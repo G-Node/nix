@@ -1,0 +1,28 @@
+# ingore binaries
+bin
+obj
+lib
+main
+Makefile
+
+# ingore documentation
+doc/html
+
+# ignore hdf5 files
+*.hdf
+*.h5
+*.hdf5
+*.he5
+
+# ignore temp files
+*.swp
+*~
+
+# ignore codeblocs project files
+*.cbp
+*.depend
+*.layout
+
+# ignore OSX specific files
+.DS_Store
+buid/
