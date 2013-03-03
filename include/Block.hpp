@@ -1,13 +1,20 @@
-#ifndef HDX_BOCK_H_INCLUDE
+#ifndef PAN_BOCK_H_INCLUDE
 #define PAN_BOCK_H_INCLUDE
 
 #include <string>
+#include <H5Cpp.h>
+#include "BaseContainer.hpp"
 
-class Block
+namespace pandora {
+
+class File;
+  
+class Block : BaseContainer
 {
   public:
 
     Block(Block &block);
+    Block(H5::H5File &file, H5::Group h5group);
 
     virtual ~Block();
 
@@ -29,8 +36,14 @@ class Block
     //void deleteTag(Tag &tag) const;
 
     //iterator<Source> sources() const;
-
-  private:
+  
+private:  
+  H5::H5File       &file;
+  
+  std::string _name;
+  
 };
+  
+}
 
 #endif // HDX_BOCK_H_INCLUDE
