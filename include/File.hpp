@@ -2,8 +2,10 @@
 #define PAN_FILE_H_INCLUDED
 
 #include <iterator>
+#include <string>
 
 #include <H5Cpp.h>
+#include <H5File.h>
 #include "Block.hpp"
 
 namespace pandora {
@@ -18,7 +20,7 @@ public:
   Block getBlock(std::string block_id) const;
 
   /// @todo Iterate by name
-  iterator<Block> blocks() const;
+  //std::iterator<Block> blocks() const;
 
   Block createBlock(std::string name, std::string type) const;
 
@@ -38,7 +40,7 @@ public:
 
   std::string createId() const;
 
-  H5File getH5File() const;
+  H5::H5File getH5File() const;
 
   virtual ~File();
 
@@ -46,7 +48,7 @@ private:
 
   std::string prefix;
 
-  H5File h5file;
+  H5::H5File h5file;
 
 };
 

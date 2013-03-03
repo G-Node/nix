@@ -1,6 +1,6 @@
-#include "Bock.hpp"
+#include "Block.hpp"
 
-Block::Block()
+Block::Block(Block &block)
 {
   //ctor
 }

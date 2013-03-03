@@ -1,8 +1,12 @@
 #include "File.hpp"
 
-File::File(string)
+#include <string>
+
+using namespace pandora;
+
+File::File(std::string name, std::string prefix, std::string mode)
 {
-  //ctor
+	  this->h5file = H5::H5File(name.c_str(), 0);
 }
 
 File::~File()
@@ -10,7 +14,7 @@ File::~File()
   //dtor
 }
 
-File::File(const File& other)
+File::File(const File &other)
 {
   //copy ctor
 }

@@ -1,6 +1,7 @@
 #ifndef HDX_BOCK_H_INCLUDE
-#define HDX_BOCK_H_INCLUDE
+#define PAN_BOCK_H_INCLUDE
 
+#include <string>
 
 class Block
 {
