@@ -32,3 +32,5 @@ buid/
 .cproject
 .project
 Debug
+main.cpp
+src/pandora_cpp.cpp

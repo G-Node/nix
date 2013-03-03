@@ -8,6 +8,7 @@ namespace pandora {
 class BaseContainer {
   
 protected:
+  BaseContainer(){};
   
   BaseContainer(H5::Group h5group) : h5group(h5group) {};
 

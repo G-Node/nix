@@ -3,14 +3,17 @@
 
 #include <iterator>
 #include <string>
+#include <vector>
+#include <utility>
 
 #include <H5Cpp.h>
 #include <H5File.h>
+#include "BaseContainer.hpp"
 #include "Block.hpp"
 
 namespace pandora {
 
-class File {
+class File : BaseContainer {
 
 public:
   File(std::string name, std::string prefix, std::string mode = "w");
@@ -52,6 +55,7 @@ private:
 
   H5::H5File h5file;
 
+  void checkAttributes(std::vector<std::pair<std::string,H5::DataType> > attribs);
 };
 
 }
