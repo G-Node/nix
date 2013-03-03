@@ -1,17 +1,34 @@
 #include "File.hpp"
 
-#include <string>
+
 
 using namespace pandora;
+using namespace H5;
 
 File::File(std::string name, std::string prefix, std::string mode)
 {
-	  this->h5file = H5::H5File(name.c_str(), 0);
+  if(mode == "r")
+	{
+	  this->h5file = H5File(name.c_str(), H5F_ACC_RDONLY);
+	}
+	else{
+	  this->h5file = H5File(name.c_str(), H5F_ACC_TRUNC);
+	}
+	this->prefix = prefix;
+//	Group g = h5file.openGroup("/");
+
+
+
 }
+
+void File::close(){
+  h5file.close();
+}
+
 
 File::~File()
 {
-  //dtor
+
 }
 
 File::File(const File &other)

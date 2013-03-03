@@ -26,3 +26,9 @@ doc/html
 # ignore OSX specific files
 .DS_Store
 buid/
+
+
+#ignore eclipse project files
+.cproject
+.project
+Debug

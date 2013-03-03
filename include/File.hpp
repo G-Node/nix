@@ -42,6 +42,8 @@ public:
 
   H5::H5File getH5File() const;
 
+  void close();
+
   virtual ~File();
 
 private:
