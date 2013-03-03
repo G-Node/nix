@@ -32,18 +32,7 @@ File::File(std::string name, std::string prefix, std::string mode)
 void File::checkAttributes(vector<pair<string, DataType> > attribs){
   for(int i = 0; i < (int)attribs.size(); i ++){
     if(!this->attrExists(attribs[i].first)){
-      try{
-        hsize_t size = {1};
-        hsize_t size2 = {100};
-        this->h5group.createAttribute(attribs[i].first, PredType::NATIVE_CHAR,H5::DataSpace(1, &size, &size2));
-        Attribute a = this->h5group.openAttribute(attribs[i].first);
-        DataType dt = H5::StrType();
-        string s = "default";
-        a.write(PredType::NATIVE_CHAR,s);
-      }
-      catch (AttributeIException e) {
-        std::cout << e.getDetailMsg() << std::endl;
-      }
+      this->setAttr(attribs[i].first,"default");
     }
   }
 }
