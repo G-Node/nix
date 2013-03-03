@@ -1,4 +1,4 @@
-#ifndef HDX_FILE_H_INCLUDED
+#ifndef PAN_FILE_H_INCLUDED
 #define PAN_FILE_H_INCLUDED
 
 #include <iterator>
