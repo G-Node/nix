@@ -46,5 +46,5 @@ void BaseContainer::setAttr(std::string name, std::string  value)
   }
   
   H5::StrType memtype = attr.getStrType();
-  attr.write(memtype, name.c_str());
+  attr.write(memtype, value);
 }
