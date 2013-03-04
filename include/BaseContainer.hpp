@@ -15,11 +15,11 @@ protected:
   
   BaseContainer(H5::Group h5group) : h5group(h5group) {};
 
-  bool attrExists(std::string name);
-  bool objectExists(std::string path);
+  bool attrExists(std::string name) const;
+  bool objectExists(std::string path) const;
   
-  bool getAttr(std::string name, std::string &value);
-  void setAttr(std::string name, std::string  value);
+  bool getAttr(std::string name, std::string &value) const;
+  void setAttr(std::string name, std::string  value) const;
   
   H5::Group h5group;
 };
