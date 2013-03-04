@@ -3,14 +3,14 @@
 using namespace pandora;
 using namespace std;
 
-Block::Block(Block &block)
-: file(block.file), BaseContainer(block.h5group)
+Block::Block(const Block &block)
+: BaseContainer(block.h5group), file(block.file)
 {
   
 }
 
-Block::Block(H5::H5File &file, H5::Group h5group)
-: file(file), BaseContainer(h5group)
+Block::Block(File &file, H5::Group h5group)
+: BaseContainer(h5group), file(file)
 {
   
 }

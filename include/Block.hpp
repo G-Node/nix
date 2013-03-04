@@ -13,8 +13,8 @@ class Block : BaseContainer
 {
   public:
 
-    Block(Block &block);
-    Block(H5::H5File &file, H5::Group h5group);
+    Block(const Block &block);
+    Block(File &file, H5::Group h5group);
 
     virtual ~Block();
 
@@ -38,10 +38,8 @@ class Block : BaseContainer
     //iterator<Source> sources() const;
   
 private:  
-  H5::H5File       &file;
-  
   std::string _name;
-  
+  File &file;
 };
   
 }
