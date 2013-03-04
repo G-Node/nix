@@ -1,4 +1,7 @@
 
+#ifndef PAN_BASE_CONTAINER_H_INCLUDE
+#define PAN_BASE_CONTAINER_H_INCLUDE
+
 #include <string>
 #include <H5Cpp.h>
 
@@ -23,3 +26,5 @@ protected:
 
   
 }
+
+#endif /* PAN_BASE_CONTAINER_H_INCLUDE */
