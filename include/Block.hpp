@@ -18,12 +18,16 @@ class Block : BaseContainer
 
     virtual ~Block();
 
+    void type(std::string type);
+    std::string type() const;
+  
     void name(std::string name);
     std::string name() const;
 
     void definition(std::string definition);
     std::string definition() const;
 
+  
     // Tag getTag(std::string tag_id) const;
 
     /// @todo Iterate by name
