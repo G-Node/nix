@@ -18,6 +18,9 @@ doc/html
 *.swp
 *~
 
+# ignore files from dbg
+.dbg.
+
 # ignore codeblocs project files
 *.cbp
 *.depend
