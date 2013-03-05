@@ -3,7 +3,8 @@ bin
 obj
 lib
 main
-Makefile
+test
+Makefile.conf
 
 # ingore documentation
 doc/html
@@ -17,6 +18,9 @@ doc/html
 # ignore temp files
 *.swp
 *~
+
+# ignore files from dbg
+.dbg.
 
 # ignore codeblocs project files
 *.cbp

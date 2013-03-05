@@ -1,0 +1,18 @@
+# copy the template file Makefile.conf.tmpl to Makefile.conf
+# and adjust all settings in this copy. 
+
+CXX      = g++
+
+# global flags for all compilation steps
+FLAGS_GLOBAL = -Wall -pedantic -fPIC -std=c++0x
+# flags for debugging
+FLAGS_DEBUG  = -ggdb3
+
+LIB_NAMES = -lhdf5_cpp -lhdf5 -lboost_date_time -lcppunit
+LIB_PATS  = -L/usr/lib
+
+INCLUDES = -Iinclude -I/usr/include
+
+MAIN     = main
+MAIN_LIB = lib/libpandora
+LIB_EXT  = so
