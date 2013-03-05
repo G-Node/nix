@@ -3,7 +3,8 @@ bin
 obj
 lib
 main
-Makefile
+test
+Makefile.conf
 
 # ingore documentation
 doc/html
