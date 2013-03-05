@@ -20,12 +20,14 @@ public:
 
   File(const File &other);
 
+  File& operator= (const File &other);
+  
   Block getBlock(std::string block_id) const;
 
   /// @todo Iterate by name
   //std::iterator<Block> blocks() const;
 
-  Block createBlock(std::string name, std::string type) const;
+  Block createBlock(std::string name, std::string type);
 
   void deleteBlock(std::string block_id) const;
 

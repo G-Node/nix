@@ -4,12 +4,12 @@
 
 using namespace pandora;
 
-bool BaseContainer::attrExists(std::string name)
+bool BaseContainer::attrExists(std::string name) const
 {
   return H5Aexists(h5group.getId(), name.c_str());
 }
 
-bool BaseContainer::objectExists(std::string path)
+bool BaseContainer::objectExists(std::string path) const
 {
   htri_t ret = H5Lexists(h5group.getId(), path.c_str(), H5P_DEFAULT);
   if (!ret)
@@ -19,7 +19,7 @@ bool BaseContainer::objectExists(std::string path)
   return ret;
 }
 
-bool BaseContainer::getAttr(std::string name, std::string &value)
+bool BaseContainer::getAttr(std::string name, std::string &value) const
 {
   if (! attrExists(name)) {
     return false;
@@ -33,7 +33,7 @@ bool BaseContainer::getAttr(std::string name, std::string &value)
   return true;
 }
 
-void BaseContainer::setAttr(std::string name, std::string  value)
+void BaseContainer::setAttr(std::string name, std::string  value) const
 {
   H5::Attribute attr;
   if (attrExists(name)) {
