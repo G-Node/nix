@@ -24,8 +24,6 @@ File::File(std::string name, std::string prefix, std::string mode)
   attribs.push_back(pair<string,DataType>("updated_at",H5::StrType()));
 
   checkAttributes(attribs);
-
-
 }
 
 
@@ -51,6 +49,7 @@ Block File::createBlock(std::string name, std::string type)
   H5::Group block_group = h5group.createGroup(name);
   
   Block block = Block(*this, block_group);
+  block.type(type);
   return block;
 }
 
