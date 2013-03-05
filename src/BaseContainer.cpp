@@ -15,8 +15,8 @@ bool BaseContainer::objectExists(std::string path) const
   if (!ret)
     return false;
   
-  ret = H5Oexists_by_name(h5group.getId(), path.c_str(), H5P_DEFAULT);
-  return ret;
+  //ret = H5Oexists_by_name(h5group.getId(), path.c_str(), H5P_DEFAULT);
+  return true;
 }
 
 bool BaseContainer::getAttr(std::string name, std::string &value) const
