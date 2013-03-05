@@ -41,7 +41,17 @@ public:
 
   // Section deleteSection(Section &section) const;
 
-  std::string createId() const;
+  std::string createId();
+
+  void version(std::string version);
+  std::string version() const;
+
+  void format(std::string format);
+  std::string format() const;
+
+  std::string created_at() const;
+
+  std::string updated_at() const;
 
   H5::H5File getH5File() const;
 
@@ -55,7 +65,13 @@ private:
 
   H5::H5File h5file;
 
-  void checkAttributes(std::vector<std::pair<std::string,H5::DataType> > attribs);
+  void checkAttributes(std::vector<std::pair<std::string, std::string> > attribs);
+
+  void checkGroups(std::vector< std::string > groups);
+
+  void created_at(std::string created_at);
+
+  void updated_at(std::string updated_at);
 };
 
 }
