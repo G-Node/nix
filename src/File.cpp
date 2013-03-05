@@ -3,6 +3,7 @@
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
+#include "boost/date_time/posix_time/posix_time.hpp"
 
 using namespace pandora;
 using namespace H5;
@@ -22,8 +23,8 @@ File::File(std::string name, std::string prefix, std::string mode)
   vector< pair<string, string > > attribs;
   attribs.push_back(pair<string,string>("format","pandora"));
   attribs.push_back(pair<string,string>("version","0.9"));
-  attribs.push_back(pair<string,string>("created_at","2013-03-05T00:00:00"));
-  attribs.push_back(pair<string,string>("updated_at","2013-03-05T00:00:00"));
+  attribs.push_back(pair<string,string>("created_at",time_stamp()));
+  attribs.push_back(pair<string,string>("updated_at",time_stamp()));
   vector<string > groups;
   groups.push_back("data");
   groups.push_back("metadata");
@@ -55,7 +56,7 @@ void File::checkGroups(vector< string > groups){
 }
 
 void File::close(){
-
+  this->setAttr("updated_at",time_stamp());
   h5file.close();
 }
 
@@ -82,4 +83,12 @@ string File::createId(){
     }
   }
   return id;
+}
+
+string File::time_stamp(){
+  using namespace boost::posix_time;
+  time_t t = time(NULL);
+  ptime timetmp = from_time_t(t);
+  string time_str = to_iso_string(timetmp);
+  return time_str;
 }

@@ -43,6 +43,8 @@ public:
 
   std::string createId();
 
+  std::string time_stamp();
+
   void version(std::string version);
   std::string version() const;
 
