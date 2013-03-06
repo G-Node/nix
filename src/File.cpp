@@ -1,5 +1,7 @@
 #include <File.hpp>
 
+#include <cstring>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <time.h>
@@ -148,4 +150,6 @@ string File::time_stamp() const{
 
 File::~File() {
 
+
 }
+
