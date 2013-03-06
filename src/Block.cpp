@@ -20,6 +20,18 @@ Block::~Block()
   //dtor
 }
 
+void Block::type(std::string type)
+{
+  this->setAttr("type", type);
+}
+
+std::string Block::type() const
+{
+  std::string str;
+  getAttr("type", str);
+  return str;
+}
+
 void Block::name(std::string name)
 {
   this->setAttr("name", name);
@@ -31,3 +43,16 @@ std::string Block::name() const
   getAttr("name", name_out);
   return name_out;
 }
+
+void Block::definition(std::string definition)
+{
+  this->setAttr("definition", definition);
+}
+
+std::string Block::definition() const
+{
+  std::string str;
+  getAttr("definition", str);
+  return str;
+}
+
