@@ -8,6 +8,10 @@ ifeq ($(LIB_EXT),)
 endif
 
 # libs
+MAIN_LIB_DIR  = lib
+MAIN_LIB_NAME = libpandora
+MAIN_LIB = $(MAIN_LIB_DIR)/$(MAIN_LIB_NAME)
+
 LIB = $(LIB_PATS) $(LIB_NAMES)
 
 # complete set of flags for target release
@@ -36,6 +40,7 @@ release: $(MAIN_LIB).$(LIB_EXT)
 	$(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(MAIN)
 
 $(MAIN_LIB).$(LIB_EXT): $(OBJS_RELEASE)
+	mkdir -p $(MAIN_LIB_DIR)
 	$(CXX) $(CXXFLAGS_RELEASE) $(LIB) -shared $^ -o $(MAIN_LIB).$(LIB_EXT)
 
 obj/release/%.o: src/%.cpp
@@ -49,6 +54,7 @@ debug: $(MAIN_LIB).dbg.$(LIB_EXT)
 	$(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $(MAIN)
 
 $(MAIN_LIB).dbg.$(LIB_EXT): $(OBJS_DEBUG)
+	mkdir -p $(MAIN_LIB_DIR)
 	$(CXX) $(CXXFLAGS_DEBUG) $(LIB) -shared $^ -o $(MAIN_LIB).dbg.$(LIB_EXT)
 
 obj/debug/%.o: src/%.cpp
@@ -65,17 +71,16 @@ test/bin%: test/src%.cpp
 	mkdir -p test/bin
 	$(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $^ $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $@
 
-
 #
 # run tests
 # 
-#    make runTestName -> starts the test with the executable test/bin/TestName
-#    make runAll      -> runs all tests in test/bin
+#    make checkTestName -> starts the test with the executable test/bin/TestName
+#    make check         -> runs all tests in test/bin
 #
-run%: test/bin/%
+check%: test/bin/%
 	$^
 
-runAll: $(EXEC_TEST)
+check: $(EXEC_TEST)
 	$(foreach var,$(EXEC_TEST), $(var))
 
 # create documentation
@@ -87,4 +92,3 @@ doc:
 .PHONY: clean
 clean:
 	rm -vrf $(MAIN) obj/* doc/* test/bin/* $(MAIN_LIB).dbg.$(LIB_EXT) $(MAIN_LIB).$(LIB_EXT)
-
