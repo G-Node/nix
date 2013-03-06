@@ -12,9 +12,4 @@ int main(int args, char **argv)
 
   H5::Exception::dontPrint();
 
-  Block block = file.createBlock("test_block", "test");
-
-  block.name("test_name");
-  std::cout << block.name() << std::endl;
-
 }
