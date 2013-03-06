@@ -1,0 +1,20 @@
+# Darwin (Mac OS X) specific settings
+# This makefile basically assumes that all 3rd party libraries
+# are installed (e.g. via homebrew) to /usr/local/lib and they
+# have been compiled against libstdc++ (not clang's own libc++)
+
+CXX      = clang++
+
+# global flags for all compilation steps
+FLAGS_GLOBAL = -Wall -pedantic -fPIC -std=c++11 -stdlib=libstdc++
+# flags for debugging
+FLAGS_DEBUG  = -ggdb3
+
+LIB_NAMES = -lhdf5_cpp -lhdf5 -lboost_date_time-mt -lcppunit
+LIB_PATS  = -L/usr/local/lib
+
+INCLUDES = -Iinclude -I/usr/include
+
+MAIN     = main
+MAIN_LIB = lib/libpandora
+LIB_EXT  = dylib
