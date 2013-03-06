@@ -1,5 +1,11 @@
 # include user specific configurations
-include Makefile.conf
+OS = $(shell uname -s 2>/dev/null | tr [:upper:] [:lower:])
+-include Makefile.$(OS)
+-include Makefile.conf
+
+ifeq ($(LIB_EXT),)
+  $(error Makfile not properly configured)
+endif
 
 # libs
 LIB = $(LIB_PATS) $(LIB_NAMES)
