@@ -16,5 +16,4 @@ LIB_PATS  = -L/usr/local/lib
 INCLUDES = -Iinclude -I/usr/include
 
 MAIN     = main
-MAIN_LIB = lib/libpandora
 LIB_EXT  = dylib
