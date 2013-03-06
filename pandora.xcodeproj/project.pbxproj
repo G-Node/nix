@@ -15,10 +15,10 @@
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB30B16E4A2430089FFFC /* libhdf5_cpp.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30916E4A2430089FFFC /* libhdf5_cpp.7.dylib */; };
 		E9CCB30C16E4A2430089FFFC /* libhdf5.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */; };
-		E9CCB32116E4A49E0089FFFC /* test_block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB32016E4A49E0089FFFC /* test_block.cpp */; };
 		E9CCB32316E4A56F0089FFFC /* libhdf5_cpp.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30916E4A2430089FFFC /* libhdf5_cpp.7.dylib */; };
 		E9CCB32416E4A56F0089FFFC /* libhdf5.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */; };
 		E9CCB32516E4A5850089FFFC /* pandora.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB2DB16E4A0870089FFFC /* pandora.dylib */; };
+		E9CCB32916E666F00089FFFC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB32816E666F00089FFFC /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,7 +44,7 @@
 		E9CCB30916E4A2430089FFFC /* libhdf5_cpp.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libhdf5_cpp.7.dylib; path = /usr/local/Cellar/hdf5/1.8.9/lib/libhdf5_cpp.7.dylib; sourceTree = "<absolute>"; };
 		E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libhdf5.7.dylib; path = /usr/local/Cellar/hdf5/1.8.9/lib/libhdf5.7.dylib; sourceTree = "<absolute>"; };
 		E9CCB31716E4A48C0089FFFC /* test_block */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_block; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9CCB32016E4A49E0089FFFC /* test_block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = test_block.cpp; sourceTree = SOURCE_ROOT; };
+		E9CCB32816E666F00089FFFC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +113,7 @@
 		E9CCB31816E4A48C0089FFFC /* test_block */ = {
 			isa = PBXGroup;
 			children = (
-				E9CCB32016E4A49E0089FFFC /* test_block.cpp */,
+				E9CCB32816E666F00089FFFC /* main.cpp */,
 			);
 			path = test_block;
 			sourceTree = "<group>";
@@ -219,7 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9CCB32116E4A49E0089FFFC /* test_block.cpp in Sources */,
+				E9CCB32916E666F00089FFFC /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -352,6 +352,7 @@
 				E9CCB2EA16E4A0870089FFFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E9CCB31D16E4A48C0089FFFC /* Build configuration list for PBXNativeTarget "test_block" */ = {
 			isa = XCConfigurationList;
@@ -360,6 +361,7 @@
 				E9CCB31F16E4A48C0089FFFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

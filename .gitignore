@@ -3,7 +3,7 @@ bin
 obj
 lib
 main
-test
+test/bin
 Makefile.conf
 
 # ingore documentation
@@ -18,9 +18,11 @@ doc/html
 # ignore temp files
 *.swp
 *~
+*.orig
 
 # ignore files from dbg
 .dbg.
+*.dSYM
 
 # ignore codeblocs project files
 *.cbp
@@ -30,7 +32,6 @@ doc/html
 # ignore OSX specific files
 .DS_Store
 buid/
-
 
 #ignore eclipse project files
 .cproject

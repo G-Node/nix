@@ -1,5 +1,11 @@
 # include user specific configurations
-include Makefile.conf
+OS = $(shell uname -s 2>/dev/null | tr [:upper:] [:lower:])
+-include Makefile.$(OS)
+-include Makefile.conf
+
+ifeq ($(LIB_EXT),)
+  $(error Makfile not properly configured)
+endif
 
 # libs
 LIB = $(LIB_PATS) $(LIB_NAMES)
@@ -50,13 +56,27 @@ obj/debug/%.o: src/%.cpp
 	$(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) -c $^ -o $@
 
 #
-# make tests
+# build tests
+# all tests are currently build with the debug target
 #
 test: debug $(EXEC_TEST)
 
 test/bin%: test/src%.cpp
 	mkdir -p test/bin
 	$(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $^ $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $@
+
+
+#
+# run tests
+# 
+#    make runTestName -> starts the test with the executable test/bin/TestName
+#    make runAll      -> runs all tests in test/bin
+#
+run%: test/bin/%
+	$^
+
+runAll: $(EXEC_TEST)
+	$(foreach var,$(EXEC_TEST), $(var))
 
 # create documentation
 .PHONY: doc
