@@ -11,8 +11,10 @@
 
 #include <H5Cpp.h>
 #include <H5File.h>
-#include "BaseContainer.hpp"
-#include "Block.hpp"
+
+#include <pandora/BaseContainer.hpp>
+
+class Block;
 
 namespace pandora {
 

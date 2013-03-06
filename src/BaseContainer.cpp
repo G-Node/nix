@@ -1,8 +1,8 @@
-#include "BaseContainer.hpp"
-
 #include <hdf5.h>
 
-using namespace pandora;
+#include <pandora/BaseContainer.hpp>
+
+namespace pandora {
 
 bool BaseContainer::attrExists(std::string name) const
 {
@@ -47,4 +47,6 @@ void BaseContainer::setAttr(std::string name, std::string  value) const
   
   H5::StrType memtype = attr.getStrType();
   attr.write(memtype, value);
+}
+
 }

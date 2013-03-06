@@ -1,16 +1,17 @@
-#include <File.hpp>
-
 #include <cstring>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <time.h>
 #include <stdlib.h>
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
-using namespace pandora;
+#include <pandora/File.hpp>
+
 using namespace H5;
 using namespace std;
+
+namespace pandora {
 
 const size_t File::READ_ONLY  = H5F_ACC_RDONLY;
 const size_t File::READ_WRITE = H5F_ACC_RDWR;
@@ -124,7 +125,7 @@ void File::close() {
 }
 
 /*SEE: File.hpp*/
-string File::createId() const{
+string File::createId() const {
   static const char* hex = "0123456789abcdef";
   string id;
   srand(time(NULL));
@@ -150,6 +151,7 @@ string File::time_stamp() const{
 
 File::~File() {
 
-
 }
+
+} // end namespace pandora
 

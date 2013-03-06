@@ -9,7 +9,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "File.hpp"
+#include "pandora/File.hpp"
 
 using namespace std;
 using namespace pandora;

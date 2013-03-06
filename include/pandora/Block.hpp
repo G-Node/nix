@@ -3,12 +3,12 @@
 
 #include <string>
 #include <H5Cpp.h>
-#include "BaseContainer.hpp"
+
+#include <pandora/BaseContainer.hpp>
+#include <pandora/File.hpp>
 
 namespace pandora {
 
-class File;
-  
 class Block : BaseContainer
 {
   public:
