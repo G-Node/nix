@@ -19,6 +19,11 @@ bool BaseContainer::objectExists(std::string path) const
   return true;
 }
 
+void BaseContainer::delAttr(std::string name) const
+{
+  h5group.removeAttr(name);
+}
+
 bool BaseContainer::getAttr(std::string name, std::string &value) const
 {
   if (! attrExists(name)) {

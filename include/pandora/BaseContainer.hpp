@@ -18,6 +18,8 @@ protected:
   bool attrExists(std::string name) const;
   bool objectExists(std::string path) const;
   
+  void delAttr(std::string name) const;
+  
   bool getAttr(std::string name, std::string &value) const;
   void setAttr(std::string name, std::string  value) const;
   
