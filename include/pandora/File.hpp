@@ -34,7 +34,7 @@ public:
   Block getBlock(std::string block_id) const;
 
   /// @todo Iterate by name
-  //std::iterator<Block> blocks() const;
+  const std::iterator<std::input_iterator_tag, Block> blocks() const;
 
   Block createBlock(std::string name, std::string type);
 
