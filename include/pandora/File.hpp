@@ -5,18 +5,24 @@
 #define VERSION "1.0"
 
 #include <iterator>
-#include <string>
+#include <cstring>
+#include <cstdlib>
 #include <vector>
 #include <utility>
+#include <iostream>
+#include <fstream>
+#include <time.h>
+
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <H5Cpp.h>
 #include <H5File.h>
 
 #include <pandora/BaseContainer.hpp>
 
-class Block;
-
 namespace pandora {
+
+class Block;
 
 class File:BaseContainer {
 
@@ -29,19 +35,25 @@ public:
 
   File( const File &other );
 
-  File& operator= (const File &other);
-  
-  Block getBlock(std::string block_id) const;
+  File& operator=( const File &other );
+
+  bool hasBlock( std::string name ) const;
+
+  size_t blockCount() const;
+
+  Block getBlock( std::string block_id );
+
+  std::string blockName(int i) const;
 
   /// @todo Iterate by name
   //std::iterator<Block> blocks() const;
 
-  Block createBlock(std::string name, std::string type);
+  Block createBlock( std::string name, std::string type );
 
-  void deleteBlock( std::string block_id ) const;
-
-  void deleteBlock( Block &block ) const;
-
+  void deleteBlock( std::string block_id );
+  /*
+   void deleteBlock( Block &block );
+   */
   // Section getSection(std::string section_id) const;
 
   // iterator<Section> sections() const;
@@ -56,17 +68,15 @@ public:
 
   std::string time_stamp() const;
 
-  void version( std::string version );
   std::string version() const;
 
-  void format( std::string format );
   std::string format() const;
 
   std::string created_at() const;
 
   std::string updated_at() const;
 
-  H5::H5File getH5File();
+  H5::H5File getH5File() const;
 
   void close();
 
@@ -78,15 +88,19 @@ private:
 
   H5::H5File h5file;
 
-  void checkAttributes( );
+  void checkAttributes();
 
-  void checkGroups( );
+  void checkGroups();
 
   bool fileExists( std::string name ) const;
 
   void openHDFFile( std::string name, int mode );
 
   bool checkFormatAndVersion() const;
+
+  void version( std::string version );
+
+  void format( std::string format );
 
 };
 
