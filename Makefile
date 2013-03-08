@@ -80,7 +80,7 @@ test/bin%: test/src%.cpp
 check%: test/bin/%
 	$^
 
-check: $(EXEC_TEST)
+check: test
 	$(foreach var,$(EXEC_TEST), $(var))
 
 # create documentation
