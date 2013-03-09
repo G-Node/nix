@@ -81,7 +81,7 @@ check%: test/bin/%
 	$^
 
 check: test
-	$(foreach var,$(EXEC_TEST), $(var))
+	for testprog in $(EXEC_TEST); do ./$$testprog; done
 
 # create documentation
 .PHONY: doc
