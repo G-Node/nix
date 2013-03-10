@@ -11,9 +11,8 @@ namespace pandora {
 class BaseContainer {
 
 protected:
-  BaseContainer(){};
-
-  BaseContainer(H5::Group h5group) : h5group(h5group) {};
+  BaseContainer(){}
+  BaseContainer(H5::Group h5group) : h5group(h5group) {}
 
   bool attrExists(std::string name) const;
   bool objectExists(std::string path) const;

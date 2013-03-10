@@ -90,7 +90,7 @@ obj/debug/%.o: src/%.cpp
 test: debug $(EXEC_TEST)
 
 test/bin%: test/src%.cpp
-	$(ECHO mkdir -p test/bin
+	$(ECHO) mkdir -p test/bin
 	@echo $(ECHO_FLAGS) " [LNK]\t$@"
 	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $^ $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $@
 
