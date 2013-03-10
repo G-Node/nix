@@ -22,6 +22,12 @@ protected:
   bool getAttr(std::string name, std::string &value) const;
   void setAttr(std::string name, std::string  value) const;
 
+  template <typename T>
+  void setAttr(std::string name, T value) const;
+
+  template <typename T>
+  bool getAttr (std::string name, T &value) const;
+  
   bool hasData(std::string name) const;
   H5::DataSet openData(std::string name) const;
   void delData(std::string name);

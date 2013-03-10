@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <hdf5.h>
 
 #include <pandora/BaseContainer.hpp>
@@ -21,34 +24,130 @@ void BaseContainer::delAttr( std::string name ) const {
   h5group.removeAttr(name);
 }
 
-bool BaseContainer::getAttr( std::string name, std::string &value ) const {
-  if (!attrExists(name)) {
-    return false;
+
+//Oh the hacks ;-)  
+
+struct TypeSpec {
+  H5::DataType fileType;
+  H5::DataType memType;
+  
+};
+  
+template <typename T>
+TypeSpec type_klassify()
+{
+  TypeSpec e;
+  //FIXME throw runtime exception here
+  return e;
+};
+  
+template <> TypeSpec type_klassify<int>() { return {H5::PredType::STD_I32LE, H5::PredType::NATIVE_INT}; };
+template <> TypeSpec type_klassify<double>() { return {H5::PredType::IEEE_F32LE, H5::PredType::NATIVE_DOUBLE}; };
+template <> TypeSpec type_klassify<std::string>() { return {H5::PredType::C_S1, H5::PredType::C_S1}; };
+  
+template <typename T>
+class Nyx {
+public:
+  Nyx(T &val) : value(val), m(type_klassify<T>()) { }
+  virtual H5::DataSpace getDataSpace() const {
+    return H5::DataSpace();
   }
+  virtual H5::DataType getFileType() const { return m.fileType; }
+  virtual H5::DataType getMemType() const { return m.memType; }
+  virtual void const *getData() const {return static_cast<const void *>(&value); }
+  virtual void *getWritePointer() { return static_cast<void *>(&value); }
+  
+  virtual void writeAttribute(H5::Attribute &attr) {
+    attr.write(m.memType, &value);
+  }
+  
+  virtual void readAttribute(H5::Attribute &attr) {
+    attr.read(m.memType, &value);
+  }
+  
+  virtual ~Nyx() {}
+protected:
+  T &value;
+  TypeSpec m;
+};
+  
+template <typename T>
+class Charon : public Nyx<T> {
+public:
+  Charon(T &val) : Nyx<T>(val) {}
+};
 
-  H5::Attribute attr = h5group.openAttribute(name);
-  H5::StrType memtype = attr.getStrType();
+template <>
+class Charon<std::string> : public Nyx<std::string> {
+public:
+  Charon(std::string &val) : Nyx<std::string>(val) {}
+  virtual H5::DataType getFileType() const {
+    H5::AtomType ftype = H5::PredType::C_S1;
+    ftype.setSize(value.length());
+    return ftype;
+  }
+  virtual const void *getData() const {return value.c_str();}
+  virtual void *getWritePointer() { return NULL; /*FIXME*/ }
+  virtual void writeAttribute(H5::Attribute &attr) {
+    attr.write(m.memType, value);
+  }
+  
+  virtual void readAttribute(H5::Attribute &attr) {
+    attr.read(m.memType, value);
+  }
+  
+  virtual ~Charon() {}
+};
 
-  attr.read(memtype, value);
 
-  return true;
-}
-
-void BaseContainer::setAttr( std::string name, std::string value ) const {
+template <typename T>
+void BaseContainer::setAttr(std::string name, T value) const
+{
   H5::Attribute attr;
+  Charon<T> charon = Charon<T>(value);
+  
   if (attrExists(name)) {
     attr = h5group.openAttribute(name);
   } else {
-    H5::DataSpace fspace;
-    H5::AtomType ftype = H5::PredType::C_S1;
-    ftype.setSize(value.length());
-    attr = h5group.createAttribute(name, ftype, fspace);
+    H5::DataType fileType = charon.getFileType();
+    H5::DataSpace fileSpace = charon.getDataSpace();
+    attr = h5group.createAttribute(name, fileType, fileSpace);
   }
-
-  H5::StrType memtype = attr.getStrType();
-  attr.write(memtype, value);
+  
+  charon.writeAttribute(attr);
+}
+ 
+template <typename T>
+bool BaseContainer::getAttr (std::string name, T &value) const {
+  
+  if (!attrExists(name)) {
+    return false;
+  }
+  
+  H5::Attribute attr = h5group.openAttribute(name);
+  Charon<T> charon = Charon<T>(value);
+  charon.readAttribute(attr);
+  
+  return true;
 }
 
+template void BaseContainer::setAttr<int>(std::string name, int value) const;
+template void BaseContainer::setAttr<double>(std::string name, double value) const;
+template void BaseContainer::setAttr<std::string>(std::string name, std::string value) const;
+  
+template bool BaseContainer::getAttr<int>(std::string name, int &value) const;
+template bool BaseContainer::getAttr<double>(std::string name, double &value) const;
+template bool BaseContainer::getAttr<std::string>(std::string name, std::string &value) const;
+
+  
+bool BaseContainer::getAttr(std::string name, std::string &value) const {
+  return getAttr<std::string>(name, value);
+}
+
+void BaseContainer::setAttr(std::string name, std::string value) const {
+  setAttr<std::string>(name, value);
+}
+  
 bool BaseContainer::hasData( std::string name ) const {
   try {
     H5::DataSet data = h5group.openDataSet(name);

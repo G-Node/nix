@@ -48,25 +48,43 @@ public:
     bool res;
 
     res = attrExists("nonexistant");
-    CPPUNIT_ASSERT(res == false);
+    CPPUNIT_ASSERT_EQUAL(false, res);
 
     string testStr = "I saw the best minds of my generation destroyed by madness";
     setAttr("testStrAttr", testStr);
 
     res = attrExists("testStrAttr");
-    CPPUNIT_ASSERT(res == true);
+    CPPUNIT_ASSERT_EQUAL(true, res);
 
     string retString;
     getAttr("testStrAttr", retString);
-
-    CPPUNIT_ASSERT(retString == testStr);
+    CPPUNIT_ASSERT_EQUAL(testStr, retString);
 
     delAttr("testStrAttr");
     res = attrExists("testStrAttr");
-    CPPUNIT_ASSERT(res == false);
+    CPPUNIT_ASSERT_EQUAL(false, res);
 
     //resetting the attr so one can eyeball it in the .h5 file
     setAttr("testStrAttr", testStr);
+
+    // non-string attr test
+    setAttr<int>("testIntAttr", 23);
+    
+    int testIntVal = 0;
+    getAttr<int>("testIntAttr", testIntVal);
+    CPPUNIT_ASSERT_EQUAL(23, testIntVal);
+    setAttr<double>("testDoubleAttr", 3.14159);
+    
+    double testDoubleVal = 0.0;
+    getAttr<double>("testDoubleAttr", testDoubleVal);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(testDoubleVal, 3.14159, 0.0001); //comparing doubles by ==, heh ;-)
+    
+    testStr = "Hab' nun, ach, Philosophie";
+    setAttr<std::string>("testTStringAttr", testStr);
+    getAttr("testTStringAttr", retString);
+    CPPUNIT_ASSERT_EQUAL(testStr, retString);
+    
+
   }
 
 };
