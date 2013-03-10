@@ -6,7 +6,7 @@
 CXX      = clang++
 
 # global flags for all compilation steps
-FLAGS_GLOBAL = -Wall -pedantic -fPIC -std=c++11 -stdlib=libstdc++
+FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wshadow -Wnon-virtual-dtor -Wglobal-constructors -Wsign-conversion -fPIC -std=c++11 -stdlib=libstdc++
 # flags for debugging
 FLAGS_DEBUG  = -ggdb3
 
