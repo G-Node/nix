@@ -54,8 +54,6 @@ public:
   }
   virtual H5::DataType getFileType() const { return m.fileType; }
   virtual H5::DataType getMemType() const { return m.memType; }
-  virtual void const *getData() const {return static_cast<const void *>(&value); }
-  virtual void *getWritePointer() { return static_cast<void *>(&value); }
   
   virtual void writeAttribute(H5::Attribute &attr) {
     attr.write(m.memType, &value);
@@ -86,8 +84,6 @@ public:
     ftype.setSize(value.length());
     return ftype;
   }
-  virtual const void *getData() const {return value.c_str();}
-  virtual void *getWritePointer() { return NULL; /*FIXME*/ }
   virtual void writeAttribute(H5::Attribute &attr) {
     attr.write(m.memType, value);
   }
