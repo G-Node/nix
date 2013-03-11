@@ -58,33 +58,31 @@ void File::openHDFFile( string name, int mode ) {
   this->h5group = h5file.openGroup("/");
 }
 
-size_t File::blockCount() const{
+size_t File::blockCount() const {
   Group g = h5group.openGroup("/data");
   return g.getNumObjs();;
 }
 
-std::string File::blockName(int i) const{
+std::string File::blockName( int i ) const {
   Group g = h5group.openGroup("/data");
   std::string name;
   name = g.getObjnameByIdx(i);
   return name;
 }
 
-Block File::getBlock( std::string block_id ){
+Block *File::getBlock( std::string block_id ) {
   if (hasBlock(block_id)) {
     std::string s("/data/");
     s.append(block_id);
     Group g = this->openGroup(s);
-    Block b(*this, g);
+    Block *b = new Block(*this, g);
     return b;
   }
   throw "File does not have such block!";
 }
 
-
-
 bool File::hasBlock( std::string block_id ) const {
-  if(block_id.length() == 0){
+  if (block_id.length() == 0) {
     return false;
   }
   std::string s("/data/");
@@ -92,21 +90,22 @@ bool File::hasBlock( std::string block_id ) const {
   return this->hasGroup(s);
 }
 
-Block File::createBlock( std::string name, std::string type ) {
+Block *File::createBlock( std::string name, std::string type ) {
   Group g = h5group.openGroup("data");
   std::string id = createId();
   Group blockGroup = g.createGroup(id, 0);
-  Block b(*this, blockGroup);
-  b.type(type);
-  b.name(name);
+  Block *b = new Block(*this, blockGroup);
+  b->type(type);
+  b->name(name);
   return b;
 }
-/*
- void File::deleteBlock( std::string block_id ) {
- std::string s = ""
- this->delGroup("/data")
- }
- */
+
+void File::deleteBlock( std::string block_id ) {
+  std::string s = "/data/";
+  s.append(block_id);
+  this->delGroup(s);
+}
+
 /*
  void File::deleteBlock( Block &block ) {
 

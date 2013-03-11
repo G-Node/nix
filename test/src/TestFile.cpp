@@ -18,12 +18,12 @@ using namespace pandora;
 class TestFile:public CPPUNIT_NS::TestFixture {
 private:
 
-  CPPUNIT_TEST_SUITE(TestFile);
-  CPPUNIT_TEST(testCreateId);
-  CPPUNIT_TEST(testTimeStamp);
-  CPPUNIT_TEST(testGetAttribs);
-  CPPUNIT_TEST(testCreateBlock);
-  CPPUNIT_TEST(testBlockAccess);
+CPPUNIT_TEST_SUITE(TestFile);
+    CPPUNIT_TEST(testCreateId);
+    CPPUNIT_TEST(testTimeStamp);
+    CPPUNIT_TEST(testGetAttribs);
+    CPPUNIT_TEST(testCreateBlock);
+    CPPUNIT_TEST(testBlockAccess);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
@@ -42,13 +42,11 @@ public:
   void testCreateId( void ) {
     string s = f1->createId();
     cout << " new ID: " << s << "\n";
-    cout << endl;
   }
 
   void testTimeStamp( void ) {
     string s = f1->time_stamp();
     cout << "new time stamp: " << s << endl;
-    cout << endl;
   }
 
   void testGetAttribs( void ) {
@@ -56,23 +54,38 @@ public:
     cout << "File format version:  " << f1->version() << endl;
     cout << "File was created at: " << f1->created_at() << endl;
     cout << "File was last updated at: " << f1->updated_at() << endl;
-    cout << "\n";
   }
 
   void testCreateBlock( void ) {
-    pandora::Block b = f1->createBlock("testBlock", "blockType");
-    cout << "\n" << b.name() << endl;
-    cout << b.type() << endl;
+    pandora::Block *b = f1->createBlock("testBlock", "blockType");
+    cout << "\n" << b->name() << endl;
+    cout << b->type() << endl;
   }
 
-  void testBlockAccess(void){
+  void testBlockAccess( void ) {
     cout << "Block count: " << f1->blockCount() << endl;
     cout << "Name by index: " << endl;
     int i = f1->blockCount();
-    for (int j = 0; j < i ; j++){
+    for (int j = 0; j < i; j++) {
       cout << "\t" << f1->blockName(j) << endl;
     }
-    cout << "Has Block: " << f1->hasBlock("test") << endl;
+    cout << "Has Block with id 'test': " << f1->hasBlock("test") << endl;
+    cout << "Get name and type of first block: " << endl;
+    if (f1->hasBlock(f1->blockName(0))) {
+      Block *b = f1->getBlock(f1->blockName(0));
+      cout << "\t Name: " << b->name() << endl;
+      cout << "\t Type: " << b->type() << endl;
+      cout << "Deleting this block!" << endl;
+      delete b;
+      cout << "Old block count: " << f1->blockCount() << endl;
+      f1->deleteBlock(f1->blockName(0));
+      cout << "New block count: " << f1->blockCount() << endl;
+      i = f1->blockCount();
+      for (int j = 0; j < i; j++) {
+        cout << "\t" << f1->blockName(j) << endl;
+      }
+    }
+
   }
 
 };
