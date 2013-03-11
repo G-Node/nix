@@ -1,12 +1,6 @@
-/*
- * BlockIterator.hpp
- *
- *  Created on: 07.03.2013
- *      Author: stoewer
- */
 
-#ifndef BLOCKITERATOR_HPP_
-#define BLOCKITERATOR_HPP_
+#ifndef PAN_BLOCKITERATOR_H_INCLUDED
+#define PAN_BLOCKITERATOR_H_INCLUDED
 
 #include <iterator>
 #include <H5Cpp.h>
@@ -19,18 +13,17 @@ class BlockIterator : public std::iterator<std::input_iterator_tag, Block>
 {
 private:
 
-  File &file;
-  H5::H5Object &h5group;
-  int index, size;
+  File file;
+  size_t index, size;
 
 public:
-  BlockIterator(File &file);
-  BlockIterator(BlockIterator &iter);
+  BlockIterator(File file);
+  BlockIterator(const BlockIterator &other);
 
-  bool operator!=(BlockIterator &iter);
-  bool operator==(BlockIterator &iter);
+  bool operator!=(BlockIterator &other);
+  bool operator==(BlockIterator &other);
 
-  Block operator*();
+  Block &operator*();
   BlockIterator &operator++();
 
   BlockIterator &begin();
@@ -40,4 +33,4 @@ public:
 };
 
 } /* namespace pandora */
-#endif /* BLOCKITERATOR_HPP_ */
+#endif /* PAN_BLOCKITERATOR_H_INCLUDED */

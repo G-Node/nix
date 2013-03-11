@@ -23,6 +23,7 @@
 namespace pandora {
 
 class Block;
+class BlockIterator;
 
 class File:BaseContainer {
 
@@ -37,10 +38,6 @@ public:
 
   File& operator=( const File &other );
 
-
-  /// @todo Iterate by name
-  const std::iterator<std::input_iterator_tag, Block> blocks() const;
-
   bool hasBlock( std::string name ) const;
 
   size_t blockCount() const;
@@ -49,8 +46,7 @@ public:
 
   std::string blockName(int i) const;
 
-  /// @todo Iterate by name
-  //std::iterator<Block> blocks() const;
+  BlockIterator blocks() const;
 
   Block *createBlock( std::string name, std::string type );
 

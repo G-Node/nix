@@ -1,5 +1,7 @@
+
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
+#include "../include/pandora/BlockIterator.hpp"
 
 using namespace H5;
 using namespace std;
@@ -106,6 +108,10 @@ void File::deleteBlock( std::string block_id ) {
   std::string s = "/data/";
   s.append(block_id);
   this->delGroup(s);
+}
+
+BlockIterator File::blocks() const {
+  return BlockIterator(*this);
 }
 
 /*
