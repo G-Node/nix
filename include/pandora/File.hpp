@@ -82,14 +82,16 @@ public:
 
   H5::H5File getH5File() const;
 
+  bool operator==(File &other);
+
   void close();
 
   virtual ~File();
 
 private:
 
+  std::string name;
   std::string prefix;
-
   H5::H5File h5file;
 
   void checkAttributes();

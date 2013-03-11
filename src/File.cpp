@@ -10,9 +10,9 @@ const size_t File::READ_ONLY = H5F_ACC_RDONLY;
 const size_t File::READ_WRITE = H5F_ACC_RDWR;
 const size_t File::OVERWRITE = H5F_ACC_TRUNC;
 
-File::File( string name, string prefix, int mode ) :
-  BaseContainer() {
-  this->prefix = prefix;
+File::File(string name, string prefix, int mode )
+  : BaseContainer(), name(name), prefix(prefix)
+{
   if (fileExists(name)) {
     openHDFFile(name, mode);
     if (!checkFormatAndVersion()) {
@@ -27,9 +27,11 @@ File::File( string name, string prefix, int mode ) :
   }
 }
 
-File::File( const File &other ) {
-  //copy ctor
-  //@todo
+File::File( const File &other )
+  : BaseContainer(other.h5group), name(other.name),
+    prefix(other.prefix), h5file(other.h5file)
+{
+  // nothing left to do
 }
 
 bool File::fileExists( string name ) const {
@@ -60,7 +62,7 @@ void File::openHDFFile( string name, int mode ) {
 
 size_t File::blockCount() const {
   Group g = h5group.openGroup("/data");
-  return g.getNumObjs();;
+  return g.getNumObjs();
 }
 
 std::string File::blockName( int i ) const {
@@ -199,6 +201,10 @@ string File::time_stamp() const {
   ptime timetmp = from_time_t(t);
   string time_str = to_iso_string(timetmp);
   return time_str;
+}
+
+bool File::operator==(File &other) {
+  return this->name == other.name;
 }
 
 File::~File() {
