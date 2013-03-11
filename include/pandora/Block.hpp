@@ -27,7 +27,6 @@ class Block : BaseContainer
     void definition(std::string definition);
     std::string definition() const;
 
-  
     // Tag getTag(std::string tag_id) const;
 
     /// @todo Iterate by name
@@ -43,6 +42,7 @@ class Block : BaseContainer
   
 private:  
   std::string _name;
+
   File &file;
 };
   

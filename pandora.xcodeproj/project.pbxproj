@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E9CCB30316E4A20C0089FFFC /* BaseContainer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB2FC16E4A20C0089FFFC /* BaseContainer.hpp */; };
-		E9CCB30416E4A20C0089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB2FD16E4A20C0089FFFC /* Block.hpp */; };
-		E9CCB30516E4A20C0089FFFC /* File.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB2FE16E4A20C0089FFFC /* File.hpp */; };
 		E9CCB30616E4A20C0089FFFC /* BaseContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30016E4A20C0089FFFC /* BaseContainer.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
@@ -19,6 +16,11 @@
 		E9CCB32416E4A56F0089FFFC /* libhdf5.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */; };
 		E9CCB32516E4A5850089FFFC /* pandora.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB2DB16E4A0870089FFFC /* pandora.dylib */; };
 		E9CCB32916E666F00089FFFC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB32816E666F00089FFFC /* main.cpp */; };
+		E9CCB32F16E7AB070089FFFC /* BaseContainer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32B16E7AB070089FFFC /* BaseContainer.hpp */; };
+		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
+		E9CCB33116E7AB070089FFFC /* File.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32D16E7AB070089FFFC /* File.hpp */; };
+		E9CCB33216E7AB070089FFFC /* pandora.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32E16E7AB070089FFFC /* pandora.hpp */; };
+		E9CCB33416E7AB580089FFFC /* libboost_date_time-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -35,9 +37,6 @@
 
 /* Begin PBXFileReference section */
 		E9CCB2DB16E4A0870089FFFC /* pandora.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pandora.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9CCB2FC16E4A20C0089FFFC /* BaseContainer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseContainer.hpp; sourceTree = "<group>"; };
-		E9CCB2FD16E4A20C0089FFFC /* Block.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Block.hpp; sourceTree = "<group>"; };
-		E9CCB2FE16E4A20C0089FFFC /* File.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = File.hpp; sourceTree = "<group>"; };
 		E9CCB30016E4A20C0089FFFC /* BaseContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseContainer.cpp; sourceTree = "<group>"; };
 		E9CCB30116E4A20C0089FFFC /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		E9CCB30216E4A20C0089FFFC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
@@ -45,6 +44,11 @@
 		E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libhdf5.7.dylib; path = /usr/local/Cellar/hdf5/1.8.9/lib/libhdf5.7.dylib; sourceTree = "<absolute>"; };
 		E9CCB31716E4A48C0089FFFC /* test_block */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test_block; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9CCB32816E666F00089FFFC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		E9CCB32B16E7AB070089FFFC /* BaseContainer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BaseContainer.hpp; sourceTree = "<group>"; };
+		E9CCB32C16E7AB070089FFFC /* Block.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Block.hpp; sourceTree = "<group>"; };
+		E9CCB32D16E7AB070089FFFC /* File.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = File.hpp; sourceTree = "<group>"; };
+		E9CCB32E16E7AB070089FFFC /* pandora.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pandora.hpp; sourceTree = "<group>"; };
+		E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_date_time-mt.dylib"; path = "/usr/local/Cellar/boost/1.52.0/lib/libboost_date_time-mt.dylib"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9CCB33416E7AB580089FFFC /* libboost_date_time-mt.dylib in Frameworks */,
 				E9CCB30B16E4A2430089FFFC /* libhdf5_cpp.7.dylib in Frameworks */,
 				E9CCB30C16E4A2430089FFFC /* libhdf5.7.dylib in Frameworks */,
 			);
@@ -93,9 +98,8 @@
 		E9CCB2FB16E4A20C0089FFFC /* include */ = {
 			isa = PBXGroup;
 			children = (
-				E9CCB2FC16E4A20C0089FFFC /* BaseContainer.hpp */,
-				E9CCB2FD16E4A20C0089FFFC /* Block.hpp */,
-				E9CCB2FE16E4A20C0089FFFC /* File.hpp */,
+				E9CCB32A16E7AB070089FFFC /* pandora */,
+				E9CCB32E16E7AB070089FFFC /* pandora.hpp */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -121,10 +125,21 @@
 		E9CCB32216E4A4C70089FFFC /* libs */ = {
 			isa = PBXGroup;
 			children = (
+				E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */,
 				E9CCB30916E4A2430089FFFC /* libhdf5_cpp.7.dylib */,
 				E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */,
 			);
 			name = libs;
+			sourceTree = "<group>";
+		};
+		E9CCB32A16E7AB070089FFFC /* pandora */ = {
+			isa = PBXGroup;
+			children = (
+				E9CCB32B16E7AB070089FFFC /* BaseContainer.hpp */,
+				E9CCB32C16E7AB070089FFFC /* Block.hpp */,
+				E9CCB32D16E7AB070089FFFC /* File.hpp */,
+			);
+			path = pandora;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,9 +149,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9CCB30316E4A20C0089FFFC /* BaseContainer.hpp in Headers */,
-				E9CCB30416E4A20C0089FFFC /* Block.hpp in Headers */,
-				E9CCB30516E4A20C0089FFFC /* File.hpp in Headers */,
+				E9CCB32F16E7AB070089FFFC /* BaseContainer.hpp in Headers */,
+				E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */,
+				E9CCB33116E7AB070089FFFC /* File.hpp in Headers */,
+				E9CCB33216E7AB070089FFFC /* pandora.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,10 +304,14 @@
 		E9CCB2E916E4A0870089FFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/include",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/hdf5/1.8.9/lib,
+					/usr/local/Cellar/boost/1.52.0/lib,
 				);
 				PRODUCT_NAME = pandora;
 			};
@@ -300,10 +320,14 @@
 		E9CCB2EA16E4A0870089FFFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/include",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/hdf5/1.8.9/lib,
+					/usr/local/Cellar/boost/1.52.0/lib,
 				);
 				PRODUCT_NAME = pandora;
 			};
@@ -313,6 +337,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/include",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/hdf5/1.8.9/lib,
@@ -325,6 +353,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/include",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/hdf5/1.8.9/lib,
