@@ -1,5 +1,6 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
+#include <exception>
 
 using namespace H5;
 using namespace std;
@@ -13,11 +14,19 @@ const size_t File::OVERWRITE = H5F_ACC_TRUNC;
 File::File( string name, string prefix, int mode ) :
   BaseContainer() {
   this->prefix = prefix;
+  srand(time(NULL));
   if (fileExists(name)) {
     openHDFFile(name, mode);
     if (!checkFormatAndVersion()) {
-      h5file.close();
-      //Throw exception
+      std::string t;
+      this->getAttr<std::string>("version",t);
+      Block b = this->getBlock(this->blockName(0));
+      cout << "BlockTypoe: " << b.type() << endl;
+      cout << "VERSION: " << t << endl;
+      cout << "VERSION exists: " << this->attrExists("version") << endl;
+      cout << "FORAMT: " << this->format() << endl;
+    //  h5file.close();
+      //throw new runtime_error( "File/Version do not match!");
     }
     checkGroups();
   } else {
@@ -41,16 +50,13 @@ bool File::fileExists( string name ) const {
 }
 
 bool File::checkFormatAndVersion() const {
-  string value;
   if (!this->attrExists("format") || !this->attrExists("version")) {
     return false;
   }
-  this->getAttr("format", value);
-  if (value.compare(FORMAT) != 0) {
+  if (this->format().compare(FORMAT) != 0) {
     return false;
   }
-  this->getAttr("version", value);
-  return value.compare(VERSION) == 0;
+  return this->version().compare(VERSION) == 0;
 }
 
 void File::openHDFFile( string name, int mode ) {
@@ -63,22 +69,43 @@ size_t File::blockCount() const {
   return g.getNumObjs();;
 }
 
-std::string File::blockName( int i ) const {
-  Group g = h5group.openGroup("/data");
-  std::string name;
-  name = g.getObjnameByIdx(i);
-  return name;
+std::string File::blockId(size_t index) const{
+  if(index >= 0 && index < (size_t)blockCount()){
+    Group g = h5group.openGroup("/data");
+    std::string name;
+    name = g.getObjnameByIdx(index);
+    return name;
+  }
+  throw new runtime_error("Error in File::blockId: Index exceeds number of blocks!");
 }
 
-Block *File::getBlock( std::string block_id ) {
+std::string File::blockName( size_t index ) {
+  try{
+    Block b = getBlock(index);
+    return b.name();
+  }
+  catch (Exception e) {
+    throw new runtime_error("Error in File::blockName: Index exceeds number of blocks!");
+  }
+}
+
+Block File::getBlock( std::string block_id ){
   if (hasBlock(block_id)) {
     std::string s("/data/");
     s.append(block_id);
     Group g = this->openGroup(s);
-    Block *b = new Block(*this, g);
+    Block b(*this, block_id, g);
     return b;
   }
-  throw "File does not have such block!";
+  throw "Error in File::getBlock: File does not contain block with the specified id!";
+}
+
+Block File::getBlock( size_t index )  {
+  if(index >= 0 && index < (size_t)blockCount()){
+    std::string id = blockId(index);
+    return getBlock(id);
+  }
+  throw new runtime_error("Error in File::getBlock: Index exceeds number of blocks!");
 }
 
 bool File::hasBlock( std::string block_id ) const {
@@ -90,13 +117,16 @@ bool File::hasBlock( std::string block_id ) const {
   return this->hasGroup(s);
 }
 
-Block *File::createBlock( std::string name, std::string type ) {
-  Group g = h5group.openGroup("data");
-  std::string id = createId();
+Block File::createBlock( std::string name, std::string type ) {
+  Group g = h5group.openGroup("/data");
+  std::string id= createId();
+  while (hasBlock(id)){
+    id = createId();
+  }
   Group blockGroup = g.createGroup(id, 0);
-  Block *b = new Block(*this, blockGroup);
-  b->type(type);
-  b->name(name);
+  Block b(*this, id, blockGroup);
+  b.type(type);
+  b.name(name);
   return b;
 }
 
@@ -106,11 +136,12 @@ void File::deleteBlock( std::string block_id ) {
   this->delGroup(s);
 }
 
-/*
  void File::deleteBlock( Block &block ) {
-
+   std::string s = "/data/";
+   s.append(block.blockId());
+   this->delGroup(s);
  }
- */
+
 string File::updated_at() const {
   string t;
   this->getAttr("updated_at", t);
@@ -125,7 +156,7 @@ string File::created_at() const {
 
 string File::version() const {
   string t;
-  this->getAttr("version", t);
+  this->getAttr<std::string>("version", t);
   return t;
 }
 
@@ -180,8 +211,6 @@ H5::H5File File::getH5File() const {
 string File::createId() const {
   static const char* hex = "0123456789abcdef";
   string id;
-  srand(time(NULL));
-
   if (!this->prefix.empty()) {
     id.append(this->prefix);
     id.append("_");

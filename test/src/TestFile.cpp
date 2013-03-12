@@ -41,12 +41,12 @@ public:
 
   void testCreateId( void ) {
     string s = f1->createId();
-    cout << " new ID: " << s << "\n";
+    cout << "\n\t new ID: " << s << "\n";
   }
 
   void testTimeStamp( void ) {
     string s = f1->time_stamp();
-    cout << "new time stamp: " << s << endl;
+    cout << "\n\tnew time stamp: " << s << endl;
   }
 
   void testGetAttribs( void ) {
@@ -57,38 +57,46 @@ public:
   }
 
   void testCreateBlock( void ) {
-    pandora::Block *b = f1->createBlock("testBlock", "blockType");
-    cout << "\n" << b->name() << endl;
-    cout << b->type() << endl;
+    pandora::Block b = f1->createBlock("testBlock", "blockType");
+    cout << "\n\tBlock name: " << b.name() << endl;
+    cout << "\tBlock type: " << b.type() << endl;
+    cout << "\tBlock block_id: " << b.blockId() << endl;
   }
 
   void testBlockAccess( void ) {
-    cout << "Block count: " << f1->blockCount() << endl;
-    cout << "Name by index: " << endl;
-    int i = f1->blockCount();
-    for (int j = 0; j < i; j++) {
-      cout << "\t" << f1->blockName(j) << endl;
+    size_t count = f1->blockCount();
+    cout << "\n\tBlock count: " << count << endl;
+    cout << "\tName by index: " << endl;
+    for (size_t i = 0; i < count; i++) {
+      cout << "\t\t" << f1->blockName(i) << endl;
     }
-    cout << "Has Block with id 'test': " << f1->hasBlock("test") << endl;
-    cout << "Get name and type of first block: " << endl;
-    if (f1->hasBlock(f1->blockName(0))) {
-      Block *b = f1->getBlock(f1->blockName(0));
-      cout << "\t Name: " << b->name() << endl;
-      cout << "\t Type: " << b->type() << endl;
-      cout << "Deleting this block!" << endl;
-      delete b;
-      cout << "Old block count: " << f1->blockCount() << endl;
-      f1->deleteBlock(f1->blockName(0));
-      cout << "New block count: " << f1->blockCount() << endl;
-      i = f1->blockCount();
-      for (int j = 0; j < i; j++) {
-        cout << "\t" << f1->blockName(j) << endl;
-      }
-    }
+    bool res = f1->hasBlock(f1->blockId(0));
+    CPPUNIT_ASSERT_EQUAL(true, res);
 
+    res = f1->hasBlock("unkownBlock");
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("test for existence of unknown block: ",false, res);
+
+    pandora::Block block = f1->createBlock("additionalBlock1", "Type");
+
+    size_t newCount = f1->blockCount();
+    CPPUNIT_ASSERT_EQUAL(true,((count+1) ==  newCount));
+
+    pandora::Block block2 = f1->createBlock("additionalBlock2", "Type");
+    newCount = f1->blockCount();
+    CPPUNIT_ASSERT_EQUAL(true, ((count+2) == newCount));
+
+    cout << "\tDeleting block by name!" << endl;
+    f1->deleteBlock(block.blockId());
+    CPPUNIT_ASSERT_EQUAL(true,(f1->blockCount() == (newCount-1)));
+
+    cout << "\tDeleting block by Block!" << endl;
+    f1->deleteBlock(block2);
+    CPPUNIT_ASSERT_EQUAL(true,(count == f1->blockCount()));
   }
 
 };
+
+
 
 int main( int argc, char* argv[] ) {
   CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);

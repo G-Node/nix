@@ -7,17 +7,21 @@ namespace pandora {
 Block::Block(const Block &block)
     : BaseContainer(block.h5group), file(block.file)
 {
-
+  this->block_id = block.block_id;
 }
 
-Block::Block(File &file, H5::Group h5group)
+Block::Block(File &file, std::string id, H5::Group h5group)
     : BaseContainer(h5group), file(file)
 {
-
+  this->block_id = id;
 }
 
 Block::~Block() {
   //dtor
+}
+
+std::string Block::blockId() const{
+ return this->block_id;
 }
 
 void Block::type(std::string type) {

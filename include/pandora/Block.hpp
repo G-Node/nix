@@ -14,7 +14,7 @@ class Block : BaseContainer
   public:
 
     Block(const Block &block);
-    Block(File &file, H5::Group h5group);
+    Block(File &file, std::string id, H5::Group h5group);
 
     virtual ~Block();
 
@@ -27,6 +27,7 @@ class Block : BaseContainer
     void definition(std::string definition);
     std::string definition() const;
 
+    std::string blockId() const;
     // Tag getTag(std::string tag_id) const;
 
     /// @todo Iterate by name
@@ -42,7 +43,7 @@ class Block : BaseContainer
   
 private:  
   std::string _name;
-
+  std::string block_id;
   File &file;
 };
   
