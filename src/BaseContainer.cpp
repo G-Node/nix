@@ -1,4 +1,3 @@
-
 #include <iostream>
 
 #include <hdf5.h>
@@ -24,51 +23,51 @@ void BaseContainer::delAttr( std::string name ) const {
   h5group.removeAttr(name);
 }
 
-
 //Oh the hacks ;-)  
 
 struct TypeSpec {
   H5::DataType fileType;
   H5::DataType memType;
-  
+
 };
-  
-template <typename T>
-TypeSpec type_klassify()
-{
+
+template<typename T>
+TypeSpec type_klassify() {
   TypeSpec e;
   //FIXME throw runtime exception here
   return e;
-};
-  
-template <> TypeSpec type_klassify<int>() { return {H5::PredType::STD_I32LE, H5::PredType::NATIVE_INT}; };
-template <> TypeSpec type_klassify<double>() { return {H5::PredType::IEEE_F32LE, H5::PredType::NATIVE_DOUBLE}; };
-template <> TypeSpec type_klassify<std::string>() { return {H5::PredType::C_S1, H5::PredType::C_S1}; };
-  
+}
+;
+
+template<> TypeSpec type_klassify<int> () {
+  return {H5::PredType::STD_I32LE, H5::PredType::NATIVE_INT};};
+template <> TypeSpec type_klassify<double>() {return {H5::PredType::IEEE_F32LE, H5::PredType::NATIVE_DOUBLE};};
+template <> TypeSpec type_klassify<std::string>() {return {H5::PredType::C_S1, H5::PredType::C_S1};};
+
 template <typename T>
 class Nyx {
 public:
-  Nyx(T &val) : value(val), m(type_klassify<T>()) { }
+  Nyx(T &val) : value(val), m(type_klassify<T>()) {}
   virtual H5::DataSpace getDataSpace() const {
     return H5::DataSpace();
   }
-  virtual H5::DataType getFileType() const { return m.fileType; }
-  virtual H5::DataType getMemType() const { return m.memType; }
-  
+  virtual H5::DataType getFileType() const {return m.fileType;}
+  virtual H5::DataType getMemType() const {return m.memType;}
+
   virtual void writeAttribute(H5::Attribute &attr) {
     attr.write(m.memType, &value);
   }
-  
+
   virtual void readAttribute(H5::Attribute &attr) {
     attr.read(m.memType, &value);
   }
-  
+
   virtual ~Nyx() {}
 protected:
   T &value;
   TypeSpec m;
 };
-  
+
 template <typename T>
 class Charon : public Nyx<T> {
 public:
@@ -85,23 +84,26 @@ public:
     return ftype;
   }
   virtual void writeAttribute(H5::Attribute &attr) {
-    attr.write(m.memType, value);
+    H5::StrType memtype = attr.getStrType();
+    attr.write(memtype, value);
+    //attr.write(m.memType, value); //FIXME This is just a quick hack...
   }
-  
+
   virtual void readAttribute(H5::Attribute &attr) {
-    attr.read(m.memType, value);
+    H5::StrType memtype = attr.getStrType();
+    //attr.read(m.memType, value);
+    attr.read(memtype, value);//FIXME This is just a quick hack...
   }
-  
+
   virtual ~Charon() {}
 };
-
 
 template <typename T>
 void BaseContainer::setAttr(std::string name, T value) const
 {
   H5::Attribute attr;
   Charon<T> charon = Charon<T>(value);
-  
+
   if (attrExists(name)) {
     attr = h5group.openAttribute(name);
   } else {
@@ -109,33 +111,32 @@ void BaseContainer::setAttr(std::string name, T value) const
     H5::DataSpace fileSpace = charon.getDataSpace();
     attr = h5group.createAttribute(name, fileType, fileSpace);
   }
-  
+
   charon.writeAttribute(attr);
 }
- 
+
 template <typename T>
 bool BaseContainer::getAttr (std::string name, T &value) const {
-  
+
   if (!attrExists(name)) {
     return false;
   }
-  
+
   H5::Attribute attr = h5group.openAttribute(name);
   Charon<T> charon = Charon<T>(value);
   charon.readAttribute(attr);
-  
+
   return true;
 }
 
 template void BaseContainer::setAttr<int>(std::string name, int value) const;
 template void BaseContainer::setAttr<double>(std::string name, double value) const;
 template void BaseContainer::setAttr<std::string>(std::string name, std::string value) const;
-  
+
 template bool BaseContainer::getAttr<int>(std::string name, int &value) const;
 template bool BaseContainer::getAttr<double>(std::string name, double &value) const;
 template bool BaseContainer::getAttr<std::string>(std::string name, std::string &value) const;
 
-  
 bool BaseContainer::getAttr(std::string name, std::string &value) const {
   return getAttr<std::string>(name, value);
 }
@@ -143,15 +144,17 @@ bool BaseContainer::getAttr(std::string name, std::string &value) const {
 void BaseContainer::setAttr(std::string name, std::string value) const {
   setAttr<std::string>(name, value);
 }
-  
+
 bool BaseContainer::hasData( std::string name ) const {
-  try {
-    H5::DataSet data = h5group.openDataSet(name);
-    data.close();
-    return true;
-  } catch (H5::Exception e) {
-    return false;
+  if(objectExists(name)) {
+    H5G_stat_t i;
+    h5group.getObjinfo(name,i);
+    H5G_obj_t t = i.type;
+    if(t == H5G_DATASET) {
+      return true;
+    }
   }
+  return false;
 }
 
 void BaseContainer::delData( std::string name ) {
@@ -165,14 +168,15 @@ H5::DataSet BaseContainer::openData( std::string name ) const {
 }
 
 bool BaseContainer::hasGroup( std::string name ) const {
-  try {
-    H5::Group g = h5group.openGroup(name);
-    g.close();
-    return true;
-  } catch (H5::Exception e) {
-    return false;
+  if(objectExists(name)) {
+    H5G_stat_t i;
+    h5group.getObjinfo(name,i);
+    H5G_obj_t t = i.type;
+    if(t == H5G_GROUP) {
+      return true;
+    }
   }
-
+  return false;
 }
 
 H5::Group BaseContainer::openGroup( std::string name ) const {
