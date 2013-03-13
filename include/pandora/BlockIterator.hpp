@@ -20,14 +20,16 @@ public:
   BlockIterator(File file);
   BlockIterator(const BlockIterator &other);
 
-  bool operator!=(BlockIterator &other);
-  bool operator==(BlockIterator &other);
+  bool operator!=(const BlockIterator &other) const;
+  bool operator==(const BlockIterator &other) const;
 
-  Block &operator*();
+  Block &operator*() const;
   BlockIterator &operator++();
 
-  BlockIterator &begin();
-  BlockIterator &end();
+  BlockIterator &begin() const;
+  BlockIterator &end() const;
+
+  void operator=(const BlockIterator &other);
 
   virtual ~BlockIterator();
 };

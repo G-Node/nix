@@ -42,7 +42,7 @@ public:
 
   size_t blockCount() const;
 
-  Block *getBlock( std::string block_id );
+  Block *getBlock( std::string block_id ) const;
 
   std::string blockName(int i) const;
 
@@ -78,7 +78,7 @@ public:
 
   H5::H5File getH5File() const;
 
-  bool operator==(File &other);
+  bool operator==(const File &other) const;
 
   void close();
 

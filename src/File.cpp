@@ -74,7 +74,7 @@ std::string File::blockName( int i ) const {
   return name;
 }
 
-Block *File::getBlock( std::string block_id ) {
+Block *File::getBlock( std::string block_id ) const {
   if (hasBlock(block_id)) {
     std::string s("/data/");
     s.append(block_id);
@@ -209,7 +209,7 @@ string File::time_stamp() const {
   return time_str;
 }
 
-bool File::operator==(File &other) {
+bool File::operator==(const File &other) const {
   return this->name == other.name;
 }
 

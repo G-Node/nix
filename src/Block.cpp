@@ -10,7 +10,7 @@ Block::Block(const Block &block)
 
 }
 
-Block::Block(File &file, H5::Group h5group)
+Block::Block(File file, H5::Group h5group)
     : BaseContainer(h5group), file(file)
 {
 

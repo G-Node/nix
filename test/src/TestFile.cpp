@@ -63,6 +63,12 @@ public:
     cout << b->type() << endl;
   }
 
+  void testBlocks() {
+    //for(BlockIterator i = f1->blocks(); i != i.end(); i++) {
+
+    //}
+  }
+
   void testBlockAccess( void ) {
     cout << "Block count: " << f1->blockCount() << endl;
     cout << "Name by index: " << endl;

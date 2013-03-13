@@ -14,7 +14,7 @@ class Block : BaseContainer
   public:
 
     Block(const Block &block);
-    Block(File &file, H5::Group h5group);
+    Block(File file, H5::Group h5group);
 
     virtual ~Block();
 
