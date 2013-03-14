@@ -7,14 +7,11 @@
 namespace pandora {
 namespace util {
 
-// default id length
-const int    ID_LENGTH = 16;
-// default id base (16 or 32)
-const int    ID_BASE = 32;
-// Base32hex alphabet (RFC 4648)
-const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
+std::string createId(std::string prefix = "", int length = 16);
 
-std::string createId(std::string prefix = "", int length = ID_LENGTH);
+std::string timeToStr(time_t time);
+
+time_t strToTime(std::string time);
 
 } // namespace util
 } // namespace pandora
