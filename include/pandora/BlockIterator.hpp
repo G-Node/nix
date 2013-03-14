@@ -4,7 +4,7 @@
 
 #include <iterator>
 #include <H5Cpp.h>
-#include <pandora/Block.hpp>
+#include <pandora/File.hpp>
 
 
 namespace pandora {

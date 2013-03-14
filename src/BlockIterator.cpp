@@ -6,7 +6,9 @@
  */
 
 #include <string>
-#include "../include/pandora/BlockIterator.hpp"
+
+#include <pandora/Block.hpp>
+#include <pandora/BlockIterator.hpp>
 
 using namespace std;
 
@@ -58,9 +60,8 @@ BlockIterator &BlockIterator::operator++() {
 
 /* SEE: pandora/BlockIterator.hpp */
 Block &BlockIterator::operator*() const {
-  string id = file.blockName(index);
-  Block *block = file.getBlock(id);
-  return *block;
+  Block block(file.getBlock(index));
+  return block;
 }
 
 void BlockIterator::operator=(const BlockIterator &other) {
