@@ -1,7 +1,20 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+/**
+ * @file Util.cpp
+ * @brief Implementation of utility functions.
+ */
+
 #include <string>
 #include <cstdlib>
 
-#include "boost/date_time/posix_time/posix_time.hpp"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <pandora/Util.hpp>
 
@@ -15,6 +28,7 @@ const int    ID_BASE = 32;
 // Base32hex alphabet (RFC 4648)
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 
+/* SEE: pandora/Util.hpp */
 string createId(string prefix, int length) {
   static bool initialized = false;
   if(!initialized) {
@@ -33,12 +47,14 @@ string createId(string prefix, int length) {
   return id;
 }
 
+/* SEE: pandora/Util.hpp */
 string timeToStr(time_t time) {
   using namespace boost::posix_time;
   ptime timetmp = from_time_t(time);
   return to_iso_string(timetmp);
 }
 
+/* SEE: pandora/Util.hpp */
 time_t strToTime(string time) {
   using namespace boost::posix_time;
   ptime timetmp(from_iso_string(time));
