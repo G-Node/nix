@@ -4,47 +4,59 @@
 #include <string>
 #include <H5Cpp.h>
 
-#include <pandora/BaseContainer.hpp>
+#include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 
 namespace pandora {
 
-class Block : BaseContainer
+class Block
 {
-  public:
 
-    Block(const Block &block);
-    Block(File &file, std::string id, H5::Group h5group);
+private:
 
-    virtual ~Block();
-
-    void type(std::string type);
-    std::string type() const;
-  
-    void name(std::string name);
-    std::string name() const;
-
-    void definition(std::string definition);
-    std::string definition() const;
-
-    std::string blockId() const;
-    // Tag getTag(std::string tag_id) const;
-
-    /// @todo Iterate by name
-    //iterator<Tag> tags() const;
-
-    //Tag createTag(std::string name, std::string type) const;
-
-    //void deleteTag(std::string tag_id) const;
-
-    //void deleteTag(Tag &tag) const;
-
-    //iterator<Source> sources() const;
-  
-private:  
-  std::string _name;
+  File file;
+  Group group;
   std::string block_id;
-  File &file;
+
+public:
+
+  Block(const Block &block);
+
+  Block(File file, Group group, std::string id);
+
+  std::string id() const;
+
+  void type(std::string type);
+  std::string type() const;
+
+  void name(std::string name);
+  std::string name() const;
+
+  void definition(std::string definition);
+  std::string definition() const;
+
+  void date(time_t date);
+  time_t date() const;
+
+  // Tag getTag(std::string tag_id) const;
+
+  /// @todo Iterate by name
+  //iterator<Tag> tags() const;
+
+  //Tag createTag(std::string name, std::string type) const;
+
+  //void deleteTag(std::string tag_id) const;
+
+  //void deleteTag(Tag &tag) const;
+
+  //iterator<Source> sources() const;
+  
+  bool operator==(const Block &other) const;
+
+  bool operator!=(const Block &other) const;
+
+  virtual ~Block();
+
 };
   
 }
