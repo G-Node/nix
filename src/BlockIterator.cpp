@@ -1,77 +1,64 @@
-/*
- * BlockIterator.cpp
- *
- *  Created on: 07.03.2013
- *      Author: stoewer
- */
-
-#include <string>
-#include "../include/pandora/BlockIterator.hpp"
+#include <pandora/BlockIterator.hpp>
 
 using namespace std;
 
 namespace pandora {
 
-/* SEE: pandora/BlockIterator.hpp */
-BlockIterator::BlockIterator(File file)
-  : file(file), index(0), size(file.blockCount())
+
+BlockIterator::BlockIterator(File file, Group group)
+  : file(file), group(group)
 {
-  // nothing left to do
+  index = 0;
+  size  = group.objectCount();
 }
 
-/* SEE: pandora/BlockIterator.hpp */
 BlockIterator::BlockIterator(const BlockIterator &other)
-  : file(other.file), index(other.index), size(other.size)
+  : file(other.file), group(other.group), index(other.index), size(other.size)
 {
-  // nothing left to do
 }
 
-/* SEE: pandora/BlockIterator.hpp */
-BlockIterator &BlockIterator::begin() const {
-  BlockIterator iter(*this);
-  iter.index = 0;
-  return iter;
-}
-
-/* SEE: pandora/BlockIterator.hpp */
-BlockIterator &BlockIterator::end() const {
-  BlockIterator iter(*this);
-  iter.index = iter.size - 1;
-  return iter;
-}
-
-/* SEE: pandora/BlockIterator.hpp */
-bool BlockIterator::operator!=(const BlockIterator &other) const {
-  return !(this->file == other.file && this->index == other.index);
-}
-
-/* SEE: pandora/BlockIterator.hpp */
-bool BlockIterator::operator==(const BlockIterator &other) const {
-  return (this->file == other.file && this->index == other.index);
-}
-
-/* SEE: pandora/BlockIterator.hpp */
 BlockIterator &BlockIterator::operator++() {
   index++;
   return *this;
 }
 
-/* SEE: pandora/BlockIterator.hpp */
-Block &BlockIterator::operator*() const {
-  string id = file.blockName(index);
-  Block *block = file.getBlock(id);
-  return *block;
+BlockIterator BlockIterator::begin() const {
+  BlockIterator iter(*this);
+  iter.index = 0;
+  return iter;
+}
+
+BlockIterator BlockIterator::end() const {
+  BlockIterator iter(*this);
+  iter.index = size;
+  return iter;
+}
+
+Block BlockIterator::operator*() const {
+  string id;
+  if (index  < size) {
+    id = group.objectName(index);
+  } else {
+    id = group.objectName(size - 1);
+  }
+  Block block(file, group.openGroup(id, false), id);
+  return block;
 }
 
 void BlockIterator::operator=(const BlockIterator &other) {
-  this->file  = other.file;
-  this->index = other.index;
-  this->size  = other.size;
+  file  = other.file;
+  group = other.group;
+  index = other.index;
+  size  = other.size;
 }
 
-/* SEE: pandora/BlockIterator.hpp */
-BlockIterator::~BlockIterator() {
-  // TODO Auto-generated destructor stub
+bool BlockIterator::operator==(const BlockIterator &other) const {
+  return group == other.group && index == other.index;
 }
+
+bool BlockIterator::operator!=(const BlockIterator &other) const {
+  return group != other.group || index != other.index;
+}
+
 
 } /* namespace pandora */

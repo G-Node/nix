@@ -1,220 +1,199 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
+/**
+ * @file File.cpp
+ * @brief Implementation of all methods from the class File.
+ */
+
+#include <fstream>
+
+#include <hdf5.h>
+
+#include <pandora/Util.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
-#include "../include/pandora/BlockIterator.hpp"
+#include <pandora/BlockIterator.hpp>
 
-using namespace H5;
+
 using namespace std;
 
 namespace pandora {
 
-const size_t File::READ_ONLY = H5F_ACC_RDONLY;
-const size_t File::READ_WRITE = H5F_ACC_RDWR;
-const size_t File::OVERWRITE = H5F_ACC_TRUNC;
+// Format definition
+const string File::VERSION = "1.0";
+const string File::FORMAT  = "pandora";
 
-File::File(string name, string prefix, int mode )
-  : BaseContainer(), name(name), prefix(prefix)
+// File open modes
+const size_t File::READ_ONLY  = H5F_ACC_RDONLY;
+const size_t File::READ_WRITE = H5F_ACC_RDWR;
+const size_t File::OVERWRITE  = H5F_ACC_TRUNC;
+
+/*SEE: File.hpp*/
+File::File(string name, string prefix, int mode)
+  : prefix(prefix)
 {
   if (fileExists(name)) {
-    openHDFFile(name, mode);
-    if (!checkFormatAndVersion()) {
-      h5file.close();
-      //Throw exception
-    }
-    checkGroups();
+    /// @check if hdf5 file
+    h5file = H5::H5File(name.c_str(), mode);
   } else {
-    openHDFFile(name, File::OVERWRITE);
-    checkAttributes();
-    checkGroups();
+    h5file = H5::H5File(name.c_str(), File::OVERWRITE);
+  }
+  root = Group(h5file.openGroup("/"));
+  metadata = root.openGroup("metadata");
+  data = root.openGroup("data");
+
+  if(!checkHeader()) {
+    /// @todo throw an exception here
   }
 }
 
-File::File( const File &other )
-  : BaseContainer(other.h5group), name(other.name),
-    prefix(other.prefix), h5file(other.h5file)
+/*SEE: File.hpp*/
+File::File( const File &file )
+  : prefix(file.prefix), h5file(file.h5file), metadata(file.metadata), data(file.data)
 {
-  // nothing left to do
+  // nothing to do
 }
 
-bool File::fileExists( string name ) const {
-  bool exists = false;
-  ifstream my_file(name.c_str(), ifstream::in);
-  exists = my_file.good();
-  my_file.close();
-  return exists;
-}
-
-bool File::checkFormatAndVersion() const {
-  string value;
-  if (!this->attrExists("format") || !this->attrExists("version")) {
+/*SEE: File.hpp*/
+bool File::fileExists(string name) const {
+  ifstream f(name.c_str());
+  if (f) {
+    f.close();
+    return true;
+  } else {
     return false;
   }
-  this->getAttr("format", value);
-  if (value.compare(FORMAT) != 0) {
-    return false;
-  }
-  this->getAttr("version", value);
-  return value.compare(VERSION) == 0;
 }
 
-void File::openHDFFile( string name, int mode ) {
-  this->h5file = H5File(name.c_str(), mode);
-  this->h5group = h5file.openGroup("/");
+/*SEE: File.hpp*/
+bool File::hasBlock(std::string id) const {
+  return data.hasGroup(id);
 }
 
-size_t File::blockCount() const {
-  Group g = h5group.openGroup("/data");
-  return g.getNumObjs();
-}
-
-std::string File::blockName( int i ) const {
-  Group g = h5group.openGroup("/data");
-  std::string name;
-  name = g.getObjnameByIdx(i);
-  return name;
-}
-
-Block *File::getBlock( std::string block_id ) const {
-  if (hasBlock(block_id)) {
-    std::string s("/data/");
-    s.append(block_id);
-    Group g = this->openGroup(s);
-    Block *b = new Block(*this, g);
-    return b;
-  }
-  throw "File does not have such block!";
-}
-
-bool File::hasBlock( std::string block_id ) const {
-  if (block_id.length() == 0) {
-    return false;
-  }
-  std::string s("/data/");
-  s.append(block_id);
-  return this->hasGroup(s);
-}
-
-Block *File::createBlock( std::string name, std::string type ) {
-  Group g = h5group.openGroup("data");
-  std::string id = createId();
-  Group blockGroup = g.createGroup(id, 0);
-  Block *b = new Block(*this, blockGroup);
-  b->type(type);
-  b->name(name);
-  return b;
-}
-
-void File::deleteBlock( std::string block_id ) {
-  std::string s = "/data/";
-  s.append(block_id);
-  this->delGroup(s);
+/*SEE: File.hpp*/
+Block File::getBlock(std::string id) const {
+  return Block(*this, data.openGroup(id, false), id);
 }
 
 BlockIterator File::blocks() const {
-  return BlockIterator(*this);
+  BlockIterator b(*this, data);
+  return b;
 }
 
-/*
- void File::deleteBlock( Block &block ) {
+/*SEE: File.hpp*/
+Block File::createBlock(string name, string type) {
+  string id = util::createId("block");
+  while(data.hasObject(id))
+    id = util::createId("block");
+  Block b(*this, data.openGroup(id, true), id);
+  b.name(name);
+  b.type(type);
+  return b;
+}
 
- }
- */
-string File::updated_at() const {
+/*SEE: File.hpp*/
+void File::deleteBlock(std::string id) {
+  if (data.hasGroup(id)) {
+    data.delGroup(id);
+  }
+}
+
+/*SEE: File.hpp*/
+size_t File::blockCount() const {
+  return data.objectCount();
+}
+
+/*SEE: File.hpp*/
+Block File::getBlock(size_t index) const {
+  string id = data.objectName(index);
+  Block b(*this, data.openGroup(id), id);
+  return b;
+}
+
+/*SEE: File.hpp*/
+time_t File::updatedAt() const {
   string t;
-  this->getAttr("updated_at", t);
-  return t;
+  root.getAttr("updated_at", t);
+  return util::strToTime(t);
 }
 
-string File::created_at() const {
+/*SEE: File.hpp*/
+time_t File::createdAt() const {
   string t;
-  this->getAttr("created_at", t);
-  return t;
+  root.getAttr("created_at", t);
+  return util::strToTime(t);
 }
 
+/*SEE: File.hpp*/
 string File::version() const {
   string t;
-  this->getAttr("version", t);
+  root.getAttr<std::string>("version", t);
   return t;
 }
 
-void File::version( string version ) {
-  this->setAttr("version", version);
-}
-
+/*SEE: File.hpp*/
 string File::format() const {
   string t;
-  this->getAttr("format", t);
+  root.getAttr("format", t);
   return t;
-}
-
-void File::format( string format ) {
-  this->setAttr("format", format);
-}
-
-void File::checkAttributes() {
-  vector<pair<string, string> > attribs;
-  attribs.push_back(pair<string, string> ("format", FORMAT));
-  attribs.push_back(pair<string, string> ("version", VERSION));
-  attribs.push_back(pair<string, string> ("created_at", time_stamp()));
-  attribs.push_back(pair<string, string> ("updated_at", time_stamp()));
-  for (int i = 0; i < (int) attribs.size(); i++) {
-    if (!this->attrExists(attribs[i].first)) {
-      this->setAttr(attribs[i].first, attribs[i].second);
-    }
-  }
-}
-
-void File::checkGroups() {
-  vector<string> groups;
-  groups.push_back("data");
-  groups.push_back("metadata");
-  for (int i = 0; i < (int) groups.size(); i++) {
-    if (!this->objectExists(groups[i])) {
-      this->h5file.createGroup(groups[i], 0);
-    }
-  }
-}
-
-void File::close() {
-  this->setAttr("updated_at", time_stamp());
-  h5file.close();
-}
-
-H5::H5File File::getH5File() const {
-  return this->h5file;
 }
 
 /*SEE: File.hpp*/
 string File::createId() const {
-  static const char* hex = "0123456789abcdef";
-  string id;
-  srand(time(NULL));
+  return util::createId(prefix);
+}
 
-  if (!this->prefix.empty()) {
-    id.append(this->prefix);
-    id.append("_");
-    for (int i = 0; i < 64; i++) {
-      char c = hex[(size_t) (((double) (rand())) / RAND_MAX * 16)];
-      id.push_back(c);
+/*SEE: File.hpp*/
+bool File::checkHeader() {
+  bool check = true;
+  string str;
+  // check format
+  if (root.hasAttr("format")) {
+    if (!root.getAttr("format", str) || str != FORMAT) {
+      check = false;
     }
+  } else {
+    root.setAttr("format", FORMAT);
   }
-  return id;
+  // check version
+  if (root.hasAttr("version")) {
+    if (!root.getAttr("version", str) || str != VERSION) {
+      check = false;
+    }
+  } else {
+    root.setAttr("version", VERSION);
+  }
+  // check created_at
+  if (!root.hasAttr("created_at")) {
+    root.setAttr("created_at", util::timeToStr(time(NULL)));
+  }
+  // check updated_at
+  if (!root.hasAttr("updated_at")) {
+    root.setAttr("updated_at", util::timeToStr(time(NULL)));
+  }
+  return check;
 }
 
-string File::time_stamp() const {
-  using namespace boost::posix_time;
-  time_t t = time(NULL);
-  ptime timetmp = from_time_t(t);
-  string time_str = to_iso_string(timetmp);
-  return time_str;
-}
-
+/*SEE: File.hpp*/
 bool File::operator==(const File &other) const {
-  return this->name == other.name;
+  return h5file.getFileName() == other.h5file.getFileName();
 }
 
-File::~File() {
+/*SEE: File.hpp*/
+bool File::operator!=(const File &other) const {
+  return h5file.getFileName() != other.h5file.getFileName();
+}
 
+/*SEE: File.hpp*/
+File::~File() {
+//  root.setAttr("updated_at", util::timeToStr(time(NULL)));
+  h5file.close();
 }
 
 } // end namespace pandora
