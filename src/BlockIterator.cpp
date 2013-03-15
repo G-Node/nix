@@ -15,7 +15,7 @@ namespace pandora {
 
 
 /* SEE: pandora/BlockIterator.hpp */
-Block &BlockIterator::operator*() const {
+Block BlockIterator::operator*() const {
   string id = group.objectName(index);
   Block block(file, group.openGroup(id), id);
   return block;

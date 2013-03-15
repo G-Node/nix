@@ -20,7 +20,7 @@ public:
   GroupIterator(File file, Group group);
   GroupIterator(const GroupIterator<T> &other);
 
-  virtual T &operator*() const;
+  virtual T operator*() const = 0;
   GroupIterator &operator++();
 
   GroupIterator<T> &begin() const;
@@ -31,7 +31,7 @@ public:
   bool operator==(const GroupIterator<T> &other) const;
   bool operator!=(const GroupIterator<T> &other) const;
 
-  virtual ~GroupIterator();
+  virtual ~GroupIterator() {}
 };
 
 } /* namespace pandora */

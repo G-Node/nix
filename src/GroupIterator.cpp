@@ -53,6 +53,5 @@ template<class T> bool GroupIterator<T>::operator!=(const GroupIterator<T> &othe
   return group != other.group || index != other.index;
 }
 
-template<class T> GroupIterator<T>::~GroupIterator() {}
 
 } /* namespace pandora */
