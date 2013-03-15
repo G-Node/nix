@@ -2,8 +2,6 @@
 #ifndef PAN_BLOCKITERATOR_H_INCLUDED
 #define PAN_BLOCKITERATOR_H_INCLUDED
 
-#include <iterator>
-#include <H5Cpp.h>
 #include <pandora/Block.hpp>
 #include <pandora/GroupIterator.hpp>
 
