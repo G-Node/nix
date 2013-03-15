@@ -10,7 +10,7 @@ namespace pandora {
 
 class Group {
 
-protected:
+private:
 
   H5::Group h5group;
 
@@ -44,6 +44,9 @@ public:
   bool hasGroup(std::string name) const;
   Group openGroup(std::string name, bool create = true) const;
   void delGroup(std::string name);
+
+  bool operator==(const Group &group) const;
+  bool operator!=(const Group &group) const;
 
   virtual ~Group();
 }; // group Group

@@ -4,12 +4,13 @@
 
 #include <iterator>
 #include <H5Cpp.h>
-#include <pandora/File.hpp>
+#include <pandora/Block.hpp>
+#include <pandora/GroupIterator.hpp>
 
 
 namespace pandora {
 
-class BlockIterator : public std::iterator<std::input_iterator_tag, Block>
+class BlockIterator : public GroupIterator<Block>
 {
 private:
 
@@ -19,9 +20,6 @@ private:
 public:
   BlockIterator(File file);
   BlockIterator(const BlockIterator &other);
-
-  bool operator!=(const BlockIterator &other) const;
-  bool operator==(const BlockIterator &other) const;
 
   Block &operator*() const;
   BlockIterator &operator++();

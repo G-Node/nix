@@ -238,6 +238,13 @@ void Group::delGroup(std::string name) {
     h5group.unlink(name);
 }
 
+bool Group::operator==(const Group &group) const {
+  return h5group.getLocId() == group.h5group.getLocId();
+}
+bool Group::operator!=(const Group &group) const {
+  return h5group.getLocId() != group.h5group.getLocId();
+}
+
 Group::~Group() {}
 
 }
