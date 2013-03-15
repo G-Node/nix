@@ -81,6 +81,11 @@ Block File::getBlock(std::string id) const {
   return Block(*this, data.openGroup(id, false), id);
 }
 
+BlockIterator File::blocks() const {
+  BlockIterator b(*this, data);
+  return b;
+}
+
 /*SEE: File.hpp*/
 Block File::createBlock(string name, string type) {
   string id = util::createId("block");
