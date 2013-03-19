@@ -135,14 +135,42 @@ public:
      */
   bool hasSection(std::string id) const;
 
+  /**
+   * Return the Section specified by the id.
+   *
+   * @param id  The id of the Section
+   *
+   * @return The section with the given id.
+   */
   Section getSection(std::string section_id) const;
 
+  /**
+   * Returns the number of Sections stored in the File.
+   *
+   * @return size_t   The number of sections.
+   */
   size_t sectionCount() const;
 
+  /**
+   * Returns a SectionIterator instance.
+   *
+   * @returns an Instance of SectionIterator.
+   */
   SectionIterator sections() const;
 
+  /**
+   * Creates a new Section with a given name and type. Both must not be empty.
+   *
+   * @param std::string the given name of the section.
+   * @param std::string the type of the section.
+   *
+   * @return   the created Section.
+   */
   Section createSection(std::string name, std::string type);
 
+  /**
+   * Deletes the Section that is specified with the id.
+   */
   void deleteSection(std::string section_id);
 
   /**
