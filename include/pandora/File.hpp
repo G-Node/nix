@@ -23,6 +23,8 @@
 namespace pandora {
 class Block;
 class BlockIterator;
+class Section;
+class SectionIterator;
 
 /**
  * Class that represents a pandora file.
@@ -124,13 +126,24 @@ public:
   //std::iterator<Block> blocks() const;
   BlockIterator blocks() const;
 
-  // Section getSection(std::string section_id) const;
+  /**
+     * Check if a section exists in the file.
+     *
+     * @param id    The ID of the section.
+     *
+     * @return True if the section exists, false otherwise.
+     */
+  bool hasSection(std::string id) const;
 
-  // iterator<Section> sections() const;
+  Section getSection(std::string section_id) const;
 
-  // Section createSection(std::string name, std::string type) const;
+  size_t sectionCount() const;
 
-  // Section deleteSection(std::string section_id) const;
+  SectionIterator sections() const;
+
+  Section createSection(std::string name, std::string type);
+
+  void deleteSection(std::string section_id);
 
   /**
    * Create an id with the prefix used by the file.

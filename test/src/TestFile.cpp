@@ -13,6 +13,7 @@
 
 #include "pandora/File.hpp"
 #include "pandora/Block.hpp"
+#include "pandora/Section.hpp"
 
 using namespace std;
 using namespace pandora;
@@ -27,10 +28,10 @@ CPPUNIT_TEST_SUITE(TestFile);
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testBlockAccess);
+    CPPUNIT_TEST(testSectionAccess);
 //    CPPUNIT_TEST(testTimeStamp);
 //    CPPUNIT_TEST(testGetAttribs);
 //    CPPUNIT_TEST(testCreateBlock);
-//    CPPUNIT_TEST(testBlockAccess);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
@@ -92,6 +93,17 @@ public:
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), b1 == b2);
     }
   }
+
+  void testSectionAccess() {
+      const char *names[5] = {"section_a", "section_b", "section_c", "section_d", "section_e"};
+      for (int i = 0; i < 5; i++) {
+        Section s1(f1->createSection(names[i], "Recording"));
+        Section s2(f1->getSection(s1.id()));
+        stringstream errmsg;
+        errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
+        CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
+      }
+    }
 
 //  void testTimeStamp( void ) {
 //    string s = f1->time_stamp();

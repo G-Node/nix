@@ -19,7 +19,8 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/BlockIterator.hpp>
-
+#include <pandora/Section.hpp>
+#include <pandora/SectionIterator.hpp>
 
 using namespace std;
 
@@ -114,6 +115,45 @@ Block File::getBlock(size_t index) const {
   string id = data.objectName(index);
   Block b(*this, data.openGroup(id), id);
   return b;
+}
+
+
+/*SEE: File.hpp*/
+bool File::hasSection(std::string id) const {
+  return metadata.hasGroup(id);
+}
+
+/*SEE: File.hpp*/
+Section File::getSection(std::string id) const {
+  return Section(*this, metadata.openGroup(id, false), id);
+}
+
+SectionIterator File::sections() const{
+  SectionIterator iter(*this, metadata);
+  return iter;
+}
+
+/*SEE: File.hpp*/
+Section File::createSection(string name, string type) {
+  string id = util::createId("section");
+  while(metadata.hasObject(id))
+    id = util::createId("section");
+  Section s(*this, metadata.openGroup(id, true), id);
+  s.name(name);
+  s.type(type);
+  return s;
+}
+
+/*SEE: File.hpp*/
+void File::deleteSection(std::string id){
+  if (metadata.hasGroup(id)) {
+    metadata.delGroup(id);
+  }
+}
+
+/*SEE: File.hpp*/
+size_t File::sectionCount() const {
+  return metadata.objectCount();
 }
 
 /*SEE: File.hpp*/
