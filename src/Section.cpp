@@ -1,5 +1,7 @@
 #include <pandora/Section.hpp>
 #include <pandora/Util.hpp>
+#include <pandora/Property.hpp>
+#include <pandora/PropertyIterator.hpp>
 
 using namespace std;
 
@@ -8,11 +10,13 @@ namespace pandora {
 Section::Section(const Section &section) :
   file(section.file), group(section.group), section_id(section.section_id) {
   // nothing to do
+  props = section.props;
 }
 
 Section::Section(File file, Group group, string id) :
   file(file), group(group), section_id(id) {
   // nothing to do
+  props = group.openGroup("properties");
 }
 
 string Section::id() const {
@@ -96,6 +100,11 @@ string Section::parent() const {
   string parent;
   group.getAttr("parent", parent);
   return parent;
+}
+
+PropertyIterator Section::properties() const {
+  PropertyIterator iter(this->file, props);
+  return iter;
 }
 
 bool Section::operator==(const Section &other) const {

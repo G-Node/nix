@@ -14,6 +14,7 @@
 #include "pandora/File.hpp"
 #include "pandora/Block.hpp"
 #include "pandora/Section.hpp"
+#include "pandora/SectionIterator.hpp"
 
 using namespace std;
 using namespace pandora;
@@ -21,17 +22,17 @@ using namespace pandora;
 class TestFile:public CPPUNIT_NS::TestFixture {
 private:
 
-CPPUNIT_TEST_SUITE(TestFile);
-    CPPUNIT_TEST(testCreateId);
-    CPPUNIT_TEST(testVersion);
-    CPPUNIT_TEST(testFormat);
-    CPPUNIT_TEST(testCreatedAt);
-    CPPUNIT_TEST(testUpdatedAt);
-    CPPUNIT_TEST(testBlockAccess);
-    CPPUNIT_TEST(testSectionAccess);
-//    CPPUNIT_TEST(testTimeStamp);
-//    CPPUNIT_TEST(testGetAttribs);
-//    CPPUNIT_TEST(testCreateBlock);
+  CPPUNIT_TEST_SUITE(TestFile);
+  CPPUNIT_TEST(testCreateId);
+  CPPUNIT_TEST(testVersion);
+  CPPUNIT_TEST(testFormat);
+  CPPUNIT_TEST(testCreatedAt);
+  CPPUNIT_TEST(testUpdatedAt);
+  CPPUNIT_TEST(testBlockAccess);
+  CPPUNIT_TEST(testSectionAccess);
+  //    CPPUNIT_TEST(testTimeStamp);
+  //    CPPUNIT_TEST(testGetAttribs);
+  //    CPPUNIT_TEST(testCreateBlock);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
@@ -95,65 +96,72 @@ public:
   }
 
   void testSectionAccess() {
-      const char *names[5] = {"section_a", "section_b", "section_c", "section_d", "section_e"};
-      for (int i = 0; i < 5; i++) {
-        Section s1(f1->createSection(names[i], "Recording"));
-        Section s2(f1->getSection(s1.id()));
-        stringstream errmsg;
-        errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
-        CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
-      }
+    const char *names[5] = {"section_a", "section_b", "section_c", "section_d", "section_e"};
+    for (int i = 0; i < 5; i++) {
+      Section s1(f1->createSection(names[i], "Recording"));
+      Section s2(f1->getSection(s1.id()));
+      stringstream errmsg;
+      errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
+      CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
+    /*
+      cout << f1->sectionCount() << endl;
+      for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
+        Section s = *iter;
+        cout << s.name() << endl;
+      }
+     */
+  }
 
-//  void testTimeStamp( void ) {
-//    string s = f1->time_stamp();
-//    cout << "\n\tnew time stamp: " << s << endl;
-//  }
-//
-//  void testGetAttribs( void ) {
-//    cout << "\n" << "File format is: " << f1->format() << endl;
-//    cout << "File format version:  " << f1->version() << endl;
-//    cout << "File was created at: " << f1->created_at() << endl;
-//    cout << "File was last updated at: " << f1->updated_at() << endl;
-//  }
-//
-//  void testCreateBlock( void ) {
-//    pandora::Block b = f1->createBlock("testBlock", "blockType");
-//    cout << "\n\tBlock name: " << b.name() << endl;
-//    cout << "\tBlock type: " << b.type() << endl;
-//    cout << "\tBlock block_id: " << b.blockId() << endl;
-//  }
-//
-//  void testBlockAccess( void ) {
-//    size_t count = f1->blockCount();
-//    cout << "\n\tBlock count: " << count << endl;
-//    cout << "\tName by index: " << endl;
-//    for (size_t i = 0; i < count; i++) {
-//      cout << "\t\t" << f1->blockName(i) << endl;
-//    }
-//    bool res = f1->hasBlock(f1->blockId(0));
-//    CPPUNIT_ASSERT_EQUAL(true, res);
-//
-//    res = f1->hasBlock("unkownBlock");
-//    CPPUNIT_ASSERT_EQUAL_MESSAGE("test for existence of unknown block: ",false, res);
-//
-//    pandora::Block block = f1->createBlock("additionalBlock1", "Type");
-//
-//    size_t newCount = f1->blockCount();
-//    CPPUNIT_ASSERT_EQUAL(true,((count+1) ==  newCount));
-//
-//    pandora::Block block2 = f1->createBlock("additionalBlock2", "Type");
-//    newCount = f1->blockCount();
-//    CPPUNIT_ASSERT_EQUAL(true, ((count+2) == newCount));
-//
-//    cout << "\tDeleting block by name!" << endl;
-//    f1->deleteBlock(block.blockId());
-//    CPPUNIT_ASSERT_EQUAL(true,(f1->blockCount() == (newCount-1)));
-//
-//    cout << "\tDeleting block by Block!" << endl;
-//    f1->deleteBlock(block2);
-//    CPPUNIT_ASSERT_EQUAL(true,(count == f1->blockCount()));
-//  }
+  //  void testTimeStamp( void ) {
+  //    string s = f1->time_stamp();
+  //    cout << "\n\tnew time stamp: " << s << endl;
+  //  }
+  //
+  //  void testGetAttribs( void ) {
+  //    cout << "\n" << "File format is: " << f1->format() << endl;
+  //    cout << "File format version:  " << f1->version() << endl;
+  //    cout << "File was created at: " << f1->created_at() << endl;
+  //    cout << "File was last updated at: " << f1->updated_at() << endl;
+  //  }
+  //
+  //  void testCreateBlock( void ) {
+  //    pandora::Block b = f1->createBlock("testBlock", "blockType");
+  //    cout << "\n\tBlock name: " << b.name() << endl;
+  //    cout << "\tBlock type: " << b.type() << endl;
+  //    cout << "\tBlock block_id: " << b.blockId() << endl;
+  //  }
+  //
+  //  void testBlockAccess( void ) {
+  //    size_t count = f1->blockCount();
+  //    cout << "\n\tBlock count: " << count << endl;
+  //    cout << "\tName by index: " << endl;
+  //    for (size_t i = 0; i < count; i++) {
+  //      cout << "\t\t" << f1->blockName(i) << endl;
+  //    }
+  //    bool res = f1->hasBlock(f1->blockId(0));
+  //    CPPUNIT_ASSERT_EQUAL(true, res);
+  //
+  //    res = f1->hasBlock("unkownBlock");
+  //    CPPUNIT_ASSERT_EQUAL_MESSAGE("test for existence of unknown block: ",false, res);
+  //
+  //    pandora::Block block = f1->createBlock("additionalBlock1", "Type");
+  //
+  //    size_t newCount = f1->blockCount();
+  //    CPPUNIT_ASSERT_EQUAL(true,((count+1) ==  newCount));
+  //
+  //    pandora::Block block2 = f1->createBlock("additionalBlock2", "Type");
+  //    newCount = f1->blockCount();
+  //    CPPUNIT_ASSERT_EQUAL(true, ((count+2) == newCount));
+  //
+  //    cout << "\tDeleting block by name!" << endl;
+  //    f1->deleteBlock(block.blockId());
+  //    CPPUNIT_ASSERT_EQUAL(true,(f1->blockCount() == (newCount-1)));
+  //
+  //    cout << "\tDeleting block by Block!" << endl;
+  //    f1->deleteBlock(block2);
+  //    CPPUNIT_ASSERT_EQUAL(true,(count == f1->blockCount()));
+  //  }
 
 };
 

@@ -8,6 +8,9 @@
 #include <pandora/File.hpp>
 
 namespace pandora {
+class Property;
+class PropertyIterator;
+
 
 class Section
 {
@@ -15,7 +18,7 @@ class Section
 private:
 
   File file;
-  Group group;
+  Group group, props;
   std::string section_id;
 
 public:
@@ -49,6 +52,8 @@ public:
 
   void parent(std::string parent);
   std::string parent() const;
+
+  PropertyIterator properties() const;
 
   bool operator==(const Section &other) const;
 
