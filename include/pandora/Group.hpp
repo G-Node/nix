@@ -48,6 +48,7 @@ public:
   bool operator==(const Group &group) const;
   bool operator!=(const Group &group) const;
 
+  H5::Group h5Group() const;
   virtual ~Group();
 }; // group Group
 

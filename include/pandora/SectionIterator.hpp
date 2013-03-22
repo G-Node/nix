@@ -14,9 +14,10 @@ protected:
   File  file;
   Group group;
   size_t index, size;
+  std::string parent;
 
 public:
-SectionIterator(File file, Group group);
+  SectionIterator(File file, Group group, std::string parent_id = "");
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;

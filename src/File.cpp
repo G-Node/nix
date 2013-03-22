@@ -129,7 +129,7 @@ Section File::getSection(std::string id) const {
 }
 
 SectionIterator File::sections() const{
-  SectionIterator iter(*this, metadata);
+  SectionIterator iter(*this, metadata,"");
   return iter;
 }
 

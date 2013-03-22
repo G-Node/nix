@@ -1,5 +1,5 @@
-#ifndef PAN_SECTIONITERATOR_H_INCLUDED
-#define PAN_SECTIONITERATOR_H_INCLUDED
+#ifndef PAN_PROPERTYITERATOR_H_INCLUDED
+#define PAN_PROPERTYITERATOR_H_INCLUDED
 
 #include <iterator>
 #include <pandora/Property.hpp>

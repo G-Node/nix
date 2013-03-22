@@ -1,7 +1,9 @@
 #include <pandora/Section.hpp>
+#include <pandora/SectionIterator.hpp>
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
+#include <iostream>
 
 using namespace std;
 
@@ -100,6 +102,21 @@ string Section::parent() const {
   string parent;
   group.getAttr("parent", parent);
   return parent;
+}
+
+Section Section::addSection(std::string name, std::string type){
+  string new_id = util::createId("subsection");
+  while(group.hasObject(new_id))
+    new_id = util::createId("subsection");
+  Section s = file.createSection(name,type);
+  s.parent(id());
+  cout << s.id() << "\t" << s.name() << "\t" << s.type() << "\t" << s.parent() << endl;
+  return s;
+}
+
+SectionIterator Section::children() const {
+  SectionIterator iter(this->file, group, id());
+  return iter;
 }
 
 PropertyIterator Section::properties() const {

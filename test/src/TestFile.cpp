@@ -100,17 +100,19 @@ public:
     for (int i = 0; i < 5; i++) {
       Section s1(f1->createSection(names[i], "Recording"));
       Section s2(f1->getSection(s1.id()));
+      s2.addSection("new section","test");
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
-    /*
-      cout << f1->sectionCount() << endl;
-      for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
-        Section s = *iter;
-        cout << s.name() << endl;
-      }
-     */
+    std::cout << "\nTestFile: number of sections: " << f1->sectionCount() << endl;
+    for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
+      Section s = *iter;
+
+      cout << "TestFile: " << s.name() << endl;
+    }
+
+
   }
 
   //  void testTimeStamp( void ) {

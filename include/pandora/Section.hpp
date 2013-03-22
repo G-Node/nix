@@ -10,7 +10,7 @@
 namespace pandora {
 class Property;
 class PropertyIterator;
-
+class SectionIterator;
 
 class Section
 {
@@ -52,6 +52,11 @@ public:
 
   void parent(std::string parent);
   std::string parent() const;
+
+  SectionIterator children() const;
+
+  Section addSection(std::string name, std::string type);
+
 
   PropertyIterator properties() const;
 
