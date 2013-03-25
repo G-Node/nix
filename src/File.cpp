@@ -72,6 +72,10 @@ bool File::fileExists(string name) const {
   }
 }
 
+Group File::metdataGroup() const{
+  return metadata;
+}
+
 /*SEE: File.hpp*/
 bool File::hasBlock(std::string id) const {
   return data.hasGroup(id);

@@ -9,6 +9,9 @@ namespace pandora {
 class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
 {
 
+private:
+  size_t nextIndex(size_t start);
+
 protected:
 
   File  file;

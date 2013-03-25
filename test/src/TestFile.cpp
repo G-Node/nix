@@ -105,11 +105,13 @@ public:
       errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
-    std::cout << "\nTestFile: number of sections: " << f1->sectionCount() << endl;
     for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
       Section s = *iter;
-
-      cout << "TestFile: " << s.name() << endl;
+      cout << "rootSection: " << s.id() << endl;
+      for(SectionIterator iter2 = s.children(); iter2 != iter2.end(); ++iter2){
+        Section s3 = *iter2;
+        cout << "\t\t child section: " << s3.id() << endl;
+      }
     }
 
 

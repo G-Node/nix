@@ -110,12 +110,11 @@ Section Section::addSection(std::string name, std::string type){
     new_id = util::createId("subsection");
   Section s = file.createSection(name,type);
   s.parent(id());
-  cout << s.id() << "\t" << s.name() << "\t" << s.type() << "\t" << s.parent() << endl;
   return s;
 }
 
 SectionIterator Section::children() const {
-  SectionIterator iter(this->file, group, id());
+  SectionIterator iter(this->file, this->file.metdataGroup(), id());
   return iter;
 }
 

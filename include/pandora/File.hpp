@@ -39,7 +39,7 @@ private:
   /* the opened HDF5 file */
   H5::H5File  h5file;
   /* groups representing different sections of the file */
-  Group       root, metadata, data;
+   Group       root, metadata, data;
 
 public:
 
@@ -215,6 +215,7 @@ public:
 //  void close();
 //
 //  File& operator=(const File &other);
+  Group metdataGroup() const;
 
   /**
    * Comparator.
