@@ -97,14 +97,61 @@ public:
 
   void testSectionAccess() {
     const char *names[5] = {"section_a", "section_b", "section_c", "section_d", "section_e"};
+    std::string lastSectionId;
     for (int i = 0; i < 5; i++) {
       Section s1(f1->createSection(names[i], "Recording"));
       Section s2(f1->getSection(s1.id()));
-      s2.addSection("new section","test");
+      lastSectionId = s2.id();
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
+    Section test = f1->getSection(lastSectionId);
+    stringstream errmsg;
+    errmsg << "Error while accessing Section with id: " << lastSectionId << ", retrieved section id = " << test.id();
+    CPPUNIT_ASSERT_MESSAGE(errmsg.str(), test.id() == lastSectionId);
+
+    stringstream msg1;
+    msg1 << "Error while getting section iterator from section with no children: " << lastSectionId;
+    CPPUNIT_ASSERT_MESSAGE(msg1.str(), test.children() == test.children().end());
+
+    size_t sectionCount = f1->metadataGroup().objectCount(); // we will need that later
+    stringstream msg2;
+    msg2 << "Error while adding child sections to section: " << lastSectionId << " should have two children!";
+    Section c1 = test.addSection("child1","dataset");
+    Section c2 = test.addSection("child2","dataset");
+    int childCount = 0;
+    for(SectionIterator iter = test.children(); iter != iter.end(); ++iter){
+      childCount ++;
+    }
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), childCount == 2);
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), test.hasChildren());
+
+    stringstream msg5;
+    msg5 << "Error while removing a parent section: " << test.id() << " with cascade == false!";
+    bool result = f1->deleteSection(test.id(),false);
+
+    CPPUNIT_ASSERT_MESSAGE(msg5.str(), !result);
+    CPPUNIT_ASSERT_MESSAGE(msg5.str(), f1->getSection(test.id()) == test);
+
+    stringstream msg3;
+    msg3 << "Error while removing child section: " << c1.id() << " from section: " << lastSectionId << " with cascade == true!";
+    test.delSection(c1.id(),true);
+    CPPUNIT_ASSERT_MESSAGE(msg3.str(), (sectionCount + 1) == f1->metadataGroup().objectCount());
+
+    stringstream msg4;
+    msg4 << "Error while removing child section: " << c1.id() << " from section: " << lastSectionId << " with cascade == false!";
+    test.delSection(c2.id(),false);
+    CPPUNIT_ASSERT_MESSAGE(msg4.str(), sectionCount == (f1->metadataGroup().objectCount()));
+
+    test.addSection("child3","dataset");
+    test.addSection("child4","dataset");
+    stringstream msg6;
+    msg6 << "Error while removing section recursively: " << test.id();
+    f1->deleteSection(test.id(),true);
+    CPPUNIT_ASSERT_MESSAGE(msg6.str(), (sectionCount-1) == (f1->metadataGroup().objectCount()));
+
+    /*
     for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
       Section s = *iter;
       cout << "rootSection: " << s.id() << endl;
@@ -113,7 +160,7 @@ public:
         cout << "\t\t child section: " << s3.id() << endl;
       }
     }
-
+     */
 
   }
 

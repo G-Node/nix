@@ -171,7 +171,7 @@ public:
   /**
    * Deletes the Section that is specified with the id.
    */
-  void deleteSection(std::string section_id);
+  bool deleteSection(std::string section_id, bool cascade = true);
 
   /**
    * Create an id with the prefix used by the file.
@@ -215,7 +215,7 @@ public:
 //  void close();
 //
 //  File& operator=(const File &other);
-  Group metdataGroup() const;
+  Group metadataGroup() const;
 
   /**
    * Comparator.

@@ -12,6 +12,7 @@
  */
 
 #include <fstream>
+#include <vector>
 
 #include <hdf5.h>
 
@@ -37,7 +38,7 @@ const size_t File::OVERWRITE  = H5F_ACC_TRUNC;
 
 /*SEE: File.hpp*/
 File::File(string name, string prefix, int mode)
-  : prefix(prefix)
+: prefix(prefix)
 {
   if (fileExists(name)) {
     /// @check if hdf5 file
@@ -56,7 +57,7 @@ File::File(string name, string prefix, int mode)
 
 /*SEE: File.hpp*/
 File::File( const File &file )
-  : prefix(file.prefix), h5file(file.h5file), metadata(file.metadata), data(file.data)
+: prefix(file.prefix), h5file(file.h5file), metadata(file.metadata), data(file.data)
 {
   // nothing to do
 }
@@ -72,7 +73,7 @@ bool File::fileExists(string name) const {
   }
 }
 
-Group File::metdataGroup() const{
+Group File::metadataGroup() const{
   return metadata;
 }
 
@@ -149,10 +150,28 @@ Section File::createSection(string name, string type) {
 }
 
 /*SEE: File.hpp*/
-void File::deleteSection(std::string id){
-  if (metadata.hasGroup(id)) {
-    metadata.delGroup(id);
+bool File::deleteSection(std::string id, bool cascade){
+  bool success = false;
+  if(hasSection(id)){
+    Section s = getSection(id);
+    if(s.hasChildren()){
+      if(cascade){
+        vector<std::string> children;
+        for(SectionIterator i = s.children(); i != i.end(); ++i){
+          Section child = *i;
+          children.push_back(child.id());
+        }
+        for(size_t i = 0; i < children.size(); i++)
+          deleteSection(children[i],cascade);
+        metadataGroup().delGroup(id);
+      }
+    }
+    else{
+      metadataGroup().delGroup(id);
+      success = true;
+    }
   }
+  return success;
 }
 
 /*SEE: File.hpp*/
@@ -236,7 +255,7 @@ bool File::operator!=(const File &other) const {
 
 /*SEE: File.hpp*/
 File::~File() {
-//  root.setAttr("updated_at", util::timeToStr(time(NULL)));
+  //  root.setAttr("updated_at", util::timeToStr(time(NULL)));
   h5file.close();
 }
 

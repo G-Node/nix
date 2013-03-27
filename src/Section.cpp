@@ -10,13 +10,13 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-  file(section.file), group(section.group), section_id(section.section_id) {
+      file(section.file), group(section.group), section_id(section.section_id) {
   // nothing to do
   props = section.props;
 }
 
 Section::Section(File file, Group group, string id) :
-  file(file), group(group), section_id(id) {
+      file(file), group(group), section_id(id) {
   // nothing to do
   props = group.openGroup("properties");
 }
@@ -105,22 +105,43 @@ string Section::parent() const {
 }
 
 Section Section::addSection(std::string name, std::string type){
-  string new_id = util::createId("subsection");
-  while(group.hasObject(new_id))
-    new_id = util::createId("subsection");
   Section s = file.createSection(name,type);
   s.parent(id());
   return s;
 }
 
+bool Section::delSection(std::string id, bool cascade){
+  return this->file.deleteSection(id,cascade);
+}
+
+bool Section::hasChildren()const{
+  SectionIterator iter = this->children();
+  return iter != iter.end();
+}
+
 SectionIterator Section::children() const {
-  SectionIterator iter(this->file, this->file.metdataGroup(), id());
+  SectionIterator iter(this->file, this->file.metadataGroup(), id());
   return iter;
 }
 
 PropertyIterator Section::properties() const {
   PropertyIterator iter(this->file, props);
   return iter;
+}
+
+Property Section::addProperty(std::string name){
+  string new_id = util::createId("property");
+  while(props.hasObject(new_id))
+    new_id = util::createId("property");
+  Property p(this->file, props, new_id);
+  p.name(name);
+  return p;
+}
+
+void Section::delProperty(std::string id){
+  if(props.hasObject(id)){
+    props.delGroup(id);
+  }
 }
 
 bool Section::operator==(const Section &other) const {
