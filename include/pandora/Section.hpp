@@ -53,6 +53,8 @@ public:
   void parent(std::string parent);
   std::string parent() const;
 
+  size_t childCount() const;
+
   SectionIterator children() const;
 
   bool hasChildren() const;

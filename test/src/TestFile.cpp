@@ -113,17 +113,14 @@ public:
 
     stringstream msg1;
     msg1 << "Error while getting section iterator from section with no children: " << lastSectionId;
+    SectionIterator iter = test.children();
     CPPUNIT_ASSERT_MESSAGE(msg1.str(), test.children() == test.children().end());
-
     size_t sectionCount = f1->metadataGroup().objectCount(); // we will need that later
     stringstream msg2;
     msg2 << "Error while adding child sections to section: " << lastSectionId << " should have two children!";
     Section c1 = test.addSection("child1","dataset");
     Section c2 = test.addSection("child2","dataset");
-    int childCount = 0;
-    for(SectionIterator iter = test.children(); iter != iter.end(); ++iter){
-      childCount ++;
-    }
+    size_t childCount = test.childCount();
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), childCount == 2);
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), test.hasChildren());
 

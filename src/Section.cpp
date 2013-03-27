@@ -124,6 +124,14 @@ SectionIterator Section::children() const {
   return iter;
 }
 
+size_t Section::childCount() const{
+  size_t childCount = 0;
+  for(SectionIterator iter = this->children(); iter != iter.end(); ++iter){
+     childCount ++;
+  }
+  return childCount;
+}
+
 PropertyIterator Section::properties() const {
   PropertyIterator iter(this->file, props);
   return iter;
