@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <iterator>
+#include <stdexcept>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -110,6 +111,8 @@ public:
     stringstream errmsg;
     errmsg << "Error while accessing Section with id: " << lastSectionId << ", retrieved section id = " << test.id();
     CPPUNIT_ASSERT_MESSAGE(errmsg.str(), test.id() == lastSectionId);
+
+    CPPUNIT_ASSERT_THROW(*test.children().end(), std::range_error);
 
     stringstream msg1;
     msg1 << "Error while getting section iterator from section with no children: " << lastSectionId;

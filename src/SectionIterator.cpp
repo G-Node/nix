@@ -1,5 +1,6 @@
 #include <pandora/SectionIterator.hpp>
 #include <cstring>
+#include <stdexcept>
 
 using namespace std;
 
@@ -88,7 +89,8 @@ Section SectionIterator::operator*() const {
   if (index  < size) {
     id = group.objectName(index);
   } else {
-    id = group.objectName(lastIndex());
+    throw std::range_error("Attempt to access an element that is out of range!");
+   // id = group.objectName(lastIndex());
   }
   Section section(file, group.openGroup(id, false), id);
   return section;
