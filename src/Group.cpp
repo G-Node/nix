@@ -27,7 +27,7 @@ bool Group::hasAttr(std::string name) const {
   return H5Aexists(h5group.getId(), name.c_str());
 }
 
-void Group::delAttr(std::string name) const {
+void Group::removeAttr(std::string name) const {
   h5group.removeAttr(name);
 }
 
@@ -202,7 +202,7 @@ bool Group::hasData(std::string name) const {
   return false;
 }
 
-void Group::delData(std::string name) {
+void Group::removeData(std::string name) {
   if (hasData(name))
     h5group.unlink(name);
 }
@@ -233,7 +233,7 @@ Group Group::openGroup(std::string name, bool create) const {
   return g;
 }
 
-void Group::delGroup(std::string name) {
+void Group::removeGroup(std::string name) {
   if (hasGroup(name))
     h5group.unlink(name);
 }

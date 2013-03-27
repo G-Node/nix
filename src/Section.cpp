@@ -110,8 +110,8 @@ Section Section::addSection(std::string name, std::string type){
   return s;
 }
 
-bool Section::delSection(std::string id, bool cascade){
-  return this->file.deleteSection(id,cascade);
+bool Section::removeSection(std::string id, bool cascade){
+  return this->file.removeSection(id,cascade);
 }
 
 bool Section::hasChildren()const{
@@ -138,9 +138,9 @@ Property Section::addProperty(std::string name){
   return p;
 }
 
-void Section::delProperty(std::string id){
+void Section::removeProperty(std::string id){
   if(props.hasObject(id)){
-    props.delGroup(id);
+    props.removeGroup(id);
   }
 }
 

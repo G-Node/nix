@@ -25,7 +25,7 @@ public:
   void operator=(const Group &group);
 
   bool hasAttr(std::string name) const;
-  void delAttr(std::string name) const;
+  void removeAttr(std::string name) const;
 
   template <typename T>
   void setAttr(std::string name, T value) const;
@@ -39,11 +39,11 @@ public:
 
   bool hasData(std::string name) const;
   H5::DataSet openData(std::string name) const;
-  void delData(std::string name);
+  void removeData(std::string name);
 
   bool hasGroup(std::string name) const;
   Group openGroup(std::string name, bool create = true) const;
-  void delGroup(std::string name);
+  void removeGroup(std::string name);
 
   bool operator==(const Group &group) const;
   bool operator!=(const Group &group) const;

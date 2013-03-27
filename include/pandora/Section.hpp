@@ -59,13 +59,13 @@ public:
 
   Section addSection(std::string name, std::string type);
 
-  bool delSection(std::string id, bool cascade = true);
+  bool removeSection(std::string id, bool cascade = true);
 
   PropertyIterator properties() const;
 
   Property addProperty(std::string name);
 
-  void delProperty(std::string id);
+  void removeProperty(std::string id);
 
   bool operator==(const Section &other) const;
 

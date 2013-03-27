@@ -129,26 +129,26 @@ public:
 
     stringstream msg5;
     msg5 << "Error while removing a parent section: " << test.id() << " with cascade == false!";
-    bool result = f1->deleteSection(test.id(),false);
+    bool result = f1->removeSection(test.id(),false);
 
     CPPUNIT_ASSERT_MESSAGE(msg5.str(), !result);
     CPPUNIT_ASSERT_MESSAGE(msg5.str(), f1->getSection(test.id()) == test);
 
     stringstream msg3;
     msg3 << "Error while removing child section: " << c1.id() << " from section: " << lastSectionId << " with cascade == true!";
-    test.delSection(c1.id(),true);
+    test.removeSection(c1.id(),true);
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), (sectionCount + 1) == f1->metadataGroup().objectCount());
 
     stringstream msg4;
     msg4 << "Error while removing child section: " << c1.id() << " from section: " << lastSectionId << " with cascade == false!";
-    test.delSection(c2.id(),false);
+    test.removeSection(c2.id(),false);
     CPPUNIT_ASSERT_MESSAGE(msg4.str(), sectionCount == (f1->metadataGroup().objectCount()));
 
     test.addSection("child3","dataset");
     test.addSection("child4","dataset");
     stringstream msg6;
     msg6 << "Error while removing section recursively: " << test.id();
-    f1->deleteSection(test.id(),true);
+    f1->removeSection(test.id(),true);
     CPPUNIT_ASSERT_MESSAGE(msg6.str(), (sectionCount-1) == (f1->metadataGroup().objectCount()));
 
     /*

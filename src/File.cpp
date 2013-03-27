@@ -106,7 +106,7 @@ Block File::createBlock(string name, string type) {
 /*SEE: File.hpp*/
 void File::deleteBlock(std::string id) {
   if (data.hasGroup(id)) {
-    data.delGroup(id);
+    data.removeGroup(id);
   }
 }
 
@@ -150,7 +150,7 @@ Section File::createSection(string name, string type) {
 }
 
 /*SEE: File.hpp*/
-bool File::deleteSection(std::string id, bool cascade){
+bool File::removeSection(std::string id, bool cascade){
   bool success = false;
   if(hasSection(id)){
     Section s = getSection(id);
@@ -162,12 +162,12 @@ bool File::deleteSection(std::string id, bool cascade){
           children.push_back(child.id());
         }
         for(size_t i = 0; i < children.size(); i++)
-          deleteSection(children[i],cascade);
-        metadataGroup().delGroup(id);
+          removeSection(children[i],cascade);
+        metadataGroup().removeGroup(id);
       }
     }
     else{
-      metadataGroup().delGroup(id);
+      metadataGroup().removeGroup(id);
       success = true;
     }
   }
