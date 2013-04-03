@@ -3,9 +3,174 @@
 #include <hdf5.h>
 
 #include <pandora/Group.hpp>
+#include <boost/multi_array.hpp>
 
 namespace pandora {
 
+  //
+  
+  
+template<typename T>
+struct TypeSpec {
+
+  //const bool is_valid = false; //make compiler cry on unspecified types
+  const H5::DataType fileType;
+  const H5::DataType memType;
+};
+  
+  
+template<>
+struct TypeSpec<int> {
+    
+  const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I32LE;
+  const H5::DataType memType = H5::PredType::NATIVE_INT;
+};
+  
+template<>
+struct TypeSpec<double> {
+  
+  const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::IEEE_F64LE;
+  const H5::DataType memType = H5::PredType::NATIVE_DOUBLE;
+};
+  
+template<>
+struct TypeSpec<std::string> {
+  
+  const bool is_valid = true;
+  const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+  const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+};
+  
+  //**
+  
+template<typename T, typename U = T>
+class Nyx {
+public:
+  TypeSpec<U>  m;
+  T           &value;
+  typedef U base_type;
+  
+public:
+  
+  Nyx(T &val) : m(TypeSpec<U>()), value(val) {
+    assert(m.is_valid);
+  }
+  
+  virtual H5::DataType getFileType() const { return m.fileType; }
+  virtual H5::DataType getMemType() const { return m.memType; }
+  virtual H5::DataSpace getDataSpace() const { return H5::DataSpace(); }
+  
+  virtual void write(H5::Attribute &attr) {
+    attr.write(this->m.memType, getData());
+  };
+  
+  virtual void read(H5::Attribute &attr) {
+    attr.read(this->m.memType, getData());
+  };
+  
+  virtual base_type* getData() { return nullptr; }; //Throw exception?
+  
+  virtual ~Nyx() { }
+};
+  
+  
+  
+template<typename T>
+class Charon: public Nyx<T> {
+  using typename Nyx<T>::base_type;
+  
+public:
+  Charon(T &val) : Nyx<T>(val) {}
+  base_type* getData() { return &this->value; }
+};
+  
+  
+template<>
+class Charon<std::string> : public Nyx<std::string> {
+public:
+  Charon(std::string &val) : Nyx<std::string>(val) {}
+  
+  virtual void write(H5::Attribute &attr) {
+    attr.write(this->m.memType, this->value);
+  };
+  
+  virtual void read(H5::Attribute &attr) {
+    attr.read(this->m.memType, this->value);
+  };
+  
+};
+  
+  
+template<typename T, int N>
+class Charon<boost::multi_array<T, N>> : public Nyx<boost::multi_array<T, N>, T> {
+public:
+  typedef boost::multi_array<T, N> array_type;
+  using typename Nyx<array_type, T>::base_type;
+  
+  Charon(array_type &value) : Nyx<array_type, T>(value) {}
+  //using Nyx<array_type, T>::Nyx;
+  
+  virtual H5::DataSpace getDataSpace() const {
+    const typename array_type::size_type *shape = this->value.shape();
+    hsize_t dims[N];
+    std::copy(shape, shape + N, dims);
+    
+    return H5::DataSpace(N, dims, NULL);
+  }
+  
+  base_type* getData() { return this->value.data(); }
+};
+  
+template<int N>
+class Charon<boost::multi_array<std::string, N>> :
+  public Nyx<boost::multi_array<std::string, N>, std::string> {
+public:
+  typedef boost::multi_array<std::string, N> array_type;
+  
+  Charon(array_type &value) : Nyx<array_type, std::string>(value) {}
+  
+  virtual H5::DataSpace getDataSpace() const {
+    const typename array_type::size_type *shape = this->value.shape();
+    hsize_t dims[N];
+    std::copy(shape, shape + N, dims);
+    
+    return H5::DataSpace(N, dims, NULL);
+  }
+  
+  virtual void write(H5::Attribute &attr) {
+    std::string *vptr = this->value.data();
+    auto nelms = this->value.num_elements();
+    char const* *data = new char const* [nelms];
+    
+    for (auto i = 0; i < nelms; i++) {
+      data[i] = vptr[i].c_str();
+      std::cout << i << " " << data[i] << std::endl;
+    }
+    
+    attr.write(this->m.memType, data);
+    delete[] data;
+  }
+  
+  virtual void read(H5::Attribute &attr) {
+    std::string *vptr = this->value.data();
+    auto nelms = this->value.num_elements();
+    char **data = new char *[nelms];
+    
+    attr.read(this->m.memType, data);
+    for (auto i = 0; i < nelms; i++) {
+      
+      vptr[i] = data[i];
+    }
+    
+    H5::DataSet::vlenReclaim(data, this->m.memType, attr.getSpace());
+    delete[] data;
+  }
+};
+
+  
+  
 Group::Group()
     : h5group()
 {}
@@ -31,109 +196,6 @@ void Group::removeAttr(std::string name) const {
   h5group.removeAttr(name);
 }
 
-//Oh the hacks ;-)  
-
-struct TypeSpec
-{
-  H5::DataType fileType;
-  H5::DataType memType;
-};
-
-template<typename T> TypeSpec type_klassify() {
-  TypeSpec e;
-  //FIXME throw runtime exception here
-  return e;
-}
-
-
-template<> TypeSpec type_klassify<int>() {
-  return {H5::PredType::STD_I32LE, H5::PredType::NATIVE_INT};
-}
-
-template<> TypeSpec type_klassify<double>() {
-  return {H5::PredType::IEEE_F32LE, H5::PredType::NATIVE_DOUBLE};
-}
-
-template<> TypeSpec type_klassify<std::string>() {
-  return {H5::PredType::C_S1, H5::PredType::C_S1};
-}
-
-
-template<typename T> class Nyx
-{
-
-protected:
-
-  T &value;
-  TypeSpec m;
-
-public:
-
-  Nyx(T &val)
-      : value(val), m(type_klassify<T>())
-  {}
-
-  virtual H5::DataSpace getDataSpace() const {
-    return H5::DataSpace();
-  }
-
-  virtual H5::DataType getFileType() const {
-    return m.fileType;
-  }
-
-  virtual H5::DataType getMemType() const {
-    return m.memType;
-  }
-
-  virtual void writeAttribute(H5::Attribute &attr) {
-    attr.write(m.memType, &value);
-  }
-
-  virtual void readAttribute(H5::Attribute &attr) {
-    attr.read(m.memType, &value);
-  }
-
-  virtual ~Nyx() {}
-
-};
-
-template<typename T> class Charon: public Nyx<T>
-{
-public:
-  Charon(T &val)
-    : Nyx<T>(val)
-  {}
-};
-
-template<> class Charon<std::string> : public Nyx<std::string>
-{
-
-public:
-  Charon(std::string &val)
-    : Nyx<std::string>(val)
-  {}
-
-  virtual H5::DataType getFileType() const {
-    H5::AtomType ftype = H5::PredType::C_S1;
-    ftype.setSize(value.length());
-    return ftype;
-  }
-
-  virtual void writeAttribute(H5::Attribute &attr) {
-    H5::StrType memtype = attr.getStrType();
-    attr.write(memtype, value);
-    //attr.write(m.memType, value); //FIXME This is just a quick hack...
-  }
-
-  virtual void readAttribute(H5::Attribute &attr) {
-    H5::StrType memtype = attr.getStrType();
-    //attr.read(m.memType, value);
-    attr.read(memtype, value); //FIXME This is just a quick hack...
-  }
-
-  virtual ~Charon() {}
-};
-
 template<typename T> void Group::setAttr(std::string name, T value) const {
   H5::Attribute attr;
   Charon<T> charon = Charon<T>(value);
@@ -146,7 +208,7 @@ template<typename T> void Group::setAttr(std::string name, T value) const {
     attr = h5group.createAttribute(name, fileType, fileSpace);
   }
 
-  charon.writeAttribute(attr);
+  charon.write(attr);
 }
 
 template<typename T> bool Group::getAttr(std::string name, T &value) const {
@@ -157,22 +219,17 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const {
 
   H5::Attribute attr = h5group.openAttribute(name);
   Charon<T> charon = Charon<T>(value);
-  charon.readAttribute(attr);
-
+  charon.read(attr);
   return true;
 }
 
 template void Group::setAttr<int>(std::string name, int value) const;
-
 template void Group::setAttr<double>(std::string name, double value) const;
-
 template void Group::setAttr<std::string>(std::string name, std::string value) const;
-
 template bool Group::getAttr<int>(std::string name, int &value) const;
-
 template bool Group::getAttr<double>(std::string name, double &value) const;
-
 template bool Group::getAttr<std::string>(std::string name, std::string &value) const;
+  
 
 bool Group::hasObject(std::string name) const {
   hsize_t num = h5group.getNumObjs();
