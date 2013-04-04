@@ -33,40 +33,6 @@ void Group::removeAttr(std::string name) const {
   h5group.removeAttr(name);
 }
 
-template<typename T> void Group::setAttr(std::string name, T value) const {
-  H5::Attribute attr;
-  Charon<T> charon = Charon<T>(value);
-
-  if (hasAttr(name)) {
-    attr = h5group.openAttribute(name);
-  } else {
-    H5::DataType fileType = charon.getFileType();
-    H5::DataSpace fileSpace = charon.getDataSpace();
-    attr = h5group.createAttribute(name, fileType, fileSpace);
-  }
-
-  charon.write(attr);
-}
-
-template<typename T> bool Group::getAttr(std::string name, T &value) const {
-
-  if (!hasAttr(name)) {
-    return false;
-  }
-
-  H5::Attribute attr = h5group.openAttribute(name);
-  Charon<T> charon = Charon<T>(value);
-  charon.read(attr);
-  return true;
-}
-
-template void Group::setAttr<int>(std::string name, int value) const;
-template void Group::setAttr<double>(std::string name, double value) const;
-template void Group::setAttr<std::string>(std::string name, std::string value) const;
-template bool Group::getAttr<int>(std::string name, int &value) const;
-template bool Group::getAttr<double>(std::string name, double &value) const;
-template bool Group::getAttr<std::string>(std::string name, std::string &value) const;
-  
 
 bool Group::hasObject(std::string name) const {
   hsize_t num = h5group.getNumObjs();
