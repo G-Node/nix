@@ -164,7 +164,7 @@ public:
      */
 
   }
-
+  /*
   void testSectionCache(){
     Section s = f1->getSection(f1->metadataGroup().objectName(0));
 
@@ -195,7 +195,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), childCount == newChildCount);
 
   }
-
+  */
   //  void testTimeStamp( void ) {
   //    string s = f1->time_stamp();
   //    cout << "\n\tnew time stamp: " << s << endl;

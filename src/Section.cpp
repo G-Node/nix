@@ -10,12 +10,12 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-      file(section.file), group(section.group), section_id(section.section_id) {
+    file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
 }
 
 Section::Section(File *file, Group group, string id) :
-      file(file), group(group), section_id(id) {
+    file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
 }
 
@@ -102,29 +102,29 @@ string Section::parent() const {
   return parent;
 }
 
-Section Section::addSection(std::string name, std::string type){
-  Section s = (*file).createSection(name,type, id());
+Section Section::addSection(std::string name, std::string type) {
+  Section s = (*file).createSection(name, type, id());
   return s;
 }
 
-bool Section::removeSection(std::string id, bool cascade){
-  return (*file).removeSection(id,cascade);
+bool Section::removeSection(std::string id, bool cascade) {
+  return (*file).removeSection(id, cascade);
 }
 
-bool Section::hasChildren() const{
+bool Section::hasChildren() const {
   SectionIterator iter = this->children();
   return iter != iter.end();
 }
 
-SectionIterator Section::children() const{
+SectionIterator Section::children() const {
   SectionIterator iter(file, (*file).metadataGroup(), id());
   return iter;
 }
 
-size_t Section::childCount() const{
+size_t Section::childCount() const {
   size_t childCount = 0;
-  for(SectionIterator iter = this->children(); iter != iter.end(); ++iter){
-     childCount ++;
+  for (SectionIterator iter = this->children(); iter != iter.end(); ++iter) {
+    childCount++;
   }
   return childCount;
 }
@@ -134,24 +134,46 @@ PropertyIterator Section::properties() const {
   return iter;
 }
 
-Property Section::addProperty(std::string name){
+Property Section::getProperty(std::string id) const {
+  if (props.hasGroup(id)) {
+    return Property(this->file, props.openGroup(id, false), id);
+  } else {
+    throw std::runtime_error(
+        "Requested Property does not exist! Always check with hasProperty!");
+  }
+}
+
+Property Section::getPropertyByName(std::string name) const {
+  for (PropertyIterator iter = properties(); iter != iter.end(); ++iter) {
+    Property p = *iter;
+    if (p.name() == name)
+      return p;
+  }
+  throw std::runtime_error(
+      "Requested Property does not exist! Always check with hasPropertyByName!");
+}
+
+Property Section::addProperty(std::string name) {
+  if (hasPropertyByName(name)) {
+    throw std::runtime_error("Attempt to add a property that already exists!");
+  }
   string new_id = util::createId("property");
-  while(props.hasObject(new_id))
+  while (props.hasObject(new_id))
     new_id = util::createId("property");
-  Property p(file, props.openGroup(new_id,true), new_id);
+  Property p(file, props.openGroup(new_id, true), new_id);
   p.name(name);
   return p;
 }
 
-void Section::removeProperty(std::string id){
-  if(props.hasObject(id)){
+void Section::removeProperty(std::string id) {
+  if (props.hasObject(id)) {
     props.removeGroup(id);
   }
 }
 
-size_t Section::propertyCount() const{
+size_t Section::propertyCount() const {
   size_t count = props.objectCount();
-  if(group.hasGroup("values"))
+  if (group.hasGroup("values"))
     count--;
   return count;
 }
@@ -162,6 +184,19 @@ bool Section::operator==(const Section &other) const {
 
 bool Section::operator!=(const Section &other) const {
   return section_id != other.section_id;
+}
+
+bool Section::hasProperty(std::string id) const {
+  return props.hasGroup(id);
+}
+
+bool Section::hasPropertyByName(string name) const {
+  for (PropertyIterator iter = properties(); iter != iter.end(); ++iter) {
+    Property p = *iter;
+    if (p.name() == name)
+      return true;
+  }
+  return false;
 }
 
 Section::~Section() {

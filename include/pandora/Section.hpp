@@ -12,8 +12,7 @@ class Property;
 class PropertyIterator;
 class SectionIterator;
 
-class Section
-{
+class Section {
 
 private:
 
@@ -65,6 +64,10 @@ public:
 
   PropertyIterator properties() const;
 
+  Property getProperty(std::string id) const;
+
+  Property getPropertyByName(std::string name) const;
+
   Property addProperty(std::string name);
 
   void removeProperty(std::string id);
@@ -77,6 +80,9 @@ public:
 
   virtual ~Section();
 
+  bool hasProperty(std::string id) const;
+
+  bool hasPropertyByName(std::string name) const;
 };
 
 }

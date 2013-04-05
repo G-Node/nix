@@ -129,7 +129,12 @@ bool File::hasSection(std::string id) const {
 
 /*SEE: File.hpp*/
 Section File::getSection(std::string id) {
-  return Section(this, metadata.openGroup(id, false), id);
+  if(metadata.hasGroup(id)){
+      return Section(this, metadata.openGroup(id, false), id);
+    }
+    else{
+      throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
+    }
 }
 
 SectionIterator File::sections(){
