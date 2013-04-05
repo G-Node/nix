@@ -18,3 +18,19 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/BlockIterator.hpp>
+#include <pandora/Section.hpp>
+#include <pandora/SectionIterator.hpp>
+#include <pandora/Property.hpp>
+#include <pandora/PropertyIterator.hpp>
+
+namespace pandora {
+  enum DataType {
+    FLOAT,
+    INT,
+    BOOL,
+    STRING,
+    DATE,
+    DATETIME
+  };
+
+}

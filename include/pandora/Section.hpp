@@ -69,6 +69,8 @@ public:
 
   void removeProperty(std::string id);
 
+  size_t propertyCount() const;
+
   bool operator==(const Section &other) const;
 
   bool operator!=(const Section &other) const;

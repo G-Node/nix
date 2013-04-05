@@ -14,7 +14,7 @@ class Property
 
 private:
 
-  File *file;
+  mutable File *file;
   Group group, val;
   std::string property_id;
 

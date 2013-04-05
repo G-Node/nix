@@ -28,7 +28,7 @@ void Section::type(string type) {
 }
 
 string Section::type() const {
-  string type = "";
+  string type;
   group.getAttr("type", type);
   return type;
 }
@@ -38,7 +38,7 @@ void Section::name(string name) {
 }
 
 string Section::name() const {
-  string name = "";
+  string name;
   group.getAttr("name", name);
   return name;
 }
@@ -48,7 +48,7 @@ void Section::definition(string definition) {
 }
 
 string Section::definition() const {
-  string definition = "";
+  string definition;
   group.getAttr("definition", definition);
   return definition;
 }
@@ -58,7 +58,7 @@ void Section::repository(string repository) {
 }
 
 string Section::repository() const {
-  string repository = "";
+  string repository;
   group.getAttr("repository", repository);
   return repository;
 }
@@ -68,7 +68,7 @@ void Section::link(string link) {
 }
 
 string Section::link() const {
-  string link = "";
+  string link;
   group.getAttr("link", link);
   return link;
 }
@@ -77,7 +77,7 @@ void Section::include(string include) {
 }
 
 string Section::include() const {
-  string include = "";
+  string include;
   group.getAttr("include", include);
   return include;
 }
@@ -87,7 +87,7 @@ void Section::mapping(string mapping) {
 }
 
 string Section::mapping() const {
-  string mapping = "";
+  string mapping;
   group.getAttr("mapping", mapping);
   return mapping;
 }
@@ -97,7 +97,7 @@ void Section::parent(string parent) {
 }
 
 string Section::parent() const {
-  string parent = "";
+  string parent;
   group.getAttr("parent", parent);
   return parent;
 }
@@ -130,7 +130,7 @@ size_t Section::childCount() const{
 }
 
 PropertyIterator Section::properties() const {
-  PropertyIterator iter(this->file, props);
+  PropertyIterator iter(file, props);
   return iter;
 }
 
@@ -138,7 +138,7 @@ Property Section::addProperty(std::string name){
   string new_id = util::createId("property");
   while(props.hasObject(new_id))
     new_id = util::createId("property");
-  Property p(this->file, props, new_id);
+  Property p(file, props.openGroup(new_id,true), new_id);
   p.name(name);
   return p;
 }
@@ -147,6 +147,13 @@ void Section::removeProperty(std::string id){
   if(props.hasObject(id)){
     props.removeGroup(id);
   }
+}
+
+size_t Section::propertyCount() const{
+  size_t count = props.objectCount();
+  if(group.hasGroup("values"))
+    count--;
+  return count;
 }
 
 bool Section::operator==(const Section &other) const {

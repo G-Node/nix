@@ -12,7 +12,7 @@ Property::Property(const Property &property) :
 
 Property::Property(File *file, Group group, string id) :
   file(file), group(group), property_id(id) {
-  val = group.openGroup("values");
+  val = group.openGroup("values",true);
 }
 
 string Property::id() const {
