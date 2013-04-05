@@ -25,21 +25,19 @@ class Block;
 class BlockIterator;
 class Section;
 class SectionIterator;
-
 /**
  * Class that represents a pandora file.
  */
-class File
-{
+class File {
 
 private:
 
   /* prefix for IDs: currently not used */
   std::string prefix;
   /* the opened HDF5 file */
-  H5::H5File  h5file;
+  H5::H5File h5file;
   /* groups representing different sections of the file */
-   Group       root, metadata, data;
+  Group root, metadata, data;
 
 public:
 
@@ -94,7 +92,7 @@ public:
    *
    * @return The block with the given id.
    */
-  Block getBlock(std::string id) const;
+  Block getBlock(std::string id);
 
   /**
    * Read an existing with block from the file, addressed by index.
@@ -103,7 +101,7 @@ public:
    *
    * @return The block at the given index.
    */
-  Block getBlock(size_t index) const;
+  Block getBlock(size_t index);
 
   /**
    * Create an new block, that is immediately persisted in the file.
@@ -124,15 +122,15 @@ public:
 
   // @todo Iterate by name
   //std::iterator<Block> blocks() const;
-  BlockIterator blocks() const;
+  BlockIterator blocks();
 
   /**
-     * Check if a section exists in the file.
-     *
-     * @param id    The ID of the section.
-     *
-     * @return True if the section exists, false otherwise.
-     */
+   * Check if a section exists in the file.
+   *
+   * @param id    The ID of the section.
+   *
+   * @return True if the section exists, false otherwise.
+   */
   bool hasSection(std::string id) const;
 
   /**
@@ -142,7 +140,7 @@ public:
    *
    * @return The section with the given id.
    */
-  Section getSection(std::string section_id) const;
+  Section getSection(std::string section_id);
 
   /**
    * Returns the number of Sections stored in the File.
@@ -156,7 +154,7 @@ public:
    *
    * @returns an Instance of SectionIterator.
    */
-  SectionIterator sections() const;
+  SectionIterator sections();
 
   /**
    * Creates a new Section with a given name and type. Both must not be empty.
@@ -166,7 +164,7 @@ public:
    *
    * @return   the created Section.
    */
-  Section createSection(std::string name, std::string type);
+  Section createSection(std::string name, std::string type, std::string parent = "");
 
   /**
    * Deletes the Section that is specified with the id.
@@ -208,7 +206,6 @@ public:
    * @return The date of the last update.
    */
   time_t updatedAt() const;
-
 
 //  H5::H5File getH5File() const;
 //

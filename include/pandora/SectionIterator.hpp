@@ -16,14 +16,14 @@ private:
 
 protected:
 
-  File  file;
+  File  *file;
   Group group;
   size_t index, size;
   std::string parent;
   size_t first;
 
 public:
-  SectionIterator(File file, Group group, std::string parent_id = "");
+  SectionIterator(File *file, Group group, std::string parent_id = "");
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;

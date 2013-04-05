@@ -88,8 +88,8 @@ public:
   void testBlockAccess() {
     const char *names[5] = {"block_a", "block_b", "block_c", "block_d", "block_e"};
     for (int i = 0; i < 5; i++) {
-      Block b1(f1->createBlock(names[i], "dataset"));
-      Block b2(f1->getBlock(b1.id()));
+      Block b1 = f1->createBlock(names[i], "dataset");
+      Block b2 = f1->getBlock(b1.id());
       stringstream errmsg;
       errmsg << "Error while accessing block: b1.id() = " << b1.id() << " / b2.id() = " << b2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), b1 == b2);
@@ -107,6 +107,7 @@ public:
       errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
+    /*
     Section test = f1->getSection(lastSectionId);
     stringstream errmsg;
     errmsg << "Error while accessing Section with id: " << lastSectionId << ", retrieved section id = " << test.id();
@@ -150,7 +151,7 @@ public:
     msg6 << "Error while removing section recursively: " << test.id();
     f1->removeSection(test.id(),true);
     CPPUNIT_ASSERT_MESSAGE(msg6.str(), (sectionCount-1) == (f1->metadataGroup().objectCount()));
-
+     */
     /*
     for(SectionIterator iter = f1->sections(); iter != iter.end(); ++iter){
       Section s = *iter;
@@ -161,6 +162,37 @@ public:
       }
     }
      */
+
+  }
+
+  void testSectionCache(){
+    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+
+    list<string> children;
+    f1->sectionCache()->getFromCache(s.id(), children);
+    int childCount = children.size();
+
+    Section c1 = s.addSection("child1","test");
+    Section c2 = s.addSection("child2","test");
+
+    list<string> newChildren;
+    f1->sectionCache()->getFromCache(s.id(), newChildren);
+    int newChildCount = newChildren.size();
+
+    stringstream msg;
+    msg << "Error in sectionCache, adding does not work properly! ChildCount should be: " << childCount + 2 << " but is " << newChildCount;
+    CPPUNIT_ASSERT_MESSAGE(msg.str(), (childCount+2) == newChildCount);
+
+    s.removeSection(c1.id());
+    s.removeSection(c2.id());
+
+    children.clear();
+    f1->sectionCache()->getFromCache(s.id(), children);
+    newChildCount = children.size();
+
+    stringstream msg2;
+    msg2 << "Error in sectionCache, removing does not work properly! ChildCount should be: " << childCount << " but is " << newChildCount;
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), childCount == newChildCount);
 
   }
 

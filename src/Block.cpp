@@ -11,7 +11,7 @@ Block::Block(const Block &block)
   // nothing to do
 }
 
-Block::Block(File file, Group group, string id)
+Block::Block(File *file, Group group, string id)
     : file(file), group(group), block_id(id)
 {
   // nothing to do

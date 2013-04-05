@@ -14,7 +14,7 @@ class Property
 
 private:
 
-  File file;
+  File *file;
   Group group, val;
   std::string property_id;
 
@@ -23,7 +23,7 @@ public:
 
   Property(const Property &property);
 
-  Property(File file, Group group, std::string id);
+  Property(File *file, Group group, std::string id);
 
   std::string id() const;
 

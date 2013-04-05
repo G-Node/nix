@@ -15,7 +15,7 @@ Section::Section(const Section &section) :
   props = section.props;
 }
 
-Section::Section(File file, Group group, string id) :
+Section::Section(File *file, Group group, string id) :
       file(file), group(group), section_id(id) {
   // nothing to do
   props = group.openGroup("properties");
@@ -30,7 +30,7 @@ void Section::type(string type) {
 }
 
 string Section::type() const {
-  string type;
+  string type = "";
   group.getAttr("type", type);
   return type;
 }
@@ -40,7 +40,7 @@ void Section::name(string name) {
 }
 
 string Section::name() const {
-  string name;
+  string name = "";
   group.getAttr("name", name);
   return name;
 }
@@ -50,7 +50,7 @@ void Section::definition(string definition) {
 }
 
 string Section::definition() const {
-  string definition;
+  string definition = "";
   group.getAttr("definition", definition);
   return definition;
 }
@@ -60,7 +60,7 @@ void Section::repository(string repository) {
 }
 
 string Section::repository() const {
-  string repository;
+  string repository = "";
   group.getAttr("repository", repository);
   return repository;
 }
@@ -70,7 +70,7 @@ void Section::link(string link) {
 }
 
 string Section::link() const {
-  string link;
+  string link = "";
   group.getAttr("link", link);
   return link;
 }
@@ -79,7 +79,7 @@ void Section::include(string include) {
 }
 
 string Section::include() const {
-  string include;
+  string include = "";
   group.getAttr("include", include);
   return include;
 }
@@ -89,7 +89,7 @@ void Section::mapping(string mapping) {
 }
 
 string Section::mapping() const {
-  string mapping;
+  string mapping = "";
   group.getAttr("mapping", mapping);
   return mapping;
 }
@@ -99,32 +99,31 @@ void Section::parent(string parent) {
 }
 
 string Section::parent() const {
-  string parent;
+  string parent = "";
   group.getAttr("parent", parent);
   return parent;
 }
 
 Section Section::addSection(std::string name, std::string type){
-  Section s = file.createSection(name,type);
-  s.parent(id());
+  Section s = (*file).createSection(name,type, id());
   return s;
 }
 
 bool Section::removeSection(std::string id, bool cascade){
-  return this->file.removeSection(id,cascade);
+  return (*file).removeSection(id,cascade);
 }
 
-bool Section::hasChildren()const{
+bool Section::hasChildren(){
   SectionIterator iter = this->children();
   return iter != iter.end();
 }
 
-SectionIterator Section::children() const {
-  SectionIterator iter(this->file, this->file.metadataGroup(), id());
+SectionIterator Section::children() {
+  SectionIterator iter(file, (*file).metadataGroup(), id());
   return iter;
 }
 
-size_t Section::childCount() const{
+size_t Section::childCount(){
   size_t childCount = 0;
   for(SectionIterator iter = this->children(); iter != iter.end(); ++iter){
      childCount ++;

@@ -10,7 +10,7 @@ Property::Property(const Property &property) :
   // nothing to do
 }
 
-Property::Property(File file, Group group, string id) :
+Property::Property(File *file, Group group, string id) :
   file(file), group(group), property_id(id) {
   val = group.openGroup("values");
 }

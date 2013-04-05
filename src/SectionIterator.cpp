@@ -7,7 +7,7 @@ using namespace std;
 namespace pandora {
 
 
-SectionIterator::SectionIterator(File file, Group group, std::string parent_id)
+SectionIterator::SectionIterator(File *file, Group group, std::string parent_id)
 : file(file), group(group), parent(parent_id)
 {
   index = 0;

@@ -17,7 +17,7 @@ class Section
 
 private:
 
-  File file;
+  File *file;
   Group group, props;
   std::string section_id;
 
@@ -25,7 +25,7 @@ public:
 
   Section(const Section &section);
 
-  Section(File file, Group group, std::string id);
+  Section(File *file, Group group, std::string id);
 
   std::string id() const;
 
@@ -53,11 +53,11 @@ public:
   void parent(std::string parent);
   std::string parent() const;
 
-  size_t childCount() const;
+  size_t childCount();
 
-  SectionIterator children() const;
+  SectionIterator children();
 
-  bool hasChildren() const;
+  bool hasChildren();
 
   Section addSection(std::string name, std::string type);
 

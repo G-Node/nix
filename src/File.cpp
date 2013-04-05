@@ -22,6 +22,7 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
+//#include <pandora/GroupCache.hpp>
 
 using namespace std;
 
@@ -83,12 +84,12 @@ bool File::hasBlock(std::string id) const {
 }
 
 /*SEE: File.hpp*/
-Block File::getBlock(std::string id) const {
-  return Block(*this, data.openGroup(id, false), id);
+Block File::getBlock(std::string id) {
+  return Block(this, data.openGroup(id, false), id);
 }
 
-BlockIterator File::blocks() const {
-  BlockIterator b(*this, data);
+BlockIterator File::blocks() {
+  BlockIterator b(this, data);
   return b;
 }
 
@@ -97,7 +98,7 @@ Block File::createBlock(string name, string type) {
   string id = util::createId("block");
   while(data.hasObject(id))
     id = util::createId("block");
-  Block b(*this, data.openGroup(id, true), id);
+  Block b(this, data.openGroup(id, true), id);
   b.name(name);
   b.type(type);
   return b;
@@ -116,9 +117,9 @@ size_t File::blockCount() const {
 }
 
 /*SEE: File.hpp*/
-Block File::getBlock(size_t index) const {
+Block File::getBlock(size_t index) {
   string id = data.objectName(index);
-  Block b(*this, data.openGroup(id), id);
+  Block b(this, data.openGroup(id), id);
   return b;
 }
 
@@ -129,23 +130,27 @@ bool File::hasSection(std::string id) const {
 }
 
 /*SEE: File.hpp*/
-Section File::getSection(std::string id) const {
-  return Section(*this, metadata.openGroup(id, false), id);
+Section File::getSection(std::string id) {
+  return Section(this, metadata.openGroup(id, false), id);
 }
 
-SectionIterator File::sections() const{
-  SectionIterator iter(*this, metadata,"");
+SectionIterator File::sections(){
+  SectionIterator iter(this, metadata,"");
   return iter;
 }
 
 /*SEE: File.hpp*/
-Section File::createSection(string name, string type) {
+Section File::createSection(string name, string type, string parent) {
+  // cout << "File: " << this << "\t" << "createSection!" << endl;
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(*this, metadata.openGroup(id, true), id);
+  Section s(this, metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
+  if(parent.length() > 0){
+    s.parent(parent);
+  }
   return s;
 }
 

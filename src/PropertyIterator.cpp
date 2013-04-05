@@ -5,7 +5,7 @@ using namespace std;
 namespace pandora {
 
 
-PropertyIterator::PropertyIterator(File file, Group group)
+PropertyIterator::PropertyIterator(File *file, Group group)
   : file(file), group(group)
 {
   index = 0;

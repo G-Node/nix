@@ -11,12 +11,12 @@ class PropertyIterator : public std::iterator<std::input_iterator_tag, Property>
 
 protected:
 
-  File  file;
+  File  *file;
   Group group;
   size_t index, size;
 
 public:
-  PropertyIterator(File file, Group group);
+  PropertyIterator(File *file, Group group);
   PropertyIterator(const PropertyIterator &other);
 
   Property operator*() const;
