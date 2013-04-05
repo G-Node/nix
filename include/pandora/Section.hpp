@@ -17,7 +17,7 @@ class Section
 
 private:
 
-  File *file;
+  mutable File *file;
   Group group, props;
   std::string section_id;
 
@@ -53,11 +53,11 @@ public:
   void parent(std::string parent);
   std::string parent() const;
 
-  size_t childCount();
+  size_t childCount() const;
 
-  SectionIterator children();
+  SectionIterator children() const;
 
-  bool hasChildren();
+  bool hasChildren() const;
 
   Section addSection(std::string name, std::string type);
 

@@ -4,17 +4,14 @@ using namespace std;
 
 namespace pandora {
 
-
-PropertyIterator::PropertyIterator(File *file, Group group)
-  : file(file), group(group)
-{
+PropertyIterator::PropertyIterator(File *file, Group group) :
+    file(file), group(group) {
   index = 0;
-  size  = group.objectCount();
+  size = group.objectCount();
 }
 
-PropertyIterator::PropertyIterator(const PropertyIterator &other)
-  : file(other.file), group(other.group), index(other.index), size(other.size)
-{
+PropertyIterator::PropertyIterator(const PropertyIterator &other) :
+    file(other.file), group(other.group), index(other.index), size(other.size) {
 }
 
 PropertyIterator &PropertyIterator::operator++() {
@@ -36,20 +33,21 @@ PropertyIterator PropertyIterator::end() const {
 
 Property PropertyIterator::operator*() const {
   string id;
-  if (index  < size) {
+  if (index < size) {
     id = group.objectName(index);
   } else {
-    id = group.objectName(size - 1);
+    throw std::range_error(
+        "Attempt to access an element that is out of range!");
   }
   Property property(file, group.openGroup(id, false), id);
   return property;
 }
 
 void PropertyIterator::operator=(const PropertyIterator &other) {
-  file  = other.file;
+  file = other.file;
   group = other.group;
   index = other.index;
-  size  = other.size;
+  size = other.size;
 }
 
 bool PropertyIterator::operator==(const PropertyIterator &other) const {
@@ -59,6 +57,5 @@ bool PropertyIterator::operator==(const PropertyIterator &other) const {
 bool PropertyIterator::operator!=(const PropertyIterator &other) const {
   return group != other.group || index != other.index;
 }
-
 
 } /* namespace pandora */

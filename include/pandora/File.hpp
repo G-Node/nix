@@ -224,6 +224,7 @@ public:
    */
   bool operator!=(const File &other) const;
 
+
   /**
    * Destructor.
    */

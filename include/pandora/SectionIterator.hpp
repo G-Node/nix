@@ -3,6 +3,9 @@
 
 #include <iterator>
 #include <pandora/Section.hpp>
+#include <stdexcept>
+#include <list>
+#include <string>
 
 namespace pandora {
 
@@ -16,7 +19,7 @@ private:
 
 protected:
 
-  File  *file;
+  mutable File  *file;
   Group group;
   size_t index, size;
   std::string parent;

@@ -1,15 +1,11 @@
 #include <pandora/SectionIterator.hpp>
-#include <cstring>
-#include <stdexcept>
 
 using namespace std;
 
 namespace pandora {
 
-
-SectionIterator::SectionIterator(File *file, Group group, std::string parent_id)
-: file(file), group(group), parent(parent_id)
-{
+SectionIterator::SectionIterator(File *file, Group group, std::string parent_id) :
+    file(file), group(group), parent(parent_id) {
   index = 0;
   size  = group.objectCount();
   index = nextIndex(0);
@@ -97,10 +93,10 @@ Section SectionIterator::operator*() const {
 }
 
 void SectionIterator::operator=(const SectionIterator &other) {
-  file  = other.file;
+  file = other.file;
   group = other.group;
   index = other.index;
-  size  = other.size;
+  size = other.size;
 }
 
 bool SectionIterator::operator==(const SectionIterator &other) const {
@@ -110,8 +106,5 @@ bool SectionIterator::operator==(const SectionIterator &other) const {
 bool SectionIterator::operator!=(const SectionIterator &other) const {
   return group != other.group || index != other.index;
 }
-
-
-
 
 } /* namespace pandora */

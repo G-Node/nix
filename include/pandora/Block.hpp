@@ -14,7 +14,7 @@ class Block
 
 private:
 
-  File *file;
+  mutable File *file;
   Group group;
   std::string block_id;
 

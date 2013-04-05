@@ -22,7 +22,6 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
-//#include <pandora/GroupCache.hpp>
 
 using namespace std;
 
@@ -42,7 +41,6 @@ File::File(string name, string prefix, int mode)
 : prefix(prefix)
 {
   if (fileExists(name)) {
-    /// @check if hdf5 file
     h5file = H5::H5File(name.c_str(), mode);
   } else {
     h5file = H5::H5File(name.c_str(), File::OVERWRITE);
@@ -88,7 +86,7 @@ Block File::getBlock(std::string id) {
   return Block(this, data.openGroup(id, false), id);
 }
 
-BlockIterator File::blocks() {
+BlockIterator File::blocks(){
   BlockIterator b(this, data);
   return b;
 }

@@ -11,13 +11,11 @@ namespace pandora {
 
 Section::Section(const Section &section) :
       file(section.file), group(section.group), section_id(section.section_id) {
-  // nothing to do
   props = section.props;
 }
 
 Section::Section(File *file, Group group, string id) :
       file(file), group(group), section_id(id) {
-  // nothing to do
   props = group.openGroup("properties");
 }
 
@@ -113,17 +111,17 @@ bool Section::removeSection(std::string id, bool cascade){
   return (*file).removeSection(id,cascade);
 }
 
-bool Section::hasChildren(){
+bool Section::hasChildren() const{
   SectionIterator iter = this->children();
   return iter != iter.end();
 }
 
-SectionIterator Section::children() {
+SectionIterator Section::children() const{
   SectionIterator iter(file, (*file).metadataGroup(), id());
   return iter;
 }
 
-size_t Section::childCount(){
+size_t Section::childCount() const{
   size_t childCount = 0;
   for(SectionIterator iter = this->children(); iter != iter.end(); ++iter){
      childCount ++;

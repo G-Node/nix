@@ -2,16 +2,17 @@
 #define PAN_PROPERTYITERATOR_H_INCLUDED
 
 #include <iterator>
+#include <stdexcept>
+
 #include <pandora/Property.hpp>
 
 namespace pandora {
 
-class PropertyIterator : public std::iterator<std::input_iterator_tag, Property>
-{
+class PropertyIterator: public std::iterator<std::input_iterator_tag, Property> {
 
 protected:
 
-  File  *file;
+  mutable File *file;
   Group group;
   size_t index, size;
 
@@ -30,7 +31,8 @@ public:
   bool operator==(const PropertyIterator &other) const;
   bool operator!=(const PropertyIterator &other) const;
 
-  virtual ~PropertyIterator() {}
+  virtual ~PropertyIterator() {
+  }
 };
 
 } /* namespace pandora */

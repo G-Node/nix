@@ -12,7 +12,7 @@ class BlockIterator : public std::iterator<std::input_iterator_tag, Block>
 
 protected:
 
-  File  *file;
+  mutable File  *file;
   Group group;
   size_t index, size;
 
