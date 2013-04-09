@@ -1,4 +1,5 @@
 
+
 #include <H5Cpp.h>
 #include <boost/multi_array.hpp>
 
@@ -8,7 +9,7 @@ namespace pandora {
 template<typename T>
 struct TypeSpec {
   
-  //const bool is_valid = false; //make compiler cry on unspecified types
+  static const bool is_valid = false;
   const H5::DataType fileType;
   const H5::DataType memType;
 };
@@ -16,17 +17,75 @@ struct TypeSpec {
 //
 
 template<>
-struct TypeSpec<int> {
+struct TypeSpec<char> {
+    
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I8LE;
+  const H5::DataType memType = H5::PredType::NATIVE_CHAR;
+};
   
-  const bool is_valid = true;
+template<>
+struct TypeSpec<int16_t> {
+  
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I16LE;
+  const H5::DataType memType = H5::PredType::NATIVE_INT16;
+};
+  
+template<>
+struct TypeSpec<uint16_t> {
+    
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_U16LE;
+  const H5::DataType memType = H5::PredType::NATIVE_UINT16;
+};
+  
+template<>
+struct TypeSpec<int32_t> {
+    
+  static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I32LE;
-  const H5::DataType memType = H5::PredType::NATIVE_INT;
+  const H5::DataType memType = H5::PredType::NATIVE_INT32;
+};
+  
+template<>
+struct TypeSpec<uint32_t> {
+  
+  static  const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_U32LE;
+  const H5::DataType memType = H5::PredType::NATIVE_UINT32;
 };
 
 template<>
+struct TypeSpec<int64_t> {
+  
+  static  const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I64LE;
+  const H5::DataType memType = H5::PredType::NATIVE_INT64;
+};
+
+template<>
+struct TypeSpec<uint64_t> {
+  
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_U64LE;
+  const H5::DataType memType = H5::PredType::NATIVE_UINT64;
+};
+
+
+template<>
+struct TypeSpec<float> {
+  
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::IEEE_F32LE;
+  const H5::DataType memType = H5::PredType::NATIVE_FLOAT;
+};
+  
+  
+template<>
 struct TypeSpec<double> {
   
-  const bool is_valid = true;
+  static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::IEEE_F64LE;
   const H5::DataType memType = H5::PredType::NATIVE_DOUBLE;
 };
@@ -34,7 +93,7 @@ struct TypeSpec<double> {
 template<>
 struct TypeSpec<std::string> {
   
-  const bool is_valid = true;
+  static const bool is_valid = true;
   const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
 };
@@ -45,7 +104,7 @@ template<typename T, typename U = T>
 class Nyx {
   
 public:
-  TypeSpec<U> m;
+  const TypeSpec<U> m;
   T &value;
   
   typedef U base_type;
@@ -53,11 +112,11 @@ public:
 public:
   
   Nyx(T &val) : m(TypeSpec<U>()), value(val) {
-    assert(m.is_valid);
+    static_assert(TypeSpec<U>::is_valid, "No specialisation fore base type found");
   }
   
-  H5::DataType getFileType() { return m.fileType; }
-  H5::DataType getMemType() { return m.memType; }
+  const H5::DataType& getFileType() const { return m.fileType; }
+  const H5::DataType& getMemType() const { return m.memType; }
   
   virtual H5::DataSpace getDataSpace() const {
     return H5::DataSpace();
