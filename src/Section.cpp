@@ -130,13 +130,13 @@ size_t Section::childCount() const {
 }
 
 PropertyIterator Section::properties() const {
-  PropertyIterator iter(file, props);
+  PropertyIterator iter(*this, props);
   return iter;
 }
 
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
-    return Property(this->file, props.openGroup(id, false), id);
+    return Property(*this, props.openGroup(id, false), id);
   } else {
     throw std::runtime_error(
         "Requested Property does not exist! Always check with hasProperty!");
@@ -160,7 +160,7 @@ Property Section::addProperty(std::string name) {
   string new_id = util::createId("property");
   while (props.hasObject(new_id))
     new_id = util::createId("property");
-  Property p(file, props.openGroup(new_id, true), new_id);
+  Property p(*this, props.openGroup(new_id, true), new_id);
   p.name(name);
   return p;
 }

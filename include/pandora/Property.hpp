@@ -5,7 +5,7 @@
 #include <H5Cpp.h>
 
 #include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+#include <pandora/Section.hpp>
 
 namespace pandora {
 
@@ -14,7 +14,7 @@ class Property
 
 private:
 
-  mutable File *file;
+  Section section;
   Group group, val;
   std::string property_id;
 
@@ -23,7 +23,7 @@ public:
 
   Property(const Property &property);
 
-  Property(File *file, Group group, std::string id);
+  Property(Section section, Group group, std::string id);
 
   std::string id() const;
 

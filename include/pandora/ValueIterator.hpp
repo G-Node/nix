@@ -18,7 +18,7 @@ protected:
   size_t index, size;
 
 public:
-  ValueIterator(Property &property, Group group);
+  ValueIterator(const Property &property, Group group);
   ValueIterator(const ValueIterator &other);
 
   Value operator*() const;
