@@ -4,7 +4,7 @@ using namespace std;
 
 namespace pandora {
 
-ValueIterator::ValueIterator(Property &property, Group group) :
+ValueIterator::ValueIterator(const Property &property, Group group) :
     property(property), group(group) {
   index = 0;
   size = group.objectCount();

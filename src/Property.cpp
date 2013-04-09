@@ -6,12 +6,12 @@ using namespace std;
 namespace pandora {
 
 Property::Property(const Property &property) :
-  file(property.file), group(property.group), val(property.val), property_id(property.property_id) {
+  section(property.section), group(property.group), val(property.val), property_id(property.property_id) {
   // nothing to do
 }
 
-Property::Property(File *file, Group group, string id) :
-  file(file), group(group), property_id(id) {
+Property::Property(Section section, Group group, string id) :
+  section(section), group(group), property_id(id) {
   val = group.openGroup("values",true);
 }
 

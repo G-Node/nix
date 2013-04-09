@@ -4,14 +4,14 @@ using namespace std;
 
 namespace pandora {
 
-PropertyIterator::PropertyIterator(File *file, Group group) :
-    file(file), group(group) {
+PropertyIterator::PropertyIterator(const Section &section, Group group) :
+    section(section), group(group) {
   index = 0;
   size = group.objectCount();
 }
 
 PropertyIterator::PropertyIterator(const PropertyIterator &other) :
-    file(other.file), group(other.group), index(other.index), size(other.size) {
+    section(other.section), group(other.group), index(other.index), size(other.size) {
 }
 
 PropertyIterator &PropertyIterator::operator++() {
@@ -39,12 +39,12 @@ Property PropertyIterator::operator*() const {
     throw std::range_error(
         "Attempt to access an element that is out of range!");
   }
-  Property property(file, group.openGroup(id, false), id);
+  Property property(section, group.openGroup(id, false), id);
   return property;
 }
 
 void PropertyIterator::operator=(const PropertyIterator &other) {
-  file = other.file;
+  section = other.section;
   group = other.group;
   index = other.index;
   size = other.size;
