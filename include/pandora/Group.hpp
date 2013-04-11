@@ -5,6 +5,7 @@
 #include <string>
 #include <H5Cpp.h>
 
+#include "Charon.hpp"
 
 namespace pandora {
 
@@ -52,6 +53,39 @@ public:
   virtual ~Group();
 }; // group Group
 
+  
+  //template functions
+  
+template<typename T> void Group::setAttr(std::string name, T value) const
+{
+  H5::Attribute attr;
+  Charon<T> charon = Charon<T>(value);
+  
+  if (hasAttr(name)) {
+    attr = h5group.openAttribute(name);
+  } else {
+    H5::DataType fileType = charon.getFileType();
+    H5::DataSpace fileSpace = charon.getDataSpace();
+    attr = h5group.createAttribute(name, fileType, fileSpace);
+  }
+  
+  charon.write(attr);
+}
+  
+template<typename T> bool Group::getAttr(std::string name, T &value) const
+{
+  
+  if (!hasAttr(name)) {
+    return false;
+  }
+  
+  H5::Attribute attr = h5group.openAttribute(name);
+  Charon<T> charon = Charon<T>(value);
+  charon.read(attr);
+  return true;
+}
+  
 }  // namespace pandora
+
 
 #endif /* PAN_GROUP_H_INCLUDE */
