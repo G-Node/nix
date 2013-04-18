@@ -4,8 +4,9 @@
 #include <boost/multi_array.hpp>
 
 namespace pandora {
+  namespace hades {
 
-
+/* ********** */
 template<typename T>
 struct TypeSpec {
   
@@ -18,12 +19,12 @@ struct TypeSpec {
 
 template<>
 struct TypeSpec<char> {
-    
+  
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I8LE;
   const H5::DataType memType = H5::PredType::NATIVE_CHAR;
 };
-  
+
 template<>
 struct TypeSpec<int16_t> {
   
@@ -31,23 +32,23 @@ struct TypeSpec<int16_t> {
   const H5::DataType fileType = H5::PredType::STD_I16LE;
   const H5::DataType memType = H5::PredType::NATIVE_INT16;
 };
-  
+
 template<>
 struct TypeSpec<uint16_t> {
-    
+  
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U16LE;
   const H5::DataType memType = H5::PredType::NATIVE_UINT16;
 };
-  
+
 template<>
 struct TypeSpec<int32_t> {
-    
+  
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I32LE;
   const H5::DataType memType = H5::PredType::NATIVE_INT32;
 };
-  
+
 template<>
 struct TypeSpec<uint32_t> {
   
@@ -72,7 +73,6 @@ struct TypeSpec<uint64_t> {
   const H5::DataType memType = H5::PredType::NATIVE_UINT64;
 };
 
-
 template<>
 struct TypeSpec<float> {
   
@@ -80,8 +80,7 @@ struct TypeSpec<float> {
   const H5::DataType fileType = H5::PredType::IEEE_F32LE;
   const H5::DataType memType = H5::PredType::NATIVE_FLOAT;
 };
-  
-  
+
 template<>
 struct TypeSpec<double> {
   
@@ -98,144 +97,340 @@ struct TypeSpec<std::string> {
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
 };
 
+/* ********** */
 
-//
-template<typename T, typename U = T>
-class Nyx {
-  
+class InvalidRankException : public std::runtime_error {
 public:
-  const TypeSpec<U> m;
-  T &value;
-  
-  typedef U base_type;
-  
-public:
-  
-  Nyx(T &val) : m(TypeSpec<U>()), value(val) {
-    static_assert(TypeSpec<U>::is_valid, "No specialisation fore base type found");
-  }
-  
-  const H5::DataType& getFileType() const { return m.fileType; }
-  const H5::DataType& getMemType() const { return m.memType; }
-  
-  virtual H5::DataSpace getDataSpace() const {
-    return H5::DataSpace();
-  }
-  
-  virtual void write(H5::Attribute &attr) {
-    attr.write(this->m.memType, getData());
-  }
-  
-  virtual void read(H5::Attribute &attr) {
-    attr.read(this->m.memType, getData());
-  }
-  
-  virtual base_type* getData() = 0;
-  
-  virtual ~Nyx() { }
+  InvalidRankException(const std::string &message)
+    : std::runtime_error(message) { }
 };
 
+/* ** */
+template<typename T>
+class TypeInfo {
+public:
+  typedef T element_type;
+  
+  static hsize_t *shape(const T &value, size_t &rank) {
+    rank = 0;
+    return nullptr;
+  }
+  
+  static size_t num_elements(const T &value) {
+    return 1;
+  }
+  
+  static const element_type* getData(const T &value) {
+    return &value;
+  }
+  
+  static element_type* getData(T &value) {
+    return &value;
+  }
+  
+  static void resize(T &value, size_t rank, hsize_t *dims) {
+    if (rank != 0) {
+      throw InvalidRankException("Cannot resize scalar");
+    }
+  }
+  
+};
+
+template<typename T>
+class TypeInfo<std::vector<T>> {
+public:
+  typedef T element_type;
+  typedef std::vector<T> vector_type;
+  
+  static hsize_t *shape(const vector_type &value, size_t &rank) {
+    rank = 1;
+    hsize_t *dims = new hsize_t[1];
+    dims[0] = value.size();
+    return dims;
+  }
+  
+  static size_t num_elements(const vector_type &value) {
+    return value.size();
+  }
+  
+  static const element_type* getData(const vector_type &value) {
+    return &value[0];
+  }
+  
+  static element_type* getData(vector_type &value) {
+    return &value[0];
+  }
+  
+  static void resize(vector_type &value, size_t rank, hsize_t *dims) {
+    if (rank != 1) {
+      throw InvalidRankException("Cannot change rank of vector"); //FIXME
+    }
+    
+    if (dims[0] == value.size())
+      return;
+    
+    value.resize(dims[0]);
+  }
+};
+
+template<typename T, size_t N>
+class TypeInfo<boost::multi_array<T, N>> {
+public:
+  typedef boost::multi_array<T, N>     array_type;
+  typedef typename array_type::element element_type;
+  
+  static hsize_t *shape(const array_type &value, size_t &rank) {
+    rank = N;
+    hsize_t *dims = new hsize_t[N];
+    const size_t *shape = value.shape();
+    std::copy(shape, shape + N, dims);
+    return dims;
+  }
+  
+  static size_t num_elements(const array_type &value) {
+    return value.num_elements();
+  }
+  
+  static const element_type* getData(const array_type &value) {
+    return value.data();
+  }
+  
+  static element_type* getData(array_type &value) {
+    return value.data();
+  }
+  
+  static void resize(array_type &value, size_t rank, hsize_t *dims) {
+    if (rank != N) {
+      throw InvalidRankException("Cannot change rank of multiarray");
+    }
+    
+    std::vector<std::size_t> extend;
+    extend.resize(N);
+    std::copy(dims, dims+rank, extend.begin());
+    value.resize(extend);
+    std::cout << "resize done" << std::endl;
+  }
+};
+
+template<typename T>
+class ValueBox : private TypeInfo<T>,
+public TypeSpec<typename TypeInfo<T>::element_type> {
+  
+public:
+  typedef TypeInfo<T> info_type;
+  typedef T           value_type;
+  typedef T          &value_ref;
+  typedef typename info_type::element_type  element;
+  typedef element *element_ptr;
+  
+  ValueBox(value_ref val) : value(val) {}
+  
+  element_ptr get_data() { return info_type::getData(value); }
+  value_ref   get() { return value; }
+  hsize_t *   shape(size_t &rank) const { return info_type::shape(value, rank); }
+  size_t      size() { return this->num_elements(value); }
+  
+  void        resize(size_t rank, hsize_t *dims) {info_type::resize (value, rank, dims);}
+  
+private:
+  value_ref value;
+};
 
 
 template<typename T>
-class Charon : public Nyx<T>
-{
-  using typename Nyx<T>::base_type;
+class ValueBox<const T> : private TypeInfo<T>,
+public TypeSpec<typename TypeInfo<T>::element_type> {
   
 public:
-  Charon(T &val) : Nyx<T>(val) {}
-  base_type* getData() { return &this->value; }
+  typedef TypeInfo<T>  info_type;
+  typedef const T      value_type;
+  typedef const T     &value_ref;
+  typedef typename info_type::element_type element;
+  typedef typename info_type::element_type element_type;
+  typedef const element *element_ptr;
+  
+  ValueBox(value_ref val) : value(val) {}
+  
+  element_ptr get_data() const { return info_type::getData(value); }
+  value_ref   get() const { return value; }
+  hsize_t *   shape(size_t &rank) const { return info_type::shape(value, rank); }
+  size_t      size() { return this->num_elements(value); }
+  
+private:
+  value_ref value;
 };
 
 
-template<>
-class Charon<std::string> : public Nyx<std::string>
-{
+/* *** */
+template<
+typename T,
+template <typename> class ValueBox,
+typename ElementType
+>
+class DataBox {
 public:
-  Charon(std::string &val) : Nyx<std::string>(val) {}
+  typedef ValueBox<T>  &vbox_ref;
+  typedef ElementType  data_type;
+  typedef data_type   *data_ptr;
   
-  virtual void write(H5::Attribute &attr) {
-    attr.write(this->m.memType, this->value);
-  }
+  DataBox(vbox_ref val) : value(val) {}
   
-  virtual void read(H5::Attribute &attr) {
-    attr.read(this->m.memType, this->value);
-  }
+  data_type* get() { return value.get_data(); }
+  void finish(data_ptr data) { }
   
-  base_type* getData() { return &this->value; }
+private:
+  vbox_ref value;
 };
 
-  
-template<typename T, int N>
-class CharonMultiArray :
-public Nyx<boost::multi_array<T, N>, T> {
-  
-protected:
-  hsize_t dims[N];
-  H5::DataSpace memspace;
-  
+template<
+typename T,
+template <typename> class ValueBox,
+typename ElementType
+>
+class DataBox<const T, ValueBox, ElementType> {
 public:
-  typedef boost::multi_array<T, N> array_type;
-  using typename Nyx<array_type, T>::base_type;
+  typedef ValueBox<const T> &vbox_ref;
+  typedef const ElementType  data_type;
+  typedef       data_type   *data_ptr;
   
-  CharonMultiArray(array_type &value) : Nyx<array_type, T>(value) {
-    auto *shape = this->value.shape();
-    std::copy(shape, shape + N, dims);
-    memspace = H5::DataSpace(N, dims, NULL);
-  }
+  DataBox(vbox_ref val) : value(val) {}
   
-  virtual H5::DataSpace getDataSpace() const {
-    return memspace;
-  }
+  data_type* get() const { return value.get_data(); }
+  void finish(data_ptr data) { }
   
-  base_type* getData() { return this->value.data(); }
+private:
+  vbox_ref value;
 };
 
-  
-template<typename T, int N>
-class Charon<boost::multi_array<T, N>> :
-public CharonMultiArray<T, N> {
-public:
-  typedef boost::multi_array<T, N> array_type;
-  Charon(array_type &val) : CharonMultiArray<T, N>(val) {}
-};
 
-  
-template<int N>
-class Charon<boost::multi_array<std::string, N>> :
-public CharonMultiArray<std::string, N>{
+template<
+typename T,
+template <typename> class ValueBox
+>
+class DataBox<T, ValueBox, std::string> {
 public:
-  typedef boost::multi_array<std::string, N> array_type;
+  typedef ValueBox<T>  &vbox_ref;
+  typedef char        *data_type;
+  typedef data_type   *data_ptr;
   
-  Charon(array_type &value) : CharonMultiArray<std::string, N>(value) {}
+  DataBox(vbox_ref val) : value(val) {}
   
-  virtual void write(H5::Attribute &attr) {
-    std::string *vptr = this->value.data();
-    auto nelms = this->value.num_elements();
-    char const* *data = new char const* [nelms];
+  data_type* get() {
+    size_t nelms = value.size();
+    data_ptr data = new data_type[nelms];
+    return data;
+  }
+  void finish(data_ptr data) {
+    size_t nelms = value.size();
+    auto vptr = value.get_data();
     
-    for (auto i = 0; i < nelms; i++) {
-      data[i] = vptr[i].c_str();
-      std::cout << i << " " << data[i] << std::endl;
-    }
-    
-    attr.write(this->m.memType, data);
-    delete[] data;
-  }
-  
-  virtual void read(H5::Attribute &attr) {
-    std::string *vptr = this->value.data();
-    auto nelms = this->value.num_elements();
-    char **data = new char *[nelms];
-    
-    attr.read(this->m.memType, data);
-    for (auto i = 0; i < nelms; i++) {
+    for (size_t i = 0; i < nelms; i++) {
       vptr[i] = data[i];
     }
     
-    H5::DataSet::vlenReclaim(data, this->m.memType, attr.getSpace());
     delete[] data;
   }
-};
   
+private:
+  vbox_ref value;
+};
+
+template<
+typename T,
+template <typename> class ValueBox
+>
+class DataBox<const T, ValueBox, std::string> {
+public:
+  typedef ValueBox<const T> &vbox_ref;
+  typedef char const       *data_type;
+  typedef data_type        *data_ptr;
+  
+  DataBox(vbox_ref val) : value(val) {}
+  
+  data_type* get() const {
+    size_t nelms = value.size();
+    data_ptr data = new data_type[nelms];
+    auto vptr = value.get_data();
+    
+    for (auto i = 0; i < nelms; i++) {
+      data[i] = vptr[i].c_str();
+    }
+    return data;
+  }
+  
+  void finish(data_ptr data) {
+    delete[] data;
+  }
+  
+private:
+  vbox_ref value;
+};
+
+} //namespace hades
+/**/
+template<typename T>
+class Charon {
+  
+public:
+  typedef hades::ValueBox<T> vbox_type;
+  typedef typename vbox_type::element       element_type;
+  typedef typename vbox_type::value_ref     value_ref;
+  
+  typedef hades::DataBox<T, hades::ValueBox, element_type> dbox_type;
+  typedef typename dbox_type::data_ptr       data_ptr;
+  
+  
+  Charon(value_ref val) : value(val), data(value) {
+    static_assert(vbox_type::is_valid, "No valid type spec");
+  }
+  
+  const H5::DataType& getFileType() const { return value.fileType; }
+  const H5::DataType& getMemType() const { return value.memType; }
+  
+  H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
+    hsize_t *shape;
+    size_t   rank;
+    shape = value.shape(rank);
+    H5::DataSpace space;
+    
+    if (rank == 0) {
+      space = H5::DataSpace();
+      return space; //no need to delete shape
+    }
+    
+    if (maxdimsUnlimited) {
+      hsize_t *maxdims = new hsize_t[rank];
+      std::fill_n(maxdims, rank, H5S_UNLIMITED);
+      space = H5::DataSpace((int) rank, shape, maxdims);
+      delete[] maxdims;
+    } else {
+      space = H5::DataSpace((int) rank, shape);
+    }
+    
+    delete[] shape;
+    return space;
+  }
+  
+  hsize_t* shape(size_t &rank) const {
+    return value.shape(rank);
+  }
+  
+  data_ptr get() {
+    return data.get();
+  }
+  
+  void finish(data_ptr val) {
+    data.finish(val);
+  }
+  
+  void resize(size_t rank, hsize_t *dims) {
+    value.resize(rank, dims);
+  }
+  
+private:
+  vbox_type               value;
+  dbox_type               data;
+};
+
+
 } //namespace pandora
