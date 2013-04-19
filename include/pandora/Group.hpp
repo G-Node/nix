@@ -57,23 +57,23 @@ public:
   //template functions
   
 template<typename T> void Group::setAttr(std::string name, const T &value) const
-  {
-    Charon<const T> charon(value);
-    H5::Attribute attr;
-    
-    if (hasAttr(name)) {
-      attr = h5group.openAttribute(name);
-    } else {
-      H5::DataType fileType = charon.getFileType();
-      H5::DataSpace fileSpace = charon.createDataSpace(true);
-      attr = h5group.createAttribute(name, fileType, fileSpace);
-    }
-    
-    typedef typename Charon<const T>::data_ptr data_ptr;
-    data_ptr data = charon.get();
-    attr.write(charon.getMemType(), data);
-    charon.finish(data);
+{
+  Charon<const T> charon(value);
+  H5::Attribute attr;
+  
+  if (hasAttr(name)) {
+    attr = h5group.openAttribute(name);
+  } else {
+    H5::DataType fileType = charon.getFileType();
+    H5::DataSpace fileSpace = charon.createDataSpace(true);
+    attr = h5group.createAttribute(name, fileType, fileSpace);
   }
+  
+  typedef typename Charon<const T>::data_ptr data_ptr;
+  data_ptr data = charon.get();
+  attr.write(charon.getMemType(), data);
+  charon.finish(data);
+}
   
 template<typename T> bool Group::getAttr(std::string name, T &value) const
 {
@@ -98,7 +98,7 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const
   typedef typename Charon<T>::data_ptr data_ptr;
   data_ptr data = charon.get();
   attr.read(charon.getMemType(), data);
-  charon.finish(data);
+  charon.finish(data, &space);
   
   return true;
 }

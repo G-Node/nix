@@ -1,10 +1,12 @@
 
+#ifndef PANDORA_CHARON_H
+#define PANDORA_CHARON_H
 
 #include <H5Cpp.h>
 #include <boost/multi_array.hpp>
 
 namespace pandora {
-  namespace hades {
+namespace hades {
 
 /* ********** */
 template<typename T>
@@ -111,7 +113,7 @@ class TypeInfo {
 public:
   typedef T element_type;
   
-  static hsize_t *shape(const T &value, size_t &rank) {
+  static hsize_t* shape(const T &value, size_t &rank) {
     rank = 0;
     return nullptr;
   }
@@ -214,7 +216,7 @@ public:
 
 template<typename T>
 class ValueBox : private TypeInfo<T>,
-public TypeSpec<typename TypeInfo<T>::element_type> {
+    public TypeSpec<typename TypeInfo<T>::element_type> {
   
 public:
   typedef TypeInfo<T> info_type;
@@ -239,7 +241,7 @@ private:
 
 template<typename T>
 class ValueBox<const T> : private TypeInfo<T>,
-public TypeSpec<typename TypeInfo<T>::element_type> {
+    public TypeSpec<typename TypeInfo<T>::element_type> {
   
 public:
   typedef TypeInfo<T>  info_type;
@@ -263,9 +265,9 @@ private:
 
 /* *** */
 template<
-typename T,
-template <typename> class ValueBox,
-typename ElementType
+  typename T,
+  template <typename> class ValueBox,
+  typename ElementType
 >
 class DataBox {
 public:
@@ -276,16 +278,16 @@ public:
   DataBox(vbox_ref val) : value(val) {}
   
   data_type* get() { return value.get_data(); }
-  void finish(data_ptr data) { }
+  void finish(data_ptr data, const H5::DataSpace *space) { }
   
 private:
   vbox_ref value;
 };
 
 template<
-typename T,
-template <typename> class ValueBox,
-typename ElementType
+  typename T,
+  template <typename> class ValueBox,
+  typename ElementType
 >
 class DataBox<const T, ValueBox, ElementType> {
 public:
@@ -296,7 +298,7 @@ public:
   DataBox(vbox_ref val) : value(val) {}
   
   data_type* get() const { return value.get_data(); }
-  void finish(data_ptr data) { }
+  void finish(data_ptr data, const H5::DataSpace *space) { }
   
 private:
   vbox_ref value;
@@ -304,8 +306,8 @@ private:
 
 
 template<
-typename T,
-template <typename> class ValueBox
+  typename T,
+  template <typename> class ValueBox
 >
 class DataBox<T, ValueBox, std::string> {
 public:
@@ -320,13 +322,18 @@ public:
     data_ptr data = new data_type[nelms];
     return data;
   }
-  void finish(data_ptr data) {
+  
+  void finish(data_ptr data, const H5::DataSpace *space) {
     size_t nelms = value.size();
     auto vptr = value.get_data();
     
     for (size_t i = 0; i < nelms; i++) {
       vptr[i] = data[i];
     }
+    
+    if (space) {
+			H5::DataSet::vlenReclaim(data, value.memType, *space);
+		}
     
     delete[] data;
   }
@@ -336,8 +343,8 @@ private:
 };
 
 template<
-typename T,
-template <typename> class ValueBox
+  typename T,
+  template <typename> class ValueBox
 >
 class DataBox<const T, ValueBox, std::string> {
 public:
@@ -355,10 +362,11 @@ public:
     for (auto i = 0; i < nelms; i++) {
       data[i] = vptr[i].c_str();
     }
+    
     return data;
   }
   
-  void finish(data_ptr data) {
+  void finish(data_ptr data, const H5::DataSpace *space) {
     delete[] data;
   }
   
@@ -379,7 +387,7 @@ public:
   typedef hades::DataBox<T, hades::ValueBox, element_type> dbox_type;
   typedef typename dbox_type::data_ptr       data_ptr;
   
-  
+
   Charon(value_ref val) : value(val), data(value) {
     static_assert(vbox_type::is_valid, "No valid type spec");
   }
@@ -419,8 +427,8 @@ public:
     return data.get();
   }
   
-  void finish(data_ptr val) {
-    data.finish(val);
+  void finish(data_ptr val, const H5::DataSpace *space = nullptr) {
+    data.finish(val, space);
   }
   
   void resize(size_t rank, hsize_t *dims) {
@@ -428,9 +436,10 @@ public:
   }
   
 private:
-  vbox_type               value;
-  dbox_type               data;
+  vbox_type  value;
+  dbox_type  data;
 };
 
+#endif //PANDORA_CHARON_H
 
 } //namespace pandora
