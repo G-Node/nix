@@ -210,7 +210,6 @@ public:
     extend.resize(N);
     std::copy(dims, dims+rank, extend.begin());
     value.resize(extend);
-    std::cout << "resize done" << std::endl;
   }
 };
 
