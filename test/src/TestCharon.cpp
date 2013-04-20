@@ -23,8 +23,15 @@ class TestCharon:public CPPUNIT_NS::TestFixture {
 public:
 
   void setUp() {
-    h5file = H5::H5File("test_charon.h5", H5F_ACC_TRUNC);
-    h5group = h5file.createGroup("charon");
+    unsigned int &openMode = open_mode();
+
+    h5file = H5::H5File("test_charon.h5", openMode);
+    if (openMode == H5F_ACC_TRUNC) {
+      h5group = h5file.createGroup("charon");
+    } else {
+      h5group = h5file.openGroup("charon");
+    }
+    openMode = H5F_ACC_RDWR;
   }
 
   void tearDown() {
@@ -57,7 +64,7 @@ public:
 
   }
 
-  void testArray() {
+  void testMultiArray() {
     pandora::Group group(h5group);
     //arrays
     typedef boost::multi_array<double, 3> array_type;
@@ -114,7 +121,28 @@ public:
     std::vector<std::string> tsv;
     group.getAttr("t_strvector", tsv);
     assert_vectors_equal(sv, tsv);
+  }
 
+  void testArray() {
+    pandora::Group group(h5group);
+    int ia1d[5] = {1, 2, 3, 4, 5};
+
+    group.setAttr("t_intarray1d", ia1d);
+    int tia1d[5] = {0, };
+    group.getAttr("t_intarray1d", tia1d);
+
+    for (int i = 0; i < 5; i++) {
+      CPPUNIT_ASSERT_EQUAL(ia1d[i], tia1d[i]);
+    }
+
+    int ia2d[3][2] = { {1, 2}, {3, 4}, {5, 6} };
+    group.setAttr("t_intarray2d", ia2d);
+    int tia2d[3][2] = { {0, }, };
+    group.getAttr("t_intarray2d", tia2d);
+
+    for (int i = 0; i < 3*2; i++) {
+      CPPUNIT_ASSERT_EQUAL(*(ia2d[0] + i), *(tia2d[0] + i));
+    }
   }
 
   template<typename T>
@@ -134,17 +162,24 @@ public:
 
 private:
 
+  static unsigned int &open_mode();
+
   H5::H5File h5file;
   H5::Group h5group;
 
   CPPUNIT_TEST_SUITE(TestCharon);
   CPPUNIT_TEST(testBaseTypes);
   CPPUNIT_TEST(testVector);
+  CPPUNIT_TEST(testMultiArray);
   CPPUNIT_TEST(testArray);
   CPPUNIT_TEST_SUITE_END ();
 };
 
-
+unsigned int & TestCharon::open_mode()
+{
+  static unsigned int openMode = H5F_ACC_TRUNC;
+  return openMode;
+}
 
  int main(int argc, char* argv[])
  {

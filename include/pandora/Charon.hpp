@@ -135,8 +135,9 @@ public:
       throw InvalidRankException("Cannot resize scalar");
     }
   }
-  
 };
+  
+
 
 template<typename T>
 class TypeInfo<std::vector<T>> {
@@ -213,6 +214,76 @@ public:
   }
 };
 
+  
+template<typename T, size_t N>
+class TypeInfo<T[N]> {
+public:
+  typedef T element_type;
+  typedef T array_type[N];
+  
+  static hsize_t *shape(const array_type &value, size_t &rank) {
+    rank = 1;
+    hsize_t *dims = new hsize_t[1];
+    dims[0] = N;
+    return dims;
+  }
+  
+  static size_t num_elements(const array_type&value) {
+    return N;
+  }
+  
+  static const element_type* getData(const array_type &value) {
+    return value;
+  }
+  
+  static element_type* getData(array_type &value) {
+    return value;
+  }
+  
+  static void resize(array_type &value, size_t rank, hsize_t *dims) {
+    if (rank != 1 && dims[0] != N) {
+      throw InvalidRankException("Cannot resize native arrays");
+    }
+    //NOOP
+  }
+};
+  
+  
+template<typename T, size_t N, size_t M>
+class TypeInfo<T[M][N]> {
+public:
+  typedef T element_type;
+  typedef T array_type[M][N];
+  
+  static hsize_t *shape(const array_type &value, size_t &rank) {
+    rank = 2;
+    hsize_t *dims = new hsize_t[2];
+    dims[0] = M;
+    dims[1] = N;
+    return dims;
+  }
+  
+  static size_t num_elements(const array_type&value) {
+    return M*N;
+  }
+  
+  static const element_type* getData(const array_type &value) {
+    return value[0];
+  }
+  
+  static element_type* getData(array_type &value) {
+    return value[0];
+  }
+  
+  static void resize(array_type &value, size_t rank, hsize_t *dims) {
+    if (rank != 2 && dims[0] != M && dims[1] != N) {
+      throw InvalidRankException("Cannot resize native arrays");
+    }
+    //NOOP
+  }
+};
+
+  
 template<typename T>
 class ValueBox : private TypeInfo<T>,
     public TypeSpec<typename TypeInfo<T>::element_type> {
