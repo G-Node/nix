@@ -31,20 +31,35 @@ namespace pandora {
 const string File::VERSION = "1.0";
 const string File::FORMAT  = "pandora";
 
-// File open modes
-const size_t File::READ_ONLY  = H5F_ACC_RDONLY;
-const size_t File::READ_WRITE = H5F_ACC_RDWR;
-const size_t File::OVERWRITE  = H5F_ACC_TRUNC;
+
+static unsigned int map_file_mode(FileMode mode) {
+  switch (mode) {
+    case FileMode::ReadWrite:
+      return H5F_ACC_RDWR;
+      
+    case FileMode::ReadOnly:
+      return H5F_ACC_RDONLY;
+      
+    case FileMode::Overwrite:
+      return H5F_ACC_TRUNC;
+
+    default:
+      return H5F_ACC_DEFAULT;
+  }
+  
+}
 
 /*SEE: File.hpp*/
-File::File(string name, string prefix, int mode)
+File::File(string name, string prefix, FileMode mode)
 : prefix(prefix)
 {
-  if (fileExists(name)) {
-    h5file = H5::H5File(name.c_str(), mode);
-  } else {
-    h5file = H5::H5File(name.c_str(), File::OVERWRITE);
+  if (!fileExists(name)) {
+    mode = FileMode::Overwrite;
   }
+
+  unsigned int h5mode =  map_file_mode(mode);
+  h5file = H5::H5File(name.c_str(), h5mode);
+
   root = Group(h5file.openGroup("/"));
   metadata = root.openGroup("metadata");
   data = root.openGroup("data");

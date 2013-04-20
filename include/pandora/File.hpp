@@ -25,6 +25,14 @@ class Block;
 class BlockIterator;
 class Section;
 class SectionIterator;
+
+enum class FileMode {
+  ReadOnly = 0,
+  ReadWrite,
+  Overwrite
+};
+  
+  
 /**
  * Class that represents a pandora file.
  */
@@ -46,21 +54,14 @@ public:
   /** The version of the pandora format */
   static const std::string VERSION;
 
-  /** Read only file open mode */
-  static const size_t READ_ONLY;
-  /** Read/write file open mode */
-  static const size_t READ_WRITE;
-  /** Overwrite file open mode */
-  static const size_t OVERWRITE;
-
   /**
    * Constructor that is used to open the file.
    *
    * @param name    The name of the file to open.
    * @param prefix  The prefix used for IDs.
-   * @param mode    File open mode READ_ONLY, READ_WRITE or OVERWRITE.
+   * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
    */
-  File(std::string name, std::string prefix, int mode = READ_WRITE);
+  File(std::string name, std::string prefix, FileMode mode = FileMode::ReadWrite);
 
   /**
    * Copy constructor.
