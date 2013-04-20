@@ -29,7 +29,7 @@ public:
   void removeAttr(std::string name) const;
 
   template <typename T>
-  void setAttr(std::string name, T value) const;
+  void setAttr(std::string name, const T &value) const;
 
   template <typename T>
   bool getAttr(std::string name, T &value) const;
@@ -56,20 +56,23 @@ public:
   
   //template functions
   
-template<typename T> void Group::setAttr(std::string name, T value) const
+template<typename T> void Group::setAttr(std::string name, const T &value) const
 {
+  Charon<const T> charon(value);
   H5::Attribute attr;
-  Charon<T> charon = Charon<T>(value);
   
   if (hasAttr(name)) {
     attr = h5group.openAttribute(name);
   } else {
     H5::DataType fileType = charon.getFileType();
-    H5::DataSpace fileSpace = charon.getDataSpace();
+    H5::DataSpace fileSpace = charon.createDataSpace(true);
     attr = h5group.createAttribute(name, fileType, fileSpace);
   }
   
-  charon.write(attr);
+  typedef typename Charon<const T>::data_ptr data_ptr;
+  data_ptr data = charon.get();
+  attr.write(charon.getMemType(), data);
+  charon.finish(data);
 }
   
 template<typename T> bool Group::getAttr(std::string name, T &value) const
@@ -79,9 +82,24 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const
     return false;
   }
   
-  H5::Attribute attr = h5group.openAttribute(name);
-  Charon<T> charon = Charon<T>(value);
-  charon.read(attr);
+  Charon<T> charon(value);
+  H5::Attribute attr;
+  H5::DataSpace space;
+  
+  attr = h5group.openAttribute(name);
+  
+  space = attr.getSpace();
+  size_t rank = (size_t) space.getSimpleExtentNdims();
+  hsize_t *dims = new hsize_t[rank];
+  space.getSimpleExtentDims (dims, nullptr);
+  charon.resize(rank, dims);
+  delete[] dims;
+  
+  typedef typename Charon<T>::data_ptr data_ptr;
+  data_ptr data = charon.get();
+  attr.read(charon.getMemType(), data);
+  charon.finish(data, &space);
+  
   return true;
 }
   
