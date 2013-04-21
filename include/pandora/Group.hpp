@@ -65,7 +65,7 @@ template<typename T> void Group::setAttr(std::string name, const T &value) const
     attr = h5group.openAttribute(name);
   } else {
     H5::DataType fileType = charon.getFileType();
-    H5::DataSpace fileSpace = charon.createDataSpace(true);
+    H5::DataSpace fileSpace = charon.createDataSpace(false);
     attr = h5group.createAttribute(name, fileType, fileSpace);
   }
 
