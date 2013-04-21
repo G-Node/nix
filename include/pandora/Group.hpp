@@ -68,13 +68,13 @@ template<typename T> void Group::setAttr(std::string name, const T &value) const
     H5::DataSpace fileSpace = charon.createDataSpace(true);
     attr = h5group.createAttribute(name, fileType, fileSpace);
   }
-  
-  typedef typename Charon<const T>::data_ptr data_ptr;
-  data_ptr data = charon.get();
-  attr.write(charon.getMemType(), data);
-  charon.finish(data);
+
+  typedef typename Charon<const T>::dbox_type dbox_type;
+  dbox_type data = charon.get_data();
+  attr.write(charon.getMemType(), *data);
+  data.finish();
 }
-  
+
 template<typename T> bool Group::getAttr(std::string name, T &value) const
 {
   
@@ -94,15 +94,15 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const
   space.getSimpleExtentDims (dims, nullptr);
   charon.resize(rank, dims);
   delete[] dims;
-  
-  typedef typename Charon<T>::data_ptr data_ptr;
-  data_ptr data = charon.get();
-  attr.read(charon.getMemType(), data);
-  charon.finish(data, &space);
-  
+
+  typedef typename Charon<T>::dbox_type dbox_type;
+  dbox_type data = charon.get_data();
+  attr.read(charon.getMemType(), *data);
+  data.finish(&space);
+
   return true;
 }
-  
+
 }  // namespace pandora
 
 

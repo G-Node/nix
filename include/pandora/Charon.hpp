@@ -344,12 +344,13 @@ public:
   typedef ValueBox<T>  &vbox_ref;
   typedef ElementType  data_type;
   typedef data_type   *data_ptr;
-  
+
   DataBox(vbox_ref val) : value(val) {}
-  
-  data_type* get() { return value.get_data(); }
-  void finish(data_ptr data, const H5::DataSpace *space) { }
-  
+
+  data_ptr operator *() { return get(); }
+  data_ptr get() { return value.get_data(); }
+  void finish(const H5::DataSpace *space = nullptr) { }
+
 private:
   vbox_ref value;
 };
@@ -364,12 +365,13 @@ public:
   typedef ValueBox<const T> &vbox_ref;
   typedef const ElementType  data_type;
   typedef       data_type   *data_ptr;
-  
+
   DataBox(vbox_ref val) : value(val) {}
-  
-  data_type* get() const { return value.get_data(); }
-  void finish(data_ptr data, const H5::DataSpace *space) { }
-  
+
+  data_ptr operator *() { return get(); }
+  data_ptr get() const { return value.get_data(); }
+  void finish(const H5::DataSpace *space = nullptr) { }
+
 private:
   vbox_ref value;
 };
@@ -384,31 +386,34 @@ public:
   typedef ValueBox<T>  &vbox_ref;
   typedef char        *data_type;
   typedef data_type   *data_ptr;
-  
-  DataBox(vbox_ref val) : value(val) {}
-  
-  data_type* get() {
+
+  DataBox(vbox_ref val) : value(val) {
     size_t nelms = value.size();
-    data_ptr data = new data_type[nelms];
-    return data;
+    data = new data_type[nelms];
   }
-  
-  void finish(data_ptr data, const H5::DataSpace *space) {
+
+  data_ptr operator *() { return get(); }
+  data_ptr get() { return data; }
+
+  void finish(const H5::DataSpace *space = nullptr) {
     size_t nelms = value.size();
     auto vptr = value.get_data();
-    
+
     for (size_t i = 0; i < nelms; i++) {
       vptr[i] = data[i];
     }
-    
+
     if (space) {
 			H5::DataSet::vlenReclaim(data, value.memType, *space);
 		}
-    
-    delete[] data;
   }
-  
+
+  ~DataBox() {
+     delete[] data;
+  }
+
 private:
+  data_ptr data;
   vbox_ref value;
 };
 
@@ -421,26 +426,27 @@ public:
   typedef ValueBox<const T> &vbox_ref;
   typedef char const       *data_type;
   typedef data_type        *data_ptr;
-  
-  DataBox(vbox_ref val) : value(val) {}
-  
-  data_type* get() const {
-    size_t nelms = value.size();
-    data_ptr data = new data_type[nelms];
-    auto vptr = value.get_data();
-    
-    for (auto i = 0; i < nelms; i++) {
+
+  DataBox(vbox_ref val) : value(val) {
+     size_t nelms = value.size();
+     data = new data_type[nelms];
+     auto vptr = value.get_data();
+
+     for (auto i = 0; i < nelms; i++) {
       data[i] = vptr[i].c_str();
     }
-    
-    return data;
   }
-  
-  void finish(data_ptr data, const H5::DataSpace *space) {
-    delete[] data;
+
+  data_ptr operator *() { return get(); }
+  data_ptr get() const { return data; }
+  void finish(const H5::DataSpace *space = nullptr) { }
+
+  ~DataBox() {
+     delete[] data;
   }
-  
+
 private:
+  data_ptr data;
   vbox_ref value;
 };
 
@@ -458,7 +464,7 @@ public:
   typedef typename dbox_type::data_ptr       data_ptr;
   
 
-  Charon(value_ref val) : value(val), data(value) {
+  Charon(value_ref val) : value(val) {
     static_assert(vbox_type::is_valid, "No valid type spec");
   }
   
@@ -484,30 +490,26 @@ public:
     } else {
       space = H5::DataSpace((int) rank, shape);
     }
-    
+
     delete[] shape;
     return space;
   }
-  
+
   hsize_t* shape(size_t &rank) const {
     return value.shape(rank);
   }
-  
-  data_ptr get() {
-    return data.get();
+
+  dbox_type get_data() {
+    dbox_type data(value);
+    return data;
   }
-  
-  void finish(data_ptr val, const H5::DataSpace *space = nullptr) {
-    data.finish(val, space);
-  }
-  
+
   void resize(size_t rank, hsize_t *dims) {
     value.resize(rank, dims);
   }
-  
+
 private:
   vbox_type  value;
-  dbox_type  data;
 };
 
 #endif //PANDORA_CHARON_H
