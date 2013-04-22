@@ -139,20 +139,17 @@ public:
       Property p1 = s.addProperty(name.str());
       p1.unit(units[j]);
     }
-
     stringstream msg;
     msg << "Error while creating properties in section: s.id() = " << s.id()
                     << " Property count should be: " << oldCount + 5 << " but is: "
                     << s.propertyCount();
     CPPUNIT_ASSERT_MESSAGE(msg.str(), s.propertyCount() == (oldCount + 5));
-
     Property p = *s.properties();
     stringstream msg2;
     msg2
     << "Error while adding already existing property. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg2.str(), s.addProperty(p.name()),
         std::runtime_error);
-
   }
 
   void testAccessingProperties() {
