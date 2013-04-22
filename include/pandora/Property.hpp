@@ -47,6 +47,7 @@ private:
   Group group;
   std::string property_id;
 
+  bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
 public:
 
@@ -78,6 +79,16 @@ public:
   std::string unit() const;
 
   void addStringValue(const std::string value, const std::string &reference= "", const std::string filename = "", const std::string encoder = "", const std::string checksum = "");
+
+  std::string stringValue(size_t index) const;
+
+  void removeValue(size_t index);
+
+  void removeValues();
+
+  void stringValue(size_t index, StringValue &value) const;
+
+  size_t valueCount() const;
 
   //void addValue(int value, const std::string &reference, const std::string &filename, const std::string filename, const std::string encoder, const std::string checksum);
 
