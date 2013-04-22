@@ -81,19 +81,15 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const
   if (!hasAttr(name)) {
     return false;
   }
-  
+
   Charon<T> charon(value);
-  H5::Attribute attr;
-  H5::DataSpace space;
-  
-  attr = h5group.openAttribute(name);
-  
-  space = attr.getSpace();
-  size_t rank = (size_t) space.getSimpleExtentNdims();
-  hsize_t *dims = new hsize_t[rank];
-  space.getSimpleExtentDims (dims, nullptr);
-  charon.resize(rank, dims);
-  delete[] dims;
+  H5::Attribute attr = h5group.openAttribute(name);
+
+  H5::DataSpace space = attr.getSpace();
+  int rank = space.getSimpleExtentNdims();
+  PSize dims(static_cast<size_t>(rank));
+  space.getSimpleExtentDims (&dims[0], nullptr);
+  charon.resize(dims);
 
   typedef typename Charon<T>::dbox_type dbox_type;
   dbox_type data = charon.get_data();

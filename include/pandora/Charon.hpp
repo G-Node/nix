@@ -5,6 +5,8 @@
 #include <H5Cpp.h>
 #include <boost/multi_array.hpp>
 
+#include <pandora/PSize.hpp>
+
 namespace pandora {
 namespace hades {
 
@@ -112,12 +114,9 @@ template<typename T>
 class TypeInfo {
 public:
   typedef T element_type;
-  
-  static hsize_t* shape(const T &value, size_t &rank) {
-    rank = 0;
-    return nullptr;
-  }
-  
+
+  static PSize shape(const T &value) { return PSize(); }
+
   static size_t num_elements(const T &value) {
     return 1;
   }
@@ -130,8 +129,8 @@ public:
     return &value;
   }
   
-  static void resize(T &value, size_t rank, hsize_t *dims) {
-    if (rank != 0) {
+  static void resize(T &value, const PSize &dims) {
+    if (dims.size() != 0) {
       throw InvalidRankException("Cannot resize scalar");
     }
   }
@@ -144,14 +143,13 @@ class TypeInfo<std::vector<T>> {
 public:
   typedef T element_type;
   typedef std::vector<T> vector_type;
-  
-  static hsize_t *shape(const vector_type &value, size_t &rank) {
-    rank = 1;
-    hsize_t *dims = new hsize_t[1];
-    dims[0] = value.size();
-    return dims;
+
+  static PSize shape(const vector_type &value) {
+    PSize hsize(1);
+    hsize[0] = value.size();
+    return hsize;
   }
-  
+
   static size_t num_elements(const vector_type &value) {
     return value.size();
   }
@@ -163,15 +161,15 @@ public:
   static element_type* getData(vector_type &value) {
     return &value[0];
   }
-  
-  static void resize(vector_type &value, size_t rank, hsize_t *dims) {
-    if (rank != 1) {
+
+  static void resize(vector_type &value, const PSize &dims) {
+    if (dims.size() != 1) {
       throw InvalidRankException("Cannot change rank of vector"); //FIXME
     }
-    
+
     if (dims[0] == value.size())
       return;
-    
+
     value.resize(dims[0]);
   }
 };
@@ -181,15 +179,14 @@ class TypeInfo<boost::multi_array<T, N>> {
 public:
   typedef boost::multi_array<T, N>     array_type;
   typedef typename array_type::element element_type;
-  
-  static hsize_t *shape(const array_type &value, size_t &rank) {
-    rank = N;
-    hsize_t *dims = new hsize_t[N];
+
+  static PSize shape(const array_type &value) {
+    PSize hsize(N);
     const size_t *shape = value.shape();
-    std::copy(shape, shape + N, dims);
-    return dims;
+    std::copy(shape, shape + N, &hsize[0]);
+    return hsize;
   }
-  
+
   static size_t num_elements(const array_type &value) {
     return value.num_elements();
   }
@@ -202,15 +199,12 @@ public:
     return value.data();
   }
   
-  static void resize(array_type &value, size_t rank, hsize_t *dims) {
-    if (rank != N) {
+  static void resize(array_type &value, const PSize &dims) {
+    if (dims.size() != N) {
       throw InvalidRankException("Cannot change rank of multiarray");
     }
-    
-    std::vector<std::size_t> extend;
-    extend.resize(N);
-    std::copy(dims, dims+rank, extend.begin());
-    value.resize(extend);
+
+    value.resize(dims);
   }
 };
 
@@ -220,14 +214,13 @@ class TypeInfo<T[N]> {
 public:
   typedef T element_type;
   typedef T array_type[N];
-  
-  static hsize_t *shape(const array_type &value, size_t &rank) {
-    rank = 1;
-    hsize_t *dims = new hsize_t[1];
-    dims[0] = N;
-    return dims;
+
+  static PSize shape(const array_type &value) {
+    PSize hsize(1);
+    hsize[0] = N;
+    return hsize;
   }
-  
+
   static size_t num_elements(const array_type&value) {
     return N;
   }
@@ -239,9 +232,9 @@ public:
   static element_type* getData(array_type &value) {
     return value;
   }
-  
-  static void resize(array_type &value, size_t rank, hsize_t *dims) {
-    if (rank != 1 && dims[0] != N) {
+
+  static void resize(array_type &value, const PSize &dims) {
+    if (dims.size() != 1 && dims[0] != N) {
       throw InvalidRankException("Cannot resize native arrays");
     }
     //NOOP
@@ -254,16 +247,15 @@ class TypeInfo<T[M][N]> {
 public:
   typedef T element_type;
   typedef T array_type[M][N];
-  
-  static hsize_t *shape(const array_type &value, size_t &rank) {
-    rank = 2;
-    hsize_t *dims = new hsize_t[2];
-    dims[0] = M;
-    dims[1] = N;
-    return dims;
+
+  static PSize shape(const array_type &value) {
+    PSize hsize(2);
+    hsize[0] = M;
+    hsize[1] = N;
+    return hsize;
   }
-  
-  static size_t num_elements(const array_type&value) {
+
+  static size_t num_elements(const array_type &value) {
     return M*N;
   }
   
@@ -274,9 +266,9 @@ public:
   static element_type* getData(array_type &value) {
     return value[0];
   }
-  
-  static void resize(array_type &value, size_t rank, hsize_t *dims) {
-    if (rank != 2 && dims[0] != M && dims[1] != N) {
+
+  static void resize(array_type &value, const PSize &dims) {
+    if (dims.size() != 2 && dims[0] != M && dims[1] != N) {
       throw InvalidRankException("Cannot resize native arrays");
     }
     //NOOP
@@ -299,10 +291,10 @@ public:
   
   element_ptr get_data() { return info_type::getData(value); }
   value_ref   get() { return value; }
-  hsize_t *   shape(size_t &rank) const { return info_type::shape(value, rank); }
+  PSize       shape() const { return info_type::shape(value); }
   size_t      size() { return this->num_elements(value); }
   
-  void        resize(size_t rank, hsize_t *dims) {info_type::resize (value, rank, dims);}
+  void        resize(const PSize &size) {info_type::resize (value, size);}
   
 private:
   value_ref value;
@@ -325,7 +317,7 @@ public:
   
   element_ptr get_data() const { return info_type::getData(value); }
   value_ref   get() const { return value; }
-  hsize_t *   shape(size_t &rank) const { return info_type::shape(value, rank); }
+  PSize       shape() const { return info_type::shape(value); }
   size_t      size() { return this->num_elements(value); }
   
 private:
@@ -472,31 +464,28 @@ public:
   const H5::DataType& getMemType() const { return value.memType; }
   
   H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
-    hsize_t *shape;
-    size_t   rank;
-    shape = value.shape(rank);
+    PSize shape = value.shape();
     H5::DataSpace space;
-    
-    if (rank == 0) {
+
+    if (shape.size() == 0) {
       space = H5::DataSpace();
       return space; //no need to delete shape
     }
-    
+
+    int rank = (int) shape.size();
     if (maxdimsUnlimited) {
-      hsize_t *maxdims = new hsize_t[rank];
-      std::fill_n(maxdims, rank, H5S_UNLIMITED);
-      space = H5::DataSpace((int) rank, shape, maxdims);
-      delete[] maxdims;
+      PSize maxdims(shape.size());
+      std::fill_n(&maxdims[0], rank, H5S_UNLIMITED);
+      space = H5::DataSpace(rank, &shape[0], &maxdims[0]);
     } else {
-      space = H5::DataSpace((int) rank, shape);
+      space = H5::DataSpace(rank, &shape[0]);
     }
 
-    delete[] shape;
     return space;
   }
 
-  hsize_t* shape(size_t &rank) const {
-    return value.shape(rank);
+  PSize shape() const {
+    return value.shape();
   }
 
   dbox_type get_data() {
@@ -504,8 +493,8 @@ public:
     return data;
   }
 
-  void resize(size_t rank, hsize_t *dims) {
-    value.resize(rank, dims);
+  void resize(const PSize &size) {
+    value.resize(size);
   }
 
 private:
