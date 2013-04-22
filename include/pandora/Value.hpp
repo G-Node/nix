@@ -12,13 +12,14 @@ const size_t VALUE_STR_LENGTH = 2500;
 namespace pandora {
 
 struct StringValue{
-   char value[1251];
-   double uncertainty;
-   char filename[257];
-   char encoder[257];
-   char checksum[257];
-   char reference[257];
+  char value[1251];
+  double uncertainty;
+  char filename[257];
+  char encoder[257];
+  char checksum[257];
+  char reference[257];
 } val;
+
 
 class Value {
 
@@ -33,19 +34,32 @@ class Value {
 
 public:
 
+  static H5::CompType stringValueMemType(){
+    H5::StrType longString(H5::PredType::C_S1, 1251);
+    H5::StrType shortString(H5::PredType::C_S1, 257);
+    H5::CompType mtype(sizeof(StringValue));
+    mtype.insertMember("value", HOFFSET(StringValue, value), longString);
+    mtype.insertMember("uncertainty", HOFFSET(StringValue, uncertainty), H5::PredType::NATIVE_DOUBLE);
+    mtype.insertMember("reference", HOFFSET(StringValue, reference), shortString);
+    mtype.insertMember("filename", HOFFSET(StringValue, filename), shortString);
+    mtype.insertMember("encoder", HOFFSET(StringValue, encoder), shortString);
+    mtype.insertMember("checksum", HOFFSET(StringValue, checksum), shortString);
+    return mtype;
+  };
+
   Value(const Value &value);
 
   Value(std::string value, double uncertainty = 0.0, std::string filename = "",
       std::string checksum = "", std::string encoder = "", std::string reference = "");
 
   Value(int value, double uncertainty = 0.0, std::string filename = "",
-        std::string checksum = "", std::string encoder = "", std::string reference = "");
+      std::string checksum = "", std::string encoder = "", std::string reference = "");
 
   Value(double value, double uncertainty = 0.0, std::string filename = "",
-        std::string checksum = "", std::string encoder = "", std::string reference = "");
+      std::string checksum = "", std::string encoder = "", std::string reference = "");
 
   Value(float value, double uncertainty = 0.0, std::string filename = "",
-        std::string checksum = "", std::string encoder = "", std::string reference = "");
+      std::string checksum = "", std::string encoder = "", std::string reference = "");
 
 
 
