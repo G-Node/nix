@@ -6,6 +6,7 @@
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>
+#include <pandora/DataType.hpp>
 
 namespace pandora {
 namespace hades {
@@ -99,6 +100,21 @@ struct TypeSpec<std::string> {
   static const bool is_valid = true;
   const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+};
+
+
+template<>
+struct TypeSpec<DataType> {
+
+  static const bool is_valid = true;
+
+  TypeSpec(DataType type)
+    : fileType(data_type_to_h5_filetype(type)),
+      memType(data_type_to_h5_memtype(type))
+     { }
+
+  const H5::DataType fileType;
+  const H5::DataType memType;
 };
 
 /* ********** */
