@@ -3,7 +3,6 @@
 
 #include <string>
 #include <pandora/Group.hpp>
-#include <pandora/Property.hpp>
 #include <pandora/File.hpp>
 
 const size_t STRLENGTH = 512;
@@ -18,7 +17,7 @@ struct StringValue{
   char encoder[257];
   char checksum[257];
   char reference[257];
-} val;
+};
 
 
 class Value {
