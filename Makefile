@@ -47,7 +47,7 @@ endif
 #
 # make all
 #
-all: clean release
+all: release
 
 #
 # make library and main executable for release
