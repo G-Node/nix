@@ -23,6 +23,9 @@
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
 
+#ifndef PANDORA_H
+#define PANDORA_H
+
 namespace pandora {
   enum DataType {
     FLOAT,
@@ -34,3 +37,5 @@ namespace pandora {
   };
 
 }
+
+#endif //PANDORA_H
