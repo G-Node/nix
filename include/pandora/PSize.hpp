@@ -1,5 +1,5 @@
-#ifndef PANDORA_HSIZE_H
-#define PANDORA_HSIZE_H
+#ifndef PANDORA_PSIZE_H
+#define PANDORA_PSIZE_H
 
 #include <stdexcept>
 
@@ -83,4 +83,4 @@ private:
 };
 
 } //namespace pandroa
-#endif // PANDORA_HSIZE_H
+#endif // PANDORA_PSIZE_H
