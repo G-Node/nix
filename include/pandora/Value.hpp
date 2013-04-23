@@ -19,7 +19,6 @@ struct StringValue{
   char reference[257];
 };
 
-
 class Value {
 
   union panValue {
