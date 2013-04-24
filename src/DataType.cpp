@@ -54,21 +54,21 @@ size_t data_type_to_size(DataType dtype)
 
 		case DataType::Int8:
 		case DataType::UInt8:
-		  return 8;
+		  return 1;
 
 		case DataType::Int16:
 		case DataType::UInt16:
-		  return 16;
+		  return 2;
 
 		case DataType::Int32:
 		case DataType::UInt32:
 		case DataType::Float:
-		  return 32;
+		  return 4;
 
 		case DataType::Int64:
 		case DataType::UInt64:
 		case DataType::Double:
-		  return 64;
+		  return 8;
 
 		default:
 		   throw std::invalid_argument("Unkown DataType");

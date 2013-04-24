@@ -24,6 +24,7 @@ namespace pandora {
 
 H5::DataType data_type_to_h5_filetype(DataType dtype);
 H5::DataType data_type_to_h5_memtype(DataType dtype);
+size_t       data_type_to_size(DataType dtype);
 
 }
 
