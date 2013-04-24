@@ -15,6 +15,7 @@ public:
 
 	static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
 		const PSize &size, const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+	static PSize guessChunking(PSize dims, DataType dtype);
 
 	void extend(const PSize &size);
 
