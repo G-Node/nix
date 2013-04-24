@@ -60,6 +60,10 @@ public:
 
 	size_t size() const { return rank; }
 
+	void fill(hsize_t value) {
+		std::fill_n(dims, rank, value);
+	}
+
 	~PSize(){
 		delete[] dims;
 	}
