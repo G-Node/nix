@@ -33,11 +33,27 @@ public:
     openMode = H5F_ACC_RDWR;
   }
 
-  void testCreation() {
+  void testChunkGuessing() {
+
+    PSize dims(2);
+    dims[0] = 1024;
+    dims[1] = 1024;
+
+    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
+    CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
+  }
+
+  void testBasic() {
     PSize dims(2);
     dims[0] = 4;
     dims[1] = 6;
-    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
+
+    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    PSize maxdims(dims.size());
+    maxdims.fill(H5S_UNLIMITED);
+
+    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims, &maxdims, &chunks);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -56,6 +72,17 @@ public:
       for(index j = 0; j != 6; ++j)
         CPPUNIT_ASSERT_EQUAL(A[i][j], B[i][j]);
 
+    array_type C(boost::extents[8][12]);
+    values = 0;
+    for(index i = 0; i != 8; ++i)
+      for(index j = 0; j != 12; ++j)
+        C[i][j] = values++;
+
+    dims[0] = 8;
+    dims[1] = 12;
+
+    ds.extend(dims);
+    ds.write(C);
   }
 
   void tearDown() {
@@ -71,7 +98,8 @@ public:
   H5::Group h5group;
 
   CPPUNIT_TEST_SUITE(TestDataSet);
-  CPPUNIT_TEST(testCreation);
+  CPPUNIT_TEST(testBasic);
+  CPPUNIT_TEST(testChunkGuessing);
   CPPUNIT_TEST_SUITE_END ();
 };
 
