@@ -15,6 +15,7 @@
  */
 
 #include <pandora/DataType.hpp>
+#include <pandora/PSize.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
