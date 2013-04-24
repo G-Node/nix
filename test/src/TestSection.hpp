@@ -37,7 +37,7 @@ private:
 public:
 
   void setUp() {
-    f1 = new File("test_block.h5", "org.g-node", File::READ_WRITE);
+    f1 = new File("test_block.h5", "org.g-node", FileMode::ReadWrite);
   }
 
   void tearDown() {

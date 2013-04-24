@@ -1,12 +1,14 @@
 #include "TestCharon.hpp"
 #include "TestFile.hpp"
 #include "TestSection.hpp"
+#include "TestProperty.hpp"
 
 int main(int argc, char* argv[])
 {
   CPPUNIT_TEST_SUITE_REGISTRATION(TestCharon);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
 
   CPPUNIT_NS::TestResult testresult;
   CPPUNIT_NS::TestResultCollector collectedresults;
