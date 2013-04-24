@@ -1,7 +1,6 @@
 #ifndef PANDORA_DATASET_H
 #define PANDORA_DATASET_H
 
-
 #include <pandora.hpp>
 #include <H5Cpp.h>
 
@@ -16,6 +15,8 @@ public:
 
 	static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
 		const PSize &size, const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+
+	void extend(const PSize &size);
 
 private:
 	H5::DataSet h5dset;

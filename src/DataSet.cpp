@@ -37,4 +37,10 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 	return DataSet(dset);
 }
 
+void DataSet::extend(const PSize &dims)
+{
+	//FIXME check for same rank
+	h5dset.extend(&dims[0]);
+}
+
 } //namespace pandora
