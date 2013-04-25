@@ -62,9 +62,10 @@ double psize_product(const PSize &dims)
  *
  * This function is a port of the guess_chunk() function from h5py
  * low-level Python interface to the HDF5 library.\n
- * Copyright (C) 2008 - 2013 Andrew Collette & contributers\n
  * http://h5py.alfven.org\n
- * License: BSD 3-clause (see LICENSE.h5py)\n
+ * 
+ * @copyrigh 2008 - 2013 Andrew Collette & contributers\n
+ * @license BSD 3-clause (see LICENSE.h5py)\n
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
