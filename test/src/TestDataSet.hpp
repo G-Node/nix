@@ -85,6 +85,65 @@ public:
     ds.write(C);
   }
 
+
+
+  void testSelection() {
+    PSize dims(2);
+    dims[0] = 15;
+    dims[1] = 15;
+
+    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    PSize maxdims(dims.size());
+    maxdims.fill(H5S_UNLIMITED);
+    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims, &maxdims, &chunks);
+
+    typedef boost::multi_array<double, 2> array_type;
+    typedef array_type::index index;
+    array_type A(boost::extents[5][5]);
+    int values = 1;
+    for(index i = 0; i != 5; ++i)
+      for(index j = 0; j != 5; ++j)
+        A[i][j] = values++;
+
+    Selection memSelection(ds.createSelection(A));
+    Selection fileSelection(ds.createSelection());
+
+    PSize fileCount(dims.size());
+    PSize fileStart(dims.size());
+    fileCount.fill(5ULL);
+    fileStart.fill(5ULL);
+    fileSelection.select(fileCount, fileStart);
+
+    PSize boundsStart(dims.size());
+    PSize boundsEnd(dims.size());
+
+    fileSelection.bounds(boundsStart, boundsEnd);
+    PSize boundsSize = fileSelection.size();
+    for (size_t idx = 0; idx < dims.size(); idx++) {
+      std::cout << boundsStart[idx] << " : " << boundsEnd[idx] << "|" << boundsSize[idx] << std::endl;
+    }
+
+    ds.write(A, fileSelection, memSelection);
+
+    array_type B(boost::extents[5][5]);
+    ds.read(B, fileSelection); //NB: no mem-selection
+
+    for(index i = 0; i != 5; ++i)
+      for(index j = 0; j != 5; ++j)
+        CPPUNIT_ASSERT_EQUAL(A[i][j], B[i][j]);
+
+    PSSize offset(dims.size(), 5);
+    fileSelection.offset(offset);
+    ds.write(A, fileSelection);
+
+    array_type C(boost::extents[5][5]);
+    ds.read(C, fileSelection, true);
+
+    for(index i = 0; i != 5; ++i)
+      for(index j = 0; j != 5; ++j)
+        CPPUNIT_ASSERT_EQUAL(A[i][j], C[i][j]);
+  }
+
   void tearDown() {
     h5group.close();
     h5file.close();
@@ -98,8 +157,9 @@ public:
   H5::Group h5group;
 
   CPPUNIT_TEST_SUITE(TestDataSet);
-  CPPUNIT_TEST(testBasic);
   CPPUNIT_TEST(testChunkGuessing);
+  CPPUNIT_TEST(testBasic);
+  CPPUNIT_TEST(testSelection);
   CPPUNIT_TEST_SUITE_END ();
 };
 

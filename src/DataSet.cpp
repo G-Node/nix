@@ -1,6 +1,7 @@
 #include <iostream>
 #include <hdf5.h>
 #include <pandora/DataSet.hpp>
+#include <pandora/Selection.hpp>
 
 #include <cmath>
 
@@ -124,6 +125,12 @@ void DataSet::extend(const PSize &dims)
 {
 	//FIXME check for same rank
 	h5dset.extend(&dims[0]);
+}
+
+Selection DataSet::createSelection() const
+{
+	H5::DataSpace space = h5dset.getSpace();
+	return Selection(space);
 }
 
 } //namespace pandora
