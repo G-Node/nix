@@ -64,8 +64,8 @@ double psize_product(const PSize &dims)
  * low-level Python interface to the HDF5 library.\n
  * http://h5py.alfven.org\n
  * 
- * @copyrigh 2008 - 2013 Andrew Collette & contributers\n
- * @license BSD 3-clause (see LICENSE.h5py)\n
+ * @copyright Copyright 2008 - 2013 Andrew Collette & contributers\n
+ * License: BSD 3-clause (see LICENSE.h5py)\n
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
