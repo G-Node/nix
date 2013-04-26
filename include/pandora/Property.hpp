@@ -10,36 +10,7 @@
 
 namespace pandora {
 
-
-
-struct DoubleValue{
-   double value;
-   double uncertainty;
-   std::string filename;
-   std::string encoder;
-   std::string checksum;
-   std::string reference;
-};
-
-struct IntValue{
-   int value;
-   double uncertainty;
-   std::string filename;
-   std::string encoder;
-   std::string checksum;
-   std::string reference;
-};
-
-struct BoolValue{
-   bool value;
-   std::string filename;
-   std::string encoder;
-   std::string checksum;
-   std::string reference;
-};
-
-class Property
-{
+class Property {
 
 private:
 
@@ -78,15 +49,20 @@ public:
   void unit(std::string unit);
   std::string unit() const;
 
-  void addStringValue(const std::string value, const std::string &reference= "", const std::string filename = "", const std::string encoder = "", const std::string checksum = "");
+  template<typename T>
+  void addValue(const Value<T> &value);
 
-  std::string stringValue(size_t index) const;
+  template<typename T>
+  void addValue(const T value, const std::string &reference = "", const std::string filename = "",
+      const std::string encoder = "", const std::string checksum = "");
+
+
+  template<typename T>
+  void value(size_t index, Value<T> &value) const;
 
   void removeValue(size_t index);
 
   void removeValues();
-
-  void stringValue(size_t index, StringValue &value) const;
 
   size_t valueCount() const;
 
@@ -101,6 +77,73 @@ public:
 
 };
 
+template<typename T>
+void Property::addValue(T value, const std::string &reference, const std::string filename,
+    const std::string encoder, const std::string checksum) {
+  ValueInfo<T> info;
+  std::string dt = this->dataType();
+  if (dt.length() > 0 && dt.compare(info.type) != 0) {
+    throw std::runtime_error("Value and data type do not match!");
+    return;
+  } else {
+    dataType(info.type);
+  }
+
+  FileValue<typename ValueInfo<T>::inner_type> val;
+
+  val.value = info.get(value);
+  val.uncertainty = 0.0;
+  val.reference = (char*) reference.c_str();
+  val.encoder = (char*) encoder.c_str();
+  val.checksum = (char*) checksum.c_str();
+  val.filename = (char*) filename.c_str();
+
+  hsize_t dim[1] = { 1 };
+  H5::DataSpace space(1, dim);
+  H5::DataSet* dataset;
+  dataset = new H5::DataSet(group.h5Group().createDataSet("values", info.memtype, space));
+  dataset->write(&val, info.memtype);
+}
+
+template<typename T>
+void Property::addValue(const Value<T> &value)  {
+  ValueInfo<T> info;
+  std::string dt = this->dataType();
+  if (dt.length() > 0 && dt.compare(info.type) != 0) {
+    throw std::runtime_error("Value and data type do not match!");
+    return;
+  } else {
+    dataType(info.type);
+  }
+
+  typedef typename ValueInfo<T>::inner_type inner_type;
+  FileValue<inner_type> val;
+  val = value.toValueBase(val.value);
+
+  hsize_t dim[1] = { 1 };
+  H5::DataSpace space(1, dim);
+  H5::DataSet* dataset;
+  dataset = new H5::DataSet(group.h5Group().createDataSet("values", info.memtype, space));
+  dataset->write(&val, info.memtype);
+}
+
+template<typename T>
+void Property::value(size_t index, Value<T> &value) const {
+  if (group.hasData("values")) {
+    if (index < 0 || index >= valueCount()) {
+      throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
+    }
+    H5::DataSet dataset = group.openData("values");
+    ValueInfo<T> info;
+    if (!checkDataType(dataset, info.h5class)) {
+      throw std::runtime_error("Property::stringValue(index): Value DataType is not String!");
+    }
+    FileValue<typename ValueInfo<T>::inner_type> fileValue;
+    dataset.read(&fileValue, info.memtype);
+    value = fileValue;
+    H5::DataSet::vlenReclaim(&fileValue, info.memtype, dataset.getSpace());
+  }
+}
 }
 
 #endif // HDX_PROPERTY_H_INCLUDE

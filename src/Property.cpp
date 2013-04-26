@@ -8,12 +8,12 @@ using namespace std;
 namespace pandora {
 
 Property::Property(const Property &property) :
-          section(property.section), group(property.group), property_id(property.property_id) {
+              section(property.section), group(property.group), property_id(property.property_id) {
   // nothing to do
 }
 
 Property::Property(Section section, Group group, string id) :
-          section(section), group(group), property_id(id) {
+              section(section), group(group), property_id(id) {
 }
 
 string Property::id() const {
@@ -87,53 +87,6 @@ string Property::unit() const {
   return unit;
 }
 
-void Property::addStringValue(const std::string value, const std::string &reference,
-    const std::string filename, const std::string encoder, const std::string checksum) {
-  string dt = this->dataType();
-  if (dt.length() > 0 && dt.compare("string") != 0) {
-    throw std::runtime_error("Value and data type do not match!");
-    return;
-  } else {
-    dataType("string");
-  }
-
-  StringValue v1[1];
-  v1[0].value = (char*)value.c_str();
-  v1[0].uncertainty = 0.0;
-  v1[0].reference = (char*)reference.c_str();
-  v1[0].encoder = (char*)encoder.c_str();
-  v1[0].checksum = (char*)checksum.c_str();
-  v1[0].filename = (char*)filename.c_str();
-
-  hsize_t dim[1] = { 1 };
-  H5::DataSpace space(1, dim);
-  H5::CompType mtype = Value::stringValueMemType();
-  H5::DataSet* dataset;
-  dataset = new H5::DataSet(group.h5Group().createDataSet("values", mtype, space));
-  dataset->write(v1, mtype);
-}
-
-string Property::stringValue(size_t index) const {
-  StringValue value[1];
-  stringValue(index, value[0]);
-  return value[0].value;
-}
-
-void Property::stringValue(size_t index, StringValue &value) const {
-  if (group.hasData("values")) {
-    if (index < 0 || index >= valueCount()) {
-      throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
-    }
-    H5::DataSet dataset = group.openData("values");
-    if (!checkDataType(dataset, H5T_STRING)) {
-      throw std::runtime_error("Property::stringValue(index): Value DataType is not String!");
-    }
-    H5::CompType mtype = Value::stringValueMemType();
-    StringValue temp[1];
-    dataset.read(temp, mtype);
-    value = temp[0];
-  }
-}
 
 void Property::removeValue(size_t index){
   if (group.hasData("values")) {
