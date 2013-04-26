@@ -119,9 +119,6 @@ public:
 
     fileSelection.bounds(boundsStart, boundsEnd);
     PSize boundsSize = fileSelection.size();
-    for (size_t idx = 0; idx < dims.size(); idx++) {
-      std::cout << boundsStart[idx] << " : " << boundsEnd[idx] << "|" << boundsSize[idx] << std::endl;
-    }
 
     ds.write(A, fileSelection, memSelection);
 
