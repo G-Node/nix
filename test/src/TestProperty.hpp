@@ -20,7 +20,7 @@
 using namespace std;
 using namespace pandora;
 
-class TestProperty: public CPPUNIT_NS::TestFixture {
+class TestProperty:public CPPUNIT_NS::TestFixture {
 private:
 
   CPPUNIT_TEST_SUITE(TestProperty);
@@ -41,10 +41,9 @@ public:
     delete f1;
   }
 
-
-  void testAddRemoveValue(){
+  void testAddRemoveValue() {
     Section s = f1->getSection(f1->metadataGroup().objectName(0));
-    if(s.hasPropertyByName("TestProperty")){
+    if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
     Property p = s.addProperty("TestProperty");
@@ -60,58 +59,90 @@ public:
     std::string str = "This is a  test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";
-    p.addStringValue(str,str2,str3);
+    p.addStringValue(str, str2, str3);
 
     stringstream msg2;
     msg2 << "Error getting value count. Should have been 1!";
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), p.valueCount() == 1 );
 
     p.removeValues();
+
     stringstream msg3;
     msg2 << "Error setting property name. Should have been refused since property has values!";
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), p.valueCount() == 0 );
   }
 
-  void testAccessingValues(){
+  void testAccessingValues() {
     Section s = f1->getSection(f1->metadataGroup().objectName(0));
-    if(s.hasPropertyByName("TestProperty")){
+    if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
     Property p = s.addProperty("TestProperty");
     std::string str = "This is a test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";
-    p.addStringValue(str,str2,str3);
+    std::string str4 = "a common encoder";
+    std::string str5 = "the checksum";
 
+    p.addStringValue(str, str2, str3, str4, str5);
+
+    StringValue val[1];
+    p.stringValue(0, val[0]);
+    stringstream valmsg;
+    valmsg << "Error accessing string value! Error accessing field value!";
+    string test(val[0].value);
+    CPPUNIT_ASSERT_MESSAGE(valmsg.str(), test.compare(str) == 0);
+
+    stringstream refmsg;
+    refmsg << "Error accessing string value! Error accessing field reference!";
+    test.assign(val[0].reference);
+    CPPUNIT_ASSERT_MESSAGE(refmsg.str(), test.compare(str2) == 0);
+
+    stringstream filemsg;
+    filemsg << "Error accessing string value! Error accessing filename!";
+    test.assign(val[0].filename);
+    CPPUNIT_ASSERT_MESSAGE(filemsg.str(), test.compare(str3) == 0);
+
+    stringstream encmsg;
+    encmsg << "Error accessing string value! Error accessing field encoder!";
+    test.assign(val[0].encoder);
+    CPPUNIT_ASSERT_MESSAGE(encmsg.str(), test.compare(str4) == 0);
+
+    stringstream chkmsg;
+    chkmsg << "Error accessing string value! Error accessing field checksum!";
+    test.assign(val[0].checksum);
+    CPPUNIT_ASSERT_MESSAGE(chkmsg.str(), test.compare(str5) == 0);
+
+    string value(p.stringValue(0));
     stringstream msg2;
     msg2 << "Error accessing string value!";
-    CPPUNIT_ASSERT_MESSAGE(msg2.str(), p.stringValue(0).compare("This is a test string.") == 0);
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), value.compare("This is a test string.") == 0);
 
     stringstream msg3;
-    msg3 << "Error accessing string value with index larger than value count. Should have thrown a runtime exception!";
+    msg3
+    << "Error accessing string value with index larger than value count. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(), p.stringValue(1), std::runtime_error);
-
   }
-
-
 
   void testProperties() {
     Section s = f1->getSection(f1->metadataGroup().objectName(0));
-    if(s.hasPropertyByName("TestProperty")){
+    if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
     Property p = s.addProperty("TestProperty");
     std::string str = "This is a  test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";
-    p.addStringValue(str,str2,str3);
+    p.addStringValue(str, str2, str3);
 
     stringstream msg3;
-    msg3 << "Error changing dataType of not-empty property. Should have thrown a runtime exception!";
+    msg3
+    << "Error changing dataType of not-empty property. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(), p.dataType("double"), std::runtime_error);
 
     stringstream msg4;
-    msg4 << "Error changing the name of a not empty property. Should have thrown a runtime exception!";
+    msg4
+    << "Error changing the name of a not empty property. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg4.str(), p.name("Test Property"), std::runtime_error);
   }
 

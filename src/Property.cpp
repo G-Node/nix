@@ -98,58 +98,12 @@ void Property::addStringValue(const std::string value, const std::string &refere
   }
 
   StringValue v1[1];
-  size_t i;
-  if (value.length() > 0) {
-    const char *ptr = value.c_str();
-    for (i = 0; (i < value.length() && i < 1250); i++) {
-      v1[0].value[i] = *ptr;
-      ptr++;
-    }
-    v1[0].value[i++] = '\0';
-  } else {
-    v1[0].value[0] = '\0';
-  }
+  v1[0].value = (char*)value.c_str();
   v1[0].uncertainty = 0.0;
-  if (reference.length() > 0) {
-    const char *refptr = reference.c_str();
-    for (i = 0; (i < reference.length() && i < 256); i++) {
-      v1[0].reference[i] = *refptr;
-      refptr++;
-    }
-    v1[0].reference[i++] = '\0';
-  } else {
-    v1[0].reference[0] = '\0';
-  }
-  if (encoder.length() > 0) {
-    const char *encptr = encoder.c_str();
-    for (i = 0; (i < encoder.length() && i < 256); i++) {
-      v1[0].encoder[i] = *encptr;
-      encptr++;
-    }
-    v1[0].encoder[i++] = '\0';
-  } else {
-    v1[0].encoder[0] = '\0';
-  }
-  if (filename.length() > 0) {
-    const char *fileptr = filename.c_str();
-    for (i = 0; (i < filename.length() && i < 256); i++) {
-      v1[0].filename[i] = *fileptr;
-      fileptr++;
-    }
-    v1[0].filename[i++] = '\0';
-  } else {
-    v1[0].filename[0] = '\0';
-  }
-  if (checksum.length() > 0) {
-    const char *chkptr = checksum.c_str();
-    for (i = 0; (i < checksum.length() && i < 256); i++) {
-      v1[0].checksum[i] = *chkptr;
-      chkptr++;
-    }
-    v1[0].checksum[i++] = '\0';
-  } else {
-    v1[0].checksum[0] = '\0';
-  }
+  v1[0].reference = (char*)reference.c_str();
+  v1[0].encoder = (char*)encoder.c_str();
+  v1[0].checksum = (char*)checksum.c_str();
+  v1[0].filename = (char*)filename.c_str();
 
   hsize_t dim[1] = { 1 };
   H5::DataSpace space(1, dim);

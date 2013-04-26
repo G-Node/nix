@@ -11,12 +11,12 @@ const size_t VALUE_STR_LENGTH = 2500;
 namespace pandora {
 
 struct StringValue{
-  char value[1251];
+  char *value;
   double uncertainty;
-  char filename[257];
-  char encoder[257];
-  char checksum[257];
-  char reference[257];
+  char *filename;
+  char *encoder;
+  char *checksum;
+  char *reference;
 };
 
 class Value {
@@ -33,15 +33,24 @@ class Value {
 public:
 
   static H5::CompType stringValueMemType(){
-    H5::StrType longString(H5::PredType::C_S1, 1251);
-    H5::StrType shortString(H5::PredType::C_S1, 257);
+
     H5::CompType mtype(sizeof(StringValue));
-    mtype.insertMember("value", HOFFSET(StringValue, value), longString);
+    hid_t valtype = H5Tcopy (H5T_C_S1);
+    H5Tset_size (valtype, H5T_VARIABLE);
+    mtype.insertMember("value", HOFFSET(StringValue, value), valtype);
     mtype.insertMember("uncertainty", HOFFSET(StringValue, uncertainty), H5::PredType::NATIVE_DOUBLE);
-    mtype.insertMember("reference", HOFFSET(StringValue, reference), shortString);
-    mtype.insertMember("filename", HOFFSET(StringValue, filename), shortString);
-    mtype.insertMember("encoder", HOFFSET(StringValue, encoder), shortString);
-    mtype.insertMember("checksum", HOFFSET(StringValue, checksum), shortString);
+    hid_t reftype = H5Tcopy (H5T_C_S1);
+    H5Tset_size (reftype, H5T_VARIABLE);
+    mtype.insertMember("reference", HOFFSET(StringValue, reference), reftype);
+    hid_t filetype = H5Tcopy (H5T_C_S1);
+    H5Tset_size (filetype, H5T_VARIABLE);
+    mtype.insertMember("filename", HOFFSET(StringValue, filename), filetype);
+    hid_t enctype = H5Tcopy (H5T_C_S1);
+    H5Tset_size (enctype, H5T_VARIABLE);
+    mtype.insertMember("encoder", HOFFSET(StringValue, encoder), enctype);
+    hid_t chktype = H5Tcopy (H5T_C_S1);
+    H5Tset_size (chktype, H5T_VARIABLE);
+    mtype.insertMember("checksum", HOFFSET(StringValue, checksum), chktype);
     return mtype;
   };
 
@@ -62,13 +71,7 @@ public:
 
 
 public:
-  const std::string filename;
-  const std::string encoder;
-  const std::string checksum;
-  const std::string reference;
-  const double uncertainty;
-  const std::string dataType;
-  const panValue value;
+
 
 };
 
