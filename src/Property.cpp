@@ -119,9 +119,10 @@ size_t Property::valueCount() const {
     H5::DataSet dataset = group.openData("values");
     H5::DataSpace space = dataset.getSpace();
     int dims = space.getSimpleExtentNdims();
-    hsize_t dimSize[dims];
+    hsize_t *dimSize = new hsize_t[dims];
     space.getSimpleExtentDims(dimSize);
     count = dimSize[0];
+    delete[] dimSize;
   }
   return count;
 }
