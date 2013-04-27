@@ -94,6 +94,14 @@ struct TypeSpec<double> {
 };
 
 template<>
+struct TypeSpec<bool> {
+
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I8LE;
+  const H5::DataType memType = H5::PredType::NATIVE_HBOOL;
+};
+
+template<>
 struct TypeSpec<std::string> {
   
   static const bool is_valid = true;
