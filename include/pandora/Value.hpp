@@ -5,20 +5,9 @@
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 
-const size_t STRLENGTH = 512;
-const size_t VALUE_STR_LENGTH = 2500;
 
 namespace pandora {
-/*
- struct StringValue{
- char *value;
- double uncertainty;
- char *filename;
- char *encoder;
- char *checksum;
- char *reference;
- };
- */
+
 template<typename T>
 struct FileValue {
   T value;
@@ -41,7 +30,7 @@ struct Value {
   Value() {}
   Value(const FileValue<T> &that) :
     value(that.value), uncertainty(that.uncertainty), filename(that.filename),
-        encoder(that.encoder), checksum(that.checksum), reference(that.reference) {
+    encoder(that.encoder), checksum(that.checksum), reference(that.reference) {
   }
 
   template<typename U>
@@ -78,10 +67,25 @@ FileValue<U> Value<std::string>::toValueBase(const U) const {
   return base;
 }
 
+template<> template<typename U>
+FileValue<U> Value<bool>::toValueBase(const U) const {
+  FileValue<U> base;
+  base.filename = const_cast<char *> (filename.c_str());
+  base.encoder = const_cast<char *> (encoder.c_str());
+  base.checksum = const_cast<char *> (checksum.c_str());
+  base.reference = const_cast<char *> (reference.c_str());
+  if(value)
+    base.value = (int32_t) 1;
+  else
+    base.value = (int32_t) 0;
+  return base;
+}
+
 typedef Value<std::string> StringValue;
 typedef Value<double> DoubleValue;
 typedef Value<int64_t> LongValue;
 typedef Value<int32_t> IntValue;
+typedef Value<bool> BoolValue;
 
 template<typename T>
 struct ValueInfo {
@@ -139,8 +143,19 @@ struct ValueInfo<std::string> :public MemoryType<std::string, char *> {
 };
 
 template<>
-struct ValueInfo<int64_t> :public MemoryType<int64_t> {
-  std::string type = "int64";
+struct ValueInfo<bool> :public MemoryType<bool, int32_t> {
+  std::string type = "bool";
+  H5T_class_t h5class = H5T_INTEGER;
+  int32_t get(bool b) {
+    if(b)
+      return (int32_t)1;
+    return (int32_t)0;
+  }
+};
+
+template<>
+struct ValueInfo<int16_t> {
+  std::string type = "int16";
   H5T_class_t h5class = H5T_INTEGER;
 };
 
@@ -149,6 +164,14 @@ struct ValueInfo<int32_t> :public MemoryType<int32_t> {
   std::string type = "int32";
   H5T_class_t h5class = H5T_INTEGER;
 };
+
+
+template<>
+struct ValueInfo<int64_t> :public MemoryType<int64_t> {
+  std::string type = "int64";
+  H5T_class_t h5class = H5T_INTEGER;
+};
+
 
 template<>
 struct ValueInfo<double> :public MemoryType<double> {
