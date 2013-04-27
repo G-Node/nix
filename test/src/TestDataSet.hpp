@@ -105,8 +105,8 @@ public:
       for(index j = 0; j != 5; ++j)
         A[i][j] = values++;
 
-    Selection memSelection(ds.createSelection(A));
-    Selection fileSelection(ds.createSelection());
+    Selection memSelection(A);
+    Selection fileSelection = ds.createSelection();
 
     PSize fileCount(dims.size());
     PSize fileStart(dims.size());

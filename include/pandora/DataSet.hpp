@@ -26,9 +26,6 @@ public:
 	void extend(const PSize &size);
 	Selection createSelection() const;
 
-	template<typename T>
-	Selection createSelection(const T& value) const;
-
 private:
 	H5::DataSet h5dset;
 };
@@ -81,7 +78,7 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool
 		charon.resize(fsize);
 	}
 
-	read(value, fileSel, createSelection(value));
+	read(value, fileSel, Selection(value));
 }
 
 /**
@@ -133,7 +130,7 @@ template<typename T> void DataSet::write(const T &value) const
  */
 template<typename T> void DataSet::write(const T &value, const Selection &fileSel) const
 {
-	write(value, fileSel, createSelection(value));
+	write(value, fileSel, Selection(value));
 }
 
 /**
@@ -156,13 +153,6 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
 	data.finish();
 }
 
-template<typename T>
-Selection DataSet::createSelection(const T &value) const
-{
-	typedef Charon<const T> charon_type;
-	charon_type charon(value);
-	return Selection(charon.createDataSpace(false));
-}
 
 }
 

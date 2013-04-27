@@ -4,6 +4,7 @@
 
 #include <H5Cpp.h>
 #include <pandora/PSize.hpp>
+#include <pandora/Charon.hpp>
 
 namespace pandora {
 
@@ -26,6 +27,9 @@ public:
   Selection() {}
   Selection(const H5::DataSpace &ds) : space(ds) {}
   Selection(const Selection &sel) : space(sel.space) {}
+  template<typename T> Selection (const T &value);
+
+  Selection& operator=(const Selection &other) { space = other.space; return *this; }
 
   void select(const PSize &count, const PSize &start, Mode mode = Mode::Set);
   void select(Preset set);
@@ -41,6 +45,13 @@ public:
 private:
   H5::DataSpace space;
 };
+
+template<typename T>
+Selection::Selection (const T &value)
+{
+  Charon<const T> charon(value);
+  space = charon.createDataSpace(true);
+}
 
 } //namespace
 
