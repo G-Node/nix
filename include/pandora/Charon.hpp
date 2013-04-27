@@ -517,6 +517,7 @@ private:
   vbox_type  value;
 };
 
-#endif //PANDORA_CHARON_H
 
-} //namespace pandora
+}  //namespace pandora
+
+#endif //PANDORA_CHARON_H
