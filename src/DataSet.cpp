@@ -101,7 +101,7 @@ PSize DataSet::guessChunking(PSize dims, DataType dtype)
 	size_t i = 0;
 	while(true) {
 
-		double csize = psize_product(chunks);
+		double csize = chunks.nelms();
 		if (csize == 1.0) {
 			break;
 		}

@@ -27,6 +27,7 @@ public:
 		allocate();
 		fill(fillValue);
 	}
+
 	//copy
 	PSizeBase(const PSizeBase &other) : rank(other.rank), dims(nullptr) {
 		allocate();
@@ -64,6 +65,14 @@ public:
 	}
 
 	size_t size() const { return rank; }
+
+	size_t nelms() const {
+		size_t product = 1;
+		std::for_each(begin(), end(), [&](hsize_t val) {
+			product *= val;
+		});
+		return product;
+	}
 
 	void fill(T value) {
 		std::fill_n(dims, rank, value);
