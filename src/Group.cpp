@@ -36,12 +36,11 @@ void Group::removeAttr(std::string name) const {
 
 
 bool Group::hasObject(std::string name) const {
-  hsize_t num = h5group.getNumObjs();
-  for (hsize_t i = 0; i < num; i++) {
-    if (h5group.getObjnameByIdx(i) == name)
-      return true;
-  }
-  return false;
+  herr_t res;
+  H5E_BEGIN_TRY
+  res = H5Gget_objinfo(h5group.getId(), name.c_str(), true, NULL);
+  H5E_END_TRY
+  return res >= 0;
 }
 
 size_t Group::objectCount() const {
