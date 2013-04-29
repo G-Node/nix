@@ -40,7 +40,7 @@ public:
   bool isValid() const { return space.selectValid(); }
   void bounds(PSize &start, PSize &end) const { space.getSelectBounds(&start[0], &end[0]); }
   PSize size() const;
-  size_t rank() const {return static_cast<hsize_t>(space.getSimpleExtentNdims()); }
+  size_t rank() const {return static_cast<size_t>(space.getSimpleExtentNdims()); }
 
 private:
   H5::DataSpace space;
