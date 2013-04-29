@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <initializer_list>
 
 namespace pandora {
 
@@ -27,6 +28,11 @@ public:
 	explicit PSizeBase(size_t _rank, T fillValue) : rank(_rank), dims(nullptr) {
 		allocate();
 		fill(fillValue);
+	}
+
+	PSizeBase(std::initializer_list<T> args)  : rank(args.size()) {
+		allocate();
+		std::copy(args.begin(), args.end(), dims);
 	}
 
 	//copy
