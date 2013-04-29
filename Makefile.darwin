@@ -3,12 +3,17 @@
 # are installed (e.g. via homebrew) to /usr/local/lib and they
 # have been compiled against libstdc++ (not clang's own libc++)
 
-CXX      = clang++
+compiler ?= clang
 
-# global flags for all compilation steps
-FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wshadow -Wnon-virtual-dtor -Wglobal-constructors -Wsign-conversion -fPIC -std=c++11 -stdlib=libstdc++
-# flags for debugging
-FLAGS_DEBUG  = -ggdb3
+ifeq ($(compiler), clang)
+  FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wnon-virtual-dtor -Wglobal-constructors -fPIC -std=c++11 -stdlib=libstdc++
+  FLAGS_DEBUG  = -ggdb3 -Wshadow -Wsign-conversion
+  CXX          = clang++
+else ifeq ($(compiler), gcc)
+  FLAGS_GLOBAL = -Wall -pedantic -Wnon-virtual-dtor -fPIC -std=c++11
+  FLAGS_DEBUG  = -ggdb3 -Wshadow -Wsign-conversion
+  CXX          = g++-4.8
+endif
 
 LIB_NAMES = -lhdf5_cpp -lhdf5 -lboost_date_time-mt -lcppunit
 LIB_PATS  = -L/usr/local/lib
