@@ -35,9 +35,7 @@ public:
 
   void testChunkGuessing() {
 
-    PSize dims(2);
-    dims[0] = 1024;
-    dims[1] = 1024;
+    PSize dims = {1024, 1024};
 
     PSize chunks = DataSet::guessChunking(dims, DataType::Double);
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
@@ -45,9 +43,7 @@ public:
   }
 
   void testBasic() {
-    PSize dims(2);
-    dims[0] = 4;
-    dims[1] = 6;
+    PSize dims = {4, 6};
 
     PSize chunks = DataSet::guessChunking(dims, DataType::Double);
     PSize maxdims(dims.size());
@@ -88,9 +84,7 @@ public:
 
 
   void testSelection() {
-    PSize dims(2);
-    dims[0] = 15;
-    dims[1] = 15;
+    PSize dims = {15, 15};
 
     PSize chunks = DataSet::guessChunking(dims, DataType::Double);
     PSize maxdims(dims.size());
