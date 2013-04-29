@@ -273,7 +273,7 @@
 			dependencies = (
 			);
 			name = pandora;
-			productName = cxx_test;
+			productName = Pandora;
 			productReference = E9CCB2DB16E4A0870089FFFC /* pandora.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
@@ -388,8 +388,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/include,
 					"$(SRCROOT)/include",
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/opt/lib,
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				ONLY_ACTIVE_ARCH = YES;
@@ -418,8 +423,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
+					/opt/include,
 					"$(SRCROOT)/include",
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/opt/lib,
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				SDKROOT = macosx;
@@ -429,15 +439,12 @@
 		E9CCB2E916E4A0870089FFFC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(SRCROOT)/include",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/hdf5/1.8.9/lib,
-					/usr/local/Cellar/boost/1.52.0/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = pandora;
 			};
 			name = Debug;
@@ -445,15 +452,12 @@
 		E9CCB2EA16E4A0870089FFFC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LIBRARY = "libc++";
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(SRCROOT)/include",
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					/usr/local/Cellar/hdf5/1.8.9/lib,
-					/usr/local/Cellar/boost/1.52.0/lib,
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = pandora;
 			};
 			name = Release;
@@ -461,11 +465,8 @@
 		E9D8C669172322FC0037BA7F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LIBRARY = "libstdc++";
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(inherited)",
-				);
+				CLANG_CXX_LIBRARY = "libc++";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -473,11 +474,8 @@
 		E9D8C66A172322FC0037BA7F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LIBRARY = "libstdc++";
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"$(inherited)",
-				);
+				CLANG_CXX_LIBRARY = "libc++";
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
