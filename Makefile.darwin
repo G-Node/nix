@@ -3,7 +3,7 @@
 # are installed (e.g. via homebrew) to /usr/local/lib and they
 # have been compiled against libstdc++ (not clang's own libc++)
 
-compiler ?= clang
+compiler ?= gcc
 
 ifeq ($(compiler), clang)
   FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wnon-virtual-dtor -Wglobal-constructors -fPIC -std=c++11 -stdlib=libstdc++
@@ -12,7 +12,7 @@ ifeq ($(compiler), clang)
 else ifeq ($(compiler), gcc)
   FLAGS_GLOBAL = -Wall -pedantic -Wnon-virtual-dtor -fPIC -std=c++11
   FLAGS_DEBUG  = -ggdb3 -Wshadow -Wsign-conversion
-  CXX          = g++-4.8
+  CXX          = /usr/local/bin/g++-4.8
 endif
 
 LIB_NAMES = -lhdf5_cpp -lhdf5 -lboost_date_time-mt -lcppunit
