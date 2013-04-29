@@ -6,7 +6,7 @@
 compiler ?= gcc
 
 ifeq ($(compiler), clang)
-  FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wnon-virtual-dtor -Wglobal-constructors -fPIC -std=c++11 -stdlib=libstdc++
+  FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wnon-virtual-dtor -Wglobal-constructors -fPIC -std=c++11 -stdlib=libc++
   FLAGS_DEBUG  = -ggdb3 -Wshadow -Wsign-conversion
   CXX          = clang++
 else ifeq ($(compiler), gcc)
