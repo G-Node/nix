@@ -2,6 +2,7 @@
 #define PANDORA_PSIZE_H
 
 #include <stdexcept>
+#include <algorithm>
 
 namespace pandora {
 
