@@ -25,5 +25,5 @@
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
 #include <pandora/DataSet.hpp>
-
+#include <pandora/DataArray.hpp>
 
