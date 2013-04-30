@@ -3,7 +3,7 @@
 # are installed (e.g. via homebrew) to /usr/local/lib and they
 # have been compiled against libstdc++ (not clang's own libc++)
 
-compiler ?= gcc
+compiler ?= clang
 
 ifeq ($(compiler), clang)
   FLAGS_GLOBAL = -Wall -pedantic -Wextra-semi -Wnon-virtual-dtor -Wglobal-constructors -fPIC -std=c++11 -stdlib=libc++
