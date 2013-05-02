@@ -6,6 +6,7 @@
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>
+#include <pandora/DataType.hpp>
 
 namespace pandora {
 namespace hades {
@@ -107,6 +108,21 @@ struct TypeSpec<std::string> {
   static const bool is_valid = true;
   const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+};
+
+
+template<>
+struct TypeSpec<DataType> {
+
+  static const bool is_valid = true;
+
+  TypeSpec(DataType type)
+    : fileType(data_type_to_h5_filetype(type)),
+      memType(data_type_to_h5_memtype(type))
+     { }
+
+  const H5::DataType fileType;
+  const H5::DataType memType;
 };
 
 /* ********** */
@@ -302,7 +318,7 @@ public:
   PSize       shape() const { return info_type::shape(value); }
   size_t      size() { return this->num_elements(value); }
   
-  void        resize(const PSize &size) {info_type::resize (value, size);}
+  void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
   
 private:
   value_ref value;
@@ -472,21 +488,21 @@ public:
   const H5::DataType& getMemType() const { return value.memType; }
   
   H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
-    PSize shape = value.shape();
+    PSize dims = value.shape();
     H5::DataSpace space;
 
-    if (shape.size() == 0) {
+    if (dims.size() == 0) {
       space = H5::DataSpace();
       return space; //no need to delete shape
     }
 
-    int rank = (int) shape.size();
+    int rank = (int) dims.size();
     if (maxdimsUnlimited) {
-      PSize maxdims(shape.size());
+      PSize maxdims(dims.size());
       std::fill_n(&maxdims[0], rank, H5S_UNLIMITED);
-      space = H5::DataSpace(rank, &shape[0], &maxdims[0]);
+      space = H5::DataSpace(rank, &dims[0], &maxdims[0]);
     } else {
-      space = H5::DataSpace(rank, &shape[0]);
+      space = H5::DataSpace(rank, &dims[0]);
     }
 
     return space;
@@ -509,6 +525,7 @@ private:
   vbox_type  value;
 };
 
-#endif //PANDORA_CHARON_H
 
-} //namespace pandora
+}  //namespace pandora
+
+#endif //PANDORA_CHARON_H

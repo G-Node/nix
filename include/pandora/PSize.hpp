@@ -1,58 +1,71 @@
-#ifndef PANDORA_HSIZE_H
-#define PANDORA_HSIZE_H
+#ifndef PANDORA_PSIZE_H
+#define PANDORA_PSIZE_H
 
 #include <stdexcept>
+#include <algorithm>
+#include <initializer_list>
 
 namespace pandora {
 
-class PSize {
+template<typename T>
+class PSizeBase {
 public:
-	typedef hsize_t        value_type;
-	typedef hsize_t       *iterator;
-	typedef const hsize_t *const_iterator;
-	typedef hsize_t       &reference;
-	typedef const hsize_t  const_reference;
-	typedef hsize_t       *pointer;
-	typedef size_t         difference_type;
-	typedef size_t         size_type;
+	typedef T        value_type;
+	typedef T       *iterator;
+	typedef const T *const_iterator;
+	typedef T       &reference;
+	typedef const T  const_reference;
+	typedef T       *pointer;
+	typedef size_t   difference_type;
+	typedef size_t   size_type;
 
-	PSize() : rank(0), dims(nullptr) { }
+	PSizeBase() : rank(0), dims(nullptr) { }
 
-	explicit PSize(size_t _rank) : rank(_rank), dims(nullptr) {
+	explicit PSizeBase(size_t _rank) : rank(_rank), dims(nullptr) {
 		allocate();
 	}
 
+	explicit PSizeBase(size_t _rank, T fillValue) : rank(_rank), dims(nullptr) {
+		allocate();
+		fill(fillValue);
+	}
+
+	PSizeBase(std::initializer_list<T> args)  : rank(args.size()) {
+		allocate();
+		std::copy(args.begin(), args.end(), dims);
+	}
+
 	//copy
-	PSize(const PSize &other) : rank(other.rank), dims(nullptr) {
+	PSizeBase(const PSizeBase &other) : rank(other.rank), dims(nullptr) {
 		allocate();
 		std::copy(other.dims, other.dims + rank, dims);
 	}
 
 	//move (not tested due to: http://llvm.org/bugs/show_bug.cgi?id=12208)
-	PSize(PSize &&other) : rank(other.rank), dims(other.dims) {
+	PSizeBase(PSizeBase &&other) : rank(other.rank), dims(other.dims) {
 		other.dims = nullptr;
 		other.rank = 0;
 	}
 
 	//copy and move assignment operator (not tested, see above)
-	PSize& operator=(PSize other) {
+	PSizeBase& operator=(PSizeBase other) {
 		swap(other);
 		return *this;
 	}
 
-	hsize_t& operator[] (const size_t index) {
-		const PSize *this_const = const_cast<const PSize*>(this);
-		return const_cast<hsize_t&>(this_const->operator[](index));
+	T& operator[] (const size_t index) {
+		const PSizeBase *this_const = const_cast<const PSizeBase*>(this);
+		return const_cast<T&>(this_const->operator[](index));
 	}
 
-	const hsize_t& operator[] (const size_t index) const {
+	const T& operator[] (const size_t index) const {
 		if (index > rank) {
 			throw std::out_of_range ("Index out of bounds");
 		}
 		return dims[index];
 	}
 
-	void swap(PSize &other) {
+	void swap(PSizeBase &other) {
 		using std::swap;
 		swap(dims, other.dims);
 		rank = other.rank;
@@ -60,7 +73,19 @@ public:
 
 	size_t size() const { return rank; }
 
-	~PSize(){
+	size_t nelms() const {
+		size_t product = 1;
+		std::for_each(begin(), end(), [&](hsize_t val) {
+			product *= val;
+		});
+		return product;
+	}
+
+	void fill(T value) {
+		std::fill_n(dims, rank, value);
+	}
+
+	~PSizeBase(){
 		delete[] dims;
 	}
 
@@ -74,13 +99,64 @@ public:
 private:
 	void allocate() {
 		if (rank > 0) {
-			dims = new hsize_t[rank];
+			dims = new T[rank];
 		}
 	}
 
 	size_t   rank;
-	hsize_t *dims;
+	T *dims;
 };
 
+template<typename T>
+PSizeBase<T> operator-(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+{
+	if(rhs.size() != lhs.size()) {
+	  throw std::out_of_range (""); //fixme: use different exception
+	}
+
+  PSizeBase<T> result(rhs.size());
+  for (size_t i = 0; i < rhs.size(); i++) {
+  	result[i] = lhs[i] - rhs[i];
+  }
+
+  return result;
+}
+
+template<typename T>
+PSizeBase<T> operator+(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+{
+	if(rhs.size() != lhs.size()) {
+	  throw std::out_of_range (""); //fixme: use different exception
+	}
+
+  PSizeBase<T> result(rhs.size());
+  for (size_t i = 0; i < rhs.size(); i++) {
+  	result[i] = lhs[i] + rhs[i];
+  }
+
+  return result;
+}
+
+template<typename T>
+PSizeBase<T> operator+(const PSizeBase<T> &lhs, int rhs)
+{
+  PSizeBase<T> result(lhs.size());
+  for (size_t i = 0; i < lhs.size(); i++) {
+  	result[i] = lhs[i] + static_cast<T>(rhs);
+  }
+
+  return result;
+}
+
+
+template<typename T>
+PSizeBase<T> operator+(int lhs, const PSizeBase<T> &rhs)
+{
+  return operator+(rhs, lhs);
+}
+
+typedef PSizeBase<hsize_t>  PSize;
+typedef PSizeBase<hssize_t> PSSize;
+
 } //namespace pandroa
-#endif // PANDORA_HSIZE_H
+#endif // PANDORA_PSIZE_H
