@@ -53,7 +53,7 @@ public:
   void addValue(const Value<T> &value);
 
   template<typename T>
-  void addValue(const T value, const std::string &reference = "", const std::string filename = "",
+  void addValue(const T value, double uncertainty = 0.0, const std::string &reference = "", const std::string filename = "",
       const std::string encoder = "", const std::string checksum = "");
 
 
@@ -78,7 +78,7 @@ public:
 };
 
 template<typename T>
-void Property::addValue(T value, const std::string &reference, const std::string filename,
+void Property::addValue(T value, double uncertainty, const std::string &reference, const std::string filename,
     const std::string encoder, const std::string checksum) {
   ValueInfo<T> info;
   std::string dt = this->dataType();
@@ -92,7 +92,7 @@ void Property::addValue(T value, const std::string &reference, const std::string
   FileValue<typename ValueInfo<T>::inner_type> val;
 
   val.value = info.get(value);
-  val.uncertainty = 0.0;
+  val.uncertainty = uncertainty;
   val.reference = (char*) reference.c_str();
   val.encoder = (char*) encoder.c_str();
   val.checksum = (char*) checksum.c_str();
