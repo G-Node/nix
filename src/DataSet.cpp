@@ -61,63 +61,80 @@ double psize_product(const PSize &dims)
  * @param dims    Size information to base the guessing on
  * @param dtype   The type of the data to guess the chunks for
  *
- * This function is a port of the guess_chunk() function from h5py
- * low-level Python interface to the HDF5 library.\n
- * http://h5py.alfven.org\n
- * 
- * @copyright Copyright 2008 - 2013 Andrew Collette & contributers\n
- * License: BSD 3-clause (see LICENSE.h5py)\n
+ * Internally uses guessChunking(PSize, size_t) for calculations.
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
 PSize DataSet::guessChunking(PSize dims, DataType dtype)
 {
+	
+	const size_t type_size = data_type_to_size(dtype);
+	PSize chunks = guessChunking(dims, type_size);
+	return chunks;
+}
+  
+/**
+ * Infer the chunk size from the supplied size information
+ *
+ * @param dims          Size information to base the guessing on
+ * @param elementSize   The size of a single element in bytes
+ *
+ * This function is a port of the guess_chunk() function from h5py
+ * low-level Python interface to the HDF5 library.\n
+ * http://h5py.alfven.org\n
+ *
+ * @copyright Copyright 2008 - 2013 Andrew Collette & contributers\n
+ * License: BSD 3-clause (see LICENSE.h5py)\n
+ *
+ * @return An (maybe not at all optimal) guess for chunk size
+ */
+PSize DataSet::guessChunking(PSize dims, size_t elementSize)
+{
 	// original source:
 	//    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
-
+  
 	if(dims.size() == 0) {
 		throw 1;
 	}
-
+  
 	PSize chunks(dims);
-	const size_t type_size = data_type_to_size(dtype);
 	double product = 1;
 	std::for_each(dims.begin(), dims.end(), [&](hsize_t &val) {
 		//todo: check for +infinity
 		if (val == 0)
 			val = 1024;
-
+    
 		product *= val;
 	});
-
-	product *= type_size;
-
+  
+	product *= elementSize;
+  
 	double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0L * 1024.0L)));
 	if (target_size > CHUNK_MAX)
 		target_size = CHUNK_MAX;
 	else if (target_size < CHUNK_MIN)
 		target_size = CHUNK_MIN;
-
+  
 	size_t i = 0;
 	while(true) {
-
+    
 		double csize = chunks.nelms();
 		if (csize == 1.0) {
 			break;
 		}
-
-		double cbytes = csize * type_size;
+    
+		double cbytes = csize * elementSize;
 		if ((cbytes < target_size || (abs(cbytes - target_size) / target_size) < 0.5)
-			&& cbytes < CHUNK_MAX) {
+        && cbytes < CHUNK_MAX) {
 			break;
 		}
-
+    
 		//not done yet, one more iteration
 		size_t idx = i % chunks.size();
 		chunks[idx] = chunks[idx] >> 1; //divide by two
 		i++;
 	}
-
+  
 	return chunks;
 }
 
