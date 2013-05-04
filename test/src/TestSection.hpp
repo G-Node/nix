@@ -25,11 +25,12 @@ using namespace pandora;
 class TestSection: public CPPUNIT_NS::TestFixture {
 private:
 
-  CPPUNIT_TEST_SUITE(TestSection);
-  CPPUNIT_TEST(testAddAndRemove);
-  CPPUNIT_TEST(testAddingProperties);
-  CPPUNIT_TEST(testAccessingProperties);
-  CPPUNIT_TEST(testRemovingProperties);
+CPPUNIT_TEST_SUITE(TestSection);
+    CPPUNIT_TEST(testAddAndRemove);
+    CPPUNIT_TEST(testAddingProperties);
+    CPPUNIT_TEST(testAccessingProperties);
+    CPPUNIT_TEST(testRemovingProperties);
+    CPPUNIT_TEST(testSectionLinks);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
@@ -54,7 +55,7 @@ public:
       lastSectionId = s2.id();
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id()
-                      << " / s2.id() = " << s2.id();
+          << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
     Section test = f1->getSection(lastSectionId);
@@ -71,8 +72,8 @@ public:
 
     stringstream msg1;
     msg1
-    << "Error while getting section iterator from section with no children: "
-    << lastSectionId;
+        << "Error while getting section iterator from section with no children: "
+        << lastSectionId;
     SectionIterator iter = test.children();
     CPPUNIT_ASSERT_MESSAGE(msg1.str(),
         test.children() == test.children().end());
@@ -88,7 +89,7 @@ public:
 
     stringstream msg5;
     msg5 << "Error while removing a parent section: " << test.id()
-                    << " with cascade == false!";
+        << " with cascade == false!";
     bool result = f1->removeSection(test.id(), false);
 
     CPPUNIT_ASSERT_MESSAGE(msg5.str(), !result);
@@ -96,14 +97,14 @@ public:
 
     stringstream msg3;
     msg3 << "Error while removing child section: " << c1.id()
-                    << " from section: " << lastSectionId << " with cascade == true!";
+        << " from section: " << lastSectionId << " with cascade == true!";
     test.removeSection(c1.id(), true);
     CPPUNIT_ASSERT_MESSAGE(msg3.str(),
         (sectionCount + 1) == f1->metadataGroup().objectCount());
 
     stringstream msg4;
     msg4 << "Error while removing child section: " << c1.id()
-                    << " from section: " << lastSectionId << " with cascade == false!";
+        << " from section: " << lastSectionId << " with cascade == false!";
     test.removeSection(c2.id(), false);
     CPPUNIT_ASSERT_MESSAGE(msg4.str(),
         sectionCount == (f1->metadataGroup().objectCount()));
@@ -141,13 +142,13 @@ public:
     }
     stringstream msg;
     msg << "Error while creating properties in section: s.id() = " << s.id()
-                    << " Property count should be: " << oldCount + 5 << " but is: "
-                    << s.propertyCount();
+        << " Property count should be: " << oldCount + 5 << " but is: "
+        << s.propertyCount();
     CPPUNIT_ASSERT_MESSAGE(msg.str(), s.propertyCount() == (oldCount + 5));
     Property p = *s.properties();
     stringstream msg2;
     msg2
-    << "Error while adding already existing property. Should have thrown a runtime exception!";
+        << "Error while adding already existing property. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg2.str(), s.addProperty(p.name()),
         std::runtime_error);
   }
@@ -155,7 +156,8 @@ public:
   void testAccessingProperties() {
     Section s = f1->getSection(f1->metadataGroup().objectName(0));
     stringstream msg;
-    msg << "Error while accessing property that does not exist. Should have thrown a runtime exception!";
+    msg
+        << "Error while accessing property that does not exist. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg.str(), s.getProperty("unknownProperty"),
         std::runtime_error);
 
@@ -166,9 +168,10 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), p == p2);
 
     stringstream msg3;
-    msg3 << "Error while accessing an unknown property by name. Should have thrown a runtime exception!";
-    CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(), s.getPropertyByName("Test Property"),
-        std::runtime_error);
+    msg3
+        << "Error while accessing an unknown property by name. Should have thrown a runtime exception!";
+    CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(),
+        s.getPropertyByName("Test Property"), std::runtime_error);
 
     s.removeProperty(p.id());
   }
@@ -192,4 +195,50 @@ public:
         << count << " but is: " << s.propertyCount();
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), s.propertyCount() == count);
   }
+
+  void testSectionLinks() {
+    Section base = f1->createSection("base stimulus", "stimulus/white_noise");
+
+    Property baseP1 = base.addProperty("cutoff frequency");
+    baseP1.unit("Hz");
+    baseP1.addValue(300.0);
+
+    Section base2 = f1->createSection("base stimulus", "stimulus/ou_noise");
+    Property base2P1 = base2.addProperty("cutoff frequency");
+    base2P1.unit("Hz");
+    base2P1.addValue(150.0);
+
+    Section derived = base.addSection("modified stimulus",
+        "stimulus/white_noise");
+    Property derivedP1 = derived.addProperty("intensity");
+    derivedP1.addValue(2.5);
+    derivedP1.unit("nA");
+
+    //try to establish link that does not work
+    stringstream msg1;
+    msg1
+        << "Error while creating an invalid section-link. Should have thrown a runtime exception!";
+    CPPUNIT_ASSERT_THROW_MESSAGE(msg1.str(), derived.link(base2.id()),
+        std::runtime_error);
+
+    //try to establish a link that is valid
+    stringstream msg2;
+    msg2 << "Error while creating a valid section-link!";
+    derived.link(base.id());
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), derived.link().compare(base.id()) == 0);
+
+    //try to access a Property in derived section that is contained in base but not in derived.
+    stringstream msg3;
+    msg3 << "Error while accessing linked Property!";
+    Property p = derived.getPropertyByName("cutoff frequency");
+    DoubleValue val;
+    p.value(0, val);
+    CPPUNIT_ASSERT_MESSAGE(msg3.str(), val.value == 300.0);
+
+    f1->removeSection(base.id(), true);
+    f1->removeSection(base2.id(), true);
+
+  }
+
 };
+
