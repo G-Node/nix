@@ -29,6 +29,9 @@
 		E9D8C678172323880037BA7F /* libhdf5_hl.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9D8C677172323880037BA7F /* libhdf5_hl.7.dylib */; };
 		E9D8C679172323BC0037BA7F /* libcppunit-1.12.1.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB34B16ECEF120089FFFC /* libcppunit-1.12.1.0.0.dylib */; };
 		E9D8C67A172323EF0037BA7F /* libboost_date_time-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */; };
+		E9DAF095173EAB0C003BE77F /* NDBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */; };
+		E9DAF097173EAB13003BE77F /* NDBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9DAF096173EAB13003BE77F /* NDBuffer.cpp */; };
+		E9DAF099173EAB3A003BE77F /* TestNDBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */; };
 		E9F3F36A17035E94005DE07F /* BlockIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9F3F36317035E94005DE07F /* BlockIterator.cpp */; };
 		E9F3F36B17035E94005DE07F /* Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9F3F36417035E94005DE07F /* Group.cpp */; };
 		E9F3F36C17035E94005DE07F /* Property.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9F3F36517035E94005DE07F /* Property.cpp */; };
@@ -94,6 +97,9 @@
 		E9D8C66E172323320037BA7F /* TestFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestFile.hpp; path = test/src/TestFile.hpp; sourceTree = SOURCE_ROOT; };
 		E9D8C66F172323320037BA7F /* TestSection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestSection.hpp; path = test/src/TestSection.hpp; sourceTree = SOURCE_ROOT; };
 		E9D8C677172323880037BA7F /* libhdf5_hl.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libhdf5_hl.7.dylib; path = /usr/local/Cellar/hdf5/1.8.9/lib/libhdf5_hl.7.dylib; sourceTree = "<absolute>"; };
+		E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NDBuffer.hpp; sourceTree = "<group>"; };
+		E9DAF096173EAB13003BE77F /* NDBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NDBuffer.cpp; sourceTree = "<group>"; };
+		E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestNDBuffer.hpp; path = test/src/TestNDBuffer.hpp; sourceTree = SOURCE_ROOT; };
 		E9F3F36317035E94005DE07F /* BlockIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockIterator.cpp; sourceTree = "<group>"; };
 		E9F3F36417035E94005DE07F /* Group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Group.cpp; sourceTree = "<group>"; };
 		E9F3F36517035E94005DE07F /* Property.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Property.cpp; sourceTree = "<group>"; };
@@ -170,6 +176,7 @@
 		E9CCB2FF16E4A20C0089FFFC /* src */ = {
 			isa = PBXGroup;
 			children = (
+				E9DAF096173EAB13003BE77F /* NDBuffer.cpp */,
 				E9081341172949E10073075E /* DataSet.cpp */,
 				E9081342172949E10073075E /* DataType.cpp */,
 				E9081343172949E10073075E /* Selection.cpp */,
@@ -201,6 +208,7 @@
 		E9CCB32A16E7AB070089FFFC /* pandora */ = {
 			isa = PBXGroup;
 			children = (
+				E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */,
 				E9081339172949D70073075E /* DataSet.hpp */,
 				E908133A172949D70073075E /* DataType.hpp */,
 				E908133B172949D70073075E /* PSize.hpp */,
@@ -222,6 +230,7 @@
 		E9D8C663172322FC0037BA7F /* TestAll */ = {
 			isa = PBXGroup;
 			children = (
+				E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */,
 				E9081350172E6A310073075E /* TestGroup.hpp */,
 				E908134A172949FB0073075E /* TestDataSet.hpp */,
 				E9D8C66B172323320037BA7F /* TestAll.cpp */,
@@ -254,6 +263,8 @@
 				E908133E172949D70073075E /* DataType.hpp in Headers */,
 				E908133F172949D70073075E /* PSize.hpp in Headers */,
 				E9081340172949D70073075E /* Selection.hpp in Headers */,
+				E9DAF095173EAB0C003BE77F /* NDBuffer.hpp in Headers */,
+				E9DAF099173EAB3A003BE77F /* TestNDBuffer.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,6 +350,7 @@
 				E9081344172949E10073075E /* DataSet.cpp in Sources */,
 				E9081345172949E10073075E /* DataType.cpp in Sources */,
 				E9081346172949E10073075E /* Selection.cpp in Sources */,
+				E9DAF097173EAB13003BE77F /* NDBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
