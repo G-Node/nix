@@ -64,6 +64,8 @@ public:
 
   PropertyIterator properties() const;
 
+  PropertyIterator inheritedProperties() const;
+
   Property getProperty(std::string id) const;
 
   Property getPropertyByName(std::string name) const;

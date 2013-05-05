@@ -145,6 +145,16 @@ PropertyIterator Section::properties() const {
   return iter;
 }
 
+PropertyIterator Section::inheritedProperties() const {
+  if(this->link().length() > 0){
+    return this->file->getSection(this->link()).properties();
+  }
+  else{
+    throw std::runtime_error(
+           "Section has no link, cannot retrieve inherited Properties!");
+  }
+}
+
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
     return Property(*this, props.openGroup(id, false), id);
