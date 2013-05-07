@@ -64,7 +64,18 @@ string Section::repository() const {
 }
 
 void Section::link(string link) {
-  group.setAttr("link", link);
+  if (this->file->hasSection(link)) {
+    if (this->file->getSection(link).type().compare(this->type()) == 0) {
+      group.setAttr("link", link);
+    } else {
+      throw std::runtime_error(
+          "Cannot create link to a section of deviating type!");
+    }
+  } else {
+    throw std::runtime_error(
+
+    "Cannot create link! Linked section does not exist!");
+  }
 }
 
 string Section::link() const {
@@ -134,6 +145,16 @@ PropertyIterator Section::properties() const {
   return iter;
 }
 
+PropertyIterator Section::inheritedProperties() const {
+  if(this->link().length() > 0){
+    return this->file->getSection(this->link()).properties();
+  }
+  else{
+    throw std::runtime_error(
+           "Section has no link, cannot retrieve inherited Properties!");
+  }
+}
+
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
     return Property(*this, props.openGroup(id, false), id);
@@ -149,6 +170,15 @@ Property Section::getPropertyByName(std::string name) const {
     if (p.name() == name)
       return p;
   }
+  if (this->link().length() > 0) {
+    if (this->file->hasSection(this->link())) {
+      Section linked = this->file->getSection(this->link());
+      if (linked.hasPropertyByName(name)) {
+        return linked.getPropertyByName(name);
+      }
+    }
+  }
+
   throw std::runtime_error(
       "Requested Property does not exist! Always check with hasPropertyByName!");
 }

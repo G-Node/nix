@@ -4,6 +4,7 @@ using namespace std;
 
 namespace pandora {
 
+
 PropertyIterator::PropertyIterator(const Section &section, Group group) :
     section(section), group(group) {
   index = 0;
