@@ -1,7 +1,7 @@
 #ifndef PANDORA_DATASET_H
 #define PANDORA_DATASET_H
 
-#include <pandora.hpp>
+#include <pandora/Charon.hpp>
 #include <H5Cpp.h>
 #include <pandora/Selection.hpp>
 
@@ -11,6 +11,8 @@ class DataSet {
 public:
 	explicit DataSet(H5::DataSet dset);
 
+	DataSet& operator=(const DataSet &other) {h5dset = other.h5dset; return *this;}
+
 	template<typename T> void read(T &value, bool resize = false);
 	template<typename T> void read(T &value, const Selection &fileSel, bool resize = false);
 	template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel);
@@ -19,19 +21,26 @@ public:
 	template<typename T> void write(const T &value, const Selection &fileSel) const;
 	template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel) const;
 
+
 	static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
 		const PSize &size, const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
 	static PSize guessChunking(PSize dims, DataType dtype);
 
+	static DataSet create(const H5::CommonFG &parent, const H5::DataType &fileType,
+      const std::string &name, const PSize &size, const PSize *maxsize, const PSize *chunks =
+          nullptr);
+
 	void extend(const PSize &size);
 	Selection createSelection() const;
 
+	 PSize extent();
 private:
 	H5::DataSet h5dset;
 };
 
 
 /* ************************************************************************* */
+
 /**
  * Read *all* the data from a DataSet into memory
  *

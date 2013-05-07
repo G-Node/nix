@@ -59,7 +59,7 @@ public:
     std::string str = "This is a  test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";
-    p.addValue(str, str2, str3);
+    p.addValue(str,0.0, str2, str3);
 
     stringstream msg2;
     msg2 << "Error getting value count. Should have been 1!";
@@ -68,7 +68,7 @@ public:
     p.removeValues();
 
     stringstream msg3;
-    msg2 << "Error setting property name. Should have been refused since property has values!";
+    msg3 << "Error setting property name. Should have been refused since property has values!";
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), p.valueCount() == 0 );
   }
 
@@ -84,7 +84,7 @@ public:
     std::string str4 = "a common encoder";
     std::string str5 = "the checksum";
 
-    p.addValue(str, str2, str3, str4, str5);
+    p.addValue(str, 0.0, str2, str3, str4, str5);
 
     StringValue val;
     p.value(0, val);
@@ -134,7 +134,7 @@ public:
     std::string str = "This is a  test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";
-    p.addValue(str, str2, str3);
+    p.addValue(str,0.0, str2, str3);
 
     stringstream msg3;
     msg3

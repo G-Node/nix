@@ -40,6 +40,27 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 	return DataSet(dset);
 }
 
+DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType,
+    const std::string &name, const PSize &size, const PSize *maxsize, const PSize *chunks) {
+  H5::DataSpace space;
+
+  if (size.size() > 0) {
+    int rank = static_cast<int>(size.size());
+    const hsize_t *maxdims = maxsize != nullptr ? &(*maxsize)[0] : nullptr;
+    space = H5::DataSpace(rank, &size[0], maxdims);
+  }
+
+  H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+
+  if (chunks != nullptr) {
+    int rank = static_cast<int>(chunks->size());
+    plcreate.setChunk(rank, &(*chunks)[0]);
+  }
+
+  H5::DataSet dset = parent.createDataSet(name, fileType, space);
+  return DataSet(dset);
+}
+
 double psize_product(const PSize &dims)
 {
 	double product = 1;
@@ -131,6 +152,15 @@ Selection DataSet::createSelection() const
 {
 	H5::DataSpace space = h5dset.getSpace();
 	return Selection(space);
+}
+
+PSize DataSet::extent()
+{
+  H5::DataSpace space = h5dset.getSpace();
+  int ndim = space.getSimpleExtentNdims();
+  PSize dims(ndim);
+  space.getSimpleExtentDims(&dims[0]);
+  return dims;
 }
 
 } //namespace pandora
