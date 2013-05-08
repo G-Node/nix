@@ -50,7 +50,7 @@ template<typename T> void DataSet::read(T &value, bool resize)
 	if (resize) {
 		size_t rank = (size_t) space.getSimpleExtentNdims();
 		PSize dims(rank);
-		space.getSimpleExtentDims (&dims[0], nullptr);
+		space.getSimpleExtentDims (dims.data(), nullptr);
 		charon.resize(dims);
 	}
 

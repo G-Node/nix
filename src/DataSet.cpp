@@ -25,15 +25,15 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 
 	if (size.size() > 0) {
 		int rank = static_cast<int>(size.size());
-		const hsize_t *maxdims = maxsize != nullptr ? &(*maxsize)[0] : nullptr;
-		space = H5::DataSpace(rank, &size[0], maxdims);
+		const hsize_t *maxdims = maxsize != nullptr ? maxsize->data() : nullptr;
+		space = H5::DataSpace(rank, size.data(), maxdims);
 	}
 
 	H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
 
 	if (chunks != nullptr) {
 		int rank = static_cast<int>(chunks->size());
-		plcreate.setChunk(rank, &(*chunks)[0]);
+		plcreate.setChunk(rank, chunks->data());
 	}
 
 	H5::DataSet dset = parent.createDataSet(name, fileType, space);
@@ -141,7 +141,7 @@ PSize DataSet::guessChunking(PSize dims, size_t elementSize)
 void DataSet::extend(const PSize &dims)
 {
 	//FIXME check for same rank
-	h5dset.extend(&dims[0]);
+	h5dset.extend(dims.data());
 }
 
 Selection DataSet::createSelection() const

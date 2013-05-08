@@ -4,13 +4,13 @@ namespace pandora {
 
 void Selection::offset(const PSSize &offset)
 {
-  space.offsetSimple(&offset[0]);
+  space.offsetSimple(offset.data());
 }
 
 void Selection::select(const PSize &count, const PSize &start, Mode mode)
 {
   H5S_seloper_t op = static_cast<H5S_seloper_t>(mode);
-  space.selectHyperslab(op, &count[0], &start[0]);
+  space.selectHyperslab(op, count.data(), start.data());
 }
 
 void Selection::select(Preset set)

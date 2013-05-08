@@ -59,7 +59,7 @@ public:
 	}
 
 	const T& operator[] (const size_t index) const {
-		if (index > rank) {
+		if (index + 1 > rank) {
 			throw std::out_of_range ("Index out of bounds");
 		}
 		return dims[index];
@@ -81,6 +81,9 @@ public:
 		return product;
 	}
 
+  T* data() { return dims; }
+  const T* data() const {return dims; }
+  
 	void fill(T value) {
 		std::fill_n(dims, rank, value);
 	}

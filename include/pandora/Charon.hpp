@@ -199,7 +199,7 @@ public:
   static PSize shape(const array_type &value) {
     PSize hsize(N);
     const size_t *shape = value.shape();
-    std::copy(shape, shape + N, &hsize[0]);
+    std::copy(shape, shape + N, hsize.data());
     return hsize;
   }
 
@@ -490,11 +490,10 @@ public:
 
     int rank = (int) dims.size();
     if (maxdimsUnlimited) {
-      PSize maxdims(dims.size());
-      std::fill_n(&maxdims[0], rank, H5S_UNLIMITED);
-      space = H5::DataSpace(rank, &dims[0], &maxdims[0]);
+      PSize maxdims(dims.size(), H5S_UNLIMITED);
+      space = H5::DataSpace(rank, dims.data(), maxdims.data());
     } else {
-      space = H5::DataSpace(rank, &dims[0]);
+      space = H5::DataSpace(rank, dims.data());
     }
 
     return space;
