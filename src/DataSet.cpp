@@ -149,5 +149,14 @@ Selection DataSet::createSelection() const
 	H5::DataSpace space = h5dset.getSpace();
 	return Selection(space);
 }
+  
+PSize DataSet::size() const
+{
+  H5::DataSpace space = h5dset.getSpace();
+  size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
+  PSize dims(rank);
+  space.getSimpleExtentDims (dims.data(), nullptr);
+  return dims;
+}
 
 } //namespace pandora

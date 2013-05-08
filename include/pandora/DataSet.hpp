@@ -26,7 +26,8 @@ public:
   
 	void extend(const PSize &size);
 	Selection createSelection() const;
-
+  PSize size() const;
+  
 private:
 	H5::DataSet h5dset;
 };
@@ -48,9 +49,7 @@ template<typename T> void DataSet::read(T &value, bool resize)
 
 	H5::DataSpace space = h5dset.getSpace();
 	if (resize) {
-		size_t rank = (size_t) space.getSimpleExtentNdims();
-		PSize dims(rank);
-		space.getSimpleExtentDims (dims.data(), nullptr);
+		PSize dims = this->size();
 		charon.resize(dims);
 	}
 
