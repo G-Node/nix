@@ -33,6 +33,61 @@ public:
     openMode = H5F_ACC_RDWR;
   }
 
+  void testPSize() {
+    PSize a = {23, 42, 1982};
+    
+    typedef typename PSize::value_type value_type;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), a[2]);
+    
+    CPPUNIT_ASSERT_THROW(a[3], std::out_of_range);
+    
+    a++;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(24),   a[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(43),   a[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1983), a[2]);
+    
+    a--;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), a[2]);
+    
+    a += 13;
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(36),   a[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(55),   a[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1995), a[2]);
+    
+    a -= 13;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), a[2]);
+    
+    
+    PSize b = {19, 1940, 18};
+    
+    PSize c = a + b;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   c[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), c[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(2000), c[2]);
+    
+    PSize d = c - b;
+    
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   d[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   d[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), d[2]);
+    
+    PSize f = {1, 2, 3, 4};
+    CPPUNIT_ASSERT_THROW(a + f, std::out_of_range);
+    
+  }
+  
   void testChunkGuessing() {
 
     PSize dims = {1024, 1024};
@@ -148,6 +203,7 @@ public:
   H5::Group h5group;
 
   CPPUNIT_TEST_SUITE(TestDataSet);
+  CPPUNIT_TEST(testPSize);
   CPPUNIT_TEST(testChunkGuessing);
   CPPUNIT_TEST(testBasic);
   CPPUNIT_TEST(testSelection);

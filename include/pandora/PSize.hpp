@@ -65,6 +65,80 @@ public:
 		return dims[index];
 	}
 
+  PSizeBase<T>& operator++() {
+    std::for_each(begin(), end(), [](hsize_t &val) {
+      val++;
+		});
+    return *this;
+  }
+  
+  PSizeBase<T> operator++(int) {
+    PSizeBase<T> snapshot(*this);
+    operator++();
+    return snapshot;
+  }
+  
+  PSizeBase<T>& operator+=(const PSizeBase<T> &rhs) {
+    if(size() != rhs.size()) {
+      throw std::out_of_range (""); //fixme: use different exception
+    }
+    
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] += rhs.dims[i];
+    }
+    
+    return *this;
+  }
+  
+  PSizeBase<T>& operator+=(T val) {
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] += val;
+    }
+    
+    return *this;
+  }
+  
+  PSizeBase<T>& operator+=(int val) {
+    return operator+=(static_cast<T>(val));
+  }
+  
+  PSizeBase<T>& operator--() {
+    std::for_each(begin(), end(), [](hsize_t &val) {
+      val--;
+		});
+    return *this;
+  }
+
+  PSizeBase<T> operator--(int) {
+    PSizeBase<T> snapshot(*this);
+    operator--();
+    return snapshot;
+  }
+  
+  PSizeBase<T>& operator-=(const PSizeBase<T> &rhs) {
+    if(size() != rhs.size()) {
+      throw std::out_of_range (""); //fixme: use different exception
+    }
+    
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] -= rhs.dims[i];
+    }
+    
+    return *this;
+  }
+  
+  PSizeBase<T>& operator-=(T val) {
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] -= val;
+    }
+    
+    return *this;
+  }
+  
+  PSizeBase<T>& operator-=(int val) {
+    return operator-=(static_cast<T>(val));
+  }
+  
 	void swap(PSizeBase &other) {
 		using std::swap;
 		swap(dims, other.dims);
@@ -111,44 +185,39 @@ private:
 };
 
 template<typename T>
-PSizeBase<T> operator-(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+PSizeBase<T> operator-(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 {
-	if(rhs.size() != lhs.size()) {
-	  throw std::out_of_range (""); //fixme: use different exception
-	}
-
-  PSizeBase<T> result(rhs.size());
-  for (size_t i = 0; i < rhs.size(); i++) {
-  	result[i] = lhs[i] - rhs[i];
-  }
-
-  return result;
+	lhs -= rhs;
+  return lhs;
 }
 
 template<typename T>
-PSizeBase<T> operator+(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+PSizeBase<T> operator+(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 {
-	if(rhs.size() != lhs.size()) {
-	  throw std::out_of_range (""); //fixme: use different exception
-	}
-
-  PSizeBase<T> result(rhs.size());
-  for (size_t i = 0; i < rhs.size(); i++) {
-  	result[i] = lhs[i] + rhs[i];
-  }
-
-  return result;
+  lhs += rhs;
+  return lhs;
 }
 
 template<typename T>
-PSizeBase<T> operator+(const PSizeBase<T> &lhs, int rhs)
+PSizeBase<T> operator+(PSizeBase<T> lhs, T rhs)
 {
-  PSizeBase<T> result(lhs.size());
-  for (size_t i = 0; i < lhs.size(); i++) {
-  	result[i] = lhs[i] + static_cast<T>(rhs);
-  }
+  lhs += rhs;
+  return lhs;
+}
+  
+  
+template<typename T>
+PSizeBase<T> operator+(T lhs, const PSizeBase<T> &rhs)
+{
+  return operator+(rhs, lhs);
+}
 
-  return result;
+  
+template<typename T>
+PSizeBase<T> operator+(PSizeBase<T> lhs, int rhs)
+{
+  lhs += rhs;
+  return lhs;
 }
 
 
