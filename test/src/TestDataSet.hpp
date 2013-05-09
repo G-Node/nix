@@ -134,6 +134,15 @@ public:
 
     ds.extend(dims);
     ds.write(C);
+    
+    DataSet ds2 = DataSet::create(h5group, "dsDouble2", A);
+    ds2.write(A);
+    array_type D(boost::extents[1][1]);
+    ds2.read(D, true);
+    
+    for(index i = 0; i != 4; ++i)
+      for(index j = 0; j != 6; ++j)
+        CPPUNIT_ASSERT_EQUAL(A[i][j], D[i][j]);
   }
 
 
