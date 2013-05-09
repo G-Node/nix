@@ -86,6 +86,12 @@ public:
     PSize f = {1, 2, 3, 4};
     CPPUNIT_ASSERT_THROW(a + f, std::out_of_range);
     
+    PSize g(f.size(), 0);
+    
+    g += f;
+    
+    CPPUNIT_ASSERT(g == f);
+    CPPUNIT_ASSERT(g != a);
   }
   
   void testChunkGuessing() {

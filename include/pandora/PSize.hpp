@@ -227,6 +227,27 @@ PSizeBase<T> operator+(int lhs, const PSizeBase<T> &rhs)
   return operator+(rhs, lhs);
 }
 
+template<typename T>
+inline bool operator==(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+{
+  if (lhs.size() != rhs.size())
+    return false;
+  
+  for (size_t i = 0; i < lhs.size(); i++) {
+    if (lhs[i] != rhs[i])
+      return false;
+  }
+  
+  return true;
+}
+  
+template<typename T>
+inline bool operator!=(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+{
+  return !operator==(lhs, rhs);
+}
+  
+/* *****  */
 typedef PSizeBase<hsize_t>  PSize;
 typedef PSizeBase<hssize_t> PSSize;
 
