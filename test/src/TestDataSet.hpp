@@ -102,6 +102,14 @@ public:
     PSize k = h * j;
     
     CPPUNIT_ASSERT(j == k);
+    
+    size_t dp = j.dot(h);
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(999), dp);
+
+    PSize s = {3, 4};
+    dp = s.dot(s);
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(25), dp);
+    
   }
   
   void testChunkGuessing() {

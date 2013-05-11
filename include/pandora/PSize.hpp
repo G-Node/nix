@@ -179,6 +179,19 @@ public:
 		return product;
 	}
 
+  size_t dot(const PSizeBase<T> &other) const {
+    if(size() != other.size()) {
+      throw std::out_of_range (""); //fixme: use different exception
+    }
+
+    size_t res  = 0;
+    for (size_t i = 0; i < rank; i++) {
+      res += dims[i] * other.dims[i];
+    }
+    
+    return res;
+  }
+  
   T* data() { return dims; }
   const T* data() const {return dims; }
   
