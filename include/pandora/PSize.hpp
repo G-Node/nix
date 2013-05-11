@@ -144,6 +144,30 @@ public:
 		swap(dims, other.dims);
 		rank = other.rank;
 	}
+  
+  PSizeBase<T>& operator*=(const PSizeBase<T> &rhs) {
+    if(size() != rhs.size()) {
+      throw std::out_of_range (""); //fixme: use different exception
+    }
+    
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] *= rhs.dims[i];
+    }
+    
+    return *this;
+  }
+  
+  PSizeBase<T>& operator/=(const PSizeBase<T> &rhs) {
+    if(size() != rhs.size()) {
+      throw std::out_of_range (""); //fixme: use different exception
+    }
+    
+    for (size_t i = 0; i < rank; i++) {
+      dims[i] /= rhs.dims[i];
+    }
+    
+    return *this;
+  }
 
 	size_t size() const { return rank; }
 
@@ -226,7 +250,47 @@ PSizeBase<T> operator+(int lhs, const PSizeBase<T> &rhs)
 {
   return operator+(rhs, lhs);
 }
+  
+template<typename T>
+PSizeBase<T> operator*(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+{
+  lhs *= rhs;
+  return lhs;
+}
+  
+template<typename T>
+PSizeBase<T> operator*(PSizeBase<T> lhs, T rhs)
+{
+  lhs *= rhs;
+  return lhs;
+}
 
+template<typename T>
+PSizeBase<T> operator*(T lhs, const PSizeBase<T> &rhs)
+{
+  return operator*(rhs, lhs);
+}
+
+template<typename T>
+PSizeBase<T> operator/(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+{
+  lhs /= rhs;
+  return lhs;
+}
+
+template<typename T>
+PSizeBase<T> operator/(PSizeBase<T> lhs, T rhs)
+{
+  lhs /= rhs;
+  return lhs;
+}
+  
+template<typename T>
+PSizeBase<T> operator/(T lhs, const PSizeBase<T> &rhs)
+{
+  return operator/(rhs, lhs);
+}
+  
 template<typename T>
 inline bool operator==(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
 {

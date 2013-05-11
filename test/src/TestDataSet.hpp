@@ -92,6 +92,16 @@ public:
     
     CPPUNIT_ASSERT(g == f);
     CPPUNIT_ASSERT(g != a);
+    
+    PSize h = b / b;
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[2]);
+    
+    PSize j(h.size(), static_cast<value_type>(333));
+    PSize k = h * j;
+    
+    CPPUNIT_ASSERT(j == k);
   }
   
   void testChunkGuessing() {
