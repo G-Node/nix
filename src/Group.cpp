@@ -3,6 +3,7 @@
 #include <hdf5.h>
 
 #include <pandora/Group.hpp>
+#include <pandora/DataSet.hpp>
 #include <boost/multi_array.hpp>
 
 namespace pandora {
@@ -35,12 +36,8 @@ void Group::removeAttr(std::string name) const {
 
 
 bool Group::hasObject(std::string name) const {
-  hsize_t num = h5group.getNumObjs();
-  for (hsize_t i = 0; i < num; i++) {
-    if (h5group.getObjnameByIdx(i) == name)
-      return true;
-  }
-  return false;
+  htri_t res = H5Lexists(h5group.getLocId(), name.c_str(), H5P_DEFAULT);
+  return res;
 }
 
 size_t Group::objectCount() const {
@@ -67,9 +64,9 @@ void Group::removeData(std::string name) {
     h5group.unlink(name);
 }
 
-H5::DataSet Group::openData(std::string name) const {
-  H5::DataSet data = h5group.openDataSet(name);
-  return data;
+DataSet Group::openData(std::string name) const {
+  H5::DataSet ds5 = h5group.openDataSet(name);
+  return DataSet(ds5);
 }
 
 bool Group::hasGroup(std::string name) const {

@@ -5,9 +5,12 @@
 #include <string>
 #include <H5Cpp.h>
 
-#include "Charon.hpp"
+#include <pandora/Charon.hpp>
 
 namespace pandora {
+
+//forward delcaration
+class DataSet;
 
 class Group {
 
@@ -39,7 +42,7 @@ public:
   std::string objectName(size_t index) const;
 
   bool hasData(std::string name) const;
-  H5::DataSet openData(std::string name) const;
+  DataSet openData(std::string name) const;
   void removeData(std::string name);
 
   bool hasGroup(std::string name) const;

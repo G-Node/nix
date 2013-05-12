@@ -116,13 +116,9 @@ bool Property::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) c
 size_t Property::valueCount() const {
   size_t count = 0;
   if (group.hasData("values")) {
-    H5::DataSet dataset = group.openData("values");
-    H5::DataSpace space = dataset.getSpace();
-    int dims = space.getSimpleExtentNdims();
-    hsize_t *dimSize = new hsize_t[dims];
-    space.getSimpleExtentDims(dimSize);
-    count = dimSize[0];
-    delete[] dimSize;
+    DataSet dataset = group.openData("values");
+    PSize size = dataset.extent();
+    return size[0];
   }
   return count;
 }

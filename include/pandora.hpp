@@ -14,6 +14,8 @@
  * @brief This namespace contains all declarations of the public API.
  */
 
+#include <pandora/DataType.hpp>
+#include <pandora/PSize.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
@@ -23,20 +25,4 @@
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
 #include <pandora/TreeIterator.hpp>
-
-#ifndef PANDORA_H
-#define PANDORA_H
-
-namespace pandora {
-  enum DataType {
-    FLOAT,
-    INT,
-    BOOL,
-    STRING,
-    DATE,
-    DATETIME
-  };
-
-}
-
-#endif //PANDORA_H
+#include <pandora/DataSet.hpp>

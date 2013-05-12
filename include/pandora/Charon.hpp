@@ -6,11 +6,22 @@
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>
+#include <pandora/DataType.hpp>
 
 namespace pandora {
 namespace hades {
 
 /* ********** */
+
+template<typename T>
+struct TypeSpecBase {
+  typedef T inner_type;
+  static T get_inner(T val) {
+    return val;
+  }
+
+};
+
 template<typename T>
 struct TypeSpec {
   
@@ -22,7 +33,7 @@ struct TypeSpec {
 //
 
 template<>
-struct TypeSpec<char> {
+struct TypeSpec<char> : public TypeSpecBase<char> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I8LE;
@@ -30,7 +41,7 @@ struct TypeSpec<char> {
 };
 
 template<>
-struct TypeSpec<int16_t> {
+struct TypeSpec<int16_t> : public TypeSpecBase<int16_t>  {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I16LE;
@@ -38,7 +49,7 @@ struct TypeSpec<int16_t> {
 };
 
 template<>
-struct TypeSpec<uint16_t> {
+struct TypeSpec<uint16_t> : public TypeSpecBase<uint16_t> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U16LE;
@@ -46,7 +57,7 @@ struct TypeSpec<uint16_t> {
 };
 
 template<>
-struct TypeSpec<int32_t> {
+struct TypeSpec<int32_t> : public TypeSpecBase<int32_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I32LE;
@@ -54,7 +65,7 @@ struct TypeSpec<int32_t> {
 };
 
 template<>
-struct TypeSpec<uint32_t> {
+struct TypeSpec<uint32_t> : public TypeSpecBase<uint32_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U32LE;
@@ -62,7 +73,7 @@ struct TypeSpec<uint32_t> {
 };
 
 template<>
-struct TypeSpec<int64_t> {
+struct TypeSpec<int64_t> : public TypeSpecBase<int64_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I64LE;
@@ -70,7 +81,7 @@ struct TypeSpec<int64_t> {
 };
 
 template<>
-struct TypeSpec<uint64_t> {
+struct TypeSpec<uint64_t> : public TypeSpecBase<uint64_t> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U64LE;
@@ -78,7 +89,7 @@ struct TypeSpec<uint64_t> {
 };
 
 template<>
-struct TypeSpec<float> {
+struct TypeSpec<float> : public TypeSpecBase<float> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::IEEE_F32LE;
@@ -86,7 +97,7 @@ struct TypeSpec<float> {
 };
 
 template<>
-struct TypeSpec<double> {
+struct TypeSpec<double> : public TypeSpecBase<double> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::IEEE_F64LE;
@@ -94,19 +105,44 @@ struct TypeSpec<double> {
 };
 
 template<>
-struct TypeSpec<bool> {
+struct TypeSpec<bool> : public TypeSpecBase<int8_t> {
 
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I8LE;
   const H5::DataType memType = H5::PredType::NATIVE_HBOOL;
+
+  static int8_t get_inner(bool b) {
+    return b;
+  }
+
 };
 
 template<>
-struct TypeSpec<std::string> {
+struct TypeSpec<std::string> : public TypeSpecBase<char *> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+
+  static char* get_inner(const std::string &val) {
+    return (char*) val.c_str();
+  }
+
+};
+
+
+template<>
+struct TypeSpec<DataType> {
+
+  static const bool is_valid = true;
+
+  TypeSpec(DataType type)
+    : fileType(data_type_to_h5_filetype(type)),
+      memType(data_type_to_h5_memtype(type))
+     { }
+
+  const H5::DataType fileType;
+  const H5::DataType memType;
 };
 
 /* ********** */
@@ -147,7 +183,7 @@ public:
 
 
 template<typename T>
-class TypeInfo<std::vector<T>> {
+class TypeInfo<std::vector<T> > {
 public:
   typedef T element_type;
   typedef std::vector<T> vector_type;
@@ -183,7 +219,7 @@ public:
 };
 
 template<typename T, size_t N>
-class TypeInfo<boost::multi_array<T, N>> {
+class TypeInfo<boost::multi_array<T, N> > {
 public:
   typedef boost::multi_array<T, N>     array_type;
   typedef typename array_type::element element_type;
@@ -302,7 +338,7 @@ public:
   PSize       shape() const { return info_type::shape(value); }
   size_t      size() { return this->num_elements(value); }
   
-  void        resize(const PSize &size) {info_type::resize (value, size);}
+  void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
   
 private:
   value_ref value;
@@ -472,21 +508,21 @@ public:
   const H5::DataType& getMemType() const { return value.memType; }
   
   H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
-    PSize shape = value.shape();
+    PSize dims = value.shape();
     H5::DataSpace space;
 
-    if (shape.size() == 0) {
+    if (dims.size() == 0) {
       space = H5::DataSpace();
       return space; //no need to delete shape
     }
 
-    int rank = (int) shape.size();
+    int rank = (int) dims.size();
     if (maxdimsUnlimited) {
-      PSize maxdims(shape.size());
+      PSize maxdims(dims.size());
       std::fill_n(&maxdims[0], rank, H5S_UNLIMITED);
-      space = H5::DataSpace(rank, &shape[0], &maxdims[0]);
+      space = H5::DataSpace(rank, &dims[0], &maxdims[0]);
     } else {
-      space = H5::DataSpace(rank, &shape[0]);
+      space = H5::DataSpace(rank, &dims[0]);
     }
 
     return space;
@@ -509,6 +545,7 @@ private:
   vbox_type  value;
 };
 
-#endif //PANDORA_CHARON_H
 
-} //namespace pandora
+}  //namespace pandora
+
+#endif //PANDORA_CHARON_H

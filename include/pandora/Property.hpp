@@ -8,6 +8,8 @@
 #include <pandora/Section.hpp>
 #include <pandora/Value.hpp>
 
+#include <pandora/DataSet.hpp>
+
 namespace pandora {
 
 class Property {
@@ -53,7 +55,7 @@ public:
   void addValue(const Value<T> &value);
 
   template<typename T>
-  void addValue(const T value, const std::string &reference = "", const std::string filename = "",
+  void addValue(const T value, double uncertainty = 0.0, const std::string &reference = "", const std::string filename = "",
       const std::string encoder = "", const std::string checksum = "");
 
 
@@ -78,53 +80,47 @@ public:
 };
 
 template<typename T>
-void Property::addValue(T value, const std::string &reference, const std::string filename,
+void Property::addValue(T value, double uncertainty, const std::string &reference, const std::string filename,
     const std::string encoder, const std::string checksum) {
-  ValueInfo<T> info;
+
   std::string dt = this->dataType();
-  if (dt.length() > 0 && dt.compare(info.type) != 0) {
-    throw std::runtime_error("Value and data type do not match!");
-    return;
-  } else {
-    dataType(info.type);
-  }
-
-  FileValue<typename ValueInfo<T>::inner_type> val;
-
-  val.value = info.get(value);
-  val.uncertainty = 0.0;
-  val.reference = (char*) reference.c_str();
-  val.encoder = (char*) encoder.c_str();
-  val.checksum = (char*) checksum.c_str();
-  val.filename = (char*) filename.c_str();
-
-  hsize_t dim[1] = { 1 };
-  H5::DataSpace space(1, dim);
-  H5::DataSet* dataset;
-  dataset = new H5::DataSet(group.h5Group().createDataSet("values", info.memtype, space));
-  dataset->write(&val, info.memtype);
+//  if (dt.length() > 0 && dt.compare(info.type) != 0) {
+//    throw std::runtime_error("Value and data type do not match!");
+//    return;
+//  } else {
+//    dataType(info.type);
+//  }
+  Value<T> tempValue(value, uncertainty, reference, filename, encoder, checksum);
+  addValue(tempValue);
 }
 
 template<typename T>
-void Property::addValue(const Value<T> &value)  {
-  ValueInfo<T> info;
-  std::string dt = this->dataType();
-  if (dt.length() > 0 && dt.compare(info.type) != 0) {
-    throw std::runtime_error("Value and data type do not match!");
-    return;
+void Property::addValue(const Value<T> &value) {
+  std::vector<Value<T> > vals = { value };
+
+  PSize start;
+
+  DataSet ds((H5::DataSet()));
+  if (group.hasData("values")) {
+    ds = group.openData("values");
+    PSize size = ds.extent();
+    PSize newSize = size + 1;
+    ds.extend(newSize);
+    start = size;
   } else {
-    dataType(info.type);
+    Charon<std::vector<Value<T> > > charon(vals);
+    PSize size = {1};
+    PSize maxsize = {H5S_UNLIMITED};
+    PSize chunks = DataSet::guessChunking(size, DataType::Double);
+    ds = DataSet::create(group.h5Group(), charon.getFileType(),  "values", size, &maxsize, &chunks);
+    start = {0};
   }
 
-  typedef typename ValueInfo<T>::inner_type inner_type;
-  FileValue<inner_type> val;
-  val = value.toValueBase(val.value);
+  Selection fileSel = ds.createSelection();
+  PSize count = {1};
+  fileSel.select(count, start);
 
-  hsize_t dim[1] = { 1 };
-  H5::DataSpace space(1, dim);
-  H5::DataSet* dataset;
-  dataset = new H5::DataSet(group.h5Group().createDataSet("values", info.memtype, space));
-  dataset->write(&val, info.memtype);
+  ds.write(vals, fileSel);
 }
 
 template<typename T>
@@ -133,15 +129,22 @@ void Property::value(size_t index, Value<T> &value) const {
     if (index < 0 || index >= valueCount()) {
       throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
     }
-    H5::DataSet dataset = group.openData("values");
-    ValueInfo<T> info;
-    if (!checkDataType(dataset, info.h5class)) {
-      throw std::runtime_error("Property::stringValue(index): Value DataType is not String!");
-    }
-    FileValue<typename ValueInfo<T>::inner_type> fileValue;
-    dataset.read(&fileValue, info.memtype);
-    value = fileValue;
-    H5::DataSet::vlenReclaim(&fileValue, info.memtype, dataset.getSpace());
+    DataSet dataset = group.openData("values");
+
+//    ValueInfo<T> info;
+//    if (!checkDataType(dataset, info.h5class)) {
+//      throw std::runtime_error("Property::stringValue(index): Value DataType is not String!");
+//    }
+
+    std::vector<Value<T> > vals;
+
+    Selection fileSel = dataset.createSelection();
+    PSize start = {index};
+    PSize count = {1};
+    fileSel.select(count, start);
+
+    dataset.read(vals, fileSel, true);
+    value = vals[0];
   }
 }
 }
