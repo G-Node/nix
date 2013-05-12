@@ -29,7 +29,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 		space = H5::DataSpace(rank, size.data(), maxdims);
 	}
 
-	H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+	H5::DSetCreatPropList plcreate;
 
 	if (chunks != nullptr) {
 		int rank = static_cast<int>(chunks->size());
