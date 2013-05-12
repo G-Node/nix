@@ -38,7 +38,7 @@ public:
   H5::DataSpace& h5space() { return space; }
   const H5::DataSpace& h5space() const { return space; }
   bool isValid() const { return space.selectValid(); }
-  void bounds(PSize &start, PSize &end) const { space.getSelectBounds(&start[0], &end[0]); }
+  void bounds(PSize &start, PSize &end) const { space.getSelectBounds(start.data(), end.data()); }
   PSize size() const;
   size_t rank() const {return static_cast<size_t>(space.getSimpleExtentNdims()); }
 

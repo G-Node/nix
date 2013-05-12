@@ -227,7 +227,7 @@ public:
   static PSize shape(const array_type &value) {
     PSize hsize(N);
     const size_t *shape = value.shape();
-    std::copy(shape, shape + N, &hsize[0]);
+    std::copy(shape, shape + N, hsize.data());
     return hsize;
   }
 
@@ -508,26 +508,36 @@ public:
   const H5::DataType& getMemType() const { return value.memType; }
   
   H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
+
+    if (maxdimsUnlimited) {
+      PSize dims = value.shape();
+      PSize maxdims(dims.size(), H5S_UNLIMITED);
+      return createDataSpace(&maxdims);
+    } else {
+      return createDataSpace(nullptr);
+    }
+  
+  }
+
+  H5::DataSpace createDataSpace(const PSize *maxdims) const {
     PSize dims = value.shape();
     H5::DataSpace space;
-
+    
     if (dims.size() == 0) {
       space = H5::DataSpace();
       return space; //no need to delete shape
     }
-
+    
     int rank = (int) dims.size();
-    if (maxdimsUnlimited) {
-      PSize maxdims(dims.size());
-      std::fill_n(&maxdims[0], rank, H5S_UNLIMITED);
-      space = H5::DataSpace(rank, &dims[0], &maxdims[0]);
+    if (maxdims != nullptr) {
+      space = H5::DataSpace(rank, dims.data(), maxdims->data());
     } else {
-      space = H5::DataSpace(rank, &dims[0]);
+      space = H5::DataSpace(rank, dims.data());
     }
-
+    
     return space;
   }
-
+  
   PSize shape() const {
     return value.shape();
   }
