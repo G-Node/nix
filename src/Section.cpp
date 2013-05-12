@@ -3,6 +3,8 @@
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
+#include <pandora/TreeIterator.hpp>
+
 #include <iostream>
 
 using namespace std;
@@ -129,6 +131,11 @@ bool Section::hasChildren() const {
 
 SectionIterator Section::children() const {
   SectionIterator iter(file, (*file).metadataGroup(), id());
+  return iter;
+}
+
+TreeIterator Section::treeIterator() const {
+  TreeIterator iter(*this);
   return iter;
 }
 

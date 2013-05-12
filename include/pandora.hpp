@@ -22,6 +22,7 @@
 #include <pandora/SectionIterator.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
+#include <pandora/TreeIterator.hpp>
 
 #ifndef PANDORA_H
 #define PANDORA_H
