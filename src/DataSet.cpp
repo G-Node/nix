@@ -36,7 +36,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 		plcreate.setChunk(rank, chunks->data());
 	}
 
-	H5::DataSet dset = parent.createDataSet(name, fileType, space);
+	H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
 	return DataSet(dset);
 }
 

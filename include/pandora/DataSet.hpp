@@ -56,9 +56,8 @@ DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, con
 		plcreate.setChunk(rank, chunks->data());
 	}
   
-	H5::DataSet dset = parent.createDataSet(name, charon.getFileType(), space);
+	H5::DataSet dset = parent.createDataSet(name, charon.getFileType(), space, plcreate);
 	return DataSet(dset);
-  
 }
   
   
