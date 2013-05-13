@@ -91,7 +91,7 @@ template<typename T> bool Group::getAttr(std::string name, T &value) const
   H5::DataSpace space = attr.getSpace();
   int rank = space.getSimpleExtentNdims();
   PSize dims(static_cast<size_t>(rank));
-  space.getSimpleExtentDims (&dims[0], nullptr);
+  space.getSimpleExtentDims (dims.data(), nullptr);
   charon.resize(dims);
 
   typedef typename Charon<T>::dbox_type dbox_type;

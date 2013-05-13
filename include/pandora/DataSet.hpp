@@ -21,17 +21,46 @@ public:
 
 	static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
 		const PSize &size, const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+  
+  template<typename T>
+  static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value,
+                        const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+  
 	static PSize guessChunking(PSize dims, DataType dtype);
-
+  static PSize guessChunking(PSize dims, size_t elementSize);
+  
 	void extend(const PSize &size);
 	Selection createSelection() const;
-
+  PSize size() const;
+  
 private:
 	H5::DataSet h5dset;
 };
 
 
 /* ************************************************************************* */
+
+  
+template<typename T>
+DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data,
+                        const PSize *maxsize, const PSize *chunks)
+{
+  typedef Charon< const T> charon_type;
+  charon_type charon(data);
+  
+  H5::DataSpace space = charon.createDataSpace(maxsize);
+  H5::DSetCreatPropList plcreate;
+  
+	if (chunks != nullptr) {
+		int rank = static_cast<int>(chunks->size());
+		plcreate.setChunk(rank, chunks->data());
+	}
+  
+	H5::DataSet dset = parent.createDataSet(name, charon.getFileType(), space, plcreate);
+	return DataSet(dset);
+}
+  
+  
 /**
  * Read *all* the data from a DataSet into memory
  *
@@ -47,9 +76,7 @@ template<typename T> void DataSet::read(T &value, bool resize)
 
 	H5::DataSpace space = h5dset.getSpace();
 	if (resize) {
-		size_t rank = (size_t) space.getSimpleExtentNdims();
-		PSize dims(rank);
-		space.getSimpleExtentDims (&dims[0], nullptr);
+		PSize dims = this->size();
 		charon.resize(dims);
 	}
 
