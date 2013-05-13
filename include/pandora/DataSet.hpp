@@ -27,8 +27,11 @@ public:
   
   template<typename T>
   static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value,
-                        const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+      const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
   
+  static DataSet create(const H5::CommonFG &parent, const H5::DataType &fileType,
+      const std::string &name, const PSize &size, const PSize *maxsize, const PSize *chunks);
+
 	static PSize guessChunking(PSize dims, DataType dtype);
 
   static PSize guessChunking(PSize dims, size_t elementSize);

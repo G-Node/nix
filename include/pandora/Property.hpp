@@ -103,7 +103,7 @@ void Property::addValue(const Value<T> &value) {
   DataSet ds((H5::DataSet()));
   if (group.hasData("values")) {
     ds = group.openData("values");
-    PSize size = ds.extent();
+    PSize size = ds.size();
     PSize newSize = size + 1;
     ds.extend(newSize);
     start = size;

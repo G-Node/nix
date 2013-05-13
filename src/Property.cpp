@@ -117,7 +117,7 @@ size_t Property::valueCount() const {
   size_t count = 0;
   if (group.hasData("values")) {
     DataSet dataset = group.openData("values");
-    PSize size = dataset.extent();
+    PSize size = dataset.size();
     return size[0];
   }
   return count;

@@ -180,13 +180,4 @@ PSize DataSet::size() const
   return dims;
 }
 
-PSize DataSet::extent()
-{
-  H5::DataSpace space = h5dset.getSpace();
-  int ndim = space.getSimpleExtentNdims();
-  PSize dims(ndim);
-  space.getSimpleExtentDims(&dims[0]);
-  return dims;
-}
-
 } //namespace pandora
