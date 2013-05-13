@@ -7,6 +7,7 @@ namespace pandora {
 TreeIterator::TreeIterator(const Section parent) :
                                 parent(parent), currentIter(parent.children()) {
   cerr << "Constructor.parent.id: " << parent.id() << endl;
+
   if(currentIter != currentIter.end()){
     Section s = *currentIter;
     cerr << "Contructor.s.name(): " << s.name() << endl;
@@ -42,6 +43,7 @@ TreeIterator &TreeIterator::operator++() {
   }
 
   cerr << "\t end of currentIter" << endl;
+
   while(q.size() > 0){
     cerr << "\t switch to new iter" << endl;
     currentIter = q.front();
@@ -86,7 +88,7 @@ void TreeIterator::operator=(const TreeIterator &other) {
 }
 
 bool TreeIterator::operator==(const TreeIterator &other) const {
-  return parent == other.parent && currentIter == other.currentIter && q.size() == other.q.size();
+  return parent == other.parent && q.size() == other.q.size() && ((currentIter == other.currentIter) || q.size() == 0) ;
 
 }
 
