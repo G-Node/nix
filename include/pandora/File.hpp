@@ -170,7 +170,7 @@ public:
   /**
    * Deletes the Section that is specified with the id.
    */
-  bool removeSection(std::string section_id, bool cascade = true);
+  bool removeSection(std::string section_id);
 
   /**
    * Create an id with the prefix used by the file.

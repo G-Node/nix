@@ -17,15 +17,14 @@ class Section {
 
 private:
 
-  mutable File *file;
-  Group group, props;
+  Group group, props, sections;
   std::string section_id;
 
 public:
 
   Section(const Section &section);
 
-  Section(File *file, Group group, std::string id);
+  Section(Group group, std::string id);
 
   std::string id() const;
 
@@ -43,10 +42,10 @@ public:
 
   void link(std::string link);
   std::string link() const;
-
+/* TODO: how to support includes?!
   void include(std::string include);
   std::string include() const;
-
+*/
   void mapping(std::string mapping);
   std::string mapping() const;
 

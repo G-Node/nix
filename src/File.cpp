@@ -145,7 +145,7 @@ bool File::hasSection(std::string id) const {
 /*SEE: File.hpp*/
 Section File::getSection(std::string id) {
   if(metadata.hasGroup(id)){
-      return Section(this, metadata.openGroup(id, false), id);
+      return Section(metadata.openGroup(id, false), id);
     }
     else{
       throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
@@ -153,17 +153,16 @@ Section File::getSection(std::string id) {
 }
 
 SectionIterator File::sections(){
-  SectionIterator iter(this, metadata,"");
+  SectionIterator iter(metadata);
   return iter;
 }
 
 /*SEE: File.hpp*/
 Section File::createSection(string name, string type, string parent) {
-  // cout << "File: " << this << "\t" << "createSection!" << endl;
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(this, metadata.openGroup(id, true), id);
+  Section s(metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
   if(parent.length() > 0){
@@ -173,26 +172,11 @@ Section File::createSection(string name, string type, string parent) {
 }
 
 /*SEE: File.hpp*/
-bool File::removeSection(std::string id, bool cascade){
+bool File::removeSection(std::string id){
   bool success = false;
   if(hasSection(id)){
-    Section s = getSection(id);
-    if(s.hasChildren()){
-      if(cascade){
-        vector<std::string> children;
-        for(SectionIterator i = s.children(); i != i.end(); ++i){
-          Section child = *i;
-          children.push_back(child.id());
-        }
-        for(size_t i = 0; i < children.size(); i++)
-          removeSection(children[i],cascade);
-        metadataGroup().removeGroup(id);
-      }
-    }
-    else{
-      metadataGroup().removeGroup(id);
-      success = true;
-    }
+    metadataGroup().removeGroup(id);
+    success = true;
   }
   return success;
 }
