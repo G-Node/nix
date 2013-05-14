@@ -13,12 +13,13 @@ namespace pandora {
 class TreeIterator : public std::iterator<std::input_iterator_tag, Section>
 {
 protected:
-  Section parent;
+  Section root;
 
 private:
   std::list<SectionIterator> q;
   SectionIterator currentIter;
 
+  void push_children();
 
 public:
   TreeIterator(const Section parent);

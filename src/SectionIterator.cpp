@@ -86,7 +86,6 @@ Section SectionIterator::operator*() const {
     id = group.objectName(index);
   } else {
     throw std::range_error("Attempt to access an element that is out of range!");
-   // id = group.objectName(lastIndex());
   }
   Section section(file, group.openGroup(id, false), id);
   return section;
@@ -97,6 +96,7 @@ void SectionIterator::operator=(const SectionIterator &other) {
   group = other.group;
   index = other.index;
   size = other.size;
+  parent = other.parent;
 }
 
 bool SectionIterator::operator==(const SectionIterator &other) const {
