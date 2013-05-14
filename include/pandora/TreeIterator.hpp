@@ -17,12 +17,14 @@ protected:
 
 private:
   std::list<SectionIterator> q;
+  std::list<size_t> l;
   SectionIterator currentIter;
-
+  size_t depth, level;
+  bool at_end;
   void push_children();
 
 public:
-  TreeIterator(const Section parent);
+  TreeIterator(const Section parent, uint depth = 0);
   TreeIterator(const TreeIterator &other);
 
   Section operator*() const;

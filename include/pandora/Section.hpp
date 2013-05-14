@@ -58,7 +58,7 @@ public:
 
   bool hasChildren() const;
 
-  TreeIterator treeIterator() const;
+  TreeIterator treeIterator(uint depth = 0) const;
 
   Section addSection(std::string name, std::string type);
 

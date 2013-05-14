@@ -137,8 +137,8 @@ SectionIterator Section::children() const {
   return iter;
 }
 
-TreeIterator Section::treeIterator() const {
-  TreeIterator iter(*this);
+TreeIterator Section::treeIterator(uint depth) const {
+  TreeIterator iter(*this, depth);
   return iter;
 }
 
