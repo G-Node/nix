@@ -66,10 +66,10 @@ string Section::repository() const {
   group.getAttr("repository", repository);
   return repository;
 }
-/*TODO
+
 void Section::link(string link) {
   if (this->file->hasSection(link)) {
-    if (this->file->getSection(link).type().compare(this->type()) == 0) {
+    if (this->file->findSection(link).type().compare(this->type()) == 0) {
       group.setAttr("link", link);
     } else {
       throw std::runtime_error(
@@ -81,7 +81,7 @@ void Section::link(string link) {
     "Cannot create link! Linked section does not exist!");
   }
 }
- */
+
 string Section::link() const {
   string link;
   group.getAttr("link", link);
@@ -176,17 +176,17 @@ PropertyIterator Section::properties() const {
   return iter;
 }
 
-/* TODO
+
 PropertyIterator Section::inheritedProperties() const {
-  if(this->link().length() > 0){
-    return this->file->getSection(this->link()).properties();
+  if(this->link().length() > 0 && this->file->hasSection(this->link())){
+    return this->file->findSection(this->link()).properties();
   }
   else{
     throw std::runtime_error(
         "Section has no link, cannot retrieve inherited Properties!");
   }
 }
- */
+
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
     return Property(*this, props.openGroup(id, false), id);
@@ -195,7 +195,7 @@ Property Section::getProperty(std::string id) const {
         "Requested Property does not exist! Always check with hasProperty!");
   }
 }
-/* TODO
+
 Property Section::getPropertyByName(std::string name) const {
   for (PropertyIterator iter = properties(); iter != iter.end(); ++iter) {
     Property p = *iter;
@@ -204,7 +204,7 @@ Property Section::getPropertyByName(std::string name) const {
   }
   if (this->link().length() > 0) {
     if (this->file->hasSection(this->link())) {
-      Section linked = this->file->getSection(this->link());
+      Section linked = this->file->findSection(this->link());
       if (linked.hasPropertyByName(name)) {
         return linked.getPropertyByName(name);
       }
@@ -214,7 +214,7 @@ Property Section::getPropertyByName(std::string name) const {
   throw std::runtime_error(
       "Requested Property does not exist! Always check with hasPropertyByName!");
 }
- */
+
 Property Section::addProperty(std::string name) {
   if (hasPropertyByName(name)) {
     throw std::runtime_error("Attempt to add a property that already exists!");

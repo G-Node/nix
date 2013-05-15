@@ -9,7 +9,7 @@ TreeIterator::TreeIterator(const Section other, uint depth) :
   if (depth < 0)
     depth = 0;
   level = 1;
-  at_end = false;
+  at_end = currentIter == currentIter.end();
   push_children();
 }
 

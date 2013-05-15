@@ -202,7 +202,7 @@ Section File::createSection(string name, string type, string parent) {
 /*SEE: File.hpp*/
 bool File::removeSection(std::string id){
   bool success = false;
-  if(hasSection(id)){
+  if(hasSection(id,1)){
     metadataGroup().removeGroup(id);
     success = true;
   }
