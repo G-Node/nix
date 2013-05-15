@@ -12,13 +12,13 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-        file(section.file), group(section.group), section_id(section.section_id) {
+                file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
   sections = section.sections;
 }
 
 Section::Section(File *file, Group group, string id) :
-        file(file), group(group), section_id(id) {
+                file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
   sections = group.openGroup("sections");
 }
@@ -136,6 +136,16 @@ bool Section::hasSection(std::string id, uint depth) const{
     }
   }
   return found;
+}
+
+Section Section::findSection(std::string id, uint depth) const{
+  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+    if((*treeIter).id().compare(id) == 0){
+      Section found = *treeIter;
+      return found;
+    }
+  }
+  throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
 
 bool Section::hasChildren() const {

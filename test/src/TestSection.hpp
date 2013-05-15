@@ -51,14 +51,14 @@ public:
     std::string lastSectionId;
     for (int i = 0; i < 5; i++) {
       Section s1(f1->createSection(names[i], "Recording"));
-      Section s2(f1->getSection(s1.id()));
+      Section s2(f1->findSection(s1.id()));
       lastSectionId = s2.id();
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id()
               << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
-    Section test = f1->getSection(lastSectionId);
+    Section test = f1->findSection(lastSectionId);
     stringstream errmsg;
     errmsg << "Error while accessing Section with id: " << lastSectionId
         << ", retrieved section id = " << test.id();
@@ -93,7 +93,7 @@ public:
     bool result = f1->removeSection(test.id(), false);
 
     CPPUNIT_ASSERT_MESSAGE(msg5.str(), !result);
-    CPPUNIT_ASSERT_MESSAGE(msg5.str(), f1->getSection(test.id()) == test);
+    CPPUNIT_ASSERT_MESSAGE(msg5.str(), f1->findSection(test.id()) == test);
 
     stringstream msg3;
     msg3 << "Error while removing child section: " << c1.id()
@@ -131,7 +131,7 @@ public:
   }
 
   void testAddingProperties() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     const char *units[5] = { "ms", "kg", "S", "V", "mA" };
     size_t oldCount = s.propertyCount();
     for (int j = 0; j < 5; j++) {
@@ -154,7 +154,7 @@ public:
   }
 
   void testAccessingProperties() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     stringstream msg;
     msg
     << "Error while accessing property that does not exist. Should have thrown a runtime exception!";
@@ -177,7 +177,7 @@ public:
   }
 
   void testRemovingProperties() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     size_t count = s.propertyCount();
     size_t expectation;
     Property p = s.addProperty("delete property");

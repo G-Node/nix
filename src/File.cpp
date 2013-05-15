@@ -139,7 +139,7 @@ Block File::getBlock(size_t index) {
 
 
 /*SEE: File.hpp*/
-bool File::hasSection(std::string id) {
+bool File::hasSection(std::string id, uint depth) {
   bool found = false;
   for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
     if((*iter).id().compare(id) == 0){
@@ -147,32 +147,34 @@ bool File::hasSection(std::string id) {
       break;
     }
   }
-  SectionIterator iter = sections();
-  while(!found && iter != iter.end()){
-    Section s = *iter;
-    found = s.hasSection(id);
-    ++iter;
+  if(depth == 0 || depth > 1){
+    SectionIterator iter = sections();
+    while(!found && iter != iter.end()){
+      Section s = *iter;
+      found = s.hasSection(id, depth - 1);
+      ++iter;
+    }
   }
   return found;
 }
 
 /*SEE: File.hpp*/
-Section File::getSection(std::string id) {
-  if(hasSection(id)){
+Section File::findSection(std::string id, uint depth) {
+  if(hasSection(id, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
       if((*iter).id().compare(id) == 0){
         Section found = *iter;
         return found;
       }
     }
-    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+    SectionIterator iter = sections();
+    while(iter != iter.end()){
       Section s = *iter;
-      for(TreeIterator treeIter = s.treeIterator(); treeIter != treeIter.end(); ++treeIter){
-        if((*treeIter).id().compare(id) == 0){
-          Section found = *treeIter;
-          return found;
-        }
+      if(s.hasSection(id)){
+        Section found = s.findSection(id, depth -1);
+        return found;
       }
+      ++iter;
     }
   }
   throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");

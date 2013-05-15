@@ -42,7 +42,7 @@ public:
   }
 
   void testAddRemoveValue() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
@@ -73,7 +73,7 @@ public:
   }
 
   void testAccessingValues() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
@@ -126,7 +126,7 @@ public:
   }
 
   void testProperties() {
-    Section s = f1->getSection(f1->metadataGroup().objectName(0));
+    Section s = f1->findSection(f1->metadataGroup().objectName(0));
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }

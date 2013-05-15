@@ -6,6 +6,8 @@ namespace pandora {
 
 TreeIterator::TreeIterator(const Section other, uint depth) :
       root(other), currentIter(other.children()),depth(depth) {
+  if (depth < 0)
+    depth = 0;
   level = 1;
   at_end = false;
   push_children();

@@ -72,7 +72,7 @@ public:
    */
   bool hasSection(std::string id, uint depth = 0) const;
 
-  Section findSection(std::string id) const;
+  Section findSection(std::string id, uint depth = 0) const;
 
   bool removeSection(std::string id, bool cascade = true);
 
