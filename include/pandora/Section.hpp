@@ -61,6 +61,16 @@ public:
   TreeIterator treeIterator(uint depth = 0) const;
 
   Section addSection(std::string name, std::string type);
+  /**
+   * Performs a search on the tree starting at this section and returns whether a section with
+   * the specified id exists.
+   *
+   * @param id: string the id of requested section
+   * @param depth: uint (default 0). The depth of the search. 0 indicates unlimited depth.
+   *
+   * @return bool
+   */
+  bool hasSection(std::string id, uint depth = 0) const;
 
   Section findSection(std::string id) const;
 

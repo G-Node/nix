@@ -147,16 +147,11 @@ bool File::hasSection(std::string id) {
       break;
     }
   }
-  if(!found){
-    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
-      Section s = *iter;
-      for(TreeIterator treeIter = s.treeIterator(); treeIter != treeIter.end(); ++treeIter){
-        if((*treeIter).id().compare(id) == 0){
-          found = true;
-          break;
-        }
-      }
-    }
+  SectionIterator iter = sections();
+  while(!found && iter != iter.end()){
+    Section s = *iter;
+    found = s.hasSection(id);
+    ++iter;
   }
   return found;
 }

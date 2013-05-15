@@ -12,13 +12,13 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-    file(section.file), group(section.group), section_id(section.section_id) {
+        file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
   sections = section.sections;
 }
 
 Section::Section(File *file, Group group, string id) :
-    file(file), group(group), section_id(id) {
+        file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
   sections = group.openGroup("sections");
 }
@@ -127,6 +127,17 @@ bool Section::removeSection(std::string id, bool cascade) {
   return success;
 }
 
+bool Section::hasSection(std::string id, uint depth) const{
+  bool found = false;
+  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+    if((*treeIter).id().compare(id) == 0){
+      found = true;
+      break;
+    }
+  }
+  return found;
+}
+
 bool Section::hasChildren() const {
   SectionIterator iter = this->children();
   return iter != iter.end();
@@ -165,7 +176,7 @@ PropertyIterator Section::inheritedProperties() const {
         "Section has no link, cannot retrieve inherited Properties!");
   }
 }
-*/
+ */
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
     return Property(*this, props.openGroup(id, false), id);
@@ -193,7 +204,7 @@ Property Section::getPropertyByName(std::string name) const {
   throw std::runtime_error(
       "Requested Property does not exist! Always check with hasPropertyByName!");
 }
-*/
+ */
 Property Section::addProperty(std::string name) {
   if (hasPropertyByName(name)) {
     throw std::runtime_error("Attempt to add a property that already exists!");
