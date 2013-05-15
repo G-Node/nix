@@ -13,13 +13,14 @@ class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
 {
 
 protected:
+  mutable File  *file;
   Group group;
   size_t index, size;
 
 
 
 public:
-  SectionIterator(Group group);
+  SectionIterator(File *file, Group group);
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;

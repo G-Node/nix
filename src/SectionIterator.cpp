@@ -4,14 +4,14 @@ using namespace std;
 
 namespace pandora {
 
-SectionIterator::SectionIterator(Group group) :
-        group(group){
+SectionIterator::SectionIterator(File *file, Group group) :
+        file(file), group(group){
   index = 0;
   size = group.objectCount();
 }
 
 SectionIterator::SectionIterator(const SectionIterator &other) :
-        group(other.group), index(other.index), size(other.size){
+    file(other.file), group(other.group), index(other.index), size(other.size){
 }
 
 SectionIterator &SectionIterator::operator++() {
@@ -38,7 +38,7 @@ Section SectionIterator::operator*() const {
   } else {
     throw std::range_error("Attempt to access an element that is out of range!");
   }
-  Section section(group.openGroup(id, false), id);
+  Section section(file, group.openGroup(id, false), id);
   return section;
 }
 

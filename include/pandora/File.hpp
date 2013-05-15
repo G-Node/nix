@@ -132,7 +132,7 @@ public:
    *
    * @return True if the section exists, false otherwise.
    */
-  bool hasSection(std::string id) const;
+  bool hasSection(std::string id);
 
   /**
    * Return the Section specified by the id.

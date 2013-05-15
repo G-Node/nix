@@ -12,13 +12,13 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-            group(section.group), section_id(section.section_id) {
+    file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
   sections = section.sections;
 }
 
-Section::Section(Group group, string id) :
-            group(group), section_id(id) {
+Section::Section(File *file, Group group, string id) :
+    file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
   sections = group.openGroup("sections");
 }
@@ -111,7 +111,7 @@ string Section::parent() const {
 
 Section Section::addSection(std::string name, std::string type) {
   string id = util::createId("section");
-  Section s(sections.openGroup(id,true), id);
+  Section s(file, sections.openGroup(id,true), id);
   s.name(name);
   s.type(type);
   s.parent(this->id());
@@ -133,7 +133,7 @@ bool Section::hasChildren() const {
 }
 
 SectionIterator Section::children() const {
-  SectionIterator iter(sections);
+  SectionIterator iter(file, sections);
   return iter;
 }
 
@@ -154,6 +154,7 @@ PropertyIterator Section::properties() const {
   PropertyIterator iter(*this, props);
   return iter;
 }
+
 /* TODO
 PropertyIterator Section::inheritedProperties() const {
   if(this->link().length() > 0){

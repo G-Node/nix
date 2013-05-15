@@ -16,7 +16,7 @@ class TreeIterator;
 class Section {
 
 private:
-
+  mutable File *file;
   Group group, props, sections;
   std::string section_id;
 
@@ -24,7 +24,7 @@ public:
 
   Section(const Section &section);
 
-  Section(Group group, std::string id);
+  Section(File *file, Group group, std::string id);
 
   std::string id() const;
 
@@ -61,6 +61,8 @@ public:
   TreeIterator treeIterator(uint depth = 0) const;
 
   Section addSection(std::string name, std::string type);
+
+  Section findSection(std::string id) const;
 
   bool removeSection(std::string id, bool cascade = true);
 

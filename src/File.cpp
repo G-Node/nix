@@ -22,6 +22,7 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
+#include <pandora/TreeIterator.hpp>
 
 using namespace std;
 
@@ -34,19 +35,19 @@ const string File::FORMAT  = "pandora";
 
 static unsigned int map_file_mode(FileMode mode) {
   switch (mode) {
-    case FileMode::ReadWrite:
-      return H5F_ACC_RDWR;
-      
-    case FileMode::ReadOnly:
-      return H5F_ACC_RDONLY;
-      
-    case FileMode::Overwrite:
-      return H5F_ACC_TRUNC;
+  case FileMode::ReadWrite:
+    return H5F_ACC_RDWR;
 
-    default:
-      return H5F_ACC_DEFAULT;
+  case FileMode::ReadOnly:
+    return H5F_ACC_RDONLY;
+
+  case FileMode::Overwrite:
+    return H5F_ACC_TRUNC;
+
+  default:
+    return H5F_ACC_DEFAULT;
   }
-  
+
 }
 
 /*SEE: File.hpp*/
@@ -138,22 +139,52 @@ Block File::getBlock(size_t index) {
 
 
 /*SEE: File.hpp*/
-bool File::hasSection(std::string id) const {
-  return metadata.hasGroup(id);
+bool File::hasSection(std::string id) {
+  bool found = false;
+  for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+    if((*iter).id().compare(id) == 0){
+      found = true;
+      break;
+    }
+  }
+  if(!found){
+    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+      Section s = *iter;
+      for(TreeIterator treeIter = s.treeIterator(); treeIter != treeIter.end(); ++treeIter){
+        if((*treeIter).id().compare(id) == 0){
+          found = true;
+          break;
+        }
+      }
+    }
+  }
+  return found;
 }
 
 /*SEE: File.hpp*/
 Section File::getSection(std::string id) {
-  if(metadata.hasGroup(id)){
-      return Section(metadata.openGroup(id, false), id);
+  if(hasSection(id)){
+    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+      if((*iter).id().compare(id) == 0){
+        Section found = *iter;
+        return found;
+      }
     }
-    else{
-      throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
+    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+      Section s = *iter;
+      for(TreeIterator treeIter = s.treeIterator(); treeIter != treeIter.end(); ++treeIter){
+        if((*treeIter).id().compare(id) == 0){
+          Section found = *treeIter;
+          return found;
+        }
+      }
     }
+  }
+  throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
 
 SectionIterator File::sections(){
-  SectionIterator iter(metadata);
+  SectionIterator iter(this, metadata);
   return iter;
 }
 
@@ -162,7 +193,7 @@ Section File::createSection(string name, string type, string parent) {
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(metadata.openGroup(id, true), id);
+  Section s(this, metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
   if(parent.length() > 0){
