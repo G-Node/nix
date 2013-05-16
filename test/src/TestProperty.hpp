@@ -131,6 +131,7 @@ public:
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
     Property p = s.addProperty("TestProperty");
+    p.dataType("string");
     std::string str = "This is a  test string.";
     std::string str2 = "a reference";
     std::string str3 = "a file name";

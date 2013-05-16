@@ -11,32 +11,32 @@ template<typename T>
 struct FileValue {
   T value;
   double uncertainty;
+  char *reference;
   char *filename;
   char *encoder;
   char *checksum;
-  char *reference;
 };
 
 template<typename T>
 struct Value {
   T value;
   double uncertainty;
+  std::string reference;
   std::string filename;
   std::string encoder;
   std::string checksum;
-  std::string reference;
 
   Value() {
   }
   Value(const T &val) :
     value(val) {
   }
-  Value(const T &val, double uc, std::string fn, std::string en, std::string ck, std::string rf) :
-    value(val), uncertainty(uc), filename(fn), encoder(en), checksum(ck), reference(rf) {
+  Value(const T &val, double uc, std::string rf, std::string fn, std::string en, std::string ck) :
+    value(val), uncertainty(uc), reference(rf), filename(fn), encoder(en), checksum(ck) {
   }
   Value(const FileValue<T> &that) :
-    value(that.value), uncertainty(that.uncertainty), filename(that.filename),
-        encoder(that.encoder), checksum(that.checksum), reference(that.reference) {
+    value(that.value), uncertainty(that.uncertainty), reference(that.reference), filename(that.filename),
+        encoder(that.encoder), checksum(that.checksum) {
   }
 
   template<typename U>

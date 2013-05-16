@@ -55,8 +55,8 @@ public:
   void addValue(const Value<T> &value);
 
   template<typename T>
-  void addValue(const T value, double uncertainty = 0.0, const std::string &reference = "", const std::string filename = "",
-      const std::string encoder = "", const std::string checksum = "");
+  void addValue(const T value, double uncertainty = 0.0, const std::string filename = "",
+      const std::string encoder = "", const std::string checksum = "", const std::string &reference = "");
 
 
   template<typename T>
@@ -80,8 +80,8 @@ public:
 };
 
 template<typename T>
-void Property::addValue(T value, double uncertainty, const std::string &reference, const std::string filename,
-    const std::string encoder, const std::string checksum) {
+void Property::addValue(T value, double uncertainty, const std::string filename,
+    const std::string encoder, const std::string checksum, const std::string &reference) {
 
   std::string dt = this->dataType();
 //  if (dt.length() > 0 && dt.compare(info.type) != 0) {
@@ -90,7 +90,7 @@ void Property::addValue(T value, double uncertainty, const std::string &referenc
 //  } else {
 //    dataType(info.type);
 //  }
-  Value<T> tempValue(value, uncertainty, reference, filename, encoder, checksum);
+  Value<T> tempValue(value, uncertainty, filename, encoder, checksum, reference);
   addValue(tempValue);
 }
 
