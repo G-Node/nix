@@ -99,7 +99,6 @@ void Property::addValue(const Value<T> &value) {
   std::vector<Value<T> > vals = { value };
 
   PSize start;
-
   DataSet ds((H5::DataSet()));
   if (group.hasData("values")) {
     ds = group.openData("values");
@@ -119,7 +118,6 @@ void Property::addValue(const Value<T> &value) {
   Selection fileSel = ds.createSelection();
   PSize count = {1};
   fileSel.select(count, start);
-
   ds.write(vals, fileSel);
 }
 

@@ -182,7 +182,6 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
 	typedef typename charon_type::dbox_type dbox_type;
 
 	charon_type charon(value);
-
 	dbox_type data = charon.get_data();
 	h5dset.write(*data, charon.getMemType(), memSel.h5space(), fileSel.h5space());
 	data.finish();

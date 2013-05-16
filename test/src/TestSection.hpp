@@ -258,11 +258,9 @@ public:
     stringstream msg3;
     msg3 << "Error while accessing linked Property!";
     Property p = derived.getPropertyByName("cutoff frequency");
-    cerr << p.name() << endl;
 
     DoubleValue val;
     p.value(0, val);
-    cerr << val.value << endl;
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), val.value == 300.0);
 
     //test inherited PropertyIterator

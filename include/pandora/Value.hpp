@@ -159,6 +159,15 @@ static void resize(myType &value, const PSize &dims) {
 }
 };
 
+
+template<typename Inner, typename Outer>
+Inner get_inner(const Outer &outer) {
+  return outer;
+}
+
+template<> char *get_inner<char*, std::string>(const std::string &outer);
+template<> int8_t get_inner<int8_t, bool>(const bool &outer);
+
 template<
 typename T,
 template <typename> class ValueBox,
@@ -175,16 +184,14 @@ DataBox(vbox_ref val) : value(val) {
   size_t nelms = value.size();
   data = new data_type[nelms];
   const Value<U> *vptr = value.get_data();
-
   for (size_t i = 0; i < nelms; i++) {
     FileValue<inner_type> val;
-    val.value = get_inner(vptr[i].value);
+    val.value = get_inner<inner_type,U>(vptr[i].value);
     val.uncertainty = vptr[i].uncertainty;
-    val.reference = get_inner(vptr[i].reference);
-    val.encoder = get_inner(vptr[i].encoder);
-    val.checksum = get_inner(vptr[i].checksum);
-    val.filename = get_inner(vptr[i].filename);
-
+    val.reference = get_inner<char *,std::string>(vptr[i].reference);
+    val.encoder = get_inner<char *,std::string>(vptr[i].encoder);
+    val.checksum = get_inner<char *,std::string>(vptr[i].checksum);
+    val.filename = get_inner<char *,std::string>(vptr[i].filename);
     data[i] = val;
   }
 }
@@ -199,22 +206,12 @@ void finish(const H5::DataSpace *space = nullptr) {}
 
 private:
 
-template<typename Inner, typename Outer>
-Inner get_inner(const Outer &outer) {
-  return outer;
-}
 
-char *get_inner(const std::string &outer) {
-  return const_cast<char *>(outer.c_str());
-}
-
-int8_t get_inner(const bool outer) {
-  return static_cast<int8_t>(outer);
-}
 
 data_ptr data;
 vbox_ref value;
 };
+
 
 template<
 typename T,
