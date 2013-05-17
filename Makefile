@@ -47,15 +47,11 @@ endif
 #
 # make all
 #
-all: release
+all: $(MAIN_LIB).$(LIB_EXT)
 
 #
-# make library and main executable for release
+# make library
 #
-release: $(MAIN_LIB).$(LIB_EXT)
-	@echo $(ECHO_FLAGS) " [CXX+LNK]\t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(MAIN)
-
 $(MAIN_LIB).$(LIB_EXT): $(OBJS_RELEASE)
 	$(ECHO) mkdir -p $(MAIN_LIB_DIR)
 	@echo $(ECHO_FLAGS) " [LNK]  \t$@"
@@ -69,9 +65,6 @@ obj/release/%.o: src/%.cpp
 #
 # make library and main executable with debug symbols
 #
-debug: $(MAIN_LIB).dbg.$(LIB_EXT)
-	@echo $(ECHO_FLAGS) " [CXX+LNK] {D} \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $(MAIN)
 
 $(MAIN_LIB).dbg.$(LIB_EXT): $(OBJS_DEBUG)
 	$(ECHO)mkdir -p $(MAIN_LIB_DIR)
@@ -87,7 +80,7 @@ obj/debug/%.o: src/%.cpp
 # build tests
 # all tests are currently build with the debug target
 #
-test: debug $(EXEC_TEST)
+test: $(MAIN_LIB).dbg.$(LIB_EXT) $(EXEC_TEST)
 
 test/bin%: test/src%.cpp
 	$(ECHO) mkdir -p test/bin
@@ -124,4 +117,4 @@ doc:
 
 .PHONY: clean
 clean:
-	rm -vrf $(MAIN) obj/* doc/* test/bin/* $(MAIN_LIB).dbg.$(LIB_EXT) $(MAIN_LIB).$(LIB_EXT)
+	rm -vrf obj/* doc/* test/bin/* $(MAIN_LIB).dbg.$(LIB_EXT) $(MAIN_LIB).$(LIB_EXT)
