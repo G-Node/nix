@@ -1,5 +1,6 @@
 #include "TestSection.hpp"
 
+
 int main(int argc, char* argv[]) {
   CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
   // Informiert Test-Listener ueber Testresultate

@@ -22,6 +22,7 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
+#include <pandora/TreeIterator.hpp>
 
 using namespace std;
 
@@ -34,19 +35,19 @@ const string File::FORMAT  = "pandora";
 
 static unsigned int map_file_mode(FileMode mode) {
   switch (mode) {
-    case FileMode::ReadWrite:
-      return H5F_ACC_RDWR;
-      
-    case FileMode::ReadOnly:
-      return H5F_ACC_RDONLY;
-      
-    case FileMode::Overwrite:
-      return H5F_ACC_TRUNC;
+  case FileMode::ReadWrite:
+    return H5F_ACC_RDWR;
 
-    default:
-      return H5F_ACC_DEFAULT;
+  case FileMode::ReadOnly:
+    return H5F_ACC_RDONLY;
+
+  case FileMode::Overwrite:
+    return H5F_ACC_TRUNC;
+
+  default:
+    return H5F_ACC_DEFAULT;
   }
-  
+
 }
 
 /*SEE: File.hpp*/
@@ -138,28 +139,54 @@ Block File::getBlock(size_t index) {
 
 
 /*SEE: File.hpp*/
-bool File::hasSection(std::string id) const {
-  return metadata.hasGroup(id);
+bool File::hasSection(std::string id, uint depth) {
+  bool found = false;
+  for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+    if((*iter).id().compare(id) == 0){
+      found = true;
+      break;
+    }
+  }
+  if(depth == 0 || depth > 1){
+    SectionIterator iter = sections();
+    while(!found && iter != iter.end()){
+      Section s = *iter;
+      found = s.hasSection(id, depth - 1);
+      ++iter;
+    }
+  }
+  return found;
 }
 
 /*SEE: File.hpp*/
-Section File::getSection(std::string id) {
-  if(metadata.hasGroup(id)){
-      return Section(this, metadata.openGroup(id, false), id);
+Section File::findSection(std::string id, uint depth) {
+  if(hasSection(id, depth)){
+    for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
+      if((*iter).id().compare(id) == 0){
+        Section found = *iter;
+        return found;
+      }
     }
-    else{
-      throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
+    SectionIterator iter = sections();
+    while(iter != iter.end()){
+      Section s = *iter;
+      if(s.hasSection(id)){
+        Section found = s.findSection(id, depth -1);
+        return found;
+      }
+      ++iter;
     }
+  }
+  throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
 
 SectionIterator File::sections(){
-  SectionIterator iter(this, metadata,"");
+  SectionIterator iter(this, metadata);
   return iter;
 }
 
 /*SEE: File.hpp*/
 Section File::createSection(string name, string type, string parent) {
-  // cout << "File: " << this << "\t" << "createSection!" << endl;
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
@@ -173,26 +200,11 @@ Section File::createSection(string name, string type, string parent) {
 }
 
 /*SEE: File.hpp*/
-bool File::removeSection(std::string id, bool cascade){
+bool File::removeSection(std::string id){
   bool success = false;
-  if(hasSection(id)){
-    Section s = getSection(id);
-    if(s.hasChildren()){
-      if(cascade){
-        vector<std::string> children;
-        for(SectionIterator i = s.children(); i != i.end(); ++i){
-          Section child = *i;
-          children.push_back(child.id());
-        }
-        for(size_t i = 0; i < children.size(); i++)
-          removeSection(children[i],cascade);
-        metadataGroup().removeGroup(id);
-      }
-    }
-    else{
-      metadataGroup().removeGroup(id);
-      success = true;
-    }
+  if(hasSection(id,1)){
+    metadataGroup().removeGroup(id);
+    success = true;
   }
   return success;
 }

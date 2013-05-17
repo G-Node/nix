@@ -3,6 +3,8 @@
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
+#include <pandora/TreeIterator.hpp>
+
 #include <iostream>
 
 using namespace std;
@@ -10,13 +12,15 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-    file(section.file), group(section.group), section_id(section.section_id) {
+                file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
+  sections = section.sections;
 }
 
 Section::Section(File *file, Group group, string id) :
-    file(file), group(group), section_id(id) {
+                file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
+  sections = group.openGroup("sections");
 }
 
 string Section::id() const {
@@ -64,7 +68,18 @@ string Section::repository() const {
 }
 
 void Section::link(string link) {
-  group.setAttr("link", link);
+  if (this->file->hasSection(link)) {
+    if (this->file->findSection(link).type().compare(this->type()) == 0) {
+      group.setAttr("link", link);
+    } else {
+      throw std::runtime_error(
+          "Cannot create link to a section of deviating type!");
+    }
+  } else {
+    throw std::runtime_error(
+
+    "Cannot create link! Linked section does not exist!");
+  }
 }
 
 string Section::link() const {
@@ -72,15 +87,7 @@ string Section::link() const {
   group.getAttr("link", link);
   return link;
 }
-void Section::include(string include) {
-  group.setAttr("include", include);
-}
 
-string Section::include() const {
-  string include;
-  group.getAttr("include", include);
-  return include;
-}
 
 void Section::mapping(string mapping) {
   group.setAttr("mapping", mapping);
@@ -103,12 +110,42 @@ string Section::parent() const {
 }
 
 Section Section::addSection(std::string name, std::string type) {
-  Section s = (*file).createSection(name, type, id());
+  string id = util::createId("section");
+  Section s(file, sections.openGroup(id,true), id);
+  s.name(name);
+  s.type(type);
+  s.parent(this->id());
   return s;
 }
 
 bool Section::removeSection(std::string id, bool cascade) {
-  return (*file).removeSection(id, cascade);
+  bool success = false;
+  if(sections.hasGroup(id)){
+    sections.removeGroup(id);
+    success = true;
+  }
+  return success;
+}
+
+bool Section::hasSection(std::string id, uint depth) const{
+  bool found = false;
+  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+    if((*treeIter).id().compare(id) == 0){
+      found = true;
+      break;
+    }
+  }
+  return found;
+}
+
+Section Section::findSection(std::string id, uint depth) const{
+  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+    if((*treeIter).id().compare(id) == 0){
+      Section found = *treeIter;
+      return found;
+    }
+  }
+  throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
 
 bool Section::hasChildren() const {
@@ -117,7 +154,12 @@ bool Section::hasChildren() const {
 }
 
 SectionIterator Section::children() const {
-  SectionIterator iter(file, (*file).metadataGroup(), id());
+  SectionIterator iter(file, sections);
+  return iter;
+}
+
+TreeIterator Section::treeIterator(uint depth) const {
+  TreeIterator iter(*this, depth);
   return iter;
 }
 
@@ -130,13 +172,24 @@ size_t Section::childCount() const {
 }
 
 PropertyIterator Section::properties() const {
-  PropertyIterator iter(file, props);
+  PropertyIterator iter(*this, props);
   return iter;
+}
+
+
+PropertyIterator Section::inheritedProperties() const {
+  if(this->link().length() > 0 && this->file->hasSection(this->link())){
+    return this->file->findSection(this->link()).properties();
+  }
+  else{
+    throw std::runtime_error(
+        "Section has no link, cannot retrieve inherited Properties!");
+  }
 }
 
 Property Section::getProperty(std::string id) const {
   if (props.hasGroup(id)) {
-    return Property(this->file, props.openGroup(id, false), id);
+    return Property(*this, props.openGroup(id, false), id);
   } else {
     throw std::runtime_error(
         "Requested Property does not exist! Always check with hasProperty!");
@@ -149,6 +202,15 @@ Property Section::getPropertyByName(std::string name) const {
     if (p.name() == name)
       return p;
   }
+  if (this->link().length() > 0) {
+    if (this->file->hasSection(this->link())) {
+      Section linked = this->file->findSection(this->link());
+      if (linked.hasPropertyByName(name)) {
+        return linked.getPropertyByName(name);
+      }
+    }
+  }
+
   throw std::runtime_error(
       "Requested Property does not exist! Always check with hasPropertyByName!");
 }
@@ -160,7 +222,7 @@ Property Section::addProperty(std::string name) {
   string new_id = util::createId("property");
   while (props.hasObject(new_id))
     new_id = util::createId("property");
-  Property p(file, props.openGroup(new_id, true), new_id);
+  Property p(*this, props.openGroup(new_id, true), new_id);
   p.name(name);
   return p;
 }

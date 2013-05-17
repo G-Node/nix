@@ -101,7 +101,7 @@ public:
     std::string lastSectionId;
     for (int i = 0; i < 5; i++) {
       Section s1(f1->createSection(names[i], "Recording"));
-      Section s2(f1->getSection(s1.id()));
+      Section s2(f1->findSection(s1.id()));
       lastSectionId = s2.id();
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id() << " / s2.id() = " << s2.id();

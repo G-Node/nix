@@ -12,6 +12,16 @@ namespace pandora {
 namespace hades {
 
 /* ********** */
+
+template<typename T>
+struct TypeSpecBase {
+  typedef T inner_type;
+  static T get_inner(T val) {
+    return val;
+  }
+
+};
+
 template<typename T>
 struct TypeSpec {
   
@@ -23,7 +33,7 @@ struct TypeSpec {
 //
 
 template<>
-struct TypeSpec<char> {
+struct TypeSpec<char> : public TypeSpecBase<char> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I8LE;
@@ -31,7 +41,7 @@ struct TypeSpec<char> {
 };
 
 template<>
-struct TypeSpec<int16_t> {
+struct TypeSpec<int16_t> : public TypeSpecBase<int16_t>  {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I16LE;
@@ -39,7 +49,7 @@ struct TypeSpec<int16_t> {
 };
 
 template<>
-struct TypeSpec<uint16_t> {
+struct TypeSpec<uint16_t> : public TypeSpecBase<uint16_t> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U16LE;
@@ -47,7 +57,7 @@ struct TypeSpec<uint16_t> {
 };
 
 template<>
-struct TypeSpec<int32_t> {
+struct TypeSpec<int32_t> : public TypeSpecBase<int32_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I32LE;
@@ -55,7 +65,7 @@ struct TypeSpec<int32_t> {
 };
 
 template<>
-struct TypeSpec<uint32_t> {
+struct TypeSpec<uint32_t> : public TypeSpecBase<uint32_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U32LE;
@@ -63,7 +73,7 @@ struct TypeSpec<uint32_t> {
 };
 
 template<>
-struct TypeSpec<int64_t> {
+struct TypeSpec<int64_t> : public TypeSpecBase<int64_t> {
   
   static  const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_I64LE;
@@ -71,7 +81,7 @@ struct TypeSpec<int64_t> {
 };
 
 template<>
-struct TypeSpec<uint64_t> {
+struct TypeSpec<uint64_t> : public TypeSpecBase<uint64_t> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::STD_U64LE;
@@ -79,7 +89,7 @@ struct TypeSpec<uint64_t> {
 };
 
 template<>
-struct TypeSpec<float> {
+struct TypeSpec<float> : public TypeSpecBase<float> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::IEEE_F32LE;
@@ -87,7 +97,7 @@ struct TypeSpec<float> {
 };
 
 template<>
-struct TypeSpec<double> {
+struct TypeSpec<double> : public TypeSpecBase<double> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::PredType::IEEE_F64LE;
@@ -95,11 +105,29 @@ struct TypeSpec<double> {
 };
 
 template<>
-struct TypeSpec<std::string> {
+struct TypeSpec<bool> : public TypeSpecBase<int8_t> {
+
+  static const bool is_valid = true;
+  const H5::DataType fileType = H5::PredType::STD_I8LE;
+  const H5::DataType memType = H5::PredType::NATIVE_HBOOL;
+
+  static int8_t get_inner(bool b) {
+    return b;
+  }
+
+};
+
+template<>
+struct TypeSpec<std::string> : public TypeSpecBase<char *> {
   
   static const bool is_valid = true;
   const H5::DataType fileType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
   const H5::DataType memType = H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+
+  static char* get_inner(const std::string &val) {
+    return (char*) val.c_str();
+  }
+
 };
 
 
@@ -155,7 +183,7 @@ public:
 
 
 template<typename T>
-class TypeInfo<std::vector<T>> {
+class TypeInfo<std::vector<T> > {
 public:
   typedef T element_type;
   typedef std::vector<T> vector_type;
@@ -191,7 +219,7 @@ public:
 };
 
 template<typename T, size_t N>
-class TypeInfo<boost::multi_array<T, N>> {
+class TypeInfo<boost::multi_array<T, N> > {
 public:
   typedef boost::multi_array<T, N>     array_type;
   typedef typename array_type::element element_type;

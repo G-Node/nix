@@ -24,6 +24,5 @@
 #include <pandora/SectionIterator.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
+#include <pandora/TreeIterator.hpp>
 #include <pandora/DataSet.hpp>
-
-

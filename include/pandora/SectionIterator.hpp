@@ -12,21 +12,15 @@ namespace pandora {
 class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
 {
 
-private:
-  size_t nextIndex(size_t start) const;
-  size_t lastIndex() const;
-  bool matchesParent(Group group) const;
-
 protected:
-
   mutable File  *file;
   Group group;
   size_t index, size;
-  std::string parent;
-  size_t first;
+
+
 
 public:
-  SectionIterator(File *file, Group group, std::string parent_id = "");
+  SectionIterator(File *file, Group group);
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;
