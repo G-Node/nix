@@ -124,7 +124,7 @@ void Property::addValue(const Value<T> &value) {
 template<typename T>
 void Property::value(size_t index, Value<T> &value) const {
   if (group.hasData("values")) {
-    if (index < 0 || index >= valueCount()) {
+    if (index >= valueCount()) {
       throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
     }
     DataSet dataset = group.openData("values");
