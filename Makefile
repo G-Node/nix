@@ -54,7 +54,7 @@ all: release
 #
 release: $(MAIN_LIB).$(LIB_EXT)
 	@echo $(ECHO_FLAGS) " [CXX+LNK]\t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(MAIN)
+	-$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(MAIN)
 
 $(MAIN_LIB).$(LIB_EXT): $(OBJS_RELEASE)
 	$(ECHO) mkdir -p $(MAIN_LIB_DIR)
@@ -71,7 +71,7 @@ obj/release/%.o: src/%.cpp
 #
 debug: $(MAIN_LIB).dbg.$(LIB_EXT)
 	@echo $(ECHO_FLAGS) " [CXX+LNK] {D} \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $(MAIN)
+	-$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $(MAIN).cpp $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $(MAIN)
 
 $(MAIN_LIB).dbg.$(LIB_EXT): $(OBJS_DEBUG)
 	$(ECHO)mkdir -p $(MAIN_LIB_DIR)
