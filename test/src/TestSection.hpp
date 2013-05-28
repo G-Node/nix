@@ -162,7 +162,7 @@ public:
   }
 
   void testTypeFilter(){
-    //TODO test the TreeIterator with type filter
+    //TODO test the TreeIterator with type filter, test empty filter
     Section s1 = f1->createSection("Iterator test","test");
     s1.addSection("Test child a.1","testa");
     s1.addSection("Test child a.2","testa");
