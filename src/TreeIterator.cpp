@@ -4,15 +4,15 @@ using namespace std;
 
 namespace pandora {
 
-TreeIterator::TreeIterator(const Section other, uint depth) :
-      root(other), currentIter(other.children()),depth(depth) {
+TreeIterator::TreeIterator(const Section other, std::string type, uint depth) :
+      root(other), currentIter(other.children()), type(type), depth(depth) {
   level = 1;
   at_end = currentIter == currentIter.end();
   push_children();
 }
 
 TreeIterator::TreeIterator(const TreeIterator &other) :
-      root(other.root), q(other.q), currentIter(other.currentIter), depth(other.depth), level(other.level) {
+      root(other.root), q(other.q), currentIter(other.currentIter), type(other.type), depth(other.depth), level(other.level) {
 }
 
 Section TreeIterator::operator*() const {
@@ -95,7 +95,7 @@ bool TreeIterator::operator!=(const TreeIterator &other) const {
 void TreeIterator::push_children() {
   if (currentIter != currentIter.end()) {
     Section s = *currentIter;
-    q.push_back(s.children());
+    q.push_back(s.children(type));
     l.push_back(level+1);
   }
 }

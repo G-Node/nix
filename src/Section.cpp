@@ -127,9 +127,9 @@ bool Section::removeSection(std::string id) {
   return success;
 }
 
-bool Section::hasSection(std::string id, uint depth) const{
+bool Section::hasSection(std::string id, std::string type, uint depth) const{
   bool found = false;
-  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+  for(TreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
     if((*treeIter).id().compare(id) == 0){
       found = true;
       break;
@@ -138,8 +138,8 @@ bool Section::hasSection(std::string id, uint depth) const{
   return found;
 }
 
-Section Section::findSection(std::string id, uint depth) const{
-  for(TreeIterator treeIter = treeIterator(depth); treeIter != treeIter.end(); ++treeIter){
+Section Section::findSection(std::string id, std::string type, uint depth) const{
+  for(TreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
     if((*treeIter).id().compare(id) == 0){
       Section found = *treeIter;
       return found;
@@ -153,13 +153,13 @@ bool Section::hasChildren() const {
   return iter != iter.end();
 }
 
-SectionIterator Section::children() const {
-  SectionIterator iter(file, sections);
+SectionIterator Section::children(std::string type) const {
+  SectionIterator iter(file, sections, type);
   return iter;
 }
 
-TreeIterator Section::treeIterator(uint depth) const {
-  TreeIterator iter(*this, depth);
+TreeIterator Section::treeIterator(std::string type, uint depth) const {
+  TreeIterator iter(*this, type, depth);
   return iter;
 }
 

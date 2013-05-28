@@ -139,11 +139,12 @@ public:
    * Return the Section specified by the id.
    *
    * @param id  The id of the Section
+   * @param type The type of Section. Default is ""
    * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
    *
    * @return The section with the given id.
    */
-  Section findSection(std::string section_id, uint depth = 0);
+  Section findSection(std::string section_id, std::string type = "", uint depth = 0);
 
   /**
    * Returns the number of Sections stored in the File.
