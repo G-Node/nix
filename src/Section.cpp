@@ -118,7 +118,7 @@ Section Section::addSection(std::string name, std::string type) {
   return s;
 }
 
-bool Section::removeSection(std::string id, bool cascade) {
+bool Section::removeSection(std::string id) {
   bool success = false;
   if(sections.hasGroup(id)){
     sections.removeGroup(id);

@@ -74,7 +74,7 @@ public:
 
   Section findSection(std::string id, uint depth = 0) const;
 
-  bool removeSection(std::string id, bool cascade = true);
+  bool removeSection(std::string id);
 
   PropertyIterator properties() const;
 
