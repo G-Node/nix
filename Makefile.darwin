@@ -20,5 +20,5 @@ LIB_PATS  = -L/usr/local/lib
 
 INCLUDES = -Iinclude -I/usr/include
 
-MAIN     = main
+PLYGRND  = playground
 LIB_EXT  = dylib
