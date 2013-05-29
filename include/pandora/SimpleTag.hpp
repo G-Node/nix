@@ -45,11 +45,6 @@ public:
   SimpleTag(File *file, Group group, std::string id);
 
   /**
-   * Assignment operator.
-   */
-  SimpleTag& operator=(const SimpleTag &tag);
-
-  /**
    * Destructor.
    */
   virtual ~SimpleTag();

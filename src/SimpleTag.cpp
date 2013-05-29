@@ -26,14 +26,6 @@ SimpleTag::SimpleTag(File *file, Group group, std::string id) :
     PandoraEntity(file, group, id)
 {}
 
-/* SEE: SimpleTag.hpp */
-SimpleTag& SimpleTag::operator=(const SimpleTag &tag) {
-  file = tag.file;
-  group = tag.group;
-  entity_id = tag.entity_id;
-  return *this;
-}
-
 SimpleTag::~SimpleTag()
 {
   // TODO Auto-generated destructor stub
