@@ -139,7 +139,7 @@ Block File::getBlock(size_t index) {
 
 
 /*SEE: File.hpp*/
-bool File::hasSection(std::string id, uint depth) {
+bool File::hasSection(std::string id, std::string type, uint depth) {
   bool found = false;
   for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
     if((*iter).id().compare(id) == 0){
@@ -151,7 +151,7 @@ bool File::hasSection(std::string id, uint depth) {
     SectionIterator iter = sections();
     while(!found && iter != iter.end()){
       Section s = *iter;
-      found = s.hasSection(id, depth - 1);
+      found = s.hasSection(id, type, depth - 1);
       ++iter;
     }
   }
@@ -160,7 +160,7 @@ bool File::hasSection(std::string id, uint depth) {
 
 /*SEE: File.hpp*/
 Section File::findSection(std::string id, std::string type, uint depth) {
-  if(hasSection(id, depth)){
+  if(hasSection(id, type, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
       if((*iter).id().compare(id) == 0){
         Section found = *iter;
@@ -202,7 +202,7 @@ Section File::createSection(string name, string type, string parent) {
 /*SEE: File.hpp*/
 bool File::removeSection(std::string id){
   bool success = false;
-  if(hasSection(id,1)){
+  if(hasSection(id,"", 1)){
     metadataGroup().removeGroup(id);
     success = true;
   }
