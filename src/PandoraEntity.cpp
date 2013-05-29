@@ -5,6 +5,8 @@
  *      Author: stoewer
  */
 
+#include <ctime>
+
 #include <pandora/PandoraEntity.hpp>
 #include <pandora/Util.hpp>
 
@@ -15,7 +17,18 @@ namespace pandora {
 /* SEE: PandoraEntity.hpp */
 PandoraEntity::PandoraEntity(File *file, Group group, std::string id) :
     file(file), group(group), entity_id(id)
-{}
+{
+  setUpdatedAt();
+  setCreatedAt();
+}
+
+/* SEE: PandoraEntity.hpp */
+PandoraEntity::PandoraEntity(File *file, Group group, std::string id, time_t time) :
+    file(file), group(group), entity_id(id)
+{
+  setUpdatedAt();
+  forceCreatedAt(time);
+}
 
 /* SEE: PandoraEntity.hpp */
 string PandoraEntity::id() const {
@@ -60,17 +73,37 @@ string PandoraEntity::definition() const {
 
 /* SEE: PandoraEntity.hpp */
 time_t PandoraEntity::updatedAt() const {
-  string tmp;
-  group.getAttr("updated_at", tmp);
-  return util::strToTime(tmp);
+  string t;
+  group.getAttr("updated_at", t);
+  return util::strToTime(t);
+}
+
+/* SEE: PandoraEntity.hpp */
+void PandoraEntity::setUpdatedAt() {
+  time_t t = time(NULL);
+  group.setAttr("updated_at", util::timeToStr(t));
 }
 
 /* SEE: PandoraEntity.hpp */
 time_t PandoraEntity::createdAt() const {
-  string tmp;
-  group.getAttr("created_at", tmp);
-  return util::strToTime(tmp);
+  string t;
+  group.getAttr("created_at", t);
+  return util::strToTime(t);
 }
+
+/* SEE: PandoraEntity.hpp */
+void PandoraEntity::setCreatedAt() {
+  if (!group.hasAttr("created_at")) {
+    time_t t = time(NULL);
+    group.setAttr("created_at", util::timeToStr(t));
+  }
+}
+
+/* SEE: PandoraEntity.hpp */
+void PandoraEntity::forceCreatedAt(time_t t) {
+  group.setAttr("created_at", util::timeToStr(t));
+}
+
 
 /* SEE: PandoraEntity.hpp */
 bool PandoraEntity::operator==(const PandoraEntity &other) const {

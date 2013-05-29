@@ -45,6 +45,11 @@ public:
   PandoraEntity(File *file, Group group, std::string id);
 
   /**
+   * Standard constructor that preserves the creation time.
+   */
+  PandoraEntity(File *file, Group group, std::string id, time_t time);
+
+  /**
    * Getter for the id of the entity.
    *
    * @return The id of the entity.
@@ -170,7 +175,7 @@ protected:
    *
    * @param time The creation time to set.
    */
-  void forceCreatedAt(time_t time);
+  void forceCreatedAt(time_t t);
 
 };
 
