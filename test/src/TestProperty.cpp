@@ -1,7 +1,7 @@
-#include "TestFile.hpp"
+#include "TestProperty.hpp"
 
-int main( int argc, char* argv[] ) {
-  CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
+int main(int argc, char* argv[]) {
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
   // Informiert Test-Listener ueber Testresultate
   CPPUNIT_NS::TestResult testresult;
   // Listener zum Sammeln der Testergebnisse registrieren

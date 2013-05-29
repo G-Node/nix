@@ -5,8 +5,9 @@
  *      Author: stoewer
  */
 
-#include "../../include/pandora/BlockIterator.hpp"
+#include <pandora/BlockIterator.hpp>
 
-namespace pandora {
 
-} /* namespace pandora */
+int main( int argc, char* argv[] ) {
+  return 0;
+}

@@ -1,7 +1,8 @@
-#include "TestFile.hpp"
+#include "TestSection.hpp"
 
-int main( int argc, char* argv[] ) {
-  CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
+
+int main(int argc, char* argv[]) {
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
   // Informiert Test-Listener ueber Testresultate
   CPPUNIT_NS::TestResult testresult;
   // Listener zum Sammeln der Testergebnisse registrieren

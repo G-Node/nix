@@ -14,7 +14,7 @@ class Block
 
 private:
 
-  File file;
+  mutable File *file;
   Group group;
   std::string block_id;
 
@@ -22,7 +22,7 @@ public:
 
   Block(const Block &block);
 
-  Block(File file, Group group, std::string id);
+  Block(File *file, Group group, std::string id);
 
   std::string id() const;
 

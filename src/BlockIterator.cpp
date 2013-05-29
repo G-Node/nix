@@ -5,7 +5,7 @@ using namespace std;
 namespace pandora {
 
 
-BlockIterator::BlockIterator(File file, Group group)
+BlockIterator::BlockIterator(File *file, Group group)
   : file(file), group(group)
 {
   index = 0;

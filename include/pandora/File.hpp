@@ -23,21 +23,29 @@
 namespace pandora {
 class Block;
 class BlockIterator;
+class Section;
+class SectionIterator;
 
+enum class FileMode {
+  ReadOnly = 0,
+  ReadWrite,
+  Overwrite
+};
+  
+  
 /**
  * Class that represents a pandora file.
  */
-class File
-{
+class File {
 
 private:
 
   /* prefix for IDs: currently not used */
   std::string prefix;
   /* the opened HDF5 file */
-  H5::H5File  h5file;
+  H5::H5File h5file;
   /* groups representing different sections of the file */
-  Group       root, metadata, data;
+  Group root, metadata, data;
 
 public:
 
@@ -46,21 +54,14 @@ public:
   /** The version of the pandora format */
   static const std::string VERSION;
 
-  /** Read only file open mode */
-  static const size_t READ_ONLY;
-  /** Read/write file open mode */
-  static const size_t READ_WRITE;
-  /** Overwrite file open mode */
-  static const size_t OVERWRITE;
-
   /**
    * Constructor that is used to open the file.
    *
    * @param name    The name of the file to open.
    * @param prefix  The prefix used for IDs.
-   * @param mode    File open mode READ_ONLY, READ_WRITE or OVERWRITE.
+   * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
    */
-  File(std::string name, std::string prefix, int mode = READ_WRITE);
+  File(std::string name, std::string prefix, FileMode mode = FileMode::ReadWrite);
 
   /**
    * Copy constructor.
@@ -92,7 +93,7 @@ public:
    *
    * @return The block with the given id.
    */
-  Block getBlock(std::string id) const;
+  Block getBlock(std::string id);
 
   /**
    * Read an existing with block from the file, addressed by index.
@@ -101,7 +102,7 @@ public:
    *
    * @return The block at the given index.
    */
-  Block getBlock(size_t index) const;
+  Block getBlock(size_t index);
 
   /**
    * Create an new block, that is immediately persisted in the file.
@@ -122,15 +123,57 @@ public:
 
   // @todo Iterate by name
   //std::iterator<Block> blocks() const;
-  BlockIterator blocks() const;
+  BlockIterator blocks();
 
-  // Section getSection(std::string section_id) const;
+  /**
+   * Check if a section exists in the file.
+   *
+   * @param id    The ID of the section.
+   * @param depth The depth of the search. default: 0 stands for unlimited search.
+   *
+   * @return True if the section exists, false otherwise.
+   */
+  bool hasSection(std::string id, uint depth = 0);
 
-  // iterator<Section> sections() const;
+  /**
+   * Return the Section specified by the id.
+   *
+   * @param id  The id of the Section
+   * @param type The type of Section. Default is ""
+   * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
+   *
+   * @return The section with the given id.
+   */
+  Section findSection(std::string section_id, std::string type = "", uint depth = 0);
 
-  // Section createSection(std::string name, std::string type) const;
+  /**
+   * Returns the number of Sections stored in the File.
+   *
+   * @return size_t   The number of sections.
+   */
+  size_t sectionCount() const;
 
-  // Section deleteSection(std::string section_id) const;
+  /**
+   * Returns a SectionIterator instance.
+   *
+   * @returns an Instance of SectionIterator.
+   */
+  SectionIterator sections();
+
+  /**
+   * Creates a new Section with a given name and type. Both must not be empty.
+   *
+   * @param std::string the given name of the section.
+   * @param std::string the type of the section.
+   *
+   * @return   the created Section.
+   */
+  Section createSection(std::string name, std::string type, std::string parent = "");
+
+  /**
+   * Deletes the Section that is specified with the id.
+   */
+  bool removeSection(std::string section_id);
 
   /**
    * Create an id with the prefix used by the file.
@@ -168,12 +211,12 @@ public:
    */
   time_t updatedAt() const;
 
-
 //  H5::H5File getH5File() const;
 //
 //  void close();
 //
 //  File& operator=(const File &other);
+  Group metadataGroup() const;
 
   /**
    * Comparator.
@@ -184,6 +227,7 @@ public:
    * Comparator.
    */
   bool operator!=(const File &other) const;
+
 
   /**
    * Destructor.

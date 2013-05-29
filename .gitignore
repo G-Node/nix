@@ -40,3 +40,6 @@ buid/
 Debug
 main.cpp
 src/pandora_cpp.cpp
+
+#ignore sublime specific files
+*.sublime-*

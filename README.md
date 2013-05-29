@@ -1,14 +1,3 @@
-Build Dependencies
-------------------
+The Pandora project started as an initiative of the Electrophysiology Task Force which is part of the INCF Datasharing Program. As such the project aims to develop standardized methods and models for storing electrophysiology and other neuroscience data together with their metadata in one common file format based on HDF5.
 
-Build tested with clang++ 3.0 and g++ 4.6.3
-
-### HDF5 
-
-> Library: libhdf5.so
-> Debian Package: libhdf5-serial-dev
-
-### Boost Date Time
-
-> Library: libboost_date_time.so
-> Debian Package: libboost-date-time-dev
+[See the wiki for more information](https://github.com/G-Node/pandora/wiki)

@@ -47,7 +47,7 @@ endif
 #
 # make all
 #
-all: clean release
+all: release
 
 #
 # make library and main executable for release
@@ -96,16 +96,16 @@ test/bin%: test/src%.cpp
 
 #
 # run tests
-# 
+#
 #    make checkTestName -> starts the test with the executable test/bin/TestName
-#    make check         -> runs all tests in test/bin
+#    make check         -> runs TestAll binary which includes all default tests
 #
 check%: test/bin/%
 	$^
 
 check: test
 	@echo $(ECHO_FLAGS) " [TESTING] "
-	$(ECHO) for testprog in $(EXEC_TEST); do ./$$testprog; done
+	./test/bin/TestAll
 
 
 
