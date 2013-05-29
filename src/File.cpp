@@ -159,7 +159,7 @@ bool File::hasSection(std::string id, uint depth) {
 }
 
 /*SEE: File.hpp*/
-Section File::findSection(std::string id, uint depth) {
+Section File::findSection(std::string id, std::string type, uint depth) {
   if(hasSection(id, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
       if((*iter).id().compare(id) == 0){
@@ -171,7 +171,7 @@ Section File::findSection(std::string id, uint depth) {
     while(iter != iter.end()){
       Section s = *iter;
       if(s.hasSection(id)){
-        Section found = s.findSection(id, depth -1);
+        Section found = s.findSection(id, type, depth -1);
         return found;
       }
       ++iter;
@@ -181,7 +181,7 @@ Section File::findSection(std::string id, uint depth) {
 }
 
 SectionIterator File::sections(){
-  SectionIterator iter(this, metadata);
+  SectionIterator iter(this, metadata, "");
   return iter;
 }
 

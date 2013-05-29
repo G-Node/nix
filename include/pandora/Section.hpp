@@ -54,11 +54,11 @@ public:
 
   size_t childCount() const;
 
-  SectionIterator children() const;
+  SectionIterator children(std::string type = "") const;
 
   bool hasChildren() const;
 
-  TreeIterator treeIterator(uint depth = 0) const;
+  TreeIterator treeIterator(std::string type = "", uint depth = 0) const;
 
   Section addSection(std::string name, std::string type);
   /**
@@ -70,11 +70,11 @@ public:
    *
    * @return bool
    */
-  bool hasSection(std::string id, uint depth = 0) const;
+  bool hasSection(std::string id, std::string type = "", uint depth = 0) const;
 
-  Section findSection(std::string id, uint depth = 0) const;
+  Section findSection(std::string id, std::string type = "", uint depth = 0) const;
 
-  bool removeSection(std::string id, bool cascade = true);
+  bool removeSection(std::string id);
 
   PropertyIterator properties() const;
 

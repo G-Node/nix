@@ -19,12 +19,13 @@ private:
   std::list<SectionIterator> q;
   std::list<size_t> l;
   SectionIterator currentIter;
+  std::string type;
   size_t depth, level;
   bool at_end;
   void push_children();
 
 public:
-  TreeIterator(const Section parent, uint depth = 0);
+  TreeIterator(const Section parent, std::string type = "", uint depth = 0);
   TreeIterator(const TreeIterator &other);
 
   Section operator*() const;

@@ -11,16 +11,21 @@ namespace pandora {
 
 class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
 {
+ private:
+   size_t nextIndex(size_t start) const;
+   size_t lastIndex() const;
+   bool matchesType(Group group) const;
 
 protected:
   mutable File  *file;
   Group group;
   size_t index, size;
-
+  std::string type;
+  size_t first;
 
 
 public:
-  SectionIterator(File *file, Group group);
+  SectionIterator(File *file, Group group, std::string type = "");
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;
