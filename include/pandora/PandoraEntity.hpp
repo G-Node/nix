@@ -159,9 +159,15 @@ public:
 protected:
 
   /**
-   * Sets the time of the last update to the current time.
+   * Sets the time of the last update to the current time if
+   * the field is not set.
    */
   void setUpdatedAt();
+
+  /**
+   * Sets the time of the last update to the current time.
+   */
+  void forceUpdatedAt();
 
   /**
    * Sets the creation time to the current time if the attribute

@@ -43,6 +43,7 @@ string PandoraEntity::id() const {
 /* SEE: PandoraEntity.hpp */
 void PandoraEntity::type(string type) {
   group.setAttr("type", type);
+  forceUpdatedAt();
 }
 
 /* SEE: PandoraEntity.hpp */
@@ -55,6 +56,7 @@ string PandoraEntity::type() const {
 /* SEE: PandoraEntity.hpp */
 void PandoraEntity::name(string name) {
   group.setAttr("name", name);
+  forceUpdatedAt();
 }
 
 /* SEE: PandoraEntity.hpp */
@@ -67,6 +69,7 @@ string PandoraEntity::name() const {
 /* SEE: PandoraEntity.hpp */
 void PandoraEntity::definition(string definition) {
   group.setAttr("definition", definition);
+  forceUpdatedAt();
 }
 
 /* SEE: PandoraEntity.hpp */
@@ -85,6 +88,14 @@ time_t PandoraEntity::updatedAt() const {
 
 /* SEE: PandoraEntity.hpp */
 void PandoraEntity::setUpdatedAt() {
+  if (!group.hasAttr("updated_at")) {
+    time_t t = time(NULL);
+    group.setAttr("updated_at", util::timeToStr(t));
+  }
+}
+
+/* SEE: PandoraEntity.hpp */
+void PandoraEntity::forceUpdatedAt() {
   time_t t = time(NULL);
   group.setAttr("updated_at", util::timeToStr(t));
 }
