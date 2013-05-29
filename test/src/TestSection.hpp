@@ -147,12 +147,12 @@ public:
     msg << "Error while checking for section that is on level 3 but was not found! ";
     CPPUNIT_ASSERT_MESSAGE(msg.str(), hasSection);
 
-    hasSection = f1->hasSection(grandchild2.id(),2);
+    hasSection = f1->hasSection(grandchild2.id(),"",2);
     stringstream msg2;
     msg2 << "Error while checking for section that is on level 3 and was found though the search depth was set to 2! ";
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), !hasSection);
 
-    if(f1->hasSection(grandchild2.id(),3)){
+    if(f1->hasSection(grandchild2.id(),"",3)){
       Section temp = f1->findSection(grandchild2.id(),"",3);
       stringstream msg2;
       msg2 << "Error while retrieving existing section on level 3 when finding it with the appropriate depth (3)! ";

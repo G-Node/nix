@@ -129,11 +129,12 @@ public:
    * Check if a section exists in the file.
    *
    * @param id    The ID of the section.
+   * @param type The type of Section. Default is ""
    * @param depth The depth of the search. default: 0 stands for unlimited search.
    *
    * @return True if the section exists, false otherwise.
    */
-  bool hasSection(std::string id, uint depth = 0);
+  bool hasSection(std::string id, std::string type = "", uint depth = 0);
 
   /**
    * Return the Section specified by the id.

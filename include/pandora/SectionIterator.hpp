@@ -19,8 +19,8 @@ class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
 protected:
   mutable File  *file;
   Group group;
-  size_t index, size;
   std::string type;
+  size_t index, size;
   size_t first;
 
 
