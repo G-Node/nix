@@ -17,7 +17,7 @@ MAIN_LIB = $(MAIN_LIB_DIR)/$(MAIN_LIB_NAME)
 
 LIB = $(LIB_PATS) $(LIB_NAMES)
 
-ifeq ($(DEBUG), trueq)
+ifeq ($(DEBUG), true)
   CXXFLAGS = $(FLAGS_GLOBAL) $(FLAGS_DEBUG) -O0
 else
   CXXFLAGS = $(FLAGS_GLOBAL) -O2
