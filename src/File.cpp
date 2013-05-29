@@ -147,14 +147,15 @@ bool File::hasSection(std::string id, uint depth) {
       break;
     }
   }
-  if(depth == 0 || depth > 1){
+  /*
+    if(depth == 0 || depth > 1){
     SectionIterator iter = sections();
     while(!found && iter != iter.end()){
       Section s = *iter;
-      found = s.hasSection(id, depth - 1);
+      found = s.hasSection(id, depth - 1); FIXME This part causes compilation errors
       ++iter;
     }
-  }
+  }*/
   return found;
 }
 
