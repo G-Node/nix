@@ -31,6 +31,7 @@ private:
   CPPUNIT_TEST(testBreadthFirstTreeIterator);
   CPPUNIT_TEST(testFinding);
   CPPUNIT_TEST(testTypeFilter);
+  CPPUNIT_TEST(testRelatedSections);
   CPPUNIT_TEST(testAddingProperties);
   CPPUNIT_TEST(testAccessingProperties);
   CPPUNIT_TEST(testRemovingProperties);
@@ -59,7 +60,7 @@ public:
       lastSectionId = s2.id();
       stringstream errmsg;
       errmsg << "Error while accessing block: s1.id() = " << s1.id()
-                                  << " / s2.id() = " << s2.id();
+                                                  << " / s2.id() = " << s2.id();
       CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
     }
     Section test = f1->findSection(lastSectionId);
@@ -183,9 +184,18 @@ public:
     for(SectionIterator iter = s1.children("testb"); iter != iter.end();++iter){
       count++;
     }
+
     stringstream msg2;
     msg2 << "Error while cycling through subsection with type filter. Found "<< count << " children, should have been 3!";
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), count == 3);
+
+    count = 0;
+    for(TreeIterator iter = s1.treeIterator("testb",0); iter != iter.end(); ++iter){
+      count++;
+    }
+    stringstream msg4;
+    msg4 << "Error while cycling through subsections with TreeIterator and filter. Found "<< count << " children, should have been 3!";
+    CPPUNIT_ASSERT_MESSAGE(msg4.str(), count == 3);
 
     count = 0;
     for(SectionIterator iter = s1.children("testd"); iter != iter.end();++iter){
@@ -199,6 +209,55 @@ public:
     f1->removeSection(s1.id());
   }
 
+  void testRelatedSections(){
+    Section a1 = f1->createSection("RelationTest","a");
+    Section b1 = a1.addSection("b1","b");
+    Section b2 = a1.addSection("b2","b");
+    Section c1 = a1.addSection("c1","c");
+    Section d1 = c1.addSection("d1","d");
+    Section c2 = a1.addSection("c2","c");
+    Section d2 = c2.addSection("d2","d");
+    Section e1 = d2.addSection("e1","e");
+    Section d3 = e1.addSection("d3","d");
+    Section f1 = e1.addSection("f1","f");
+    Section c3 = a1.addSection("c3","c");
+
+    std::vector<std::string> v = e1.getRelatedSections("d");
+    stringstream msg;
+    msg << "Error retrieving related section of e1. Should be 1 section with name d3";
+    CPPUNIT_ASSERT_MESSAGE(msg.str(), v.size() == 1 && v[0].compare(d3.id()) == 0);
+
+    v = e1.getRelatedSections("c");
+    stringstream msg2;
+    msg2 << "Error retrieving related section of e1. Should be 1 section with name c2";
+    CPPUNIT_ASSERT_MESSAGE(msg2.str(), v.size() == 1 && v[0].compare(c2.id()) == 0);
+
+    v = e1.getRelatedSections("b");
+    bool b1Present = (v[0].compare(b1.id()) == 0) || (v[1].compare(b1.id()) == 0);
+    bool b2Present = (v[0].compare(b2.id()) == 0) || (v[1].compare(b2.id()) == 0);
+    stringstream msg3;
+    msg3 << "Error retrieving related section of e1. Should be 2 sections with name b1 and b2";
+    CPPUNIT_ASSERT_MESSAGE(msg3.str(), v.size() == 2 && b1Present && b2Present);
+
+    v = b2.getRelatedSections("c");
+    bool c1Present = (v[0].compare(c1.id()) == 0) || (v[1].compare(c1.id()) == 0) || (v[2].compare(c1.id()) == 0);
+    bool c2Present = (v[0].compare(c2.id()) == 0) || (v[1].compare(c2.id()) == 0) || (v[2].compare(c2.id()) == 0);
+    bool c3Present = (v[0].compare(c3.id()) == 0) || (v[1].compare(c3.id()) == 0) || (v[2].compare(c3.id()) == 0);
+
+    stringstream msg4;
+    msg4 << "Error retrieving related section of b2. Should be 3 sibling sections.";
+    CPPUNIT_ASSERT_MESSAGE(msg4.str(), v.size() == 3 && c1Present && c2Present && c3Present);
+
+    v = b2.getRelatedSections("d");
+    stringstream msg5;
+    msg5 << "Error retrieving related section of b2. Should be 0  sections.";
+    CPPUNIT_ASSERT_MESSAGE(msg4.str(), v.size() == 0);
+
+    f1.removeSection(a1.id());
+  }
+
+
+
   void testAddingProperties() {
     Section s = f1->findSection(f1->metadataGroup().objectName(0));
     const char *units[5] = { "ms", "kg", "S", "V", "mA" };
@@ -211,8 +270,8 @@ public:
     }
     stringstream msg;
     msg << "Error while creating properties in section: s.id() = " << s.id()
-                                << " Property count should be: " << oldCount + 5 << " but is: "
-                                << s.propertyCount();
+                                                << " Property count should be: " << oldCount + 5 << " but is: "
+                                                << s.propertyCount();
     CPPUNIT_ASSERT_MESSAGE(msg.str(), s.propertyCount() == (oldCount + 5));
     Property p = *s.properties();
     stringstream msg2;

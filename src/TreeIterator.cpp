@@ -5,7 +5,7 @@ using namespace std;
 namespace pandora {
 
 TreeIterator::TreeIterator(const Section other, std::string type, uint depth) :
-      root(other), currentIter(other.children()), type(type), depth(depth) {
+      root(other), currentIter(other.children(type)), type(type), depth(depth) {
   level = 1;
   at_end = currentIter == currentIter.end();
   push_children();
