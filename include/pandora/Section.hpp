@@ -74,6 +74,10 @@ public:
 
   Section findSection(std::string id, std::string type = "", uint depth = 0) const;
 
+  bool hasRelatedSection(std::string type) const;
+
+  std::vector<std::string> getRelatedSections(std::string type) const;
+
   bool removeSection(std::string id);
 
   PropertyIterator properties() const;
@@ -99,6 +103,17 @@ public:
   bool hasProperty(std::string id) const;
 
   bool hasPropertyByName(std::string name) const;
+
+private:
+  bool hasParent() const;
+
+  Section findParent() const;
+
+  std::string findUpstream(std::string type) const;
+
+  std::vector<std::string> findSideways(std::string type) const;
+
+  std::vector<std::string> findDownstream(std::string type) const;
 };
 
 }

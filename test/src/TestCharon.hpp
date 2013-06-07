@@ -148,7 +148,7 @@ public:
   template<typename T>
   static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
 
-    typedef const T &value_ref;
+    //typedef const T &value_ref;
     auto ibeg = boost::make_tuple(a.begin(), b.begin());
     auto iend = boost::make_tuple(a.end(), b.end());
     auto zibeg = boost::make_zip_iterator(ibeg);

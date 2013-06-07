@@ -12,13 +12,13 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-                file(section.file), group(section.group), section_id(section.section_id) {
+                        file(section.file), group(section.group), section_id(section.section_id) {
   props = section.props;
   sections = section.sections;
 }
 
 Section::Section(File *file, Group group, string id) :
-                file(file), group(group), section_id(id) {
+                        file(file), group(group), section_id(id) {
   props = group.openGroup("properties");
   sections = group.openGroup("sections");
 }
@@ -78,7 +78,7 @@ void Section::link(string link) {
   } else {
     throw std::runtime_error(
 
-    "Cannot create link! Linked section does not exist!");
+        "Cannot create link! Linked section does not exist!");
   }
 }
 
@@ -109,6 +109,17 @@ string Section::parent() const {
   return parent;
 }
 
+bool Section::hasParent() const{
+  return (parent().length() != 0 && file->hasSection(parent()));
+}
+
+Section Section::findParent() const{
+  if(!hasParent()){
+    throw std::runtime_error("Requested Section does not have a parent Section or no such section exists! Always check with hasSection!");
+  }
+  return file->findSection(parent());
+}
+
 Section Section::addSection(std::string name, std::string type) {
   string id = util::createId("section");
   Section s(file, sections.openGroup(id,true), id);
@@ -136,6 +147,78 @@ bool Section::hasSection(std::string id, std::string type, uint depth) const{
     }
   }
   return found;
+}
+
+std::vector<std::string> Section::getRelatedSections(std::string type) const{
+  std::vector<std::string> victor = findDownstream(type);
+  if(victor.size() != 0){
+    return victor;
+  }
+  std::string t = findUpstream(type);
+  if(t.length() != 0){
+    victor.push_back(t);
+    return victor;
+  }
+
+  victor = findSideways(type);
+
+  return victor;
+}
+
+bool Section::hasRelatedSection(std::string type) const{
+  std::vector<std::string> victor = findDownstream(type);
+  if(victor.size() != 0){
+    return true;
+  }
+  if(findUpstream(type).length() != 0){
+    return true;
+  }
+  return findSideways(type).size() != 0;
+}
+
+std::vector<std::string> Section::findDownstream(std::string type) const{
+  std::vector<std::string> victor;
+  TreeIterator iter = this->treeIterator(type,0);
+  while (iter != iter.end()){
+    victor.push_back((*iter).id());
+    ++iter;
+  }
+  return victor;
+}
+
+std::string Section::findUpstream(std::string type) const{
+  std::string id;
+  if(hasParent()){
+    Section p = findParent();
+    if(p.type().compare(type) == 0){
+      return p.id();
+    }
+    id = p.findUpstream(type);
+    if(id.length() != 0){
+      return id;
+    }
+  }
+  return id;
+}
+
+std::vector<std::string> Section::findSideways(std::string type) const{
+  std::vector<std::string> victor;
+  if(hasParent()){
+    Section p = findParent();
+    TreeIterator iter = p.treeIterator(type, 1);
+    while(iter != iter.end()){
+      victor.push_back((*iter).id());
+      ++iter;
+    }
+    if(victor.size() != 0){
+      return victor;
+    }
+    victor = p.findSideways(type);
+    if(victor.size() != 0){
+      return victor;
+    }
+  }
+  return victor;
 }
 
 Section Section::findSection(std::string id, std::string type, uint depth) const{
