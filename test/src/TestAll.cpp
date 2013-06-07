@@ -5,6 +5,7 @@
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestNDBuffer.hpp"
+#include "TestSource.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -15,6 +16,7 @@ int main(int argc, char* argv[])
   CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
 
   CPPUNIT_NS::TestResult testresult;
   CPPUNIT_NS::TestResultCollector collectedresults;
