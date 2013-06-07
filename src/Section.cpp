@@ -1,9 +1,9 @@
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
+#include <pandora/SectionTreeIterator.hpp>
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
-#include <pandora/TreeIterator.hpp>
 
 #include <iostream>
 
@@ -115,7 +115,7 @@ bool Section::hasParent() const{
 
 Section Section::findParent() const{
   if(!hasParent()){
-    throw std::runtime_error("Requested Section does not have a parent Section or no such section exists! Always check with hasSection!");
+    throw std::runtime_error("Requested Section does not have a parent Section or no such section exists! Always check with hasParent!");
   }
   return file->findSection(parent());
 }
@@ -140,7 +140,7 @@ bool Section::removeSection(std::string id) {
 
 bool Section::hasSection(std::string id, std::string type, uint depth) const{
   bool found = false;
-  for(TreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
+  for(SectionTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
     if((*treeIter).id().compare(id) == 0){
       found = true;
       break;
@@ -178,7 +178,7 @@ bool Section::hasRelatedSection(std::string type) const{
 
 std::vector<std::string> Section::findDownstream(std::string type) const{
   std::vector<std::string> victor;
-  TreeIterator iter = this->treeIterator(type,0);
+  SectionTreeIterator iter = this->treeIterator(type,0);
   while (iter != iter.end()){
     victor.push_back((*iter).id());
     ++iter;
@@ -205,7 +205,7 @@ std::vector<std::string> Section::findSideways(std::string type) const{
   std::vector<std::string> victor;
   if(hasParent()){
     Section p = findParent();
-    TreeIterator iter = p.treeIterator(type, 1);
+    SectionTreeIterator iter = p.treeIterator(type, 1);
     while(iter != iter.end()){
       victor.push_back((*iter).id());
       ++iter;
@@ -222,7 +222,7 @@ std::vector<std::string> Section::findSideways(std::string type) const{
 }
 
 Section Section::findSection(std::string id, std::string type, uint depth) const{
-  for(TreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
+  for(SectionTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
     if((*treeIter).id().compare(id) == 0){
       Section found = *treeIter;
       return found;
@@ -241,8 +241,8 @@ SectionIterator Section::children(std::string type) const {
   return iter;
 }
 
-TreeIterator Section::treeIterator(std::string type, uint depth) const {
-  TreeIterator iter(*this, type, depth);
+SectionTreeIterator Section::treeIterator(std::string type, uint depth) const {
+  SectionTreeIterator iter(*this, type, depth);
   return iter;
 }
 

@@ -1,25 +1,25 @@
-#include <pandora/TreeIterator.hpp>
+#include <pandora/SectionTreeIterator.hpp>
 
 using namespace std;
 
 namespace pandora {
 
-TreeIterator::TreeIterator(const Section other, std::string type, uint depth) :
+SectionTreeIterator::SectionTreeIterator(const Section other, std::string type, uint depth) :
       root(other), currentIter(other.children(type)), type(type), depth(depth) {
   level = 1;
   at_end = currentIter == currentIter.end();
   push_children();
 }
 
-TreeIterator::TreeIterator(const TreeIterator &other) :
+SectionTreeIterator::SectionTreeIterator(const SectionTreeIterator &other) :
       root(other.root), q(other.q), currentIter(other.currentIter), type(other.type), depth(other.depth), level(other.level) {
 }
 
-Section TreeIterator::operator*() const {
+Section SectionTreeIterator::operator*() const {
   return *currentIter;
 }
 
-TreeIterator &TreeIterator::operator++() {
+SectionTreeIterator &SectionTreeIterator::operator++() {
   ++currentIter;
   if (currentIter != currentIter.end()) {
     push_children();
@@ -43,8 +43,8 @@ TreeIterator &TreeIterator::operator++() {
   return *this;
 }
 
-TreeIterator TreeIterator::begin() const {
-  TreeIterator iter(*this);
+SectionTreeIterator SectionTreeIterator::begin() const {
+  SectionTreeIterator iter(*this);
   iter.q.erase(iter.q.begin(), iter.q.end());
   iter.l.erase(iter.l.begin(), iter.l.end());
   iter.currentIter = root.children();
@@ -54,8 +54,8 @@ TreeIterator TreeIterator::begin() const {
   return iter;
 }
 
-TreeIterator TreeIterator::end() const {
-  TreeIterator iter(*this);
+SectionTreeIterator SectionTreeIterator::end() const {
+  SectionTreeIterator iter(*this);
   iter.q.erase(iter.q.begin(), iter.q.end());
   iter.l.erase(iter.l.begin(), iter.l.end());
   iter.currentIter = iter.currentIter.end();
@@ -64,7 +64,7 @@ TreeIterator TreeIterator::end() const {
   return iter;
 }
 
-void TreeIterator::operator=(const TreeIterator &other) {
+void SectionTreeIterator::operator=(const SectionTreeIterator &other) {
   root = other.root;
   q = other.q;
   l = other.l;
@@ -73,13 +73,13 @@ void TreeIterator::operator=(const TreeIterator &other) {
   level = other.level;
 }
 
-bool TreeIterator::operator==(const TreeIterator &other) const {
+bool SectionTreeIterator::operator==(const SectionTreeIterator &other) const {
   return root == other.root && q.size() == other.q.size() && ((currentIter == other.currentIter)
       || q.size() == 0) && at_end == other.at_end;
 
 }
 
-bool TreeIterator::operator!=(const TreeIterator &other) const {
+bool SectionTreeIterator::operator!=(const SectionTreeIterator &other) const {
 /*
   cerr << "\t root: " << (root != other.root) << endl;
   cerr << "\t iter: " << (currentIter != other.currentIter) << endl;
@@ -92,7 +92,7 @@ bool TreeIterator::operator!=(const TreeIterator &other) const {
       depth != other.depth || at_end != other.at_end;
 }
 
-void TreeIterator::push_children() {
+void SectionTreeIterator::push_children() {
   if (currentIter != currentIter.end()) {
     Section s = *currentIter;
     q.push_back(s.children(type));
