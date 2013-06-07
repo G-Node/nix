@@ -17,15 +17,15 @@ MAIN_LIB = $(MAIN_LIB_DIR)/$(MAIN_LIB_NAME)
 
 LIB = $(LIB_PATS) $(LIB_NAMES)
 
-# complete set of flags for target release
-CXXFLAGS_RELEASE = $(FLAGS_GLOBAL) -O1
-# complete set of flags for target debug 
-CXXFLAGS_DEBUG   = $(FLAGS_GLOBAL) $(FLAGS_DEBUG) -O0
+ifeq ($(DEBUG), true)
+  CXXFLAGS = $(FLAGS_GLOBAL) $(FLAGS_DEBUG) -O0
+else
+  CXXFLAGS = $(FLAGS_GLOBAL) -O2
+endif
 
 # define source and object files for the project
 SRCS = $(wildcard src/*.cpp)
-OBJS_RELEASE = $(patsubst src%.cpp, obj/release%.o, $(SRCS))
-OBJS_DEBUG   = $(patsubst src%.cpp, obj/debug%.o, $(SRCS))
+OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
 # define source and executable files for tests
 SRCS_TEST = $(wildcard test/src/*.cpp)
@@ -38,61 +38,45 @@ else
   ECHO := @
 endif
 
-ifeq ($(OS), darwin)
-  ECHO_FLAGS :=
-else
-  ECHO_FLAGS := -e
-endif
-
 #
 # make all
 #
-all: release
+all: lib $(ALL_EXTRA_TARGETS)
 
 #
-# make library and main executable for release
+# make library
 #
-release: $(MAIN_LIB).$(LIB_EXT)
-	@echo $(ECHO_FLAGS) " [CXX+LNK]\t$@"
-	-$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) $(PLYGRND).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(PLYGRND)
+lib: $(MAIN_LIB).$(LIB_EXT)
 
-$(MAIN_LIB).$(LIB_EXT): $(OBJS_RELEASE)
-	$(ECHO) mkdir -p $(MAIN_LIB_DIR)
-	@echo $(ECHO_FLAGS) " [LNK]  \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(LIB) -shared $^ -o $(MAIN_LIB).$(LIB_EXT)
-
-obj/release/%.o: src/%.cpp
-	$(ECHO)mkdir -p obj/release
-	@echo $(ECHO_FLAGS) " [CXX]  \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_RELEASE) $(INCLUDES) -c $^ -o $@
-
-#
-# make library and main executable with debug symbols
-#
-debug: $(MAIN_LIB).dbg.$(LIB_EXT)
-	@echo $(ECHO_FLAGS) " [CXX+LNK] {D} \t$@"
-	-$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $(PLYGRND).cpp $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $(PLYGRND)
-
-$(MAIN_LIB).dbg.$(LIB_EXT): $(OBJS_DEBUG)
+$(MAIN_LIB).$(LIB_EXT): $(OBJS)
 	$(ECHO)mkdir -p $(MAIN_LIB_DIR)
-	@echo $(ECHO_FLAGS) " [LNK] {D} \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(LIB) -shared $^ -o $(MAIN_LIB).dbg.$(LIB_EXT)
+	@echo " [LNK]  \t$@"
+	$(ECHO)$(CXX) $(CXXFLAGS) $(LIB) -shared $^ -o $(MAIN_LIB).$(LIB_EXT)
+	
+obj/%.o: src/%.cpp
+	$(ECHO)mkdir -p obj/release
+	@echo " [CXX]  \t$@"
+	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) -c $^ -o $@
+	
+#
+# make playground
+#
+playgrnd: $(PLYGRND)
 
-obj/debug/%.o: src/%.cpp
-	$(ECHO)mkdir -pv obj/debug
-	@echo $(ECHO_FLAGS) " [CXX] {D} \t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) -c $^ -o $@
+$(PLYGRND): lib $(PLYGRND).cpp
+	@echo " [CXX+LNK]\t$@"
+	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) $(PLYGRND).cpp $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $(PLYGRND)
 
 #
 # build tests
 # all tests are currently build with the debug target
 #
-test: debug $(EXEC_TEST)
+test: lib $(EXEC_TEST)
 
 test/bin%: test/src%.cpp
-	$(ECHO) mkdir -p test/bin
-	@echo $(ECHO_FLAGS) " [LNK]\t$@"
-	$(ECHO) $(CXX) $(CXXFLAGS_DEBUG) $(INCLUDES) $^ $(MAIN_LIB).dbg.$(LIB_EXT) $(LIB) -o $@
+	$(ECHO)mkdir -p test/bin
+	@echo " [LNK]\t$@"
+	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) $^ $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $@
 
 #
 # run tests
@@ -104,7 +88,7 @@ check%: test/bin/%
 	$^
 
 check: test
-	@echo $(ECHO_FLAGS) " [TESTING] "
+	@echo " [TESTING] "
 	./test/bin/TestAll
 
 
@@ -118,10 +102,10 @@ endif
 
 .PHONY: doc
 doc:
-	$(ECHO) mkdir -p doc
-	@echo $(ECHO_FLAGS) "[DOC]"
+	$(ECHO)mkdir -p doc
+	@echo "[DOC]"
 	$(ECHO)doxygen ./Doxyfile $(OUT_REDIR)
 
 .PHONY: clean
 clean:
-	rm -vrf $(PLYGRND) obj/* doc/* test/bin/* $(MAIN_LIB).dbg.$(LIB_EXT) $(MAIN_LIB).$(LIB_EXT)
+	$(ECHO)rm -rf $(PLYGRND) obj/* doc/* test/bin/* $(MAIN_LIB).$(LIB_EXT)

@@ -1,17 +1,29 @@
 # copy the template file Makefile.conf.tmpl to Makefile.conf
 # and adjust all settings in this copy. 
 
-CXX      = g++
+# compiler (g++ >= v4.7 or clang++ >= 3.2)
+CXX          = g++-4.8
 
 # global flags for all compilation steps
-FLAGS_GLOBAL = -Wall -pedantic -fPIC -std=c++0x
+FLAGS_GLOBAL = -Wall -fPIC -std=c++11
+
 # flags for debugging
 FLAGS_DEBUG  = -ggdb3
 
-LIB_NAMES = -lhdf5_cpp -lhdf5 -lboost_date_time -lcppunit
-LIB_PATS  = -L/usr/lib
+# configure libs
+LIB_NAMES    = -lhdf5_cpp -lhdf5 -lboost_date_time -lcppunit
+LIB_PATS     = -L/usr/lib
+LIB_EXT      = so
 
-INCLUDES = -Iinclude -I/usr/include
+# configure 
+INCLUDES     = -Iinclude -I/usr/include/c++/4.8 -I/usr/include
 
-PLYGRND     = playground
-LIB_EXT  = so
+# name of a custom test/playground file
+PLYGRND      = main
+
+# if true debug symbols will be inserted in all artifacts
+DEBUG        = true
+
+# by default 'all' only compiles and linkes libpandora
+# additional targets like 'test', 'playgrnd' or 'check' can be defines here
+ALL_EXTRA_TARGETS = playgrnd
