@@ -22,7 +22,11 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
-#include <pandora/TreeIterator.hpp>
+#include <pandora/SectionTreeIterator.hpp>
+#include <pandora/Source.hpp>
+#include <pandora/SourceIterator.hpp>
+#include <pandora/SourceTreeIterator.hpp>
+
 
 using namespace std;
 
@@ -62,8 +66,9 @@ File::File(string name, string prefix, FileMode mode)
   h5file = H5::H5File(name.c_str(), h5mode);
 
   root = Group(h5file.openGroup("/"));
-  metadata = root.openGroup("metadata");
-  data = root.openGroup("data");
+  metadata_group = root.openGroup("metadata");
+  source_group = root.openGroup("sources");
+  data_group = root.openGroup("data");
 
   if(!checkHeader()) {
     /// @todo throw an exception here
@@ -72,7 +77,7 @@ File::File(string name, string prefix, FileMode mode)
 
 /*SEE: File.hpp*/
 File::File( const File &file )
-: prefix(file.prefix), h5file(file.h5file), metadata(file.metadata), data(file.data)
+: prefix(file.prefix), h5file(file.h5file), metadata_group(file.metadata_group), data_group(file.data_group), source_group(file.source_group)
 {
   // nothing to do
 }
@@ -89,30 +94,30 @@ bool File::fileExists(string name) const {
 }
 
 Group File::metadataGroup() const{
-  return metadata;
+  return metadata_group;
 }
 
 /*SEE: File.hpp*/
 bool File::hasBlock(std::string id) const {
-  return data.hasGroup(id);
+  return data_group.hasGroup(id);
 }
 
 /*SEE: File.hpp*/
 Block File::getBlock(std::string id) {
-  return Block(this, data.openGroup(id, false), id);
+  return Block(this, data_group.openGroup(id, false), id);
 }
 
 BlockIterator File::blocks(){
-  BlockIterator b(this, data);
+  BlockIterator b(this, data_group);
   return b;
 }
 
 /*SEE: File.hpp*/
 Block File::createBlock(string name, string type) {
   string id = util::createId("block");
-  while(data.hasObject(id))
+  while(data_group.hasObject(id))
     id = util::createId("block");
-  Block b(this, data.openGroup(id, true), id);
+  Block b(this, data_group.openGroup(id, true), id);
   b.name(name);
   b.type(type);
   return b;
@@ -120,20 +125,20 @@ Block File::createBlock(string name, string type) {
 
 /*SEE: File.hpp*/
 void File::deleteBlock(std::string id) {
-  if (data.hasGroup(id)) {
-    data.removeGroup(id);
+  if (data_group.hasGroup(id)) {
+    data_group.removeGroup(id);
   }
 }
 
 /*SEE: File.hpp*/
 size_t File::blockCount() const {
-  return data.objectCount();
+  return data_group.objectCount();
 }
 
 /*SEE: File.hpp*/
 Block File::getBlock(size_t index) {
-  string id = data.objectName(index);
-  Block b(this, data.openGroup(id), id);
+  string id = data_group.objectName(index);
+  Block b(this, data_group.openGroup(id), id);
   return b;
 }
 
@@ -181,16 +186,16 @@ Section File::findSection(std::string id, std::string type, uint depth) {
 }
 
 SectionIterator File::sections(){
-  SectionIterator iter(this, metadata, "");
+  SectionIterator iter(this, metadata_group, "");
   return iter;
 }
 
 /*SEE: File.hpp*/
 Section File::createSection(string name, string type, string parent) {
   string id = util::createId("section");
-  while(metadata.hasObject(id))
+  while(metadata_group.hasObject(id))
     id = util::createId("section");
-  Section s(this, metadata.openGroup(id, true), id);
+  Section s(this, metadata_group.openGroup(id, true), id);
   s.name(name);
   s.type(type);
   if(parent.length() > 0){
@@ -203,7 +208,7 @@ Section File::createSection(string name, string type, string parent) {
 bool File::removeSection(std::string id){
   bool success = false;
   if(hasSection(id,"", 1)){
-    metadataGroup().removeGroup(id);
+    metadata_group.removeGroup(id);
     success = true;
   }
   return success;
@@ -211,7 +216,60 @@ bool File::removeSection(std::string id){
 
 /*SEE: File.hpp*/
 size_t File::sectionCount() const {
-  return metadata.objectCount();
+  return metadata_group.objectCount();
+}
+
+/*SEE: File.hpp*/
+Source File::createSource(string name, string type, string parent_id) {
+  string id = util::createId("source");
+  while(source_group.hasObject(id))
+    id = util::createId("source");
+  Source s(this, source_group.openGroup(id, true), id);
+  s.name(name);
+  s.type(type);
+  if(parent_id.length() > 0){
+    s.parentSource(parent_id);
+  }
+  return s;
+}
+
+SourceIterator File::sources() {
+  SourceIterator iter(this, source_group, "");
+  return iter;
+}
+
+bool File::hasSource(std::string id, std::string type, uint depth){
+  bool found = false;
+  for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
+    if((*iter).id().compare(id) == 0){
+      found = true;
+      break;
+    }
+  }
+  if(depth == 0 || depth > 1){
+    SourceIterator iter = sources();
+    while(!found && iter != iter.end()){
+      Source s = *iter;
+      found = s.hasSource(id, type, depth - 1);
+      ++iter;
+    }
+  }
+  return found;
+}
+
+/*SEE: File.hpp*/
+bool File::removeSource(std::string id){
+  bool success = false;
+  if(hasSource(id,"", 1)){
+    source_group.removeGroup(id);
+    success = true;
+  }
+  return success;
+}
+
+/*SEE: File.hpp*/
+size_t File::sourceCount() const {
+  return source_group.objectCount();
 }
 
 /*SEE: File.hpp*/

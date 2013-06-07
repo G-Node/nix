@@ -25,14 +25,16 @@ class Block;
 class BlockIterator;
 class Section;
 class SectionIterator;
+class Source;
+class SourceIterator;
 
 enum class FileMode {
   ReadOnly = 0,
-  ReadWrite,
-  Overwrite
+      ReadWrite,
+      Overwrite
 };
-  
-  
+
+
 /**
  * Class that represents a pandora file.
  */
@@ -45,7 +47,7 @@ private:
   /* the opened HDF5 file */
   H5::H5File h5file;
   /* groups representing different sections of the file */
-  Group root, metadata, data;
+  Group root, metadata_group, data_group, source_group;
 
 public:
 
@@ -176,6 +178,23 @@ public:
    */
   bool removeSection(std::string section_id);
 
+  Source createSource(std::string name, std::string type, std::string parent_id = "");
+
+  Source findSource(std::string source_id, std::string type = "", uint depth = 0);
+
+  bool hasSource(std::string source_id, std::string type = "", uint depth = 0);
+
+  SourceIterator sources();
+
+  bool removeSource(std::string source_id);
+
+  /**
+   * Returns the number of Sources stored in the File.
+   *
+   * @return size_t   The number of sources.
+   */
+  size_t sourceCount() const;
+
   /**
    * Create an id with the prefix used by the file.
    * @deprecated.
@@ -212,11 +231,11 @@ public:
    */
   time_t updatedAt() const;
 
-//  H5::H5File getH5File() const;
-//
-//  void close();
-//
-//  File& operator=(const File &other);
+  //  H5::H5File getH5File() const;
+  //
+  //  void close();
+  //
+  //  File& operator=(const File &other);
   Group metadataGroup() const;
 
   /**

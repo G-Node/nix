@@ -22,7 +22,10 @@
 #include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
+#include <pandora/SectionTreeIterator.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/PropertyIterator.hpp>
-#include <pandora/TreeIterator.hpp>
+#include <pandora/Source.hpp>
+#include <pandora/SourceIterator.hpp>
+#include <pandora/SourceTreeIterator.hpp>
 #include <pandora/DataSet.hpp>

@@ -18,7 +18,7 @@
 #include "pandora/SectionIterator.hpp"
 #include "pandora/Property.hpp"
 #include "pandora/PropertyIterator.hpp"
-#include "pandora/TreeIterator.hpp"
+#include "pandora/SectionTreeIterator.hpp"
 
 using namespace std;
 using namespace pandora;
@@ -101,7 +101,7 @@ public:
     Section child2 = s1.addSection("Test child 2","test");
 
     int count = 0;
-    for(TreeIterator iter = s1.treeIterator("",1); iter != iter.end(); ++iter){
+    for(SectionTreeIterator iter = s1.treeIterator("",1); iter != iter.end(); ++iter){
       count++;
     }
     stringstream msg;
@@ -109,7 +109,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg.str(), count == 2);
 
     count = 0;
-    for(TreeIterator iter = s1.treeIterator("",2); iter != iter.end(); ++iter){
+    for(SectionTreeIterator iter = s1.treeIterator("",2); iter != iter.end(); ++iter){
       count++;
     }
     stringstream msg2;
@@ -117,7 +117,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), count == 4);
 
     count = 0;
-    for(TreeIterator iter = s1.treeIterator("",3); iter != iter.end(); ++iter){
+    for(SectionTreeIterator iter = s1.treeIterator("",3); iter != iter.end(); ++iter){
       count++;
     }
     stringstream msg3;
@@ -125,7 +125,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), count == 5);
 
     count = 0;
-    for(TreeIterator iter = s1.treeIterator("",0); iter != iter.end(); ++iter){
+    for(SectionTreeIterator iter = s1.treeIterator("",0); iter != iter.end(); ++iter){
       count++;
     }
     stringstream msg4;
@@ -190,7 +190,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), count == 3);
 
     count = 0;
-    for(TreeIterator iter = s1.treeIterator("testb",0); iter != iter.end(); ++iter){
+    for(SectionTreeIterator iter = s1.treeIterator("testb",0); iter != iter.end(); ++iter){
       count++;
     }
     stringstream msg4;
