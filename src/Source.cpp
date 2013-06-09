@@ -36,22 +36,6 @@ std::string Source::parentSource() const{
   return parentId;
 }
 
-void Source::metadata(std::string sectionId){
-  if(file->hasSection(sectionId)){
-    group.setAttr("metadata", sectionId);
-    forceUpdatedAt();
-  }
-  else{
-    throw std::runtime_error("Source::metadata(): You try to link to a metadata section that does not exist!");
-  }
-}
-
-std::string Source::metadata() const{
-  string sectionId;
-  group.getAttr("metadata", sectionId);
-  return sectionId;
-}
-
 Source Source::addSource(std::string name, std::string type) {
   string id = util::createId("source");
   Source s(file, sources.openGroup(id,true), id);

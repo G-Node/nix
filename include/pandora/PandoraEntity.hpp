@@ -99,6 +99,20 @@ public:
   std::string definition() const;
 
   /**
+   * Setter for the metadata section linked to the entity.
+   *
+   * @param section_id the id of the lined metadata section.
+   */
+  void metadata(std::string section_id);
+
+  /**
+   * Getter for the metadata linked to this entity.
+   *
+   * @return The section_id of the linked metadata section.
+   */
+  std::string metadata() const;
+
+  /**
    * Gets the time of the last update.
    *
    * @return Time of the last update.

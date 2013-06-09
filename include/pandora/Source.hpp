@@ -21,9 +21,6 @@ public:
 
   Source(File *file, Group group, std::string id);
 
-  void metadata(std::string sectionId);
-  std::string metadata() const;
-
   void parentSource(std::string parentId);
   std::string parentSource() const;
 

@@ -80,6 +80,25 @@ string PandoraEntity::definition() const {
 }
 
 /* SEE: PandoraEntity.hpp */
+void PandoraEntity::metadata(std::string section_id){
+  if(file->hasSection(section_id)){
+    group.setAttr("metadata", section_id);
+    forceUpdatedAt();
+  }
+  else{
+    throw std::runtime_error("Source::metadata(): You try to link to a metadata section that does not exist!");
+  }
+}
+
+/* SEE: PandoraEntity.hpp */
+std::string PandoraEntity::metadata() const{
+  string section_id;
+  group.getAttr("metadata", section_id);
+  return section_id;
+}
+
+
+/* SEE: PandoraEntity.hpp */
 time_t PandoraEntity::updatedAt() const {
   string t;
   group.getAttr("updated_at", t);
