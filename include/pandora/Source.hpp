@@ -21,12 +21,14 @@ public:
 
   Source(File *file, Group group, std::string id);
 
-  void parentSource(std::string parentId);
+  void parentSource(std::string parent_id);
   std::string parentSource() const;
 
   Source addSource(std::string name, std::string type);
 
-  bool hasSource(std::string name, std::string type = "", uint depth = 0) const;
+  bool hasSource(std::string source_id, std::string type = "", uint depth = 0) const;
+
+  Source findSource(std::string source_id, std::string type = "", uint depth = 0)const;
 
   bool removeSource(std::string id);
 

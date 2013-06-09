@@ -20,9 +20,9 @@ Source::Source(File *file, Group group, std::string id) :
   sources = group.openGroup("sources");
   }
 
-void Source::parentSource(std::string parentId){
-  if(file->hasSource(parentId)){
-      group.setAttr("parent_source", parentId);
+void Source::parentSource(std::string parent_id){
+  if(file->hasSource(parent_id)){
+      group.setAttr("parent_source", parent_id);
       forceUpdatedAt();
     }
     else{
@@ -31,9 +31,9 @@ void Source::parentSource(std::string parentId){
 }
 
 std::string Source::parentSource() const{
-  string parentId;
-  group.getAttr("parent_source", parentId);
-  return parentId;
+  string parent_id;
+  group.getAttr("parent_source", parent_id);
+  return parent_id;
 }
 
 Source Source::addSource(std::string name, std::string type) {
@@ -68,11 +68,11 @@ size_t Source::childCount() const {
   return childCount;
 }
 
-bool Source::hasSource(std::string id, std::string type, uint depth) const{
+bool Source::hasSource(std::string source_id, std::string type, uint depth) const{
   bool found = false;
   for(SourceTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
     Source s = *treeIter;
-    if(s.id().compare(id) == 0){
+    if(s.id().compare(source_id) == 0){
       found = true;
       break;
     }
@@ -80,10 +80,20 @@ bool Source::hasSource(std::string id, std::string type, uint depth) const{
   return found;
 }
 
-bool Source::removeSource(std::string id) {
+Source Source::findSource(std::string source_id, std::string type, uint depth) const{
+  for(SourceTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
+    if((*treeIter).id().compare(source_id) == 0){
+      Source found = *treeIter;
+      return found;
+    }
+  }
+  throw std::runtime_error("Requested Source does not exist! Always check with hasSource!");
+}
+
+bool Source::removeSource(std::string source_id) {
   bool success = false;
-  if(sources.hasGroup(id)){
-    sources.removeGroup(id);
+  if(sources.hasGroup(source_id)){
+    sources.removeGroup(source_id);
     success = true;
   }
   return success;

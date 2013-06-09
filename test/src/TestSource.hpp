@@ -13,6 +13,7 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include "pandora/File.hpp"
+#include "pandora/Section.hpp"
 #include "pandora/Source.hpp"
 #include "pandora/SourceIterator.hpp"
 #include "pandora/SourceTreeIterator.hpp"
@@ -27,6 +28,8 @@ private:
 
   CPPUNIT_TEST(testCreateAndRemove);
   CPPUNIT_TEST(testIterators);
+  CPPUNIT_TEST(testAddMetadata);
+  CPPUNIT_TEST(testFindSources);
 
   CPPUNIT_TEST_SUITE_END ();
 
@@ -83,6 +86,35 @@ public:
     f1->removeSource(s2.id());
   }
 
+  void testFindSources(){
+    Source s1 = f1->createSource("S1","test");
+    Source s2 = f1->createSource("S2","test");
+    Source s3 = s1.addSource("S3","test");
+    Source s4 = s1.addSource("S4","test");
+    Source s5 = s2.addSource("S5","test");
+
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource("invalid_id"),false);
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource(s3.id()),true);
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource(s3.id(),"test"),true);
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource(s3.id(),"no test"),false);
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource(s3.id(),"test",1),false);
+    CPPUNIT_ASSERT_EQUAL(f1->hasSource(s3.id(),"test",2),true);
+
+    f1->removeSource(s1.id());
+    f1->removeSource(s2.id());
+  }
+
+  void testAddMetadata(){
+    Source s1 = f1->createSource("S1","test");
+    Section sec1 = f1->createSection("Test","metadata");
+    s1.metadata(sec1.id());
+    CPPUNIT_ASSERT_EQUAL(s1.metadata(),sec1.id());
+
+    CPPUNIT_ASSERT_THROW(s1.metadata("invalid_section"),std::runtime_error);
+
+    f1->removeSource(s1.id());
+    f1->removeSection(sec1.id());
+  }
 
 };
 

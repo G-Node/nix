@@ -258,6 +258,28 @@ bool File::hasSource(std::string id, std::string type, uint depth){
 }
 
 /*SEE: File.hpp*/
+Source File::findSource(std::string source_id, std::string type, uint depth) {
+  if(hasSource(source_id, type, depth)){
+    for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
+      if((*iter).id().compare(source_id) == 0){
+        Source found = *iter;
+        return found;
+      }
+    }
+    SourceIterator iter = sources();
+    while(iter != iter.end()){
+      Source s = *iter;
+      if(s.hasSource(source_id)){
+        Source found = s.findSource(source_id, type, depth -1);
+        return found;
+      }
+      ++iter;
+    }
+  }
+  throw std::runtime_error("Requested Source does not exist! Always check with hasSource!");
+}
+
+/*SEE: File.hpp*/
 bool File::removeSource(std::string id){
   bool success = false;
   if(hasSource(id,"", 1)){
