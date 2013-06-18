@@ -41,64 +41,6 @@ string PandoraEntity::id() const {
 }
 
 /* SEE: PandoraEntity.hpp */
-void PandoraEntity::type(string type) {
-  group.setAttr("type", type);
-  forceUpdatedAt();
-}
-
-/* SEE: PandoraEntity.hpp */
-string PandoraEntity::type() const {
-  string type;
-  group.getAttr("type", type);
-  return type;
-}
-
-/* SEE: PandoraEntity.hpp */
-void PandoraEntity::name(string name) {
-  group.setAttr("name", name);
-  forceUpdatedAt();
-}
-
-/* SEE: PandoraEntity.hpp */
-string PandoraEntity::name() const {
-  string name;
-  group.getAttr("name", name);
-  return name;
-}
-
-/* SEE: PandoraEntity.hpp */
-void PandoraEntity::definition(string definition) {
-  group.setAttr("definition", definition);
-  forceUpdatedAt();
-}
-
-/* SEE: PandoraEntity.hpp */
-string PandoraEntity::definition() const {
-  string definition;
-  group.getAttr("definition", definition);
-  return definition;
-}
-
-/* SEE: PandoraEntity.hpp */
-void PandoraEntity::metadata(std::string section_id){
-  if(file->hasSection(section_id)){
-    group.setAttr("metadata", section_id);
-    forceUpdatedAt();
-  }
-  else{
-    throw std::runtime_error("Source::metadata(): You try to link to a metadata section that does not exist!");
-  }
-}
-
-/* SEE: PandoraEntity.hpp */
-std::string PandoraEntity::metadata() const{
-  string section_id;
-  group.getAttr("metadata", section_id);
-  return section_id;
-}
-
-
-/* SEE: PandoraEntity.hpp */
 time_t PandoraEntity::updatedAt() const {
   string t;
   group.getAttr("updated_at", t);
@@ -152,18 +94,13 @@ bool PandoraEntity::operator!=(const PandoraEntity &other) const {
 
 /* SEE: PandoraEntity.hpp */
 int PandoraEntity::compare(const PandoraEntity &other) const {
-  int cmp = name().compare(other.name());
-  if (cmp == 0) {
-    cmp = entity_id.compare(other.entity_id);
-  }
+  int  cmp = entity_id.compare(other.entity_id);
   return cmp;
 }
 
 /* SEE: PandoraEntity.hpp */
 ostream& operator<<(ostream &out, const PandoraEntity &ent) {
-  out << "Entity: {name = " << ent.name();
-  out << ", type = " << ent.type();
-  out << ", id = " << ent.entity_id << "}";
+  out << "Entity: {id = " << ent.entity_id << "}";
   return out;
 }
 

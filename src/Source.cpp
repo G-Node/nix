@@ -9,13 +9,13 @@ namespace pandora {
 
 
 Source::Source(const Source &source) :
-            PandoraEntity(source.file, source.group, source.entity_id)
+            NamedEntity(source.file, source.group, source.entity_id)
 {
   sources = source.sources;
 }
 
 Source::Source(File *file, Group group, std::string id) :
-            PandoraEntity(file, group, id)
+            NamedEntity(file, group, id)
 {
   sources = group.openGroup("sources");
   }

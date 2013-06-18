@@ -4,14 +4,14 @@
 #include <string>
 #include <H5Cpp.h>
 
-#include <pandora/PandoraEntity.hpp>
+#include <pandora/NamedEntity.hpp>
 
 
 namespace pandora {
 class SourceIterator;
 class SourceTreeIterator;
 
-class Source : public PandoraEntity{
+class Source : public NamedEntity{
 private:
   Group sources;
 

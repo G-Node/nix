@@ -57,62 +57,6 @@ public:
   std::string id() const;
 
   /**
-   * Setter for the type of the entity.
-   *
-   * @param type The type to set.
-   */
-  void type(std::string type);
-
-  /**
-   * Getter for the type of the entity.
-   *
-   * @return The current type.
-   */
-  std::string type() const;
-
-  /**
-   * Setter for the name of the entity.
-   *
-   * @param name The name of the entity.
-   */
-  void name(std::string name);
-
-  /**
-   * Getter for the name of the entity.
-   *
-   * @return The name of the entity.
-   */
-  std::string name() const;
-
-  /**
-   * Setter for the definition of the entity.
-   *
-   * @param definition The definition of the entity.
-   */
-  void definition(std::string definition);
-
-  /**
-   * Getter for the definition of the entity.
-   *
-   * @return The definition of the entity.
-   */
-  std::string definition() const;
-
-  /**
-   * Setter for the metadata section linked to the entity.
-   *
-   * @param section_id the id of the lined metadata section.
-   */
-  void metadata(std::string section_id);
-
-  /**
-   * Getter for the metadata linked to this entity.
-   *
-   * @return The section_id of the linked metadata section.
-   */
-  std::string metadata() const;
-
-  /**
    * Gets the time of the last update.
    *
    * @return Time of the last update.

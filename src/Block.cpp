@@ -8,12 +8,12 @@ namespace pandora {
 
 /* SEE: SimpleTag.hpp */
 Block::Block(const Block &block) :
-    PandoraEntity(block.file, block.group, block.entity_id)
+    NamedEntity(block.file, block.group, block.entity_id)
 {}
 
 /* SEE: SimpleTag.hpp */
 Block::Block(File *file, Group group, std::string id) :
-    PandoraEntity(file, group, id)
+    NamedEntity(file, group, id)
 {}
 
 Block::~Block() {
