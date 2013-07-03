@@ -10,7 +10,7 @@
 
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
-
+#include <pandora/NamedEntity.hpp>
 #include <string>
 
 #ifndef PANDORA_DATA_ARRAY_H
