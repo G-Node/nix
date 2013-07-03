@@ -16,21 +16,18 @@
 namespace pandora {
 
 enum class RepresentationType {
-  tagged, untagged, indexed
+  tagged=0, untagged=1, indexed=2
 };
 
 class Representation: public PandoraEntity {
-private:
-  std::string rdata;
-  RepresentationType rtype;
 public:
   Representation(const Representation &representation);
 
   Representation(File *file, H5::Group h5group, std::string id, std::string data_array_id, RepresentationType type);
 
-  void data(std::string dataarray_id);
+  void data(std::string data_array_id);
 
-  //void data(const DataArray da);
+  void data(const DataArray &data_array);
 
   std::string data() const;
 
