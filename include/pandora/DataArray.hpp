@@ -18,20 +18,11 @@
 
 namespace pandora {
 
-class DataArray {
+class DataArray : public NamedEntity{
 
 public:
   DataArray(File parentFile, Group thisGroup, std::string identifier);
   DataArray(const DataArray &other);
-
-  std::string type() const;
-  void type(const std::string &value);
-
-  std::string name() const;
-  void name(const std::string &value);
-
-  std::string definition() const;
-  void definition(const std::string &value);
 
   std::string label() const;
   void label(const std::string &value);
