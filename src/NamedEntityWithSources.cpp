@@ -83,9 +83,19 @@ void NamedEntityWithSources::addSource(std::string source_id) {
 
 void NamedEntityWithSources::sources(std::vector<std::string> s){
   group.removeData("sources");
-  for(size_t i = 0; i<s.size();i ++){
-    addSource(s[i]);
-  }
+  PSize start;
+  DataSet ds((H5::DataSet()));
+  Charon<std::vector<std::string> > charon(s);
+  PSize size = { s.size() };
+  PSize maxsize = { H5S_UNLIMITED };
+  PSize chunks = DataSet::guessChunking(size, DataType::Double);
+  ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
+      &maxsize, &chunks);
+  start = {0};
+  Selection fileSel = ds.createSelection();
+  PSize count = { s.size() };
+  fileSel.select(count, start);
+  ds.write(s, fileSel);
 }
 
 NamedEntityWithSources::~NamedEntityWithSources() {
