@@ -6,12 +6,11 @@
 
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
-#include <pandora/NamedEntity.hpp>
+#include <pandora/NamedEntityWithSources.hpp>
 
 namespace pandora {
 
-class Block : public NamedEntity
-{
+class Block : public NamedEntityWithSources{
 
 public:
 
