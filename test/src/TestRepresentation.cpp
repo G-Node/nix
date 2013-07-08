@@ -2,7 +2,7 @@
 
 
 int main(int argc, char* argv[]) {
-  CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
   // Informiert Test-Listener ueber Testresultate
   CPPUNIT_NS::TestResult testresult;
   // Listener zum Sammeln der Testergebnisse registrieren
