@@ -30,7 +30,6 @@ public:
   std::string unit() const;
   void unit(const std::string &value);
 
-
   void scaling(double scaling);
   double scaling()const;
 
@@ -38,7 +37,6 @@ public:
   double offset() const;
 
   DataSet data();
-
 };
 
 
