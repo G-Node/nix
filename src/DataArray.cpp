@@ -3,13 +3,13 @@
 
 namespace pandora {
 DataArray::DataArray(File parentFile, Group thisGroup, std::string identifier)
-  : fd(parentFile), group(thisGroup), myid(identifier)
+  : NamedEntityWithSources(&parentFile,thisGroup, identifier)
 {
 
 }
 
 DataArray::DataArray(const DataArray &other)
-  : fd(other.fd), group(other.group), myid(other.myid)
+  : NamedEntityWithSources(other.file, other.group, other.id())
 {
 
 }
