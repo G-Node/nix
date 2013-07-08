@@ -56,6 +56,12 @@ void NamedEntityWithSources::addSource(const Source &source) {
 }
 
 void NamedEntityWithSources::addSource(std::string source_id) {
+  if(hasSource(source_id)){
+    return;
+  }
+  if(!file->hasSource(source_id)){
+    throw std::runtime_error("NamedEntity::addSource(source_id): source does not exist!");
+  }
   std::vector<std::string> vals;
   vals.push_back(source_id);
   PSize start;
@@ -96,6 +102,16 @@ void NamedEntityWithSources::sources(std::vector<std::string> s){
   PSize count = { s.size() };
   fileSel.select(count, start);
   ds.write(s, fileSel);
+}
+
+void NamedEntityWithSources::removeSource(std::string source_id){
+  std::vector<std::string> s = sources();
+  for(size_t i = 0; i < s.size(); i++){
+    if (s[i].compare(source_id) == 0) {
+      s.erase(s.begin()+i);
+      return;
+    }
+  }
 }
 
 NamedEntityWithSources::~NamedEntityWithSources() {
