@@ -21,13 +21,13 @@ Source::Source(File *file, Group group, std::string id) :
   }
 
 void Source::parentSource(std::string parent_id){
-  if(file->hasSource(parent_id)){
+  //if(file->hasSource(parent_id)){
       group.setAttr("parent_source", parent_id);
       forceUpdatedAt();
-    }
-    else{
-      throw std::runtime_error("Source::parentSource(): You try to link to set a parent source that does not exits!");
-  }
+  //  }
+  //  else{
+  //    throw std::runtime_error("Source::parentSource(): You try to link to set a parent source that does not exits!");
+  //}
 }
 
 std::string Source::parentSource() const{

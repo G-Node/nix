@@ -34,36 +34,11 @@ public:
   }
 
   void tearDown() {
-    f1->deleteBlock(b_id);
-    f1->removeSource(s_id1);
-    f1->removeSource(s_id2);
     delete f1;
   }
 
 
   void testAddRemoveSource() {
-    Block b = f1->createBlock("test","recording");
-    b_id = b.id();
-    Source s1 = f1->createSource("test source","quelle");
-    s_id1 = s1.id();
-    Source s2 = f1->createSource("test source2","quelle");
-    s_id2 = s2.id();
-    b.addSource(s1);
-
-
-    CPPUNIT_ASSERT(b.sourceCount() == 1);
-    b.addSource(s1.id());
-    CPPUNIT_ASSERT(b.sourceCount() == 1);
-    CPPUNIT_ASSERT(b.hasSource(s1.id()));
-
-    CPPUNIT_ASSERT(!b.hasSource("test"));
-
-    CPPUNIT_ASSERT_THROW(b.addSource("test"),std::runtime_error);
-
-    b.addSource(s2);
-    CPPUNIT_ASSERT(b.sourceCount() == 2);
-
-    CPPUNIT_ASSERT(b.hasSource(s2.id()));
 
   }
 

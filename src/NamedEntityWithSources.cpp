@@ -59,9 +59,6 @@ void NamedEntityWithSources::addSource(std::string source_id) {
   if(hasSource(source_id)){
     return;
   }
-  if(!file->hasSource(source_id)){
-    throw std::runtime_error("NamedEntity::addSource(source_id): source does not exist!");
-  }
   std::vector<std::string> vals;
   vals.push_back(source_id);
   PSize start;
