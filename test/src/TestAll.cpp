@@ -1,3 +1,4 @@
+#include "TestBlock.hpp"
 #include "TestCharon.hpp"
 #include "TestFile.hpp"
 #include "TestSection.hpp"
@@ -11,6 +12,7 @@
 
 int main(int argc, char* argv[])
 {
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestCharon);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);

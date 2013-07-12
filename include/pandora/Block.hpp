@@ -11,20 +11,20 @@
 #include <pandora/Source.hpp>
 #include <pandora/SourceIterator.hpp>
 #include <pandora/SourceTreeIterator.hpp>
+#include <pandora/DataArray.hpp>
+#include <pandora/DataArrayIterator.hpp>
 
 namespace pandora {
 
 class Block : public NamedEntity{
 private:
 
-  Group source_group;
+  Group source_group, data_group;
 public:
 
   Block(const Block &block);
 
   Block(File *file, Group group, std::string id);
-
-  // Tag getTag(std::string tag_id) const;
 
   Source createSource(std::string name, std::string type, std::string parent_id = "");
 
@@ -42,6 +42,21 @@ public:
    * @return size_t   The number of sources.
    */
   size_t sourceCount() const;
+
+  DataArray createDataArray(std::string name, std::string type);
+
+  bool hasDataArray(std::string dataArray_id);
+
+  DataArrayIterator  dataArrays();
+
+  size_t dataArrayCount() const;
+
+  DataArray getDataArray(std::string data_array_id);
+
+  void removeDataArray(std::string data_array_id);
+
+
+  // Tag getTag(std::string tag_id) const;
 
   /// @todo Iterate by name
   //iterator<Tag> tags() const;
