@@ -11,6 +11,7 @@
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/NamedEntityWithSources.hpp>
+#include <pandora/DataSet.hpp>
 #include <string>
 
 #ifndef PANDORA_DATA_ARRAY_H
@@ -30,13 +31,24 @@ public:
   std::string unit() const;
   void unit(const std::string &value);
 
-  void scaling(double scaling);
-  double scaling()const;
+  void expansionOrigin(double expansion_origin = 0.0);
+  double expansionOrigin()const;
 
-  void offset(double offset);
-  double offset() const;
+  int polynomOrder() const;
+
+  void polynomCoefficients(std::vector<double> &polynom_coefficients);
+  std::vector<double> polynomCoefficients() const;
+
+  void setCalibration(std::vector<double> &coefficients, double origin = 0.0);
+
+  template<typename T, size_t numDims>
+  void setData(boost::multi_array<T,numDims>);
+  //template<typename T, size_t numDims>
+  //boost::multi_array getData();
 
   DataSet data();
+
+  ~DataArray();
 };
 
 
