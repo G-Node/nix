@@ -50,9 +50,8 @@ static unsigned int map_file_mode(FileMode mode) {
 
 }
 
-/*SEE: File.hpp*/
-File::File(string name, string prefix, FileMode mode)
-: prefix(prefix)
+
+File::File(string name, FileMode mode)
 {
   if (!fileExists(name)) {
     mode = FileMode::Overwrite;
@@ -62,22 +61,20 @@ File::File(string name, string prefix, FileMode mode)
   h5file = H5::H5File(name.c_str(), h5mode);
 
   root = Group(h5file.openGroup("/"));
-  metadata_group = root.openGroup("metadata");
-  data_group = root.openGroup("data");
+  metadata = root.openGroup("metadata");
+  data = root.openGroup("data");
 
   if(!checkHeader()) {
     /// @todo throw an exception here
   }
 }
 
-/*SEE: File.hpp*/
-File::File( const File &file )
-: prefix(file.prefix), h5file(file.h5file), metadata_group(file.metadata_group), data_group(file.data_group)
-{
-  // nothing to do
-}
 
-/*SEE: File.hpp*/
+File::File( const File &file )
+  : h5file(file.h5file), metadata(file.metadata), data(file.data)
+{}
+
+
 bool File::fileExists(string name) const {
   ifstream f(name.c_str());
   if (f) {
@@ -89,56 +86,57 @@ bool File::fileExists(string name) const {
 }
 
 Group File::metadataGroup() const{
-  return metadata_group;
+  return metadata;
 }
 
-/*SEE: File.hpp*/
+
 bool File::hasBlock(std::string id) const {
-  return data_group.hasGroup(id);
+  return data.hasGroup(id);
 }
 
-/*SEE: File.hpp*/
+
 Block File::getBlock(std::string id) {
-  return Block(this, data_group.openGroup(id, false), id);
+  return Block(this, data.openGroup(id, false), id);
 }
+
 
 BlockIterator File::blocks(){
-  BlockIterator b(this, data_group);
+  BlockIterator b(this, data);
   return b;
 }
 
-/*SEE: File.hpp*/
+
 Block File::createBlock(string name, string type) {
   string id = util::createId("block");
-  while(data_group.hasObject(id))
+  while(data.hasObject(id))
     id = util::createId("block");
-  Block b(this, data_group.openGroup(id, true), id);
+  Block b(this, data.openGroup(id, true), id);
   b.name(name);
   b.type(type);
   return b;
 }
 
-/*SEE: File.hpp*/
+
 void File::deleteBlock(std::string id) {
-  if (data_group.hasGroup(id)) {
-    data_group.removeGroup(id);
+  if (data.hasGroup(id)) {
+    data.removeGroup(id);
   }
 }
 
-/*SEE: File.hpp*/
+
 size_t File::blockCount() const {
-  return data_group.objectCount();
+  return data.objectCount();
 }
 
-/*SEE: File.hpp*/
+
 Block File::getBlock(size_t index) {
-  string id = data_group.objectName(index);
-  Block b(this, data_group.openGroup(id), id);
+  string id = data.objectName(index);
+  Block b(this, data.openGroup(id), id);
   return b;
 }
 
 
-/*SEE: File.hpp*/
+
 bool File::hasSection(std::string id, std::string type, uint depth) {
   bool found = false;
   for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
@@ -158,7 +156,7 @@ bool File::hasSection(std::string id, std::string type, uint depth) {
   return found;
 }
 
-/*SEE: File.hpp*/
+
 Section File::findSection(std::string id, std::string type, uint depth) {
   if(hasSection(id, type, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
@@ -180,17 +178,18 @@ Section File::findSection(std::string id, std::string type, uint depth) {
   throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
 
+
 SectionIterator File::sections(){
-  SectionIterator iter(this, metadata_group, "");
+  SectionIterator iter(this, metadata, "");
   return iter;
 }
 
-/*SEE: File.hpp*/
+
 Section File::createSection(string name, string type, string parent) {
   string id = util::createId("section");
-  while(metadata_group.hasObject(id))
+  while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(this, metadata_group.openGroup(id, true), id);
+  Section s(this, metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
   if(parent.length() > 0){
@@ -199,57 +198,51 @@ Section File::createSection(string name, string type, string parent) {
   return s;
 }
 
-/*SEE: File.hpp*/
+
 bool File::removeSection(std::string id){
   bool success = false;
   if(hasSection(id,"", 1)){
-    metadata_group.removeGroup(id);
+    metadata.removeGroup(id);
     success = true;
   }
   return success;
 }
 
-/*SEE: File.hpp*/
+
 size_t File::sectionCount() const {
-  return metadata_group.objectCount();
+  return metadata.objectCount();
 }
 
 
 
-/*SEE: File.hpp*/
 time_t File::updatedAt() const {
   string t;
   root.getAttr("updated_at", t);
   return util::strToTime(t);
 }
 
-/*SEE: File.hpp*/
+
 time_t File::createdAt() const {
   string t;
   root.getAttr("created_at", t);
   return util::strToTime(t);
 }
 
-/*SEE: File.hpp*/
+
 string File::version() const {
   string t;
   root.getAttr<std::string>("version", t);
   return t;
 }
 
-/*SEE: File.hpp*/
+
 string File::format() const {
   string t;
   root.getAttr("format", t);
   return t;
 }
 
-/*SEE: File.hpp*/
-string File::createId() const {
-  return util::createId(prefix);
-}
 
-/*SEE: File.hpp*/
 bool File::checkHeader() {
   bool check = true;
   string str;
@@ -280,21 +273,32 @@ bool File::checkHeader() {
   return check;
 }
 
-/*SEE: File.hpp*/
+
 bool File::operator==(const File &other) const {
   return h5file.getFileName() == other.h5file.getFileName();
 }
 
-/*SEE: File.hpp*/
+
 bool File::operator!=(const File &other) const {
   return h5file.getFileName() != other.h5file.getFileName();
 }
 
-/*SEE: File.hpp*/
+
+File& File::operator=(const File &other) {
+  if (*this != other) {
+    this->h5file = other.h5file;
+    this->root = other.root;
+    this->metadata = other.metadata;
+    this->data = other.data;
+  }
+  return *this;
+}
+
+
 File::~File() {
-  //  root.setAttr("updated_at", util::timeToStr(time(NULL)));
   h5file.close();
 }
+
 
 } // end namespace pandora
 

@@ -42,12 +42,10 @@ class File {
 
 private:
 
-  /* prefix for IDs: currently not used */
-  std::string prefix;
   /* the opened HDF5 file */
   H5::H5File h5file;
   /* groups representing different sections of the file */
-  Group root, metadata_group, data_group;
+  Group root, metadata, data;
 
 public:
 
@@ -63,7 +61,7 @@ public:
    * @param prefix  The prefix used for IDs.
    * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
    */
-  File(std::string name, std::string prefix, FileMode mode = FileMode::ReadWrite);
+  File(std::string name, FileMode mode = FileMode::ReadWrite);
 
   /**
    * Copy constructor.
@@ -126,6 +124,7 @@ public:
   // @todo Iterate by name
   //std::iterator<Block> blocks() const;
   BlockIterator blocks();
+
 
   /**
    * Check if a section exists in the file.
@@ -231,6 +230,8 @@ public:
    */
   bool operator!=(const File &other) const;
 
+
+  File& operator=(const File &other);
 
   /**
    * Destructor.
