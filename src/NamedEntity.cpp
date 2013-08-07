@@ -20,16 +20,16 @@ using namespace std;
 namespace pandora {
 
 /* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(File *file, Group group, std::string id) :
-    PandoraEntity(file, group, id)
+NamedEntity::NamedEntity(Group group, std::string id) :
+    PandoraEntity(group, id)
 {
   setUpdatedAt();
   setCreatedAt();
 }
 
 /* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(File *file, Group group, std::string id, time_t time) :
-    PandoraEntity(file, group, id, time)
+NamedEntity::NamedEntity(Group group, std::string id, time_t time) :
+    PandoraEntity(group, id, time)
 {
   setUpdatedAt();
   forceCreatedAt(time);
@@ -75,24 +75,6 @@ string NamedEntity::definition() const {
 }
 
 /* SEE: NamedEntity.hpp */
-void NamedEntity::metadata(std::string section_id){
-  if(file->hasSection(section_id)){
-    group.setAttr("metadata", section_id);
-    forceUpdatedAt();
-  }
-  else{
-    throw std::runtime_error("Source::metadata(): You try to link to a metadata section that does not exist!");
-  }
-}
-
-/* SEE: NamedEntity.hpp */
-std::string NamedEntity::metadata() const{
-  string section_id;
-  group.getAttr("metadata", section_id);
-  return section_id;
-}
-
-/* SEE: NamedEntity.hpp */
 int NamedEntity::compare(const NamedEntity &other) const {
   int cmp = name().compare(other.name());
   if (cmp == 0) {
@@ -101,10 +83,9 @@ int NamedEntity::compare(const NamedEntity &other) const {
   return cmp;
 }
 
-
 /* SEE: NamedEntity.hpp */
 ostream& operator<<(ostream &out, const NamedEntity &ent) {
-  out << "Entity: {name = " << ent.name();
+  out << "NamedEntity: {name = " << ent.name();
   out << ", type = " << ent.type();
   out << ", id = " << ent.id() << "}";
   return out;

@@ -5,14 +5,13 @@ using namespace std;
 
 namespace pandora {
 
-
-/* SEE: SimpleTag.hpp */
-Block::Block(const Block &block) :
-                NamedEntity(block.file, block.group, block.entity_id), source_group(block.source_group), data_group(block.data_group)
+/*
+Block::Block(const Block &block)
+  : NamedEntity(block.file, block.group, block.entity_id),
+    source_group(block.source_group), data_group(block.data_group)
 {
 }
 
-/* SEE: SimpleTag.hpp */
 Block::Block(File *file, Group group, std::string id) :
                 NamedEntity(file, group, id)
 {
@@ -20,7 +19,6 @@ Block::Block(File *file, Group group, std::string id) :
   data_group = group.openGroup("data_arrays");
 }
 
-/*SEE: File.hpp*/
 Source Block::createSource(string name, string type, string parent_id) {
   string id = util::createId("source");
   while(source_group.hasObject(id))
@@ -58,7 +56,6 @@ bool Block::hasSource(std::string id, std::string type, uint depth){
   return found;
 }
 
-/*SEE: File.hpp*/
 Source Block::findSource(std::string source_id, std::string type, uint depth) {
   if(hasSource(source_id, type, depth)){
     for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
@@ -89,7 +86,6 @@ bool Block::removeSource(std::string id){
   return success;
 }
 
-/*SEE: File.hpp*/
 size_t Block::sourceCount() const {
   return source_group.objectCount();
 }
@@ -137,6 +133,7 @@ void Block::removeDataArray(std::string data_array_id){
      data_group.removeGroup(data_array_id);
    }
 }
+*/
 
 Block::~Block() {
   //dtor

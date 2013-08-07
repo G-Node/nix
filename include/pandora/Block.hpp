@@ -1,6 +1,7 @@
 #ifndef PAN_BOCK_H_INCLUDE
 #define PAN_BOCK_H_INCLUDE
 
+#include <vector>
 #include <string>
 #include <H5Cpp.h>
 
@@ -8,50 +9,49 @@
 #include <pandora/Util.hpp>
 #include <pandora/File.hpp>
 #include <pandora/NamedEntity.hpp>
-#include <pandora/Source.hpp>
-#include <pandora/SourceIterator.hpp>
-#include <pandora/SourceTreeIterator.hpp>
-#include <pandora/DataArray.hpp>
-#include <pandora/DataArrayIterator.hpp>
 
 namespace pandora {
 
-class Block : public NamedEntity{
+class Source;
+class DataArray;
+
+class Block : public NamedEntity {
+
 private:
 
+  const File file;
   Group source_group, data_group;
+
 public:
 
   Block(const Block &block);
 
-  Block(File *file, Group group, std::string id);
+  Block(File file, Group group, std::string id);
+
+
+  bool hasSource(std::string source_id, std::string type = "", uint depth = 0) const;
+
+  Source getSource(std::string source_id, std::string type = "", uint depth = 0) const;
+
+  size_t sourceCount() const;
+
+  std::vector<Source> sources() const;
 
   Source createSource(std::string name, std::string type, std::string parent_id = "");
 
-  Source findSource(std::string source_id, std::string type = "", uint depth = 0);
-
-  bool hasSource(std::string source_id, std::string type = "", uint depth = 0);
-
-  SourceIterator sources();
-
   bool removeSource(std::string source_id);
 
-  /**
-   * Returns the number of Sources stored in the File.
-   *
-   * @return size_t   The number of sources.
-   */
-  size_t sourceCount() const;
 
-  DataArray createDataArray(std::string name, std::string type);
 
-  bool hasDataArray(std::string dataArray_id);
+  bool hasDataArray(std::string dataArray_id) const;
 
-  DataArrayIterator  dataArrays();
+  DataArray getDataArray(std::string data_array_id);
+
+  std::vector<DataArray> dataArrays() const;
 
   size_t dataArrayCount() const;
 
-  DataArray getDataArray(std::string data_array_id);
+  DataArray createDataArray(std::string name, std::string type);
 
   void removeDataArray(std::string data_array_id);
 
