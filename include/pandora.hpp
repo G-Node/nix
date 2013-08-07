@@ -29,3 +29,4 @@
 #include <pandora/SourceIterator.hpp>
 #include <pandora/SourceTreeIterator.hpp>
 #include <pandora/DataSet.hpp>
+#include <pandora/DataArray.hpp>

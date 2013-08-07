@@ -468,7 +468,7 @@ public:
      data = new data_type[nelms];
      auto vptr = value.get_data();
 
-     for (auto i = 0; i < nelms; i++) {
+     for (size_t i = 0; i < nelms; i++) {
       data[i] = vptr[i].c_str();
     }
   }

@@ -47,7 +47,7 @@ private:
   /* the opened HDF5 file */
   H5::H5File h5file;
   /* groups representing different sections of the file */
-  Group root, metadata_group, data_group, source_group;
+  Group root, metadata_group, data_group;
 
 public:
 
@@ -177,23 +177,6 @@ public:
    * Deletes the Section that is specified with the id.
    */
   bool removeSection(std::string section_id);
-
-  Source createSource(std::string name, std::string type, std::string parent_id = "");
-
-  Source findSource(std::string source_id, std::string type = "", uint depth = 0);
-
-  bool hasSource(std::string source_id, std::string type = "", uint depth = 0);
-
-  SourceIterator sources();
-
-  bool removeSource(std::string source_id);
-
-  /**
-   * Returns the number of Sources stored in the File.
-   *
-   * @return size_t   The number of sources.
-   */
-  size_t sourceCount() const;
 
   /**
    * Create an id with the prefix used by the file.
