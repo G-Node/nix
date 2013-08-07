@@ -19,10 +19,10 @@
 #include <pandora/Util.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
-#include <pandora/BlockIterator.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/SectionIterator.hpp>
 #include <pandora/SectionTreeIterator.hpp>
+
 
 using namespace std;
 
@@ -75,42 +75,30 @@ File::File( const File &file )
 {}
 
 
-bool File::fileExists(string name) const {
-  ifstream f(name.c_str());
-  if (f) {
-    f.close();
-    return true;
-  } else {
-    return false;
-  }
-}
-
-Group File::metadataGroup() const{
-  return metadata;
-}
-
-
 bool File::hasBlock(std::string id) const {
   return data.hasGroup(id);
 }
 
 
-Block File::getBlock(std::string id) {
-  return Block(this, data.openGroup(id, false), id);
+Block File::getBlock(std::string id) const {
+  return Block(*this, data.openGroup(id, false), id);
 }
 
-
-BlockIterator File::blocks(){
-  BlockIterator b(this, data);
+Block File::getBlock(size_t index) const {
+  string id = data.objectName(index);
+  Block b(*this, data.openGroup(id), id);
   return b;
 }
+
+
+/** TODO implement vector<Block> File::blocks() const {} */
 
 
 Block File::createBlock(string name, string type) {
   string id = util::createId("block");
   while(data.hasObject(id))
     id = util::createId("block");
-  Block b(this, data.openGroup(id, true), id);
+  Block b(*this, data.openGroup(id, true), id);
   b.name(name);
   b.type(type);
   return b;
@@ -128,16 +116,8 @@ size_t File::blockCount() const {
   return data.objectCount();
 }
 
-
-Block File::getBlock(size_t index) {
-  string id = data.objectName(index);
-  Block b(this, data.openGroup(id), id);
-  return b;
-}
-
-
-
-bool File::hasSection(std::string id, std::string type, uint depth) {
+/*
+bool File::hasSection(std::string id, std::string type, uint depth) const {
   bool found = false;
   for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
     if((*iter).id().compare(id) == 0){
@@ -157,7 +137,7 @@ bool File::hasSection(std::string id, std::string type, uint depth) {
 }
 
 
-Section File::findSection(std::string id, std::string type, uint depth) {
+Section File::findSection(std::string id, std::string type, uint depth) const {
   if(hasSection(id, type, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
       if((*iter).id().compare(id) == 0){
@@ -177,14 +157,12 @@ Section File::findSection(std::string id, std::string type, uint depth) {
   }
   throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
+*/
 
 
-SectionIterator File::sections(){
-  SectionIterator iter(this, metadata, "");
-  return iter;
-}
+/* TODO implement vector<Section> File::sections() const {} */
 
-
+/*
 Section File::createSection(string name, string type, string parent) {
   string id = util::createId("section");
   while(metadata.hasObject(id))
@@ -212,6 +190,7 @@ bool File::removeSection(std::string id){
 size_t File::sectionCount() const {
   return metadata.objectCount();
 }
+*/
 
 
 
@@ -243,7 +222,7 @@ string File::format() const {
 }
 
 
-bool File::checkHeader() {
+bool File::checkHeader() const {
   bool check = true;
   string str;
   // check format
@@ -271,6 +250,17 @@ bool File::checkHeader() {
     root.setAttr("updated_at", util::timeToStr(time(NULL)));
   }
   return check;
+}
+
+
+bool File::fileExists(string name) const {
+  ifstream f(name.c_str());
+  if (f) {
+    f.close();
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
