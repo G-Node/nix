@@ -30,8 +30,6 @@ class PandoraEntity {
 
 protected:
 
-  /** The file hosting the entity. */
-  mutable File  *file;
   /** The group that represents the entity. */
   Group         group;
   /** The id of the entity (link name of the group) */
@@ -42,12 +40,12 @@ public:
   /**
    * Standard constructor
    */
-  PandoraEntity(File *file, Group group, std::string id);
+  PandoraEntity(Group group, std::string id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  PandoraEntity(File *file, Group group, std::string id, time_t time);
+  PandoraEntity(Group group, std::string id, time_t time);
 
   /**
    * Getter for the id of the entity.

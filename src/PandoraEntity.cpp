@@ -20,16 +20,16 @@ using namespace std;
 namespace pandora {
 
 /* SEE: PandoraEntity.hpp */
-PandoraEntity::PandoraEntity(File *file, Group group, std::string id) :
-    file(file), group(group), entity_id(id)
+PandoraEntity::PandoraEntity(Group group, std::string id) :
+    group(group), entity_id(id)
 {
   setUpdatedAt();
   setCreatedAt();
 }
 
 /* SEE: PandoraEntity.hpp */
-PandoraEntity::PandoraEntity(File *file, Group group, std::string id, time_t time) :
-    file(file), group(group), entity_id(id)
+PandoraEntity::PandoraEntity(Group group, std::string id, time_t time) :
+    group(group), entity_id(id)
 {
   setUpdatedAt();
   forceCreatedAt(time);
@@ -84,12 +84,12 @@ void PandoraEntity::forceCreatedAt(time_t t) {
 
 /* SEE: PandoraEntity.hpp */
 bool PandoraEntity::operator==(const PandoraEntity &other) const {
-  return file == file && group == group && entity_id == entity_id;
+  return group == group && entity_id == entity_id;
 }
 
 /* SEE: PandoraEntity.hpp */
 bool PandoraEntity::operator!=(const PandoraEntity &other) const {
-  return !(file == file && group == group && entity_id == entity_id);
+  return group != group || entity_id != entity_id;
 }
 
 /* SEE: PandoraEntity.hpp */
