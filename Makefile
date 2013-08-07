@@ -24,7 +24,15 @@ else
 endif
 
 # define source and object files for the project
-SRCS = $(wildcard src/*.cpp)
+SRCS = src/Value.cpp \
+	src/Util.cpp \
+	src/NDBuffer.cpp \
+	src/Group.cpp \
+	src/File.cpp \
+	src/PandoraEntity.cpp \
+	src/NamedEntity.cpp \
+	src/Block.cpp
+
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
 # define source and executable files for tests
