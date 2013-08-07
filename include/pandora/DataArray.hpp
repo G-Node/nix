@@ -12,6 +12,8 @@
 #include <pandora/File.hpp>
 #include <pandora/NamedEntityWithSources.hpp>
 #include <pandora/DataSet.hpp>
+#include <pandora/Charon.hpp>
+#include <H5Cpp.h>
 #include <string>
 
 #ifndef PANDORA_DATA_ARRAY_H
