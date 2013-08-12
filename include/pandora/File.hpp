@@ -23,9 +23,7 @@
 namespace pandora {
 
 class Block;
-class BlockIterator;
 class Section;
-class SectionIterator;
 
 enum class FileMode {
   ReadOnly = 0,
@@ -42,6 +40,7 @@ private:
 
   /* the opened HDF5 file */
   H5::H5File h5file;
+
   /* groups representing different sections of the file */
   Group root, metadata, data;
 
@@ -138,15 +137,22 @@ public:
   bool hasSection(std::string id, std::string type = "", uint depth = 0) const;
 
   /**
-   * Return the Section specified by the id.
+   * Get root section with a given id.
    *
-   * @param id  The id of the Section
-   * @param type The type of Section. Default is ""
-   * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
+   * @param id      The id of the section.
    *
-   * @return The section with the given id.
+   * @return The section with the specified id.
    */
-  Section findSection(std::string section_id, std::string type = "", uint depth = 0) const;
+  Section getSection(std::string id) const;
+
+  /**
+   * Get root section with a given index/position.
+   *
+   * @param index      The index of the section.
+   *
+   * @return The section with the specified index.
+   */
+  Section getSection(size_t index) const;
 
   /**
    * Returns the number of Sections stored in the File.
@@ -163,6 +169,17 @@ public:
   std::vector<Section> sections() const;
 
   /**
+   * Return the Section specified by the id.
+   *
+   * @param id  The id of the Section
+   * @param type The type of Section. Default is ""
+   * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
+   *
+   * @return The section with the given id.
+   */
+  Section findSection(std::string id, std::string type = "", uint depth = 0) const;
+
+  /**
    * Creates a new Section with a given name and type. Both must not be empty.
    *
    * @param std::string the given name of the section.
@@ -175,7 +192,7 @@ public:
   /**
    * Deletes the Section that is specified with the id.
    */
-  bool removeSection(std::string section_id);
+  bool removeSection(std::string id);
 
   /**
    * Read the pandora version from the file.

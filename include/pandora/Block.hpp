@@ -14,6 +14,8 @@ namespace pandora {
 
 class Source;
 class DataArray;
+class SimpleTag;
+class DataTag;
 
 class Block : public NamedEntity {
 
