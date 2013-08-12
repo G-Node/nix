@@ -3,7 +3,7 @@
 
 namespace pandora {
 DataArray::DataArray(File parentFile, Group thisGroup, std::string identifier) :
-        		  NamedEntityWithSources(&parentFile, thisGroup, identifier) {
+        		  EntityWithSources(&parentFile, thisGroup, identifier) {
 	expansionOrigin(0.0);
 	std::vector<double> coefficients;
 	coefficients.push_back(1.0);
@@ -11,7 +11,7 @@ DataArray::DataArray(File parentFile, Group thisGroup, std::string identifier) :
 }
 
 DataArray::DataArray(const DataArray &other) :
-        		  NamedEntityWithSources(other.file, other.group, other.id()) {
+        		  EntityWithSources(other.file, other.group, other.id()) {
 	expansionOrigin(0.0);
 	std::vector<double> coefficients;
 	coefficients.push_back(1.0);

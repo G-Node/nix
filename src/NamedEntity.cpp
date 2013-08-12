@@ -19,21 +19,6 @@ using namespace std;
 
 namespace pandora {
 
-/* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(Group group, std::string id) :
-    PandoraEntity(group, id)
-{
-  setUpdatedAt();
-  setCreatedAt();
-}
-
-/* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(Group group, std::string id, time_t time) :
-    PandoraEntity(group, id, time)
-{
-  setUpdatedAt();
-  forceCreatedAt(time);
-}
 
 /* SEE: NamedEntity.hpp */
 void NamedEntity::type(string type) {

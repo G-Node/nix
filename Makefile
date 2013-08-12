@@ -24,19 +24,26 @@ else
 endif
 
 # define source and object files for the project
-SRCS = src/Value.cpp \
-	src/Util.cpp \
+# SRCS = $(wildcard src/*.cpp)
+SRCS = src/Util.cpp \
+	src/DataType.cpp \
+	src/DataSet.cpp \
 	src/NDBuffer.cpp \
 	src/Group.cpp \
-	src/File.cpp \
 	src/PandoraEntity.cpp \
 	src/NamedEntity.cpp \
+	src/EntityWithSources.cpp \
+	src/EntityWithMetadata.cpp \
+	src/File.cpp \
 	src/Block.cpp
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
 # define source and executable files for tests
-SRCS_TEST = $(wildcard test/src/*.cpp)
+# SRCS_TEST = $(wildcard test/src/*.cpp)
+
+SRCS_TEST = test/src/TestFile.cpp
+
 EXEC_TEST = $(patsubst test/src%.cpp, test/bin%, $(SRCS_TEST))
 
 ### misc

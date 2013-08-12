@@ -23,9 +23,7 @@
 namespace pandora {
 
 class Block;
-class BlockIterator;
 class Section;
-class SectionIterator;
 
 enum class FileMode {
   ReadOnly = 0,
@@ -42,6 +40,7 @@ private:
 
   /* the opened HDF5 file */
   H5::H5File h5file;
+
   /* groups representing different sections of the file */
   Group root, metadata, data;
 
@@ -67,6 +66,11 @@ public:
    * @param other   The file to copy.
    */
   File(const File &other);
+
+  //--------------------------------------------------
+  // Methods concerning blocks
+  // TODO implement block methods
+  //--------------------------------------------------
 
   /**
    * Get the number of blocks in in the file.
@@ -116,8 +120,10 @@ public:
    * Delete a block from the file.
    *
    * @param id    The id of the block to delete.
+   *
+   * @return True if the block has been removed, false otherwise.
    */
-  void deleteBlock(std::string id);
+  bool removeBlock(std::string id);
 
   /**
    * Returns all blocks in this file.
@@ -126,27 +132,37 @@ public:
    */
   std::vector<Block> blocks() const;
 
+  //--------------------------------------------------
+  // Methods concerning sections
+  // TODO implement section methods
+  //--------------------------------------------------
+
   /**
-   * Check if a section exists in the file.
+   * Check if a specific root section exists in the file.
    *
-   * @param id    The ID of the section.
-   * @param type The type of Section. Default is ""
-   * @param depth The depth of the search. default: 0 stands for unlimited search.
+   * @param id      The ID of the section.
    *
    * @return True if the section exists, false otherwise.
    */
-  bool hasSection(std::string id, std::string type = "", uint depth = 0) const;
+  bool hasSection(std::string id) const;
 
   /**
-   * Return the Section specified by the id.
+   * Get root section with a given id.
    *
-   * @param id  The id of the Section
-   * @param type The type of Section. Default is ""
-   * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
+   * @param id      The id of the section.
    *
-   * @return The section with the given id.
+   * @return The section with the specified id.
    */
-  Section findSection(std::string section_id, std::string type = "", uint depth = 0) const;
+  Section getSection(std::string id) const;
+
+  /**
+   * Get root section with a given index/position.
+   *
+   * @param index      The index of the section.
+   *
+   * @return The section with the specified index.
+   */
+  Section getSection(size_t index) const;
 
   /**
    * Returns the number of Sections stored in the File.
@@ -163,24 +179,48 @@ public:
   std::vector<Section> sections() const;
 
   /**
+   * Checks if a section exists either as a root section or somewhere in
+   * the subtrees of all root section.
+   *
+   * @param id      The ID of the section.
+   * @param type    The type of Section. Default is ""
+   *
+   * @return True if the section exists, false otherwise.
+   */
+  bool existsSection(std::string id, std::string type = "") const;
+
+  /**
+   * Return the Section specified by the id.
+   *
+   * @param id      The id of the Section
+   *
+   * @return The section with the given id.
+   */
+  Section findSection(std::string id, std::string type = "") const;
+
+  /**
    * Creates a new Section with a given name and type. Both must not be empty.
    *
-   * @param std::string the given name of the section.
-   * @param std::string the type of the section.
+   * @param name    The given name of the section.
+   * @param type    The type of the section.
    *
    * @return   the created Section.
    */
-  Section createSection(std::string name, std::string type, std::string parent = "");
+  Section createSection(std::string name, std::string type);
 
   /**
    * Deletes the Section that is specified with the id.
    */
-  bool removeSection(std::string section_id);
+  bool removeSection(std::string id);
+
+  //--------------------------------------------------
+  // Methods for file attribute access.
+  //--------------------------------------------------
 
   /**
    * Read the pandora version from the file.
    *
-   * @return The verion of the pandora file.
+   * @return The version of the pandora file.
    */
   std::string version() const;
 

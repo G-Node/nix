@@ -65,7 +65,7 @@ File::File(string name, FileMode mode)
   data = root.openGroup("data");
 
   if(!checkHeader()) {
-    /// @todo throw an exception here
+    /// TODO throw an exception here
   }
 }
 
@@ -105,9 +105,12 @@ Block File::createBlock(string name, string type) {
 }
 
 
-void File::deleteBlock(std::string id) {
+bool File::removeBlock(std::string id) {
   if (data.hasGroup(id)) {
     data.removeGroup(id);
+    return true;
+  } else {
+    return false;
   }
 }
 

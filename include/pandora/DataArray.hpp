@@ -21,7 +21,7 @@
 
 namespace pandora {
 
-class DataArray : public NamedEntityWithSources{
+class DataArray : public EntityWithSources{
 
 public:
   DataArray(File parentFile, Group thisGroup, std::string identifier);

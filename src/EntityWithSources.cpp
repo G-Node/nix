@@ -1,18 +1,22 @@
-#include "pandora/NamedEntityWithSources.hpp"
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+/**
+ * @file EntityWithSources.cpp
+ * @brief Implementation of all methods of the class EntityWithSources.
+ */
+
+#include "pandora/EntityWithSources.hpp"
 
 namespace pandora {
 
-NamedEntityWithSources::NamedEntityWithSources(File *file, Group group,
-    std::string id) :
-    NamedEntity(file, group, id) {
-}
-/* SEE: NamedEntity.hpp */
-NamedEntityWithSources::NamedEntityWithSources(File *file, Group group,
-    std::string id, time_t time) :
-    NamedEntity(file, group, id, time) {
-}
 
-size_t NamedEntityWithSources::sourceCount() const {
+size_t EntityWithSources::sourceCount() const {
   size_t count = 0;
   if (group.hasData("sources")) {
     DataSet dataset = group.openData("sources");
@@ -22,7 +26,8 @@ size_t NamedEntityWithSources::sourceCount() const {
   return count;
 }
 
-bool NamedEntityWithSources::hasSource(std::string source_id) const {
+
+bool EntityWithSources::hasSource(std::string source_id) const {
   if (group.hasData("sources")) {
     if (sourceCount() == 0)
       return false;
@@ -38,7 +43,8 @@ bool NamedEntityWithSources::hasSource(std::string source_id) const {
   return false;
 }
 
-std::vector<std::string> NamedEntityWithSources::sources() const {
+
+std::vector<std::string> EntityWithSources::sources() const {
   std::vector<std::string> s;
   if (group.hasData("sources")) {
     DataSet ds = group.openData("sources");
@@ -51,11 +57,13 @@ std::vector<std::string> NamedEntityWithSources::sources() const {
   return s;
 }
 
-void NamedEntityWithSources::addSource(const Source &source) {
+
+void EntityWithSources::addSource(const Source &source) {
   addSource(source.id());
 }
 
-void NamedEntityWithSources::addSource(std::string source_id) {
+
+void EntityWithSources::addSource(std::string source_id) {
   if(hasSource(source_id)){
     return;
   }
@@ -84,7 +92,7 @@ void NamedEntityWithSources::addSource(std::string source_id) {
   ds.write(vals, fileSel);
 }
 
-void NamedEntityWithSources::sources(std::vector<std::string> s){
+void EntityWithSources::sources(std::vector<std::string> s){
   group.removeData("sources");
   PSize start;
   DataSet ds((H5::DataSet()));
@@ -101,7 +109,7 @@ void NamedEntityWithSources::sources(std::vector<std::string> s){
   ds.write(s, fileSel);
 }
 
-void NamedEntityWithSources::removeSource(std::string source_id){
+void EntityWithSources::removeSource(std::string source_id){
   std::vector<std::string> s = sources();
   for(size_t i = 0; i < s.size(); i++){
     if (s[i].compare(source_id) == 0) {
@@ -111,7 +119,5 @@ void NamedEntityWithSources::removeSource(std::string source_id){
   }
 }
 
-NamedEntityWithSources::~NamedEntityWithSources() {
-  // TODO Auto-generated destructor stub
-}
+
 } //namespace
