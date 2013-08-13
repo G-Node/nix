@@ -21,9 +21,10 @@ Group::Group(const Group &group)
     : h5group(group.h5group)
 {}
 
-void Group::operator=(const Group &group)
+Group& Group::operator=(const Group &group)
 {
   h5group = group.h5group;
+  return *this;
 }
 
 bool Group::hasAttr(std::string name) const {
@@ -107,6 +108,7 @@ H5::Group Group::h5Group() const {
   return h5group;
 }
 
-Group::~Group() {}
-
+Group::~Group() {
+  h5group.close();
+}
 }
