@@ -11,9 +11,26 @@
  * @brief Implementation of all methods of the class EntityWithMetadata.
  */
 
-#include "pandora/EntityWithMetadata.hpp"
+#include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/File.hpp>
+#include <pandora/EntityWithMetadata.hpp>
+
+using namespace std;
 
 namespace pandora {
 
+EntityWithMetadata::EntityWithMetadata(File file, Group group, string id)
+  : NamedEntity(group, id), file(file)
+{
+
+}
+
+
+EntityWithMetadata::EntityWithMetadata(File file, Group group, string id, time_t time)
+  : NamedEntity(group, id, time), file(file)
+{
+
+}
 
 } //namespace

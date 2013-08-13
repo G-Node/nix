@@ -1,24 +1,43 @@
 
+#include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 
 using namespace std;
 
 namespace pandora {
 
-/*
+
 Block::Block(const Block &block)
-  : NamedEntity(block.file, block.group, block.entity_id),
-    source_group(block.source_group), data_group(block.data_group)
+  : EntityWithMetadata(block.file, block.group, block.entity_id),
+    source_group(block.source_group), data_array_group(block.data_array_group),
+    simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
 {
+  // nothing to do
 }
 
-Block::Block(File *file, Group group, std::string id) :
-                NamedEntity(file, group, id)
+
+Block::Block(File file, Group group, string id)
+  : EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
-  data_group = group.openGroup("data_arrays");
+  data_array_group = group.openGroup("data_arrays");
+  simple_tag_group = group.openGroup("simple_tags");
+  data_tag_group = group.openGroup("data_tags");
 }
 
+
+Block::Block(File file, Group group, string id, time_t time)
+  : EntityWithMetadata(file, group, id, time)
+{
+  source_group = group.openGroup("sources");
+  data_array_group = group.openGroup("data_arrays");
+  simple_tag_group = group.openGroup("simple_tags");
+  data_tag_group = group.openGroup("data_tags");
+}
+
+/*
 Source Block::createSource(string name, string type, string parent_id) {
   string id = util::createId("source");
   while(source_group.hasObject(id))
@@ -135,8 +154,6 @@ void Block::removeDataArray(std::string data_array_id){
 }
 */
 
-Block::~Block() {
-  //dtor
-}
+Block::~Block() {}
 
 } // end namespace pandora

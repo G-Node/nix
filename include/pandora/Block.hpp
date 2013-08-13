@@ -16,12 +16,7 @@
 
 #include <vector>
 #include <string>
-#include <H5Cpp.h>
 
-#include <pandora/Group.hpp>
-#include <pandora/Util.hpp>
-#include <pandora/File.hpp>
-#include <pandora/NamedEntity.hpp>
 #include <pandora/EntityWithMetadata.hpp>
 
 namespace pandora {
@@ -35,11 +30,10 @@ class DataTag;
 /**
  * Class that represents a pandora Block entity.
  */
-class Block : public NamedEntity, EntityWithMetadata {
+class Block : public EntityWithMetadata {
 
 private:
 
-  const File file;
   Group source_group, data_array_group, simple_tag_group, data_tag_group;
 
 public:
@@ -59,6 +53,15 @@ public:
    * @param id        The id of this block.
    */
   Block(File file, Group group, std::string id);
+
+  /**
+   * Standard constructor for a Block.
+   *
+   * @param file      The file which contains this block.
+   * @param group     The group that represents the block inside the file.
+   * @param id        The id of this block.
+   */
+  Block(File file, Group group, std::string id, time_t time);
 
   //--------------------------------------------------
   // Methods concerning sources

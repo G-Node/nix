@@ -18,8 +18,7 @@
 #include <iostream>
 
 #include <pandora/PandoraEntity.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+
 
 namespace pandora {
 
@@ -29,6 +28,17 @@ namespace pandora {
 class NamedEntity : public PandoraEntity {
 
 public:
+
+  /**
+   * Standard constructor
+   */
+  NamedEntity(Group group, std::string id);
+
+  /**
+   * Standard constructor that preserves the creation time.
+   */
+  NamedEntity(Group group, std::string id, time_t time);
+
 
   /**
    * Setter for the type of the entity.

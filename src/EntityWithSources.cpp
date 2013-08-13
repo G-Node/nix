@@ -11,9 +11,32 @@
  * @brief Implementation of all methods of the class EntityWithSources.
  */
 
-#include "pandora/EntityWithSources.hpp"
+
+#include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/DataSet.hpp>
+#include <pandora/PSize.hpp>
+#include <pandora/File.hpp>
+#include <pandora/Block.hpp>
+#include <pandora/Source.hpp>
+#include <pandora/EntityWithSources.hpp>
+
+using namespace std;
 
 namespace pandora {
+
+
+EntityWithSources::EntityWithSources(File file, Block block, Group group, string id)
+  : EntityWithMetadata(file, group, id), block(block)
+{
+
+}
+
+EntityWithSources::EntityWithSources(File file, Block block, Group group, string id, time_t time)
+  : EntityWithMetadata(file, group, id, time), block(block)
+{
+
+}
 
 
 size_t EntityWithSources::sourceCount() const {
@@ -27,11 +50,11 @@ size_t EntityWithSources::sourceCount() const {
 }
 
 
-bool EntityWithSources::hasSource(std::string source_id) const {
+bool EntityWithSources::hasSource(string source_id) const {
   if (group.hasData("sources")) {
     if (sourceCount() == 0)
       return false;
-    std::vector<std::string> s = sources();
+    vector<string> s = sources();
     for (size_t i = 0; i < s.size(); i++) {
       if (s[i].compare(source_id) == 0) {
         return true;
@@ -44,8 +67,8 @@ bool EntityWithSources::hasSource(std::string source_id) const {
 }
 
 
-std::vector<std::string> EntityWithSources::sources() const {
-  std::vector<std::string> s;
+vector<string> EntityWithSources::sources() const {
+  vector<string> s;
   if (group.hasData("sources")) {
     DataSet ds = group.openData("sources");
     Selection fileSel = ds.createSelection();
@@ -63,11 +86,11 @@ void EntityWithSources::addSource(const Source &source) {
 }
 
 
-void EntityWithSources::addSource(std::string source_id) {
+void EntityWithSources::addSource(string source_id) {
   if(hasSource(source_id)){
     return;
   }
-  std::vector<std::string> vals;
+  vector<string> vals;
   vals.push_back(source_id);
   PSize start;
   DataSet ds((H5::DataSet()));
@@ -78,7 +101,7 @@ void EntityWithSources::addSource(std::string source_id) {
     ds.extend(newSize);
     start = size;
   } else {
-    Charon<std::vector<std::string> > charon(vals);
+    Charon<vector<string> > charon(vals);
     PSize size = { 1 };
     PSize maxsize = { H5S_UNLIMITED };
     PSize chunks = DataSet::guessChunking(size, DataType::Double);
@@ -92,11 +115,12 @@ void EntityWithSources::addSource(std::string source_id) {
   ds.write(vals, fileSel);
 }
 
-void EntityWithSources::sources(std::vector<std::string> s){
+
+void EntityWithSources::sources(vector<string> s){
   group.removeData("sources");
   PSize start;
   DataSet ds((H5::DataSet()));
-  Charon<std::vector<std::string> > charon(s);
+  Charon<vector<string> > charon(s);
   PSize size = { s.size() };
   PSize maxsize = { H5S_UNLIMITED };
   PSize chunks = DataSet::guessChunking(size, DataType::Double);
@@ -109,8 +133,9 @@ void EntityWithSources::sources(std::vector<std::string> s){
   ds.write(s, fileSel);
 }
 
-void EntityWithSources::removeSource(std::string source_id){
-  std::vector<std::string> s = sources();
+
+void EntityWithSources::removeSource(string source_id){
+  vector<string> s = sources();
   for(size_t i = 0; i < s.size(); i++){
     if (s[i].compare(source_id) == 0) {
       s.erase(s.begin()+i);

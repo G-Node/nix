@@ -71,7 +71,7 @@ File::File(string name, FileMode mode)
 
 
 File::File( const File &file )
-  : h5file(file.h5file), metadata(file.metadata), data(file.data)
+  : h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
 {}
 
 

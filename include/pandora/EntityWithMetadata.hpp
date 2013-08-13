@@ -17,11 +17,11 @@
 #include <string>
 #include <iostream>
 
-#include <pandora/PandoraEntity.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+#include <pandora/NamedEntity.hpp>
 
 namespace pandora {
+
+class File;
 
 /**
  * Base class for entities that are associated with metadata such
@@ -29,9 +29,23 @@ namespace pandora {
  *
  * TODO Implement all methods of EntityWithMetadata.
  */
-class EntityWithMetadata : public PandoraEntity {
+class EntityWithMetadata : public NamedEntity {
+
+protected:
+
+  File file;
 
 public:
+
+  /**
+   * Standard constructor
+   */
+  EntityWithMetadata(File file, Group group, std::string id);
+
+  /**
+   * Standard constructor that preserves the creation time.
+   */
+  EntityWithMetadata(File file, Group group, std::string id, time_t time);
 
   /**
    * Checks if the block has associated metadata.

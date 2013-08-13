@@ -12,54 +12,68 @@
  */
 #include <ctime>
 
-#include <pandora/NamedEntity.hpp>
 #include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/NamedEntity.hpp>
 
 using namespace std;
 
 namespace pandora {
 
 
-/* SEE: NamedEntity.hpp */
+NamedEntity::NamedEntity(Group group, string id)
+  : PandoraEntity(group, id)
+{
+  // nothing to do
+}
+
+
+NamedEntity::NamedEntity(Group group, string id, time_t time)
+  : PandoraEntity(group, id, time)
+{
+  // nothing to do
+}
+
+
 void NamedEntity::type(string type) {
   group.setAttr("type", type);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::type() const {
   string type;
   group.getAttr("type", type);
   return type;
 }
 
-/* SEE: NamedEntity.hpp */
+
 void NamedEntity::name(string name) {
   group.setAttr("name", name);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::name() const {
   string name;
   group.getAttr("name", name);
   return name;
 }
 
-/* SEE: NamedEntity.hpp */
+
 void NamedEntity::definition(string definition) {
   group.setAttr("definition", definition);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::definition() const {
   string definition;
   group.getAttr("definition", definition);
   return definition;
 }
 
-/* SEE: NamedEntity.hpp */
+
 int NamedEntity::compare(const NamedEntity &other) const {
   int cmp = name().compare(other.name());
   if (cmp == 0) {
@@ -68,7 +82,7 @@ int NamedEntity::compare(const NamedEntity &other) const {
   return cmp;
 }
 
-/* SEE: NamedEntity.hpp */
+
 ostream& operator<<(ostream &out, const NamedEntity &ent) {
   out << "NamedEntity: {name = " << ent.name();
   out << ", type = " << ent.type();
@@ -76,8 +90,9 @@ ostream& operator<<(ostream &out, const NamedEntity &ent) {
   return out;
 }
 
-/* SEE: NamedEntity.hpp */
-NamedEntity::~NamedEntity()
-{}
+
+NamedEntity::~NamedEntity() {
+  // nothing to do
+}
 
 } /* namespace pandora */

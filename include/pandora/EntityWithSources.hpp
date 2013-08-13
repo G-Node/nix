@@ -18,14 +18,13 @@
 #include <vector>
 #include <iostream>
 
-#include <pandora/NamedEntity.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-#include <pandora/DataSet.hpp>
-#include <pandora/Charon.hpp>
-#include <pandora/Source.hpp>
+#include <pandora/EntityWithMetadata.hpp>
+
 
 namespace pandora {
+
+class Block;
+class Source;
 
 /**
  * Base class for entities that are associated with sources.
@@ -33,9 +32,17 @@ namespace pandora {
  * TODO: Refactoring of method sources() (use vector<Source>)
  * TODO: Write documentation.
  */
-class EntityWithSources: public PandoraEntity {
+class EntityWithSources: public EntityWithMetadata {
+
+protected:
+
+  Block block;
 
 public:
+
+  EntityWithSources(File file, Block block, Group group, std::string id);
+
+  EntityWithSources(File file, Block block, Group group, std::string id, time_t time);
 
   size_t sourceCount() const;
 
