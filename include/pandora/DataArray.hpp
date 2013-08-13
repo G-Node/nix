@@ -36,12 +36,12 @@ public:
   void expansionOrigin(double expansion_origin = 0.0);
   double expansionOrigin()const;
 
-  int polynomOrder() const;
-
   void polynomCoefficients(std::vector<double> &polynom_coefficients);
   std::vector<double> polynomCoefficients() const;
 
   void setCalibration(std::vector<double> &coefficients, double origin = 0.0);
+
+  double applyPolynom(std::vector<double> &coefficients, double origin, double input) const;
 
   template<typename T, size_t numDims>
   void setData(boost::multi_array<T,numDims>);
