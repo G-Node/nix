@@ -351,6 +351,11 @@ public:
    */
   void removeDataTag(std::string id);
 
+  /**
+   * Output operator
+   */
+  friend std::ostream& operator<<(std::ostream &out, const Block &ent);
+
   virtual ~Block();
 
 };

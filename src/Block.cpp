@@ -154,6 +154,14 @@ void Block::removeDataArray(std::string data_array_id){
 }
 */
 
+ostream& operator<<(ostream &out, const Block &ent) {
+  out << "Block: {name = " << ent.name();
+  out << ", type = " << ent.type();
+  out << ", id = " << ent.id() << "}";
+  return out;
+}
+
+
 Block::~Block() {}
 
 } // end namespace pandora

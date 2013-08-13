@@ -83,14 +83,6 @@ int NamedEntity::compare(const NamedEntity &other) const {
 }
 
 
-ostream& operator<<(ostream &out, const NamedEntity &ent) {
-  out << "NamedEntity: {name = " << ent.name();
-  out << ", type = " << ent.type();
-  out << ", id = " << ent.id() << "}";
-  return out;
-}
-
-
 NamedEntity::~NamedEntity() {
   // nothing to do
 }

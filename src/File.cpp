@@ -14,8 +14,6 @@
 #include <fstream>
 #include <vector>
 
-#include <hdf5.h>
-
 #include <pandora/Util.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
@@ -70,7 +68,7 @@ File::File(string name, FileMode mode)
 }
 
 
-File::File( const File &file )
+File::File(const File &file)
   : h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
 {}
 
@@ -91,7 +89,18 @@ Block File::getBlock(size_t index) const {
 }
 
 
-/** TODO implement vector<Block> File::blocks() const {} */
+vector<Block> File::blocks() const {
+  vector<Block>  block_obj;
+
+  size_t n = data.objectCount();
+  for (size_t i = 0; i < n; i++) {
+    string id = data.objectName(i);
+    Block b(*this, data.openGroup(id), id);
+    block_obj.push_back(b);
+  }
+
+  return block_obj;
+}
 
 
 Block File::createBlock(string name, string type) {
