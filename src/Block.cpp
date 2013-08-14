@@ -154,6 +154,19 @@ void Block::removeDataArray(std::string data_array_id){
 }
 */
 
+Block& Block::operator=(const Block &other) {
+  if (*this != other) {
+      this->file = other.file;
+      this->group = other.group;
+      this->entity_id = other.entity_id;
+      this->source_group = other.source_group;
+      this->data_array_group = other.data_array_group;
+      this->simple_tag_group = other.simple_tag_group;
+      this->data_tag_group = other.data_tag_group;
+    }
+    return *this;
+}
+
 ostream& operator<<(ostream &out, const Block &ent) {
   out << "Block: {name = " << ent.name();
   out << ", type = " << ent.type();
