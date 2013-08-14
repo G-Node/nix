@@ -35,7 +35,8 @@ SRCS = src/Util.cpp \
 	src/EntityWithSources.cpp \
 	src/EntityWithMetadata.cpp \
 	src/File.cpp \
-	src/Block.cpp
+	src/Block.cpp \
+	src/Source.cpp
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 

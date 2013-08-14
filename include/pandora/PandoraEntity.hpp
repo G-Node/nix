@@ -104,6 +104,9 @@ public:
    */
   int compare(const PandoraEntity &other) const;
 
+  /**
+   * Output operator
+   */
   friend std::ostream& operator<<(std::ostream &out, const PandoraEntity &ent);
 
   /**
