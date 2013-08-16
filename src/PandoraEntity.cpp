@@ -84,12 +84,12 @@ void PandoraEntity::forceCreatedAt(time_t t) {
 
 
 bool PandoraEntity::operator==(const PandoraEntity &other) const {
-  return group == group && entity_id == entity_id;
+  return group == other.group && entity_id == other.entity_id;
 }
 
 
 bool PandoraEntity::operator!=(const PandoraEntity &other) const {
-  return group != group || entity_id != entity_id;
+  return group != other.group || entity_id != other.entity_id;
 }
 
 

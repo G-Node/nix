@@ -150,7 +150,7 @@ public:
   /**
    * Output operator
    */
-  friend std::ostream& operator<<(std::ostream &out, const Block &ent);
+  friend std::ostream& operator<<(std::ostream &out, const Source &ent);
 
 
   virtual ~Source();

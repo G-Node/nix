@@ -7,8 +7,8 @@
 #include <boost/multi_array.hpp>
 
 namespace pandora {
-  
-    
+
+
 Group::Group()
     : h5group()
 {}
@@ -87,6 +87,8 @@ Group Group::openGroup(std::string name, bool create) const {
     g = Group(h5group.openGroup(name));
   } else if (create) {
     g = Group(h5group.createGroup(name));
+  } else {
+    throw std::runtime_error("Unable to open group with name '" + name + "'!");
   }
   return g;
 }
