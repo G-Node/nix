@@ -1,8 +1,21 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+/**
+ * @file src/Block.cpp
+ * @brief Implementation of methods and functions related to the class Block.
+ */
 
 #include <pandora/Util.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
+#include <pandora/Source.hpp>
 
 using namespace std;
 
@@ -37,78 +50,121 @@ Block::Block(File file, Group group, string id, time_t time)
   data_tag_group = group.openGroup("data_tags");
 }
 
-/*
-Source Block::createSource(string name, string type, string parent_id) {
-  string id = util::createId("source");
-  while(source_group.hasObject(id))
-    id = util::createId("source");
-  Source s(file, source_group.openGroup(id, true), id);
-  s.name(name);
-  s.type(type);
-  if(parent_id.length() > 0){
-    s.parentSource(parent_id);
-  }
-  return s;
+
+bool Block::hasSource(string id) const {
+  return source_group.hasGroup(id);
 }
 
-SourceIterator Block::sources() {
-  SourceIterator iter(file, source_group, "");
-  return iter;
+
+Source Block::getSource(string id) const {
+  return Source(file, source_group.openGroup(id, false), id);
 }
 
-bool Block::hasSource(std::string id, std::string type, uint depth){
-  bool found = false;
-  for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(id) == 0){
-      found = true;
-      break;
-    }
-  }
-  if(depth == 0 || depth > 1){
-    SourceIterator iter = sources();
-    while(!found && iter != iter.end()){
-      Source s = *iter;
-      found = s.hasSource(id, type, depth - 1);
-      ++iter;
-    }
-  }
-  return found;
+
+Source Block::getSource(size_t index) const {
+  string id = source_group.objectName(index);
+  return Source(file, source_group.openGroup(id, false), id);
 }
 
-Source Block::findSource(std::string source_id, std::string type, uint depth) {
-  if(hasSource(source_id, type, depth)){
-    for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
-      if((*iter).id().compare(source_id) == 0){
-        Source found = *iter;
-        return found;
+
+bool Block::existsSource(string id) const {
+
+  if (hasSource(id)) {
+    return true;
+  } else {
+    vector<Source> stack;
+    vector<Source> tmp(sources());
+    stack.insert(stack.end(), tmp.begin(), tmp.end());
+
+    bool found = false;
+    while(!found && stack.size() > 0) {
+      Source s(stack.back());
+      stack.pop_back();
+
+      if (s.hasSource(id)) {
+        found = true;
+      } else {
+        vector<Source> tmp = s.sources();
+        stack.insert(stack.end(), tmp.begin(), tmp.end());
       }
     }
-    SourceIterator iter = sources();
-    while(iter != iter.end()){
-      Source s = *iter;
-      if(s.hasSource(source_id)){
-        Source found = s.findSource(source_id, type, depth -1);
-        return found;
-      }
-      ++iter;
-    }
+
+    return found;
   }
-  throw std::runtime_error("Requested Source does not exist! Always check with hasSource!");
 }
 
-bool Block::removeSource(std::string id){
-  bool success = false;
-  if(hasSource(id,"", 1)){
-    source_group.removeGroup(id);
-    success = true;
+
+Source Block::findSource(string id) const {
+
+  if (sourceCount() == 0) {
+    throw runtime_error("Unable to find the source with id " + id + "!");
   }
-  return success;
+
+  if (hasSource(id)) {
+    return getSource(id);
+  } else {
+    vector<Source> stack;
+    vector<Source> tmp(sources());
+    stack.insert(stack.end(), tmp.begin(), tmp.end());
+    Source result(stack[0]);
+
+    bool found = false;
+    while(!found && stack.size() > 0) {
+      Source s(stack.back());
+      stack.pop_back();
+
+      if (s.hasSource(id)) {
+        found = true;
+        result = s.getSource(id);
+      } else {
+        vector<Source> tmp(s.sources());
+        stack.insert(stack.end(), tmp.begin(), tmp.end());
+      }
+    }
+
+    if (!found) {
+      throw runtime_error("Unable to find the source with id " + id + "!");
+    }
+
+    return result;
+  }
 }
+
 
 size_t Block::sourceCount() const {
   return source_group.objectCount();
 }
 
+
+std::vector<Source> Block::sources() const {
+  vector<Source> source_obj;
+
+  size_t source_count = source_group.objectCount();
+  for (int i = 0; i < source_count; i++) {
+    string id = source_group.objectName(i);
+    Source s(file, source_group.openGroup(id, false), id);
+    source_obj.push_back(s);
+  }
+
+  return source_obj;
+}
+
+
+Source Block::createSource(string name, string type) {
+  string id = util::createId("source");
+
+  while(source_group.hasObject(id)) {
+    id = util::createId("source");
+  }
+
+  Source s(file, source_group.openGroup(id, true), id);
+  s.name(name);
+  s.type(type);
+
+  return s;
+}
+
+/*
 size_t Block::dataArrayCount()const {
   return data_group.objectCount();
 }

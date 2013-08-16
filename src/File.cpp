@@ -92,10 +92,10 @@ Block File::getBlock(size_t index) const {
 vector<Block> File::blocks() const {
   vector<Block>  block_obj;
 
-  size_t n = data.objectCount();
-  for (size_t i = 0; i < n; i++) {
+  size_t block_count = data.objectCount();
+  for (size_t i = 0; i < block_count; i++) {
     string id = data.objectName(i);
-    Block b(*this, data.openGroup(id), id);
+    Block b(*this, data.openGroup(id, false), id);
     block_obj.push_back(b);
   }
 

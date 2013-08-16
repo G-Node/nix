@@ -1,103 +1,164 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+/**
+ * @file src/Source.cpp
+ * @brief Implementation of methods and functions related to the class Source.
+ */
+
 #include <pandora/Util.hpp>
+#include <pandora/File.hpp>
+#include <pandora/Group.hpp>
 #include <pandora/Source.hpp>
-#include <pandora/SourceIterator.hpp>
-#include <pandora/SourceTreeIterator.hpp>
 
 using namespace std;
 
 namespace pandora {
 
 
-Source::Source(const Source &source) :
-            NamedEntity(source.file, source.group, source.entity_id)
+Source::Source(const Source &source)
+  : EntityWithMetadata(source.file, source.group, source.entity_id)
 {
-  sources = source.sources;
+  source_group = source.source_group;
 }
 
-Source::Source(File *file, Group group, std::string id) :
-            NamedEntity(file, group, id)
+
+Source::Source(File file, Group group, std::string id)
+  : EntityWithMetadata(file, group, id)
 {
-  sources = group.openGroup("sources");
-  }
-
-void Source::parentSource(std::string parent_id){
-  //if(file->hasSource(parent_id)){
-      group.setAttr("parent_source", parent_id);
-      forceUpdatedAt();
-  //  }
-  //  else{
-  //    throw std::runtime_error("Source::parentSource(): You try to link to set a parent source that does not exits!");
-  //}
+  source_group = group.openGroup("sources");
 }
 
-std::string Source::parentSource() const{
-  string parent_id;
-  group.getAttr("parent_source", parent_id);
-  return parent_id;
+
+Source::Source(File file, Group group, std::string id, time_t time)
+  : EntityWithMetadata(file, group, id, time)
+{
+  source_group = group.openGroup("sources");
 }
 
-Source Source::addSource(std::string name, std::string type) {
-  string id = util::createId("source");
-  Source s(file, sources.openGroup(id,true), id);
-  s.name(name);
-  s.type(type);
-  s.parentSource(this->id());
-  return s;
+
+bool Source::hasSource(string id) const {
+  return source_group.hasGroup(id);
 }
 
-bool Source::hasChildren() const {
-  SourceIterator iter = this->children();
-  return iter != iter.end();
+
+Source Source::getSource(string id) const {
+  return Source(file, source_group.openGroup(id, false), id);
 }
 
-SourceIterator Source::children(std::string type) const {
-  SourceIterator iter(file, sources, type);
-  return iter;
+
+Source Source::getSource(size_t index) const {
+  string id = source_group.objectName(index);
+  return Source(file, source_group.openGroup(id, false), id);
 }
 
-SourceTreeIterator Source::treeIterator(std::string type, uint depth) const {
-  SourceTreeIterator iter(*this, type, depth);
-  return iter;
-}
 
-size_t Source::childCount() const {
-  size_t childCount = 0;
-  for (SourceIterator iter = this->children(); iter != iter.end(); ++iter) {
-    childCount++;
-  }
-  return childCount;
-}
+bool Source::existsSource(string id) const {
+  vector<Source> stack;
+  stack.push_back(*this);
 
-bool Source::hasSource(std::string source_id, std::string type, uint depth) const{
   bool found = false;
-  for(SourceTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
-    Source s = *treeIter;
-    if(s.id().compare(source_id) == 0){
+  while(!found && stack.size() > 0) {
+    Source s(stack.back());
+    stack.pop_back();
+
+    if (s.hasSource(id)) {
       found = true;
-      break;
+    } else {
+      vector<Source> tmp(s.sources());
+      stack.insert(stack.end(), tmp.begin(), tmp.end());
     }
   }
+
   return found;
 }
 
-Source Source::findSource(std::string source_id, std::string type, uint depth) const{
-  for(SourceTreeIterator treeIter = treeIterator(type, depth); treeIter != treeIter.end(); ++treeIter){
-    if((*treeIter).id().compare(source_id) == 0){
-      Source found = *treeIter;
-      return found;
+
+Source Source::findSource(string id) const {
+  Source result(*this);
+  vector<Source> stack;
+  stack.push_back(*this);
+
+  bool found = false;
+  while(!found && stack.size() > 0) {
+    Source s(stack.back());
+    stack.pop_back();
+
+    if (s.hasSource(id)) {
+      found = true;
+      result = s.getSource(id);
+    } else {
+      vector<Source> tmp(s.sources());
+      stack.insert(stack.end(), tmp.begin(), tmp.end());
     }
   }
-  throw std::runtime_error("Requested Source does not exist! Always check with hasSource!");
+
+  if (!found) {
+    throw runtime_error("Unable to find the source with id " + id + "!");
+  }
+
+  return result;
 }
 
-bool Source::removeSource(std::string source_id) {
-  bool success = false;
-  if(sources.hasGroup(source_id)){
-    sources.removeGroup(source_id);
-    success = true;
-  }
-  return success;
+
+size_t Source::sourceCount() const {
+  return source_group.objectCount();
 }
+
+
+std::vector<Source> Source::sources() const {
+  vector<Source> source_obj;
+
+  size_t source_count = source_group.objectCount();
+  for (int i = 0; i < source_count; i++) {
+    string id = source_group.objectName(i);
+    Source s(file, source_group.openGroup(id, false), id);
+    source_obj.push_back(s);
+  }
+
+  return source_obj;
+}
+
+
+Source Source::createSource(string name, string type) {
+  string id = util::createId("source");
+
+  while(source_group.hasObject(id)) {
+    id = util::createId("source");
+  }
+
+  Source s(file, source_group.openGroup(id, true), id);
+  s.name(name);
+  s.type(type);
+
+  return s;
+}
+
+
+ostream& operator<<(ostream &out, const Source &ent) {
+  out << "Source: {name = " << ent.name();
+  out << ", type = " << ent.type();
+  out << ", id = " << ent.id() << "}";
+  return out;
+}
+
+
+Source& Source::operator=(const Source &other) {
+  if (*this != other) {
+    this->file = other.file;
+    this->group = other.group;
+    this->entity_id = other.entity_id;
+    this->source_group = other.source_group;
+  }
+  return *this;
+}
+
+
 
 Source::~Source() {
   //dtor
