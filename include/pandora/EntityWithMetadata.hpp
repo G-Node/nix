@@ -72,9 +72,17 @@ public:
   void metadata(const Section &metadata);
 
   /**
+   * Remove associated metadata from the entity.
+   * The section will not be deleted.
+   *
+   * @return True if the section was removed, false otherwise.
+   */
+  bool removeMetadata(Section &metadata);
+
+  /**
    * Destructor of this class.
    */
-  virtual ~EntityWithMetadata() {};
+  virtual ~EntityWithMetadata();
 
 };
 

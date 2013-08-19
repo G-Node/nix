@@ -40,25 +40,68 @@ protected:
 
 public:
 
+  /**
+   * Standard constructor.
+   */
   EntityWithSources(File file, Block block, Group group, std::string id);
 
+  /**
+   * Standard constructor that preserves the creation time.
+   */
   EntityWithSources(File file, Block block, Group group, std::string id, time_t time);
 
+  /**
+   * Get the number of sources associated with this entity.
+   *
+   * @return The number sources.
+   */
   size_t sourceCount() const;
 
-  bool hasSource(std::string source_id) const;
+  /**
+   * Checks if a specific source is associated with this entity.
+   *
+   * @param source      The source to check.
+   *
+   * @return True if the source is associated with this entity, false otherwise.
+   */
+  bool hasSource(Source source) const;
 
+  /**
+   * Add a specific source to the list of associated sources.
+   *
+   * @param source      The source to associate with this entity.
+   */
   void addSource(const Source &source);
 
-  void addSource(std::string source_id);
+  /**
+   * Remove a source from the list of associated sources.
+   * This source will not be deleted from the file.
+   *
+   * @param source      The source to remove.
+   *
+   * @return True if the source was removed, false otherwise.
+   */
+  bool removeSource(const Source &source);
 
-  void removeSource(std::string source_id);
+  /**
+   * Set all sources associated with this entity. All previosly
+   * associated sources, that are not in the vector will be removed.
+   *
+   * @param sources     A vector with all sources.
+   */
+  void sources(std::vector<Source>);
 
-  void sources(std::vector<std::string>);
+  /**
+   * Get all associated sources of this entity.
+   *
+   * @return A vector with all sources.
+   */
+  std::vector<Source> sources() const;
 
-  std::vector<std::string> sources() const;
-
-  virtual ~EntityWithSources() {};
+  /**
+   * Destructor.
+   */
+  virtual ~EntityWithSources();
 
 };
 

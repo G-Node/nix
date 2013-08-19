@@ -11,32 +11,24 @@
  * @brief Definition of the class SimpleTag.
  */
 
-#include <string>
-#include <vector>
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-#include <pandora/Block.hpp>
-#include <pandora/PandoraEntity.hpp>
+#include <pandora/EntityWithSources.hpp>
 
 #ifndef PAN_SIMPLETAG_H_INCLUDED
 #define PAN_SIMPLETAG_H_INCLUDED
 
 namespace pandora {
 
+
 class Section;
-class Source;
 class DataArray;
 class Representation;
 
 /**
  * Class that represents a pandora tag.
  */
-class SimpleTag : public PandoraEntity {
+class SimpleTag : public EntityWithSources {
 
-private:
-
-  const Block block;
 
 public:
 
@@ -48,22 +40,13 @@ public:
   /**
    * Standard constructor
    */
-  SimpleTag(File *file, const Block block, Group group, std::string id);
+  SimpleTag(File file, Block block, Group group, std::string id);
 
-  std::string type() const;
-  void type(const std::string &type);
+  /**
+   * Standard constructor that preserves the creation time.
+   */
+  SimpleTag(File file, Block block, Group group, std::string id, time_t time);
 
-  std::string name() const;
-  void name(const std::string &name);
-
-  std::string definition() const;
-  void definition(const std::string &definition);
-
-  Section metadata() const;
-  void metadata(const Section &metadata);
-
-  std::vector<Source> sources() const;
-  void sources(const std::vector<Source> &sources);
 
   std::string unit() const;
   void unit(const std::string &unit);

@@ -38,7 +38,7 @@ EntityWithSources::EntityWithSources(File file, Block block, Group group, string
 
 }
 
-/*
+
 size_t EntityWithSources::sourceCount() const {
   size_t count = 0;
   if (group.hasData("sources")) {
@@ -49,7 +49,7 @@ size_t EntityWithSources::sourceCount() const {
   return count;
 }
 
-
+/*
 bool EntityWithSources::hasSource(string source_id) const {
   if (group.hasData("sources")) {
     if (sourceCount() == 0)
@@ -145,5 +145,8 @@ void EntityWithSources::removeSource(string source_id){
 }
 */
 
+  EntityWithSources::~EntityWithSources() {
+
+  }
 
 } //namespace

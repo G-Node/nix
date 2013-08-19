@@ -14,19 +14,7 @@
  * @brief This namespace contains all declarations of the public API.
  */
 
-#include <pandora/DataType.hpp>
-#include <pandora/PSize.hpp>
-#include <pandora/Group.hpp>
+
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
-#include <pandora/BlockIterator.hpp>
-#include <pandora/Section.hpp>
-#include <pandora/SectionIterator.hpp>
-#include <pandora/SectionTreeIterator.hpp>
-#include <pandora/Property.hpp>
-#include <pandora/PropertyIterator.hpp>
 #include <pandora/Source.hpp>
-#include <pandora/SourceIterator.hpp>
-#include <pandora/SourceTreeIterator.hpp>
-#include <pandora/DataSet.hpp>
-#include <pandora/DataArray.hpp>

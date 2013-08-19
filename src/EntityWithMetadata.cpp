@@ -33,4 +33,8 @@ EntityWithMetadata::EntityWithMetadata(File file, Group group, string id, time_t
 
 }
 
+EntityWithMetadata::~EntityWithMetadata() {
+
+}
+
 } //namespace
