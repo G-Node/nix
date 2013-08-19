@@ -64,7 +64,16 @@ public:
    *
    * @return True if the source is associated with this entity, false otherwise.
    */
-  bool hasSource(Source source) const;
+  bool hasSource(const Source &source) const;
+
+  /**
+   * Checks if a specific source is associated with this entity.
+   *
+   * @param id      The source id to check.
+   *
+   * @return True if the source is associated with this entity, false otherwise.
+   */
+  bool hasSource(std::string id) const;
 
   /**
    * Add a specific source to the list of associated sources.
@@ -87,9 +96,9 @@ public:
    * Set all sources associated with this entity. All previosly
    * associated sources, that are not in the vector will be removed.
    *
-   * @param sources     A vector with all sources.
+   * @param s     A vector with all sources.
    */
-  void sources(std::vector<Source>);
+  void sources(std::vector<Source> s);
 
   /**
    * Get all associated sources of this entity.

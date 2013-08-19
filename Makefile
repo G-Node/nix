@@ -28,6 +28,7 @@ endif
 SRCS = src/Util.cpp \
 	src/DataType.cpp \
 	src/DataSet.cpp \
+	src/Selection.cpp \
 	src/NDBuffer.cpp \
 	src/Group.cpp \
 	src/PandoraEntity.cpp \

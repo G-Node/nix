@@ -32,6 +32,7 @@ EntityWithSources::EntityWithSources(File file, Block block, Group group, string
 
 }
 
+
 EntityWithSources::EntityWithSources(File file, Block block, Group group, string id, time_t time)
   : EntityWithMetadata(file, group, id, time), block(block)
 {
@@ -49,104 +50,148 @@ size_t EntityWithSources::sourceCount() const {
   return count;
 }
 
-/*
-bool EntityWithSources::hasSource(string source_id) const {
-  if (group.hasData("sources")) {
-    if (sourceCount() == 0)
-      return false;
-    vector<string> s = sources();
-    for (size_t i = 0; i < s.size(); i++) {
-      if (s[i].compare(source_id) == 0) {
-        return true;
-      }
-    }
-  } else {
-    return false;
-  }
-  return false;
+
+bool EntityWithSources::hasSource(const Source &source) const {
+  return hasSource(source.id());
 }
 
 
-vector<string> EntityWithSources::sources() const {
-  vector<string> s;
+bool EntityWithSources::hasSource(string id) const {
+  bool found = false;
+
+  if (sourceCount() > 0) {
+    vector<Source> s = sources();
+    for (size_t i = 0; i < s.size() && !found; i++) {
+      if (s[i].id().compare(id) == 0) {
+        found = true;
+      }
+    }
+  }
+
+  return found;
+}
+
+
+vector<Source> EntityWithSources::sources() const {
+  vector<string> ids;
+  vector<Source> source_obj;
+
   if (group.hasData("sources")) {
     DataSet ds = group.openData("sources");
     Selection fileSel = ds.createSelection();
-    PSize start = { 0 };
-    PSize count = { sourceCount() };
-    fileSel.select(count, start);
-    ds.read(s, fileSel, true);
+    fileSel.select({0}, {sourceCount()});
+    ds.read(ids, fileSel, true);
   }
-  return s;
+
+  // TODO this will not perform very well for many sources.
+  //      Solution: implement the following methods in class Block.
+  //                Block::findSources(const vector<string> &ids) const;
+  //                Block::existsSources(const vector<string> &ids) const;
+  for (size_t i = 0; i < ids.size(); i++) {
+    if (block.existsSource(ids[i])) {
+      source_obj.push_back(block.findSource(ids[i]));
+    } else {
+      // TODO What is the right thing to do here?
+    }
+  }
+
+  return source_obj;
 }
 
 
 void EntityWithSources::addSource(const Source &source) {
-  addSource(source.id());
+  string source_id = source.id();
+
+  if (!block.hasSource(source_id)) {
+    throw runtime_error("Unable to find source with id " + source_id +
+                        "on block " + block.id());
+  }
+
+  if (!hasSource(source_id)) {
+    vector<string> vals;
+    vals.push_back(source_id);
+    PSize start;
+    DataSet ds((H5::DataSet()));
+
+    if (group.hasData("sources")) {
+      ds = group.openData("sources");
+      PSize size = ds.size();
+      PSize newSize = size + 1;
+      ds.extend(newSize);
+      start = size;
+    } else {
+      Charon<vector<string>> charon(vals);
+      PSize size = { 1 };
+      PSize maxsize = { H5S_UNLIMITED };
+      PSize chunks = DataSet::guessChunking(size, DataType::Double);
+      ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
+          &maxsize, &chunks);
+      start = {0};
+    }
+
+    Selection fileSel = ds.createSelection();
+    PSize count = { 1 };
+    fileSel.select(count, start);
+    ds.write(vals, fileSel);
+  }
 }
 
 
-void EntityWithSources::addSource(string source_id) {
-  if(hasSource(source_id)){
-    return;
-  }
-  vector<string> vals;
-  vals.push_back(source_id);
-  PSize start;
-  DataSet ds((H5::DataSet()));
-  if (group.hasData("sources")) {
-    ds = group.openData("sources");
-    PSize size = ds.size();
-    PSize newSize = size + 1;
-    ds.extend(newSize);
-    start = size;
-  } else {
-    Charon<vector<string> > charon(vals);
-    PSize size = { 1 };
-    PSize maxsize = { H5S_UNLIMITED };
-    PSize chunks = DataSet::guessChunking(size, DataType::Double);
-    ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
-        &maxsize, &chunks);
-    start = {0};
-  }
-  Selection fileSel = ds.createSelection();
-  PSize count = { 1 };
-  fileSel.select(count, start);
-  ds.write(vals, fileSel);
-}
+void EntityWithSources::sources(vector<Source> s) {
+  vector<string> ids;
 
+  for (size_t i = 0; i < s.size(); i++) {
+    string id = s[i].id();
+    if (block.hasSource(id)) {
+      ids.push_back(id);
+    } else {
+      throw runtime_error("Unable to find source with id " + id +
+                              "on block " + block.id());
+    }
+  }
 
-void EntityWithSources::sources(vector<string> s){
+  sort(ids.begin(), ids.end());
+
+  // TODO It would be so cool if we could avoid/reduce this boiler plate code.
   group.removeData("sources");
   PSize start;
   DataSet ds((H5::DataSet()));
-  Charon<vector<string> > charon(s);
-  PSize size = { s.size() };
+  Charon<vector<string> > charon(ids);
+  PSize size = { ids.size() };
   PSize maxsize = { H5S_UNLIMITED };
   PSize chunks = DataSet::guessChunking(size, DataType::Double);
   ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
       &maxsize, &chunks);
   start = {0};
   Selection fileSel = ds.createSelection();
-  PSize count = { s.size() };
+  PSize count = { ids.size() };
   fileSel.select(count, start);
-  ds.write(s, fileSel);
+  ds.write(ids, fileSel);
+
 }
 
 
-void EntityWithSources::removeSource(string source_id){
-  vector<string> s = sources();
-  for(size_t i = 0; i < s.size(); i++){
-    if (s[i].compare(source_id) == 0) {
-      s.erase(s.begin()+i);
-      return;
+bool EntityWithSources::removeSource(const Source &source){
+  bool removed = false;
+  vector<Source> source_obj = sources();
+
+  for(size_t i = 0; i < source_obj.size() && !removed; i++){
+    if (source_obj[i].compare(source) == 0) {
+      source_obj.erase(source_obj.begin() + i);
+      removed = true;
     }
   }
-}
-*/
 
-  EntityWithSources::~EntityWithSources() {
-
+  if (removed) {
+    sources(source_obj);
   }
+
+  return removed;
+}
+
+
+EntityWithSources::~EntityWithSources() {
+
+}
 
 } //namespace
