@@ -31,9 +31,16 @@ SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id)
 {}
 
 
+SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id, time_t time)
+  : EntityWithSources(file, block, group, id, time)
+{}
+
+
+
 SimpleTag::~SimpleTag()
 {
   // TODO Auto-generated destructor stub
 }
+
 
 } /* namespace pandora */

@@ -47,12 +47,23 @@ public:
    */
   SimpleTag(File file, Block block, Group group, std::string id, time_t time);
 
+  /**
+   * Getter for the units of the tag. The units are applied to all values for position
+   * and extent in order to calculate the right position vectors in referenced data arrays.
+   *
+   * @return All units of the tag as a vector.
+   */
+  std::vector<std::string> units() const;
 
-  std::string unit() const;
-  void unit(const std::string &unit);
+  /**
+   * Setter for the units of a tag.
+   *
+   * @param units     All units as a vector.
+   */
+  void units(const std::vector<std::string> &units);
 
   std::vector<double> position() const;
-  void position(const std::vector<double> &position);
+  void position(const std::vector<double> &pposition);
 
   std::vector<double> extent() const;
   void extent(const std::vector<double> &extent);
