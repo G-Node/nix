@@ -28,9 +28,6 @@ class Source;
 
 /**
  * Base class for entities that are associated with sources.
- *
- * TODO: Refactoring of method sources() (use vector<Source>)
- * TODO: Write documentation.
  */
 class EntityWithSources: public EntityWithMetadata {
 
@@ -93,7 +90,7 @@ public:
   bool removeSource(const Source &source);
 
   /**
-   * Set all sources associated with this entity. All previosly
+   * Set all sources associated with this entity. All previously
    * associated sources, that are not in the vector will be removed.
    *
    * @param s     A vector with all sources.

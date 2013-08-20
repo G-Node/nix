@@ -140,7 +140,7 @@ std::vector<Source> Block::sources() const {
   vector<Source> source_obj;
 
   size_t source_count = source_group.objectCount();
-  for (int i = 0; i < source_count; i++) {
+  for (size_t i = 0; i < source_count; i++) {
     string id = source_group.objectName(i);
     Source s(file, source_group.openGroup(id, false), id);
     source_obj.push_back(s);
