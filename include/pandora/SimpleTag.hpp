@@ -64,7 +64,7 @@ public:
    *
    * @param units     All units as a vector.
    */
-  void units(const std::vector<std::string> &units);
+  void units(std::vector<std::string> &units);
 
   /**
    * Getter for the position of a tag. The position is a vector that
@@ -170,7 +170,7 @@ public:
    * @param data      The data array of this representation.
    * @param type      The link type of this representation.
    *
-   * @return The created source object.
+   * @return The created representation object.
    */
   Representation createRepresentation(DataArray data, RepresentationType link_type);
 

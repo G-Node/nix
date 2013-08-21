@@ -14,6 +14,7 @@
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
+#include <pandora/DataSet.hpp>
 #include <pandora/SimpleTag.hpp>
 
 using namespace std;
@@ -35,6 +36,31 @@ SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id, 
   : EntityWithSources(file, block, group, id, time)
 {}
 
+
+vector<string> SimpleTag::units() const {
+  vector<string> u;
+
+  if (group.hasData("units")) {
+    DataSet ds = group.openData("units");
+    ds.read(u, true);
+  }
+
+  return u;
+}
+
+
+void SimpleTag::units(vector<string> &u) {
+  vector<string> s = {"foo", "bar"};
+  DataSet ds((H5::DataSet()));
+
+  if (group.hasData("units")) {
+    ds = group.openData("units");
+    ds.extend({u.size()});
+  } else {
+    PSize chunks = {1};
+    ds = DataSet::create(group, "units", u, nullptr, &chunks);
+  }
+}
 
 
 SimpleTag::~SimpleTag()
