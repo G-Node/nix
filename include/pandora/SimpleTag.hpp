@@ -19,13 +19,17 @@
 
 namespace pandora {
 
-
 class Section;
 class DataArray;
+class LinkType;
 class Representation;
+class RepresentationType;
+
 
 /**
  * Class that represents a pandora tag.
+ *
+ *
  */
 class SimpleTag : public EntityWithSources {
 
@@ -62,17 +66,137 @@ public:
    */
   void units(const std::vector<std::string> &units);
 
+  /**
+   * Getter for the position of a tag. The position is a vector that
+   * points into referenced DataArrays.
+   *
+   * @return The position vector.
+   */
   std::vector<double> position() const;
-  void position(const std::vector<double> &pposition);
 
+  /**
+   * Setter for the position of a tag.
+   *
+   * @param position    The position vector.
+   */
+  void position(const std::vector<double> &position);
+
+  /**
+   * Getter for the extent of a tag. Given a specified position
+   * vector, the extent vector defined the size of a region of
+   * interest in the referenced DataArrays.
+   *
+   * @return The extent of the tag.
+   */
   std::vector<double> extent() const;
+
+  /**
+   * Setter for the extent of a tag.
+   *
+   * @param extent      The extent vector.
+   */
   void extent(const std::vector<double> &extent);
 
+  //--------------------------------------------------
+  // Methods concerning references.
+  // TODO add hasXy getXy addXy and removeXy methods for references.
+  //--------------------------------------------------
+
+  /**
+   * Getter for all referenced DataArrays.
+   *
+   * @return All referenced DataArrays
+   */
   std::vector<DataArray> references() const;
+
+  /**
+   * Setter for all referenced DataArrays. Previously referenced
+   * DataArrays, that are not in the references vector will be
+   * removed.
+   *
+   * @param references    All referenced arrays.
+   */
   void references(const std::vector<DataArray> &references);
 
+  //--------------------------------------------------
+  // Methods concerning representations.
+  //--------------------------------------------------
+
+  /**
+   * Checks if a specific representation exists on the tag.
+   *
+   * @param id        The id of a representation.
+   *
+   * @return True if the representation exists, false otherwise.
+   */
+  bool hasRepresentation(std::string id) const;
+
+  /**
+   * Returns the number of representations in this block.
+   *
+   * @return The number of representations.
+   */
+  size_t representationCount() const;
+
+  /**
+   * Retrieves a specific representation from the tag.
+   *
+   * @param id        The id of the representation.
+   *
+   * @return The representation with the specified id. If it doesn't exist
+   *         an exception will be thrown.
+   */
+  DataTag getRepresentation(std::string id) const;
+
+  /**
+   * Retrieves a specific representation from the tag.
+   *
+   * @param index        The index of the representation.
+   *
+   * @return The representation with the specified index.
+   */
+  DataTag getRepresentation(size_t index) const;
+
+  /**
+   * Getter for all representations of the tag.
+   *
+   * @return All representations as vector.
+   */
   std::vector<Representation> representations() const;
-  void representations(const std::vector<Representation> &representatios);
+
+  /**
+   * Create a new representation.
+   *
+   * @param data      The data array of this representation.
+   * @param type      The link type of this representation.
+   *
+   * @return The created source object.
+   */
+  Representation createRepresentation(DataArray data, RepresentationType link_type);
+
+  /**
+   * Remove a representation from the tag.
+   *
+   * @param id        The id of the representation to remove.
+   *
+   * @return True if the representation was removed, false otherwise.
+   */
+  bool removeRepresentation(std::string id);
+
+
+  //--------------------------------------------------
+  // Other methods and functions
+  //--------------------------------------------------
+
+  /**
+   * Assignment operator
+   */
+  SimpleTag& operator=(const SimpleTag &other);
+
+  /**
+   * Output operator
+   */
+  friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent);
 
   /**
    * Destructor.
