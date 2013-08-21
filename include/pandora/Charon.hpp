@@ -514,12 +514,12 @@ public:
       PSize maxdims(dims.size(), H5S_UNLIMITED);
       return createDataSpace(&maxdims);
     } else {
-      return createDataSpace(nullptr);
+      return createDataSpace();
     }
   
   }
 
-  H5::DataSpace createDataSpace(const PSize *maxdims) const {
+  H5::DataSpace createDataSpace(const PSize *maxdims = nullptr) const {
     PSize dims = value.shape();
     H5::DataSpace space;
     
