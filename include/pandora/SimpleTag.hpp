@@ -19,6 +19,7 @@
 
 namespace pandora {
 
+class Group;
 class Section;
 class DataArray;
 class LinkType;
@@ -36,6 +37,8 @@ private:
 
   static const PSize MIN_CHUNK_SIZE;
   static const PSize MAX_SIZE_1D;
+
+  Group representation_group;
 
 public:
 
@@ -102,6 +105,7 @@ public:
 
   //--------------------------------------------------
   // Methods concerning references.
+  // TODO implement when done with the DataArray class.
   // TODO add hasXy getXy addXy and removeXy methods for references.
   //--------------------------------------------------
 
