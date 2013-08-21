@@ -11,7 +11,7 @@
  * @brief Definition of the class SimpleTag.
  */
 
-
+#include <pandora/PSize.hpp>
 #include <pandora/EntityWithSources.hpp>
 
 #ifndef PAN_SIMPLETAG_H_INCLUDED
@@ -25,7 +25,6 @@ class LinkType;
 class Representation;
 class RepresentationType;
 
-
 /**
  * Class that represents a pandora tag.
  *
@@ -33,6 +32,10 @@ class RepresentationType;
  */
 class SimpleTag : public EntityWithSources {
 
+private:
+
+  static const PSize MIN_CHUNK_SIZE;
+  static const PSize MAX_SIZE_1D;
 
 public:
 

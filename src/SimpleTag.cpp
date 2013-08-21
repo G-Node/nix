@@ -22,6 +22,10 @@ using namespace std;
 namespace pandora {
 
 
+const PSize SimpleTag::MIN_CHUNK_SIZE = {1};
+const PSize SimpleTag::MAX_SIZE_1D = {H5S_UNLIMITED};
+
+
 SimpleTag::SimpleTag(const SimpleTag &tag)
   : EntityWithSources(tag.file, tag.block, tag.group, tag.entity_id)
 {}
@@ -38,28 +42,34 @@ SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id, 
 
 
 vector<string> SimpleTag::units() const {
-  vector<string> u;
+  vector<string> units;
 
   if (group.hasData("units")) {
     DataSet ds = group.openData("units");
-    ds.read(u, true);
+    ds.read(units, true);
   }
 
-  return u;
+  return units;
 }
 
 
-void SimpleTag::units(vector<string> &u) {
-  vector<string> s = {"foo", "bar"};
-  DataSet ds((H5::DataSet()));
-
+void SimpleTag::units(vector<string> &units) {
   if (group.hasData("units")) {
-    ds = group.openData("units");
-    ds.extend({u.size()});
+    DataSet ds(group.openData("units"));
+    ds.extend({units.size()});
+    ds.write(units);
   } else {
-    PSize chunks = {1};
-    ds = DataSet::create(group, "units", u, nullptr, &chunks);
+    DataSet ds(DataSet::create(group.h5Group(), "units", units, &MAX_SIZE_1D, &MIN_CHUNK_SIZE));
+    ds.write(units);
   }
+}
+
+
+ostream& operator<<(ostream &out, const SimpleTag &ent) {
+  out << "SimpleTag: {name = " << ent.name();
+  out << ", type = " << ent.type();
+  out << ", id = " << ent.id() << "}";
+  return out;
 }
 
 

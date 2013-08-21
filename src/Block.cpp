@@ -16,6 +16,7 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/Source.hpp>
+#include <pandora/SimpleTag.hpp>
 
 using namespace std;
 
@@ -164,6 +165,19 @@ Source Block::createSource(string name, string type) {
   return s;
 }
 
+SimpleTag Block::createSimpleTag(string name, string type) {
+  string id = util::createId("simple_tag");
+
+  while(simple_tag_group.hasObject(id)) {
+    id = util::createId("simple_tag");
+  }
+
+  SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+  st.name(name);
+  st.type(type);
+
+  return st;
+}
 /*
 size_t Block::dataArrayCount()const {
   return data_group.objectCount();
