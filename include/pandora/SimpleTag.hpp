@@ -22,14 +22,16 @@ namespace pandora {
 class Group;
 class Section;
 class DataArray;
-class LinkType;
 class Representation;
 class RepresentationType;
+
+enum class LinkType;
 
 /**
  * Class that represents a pandora tag.
  *
- *
+ * TODO implement methods for representation.
+ * TODO implement methods for references.
  */
 class SimpleTag : public EntityWithSources {
 

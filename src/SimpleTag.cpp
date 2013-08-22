@@ -16,6 +16,7 @@
 #include <pandora/Block.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/SimpleTag.hpp>
+#include <pandora/Representation.hpp>
 
 using namespace std;
 
