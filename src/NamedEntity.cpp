@@ -12,87 +12,68 @@
  */
 #include <ctime>
 
-#include <pandora/NamedEntity.hpp>
 #include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/NamedEntity.hpp>
 
 using namespace std;
 
 namespace pandora {
 
-/* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(File *file, Group group, std::string id) :
-    PandoraEntity(file, group, id)
+
+NamedEntity::NamedEntity(Group group, string id)
+  : PandoraEntity(group, id)
 {
-  setUpdatedAt();
-  setCreatedAt();
+  // nothing to do
 }
 
-/* SEE: NamedEntity.hpp */
-NamedEntity::NamedEntity(File *file, Group group, std::string id, time_t time) :
-    PandoraEntity(file, group, id, time)
+
+NamedEntity::NamedEntity(Group group, string id, time_t time)
+  : PandoraEntity(group, id, time)
 {
-  setUpdatedAt();
-  forceCreatedAt(time);
+  // nothing to do
 }
 
-/* SEE: NamedEntity.hpp */
+
 void NamedEntity::type(string type) {
   group.setAttr("type", type);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::type() const {
   string type;
   group.getAttr("type", type);
   return type;
 }
 
-/* SEE: NamedEntity.hpp */
+
 void NamedEntity::name(string name) {
   group.setAttr("name", name);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::name() const {
   string name;
   group.getAttr("name", name);
   return name;
 }
 
-/* SEE: NamedEntity.hpp */
+
 void NamedEntity::definition(string definition) {
   group.setAttr("definition", definition);
   forceUpdatedAt();
 }
 
-/* SEE: NamedEntity.hpp */
+
 string NamedEntity::definition() const {
   string definition;
   group.getAttr("definition", definition);
   return definition;
 }
 
-/* SEE: NamedEntity.hpp */
-void NamedEntity::metadata(std::string section_id){
-  if(file->hasSection(section_id)){
-    group.setAttr("metadata", section_id);
-    forceUpdatedAt();
-  }
-  else{
-    throw std::runtime_error("Source::metadata(): You try to link to a metadata section that does not exist!");
-  }
-}
 
-/* SEE: NamedEntity.hpp */
-std::string NamedEntity::metadata() const{
-  string section_id;
-  group.getAttr("metadata", section_id);
-  return section_id;
-}
-
-/* SEE: NamedEntity.hpp */
 int NamedEntity::compare(const NamedEntity &other) const {
   int cmp = name().compare(other.name());
   if (cmp == 0) {
@@ -102,16 +83,8 @@ int NamedEntity::compare(const NamedEntity &other) const {
 }
 
 
-/* SEE: NamedEntity.hpp */
-ostream& operator<<(ostream &out, const NamedEntity &ent) {
-  out << "Entity: {name = " << ent.name();
-  out << ", type = " << ent.type();
-  out << ", id = " << ent.id() << "}";
-  return out;
+NamedEntity::~NamedEntity() {
+  // nothing to do
 }
-
-/* SEE: NamedEntity.hpp */
-NamedEntity::~NamedEntity()
-{}
 
 } /* namespace pandora */

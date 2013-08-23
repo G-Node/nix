@@ -90,7 +90,7 @@ string Property::unit() const {
 
 void Property::removeValue(size_t index){
   if (group.hasData("values")) {
-    if (index < 0 || index >= valueCount()) {
+    if (index >= valueCount()) {
       throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
     }
     //TODO

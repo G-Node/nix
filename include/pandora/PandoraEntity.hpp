@@ -18,10 +18,9 @@
 #include <string>
 #include <iostream>
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-
 namespace pandora {
+
+class Group;
 
 /**
  * Base class for all pandora entities e.g. Block, Section etc.
@@ -30,8 +29,6 @@ class PandoraEntity {
 
 protected:
 
-  /** The file hosting the entity. */
-  mutable File  *file;
   /** The group that represents the entity. */
   Group         group;
   /** The id of the entity (link name of the group) */
@@ -42,12 +39,12 @@ public:
   /**
    * Standard constructor
    */
-  PandoraEntity(File *file, Group group, std::string id);
+  PandoraEntity(Group group, std::string id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  PandoraEntity(File *file, Group group, std::string id, time_t time);
+  PandoraEntity(Group group, std::string id, time_t time);
 
   /**
    * Getter for the id of the entity.
@@ -107,6 +104,9 @@ public:
    */
   int compare(const PandoraEntity &other) const;
 
+  /**
+   * Output operator
+   */
   friend std::ostream& operator<<(std::ostream &out, const PandoraEntity &ent);
 
   /**

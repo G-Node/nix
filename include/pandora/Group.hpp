@@ -9,7 +9,6 @@
 
 namespace pandora {
 
-//forward delcaration
 class DataSet;
 
 class Group {
@@ -26,7 +25,7 @@ public:
 
   Group(const Group &group);
 
-  void operator=(const Group &group);
+  Group& operator=(const Group &group);
 
   bool hasAttr(std::string name) const;
   void removeAttr(std::string name) const;
