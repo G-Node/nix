@@ -468,7 +468,7 @@ public:
      data = new data_type[nelms];
      auto vptr = value.get_data();
 
-     for (auto i = 0; i < nelms; i++) {
+     for (size_t i = 0; i < nelms; i++) {
       data[i] = vptr[i].c_str();
     }
   }
@@ -514,12 +514,12 @@ public:
       PSize maxdims(dims.size(), H5S_UNLIMITED);
       return createDataSpace(&maxdims);
     } else {
-      return createDataSpace(nullptr);
+      return createDataSpace();
     }
   
   }
 
-  H5::DataSpace createDataSpace(const PSize *maxdims) const {
+  H5::DataSpace createDataSpace(const PSize *maxdims = nullptr) const {
     PSize dims = value.shape();
     H5::DataSpace space;
     

@@ -21,19 +21,15 @@
 #include <pandora/Group.hpp>
 
 namespace pandora {
+
 class Block;
-class BlockIterator;
 class Section;
-class SectionIterator;
-class Source;
-class SourceIterator;
 
 enum class FileMode {
   ReadOnly = 0,
       ReadWrite,
       Overwrite
 };
-
 
 /**
  * Class that represents a pandora file.
@@ -42,12 +38,11 @@ class File {
 
 private:
 
-  /* prefix for IDs: currently not used */
-  std::string prefix;
   /* the opened HDF5 file */
   H5::H5File h5file;
+
   /* groups representing different sections of the file */
-  Group root, metadata_group, data_group;
+  Group root, metadata, data;
 
 public:
 
@@ -63,7 +58,7 @@ public:
    * @param prefix  The prefix used for IDs.
    * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
    */
-  File(std::string name, std::string prefix, FileMode mode = FileMode::ReadWrite);
+  File(std::string name, const FileMode mode = FileMode::ReadWrite);
 
   /**
    * Copy constructor.
@@ -71,6 +66,11 @@ public:
    * @param other   The file to copy.
    */
   File(const File &other);
+
+  //--------------------------------------------------
+  // Methods concerning blocks
+  // TODO implement block methods
+  //--------------------------------------------------
 
   /**
    * Get the number of blocks in in the file.
@@ -95,7 +95,7 @@ public:
    *
    * @return The block with the given id.
    */
-  Block getBlock(std::string id);
+  Block getBlock(std::string id) const;
 
   /**
    * Read an existing with block from the file, addressed by index.
@@ -104,7 +104,7 @@ public:
    *
    * @return The block at the given index.
    */
-  Block getBlock(size_t index);
+  Block getBlock(size_t index) const;
 
   /**
    * Create an new block, that is immediately persisted in the file.
@@ -120,34 +120,49 @@ public:
    * Delete a block from the file.
    *
    * @param id    The id of the block to delete.
+   *
+   * @return True if the block has been removed, false otherwise.
    */
-  void deleteBlock(std::string id);
-
-  // @todo Iterate by name
-  //std::iterator<Block> blocks() const;
-  BlockIterator blocks();
+  bool removeBlock(std::string id);
 
   /**
-   * Check if a section exists in the file.
+   * Returns all blocks in this file.
    *
-   * @param id    The ID of the section.
-   * @param type The type of Section. Default is ""
-   * @param depth The depth of the search. default: 0 stands for unlimited search.
+   * @return All blocks in this file as a vector.
+   */
+  std::vector<Block> blocks() const;
+
+  //--------------------------------------------------
+  // Methods concerning sections
+  // TODO implement section methods
+  //--------------------------------------------------
+
+  /**
+   * Check if a specific root section exists in the file.
+   *
+   * @param id      The ID of the section.
    *
    * @return True if the section exists, false otherwise.
    */
-  bool hasSection(std::string id, std::string type = "", uint depth = 0);
+  bool hasSection(std::string id) const;
 
   /**
-   * Return the Section specified by the id.
+   * Get root section with a given id.
    *
-   * @param id  The id of the Section
-   * @param type The type of Section. Default is ""
-   * @param depth The depth of the search. 0 stands for unlimited search, 1 for direct children only.
+   * @param id      The id of the section.
    *
-   * @return The section with the given id.
+   * @return The section with the specified id.
    */
-  Section findSection(std::string section_id, std::string type = "", uint depth = 0);
+  Section getSection(std::string id) const;
+
+  /**
+   * Get root section with a given index/position.
+   *
+   * @param index      The index of the section.
+   *
+   * @return The section with the specified index.
+   */
+  Section getSection(size_t index) const;
 
   /**
    * Returns the number of Sections stored in the File.
@@ -157,39 +172,55 @@ public:
   size_t sectionCount() const;
 
   /**
-   * Returns a SectionIterator instance.
+   * Returns all root sections in this file.
    *
-   * @returns an Instance of SectionIterator.
+   * @returns All root sections as vector.
    */
-  SectionIterator sections();
+  std::vector<Section> sections() const;
+
+  /**
+   * Checks if a section exists either as a root section or somewhere in
+   * the subtrees of all root section.
+   *
+   * @param id      The ID of the section.
+   * @param type    The type of Section. Default is ""
+   *
+   * @return True if the section exists, false otherwise.
+   */
+  bool existsSection(std::string id, std::string type = "") const;
+
+  /**
+   * Return the Section specified by the id.
+   *
+   * @param id      The id of the Section
+   *
+   * @return The section with the given id.
+   */
+  Section findSection(std::string id, std::string type = "") const;
 
   /**
    * Creates a new Section with a given name and type. Both must not be empty.
    *
-   * @param std::string the given name of the section.
-   * @param std::string the type of the section.
+   * @param name    The given name of the section.
+   * @param type    The type of the section.
    *
    * @return   the created Section.
    */
-  Section createSection(std::string name, std::string type, std::string parent = "");
+  Section createSection(std::string name, std::string type);
 
   /**
    * Deletes the Section that is specified with the id.
    */
-  bool removeSection(std::string section_id);
+  bool removeSection(std::string id);
 
-  /**
-   * Create an id with the prefix used by the file.
-   * @deprecated.
-   *
-   * @return A new id.
-   */
-  std::string createId() const;
+  //--------------------------------------------------
+  // Methods for file attribute access.
+  //--------------------------------------------------
 
   /**
    * Read the pandora version from the file.
    *
-   * @return The verion of the pandora file.
+   * @return The version of the pandora file.
    */
   std::string version() const;
 
@@ -214,12 +245,6 @@ public:
    */
   time_t updatedAt() const;
 
-  //  H5::H5File getH5File() const;
-  //
-  //  void close();
-  //
-  //  File& operator=(const File &other);
-  Group metadataGroup() const;
 
   /**
    * Comparator.
@@ -231,6 +256,14 @@ public:
    */
   bool operator!=(const File &other) const;
 
+  /**
+   * Assignment operator.
+   *
+   * @param The file to assign.
+   *
+   * @return A reference to the assigned file.
+   */
+  File& operator=(const File &other);
 
   /**
    * Destructor.
@@ -243,7 +276,7 @@ private:
   bool fileExists(std::string name) const;
 
   // check if the header of the file is valid
-  bool checkHeader();
+  bool checkHeader() const;
 
 };
 

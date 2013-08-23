@@ -7,36 +7,93 @@
 
 #ifndef PAN_REPRESENTATION_H_INCLUDE
 #define PAN_REPRESENTATION_H_INCLUDE
-#include <string>
-#include <iostream>
 
 #include <pandora/PandoraEntity.hpp>
-#include <pandora/DataArray.hpp>
 
 namespace pandora {
 
-enum class RepresentationType {
-  tagged=0, untagged=1, indexed=2
+class DataArray;
+
+/**
+ * Enumeration for link types.
+ */
+enum class LinkType : int {
+    TAGGED, UNTAGGED, INDEXED
 };
 
+/**
+ * Converts a LinkType into a string.
+ *
+ * @param link_type   The type to convert.
+ */
+std::string linkTypeToString(LinkType link_type);
+
+/**
+ * Create a link type from a string. If no matching type
+ * exists, an exception will be thrown.
+ *
+ * @return The link type that matches the string.
+ */
+LinkType linkTypeFromString(const std::string &str);
+
+/**
+ * Class that represents a pandora representation entity
+ * TODO implement methods for DataArray.
+ */
 class Representation: public PandoraEntity {
+
 public:
+
+  /**
+   * Copy constructor.
+   */
   Representation(const Representation &representation);
 
-  Representation(File *file, H5::Group h5group, std::string id, std::string data_array_id, RepresentationType type);
+  /**
+   * Default constuctor.
+   */
+  Representation(Group group, std::string id);
 
-  void data(std::string data_array_id);
+  /**
+   * Default constructor that preserves the creation time.
+   */
+  Representation(Group group, std::string id, time_t time);
 
-  void data(const DataArray &data_array);
+  /**
+   * Setter for the link type.
+   *
+   * @param type    The link type to set.
+   */
+  void linkType(LinkType type);
 
-  std::string data() const;
+  /**
+   * Getter for the link type.
+   *
+   * @return The current link type of the representation.
+   */
+  LinkType linkType() const;
 
-  void type(pandora::RepresentationType type);
+  /**
+   * Sets the data array associated with this representation.
+   *
+   * @param data    The data array to set.
+   */
+  void data(const DataArray &data);
 
-  RepresentationType type() const;
+  /**
+   * Gets the data array associated with this representation.
+   *
+   * @return The associated data array.
+   */
+  DataArray data() const;
 
+  /**
+   * Destructor.
+   */
   virtual ~Representation();
+
 };
 
-}
-#endif /* REPRESENTATION_HPP_ */
+} // namespace
+
+#endif //PAN_REPRESENTATION_H_INCLUDE

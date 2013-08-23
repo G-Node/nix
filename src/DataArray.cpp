@@ -1,46 +1,93 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+/**
+ * @file DataArray.cpp
+ * @brief Implementations of the class DataArray.
+ */
+
+#include <pandora/Group.hpp>
+#include <pandora/File.hpp>
+#include <pandora/Block.hpp>
+#include <pandora/DataSet.hpp>
 #include <pandora/DataArray.hpp>
 
+using namespace std;
 
 namespace pandora {
-DataArray::DataArray(File parentFile, Group thisGroup, std::string identifier) :
-        		  NamedEntityWithSources(&parentFile, thisGroup, identifier) {
-	expansionOrigin(0.0);
-	std::vector<double> coefficients;
-	coefficients.push_back(1.0);
-	polynomCoefficients(coefficients);
+
+
+const PSize DataArray::MIN_CHUNK_SIZE = {1};
+const PSize DataArray::MAX_SIZE_1D = {H5S_UNLIMITED};
+
+
+DataArray::DataArray(const DataArray &data_array)
+  : EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
+{
+  dimension_group = data_array.dimension_group;
 }
 
-DataArray::DataArray(const DataArray &other) :
-        		  NamedEntityWithSources(other.file, other.group, other.id()) {
-	expansionOrigin(0.0);
-	std::vector<double> coefficients;
-	coefficients.push_back(1.0);
-	polynomCoefficients(coefficients);
+
+DataArray::DataArray(File file, const Block block, Group group, string id)
+  : EntityWithSources(file, block, group, id)
+{
+  dimension_group = group.openGroup("representations");
+
+  if (!group.hasAttr("polynom_coefficients")) {
+    vector<double> pc = {1};
+    polynomCoefficients(pc);
+  }
+
+  if (!group.hasAttr("expansion_origin")) {
+    expansionOrigin(0);
+  }
 }
 
-std::string DataArray::label() const {
-	std::string value;
+
+DataArray::DataArray(File file, const Block block, Group group, string id, time_t time)
+  : EntityWithSources(file, block, group, id, time)
+{
+  dimension_group = group.openGroup("representations");
+
+  if (!group.hasAttr("polynom_coefficients")) {
+    vector<double> pc = {1};
+    polynomCoefficients(pc);
+  }
+
+  if (!group.hasAttr("expansion_origin")) {
+    expansionOrigin(0);
+  }
+}
+
+
+string DataArray::label() const {
+	string value;
 	group.getAttr("label", value);
 	return value;
 }
 
-void DataArray::label(const std::string &value) {
+
+void DataArray::label(const string &value) {
 	group.setAttr("label", value);
+	forceUpdatedAt();
 }
 
-std::string DataArray::unit() const {
-	std::string value;
+string DataArray::unit() const {
+	string value;
 	group.getAttr("unit", value);
 	return value;
 }
 
-void DataArray::unit(const std::string &value) {
+void DataArray::unit(const string &value) {
 	group.setAttr("unit", value);
+	forceUpdatedAt();
 }
 
-void DataArray::expansionOrigin(double expansion_origin) {
-	group.setAttr("expansion_origin", expansion_origin);
-}
 
 double DataArray::expansionOrigin() const {
 	double expansion_origin;
@@ -48,58 +95,39 @@ double DataArray::expansionOrigin() const {
 	return expansion_origin;
 }
 
-void DataArray::polynomCoefficients(std::vector<double> &coefficients){
-	PSize start;
-	DataSet ds((H5::DataSet()));
-	if (group.hasData("polynom_coefficients")) {
-		ds = group.openData("polynom_coefficients");
-		start = {0};
-	} else {
-		Charon<std::vector<double> > charon(coefficients);
-		PSize size = {1};
-		PSize maxsize = {H5S_UNLIMITED};
-		PSize chunks = DataSet::guessChunking(size, DataType::Double);
-		ds = DataSet::create(group.h5Group(), charon.getFileType(),  "polynom_coefficients", size, &maxsize, &chunks);
-		start = {0};
-	}
-	Selection fileSel = ds.createSelection();
-	PSize count = {1};
-	fileSel.select(count, start);
-	ds.write(coefficients, fileSel);
+
+void DataArray::expansionOrigin(double expansion_origin) {
+  group.setAttr("expansion_origin", expansion_origin);
+  forceUpdatedAt();
 }
 
-std::vector<double> DataArray::polynomCoefficients()const{
-	std::vector<double> c;
-	if (group.hasData("polynom_coefficients")) {
-		DataSet dataset = group.openData("polynom_coefficients");
-		Selection fileSel = dataset.createSelection();
-		PSize start = {0};
-		PSize count = {1};
-		fileSel.select(count, start);
 
-		dataset.read(c, fileSel, true);
-	}
-	return c;
+vector<double> DataArray::polynomCoefficients()const{
+  vector<double> polynom_coefficients;
+
+  if (group.hasData("polynom_coefficients")) {
+    DataSet ds = group.openData("polynom_coefficients");
+    ds.read(polynom_coefficients, true);
+  }
+
+  return polynom_coefficients;
 }
 
-void DataArray::setCalibration(std::vector<double> &coefficients, double origin){
-	polynomCoefficients(coefficients);
-	expansionOrigin(origin);
+
+void DataArray::polynomCoefficients(vector<double> &coefficients){
+  if (group.hasData("polynom_coefficients")) {
+    DataSet ds = group.openData("polynom_coefficients");
+    ds.extend({coefficients.size()});
+    ds.write(coefficients);
+  } else {
+    DataSet ds = DataSet::create(group.h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
+    ds.write(coefficients);
+  }
+  forceUpdatedAt();
 }
 
-double DataArray::applyPolynom(std::vector<double> &coefficients, double origin, double input) const{
-	double value = 0.0;
-	double term = 1.0;
-	for(size_t i = 0; i < coefficients.size(); i++){
-		value += coefficients[i] * term;
-		term *= input - origin;
-	}
-	return value;
-}
+// TODO put missing methods here.
 
-DataSet DataArray::data() {
-	return group.openData("data");
-}
 
 DataArray::~DataArray(){
 	//dtor

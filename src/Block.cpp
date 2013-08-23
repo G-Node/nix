@@ -1,99 +1,184 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
+/**
+ * @file src/Block.cpp
+ * @brief Implementation of methods and functions related to the class Block.
+ */
+
+#include <pandora/Util.hpp>
+#include <pandora/Group.hpp>
+#include <pandora/File.hpp>
 #include <pandora/Block.hpp>
+#include <pandora/Source.hpp>
+#include <pandora/SimpleTag.hpp>
 
 using namespace std;
 
 namespace pandora {
 
 
-/* SEE: SimpleTag.hpp */
-Block::Block(const Block &block) :
-                NamedEntity(block.file, block.group, block.entity_id), source_group(block.source_group), data_group(block.data_group)
+Block::Block(const Block &block)
+  : EntityWithMetadata(block.file, block.group, block.entity_id),
+    source_group(block.source_group), data_array_group(block.data_array_group),
+    simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
 {
+  // nothing to do
 }
 
-/* SEE: SimpleTag.hpp */
-Block::Block(File *file, Group group, std::string id) :
-                NamedEntity(file, group, id)
+
+Block::Block(File file, Group group, string id)
+  : EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
-  data_group = group.openGroup("data_arrays");
+  data_array_group = group.openGroup("data_arrays");
+  simple_tag_group = group.openGroup("simple_tags");
+  data_tag_group = group.openGroup("data_tags");
 }
 
-/*SEE: File.hpp*/
-Source Block::createSource(string name, string type, string parent_id) {
-  string id = util::createId("source");
-  while(source_group.hasObject(id))
-    id = util::createId("source");
-  Source s(file, source_group.openGroup(id, true), id);
-  s.name(name);
-  s.type(type);
-  if(parent_id.length() > 0){
-    s.parentSource(parent_id);
-  }
-  return s;
+
+Block::Block(File file, Group group, string id, time_t time)
+  : EntityWithMetadata(file, group, id, time)
+{
+  source_group = group.openGroup("sources");
+  data_array_group = group.openGroup("data_arrays");
+  simple_tag_group = group.openGroup("simple_tags");
+  data_tag_group = group.openGroup("data_tags");
 }
 
-SourceIterator Block::sources() {
-  SourceIterator iter(file, source_group, "");
-  return iter;
+
+bool Block::hasSource(string id) const {
+  return source_group.hasGroup(id);
 }
 
-bool Block::hasSource(std::string id, std::string type, uint depth){
-  bool found = false;
-  for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(id) == 0){
-      found = true;
-      break;
-    }
-  }
-  if(depth == 0 || depth > 1){
-    SourceIterator iter = sources();
-    while(!found && iter != iter.end()){
-      Source s = *iter;
-      found = s.hasSource(id, type, depth - 1);
-      ++iter;
-    }
-  }
-  return found;
+
+Source Block::getSource(string id) const {
+  return Source(file, source_group.openGroup(id, false), id);
 }
 
-/*SEE: File.hpp*/
-Source Block::findSource(std::string source_id, std::string type, uint depth) {
-  if(hasSource(source_id, type, depth)){
-    for(SourceIterator iter = sources(); iter != iter.end(); ++iter){
-      if((*iter).id().compare(source_id) == 0){
-        Source found = *iter;
-        return found;
+
+Source Block::getSource(size_t index) const {
+  string id = source_group.objectName(index);
+  return Source(file, source_group.openGroup(id, false), id);
+}
+
+
+bool Block::existsSource(string id) const {
+
+  if (hasSource(id)) {
+    return true;
+  } else {
+    vector<Source> stack;
+    vector<Source> tmp(sources());
+    stack.insert(stack.end(), tmp.begin(), tmp.end());
+
+    bool found = false;
+    while(!found && stack.size() > 0) {
+      Source s(stack.back());
+      stack.pop_back();
+
+      if (s.hasSource(id)) {
+        found = true;
+      } else {
+        vector<Source> tmp = s.sources();
+        stack.insert(stack.end(), tmp.begin(), tmp.end());
       }
     }
-    SourceIterator iter = sources();
-    while(iter != iter.end()){
-      Source s = *iter;
-      if(s.hasSource(source_id)){
-        Source found = s.findSource(source_id, type, depth -1);
-        return found;
+
+    return found;
+  }
+}
+
+
+Source Block::findSource(string id) const {
+
+  if (sourceCount() == 0) {
+    throw runtime_error("Unable to find the source with id " + id + "!");
+  }
+
+  if (hasSource(id)) {
+    return getSource(id);
+  } else {
+    vector<Source> stack;
+    vector<Source> tmp(sources());
+    stack.insert(stack.end(), tmp.begin(), tmp.end());
+    Source result(stack[0]);
+
+    bool found = false;
+    while(!found && stack.size() > 0) {
+      Source s(stack.back());
+      stack.pop_back();
+
+      if (s.hasSource(id)) {
+        found = true;
+        result = s.getSource(id);
+      } else {
+        vector<Source> tmp(s.sources());
+        stack.insert(stack.end(), tmp.begin(), tmp.end());
       }
-      ++iter;
     }
+
+    if (!found) {
+      throw runtime_error("Unable to find the source with id " + id + "!");
+    }
+
+    return result;
   }
-  throw std::runtime_error("Requested Source does not exist! Always check with hasSource!");
 }
 
-bool Block::removeSource(std::string id){
-  bool success = false;
-  if(hasSource(id,"", 1)){
-    source_group.removeGroup(id);
-    success = true;
-  }
-  return success;
-}
 
-/*SEE: File.hpp*/
 size_t Block::sourceCount() const {
   return source_group.objectCount();
 }
 
+
+std::vector<Source> Block::sources() const {
+  vector<Source> source_obj;
+
+  size_t source_count = source_group.objectCount();
+  for (size_t i = 0; i < source_count; i++) {
+    string id = source_group.objectName(i);
+    Source s(file, source_group.openGroup(id, false), id);
+    source_obj.push_back(s);
+  }
+
+  return source_obj;
+}
+
+
+Source Block::createSource(string name, string type) {
+  string id = util::createId("source");
+
+  while(source_group.hasObject(id)) {
+    id = util::createId("source");
+  }
+
+  Source s(file, source_group.openGroup(id, true), id);
+  s.name(name);
+  s.type(type);
+
+  return s;
+}
+
+SimpleTag Block::createSimpleTag(string name, string type) {
+  string id = util::createId("simple_tag");
+
+  while(simple_tag_group.hasObject(id)) {
+    id = util::createId("simple_tag");
+  }
+
+  SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+  st.name(name);
+  st.type(type);
+
+  return st;
+}
+/*
 size_t Block::dataArrayCount()const {
   return data_group.objectCount();
 }
@@ -137,9 +222,29 @@ void Block::removeDataArray(std::string data_array_id){
      data_group.removeGroup(data_array_id);
    }
 }
+*/
 
-Block::~Block() {
-  //dtor
+Block& Block::operator=(const Block &other) {
+  if (*this != other) {
+      this->file = other.file;
+      this->group = other.group;
+      this->entity_id = other.entity_id;
+      this->source_group = other.source_group;
+      this->data_array_group = other.data_array_group;
+      this->simple_tag_group = other.simple_tag_group;
+      this->data_tag_group = other.data_tag_group;
+    }
+    return *this;
 }
+
+ostream& operator<<(ostream &out, const Block &ent) {
+  out << "Block: {name = " << ent.name();
+  out << ", type = " << ent.type();
+  out << ", id = " << ent.id() << "}";
+  return out;
+}
+
+
+Block::~Block() {}
 
 } // end namespace pandora

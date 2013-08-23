@@ -18,8 +18,7 @@
 #include <iostream>
 
 #include <pandora/PandoraEntity.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+
 
 namespace pandora {
 
@@ -28,20 +27,18 @@ namespace pandora {
  */
 class NamedEntity : public PandoraEntity {
 
-protected:
-
-
 public:
 
   /**
    * Standard constructor
    */
-  NamedEntity(File *file, Group group, std::string id);
+  NamedEntity(Group group, std::string id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  NamedEntity(File *file, Group group, std::string id, time_t time);
+  NamedEntity(Group group, std::string id, time_t time);
+
 
   /**
    * Setter for the type of the entity.
@@ -86,19 +83,13 @@ public:
   std::string definition() const;
 
   /**
-   * Setter for the metadata section linked to the entity.
+   * Compare the order of two named entities.
+   * First names are compared, if they are equal the comparison is
+   * done using the ids.
    *
-   * @param section_id the id of the lined metadata section.
-   */
-  void metadata(std::string section_id);
-
-  /**
-   * Getter for the metadata linked to this entity.
+   * @param other   The named entity to compare with.
    *
-   * @return The section_id of the linked metadata section.
    */
-  std::string metadata() const;
-
   int compare(const NamedEntity &other) const;
 
   /**
