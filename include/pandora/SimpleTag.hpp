@@ -19,7 +19,6 @@
 
 namespace pandora {
 
-class Group;
 class Section;
 class DataArray;
 class Representation;
