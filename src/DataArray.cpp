@@ -42,7 +42,7 @@ void DataArray::expansionOrigin(double expansion_origin) {
 	group.setAttr("expansion_origin", expansion_origin);
 }
 
-double DataArray::expansionOrigin() const {
+double DataArray::getExpansionOrigin() const {
 	double expansion_origin;
 	group.getAttr("expansion_origin", expansion_origin);
 	return expansion_origin;
@@ -96,6 +96,8 @@ double DataArray::applyPolynom(std::vector<double> &coefficients, double origin,
 	}
 	return value;
 }
+
+
 
 DataSet DataArray::data() {
 	return group.openData("data");

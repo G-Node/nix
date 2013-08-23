@@ -34,7 +34,7 @@ public:
   void unit(const std::string &value);
 
   void expansionOrigin(double expansion_origin = 0.0);
-  double expansionOrigin()const;
+  double getExpansionOrigin()const;
 
   void polynomCoefficients(std::vector<double> &polynom_coefficients);
   std::vector<double> polynomCoefficients() const;
@@ -44,9 +44,30 @@ public:
   double applyPolynom(std::vector<double> &coefficients, double origin, double input) const;
 
   template<typename T, size_t numDims>
-  void setData(boost::multi_array<T,numDims>);
-  //template<typename T, size_t numDims>
-  //boost::multi_array getData();
+  void setData(const boost::multi_array<T, numDims> &values){
+	  if (!group.hasData("data")){
+		  PSize size = {numDims};
+		  PSize maxsize = {H5S_UNLIMITED};
+		  PSize chunks = {1};
+		  DataSet ds(DataSet::create(group.h5Group(), "data", values, &maxsize, &chunks));
+	  }
+	  else{
+		  DataSet ds = group.openData("data");
+		  ds.write(values);
+	  }
+  }
+
+  template<typename T, size_t numDims>
+  void getData(boost::multi_array<T, numDims> &values, bool convert=false) const{
+	  DataSet ds = group.openData("data");
+	  ds.read(values, true);
+	  if(convert){
+		 // boost::multi_array<T, numDims> temp(values);
+		 // values.
+	  }
+
+
+  }
 
   DataSet data();
 
