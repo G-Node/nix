@@ -47,20 +47,8 @@ double DataArray::expansionOrigin() const {
 	group.getAttr("expansion_origin", expansion_origin);
 	return expansion_origin;
 }
-/*
-void DataArray::polynomOrder(int order) {
-  group.setAttr("polynom_order", order);
-}
- */
-
-int DataArray::polynomOrder() const {
-	int order;
-	group.getAttr("polynom_order", order);
-	return order;
-}
 
 void DataArray::polynomCoefficients(std::vector<double> &coefficients){
-	group.setAttr("polynom_order", coefficients.size());
 	PSize start;
 	DataSet ds((H5::DataSet()));
 	if (group.hasData("polynom_coefficients")) {
@@ -95,11 +83,26 @@ std::vector<double> DataArray::polynomCoefficients()const{
 }
 
 void DataArray::setCalibration(std::vector<double> &coefficients, double origin){
+	polynomCoefficients(coefficients);
+	expansionOrigin(origin);
+}
 
+double DataArray::applyPolynom(std::vector<double> &coefficients, double origin, double input) const{
+	double value = 0.0;
+	double term = 1.0;
+	for(size_t i = 0; i < coefficients.size(); i++){
+		value += coefficients[i] * term;
+		term *= input - origin;
+	}
+	return value;
 }
 
 DataSet DataArray::data() {
 	return group.openData("data");
+}
+
+DataArray::~DataArray(){
+	//dtor
 }
 
 } //namespace pandora
