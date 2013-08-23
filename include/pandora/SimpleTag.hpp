@@ -154,7 +154,7 @@ public:
    * @return The representation with the specified id. If it doesn't exist
    *         an exception will be thrown.
    */
-  DataTag getRepresentation(std::string id) const;
+  Representation getRepresentation(std::string id) const;
 
   /**
    * Retrieves a specific representation from the tag.
@@ -163,7 +163,7 @@ public:
    *
    * @return The representation with the specified index.
    */
-  DataTag getRepresentation(size_t index) const;
+  Representation getRepresentation(size_t index) const;
 
   /**
    * Getter for all representations of the tag.
