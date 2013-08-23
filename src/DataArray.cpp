@@ -123,6 +123,7 @@ void DataArray::polynomCoefficients(vector<double> &coefficients){
     DataSet ds = DataSet::create(group.h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
     ds.write(coefficients);
   }
+  forceUpdatedAt();
 }
 
 // TODO put missing methods here.
