@@ -27,14 +27,14 @@ const PSize DataArray::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
 DataArray::DataArray(const DataArray &data_array)
-  : EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
+: EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
 {
   dimension_group = data_array.dimension_group;
 }
 
 
 DataArray::DataArray(File file, const Block block, Group group, string id)
-  : EntityWithSources(file, block, group, id)
+: EntityWithSources(file, block, group, id)
 {
   dimension_group = group.openGroup("representations");
 
@@ -50,7 +50,7 @@ DataArray::DataArray(File file, const Block block, Group group, string id)
 
 
 DataArray::DataArray(File file, const Block block, Group group, string id, time_t time)
-  : EntityWithSources(file, block, group, id, time)
+: EntityWithSources(file, block, group, id, time)
 {
   dimension_group = group.openGroup("representations");
 
@@ -66,33 +66,33 @@ DataArray::DataArray(File file, const Block block, Group group, string id, time_
 
 
 string DataArray::label() const {
-	string value;
-	group.getAttr("label", value);
-	return value;
+  string value;
+  group.getAttr("label", value);
+  return value;
 }
 
 
 void DataArray::label(const string &value) {
-	group.setAttr("label", value);
-	forceUpdatedAt();
+  group.setAttr("label", value);
+  forceUpdatedAt();
 }
 
 string DataArray::unit() const {
-	string value;
-	group.getAttr("unit", value);
-	return value;
+  string value;
+  group.getAttr("unit", value);
+  return value;
 }
 
 void DataArray::unit(const string &value) {
-	group.setAttr("unit", value);
-	forceUpdatedAt();
+  group.setAttr("unit", value);
+  forceUpdatedAt();
 }
 
 
 double DataArray::expansionOrigin() const {
-	double expansion_origin;
-	group.getAttr("expansion_origin", expansion_origin);
-	return expansion_origin;
+  double expansion_origin;
+  group.getAttr("expansion_origin", expansion_origin);
+  return expansion_origin;
 }
 
 
@@ -126,11 +126,20 @@ void DataArray::polynomCoefficients(vector<double> &coefficients){
   forceUpdatedAt();
 }
 
+double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
+  double value = 0.0;
+  double term = 1.0;
+  for(size_t i = 0; i < coefficients.size(); i++){
+    value += coefficients[i] * term;
+    term *= input - origin;
+  }
+  return value;
+}
 // TODO put missing methods here.
 
 
 DataArray::~DataArray(){
-	//dtor
+  //dtor
 }
 
 } //namespace pandora

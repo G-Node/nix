@@ -68,17 +68,25 @@ public:
   // Methods concerning data access.
   //--------------------------------------------------
 
-
   template<typename T, size_t dims>
-  void getData(boost::multi_array<T, dims> &data) const;
+  void getData(boost::multi_array<T, dims> &data) const{
+    getRawData(data);
+    double origin = expansionOrigin();
+    std::vector<double> polynoms = polynomCoefficients();
+    for(auto i = data.data(); i < (data.data() + data.num_elements()); ++i) {
+        *i = applyPolynomial(polynoms, origin, (double)(*i));
+    }
+  }
 
   template<typename T, size_t dims>
   void setData(const boost::multi_array<T, dims> &data);
 
   template<typename T, size_t dims>
   void getRawData(boost::multi_array<T, dims> &data) const{
-	  DataSet ds = group.openData("data");
-	  ds.read(data, true);
+    if(group.hasData("data")){
+      DataSet ds = group.openData("data");
+	    ds.read(data, true);
+    }
   }
 
   template<typename T, size_t dims>
@@ -96,7 +104,6 @@ public:
 	  }
   }
 
-
   //--------------------------------------------------
   // Methods concerning dimensions
   // TODO figure out how dimension access should work regarding different dimension types.
@@ -106,6 +113,7 @@ public:
   //--------------------------------------------------
   // Other methods and functions
   //--------------------------------------------------
+  double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
   /**
    * Assignment operator
