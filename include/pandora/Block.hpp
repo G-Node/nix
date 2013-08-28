@@ -65,7 +65,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning sources
-  // TODO implement source methods
   //--------------------------------------------------
 
   /**

@@ -53,6 +53,8 @@ Block::Block(File file, Group group, string id, time_t time)
 }
 
 
+// source methods
+
 bool Block::hasSource(string id) const {
   return source_group.hasGroup(id);
 }
@@ -66,6 +68,7 @@ Source Block::getSource(string id) const {
 Source Block::getSource(size_t index) const {
   string id = source_group.objectName(index);
   return Source(file, source_group.openGroup(id, false), id);
+  // TODO handle exceptions!!
 }
 
 
@@ -165,6 +168,54 @@ Source Block::createSource(string name, string type) {
 
   return s;
 }
+
+
+// SimpleTag methods
+
+bool Block::hasSimpleTag(string id) const {
+  return simple_tag_group.hasObject(id);
+}
+
+
+SimpleTag Block::getSimpleTag(string id) const {
+  if (hasSimpleTag(id)) {
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+    return st;
+  } else {
+    throw runtime_error("Unable to find SimpleTag with id " + id + "!");
+  }
+}
+
+
+SimpleTag Block::getSimpleTag(size_t index) const {
+  if (index < simpleTagCount()) {
+    string id = simple_tag_group.objectName(index);
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+    return st;
+  } else {
+    throw runtime_error("Unable to find SimpleTag with the given index!");
+  }
+}
+
+
+size_t Block::simpleTagCount() const {
+  return simple_tag_group.objectCount();
+}
+
+
+vector<SimpleTag> Block::simpleTags() const {
+  vector<SimpleTag> tag_obj;
+
+  size_t tag_count = simpleTagCount();
+  for (size_t i = 0; i < tag_count; i++) {
+    string id = simple_tag_group.objectName(i);
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id), id);
+    tag_obj.push_back(st);
+  }
+
+  return tag_obj;
+}
+
 
 SimpleTag Block::createSimpleTag(string name, string type) {
   string id = util::createId("simple_tag");
