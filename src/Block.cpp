@@ -303,7 +303,7 @@ vector<DataArray> Block::dataArrays() const {
 }
 
 
-DataArray Block::createDataArray(std::string name, std::string type){
+DataArray Block::createDataArray(std::string name, std::string type) {
   string id = util::createId("data_array");
   
   while (hasDataArray(id)) {
