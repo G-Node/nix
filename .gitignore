@@ -41,5 +41,9 @@ Debug
 main.cpp
 src/pandora_cpp.cpp
 
+#ignore IDEA project files
+.idea
+*.iml
+
 #ignore sublime specific files
 *.sublime-*
