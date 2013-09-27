@@ -53,6 +53,8 @@ Block::Block(File file, Group group, string id, time_t time)
 }
 
 
+// source methods
+
 bool Block::hasSource(string id) const {
   return source_group.hasGroup(id);
 }
@@ -66,6 +68,7 @@ Source Block::getSource(string id) const {
 Source Block::getSource(size_t index) const {
   string id = source_group.objectName(index);
   return Source(file, source_group.openGroup(id, false), id);
+  // TODO handle exceptions!!
 }
 
 
@@ -166,10 +169,70 @@ Source Block::createSource(string name, string type) {
   return s;
 }
 
+
+bool Block::removeSource(string id) {
+  bool removed = false;
+  
+  if (hasSource(id)) {
+    source_group.removeGroup(id);
+    removed = true;
+  }
+  
+  return removed;
+}
+
+
+// SimpleTag methods
+
+bool Block::hasSimpleTag(string id) const {
+  return simple_tag_group.hasObject(id);
+}
+
+
+SimpleTag Block::getSimpleTag(string id) const {
+  if (hasSimpleTag(id)) {
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+    return st;
+  } else {
+    throw runtime_error("Unable to find SimpleTag with id " + id + "!");
+  }
+}
+
+
+SimpleTag Block::getSimpleTag(size_t index) const {
+  if (index < simpleTagCount()) {
+    string id = simple_tag_group.objectName(index);
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
+    return st;
+  } else {
+    throw runtime_error("Unable to find SimpleTag with the given index!");
+  }
+}
+
+
+size_t Block::simpleTagCount() const {
+  return simple_tag_group.objectCount();
+}
+
+
+vector<SimpleTag> Block::simpleTags() const {
+  vector<SimpleTag> tag_obj;
+
+  size_t tag_count = simpleTagCount();
+  for (size_t i = 0; i < tag_count; i++) {
+    string id = simple_tag_group.objectName(i);
+    SimpleTag st(file, *this, simple_tag_group.openGroup(id), id);
+    tag_obj.push_back(st);
+  }
+
+  return tag_obj;
+}
+
+
 SimpleTag Block::createSimpleTag(string name, string type) {
   string id = util::createId("simple_tag");
 
-  while(simple_tag_group.hasObject(id)) {
+  while(hasSimpleTag(id)) {
     id = util::createId("simple_tag");
   }
 
@@ -179,51 +242,96 @@ SimpleTag Block::createSimpleTag(string name, string type) {
 
   return st;
 }
-/*
-size_t Block::dataArrayCount()const {
-  return data_group.objectCount();
+
+
+bool Block::removeSimpleTag(string id) {
+  bool removed = false;
+  
+  if (hasSimpleTag(id)) {
+    simple_tag_group.removeGroup(id);
+    removed = true;
+  }
+  
+  return removed;
 }
-*/
-DataArray Block::createDataArray(std::string name, std::string type){
+
+
+// Methods related to DataArray
+
+bool Block::hasDataArray(string id) const {
+  return data_array_group.hasObject(id);
+}
+
+
+DataArray Block::getDataArray(string id) const {
+  if (hasDataArray(id)) {
+    DataArray da(file, *this, data_array_group.openGroup(id, true), id);
+    return da;   
+  } else {
+    throw runtime_error("Unable to find DataArray with id " + id + "!");
+  }
+}
+
+
+DataArray Block::getDataArray(size_t index) const {
+  if (index < dataArrayCount()) {
+    string id = data_array_group.objectName(index);
+    DataArray da(file, *this, data_array_group.openGroup(id, true), id);
+    return da;
+  } else {
+    throw runtime_error("Unable to find DataArray with the given index!");
+  } 
+}
+
+
+size_t Block::dataArrayCount() const {
+  return data_array_group.objectCount();
+}
+
+
+vector<DataArray> Block::dataArrays() const {
+  vector<DataArray> array_obj;
+  
+  size_t array_count = dataArrayCount();
+  for (size_t i = 0; i < array_count; i++) {
+    string id = data_array_group.objectName(i);
+    DataArray da(file, *this, data_array_group.openGroup(id), id);
+    array_obj.push_back(da);
+  }
+  
+  return array_obj;
+}
+
+
+DataArray Block::createDataArray(std::string name, std::string type) {
   string id = util::createId("data_array");
-  while(data_array_group.hasObject(id))
+  
+  while (hasDataArray(id)) {
     id = util::createId("data_array");
+  }
+  
   DataArray da(this->file, *this, data_array_group.openGroup(id, true), id);
   da.name(name);
   da.type(type);
+  
   return da;
 }
-/*
-DataArrayIterator Block::dataArrays(){
-  DataArrayIterator iter(file, data_group);
-  return iter;
-}
 
-bool Block::hasDataArray(std::string data_array_id){
-  for(DataArrayIterator iter = dataArrays(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(data_array_id) == 0){
-      return true;
-    }
+
+bool Block::removeDataArray(string id) {
+  bool removed = false;
+  
+  if (hasDataArray(id)) {
+    data_array_group.removeGroup(id);
+    removed = true;
   }
-  return false;
+  
+  return removed;
 }
 
-DataArray Block::getDataArray(std::string data_array_id){
-  for(DataArrayIterator iter = dataArrays(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(data_array_id) == 0){
-      DataArray found = *iter;
-      return found;
-    }
-  }
-  throw std::runtime_error("Requested DataArray does not exist! Always check with hasDataArray!");
-}
 
-void Block::removeDataArray(std::string data_array_id){
-  if(hasDataArray(data_array_id)){
-     data_group.removeGroup(data_array_id);
-   }
-}
-*/
+// Other methods and functions
+
 
 Block& Block::operator=(const Block &other) {
   if (*this != other) {

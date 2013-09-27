@@ -65,7 +65,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning sources
-  // TODO implement source methods
   //--------------------------------------------------
 
   /**
@@ -154,7 +153,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning data arrays
-  // TODO implement data array methods
   //--------------------------------------------------
 
   /**
@@ -219,7 +217,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning simple tags.
-  // TODO implement simple tag methods.
   //--------------------------------------------------
 
   /**
