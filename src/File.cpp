@@ -32,44 +32,44 @@ const string File::FORMAT  = "pandora";
 
 
 static unsigned int map_file_mode(FileMode mode) {
-  switch (mode) {
-  case FileMode::ReadWrite:
-    return H5F_ACC_RDWR;
+	switch (mode) {
+	case FileMode::ReadWrite:
+		return H5F_ACC_RDWR;
 
-  case FileMode::ReadOnly:
-    return H5F_ACC_RDONLY;
+	case FileMode::ReadOnly:
+		return H5F_ACC_RDONLY;
 
-  case FileMode::Overwrite:
-    return H5F_ACC_TRUNC;
+	case FileMode::Overwrite:
+		return H5F_ACC_TRUNC;
 
-  default:
-    return H5F_ACC_DEFAULT;
-  }
+	default:
+		return H5F_ACC_DEFAULT;
+	}
 
 }
 
 
 File::File(string name, FileMode mode)
 {
-  if (!fileExists(name)) {
-    mode = FileMode::Overwrite;
-  }
+	if (!fileExists(name)) {
+		mode = FileMode::Overwrite;
+	}
 
-  unsigned int h5mode =  map_file_mode(mode);
-  h5file = H5::H5File(name.c_str(), h5mode);
+	unsigned int h5mode =  map_file_mode(mode);
+	h5file = H5::H5File(name.c_str(), h5mode);
 
-  root = Group(h5file.openGroup("/"));
-  metadata = root.openGroup("metadata");
-  data = root.openGroup("data");
+	root = Group(h5file.openGroup("/"));
+	metadata = root.openGroup("metadata");
+	data = root.openGroup("data");
 
-  if(!checkHeader()) {
-    /// TODO throw an exception here
-  }
+	if(!checkHeader()) {
+		/// TODO throw an exception here
+	}
 }
 
 
 File::File(const File &file)
-  : h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
+: h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
 {}
 
 
@@ -77,29 +77,28 @@ bool File::hasBlock(const std::string &id) const {
   return data.hasGroup(id);
 }
 
-
 Block File::getBlock(const std::string &id) const {
   return Block(*this, data.openGroup(id, false), id);
 }
 
 Block File::getBlock(size_t index) const {
-  string id = data.objectName(index);
-  Block b(*this, data.openGroup(id), id);
-  return b;
+	string id = data.objectName(index);
+	Block b(*this, data.openGroup(id), id);
+	return b;
 }
 
 
 vector<Block> File::blocks() const {
-  vector<Block>  block_obj;
+	vector<Block>  block_obj;
 
-  size_t block_count = data.objectCount();
-  for (size_t i = 0; i < block_count; i++) {
-    string id = data.objectName(i);
-    Block b(*this, data.openGroup(id, false), id);
-    block_obj.push_back(b);
-  }
+	size_t block_count = data.objectCount();
+	for (size_t i = 0; i < block_count; i++) {
+		string id = data.objectName(i);
+		Block b(*this, data.openGroup(id, false), id);
+		block_obj.push_back(b);
+	}
 
-  return block_obj;
+	return block_obj;
 }
 
 
@@ -125,30 +124,63 @@ bool File::removeBlock(const std::string &id) {
 
 
 size_t File::blockCount() const {
-  return data.objectCount();
+	return data.objectCount();
+}
+
+std::vector<Section> File::sections()const{
+	vector<Section>  section_obj;
+	size_t section_count = metadata.objectCount();
+	for (size_t i = 0; i < section_count; i++) {
+		string id = metadata.objectName(i);
+		Section s(*this,metadata.openGroup(id, false), id);
+		section_obj.push_back(s);
+	}
+	return section_obj;
+}
+
+bool File::hasSection(std::string id) const{
+	return metadata.hasGroup(id);
 }
 
 /*
-bool File::hasSection(std::string id, std::string type, uint depth) const {
-  bool found = false;
-  for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(id) == 0){
-      found = true;
-      break;
-    }
-  }
-  if(depth == 0 || depth > 1){
-    SectionIterator iter = sections();
-    while(!found && iter != iter.end()){
-      Section s = *iter;
-      found = s.hasSection(id, type, depth - 1);
-      ++iter;
-    }
-  }
-  return found;
+bool File::existsSection(std::string id) const {
+	bool found = false;
+	vector<Section> s = sections();
+	for (size_t i = 0; i < s.size(); i++){
+		if(s[i].id().compare(id) == 0){
+			found = true;
+			return found;
+		}
+	}
+	for(size_t i = 0; i < s.size(); i++){
+		found = s[i].existsSection(id);
+		if (found){
+			return found;
+		}
+	}
+	return found;
+}
+*/
+
+std::vector<Section> File::findSection(const std::string &id) const{
+	vector<Section> s = sections();
+	vector<Section> sects;
+	for(size_t i = 0; i < s.size(); i++){
+		if(s[i].id().compare(id)==0){
+			sects.push_back(s[i]);
+			return sects;
+		}
+	}
+	for(size_t i = 0; i < s.size(); i++){
+		sects = s[i].findSection(id);
+		if (sects.size() > 0){
+			return sects;
+		}
+	}
+	return sects;
 }
 
-
+/*
 Section File::findSection(std::string id, std::string type, uint depth) const {
   if(hasSection(id, type, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
@@ -169,7 +201,7 @@ Section File::findSection(std::string id, std::string type, uint depth) const {
   }
   throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
-*/
+ */
 
 
 /* TODO implement vector<Section> File::sections() const {} */
@@ -202,103 +234,103 @@ bool File::removeSection(std::string id){
 size_t File::sectionCount() const {
   return metadata.objectCount();
 }
-*/
+ */
 
 
 
 time_t File::updatedAt() const {
-  string t;
-  root.getAttr("updated_at", t);
-  return util::strToTime(t);
+	string t;
+	root.getAttr("updated_at", t);
+	return util::strToTime(t);
 }
 
 
 time_t File::createdAt() const {
-  string t;
-  root.getAttr("created_at", t);
-  return util::strToTime(t);
+	string t;
+	root.getAttr("created_at", t);
+	return util::strToTime(t);
 }
 
 
 string File::version() const {
-  string t;
-  root.getAttr<std::string>("version", t);
-  return t;
+	string t;
+	root.getAttr<std::string>("version", t);
+	return t;
 }
 
 
 string File::format() const {
-  string t;
-  root.getAttr("format", t);
-  return t;
+	string t;
+	root.getAttr("format", t);
+	return t;
 }
 
 
 bool File::checkHeader() const {
-  bool check = true;
-  string str;
-  // check format
-  if (root.hasAttr("format")) {
-    if (!root.getAttr("format", str) || str != FORMAT) {
-      check = false;
-    }
-  } else {
-    root.setAttr("format", FORMAT);
-  }
-  // check version
-  if (root.hasAttr("version")) {
-    if (!root.getAttr("version", str) || str != VERSION) {
-      check = false;
-    }
-  } else {
-    root.setAttr("version", VERSION);
-  }
-  // check created_at
-  if (!root.hasAttr("created_at")) {
-    root.setAttr("created_at", util::timeToStr(time(NULL)));
-  }
-  // check updated_at
-  if (!root.hasAttr("updated_at")) {
-    root.setAttr("updated_at", util::timeToStr(time(NULL)));
-  }
-  return check;
+	bool check = true;
+	string str;
+	// check format
+	if (root.hasAttr("format")) {
+		if (!root.getAttr("format", str) || str != FORMAT) {
+			check = false;
+		}
+	} else {
+		root.setAttr("format", FORMAT);
+	}
+	// check version
+	if (root.hasAttr("version")) {
+		if (!root.getAttr("version", str) || str != VERSION) {
+			check = false;
+		}
+	} else {
+		root.setAttr("version", VERSION);
+	}
+	// check created_at
+	if (!root.hasAttr("created_at")) {
+		root.setAttr("created_at", util::timeToStr(time(NULL)));
+	}
+	// check updated_at
+	if (!root.hasAttr("updated_at")) {
+		root.setAttr("updated_at", util::timeToStr(time(NULL)));
+	}
+	return check;
 }
 
 
 bool File::fileExists(string name) const {
-  ifstream f(name.c_str());
-  if (f) {
-    f.close();
-    return true;
-  } else {
-    return false;
-  }
+	ifstream f(name.c_str());
+	if (f) {
+		f.close();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 
 bool File::operator==(const File &other) const {
-  return h5file.getFileName() == other.h5file.getFileName();
+	return h5file.getFileName() == other.h5file.getFileName();
 }
 
 
 bool File::operator!=(const File &other) const {
-  return h5file.getFileName() != other.h5file.getFileName();
+	return h5file.getFileName() != other.h5file.getFileName();
 }
 
 
 File& File::operator=(const File &other) {
-  if (*this != other) {
-    this->h5file = other.h5file;
-    this->root = other.root;
-    this->metadata = other.metadata;
-    this->data = other.data;
-  }
-  return *this;
+	if (*this != other) {
+		this->h5file = other.h5file;
+		this->root = other.root;
+		this->metadata = other.metadata;
+		this->data = other.data;
+	}
+	return *this;
 }
 
 
 File::~File() {
-  h5file.close();
+	h5file.close();
 }
 
 

@@ -178,24 +178,13 @@ public:
   std::vector<Section> sections() const;
 
   /**
-   * Checks if a section exists either as a root section or somewhere in
-   * the subtrees of all root section.
-   *
-   * @param id      The ID of the section.
-   * @param type    The type of Section. Default is ""
-   *
-   * @return True if the section exists, false otherwise.
-   */
-  bool existsSection(std::string id, std::string type = "") const;
-
-  /**
    * Return the Section specified by the id.
    *
    * @param id      The id of the Section
    *
-   * @return The section with the given id.
+   * @return a vector of sections with the given id. Is empty if none found
    */
-  Section findSection(std::string id, std::string type = "") const;
+  std::vector<Section> findSection(const std::string &id) const;
 
   /**
    * Creates a new Section with a given name and type. Both must not be empty.
@@ -205,12 +194,12 @@ public:
    *
    * @return   the created Section.
    */
-  Section createSection(std::string name, std::string type);
+  Section createSection(const std::string &name, const std::string &type);
 
   /**
    * Deletes the Section that is specified with the id.
    */
-  bool removeSection(std::string id);
+  bool removeSection(const std::string &id);
 
   //--------------------------------------------------
   // Methods for file attribute access.

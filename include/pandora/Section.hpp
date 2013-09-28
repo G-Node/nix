@@ -4,6 +4,7 @@
 #include <string>
 #include <H5Cpp.h>
 
+#include <pandora/NamedEntity.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 
@@ -13,54 +14,57 @@ class PropertyIterator;
 class SectionIterator;
 class SectionTreeIterator;
 
-class Section {
+class Section : public NamedEntity{
 
 private:
-  mutable File *file;
-  Group group, props, sections;
-  std::string section_id;
+  Group group, property_group, section_group;
+
+protected:
+  File file;
 
 public:
 
+  /**
+   * Copy constructor
+   */
   Section(const Section &section);
 
-  Section(File *file, Group group, std::string id);
+    /**
+     * Standard constructor
+     */
+  Section(File file, Group group, const std::string &id);
 
-  std::string id() const;
+    /**
+     * Standard constructor that preserves the creation time.
+     */
+  Section(File file, Group group, const std::string &id, time_t time);
 
-  void type(std::string type);
-  std::string type() const;
-
-  void name(std::string name);
-  std::string name() const;
-
-  void definition(std::string definition);
-  std::string definition() const;
-
-  void repository(std::string repository);
+  void repository(const std::string &repository);
   std::string repository() const;
 
-  void link(std::string link);
+  void link(const std::string &link);
   std::string link() const;
 /* TODO: how to support includes?!
   void include(std::string include);
   std::string include() const;
 */
-  void mapping(std::string mapping);
+  void mapping(const std::string &mapping);
   std::string mapping() const;
 
-  void parent(std::string parent);
+  void parent(const std::string &parent);
   std::string parent() const;
 
   size_t childCount() const;
 
-  SectionIterator children(std::string type = "") const;
+  SectionIterator children(const std::string &type = "") const;
+
+  std::vector<Section> sections() const;
 
   bool hasChildren() const;
 
-  SectionTreeIterator treeIterator(std::string type = "", uint depth = 0) const;
+  SectionTreeIterator treeIterator(const std::string &type = "", uint depth = 0) const;
 
-  Section addSection(std::string name, std::string type);
+  Section addSection(const std::string &name, const std::string &type);
   /**
    * Performs a search on the tree starting at this section and returns whether a section with
    * the specified id exists.
@@ -70,27 +74,28 @@ public:
    *
    * @return bool
    */
-  bool hasSection(std::string id, std::string type = "", uint depth = 0) const;
+  bool hasSection(const std::string &id) const;
 
-  Section findSection(std::string id, std::string type = "", uint depth = 0) const;
+ // Section findSection(std::string id, std::string type = "", uint depth = 0) const;
+  std::vector<Section> findSection(const std::string &id) const;
 
-  bool hasRelatedSection(std::string type) const;
+  bool hasRelatedSection(const std::string &type) const;
 
-  std::vector<std::string> getRelatedSections(std::string type) const;
+  std::vector<std::string> getRelatedSections(const std::string &type) const;
 
-  bool removeSection(std::string id);
+  bool removeSection(const std::string &id);
 
   PropertyIterator properties() const;
 
   PropertyIterator inheritedProperties() const;
 
-  Property getProperty(std::string id) const;
+  Property getProperty(const std::string &id) const;
 
-  Property getPropertyByName(std::string name) const;
+  Property getPropertyByName(const std::string &name) const;
 
-  Property addProperty(std::string name);
+  Property addProperty(const std::string &name);
 
-  void removeProperty(std::string id);
+  void removeProperty(const std::string &id);
 
   size_t propertyCount() const;
 
@@ -100,20 +105,22 @@ public:
 
   virtual ~Section();
 
-  bool hasProperty(std::string id) const;
+  bool hasProperty(const std::string &id) const;
 
-  bool hasPropertyByName(std::string name) const;
+  bool hasPropertyByName(const std::string &name) const;
 
 private:
   bool hasParent() const;
 
   Section findParent() const;
 
-  std::string findUpstream(std::string type) const;
+  std::string findUpstream(const std::string &type) const;
 
-  std::vector<std::string> findSideways(std::string type) const;
+  std::vector<std::string> findSideways(const std::string &type) const;
 
-  std::vector<std::string> findDownstream(std::string type) const;
+  std::vector<std::string> findDownstream(const std::string &type) const;
+
+  void findSectionRec(const std::string &id, std::vector<Section> &sec) const;
 };
 
 }

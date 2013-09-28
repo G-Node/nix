@@ -40,7 +40,9 @@ SRCS = src/Util.cpp \
 	src/Source.cpp \
 	src/SimpleTag.cpp \
 	src/Representation.cpp \
-	src/DataArray.cpp
+	src/DataArray.cpp \
+	src/Section.cpp
+	
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
