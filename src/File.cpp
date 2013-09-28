@@ -161,7 +161,7 @@ std::vector<Section> File::findSection(const std::string &id) const{
 	for(size_t i = 0; i < s.size(); i++){
 		if(s[i].id().compare(id)==0){
 			sects.push_back(s[i]);
-			return sects;
+ 			return sects;
 		}
 	}
 	for(size_t i = 0; i < s.size(); i++){
