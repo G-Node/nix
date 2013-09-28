@@ -19,7 +19,6 @@ Property::Property(Group group,const std::string &id, time_t time):
 	NamedEntity(group,id,time){
 }
 
-
 void Property::dataType(const string &dataType) {
   string dt = this->dataType();
   if (dt.compare(dataType) == 0) {

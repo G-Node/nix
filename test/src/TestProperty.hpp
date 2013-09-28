@@ -12,10 +12,9 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include "pandora/Group.hpp"
 #include "pandora/Section.hpp"
-#include "pandora/SectionIterator.hpp"
 #include "pandora/Property.hpp"
-#include "pandora/PropertyIterator.hpp"
 
 using namespace std;
 using namespace pandora;
@@ -34,7 +33,7 @@ private:
 public:
 
   void setUp() {
-    f1 = new File("test_block.h5", "org.g-node", FileMode::ReadWrite);
+    f1 = new File("test_block.h5", FileMode::ReadWrite);
   }
 
   void tearDown() {
@@ -42,7 +41,8 @@ public:
   }
 
   void testAddRemoveValue() {
-    Section s = f1->findSection(f1->metadataGroup().objectName(0));
+    Section s = f1->createSection("PropertyTest", "test");
+
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
@@ -70,10 +70,12 @@ public:
     stringstream msg3;
     msg3 << "Error setting property name. Should have been refused since property has values!";
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), p.valueCount() == 0 );
+
+    f1->removeSection(s.id());
   }
 
   void testAccessingValues() {
-    Section s = f1->findSection(f1->metadataGroup().objectName(0));
+    Section s = f1->createSection("PropertyTest", "test");
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
@@ -123,10 +125,11 @@ public:
     << "Error accessing string value with index larger than value count. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(), p.stringValue(1), std::runtime_error);
     */
+    f1->removeSection(s.id());
   }
 
   void testProperties() {
-    Section s = f1->findSection(f1->metadataGroup().objectName(0));
+    Section s = f1->createSection("PropertyTest", "test");
     if (s.hasPropertyByName("TestProperty")) {
       s.removeProperty(s.getPropertyByName("TestProperty").id());
     }
@@ -142,10 +145,7 @@ public:
     << "Error changing dataType of not-empty property. Should have thrown a runtime exception!";
     CPPUNIT_ASSERT_THROW_MESSAGE(msg3.str(), p.dataType("double"), std::runtime_error);
 
-    stringstream msg4;
-    msg4
-    << "Error changing the name of a not empty property. Should have thrown a runtime exception!";
-    CPPUNIT_ASSERT_THROW_MESSAGE(msg4.str(), p.name("Test Property"), std::runtime_error);
+    f1->removeSection(s.id());
   }
 
 };
