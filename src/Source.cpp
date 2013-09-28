@@ -58,26 +58,6 @@ Source Source::getSource(size_t index) const {
 }
 
 
-bool Source::existsSource(string id) const {
-  vector<Source> stack;
-  stack.push_back(*this);
-
-  bool found = false;
-  while(!found && stack.size() > 0) {
-    Source s(stack.back());
-    stack.pop_back();
-
-    if (s.hasSource(id)) {
-      found = true;
-    } else {
-      vector<Source> tmp(s.sources());
-      stack.insert(stack.end(), tmp.begin(), tmp.end());
-    }
-  }
-
-  return found;
-}
-
 void Source::findSourcesRec(const Source &cur_source,
                             std::vector<Source> &results,
                             std::function<bool(const Source &)> predicate,

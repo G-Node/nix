@@ -83,16 +83,6 @@ public:
    */
   Source getSource(size_t index) const;
 
-  /**
-   * Checks if a source with a specific id exists either as a direct descendant or
-   * somewhere in the subtree.
-   *
-   * @param id        The id of the source.
-   *
-   * @return True if a source with the given id exists, false otherwise.
-   */
-  bool existsSource(std::string id) const;
-
 
   /**
    * Return a vector of sources for which the predicate evaluates to true.
