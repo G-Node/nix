@@ -171,6 +171,13 @@ std::vector<Section> Section::findSideways(const std::string &type) const{
 			bool found = section.type() == type;
 			return found;
 		},true,1);
+		if(victor.size() > 0){
+			return victor;
+		}
+		victor = p.findSideways(type);
+		if(victor.size() > 0){
+			return victor;
+		}
 	}
 	return victor;
 }

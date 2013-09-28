@@ -25,10 +25,8 @@ private:
 
 	CPPUNIT_TEST_SUITE(TestSection);
 	CPPUNIT_TEST(testAddAndRemove);
-	//CPPUNIT_TEST(testBreadthFirstTreeIterator);
-	//CPPUNIT_TEST(testFinding);
-	//CPPUNIT_TEST(testTypeFilter);
-	//CPPUNIT_TEST(testRelatedSections);
+	CPPUNIT_TEST(testDepthRetrieving);
+	CPPUNIT_TEST(testRelatedSections);
 	CPPUNIT_TEST(testAddingProperties);
 	CPPUNIT_TEST(testAccessingProperties);
 	CPPUNIT_TEST(testRemovingProperties);
@@ -98,8 +96,8 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), test.hasChildren());
 		 */
 	}
-	/*
-	void testBreadthFirstTreeIterator(){
+
+	void testDepthRetrieving(){
 		Section s1 = f1->createSection("Iterator test","test");
 		Section child1 = s1.addSection("Test child 1","test");
 		child1.addSection("grand child 1","test");
@@ -107,118 +105,25 @@ public:
 		grandchild2.addSection("great grandchild 1", "test");
 		Section child2 = s1.addSection("Test child 2","test");
 
-		int count = 0;
-		for(SectionTreeIterator iter = s1.treeIterator("",1); iter != iter.end(); ++iter){
-			count++;
-		}
-		stringstream msg;
-		msg << "Error while iterating with depth = 1. Count should have been 2 but is " << count << "!";
-		CPPUNIT_ASSERT_MESSAGE(msg.str(), count == 2);
-
-		count = 0;
-		for(SectionTreeIterator iter = s1.treeIterator("",2); iter != iter.end(); ++iter){
-			count++;
-		}
+		std::vector<Section> secs = s1.findSections([](const Section &section) {
+			return true;},true,2);
 		stringstream msg2;
-		msg2 << "Error while iterating with depth = 2. Count should have been 4 but is " << count << "!";
-		CPPUNIT_ASSERT_MESSAGE(msg2.str(), count == 4);
+		msg2 << "Error while iterating with depth = 2. Count should have been 4 but is " << secs.size() << "!";
+		CPPUNIT_ASSERT_MESSAGE(msg2.str(), secs.size() == 4);
 
-		count = 0;
-		for(SectionTreeIterator iter = s1.treeIterator("",3); iter != iter.end(); ++iter){
-			count++;
-		}
 		stringstream msg3;
-		msg3 << "Error while iterating with depth = 3. Count should have been 5 but is " << count << "!";
-		CPPUNIT_ASSERT_MESSAGE(msg3.str(), count == 5);
+		secs = s1.findSections([](const Section &section) {return true;},true,3);
+		msg3 << "Error while iterating with depth = 3. Count should have been 5 but is " << secs.size() << "!";
+		CPPUNIT_ASSERT_MESSAGE(msg3.str(), secs.size() == 5);
 
-		count = 0;
-		for(SectionTreeIterator iter = s1.treeIterator("",0); iter != iter.end(); ++iter){
-			count++;
-		}
+		secs = s1.findSections([](const Section &section) {return true;},true,-1);
 		stringstream msg4;
-		msg4 << "Error while iterating with unlimited depth (0). Count should have been 5 but is " << count << "!";
-		CPPUNIT_ASSERT_MESSAGE(msg4.str(), count == 5);
+		msg4 << "Error while iterating with unlimited depth (0). Count should have been 5 but is " << secs.size() << "!";
+		CPPUNIT_ASSERT_MESSAGE(msg4.str(), secs.size() == 5);
 		f1->removeSection(s1.id());
 	}
-	*/
-
-	/*
-  void testFinding(){
-    Section s1 = f1->createSection("Iterator test","test");
-    Section child1 = s1.addSection("Test child 1","test");
-    child1.addSection("grand child 1","test");
-    Section grandchild2 = child1.addSection("grand child 2","test");
-    grandchild2.addSection("great grandchild 1", "test");
-    Section child2 = s1.addSection("Test child 2","test");
 
 
-    bool hasSection = f1->hasSection(grandchild2.id());
-    stringstream msg;
-    msg << "Error while checking for section that is on level 3 but was not found! ";
-    CPPUNIT_ASSERT_MESSAGE(msg.str(), hasSection);
-
-    hasSection = f1->hasSection(grandchild2.id(),"",2);
-    stringstream msg2;
-    msg2 << "Error while checking for section that is on level 3 and was found though the search depth was set to 2! ";
-    CPPUNIT_ASSERT_MESSAGE(msg2.str(), !hasSection);
-
-    if(f1->hasSection(grandchild2.id(),"",3)){
-      Section temp = f1->findSection(grandchild2.id(),"",3);
-      stringstream msg2;
-      msg2 << "Error while retrieving existing section on level 3 when finding it with the appropriate depth (3)! ";
-      CPPUNIT_ASSERT_MESSAGE(msg2.str(), temp.name().compare(grandchild2.name()) == 0);
-    }
-    f1->removeSection(s1.id());
-  }
-	 */
-	/*
-	void testTypeFilter(){
-		//TODO test the TreeIterator with type filter, test empty filter
-		Section s1 = f1->createSection("Iterator test","test");
-		s1.addSection("Test child a.1","testa");
-		s1.addSection("Test child a.2","testa");
-		s1.addSection("Test child b.1","testb");
-		s1.addSection("Test child b.2","testb");
-		s1.addSection("Test child b.3", "testb");
-		s1.addSection("Test child c.1","testc");
-
-		int count = 0;
-		for(SectionIterator iter = s1.children("testa"); iter != iter.end();++iter){
-			count++;
-		}
-		stringstream msg;
-		msg << "Error while cycling through subsection with type filter. Found "<< count << " children, should have been 2!";
-		CPPUNIT_ASSERT_MESSAGE(msg.str(), count == 2);
-
-		count = 0;
-		for(SectionIterator iter = s1.children("testb"); iter != iter.end();++iter){
-			count++;
-		}
-
-		stringstream msg2;
-		msg2 << "Error while cycling through subsection with type filter. Found "<< count << " children, should have been 3!";
-		CPPUNIT_ASSERT_MESSAGE(msg2.str(), count == 3);
-
-		count = 0;
-		for(SectionTreeIterator iter = s1.treeIterator("testb",0); iter != iter.end(); ++iter){
-			count++;
-		}
-		stringstream msg4;
-		msg4 << "Error while cycling through subsections with TreeIterator and filter. Found "<< count << " children, should have been 3!";
-		CPPUNIT_ASSERT_MESSAGE(msg4.str(), count == 3);
-
-		count = 0;
-		for(SectionIterator iter = s1.children("testd"); iter != iter.end();++iter){
-			count++;
-		}
-		stringstream msg3;
-		msg3 << "Error while cycling through subsection with type filter. Found "<< count << " children, should have been 0!";
-		CPPUNIT_ASSERT_MESSAGE(msg3.str(), count == 0);
-
-
-		f1->removeSection(s1.id());
-	}
-	*/
 	void testRelatedSections(){
 		Section a1 = f1->createSection("RelationTest","a");
 		Section b1 = a1.addSection("b1","b");
