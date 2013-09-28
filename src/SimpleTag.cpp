@@ -242,6 +242,7 @@ SimpleTag& SimpleTag::operator=(const SimpleTag &other) {
     this->group = other.group;
     this->entity_id = other.entity_id;
     this->representation_group = other.representation_group;
+    this->sources_refs = other.sources_refs;
   }
   return *this;
 }

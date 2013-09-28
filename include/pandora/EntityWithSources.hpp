@@ -18,6 +18,7 @@
 #include <vector>
 #include <iostream>
 
+#include <pandora/util/ReferenceList.hpp>
 #include <pandora/EntityWithMetadata.hpp>
 
 
@@ -34,6 +35,7 @@ class EntityWithSources: public EntityWithMetadata {
 protected:
 
   Block block;
+  util::ReferenceList sources_refs;
 
 public:
 
@@ -95,7 +97,7 @@ public:
    *
    * @param s     A vector with all sources.
    */
-  void sources(std::vector<Source> s);
+  void sources(const std::vector<Source> &s);
 
   /**
    * Get all associated sources of this entity.

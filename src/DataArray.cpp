@@ -147,6 +147,7 @@ DataArray& DataArray::operator=(const DataArray &other) {
     this->group = other.group;
     this->entity_id = other.entity_id;
     this->dimension_group = other.dimension_group;
+    this->sources_refs = other.sources_refs;
   }
   return *this;
 }

@@ -28,6 +28,10 @@ class ReferenceList {
   Group group;
   std::string ds_name;
 
+public:
+
+  ReferenceList(const ReferenceList &other);
+
   ReferenceList(const Group &group, const std::string &ds_name);
 
   bool has(const std::string &id) const;
@@ -38,8 +42,6 @@ class ReferenceList {
 
   void set(const std::vector<std::string> &ids);
 
-  inline void set(const std::vector<PandoraEntity> &entities);
-
   void add(const std::string &id);
 
   inline void add(const PandoraEntity &entity);
@@ -47,6 +49,16 @@ class ReferenceList {
   bool remove(const std::string &id);
 
   inline bool remove(const PandoraEntity &entity);
+
+  inline size_t count() const;
+
+  bool operator==(const ReferenceList &other) const;
+
+  bool operator!=(const ReferenceList &other) const;
+
+  ReferenceList& operator=(const ReferenceList &other);
+
+  virtual ~ReferenceList();
 
 };
 
@@ -56,20 +68,16 @@ bool ReferenceList::has(const PandoraEntity &entity) const {
   return has(entity.id());
 }
 
-void ReferenceList::set(const std::vector<PandoraEntity> &entities) {
-  std::vector<std::string> ids(entities.size());
-  for (size_t i = 0; i < entities.size(); i++) {
-    ids[i] = entities[i].id();
-  }
-  set(ids);
-}
-
 void ReferenceList::add(const PandoraEntity &entity) {
   add(entity.id());
 }
 
-inline bool ReferenceList::remove(const PandoraEntity &entity) {
+bool ReferenceList::remove(const PandoraEntity &entity) {
   return remove(entity.id());
+}
+
+size_t ReferenceList::count() const {
+  return get().size();
 }
 
 } // namespace util
