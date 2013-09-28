@@ -1,10 +1,12 @@
+#include <pandora/Group.hpp>
 #include <pandora/SectionIterator.hpp>
+
 
 using namespace std;
 
 namespace pandora {
 
-SectionIterator::SectionIterator(File *file, Group group, std::string type) :
+SectionIterator::SectionIterator(File file, Group group, std::string type) :
         file(file), group(group), type(type){
   index = 0;
   size = group.objectCount();

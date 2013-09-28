@@ -17,7 +17,7 @@ class SectionIterator : public std::iterator<std::input_iterator_tag, Section>
    bool matchesType(Group group) const;
 
 protected:
-  mutable File  *file;
+  File  file;
   Group group;
   std::string type;
   size_t index, size;
@@ -25,7 +25,7 @@ protected:
 
 
 public:
-  SectionIterator(File *file, Group group, std::string type = "");
+  SectionIterator(File file, Group group, std::string type = "");
   SectionIterator(const SectionIterator &other);
 
   Section operator*() const;

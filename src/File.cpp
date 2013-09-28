@@ -72,14 +72,13 @@ File::File(string name, FileMode mode)
 
 
 File::File(const File &file)
-  : h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
+: h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
 {}
 
 
 bool File::hasBlock(const std::string &id) const {
   return data.hasGroup(id);
 }
-
 
 Block File::getBlock(const std::string &id) const {
   return Block(*this, data.openGroup(id, false), id);
@@ -131,27 +130,60 @@ size_t File::blockCount() const {
   return data.objectCount();
 }
 
+std::vector<Section> File::sections()const{
+  vector<Section>  section_obj;
+  size_t section_count = metadata.objectCount();
+  for (size_t i = 0; i < section_count; i++) {
+    string id = metadata.objectName(i);
+    Section s(*this,metadata.openGroup(id, false), id);
+    section_obj.push_back(s);
+  }
+  return section_obj;
+}
+
+bool File::hasSection(std::string id) const{
+  return metadata.hasGroup(id);
+}
+
 /*
-bool File::hasSection(std::string id, std::string type, uint depth) const {
+bool File::existsSection(std::string id) const {
   bool found = false;
-  for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
-    if((*iter).id().compare(id) == 0){
+  vector<Section> s = sections();
+  for (size_t i = 0; i < s.size(); i++){
+    if(s[i].id().compare(id) == 0){
       found = true;
-      break;
+      return found;
     }
   }
-  if(depth == 0 || depth > 1){
-    SectionIterator iter = sections();
-    while(!found && iter != iter.end()){
-      Section s = *iter;
-      found = s.hasSection(id, type, depth - 1);
-      ++iter;
+  for(size_t i = 0; i < s.size(); i++){
+    found = s[i].existsSection(id);
+    if (found){
+      return found;
     }
   }
   return found;
 }
+*/
 
+std::vector<Section> File::findSection(const std::string &id) const{
+  vector<Section> s = sections();
+  vector<Section> sects;
+  for(size_t i = 0; i < s.size(); i++){
+    if(s[i].id().compare(id)==0){
+      sects.push_back(s[i]);
+      return sects;
+    }
+  }
+  for(size_t i = 0; i < s.size(); i++){
+    sects = s[i].findSection(id);
+    if (sects.size() > 0){
+      return sects;
+    }
+  }
+  return sects;
+}
 
+/*
 Section File::findSection(std::string id, std::string type, uint depth) const {
   if(hasSection(id, type, depth)){
     for(SectionIterator iter = sections(); iter != iter.end(); ++iter){
@@ -172,29 +204,26 @@ Section File::findSection(std::string id, std::string type, uint depth) const {
   }
   throw std::runtime_error("Requested Section does not exist! Always check with hasSection!");
 }
-*/
+ */
 
 
 /* TODO implement vector<Section> File::sections() const {} */
 
-/*
-Section File::createSection(string name, string type, string parent) {
+
+Section File::createSection(const string &name, const  string &type) {
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(this, metadata.openGroup(id, true), id);
+  Section s(*this, metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
-  if(parent.length() > 0){
-    s.parent(parent);
-  }
   return s;
 }
 
 
-bool File::removeSection(std::string id){
+bool File::removeSection(const std::string &id){
   bool success = false;
-  if(hasSection(id,"", 1)){
+  if(!findSection(id).empty()){
     metadata.removeGroup(id);
     success = true;
   }
@@ -205,7 +234,7 @@ bool File::removeSection(std::string id){
 size_t File::sectionCount() const {
   return metadata.objectCount();
 }
-*/
+
 
 
 
@@ -245,7 +274,7 @@ void File::setCreatedAt() {
 
 
 void File::forceCreatedAt(time_t t) {
-	root.setAttr("created_at", util::timeToStr(t));
+  root.setAttr("created_at", util::timeToStr(t));
 }
 
 

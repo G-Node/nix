@@ -41,12 +41,12 @@ public:
   /**
    * Default constructor.
    */
-  Source(File file, Group group, std::string id);
+  Source(File file, Group group, const std::string &id);
 
   /**
    * Default constructor that preserves the creation time.
    */
-  Source(File file, Group group, std::string id, time_t time);
+  Source(File file, Group group, const std::string &id, time_t time);
 
 
   //--------------------------------------------------
@@ -62,7 +62,7 @@ public:
    * @return True if a source with the given id is a direct descendant, false
    *         otherwise.
    */
-  bool hasSource(std::string id) const;
+  bool hasSource(const std::string &id) const;
 
   /**
    * Retrieves a specific child source that is a direct descendant.
@@ -72,7 +72,7 @@ public:
    * @return The source with the given id. If it doesn't exist an exception
    *         will be thrown.
    */
-  Source getSource(std::string id) const;
+  Source getSource(const std::string &id) const;
 
   /**
    * Retrieves a specific source by index.
@@ -83,27 +83,19 @@ public:
    */
   Source getSource(size_t index) const;
 
-  /**
-   * Checks if a source with a specific id exists either as a direct descendant or
-   * somewhere in the subtree.
-   *
-   * @param id        The id of the source.
-   *
-   * @return True if a source with the given id exists, false otherwise.
-   */
-  bool existsSource(std::string id) const;
 
   /**
-   * Retrieves a specific source by searching all sources and their
-   * child sources.
+   * Return a vector of sources for which the predicate evaluates to true.
    *
-   * @param id        The id of the source.
+   * @param predicate     Predicate function that will be called for each source. Return true to collect.
+   * @param exclude_root  Whether or not to include the root source.
+   * @param max_depth     The maximum recursion depth.
    *
-   * @return The source with the given id. If it doesn't exist an exception
-   *         will be thrown.
+   * @return The source for which predicate was true.
    */
-  Source findSource(std::string id) const;
+  std::vector<Source> findSources(std::function<bool(const Source &)> predicate, bool exclude_root = false, int max_depth = -1) const;
 
+  
   /**
    * Returns the number of sources that are direct descendants of this source.
    *
@@ -126,7 +118,7 @@ public:
    *
    * @return The created source object.
    */
-  Source createSource(std::string name, std::string type);
+  Source createSource(const std::string &name, const std::string &type);
 
   /**
    * Remove a root source and all its child sources from
@@ -154,6 +146,14 @@ public:
 
 
   virtual ~Source();
+  
+private:
+  void findSourcesRec(const Source &cur_source,
+                      std::vector<Source> &results,
+                      std::function<bool(const Source &)> predicate,
+                      int level,
+                      int max_depth) const;
+  
 
 };
 }//of namespace

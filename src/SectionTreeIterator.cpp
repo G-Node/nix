@@ -1,3 +1,4 @@
+#include <pandora/Group.hpp>
 #include <pandora/SectionTreeIterator.hpp>
 
 using namespace std;
