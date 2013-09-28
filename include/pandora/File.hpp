@@ -69,7 +69,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning blocks
-  // TODO implement block methods
   //--------------------------------------------------
 
   /**
@@ -86,7 +85,7 @@ public:
    *
    * @return True if the block exists, false otherwise.
    */
-  bool hasBlock(std::string id) const;
+  bool hasBlock(const std::string &id) const;
 
   /**
    * Read an existing block from the file.
@@ -95,7 +94,7 @@ public:
    *
    * @return The block with the given id.
    */
-  Block getBlock(std::string id) const;
+  Block getBlock(const std::string &id) const;
 
   /**
    * Read an existing with block from the file, addressed by index.
@@ -114,7 +113,7 @@ public:
    *
    * @return The created block.
    */
-  Block createBlock(std::string name, std::string type);
+  Block createBlock(const std::string &name, std::string type);
 
   /**
    * Delete a block from the file.
@@ -123,7 +122,7 @@ public:
    *
    * @return True if the block has been removed, false otherwise.
    */
-  bool removeBlock(std::string id);
+  bool removeBlock(const std::string &id);
 
   /**
    * Returns all blocks in this file.
