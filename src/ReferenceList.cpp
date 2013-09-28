@@ -28,27 +28,18 @@ ReferenceList::ReferenceList(const Group &group, const string &ds_name)
 {}
 
 bool ReferenceList::has(const string &id) const {
-  bool found = false;
-
+  
   vector<string> ids = get();
-  for (size_t i = 0; i < ids.size(); i++) {
-    if (ids[i] == id) {
-      found = true;
-      break;
-    }
-  }
-
-  return found;
+  return std::find(ids.begin(), ids.end(), id) != ids.end();
 }
+  
 
 vector<string> ReferenceList::get() const {
   vector<string> ids;
 
   if (group.hasData(ds_name)) {
     DataSet ds = group.openData(ds_name);
-    Selection sel = ds.createSelection();
-    sel.select({0}, ds.size());
-    ds.read(ids, sel, true);
+    ds.read(ids, true);
   }
 
   return ids;
