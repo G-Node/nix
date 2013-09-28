@@ -83,9 +83,7 @@ bool ReferenceList::remove(const string &id) {
   if (group.hasData(ds_name)) {
     vector<string> ids;
     DataSet ds = group.openData(ds_name);
-    Selection sel = ds.createSelection();
-    sel.select({0}, ds.size());
-    ds.read(ids, sel, true);
+    ds.read(ids, true);
 
     for (size_t i = 0; i < ids.size(); i++) {
       if (ids[i] == id) {
