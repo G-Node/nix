@@ -70,19 +70,8 @@ bool EntityWithSources::hasSource(const Source &source) const {
 
 
 bool EntityWithSources::hasSource(string id) const {
-  bool found = false;
-
-  if (sourceCount() > 0) {
-    vector<Source> s = sources();
-    for (size_t i = 0; i < s.size() && !found; i++) {
-      if (s[i].id().compare(id) == 0) {
-        found = true;
-        break;
-      }
-    }
-  }
-
-  return found;
+  vector<string> ids = source_ids();
+  return std::find(ids.begin(), ids.end(), id) != ids.end();
 }
 
 
