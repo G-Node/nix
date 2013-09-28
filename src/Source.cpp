@@ -28,26 +28,26 @@ Source::Source(const Source &source)
 }
 
 
-Source::Source(File file, Group group, std::string id)
+Source::Source(File file, Group group, const std::string &id)
   : EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
 }
 
 
-Source::Source(File file, Group group, std::string id, time_t time)
+Source::Source(File file, Group group, const std::string &id, time_t time)
   : EntityWithMetadata(file, group, id, time)
 {
   source_group = group.openGroup("sources");
 }
 
 
-bool Source::hasSource(string id) const {
+bool Source::hasSource(const string &id) const {
   return source_group.hasGroup(id);
 }
 
 
-Source Source::getSource(string id) const {
+Source Source::getSource(const string &id) const {
   return Source(file, source_group.openGroup(id, false), id);
 }
 
@@ -58,54 +58,48 @@ Source Source::getSource(size_t index) const {
 }
 
 
-bool Source::existsSource(string id) const {
-  vector<Source> stack;
-  stack.push_back(*this);
-
-  bool found = false;
-  while(!found && stack.size() > 0) {
-    Source s(stack.back());
-    stack.pop_back();
-
-    if (s.hasSource(id)) {
-      found = true;
-    } else {
-      vector<Source> tmp(s.sources());
-      stack.insert(stack.end(), tmp.begin(), tmp.end());
+void Source::findSourcesRec(const Source &cur_source,
+                            std::vector<Source> &results,
+                            std::function<bool(const Source &)> predicate,
+                            int level,
+                            int max_depth) const
+{
+  size_t source_count = cur_source.sourceCount();
+  std::vector<Source> my_children;
+  
+  for (size_t i = 0; i < source_count; i++) {
+    Source s = cur_source.getSource(i);
+    
+    if (predicate(s)) {
+      results.push_back(s);
     }
+    
+    my_children.push_back(s);
   }
-
-  return found;
+  
+  if (max_depth > 0 && level > max_depth) {
+    return;
+  }
+  
+  for (size_t i = 0; i < my_children.size(); i++) {
+    findSourcesRec(my_children[i], results, predicate, level + 1, max_depth);
+  }
+  
 }
+  
 
-
-Source Source::findSource(string id) const {
-  Source result(*this);
-  vector<Source> stack;
-  stack.push_back(*this);
-
-  bool found = false;
-  while(!found && stack.size() > 0) {
-    Source s(stack.back());
-    stack.pop_back();
-
-    if (s.hasSource(id)) {
-      found = true;
-      result = s.getSource(id);
-    } else {
-      vector<Source> tmp(s.sources());
-      stack.insert(stack.end(), tmp.begin(), tmp.end());
-    }
+std::vector<Source> Source::findSources(std::function<bool(const Source &)> predicate, bool exclude_root, int max_depth) const
+{
+  std::vector<Source> results;
+  
+  if (!exclude_root && predicate(*this)) {
+    results.push_back(*this);
   }
-
-  if (!found) {
-    throw runtime_error("Unable to find the source with id " + id + "!");
-  }
-
-  return result;
+  
+  findSourcesRec(*this, results, predicate, max_depth, 1);
+  return results;
 }
-
-
+  
 size_t Source::sourceCount() const {
   return source_group.objectCount();
 }
@@ -114,18 +108,15 @@ size_t Source::sourceCount() const {
 std::vector<Source> Source::sources() const {
   vector<Source> source_obj;
 
-  size_t source_count = source_group.objectCount();
-  for (size_t i = 0; i < source_count; i++) {
-    string id = source_group.objectName(i);
-    Source s(file, source_group.openGroup(id, false), id);
-    source_obj.push_back(s);
-  }
+  source_obj = findSources([](const Source &source) {
+    return true;
+  }, true, 1);
 
   return source_obj;
 }
 
 
-Source Source::createSource(string name, string type) {
+Source Source::createSource(const string &name, const string &type) {
   string id = util::createId("source");
 
   while(source_group.hasObject(id)) {
