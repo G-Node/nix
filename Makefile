@@ -44,6 +44,7 @@ SRCS = src/Util.cpp \
 	src/Section.cpp \
 	src/Property.cpp \
 	src/Value.cpp	
+	src/ReferenceList.cpp
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
