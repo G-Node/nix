@@ -28,26 +28,26 @@ Source::Source(const Source &source)
 }
 
 
-Source::Source(File file, Group group, std::string id)
+Source::Source(File file, Group group, const std::string &id)
   : EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
 }
 
 
-Source::Source(File file, Group group, std::string id, time_t time)
+Source::Source(File file, Group group, const std::string &id, time_t time)
   : EntityWithMetadata(file, group, id, time)
 {
   source_group = group.openGroup("sources");
 }
 
 
-bool Source::hasSource(string id) const {
+bool Source::hasSource(const string &id) const {
   return source_group.hasGroup(id);
 }
 
 
-Source Source::getSource(string id) const {
+Source Source::getSource(const string &id) const {
   return Source(file, source_group.openGroup(id, false), id);
 }
 
@@ -117,7 +117,7 @@ std::vector<Source> Source::sources() const {
 }
 
 
-Source Source::createSource(string name, string type) {
+Source Source::createSource(const string &name, const string &type) {
   string id = util::createId("source");
 
   while(source_group.hasObject(id)) {

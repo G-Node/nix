@@ -41,12 +41,12 @@ public:
   /**
    * Default constructor.
    */
-  Source(File file, Group group, std::string id);
+  Source(File file, Group group, const std::string &id);
 
   /**
    * Default constructor that preserves the creation time.
    */
-  Source(File file, Group group, std::string id, time_t time);
+  Source(File file, Group group, const std::string &id, time_t time);
 
 
   //--------------------------------------------------
@@ -62,7 +62,7 @@ public:
    * @return True if a source with the given id is a direct descendant, false
    *         otherwise.
    */
-  bool hasSource(std::string id) const;
+  bool hasSource(const std::string &id) const;
 
   /**
    * Retrieves a specific child source that is a direct descendant.
@@ -72,7 +72,7 @@ public:
    * @return The source with the given id. If it doesn't exist an exception
    *         will be thrown.
    */
-  Source getSource(std::string id) const;
+  Source getSource(const std::string &id) const;
 
   /**
    * Retrieves a specific source by index.
@@ -118,7 +118,7 @@ public:
    *
    * @return The created source object.
    */
-  Source createSource(std::string name, std::string type);
+  Source createSource(const std::string &name, const std::string &type);
 
   /**
    * Remove a root source and all its child sources from
