@@ -105,7 +105,49 @@ Source Source::findSource(string id) const {
   return result;
 }
 
+void Source::findSourcesRec(const Source &cur_source,
+                            std::vector<Source> &results,
+                            std::function<bool(const Source &)> predicate,
+                            int level,
+                            int max_depth) const
+{
+  size_t source_count = cur_source.source_group.objectCount();
+  std::vector<Source> my_children;
+  
+  for (size_t i = 0; i < source_count; i++) {
+    string id = cur_source.source_group.objectName(i);
+    Source s(file, cur_source.source_group.openGroup(id, false), id);
+    
+    if (predicate(s)) {
+      results.push_back(s);
+    }
+    
+    my_children.push_back(s);
+  }
+  
+  if (max_depth > 0 && level > max_depth) {
+    return;
+  }
+  
+  for (size_t i = 0; i < my_children.size(); i++) {
+    findSourcesRec(my_children[i], results, predicate, level + 1, max_depth);
+  }
+  
+}
+  
 
+std::vector<Source> Source::findSources(std::function<bool(const Source &)> predicate, bool exclude_root, int max_depth) const
+{
+  std::vector<Source> results;
+  
+  if (!exclude_root && predicate(*this)) {
+    results.push_back(*this);
+  }
+  
+  findSourcesRec(*this, results, predicate, max_depth, 1);
+  return results;
+}
+  
 size_t Source::sourceCount() const {
   return source_group.objectCount();
 }
