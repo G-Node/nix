@@ -94,13 +94,34 @@ public:
     Source s4 = s1.createSource("S4","test");
     Source s5 = s2.createSource("S5","test");
     
+    //sanity check
     vector<Source> res = s1.findSources([&](const Source &source) {
+      return false;
+    });
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(0), res.size());
+
+  
+    //now some actual work
+    res = s1.findSources([&](const Source &source) {
       bool found = source.id() == s4.id();
       return found;
     });
 
     CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(1), res.size());
     CPPUNIT_ASSERT_EQUAL(s4.id(), res[0].id());
+    
+    res = s1.findSources([&](const Source &source) {
+      return true;
+    }, true, 1);
+
+    CPPUNIT_ASSERT_EQUAL(res.size(), s1.sourceCount());
+    vector<Source> children = s1.sources();
+    
+    for (int i = 0; i < res.size(); i++) {
+      CPPUNIT_ASSERT_EQUAL(res[i].id(), children[i].id());
+    }
+    
     
 //    CPPUNIT_ASSERT_EQUAL(b1.hasSource("invalid_id"),false);
 //    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id()),true);
