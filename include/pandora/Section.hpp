@@ -3,7 +3,7 @@
 
 #include <string>
 #include <H5Cpp.h>
-
+#include <functional>
 #include <pandora/NamedEntity.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
@@ -17,7 +17,7 @@ class SectionTreeIterator;
 class Section : public NamedEntity{
 
 private:
-  Group group, property_group, section_group;
+  Group property_group, section_group;
 
 protected:
   File file;
@@ -54,7 +54,9 @@ public:
   void parent(const std::string &parent);
   std::string parent() const;
 
-  size_t childCount() const;
+  size_t sectionCount() const;
+
+  Section getSection(size_t index) const;
 
   SectionIterator children(const std::string &type = "") const;
 
@@ -76,8 +78,18 @@ public:
    */
   bool hasSection(const std::string &id) const;
 
- // Section findSection(std::string id, std::string type = "", uint depth = 0) const;
-  std::vector<Section> findSection(const std::string &id) const;
+  /**
+   * Return a vector of sections for which the predicate evaluates to true.
+   *
+   * @param predicate     Predicate function that will be called for each section. Return true to collect.
+   * @param exclude_root  Whether or not to include the root source.
+   * @param max_depth     The maximum recursion depth.
+   *
+   * @return The source for which predicate was true.
+   */
+  std::vector<Section> findSections(std::function<bool(const Section &)> predicate, bool exclude_root = false, int max_depth = -1) const;
+
+
 
   bool hasRelatedSection(const std::string &type) const;
 
@@ -120,7 +132,13 @@ private:
 
   std::vector<std::string> findDownstream(const std::string &type) const;
 
-  void findSectionRec(const std::string &id, std::vector<Section> &sec) const;
+  //void findSectionRec(const std::string &id, std::vector<Section> &sec) const;
+  void findSectionsRec(const Section &cur_section,
+                        std::vector<Section> &results,
+                        std::function<bool(const Section &)> predicate,
+                        int level,
+                        int max_depth) const;
+
 };
 
 }

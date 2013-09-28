@@ -53,7 +53,8 @@ OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 # define source and executable files for tests
 # SRCS_TEST = $(wildcard test/src/*.cpp)
 
-SRCS_TEST = test/src/TestFile.cpp
+SRCS_TEST = test/src/TestSection.cpp \
+			test/src/TestSource.cpp
 
 EXEC_TEST = $(patsubst test/src%.cpp, test/bin%, $(SRCS_TEST))
 

@@ -16,6 +16,7 @@
 
 
 #include <string>
+#include <functional>
 #include <pandora/EntityWithMetadata.hpp>
 
 

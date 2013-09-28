@@ -12,19 +12,19 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-				NamedEntity(section.group,section.entity_id), file(section.file){
+						NamedEntity(section.group,section.entity_id), file(section.file){
 	property_group = section.property_group;
 	section_group = section.section_group;
 }
 
 Section::Section(File file, Group group,const  string &id) :
-				NamedEntity(group,id), file(file){
+						NamedEntity(group,id), file(file){
 	property_group = group.openGroup("properties");
 	section_group = group.openGroup("sections");
 }
 
 Section::Section(File file, Group group, const string &id, time_t time) :
-				NamedEntity(group,id,time),file(file)
+						NamedEntity(group,id,time),file(file)
 {
 	property_group = group.openGroup("properties");
 	section_group = group.openGroup("sections");
@@ -188,11 +188,18 @@ std::vector<std::string> Section::findSideways(const std::string &type) const{
 	return victor;
 }
 
-std::vector<Section> Section::findSection(const std::string &id)const{
-	vector<Section> sects;
-	findSectionRec(id, sects);
-	return sects;
+std::vector<Section> Section::findSections(std::function<bool(const Section &)> predicate, bool exclude_root, int max_depth) const
+{
+	std::vector<Section> results;
+
+	if (!exclude_root && predicate(*this)) {
+		results.push_back(*this);
+	}
+
+	findSectionsRec(*this, results, predicate, max_depth, 1);
+	return results;
 }
+
 
 std::vector<Section> Section::sections() const{
 	vector<Section>  section_obj;
@@ -206,6 +213,42 @@ std::vector<Section> Section::sections() const{
 	return section_obj;
 }
 
+Section Section::getSection(size_t index) const{
+	string id = section_group.objectName(index);
+	Section s(file, section_group.openGroup(id), id);
+	return s;
+}
+
+void Section::findSectionsRec(const Section &cur_section,
+		std::vector<Section> &results,
+		std::function<bool(const Section &)> predicate,
+		int level,
+		int max_depth) const
+{
+	size_t section_count = cur_section.sectionCount();
+	std::vector<Section> my_children;
+
+	for (size_t i = 0; i < section_count; i++) {
+		Section s = cur_section.getSection(i);
+
+		if (predicate(s)) {
+			results.push_back(s);
+		}
+
+		my_children.push_back(s);
+	}
+
+	if (max_depth > 0 && level > max_depth) {
+		return;
+	}
+
+	for (size_t i = 0; i < my_children.size(); i++) {
+		findSectionsRec(my_children[i], results, predicate, level + 1, max_depth);
+	}
+
+}
+
+/*
 void Section::findSectionRec(const std::string &id, vector<Section> &sects) const{
 	std::vector<Section> s = sections();
 	for (size_t i = 0; i < s.size(); i++){
@@ -221,7 +264,7 @@ void Section::findSectionRec(const std::string &id, vector<Section> &sects) cons
 		}
 	}
 }
-
+ */
 bool Section::hasChildren() const {
 	SectionIterator iter = this->children();
 	return iter != iter.end();
@@ -237,7 +280,7 @@ SectionTreeIterator Section::treeIterator(const std::string &type, uint depth) c
 	return iter;
 }
 
-size_t Section::childCount() const {
+size_t Section::sectionCount() const {
 	size_t childCount = 0;
 	for (SectionIterator iter = this->children(); iter != iter.end(); ++iter) {
 		childCount++;

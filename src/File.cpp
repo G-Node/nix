@@ -132,7 +132,7 @@ std::vector<Section> File::sections()const{
 	size_t section_count = metadata.objectCount();
 	for (size_t i = 0; i < section_count; i++) {
 		string id = metadata.objectName(i);
-		Section s(*this,metadata.openGroup(id, false), id);
+		Section s(*this,metadata.openGroup(id,false), id);
 		section_obj.push_back(s);
 	}
 	return section_obj;
@@ -162,7 +162,10 @@ std::vector<Section> File::findSection(const std::string &id) const{
 		}
 	}
 	for(size_t i = 0; i < s.size(); i++){
-		sects = s[i].findSection(id);
+		sects = s[i].findSections([&](const Section &section) {
+			bool found = section.id() == id;
+			return found;
+		});
 		if (sects.size() > 0){
 			return sects;
 		}
@@ -183,7 +186,9 @@ Section File::createSection(const string &name, const  string &type) {
 
 bool File::removeSection(const std::string &id){
 	bool success = false;
-	if(!findSection(id).empty()){
+
+	std::vector<Section> sects = findSection(id);
+	if(!sects.empty()){
 		metadata.removeGroup(id);
 		success = true;
 	}
