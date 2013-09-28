@@ -29,7 +29,6 @@ private:
 
   CPPUNIT_TEST(testCreateAndRemove);
   CPPUNIT_TEST(testIterators);
-  CPPUNIT_TEST(testAddMetadata);
   CPPUNIT_TEST(testFindSources);
 
   CPPUNIT_TEST_SUITE_END ();
@@ -38,7 +37,7 @@ private:
 public:
 
   void setUp() {
-    f1 = new File("test_block.h5", "org.g-node", FileMode::ReadWrite);
+    f1 = new File("test_block.h5", FileMode::ReadWrite);
   }
 
   void tearDown() {
@@ -65,25 +64,25 @@ public:
     msg2 << "Removing s1 failed!" ;
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), !b1.hasSource(s1.id()));
     b1.removeSource(s2.id());
-    f1->deleteBlock(b1.id());
+    f1->removeBlock(b1.id());
   }
 
   void testIterators(){
     Block b1 = f1->createBlock("test block","test");
     Source s1 = b1.createSource("S1","test");
-    s1.addSource("S3","test");
-    s1.addSource("S4","test");
+    s1.createSource("S3","test");
+    s1.createSource("S4","test");
     Source s2 = b1.createSource("S2","test");
-    s2.addSource("S5","test");
+    s2.createSource("S5","test");
 
-    size_t count = s1.childCount();
+    size_t count = s1.sourceCount();
     CPPUNIT_ASSERT_EQUAL(count,(size_t)2);
-    count = s2.childCount();
+    count = s2.sourceCount();
     CPPUNIT_ASSERT_EQUAL(count,(size_t)1);
 
     b1.removeSource(s1.id());
     b1.removeSource(s2.id());
-    f1->deleteBlock(b1.id());
+    f1->removeBlock(b1.id());
 
   }
 
@@ -91,34 +90,51 @@ public:
     Block b1 = f1->createBlock("test block","test");
     Source s1 = b1.createSource("S1","test");
     Source s2 = b1.createSource("S2","test");
-    Source s3 = s1.addSource("S3","test");
-    Source s4 = s1.addSource("S4","test");
-    Source s5 = s2.addSource("S5","test");
+    Source s3 = s1.createSource("S3","test");
+    Source s4 = s1.createSource("S4","test");
+    Source s5 = s2.createSource("S5","test");
+    
+    //sanity check
+    vector<Source> res = s1.findSources([&](const Source &source) {
+      return false;
+    });
 
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource("invalid_id"),false);
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id()),true);
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id(),"test"),true);
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id(),"no test"),false);
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id(),"test",1),false);
-    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id(),"test",2),true);
+    CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(0), res.size());
+
+  
+    //now some actual work
+    res = s1.findSources([&](const Source &source) {
+      bool found = source.id() == s4.id();
+      return found;
+    });
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(1), res.size());
+    CPPUNIT_ASSERT_EQUAL(s4.id(), res[0].id());
+    
+    res = s1.findSources([&](const Source &source) {
+      return true;
+    }, true, 1);
+
+    CPPUNIT_ASSERT_EQUAL(res.size(), s1.sourceCount());
+    vector<Source> children = s1.sources();
+    
+    for (size_t i = 0; i < res.size(); i++) {
+      CPPUNIT_ASSERT_EQUAL(res[i].id(), children[i].id());
+    }
+    
+    
+//    CPPUNIT_ASSERT_EQUAL(b1.hasSource("invalid_id"),false);
+//    CPPUNIT_ASSERT_EQUAL(b1.hasSource(s3.id()),true);
+//    CPPUNIT_ASSERT_EQUAL(b1.existsSource(s3.id(),"test"),true);
+//    CPPUNIT_ASSERT_EQUAL(b1.existsSource(s3.id(),"no test"),false);
+//    CPPUNIT_ASSERT_EQUAL(b1.existsSource(s3.id(),"test",1),false);
+//    CPPUNIT_ASSERT_EQUAL(b1.existsSource(s3.id(),"test",2),true);
 
     b1.removeSource(s1.id());
     b1.removeSource(s2.id());
-    f1->deleteBlock(b1.id());
+    f1->removeBlock(b1.id());
   }
 
-  void testAddMetadata(){
-    Block b1 = f1->createBlock("test block","test");
-    Source s1 = b1.createSource("S1","test");
-    Section sec1 = f1->createSection("Test","metadata");
-    s1.metadata(sec1.id());
-    CPPUNIT_ASSERT_EQUAL(s1.metadata(),sec1.id());
-
-    CPPUNIT_ASSERT_THROW(s1.metadata("invalid_section"),std::runtime_error);
-
-    b1.removeSource(s1.id());
-    f1->removeSection(sec1.id());
-  }
 
 };
 
