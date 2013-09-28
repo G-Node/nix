@@ -206,24 +206,21 @@ Section File::findSection(std::string id, std::string type, uint depth) const {
 
 /* TODO implement vector<Section> File::sections() const {} */
 
-/*
-Section File::createSection(string name, string type, string parent) {
+
+Section File::createSection(const string &name, const  string &type) {
   string id = util::createId("section");
   while(metadata.hasObject(id))
     id = util::createId("section");
-  Section s(this, metadata.openGroup(id, true), id);
+  Section s(*this, metadata.openGroup(id, true), id);
   s.name(name);
   s.type(type);
-  if(parent.length() > 0){
-    s.parent(parent);
-  }
   return s;
 }
 
 
-bool File::removeSection(std::string id){
+bool File::removeSection(const std::string &id){
   bool success = false;
-  if(hasSection(id,"", 1)){
+  if(!findSection(id).empty()){
     metadata.removeGroup(id);
     success = true;
   }
@@ -234,7 +231,7 @@ bool File::removeSection(std::string id){
 size_t File::sectionCount() const {
   return metadata.objectCount();
 }
- */
+
 
 
 

@@ -1,3 +1,4 @@
+#include <pandora/Group.hpp>
 #include <pandora/PropertyIterator.hpp>
 
 using namespace std;
