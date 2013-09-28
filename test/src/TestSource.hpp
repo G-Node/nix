@@ -16,8 +16,6 @@
 #include "pandora/Block.hpp"
 #include "pandora/Section.hpp"
 #include "pandora/Source.hpp"
-#include "pandora/SourceIterator.hpp"
-#include "pandora/SourceTreeIterator.hpp"
 
 using namespace std;
 using namespace pandora;
