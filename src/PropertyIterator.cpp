@@ -41,7 +41,7 @@ Property PropertyIterator::operator*() const {
     throw std::range_error(
         "Attempt to access an element that is out of range!");
   }
-  Property property(section, group.openGroup(id, false), id);
+  Property property(group.openGroup(id, false), id);
   return property;
 }
 

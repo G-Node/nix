@@ -7,18 +7,14 @@
 #include <pandora/Group.hpp>
 #include <pandora/Section.hpp>
 #include <pandora/Value.hpp>
-
+#include <pandora/NamedEntity.hpp>
 #include <pandora/DataSet.hpp>
 
 namespace pandora {
 
-class Property {
+class Property : public NamedEntity{
 
 private:
-
-  Section section;
-  Group group;
-  std::string property_id;
 
   bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
@@ -26,29 +22,20 @@ public:
 
   Property(const Property &property);
 
-  Property(Section section, Group group, std::string id);
+  Property(Group group,const std::string &id);
 
-  std::string id() const;
+  Property(Group group,const std::string &id, time_t time);
 
-  void name(std::string name);
-  std::string name() const;
-
-  void definition(std::string definition);
-  std::string definition() const;
-
-  void link(std::string link);
-  std::string link() const;
-
-  void include(std::string include);
+  void include(const std::string &include);
   std::string include() const;
 
-  void mapping(std::string mapping);
+  void mapping(const std::string &mapping);
   std::string mapping() const;
 
-  void dataType(std::string dataType);
+  void dataType(const std::string &dataType);
   std::string dataType() const;
 
-  void unit(std::string unit);
+  void unit(const std::string &unit);
   std::string unit() const;
 
   template<typename T>

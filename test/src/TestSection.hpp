@@ -32,9 +32,9 @@ private:
 	//CPPUNIT_TEST(testFinding);
 	//CPPUNIT_TEST(testTypeFilter);
 	//CPPUNIT_TEST(testRelatedSections);
-	//CPPUNIT_TEST(testAddingProperties);
-	//CPPUNIT_TEST(testAccessingProperties);
-	//CPPUNIT_TEST(testRemovingProperties);
+	CPPUNIT_TEST(testAddingProperties);
+	CPPUNIT_TEST(testAccessingProperties);
+	CPPUNIT_TEST(testRemovingProperties);
 	//CPPUNIT_TEST(testSectionLinks);
 	CPPUNIT_TEST_SUITE_END ();
 
@@ -52,17 +52,25 @@ public:
 
 	void testAddAndRemove() {
 		const char *names[5] = { "section_a", "section_b", "section_c", "section_d",
-		   "section_e" };
-		std::string lastSectionId;
+				"section_e" };
+		std::vector<std::string> ids;
+		size_t count = f1->sectionCount();
 		for (int i = 0; i < 5; i++) {
 			Section s1(f1->createSection(names[i], "Recording"));
-			Section s2(f1->findSection(s1.id())[0]);
-			lastSectionId = s2.id();
-			stringstream errmsg;
-			errmsg << "Error while accessing block: s1.id() = " << s1.id()
-                                                		  << " / s2.id() = " << s2.id();
-			CPPUNIT_ASSERT_MESSAGE(errmsg.str(), s1 == s2);
+			ids.push_back(s1.id());
 		}
+		CPPUNIT_ASSERT(f1->sectionCount() == (count + 5));
+		//test retrieving
+		for(size_t i = 0; i < ids.size(); i++) {
+			CPPUNIT_ASSERT(f1->hasSection(ids[i]));
+			Section s = f1->getSection(ids[i]);
+			CPPUNIT_ASSERT(s.name().compare(names[i])==0);
+		}
+		//test removing
+		for(size_t i = 0; i < ids.size(); i++) {
+			f1->removeSection(ids[i]);
+		}
+		CPPUNIT_ASSERT(f1->sectionCount() == count);
 		/*
     Section test = f1->findSection(lastSectionId)[0];
     stringstream errmsg;
@@ -260,7 +268,6 @@ public:
 	}
 
 
-
 	void testAddingProperties() {
 		Section s = f1->sections()[0];
 		const char *units[5] = { "ms", "kg", "S", "V", "mA" };
@@ -273,8 +280,8 @@ public:
 		}
 		stringstream msg;
 		msg << "Error while creating properties in section: s.id() = " << s.id()
-                                                		<< " Property count should be: " << oldCount + 5 << " but is: "
-                                                		<< s.propertyCount();
+                                                				<< " Property count should be: " << oldCount + 5 << " but is: "
+                                                				<< s.propertyCount();
 		CPPUNIT_ASSERT_MESSAGE(msg.str(), s.propertyCount() == (oldCount + 5));
 		Property p = *s.properties();
 		stringstream msg2;

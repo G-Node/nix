@@ -133,7 +133,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning sections
-  // TODO implement section methods
   //--------------------------------------------------
 
   /**
@@ -143,7 +142,7 @@ public:
    *
    * @return True if the section exists, false otherwise.
    */
-  bool hasSection(std::string id) const;
+  bool hasSection(const std::string &id) const;
 
   /**
    * Get root section with a given id.
@@ -152,7 +151,7 @@ public:
    *
    * @return The section with the specified id.
    */
-  Section getSection(std::string id) const;
+  Section getSection(const std::string &id) const;
 
   /**
    * Get root section with a given index/position.

@@ -8,33 +8,19 @@ using namespace std;
 namespace pandora {
 
 Property::Property(const Property &property) :
-              section(property.section), group(property.group), property_id(property.property_id) {
-  // nothing to do
+		NamedEntity(property.group, property.entity_id){
 }
 
-Property::Property(Section section, Group group, string id) :
-              section(section), group(group), property_id(id) {
+Property::Property(Group group, const std::string &id) :
+		NamedEntity(group, id){
 }
 
-string Property::id() const {
-  return property_id;
+Property::Property(Group group,const std::string &id, time_t time):
+	NamedEntity(group,id,time){
 }
 
-void Property::name(string name) {
-  if (valueCount() > 0 && this->name().length() > 0) {
-    throw std::runtime_error("Cannot change name of a property that contains values!");
-    return;
-  }
-  group.setAttr("name", name);
-}
 
-string Property::name() const {
-  string name;
-  group.getAttr("name", name);
-  return name;
-}
-
-void Property::dataType(string dataType) {
+void Property::dataType(const string &dataType) {
   string dt = this->dataType();
   if (dt.compare(dataType) == 0) {
     return;
@@ -53,17 +39,7 @@ string Property::dataType() const {
   return dataType;
 }
 
-void Property::definition(string definition) {
-  group.setAttr("definition", definition);
-}
-
-string Property::definition() const {
-  string definition;
-  group.getAttr("definition", definition);
-  return definition;
-}
-
-void Property::mapping(string mapping) {
+void Property::mapping(const string &mapping) {
   group.setAttr("mapping", mapping);
 }
 
@@ -73,7 +49,7 @@ string Property::mapping() const {
   return mapping;
 }
 
-void Property::unit(string unit) {
+void Property::unit(const string &unit) {
   if (valueCount() > 0 && this->unit().length() > 0) {
     throw std::runtime_error("Cannot change unit of a not-empty property!");
     return;
@@ -124,11 +100,11 @@ size_t Property::valueCount() const {
 }
 
 bool Property::operator==(const Property &other) const {
-  return property_id == other.property_id;
+  return entity_id == other.entity_id;
 }
 
 bool Property::operator!=(const Property &other) const {
-  return property_id != other.property_id;
+  return entity_id != other.entity_id;
 }
 
 Property::~Property() {
