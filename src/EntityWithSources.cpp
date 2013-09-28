@@ -45,7 +45,7 @@ size_t EntityWithSources::sourceCount() const {
   if (group.hasData("sources")) {
     DataSet dataset = group.openData("sources");
     PSize size = dataset.size();
-    return size[0];
+    count = size[0];
   }
   return count;
 }
@@ -64,6 +64,7 @@ bool EntityWithSources::hasSource(string id) const {
     for (size_t i = 0; i < s.size() && !found; i++) {
       if (s[i].id().compare(id) == 0) {
         found = true;
+        break;
       }
     }
   }
