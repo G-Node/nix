@@ -100,17 +100,17 @@ template<typename T>
 H5::DataType ValueToMemtype() {
   TypeSpec<T> spec;
   H5::CompType memtype(sizeof(FileValue<typename TypeSpec<T>::inner_type> ));
-  memtype.insertMember("value", HOFFSET(StringValue, value), spec.memType);
+  memtype.insertMember("value", HOFFSET(Value<T>, value), spec.memType);
 
-  memtype.insertMember("uncertainty", HOFFSET(StringValue, uncertainty),
+  memtype.insertMember("uncertainty", HOFFSET(Value<T>, uncertainty),
       H5::PredType::NATIVE_DOUBLE);
-  memtype.insertMember("reference", HOFFSET(StringValue, reference), H5::StrType(
+  memtype.insertMember("reference", HOFFSET(Value<T>, reference), H5::StrType(
       H5::PredType::C_S1, H5T_VARIABLE));
-  memtype.insertMember("filename", HOFFSET(StringValue, filename), H5::StrType(H5::PredType::C_S1,
+  memtype.insertMember("filename", HOFFSET(Value<T>, filename), H5::StrType(H5::PredType::C_S1,
       H5T_VARIABLE));
-  memtype.insertMember("encoder", HOFFSET(StringValue, encoder), H5::StrType(H5::PredType::C_S1,
+  memtype.insertMember("encoder", HOFFSET(Value<T>, encoder), H5::StrType(H5::PredType::C_S1,
       H5T_VARIABLE));
-  memtype.insertMember("checksum", HOFFSET(StringValue, checksum), H5::StrType(H5::PredType::C_S1,
+  memtype.insertMember("checksum", HOFFSET(Value<T>, checksum), H5::StrType(H5::PredType::C_S1,
       H5T_VARIABLE));
   return memtype;
 }
