@@ -118,7 +118,7 @@ public:
     CPPUNIT_ASSERT_EQUAL(res.size(), s1.sourceCount());
     vector<Source> children = s1.sources();
     
-    for (int i = 0; i < res.size(); i++) {
+    for (size_t i = 0; i < res.size(); i++) {
       CPPUNIT_ASSERT_EQUAL(res[i].id(), children[i].id());
     }
     
