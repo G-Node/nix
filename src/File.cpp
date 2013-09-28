@@ -279,7 +279,7 @@ bool File::checkHeader() const {
 }
 
 
-bool File::fileExists(string name) const {
+bool File::fileExists(const string &name) const {
   ifstream f(name.c_str());
   if (f) {
     f.close();

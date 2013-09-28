@@ -260,7 +260,7 @@ public:
 private:
 
   // check for existence
-  bool fileExists(std::string name) const;
+  bool fileExists(const std::string &name) const;
 
   // check if the header of the file is valid
   bool checkHeader() const;
