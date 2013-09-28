@@ -153,6 +153,23 @@ std::vector<Source> Block::sources() const {
   return source_obj;
 }
 
+  
+  
+std::vector<Source> Block::findSources(std::function<bool(const Source &)> predicate) const
+{
+  vector<Source> result;
+  
+  size_t source_count = sourceCount();
+  for (size_t i = 0; i < source_count; i++) {
+    Source s = getSource(i);
+    vector<Source> tmp = s.findSources(predicate);
+    result.insert(result.begin(), tmp.begin(), tmp.end());
+  }
+  
+  return result;
+}
+  
+  
 
 Source Block::createSource(string name, string type) {
   string id = util::createId("source");

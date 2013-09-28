@@ -131,6 +131,10 @@ public:
    */
   std::vector<Source> sources() const;
 
+  
+  
+  std::vector<Source> findSources(std::function<bool(const Source &)>) const;
+  
   /**
    * Create a new root source.
    *
