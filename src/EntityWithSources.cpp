@@ -27,31 +27,29 @@ namespace pandora {
 
 
 EntityWithSources::EntityWithSources(File file, Block block, Group group, string id)
-  : EntityWithMetadata(file, group, id), block(block)
+  : EntityWithMetadata(file, group, id), block(block), sources_refs(group, "sources")
 {
-
 }
 
 
 EntityWithSources::EntityWithSources(File file, Block block, Group group, string id, time_t time)
-  : EntityWithMetadata(file, group, id, time), block(block)
+  : EntityWithMetadata(file, group, id, time), block(block), sources_refs(group, "sources")
 {
-
 }
 
-  
+
 std::vector<std::string> EntityWithSources::source_ids() const
 {
   vector<string> ids;
-    
+
   if (group.hasData("sources")) {
     DataSet ds = group.openData("sources");
     ds.read(ids, true);
   }
-    
+
   return ids;
 }
-  
+
 
 size_t EntityWithSources::sourceCount() const {
   size_t count = 0;
@@ -65,122 +63,47 @@ size_t EntityWithSources::sourceCount() const {
 
 
 bool EntityWithSources::hasSource(const Source &source) const {
-  return hasSource(source.id());
+  return sources_refs.has(source);
 }
 
 
 bool EntityWithSources::hasSource(string id) const {
-  vector<string> ids = source_ids();
-  return std::find(ids.begin(), ids.end(), id) != ids.end();
+  return sources_refs.has(id);
 }
 
-  
-vector<Source> EntityWithSources::sources() const {
-  vector<string> ids = source_ids();
-  vector<Source> source_obj;
 
-  source_obj = block.findSources([&](const Source &source) {
+vector<Source> EntityWithSources::sources() const {
+  vector<string> ids = sources_refs.get();
+
+  vector<Source> source_obj = block.findSources([&](const Source &source) {
     return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
   });
-  
+
   if (source_obj.size() != ids.size()) {
     // TODO What is the right thing to do here?
     throw runtime_error("Could not resolve all ids");
   }
-  
+
   return source_obj;
 }
 
 
 void EntityWithSources::addSource(const Source &source) {
-  string source_id = source.id();
-
-  if (!block.hasSource(source_id)) {
-    throw runtime_error("Unable to find source with id " + source_id +
-                        "on block " + block.id());
-  }
-
-  if (!hasSource(source_id)) {
-    vector<string> vals;
-    vals.push_back(source_id);
-    PSize start;
-    DataSet ds((H5::DataSet()));
-
-    if (group.hasData("sources")) {
-      ds = group.openData("sources");
-      PSize size = ds.size();
-      PSize newSize = size + 1;
-      ds.extend(newSize);
-      start = size;
-    } else {
-      Charon<vector<string>> charon(vals);
-      PSize size = { 1 };
-      PSize maxsize = { H5S_UNLIMITED };
-      PSize chunks = DataSet::guessChunking(size, DataType::Double);
-      ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
-          &maxsize, &chunks);
-      start = {0};
-    }
-
-    Selection fileSel = ds.createSelection();
-    PSize count = { 1 };
-    fileSel.select(count, start);
-    ds.write(vals, fileSel);
-  }
-  
+  sources_refs.add(source);
 }
 
 
-void EntityWithSources::sources(vector<Source> s) {
-  vector<string> ids;
-
+void EntityWithSources::sources(const vector<Source> &s) {
+  vector<string> ids(s.size());
   for (size_t i = 0; i < s.size(); i++) {
-    string id = s[i].id();
-    if (block.hasSource(id)) {
-      ids.push_back(id);
-    } else {
-      throw runtime_error("Unable to find source with id " + id +
-                              "on block " + block.id());
-    }
+    ids[i] = s[i].id();
   }
-
-  sort(ids.begin(), ids.end());
-
-  // TODO It would be so cool if we could avoid/reduce this boiler plate code.
-  group.removeData("sources");
-  PSize start;
-  DataSet ds((H5::DataSet()));
-  Charon<vector<string> > charon(ids);
-  PSize size = { ids.size() };
-  PSize maxsize = { H5S_UNLIMITED };
-  PSize chunks = DataSet::guessChunking(size, DataType::Double);
-  ds = DataSet::create(group.h5Group(), charon.getFileType(), "sources", size,
-      &maxsize, &chunks);
-  start = {0};
-  Selection fileSel = ds.createSelection();
-  PSize count = { ids.size() };
-  fileSel.select(count, start);
-  ds.write(ids, fileSel);
-
+  sources_refs.set(ids);
 }
 
 
 bool EntityWithSources::removeSource(const Source &source){
-  bool removed = false;
-  vector<Source> source_obj = sources();
-
-  for(size_t i = 0; i < source_obj.size() && !removed; i++){
-    if (source_obj[i].compare(source) == 0) {
-      source_obj.erase(source_obj.begin() + i);
-      removed = true;
-    }
-  }
-
-  if (removed) {
-    sources(source_obj);
-  }
-
-  return removed;
+  return sources_refs.remove(source);
 }
 
 

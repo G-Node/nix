@@ -19,6 +19,10 @@ namespace util {
 const PSize ReferenceList::MIN_CHUNK_SIZE = {1};
 const PSize ReferenceList::MAX_SIZE_1D = {H5S_UNLIMITED};
 
+ReferenceList::ReferenceList(const ReferenceList &other)
+  : group(other.group), ds_name(other.ds_name)
+{}
+
 ReferenceList::ReferenceList(const Group &group, const string &ds_name)
   : group(group), ds_name(ds_name)
 {}
@@ -61,6 +65,7 @@ void ReferenceList::set(const vector<string> &ids) {
     ds.write(ids);
   }
 }
+
 
 void ReferenceList::add(const string &id) {
   vector<string> new_ids = {id};
@@ -108,6 +113,24 @@ bool ReferenceList::remove(const string &id) {
 
   return removed;
 }
+
+bool ReferenceList::operator==(const ReferenceList &other) const {
+  return group == other.group && ds_name == other.ds_name;
+}
+
+bool ReferenceList::operator!=(const ReferenceList &other) const {
+  return !(*this == other);
+}
+
+ReferenceList& ReferenceList::operator=(const ReferenceList &other) {
+  if (*this != other) {
+    this->group = other.group;
+    this->ds_name = other.ds_name;
+  }
+  return *this;
+}
+
+ReferenceList::~ReferenceList() {}
 
 } // namespace util
 } // namespace pandora
