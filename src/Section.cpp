@@ -182,7 +182,7 @@ std::vector<Section> Section::findSections(std::function<bool(const Section &)> 
 		results.push_back(*this);
 	}
 
-	findSectionsRec(*this, results, predicate, max_depth, 1);
+	findSectionsRec(*this, results, predicate, 1, max_depth);
 	return results;
 }
 
@@ -211,6 +211,10 @@ void Section::findSectionsRec(const Section &cur_section,
 		int level,
 		int max_depth) const
 {
+	if (max_depth > 0 && level > max_depth) {
+		return;
+	}
+
 	size_t section_count = cur_section.sectionCount();
 	std::vector<Section> my_children;
 
@@ -220,13 +224,9 @@ void Section::findSectionsRec(const Section &cur_section,
 		if (predicate(s)) {
 			results.push_back(s);
 		}
-
 		my_children.push_back(s);
 	}
 
-	if (max_depth > 0 && level > max_depth) {
-		return;
-	}
 
 	for (size_t i = 0; i < my_children.size(); i++) {
 		findSectionsRec(my_children[i], results, predicate, level + 1, max_depth);

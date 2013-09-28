@@ -22,137 +22,138 @@ namespace pandora {
 
 
 Source::Source(const Source &source)
-  : EntityWithMetadata(source.file, source.group, source.entity_id)
+: EntityWithMetadata(source.file, source.group, source.entity_id)
 {
-  source_group = source.source_group;
+	source_group = source.source_group;
 }
 
 
 Source::Source(File file, Group group, const std::string &id)
-  : EntityWithMetadata(file, group, id)
+: EntityWithMetadata(file, group, id)
 {
-  source_group = group.openGroup("sources");
+	source_group = group.openGroup("sources");
 }
 
 
 Source::Source(File file, Group group, const std::string &id, time_t time)
-  : EntityWithMetadata(file, group, id, time)
+: EntityWithMetadata(file, group, id, time)
 {
-  source_group = group.openGroup("sources");
+	source_group = group.openGroup("sources");
 }
 
 
 bool Source::hasSource(const string &id) const {
-  return source_group.hasGroup(id);
+	return source_group.hasGroup(id);
 }
 
 
 Source Source::getSource(const string &id) const {
-  return Source(file, source_group.openGroup(id, false), id);
+	return Source(file, source_group.openGroup(id, false), id);
 }
 
 
 Source Source::getSource(size_t index) const {
-  string id = source_group.objectName(index);
-  return Source(file, source_group.openGroup(id, false), id);
+	string id = source_group.objectName(index);
+	return Source(file, source_group.openGroup(id, false), id);
 }
 
 
 void Source::findSourcesRec(const Source &cur_source,
-                            std::vector<Source> &results,
-                            std::function<bool(const Source &)> predicate,
-                            int level,
-                            int max_depth) const
+		std::vector<Source> &results,
+		std::function<bool(const Source &)> predicate,
+		int level,
+		int max_depth) const
 {
-  size_t source_count = cur_source.sourceCount();
-  std::vector<Source> my_children;
-  
-  for (size_t i = 0; i < source_count; i++) {
-    Source s = cur_source.getSource(i);
-    
-    if (predicate(s)) {
-      results.push_back(s);
-    }
-    
-    my_children.push_back(s);
-  }
-  
-  if (max_depth > 0 && level > max_depth) {
-    return;
-  }
-  
-  for (size_t i = 0; i < my_children.size(); i++) {
-    findSourcesRec(my_children[i], results, predicate, level + 1, max_depth);
-  }
-  
+	if (max_depth > 0 && level > max_depth) {
+		return;
+	}
+
+	size_t source_count = cur_source.sourceCount();
+	std::vector<Source> my_children;
+
+	for (size_t i = 0; i < source_count; i++) {
+		Source s = cur_source.getSource(i);
+
+		if (predicate(s)) {
+			results.push_back(s);
+		}
+
+		my_children.push_back(s);
+	}
+
+
+	for (size_t i = 0; i < my_children.size(); i++) {
+		findSourcesRec(my_children[i], results, predicate, level + 1, max_depth);
+	}
+
 }
-  
+
 
 std::vector<Source> Source::findSources(std::function<bool(const Source &)> predicate, bool exclude_root, int max_depth) const
 {
-  std::vector<Source> results;
-  
-  if (!exclude_root && predicate(*this)) {
-    results.push_back(*this);
-  }
-  
-  findSourcesRec(*this, results, predicate, max_depth, 1);
-  return results;
+	std::vector<Source> results;
+
+	if (!exclude_root && predicate(*this)) {
+		results.push_back(*this);
+	}
+
+	findSourcesRec(*this, results, predicate, 1, max_depth);
+	return results;
 }
-  
+
 size_t Source::sourceCount() const {
-  return source_group.objectCount();
+	return source_group.objectCount();
 }
 
 
 std::vector<Source> Source::sources() const {
-  vector<Source> source_obj;
+	vector<Source> source_obj;
 
-  source_obj = findSources([](const Source &source) {
-    return true;
-  }, true, 1);
+	source_obj = findSources([](const Source &source) {
+		return true;
+	}, true, 1);
 
-  return source_obj;
+	return source_obj;
 }
 
 
 Source Source::createSource(const string &name, const string &type) {
-  string id = util::createId("source");
+	string id = util::createId("source");
 
-  while(source_group.hasObject(id)) {
-    id = util::createId("source");
-  }
+	while(source_group.hasObject(id)) {
+		id = util::createId("source");
+	}
 
-  Source s(file, source_group.openGroup(id, true), id);
-  s.name(name);
-  s.type(type);
+	Source s(file, source_group.openGroup(id, true), id);
+	s.name(name);
+	s.type(type);
 
-  return s;
+	return s;
 }
 
 
 ostream& operator<<(ostream &out, const Source &ent) {
-  out << "Source: {name = " << ent.name();
-  out << ", type = " << ent.type();
-  out << ", id = " << ent.id() << "}";
-  return out;
+	out << "Source: {name = " << ent.name();
+	out << ", type = " << ent.type();
+	out << ", id = " << ent.id() << "}";
+	return out;
 }
 
 
 Source& Source::operator=(const Source &other) {
-  if (*this != other) {
-    this->file = other.file;
-    this->group = other.group;
-    this->entity_id = other.entity_id;
-    this->source_group = other.source_group;
-  }
-  return *this;
+	if (*this != other) {
+		this->file = other.file;
+		this->group = other.group;
+		this->entity_id = other.entity_id;
+		this->source_group = other.source_group;
+	}
+	return *this;
 }
 
 
 
 Source::~Source() {
-  //dtor
+	//dtor
 }
 
 } // end namespace pandora
