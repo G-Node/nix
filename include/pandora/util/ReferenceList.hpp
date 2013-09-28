@@ -7,8 +7,7 @@
 // LICENSE file in the root of the Project.
 
 /**
- * @file pandora/File.hpp
- * @brief Definition of the class file.
+ * @file pandora/util/ReferenceList.hpp
  */
 
 #ifndef PAN_REFERENCE_LIST_H_INCLUDED
