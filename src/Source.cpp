@@ -68,8 +68,7 @@ void Source::findSourcesRec(const Source &cur_source,
   std::vector<Source> my_children;
   
   for (size_t i = 0; i < source_count; i++) {
-    string id = cur_source.source_group.objectName(i);
-    Source s(file, cur_source.source_group.openGroup(id, false), id);
+    Source s = cur_source.getSource(i);
     
     if (predicate(s)) {
       results.push_back(s);
