@@ -64,7 +64,7 @@ void Source::findSourcesRec(const Source &cur_source,
                             int level,
                             int max_depth) const
 {
-  size_t source_count = cur_source.source_group.objectCount();
+  size_t source_count = cur_source.sourceCount();
   std::vector<Source> my_children;
   
   for (size_t i = 0; i < source_count; i++) {
