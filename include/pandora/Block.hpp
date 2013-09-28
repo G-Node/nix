@@ -97,16 +97,6 @@ public:
   Source getSource(size_t index) const;
 
   /**
-   * Checks if a source with a specific id exists either as a root source or
-   * somewhere in the subtree of all root sources.
-   *
-   * @param id        The id of the source.
-   *
-   * @return True if a source with the given id exists, false otherwise.
-   */
-  bool existsSource(std::string id) const;
-
-  /**
    * Retrieves a specific source by searching all sources and their
    * child sources.
    *

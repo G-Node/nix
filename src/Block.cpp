@@ -72,32 +72,6 @@ Source Block::getSource(size_t index) const {
 }
 
 
-bool Block::existsSource(string id) const {
-
-  if (hasSource(id)) {
-    return true;
-  } else {
-    vector<Source> stack;
-    vector<Source> tmp(sources());
-    stack.insert(stack.end(), tmp.begin(), tmp.end());
-
-    bool found = false;
-    while(!found && stack.size() > 0) {
-      Source s(stack.back());
-      stack.pop_back();
-
-      if (s.hasSource(id)) {
-        found = true;
-      } else {
-        vector<Source> tmp = s.sources();
-        stack.insert(stack.end(), tmp.begin(), tmp.end());
-      }
-    }
-
-    return found;
-  }
-}
-
 
 Source Block::findSource(string id) const {
 
