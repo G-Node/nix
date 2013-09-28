@@ -283,7 +283,7 @@ public:
                                                 				<< " Property count should be: " << oldCount + 5 << " but is: "
                                                 				<< s.propertyCount();
 		CPPUNIT_ASSERT_MESSAGE(msg.str(), s.propertyCount() == (oldCount + 5));
-		Property p = *s.properties();
+		Property p = s.properties()[0];
 		stringstream msg2;
 		msg2
 		<< "Error while adding already existing property. Should have thrown a runtime exception!";
@@ -373,10 +373,10 @@ public:
 		CPPUNIT_ASSERT_MESSAGE(msg3.str(), val.value == 300.0);
 
 		//test inherited PropertyIterator
-		PropertyIterator iter = derived.inheritedProperties();
+		std::vector<Property> props = derived.inheritedProperties();
 		stringstream msg4;
 		msg4 << "Error while retrieving PropertyIterator from section that is linked!";
-		CPPUNIT_ASSERT_MESSAGE(msg4.str(), iter.begin() != iter.end());
+		CPPUNIT_ASSERT_MESSAGE(msg4.str(), props.size() == 0);
 
 		stringstream msg5;
 		msg5 << "Error while retrieving PropertyIterator that is not linked! Should have thrown runtime exception!";

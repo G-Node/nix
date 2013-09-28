@@ -4,7 +4,6 @@
 #include <pandora/SectionTreeIterator.hpp>
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
-#include <pandora/PropertyIterator.hpp>
 #include <iostream>
 
 using namespace std;
@@ -320,10 +319,10 @@ Property Section::getProperty(const std::string &id) const {
 }
 
 Property Section::getPropertyByName(const std::string &name) const {
-	for (PropertyIterator iter = properties(); iter != iter.end(); ++iter) {
-		Property p = *iter;
-		if (p.name() == name)
-			return p;
+	std::vector<Property> props = properties();
+	for (size_t i = 0; i < props.size(); i ++){
+		if (props[i].name().compare(name) == 0)
+			return props[i];
 	}
 	if (this->link().length() > 0) {
 		std::vector<Section> s = this->file.findSection(this->link());
@@ -375,9 +374,9 @@ bool Section::hasProperty(const std::string &id) const {
 }
 
 bool Section::hasPropertyByName(const string &name) const {
-	for (PropertyIterator iter = properties(); iter != iter.end(); ++iter) {
-		Property p = *iter;
-		if (p.name() == name)
+	std::vector<Property> props = properties();
+	for (size_t i = 0; i < props.size(); i++){
+		if (props[i].name().compare(name)==0)
 			return true;
 	}
 	return false;
