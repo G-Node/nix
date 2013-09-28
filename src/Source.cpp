@@ -109,12 +109,9 @@ size_t Source::sourceCount() const {
 std::vector<Source> Source::sources() const {
   vector<Source> source_obj;
 
-  size_t source_count = source_group.objectCount();
-  for (size_t i = 0; i < source_count; i++) {
-    string id = source_group.objectName(i);
-    Source s(file, source_group.openGroup(id, false), id);
-    source_obj.push_back(s);
-  }
+  source_obj = findSources([](const Source &source) {
+    return true;
+  }, true, 1);
 
   return source_obj;
 }
