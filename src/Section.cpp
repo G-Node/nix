@@ -288,21 +288,27 @@ size_t Section::sectionCount() const {
 	return childCount;
 }
 
-PropertyIterator Section::properties() const {
-	PropertyIterator iter(*this, property_group);
-	return iter;
+std::vector<Property> Section::properties() const {
+	std::vector<Property> props;
+	for (size_t i = 0; i < propertyCount(); i++){
+		string id = property_group.objectName(i);
+		Group g = property_group.openGroup(id,false);
+		Property p = Property(g,id);
+		props.push_back(p);
+	}
+	return props;
 }
 
 
-PropertyIterator Section::inheritedProperties() const {
+std::vector<Property> Section::inheritedProperties() const {
+	std::vector<Property> props;
 	if(this->link().length() > 0){
 		std::vector<Section> sects = file.findSection(this->link());
 		if(!sects.empty()){
-			return sects[0].properties();
+			props = sects[0].properties();
 		}
 	}
-	throw std::runtime_error(
-			"Section has no link, cannot retrieve inherited Properties!");
+	return props;
 }
 
 Property Section::getProperty(const std::string &id) const {

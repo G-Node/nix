@@ -97,9 +97,9 @@ public:
 
   bool removeSection(const std::string &id);
 
-  PropertyIterator properties() const;
+  std::vector<Property> properties() const;
 
-  PropertyIterator inheritedProperties() const;
+  std::vector<Property> inheritedProperties() const;
 
   Property getProperty(const std::string &id) const;
 
@@ -132,7 +132,6 @@ private:
 
   std::vector<std::string> findDownstream(const std::string &type) const;
 
-  //void findSectionRec(const std::string &id, std::vector<Section> &sec) const;
   void findSectionsRec(const Section &cur_section,
                         std::vector<Section> &results,
                         std::function<bool(const Section &)> predicate,
