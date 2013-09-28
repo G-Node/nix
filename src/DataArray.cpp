@@ -135,7 +135,29 @@ double DataArray::applyPolynomial(std::vector<double> &coefficients, double orig
   }
   return value;
 }
+
+
 // TODO put missing methods here.
+
+
+DataArray& DataArray::operator=(const DataArray &other) {
+  if (*this != other) {
+    this->file = other.file;
+    this->block = other.block;
+    this->group = other.group;
+    this->entity_id = other.entity_id;
+    this->dimension_group = other.dimension_group;
+  }
+  return *this;
+}
+
+
+ostream& operator<<(ostream &out, const DataArray &ent) {
+  out << "DataArray: {name = " << ent.name();
+  out << ", type = " << ent.type();
+  out << ", id = " << ent.id() << "}";
+  return out;
+}
 
 
 DataArray::~DataArray(){
