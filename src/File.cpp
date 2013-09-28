@@ -62,6 +62,9 @@ File::File(string name, FileMode mode)
   metadata = root.openGroup("metadata");
   data = root.openGroup("data");
 
+  setCreatedAt();
+  setUpdatedAt();
+
   if(!checkHeader()) {
     /// TODO throw an exception here
   }
@@ -212,11 +215,37 @@ time_t File::updatedAt() const {
   return util::strToTime(t);
 }
 
+void File::setUpdatedAt() {
+  if (!root.hasAttr("updated_at")) {
+    time_t t = time(NULL);
+    root.setAttr("updated_at", util::timeToStr(t));
+  }
+}
+
+
+void File::forceUpdatedAt() {
+  time_t t = time(NULL);
+  root.setAttr("updated_at", util::timeToStr(t));
+}
+
 
 time_t File::createdAt() const {
   string t;
   root.getAttr("created_at", t);
   return util::strToTime(t);
+}
+
+
+void File::setCreatedAt() {
+  if (!root.hasAttr("created_at")) {
+    time_t t = time(NULL);
+    root.setAttr("created_at", util::timeToStr(t));
+  }
+}
+
+
+void File::forceCreatedAt(time_t t) {
+	root.setAttr("created_at", util::timeToStr(t));
 }
 
 
@@ -252,14 +281,6 @@ bool File::checkHeader() const {
     }
   } else {
     root.setAttr("version", VERSION);
-  }
-  // check created_at
-  if (!root.hasAttr("created_at")) {
-    root.setAttr("created_at", util::timeToStr(time(NULL)));
-  }
-  // check updated_at
-  if (!root.hasAttr("updated_at")) {
-    root.setAttr("updated_at", util::timeToStr(time(NULL)));
   }
   return check;
 }
@@ -298,6 +319,7 @@ File& File::operator=(const File &other) {
 
 
 File::~File() {
+  setUpdatedAt();
   h5file.close();
 }
 
