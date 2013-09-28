@@ -73,42 +73,6 @@ Source Block::getSource(size_t index) const {
 
 
 
-Source Block::findSource(string id) const {
-
-  if (sourceCount() == 0) {
-    throw runtime_error("Unable to find the source with id " + id + "!");
-  }
-
-  if (hasSource(id)) {
-    return getSource(id);
-  } else {
-    vector<Source> stack;
-    vector<Source> tmp(sources());
-    stack.insert(stack.end(), tmp.begin(), tmp.end());
-    Source result(stack[0]);
-
-    bool found = false;
-    while(!found && stack.size() > 0) {
-      Source s(stack.back());
-      stack.pop_back();
-
-      if (s.hasSource(id)) {
-        found = true;
-        result = s.getSource(id);
-      } else {
-        vector<Source> tmp(s.sources());
-        stack.insert(stack.end(), tmp.begin(), tmp.end());
-      }
-    }
-
-    if (!found) {
-      throw runtime_error("Unable to find the source with id " + id + "!");
-    }
-
-    return result;
-  }
-}
-
 
 size_t Block::sourceCount() const {
   return source_group.objectCount();

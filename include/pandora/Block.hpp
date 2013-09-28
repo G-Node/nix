@@ -96,17 +96,7 @@ public:
    */
   Source getSource(size_t index) const;
 
-  /**
-   * Retrieves a specific source by searching all sources and their
-   * child sources.
-   *
-   * @param id        The id of the source.
-   *
-   * @return The source with the given id. If it doesn't exist an exception
-   *         will be thrown.
-   */
-  Source findSource(std::string id) const;
-
+  
   /**
    * Returns the number of root sources in this block.
    *
