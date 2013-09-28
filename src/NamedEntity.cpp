@@ -21,21 +21,21 @@ using namespace std;
 namespace pandora {
 
 
-NamedEntity::NamedEntity(Group group, string id)
+NamedEntity::NamedEntity(Group group, const string &id)
   : PandoraEntity(group, id)
 {
   // nothing to do
 }
 
 
-NamedEntity::NamedEntity(Group group, string id, time_t time)
+NamedEntity::NamedEntity(Group group, const string &id, time_t time)
   : PandoraEntity(group, id, time)
 {
   // nothing to do
 }
 
 
-void NamedEntity::type(string type) {
+void NamedEntity::type(const string &type) {
   group.setAttr("type", type);
   forceUpdatedAt();
 }
@@ -48,7 +48,7 @@ string NamedEntity::type() const {
 }
 
 
-void NamedEntity::name(string name) {
+void NamedEntity::name(const string &name) {
   group.setAttr("name", name);
   forceUpdatedAt();
 }
@@ -61,7 +61,7 @@ string NamedEntity::name() const {
 }
 
 
-void NamedEntity::definition(string definition) {
+void NamedEntity::definition(const string &definition) {
   group.setAttr("definition", definition);
   forceUpdatedAt();
 }

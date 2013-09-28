@@ -39,12 +39,12 @@ public:
   /**
    * Standard constructor
    */
-  PandoraEntity(Group group, std::string id);
+  PandoraEntity(Group group,const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  PandoraEntity(Group group, std::string id, time_t time);
+  PandoraEntity(Group group,const std::string &id, time_t time);
 
   /**
    * Getter for the id of the entity.

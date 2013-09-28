@@ -32,12 +32,12 @@ public:
   /**
    * Standard constructor
    */
-  NamedEntity(Group group, std::string id);
+  NamedEntity(Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  NamedEntity(Group group, std::string id, time_t time);
+  NamedEntity(Group group, const std::string &id, time_t time);
 
 
   /**
@@ -45,7 +45,7 @@ public:
    *
    * @param type The type to set.
    */
-  void type(std::string type);
+  void type(const std::string &type);
 
   /**
    * Getter for the type of the entity.
@@ -59,7 +59,7 @@ public:
    *
    * @param name The name of the entity.
    */
-  void name(std::string name);
+  void name(const std::string &name);
 
   /**
    * Getter for the name of the entity.
@@ -73,7 +73,7 @@ public:
    *
    * @param definition The definition of the entity.
    */
-  void definition(std::string definition);
+  void definition(const std::string &definition);
 
   /**
    * Getter for the definition of the entity.

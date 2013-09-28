@@ -21,7 +21,7 @@ using namespace std;
 namespace pandora {
 
 
-PandoraEntity::PandoraEntity(Group group, string id) :
+PandoraEntity::PandoraEntity(Group group, const string &id) :
     group(group), entity_id(id)
 {
   setUpdatedAt();
@@ -29,7 +29,7 @@ PandoraEntity::PandoraEntity(Group group, string id) :
 }
 
 
-PandoraEntity::PandoraEntity(Group group, string id, time_t time) :
+PandoraEntity::PandoraEntity(Group group, const string &id, time_t time) :
     group(group), entity_id(id)
 {
   setUpdatedAt();
