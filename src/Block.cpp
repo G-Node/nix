@@ -72,68 +72,6 @@ Source Block::getSource(size_t index) const {
 }
 
 
-bool Block::existsSource(string id) const {
-
-  if (hasSource(id)) {
-    return true;
-  } else {
-    vector<Source> stack;
-    vector<Source> tmp(sources());
-    stack.insert(stack.end(), tmp.begin(), tmp.end());
-
-    bool found = false;
-    while(!found && stack.size() > 0) {
-      Source s(stack.back());
-      stack.pop_back();
-
-      if (s.hasSource(id)) {
-        found = true;
-      } else {
-        vector<Source> tmp = s.sources();
-        stack.insert(stack.end(), tmp.begin(), tmp.end());
-      }
-    }
-
-    return found;
-  }
-}
-
-
-Source Block::findSource(string id) const {
-
-  if (sourceCount() == 0) {
-    throw runtime_error("Unable to find the source with id " + id + "!");
-  }
-
-  if (hasSource(id)) {
-    return getSource(id);
-  } else {
-    vector<Source> stack;
-    vector<Source> tmp(sources());
-    stack.insert(stack.end(), tmp.begin(), tmp.end());
-    Source result(stack[0]);
-
-    bool found = false;
-    while(!found && stack.size() > 0) {
-      Source s(stack.back());
-      stack.pop_back();
-
-      if (s.hasSource(id)) {
-        found = true;
-        result = s.getSource(id);
-      } else {
-        vector<Source> tmp(s.sources());
-        stack.insert(stack.end(), tmp.begin(), tmp.end());
-      }
-    }
-
-    if (!found) {
-      throw runtime_error("Unable to find the source with id " + id + "!");
-    }
-
-    return result;
-  }
-}
 
 
 size_t Block::sourceCount() const {
@@ -144,16 +82,32 @@ size_t Block::sourceCount() const {
 std::vector<Source> Block::sources() const {
   vector<Source> source_obj;
 
-  size_t source_count = source_group.objectCount();
+  size_t source_count = sourceCount();
   for (size_t i = 0; i < source_count; i++) {
-    string id = source_group.objectName(i);
-    Source s(file, source_group.openGroup(id, false), id);
+    Source s = getSource(i);
     source_obj.push_back(s);
   }
 
   return source_obj;
 }
 
+  
+  
+std::vector<Source> Block::findSources(std::function<bool(const Source &)> predicate) const
+{
+  vector<Source> result;
+  
+  size_t source_count = sourceCount();
+  for (size_t i = 0; i < source_count; i++) {
+    Source s = getSource(i);
+    vector<Source> tmp = s.findSources(predicate);
+    result.insert(result.begin(), tmp.begin(), tmp.end());
+  }
+  
+  return result;
+}
+  
+  
 
 Source Block::createSource(string name, string type) {
   string id = util::createId("source");
