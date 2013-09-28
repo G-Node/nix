@@ -74,17 +74,10 @@ bool EntityWithSources::hasSource(string id) const {
   return std::find(ids.begin(), ids.end(), id) != ids.end();
 }
 
-
+  
 vector<Source> EntityWithSources::sources() const {
-  vector<string> ids;
+  vector<string> ids = source_ids();
   vector<Source> source_obj;
-
-  if (group.hasData("sources")) {
-    DataSet ds = group.openData("sources");
-    Selection fileSel = ds.createSelection();
-    fileSel.select({0}, {sourceCount()});
-    ds.read(ids, fileSel, true);
-  }
 
   source_obj = block.findSources([&](const Source &source) {
     return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
@@ -134,6 +127,7 @@ void EntityWithSources::addSource(const Source &source) {
     fileSel.select(count, start);
     ds.write(vals, fileSel);
   }
+  
 }
 
 
