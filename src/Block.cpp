@@ -144,10 +144,9 @@ size_t Block::sourceCount() const {
 std::vector<Source> Block::sources() const {
   vector<Source> source_obj;
 
-  size_t source_count = source_group.objectCount();
+  size_t source_count = sourceCount();
   for (size_t i = 0; i < source_count; i++) {
-    string id = source_group.objectName(i);
-    Source s(file, source_group.openGroup(id, false), id);
+    Source s = getSource(i);
     source_obj.push_back(s);
   }
 
