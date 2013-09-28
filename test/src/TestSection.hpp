@@ -32,9 +32,9 @@ private:
 	//CPPUNIT_TEST(testFinding);
 	//CPPUNIT_TEST(testTypeFilter);
 	//CPPUNIT_TEST(testRelatedSections);
-	//CPPUNIT_TEST(testAddingProperties);
-	//CPPUNIT_TEST(testAccessingProperties);
-	//CPPUNIT_TEST(testRemovingProperties);
+	CPPUNIT_TEST(testAddingProperties);
+	CPPUNIT_TEST(testAccessingProperties);
+	CPPUNIT_TEST(testRemovingProperties);
 	//CPPUNIT_TEST(testSectionLinks);
 	CPPUNIT_TEST_SUITE_END ();
 
@@ -266,7 +266,6 @@ public:
 
 		f1.removeSection(a1.id());
 	}
-
 
 
 	void testAddingProperties() {

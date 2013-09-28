@@ -307,7 +307,7 @@ PropertyIterator Section::inheritedProperties() const {
 
 Property Section::getProperty(const std::string &id) const {
 	if (property_group.hasGroup(id)) {
-		return Property(*this, property_group.openGroup(id, false), id);
+		return Property(property_group.openGroup(id, false), id);
 	} else {
 		throw std::runtime_error(
 				"Requested Property does not exist! Always check with hasProperty!");
@@ -339,7 +339,7 @@ Property Section::addProperty(const std::string &name) {
 	string new_id = util::createId("property");
 	while (property_group.hasObject(new_id))
 		new_id = util::createId("property");
-	Property p(*this, property_group.openGroup(new_id, true), new_id);
+	Property p(property_group.openGroup(new_id, true), new_id);
 	p.name(name);
 	return p;
 }
