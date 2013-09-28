@@ -73,12 +73,12 @@ File::File(const File &file)
 {}
 
 
-bool File::hasBlock(std::string id) const {
+bool File::hasBlock(const std::string &id) const {
   return data.hasGroup(id);
 }
 
 
-Block File::getBlock(std::string id) const {
+Block File::getBlock(const std::string &id) const {
   return Block(*this, data.openGroup(id, false), id);
 }
 
@@ -103,7 +103,7 @@ vector<Block> File::blocks() const {
 }
 
 
-Block File::createBlock(string name, string type) {
+Block File::createBlock(const std::string &name, string type) {
   string id = util::createId("block");
   while(data.hasObject(id))
     id = util::createId("block");
@@ -114,7 +114,7 @@ Block File::createBlock(string name, string type) {
 }
 
 
-bool File::removeBlock(std::string id) {
+bool File::removeBlock(const std::string &id) {
   if (data.hasGroup(id)) {
     data.removeGroup(id);
     return true;
