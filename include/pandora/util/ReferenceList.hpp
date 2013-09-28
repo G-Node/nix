@@ -22,6 +22,9 @@ namespace util {
 
 class ReferenceList {
 
+  static const PSize MIN_CHUNK_SIZE;
+  static const PSize MAX_SIZE_1D;
+
   Group group;
   std::string ds_name;
 
@@ -31,7 +34,7 @@ class ReferenceList {
 
   inline bool has(const PandoraEntity &entity) const;
 
-  std::vector<std::string> get();
+  std::vector<std::string> get() const;
 
   void set(const std::vector<std::string> &ids);
 

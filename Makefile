@@ -46,7 +46,8 @@ SRCS = src/Util.cpp \
 	src/SectionIterator.cpp \
 	src/SectionTreeIterator.cpp \
 	src/PropertyIterator.cpp \
-	src/Value.cpp	
+	src/Value.cpp \
+	src/ReferenceList.cpp
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
