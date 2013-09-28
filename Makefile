@@ -112,7 +112,7 @@ test/bin%: test/src%.cpp
 check%: test/bin/%
 	$^
 
-check: test
+check: lib test/bin/TestAll
 	@echo " [TESTING] "
 	./test/bin/TestAll
 
