@@ -96,27 +96,7 @@ public:
    */
   Source getSource(size_t index) const;
 
-  /**
-   * Checks if a source with a specific id exists either as a root source or
-   * somewhere in the subtree of all root sources.
-   *
-   * @param id        The id of the source.
-   *
-   * @return True if a source with the given id exists, false otherwise.
-   */
-  bool existsSource(std::string id) const;
-
-  /**
-   * Retrieves a specific source by searching all sources and their
-   * child sources.
-   *
-   * @param id        The id of the source.
-   *
-   * @return The source with the given id. If it doesn't exist an exception
-   *         will be thrown.
-   */
-  Source findSource(std::string id) const;
-
+  
   /**
    * Returns the number of root sources in this block.
    *
@@ -131,6 +111,10 @@ public:
    */
   std::vector<Source> sources() const;
 
+  
+  
+  std::vector<Source> findSources(std::function<bool(const Source &)>) const;
+  
   /**
    * Create a new root source.
    *

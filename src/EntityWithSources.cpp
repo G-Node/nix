@@ -39,6 +39,19 @@ EntityWithSources::EntityWithSources(File file, Block block, Group group, string
 
 }
 
+  
+std::vector<std::string> EntityWithSources::source_ids() const
+{
+  vector<string> ids;
+    
+  if (group.hasData("sources")) {
+    DataSet ds = group.openData("sources");
+    ds.read(ids, true);
+  }
+    
+  return ids;
+}
+  
 
 size_t EntityWithSources::sourceCount() const {
   size_t count = 0;
@@ -57,45 +70,24 @@ bool EntityWithSources::hasSource(const Source &source) const {
 
 
 bool EntityWithSources::hasSource(string id) const {
-  bool found = false;
-
-  if (sourceCount() > 0) {
-    vector<Source> s = sources();
-    for (size_t i = 0; i < s.size() && !found; i++) {
-      if (s[i].id().compare(id) == 0) {
-        found = true;
-        break;
-      }
-    }
-  }
-
-  return found;
+  vector<string> ids = source_ids();
+  return std::find(ids.begin(), ids.end(), id) != ids.end();
 }
 
-
+  
 vector<Source> EntityWithSources::sources() const {
-  vector<string> ids;
+  vector<string> ids = source_ids();
   vector<Source> source_obj;
 
-  if (group.hasData("sources")) {
-    DataSet ds = group.openData("sources");
-    Selection fileSel = ds.createSelection();
-    fileSel.select({0}, {sourceCount()});
-    ds.read(ids, fileSel, true);
+  source_obj = block.findSources([&](const Source &source) {
+    return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
+  });
+  
+  if (source_obj.size() != ids.size()) {
+    // TODO What is the right thing to do here?
+    throw runtime_error("Could not resolve all ids");
   }
-
-  // TODO this will not perform very well for many sources.
-  //      Solution: implement the following methods in class Block.
-  //                Block::findSources(const vector<string> &ids) const;
-  //                Block::existsSources(const vector<string> &ids) const;
-  for (size_t i = 0; i < ids.size(); i++) {
-    if (block.existsSource(ids[i])) {
-      source_obj.push_back(block.findSource(ids[i]));
-    } else {
-      // TODO What is the right thing to do here?
-    }
-  }
-
+  
   return source_obj;
 }
 
@@ -135,6 +127,7 @@ void EntityWithSources::addSource(const Source &source) {
     fileSel.select(count, start);
     ds.write(vals, fileSel);
   }
+  
 }
 
 

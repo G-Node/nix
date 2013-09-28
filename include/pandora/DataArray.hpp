@@ -79,9 +79,6 @@ public:
   }
 
   template<typename T, size_t dims>
-  void setData(const boost::multi_array<T, dims> &data);
-
-  template<typename T, size_t dims>
   void getRawData(boost::multi_array<T, dims> &data) const{
     if(group.hasData("data")){
       DataSet ds = group.openData("data");
