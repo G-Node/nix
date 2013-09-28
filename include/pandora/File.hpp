@@ -14,7 +14,6 @@
 #ifndef PAN_FILE_H_INCLUDED
 #define PAN_FILE_H_INCLUDED
 
-#include <iterator>
 #include <string>
 #include <H5Cpp.h>
 

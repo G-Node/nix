@@ -15,10 +15,7 @@
 #include "pandora/File.hpp"
 #include "pandora/Block.hpp"
 #include "pandora/Section.hpp"
-#include "pandora/SectionIterator.hpp"
 #include "pandora/Property.hpp"
-#include "pandora/PropertyIterator.hpp"
-#include "pandora/SectionTreeIterator.hpp"
 
 using namespace std;
 using namespace pandora;
@@ -101,7 +98,7 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), test.hasChildren());
 		 */
 	}
-
+	/*
 	void testBreadthFirstTreeIterator(){
 		Section s1 = f1->createSection("Iterator test","test");
 		Section child1 = s1.addSection("Test child 1","test");
@@ -143,6 +140,7 @@ public:
 		CPPUNIT_ASSERT_MESSAGE(msg4.str(), count == 5);
 		f1->removeSection(s1.id());
 	}
+	*/
 
 	/*
   void testFinding(){
@@ -173,6 +171,7 @@ public:
     f1->removeSection(s1.id());
   }
 	 */
+	/*
 	void testTypeFilter(){
 		//TODO test the TreeIterator with type filter, test empty filter
 		Section s1 = f1->createSection("Iterator test","test");
@@ -219,7 +218,7 @@ public:
 
 		f1->removeSection(s1.id());
 	}
-
+	*/
 	void testRelatedSections(){
 		Section a1 = f1->createSection("RelationTest","a");
 		Section b1 = a1.addSection("b1","b");
@@ -233,27 +232,27 @@ public:
 		Section f1 = e1.addSection("f1","f");
 		Section c3 = a1.addSection("c3","c");
 
-		std::vector<std::string> v = e1.getRelatedSections("d");
+		std::vector<Section> v = e1.getRelatedSections("d");
 		stringstream msg;
 		msg << "Error retrieving related section of e1. Should be 1 section with name d3";
-		CPPUNIT_ASSERT_MESSAGE(msg.str(), v.size() == 1 && v[0].compare(d3.id()) == 0);
+		CPPUNIT_ASSERT_MESSAGE(msg.str(), v.size() == 1 && v[0].id().compare(d3.id()) == 0);
 
 		v = e1.getRelatedSections("c");
 		stringstream msg2;
 		msg2 << "Error retrieving related section of e1. Should be 1 section with name c2";
-		CPPUNIT_ASSERT_MESSAGE(msg2.str(), v.size() == 1 && v[0].compare(c2.id()) == 0);
+		CPPUNIT_ASSERT_MESSAGE(msg2.str(), v.size() == 1 && v[0].id().compare(c2.id()) == 0);
 
 		v = e1.getRelatedSections("b");
-		bool b1Present = (v[0].compare(b1.id()) == 0) || (v[1].compare(b1.id()) == 0);
-		bool b2Present = (v[0].compare(b2.id()) == 0) || (v[1].compare(b2.id()) == 0);
+		bool b1Present = (v[0].id().compare(b1.id()) == 0) || (v[1].id().compare(b1.id()) == 0);
+		bool b2Present = (v[0].id().compare(b2.id()) == 0) || (v[1].id().compare(b2.id()) == 0);
 		stringstream msg3;
 		msg3 << "Error retrieving related section of e1. Should be 2 sections with name b1 and b2";
 		CPPUNIT_ASSERT_MESSAGE(msg3.str(), v.size() == 2 && b1Present && b2Present);
 
 		v = b2.getRelatedSections("c");
-		bool c1Present = (v[0].compare(c1.id()) == 0) || (v[1].compare(c1.id()) == 0) || (v[2].compare(c1.id()) == 0);
-		bool c2Present = (v[0].compare(c2.id()) == 0) || (v[1].compare(c2.id()) == 0) || (v[2].compare(c2.id()) == 0);
-		bool c3Present = (v[0].compare(c3.id()) == 0) || (v[1].compare(c3.id()) == 0) || (v[2].compare(c3.id()) == 0);
+		bool c1Present = (v[0].id().compare(c1.id()) == 0) || (v[1].id().compare(c1.id()) == 0) || (v[2].id().compare(c1.id()) == 0);
+		bool c2Present = (v[0].id().compare(c2.id()) == 0) || (v[1].id().compare(c2.id()) == 0) || (v[2].id().compare(c2.id()) == 0);
+		bool c3Present = (v[0].id().compare(c3.id()) == 0) || (v[1].id().compare(c3.id()) == 0) || (v[2].id().compare(c3.id()) == 0);
 
 		stringstream msg4;
 		msg4 << "Error retrieving related section of b2. Should be 3 sibling sections.";

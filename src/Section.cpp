@@ -1,7 +1,5 @@
 #include <pandora/Group.hpp>
 #include <pandora/Section.hpp>
-#include <pandora/SectionIterator.hpp>
-#include <pandora/SectionTreeIterator.hpp>
 #include <pandora/Util.hpp>
 #include <pandora/Property.hpp>
 #include <iostream>
@@ -11,19 +9,19 @@ using namespace std;
 namespace pandora {
 
 Section::Section(const Section &section) :
-						NamedEntity(section.group,section.entity_id), file(section.file){
+										NamedEntity(section.group,section.entity_id), file(section.file){
 	property_group = section.property_group;
 	section_group = section.section_group;
 }
 
 Section::Section(File file, Group group,const  string &id) :
-						NamedEntity(group,id), file(file){
+										NamedEntity(group,id), file(file){
 	property_group = group.openGroup("properties");
 	section_group = group.openGroup("sections");
 }
 
 Section::Section(File file, Group group, const string &id, time_t time) :
-						NamedEntity(group,id,time),file(file)
+										NamedEntity(group,id,time),file(file)
 {
 	property_group = group.openGroup("properties");
 	section_group = group.openGroup("sections");
@@ -115,74 +113,64 @@ bool Section::hasSection(const std::string &id) const{
 	return section_group.hasGroup(id);
 }
 
-std::vector<std::string> Section::getRelatedSections(const std::string &type) const{
-	std::vector<std::string> victor = findDownstream(type);
+std::vector<Section> Section::getRelatedSections(const std::string &type) const{
+	std::vector<Section> victor = findDownstream(type);
 	if(victor.size() != 0){
 		return victor;
 	}
-	std::string t = findUpstream(type);
-	if(t.length() != 0){
-		victor.push_back(t);
+	victor = findUpstream(type);
+	if(victor.size() != 0){
 		return victor;
 	}
-
 	victor = findSideways(type);
-
 	return victor;
 }
 
 bool Section::hasRelatedSection(const std::string &type) const{
-	std::vector<std::string> victor = findDownstream(type);
+	std::vector<Section> victor = findDownstream(type);
 	if(victor.size() != 0){
 		return true;
 	}
-	if(findUpstream(type).length() != 0){
+	victor = findUpstream(type);
+	if(victor.size() > 0){
 		return true;
 	}
 	return findSideways(type).size() != 0;
 }
 
-std::vector<std::string> Section::findDownstream(const std::string &type) const{
-	std::vector<std::string> victor;
-	SectionTreeIterator iter = this->treeIterator(type,0);
-	while (iter != iter.end()){
-		victor.push_back((*iter).id());
-		++iter;
-	}
+std::vector<Section> Section::findDownstream(const std::string &type) const{
+	std::vector<Section> victor;
+	victor = findSections([&](const Section &section) {
+		bool found = section.type() == type;
+		return found;
+	});
 	return victor;
 }
 
-std::string Section::findUpstream(const std::string &type) const{
-	std::string id;
+std::vector<Section> Section::findUpstream(const std::string &type) const{
+	std::vector<Section> secs;
 	if(hasParent()){
 		Section p = findParent();
 		if(p.type().compare(type) == 0){
-			return p.id();
+			secs.push_back(p);
+			return secs;
 		}
-		id = p.findUpstream(type);
-		if(id.length() != 0){
-			return id;
+		secs = p.findUpstream(type);
+		if(secs.size() > 0){
+			return secs;
 		}
 	}
-	return id;
+	return secs;
 }
 
-std::vector<std::string> Section::findSideways(const std::string &type) const{
-	std::vector<std::string> victor;
+std::vector<Section> Section::findSideways(const std::string &type) const{
+	std::vector<Section> victor;
 	if(hasParent()){
 		Section p = findParent();
-		SectionTreeIterator iter = p.treeIterator(type, 1);
-		while(iter != iter.end()){
-			victor.push_back((*iter).id());
-			++iter;
-		}
-		if(victor.size() != 0){
-			return victor;
-		}
-		victor = p.findSideways(type);
-		if(victor.size() != 0){
-			return victor;
-		}
+		victor = p.findSections([&](const Section &section) {
+			bool found = section.type() == type;
+			return found;
+		},true,1);
 	}
 	return victor;
 }
@@ -190,7 +178,6 @@ std::vector<std::string> Section::findSideways(const std::string &type) const{
 std::vector<Section> Section::findSections(std::function<bool(const Section &)> predicate, bool exclude_root, int max_depth) const
 {
 	std::vector<Section> results;
-
 	if (!exclude_root && predicate(*this)) {
 		results.push_back(*this);
 	}
@@ -244,47 +231,10 @@ void Section::findSectionsRec(const Section &cur_section,
 	for (size_t i = 0; i < my_children.size(); i++) {
 		findSectionsRec(my_children[i], results, predicate, level + 1, max_depth);
 	}
-
-}
-
-/*
-void Section::findSectionRec(const std::string &id, vector<Section> &sects) const{
-	std::vector<Section> s = sections();
-	for (size_t i = 0; i < s.size(); i++){
-		if(s[i].id().compare(id) == 0){
-			sects.push_back(s[i]);
-			return;
-		}
-	}
-	for (size_t i = 0; i < s.size(); i++){
-		s[i].findSectionRec(id, sects);
-		if(sects.size() > 0){
-			return;
-		}
-	}
-}
- */
-bool Section::hasChildren() const {
-	SectionIterator iter = this->children();
-	return iter != iter.end();
-}
-
-SectionIterator Section::children(const std::string &type) const {
-	SectionIterator iter(file, section_group, type);
-	return iter;
-}
-
-SectionTreeIterator Section::treeIterator(const std::string &type, uint depth) const {
-	SectionTreeIterator iter(*this, type, depth);
-	return iter;
 }
 
 size_t Section::sectionCount() const {
-	size_t childCount = 0;
-	for (SectionIterator iter = this->children(); iter != iter.end(); ++iter) {
-		childCount++;
-	}
-	return childCount;
+	return section_group.objectCount();
 }
 
 std::vector<Property> Section::properties() const {

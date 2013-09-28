@@ -18,8 +18,6 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/Section.hpp>
-#include <pandora/SectionIterator.hpp>
-#include <pandora/SectionTreeIterator.hpp>
 
 
 using namespace std;

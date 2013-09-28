@@ -10,9 +10,6 @@
 
 namespace pandora {
 class Property;
-class PropertyIterator;
-class SectionIterator;
-class SectionTreeIterator;
 
 class Section : public NamedEntity{
 
@@ -54,18 +51,41 @@ public:
   void parent(const std::string &parent);
   std::string parent() const;
 
+  /**
+   * The number of subsections
+   *
+   * @return size_t the subsection count.
+   */
   size_t sectionCount() const;
 
+  /**
+   * Returns the Section identified by index.
+   *
+   * @param size_t the index
+   *
+   * @return the section.
+   */
   Section getSection(size_t index) const;
 
-  SectionIterator children(const std::string &type = "") const;
-
+  /**
+   * Returns the subsections
+   *
+   * @return vector of direct subsections.
+   */
   std::vector<Section> sections() const;
-
+  /**
+   * Returns whether or not this section has child sections.
+   */
   bool hasChildren() const;
 
-  SectionTreeIterator treeIterator(const std::string &type = "", uint depth = 0) const;
-
+  /**
+   *  Adds a new child section.
+   *
+   *  @param name: the name of the new section
+   *  @param type: the type of the section
+   *
+   *  @return the new section.
+   */
   Section addSection(const std::string &name, const std::string &type);
   /**
    * Performs a search on the tree starting at this section and returns whether a section with
@@ -89,11 +109,9 @@ public:
    */
   std::vector<Section> findSections(std::function<bool(const Section &)> predicate, bool exclude_root = false, int max_depth = -1) const;
 
-
-
   bool hasRelatedSection(const std::string &type) const;
 
-  std::vector<std::string> getRelatedSections(const std::string &type) const;
+  std::vector<Section> getRelatedSections(const std::string &type) const;
 
   bool removeSection(const std::string &id);
 
@@ -126,11 +144,11 @@ private:
 
   Section findParent() const;
 
-  std::string findUpstream(const std::string &type) const;
+  std::vector<Section> findUpstream(const std::string &type) const;
 
-  std::vector<std::string> findSideways(const std::string &type) const;
+  std::vector<Section> findSideways(const std::string &type) const;
 
-  std::vector<std::string> findDownstream(const std::string &type) const;
+  std::vector<Section> findDownstream(const std::string &type) const;
 
   void findSectionsRec(const Section &cur_section,
                         std::vector<Section> &results,
