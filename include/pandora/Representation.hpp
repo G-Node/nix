@@ -17,6 +17,7 @@ class DataArray;
 /**
  * Enumeration for link types.
  */
+// TODO remove "untagged" from link type
 enum class LinkType : int {
     TAGGED, UNTAGGED, INDEXED
 };

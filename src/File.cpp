@@ -32,39 +32,42 @@ const string File::FORMAT  = "pandora";
 
 
 static unsigned int map_file_mode(FileMode mode) {
-	switch (mode) {
-	case FileMode::ReadWrite:
-		return H5F_ACC_RDWR;
+  switch (mode) {
+  case FileMode::ReadWrite:
+    return H5F_ACC_RDWR;
 
-	case FileMode::ReadOnly:
-		return H5F_ACC_RDONLY;
+  case FileMode::ReadOnly:
+    return H5F_ACC_RDONLY;
 
-	case FileMode::Overwrite:
-		return H5F_ACC_TRUNC;
+  case FileMode::Overwrite:
+    return H5F_ACC_TRUNC;
 
-	default:
-		return H5F_ACC_DEFAULT;
-	}
+  default:
+    return H5F_ACC_DEFAULT;
+  }
 
 }
 
 
 File::File(string name, FileMode mode)
 {
-	if (!fileExists(name)) {
-		mode = FileMode::Overwrite;
-	}
+  if (!fileExists(name)) {
+    mode = FileMode::Overwrite;
+  }
 
-	unsigned int h5mode =  map_file_mode(mode);
-	h5file = H5::H5File(name.c_str(), h5mode);
+  unsigned int h5mode =  map_file_mode(mode);
+  h5file = H5::H5File(name.c_str(), h5mode);
 
-	root = Group(h5file.openGroup("/"));
-	metadata = root.openGroup("metadata");
-	data = root.openGroup("data");
+  root = Group(h5file.openGroup("/"));
+  metadata = root.openGroup("metadata");
+  data = root.openGroup("data");
 
-	if(!checkHeader()) {
-		/// TODO throw an exception here
-	}
+  setCreatedAt();
+  setUpdatedAt();
+
+  if(!checkHeader()) {
+    /// TODO throw an exception here
+  }
 }
 
 
@@ -82,23 +85,23 @@ Block File::getBlock(const std::string &id) const {
 }
 
 Block File::getBlock(size_t index) const {
-	string id = data.objectName(index);
-	Block b(*this, data.openGroup(id), id);
-	return b;
+  string id = data.objectName(index);
+  Block b(*this, data.openGroup(id), id);
+  return b;
 }
 
 
 vector<Block> File::blocks() const {
-	vector<Block>  block_obj;
+  vector<Block>  block_obj;
 
-	size_t block_count = data.objectCount();
-	for (size_t i = 0; i < block_count; i++) {
-		string id = data.objectName(i);
-		Block b(*this, data.openGroup(id, false), id);
-		block_obj.push_back(b);
-	}
+  size_t block_count = data.objectCount();
+  for (size_t i = 0; i < block_count; i++) {
+    string id = data.objectName(i);
+    Block b(*this, data.openGroup(id, false), id);
+    block_obj.push_back(b);
+  }
 
-	return block_obj;
+  return block_obj;
 }
 
 
@@ -124,7 +127,7 @@ bool File::removeBlock(const std::string &id) {
 
 
 size_t File::blockCount() const {
-	return data.objectCount();
+  return data.objectCount();
 }
 
 std::vector<Section> File::sections()const{
@@ -200,98 +203,117 @@ size_t File::sectionCount() const {
 }
 
 time_t File::updatedAt() const {
-	string t;
-	root.getAttr("updated_at", t);
-	return util::strToTime(t);
+  string t;
+  root.getAttr("updated_at", t);
+  return util::strToTime(t);
+}
+
+void File::setUpdatedAt() {
+  if (!root.hasAttr("updated_at")) {
+    time_t t = time(NULL);
+    root.setAttr("updated_at", util::timeToStr(t));
+  }
+}
+
+
+void File::forceUpdatedAt() {
+  time_t t = time(NULL);
+  root.setAttr("updated_at", util::timeToStr(t));
 }
 
 
 time_t File::createdAt() const {
-	string t;
-	root.getAttr("created_at", t);
-	return util::strToTime(t);
+  string t;
+  root.getAttr("created_at", t);
+  return util::strToTime(t);
+}
+
+
+void File::setCreatedAt() {
+  if (!root.hasAttr("created_at")) {
+    time_t t = time(NULL);
+    root.setAttr("created_at", util::timeToStr(t));
+  }
+}
+
+
+void File::forceCreatedAt(time_t t) {
+  root.setAttr("created_at", util::timeToStr(t));
 }
 
 
 string File::version() const {
-	string t;
-	root.getAttr<std::string>("version", t);
-	return t;
+  string t;
+  root.getAttr<std::string>("version", t);
+  return t;
 }
 
 
 string File::format() const {
-	string t;
-	root.getAttr("format", t);
-	return t;
+  string t;
+  root.getAttr("format", t);
+  return t;
 }
 
 
 bool File::checkHeader() const {
-	bool check = true;
-	string str;
-	// check format
-	if (root.hasAttr("format")) {
-		if (!root.getAttr("format", str) || str != FORMAT) {
-			check = false;
-		}
-	} else {
-		root.setAttr("format", FORMAT);
-	}
-	// check version
-	if (root.hasAttr("version")) {
-		if (!root.getAttr("version", str) || str != VERSION) {
-			check = false;
-		}
-	} else {
-		root.setAttr("version", VERSION);
-	}
-	// check created_at
-	if (!root.hasAttr("created_at")) {
-		root.setAttr("created_at", util::timeToStr(time(NULL)));
-	}
-	// check updated_at
-	if (!root.hasAttr("updated_at")) {
-		root.setAttr("updated_at", util::timeToStr(time(NULL)));
-	}
-	return check;
+  bool check = true;
+  string str;
+  // check format
+  if (root.hasAttr("format")) {
+    if (!root.getAttr("format", str) || str != FORMAT) {
+      check = false;
+    }
+  } else {
+    root.setAttr("format", FORMAT);
+  }
+  // check version
+  if (root.hasAttr("version")) {
+    if (!root.getAttr("version", str) || str != VERSION) {
+      check = false;
+    }
+  } else {
+    root.setAttr("version", VERSION);
+  }
+  return check;
 }
 
 
 bool File::fileExists(string name) const {
-	ifstream f(name.c_str());
-	if (f) {
-		f.close();
-		return true;
-	} else {
-		return false;
-	}
+  ifstream f(name.c_str());
+  if (f) {
+    f.close();
+    return true;
+  } else {
+    return false;
+  }
 }
 
 
 bool File::operator==(const File &other) const {
-	return h5file.getFileName() == other.h5file.getFileName();
+  return h5file.getFileName() == other.h5file.getFileName();
 }
 
 
 bool File::operator!=(const File &other) const {
-	return h5file.getFileName() != other.h5file.getFileName();
+  return h5file.getFileName() != other.h5file.getFileName();
 }
 
 
 File& File::operator=(const File &other) {
-	if (*this != other) {
-		this->h5file = other.h5file;
-		this->root = other.root;
-		this->metadata = other.metadata;
-		this->data = other.data;
-	}
-	return *this;
+  if (*this != other) {
+    this->h5file = other.h5file;
+    this->root = other.root;
+    this->metadata = other.metadata;
+    this->data = other.data;
+  }
+  return *this;
 }
 
 
 File::~File() {
-	h5file.close();
+  setUpdatedAt();
+  h5file.close();
 }
 
 

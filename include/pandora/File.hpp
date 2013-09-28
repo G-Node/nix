@@ -265,6 +265,31 @@ private:
   // check if the header of the file is valid
   bool checkHeader() const;
 
+  /**
+   * Sets the time of the last update to the current time if
+   * the field is not set.
+   */
+  void setUpdatedAt();
+
+  /**
+   * Sets the time of the last update to the current time.
+   */
+  void forceUpdatedAt();
+
+  /**
+   * Sets the creation time to the current time if the attribute
+   * created_at is not set.
+   */
+  void setCreatedAt();
+
+  /**
+   * Sets the creation time to the provided value even if the
+   * attribute created_at is set.
+   *
+   * @param time The creation time to set.
+   */
+  void forceCreatedAt(time_t t);
+
 };
 
 }

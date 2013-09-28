@@ -110,6 +110,18 @@ public:
   // TODO add hasXy getXy addXy and removeXy methods for references.
   //--------------------------------------------------
 
+  bool hasReference(const DataArray &reference) const;
+
+  bool hasReference(const std::string &id) const;
+
+  size_t referenceCount() const;
+
+  DataArray getReference(const std::string &id) const;
+
+  void addReference(const DataArray &reference);
+
+  bool removeReference(const DataArray &reference);
+
   /**
    * Getter for all referenced DataArrays.
    *
