@@ -299,7 +299,6 @@ std::vector<Property> Section::properties() const {
 	return props;
 }
 
-
 std::vector<Property> Section::inheritedProperties() const {
 	std::vector<Property> props;
 	if(this->link().length() > 0){
