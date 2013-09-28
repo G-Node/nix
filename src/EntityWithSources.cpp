@@ -84,18 +84,15 @@ vector<Source> EntityWithSources::sources() const {
     ds.read(ids, fileSel, true);
   }
 
-  // TODO this will not perform very well for many sources.
-  //      Solution: implement the following methods in class Block.
-  //                Block::findSources(const vector<string> &ids) const;
-  //                Block::existsSources(const vector<string> &ids) const;
-  for (size_t i = 0; i < ids.size(); i++) {
-    if (block.existsSource(ids[i])) {
-      source_obj.push_back(block.findSource(ids[i]));
-    } else {
-      // TODO What is the right thing to do here?
-    }
+  source_obj = block.findSources([&](const Source &source) {
+    return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
+  });
+  
+  if (source_obj.size() != ids.size()) {
+    // TODO What is the right thing to do here?
+    throw runtime_error("Could not resolve all ids");
   }
-
+  
   return source_obj;
 }
 
