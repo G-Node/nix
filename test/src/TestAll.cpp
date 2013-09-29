@@ -10,6 +10,8 @@
 #include "TestDataArray.hpp"
 #include "TestNamedEntityWithSources.hpp"
 
+#include <iostream>
+
 int main(int argc, char* argv[])
 {
   //CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
@@ -32,7 +34,20 @@ int main(int argc, char* argv[])
   testresult.addListener(&progress);
 
   CPPUNIT_NS::TestRunner testrunner;
-  testrunner.addTest(CPPUNIT_NS::TestFactoryRegistry::getRegistry().makeTest());
+  CPPUNIT_NS::TestFactoryRegistry &registry = CPPUNIT_NS::TestFactoryRegistry::getRegistry();
+  
+  CPPUNIT_NS::Test *test = registry.makeTest();;
+  
+  if (argc > 1) {
+    try {
+    test = test->findTest(argv[1]);
+    } catch (std::invalid_argument &iae) {
+      std::cerr << "Test not found: \"" << argv[1] << "\". Aborting." << std::endl;
+      return -1;
+    }
+  }
+  
+  testrunner.addTest(test);
   testrunner.run(testresult);
 
   CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
