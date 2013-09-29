@@ -33,7 +33,7 @@ Block::Block(const Block &block)
 }
 
 
-Block::Block(File file, Group group, string id)
+Block::Block(File file, Group group, const string &id)
   : EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
@@ -43,7 +43,7 @@ Block::Block(File file, Group group, string id)
 }
 
 
-Block::Block(File file, Group group, string id, time_t time)
+Block::Block(File file, Group group, const string &id, time_t time)
   : EntityWithMetadata(file, group, id, time)
 {
   source_group = group.openGroup("sources");
@@ -55,12 +55,12 @@ Block::Block(File file, Group group, string id, time_t time)
 
 // source methods
 
-bool Block::hasSource(string id) const {
+bool Block::hasSource(const string &id) const {
   return source_group.hasGroup(id);
 }
 
 
-Source Block::getSource(string id) const {
+Source Block::getSource(const string &id) const {
   return Source(file, source_group.openGroup(id, false), id);
 }
 
@@ -109,7 +109,7 @@ std::vector<Source> Block::findSources(std::function<bool(const Source &)> predi
   
   
 
-Source Block::createSource(string name, string type) {
+Source Block::createSource(const string &name,const string &type) {
   string id = util::createId("source");
 
   while(source_group.hasObject(id)) {
@@ -124,7 +124,7 @@ Source Block::createSource(string name, string type) {
 }
 
 
-bool Block::removeSource(string id) {
+bool Block::removeSource(const string &id) {
   bool removed = false;
   
   if (hasSource(id)) {
@@ -138,12 +138,12 @@ bool Block::removeSource(string id) {
 
 // SimpleTag methods
 
-bool Block::hasSimpleTag(string id) const {
+bool Block::hasSimpleTag(const string &id) const {
   return simple_tag_group.hasObject(id);
 }
 
 
-SimpleTag Block::getSimpleTag(string id) const {
+SimpleTag Block::getSimpleTag(const string &id) const {
   if (hasSimpleTag(id)) {
     SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
     return st;
@@ -183,7 +183,7 @@ vector<SimpleTag> Block::simpleTags() const {
 }
 
 
-SimpleTag Block::createSimpleTag(string name, string type) {
+SimpleTag Block::createSimpleTag(const string &name, const string &type) {
   string id = util::createId("simple_tag");
 
   while(hasSimpleTag(id)) {
@@ -198,7 +198,7 @@ SimpleTag Block::createSimpleTag(string name, string type) {
 }
 
 
-bool Block::removeSimpleTag(string id) {
+bool Block::removeSimpleTag(const string &id) {
   bool removed = false;
   
   if (hasSimpleTag(id)) {
@@ -212,12 +212,12 @@ bool Block::removeSimpleTag(string id) {
 
 // Methods related to DataArray
 
-bool Block::hasDataArray(string id) const {
+bool Block::hasDataArray(const string &id) const {
   return data_array_group.hasObject(id);
 }
 
 
-DataArray Block::getDataArray(string id) const {
+DataArray Block::getDataArray(const string &id) const {
   if (hasDataArray(id)) {
     DataArray da(file, *this, data_array_group.openGroup(id, true), id);
     return da;   
@@ -257,7 +257,7 @@ vector<DataArray> Block::dataArrays() const {
 }
 
 
-DataArray Block::createDataArray(std::string name, std::string type) {
+DataArray Block::createDataArray(const std::string &name, const std::string &type) {
   string id = util::createId("data_array");
   
   while (hasDataArray(id)) {
@@ -272,7 +272,7 @@ DataArray Block::createDataArray(std::string name, std::string type) {
 }
 
 
-bool Block::removeDataArray(string id) {
+bool Block::removeDataArray(const string &id) {
   bool removed = false;
   
   if (hasDataArray(id)) {
