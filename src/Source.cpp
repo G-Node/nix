@@ -41,7 +41,18 @@ Source::Source(File file, Group group, const std::string &id, time_t time)
 	source_group = group.openGroup("sources");
 }
 
-
+  
+Source::size_type Source::childCount() const
+{
+  return source_group.objectCount();
+}
+  
+Source Source::getChild(size_type index) const
+{
+  string id = source_group.objectName(index);
+	return Source(file, source_group.openGroup(id, false), id);
+}
+  
 bool Source::hasSource(const string &id) const {
 	return source_group.hasGroup(id);
 }
