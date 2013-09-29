@@ -73,9 +73,9 @@ public:
     Source s2 = b1.createSource("S2","test");
     s2.createSource("S5","test");
 
-    size_t count = s1.sourceCount();
+    size_t count = s1.childCount();
     CPPUNIT_ASSERT_EQUAL(count,(size_t)2);
-    count = s2.sourceCount();
+    count = s2.childCount();
     CPPUNIT_ASSERT_EQUAL(count,(size_t)1);
 
     b1.removeSource(s1.id());
@@ -93,7 +93,7 @@ public:
     Source s5 = s2.createSource("S5","test");
     
     //sanity check
-    vector<Source> res = s1.findSources([&](const Source &source) {
+    vector<Source> res = s1.collectIf([&](const Source &source) {
       return false;
     });
 
@@ -101,7 +101,7 @@ public:
 
   
     //now some actual work
-    res = s1.findSources([&](const Source &source) {
+    res = s1.collectIf([&](const Source &source) {
       bool found = source.id() == s4.id();
       return found;
     });
@@ -109,11 +109,11 @@ public:
     CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(1), res.size());
     CPPUNIT_ASSERT_EQUAL(s4.id(), res[0].id());
     
-    res = s1.findSources([&](const Source &source) {
+    res = s1.collectIf([&](const Source &source) {
       return true;
     }, true, 1);
 
-    CPPUNIT_ASSERT_EQUAL(res.size(), s1.sourceCount());
+    CPPUNIT_ASSERT_EQUAL(res.size(), s1.childCount());
     vector<Source> children = s1.sources();
     
     for (size_t i = 0; i < res.size(); i++) {
