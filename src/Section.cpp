@@ -194,9 +194,6 @@ std::vector<Section> Section::sections() const{
 	return section_obj;
 }
 
-Section Section::getSection(size_t index) const{
-	return getChild(index);
-}
 
 
 Section::size_type Section::childCount() const

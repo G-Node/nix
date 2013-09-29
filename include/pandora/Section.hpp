@@ -107,15 +107,6 @@ public:
   std::string parent() const;
 
   /**
-   * Returns the Section identified by index.
-   *
-   * @param size_t the index
-   *
-   * @return the section.
-   */
-  Section getSection(size_t index) const;
-
-  /**
    * Returns the subsections
    *
    * @return vector of direct subsections.
