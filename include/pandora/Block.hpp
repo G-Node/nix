@@ -52,7 +52,7 @@ public:
    * @param group     The group that represents the block inside the file.
    * @param id        The id of this block.
    */
-  Block(File file, Group group, std::string id);
+  Block(File file, Group group, const std::string &id);
 
   /**
    * Standard constructor for a Block.
@@ -61,7 +61,7 @@ public:
    * @param group     The group that represents the block inside the file.
    * @param id        The id of this block.
    */
-  Block(File file, Group group, std::string id, time_t time);
+  Block(File file, Group group, const std::string &id, time_t time);
 
   //--------------------------------------------------
   // Methods concerning sources
@@ -75,7 +75,7 @@ public:
    * @return True if a source with the given id exists at the root, false
    *         otherwise.
    */
-  bool hasSource(std::string id) const;
+  bool hasSource(const std::string &id) const;
 
   /**
    * Retrieves a specific root source.
@@ -85,7 +85,7 @@ public:
    * @return The source with the given id. If it doesn't exist an exception
    *         will be thrown.
    */
-  Source getSource(std::string id) const;
+  Source getSource(const std::string &id) const;
 
   /**
    * Retrieves a specific root source by index.
@@ -123,7 +123,7 @@ public:
    *
    * @return The created source object.
    */
-  Source createSource(std::string name, std::string type);
+  Source createSource(const std::string &name, const std::string &type);
 
   /**
    * Remove a root source and all its child sources from
@@ -133,7 +133,7 @@ public:
    *
    * @return True if the source was removed, false otherwise.
    */
-  bool removeSource(std::string id);
+  bool removeSource(const std::string &id);
 
   //--------------------------------------------------
   // Methods concerning data arrays
@@ -146,7 +146,7 @@ public:
    *
    * @return True if the data array exists, false otherwise.
    */
-  bool hasDataArray(std::string id) const;
+  bool hasDataArray(const std::string &id) const;
 
   /**
    * Retrieves a specific data array from the block.
@@ -156,7 +156,7 @@ public:
    * @return The data array with the specified id. If this
    *         doesn't exist, an exception will be thrown.
    */
-  DataArray getDataArray(std::string id) const;
+  DataArray getDataArray(const std::string &id) const;
 
   /**
    * Retrieves a data array by index.
@@ -188,7 +188,7 @@ public:
    *
    * @return The newly created data array.
    */
-  DataArray createDataArray(std::string name, std::string type);
+  DataArray createDataArray(const std::string &name, const std::string &type);
 
   /**
    * Remove/delete a data array from this block.
@@ -197,7 +197,7 @@ public:
    *
    * @return True if the data array was removed, false otherwise.
    */
-  bool removeDataArray(std::string id);
+  bool removeDataArray(const std::string &id);
 
   //--------------------------------------------------
   // Methods concerning simple tags.
@@ -210,7 +210,7 @@ public:
    *
    * @return True if the simple tag exists, false otherwise.
    */
-  bool hasSimpleTag(std::string id) const;
+  bool hasSimpleTag(const std::string &id) const;
 
   /**
    * Retrieves a specific simple tag from the block.
@@ -220,7 +220,7 @@ public:
    * @return The tag with the specified id. If this tag doesn't exist
    *         an exception will be thrown.
    */
-  SimpleTag getSimpleTag(std::string id) const;
+  SimpleTag getSimpleTag(const std::string &id) const;
 
   /**
    * Retrieves a specific simple tag by index.
@@ -254,7 +254,7 @@ public:
    *
    * @return The newly created tag.
    */
-  SimpleTag createSimpleTag(std::string name, std::string type);
+  SimpleTag createSimpleTag(const std::string &name, const std::string &type);
 
   /**
    * Remove a simple tag from the block.
@@ -263,7 +263,7 @@ public:
    *
    * @return True if the tag was removed, false otherwise.
    */
-  bool removeSimpleTag(std::string id);
+  bool removeSimpleTag(const std::string &id);
 
   //--------------------------------------------------
   // Methods concerning data tags.
@@ -277,7 +277,7 @@ public:
    *
    * @return True if the data tag exists, false otherwise.
    */
-  bool hasDataTag(std::string id) const;
+  bool hasDataTag(const std::string &id) const;
 
   /**
    * Retrieves a specific data tag from the block.
@@ -287,7 +287,7 @@ public:
    * @return The tag with the specified id. If this tag doesn't exist
    *         an exception will be thrown.
    */
-  DataTag getDataTag(std::string id) const;
+  DataTag getDataTag(const std::string &id) const;
 
   /**
    * Retrieves a specific data tag by index.
@@ -321,7 +321,7 @@ public:
    *
    * @return The newly created tag.
    */
-  DataTag createDataTag(std::string name, std::string type);
+  DataTag createDataTag(const std::string &name, const std::string &type);
 
   /**
    * Remove a data tag from the block.
@@ -330,7 +330,7 @@ public:
    *
    * @return True if the tag was removed, false otherwise.
    */
-  void removeDataTag(std::string id);
+  void removeDataTag(const std::string &id);
 
   //--------------------------------------------------
   // Other methods and functions

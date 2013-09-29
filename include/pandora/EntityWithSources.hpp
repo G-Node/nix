@@ -111,9 +111,6 @@ public:
    */
   virtual ~EntityWithSources();
 
-  
-private:
-  std::vector<std::string> source_ids() const;
 };
 
 } // of namespace
