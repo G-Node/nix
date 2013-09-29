@@ -92,19 +92,6 @@ public:
    * @return The source at the specified index.
    */
   Source getSource(size_t index) const;
-
-
-  /**
-   * Return a vector of sources for which the predicate evaluates to true.
-   *
-   * @param predicate     Predicate function that will be called for each source. Return true to collect.
-   * @param exclude_root  Whether or not to include the root source.
-   * @param max_depth     The maximum recursion depth.
-   *
-   * @return The source for which predicate was true.
-   */
-  std::vector<Source> findSources(std::function<bool(const Source &)> predicate, bool exclude_root = false, int max_depth = -1) const;
-
   
   /**
    * Returns the number of sources that are direct descendants of this source.
@@ -156,15 +143,6 @@ public:
 
 
   virtual ~Source();
-  
-private:
-  void findSourcesRec(const Source &cur_source,
-                      std::vector<Source> &results,
-                      std::function<bool(const Source &)> predicate,
-                      int level,
-                      int max_depth) const;
-  
-
 };
 }//of namespace
 

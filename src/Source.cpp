@@ -68,50 +68,6 @@ Source Source::getSource(size_t index) const {
 	return Source(file, source_group.openGroup(id, false), id);
 }
 
-
-void Source::findSourcesRec(const Source &cur_source,
-		std::vector<Source> &results,
-		std::function<bool(const Source &)> predicate,
-		int level,
-		int max_depth) const
-{
-	if (max_depth > 0 && level > max_depth) {
-		return;
-	}
-
-	size_t source_count = cur_source.sourceCount();
-	std::vector<Source> my_children;
-
-	for (size_t i = 0; i < source_count; i++) {
-		Source s = cur_source.getSource(i);
-
-		if (predicate(s)) {
-			results.push_back(s);
-		}
-
-		my_children.push_back(s);
-	}
-
-
-	for (size_t i = 0; i < my_children.size(); i++) {
-		findSourcesRec(my_children[i], results, predicate, level + 1, max_depth);
-	}
-
-}
-
-
-std::vector<Source> Source::findSources(std::function<bool(const Source &)> predicate, bool exclude_root, int max_depth) const
-{
-	std::vector<Source> results;
-
-	if (!exclude_root && predicate(*this)) {
-		results.push_back(*this);
-	}
-
-	findSourcesRec(*this, results, predicate, 1, max_depth);
-	return results;
-}
-
 size_t Source::sourceCount() const {
 	return source_group.objectCount();
 }
@@ -120,7 +76,7 @@ size_t Source::sourceCount() const {
 std::vector<Source> Source::sources() const {
 	vector<Source> source_obj;
 
-	source_obj = findSources([](const Source &source) {
+	source_obj = collectIf([](const Source &source) {
 		return true;
 	}, true, 1);
 
