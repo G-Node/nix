@@ -18,6 +18,7 @@
 #include <pandora/Source.hpp>
 #include <pandora/SimpleTag.hpp>
 #include <pandora/DataArray.hpp>
+#include <pandora/DataTag.hpp>
 
 using namespace std;
 
@@ -25,16 +26,16 @@ namespace pandora {
 
 
 Block::Block(const Block &block)
-  : EntityWithMetadata(block.file, block.group, block.entity_id),
-    source_group(block.source_group), data_array_group(block.data_array_group),
-    simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
+: EntityWithMetadata(block.file, block.group, block.entity_id),
+  source_group(block.source_group), data_array_group(block.data_array_group),
+  simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
 {
   // nothing to do
 }
 
 
 Block::Block(File file, Group group, const string &id)
-  : EntityWithMetadata(file, group, id)
+: EntityWithMetadata(file, group, id)
 {
   source_group = group.openGroup("sources");
   data_array_group = group.openGroup("data_arrays");
@@ -44,7 +45,7 @@ Block::Block(File file, Group group, const string &id)
 
 
 Block::Block(File file, Group group, const string &id, time_t time)
-  : EntityWithMetadata(file, group, id, time)
+: EntityWithMetadata(file, group, id, time)
 {
   source_group = group.openGroup("sources");
   data_array_group = group.openGroup("data_arrays");
@@ -91,23 +92,23 @@ std::vector<Source> Block::sources() const {
   return source_obj;
 }
 
-  
-  
+
+
 std::vector<Source> Block::findSources(std::function<bool(const Source &)> predicate) const
 {
   vector<Source> result;
-  
+
   size_t source_count = sourceCount();
   for (size_t i = 0; i < source_count; i++) {
     Source s = getSource(i);
     vector<Source> tmp = s.collectIf(predicate);
     result.insert(result.begin(), tmp.begin(), tmp.end());
   }
-  
+
   return result;
 }
-  
-  
+
+
 
 Source Block::createSource(const string &name,const string &type) {
   string id = util::createId("source");
@@ -126,12 +127,12 @@ Source Block::createSource(const string &name,const string &type) {
 
 bool Block::removeSource(const string &id) {
   bool removed = false;
-  
+
   if (hasSource(id)) {
     source_group.removeGroup(id);
     removed = true;
   }
-  
+
   return removed;
 }
 
@@ -200,12 +201,12 @@ SimpleTag Block::createSimpleTag(const string &name, const string &type) {
 
 bool Block::removeSimpleTag(const string &id) {
   bool removed = false;
-  
+
   if (hasSimpleTag(id)) {
     simple_tag_group.removeGroup(id);
     removed = true;
   }
-  
+
   return removed;
 }
 
@@ -245,59 +246,127 @@ size_t Block::dataArrayCount() const {
 
 vector<DataArray> Block::dataArrays() const {
   vector<DataArray> array_obj;
-  
+
   size_t array_count = dataArrayCount();
   for (size_t i = 0; i < array_count; i++) {
     string id = data_array_group.objectName(i);
     DataArray da(file, *this, data_array_group.openGroup(id), id);
     array_obj.push_back(da);
   }
-  
+
   return array_obj;
 }
 
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type) {
   string id = util::createId("data_array");
-  
+
   while (hasDataArray(id)) {
     id = util::createId("data_array");
   }
-  
+
   DataArray da(this->file, *this, data_array_group.openGroup(id, true), id);
   da.name(name);
   da.type(type);
-  
+
   return da;
 }
 
 
 bool Block::removeDataArray(const string &id) {
   bool removed = false;
-  
+
   if (hasDataArray(id)) {
     data_array_group.removeGroup(id);
     removed = true;
   }
-  
+
   return removed;
 }
 
 
+// Methods related to DataTag
+
+DataTag Block::createDataTag(const std::string &name, const std::string &type){
+  string id = util::createId("data_tag");
+  while (hasDataTag(id)) {
+    id = util::createId("data_tag");
+  }
+  DataTag dt(this->file, *this, data_tag_group.openGroup(id, true), id);
+  dt.name(name);
+  dt.type(type);
+
+  return dt;
+}
+
+
+bool Block::hasDataTag(const std::string &id) const{
+  return data_tag_group.hasObject(id);
+}
+
+
+DataTag Block::getDataTag(const std::string &id) const{
+  if (hasDataTag(id)) {
+    DataTag dt(file, *this, data_tag_group.openGroup(id, true), id);
+    return dt;
+  } else {
+    throw runtime_error("Unable to find DataTag with id " + id + "!");
+  }
+}
+
+
+DataTag Block::getDataTag(size_t index) const {
+  if (index < dataTagCount()) {
+    string id = data_tag_group.objectName(index);
+    DataTag dt(file, *this, data_tag_group.openGroup(id, true), id);
+    return dt;
+  } else {
+    throw runtime_error("Unable to find DataTag with the given index!");
+  }
+}
+
+
+size_t Block::dataTagCount() const{
+  return data_tag_group.objectCount();
+}
+
+
+std::vector<DataTag> Block::dataTags() const{
+  vector<DataTag> tag_obj;
+
+  size_t tag_count = dataTagCount();
+  for (size_t i = 0; i < tag_count; i++) {
+    string id = data_tag_group.objectName(i);
+    DataTag dt(file, *this, data_tag_group.openGroup(id), id);
+    tag_obj.push_back(dt);
+  }
+
+  return tag_obj;
+}
+
+
+bool Block::removeDataTag(const std::string &id){
+  bool removed = false;
+  if (hasDataTag(id)) {
+    data_tag_group.removeGroup(id);
+    removed = true;
+  }
+  return removed;
+}
 // Other methods and functions
 
 
 Block& Block::operator=(const Block &other) {
   if (*this != other) {
-      this->file = other.file;
-      this->group = other.group;
-      this->entity_id = other.entity_id;
-      this->source_group = other.source_group;
-      this->data_array_group = other.data_array_group;
-      this->simple_tag_group = other.simple_tag_group;
-      this->data_tag_group = other.data_tag_group;
-    }
-    return *this;
+    this->file = other.file;
+    this->group = other.group;
+    this->entity_id = other.entity_id;
+    this->source_group = other.source_group;
+    this->data_array_group = other.data_array_group;
+    this->simple_tag_group = other.simple_tag_group;
+    this->data_tag_group = other.data_tag_group;
+  }
+  return *this;
 }
 
 ostream& operator<<(ostream &out, const Block &ent) {
