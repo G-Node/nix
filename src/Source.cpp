@@ -74,13 +74,7 @@ size_t Source::sourceCount() const {
 
 
 std::vector<Source> Source::sources() const {
-	vector<Source> source_obj;
-
-	source_obj = collectIf([](const Source &source) {
-		return true;
-	}, true, 1);
-
-	return source_obj;
+	return collectIf(predCollectAll, true, 1);
 }
 
 
