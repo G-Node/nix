@@ -11,7 +11,6 @@
  * @brief Definition of the class DataTag.
  */
 
-#include <pandora/PSize.hpp>
 #include <pandora/EntityWithSources.hpp>
 #include <pandora/util/ReferenceList.hpp>
 
@@ -28,20 +27,17 @@ class RepresentationType;
 enum class LinkType;
 
 /**
- * Class that represents a pandora tag.
+ * Class that represents a pandora datatag.
  *
  * TODO implement methods for representation.
- * TODO implement methods for references.
  */
 class DataTag : public EntityWithSources {
 
 private:
 
-  static const PSize MIN_CHUNK_SIZE;
-  static const PSize MAX_SIZE_1D;
-
   Group representation_group;
   util::ReferenceList reference_list;
+
 public:
 
   /**
