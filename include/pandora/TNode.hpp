@@ -51,6 +51,16 @@ private:
 //----------------------------------------------------------------------------------------
 //
   
+/**
+ * Return a vector of base type T nodes for which the predicate evaluates to true.
+ *
+ * @param predicate     Predicate function that will be called for each node.
+ *                      Return true to collect.
+ * @param exclude_root  Whether or not to include the root node.
+ * @param max_depth     The maximum recursion depth.
+ *
+ * @return A vector of T nodes for which predicate was true.
+ */
 template<typename T>
 std::vector<T> TNode<T>::collectIf(std::function<bool(const T &)> predicate,
                                    bool exclude_root,
@@ -66,16 +76,6 @@ std::vector<T> TNode<T>::collectIf(std::function<bool(const T &)> predicate,
 }
 
   
-/**
- * Return a vector of base type T nodes for which the predicate evaluates to true.
- *
- * @param predicate     Predicate function that will be called for each node.
- *                      Return true to collect.
- * @param exclude_root  Whether or not to include the root node.
- * @param max_depth     The maximum recursion depth.
- *
- * @return A vector of T nodes for which predicate was true.
- */
 template<typename T>
 void TNode<T>::collectRec(const TNode<T> &node,
                           std::vector<T> &results,
