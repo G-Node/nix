@@ -100,7 +100,7 @@ std::vector<Source> Block::findSources(std::function<bool(const Source &)> predi
   size_t source_count = sourceCount();
   for (size_t i = 0; i < source_count; i++) {
     Source s = getSource(i);
-    vector<Source> tmp = s.findSources(predicate);
+    vector<Source> tmp = s.collectIf(predicate);
     result.insert(result.begin(), tmp.begin(), tmp.end());
   }
   
