@@ -163,7 +163,7 @@ std::vector<Section> File::findSection(const std::string &id) const{
 		}
 	}
 	for(size_t i = 0; i < s.size(); i++){
-		sects = s[i].findSections([&](const Section &section) {
+		sects = s[i].collectIf([&](const Section &section) {
 			bool found = section.id() == id;
 			return found;
 		});

@@ -140,7 +140,7 @@ bool Section::hasRelatedSection(const std::string &type) const{
 
 std::vector<Section> Section::findDownstream(const std::string &type) const{
 	std::vector<Section> victor;
-	victor = findSections([&](const Section &section) {
+	victor = collectIf([&](const Section &section) {
 		bool found = section.type() == type;
 		return found;
 	});
@@ -167,7 +167,7 @@ std::vector<Section> Section::findSideways(const std::string &type) const{
 	std::vector<Section> victor;
 	if(hasParent()){
 		Section p = findParent();
-		victor = p.findSections([&](const Section &section) {
+		victor = p.collectIf([&](const Section &section) {
 			bool found = section.type() == type;
 			return found;
 		},true,1);
@@ -182,18 +182,6 @@ std::vector<Section> Section::findSideways(const std::string &type) const{
 	return victor;
 }
 
-std::vector<Section> Section::findSections(std::function<bool(const Section &)> predicate, bool exclude_root, int max_depth) const
-{
-	std::vector<Section> results;
-	if (!exclude_root && predicate(*this)) {
-		results.push_back(*this);
-	}
-
-	findSectionsRec(*this, results, predicate, 1, max_depth);
-	return results;
-}
-
-
 std::vector<Section> Section::sections() const{
 	vector<Section>  section_obj;
 	size_t section_count = section_group.objectCount();
@@ -207,41 +195,23 @@ std::vector<Section> Section::sections() const{
 }
 
 Section Section::getSection(size_t index) const{
-	string id = section_group.objectName(index);
-	Section s(file, section_group.openGroup(id), id);
-	return s;
+	return getChild(index);
 }
 
-void Section::findSectionsRec(const Section &cur_section,
-		std::vector<Section> &results,
-		std::function<bool(const Section &)> predicate,
-		int level,
-		int max_depth) const
+
+Section::size_type Section::childCount() const
 {
-	if (max_depth > 0 && level > max_depth) {
-		return;
-	}
-
-	size_t section_count = cur_section.sectionCount();
-	std::vector<Section> my_children;
-
-	for (size_t i = 0; i < section_count; i++) {
-		Section s = cur_section.getSection(i);
-
-		if (predicate(s)) {
-			results.push_back(s);
-		}
-		my_children.push_back(s);
-	}
-
-
-	for (size_t i = 0; i < my_children.size(); i++) {
-		findSectionsRec(my_children[i], results, predicate, level + 1, max_depth);
-	}
+  return section_group.objectCount();
 }
 
+Section Section::getChild(size_t index) const{
+  string id = section_group.objectName(index);
+  Section s(file, section_group.openGroup(id), id);
+  return s;
+}
+  
 size_t Section::sectionCount() const {
-	return section_group.objectCount();
+	return childCount();
 }
 
 std::vector<Property> Section::properties() const {

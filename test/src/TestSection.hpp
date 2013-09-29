@@ -105,7 +105,7 @@ public:
     grandchild2.addSection("great grandchild 1", "test");
     Section child2 = s1.addSection("Test child 2", "test");
 
-    std::vector<Section> secs = s1.findSections([](const Section &section) {
+    std::vector<Section> secs = s1.collectIf([](const Section &section) {
       return true;}, true, 2);
     stringstream msg2;
     msg2
@@ -114,13 +114,13 @@ public:
     CPPUNIT_ASSERT_MESSAGE(msg2.str(), secs.size() == 4);
 
     stringstream msg3;
-    secs = s1.findSections([](const Section &section) {return true;}, true, 3);
+    secs = s1.collectIf([](const Section &section) {return true;}, true, 3);
     msg3
         << "Error while iterating with depth = 3. Count should have been 5 but is "
         << secs.size() << "!";
     CPPUNIT_ASSERT_MESSAGE(msg3.str(), secs.size() == 5);
 
-    secs = s1.findSections([](const Section &section) {return true;}, true, -1);
+    secs = s1.collectIf([](const Section &section) {return true;}, true, -1);
     stringstream msg4;
     msg4
         << "Error while iterating with unlimited depth (0). Count should have been 5 but is "
