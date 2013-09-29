@@ -13,6 +13,7 @@
 
 #include <pandora/PSize.hpp>
 #include <pandora/EntityWithSources.hpp>
+#include <pandora/util/ReferenceList.hpp>
 
 #ifndef PAN_SIMPLETAG_H_INCLUDED
 #define PAN_SIMPLETAG_H_INCLUDED
@@ -40,6 +41,7 @@ private:
   static const PSize MAX_SIZE_1D;
 
   Group representation_group;
+  util::ReferenceList references_list;
 
 public:
 
