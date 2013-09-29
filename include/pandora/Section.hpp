@@ -107,13 +107,6 @@ public:
   std::string parent() const;
 
   /**
-   * The number of subsections
-   *
-   * @return size_t the subsection count.
-   */
-  size_t sectionCount() const;
-
-  /**
    * Returns the Section identified by index.
    *
    * @param size_t the index

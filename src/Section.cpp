@@ -210,10 +210,6 @@ Section Section::getChild(size_t index) const{
   return s;
 }
   
-size_t Section::sectionCount() const {
-	return childCount();
-}
-
 std::vector<Property> Section::properties() const {
 	std::vector<Property> props;
 	for (size_t i = 0; i < propertyCount(); i++){
