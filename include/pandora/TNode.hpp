@@ -35,6 +35,8 @@ public:
   
   virtual ~TNode() { };
   
+  //predicate helper
+  static bool predCollectAll(const T &node) { return true; };
   
 private:
   const T *self() const { return static_cast<const T *>(this); }; //CRTP
