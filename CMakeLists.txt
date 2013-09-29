@@ -52,7 +52,32 @@ target_link_libraries(pandora ${LINK_LIBS})
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #endif()
 
+
+########################################
+# Tests
+
+enable_testing()
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+find_package(CppUnit)
+include_directories(${CPPUNIT_INCLUDE_DIRS})
+
+add_executable(TestRunner test/src/TestAll.cpp)
+target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
+
+file(GLOB Tests_SOURCES "test/src/Test*.cpp")
+foreach(test ${Tests_SOURCES})
+        get_filename_component(TestName ${test} NAME_WE)
+	message(STATUS " Test added: ${TestName}")
+        add_test(${TestName} TestRunner ${TestName})
+endforeach(test)
+
+
+########################################
+
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
-MESSAGE(STATUS "H5: ${HDF5_LIBRARIES}")
+MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
+MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
 MESSAGE(STATUS "===============================")
