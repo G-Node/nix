@@ -112,7 +112,7 @@ public:
    *
    * @return The created block.
    */
-  Block createBlock(const std::string &name, std::string type);
+  Block createBlock(const std::string &name, const std::string &type);
 
   /**
    * Delete a block from the file.

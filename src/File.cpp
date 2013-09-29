@@ -103,7 +103,7 @@ vector<Block> File::blocks() const {
 }
 
 
-Block File::createBlock(const std::string &name, string type) {
+Block File::createBlock(const std::string &name, const string &type) {
 	string id = util::createId("block");
 	while(data.hasObject(id))
 		id = util::createId("block");
