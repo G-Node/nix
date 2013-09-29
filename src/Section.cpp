@@ -281,14 +281,11 @@ Property Section::getPropertyByName(const std::string &name) const {
 		if (props[i].name().compare(name) == 0)
 			return props[i];
 	}
-	if (this->link().length() > 0) {
-		std::vector<Section> s = this->file.findSection(this->link());
-		if (!s.empty()) {
-			if (s[0].hasPropertyByName(name)) {
-				return s[0].getPropertyByName(name);
-			}
-		}
-	}
+	props = inheritedProperties();
+	for(size_t i = 0; i < props.size(); i++)
+	  if(props[i].name().compare(name) == 0)
+	    return props[i];
+
 	throw std::runtime_error(
 			"Requested Property does not exist! Always check with hasPropertyByName!");
 }
