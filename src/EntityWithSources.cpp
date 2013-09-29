@@ -52,13 +52,7 @@ std::vector<std::string> EntityWithSources::source_ids() const
 
 
 size_t EntityWithSources::sourceCount() const {
-  size_t count = 0;
-  if (group.hasData("sources")) {
-    DataSet dataset = group.openData("sources");
-    PSize size = dataset.size();
-    count = size[0];
-  }
-  return count;
+  return sources_refs.count();
 }
 
 
