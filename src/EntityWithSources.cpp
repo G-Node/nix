@@ -38,19 +38,6 @@ EntityWithSources::EntityWithSources(File file, Block block, Group group, string
 }
 
 
-std::vector<std::string> EntityWithSources::source_ids() const
-{
-  vector<string> ids;
-
-  if (group.hasData("sources")) {
-    DataSet ds = group.openData("sources");
-    ds.read(ids, true);
-  }
-
-  return ids;
-}
-
-
 size_t EntityWithSources::sourceCount() const {
   size_t count = 0;
   if (group.hasData("sources")) {
