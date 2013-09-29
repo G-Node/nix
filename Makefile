@@ -24,27 +24,7 @@ else
 endif
 
 # define source and object files for the project
-# SRCS = $(wildcard src/*.cpp)
-SRCS = src/Util.cpp \
-	src/DataType.cpp \
-	src/DataSet.cpp \
-	src/Selection.cpp \
-	src/NDBuffer.cpp \
-	src/Group.cpp \
-	src/PandoraEntity.cpp \
-	src/NamedEntity.cpp \
-	src/EntityWithSources.cpp \
-	src/EntityWithMetadata.cpp \
-	src/File.cpp \
-	src/Block.cpp \
-	src/Source.cpp \
-	src/SimpleTag.cpp \
-	src/Representation.cpp \
-	src/DataArray.cpp \
-	src/Section.cpp \
-	src/Property.cpp \
-	src/Value.cpp \
-	src/ReferenceList.cpp
+SRCS = $(wildcard src/*.cpp)
 
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
@@ -77,12 +57,12 @@ $(MAIN_LIB).$(LIB_EXT): $(OBJS)
 	$(ECHO)mkdir -p $(MAIN_LIB_DIR)
 	@echo " [LNK]  \t$@"
 	$(ECHO)$(CXX) $(CXXFLAGS) $(LIB) -shared $^ -o $(MAIN_LIB).$(LIB_EXT)
-	
+
 obj/%.o: src/%.cpp
 	$(ECHO)mkdir -p obj/release
 	@echo " [CXX]  \t$@"
 	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) -c $^ -o $@
-	
+
 #
 # make playground
 #
