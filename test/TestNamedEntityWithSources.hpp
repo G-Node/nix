@@ -29,18 +29,9 @@ private:
   std::string s_id1, s_id2, b_id;
 public:
 
-  void setUp() {
-    f1 = new File("test_block.h5", FileMode::ReadWrite);
-  }
-
-  void tearDown() {
-    delete f1;
-  }
-
-
-  void testAddRemoveSource() {
-
-  }
+  void setUp();
+  void tearDown();
+  void testAddRemoveSource();
 
 
 
