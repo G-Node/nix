@@ -1,5 +1,6 @@
 # ingore binaries
 bin
+build
 obj
 lib
 main*
@@ -19,6 +20,7 @@ doc/html
 *.swp
 *~
 *.orig
+*.user
 
 # ignore files from dbg
 .dbg.
