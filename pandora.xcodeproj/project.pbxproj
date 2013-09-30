@@ -18,12 +18,12 @@
 		E989172617F8BE360037DFA9 /* Property.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172217F8BE360037DFA9 /* Property.cpp */; };
 		E989172717F8BE360037DFA9 /* ReferenceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172317F8BE360037DFA9 /* ReferenceList.cpp */; };
 		E989172817F8BE360037DFA9 /* Section.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172417F8BE360037DFA9 /* Section.cpp */; };
+		E989172A17F9989A0037DFA9 /* Runner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172917F9989A0037DFA9 /* Runner.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
 		E9CCB33116E7AB070089FFFC /* File.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32D16E7AB070089FFFC /* File.hpp */; };
 		E9CCB33216E7AB070089FFFC /* pandora.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32E16E7AB070089FFFC /* pandora.hpp */; };
-		E9D8C670172323320037BA7F /* TestAll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9D8C66B172323320037BA7F /* TestAll.cpp */; };
 		E9D8C674172323610037BA7F /* pandora.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB2DB16E4A0870089FFFC /* pandora.dylib */; };
 		E9D8C675172323880037BA7F /* libhdf5_cpp.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30916E4A2430089FFFC /* libhdf5_cpp.7.dylib */; };
 		E9D8C676172323880037BA7F /* libhdf5.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB30A16E4A2430089FFFC /* libhdf5.7.dylib */; };
@@ -32,7 +32,6 @@
 		E9D8C67A172323EF0037BA7F /* libboost_date_time-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */; };
 		E9DAF095173EAB0C003BE77F /* NDBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */; };
 		E9DAF097173EAB13003BE77F /* NDBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9DAF096173EAB13003BE77F /* NDBuffer.cpp */; };
-		E9DAF099173EAB3A003BE77F /* TestNDBuffer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */; };
 		E9E1820017F61A17004BF6C2 /* DataArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9E181F617F61A17004BF6C2 /* DataArray.cpp */; };
 		E9E1820117F61A17004BF6C2 /* EntityWithMetadata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9E181F717F61A17004BF6C2 /* EntityWithMetadata.cpp */; };
 		E9E1820217F61A17004BF6C2 /* EntityWithSources.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9E181F817F61A17004BF6C2 /* EntityWithSources.cpp */; };
@@ -96,12 +95,11 @@
 		E9081341172949E10073075E /* DataSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataSet.cpp; sourceTree = "<group>"; };
 		E9081342172949E10073075E /* DataType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataType.cpp; sourceTree = "<group>"; };
 		E9081343172949E10073075E /* Selection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Selection.cpp; sourceTree = "<group>"; };
-		E908134A172949FB0073075E /* TestDataSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestDataSet.hpp; path = test/src/TestDataSet.hpp; sourceTree = SOURCE_ROOT; };
-		E9081350172E6A310073075E /* TestGroup.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestGroup.hpp; path = test/src/TestGroup.hpp; sourceTree = SOURCE_ROOT; };
 		E989172117F8BE360037DFA9 /* DataTag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTag.cpp; sourceTree = "<group>"; };
 		E989172217F8BE360037DFA9 /* Property.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Property.cpp; sourceTree = "<group>"; };
 		E989172317F8BE360037DFA9 /* ReferenceList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReferenceList.cpp; sourceTree = "<group>"; };
 		E989172417F8BE360037DFA9 /* Section.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Section.cpp; sourceTree = "<group>"; };
+		E989172917F9989A0037DFA9 /* Runner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runner.cpp; path = test/Runner.cpp; sourceTree = SOURCE_ROOT; };
 		E9CCB2DB16E4A0870089FFFC /* pandora.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pandora.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9CCB30116E4A20C0089FFFC /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		E9CCB30216E4A20C0089FFFC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
@@ -113,14 +111,9 @@
 		E9CCB33316E7AB580089FFFC /* libboost_date_time-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_date_time-mt.dylib"; path = "/usr/local/Cellar/boost/1.52.0/lib/libboost_date_time-mt.dylib"; sourceTree = "<absolute>"; };
 		E9CCB34B16ECEF120089FFFC /* libcppunit-1.12.1.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libcppunit-1.12.1.0.0.dylib"; path = "/usr/local/Cellar/cppunit/1.12.1/lib/libcppunit-1.12.1.0.0.dylib"; sourceTree = "<absolute>"; };
 		E9D8C662172322FC0037BA7F /* TestAll */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAll; sourceTree = BUILT_PRODUCTS_DIR; };
-		E9D8C66B172323320037BA7F /* TestAll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestAll.cpp; path = test/src/TestAll.cpp; sourceTree = SOURCE_ROOT; };
-		E9D8C66D172323320037BA7F /* TestCharon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestCharon.hpp; path = test/src/TestCharon.hpp; sourceTree = SOURCE_ROOT; };
-		E9D8C66E172323320037BA7F /* TestFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestFile.hpp; path = test/src/TestFile.hpp; sourceTree = SOURCE_ROOT; };
-		E9D8C66F172323320037BA7F /* TestSection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestSection.hpp; path = test/src/TestSection.hpp; sourceTree = SOURCE_ROOT; };
 		E9D8C677172323880037BA7F /* libhdf5_hl.7.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libhdf5_hl.7.dylib; path = /usr/local/Cellar/hdf5/1.8.9/lib/libhdf5_hl.7.dylib; sourceTree = "<absolute>"; };
 		E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = NDBuffer.hpp; sourceTree = "<group>"; };
 		E9DAF096173EAB13003BE77F /* NDBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NDBuffer.cpp; sourceTree = "<group>"; };
-		E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestNDBuffer.hpp; path = test/src/TestNDBuffer.hpp; sourceTree = SOURCE_ROOT; };
 		E9E181F617F61A17004BF6C2 /* DataArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataArray.cpp; sourceTree = "<group>"; };
 		E9E181F717F61A17004BF6C2 /* EntityWithMetadata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityWithMetadata.cpp; sourceTree = "<group>"; };
 		E9E181F817F61A17004BF6C2 /* EntityWithSources.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityWithSources.cpp; sourceTree = "<group>"; };
@@ -288,13 +281,7 @@
 		E9D8C663172322FC0037BA7F /* TestAll */ = {
 			isa = PBXGroup;
 			children = (
-				E9DAF098173EAB3A003BE77F /* TestNDBuffer.hpp */,
-				E9081350172E6A310073075E /* TestGroup.hpp */,
-				E908134A172949FB0073075E /* TestDataSet.hpp */,
-				E9D8C66B172323320037BA7F /* TestAll.cpp */,
-				E9D8C66D172323320037BA7F /* TestCharon.hpp */,
-				E9D8C66E172323320037BA7F /* TestFile.hpp */,
-				E9D8C66F172323320037BA7F /* TestSection.hpp */,
+				E989172917F9989A0037DFA9 /* Runner.cpp */,
 			);
 			path = TestAll;
 			sourceTree = "<group>";
@@ -327,7 +314,6 @@
 				E9081340172949D70073075E /* Selection.hpp in Headers */,
 				E9E1822217F61A3A004BF6C2 /* Source.hpp in Headers */,
 				E9DAF095173EAB0C003BE77F /* NDBuffer.hpp in Headers */,
-				E9DAF099173EAB3A003BE77F /* TestNDBuffer.hpp in Headers */,
 				E9E1822517F61A3A004BF6C2 /* Value.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +409,7 @@
 				E9E1820517F61A17004BF6C2 /* Representation.cpp in Sources */,
 				E9E1820817F61A17004BF6C2 /* Source.cpp in Sources */,
 				E9E1820D17F61A22004BF6C2 /* Value.cpp in Sources */,
+				E989172A17F9989A0037DFA9 /* Runner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,7 +417,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E9D8C670172323320037BA7F /* TestAll.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
