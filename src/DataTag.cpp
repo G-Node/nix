@@ -71,6 +71,11 @@ void DataTag::positions(const string &positionsId) {
   }
 }
 
+bool DataTag::hasPositions() const{
+  std::string posId;
+  group.getAttr("positions", posId);
+  return (posId.length() > 0);
+}
 
 DataArray DataTag::extents() const {
   std::string extId;
@@ -97,6 +102,14 @@ void DataTag::extents(const string &extentsId) {
     throw runtime_error("DataTag::extents: cannot set DataArray because it does not exist!");
   }
 }
+
+
+bool DataTag::hasExtents() const{
+  std::string extId;
+  group.getAttr("extents", extId);
+  return (extId.length() > 0);
+}
+
 
 // Methods concerning references.
 
@@ -175,6 +188,15 @@ ostream& operator<<(ostream &out, const DataTag &ent) {
   return out;
 }
 
+bool DataTag::checkPositionsAndExtents() const{
+  bool valid = true;
+  if(hasPositions() && hasExtents()){
+    DataArray pos = positions();
+    DataArray ext = extents();
+    //TODO check extentions of the data stored in the dataarrays
+  }
+  return valid;
+}
 
 DataTag::~DataTag()
 {

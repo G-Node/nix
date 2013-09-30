@@ -78,6 +78,13 @@ public:
   void positions(const DataArray &positions);
 
   /**
+   * Returns whether this DataArray contains positions.
+   *
+   * @return bool
+   */
+  bool hasPositions() const;
+
+  /**
    * Getter for the extents of the tag which are stored in a#
    * DataArray
    *
@@ -99,6 +106,12 @@ public:
    */
   void extents(const std::string &extentsId);
 
+  /**
+   * Returns whether this DataArray contains extents.
+   *
+   * @return bool
+   */
+  bool hasExtents() const;
   //--------------------------------------------------
   // Methods concerning references.
   // TODO implement when done with the DataArray class.
@@ -218,6 +231,8 @@ public:
    */
   virtual ~DataTag();
 
+private:
+  bool checkPositionsAndExtents() const;
 };
 
 
