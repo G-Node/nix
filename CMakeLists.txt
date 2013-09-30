@@ -36,14 +36,14 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
   add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-  		    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
 
 include_directories(include)
-file(GLOB pandora_SOURCES src/*.cpp)
-file(GLOB pandora_INCLUDES include/*.hpp)
+file(GLOB_RECURSE pandora_SOURCES src/*.cpp)
+file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
 
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
@@ -70,7 +70,7 @@ target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
 
 foreach(test ${Tests_SOURCES})
         get_filename_component(TestName ${test} NAME_WE)
-	message(STATUS " Test added: ${TestName}")
+  message(STATUS " Test added: ${TestName}")
         add_test(${TestName} TestRunner ${TestName})
 endforeach(test)
 
