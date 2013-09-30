@@ -20,6 +20,7 @@
 		E989172817F8BE360037DFA9 /* Section.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172417F8BE360037DFA9 /* Section.cpp */; };
 		E989172A17F9989A0037DFA9 /* Runner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172917F9989A0037DFA9 /* Runner.cpp */; };
 		E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176517F99BEE0037DFA9 /* TestBlock.cpp */; };
+		E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176817F99CCB0037DFA9 /* TestCharon.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
@@ -103,6 +104,8 @@
 		E989172917F9989A0037DFA9 /* Runner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Runner.cpp; path = test/Runner.cpp; sourceTree = SOURCE_ROOT; };
 		E989176517F99BEE0037DFA9 /* TestBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestBlock.cpp; path = test/TestBlock.cpp; sourceTree = SOURCE_ROOT; };
 		E989176617F99BEE0037DFA9 /* TestBlock.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestBlock.hpp; path = test/TestBlock.hpp; sourceTree = SOURCE_ROOT; };
+		E989176817F99CCB0037DFA9 /* TestCharon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestCharon.cpp; path = test/TestCharon.cpp; sourceTree = SOURCE_ROOT; };
+		E989176917F99CCB0037DFA9 /* TestCharon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestCharon.hpp; path = test/TestCharon.hpp; sourceTree = SOURCE_ROOT; };
 		E9CCB2DB16E4A0870089FFFC /* pandora.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pandora.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9CCB30116E4A20C0089FFFC /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		E9CCB30216E4A20C0089FFFC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
@@ -284,6 +287,8 @@
 		E9D8C663172322FC0037BA7F /* TestAll */ = {
 			isa = PBXGroup;
 			children = (
+				E989176817F99CCB0037DFA9 /* TestCharon.cpp */,
+				E989176917F99CCB0037DFA9 /* TestCharon.hpp */,
 				E989176517F99BEE0037DFA9 /* TestBlock.cpp */,
 				E989176617F99BEE0037DFA9 /* TestBlock.hpp */,
 				E989172917F9989A0037DFA9 /* Runner.cpp */,
@@ -422,6 +427,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */,
 				E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
