@@ -58,8 +58,16 @@ int main(int argc, char* argv[])
   CPPUNIT_NS::Test *test = registry.makeTest();;
   
   if (argc > 1) {
+    std::string testName = argv[1];
+    static std::string testPrefix = "Test";
+    
+    if (testName.compare(0, 4, testPrefix)) {
+      testName = testPrefix + testName;
+    }
+    std::cout << testName << std::endl;
+    
     try {
-    test = test->findTest(argv[1]);
+      test = test->findTest(testName);
     } catch (std::invalid_argument &iae) {
       std::cerr << "Test not found: \"" << argv[1] << "\". Aborting." << std::endl;
       return -1;
