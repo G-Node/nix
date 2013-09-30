@@ -62,7 +62,7 @@ void ReferenceList::add(const string &id) {
   vector<string> new_ids = {id};
 
   if (group.hasData(ds_name)) {
-    DataSet ds = group.openData("sources");
+    DataSet ds = group.openData(ds_name);
     PSize old_size = ds.size();
     PSize new_size = old_size + 1;
     ds.extend(new_size);
