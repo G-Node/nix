@@ -29,12 +29,7 @@ SRCS = $(wildcard src/*.cpp)
 OBJS = $(patsubst src%.cpp, obj%.o, $(SRCS))
 
 # define source and executable files for tests
-# SRCS_TEST = $(wildcard test/src/*.cpp)
-
-SRCS_TEST = test/src/TestSection.cpp \
-			test/src/TestSource.cpp
-
-EXEC_TEST = $(patsubst test/src%.cpp, test/bin%, $(SRCS_TEST))
+SRCS_TEST = $(wildcard test/*.cpp)
 
 ### misc
 ifeq ($(verbose), 1)
@@ -76,25 +71,20 @@ $(PLYGRND): lib $(PLYGRND).cpp
 # build tests
 # all tests are currently build with the debug target
 #
-test: lib $(EXEC_TEST)
+test: lib TestRunner
 
-test/bin%: test/src%.cpp
-	$(ECHO)mkdir -p test/bin
-	@echo " [LNK]\t$@"
-	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) $^ $(MAIN_LIB).$(LIB_EXT) $(LIB) -o $@
+TestRunner: $(SRCS_TEST) $(MAIN_LIB).$(LIB_EXT)
+	@echo " [CXX+LNK]\t$@"
+	$(ECHO)$(CXX) $(CXXFLAGS) $(INCLUDES) $^ $(LIB) -o $@
 
-#
+
 # run tests
 #
-#    make checkTestName -> starts the test with the executable test/bin/TestName
-#    make check         -> runs TestAll binary which includes all default tests
+#    make check         -> runs TestRunner binary which includes all default tests
 #
-check%: test/bin/%
-	$^
-
-check: lib test/bin/TestAll
+check: lib TestRunner
 	@echo " [TESTING] "
-	./test/bin/TestAll
+	./TestRunner
 
 
 
