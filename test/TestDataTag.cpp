@@ -36,4 +36,43 @@ void TestDataTag::testCreateRemove() {
   stringstream errmsg1;
   errmsg1 << "Error while removing dataTags!";
   CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), b.dataTagCount() == count);
+  f1->removeBlock(b.id());
+}
+
+void TestDataTag::testReferences(){
+  Block b = f1->createBlock("DataTagTest","Test");
+  DataArray da_1 = b.createDataArray("TestReference 1","Reference");
+  DataArray da_2 = b.createDataArray("TestReference 2","Reference");
+  DataTag dt = b.createDataTag("TestDataTag1","Tag");
+
+  stringstream counterrmsg;
+  counterrmsg << "TestDataTag::testReference: Counts do not match!";
+  CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
+
+  dt.addReference(da_1);
+  dt.addReference(da_2);
+  CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
+
+  DataArray ref1 = dt.getReference(da_1.id());
+  stringstream retrieveerrmsg;
+  retrieveerrmsg << "TestDataTag::testReference: Retrieval did not work!";
+  CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
+
+  std::vector<DataArray> arrays = dt.references();
+  CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);
+
+  stringstream hasReferrmsg;
+  hasReferrmsg << "TestDataTag::testReference: hadReference did not work!";
+  CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1));
+  CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1.id()));
+  CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_2));
+
+  stringstream delReferrmsg;
+  delReferrmsg << "TestDataTag::testReference: removeReference did not work!";
+  dt.removeReference(da_1);
+  CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
+  dt.removeReference(da_2);
+  CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
+
+  f1->removeBlock(b.id());
 }
