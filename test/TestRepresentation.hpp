@@ -12,9 +12,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Representation.hpp"
-#include "pandora/DataArray.hpp"
+#include <pandora.hpp>
 
 using namespace std;
 using namespace pandora;
@@ -32,18 +30,8 @@ private:
 
 public:
 
-  void setUp() {
-    f1 = new File("test_block.h5", "org.g-node", FileMode::ReadWrite);
-
-  }
-
-  void tearDown() {
-    delete f1;
-  }
-
-
-  void testCreate(){
-
-  }
-
+  void setUp();
+  void tearDown();
+  void testCreate();
+  
 };

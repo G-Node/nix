@@ -29,6 +29,7 @@
 		E989177D17F9A6AF0037DFA9 /* TestDataTag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989177B17F9A6AF0037DFA9 /* TestDataTag.cpp */; };
 		E989178017F9AA9B0037DFA9 /* TestProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989177E17F9AA9B0037DFA9 /* TestProperty.cpp */; };
 		E989178317F9AB6C0037DFA9 /* TestSection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989178117F9AB6C0037DFA9 /* TestSection.cpp */; };
+		E989178617F9AC620037DFA9 /* TestRepresentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989178417F9AC620037DFA9 /* TestRepresentation.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
@@ -130,6 +131,8 @@
 		E989177F17F9AA9B0037DFA9 /* TestProperty.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestProperty.hpp; path = test/TestProperty.hpp; sourceTree = SOURCE_ROOT; };
 		E989178117F9AB6C0037DFA9 /* TestSection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestSection.cpp; path = test/TestSection.cpp; sourceTree = SOURCE_ROOT; };
 		E989178217F9AB6C0037DFA9 /* TestSection.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestSection.hpp; path = test/TestSection.hpp; sourceTree = SOURCE_ROOT; };
+		E989178417F9AC620037DFA9 /* TestRepresentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestRepresentation.cpp; path = test/TestRepresentation.cpp; sourceTree = SOURCE_ROOT; };
+		E989178517F9AC620037DFA9 /* TestRepresentation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestRepresentation.hpp; path = test/TestRepresentation.hpp; sourceTree = SOURCE_ROOT; };
 		E9CCB2DB16E4A0870089FFFC /* pandora.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pandora.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9CCB30116E4A20C0089FFFC /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		E9CCB30216E4A20C0089FFFC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
@@ -311,6 +314,8 @@
 		E9D8C663172322FC0037BA7F /* TestAll */ = {
 			isa = PBXGroup;
 			children = (
+				E989178417F9AC620037DFA9 /* TestRepresentation.cpp */,
+				E989178517F9AC620037DFA9 /* TestRepresentation.hpp */,
 				E989178117F9AB6C0037DFA9 /* TestSection.cpp */,
 				E989178217F9AB6C0037DFA9 /* TestSection.hpp */,
 				E989177E17F9AA9B0037DFA9 /* TestProperty.cpp */,
@@ -476,6 +481,7 @@
 				E989177017F9A1590037DFA9 /* TestDataSet.cpp in Sources */,
 				E989177A17F9A57F0037DFA9 /* TestNDBuffer.cpp in Sources */,
 				E989176D17F99FD30037DFA9 /* TestGroup.cpp in Sources */,
+				E989178617F9AC620037DFA9 /* TestRepresentation.cpp in Sources */,
 				E989177717F9A4E30037DFA9 /* TestNamedEntityWithSources.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
