@@ -6,7 +6,7 @@
 #include "TestDataTag.hpp"
 #include "TestGroup.hpp"
 #include "TestNDBuffer.hpp"
-//#include "TestSource.hpp"
+#include "TestSource.hpp"
 #include "TestNamedEntityWithSources.hpp"
 #include "TestRepresentation.hpp"
 
@@ -38,15 +38,12 @@ int main(int argc, char* argv[])
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
   
   /* odML */
   CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
   
-//  //CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
-//  //CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
-//  CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
-//
 
   CPPUNIT_NS::TestResult testresult;
   CPPUNIT_NS::TestResultCollector collectedresults;
