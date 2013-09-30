@@ -6,7 +6,7 @@
 #include "TestDataArray.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
-//#include "TestNDBuffer.hpp"
+#include "TestNDBuffer.hpp"
 //#include "TestSource.hpp"
 #include "TestNamedEntityWithSources.hpp"
 
@@ -31,11 +31,11 @@ int main(int argc, char* argv[])
   CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
-
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
+  
 //  //CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
 //  //CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
 //  CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
-//  CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
 //  CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
 //
 
