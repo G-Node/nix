@@ -49,6 +49,11 @@ file(GLOB pandora_INCLUDES include/*.hpp)
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
 
+set_target_properties(pandora PROPERTIES
+  FRAMEWORK TRUE
+  FRAMEWORK_VERSION 1.0
+  PUBLIC_HEADER "${pandora_INCLUDES}")
+
 #IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #endif()
