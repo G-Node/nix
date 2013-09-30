@@ -2,7 +2,6 @@
 #include "TestCharon.hpp"
 ////#include "TestFile.hpp"
 //#include "TestSection.hpp"
-////#include "TestProperty.hpp"
 #include "TestDataArray.hpp"
 #include "TestDataSet.hpp"
 #include "TestDataTag.hpp"
@@ -10,6 +9,8 @@
 #include "TestNDBuffer.hpp"
 //#include "TestSource.hpp"
 #include "TestNamedEntityWithSources.hpp"
+
+#include "TestProperty.hpp"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -34,6 +35,9 @@ int main(int argc, char* argv[])
   CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
+  
+  /* odML */
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
   
 //  //CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
 //  //CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
