@@ -18,11 +18,11 @@
 		E989172617F8BE360037DFA9 /* Property.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172217F8BE360037DFA9 /* Property.cpp */; };
 		E989172717F8BE360037DFA9 /* ReferenceList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172317F8BE360037DFA9 /* ReferenceList.cpp */; };
 		E989172817F8BE360037DFA9 /* Section.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172417F8BE360037DFA9 /* Section.cpp */; };
-		E989172A17F9989A0037DFA9 /* Runner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172917F9989A0037DFA9 /* Runner.cpp */; };
 		E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176517F99BEE0037DFA9 /* TestBlock.cpp */; };
 		E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176817F99CCB0037DFA9 /* TestCharon.cpp */; };
 		E989176D17F99FD30037DFA9 /* TestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176B17F99FD30037DFA9 /* TestGroup.cpp */; };
 		E989177017F9A1590037DFA9 /* TestDataSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176E17F9A1590037DFA9 /* TestDataSet.cpp */; };
+		E989177117F9A3B90037DFA9 /* Runner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989172917F9989A0037DFA9 /* Runner.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
@@ -429,7 +429,6 @@
 				E9E1820517F61A17004BF6C2 /* Representation.cpp in Sources */,
 				E9E1820817F61A17004BF6C2 /* Source.cpp in Sources */,
 				E9E1820D17F61A22004BF6C2 /* Value.cpp in Sources */,
-				E989172A17F9989A0037DFA9 /* Runner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +436,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E989177117F9A3B90037DFA9 /* Runner.cpp in Sources */,
 				E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */,
 				E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */,
 				E989177017F9A1590037DFA9 /* TestDataSet.cpp in Sources */,
