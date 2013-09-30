@@ -63,10 +63,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 find_package(CppUnit)
 include_directories(${CPPUNIT_INCLUDE_DIRS})
 
-add_executable(TestRunner test/Runner.cpp)
+file(GLOB Tests_SOURCES "test/Test*.cpp")
+
+add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
 
-file(GLOB Tests_SOURCES "test/Test*.cpp")
 foreach(test ${Tests_SOURCES})
         get_filename_component(TestName ${test} NAME_WE)
 	message(STATUS " Test added: ${TestName}")
