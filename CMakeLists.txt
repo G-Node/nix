@@ -40,6 +40,7 @@ if(DOXYGEN_FOUND)
 		    COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
+########################################
 
 include_directories(include)
 file(GLOB pandora_SOURCES src/*.cpp)
@@ -52,6 +53,10 @@ target_link_libraries(pandora ${LINK_LIBS})
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #endif()
 
+if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
+  add_executable(playground EXCLUDE_FROM_ALL main.cpp)
+  target_link_libraries(playground pandora)
+endif()
 
 ########################################
 # Tests
