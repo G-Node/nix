@@ -79,6 +79,7 @@ endforeach(test)
 
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
 MESSAGE(STATUS "===============================")
