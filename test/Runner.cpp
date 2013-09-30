@@ -1,6 +1,6 @@
 #include "TestBlock.hpp"
 #include "TestCharon.hpp"
-////#include "TestFile.hpp"
+#include "TestFile.hpp"
 #include "TestDataArray.hpp"
 #include "TestDataSet.hpp"
 #include "TestDataTag.hpp"
@@ -28,12 +28,12 @@
 
 int main(int argc, char* argv[])
 {
-//  //CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestCharon);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestDataTag);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
