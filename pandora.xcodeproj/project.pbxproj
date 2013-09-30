@@ -22,6 +22,7 @@
 		E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176517F99BEE0037DFA9 /* TestBlock.cpp */; };
 		E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176817F99CCB0037DFA9 /* TestCharon.cpp */; };
 		E989176D17F99FD30037DFA9 /* TestGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176B17F99FD30037DFA9 /* TestGroup.cpp */; };
+		E989177017F9A1590037DFA9 /* TestDataSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E989176E17F9A1590037DFA9 /* TestDataSet.cpp */; };
 		E9CCB30716E4A20C0089FFFC /* Block.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30116E4A20C0089FFFC /* Block.cpp */; };
 		E9CCB30816E4A20C0089FFFC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E9CCB30216E4A20C0089FFFC /* File.cpp */; };
 		E9CCB33016E7AB070089FFFC /* Block.hpp in Headers */ = {isa = PBXBuildFile; fileRef = E9CCB32C16E7AB070089FFFC /* Block.hpp */; };
@@ -109,6 +110,8 @@
 		E989176917F99CCB0037DFA9 /* TestCharon.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestCharon.hpp; path = test/TestCharon.hpp; sourceTree = SOURCE_ROOT; };
 		E989176B17F99FD30037DFA9 /* TestGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestGroup.cpp; path = test/TestGroup.cpp; sourceTree = SOURCE_ROOT; };
 		E989176C17F99FD30037DFA9 /* TestGroup.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestGroup.hpp; path = test/TestGroup.hpp; sourceTree = SOURCE_ROOT; };
+		E989176E17F9A1590037DFA9 /* TestDataSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestDataSet.cpp; path = test/TestDataSet.cpp; sourceTree = SOURCE_ROOT; };
+		E989176F17F9A1590037DFA9 /* TestDataSet.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TestDataSet.hpp; path = test/TestDataSet.hpp; sourceTree = SOURCE_ROOT; };
 		E9CCB2DB16E4A0870089FFFC /* pandora.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pandora.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9CCB30116E4A20C0089FFFC /* Block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Block.cpp; sourceTree = "<group>"; };
 		E9CCB30216E4A20C0089FFFC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
@@ -290,6 +293,8 @@
 		E9D8C663172322FC0037BA7F /* TestAll */ = {
 			isa = PBXGroup;
 			children = (
+				E989176E17F9A1590037DFA9 /* TestDataSet.cpp */,
+				E989176F17F9A1590037DFA9 /* TestDataSet.hpp */,
 				E989176B17F99FD30037DFA9 /* TestGroup.cpp */,
 				E989176C17F99FD30037DFA9 /* TestGroup.hpp */,
 				E989176817F99CCB0037DFA9 /* TestCharon.cpp */,
@@ -434,6 +439,7 @@
 			files = (
 				E989176A17F99CCB0037DFA9 /* TestCharon.cpp in Sources */,
 				E989176717F99BEE0037DFA9 /* TestBlock.cpp in Sources */,
+				E989177017F9A1590037DFA9 /* TestDataSet.cpp in Sources */,
 				E989176D17F99FD30037DFA9 /* TestGroup.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
