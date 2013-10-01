@@ -36,7 +36,7 @@ DataArray::DataArray(const DataArray &data_array)
 DataArray::DataArray(File file, const Block block, Group group, string id)
 : EntityWithSources(file, block, group, id)
 {
-  dimension_group = group.openGroup("representations");
+  dimension_group = group.openGroup("dimensions");
 
   if (!group.hasAttr("polynom_coefficients")) {
     vector<double> pc = {1};
@@ -52,7 +52,7 @@ DataArray::DataArray(File file, const Block block, Group group, string id)
 DataArray::DataArray(File file, const Block block, Group group, string id, time_t time)
 : EntityWithSources(file, block, group, id, time)
 {
-  dimension_group = group.openGroup("representations");
+  dimension_group = group.openGroup("dimensions");
 
   if (!group.hasAttr("polynom_coefficients")) {
     vector<double> pc = {1};

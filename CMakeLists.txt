@@ -40,6 +40,7 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
+########################################
 
 include_directories(include)
 file(GLOB_RECURSE pandora_SOURCES src/*.cpp)
@@ -48,10 +49,19 @@ file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
 
+set_target_properties(pandora PROPERTIES
+  FRAMEWORK TRUE
+  FRAMEWORK_VERSION 1.0
+  PUBLIC_HEADER "${pandora_INCLUDES}")
+
 #IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
 #endif()
 
+if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
+  add_executable(playground EXCLUDE_FROM_ALL main.cpp)
+  target_link_libraries(playground pandora)
+endif()
 
 ########################################
 # Tests
@@ -69,9 +79,10 @@ add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
 
 foreach(test ${Tests_SOURCES})
-        get_filename_component(TestName ${test} NAME_WE)
+  get_filename_component(TestFileName ${test} NAME_WE)
+  string(REPLACE "Test" "" TestName ${TestFileName})
   message(STATUS " Test added: ${TestName}")
-        add_test(${TestName} TestRunner ${TestName})
+  add_test(${TestName} TestRunner ${TestName})
 endforeach(test)
 
 
