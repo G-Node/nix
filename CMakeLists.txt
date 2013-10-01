@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 2.6)
 project (pandora CXX)
 
 set(CMAKE_CXX_FLAGS "-std=c++11") ## Optimize
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wno-deprecated-declarations")
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
@@ -36,15 +36,15 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
   add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-  		    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		    COMMENT "Generating API documentation with Doxygen" VERBATIM)
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
 ########################################
 
 include_directories(include)
-file(GLOB pandora_SOURCES src/*.cpp)
-file(GLOB pandora_INCLUDES include/*.hpp)
+file(GLOB_RECURSE pandora_SOURCES src/*.cpp)
+file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
 
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
@@ -79,12 +79,13 @@ add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
 
 foreach(test ${Tests_SOURCES})
-        get_filename_component(TestFileName ${test} NAME_WE)
-	string(REPLACE "Test" "" TestName ${TestFileName})
-	message(STATUS " Test added: ${TestName}")
-        add_test(${TestName} TestRunner ${TestName})
+  get_filename_component(TestFileName ${test} NAME_WE)
+  string(REPLACE "Test" "" TestName ${TestFileName})
+  message(STATUS " Test added: ${TestName}")
+  add_test(${TestName} TestRunner ${TestName})
 endforeach(test)
 
+include(CTest)
 
 ########################################
 
