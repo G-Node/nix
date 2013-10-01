@@ -193,7 +193,20 @@ bool DataTag::checkPositionsAndExtents() const{
   if(hasPositions() && hasExtents()){
     DataArray pos = positions();
     DataArray ext = extents();
-    //TODO check extentions of the data stored in the dataarrays
+    boost::multi_array<double,1> posData, extData;
+    pos.getRawData(posData);
+    ext.getRawData(extData);
+
+    valid = posData.num_dimensions() == extData.num_dimensions();
+    if(!valid)
+      return valid;
+
+    boost::multi_array::size_type dims = posData.num_dimensions();
+    for(boost::multi_array::size_type i = 0; i < *posData.shape(); i++){
+      valid = (*posData.shape()[i] != *extData.shape()[i]);
+      if(!valid)
+        return valid;
+    }
   }
   return valid;
 }

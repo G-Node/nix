@@ -232,6 +232,8 @@ public:
   virtual ~DataTag();
 
 private:
+  //TODO make sure that dimensions of positions and extents match dimensionality of data.
+  //TODO validate method that calls both methods
   bool checkPositionsAndExtents() const;
 };
 

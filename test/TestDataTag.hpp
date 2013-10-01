@@ -26,6 +26,7 @@ private:
   CPPUNIT_TEST_SUITE(TestDataTag);
   CPPUNIT_TEST(testCreateRemove);
   CPPUNIT_TEST(testReferences);
+  CPPUNIT_TEST(testPositionExtents);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
@@ -36,4 +37,5 @@ public:
   void tearDown();
   void testCreateRemove();
   void testReferences();
+  void testPositionExtents();
 };
