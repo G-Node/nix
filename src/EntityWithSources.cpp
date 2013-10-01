@@ -53,6 +53,11 @@ bool EntityWithSources::hasSource(string id) const {
 }
 
 
+Source EntityWithSources::getSource(const std::string id) const{
+  return block.getSource(id);
+}
+
+
 vector<Source> EntityWithSources::sources() const {
   vector<string> ids = sources_refs.get();
 

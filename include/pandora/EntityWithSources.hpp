@@ -106,6 +106,15 @@ public:
    */
   std::vector<Source> sources() const;
 
+
+  /**
+   * Returns the source identified by the given id.
+   *
+   * @param string the source id
+   */
+  Source getSource(const std::string id) const;
+
+
   /**
    * Destructor.
    */
