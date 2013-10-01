@@ -24,10 +24,6 @@ using namespace std;
 namespace pandora {
 
 
-const PSize DataTag::MIN_CHUNK_SIZE = {1};
-const PSize DataTag::MAX_SIZE_1D = {H5S_UNLIMITED};
-
-
 DataTag::DataTag(const DataTag &tag)
 : EntityWithSources(tag.file, tag.block, tag.group, tag.entity_id),reference_list(tag.reference_list)
 {

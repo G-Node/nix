@@ -13,37 +13,26 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include "pandora/File.hpp"
-#include "pandora/Representation.hpp"
+#include "pandora/Block.hpp"
 #include "pandora/DataArray.hpp"
+#include "pandora/DataTag.hpp"
 
 using namespace std;
 using namespace pandora;
 
-class TestRepresentation:public CPPUNIT_NS::TestFixture {
+class TestDataTag: public CPPUNIT_NS::TestFixture {
 private:
 
-  CPPUNIT_TEST_SUITE(TestRepresentation);
-
-  CPPUNIT_TEST(testCreate);
-
+  CPPUNIT_TEST_SUITE(TestDataTag);
+  CPPUNIT_TEST(testCreateRemove);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
 
+  
 public:
-
-  void setUp() {
-    f1 = new File("test_block.h5", "org.g-node", FileMode::ReadWrite);
-
-  }
-
-  void tearDown() {
-    delete f1;
-  }
-
-
-  void testCreate(){
-
-  }
+  void setUp();
+  void tearDown();
+  void testCreateRemove();
 
 };

@@ -7,11 +7,12 @@
 #include <pandora/NamedEntity.hpp>
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
+#include <pandora/TNode.hpp>
 
 namespace pandora {
 class Property;
 
-class Section : public NamedEntity{
+class Section : public NamedEntity, public TNode<Section> {
 
 private:
   Group property_group, section_group;
@@ -36,6 +37,13 @@ public:
    */
   Section(File file, Group group, const std::string &id, time_t time);
 
+  
+  
+  //TNode interface
+  virtual size_type childCount() const;
+  virtual Section   getChild(size_type index) const;
+
+  
   /**
    * Set the repository in which a section of this type is defined. Usually
    * this information is provided in the form of an URL
@@ -99,22 +107,6 @@ public:
   std::string parent() const;
 
   /**
-   * The number of subsections
-   *
-   * @return size_t the subsection count.
-   */
-  size_t sectionCount() const;
-
-  /**
-   * Returns the Section identified by index.
-   *
-   * @param size_t the index
-   *
-   * @return the section.
-   */
-  Section getSection(size_t index) const;
-
-  /**
    * Returns the subsections
    *
    * @return vector of direct subsections.
@@ -146,17 +138,6 @@ public:
    * @return bool
    */
   bool hasSection(const std::string &id) const;
-
-  /**
-   * Return a vector of sections for which the predicate evaluates to true.
-   *
-   * @param predicate     Predicate function that will be called for each section. Return true to collect.
-   * @param exclude_root  Whether or not to include the root source.
-   * @param max_depth     The maximum recursion depth.
-   *
-   * @return The source for which predicate was true.
-   */
-  std::vector<Section> findSections(std::function<bool(const Section &)> predicate, bool exclude_root = false, int max_depth = -1) const;
 
   /**
    * Determines whether this section has a related section of the specified type.
@@ -273,11 +254,6 @@ private:
 
   std::vector<Section> findDownstream(const std::string &type) const;
 
-  void findSectionsRec(const Section &cur_section,
-      std::vector<Section> &results,
-      std::function<bool(const Section &)> predicate,
-      int level,
-      int max_depth) const;
 };
 
 }

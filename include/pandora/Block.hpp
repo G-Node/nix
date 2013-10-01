@@ -267,7 +267,6 @@ public:
 
   //--------------------------------------------------
   // Methods concerning data tags.
-  // TODO implement data tag methods.
   //--------------------------------------------------
 
   /**
@@ -330,7 +329,7 @@ public:
    *
    * @return True if the tag was removed, false otherwise.
    */
-  void removeDataTag(const std::string &id);
+  bool removeDataTag(const std::string &id);
 
   //--------------------------------------------------
   // Other methods and functions

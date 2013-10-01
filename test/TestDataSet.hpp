@@ -17,32 +17,30 @@
 
 using namespace pandora;
 
-class TestNamedEntityWithSources : public CPPUNIT_NS::TestFixture {
+class TestDataSet:public CPPUNIT_NS::TestFixture {
 
-private:
-
-  CPPUNIT_TEST_SUITE(TestNamedEntityWithSources);
-  CPPUNIT_TEST(testAddRemoveSource);
-  CPPUNIT_TEST_SUITE_END ();
-
-  File *f1;
-  std::string s_id1, s_id2, b_id;
 public:
 
-  void setUp() {
-    f1 = new File("test_block.h5", FileMode::ReadWrite);
-  }
+  void setUp();
+  void testPSize();
+  void testChunkGuessing();
+  void testBasic();
+  void testSelection();
+  void tearDown();
 
-  void tearDown() {
-    delete f1;
-  }
+  private:
 
+  static unsigned int &open_mode();
 
-  void testAddRemoveSource() {
+  H5::H5File h5file;
+  H5::Group h5group;
 
-  }
-
-
-
-
+  CPPUNIT_TEST_SUITE(TestDataSet);
+  CPPUNIT_TEST(testPSize);
+  CPPUNIT_TEST(testChunkGuessing);
+  CPPUNIT_TEST(testBasic);
+  CPPUNIT_TEST(testSelection);
+  CPPUNIT_TEST_SUITE_END ();
 };
+
+
