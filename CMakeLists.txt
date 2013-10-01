@@ -85,6 +85,7 @@ foreach(test ${Tests_SOURCES})
   add_test(${TestName} TestRunner ${TestName})
 endforeach(test)
 
+include(CTest)
 
 ########################################
 
