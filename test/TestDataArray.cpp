@@ -17,8 +17,8 @@ void TestDataArray::testCreateRemove(){
   CPPUNIT_ASSERT(b.hasDataArray(a.id()));
   CPPUNIT_ASSERT(b.dataArrays()[0].id().compare(a.id()) == 0);
   CPPUNIT_ASSERT(a.expansionOrigin() == 0.0);
-  CPPUNIT_ASSERT(a.polynomCoefficients().size() == 1);
-  CPPUNIT_ASSERT(a.polynomCoefficients()[0] == 1.0);
+  CPPUNIT_ASSERT(a.polynomCoefficients().size() == 2);
+  CPPUNIT_ASSERT(a.polynomCoefficients()[0] == 0.0);
   b.removeDataArray(a.id());
   CPPUNIT_ASSERT(b.dataArrayCount() == 0);
 
@@ -69,6 +69,7 @@ void TestDataArray::testData(){
   Block b = f1->createBlock("testBlock","test");
   DataArray a = b.createDataArray("DataArray","sampledData");
   std::vector<double> coefficients;
+  coefficients.push_back(0.0);
   coefficients.push_back(2.0);
   a.polynomCoefficients(coefficients);
 
@@ -77,15 +78,18 @@ void TestDataArray::testData(){
   array_type A(boost::extents[5]);
 
   for(index i = 0; i != 5; ++i){
-    A[i] = 99.9*i;
+    A[i] = 100.0*i;
   }
   a.setRawData(A);
 
   array_type convertedData, rawData;
   a.getData(convertedData);
   a.getRawData(rawData);
-
-  //TODO go from here!
-
+  int errors = 0;
+  for(size_t i = 0; i < rawData.size();i++){
+    if ((rawData[i]*2.0) != convertedData[i])
+      errors++;
+  }
+  CPPUNIT_ASSERT(errors == 0.0);
   f1->removeBlock(b.id());
 }

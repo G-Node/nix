@@ -52,22 +52,76 @@ public:
   // Element getters and setters
   //--------------------------------------------------
 
+  /**
+   * Get the label for the values stored in the DataArray.
+   *
+   * @return string the label
+   */
   std::string label() const;
-  void label(const std::string &value);
 
+  /**
+   * Set the label for the data stored.
+   *
+   * @param string label
+   */
+  void label(const std::string &label);
+
+
+  /**
+   * Get the unit of the data stored in this dataArray.
+   *
+   * @return string the unit.
+   */
   std::string unit() const;
-  void unit(const std::string &value);
 
+  /**
+   * Set the unit for the values stored in this DataArray.
+   *
+   * @param string the unit
+   */
+  void unit(const std::string &unit);
+
+
+  /**
+   * Returns the expansion origin of the calibration polynom.
+   * This is set to 0.0 by default.
+   *
+   * @return double the expansion origin.
+   */
   double expansionOrigin()const;
+
+  /**
+   * Set the expansion origin for the calibration.
+   *
+   * @param double the expansion origin.
+   */
   void expansionOrigin(double expansion_origin);
 
+  /**
+   * Set the polynom coefficients for the calibration. By default this is set
+   * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
+   *
+   * @param vector<double> the coefficients
+   */
   void polynomCoefficients(std::vector<double> &polynom_coefficients);
+
+  /**
+   * Returns the polynom coefficients.
+   *
+   * @return vector<double> the coefficients.
+   */
   std::vector<double> polynomCoefficients() const;
 
   //--------------------------------------------------
   // Methods concerning data access.
   //--------------------------------------------------
 
+  /**
+   * Returns the data stored in the DataArray and applies the calibration.
+   * Output is returned in a boost multi_array.
+   *
+   * @param output argument boost::multi_array<T, dims>
+   */
   template<typename T, size_t dims>
   void getData(boost::multi_array<T, dims> &data) const{
     getRawData(data);
@@ -78,6 +132,11 @@ public:
     }
   }
 
+  /**
+   * Returns the data as it is stored. Does not apply the calibration.
+   *
+   * @param output argument boost::multi_array<T, dims>
+   */
   template<typename T, size_t dims>
   void getRawData(boost::multi_array<T, dims> &data) const{
     if(group.hasData("data")){
@@ -86,6 +145,11 @@ public:
     }
   }
 
+  /**
+   * Set the rawData that is to be stored in the DataArray.
+   *
+   * @param boost::multi_array<T, dims>
+   */
   template<typename T, size_t dims>
   void setRawData(const boost::multi_array<T, dims> &data){
 	  if (!group.hasData("data")){
@@ -110,6 +174,9 @@ public:
   //--------------------------------------------------
   // Other methods and functions
   //--------------------------------------------------
+  /**
+   * Conversion of the data by applying the calibration.
+   */
   double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
   /**
