@@ -292,27 +292,27 @@
 		E9CCB32A16E7AB070089FFFC /* pandora */ = {
 			isa = PBXGroup;
 			children = (
+				E9CCB32C16E7AB070089FFFC /* Block.hpp */,
+				E9F3F381170E17D6005DE07F /* Charon.hpp */,
 				E9E1820E17F61A39004BF6C2 /* DataArray.hpp */,
-				E9E1820F17F61A39004BF6C2 /* EntityWithMetadata.hpp */,
-				E9E1821017F61A39004BF6C2 /* EntityWithSources.hpp */,
-				E9E1821117F61A39004BF6C2 /* NamedEntity.hpp */,
-				E9E1821217F61A39004BF6C2 /* PandoraEntity.hpp */,
-				E9E1821317F61A39004BF6C2 /* Representation.hpp */,
-				E9E1821517F61A39004BF6C2 /* SimpleTag.hpp */,
-				E9E1821617F61A39004BF6C2 /* Source.hpp */,
-				E9E1821917F61A3A004BF6C2 /* Value.hpp */,
-				E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */,
 				E9081339172949D70073075E /* DataSet.hpp */,
 				E908133A172949D70073075E /* DataType.hpp */,
-				E908133B172949D70073075E /* PSize.hpp */,
-				E908133C172949D70073075E /* Selection.hpp */,
-				E9F3F381170E17D6005DE07F /* Charon.hpp */,
-				E9F3F37217035EA2005DE07F /* Group.hpp */,
-				E9F3F37317035EA2005DE07F /* Property.hpp */,
-				E9F3F37517035EA2005DE07F /* Section.hpp */,
-				E9F3F37717035EA2005DE07F /* Util.hpp */,
-				E9CCB32C16E7AB070089FFFC /* Block.hpp */,
+				E9E1820F17F61A39004BF6C2 /* EntityWithMetadata.hpp */,
+				E9E1821017F61A39004BF6C2 /* EntityWithSources.hpp */,
 				E9CCB32D16E7AB070089FFFC /* File.hpp */,
+				E9F3F37217035EA2005DE07F /* Group.hpp */,
+				E9E1821117F61A39004BF6C2 /* NamedEntity.hpp */,
+				E9DAF094173EAB0C003BE77F /* NDBuffer.hpp */,
+				E9E1821217F61A39004BF6C2 /* PandoraEntity.hpp */,
+				E9F3F37317035EA2005DE07F /* Property.hpp */,
+				E908133B172949D70073075E /* PSize.hpp */,
+				E9E1821317F61A39004BF6C2 /* Representation.hpp */,
+				E9F3F37517035EA2005DE07F /* Section.hpp */,
+				E908133C172949D70073075E /* Selection.hpp */,
+				E9E1821517F61A39004BF6C2 /* SimpleTag.hpp */,
+				E9E1821617F61A39004BF6C2 /* Source.hpp */,
+				E9F3F37717035EA2005DE07F /* Util.hpp */,
+				E9E1821917F61A3A004BF6C2 /* Value.hpp */,
 			);
 			path = pandora;
 			sourceTree = "<group>";
@@ -427,7 +427,7 @@
 		E9CCB2D316E4A0870089FFFC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "G-Node";
 			};
 			buildConfigurationList = E9CCB2D616E4A0870089FFFC /* Build configuration list for PBXProject "pandora" */;
@@ -513,7 +513,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -555,7 +554,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
