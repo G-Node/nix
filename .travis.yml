@@ -14,5 +14,5 @@ script:
 - cd ..
 
 install:
-- sudo apt-get install libcppunit-dev libboost-all-dev libhdf5-dev
+- sudo apt-get install libcppunit-dev libboost-all-dev libhdf5-serial-dev
 
