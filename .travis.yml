@@ -1,0 +1,18 @@
+language: cpp
+env:
+  matrix:
+    - CMAKE_BUILD_TYPE=DEBUG
+
+before_script:
+- mkdir -p build
+- cd build
+- cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+
+script:
+- cd build
+- ctest -D Experimental
+- cd ..
+
+install:
+- sudo apt-get install libcppunit-dev libboost-all-dev libhdf5-dev
+
