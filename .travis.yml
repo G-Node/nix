@@ -6,7 +6,8 @@ env:
 before_script:
 - mkdir -p build
 - cd build
-- cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+- CXX=g++-4.8 cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+- cd ..
 
 script:
 - cd build
@@ -15,5 +16,7 @@ script:
 - cd ..
 
 install:
-- sudo apt-get install libcppunit-dev libboost-all-dev libhdf5-serial-dev
+- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+- sudo apt-get update -qq -y
+- sudo apt-get install gcc-4.8 libcppunit-dev libboost-all-dev libhdf5-serial-dev
 
