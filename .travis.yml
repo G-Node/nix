@@ -10,6 +10,7 @@ before_script:
 
 script:
 - cd build
+- make
 - ctest -D Experimental
 - cd ..
 

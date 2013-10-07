@@ -12,7 +12,8 @@ before_script:
 
 script:
 - cd build
--  ctest -D Experimental
+- make
+- ctest -D Experimental
 - cd ..
 
 install:
