@@ -12,6 +12,10 @@ before_script:
 script:
 - cd build
 - make
+- cd ..
+
+after_success:
+- cd build
 - ctest -D Experimental
 - cd ..
 
