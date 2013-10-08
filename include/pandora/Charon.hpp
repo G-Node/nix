@@ -2,7 +2,12 @@
 #ifndef PANDORA_CHARON_H
 #define PANDORA_CHARON_H
 
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>

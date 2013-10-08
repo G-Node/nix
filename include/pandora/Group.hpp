@@ -3,7 +3,12 @@
 #define PAN_GROUP_H_INCLUDE
 
 #include <string>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 
 #include <pandora/Charon.hpp>
 

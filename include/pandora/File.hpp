@@ -15,7 +15,12 @@
 #define PAN_FILE_H_INCLUDED
 
 #include <string>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 
 #include <pandora/Group.hpp>
 
