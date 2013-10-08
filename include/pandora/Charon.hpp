@@ -322,8 +322,8 @@ public:
 };
   
 template<typename T>
-class ValueBox : private TypeInfo<typename std::remove_const<T>::type>,
-public TypeSpec<typename TypeInfo<typename std::remove_const<T>::type>::element_type> {
+class ValueBox :
+  public TypeSpec<typename TypeInfo<typename std::remove_const<T>::type>::element_type> {
     
   public:
     typedef typename std::remove_const<T>::type  vanilla_type;
@@ -347,7 +347,7 @@ public TypeSpec<typename TypeInfo<typename std::remove_const<T>::type>::element_
     reference       get() {return const_cast<reference>(value); } //fixme enable_if-ify?
     const_reference get() const { return value; }
     PSize           shape() const { return info_type::shape(value); }
-    size_t          size() const { return this->num_elements(value); }
+    size_t          size() const { return info_type::num_elements(value); }
   
     void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
   
