@@ -45,11 +45,6 @@ private:
 
 public:
 
-  /** Indicator for the HDF5 file being a pandora file */
-  static const std::string FORMAT;
-  /** The version of the pandora format */
-  static const std::string VERSION;
-
   /**
    * Constructor that is used to open the file.
    *
