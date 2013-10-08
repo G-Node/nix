@@ -359,7 +359,6 @@ class ValueBox :
 /* *** */
 template<
   typename T,
-  template <typename> class ValueBox,
   typename ElementType
 >
 class DataBox {
@@ -380,10 +379,9 @@ private:
 
 template<
   typename T,
-  template <typename> class ValueBox,
   typename ElementType
 >
-class DataBox<const T, ValueBox, ElementType> {
+class DataBox<const T, ElementType> {
 public:
   typedef const ValueBox<const T> &vbox_ref;
   typedef const ElementType  data_type;
@@ -401,10 +399,9 @@ private:
 
 
 template<
-  typename T,
-  template <typename> class ValueBox
+  typename T
 >
-class DataBox<T, ValueBox, std::string> {
+class DataBox<T, std::string> {
 public:
   typedef ValueBox<T>  &vbox_ref;
   typedef char        *data_type;
@@ -441,10 +438,9 @@ private:
 };
 
 template<
-  typename T,
-  template <typename> class ValueBox
+  typename T
 >
-class DataBox<const T, ValueBox, std::string> {
+class DataBox<const T, std::string> {
 public:
   typedef const ValueBox<const T> &vbox_ref;
   typedef char const       *data_type;
@@ -480,11 +476,11 @@ class Charon {
   
 public:
   typedef hades::ValueBox<T> vbox_type;
-  typedef typename vbox_type::element       element_type;
-  typedef typename vbox_type::value_ref     value_ref;
+  typedef typename vbox_type::element     element_type;
+  typedef typename vbox_type::value_ref   value_ref;
   
-  typedef hades::DataBox<T, hades::ValueBox, element_type> dbox_type;
-  typedef typename dbox_type::data_ptr       data_ptr;
+  typedef hades::DataBox<T, element_type> dbox_type;
+  typedef typename dbox_type::data_ptr    data_ptr;
   
 
   Charon(value_ref val) : value(val) {

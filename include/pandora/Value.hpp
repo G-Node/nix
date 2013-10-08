@@ -170,10 +170,9 @@ template<> int8_t get_inner<int8_t, bool>(const bool &outer);
 
 template<
 typename T,
-template <typename> class ValueBox,
 typename U
 >
-class DataBox<const T, ValueBox, Value<U> > {
+class DataBox<const T, Value<U> > {
 public:
 typedef const ValueBox<const T> &vbox_ref;
 typedef typename ValueBox<T>::inner_type inner_type;
@@ -215,10 +214,9 @@ vbox_ref value;
 
 template<
 typename T,
-template <typename> class ValueBox,
 typename U
 >
-class DataBox<T, ValueBox, Value<U> > {
+class DataBox<T, Value<U> > {
 public:
 typedef ValueBox<T> &vbox_ref;
 typedef typename ValueBox<T>::inner_type inner_type;
