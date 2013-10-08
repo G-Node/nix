@@ -83,7 +83,7 @@ void Property::addValue(T value, double uncertainty, const std::string filename,
 
 template<typename T>
 void Property::addValue(const Value<T> &value) {
-  std::vector<Value<T> > vals = { value };
+  const std::vector<Value<T>> vals = { value };
 
   PSize start;
   DataSet ds((H5::DataSet()));
@@ -94,7 +94,7 @@ void Property::addValue(const Value<T> &value) {
     ds.extend(newSize);
     start = size;
   } else {
-    Charon<std::vector<Value<T> > > charon(vals);
+    Charon<const std::vector<Value<T>>> charon(vals);
     PSize size = {1};
     PSize maxsize = {H5S_UNLIMITED};
     PSize chunks = DataSet::guessChunking(size, DataType::Double);

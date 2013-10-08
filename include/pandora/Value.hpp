@@ -175,7 +175,7 @@ typename U
 >
 class DataBox<const T, ValueBox, Value<U> > {
 public:
-typedef ValueBox<const T> &vbox_ref;
+typedef const ValueBox<const T> &vbox_ref;
 typedef typename ValueBox<T>::inner_type inner_type;
 typedef FileValue<inner_type> data_type;
 typedef data_type *data_ptr;

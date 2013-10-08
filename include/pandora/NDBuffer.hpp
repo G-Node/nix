@@ -124,10 +124,10 @@ public:
 
   ValueBox(value_ref val) : TypeSpec(val.dtype()), value(val) {}
 
-  element_ptr get_data() { return value.data(); }
-  value_ref   get() { return value; }
+  element_ptr get_data() const { return value.data(); }
+  value_ref   get() const { return value; }
   PSize       shape() const { return value.shape(); }
-  size_t      size() { return value.num_elements(); }
+  size_t      size() const { return value.num_elements(); }
 
 private:
   value_ref value;

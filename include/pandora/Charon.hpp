@@ -8,6 +8,8 @@
 #include <pandora/PSize.hpp>
 #include <pandora/DataType.hpp>
 
+#include <type_traits>
+
 namespace pandora {
 namespace hades {
 
@@ -318,55 +320,40 @@ public:
     //NOOP
   }
 };
-
   
 template<typename T>
-class ValueBox : private TypeInfo<T>,
-    public TypeSpec<typename TypeInfo<T>::element_type> {
+class ValueBox : private TypeInfo<typename std::remove_const<T>::type>,
+public TypeSpec<typename TypeInfo<typename std::remove_const<T>::type>::element_type> {
+    
+  public:
+    typedef typename std::remove_const<T>::type  vanilla_type;
+    typedef TypeInfo<vanilla_type>               info_type;
+    typedef T                                    value_type;
+    typedef T                                   &value_ref;
+    typedef vanilla_type                        &reference;
+    typedef const vanilla_type                  &const_reference;
+    typedef typename info_type::element_type     element;
+    typedef typename info_type::element_type     element_type;
   
-public:
-  typedef TypeInfo<T> info_type;
-  typedef T           value_type;
-  typedef T          &value_ref;
-  typedef typename info_type::element_type  element;
-  typedef element *element_ptr;
+    typedef element_type                        *pointer;
+    typedef const element_type                  *const_pointer;
   
-  ValueBox(value_ref val) : value(val) {}
   
-  element_ptr get_data() { return info_type::getData(value); }
-  value_ref   get() { return value; }
-  PSize       shape() const { return info_type::shape(value); }
-  size_t      size() { return this->num_elements(value); }
+    ValueBox(value_ref val) : value(val) {}
+    
+    pointer      get_data() { return info_type::getData(value); }
+    const_pointer get_data() const { return info_type::getData(value); }
   
-  void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
+    reference       get() {return const_cast<reference>(value); } //fixme enable_if-ify?
+    const_reference get() const { return value; }
+    PSize           shape() const { return info_type::shape(value); }
+    size_t          size() const { return this->num_elements(value); }
   
-private:
-  value_ref value;
-};
-
-
-template<typename T>
-class ValueBox<const T> : private TypeInfo<T>,
-    public TypeSpec<typename TypeInfo<T>::element_type> {
+    void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
   
-public:
-  typedef TypeInfo<T>  info_type;
-  typedef const T      value_type;
-  typedef const T     &value_ref;
-  typedef typename info_type::element_type element;
-  typedef typename info_type::element_type element_type;
-  typedef const element *element_ptr;
-  
-  ValueBox(value_ref val) : value(val) {}
-  
-  element_ptr get_data() const { return info_type::getData(value); }
-  value_ref   get() const { return value; }
-  PSize       shape() const { return info_type::shape(value); }
-  size_t      size() { return this->num_elements(value); }
-  
-private:
-  value_ref value;
-};
+  private:
+    value_ref value;
+  };
 
 
 /* *** */
@@ -398,14 +385,14 @@ template<
 >
 class DataBox<const T, ValueBox, ElementType> {
 public:
-  typedef ValueBox<const T> &vbox_ref;
+  typedef const ValueBox<const T> &vbox_ref;
   typedef const ElementType  data_type;
   typedef       data_type   *data_ptr;
 
   DataBox(vbox_ref val) : value(val) {}
 
-  data_ptr operator *() { return get(); }
-  data_ptr get() const { return value.get_data(); }
+  const data_ptr operator *() { return get(); }
+  const data_ptr get() const { return value.get_data(); }
   void finish(const H5::DataSpace *space = nullptr) { }
 
 private:
@@ -459,7 +446,7 @@ template<
 >
 class DataBox<const T, ValueBox, std::string> {
 public:
-  typedef ValueBox<const T> &vbox_ref;
+  typedef const ValueBox<const T> &vbox_ref;
   typedef char const       *data_type;
   typedef data_type        *data_ptr;
 
