@@ -358,10 +358,16 @@ class ValueBox :
 
 /* *** */
 template<
+typename T,
+typename ElementType,
+typename isConst = void
+> class DataBox;
+  
+  
+template<
   typename T,
-  typename ElementType
->
-class DataBox {
+  typename ElementType >
+class DataBox<T, ElementType, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
   typedef ValueBox<T>  &vbox_ref;
   typedef ElementType  data_type;
@@ -381,9 +387,9 @@ template<
   typename T,
   typename ElementType
 >
-class DataBox<const T, ElementType> {
+class DataBox<T, ElementType, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef const ValueBox<const T> &vbox_ref;
+  typedef const ValueBox<T> &vbox_ref;
   typedef const ElementType  data_type;
   typedef       data_type   *data_ptr;
 
@@ -401,7 +407,7 @@ private:
 template<
   typename T
 >
-class DataBox<T, std::string> {
+class DataBox<T, std::string, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
   typedef ValueBox<T>  &vbox_ref;
   typedef char        *data_type;
@@ -440,9 +446,9 @@ private:
 template<
   typename T
 >
-class DataBox<const T, std::string> {
+  class DataBox<T, std::string, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef const ValueBox<const T> &vbox_ref;
+  typedef const ValueBox<T> &vbox_ref;
   typedef char const       *data_type;
   typedef data_type        *data_ptr;
 

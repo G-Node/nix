@@ -172,9 +172,9 @@ template<
 typename T,
 typename U
 >
-class DataBox<const T, Value<U> > {
+class DataBox<T, Value<U>, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-typedef const ValueBox<const T> &vbox_ref;
+typedef const ValueBox<T> &vbox_ref;
 typedef typename ValueBox<T>::inner_type inner_type;
 typedef FileValue<inner_type> data_type;
 typedef data_type *data_ptr;
@@ -216,7 +216,7 @@ template<
 typename T,
 typename U
 >
-class DataBox<T, Value<U> > {
+class DataBox<T, Value<U>, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
 typedef ValueBox<T> &vbox_ref;
 typedef typename ValueBox<T>::inner_type inner_type;
