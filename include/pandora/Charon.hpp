@@ -337,7 +337,7 @@ class ValueBox :
   
     typedef element_type                        *pointer;
     typedef const element_type                  *const_pointer;
-  
+    
   
     ValueBox(value_ref val) : value(val) {}
     
@@ -389,9 +389,9 @@ public:
 
   DataBox(vbox_ref val) : value(val) {}
 
-  const data_ptr operator *() { return get(); }
+  const data_ptr operator *() const { return get(); }
   const data_ptr get() const { return value.get_data(); }
-  void finish(const H5::DataSpace *space = nullptr) { }
+  void finish(const H5::DataSpace *space = nullptr) const { }
 
 private:
   vbox_ref value;
@@ -456,9 +456,9 @@ public:
     }
   }
 
-  data_ptr operator *() { return get(); }
+  data_ptr operator *() const { return get(); }
   data_ptr get() const { return data; }
-  void finish(const H5::DataSpace *space = nullptr) { }
+  void finish(const H5::DataSpace *space = nullptr) const { }
 
   ~DataBox() {
      delete[] data;
@@ -527,6 +527,11 @@ public:
 
   dbox_type get_data() {
     dbox_type data(value);
+    return data;
+  }
+  
+  const dbox_type get_data() const {
+    const dbox_type data(value);
     return data;
   }
 

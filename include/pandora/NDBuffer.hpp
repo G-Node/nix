@@ -94,11 +94,11 @@ template<>
 class ValueBox<NDBuffer> : public TypeSpec<DataType> {
 
 public:
-  typedef uint8_t  element_type;
+  typedef uint8_t   element_type;
   typedef NDBuffer  value_type;
   typedef NDBuffer &value_ref;
-  typedef uint8_t  element;
-  typedef element *element_ptr;
+  typedef uint8_t   element;
+  typedef element  *element_ptr;
 
   ValueBox(value_ref val) : TypeSpec(val.dtype()), value(val) {}
 
