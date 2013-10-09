@@ -91,6 +91,27 @@ void NDBuffer::set(const PSize &index, T value)
 namespace hades {
 
 template<>
+class TypeInfo<NDBuffer> {
+public:
+  typedef uint8_t element_type;
+  
+  static PSize shape(const NDBuffer &value) { return value.shape(); }
+  
+  static size_t num_elements(const NDBuffer &value) {
+    return value.num_elements();
+  }
+  
+  static const element_type* getData(const NDBuffer &value) {
+    return value.data();
+  }
+  
+  static element_type* getData(NDBuffer &value) {
+    return value.data();
+  }
+};
+  
+  
+template<>
 class ValueBox<NDBuffer> : public TypeSpec<DataType> {
 
 public:
