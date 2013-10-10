@@ -178,15 +178,18 @@ typename U
 >
 class DataBox<T, Value<U>, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-typedef const ValueBox<T> &vbox_ref;
-typedef typename ValueBox<T>::inner_type inner_type;
+typedef typename std::remove_const<T>::type             vanilla;
+typedef hades::TypeInfo<vanilla>                        type_info_t;
+typedef typename hades::TypeInfo<vanilla>::element_type element_type;
+typedef typename TypeSpec<Value<U>>::inner_type inner_type;
 typedef FileValue<inner_type> data_type;
 typedef data_type *data_ptr;
+  
 
-DataBox(vbox_ref val) : value(val) {
-  size_t nelms = value.size();
+DataBox(T &val) : value(val) {
+  size_t nelms = type_info_t::num_elements(value);
   data = new data_type[nelms];
-  const Value<U> *vptr = value.get_data();
+  const Value<U> *vptr = type_info_t::getData(value);
   for (size_t i = 0; i < nelms; i++) {
     FileValue<inner_type> val;
     val.value = get_inner<inner_type,U>(vptr[i].value);
@@ -212,7 +215,7 @@ private:
 
 
 data_ptr data;
-vbox_ref value;
+T &value;
 };
 
 
@@ -222,13 +225,14 @@ typename U
 >
 class DataBox<T, Value<U>, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-typedef ValueBox<T> &vbox_ref;
-typedef typename ValueBox<T>::inner_type inner_type;
+typedef hades::TypeInfo<T>                        type_info_t;
+typedef typename hades::TypeInfo<T>::element_type element_type;
+typedef typename TypeSpec<Value<U>>::inner_type inner_type;
 typedef FileValue<inner_type> data_type;
 typedef data_type *data_ptr;
 
-DataBox(vbox_ref val) : value(val) {
-  size_t nelms = value.size();
+DataBox(T &val) : value(val) {
+  size_t nelms = type_info_t::num_elements(value);
   data = new data_type[nelms];
 }
 
@@ -236,15 +240,16 @@ data_ptr operator *() {return get();}
 data_ptr get() {return data;}
 
 void finish(const H5::DataSpace *space = nullptr) {
-  size_t nelms = value.size();
-  Value<U> *vptr = value.get_data();
+  size_t nelms = type_info_t::num_elements(value);
+  Value<U> *vptr = type_info_t::getData(value);
 
   for (size_t i = 0; i < nelms; i++) {
     vptr[i] = data[i];
   }
 
   if (space) {
-    H5::DataSet::vlenReclaim(data, value.memType, *space);
+    TypeSpec<Value<U>> spec;
+    H5::DataSet::vlenReclaim(data, spec.memType, *space);
   }
 }
 
@@ -254,7 +259,7 @@ void finish(const H5::DataSpace *space = nullptr) {
 
 private:
 data_ptr data;
-vbox_ref value;
+T &value;
 };
 
 } //namespace hades

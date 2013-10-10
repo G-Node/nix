@@ -113,50 +113,6 @@ public:
   }
 };
   
-  
-template<>
-class ValueBox<NDBuffer> : public TypeSpec<DataType> {
-
-public:
-  typedef uint8_t   element_type;
-  typedef NDBuffer  value_type;
-  typedef NDBuffer &value_ref;
-  typedef uint8_t   element;
-  typedef element  *element_ptr;
-
-  ValueBox(value_ref val) : TypeSpec(val.dtype()), value(val) {}
-
-  element_ptr get_data() { return value.data(); }
-  value_ref   get() { return value; }
-  PSize       shape() const { return value.shape(); }
-  size_t      size() { return value.num_elements(); }
-  void        resize(const PSize &size) {value.resize(size);}
-
-private:
-  value_ref value;
-};
-
-template<>
-class ValueBox<const NDBuffer> : public TypeSpec<DataType> {
-
-public:
-  typedef uint8_t       element_type;
-  typedef const NDBuffer  value_type;
-  typedef const NDBuffer &value_ref;
-  typedef const uint8_t  element;
-  typedef element *element_ptr;
-
-  ValueBox(value_ref val) : TypeSpec(val.dtype()), value(val) {}
-
-  element_ptr get_data() const { return value.data(); }
-  value_ref   get() const { return value; }
-  PSize       shape() const { return value.shape(); }
-  size_t      size() const { return value.num_elements(); }
-
-private:
-  value_ref value;
-};
-
 
 } //namespace hades
 } //namespace pandora
