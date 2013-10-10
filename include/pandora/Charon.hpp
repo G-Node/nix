@@ -542,8 +542,8 @@ public:
   }
 
 private:
-  type_spec_t type_spec;
   value_ref   value;
+  type_spec_t type_spec;
 };
 
 
