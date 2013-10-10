@@ -2,11 +2,18 @@
 #ifndef PANDORA_CHARON_H
 #define PANDORA_CHARON_H
 
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>
 #include <pandora/DataType.hpp>
+
+#include <type_traits>
 
 namespace pandora {
 namespace hades {
@@ -158,6 +165,9 @@ template<typename T>
 class TypeInfo {
 public:
   typedef T element_type;
+  typedef TypeSpec<element_type> spec_type;
+
+  static spec_type type_spec(const T &value) { return spec_type(); };
 
   static PSize shape(const T &value) { return PSize(); }
 
@@ -187,7 +197,10 @@ class TypeInfo<std::vector<T> > {
 public:
   typedef T element_type;
   typedef std::vector<T> vector_type;
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const vector_type &value) { return spec_type(); };
+  
   static PSize shape(const vector_type &value) {
     PSize hsize(1);
     hsize[0] = value.size();
@@ -223,7 +236,10 @@ class TypeInfo<boost::multi_array<T, N> > {
 public:
   typedef boost::multi_array<T, N>     array_type;
   typedef typename array_type::element element_type;
-
+  typedef TypeSpec<element_type> spec_type;
+  
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(N);
     const size_t *shape = value.shape();
@@ -258,7 +274,10 @@ class TypeInfo<T[N]> {
 public:
   typedef T element_type;
   typedef T array_type[N];
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(1);
     hsize[0] = N;
@@ -291,7 +310,10 @@ class TypeInfo<T[M][N]> {
 public:
   typedef T element_type;
   typedef T array_type[M][N];
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(2);
     hsize[0] = M;
@@ -318,113 +340,66 @@ public:
     //NOOP
   }
 };
-
   
-template<typename T>
-class ValueBox : private TypeInfo<T>,
-    public TypeSpec<typename TypeInfo<T>::element_type> {
   
-public:
-  typedef TypeInfo<T> info_type;
-  typedef T           value_type;
-  typedef T          &value_ref;
-  typedef typename info_type::element_type  element;
-  typedef element *element_ptr;
-  
-  ValueBox(value_ref val) : value(val) {}
-  
-  element_ptr get_data() { return info_type::getData(value); }
-  value_ref   get() { return value; }
-  PSize       shape() const { return info_type::shape(value); }
-  size_t      size() { return this->num_elements(value); }
-  
-  void        resize(const PSize &new_size) {info_type::resize (value, new_size);}
-  
-private:
-  value_ref value;
-};
-
-
-template<typename T>
-class ValueBox<const T> : private TypeInfo<T>,
-    public TypeSpec<typename TypeInfo<T>::element_type> {
-  
-public:
-  typedef TypeInfo<T>  info_type;
-  typedef const T      value_type;
-  typedef const T     &value_ref;
-  typedef typename info_type::element_type element;
-  typedef typename info_type::element_type element_type;
-  typedef const element *element_ptr;
-  
-  ValueBox(value_ref val) : value(val) {}
-  
-  element_ptr get_data() const { return info_type::getData(value); }
-  value_ref   get() const { return value; }
-  PSize       shape() const { return info_type::shape(value); }
-  size_t      size() { return this->num_elements(value); }
-  
-private:
-  value_ref value;
-};
-
-
 /* *** */
+template<typename T, typename ElementType, typename isConst = void> class DataBox;
+  
+/* generic version for non-const types */
 template<
   typename T,
-  template <typename> class ValueBox,
-  typename ElementType
->
-class DataBox {
+  typename ElementType >
+class DataBox<T, ElementType, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-  typedef ValueBox<T>  &vbox_ref;
-  typedef ElementType  data_type;
-  typedef data_type   *data_ptr;
+  typedef hades::TypeInfo<T>  type_info_t;
+  typedef ElementType         data_type;
+  typedef data_type          *data_ptr;
 
-  DataBox(vbox_ref val) : value(val) {}
+  DataBox(T &val) : value(val) {}
 
   data_ptr operator *() { return get(); }
-  data_ptr get() { return value.get_data(); }
+  data_ptr get() { return type_info_t::getData(value); }
   void finish(const H5::DataSpace *space = nullptr) { }
 
 private:
-  vbox_ref value;
+  T &value;
 };
 
+/* generic version for const types */
 template<
   typename T,
-  template <typename> class ValueBox,
   typename ElementType
 >
-class DataBox<const T, ValueBox, ElementType> {
+class DataBox<T, ElementType, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef ValueBox<const T> &vbox_ref;
-  typedef const ElementType  data_type;
-  typedef       data_type   *data_ptr;
+  typedef typename std::remove_const<T>::type  vanilla;
+  typedef hades::TypeInfo<vanilla>             type_info_t;
+  typedef const ElementType                    data_type;
+  typedef       data_type                     *data_ptr;
 
-  DataBox(vbox_ref val) : value(val) {}
+  DataBox(T &val) : value(val) {}
 
-  data_ptr operator *() { return get(); }
-  data_ptr get() const { return value.get_data(); }
-  void finish(const H5::DataSpace *space = nullptr) { }
+  const data_ptr operator *() const { return get(); }
+  const data_ptr get() const { return type_info_t::getData(value); }
+  void finish(const H5::DataSpace *space = nullptr) const { }
 
 private:
-  vbox_ref value;
+  T &value;
 };
 
 
+/* string version for non-const types */
 template<
-  typename T,
-  template <typename> class ValueBox
+  typename T
 >
-class DataBox<T, ValueBox, std::string> {
+class DataBox<T, std::string, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-  typedef ValueBox<T>  &vbox_ref;
-  typedef char        *data_type;
-  typedef data_type   *data_ptr;
+  typedef hades::TypeInfo<T>  type_info_t;
+  typedef char               *data_type;
+  typedef data_type          *data_ptr;
 
-  DataBox(vbox_ref val) : value(val) {
-    size_t nelms = value.size();
+  DataBox(T &val) : value(val) {
+    size_t nelms = type_info_t::num_elements(value);
     data = new data_type[nelms];
   }
 
@@ -432,15 +407,16 @@ public:
   data_ptr get() { return data; }
 
   void finish(const H5::DataSpace *space = nullptr) {
-    size_t nelms = value.size();
-    auto vptr = value.get_data();
+    size_t nelms = type_info_t::num_elements(value);
+    auto vptr = type_info_t::getData(value);
 
     for (size_t i = 0; i < nelms; i++) {
       vptr[i] = data[i];
     }
 
     if (space) {
-			H5::DataSet::vlenReclaim(data, value.memType, *space);
+      TypeSpec<std::string> spec;
+			H5::DataSet::vlenReclaim(data, spec.memType, *space);
 		}
   }
 
@@ -449,41 +425,42 @@ public:
   }
 
 private:
-  data_ptr data;
-  vbox_ref value;
+  data_ptr  data;
+  T        &value;
 };
 
+/* string version for const types */
 template<
-  typename T,
-  template <typename> class ValueBox
+  typename T
 >
-class DataBox<const T, ValueBox, std::string> {
+  class DataBox<T, std::string, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef ValueBox<const T> &vbox_ref;
-  typedef char const       *data_type;
-  typedef data_type        *data_ptr;
+  typedef typename std::remove_const<T>::type  vanilla;
+  typedef hades::TypeInfo<vanilla>             type_info_t;
+  typedef char const                          *data_type;
+  typedef data_type                           *data_ptr;
 
-  DataBox(vbox_ref val) : value(val) {
-     size_t nelms = value.size();
+  DataBox(T &val) : value(val) {
+     size_t nelms = type_info_t::num_elements(value);
      data = new data_type[nelms];
-     auto vptr = value.get_data();
+     auto vptr = type_info_t::getData(value);
 
      for (size_t i = 0; i < nelms; i++) {
       data[i] = vptr[i].c_str();
     }
   }
 
-  data_ptr operator *() { return get(); }
+  data_ptr operator *() const { return get(); }
   data_ptr get() const { return data; }
-  void finish(const H5::DataSpace *space = nullptr) { }
+  void finish(const H5::DataSpace *space = nullptr) const { }
 
   ~DataBox() {
      delete[] data;
   }
 
 private:
-  data_ptr data;
-  vbox_ref value;
+  data_ptr  data;
+  T        &value;
 };
 
 } //namespace hades
@@ -492,25 +469,29 @@ template<typename T>
 class Charon {
   
 public:
-  typedef hades::ValueBox<T> vbox_type;
-  typedef typename vbox_type::element       element_type;
-  typedef typename vbox_type::value_ref     value_ref;
   
-  typedef hades::DataBox<T, hades::ValueBox, element_type> dbox_type;
-  typedef typename dbox_type::data_ptr       data_ptr;
+  typedef T &value_ref;
+  
+  typedef typename std::remove_const<T>::type             vanilla;
+  typedef hades::TypeInfo<vanilla>                        type_info_t;
+  typedef typename hades::TypeInfo<vanilla>::element_type element_type;
+  typedef typename hades::TypeInfo<vanilla>::spec_type    type_spec_t;
+
+  typedef hades::DataBox<T, element_type> dbox_type;
+  typedef typename dbox_type::data_ptr    data_ptr;
   
 
-  Charon(value_ref val) : value(val) {
-    static_assert(vbox_type::is_valid, "No valid type spec");
+  Charon(value_ref val) : value(val), type_spec(type_info_t::type_spec(val)) {
+    static_assert(type_spec_t::is_valid, "No valid type spec");
   }
   
-  const H5::DataType& getFileType() const { return value.fileType; }
-  const H5::DataType& getMemType() const { return value.memType; }
+  const H5::DataType& getFileType() const { return type_spec.fileType; }
+  const H5::DataType& getMemType() const { return type_spec.memType; }
   
   H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
 
     if (maxdimsUnlimited) {
-      PSize dims = value.shape();
+      PSize dims = type_info_t::shape(value);
       PSize maxdims(dims.size(), H5S_UNLIMITED);
       return createDataSpace(&maxdims);
     } else {
@@ -520,7 +501,7 @@ public:
   }
 
   H5::DataSpace createDataSpace(const PSize *maxdims = nullptr) const {
-    PSize dims = value.shape();
+    PSize dims = type_info_t::shape(value);
     H5::DataSpace space;
     
     if (dims.size() == 0) {
@@ -546,13 +527,19 @@ public:
     dbox_type data(value);
     return data;
   }
+  
+  dbox_type get_data() const {
+    dbox_type data(value);
+    return data;
+  }
 
   void resize(const PSize &size) {
-    value.resize(size);
+    type_info_t::resize(value, size);
   }
 
 private:
-  vbox_type  value;
+  value_ref   value;
+  type_spec_t type_spec;
 };
 
 

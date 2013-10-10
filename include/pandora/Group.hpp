@@ -3,7 +3,12 @@
 #define PAN_GROUP_H_INCLUDE
 
 #include <string>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 
 #include <pandora/Charon.hpp>
 
@@ -60,7 +65,7 @@ public:
   
 template<typename T> void Group::setAttr(std::string name, const T &value) const
 {
-  Charon<const T> charon(value);
+  const Charon<const T> charon(value);
   H5::Attribute attr;
   
   if (hasAttr(name)) {
@@ -72,7 +77,7 @@ template<typename T> void Group::setAttr(std::string name, const T &value) const
   }
 
   typedef typename Charon<const T>::dbox_type dbox_type;
-  dbox_type data = charon.get_data();
+  const dbox_type data = charon.get_data();
   attr.write(charon.getMemType(), *data);
   data.finish();
 }

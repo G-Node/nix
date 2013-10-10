@@ -15,7 +15,12 @@
 #define PAN_FILE_H_INCLUDED
 
 #include <string>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 
 #include <pandora/Group.hpp>
 
@@ -44,11 +49,6 @@ private:
   Group root, metadata, data;
 
 public:
-
-  /** Indicator for the HDF5 file being a pandora file */
-  static const std::string FORMAT;
-  /** The version of the pandora format */
-  static const std::string VERSION;
 
   /**
    * Constructor that is used to open the file.
