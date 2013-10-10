@@ -26,8 +26,8 @@ using namespace std;
 namespace pandora {
 
 // Format definition
-#define FILE_VERSION "1.0"
-#define FILE_FORMAT  "pandora"
+#define FILE_VERSION std::string("1.0")
+#define FILE_FORMAT  std::string("pandora")
 
 
 static unsigned int map_file_mode(FileMode mode) {
