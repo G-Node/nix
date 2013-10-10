@@ -94,6 +94,9 @@ template<>
 class TypeInfo<NDBuffer> {
 public:
   typedef uint8_t element_type;
+  typedef TypeSpec<DataType> spec_type;
+  
+  static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
   
   static PSize shape(const NDBuffer &value) { return value.shape(); }
   

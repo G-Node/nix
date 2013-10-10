@@ -165,6 +165,9 @@ template<typename T>
 class TypeInfo {
 public:
   typedef T element_type;
+  typedef TypeSpec<element_type> spec_type;
+
+  static spec_type type_spec(const T &value) { return spec_type(); };
 
   static PSize shape(const T &value) { return PSize(); }
 
@@ -194,7 +197,10 @@ class TypeInfo<std::vector<T> > {
 public:
   typedef T element_type;
   typedef std::vector<T> vector_type;
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const vector_type &value) { return spec_type(); };
+  
   static PSize shape(const vector_type &value) {
     PSize hsize(1);
     hsize[0] = value.size();
@@ -230,7 +236,10 @@ class TypeInfo<boost::multi_array<T, N> > {
 public:
   typedef boost::multi_array<T, N>     array_type;
   typedef typename array_type::element element_type;
-
+  typedef TypeSpec<element_type> spec_type;
+  
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(N);
     const size_t *shape = value.shape();
@@ -265,7 +274,10 @@ class TypeInfo<T[N]> {
 public:
   typedef T element_type;
   typedef T array_type[N];
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(1);
     hsize[0] = N;
@@ -298,7 +310,10 @@ class TypeInfo<T[M][N]> {
 public:
   typedef T element_type;
   typedef T array_type[M][N];
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const array_type &value) { return spec_type(); };
+  
   static PSize shape(const array_type &value) {
     PSize hsize(2);
     hsize[0] = M;

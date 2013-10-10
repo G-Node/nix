@@ -130,12 +130,16 @@ struct TypeSpec<Value<T> > {
 
 };
 
+
 template<typename T>
 class TypeInfo<std::vector<Value<T> > > {
 public:
   typedef Value<T> element_type;
   typedef std::vector<Value<T> > myType;
+  typedef TypeSpec<element_type> spec_type;
 
+  static spec_type type_spec(const myType &value) { return spec_type(); };
+  
   static PSize shape(const myType &value) {
 return  PSize( {value.size()});}
 
