@@ -178,12 +178,11 @@ typename U
 >
 class DataBox<T, Value<U>, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-typedef typename std::remove_const<T>::type             vanilla;
-typedef hades::TypeInfo<vanilla>                        type_info_t;
-typedef typename hades::TypeInfo<vanilla>::element_type element_type;
-typedef typename TypeSpec<Value<U>>::inner_type inner_type;
-typedef FileValue<inner_type> data_type;
-typedef data_type *data_ptr;
+typedef typename std::remove_const<T>::type      vanilla;
+typedef hades::TypeInfo<vanilla>                 type_info_t;
+typedef typename TypeSpec<Value<U>>::inner_type  inner_type;
+typedef FileValue<inner_type>                    data_type;
+typedef data_type                               *data_ptr;
   
 
 DataBox(T &val) : value(val) {
@@ -225,11 +224,10 @@ typename U
 >
 class DataBox<T, Value<U>, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-typedef hades::TypeInfo<T>                        type_info_t;
-typedef typename hades::TypeInfo<T>::element_type element_type;
-typedef typename TypeSpec<Value<U>>::inner_type inner_type;
-typedef FileValue<inner_type> data_type;
-typedef data_type *data_ptr;
+typedef hades::TypeInfo<T>                       type_info_t;
+typedef typename TypeSpec<Value<U>>::inner_type  inner_type;
+typedef FileValue<inner_type>                    data_type;
+typedef data_type                               *data_ptr;
 
 DataBox(T &val) : value(val) {
   size_t nelms = type_info_t::num_elements(value);

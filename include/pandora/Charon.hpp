@@ -351,10 +351,9 @@ template<
   typename ElementType >
 class DataBox<T, ElementType, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-  typedef hades::TypeInfo<T>                        type_info_t;
-  typedef typename hades::TypeInfo<T>::element_type element_type;
-  typedef ElementType  data_type;
-  typedef data_type   *data_ptr;
+  typedef hades::TypeInfo<T>  type_info_t;
+  typedef ElementType         data_type;
+  typedef data_type          *data_ptr;
 
   DataBox(T &val) : value(val) {}
 
@@ -373,11 +372,10 @@ template<
 >
 class DataBox<T, ElementType, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef typename std::remove_const<T>::type             vanilla;
-  typedef hades::TypeInfo<vanilla>                        type_info_t;
-  typedef typename hades::TypeInfo<vanilla>::element_type element_type;
-  typedef const ElementType  data_type;
-  typedef       data_type   *data_ptr;
+  typedef typename std::remove_const<T>::type  vanilla;
+  typedef hades::TypeInfo<vanilla>             type_info_t;
+  typedef const ElementType                    data_type;
+  typedef       data_type                     *data_ptr;
 
   DataBox(T &val) : value(val) {}
 
@@ -396,10 +394,9 @@ template<
 >
 class DataBox<T, std::string, typename std::enable_if<! std::is_const<T>::value>::type> {
 public:
-  typedef hades::TypeInfo<T>                        type_info_t;
-  typedef typename hades::TypeInfo<T>::element_type element_type;
-  typedef char        *data_type;
-  typedef data_type   *data_ptr;
+  typedef hades::TypeInfo<T>  type_info_t;
+  typedef char               *data_type;
+  typedef data_type          *data_ptr;
 
   DataBox(T &val) : value(val) {
     size_t nelms = type_info_t::num_elements(value);
@@ -438,11 +435,10 @@ template<
 >
   class DataBox<T, std::string, typename std::enable_if<std::is_const<T>::value>::type> {
 public:
-  typedef typename std::remove_const<T>::type             vanilla;
-  typedef hades::TypeInfo<vanilla>                        type_info_t;
-  typedef typename hades::TypeInfo<vanilla>::element_type element_type;
-  typedef char const       *data_type;
-  typedef data_type        *data_ptr;
+  typedef typename std::remove_const<T>::type  vanilla;
+  typedef hades::TypeInfo<vanilla>             type_info_t;
+  typedef char const                          *data_type;
+  typedef data_type                           *data_ptr;
 
   DataBox(T &val) : value(val) {
      size_t nelms = type_info_t::num_elements(value);
@@ -532,8 +528,8 @@ public:
     return data;
   }
   
-  const dbox_type get_data() const {
-    const dbox_type data(value);
+  dbox_type get_data() const {
+    dbox_type data(value);
     return data;
   }
 
