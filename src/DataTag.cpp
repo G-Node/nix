@@ -124,7 +124,6 @@ bool DataTag::hasExtents() const{
 
 
 // Methods concerning references.
-
 bool DataTag::hasReference(const DataArray &reference) const {
   return hasReference(reference.id());
 }

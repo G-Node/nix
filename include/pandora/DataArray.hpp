@@ -8,7 +8,7 @@
 //
 // Authors: Christian Kellner <kellner@bio.lmu.de>, Jan Grewe <jan.grewe@g-node.org>
 
-
+//TODO convenience methods for accessing dimensionality and shape of data
 #include <boost/multi_array.hpp>
 
 #include <pandora/PSize.hpp>

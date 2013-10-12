@@ -5,6 +5,7 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+// Author: Jan Grewe <jan.grewe@g-node.org>
 
 /**
  * @file pandora/DataTag.hpp
@@ -210,6 +211,18 @@ public:
    */
   bool removeRepresentation(std::string id);
 
+  /**
+   * Get the data that belongs to the Reference and is related to position and extent referenced
+   * with the index given
+   *
+   * @param boost::multi_array<T, dims> &data return argument for the data
+   * @param size_t index
+   *
+   * TODO implement this method
+   */
+  template<typename T, size_t dims>
+  void getReferenceData(boost::multi_array<T, dims> &data, size_t index) const;
+
 
   //--------------------------------------------------
   // Other methods and functions
@@ -231,8 +244,7 @@ public:
   virtual ~DataTag();
 
 private:
-  //TODO make sure that dimensions of positions and extents match dimensionality of data.
-  //TODO validate method that calls both methods
+  //TODO validate method that checks dimensionality, units, etc...
   bool checkDimensions(const DataArray &a, const DataArray &b) const;
 
   bool checkPositionsAndExtents() const;
