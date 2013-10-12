@@ -62,12 +62,18 @@ void DataTag::positions(const DataArray &positions) {
 
 
 void DataTag::positions(const string &positionsId) {
-  if(this->block.hasDataArray(positionsId)){
-    group.setAttr("positions", positionsId);
-    forceUpdatedAt();
+  if(!this->block.hasDataArray(positionsId)){
+    throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
   }
   else{
-    throw runtime_error("DataTag::positions: cannot set DataArray because it does not exist!");
+    if(this->hasExtents()){
+      DataArray pos = this->block.getDataArray(positionsId);
+      DataArray ext = this->extents();
+      if(!checkDimensions(ext,pos))
+        throw runtime_error("DataTag::positions: cannot set Positions because dimensionality of extent and position data do not match!");
+    }
+    group.setAttr("positions", positionsId);
+    forceUpdatedAt();
   }
 }
 
@@ -94,13 +100,19 @@ void DataTag::extents(const DataArray &extent) {
 
 
 void DataTag::extents(const string &extentsId) {
-  if(this->block.hasDataArray(extentsId)){
-    group.setAttr("extents", extentsId);
-    forceUpdatedAt();
-  }
-  else{
-    throw runtime_error("DataTag::extents: cannot set DataArray because it does not exist!");
-  }
+  if(!this->block.hasDataArray(extentsId)){
+     throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+   }
+   else{
+     if(this->hasPositions()){
+       DataArray ext = this->block.getDataArray(extentsId);
+       DataArray pos = this->positions();
+       if(!checkDimensions(ext,pos))
+         throw runtime_error("DataTag::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+     }
+     group.setAttr("extents", extentsId);
+     forceUpdatedAt();
+   }
 }
 
 
@@ -188,6 +200,25 @@ ostream& operator<<(ostream &out, const DataTag &ent) {
   return out;
 }
 
+
+bool DataTag::checkDimensions(const DataArray &a, const DataArray &b)const{
+  bool valid = true;
+  boost::multi_array<double,1> aData, bData;
+  a.getRawData(aData);
+  b.getRawData(bData);
+  valid = aData.num_dimensions() == bData.num_dimensions();
+  if(!valid)
+    return valid;
+
+  boost::multi_array<double,1>::size_type dims = aData.num_dimensions();
+  for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++){
+    valid = (aData.shape()[i] != bData.shape()[i]);
+    if(!valid)
+      return valid;
+  }
+  return valid;
+}
+
 bool DataTag::checkPositionsAndExtents() const{
   bool valid = true;
   if(hasPositions() && hasExtents()){
@@ -196,17 +227,7 @@ bool DataTag::checkPositionsAndExtents() const{
     boost::multi_array<double,1> posData, extData;
     pos.getRawData(posData);
     ext.getRawData(extData);
-
-    valid = posData.num_dimensions() == extData.num_dimensions();
-    if(!valid)
-      return valid;
-
-    boost::multi_array::size_type dims = posData.num_dimensions();
-    for(boost::multi_array::size_type i = 0; i < *posData.shape(); i++){
-      valid = (*posData.shape()[i] != *extData.shape()[i]);
-      if(!valid)
-        return valid;
-    }
+    return checkDimensions(pos, ext);
   }
   return valid;
 }

@@ -79,10 +79,26 @@ void TestDataTag::testReferences(){
 
 void TestDataTag::testPositionExtents(){
   Block b = f1->createBlock("DataTagTest","Test");
-  DataArray da_1 = b.createDataArray("TestReference 1","Reference");
+  DataArray da_1 = b.createDataArray("TestPosition","Position");
+  typedef boost::multi_array<double, 1> array_type;
+  typedef array_type::index index;
+  array_type A(boost::extents[5]);
+  for(index i = 0; i != 5; ++i){
+    A[i] = 100.0*i;
+  }
+  da_1.setRawData(A);
 
-  DataArray da_2 = b.createDataArray("TestReference 2","Reference");
+  array_type B(boost::extents[10]);
+  for(index i = 0; i != 10; ++i){
+    B[i] = 100.0*i;
+  }
+  DataArray da_2 = b.createDataArray("TestExtent","Extent");
+  da_2.setRawData(B);
+
   DataTag dt = b.createDataTag("TestDataTag1","Tag");
+  dt.positions(da_1);
+  CPPUNIT_ASSERT_THROW(dt.extents("some_unknown_data_array_id"),runtime_error);
+  CPPUNIT_ASSERT_THROW(dt.extents(da_2),runtime_error);
 
   f1->removeBlock(b.id());
 }

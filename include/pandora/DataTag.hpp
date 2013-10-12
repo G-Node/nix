@@ -115,7 +115,6 @@ public:
   //--------------------------------------------------
   // Methods concerning references.
   // TODO implement when done with the DataArray class.
-  // TODO add hasXy getXy addXy and removeXy methods for references.
   //--------------------------------------------------
 
   bool hasReference(const DataArray &reference) const;
@@ -234,6 +233,8 @@ public:
 private:
   //TODO make sure that dimensions of positions and extents match dimensionality of data.
   //TODO validate method that calls both methods
+  bool checkDimensions(const DataArray &a, const DataArray &b) const;
+
   bool checkPositionsAndExtents() const;
 };
 
