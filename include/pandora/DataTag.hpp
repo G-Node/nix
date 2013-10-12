@@ -14,6 +14,7 @@
 
 #include <pandora/EntityWithSources.hpp>
 #include <pandora/util/ReferenceList.hpp>
+#include <pandora/DataArray.hpp>
 
 #ifndef PAN_DATATAG_H_INCLUDED
 #define PAN_DATATAG_H_INCLUDED
@@ -21,7 +22,7 @@
 namespace pandora {
 
 class Section;
-class DataArray;
+//class DataArray;
 class Representation;
 class RepresentationType;
 
