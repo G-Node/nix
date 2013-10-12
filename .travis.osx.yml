@@ -1,0 +1,25 @@
+language: objective-c
+global:
+  COMPILER=g++
+env:
+  matrix:
+    - CMAKE_BUILD_TYPE=DEBUG
+
+before_script:
+- mkdir -p build
+- cd build
+- CXX=/usr/local/bin/g++-4.9 cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+
+script:
+- cd build
+- make
+- ctest -D Experimental
+- cd ..
+
+install:
+- brew install cppunit hdf5
+- cd /;
+- wget http://static.xatom.net/pandora/gcc-4.9.0_darwin.tar.bz2 -O /tmp/gcc-490a.tar.bz2;
+- sudo tar xfj /tmp/gcc-490a.tar.bz2;
+- cd -;
+- sudo chown -R `whoami` /usr/local;

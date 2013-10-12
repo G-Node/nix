@@ -35,7 +35,7 @@ private:
 public:
 
   //typedefs
-  typedef typename TNode<Source>::size_type size_type;
+  using size_type = TNode<Source>::size_type;
   
   
   /**

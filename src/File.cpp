@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <vector>
+#include <ctime>
 
 #include <pandora/Util.hpp>
 #include <pandora/File.hpp>
@@ -25,8 +26,8 @@ using namespace std;
 namespace pandora {
 
 // Format definition
-const string File::VERSION = "1.0";
-const string File::FORMAT  = "pandora";
+#define FILE_VERSION std::string("1.0")
+#define FILE_FORMAT  std::string("pandora")
 
 
 static unsigned int map_file_mode(FileMode mode) {
@@ -259,19 +260,19 @@ bool File::checkHeader() const {
   string str;
   // check format
   if (root.hasAttr("format")) {
-    if (!root.getAttr("format", str) || str != FORMAT) {
+    if (!root.getAttr("format", str) || str != FILE_FORMAT) {
       check = false;
     }
   } else {
-    root.setAttr("format", FORMAT);
+    root.setAttr("format", FILE_FORMAT);
   }
   // check version
   if (root.hasAttr("version")) {
-    if (!root.getAttr("version", str) || str != VERSION) {
+    if (!root.getAttr("version", str) || str != FILE_VERSION) {
       check = false;
     }
   } else {
-    root.setAttr("version", VERSION);
+    root.setAttr("version", FILE_VERSION);
   }
   return check;
 }

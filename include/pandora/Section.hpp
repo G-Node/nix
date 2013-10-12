@@ -1,8 +1,14 @@
 #ifndef PAN_SECTION_H_INCLUDE
 #define PAN_SECTION_H_INCLUDE
 
-#include <string>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
+
+#include <string>
 #include <functional>
 #include <pandora/NamedEntity.hpp>
 #include <pandora/Group.hpp>
