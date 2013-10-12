@@ -1,7 +1,12 @@
 #ifndef PANDORA_DATA_TYPE_H
 #define PANDORA_DATA_TYPE_H
 
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 
 namespace pandora {
 

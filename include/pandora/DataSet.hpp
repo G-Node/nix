@@ -1,8 +1,14 @@
 #ifndef PANDORA_DATASET_H
 #define PANDORA_DATASET_H
 
-#include <pandora/Charon.hpp>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
+
+#include <pandora/Charon.hpp>
 #include <pandora/Selection.hpp>
 
 namespace pandora {

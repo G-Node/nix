@@ -2,7 +2,12 @@
 #define PANDORA_SELECTION_H
 
 
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
 #include <H5Cpp.h>
+#endif
 #include <pandora/PSize.hpp>
 #include <pandora/Charon.hpp>
 

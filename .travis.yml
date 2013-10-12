@@ -1,0 +1,27 @@
+language: cpp
+env:
+  matrix:
+    - CMAKE_BUILD_TYPE=DEBUG
+
+before_script:
+- mkdir -p build
+- cd build
+- CXX=g++-4.8 cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+- cd ..
+
+script:
+- cd build
+- make
+- cd ..
+
+after_success:
+- cd build
+- ctest -D Experimental
+- cd ..
+
+install:
+- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+- sudo add-apt-repository ppa:gnode/pandora -y
+- sudo apt-get update -qq -y
+- sudo apt-get install gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev
+
