@@ -22,6 +22,8 @@
 namespace pandora {
 
 class File;
+class Group;
+class Source;
 
 /**
  * Base class for entities that are associated with metadata such
@@ -64,7 +66,9 @@ public:
   Section metadata() const;
 
   /**
-   * Associate the entity with some metadata.
+   * Associate the entity with some metadata. Calling this method will replace
+   * previously stored information.
+   *
    *
    * @param metadata    The section that should be associated
    *                    with this entity.
@@ -77,7 +81,7 @@ public:
    *
    * @return True if the section was removed, false otherwise.
    */
-  bool removeMetadata(Section &metadata);
+  bool removeMetadata();
 
   /**
    * Destructor of this class.
