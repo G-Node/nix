@@ -8,6 +8,7 @@
 #include "TestNDBuffer.hpp"
 #include "TestSource.hpp"
 #include "TestNamedEntityWithSources.hpp"
+#include "TestEntityWithMetadata.hpp"
 #include "TestRepresentation.hpp"
 
 #include "TestProperty.hpp"
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
   CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
+  CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
   CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
