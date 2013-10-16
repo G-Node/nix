@@ -18,12 +18,13 @@
 #include <iostream>
 
 #include <pandora/NamedEntity.hpp>
+#include <pandora/File.hpp>
 
 namespace pandora {
 
-class File;
 class Group;
 class Source;
+class Section;
 
 /**
  * Base class for entities that are associated with metadata such

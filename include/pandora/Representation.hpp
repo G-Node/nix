@@ -13,7 +13,7 @@
 namespace pandora {
 
 class DataArray;
-
+class Block;
 /**
  * Enumeration for link types.
  */
@@ -42,6 +42,8 @@ LinkType linkTypeFromString(const std::string &str);
  * TODO implement methods for DataArray.
  */
 class Representation: public PandoraEntity {
+protected:
+  Block block;
 
 public:
 
@@ -53,12 +55,12 @@ public:
   /**
    * Default constuctor.
    */
-  Representation(Group group, const std::string &id);
+  Representation(Group group, const std::string &id, Block block);
 
   /**
    * Default constructor that preserves the creation time.
    */
-  Representation(Group group, const std::string &id, time_t time);
+  Representation(Group group, const std::string &id, time_t time, Block block);
 
   /**
    * Setter for the link type.

@@ -1,5 +1,7 @@
 
 #include <pandora/Group.hpp>
+#include <pandora/Block.hpp>
+#include <pandora/DataArray.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;
@@ -25,17 +27,17 @@ LinkType linkTypeFromString(const string &str) {
 
 
 Representation::Representation(const Representation &representation)
-  : PandoraEntity(representation.group, representation.entity_id)
+  : PandoraEntity(representation.group, representation.entity_id), block(representation.block)
 {}
 
 
-Representation::Representation(Group group, const string &id)
-  : PandoraEntity(group, id)
+Representation::Representation(Group group, const string &id, Block block)
+  : PandoraEntity(group, id), block(block)
 {}
 
 
-Representation::Representation(Group group, const string &id, time_t time)
-  : PandoraEntity(group, id, time)
+Representation::Representation(Group group, const string &id, time_t time, Block block)
+  : PandoraEntity(group, id, time), block(block)
 {}
 
 
@@ -44,6 +46,17 @@ void Representation::linkType(LinkType link_type) {
   forceUpdatedAt();
 }
 
+
+void Representation::data(const DataArray &data){
+  group.setAttr("data", data.id());
+  forceUpdatedAt();
+}
+
+DataArray Representation::data() const{
+  string dataId;
+  group.getAttr("data", dataId);
+  return block.getDataArray(dataId);
+}
 
 LinkType Representation::linkType() const {
   string link_type;

@@ -186,12 +186,12 @@ size_t DataTag::representationCount() const{
 }
 
 Representation DataTag::getRepresentation(const std::string &id) const{
-  return Representation(representation_group.openGroup(id, false), id);
+  return Representation(representation_group.openGroup(id, false), id, this->block);
 }
 
 Representation DataTag::getRepresentation(size_t index) const{
   string id = representation_group.objectName(index);
-  Representation r(representation_group.openGroup(id), id);
+  Representation r(representation_group.openGroup(id), id, this->block);
   return r;
 }
 
@@ -200,7 +200,7 @@ std::vector<Representation> DataTag::representations() const{
   size_t count = representation_group.objectCount();
   for (size_t i = 0; i < count; i++) {
     string id = representation_group.objectName(i);
-    Representation r(representation_group.openGroup(id, false), id);
+    Representation r(representation_group.openGroup(id, false), id, this->block);
     representation_obj.push_back(r);
   }
   return representation_obj;
@@ -210,8 +210,9 @@ Representation DataTag::createRepresentation(DataArray data, LinkType link_type)
   string id = util::createId("representation");
   while(representation_group.hasObject(id))
     id = util::createId("representation");
-  Representation r(representation_group.openGroup(id, true), id);
+  Representation r(representation_group.openGroup(id, true), id, this->block);
   r.linkType(link_type);
+  r.data(data);
   return r;
 }
 
