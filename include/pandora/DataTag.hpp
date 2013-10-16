@@ -22,9 +22,7 @@
 namespace pandora {
 
 class Section;
-//class DataArray;
 class Representation;
-class RepresentationType;
 
 enum class LinkType;
 
@@ -201,7 +199,7 @@ public:
    *
    * @return The created representation object.
    */
-  Representation createRepresentation(DataArray data, RepresentationType link_type);
+  Representation createRepresentation(DataArray data, LinkType link_type);
 
   /**
    * Remove a representation from the tag.

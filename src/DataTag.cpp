@@ -16,7 +16,7 @@
 #include <pandora/Block.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/DataTag.hpp>
-//#include <pandora/DataArray.hpp>
+#include <pandora/Util.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;
@@ -101,18 +101,18 @@ void DataTag::extents(const DataArray &extent) {
 
 void DataTag::extents(const string &extentsId) {
   if(!this->block.hasDataArray(extentsId)){
-     throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
-   }
-   else{
-     if(this->hasPositions()){
-       DataArray ext = this->block.getDataArray(extentsId);
-       DataArray pos = this->positions();
-       if(!checkDimensions(ext,pos))
-         throw runtime_error("DataTag::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-     }
-     group.setAttr("extents", extentsId);
-     forceUpdatedAt();
-   }
+    throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+  }
+  else{
+    if(this->hasPositions()){
+      DataArray ext = this->block.getDataArray(extentsId);
+      DataArray pos = this->positions();
+      if(!checkDimensions(ext,pos))
+        throw runtime_error("DataTag::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+    }
+    group.setAttr("extents", extentsId);
+    forceUpdatedAt();
+  }
 }
 
 
@@ -174,6 +174,54 @@ void DataTag::references(const std::vector<DataArray> &references) {
   }
 
   reference_list.set(ids);
+}
+
+// Methods concerning representations.
+bool DataTag::hasRepresentation(const string &id) const{
+  return representation_group.hasGroup(id);
+}
+
+size_t DataTag::representationCount() const{
+  return representation_group.objectCount();
+}
+
+Representation DataTag::getRepresentation(const std::string &id) const{
+  return Representation(representation_group.openGroup(id, false), id);
+}
+
+Representation DataTag::getRepresentation(size_t index) const{
+  string id = representation_group.objectName(index);
+  Representation r(representation_group.openGroup(id), id);
+  return r;
+}
+
+std::vector<Representation> DataTag::representations() const{
+  vector<Representation>  representation_obj;
+  size_t count = representation_group.objectCount();
+  for (size_t i = 0; i < count; i++) {
+    string id = representation_group.objectName(i);
+    Representation r(representation_group.openGroup(id, false), id);
+    representation_obj.push_back(r);
+  }
+  return representation_obj;
+}
+
+Representation DataTag::createRepresentation(DataArray data, LinkType link_type){
+  string id = util::createId("representation");
+  while(representation_group.hasObject(id))
+    id = util::createId("representation");
+  Representation r(representation_group.openGroup(id, true), id);
+  r.linkType(link_type);
+  return r;
+}
+
+bool DataTag::removeRepresentation(const string &id){
+  if (representation_group.hasGroup(id)) {
+    representation_group.removeGroup(id);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // Other methods and functions

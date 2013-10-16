@@ -30,7 +30,7 @@ namespace util {
  *
  * @return The generated id string.
  */
-std::string createId(const std::string &prefix = "", int length = 16);
+std::string createId(std::string prefix = "", int length = 16);
 
 /**
  * Convert a time value into a string representation.

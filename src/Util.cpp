@@ -29,7 +29,7 @@ const int    ID_BASE = 32;
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 
 /* SEE: pandora/Util.hpp */
-string createId(const string &prefix, int length) {
+string createId(string prefix, int length) {
   static bool initialized = false;
   if(!initialized) {
     initialized = true;
