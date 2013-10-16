@@ -50,12 +50,12 @@ public:
   /**
    * Standard constructor
    */
-  DataTag(File file, Block block, Group group, std::string id);
+  DataTag(File file, Block block, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  DataTag(File file, Block block, Group group, std::string id, time_t time);
+  DataTag(File file, Block block, Group group, const std::string &id, time_t time);
 
   /**
    * Getter for the positions of a tag. The positions are strored in a DataArray.
@@ -158,7 +158,7 @@ public:
    *
    * @return True if the representation exists, false otherwise.
    */
-  bool hasRepresentation(std::string id) const;
+  bool hasRepresentation(const std::string &id) const;
 
   /**
    * Returns the number of representations in this block.
@@ -175,7 +175,7 @@ public:
    * @return The representation with the specified id. If it doesn't exist
    *         an exception will be thrown.
    */
-  Representation getRepresentation(std::string id) const;
+  Representation getRepresentation(const std::string &id) const;
 
   /**
    * Retrieves a specific representation from the tag.
@@ -210,7 +210,7 @@ public:
    *
    * @return True if the representation was removed, false otherwise.
    */
-  bool removeRepresentation(std::string id);
+  bool removeRepresentation(const std::string &id);
 
   /**
    * Get the data that belongs to the Reference and is related to position and extent referenced

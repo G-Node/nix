@@ -30,7 +30,7 @@ namespace util {
  *
  * @return The generated id string.
  */
-std::string createId(std::string prefix = "", int length = 16);
+std::string createId(const std::string &prefix = "", int length = 16);
 
 /**
  * Convert a time value into a string representation.
@@ -49,7 +49,7 @@ std::string timeToStr(time_t time);
  *
  * @return The time value that is represented by the time parameter.
  */
-time_t strToTime(std::string time);
+time_t strToTime(const std::string &time);
 
 } // namespace util
 } // namespace pandora

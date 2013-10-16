@@ -36,14 +36,14 @@ SimpleTag::SimpleTag(const SimpleTag &tag)
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id)
+SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id)
   : EntityWithSources(file, block, group, id), references_list(group, "references")
 {
   representation_group = group.openGroup("representations");
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id, time_t time)
+SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id, time_t time)
   : EntityWithSources(file, block, group, id, time), references_list(group, "references")
 {
   representation_group = group.openGroup("representations");

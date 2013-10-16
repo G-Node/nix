@@ -29,7 +29,7 @@ const int    ID_BASE = 32;
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 
 /* SEE: pandora/Util.hpp */
-string createId(string prefix, int length) {
+string createId(const string &prefix, int length) {
   static bool initialized = false;
   if(!initialized) {
     initialized = true;
@@ -55,7 +55,7 @@ string timeToStr(time_t time) {
 }
 
 /* SEE: pandora/Util.hpp */
-time_t strToTime(string time) {
+time_t strToTime(const string &time) {
   using namespace boost::posix_time;
   ptime timetmp(from_iso_string(time));
   ptime epoch(boost::gregorian::date(1970, 1, 1));

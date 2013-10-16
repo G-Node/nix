@@ -53,12 +53,12 @@ public:
   /**
    * Standard constructor
    */
-  SimpleTag(File file, Block block, Group group, std::string id);
+  SimpleTag(File file, Block block, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  SimpleTag(File file, Block block, Group group, std::string id, time_t time);
+  SimpleTag(File file, Block block, Group group, const std::string &id, time_t time);
 
   /**
    * Getter for the units of the tag. The units are applied to all values for position
@@ -151,7 +151,7 @@ public:
    *
    * @return True if the representation exists, false otherwise.
    */
-  bool hasRepresentation(std::string id) const;
+  bool hasRepresentation(const std::string &id) const;
 
   /**
    * Returns the number of representations in this block.
@@ -168,7 +168,7 @@ public:
    * @return The representation with the specified id. If it doesn't exist
    *         an exception will be thrown.
    */
-  Representation getRepresentation(std::string id) const;
+  Representation getRepresentation(const std::string &id) const;
 
   /**
    * Retrieves a specific representation from the tag.
@@ -203,7 +203,7 @@ public:
    *
    * @return True if the representation was removed, false otherwise.
    */
-  bool removeRepresentation(std::string id);
+  bool removeRepresentation(const std::string &id);
 
 
   //--------------------------------------------------

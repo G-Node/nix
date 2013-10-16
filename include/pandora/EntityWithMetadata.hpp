@@ -42,12 +42,12 @@ public:
   /**
    * Standard constructor
    */
-  EntityWithMetadata(File file, Group group, std::string id);
+  EntityWithMetadata(File file, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  EntityWithMetadata(File file, Group group, std::string id, time_t time);
+  EntityWithMetadata(File file, Group group, const std::string &id, time_t time);
 
   /**
    * Checks if the block has associated metadata.

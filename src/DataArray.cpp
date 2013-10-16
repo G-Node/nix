@@ -36,7 +36,7 @@ DataArray::DataArray(const DataArray &data_array)
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, string id)
+DataArray::DataArray(File file, const Block block, Group group, const string &id)
 : EntityWithSources(file, block, group, id)
 {
   dimension_group = group.openGroup("dimensions");
@@ -52,7 +52,7 @@ DataArray::DataArray(File file, const Block block, Group group, string id)
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, string id, time_t time)
+DataArray::DataArray(File file, const Block block, Group group, const string &id, time_t time)
 : EntityWithSources(file, block, group, id, time)
 {
   dimension_group = group.openGroup("dimensions");

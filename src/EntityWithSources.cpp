@@ -26,13 +26,13 @@ using namespace std;
 namespace pandora {
 
 
-EntityWithSources::EntityWithSources(File file, Block block, Group group, string id)
+EntityWithSources::EntityWithSources(File file, Block block, Group group, const string &id)
   : EntityWithMetadata(file, group, id), block(block), sources_refs(group, "sources")
 {
 }
 
 
-EntityWithSources::EntityWithSources(File file, Block block, Group group, string id, time_t time)
+EntityWithSources::EntityWithSources(File file, Block block, Group group, const string &id, time_t time)
   : EntityWithMetadata(file, group, id, time), block(block), sources_refs(group, "sources")
 {
 }
@@ -48,7 +48,7 @@ bool EntityWithSources::hasSource(const Source &source) const {
 }
 
 
-bool EntityWithSources::hasSource(string id) const {
+bool EntityWithSources::hasSource(const string &id) const {
   return sources_refs.has(id);
 }
 

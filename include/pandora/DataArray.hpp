@@ -41,12 +41,12 @@ public:
   /**
    * Standard constructor
    */
-  DataArray(File file, Block block, Group group, std::string id);
+  DataArray(File file, Block block, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  DataArray(File file, Block block, Group group, std::string id, time_t time);
+  DataArray(File file, Block block, Group group, const std::string &id, time_t time);
 
   //--------------------------------------------------
   // Element getters and setters

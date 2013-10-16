@@ -21,14 +21,14 @@ using namespace std;
 
 namespace pandora {
 
-EntityWithMetadata::EntityWithMetadata(File file, Group group, string id)
+EntityWithMetadata::EntityWithMetadata(File file, Group group, const string &id)
   : NamedEntity(group, id), file(file)
 {
 
 }
 
 
-EntityWithMetadata::EntityWithMetadata(File file, Group group, string id, time_t time)
+EntityWithMetadata::EntityWithMetadata(File file, Group group, const string &id, time_t time)
   : NamedEntity(group, id, time), file(file)
 {
 

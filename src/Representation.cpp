@@ -29,12 +29,12 @@ Representation::Representation(const Representation &representation)
 {}
 
 
-Representation::Representation(Group group, string id)
+Representation::Representation(Group group, const string &id)
   : PandoraEntity(group, id)
 {}
 
 
-Representation::Representation(Group group, string id, time_t time)
+Representation::Representation(Group group, const string &id, time_t time)
   : PandoraEntity(group, id, time)
 {}
 

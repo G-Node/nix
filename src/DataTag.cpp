@@ -31,14 +31,14 @@ DataTag::DataTag(const DataTag &tag)
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, std::string id)
+DataTag::DataTag(File file, const Block block, Group group, const std::string &id)
 : EntityWithSources(file, block, group, id), reference_list(group, "references")
 {
   representation_group = group.openGroup("representations");
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, std::string id, time_t time)
+DataTag::DataTag(File file, const Block block, Group group, const std::string &id, time_t time)
 : EntityWithSources(file, block, group, id, time),reference_list(group, "references")
 {
   representation_group = group.openGroup("representations");

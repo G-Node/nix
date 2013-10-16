@@ -53,12 +53,12 @@ public:
   /**
    * Default constuctor.
    */
-  Representation(Group group, std::string id);
+  Representation(Group group, const std::string &id);
 
   /**
    * Default constructor that preserves the creation time.
    */
-  Representation(Group group, std::string id, time_t time);
+  Representation(Group group, const std::string &id, time_t time);
 
   /**
    * Setter for the link type.
