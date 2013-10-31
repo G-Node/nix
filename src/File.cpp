@@ -48,7 +48,7 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-File::File(string name, FileMode mode)
+File::File(const string &name, FileMode mode)
 {
   if (!fileExists(name)) {
     mode = FileMode::Overwrite;

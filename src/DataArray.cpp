@@ -30,16 +30,19 @@ DataArray::DataArray(const DataArray &data_array)
 : EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
 {
   dimension_group = data_array.dimension_group;
+  vector<double> pcs = data_array.polynomCoefficients();
+  polynomCoefficients(pcs);
+  expansionOrigin(data_array.expansionOrigin());
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, string id)
+DataArray::DataArray(File file, const Block block, Group group, const string &id)
 : EntityWithSources(file, block, group, id)
 {
   dimension_group = group.openGroup("dimensions");
 
   if (!group.hasAttr("polynom_coefficients")) {
-    vector<double> pc = {1};
+    vector<double> pc = {0,1};
     polynomCoefficients(pc);
   }
 
@@ -49,13 +52,13 @@ DataArray::DataArray(File file, const Block block, Group group, string id)
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, string id, time_t time)
+DataArray::DataArray(File file, const Block block, Group group, const string &id, time_t time)
 : EntityWithSources(file, block, group, id, time)
 {
   dimension_group = group.openGroup("dimensions");
 
   if (!group.hasAttr("polynom_coefficients")) {
-    vector<double> pc = {1};
+    vector<double> pc = {0,1};
     polynomCoefficients(pc);
   }
 
@@ -72,8 +75,8 @@ string DataArray::label() const {
 }
 
 
-void DataArray::label(const string &value) {
-  group.setAttr("label", value);
+void DataArray::label(const string &label) {
+  group.setAttr("label", label);
   forceUpdatedAt();
 }
 
@@ -83,8 +86,8 @@ string DataArray::unit() const {
   return value;
 }
 
-void DataArray::unit(const string &value) {
-  group.setAttr("unit", value);
+void DataArray::unit(const string &unit) {
+  group.setAttr("unit", unit);
   forceUpdatedAt();
 }
 
@@ -126,6 +129,7 @@ void DataArray::polynomCoefficients(vector<double> &coefficients){
   forceUpdatedAt();
 }
 
+
 double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
   double value = 0.0;
   double term = 1.0;
@@ -135,9 +139,6 @@ double DataArray::applyPolynomial(std::vector<double> &coefficients, double orig
   }
   return value;
 }
-
-
-// TODO put missing methods here.
 
 
 DataArray& DataArray::operator=(const DataArray &other) {

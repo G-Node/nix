@@ -27,16 +27,16 @@ Group& Group::operator=(const Group &group)
   return *this;
 }
 
-bool Group::hasAttr(std::string name) const {
+bool Group::hasAttr(const std::string &name) const {
   return H5Aexists(h5group.getId(), name.c_str());
 }
 
-void Group::removeAttr(std::string name) const {
+void Group::removeAttr(const std::string &name) const {
   h5group.removeAttr(name);
 }
 
 
-bool Group::hasObject(std::string name) const {
+bool Group::hasObject(const std::string &name) const {
   htri_t res = H5Lexists(h5group.getLocId(), name.c_str(), H5P_DEFAULT);
   return res;
 }
@@ -49,7 +49,7 @@ std::string Group::objectName(size_t index) const {
   return h5group.getObjnameByIdx(index);
 }
 
-bool Group::hasData(std::string name) const {
+bool Group::hasData(const std::string &name) const {
   if (hasObject(name)) {
     H5G_stat_t info;
     h5group.getObjinfo(name, info);
@@ -60,17 +60,17 @@ bool Group::hasData(std::string name) const {
   return false;
 }
 
-void Group::removeData(std::string name) {
+void Group::removeData(const std::string &name) {
   if (hasData(name))
     h5group.unlink(name);
 }
 
-DataSet Group::openData(std::string name) const {
+DataSet Group::openData(const std::string &name) const {
   H5::DataSet ds5 = h5group.openDataSet(name);
   return DataSet(ds5);
 }
 
-bool Group::hasGroup(std::string name) const {
+bool Group::hasGroup(const std::string &name) const {
   if (hasObject(name)) {
     H5G_stat_t info;
     h5group.getObjinfo(name, info);
@@ -81,7 +81,7 @@ bool Group::hasGroup(std::string name) const {
   return false;
 }
 
-Group Group::openGroup(std::string name, bool create) const {
+Group Group::openGroup(const std::string &name, bool create) const {
   Group g;
   if (hasGroup(name)) {
     g = Group(h5group.openGroup(name));
@@ -93,7 +93,7 @@ Group Group::openGroup(std::string name, bool create) const {
   return g;
 }
 
-void Group::removeGroup(std::string name) {
+void Group::removeGroup(const std::string &name) {
   if (hasGroup(name))
     h5group.unlink(name);
 }

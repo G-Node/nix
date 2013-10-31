@@ -32,26 +32,26 @@ public:
 
   Group& operator=(const Group &group);
 
-  bool hasAttr(std::string name) const;
-  void removeAttr(std::string name) const;
+  bool hasAttr(const std::string &name) const;
+  void removeAttr(const std::string &name) const;
 
   template <typename T>
-  void setAttr(std::string name, const T &value) const;
+  void setAttr(const std::string &name, const T &value) const;
 
   template <typename T>
-  bool getAttr(std::string name, T &value) const;
+  bool getAttr(const std::string &name, T &value) const;
   
-  bool hasObject(std::string path) const;
+  bool hasObject(const std::string &path) const;
   size_t objectCount() const;
   std::string objectName(size_t index) const;
 
-  bool hasData(std::string name) const;
-  DataSet openData(std::string name) const;
-  void removeData(std::string name);
+  bool hasData(const std::string &name) const;
+  DataSet openData(const std::string &name) const;
+  void removeData(const std::string &name);
 
-  bool hasGroup(std::string name) const;
-  Group openGroup(std::string name, bool create = true) const;
-  void removeGroup(std::string name);
+  bool hasGroup(const std::string &name) const;
+  Group openGroup(const std::string &name, bool create = true) const;
+  void removeGroup(const std::string &name);
 
   bool operator==(const Group &group) const;
   bool operator!=(const Group &group) const;
@@ -63,7 +63,7 @@ public:
   
   //template functions
   
-template<typename T> void Group::setAttr(std::string name, const T &value) const
+template<typename T> void Group::setAttr(const std::string &name, const T &value) const
 {
   const Charon<const T> charon(value);
   H5::Attribute attr;
@@ -82,7 +82,7 @@ template<typename T> void Group::setAttr(std::string name, const T &value) const
   data.finish();
 }
 
-template<typename T> bool Group::getAttr(std::string name, T &value) const
+template<typename T> bool Group::getAttr(const std::string &name, T &value) const
 {
   
   if (!hasAttr(name)) {

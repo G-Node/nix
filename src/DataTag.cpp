@@ -16,7 +16,7 @@
 #include <pandora/Block.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/DataTag.hpp>
-#include <pandora/DataArray.hpp>
+#include <pandora/Util.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;
@@ -31,14 +31,14 @@ DataTag::DataTag(const DataTag &tag)
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, std::string id)
+DataTag::DataTag(File file, const Block block, Group group, const std::string &id)
 : EntityWithSources(file, block, group, id), reference_list(group, "references")
 {
   representation_group = group.openGroup("representations");
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, std::string id, time_t time)
+DataTag::DataTag(File file, const Block block, Group group, const std::string &id, time_t time)
 : EntityWithSources(file, block, group, id, time),reference_list(group, "references")
 {
   representation_group = group.openGroup("representations");
@@ -62,15 +62,26 @@ void DataTag::positions(const DataArray &positions) {
 
 
 void DataTag::positions(const string &positionsId) {
-  if(this->block.hasDataArray(positionsId)){
+  if(!this->block.hasDataArray(positionsId)){
+    throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+  }
+  else{
+    if(this->hasExtents()){
+      DataArray pos = this->block.getDataArray(positionsId);
+      DataArray ext = this->extents();
+      if(!checkDimensions(ext,pos))
+        throw runtime_error("DataTag::positions: cannot set Positions because dimensionality of extent and position data do not match!");
+    }
     group.setAttr("positions", positionsId);
     forceUpdatedAt();
   }
-  else{
-    throw runtime_error("DataTag::positions: cannot set DataArray because it does not exist!");
-  }
 }
 
+bool DataTag::hasPositions() const{
+  std::string posId;
+  group.getAttr("positions", posId);
+  return (posId.length() > 0);
+}
 
 DataArray DataTag::extents() const {
   std::string extId;
@@ -89,17 +100,30 @@ void DataTag::extents(const DataArray &extent) {
 
 
 void DataTag::extents(const string &extentsId) {
-  if(this->block.hasDataArray(extentsId)){
+  if(!this->block.hasDataArray(extentsId)){
+    throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+  }
+  else{
+    if(this->hasPositions()){
+      DataArray ext = this->block.getDataArray(extentsId);
+      DataArray pos = this->positions();
+      if(!checkDimensions(ext,pos))
+        throw runtime_error("DataTag::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+    }
     group.setAttr("extents", extentsId);
     forceUpdatedAt();
   }
-  else{
-    throw runtime_error("DataTag::extents: cannot set DataArray because it does not exist!");
-  }
 }
 
-// Methods concerning references.
 
+bool DataTag::hasExtents() const{
+  std::string extId;
+  group.getAttr("extents", extId);
+  return (extId.length() > 0);
+}
+
+
+// Methods concerning references.
 bool DataTag::hasReference(const DataArray &reference) const {
   return hasReference(reference.id());
 }
@@ -152,6 +176,55 @@ void DataTag::references(const std::vector<DataArray> &references) {
   reference_list.set(ids);
 }
 
+// Methods concerning representations.
+bool DataTag::hasRepresentation(const string &id) const{
+  return representation_group.hasGroup(id);
+}
+
+size_t DataTag::representationCount() const{
+  return representation_group.objectCount();
+}
+
+Representation DataTag::getRepresentation(const std::string &id) const{
+  return Representation(representation_group.openGroup(id, false), id, this->block);
+}
+
+Representation DataTag::getRepresentation(size_t index) const{
+  string id = representation_group.objectName(index);
+  Representation r(representation_group.openGroup(id), id, this->block);
+  return r;
+}
+
+std::vector<Representation> DataTag::representations() const{
+  vector<Representation>  representation_obj;
+  size_t count = representation_group.objectCount();
+  for (size_t i = 0; i < count; i++) {
+    string id = representation_group.objectName(i);
+    Representation r(representation_group.openGroup(id, false), id, this->block);
+    representation_obj.push_back(r);
+  }
+  return representation_obj;
+}
+
+Representation DataTag::createRepresentation(DataArray data, LinkType link_type){
+  string id = util::createId("representation");
+  while(representation_group.hasObject(id))
+    id = util::createId("representation");
+  Representation r(representation_group.openGroup(id, true), id, this->block);
+  r.linkType(link_type);
+  r.data(data);
+  return r;
+}
+
+bool DataTag::removeRepresentation(const string &id){
+  if (representation_group.hasGroup(id)) {
+    representation_group.removeGroup(id);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 // Other methods and functions
 
 DataTag& DataTag::operator=(const DataTag &other) {
@@ -175,6 +248,37 @@ ostream& operator<<(ostream &out, const DataTag &ent) {
   return out;
 }
 
+
+bool DataTag::checkDimensions(const DataArray &a, const DataArray &b)const{
+  bool valid = true;
+  boost::multi_array<double,1> aData, bData;
+  a.getRawData(aData);
+  b.getRawData(bData);
+  valid = aData.num_dimensions() == bData.num_dimensions();
+  if(!valid)
+    return valid;
+
+  boost::multi_array<double,1>::size_type dims = aData.num_dimensions();
+  for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++){
+    valid = (aData.shape()[i] != bData.shape()[i]);
+    if(!valid)
+      return valid;
+  }
+  return valid;
+}
+
+bool DataTag::checkPositionsAndExtents() const{
+  bool valid = true;
+  if(hasPositions() && hasExtents()){
+    DataArray pos = positions();
+    DataArray ext = extents();
+    boost::multi_array<double,1> posData, extData;
+    pos.getRawData(posData);
+    ext.getRawData(extData);
+    return checkDimensions(pos, ext);
+  }
+  return valid;
+}
 
 DataTag::~DataTag()
 {

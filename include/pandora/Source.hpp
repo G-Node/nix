@@ -125,7 +125,7 @@ public:
    *
    * @return True if the source was removed, false otherwise.
    */
-  bool removeSource(std::string id);
+  bool removeSource(const std::string &id);
 
   //--------------------------------------------------
   // Other methods and functions

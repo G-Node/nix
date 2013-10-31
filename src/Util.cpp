@@ -55,7 +55,7 @@ string timeToStr(time_t time) {
 }
 
 /* SEE: pandora/Util.hpp */
-time_t strToTime(string time) {
+time_t strToTime(const string &time) {
   using namespace boost::posix_time;
   ptime timetmp(from_iso_string(time));
   ptime epoch(boost::gregorian::date(1970, 1, 1));

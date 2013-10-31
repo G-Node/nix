@@ -18,10 +18,13 @@
 #include <iostream>
 
 #include <pandora/NamedEntity.hpp>
+#include <pandora/File.hpp>
 
 namespace pandora {
 
-class File;
+class Group;
+class Source;
+class Section;
 
 /**
  * Base class for entities that are associated with metadata such
@@ -40,12 +43,12 @@ public:
   /**
    * Standard constructor
    */
-  EntityWithMetadata(File file, Group group, std::string id);
+  EntityWithMetadata(File file, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  EntityWithMetadata(File file, Group group, std::string id, time_t time);
+  EntityWithMetadata(File file, Group group, const std::string &id, time_t time);
 
   /**
    * Checks if the block has associated metadata.
@@ -64,7 +67,9 @@ public:
   Section metadata() const;
 
   /**
-   * Associate the entity with some metadata.
+   * Associate the entity with some metadata. Calling this method will replace
+   * previously stored information.
+   *
    *
    * @param metadata    The section that should be associated
    *                    with this entity.
@@ -77,7 +82,7 @@ public:
    *
    * @return True if the section was removed, false otherwise.
    */
-  bool removeMetadata(Section &metadata);
+  bool removeMetadata();
 
   /**
    * Destructor of this class.

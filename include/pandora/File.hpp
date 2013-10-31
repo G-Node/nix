@@ -57,7 +57,7 @@ public:
    * @param prefix  The prefix used for IDs.
    * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
    */
-  File(std::string name, const FileMode mode = FileMode::ReadWrite);
+  File(const std::string &name, const FileMode mode = FileMode::ReadWrite);
 
   /**
    * Copy constructor.

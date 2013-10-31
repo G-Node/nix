@@ -13,21 +13,21 @@
 
 #include <pandora/Util.hpp>
 #include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+#include <pandora/Section.hpp>
 #include <pandora/EntityWithMetadata.hpp>
 
 using namespace std;
 
 namespace pandora {
 
-EntityWithMetadata::EntityWithMetadata(File file, Group group, string id)
+EntityWithMetadata::EntityWithMetadata(File file, Group group, const string &id)
   : NamedEntity(group, id), file(file)
 {
 
 }
 
 
-EntityWithMetadata::EntityWithMetadata(File file, Group group, string id, time_t time)
+EntityWithMetadata::EntityWithMetadata(File file, Group group, const string &id, time_t time)
   : NamedEntity(group, id, time), file(file)
 {
 
@@ -35,6 +35,37 @@ EntityWithMetadata::EntityWithMetadata(File file, Group group, string id, time_t
 
 EntityWithMetadata::~EntityWithMetadata() {
 
+}
+
+void EntityWithMetadata::metadata(const Section &metadata){
+  if(!this->file.hasSection(metadata.id())){
+     throw runtime_error("EntityWithMetadata::metadata: cannot set metadata because Section does not exist in this file!");
+   }
+   else{
+     this->group.setAttr("metadata", metadata.id());
+     forceUpdatedAt();
+   }
+}
+
+Section EntityWithMetadata::metadata() const{
+  if(!hasMetadata()){
+    throw runtime_error("EntityWithMetadata::metadata: This entity does not reference metadata!");
+  }
+  std::string sectionId;
+  group.getAttr("metadata", sectionId);
+  return file.getSection(sectionId);
+}
+
+bool EntityWithMetadata::removeMetadata(){
+  if(hasMetadata())
+    group.removeAttr("metadata");
+  return true;
+}
+
+bool EntityWithMetadata::hasMetadata() const{
+  std::string sectionId;
+  group.getAttr("metadata", sectionId);
+  return (sectionId.length() > 0);
 }
 
 } //namespace

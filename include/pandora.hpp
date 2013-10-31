@@ -18,5 +18,6 @@
 #include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/Source.hpp>
+#include <pandora/Section.hpp>
 #include <pandora/SimpleTag.hpp>
 #include <pandora/Representation.hpp>

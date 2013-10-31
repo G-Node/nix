@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
+#include <limits>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -12,30 +13,23 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Block.hpp"
-#include "pandora/DataArray.hpp"
-#include "pandora/DataTag.hpp"
+#include <pandora.hpp>
 
-using namespace std;
 using namespace pandora;
 
-class TestDataTag: public CPPUNIT_NS::TestFixture {
+class TestEntityWithMetadata: public CPPUNIT_NS::TestFixture {
+
 private:
 
-  CPPUNIT_TEST_SUITE(TestDataTag);
-  CPPUNIT_TEST(testCreateRemove);
-  CPPUNIT_TEST(testReferences);
-  CPPUNIT_TEST(testPositionExtents);
+  CPPUNIT_TEST_SUITE(TestEntityWithMetadata);
+  CPPUNIT_TEST(testMetadata);
   CPPUNIT_TEST_SUITE_END ();
 
   File *f1;
-
-  
 public:
+
   void setUp();
   void tearDown();
-  void testCreateRemove();
-  void testReferences();
-  void testPositionExtents();
+  void testMetadata();
+
 };

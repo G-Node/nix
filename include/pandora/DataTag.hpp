@@ -5,6 +5,7 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+// Author: Jan Grewe <jan.grewe@g-node.org>
 
 /**
  * @file pandora/DataTag.hpp
@@ -13,6 +14,7 @@
 
 #include <pandora/EntityWithSources.hpp>
 #include <pandora/util/ReferenceList.hpp>
+#include <pandora/DataArray.hpp>
 
 #ifndef PAN_DATATAG_H_INCLUDED
 #define PAN_DATATAG_H_INCLUDED
@@ -20,9 +22,7 @@
 namespace pandora {
 
 class Section;
-class DataArray;
 class Representation;
-class RepresentationType;
 
 enum class LinkType;
 
@@ -48,12 +48,12 @@ public:
   /**
    * Standard constructor
    */
-  DataTag(File file, Block block, Group group, std::string id);
+  DataTag(File file, Block block, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  DataTag(File file, Block block, Group group, std::string id, time_t time);
+  DataTag(File file, Block block, Group group, const std::string &id, time_t time);
 
   /**
    * Getter for the positions of a tag. The positions are strored in a DataArray.
@@ -78,6 +78,13 @@ public:
   void positions(const DataArray &positions);
 
   /**
+   * Returns whether this DataArray contains positions.
+   *
+   * @return bool
+   */
+  bool hasPositions() const;
+
+  /**
    * Getter for the extents of the tag which are stored in a#
    * DataArray
    *
@@ -99,10 +106,15 @@ public:
    */
   void extents(const std::string &extentsId);
 
+  /**
+   * Returns whether this DataArray contains extents.
+   *
+   * @return bool
+   */
+  bool hasExtents() const;
   //--------------------------------------------------
   // Methods concerning references.
   // TODO implement when done with the DataArray class.
-  // TODO add hasXy getXy addXy and removeXy methods for references.
   //--------------------------------------------------
 
   bool hasReference(const DataArray &reference) const;
@@ -144,7 +156,7 @@ public:
    *
    * @return True if the representation exists, false otherwise.
    */
-  bool hasRepresentation(std::string id) const;
+  bool hasRepresentation(const std::string &id) const;
 
   /**
    * Returns the number of representations in this block.
@@ -161,7 +173,7 @@ public:
    * @return The representation with the specified id. If it doesn't exist
    *         an exception will be thrown.
    */
-  Representation getRepresentation(std::string id) const;
+  Representation getRepresentation(const std::string &id) const;
 
   /**
    * Retrieves a specific representation from the tag.
@@ -187,7 +199,7 @@ public:
    *
    * @return The created representation object.
    */
-  Representation createRepresentation(DataArray data, RepresentationType link_type);
+  Representation createRepresentation(DataArray data, LinkType link_type);
 
   /**
    * Remove a representation from the tag.
@@ -196,7 +208,45 @@ public:
    *
    * @return True if the representation was removed, false otherwise.
    */
-  bool removeRepresentation(std::string id);
+  bool removeRepresentation(const std::string &id);
+
+  /**
+   * Get the data that belongs to the Reference and is related to position and extent referenced
+   * with the index given.
+   *
+   * @param boost::multi_array<T, dims> &data return argument for the data
+   * @param size_t index
+   *
+   */
+  template<typename T, size_t dims>
+  void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
+    if (referenceCount() == 0){
+      throw std::runtime_error("DataTag::getReferencedData: There is no reference attached to this tag!");
+    }
+    if(!hasPositions()){
+      throw std::runtime_error("DataTag::getReferencedData: There is no positions array attached to this tag!");
+    }
+
+    DataArray pa = positions();
+    boost::multi_array<double,1> posData, extData;
+    pa.getRawData(posData);
+
+    if(index >= posData.shape()[0]){
+      throw std::runtime_error("DataTag::getReferencedData: index exeeds matrix dimensions in positions data!");
+    }
+
+    if(hasExtents()){
+      DataArray ea = extents();
+      ea.getRawData(extData);
+    }
+
+    //TODO convert position and extent to respective units
+    //TODO get the data slice from the referenced DataArrays
+    std::vector<DataArray> refs = references();
+    for (size_t i = 0; i < refs.size();i++){
+
+    }
+  }
 
 
   //--------------------------------------------------
@@ -218,6 +268,11 @@ public:
    */
   virtual ~DataTag();
 
+private:
+  //TODO validate method that checks dimensionality, units, etc...
+  bool checkDimensions(const DataArray &a, const DataArray &b) const;
+
+  bool checkPositionsAndExtents() const;
 };
 
 

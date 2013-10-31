@@ -17,6 +17,7 @@
 #include <pandora/DataSet.hpp>
 #include <pandora/SimpleTag.hpp>
 #include <pandora/DataArray.hpp>
+#include <pandora/Util.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;
@@ -36,14 +37,14 @@ SimpleTag::SimpleTag(const SimpleTag &tag)
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id)
+SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id)
   : EntityWithSources(file, block, group, id), references_list(group, "references")
 {
   representation_group = group.openGroup("representations");
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, std::string id, time_t time)
+SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id, time_t time)
   : EntityWithSources(file, block, group, id, time), references_list(group, "references")
 {
   representation_group = group.openGroup("representations");
@@ -179,6 +180,55 @@ void SimpleTag::references(const std::vector<DataArray> &references) {
   }
 
   references_list.set(ids);
+}
+
+// Methods concerning representations.
+bool SimpleTag::hasRepresentation(const string &id) const{
+  return representation_group.hasGroup(id);
+}
+
+size_t SimpleTag::representationCount() const{
+  return representation_group.objectCount();
+}
+
+Representation SimpleTag::getRepresentation(const std::string &id) const{
+  return Representation(representation_group.openGroup(id, false), id, this->block);
+}
+
+Representation SimpleTag::getRepresentation(size_t index) const{
+  string id = representation_group.objectName(index);
+  Representation r(representation_group.openGroup(id), id, this->block);
+  return r;
+}
+
+std::vector<Representation> SimpleTag::representations() const{
+  vector<Representation>  representation_obj;
+  size_t count = representation_group.objectCount();
+  for (size_t i = 0; i < count; i++) {
+    string id = representation_group.objectName(i);
+    Representation r(representation_group.openGroup(id, false), id, this->block);
+    representation_obj.push_back(r);
+  }
+  return representation_obj;
+}
+
+Representation SimpleTag::createRepresentation(DataArray data, LinkType link_type){
+  string id = util::createId("representation");
+  while(representation_group.hasObject(id))
+    id = util::createId("representation");
+  Representation r(representation_group.openGroup(id, true), id, this->block);
+  r.linkType(link_type);
+  r.data(data);
+  return r;
+}
+
+bool SimpleTag::removeRepresentation(const string &id){
+  if (representation_group.hasGroup(id)) {
+    representation_group.removeGroup(id);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 // Other methods and functions

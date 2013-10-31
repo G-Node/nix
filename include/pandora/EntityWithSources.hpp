@@ -42,12 +42,12 @@ public:
   /**
    * Standard constructor.
    */
-  EntityWithSources(File file, Block block, Group group, std::string id);
+  EntityWithSources(File file, Block block, Group group, const std::string &id);
 
   /**
    * Standard constructor that preserves the creation time.
    */
-  EntityWithSources(File file, Block block, Group group, std::string id, time_t time);
+  EntityWithSources(File file, Block block, Group group, const std::string &id, time_t time);
 
   /**
    * Get the number of sources associated with this entity.
@@ -72,7 +72,7 @@ public:
    *
    * @return True if the source is associated with this entity, false otherwise.
    */
-  bool hasSource(std::string id) const;
+  bool hasSource(const std::string &id) const;
 
   /**
    * Add a specific source to the list of associated sources.
@@ -105,6 +105,15 @@ public:
    * @return A vector with all sources.
    */
   std::vector<Source> sources() const;
+
+
+  /**
+   * Returns the source identified by the given id.
+   *
+   * @param string the source id
+   */
+  Source getSource(const std::string id) const;
+
 
   /**
    * Destructor.
