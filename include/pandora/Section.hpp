@@ -10,13 +10,14 @@
 
 #include <string>
 #include <functional>
-#include <pandora/NamedEntity.hpp>
+
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
+#include <pandora/Property.hpp>
 #include <pandora/TNode.hpp>
+#include <pandora/NamedEntity.hpp>
 
 namespace pandora {
-class Property;
 
 class Section : public NamedEntity, public TNode<Section> {
 
@@ -43,13 +44,13 @@ public:
    */
   Section(File file, Group group, const std::string &id, time_t time);
 
-  
-  
+
+
   //TNode interface
   virtual size_type childCount() const;
   virtual Section   getChild(size_type index) const;
 
-  
+
   /**
    * Set the repository in which a section of this type is defined. Usually
    * this information is provided in the form of an URL

@@ -18,9 +18,9 @@
 #include <string>
 #include <iostream>
 
-namespace pandora {
+#include <pandora/Group.hpp>
 
-class Group;
+namespace pandora {
 
 /**
  * Base class for all pandora entities e.g. Block, Section etc.

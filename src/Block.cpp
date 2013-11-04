@@ -12,8 +12,6 @@
  */
 
 #include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
 #include <pandora/Block.hpp>
 #include <pandora/Source.hpp>
 #include <pandora/SimpleTag.hpp>
@@ -221,7 +219,7 @@ bool Block::hasDataArray(const string &id) const {
 DataArray Block::getDataArray(const string &id) const {
   if (hasDataArray(id)) {
     DataArray da(file, *this, data_array_group.openGroup(id, true), id);
-    return da;   
+    return da;
   } else {
     throw runtime_error("Unable to find DataArray with id " + id + "!");
   }
@@ -235,7 +233,7 @@ DataArray Block::getDataArray(size_t index) const {
     return da;
   } else {
     throw runtime_error("Unable to find DataArray with the given index!");
-  } 
+  }
 }
 
 

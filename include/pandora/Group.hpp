@@ -10,11 +10,9 @@
 #include <H5Cpp.h>
 #endif
 
-#include <pandora/Charon.hpp>
+#include <pandora/DataSet.hpp>
 
 namespace pandora {
-
-class DataSet;
 
 class Group {
 
@@ -40,7 +38,7 @@ public:
 
   template <typename T>
   bool getAttr(const std::string &name, T &value) const;
-  
+
   bool hasObject(const std::string &path) const;
   size_t objectCount() const;
   std::string objectName(size_t index) const;
@@ -60,14 +58,14 @@ public:
   virtual ~Group();
 }; // group Group
 
-  
+
   //template functions
-  
+
 template<typename T> void Group::setAttr(const std::string &name, const T &value) const
 {
   const Charon<const T> charon(value);
   H5::Attribute attr;
-  
+
   if (hasAttr(name)) {
     attr = h5group.openAttribute(name);
   } else {
@@ -84,7 +82,7 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
 
 template<typename T> bool Group::getAttr(const std::string &name, T &value) const
 {
-  
+
   if (!hasAttr(name)) {
     return false;
   }

@@ -21,7 +21,6 @@
 
 namespace pandora {
 
-class Section;
 class Source;
 class DataArray;
 class SimpleTag;
@@ -96,7 +95,7 @@ public:
    */
   Source getSource(size_t index) const;
 
-  
+
   /**
    * Returns the number of root sources in this block.
    *
@@ -111,10 +110,10 @@ public:
    */
   std::vector<Source> sources() const;
 
-  
-  
+
+
   std::vector<Source> findSources(std::function<bool(const Source &)>) const;
-  
+
   /**
    * Create a new root source.
    *

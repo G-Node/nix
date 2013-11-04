@@ -13,7 +13,6 @@
 #include <ctime>
 
 #include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
 #include <pandora/PandoraEntity.hpp>
 
 using namespace std;

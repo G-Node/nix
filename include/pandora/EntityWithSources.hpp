@@ -18,13 +18,12 @@
 #include <vector>
 #include <iostream>
 
-#include <pandora/util/ReferenceList.hpp>
+#include <pandora/Block.hpp>
 #include <pandora/EntityWithMetadata.hpp>
-
+#include <pandora/util/ReferenceList.hpp>
 
 namespace pandora {
 
-class Block;
 class Source;
 
 /**

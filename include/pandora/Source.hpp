@@ -17,6 +17,7 @@
 
 #include <string>
 #include <functional>
+
 #include <pandora/EntityWithMetadata.hpp>
 #include <pandora/TNode.hpp>
 
@@ -36,8 +37,8 @@ public:
 
   //typedefs
   using size_type = TNode<Source>::size_type;
-  
-  
+
+
   /**
    * Copyconstructor.
    */
@@ -53,7 +54,7 @@ public:
    */
   Source(File file, Group group, const std::string &id, time_t time);
 
-  
+
   //TNode interface
   virtual size_type childCount() const;
   virtual Source    getChild(size_type index) const;
@@ -92,7 +93,7 @@ public:
    * @return The source at the specified index.
    */
   Source getSource(size_t index) const;
-  
+
   /**
    * Returns the number of sources that are direct descendants of this source.
    *

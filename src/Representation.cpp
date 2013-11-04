@@ -1,7 +1,4 @@
 
-#include <pandora/Group.hpp>
-#include <pandora/Block.hpp>
-#include <pandora/DataArray.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;
