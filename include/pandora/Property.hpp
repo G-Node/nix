@@ -9,11 +9,9 @@
 #include <H5Cpp.h>
 #endif
 
-#include <pandora/Group.hpp>
-#include <pandora/Section.hpp>
 #include <pandora/Value.hpp>
-#include <pandora/NamedEntity.hpp>
 #include <pandora/DataSet.hpp>
+#include <pandora/NamedEntity.hpp>
 
 namespace pandora {
 

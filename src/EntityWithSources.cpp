@@ -13,11 +13,7 @@
 
 
 #include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
 #include <pandora/DataSet.hpp>
-#include <pandora/PSize.hpp>
-#include <pandora/File.hpp>
-#include <pandora/Block.hpp>
 #include <pandora/Source.hpp>
 #include <pandora/EntityWithSources.hpp>
 

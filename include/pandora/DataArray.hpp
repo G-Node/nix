@@ -11,17 +11,14 @@
 //TODO convenience methods for accessing dimensionality and shape of data
 #include <boost/multi_array.hpp>
 
-#include <pandora/PSize.hpp>
-#include <pandora/EntityWithSources.hpp>
 #include <pandora/DataSet.hpp>
-
+#include <pandora/Dimension.hpp>
+#include <pandora/EntityWithSources.hpp>
 
 #ifndef PAN_DATA_ARRAY_H_INCLUDED
 #define PAN_DATA_ARRAY_H_INCLUDED
 
 namespace pandora {
-
-class Dimension;
 
 
 class DataArray : public EntityWithSources {
@@ -141,7 +138,7 @@ public:
   void getRawData(boost::multi_array<T, dims> &data) const{
     if(group.hasData("data")){
       DataSet ds = group.openData("data");
-	    ds.read(data, true);
+      ds.read(data, true);
     }
   }
 
@@ -152,17 +149,17 @@ public:
    */
   template<typename T, size_t dims>
   void setRawData(const boost::multi_array<T, dims> &data){
-	  if (!group.hasData("data")){
-		  PSize size = {dims};
-		  PSize maxsize = {H5S_UNLIMITED};
-		  PSize chunks = {1};
-		  DataSet ds(DataSet::create(group.h5Group(), "data", data, &maxsize, &chunks));
-		  ds.write(data);
-	  }
-	  else{
-		  DataSet ds = group.openData("data");
-		  ds.write(data);
-	  }
+    if (!group.hasData("data")){
+      PSize size = {dims};
+      PSize maxsize = {H5S_UNLIMITED};
+      PSize chunks = {1};
+      DataSet ds(DataSet::create(group.h5Group(), "data", data, &maxsize, &chunks));
+      ds.write(data);
+    }
+    else{
+      DataSet ds = group.openData("data");
+      ds.write(data);
+    }
   }
 
   //--------------------------------------------------

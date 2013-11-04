@@ -8,12 +8,12 @@
 #ifndef PAN_REPRESENTATION_H_INCLUDE
 #define PAN_REPRESENTATION_H_INCLUDE
 
+#include <pandora/Block.hpp>
+#include <pandora/DataArray.hpp>
 #include <pandora/PandoraEntity.hpp>
 
 namespace pandora {
 
-class DataArray;
-class Block;
 /**
  * Enumeration for link types.
  */

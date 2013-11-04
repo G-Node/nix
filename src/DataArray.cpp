@@ -11,9 +11,6 @@
  * @brief Implementations of the class DataArray.
  */
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-#include <pandora/Block.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/DataArray.hpp>
 

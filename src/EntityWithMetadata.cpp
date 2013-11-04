@@ -12,8 +12,6 @@
  */
 
 #include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
-#include <pandora/Section.hpp>
 #include <pandora/EntityWithMetadata.hpp>
 
 using namespace std;

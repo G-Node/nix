@@ -6,10 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/util/ReferenceList.hpp>
-#include <pandora/PSize.hpp>
-#include <pandora/Selection.hpp>
 #include <pandora/DataSet.hpp>
+#include <pandora/util/ReferenceList.hpp>
 
 using namespace std;
 
@@ -28,11 +26,11 @@ ReferenceList::ReferenceList(const Group &group, const string &ds_name)
 {}
 
 bool ReferenceList::has(const string &id) const {
-  
+
   vector<string> ids = get();
   return std::find(ids.begin(), ids.end(), id) != ids.end();
 }
-  
+
 
 vector<string> ReferenceList::get() const {
   vector<string> ids;

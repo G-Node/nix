@@ -11,13 +11,9 @@
  * @brief Implementations of the class DataTag.
  */
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-#include <pandora/Block.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/DataTag.hpp>
 #include <pandora/Util.hpp>
-#include <pandora/Representation.hpp>
 
 using namespace std;
 

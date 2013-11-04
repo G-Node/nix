@@ -10,12 +10,10 @@
 #ifndef PANDORA_NDBUFFER_H
 #define PANDORA_NDBUFFER_H
 
-#include <pandora/DataType.hpp>
-#include <pandora/PSize.hpp>
-#include <pandora/Charon.hpp>
-
 #include <vector>
 #include <iostream>
+
+#include <pandora/Charon.hpp>
 
 namespace pandora {
 
@@ -36,12 +34,12 @@ public:
   template<typename T> const T get(const PSize &index) const;
   template<typename T> void set(size_t index, T value);
   template<typename T> void set(const PSize &index, T value);
-  
+
   byte_type *data() { return &dstore[0]; }
   const byte_type *data() const { return &dstore[0]; }
 
   void resize(const PSize &new_size);
-  
+
   size_t sub2index(const PSize &sub) const;
 
 private:
@@ -62,7 +60,7 @@ const T NDBuffer::get(size_t index) const
   const T *dx = reinterpret_cast<const T *>(&dstore[0]);
   return dx[index];
 }
-  
+
 template<typename T>
 const T NDBuffer::get(const PSize &index) const
 {
@@ -71,7 +69,7 @@ const T NDBuffer::get(const PSize &index) const
   return dx[pos];
 }
 
-  
+
 template<typename T>
 void NDBuffer::set(size_t index, T value)
 {
@@ -86,7 +84,7 @@ void NDBuffer::set(const PSize &index, T value)
   T* dx = reinterpret_cast<T *>(&dstore[0]);
   dx[pos] = value;
 }
-  
+
 /* ****************************************** */
 namespace hades {
 
@@ -95,24 +93,24 @@ class TypeInfo<NDBuffer> {
 public:
   typedef uint8_t element_type;
   typedef TypeSpec<DataType> spec_type;
-  
+
   static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
-  
+
   static PSize shape(const NDBuffer &value) { return value.shape(); }
-  
+
   static size_t num_elements(const NDBuffer &value) {
     return value.num_elements();
   }
-  
+
   static const element_type* getData(const NDBuffer &value) {
     return value.data();
   }
-  
+
   static element_type* getData(NDBuffer &value) {
     return value.data();
   }
 };
-  
+
 
 } //namespace hades
 } //namespace pandora
