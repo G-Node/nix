@@ -12,8 +12,6 @@
  */
 #include <ctime>
 
-#include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
 #include <pandora/NamedEntity.hpp>
 
 using namespace std;

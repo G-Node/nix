@@ -1,22 +1,22 @@
-#include <pandora/Property.hpp>
-#include <pandora/Util.hpp>
 #include <iostream>
 #include <stdexcept>
+
+#include <pandora/Property.hpp>
 
 using namespace std;
 
 namespace pandora {
 
 Property::Property(const Property &property) :
-		NamedEntity(property.group, property.entity_id){
+    NamedEntity(property.group, property.entity_id){
 }
 
 Property::Property(Group group, const std::string &id) :
-		NamedEntity(group, id){
+    NamedEntity(group, id){
 }
 
 Property::Property(Group group,const std::string &id, time_t time):
-	NamedEntity(group,id,time){
+  NamedEntity(group,id,time){
 }
 
 void Property::dataType(const string &dataType) {

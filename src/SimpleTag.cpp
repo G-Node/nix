@@ -11,13 +11,10 @@
  * @brief Implementations of the class SimpleTag.
  */
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
-#include <pandora/Block.hpp>
+#include <pandora/Util.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/SimpleTag.hpp>
 #include <pandora/DataArray.hpp>
-#include <pandora/Util.hpp>
 #include <pandora/Representation.hpp>
 
 using namespace std;

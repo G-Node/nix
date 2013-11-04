@@ -12,7 +12,6 @@
  */
 
 #include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
 #include <pandora/EntityWithMetadata.hpp>
 
 using namespace std;

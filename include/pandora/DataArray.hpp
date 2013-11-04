@@ -11,7 +11,6 @@
 //TODO convenience methods for accessing dimensionality and shape of data
 #include <boost/multi_array.hpp>
 
-#include <pandora/PSize.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/Dimension.hpp>
 #include <pandora/EntityWithSources.hpp>

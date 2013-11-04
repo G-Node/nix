@@ -11,7 +11,6 @@
 #include <string>
 #include <functional>
 
-#include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 #include <pandora/Property.hpp>
 #include <pandora/TNode.hpp>

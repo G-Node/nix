@@ -13,7 +13,6 @@
  */
 
 #include <pandora/DataArray.hpp>
-#include <pandora/Section.hpp>
 #include <pandora/Representation.hpp>
 #include <pandora/EntityWithSources.hpp>
 #include <pandora/util/ReferenceList.hpp>
@@ -22,9 +21,6 @@
 #define PAN_DATATAG_H_INCLUDED
 
 namespace pandora {
-
-//class Section;
-//class Representation;
 
 enum class LinkType;
 

@@ -2,6 +2,7 @@
 #define PAN_VALUE_H_INCLUDE
 
 #include <string>
+
 #include <pandora/Group.hpp>
 #include <pandora/File.hpp>
 
@@ -139,7 +140,7 @@ public:
   typedef TypeSpec<element_type> spec_type;
 
   static spec_type type_spec(const myType &value) { return spec_type(); };
-  
+
   static PSize shape(const myType &value) {
 return  PSize( {value.size()});}
 
@@ -183,7 +184,7 @@ typedef hades::TypeInfo<vanilla>                 type_info_t;
 typedef typename TypeSpec<Value<U>>::inner_type  inner_type;
 typedef FileValue<inner_type>                    data_type;
 typedef data_type                               *data_ptr;
-  
+
 
 DataBox(T &val) : value(val) {
   size_t nelms = type_info_t::num_elements(value);
