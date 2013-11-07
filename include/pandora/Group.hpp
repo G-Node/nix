@@ -50,6 +50,7 @@ public:
   bool hasGroup(const std::string &name) const;
   Group openGroup(const std::string &name, bool create = true) const;
   void removeGroup(const std::string &name);
+  void renameGroup(const std::string &old_name, const std::string &new_name);
 
   bool operator==(const Group &group) const;
   bool operator!=(const Group &group) const;

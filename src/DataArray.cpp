@@ -11,8 +11,10 @@
  * @brief Implementations of the class DataArray.
  */
 
+#include <pandora/Util.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/DataArray.hpp>
+#include <pandora/Dimension.hpp>
 
 using namespace std;
 
@@ -64,6 +66,9 @@ DataArray::DataArray(File file, const Block block, Group group, const string &id
   }
 }
 
+//--------------------------------------------------
+// Element getters and setters
+//--------------------------------------------------
 
 string DataArray::label() const {
   string value;
@@ -126,6 +131,139 @@ void DataArray::polynomCoefficients(vector<double> &coefficients){
   forceUpdatedAt();
 }
 
+//--------------------------------------------------
+// Methods concerning dimensions
+//--------------------------------------------------
+
+vector<shared_ptr<Dimension>> DataArray::dimensions() const {
+  vector<shared_ptr<Dimension>> dimensions;
+
+  size_t dim_count = dimensionCount();
+  for (size_t i = 0; i < dim_count; i++) {
+    size_t dim_id = i + 1;
+    string str_id = util::numToStr(dim_id);
+
+    if (dimension_group.hasGroup(str_id)) {
+      Group dim_group = dimension_group.openGroup(str_id, false);
+      string dim_type_name;
+      dim_group.getAttr("dimension_type", dim_type_name);
+      DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
+
+      shared_ptr<Dimension> dim;
+      switch (dim_type) {
+        case DimensionType::SET_DIMENSION:
+          dim = shared_ptr<Dimension>(new SetDimension(dim_group, dim_id));
+          break;
+        case DimensionType::RANGE_DIMENSION:
+          dim = shared_ptr<Dimension>(new RangeDimension(dim_group, dim_id));
+          break;
+        case DimensionType::SAMPLED_DIMENSION:
+          dim = shared_ptr<Dimension>(new SampledDimension(dim_group, dim_id));
+          break;
+        default:
+          throw runtime_error("Invalid dimension type");
+      }
+
+      dimensions.push_back(dim);
+    }
+  }
+
+  return dimensions;
+}
+
+
+size_t DataArray::dimensionCount() const {
+  return dimension_group.objectCount();
+}
+
+
+shared_ptr<Dimension> DataArray::getDimension(size_t id) const {
+  string str_id = util::numToStr(id);
+  shared_ptr<Dimension> dim;
+
+  if (dimension_group.hasGroup(str_id)) {
+    Group dim_group = dimension_group.openGroup(str_id, false);
+    string dim_type_name;
+    dim_group.getAttr("dimension_type", dim_type_name);
+    DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
+
+    switch (dim_type) {
+      case DimensionType::SET_DIMENSION:
+        dim = shared_ptr<Dimension>(new SetDimension(dim_group, id));
+        break;
+      case DimensionType::RANGE_DIMENSION:
+        dim = shared_ptr<Dimension>(new RangeDimension(dim_group, id));
+        break;
+      case DimensionType::SAMPLED_DIMENSION:
+        dim = shared_ptr<Dimension>(new SampledDimension(dim_group, id));
+        break;
+      default:
+        throw runtime_error("Invalid dimension type");
+    }
+  }
+
+  return dim;
+}
+
+
+shared_ptr<Dimension> DataArray::createDimension(size_t id, DimensionType type) {
+  size_t dim_count = dimensionCount();
+
+  if (id <= dim_count) {
+    id = dim_count + 1;
+  }
+
+  string str_id = util::numToStr(id);
+
+  if (dimension_group.hasGroup(str_id)) {
+    dimension_group.removeGroup(str_id);
+  }
+
+  Group dim_group = dimension_group.openGroup(str_id, true);
+  shared_ptr<Dimension> dim;
+
+  switch (type) {
+    case DimensionType::SET_DIMENSION:
+      dim = shared_ptr<Dimension>(new SetDimension(dim_group, id));
+      break;
+    case DimensionType::RANGE_DIMENSION:
+      dim = shared_ptr<Dimension>(new RangeDimension(dim_group, id));
+      break;
+    case DimensionType::SAMPLED_DIMENSION:
+      dim = shared_ptr<Dimension>(new SampledDimension(dim_group, id));
+      break;
+    default:
+      throw runtime_error("Invalid dimension type");
+  }
+
+  return dim;
+}
+
+
+bool DataArray::removeDimension(size_t id) {
+  bool deleted = false;
+  size_t dim_count = dimensionCount();
+  string str_id = util::numToStr(id);
+
+  if (dimension_group.hasGroup(str_id)) {
+    dimension_group.removeGroup(str_id);
+    deleted = true;
+  }
+
+  if (deleted && id < dim_count) {
+    for (size_t old_id = id + 1; old_id <= dim_count; old_id++) {
+      string str_old_id = util::numToStr(old_id);
+      string str_new_id = util::numToStr(old_id - 1);
+      dimension_group.renameGroup(str_old_id, str_new_id);
+    }
+  }
+
+  return deleted;
+}
+
+//--------------------------------------------------
+// Other methods and functions
+//--------------------------------------------------
 
 double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
   double value = 0.0;

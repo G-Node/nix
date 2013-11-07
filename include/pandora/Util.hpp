@@ -18,6 +18,7 @@
 #define PAN_UTIL_H_INCLUDED
 
 #include <string>
+#include <sstream>
 
 namespace pandora {
 namespace util {
@@ -50,6 +51,32 @@ std::string timeToStr(time_t time);
  * @return The time value that is represented by the time parameter.
  */
 time_t strToTime(const std::string &time);
+
+/**
+ * Convert a number into a string representation.
+ *
+ * @param number  The number to convert
+ *
+ * @return The string representation of number
+ */
+template<typename T> std::string numToStr(T number) {
+  std::stringstream s;
+  s << number;
+  return s.str();
+}
+
+/**
+ * Convert a string representing a number into a number.
+ *
+ * @param str   The string to convert.
+ *
+ * @return The number that was represented by the string.
+ */
+template<typename T> T strToNum(const std::string &str) {
+  std::stringstream s(str);
+  T number;
+  return s >> number ? number : 0;
+}
 
 } // namespace util
 } // namespace pandora

@@ -6,11 +6,6 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-/**
- * @file pandora/Dimension.hpp
- * @brief Definition of the class PandoraEntity.
- */
-
 #ifndef PAN_DIMENSION_H_INCLUDED
 #define PAN_DIMENSION_H_INCLUDED
 
@@ -28,6 +23,13 @@ enum class DimensionType : int {
   SAMPLED_DIMENSION, SET_DIMENSION, RANGE_DIMENSION
 };
 
+DimensionType dimensionTypeFromStr(const std::string &str);
+
+std::string dimensionTypeToStr(DimensionType dim);
+
+/**
+ * @brief The Dimension class
+ */
 class Dimension {
 
 protected:
@@ -39,18 +41,115 @@ public:
 
   Dimension(Group group, size_t id);
 
+  Dimension(const Dimension &other);
+
   size_t id() const { return dim_id; }
 
   virtual DimensionType dimensionType() const = 0;
 
-  virtual void swap(const Dimension &other) = 0;
+  virtual void swap(Dimension &other);
 
   bool operator==(const Dimension &other) const;
 
   bool operator!=(const Dimension &other) const;
 
   virtual ~Dimension();
+
+protected:
+
+  void setType();
 };
+
+
+/**
+ * @brief The SampledDimension class
+ */
+class SampledDimension : public Dimension {
+
+public:
+
+  SampledDimension(Group group, size_t id);
+
+  SampledDimension(const SampledDimension &other);
+
+  DimensionType dimensionType() const;
+
+  std::string label() const;
+
+  void label(const std::string &label);
+
+  std::string unit() const;
+
+  void unit(const std::string &unit);
+
+  double samplingInterval() const;
+
+  void samplingInterval(double sampling_interval);
+
+  double offset() const;
+
+  void offset(double offset);
+
+  SampledDimension& operator=(const SampledDimension &other);
+
+  virtual ~SampledDimension();
+};
+
+
+/**
+ * @brief The SetDimension class
+ */
+class SetDimension : public Dimension {
+
+public:
+
+  SetDimension(Group group, size_t id);
+
+  SetDimension(const SetDimension &other);
+
+  DimensionType dimensionType() const;
+
+  std::vector<std::string> labels() const;
+
+  void labels(const std::vector<std::string> &labels);
+
+  SetDimension& operator=(const SetDimension &other);
+
+  virtual ~SetDimension();
+
+};
+
+
+/**
+ * @brief The RangeDimension class
+ */
+class RangeDimension : public Dimension {
+
+public:
+
+  RangeDimension(Group group, size_t id);
+
+  RangeDimension(const RangeDimension &other);
+
+  DimensionType dimensionType() const;
+
+  std::string label() const;
+
+  void label(const std::string &label);
+
+  std::string unit() const;
+
+  void unit(const std::string &unit);
+
+  std::vector<double> tics() const;
+
+  void tics(const std::vector<double> &tics);
+
+  RangeDimension& operator=(const RangeDimension &other);
+
+  virtual ~RangeDimension();
+};
+
 
 } /* namespace pandora */
 
