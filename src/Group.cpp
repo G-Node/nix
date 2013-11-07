@@ -98,6 +98,12 @@ void Group::removeGroup(const std::string &name) {
     h5group.unlink(name);
 }
 
+void Group::renameGroup(const std::string &old_name, const std::string &new_name) {
+  if (hasGroup(old_name)) {
+    h5group.move(old_name, new_name);
+  }
+}
+
 bool Group::operator==(const Group &group) const {
   return h5group.getLocId() == group.h5group.getLocId();
 }
