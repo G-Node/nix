@@ -13,6 +13,34 @@ using namespace std;
 
 namespace pandora {
 
+DimensionType dimensionTypeFromStr(const string &str) {
+  if (str == "set") {
+    return DimensionType::SET_DIMENSION;
+  } else if (str == "range") {
+    return DimensionType::RANGE_DIMENSION;
+  } else if (str == "sample") {
+    return DimensionType::SAMPLED_DIMENSION;
+  } else {
+    throw runtime_error("Not a valid dimension name");
+  }
+}
+
+std::string dimensionTypeToStr(DimensionType dim) {
+  switch (dim) {
+    case DimensionType::SET_DIMENSION:
+      return "set";
+    case DimensionType::RANGE_DIMENSION:
+      return "range";
+    case DimensionType::SAMPLED_DIMENSION:
+      return "sample";
+    default:
+      throw runtime_error("Not a valid dimension type");
+  }
+}
+
+
+
+
 // Implementation of Dimension
 
 Dimension::Dimension(Group group, size_t id)

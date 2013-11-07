@@ -23,6 +23,10 @@ enum class DimensionType : int {
   SAMPLED_DIMENSION, SET_DIMENSION, RANGE_DIMENSION
 };
 
+DimensionType dimensionTypeFromStr(const std::string &str);
+
+std::string dimensionTypeToStr(DimensionType dim);
+
 /**
  * @brief The Dimension class
  */
@@ -58,6 +62,8 @@ public:
  */
 class SampledDimension : public Dimension {
 
+public:
+
   SampledDimension(Group group, size_t id);
 
   SampledDimension(const SampledDimension &other);
@@ -91,6 +97,8 @@ class SampledDimension : public Dimension {
  */
 class SetDimension : public Dimension {
 
+public:
+
   SetDimension(Group group, size_t id);
 
   SetDimension(const SetDimension &other);
@@ -112,6 +120,8 @@ class SetDimension : public Dimension {
  * @brief The RangeDimension class
  */
 class RangeDimension : public Dimension {
+
+public:
 
   RangeDimension(Group group, size_t id);
 

@@ -9,6 +9,8 @@
 // Authors: Christian Kellner <kellner@bio.lmu.de>, Jan Grewe <jan.grewe@g-node.org>
 
 //TODO convenience methods for accessing dimensionality and shape of data
+
+#include <memory>
 #include <boost/multi_array.hpp>
 
 #include <pandora/DataSet.hpp>
@@ -164,13 +166,22 @@ public:
 
   //--------------------------------------------------
   // Methods concerning dimensions
-  // TODO figure out how dimension access should work regarding different dimension types.
   //--------------------------------------------------
 
+  std::vector<std::shared_ptr<Dimension>> dimensions() const;
+
+  size_t dimensionCount() const;
+
+  std::shared_ptr<Dimension> getDimension(size_t id) const;
+
+  std::shared_ptr<Dimension> createDimension(size_t id, DimensionType type);
+
+  bool removeDimension(size_t id);
 
   //--------------------------------------------------
   // Other methods and functions
   //--------------------------------------------------
+
   /**
    * Conversion of the data by applying the calibration.
    */
