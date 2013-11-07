@@ -190,10 +190,13 @@ shared_ptr<Dimension> DataArray::getDimension(size_t id) const {
     switch (dim_type) {
       case DimensionType::SET_DIMENSION:
         dim = shared_ptr<Dimension>(new SetDimension(dim_group, id));
+        break;
       case DimensionType::RANGE_DIMENSION:
         dim = shared_ptr<Dimension>(new RangeDimension(dim_group, id));
+        break;
       case DimensionType::SAMPLED_DIMENSION:
         dim = shared_ptr<Dimension>(new SampledDimension(dim_group, id));
+        break;
       default:
         throw runtime_error("Invalid dimension type");
     }

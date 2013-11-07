@@ -1,6 +1,8 @@
 
 #include "TestDataArray.hpp"
 
+using namespace std;
+
 void TestDataArray::setUp() {
   f1 = new File("test_block.h5", FileMode::ReadWrite);
 }
@@ -38,13 +40,13 @@ void TestDataArray::testSoures() {
   Source s4 = s1.createSource("S4","test");
   Source s5 = s2.createSource("S5","test");
 
-  std::vector<Source> source = a.sources();
+  vector<Source> source = a.sources();
 
-  CPPUNIT_ASSERT_EQUAL(static_cast<std::vector<Source>::size_type>(2), source.size());
+  CPPUNIT_ASSERT_EQUAL(static_cast<vector<Source>::size_type>(2), source.size());
 
-  CPPUNIT_ASSERT(std::find_if(source.begin(), source.end(), [&](const Source &s){ return s.id() == s1.id(); }) != source.end());
+  CPPUNIT_ASSERT(find_if(source.begin(), source.end(), [&](const Source &s){ return s.id() == s1.id(); }) != source.end());
 
-  CPPUNIT_ASSERT(std::find_if(source.begin(), source.end(), [&](const Source &s){ return s.id() == s2.id(); }) != source.end());
+  CPPUNIT_ASSERT(find_if(source.begin(), source.end(), [&](const Source &s){ return s.id() == s2.id(); }) != source.end());
 
   f1->removeBlock(b.id());
 }
@@ -52,11 +54,11 @@ void TestDataArray::testSoures() {
 void TestDataArray::testCalibrationSettings(){
   Block b = f1->createBlock("testBlock","test");
   DataArray a = b.createDataArray("DataArray","sampledData");
-  std::vector<double> coefficients;
+  vector<double> coefficients;
   coefficients.push_back(2.0);
   coefficients.push_back(1.0);
   a.polynomCoefficients(coefficients);
-  std::vector<double> readCs = a.polynomCoefficients();
+  vector<double> readCs = a.polynomCoefficients();
   CPPUNIT_ASSERT(readCs.size() == 2);
   CPPUNIT_ASSERT(readCs[0] == 2.0 && readCs[1] == 1.0);
 
@@ -68,7 +70,7 @@ void TestDataArray::testCalibrationSettings(){
 void TestDataArray::testData(){
   Block b = f1->createBlock("testBlock","test");
   DataArray a = b.createDataArray("DataArray","sampledData");
-  std::vector<double> coefficients;
+  vector<double> coefficients;
   coefficients.push_back(0.0);
   coefficients.push_back(2.0);
   a.polynomCoefficients(coefficients);
@@ -91,5 +93,67 @@ void TestDataArray::testData(){
       errors++;
   }
   CPPUNIT_ASSERT(errors == 0.0);
+  f1->removeBlock(b.id());
+}
+
+void TestDataArray::testDimensions() {
+  Block b = f1->createBlock("testBlock", "test");
+  DataArray a = b.createDataArray("DataArray", "sampledData");
+
+  double offset = 100;
+  double inter = 0.001;
+  string unit  = "mV";
+  string label = "test_label";
+  vector<string> labels = {"lebel_one", "label_two"};
+  vector<double> tics = {1, 2, 3, 4, 5};
+
+  // test for empty dimensions
+  auto dims = a.dimensions();
+  CPPUNIT_ASSERT(dims.size() == 0);
+
+  // create dimensions
+  shared_ptr<Dimension> dim = a.createDimension(1, DimensionType::SET_DIMENSION);
+  shared_ptr<SetDimension> set_dim = static_pointer_cast<SetDimension>(dim);
+  set_dim->labels(labels);
+
+  dim = a.createDimension(2, DimensionType::RANGE_DIMENSION);
+  shared_ptr<RangeDimension> range_dim = static_pointer_cast<RangeDimension>(dim);
+  range_dim->label(label);
+  range_dim->tics(tics);
+  range_dim->unit(unit);
+
+  dim = a.createDimension(3, DimensionType::SAMPLED_DIMENSION);
+  shared_ptr<SampledDimension> sample_dim = static_pointer_cast<SampledDimension>(dim);
+  sample_dim->unit(unit);
+  sample_dim->label(label);
+  sample_dim->samplingInterval(inter);
+  sample_dim->offset(offset);
+
+  // test for number of dimensions
+  dims = a.dimensions();
+  CPPUNIT_ASSERT(dims.size() == 3);
+
+  // test reading
+  set_dim = static_pointer_cast<SetDimension>(a.getDimension(1));
+  CPPUNIT_ASSERT(set_dim->dimensionType() == DimensionType::SET_DIMENSION);
+  CPPUNIT_ASSERT(set_dim->id() == 1);
+  CPPUNIT_ASSERT(set_dim->labels() == labels);
+
+  range_dim = static_pointer_cast<RangeDimension>(a.getDimension(2));
+  CPPUNIT_ASSERT(range_dim->dimensionType() == DimensionType::RANGE_DIMENSION);
+  CPPUNIT_ASSERT(range_dim->id() == 2);
+  CPPUNIT_ASSERT(range_dim->label() == label);
+  CPPUNIT_ASSERT(range_dim->unit() == unit);
+  CPPUNIT_ASSERT(range_dim->tics() == tics);
+
+  sample_dim = static_pointer_cast<SampledDimension>(a.getDimension(3));
+  CPPUNIT_ASSERT(sample_dim->dimensionType() == DimensionType::SAMPLED_DIMENSION);
+  CPPUNIT_ASSERT(sample_dim->id() == 3);
+  CPPUNIT_ASSERT(sample_dim->label() == label);
+  CPPUNIT_ASSERT(sample_dim->unit() == unit);
+  CPPUNIT_ASSERT(sample_dim->samplingInterval() == inter);
+  CPPUNIT_ASSERT(sample_dim->offset() == offset);
+
+  // clean up
   f1->removeBlock(b.id());
 }

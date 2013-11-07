@@ -55,6 +55,10 @@ Dimension::Dimension(const Dimension &other)
 }
 
 
+void Dimension::setType() {
+  group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
+}
+
 void Dimension::swap(Dimension &other) {
   using std::swap;
   swap(group, other.group);
@@ -79,12 +83,14 @@ Dimension::~Dimension() {}
 SampledDimension::SampledDimension(Group group, size_t id)
   : Dimension(group, id)
 {
+  setType();
 }
 
 
 SampledDimension::SampledDimension(const SampledDimension &other)
   : Dimension(other.group, other.dim_id)
 {
+  setType();
 }
 
 
@@ -155,12 +161,14 @@ SampledDimension::~SampledDimension() {}
 SetDimension::SetDimension(Group group, size_t id)
   : Dimension(group, id)
 {
+  setType();
 }
 
 
 SetDimension::SetDimension(const SetDimension &other)
   : Dimension(other.group, other.dim_id)
 {
+  setType();
 }
 
 
@@ -208,12 +216,14 @@ SetDimension::~SetDimension() {}
 RangeDimension::RangeDimension(Group group, size_t id)
   : Dimension(group, id)
 {
+  setType();
 }
 
 
 RangeDimension::RangeDimension(const RangeDimension &other)
   : Dimension(other.group, other.dim_id)
 {
+  setType();
 }
 
 

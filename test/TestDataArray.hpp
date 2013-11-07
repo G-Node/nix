@@ -29,21 +29,23 @@ class TestDataArray : public CPPUNIT_NS::TestFixture {
 
 private:
 
-	CPPUNIT_TEST_SUITE(TestDataArray);
-	CPPUNIT_TEST(testCreateRemove);
-	CPPUNIT_TEST(testCalibrationSettings);
-	CPPUNIT_TEST(testSoures);
-	CPPUNIT_TEST(testData);
+  CPPUNIT_TEST_SUITE(TestDataArray);
+  CPPUNIT_TEST(testCreateRemove);
+  CPPUNIT_TEST(testCalibrationSettings);
+  CPPUNIT_TEST(testSoures);
+  CPPUNIT_TEST(testData);
+  CPPUNIT_TEST(testDimensions);
   CPPUNIT_TEST_SUITE_END ();
-	File *f1;
+  File *f1;
 
 public:
 
-	void setUp();
-	void tearDown();
-	void testCreateRemove();
-	void testCalibrationSettings();
+  void setUp();
+  void tearDown();
+  void testCreateRemove();
+  void testCalibrationSettings();
   void testSoures();
   void testData();
+  void testDimensions();
 };
 

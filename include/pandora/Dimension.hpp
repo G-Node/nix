@@ -54,6 +54,10 @@ public:
   bool operator!=(const Dimension &other) const;
 
   virtual ~Dimension();
+
+protected:
+
+  void setType();
 };
 
 
