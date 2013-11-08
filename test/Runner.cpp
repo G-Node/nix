@@ -17,6 +17,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+/*
 #include "TestBlock.hpp"
 #include "TestCharon.hpp"
 #include "TestFile.hpp"
@@ -32,10 +33,12 @@
 
 #include "TestProperty.hpp"
 #include "TestSection.hpp"
+*/
 
 
 int main(int argc, char* argv[]) {
 
+    /*
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestCharon);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
@@ -49,9 +52,9 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
 
-    /* odML */
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
+    */
 
 
     CPPUNIT_NS::TestResult testresult;
