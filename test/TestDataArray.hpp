@@ -1,3 +1,11 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -29,23 +37,23 @@ class TestDataArray : public CPPUNIT_NS::TestFixture {
 
 private:
 
-  CPPUNIT_TEST_SUITE(TestDataArray);
-  CPPUNIT_TEST(testCreateRemove);
-  CPPUNIT_TEST(testCalibrationSettings);
-  CPPUNIT_TEST(testSoures);
-  CPPUNIT_TEST(testData);
-  CPPUNIT_TEST(testDimensions);
-  CPPUNIT_TEST_SUITE_END ();
-  File *f1;
+    CPPUNIT_TEST_SUITE(TestDataArray);
+    CPPUNIT_TEST(testCreateRemove);
+    CPPUNIT_TEST(testCalibrationSettings);
+    CPPUNIT_TEST(testSoures);
+    CPPUNIT_TEST(testData);
+    CPPUNIT_TEST(testDimensions);
+    CPPUNIT_TEST_SUITE_END ();
+    File *f1;
 
 public:
 
-  void setUp();
-  void tearDown();
-  void testCreateRemove();
-  void testCalibrationSettings();
-  void testSoures();
-  void testData();
-  void testDimensions();
+    void setUp();
+    void tearDown();
+    void testCreateRemove();
+    void testCalibrationSettings();
+    void testSoures();
+    void testData();
+    void testDimensions();
 };
 

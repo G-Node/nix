@@ -1,9 +1,10 @@
-/*
- * Representation.hpp
- *
- *  Created on: Mar 6, 2013
- *      Author: grewe
- */
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
 #ifndef PAN_REPRESENTATION_H_INCLUDE
 #define PAN_REPRESENTATION_H_INCLUDE
@@ -16,8 +17,9 @@ namespace pandora {
 
 /**
  * Enumeration for link types.
+ *
+ *  TODO remove "untagged" from link type
  */
-// TODO remove "untagged" from link type
 enum class LinkType : int {
     TAGGED, UNTAGGED, INDEXED
 };
@@ -42,58 +44,60 @@ LinkType linkTypeFromString(const std::string &str);
  * TODO implement methods for DataArray.
  */
 class Representation: public PandoraEntity {
+
 protected:
-  Block block;
+
+    Block block;
 
 public:
 
-  /**
-   * Copy constructor.
-   */
-  Representation(const Representation &representation);
+    /**
+     * Copy constructor.
+     */
+    Representation(const Representation &representation);
 
-  /**
-   * Default constuctor.
-   */
-  Representation(Group group, const std::string &id, Block block);
+    /**
+     * Default constuctor.
+     */
+    Representation(Group group, const std::string &id, Block block);
 
-  /**
-   * Default constructor that preserves the creation time.
-   */
-  Representation(Group group, const std::string &id, time_t time, Block block);
+    /**
+     * Default constructor that preserves the creation time.
+     */
+    Representation(Group group, const std::string &id, time_t time, Block block);
 
-  /**
-   * Setter for the link type.
-   *
-   * @param type    The link type to set.
-   */
-  void linkType(LinkType type);
+    /**
+     * Setter for the link type.
+     *
+     * @param type    The link type to set.
+     */
+    void linkType(LinkType type);
 
-  /**
-   * Getter for the link type.
-   *
-   * @return The current link type of the representation.
-   */
-  LinkType linkType() const;
+    /**
+     * Getter for the link type.
+     *
+     * @return The current link type of the representation.
+     */
+    LinkType linkType() const;
 
-  /**
-   * Sets the data array associated with this representation.
-   *
-   * @param data    The data array to set.
-   */
-  void data(const DataArray &data);
+    /**
+     * Sets the data array associated with this representation.
+     *
+     * @param data    The data array to set.
+     */
+    void data(const DataArray &data);
 
-  /**
-   * Gets the data array associated with this representation.
-   *
-   * @return The associated data array.
-   */
-  DataArray data() const;
+    /**
+     * Gets the data array associated with this representation.
+     *
+     * @return The associated data array.
+     */
+    DataArray data() const;
 
-  /**
-   * Destructor.
-   */
-  virtual ~Representation();
+    /**
+     * Destructor.
+     */
+    virtual ~Representation();
 
 };
 

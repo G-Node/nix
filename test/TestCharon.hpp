@@ -1,3 +1,11 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -22,43 +30,43 @@ class TestCharon:public CPPUNIT_NS::TestFixture {
 
 public:
 
-  void setUp();
-  void tearDown();
+    void setUp();
+    void tearDown();
 
-  void testBaseTypes();
-  void testMultiArray();
-  void testVector();
+    void testBaseTypes();
+    void testMultiArray();
+    void testVector();
 
-  void testArray();
+    void testArray();
 
-  template<typename T>
-  static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
+    template<typename T>
+    static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
 
-    //typedef const T &value_ref;
-    auto ibeg = boost::make_tuple(a.begin(), b.begin());
-    auto iend = boost::make_tuple(a.end(), b.end());
-    auto zibeg = boost::make_zip_iterator(ibeg);
-    auto ziend = boost::make_zip_iterator(iend);
-    typedef const boost::tuple<const T&, const T&>& tuple_ref;
+        //typedef const T &value_ref;
+        auto ibeg = boost::make_tuple(a.begin(), b.begin());
+        auto iend = boost::make_tuple(a.end(), b.end());
+        auto zibeg = boost::make_zip_iterator(ibeg);
+        auto ziend = boost::make_zip_iterator(iend);
+        typedef const boost::tuple<const T&, const T&>& tuple_ref;
 
-    std::for_each(zibeg, ziend, [](tuple_ref t) {
-      CPPUNIT_ASSERT_EQUAL(boost::get<0>(t), boost::get<1>(t));
-    });
-  }
+        std::for_each(zibeg, ziend, [](tuple_ref t) {
+            CPPUNIT_ASSERT_EQUAL(boost::get<0>(t), boost::get<1>(t));
+        });
+    }
 
 private:
 
-  static unsigned int &open_mode();
+    static unsigned int &open_mode();
 
-  H5::H5File h5file;
-  H5::Group h5group;
+    H5::H5File h5file;
+    H5::Group h5group;
 
-  CPPUNIT_TEST_SUITE(TestCharon);
-  CPPUNIT_TEST(testBaseTypes);
-  CPPUNIT_TEST(testVector);
-  CPPUNIT_TEST(testMultiArray);
-  CPPUNIT_TEST(testArray);
-  CPPUNIT_TEST_SUITE_END ();
+    CPPUNIT_TEST_SUITE(TestCharon);
+    CPPUNIT_TEST(testBaseTypes);
+    CPPUNIT_TEST(testVector);
+    CPPUNIT_TEST(testMultiArray);
+    CPPUNIT_TEST(testArray);
+    CPPUNIT_TEST_SUITE_END ();
 };
 
 

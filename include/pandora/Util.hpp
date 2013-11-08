@@ -7,9 +7,6 @@
 // LICENSE file in the root of the Project.
 
 /**
- * @file pandora/Util.hpp
- * @brief Declaration of utility functions.
- *
  * @namespace pandora::util
  * @brief Namespace for utility functions. This namespace is not part of the public API.
  */
@@ -60,9 +57,9 @@ time_t strToTime(const std::string &time);
  * @return The string representation of number
  */
 template<typename T> std::string numToStr(T number) {
-  std::stringstream s;
-  s << number;
-  return s.str();
+    std::stringstream s;
+    s << number;
+    return s.str();
 }
 
 /**
@@ -73,9 +70,9 @@ template<typename T> std::string numToStr(T number) {
  * @return The number that was represented by the string.
  */
 template<typename T> T strToNum(const std::string &str) {
-  std::stringstream s(str);
-  T number;
-  return s >> number ? number : 0;
+    std::stringstream s(str);
+    T number;
+    return s >> number ? number : 0;
 }
 
 } // namespace util

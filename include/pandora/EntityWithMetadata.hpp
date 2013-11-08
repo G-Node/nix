@@ -6,11 +6,6 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-/**
- * @file pandora/EntityWithMetadata.hpp
- * @brief Definition of the class EntityWithMetadata.
- */
-
 #ifndef PAN_ENTITY_WITH_METADATA_H_INCLUDED
 #define PAN_ENTITY_WITH_METADATA_H_INCLUDED
 
@@ -33,58 +28,58 @@ class EntityWithMetadata : public NamedEntity {
 
 protected:
 
-  File file;
+    File file;
 
 public:
 
-  /**
-   * Standard constructor
-   */
-  EntityWithMetadata(File file, Group group, const std::string &id);
+    /**
+     * Standard constructor
+     */
+    EntityWithMetadata(File file, Group group, const std::string &id);
 
-  /**
-   * Standard constructor that preserves the creation time.
-   */
-  EntityWithMetadata(File file, Group group, const std::string &id, time_t time);
+    /**
+     * Standard constructor that preserves the creation time.
+     */
+    EntityWithMetadata(File file, Group group, const std::string &id, time_t time);
 
-  /**
-   * Checks if the block has associated metadata.
-   *
-   * @return True if the block has metadata (odML section),
-   *         false otherwise.
-   */
-  bool hasMetadata() const;
+    /**
+     * Checks if the block has associated metadata.
+     *
+     * @return True if the block has metadata (odML section),
+     *         false otherwise.
+     */
+    bool hasMetadata() const;
 
-  /**
-   * Get metadata associated with this entity.
-   *
-   * @return The associated section, if no such section exists
-   *         an exception will be thrown.
-   */
-  Section metadata() const;
+    /**
+     * Get metadata associated with this entity.
+     *
+     * @return The associated section, if no such section exists
+     *         an exception will be thrown.
+     */
+    Section metadata() const;
 
-  /**
-   * Associate the entity with some metadata. Calling this method will replace
-   * previously stored information.
-   *
-   *
-   * @param metadata    The section that should be associated
-   *                    with this entity.
-   */
+    /**
+     * Associate the entity with some metadata. Calling this method will replace
+     * previously stored information.
+     *
+     *
+     * @param metadata    The section that should be associated
+     *                    with this entity.
+     */
   void metadata(const Section &metadata);
 
-  /**
-   * Remove associated metadata from the entity.
-   * The section will not be deleted.
-   *
-   * @return True if the section was removed, false otherwise.
-   */
-  bool removeMetadata();
+    /**
+     * Remove associated metadata from the entity.
+     * The section will not be deleted.
+     *
+     * @return True if the section was removed, false otherwise.
+     */
+    bool removeMetadata();
 
-  /**
-   * Destructor of this class.
-   */
-  virtual ~EntityWithMetadata();
+    /**
+     * Destructor of this class.
+     */
+    virtual ~EntityWithMetadata();
 
 };
 

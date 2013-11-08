@@ -1,3 +1,11 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -21,26 +29,26 @@ class TestDataSet:public CPPUNIT_NS::TestFixture {
 
 public:
 
-  void setUp();
-  void testPSize();
-  void testChunkGuessing();
-  void testBasic();
-  void testSelection();
-  void tearDown();
+    void setUp();
+    void testPSize();
+    void testChunkGuessing();
+    void testBasic();
+    void testSelection();
+    void tearDown();
 
-  private:
+private:
 
-  static unsigned int &open_mode();
+    static unsigned int &open_mode();
 
-  H5::H5File h5file;
-  H5::Group h5group;
+    H5::H5File h5file;
+    H5::Group h5group;
 
-  CPPUNIT_TEST_SUITE(TestDataSet);
-  CPPUNIT_TEST(testPSize);
-  CPPUNIT_TEST(testChunkGuessing);
-  CPPUNIT_TEST(testBasic);
-  CPPUNIT_TEST(testSelection);
-  CPPUNIT_TEST_SUITE_END ();
+    CPPUNIT_TEST_SUITE(TestDataSet);
+    CPPUNIT_TEST(testPSize);
+    CPPUNIT_TEST(testChunkGuessing);
+    CPPUNIT_TEST(testBasic);
+    CPPUNIT_TEST(testSelection);
+    CPPUNIT_TEST_SUITE_END ();
 };
 
 

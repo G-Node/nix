@@ -19,135 +19,139 @@
 
 namespace pandora {
 
+
 enum class DimensionType : int {
-  SAMPLED_DIMENSION, SET_DIMENSION, RANGE_DIMENSION
+    SAMPLED_DIMENSION, SET_DIMENSION, RANGE_DIMENSION
 };
+
 
 DimensionType dimensionTypeFromStr(const std::string &str);
 
+
 std::string dimensionTypeToStr(DimensionType dim);
 
+
 /**
- * @brief The Dimension class
+ * TODO documentation
  */
 class Dimension {
 
 protected:
 
-  Group group;
-  size_t dim_id;
+    Group group;
+    size_t dim_id;
 
 public:
 
-  Dimension(Group group, size_t id);
+    Dimension(Group group, size_t id);
 
-  Dimension(const Dimension &other);
+    Dimension(const Dimension &other);
 
-  size_t id() const { return dim_id; }
+    size_t id() const { return dim_id; }
 
-  virtual DimensionType dimensionType() const = 0;
+    virtual DimensionType dimensionType() const = 0;
 
-  virtual void swap(Dimension &other);
+    virtual void swap(Dimension &other);
 
-  bool operator==(const Dimension &other) const;
+    bool operator==(const Dimension &other) const;
 
-  bool operator!=(const Dimension &other) const;
+    bool operator!=(const Dimension &other) const;
 
-  virtual ~Dimension();
+    virtual ~Dimension();
 
 protected:
 
-  void setType();
+    void setType();
 };
 
 
 /**
- * @brief The SampledDimension class
+ * TODO documentation
  */
 class SampledDimension : public Dimension {
 
 public:
 
-  SampledDimension(Group group, size_t id);
+    SampledDimension(Group group, size_t id);
 
-  SampledDimension(const SampledDimension &other);
+    SampledDimension(const SampledDimension &other);
 
-  DimensionType dimensionType() const;
+    DimensionType dimensionType() const;
 
-  std::string label() const;
+    std::string label() const;
 
-  void label(const std::string &label);
+    void label(const std::string &label);
 
-  std::string unit() const;
+    std::string unit() const;
 
-  void unit(const std::string &unit);
+    void unit(const std::string &unit);
 
-  double samplingInterval() const;
+    double samplingInterval() const;
 
-  void samplingInterval(double sampling_interval);
+    void samplingInterval(double sampling_interval);
 
-  double offset() const;
+    double offset() const;
 
-  void offset(double offset);
+    void offset(double offset);
 
-  SampledDimension& operator=(const SampledDimension &other);
+    SampledDimension& operator=(const SampledDimension &other);
 
-  virtual ~SampledDimension();
+    virtual ~SampledDimension();
 };
 
 
 /**
- * @brief The SetDimension class
+ * TODO documentation
  */
 class SetDimension : public Dimension {
 
 public:
 
-  SetDimension(Group group, size_t id);
+    SetDimension(Group group, size_t id);
 
-  SetDimension(const SetDimension &other);
+    SetDimension(const SetDimension &other);
 
-  DimensionType dimensionType() const;
+    DimensionType dimensionType() const;
 
-  std::vector<std::string> labels() const;
+    std::vector<std::string> labels() const;
 
-  void labels(const std::vector<std::string> &labels);
+    void labels(const std::vector<std::string> &labels);
 
-  SetDimension& operator=(const SetDimension &other);
+    SetDimension& operator=(const SetDimension &other);
 
-  virtual ~SetDimension();
+    virtual ~SetDimension();
 
 };
 
 
 /**
- * @brief The RangeDimension class
+ * TODO documentation
  */
 class RangeDimension : public Dimension {
 
 public:
 
-  RangeDimension(Group group, size_t id);
+    RangeDimension(Group group, size_t id);
 
-  RangeDimension(const RangeDimension &other);
+    RangeDimension(const RangeDimension &other);
 
-  DimensionType dimensionType() const;
+    DimensionType dimensionType() const;
 
-  std::string label() const;
+    std::string label() const;
 
-  void label(const std::string &label);
+    void label(const std::string &label);
 
-  std::string unit() const;
+    std::string unit() const;
 
-  void unit(const std::string &unit);
+    void unit(const std::string &unit);
 
-  std::vector<double> tics() const;
+    std::vector<double> tics() const;
 
-  void tics(const std::vector<double> &tics);
+    void tics(const std::vector<double> &tics);
 
-  RangeDimension& operator=(const RangeDimension &other);
+    RangeDimension& operator=(const RangeDimension &other);
 
-  virtual ~RangeDimension();
+    virtual ~RangeDimension();
 };
 
 
