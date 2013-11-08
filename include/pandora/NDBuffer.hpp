@@ -19,96 +19,103 @@ namespace pandora {
 
 
 class NDBuffer {
+
 public:
-  typedef uint8_t byte_type;
 
-  NDBuffer(DataType dtype, PSize dims);
+    typedef uint8_t byte_type;
 
-  size_t rank() const { return extends.size(); }
-  size_t num_elements() const { return extends.nelms(); }
-  PSize  shape() const { return extends; }
-  PSize  size()const { return extends; }
-  DataType dtype() const { return dataType ;}
+    NDBuffer(DataType dtype, PSize dims);
 
-  template<typename T> const T get(size_t index) const;
-  template<typename T> const T get(const PSize &index) const;
-  template<typename T> void set(size_t index, T value);
-  template<typename T> void set(const PSize &index, T value);
+    size_t rank() const { return extends.size(); }
+    size_t num_elements() const { return extends.nelms(); }
+    PSize  shape() const { return extends; }
+    PSize  size()const { return extends; }
+    DataType dtype() const { return dataType ;}
 
-  byte_type *data() { return &dstore[0]; }
-  const byte_type *data() const { return &dstore[0]; }
+    template<typename T> const T get(size_t index) const;
+    template<typename T> const T get(const PSize &index) const;
+    template<typename T> void set(size_t index, T value);
+    template<typename T> void set(const PSize &index, T value);
 
-  void resize(const PSize &new_size);
+    byte_type *data() { return &dstore[0]; }
+    const byte_type *data() const { return &dstore[0]; }
 
-  size_t sub2index(const PSize &sub) const;
+    void resize(const PSize &new_size);
+
+    size_t sub2index(const PSize &sub) const;
 
 private:
-  DataType  dataType;
-  void allocate_space();
-  void calc_strides();
 
-  PSize                  extends;
-  PSize                  strides;
-  std::vector<byte_type> dstore;
+    DataType  dataType;
+    void allocate_space();
+    void calc_strides();
+
+    PSize                  extends;
+    PSize                  strides;
+    std::vector<byte_type> dstore;
 
 };
 
 /* ******************************************* */
+
 template<typename T>
 const T NDBuffer::get(size_t index) const
 {
-  const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-  return dx[index];
+    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
+    return dx[index];
 }
+
 
 template<typename T>
 const T NDBuffer::get(const PSize &index) const
 {
-  size_t pos = sub2index(index);
-  const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-  return dx[pos];
+    size_t pos = sub2index(index);
+    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
+    return dx[pos];
 }
 
 
 template<typename T>
 void NDBuffer::set(size_t index, T value)
 {
-  T* dx = reinterpret_cast<T *>(&dstore[0]);
-  dx[index] = value;
+    T* dx = reinterpret_cast<T *>(&dstore[0]);
+    dx[index] = value;
 }
+
 
 template<typename T>
 void NDBuffer::set(const PSize &index, T value)
 {
-  size_t pos = sub2index(index);
-  T* dx = reinterpret_cast<T *>(&dstore[0]);
-  dx[pos] = value;
+    size_t pos = sub2index(index);
+    T* dx = reinterpret_cast<T *>(&dstore[0]);
+    dx[pos] = value;
 }
 
 /* ****************************************** */
+
 namespace hades {
 
 template<>
 class TypeInfo<NDBuffer> {
 public:
-  typedef uint8_t element_type;
-  typedef TypeSpec<DataType> spec_type;
+    typedef uint8_t element_type;
+    typedef TypeSpec<DataType> spec_type;
 
-  static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
+    static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
 
-  static PSize shape(const NDBuffer &value) { return value.shape(); }
+    static PSize shape(const NDBuffer &value) { return value.shape(); }
 
-  static size_t num_elements(const NDBuffer &value) {
-    return value.num_elements();
-  }
+    static size_t num_elements(const NDBuffer &value) {
+        return value.num_elements();
+    }
 
-  static const element_type* getData(const NDBuffer &value) {
-    return value.data();
-  }
+    static const element_type* getData(const NDBuffer &value) {
+        return value.data();
+    }
 
-  static element_type* getData(NDBuffer &value) {
-    return value.data();
-  }
+    static element_type* getData(NDBuffer &value) {
+        return value.data();
+    }
 };
 
 

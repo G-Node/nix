@@ -6,12 +6,6 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-/**
- * @file EntityWithSources.cpp
- * @brief Implementation of all methods of the class EntityWithSources.
- */
-
-
 #include <pandora/Util.hpp>
 #include <pandora/DataSet.hpp>
 #include <pandora/Source.hpp>
@@ -23,69 +17,69 @@ namespace pandora {
 
 
 EntityWithSources::EntityWithSources(File file, Block block, Group group, const string &id)
-  : EntityWithMetadata(file, group, id), block(block), sources_refs(group, "sources")
+    : EntityWithMetadata(file, group, id), block(block), sources_refs(group, "sources")
 {
 }
 
 
 EntityWithSources::EntityWithSources(File file, Block block, Group group, const string &id, time_t time)
-  : EntityWithMetadata(file, group, id, time), block(block), sources_refs(group, "sources")
+    : EntityWithMetadata(file, group, id, time), block(block), sources_refs(group, "sources")
 {
 }
 
 
 size_t EntityWithSources::sourceCount() const {
-  return sources_refs.count();
+    return sources_refs.count();
 }
 
 
 bool EntityWithSources::hasSource(const Source &source) const {
-  return sources_refs.has(source);
+    return sources_refs.has(source);
 }
 
 
 bool EntityWithSources::hasSource(const string &id) const {
-  return sources_refs.has(id);
+    return sources_refs.has(id);
 }
 
 
 Source EntityWithSources::getSource(const std::string id) const{
-  return block.getSource(id);
+    return block.getSource(id);
 }
 
 
 vector<Source> EntityWithSources::sources() const {
-  vector<string> ids = sources_refs.get();
+    vector<string> ids = sources_refs.get();
 
-  vector<Source> source_obj = block.findSources([&](const Source &source) {
-    return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
-  });
+    vector<Source> source_obj = block.findSources([&](const Source &source) {
+        return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
+    });
 
-  if (source_obj.size() != ids.size()) {
-    // TODO What is the right thing to do here?
-    throw runtime_error("Could not resolve all ids");
-  }
+    if (source_obj.size() != ids.size()) {
+        // TODO What is the right thing to do here?
+        throw runtime_error("Could not resolve all ids");
+    }
 
-  return source_obj;
+    return source_obj;
 }
 
 
 void EntityWithSources::addSource(const Source &source) {
-  sources_refs.add(source);
+    sources_refs.add(source);
 }
 
 
 void EntityWithSources::sources(const vector<Source> &s) {
-  vector<string> ids(s.size());
-  for (size_t i = 0; i < s.size(); i++) {
-    ids[i] = s[i].id();
-  }
-  sources_refs.set(ids);
+    vector<string> ids(s.size());
+    for (size_t i = 0; i < s.size(); i++) {
+        ids[i] = s[i].id();
+    }
+    sources_refs.set(ids);
 }
 
 
 bool EntityWithSources::removeSource(const Source &source){
-  return sources_refs.remove(source);
+    return sources_refs.remove(source);
 }
 
 
