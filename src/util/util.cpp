@@ -11,11 +11,11 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <pandora/Util.hpp>
+#include <nix/util/util.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
 namespace util {
 
 // default id base (16 or 32)
@@ -58,4 +58,4 @@ time_t strToTime(const string &time) {
 }
 
 } // namespace util
-} // namespace pandora
+} // namespace nix

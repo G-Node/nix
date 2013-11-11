@@ -9,15 +9,12 @@
 #ifndef PANDORA_SELECTION_H
 #define PANDORA_SELECTION_H
 
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
-#include <H5Cpp.h>
-#endif
-#include <pandora/PSize.hpp>
-#include <pandora/Charon.hpp>
+#include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/PSize.hpp>
+#include <nix/hdf5/Charon.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 class Selection {
@@ -26,7 +23,7 @@ public:
 
     enum class Preset {
         None = 0,
-        All  = 1,
+        All  = 1
     };
 
     enum class Mode {
@@ -67,6 +64,8 @@ Selection::Selection (const T &value)
     space = charon.createDataSpace(true);
 }
 
-} //namespace
+
+} // namespace hdf5
+} // namespace nix
 
 #endif //PANDORA_SELECTION_H

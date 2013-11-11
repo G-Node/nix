@@ -9,20 +9,16 @@
 #ifndef PANDORA_CHARON_H
 #define PANDORA_CHARON_H
 
-
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
-#include <H5Cpp.h>
-#endif
+#include <type_traits>
 #include <boost/multi_array.hpp>
 
-#include <pandora/PSize.hpp>
-#include <pandora/DataType.hpp>
+#include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/PSize.hpp>
+#include <nix/hdf5/DataType.hpp>
 
-#include <type_traits>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 namespace hades {
 
 /* ********** */
@@ -558,6 +554,7 @@ private:
 };
 
 
-}  //namespace pandora
+} // namespace hdf5
+} //namespace nix
 
 #endif //PANDORA_CHARON_H

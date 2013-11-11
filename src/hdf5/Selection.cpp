@@ -6,9 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Selection.hpp>
+#include <nix/hdf5/Selection.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 void Selection::offset(const PSSize &offset)
@@ -47,4 +48,5 @@ PSize Selection::size() const
 }
 
 
-} //namespace pandora
+} // namespace hdf5
+} // namespace nix

@@ -6,28 +6,23 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Util.hpp>
-#include <pandora/Block.hpp>
-#include <pandora/Source.hpp>
-#include <pandora/SimpleTag.hpp>
-#include <pandora/DataArray.hpp>
-#include <pandora/DataTag.hpp>
+#include <nix/hdf5/BlockHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
-
-Block::Block(const Block &block)
-    : EntityWithMetadata(block.file, block.group, block.entity_id),
+BlockHDF5::BlockHDF5(const BlockHDF5 &block)
+    : NamedEntityHDF5(block.file(), block.group(), block.id()),
       source_group(block.source_group), data_array_group(block.data_array_group),
       simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
 {
 }
 
 
-Block::Block(File file, Group group, const string &id)
-    : EntityWithMetadata(file, group, id)
+BlockHDF5::BlockHDF5(File file, Group group, const string &id)
+    : NamedEntityHDF5(file, group, id)
 {
     source_group = group.openGroup("sources");
     data_array_group = group.openGroup("data_arrays");
@@ -36,8 +31,8 @@ Block::Block(File file, Group group, const string &id)
 }
 
 
-Block::Block(File file, Group group, const string &id, time_t time)
-    : EntityWithMetadata(file, group, id, time)
+BlockHDF5::BlockHDF5(File file, Group group, const string &id, time_t time)
+    : NamedEntityHDF5(file, group, id, time)
 {
     source_group = group.openGroup("sources");
     data_array_group = group.openGroup("data_arrays");
@@ -48,29 +43,30 @@ Block::Block(File file, Group group, const string &id, time_t time)
 
 // source methods
 
-bool Block::hasSource(const string &id) const {
+/*
+bool BlockHDF5::hasSource(const string &id) const {
     return source_group.hasGroup(id);
 }
 
 
-Source Block::getSource(const string &id) const {
+Source BlockHDF5::getSource(const string &id) const {
     return Source(file, source_group.openGroup(id, false), id);
 }
 
 
-Source Block::getSource(size_t index) const {
+Source BlockHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
     return Source(file, source_group.openGroup(id, false), id);
     // TODO handle exceptions!!
 }
 
 
-size_t Block::sourceCount() const {
+size_t BlockHDF5::sourceCount() const {
     return source_group.objectCount();
 }
 
 
-std::vector<Source> Block::sources() const {
+std::vector<Source> BlockHDF5::sources() const {
     vector<Source> source_obj;
 
     size_t source_count = sourceCount();
@@ -83,7 +79,7 @@ std::vector<Source> Block::sources() const {
 }
 
 
-std::vector<Source> Block::findSources(std::function<bool(const Source &)> predicate) const
+std::vector<Source> BlockHDF5::findSources(std::function<bool(const Source &)> predicate) const
 {
     vector<Source> result;
 
@@ -98,7 +94,7 @@ std::vector<Source> Block::findSources(std::function<bool(const Source &)> predi
 }
 
 
-Source Block::createSource(const string &name,const string &type) {
+Source BlockHDF5::createSource(const string &name,const string &type) {
     string id = util::createId("source");
 
     while(source_group.hasObject(id)) {
@@ -113,7 +109,7 @@ Source Block::createSource(const string &name,const string &type) {
 }
 
 
-bool Block::removeSource(const string &id) {
+bool BlockHDF5::removeSource(const string &id) {
     bool removed = false;
 
     if (hasSource(id)) {
@@ -123,16 +119,17 @@ bool Block::removeSource(const string &id) {
 
     return removed;
 }
-
+*/
 
 // SimpleTag methods
 
-bool Block::hasSimpleTag(const string &id) const {
+/*
+bool BlockHDF5::hasSimpleTag(const string &id) const {
     return simple_tag_group.hasObject(id);
 }
 
 
-SimpleTag Block::getSimpleTag(const string &id) const {
+SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
     if (hasSimpleTag(id)) {
         SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
         return st;
@@ -142,7 +139,7 @@ SimpleTag Block::getSimpleTag(const string &id) const {
 }
 
 
-SimpleTag Block::getSimpleTag(size_t index) const {
+SimpleTag BlockHDF5::getSimpleTag(size_t index) const {
     if (index < simpleTagCount()) {
         string id = simple_tag_group.objectName(index);
         SimpleTag st(file, *this, simple_tag_group.openGroup(id, true), id);
@@ -153,12 +150,12 @@ SimpleTag Block::getSimpleTag(size_t index) const {
 }
 
 
-size_t Block::simpleTagCount() const {
+size_t BlockHDF5::simpleTagCount() const {
     return simple_tag_group.objectCount();
 }
 
 
-vector<SimpleTag> Block::simpleTags() const {
+vector<SimpleTag> BlockHDF5::simpleTags() const {
     vector<SimpleTag> tag_obj;
 
     size_t tag_count = simpleTagCount();
@@ -172,7 +169,7 @@ vector<SimpleTag> Block::simpleTags() const {
 }
 
 
-SimpleTag Block::createSimpleTag(const string &name, const string &type) {
+SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type) {
     string id = util::createId("simple_tag");
 
     while(hasSimpleTag(id)) {
@@ -187,7 +184,7 @@ SimpleTag Block::createSimpleTag(const string &name, const string &type) {
 }
 
 
-bool Block::removeSimpleTag(const string &id) {
+bool BlockHDF5::removeSimpleTag(const string &id) {
     bool removed = false;
 
     if (hasSimpleTag(id)) {
@@ -197,16 +194,17 @@ bool Block::removeSimpleTag(const string &id) {
 
     return removed;
 }
-
+*/
 
 // Methods related to DataArray
 
-bool Block::hasDataArray(const string &id) const {
+/*
+bool BlockHDF5::hasDataArray(const string &id) const {
     return data_array_group.hasObject(id);
 }
 
 
-DataArray Block::getDataArray(const string &id) const {
+DataArray BlockHDF5::getDataArray(const string &id) const {
     if (hasDataArray(id)) {
         DataArray da(file, *this, data_array_group.openGroup(id, true), id);
         return da;
@@ -216,7 +214,7 @@ DataArray Block::getDataArray(const string &id) const {
 }
 
 
-DataArray Block::getDataArray(size_t index) const {
+DataArray BlockHDF5::getDataArray(size_t index) const {
     if (index < dataArrayCount()) {
         string id = data_array_group.objectName(index);
         DataArray da(file, *this, data_array_group.openGroup(id, true), id);
@@ -227,12 +225,12 @@ DataArray Block::getDataArray(size_t index) const {
 }
 
 
-size_t Block::dataArrayCount() const {
+size_t BlockHDF5::dataArrayCount() const {
     return data_array_group.objectCount();
 }
 
 
-vector<DataArray> Block::dataArrays() const {
+vector<DataArray> BlockHDF5::dataArrays() const {
     vector<DataArray> array_obj;
 
     size_t array_count = dataArrayCount();
@@ -246,7 +244,7 @@ vector<DataArray> Block::dataArrays() const {
 }
 
 
-DataArray Block::createDataArray(const std::string &name, const std::string &type) {
+DataArray BlockHDF5::createDataArray(const std::string &name, const std::string &type) {
     string id = util::createId("data_array");
 
     while (hasDataArray(id)) {
@@ -261,7 +259,7 @@ DataArray Block::createDataArray(const std::string &name, const std::string &typ
 }
 
 
-bool Block::removeDataArray(const string &id) {
+bool BlockHDF5::removeDataArray(const string &id) {
     bool removed = false;
 
     if (hasDataArray(id)) {
@@ -272,10 +270,12 @@ bool Block::removeDataArray(const string &id) {
     return removed;
 }
 
+*/
 
 // Methods related to DataTag
 
-DataTag Block::createDataTag(const std::string &name, const std::string &type){
+/*
+DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &type){
     string id = util::createId("data_tag");
     while (hasDataTag(id)) {
         id = util::createId("data_tag");
@@ -288,12 +288,12 @@ DataTag Block::createDataTag(const std::string &name, const std::string &type){
 }
 
 
-bool Block::hasDataTag(const std::string &id) const{
+bool BlockHDF5::hasDataTag(const std::string &id) const{
     return data_tag_group.hasObject(id);
 }
 
 
-DataTag Block::getDataTag(const std::string &id) const{
+DataTag BlockHDF5::getDataTag(const std::string &id) const{
     if (hasDataTag(id)) {
         DataTag dt(file, *this, data_tag_group.openGroup(id, true), id);
         return dt;
@@ -303,7 +303,7 @@ DataTag Block::getDataTag(const std::string &id) const{
 }
 
 
-DataTag Block::getDataTag(size_t index) const {
+DataTag BlockHDF5::getDataTag(size_t index) const {
     if (index < dataTagCount()) {
         string id = data_tag_group.objectName(index);
         DataTag dt(file, *this, data_tag_group.openGroup(id, true), id);
@@ -314,12 +314,12 @@ DataTag Block::getDataTag(size_t index) const {
 }
 
 
-size_t Block::dataTagCount() const{
+size_t BlockHDF5::dataTagCount() const{
     return data_tag_group.objectCount();
 }
 
 
-std::vector<DataTag> Block::dataTags() const{
+std::vector<DataTag> BlockHDF5::dataTags() const{
     vector<DataTag> tag_obj;
 
     size_t tag_count = dataTagCount();
@@ -333,7 +333,7 @@ std::vector<DataTag> Block::dataTags() const{
 }
 
 
-bool Block::removeDataTag(const std::string &id){
+bool BlockHDF5::removeDataTag(const std::string &id){
     bool removed = false;
     if (hasDataTag(id)) {
         data_tag_group.removeGroup(id);
@@ -342,23 +342,31 @@ bool Block::removeDataTag(const std::string &id){
     return removed;
 }
 
+*/
 // Other methods and functions
 
-Block& Block::operator=(const Block &other) {
+
+void BlockHDF5::swap(BlockHDF5 &other) {
+    using std::swap;
+
+    EntityHDF5::swap(other);
+    swap(source_group, other.source_group);
+    swap(data_array_group, other.data_array_group);
+    swap(simple_tag_group, other.simple_tag_group);
+    swap(data_tag_group, other.data_tag_group);
+}
+
+
+BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
     if (*this != other) {
-        this->file = other.file;
-        this->group = other.group;
-        this->entity_id = other.entity_id;
-        this->source_group = other.source_group;
-        this->data_array_group = other.data_array_group;
-        this->simple_tag_group = other.simple_tag_group;
-        this->data_tag_group = other.data_tag_group;
+        BlockHDF5 tmp(other);
+        swap(tmp);
     }
     return *this;
 }
 
 
-ostream& operator<<(ostream &out, const Block &ent) {
+ostream& operator<<(ostream &out, const BlockHDF5 &ent) {
     out << "Block: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
@@ -366,6 +374,8 @@ ostream& operator<<(ostream &out, const Block &ent) {
 }
 
 
-Block::~Block() {}
+BlockHDF5::~BlockHDF5() {}
 
-} // end namespace pandora
+
+} // namespace hdf5
+} // namespace nix

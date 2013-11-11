@@ -6,7 +6,26 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/File.hpp>
-#include <nix/Block.hpp>
-#include <nix/Section.hpp>
+#ifndef NIX_I_BLOCK_H
+#define NIX_I_BLOCK_H
 
+#include <nix/base/IEntity.hpp>
+#include <nix/base/INamedEntity.hpp>
+
+
+namespace nix {
+
+
+class IBlock : virtual public base::INamedEntity {
+
+public:
+
+    // TODO add missing methods
+
+};
+
+
+} // namespace nix
+
+
+#endif // NIX_I_BLOCK_H

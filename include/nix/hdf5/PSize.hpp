@@ -13,7 +13,9 @@
 #include <algorithm>
 #include <initializer_list>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
+
 
 template<typename T>
 class PSizeBase {
@@ -400,6 +402,7 @@ typedef PSizeBase<hsize_t>  PSize;
 typedef PSizeBase<hssize_t> PSSize;
 
 
-} //namespace pandroa
+} // namespace hdf5
+} // namespace nix
 
 #endif // PANDORA_PSIZE_H

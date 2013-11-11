@@ -7,13 +7,12 @@
 // LICENSE file in the root of the Project.
 
 #include <iostream>
-#include <hdf5.h>
-#include <pandora/DataSet.hpp>
-#include <pandora/Selection.hpp>
-
 #include <cmath>
 
-namespace pandora {
+#include <nix/hdf5/DataSet.hpp>
+
+namespace nix {
+namespace hdf5 {
 
 
 DataSet::DataSet(H5::DataSet dset)
@@ -194,4 +193,6 @@ PSize DataSet::size() const
     return dims;
 }
 
-} //namespace pandora
+
+} // namespace hdf5
+} // namespace nix

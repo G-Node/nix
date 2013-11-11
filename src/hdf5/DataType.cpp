@@ -7,9 +7,11 @@
 // LICENSE file in the root of the Project.
 
 #include <stdexcept>
-#include <pandora/DataType.hpp>
 
-namespace pandora {
+#include <nix/hdf5/DataType.hpp>
+
+namespace nix {
+namespace hdf5 {
 
 
 H5::DataType data_type_to_h5_filetype(DataType dtype) {
@@ -82,4 +84,5 @@ size_t data_type_to_size(DataType dtype) {
     }
 }
 
-} // namespace pandora
+} // namespace hdf4
+} // namespace nix

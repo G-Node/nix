@@ -9,17 +9,13 @@
 #ifndef PANDORA_DATASET_H
 #define PANDORA_DATASET_H
 
+#include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/Charon.hpp>
+#include <nix/hdf5/Selection.hpp>
 
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
-#include <H5Cpp.h>
-#endif
+namespace nix {
+namespace hdf5 {
 
-#include <pandora/Charon.hpp>
-#include <pandora/Selection.hpp>
-
-namespace pandora {
 
 class DataSet {
 
@@ -205,6 +201,7 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
 }
 
 
-}
+} // namespace hdf5
+} // namespace nix
 
 #endif // PANDORA_DATASET_H

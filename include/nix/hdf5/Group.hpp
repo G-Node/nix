@@ -11,15 +11,12 @@
 
 #include <string>
 
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
-#include <H5Cpp.h>
-#endif
+#include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/DataSet.hpp>
 
-#include <pandora/DataSet.hpp>
+namespace nix {
+namespace hdf5 {
 
-namespace pandora {
 
 /**
  * TODO documentation
@@ -114,7 +111,9 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     return true;
 }
 
-}  // namespace pandora
+
+} // namespace hdf5
+} // namespace nix
 
 
 #endif /* PAN_GROUP_H_INCLUDE */

@@ -17,6 +17,8 @@ namespace base {
 template<typename T>
 class ImplContainer {
 
+protected:
+
     std::shared_ptr<T> impl_ptr;
 
 public:
@@ -47,6 +49,14 @@ public:
 
         swap(*this, tmp);
         return *this;
+    }
+
+    virtual bool operator==(const ImplContainer<T> &other) {
+        return this->impl_ptr == other.impl_ptr;
+    }
+
+    virtual bool operator!=(const ImplContainer<T> &other) {
+        return !(*this == other);
     }
 
     friend void swap(ImplContainer<T> &first, ImplContainer<T> &second) {

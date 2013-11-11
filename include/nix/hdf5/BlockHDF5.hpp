@@ -6,25 +6,22 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_BOCK_H_INCLUDE
-#define PAN_BOCK_H_INCLUDE
+#ifndef NIX_BLOCK_HDF5_H
+#define NIX_BLOCK_HDF5_H
 
 #include <vector>
 #include <string>
 
-#include <pandora/EntityWithMetadata.hpp>
+#include <nix.hpp>
+#include <nix/hdf5/NamedEntityHDF5.hpp>
 
-namespace pandora {
-
-class Source;
-class DataArray;
-class SimpleTag;
-class DataTag;
+namespace nix {
+namespace hdf5 {
 
 /**
  * Class that represents a pandora Block entity.
  */
-class Block : public EntityWithMetadata {
+class BlockHDF5 : public NamedEntityHDF5, virtual public IBlock {
 
 private:
 
@@ -37,7 +34,7 @@ public:
      *
      * @param block     The block to create the new copy from.
      */
-    Block(const Block &block);
+    BlockHDF5(const BlockHDF5 &block);
 
     /**
      * Standard constructor for a Block.
@@ -46,7 +43,7 @@ public:
      * @param group     The group that represents the block inside the file.
      * @param id        The id of this block.
      */
-    Block(File file, Group group, const std::string &id);
+    BlockHDF5(File file, Group group, const std::string &id);
 
     /**
      * Standard constructor for a Block.
@@ -55,7 +52,8 @@ public:
      * @param group     The group that represents the block inside the file.
      * @param id        The id of this block.
      */
-    Block(File file, Group group, const std::string &id, time_t time);
+    BlockHDF5(File file, Group group, const std::string &id, time_t time);
+
 
     //--------------------------------------------------
     // Methods concerning sources
@@ -69,7 +67,7 @@ public:
      * @return True if a source with the given id exists at the root, false
      *         otherwise.
      */
-    bool hasSource(const std::string &id) const;
+    //bool hasSource(const std::string &id) const;
 
     /**
      * Retrieves a specific root source.
@@ -79,7 +77,7 @@ public:
      * @return The source with the given id. If it doesn't exist an exception
      *         will be thrown.
      */
-    Source getSource(const std::string &id) const;
+    //Source getSource(const std::string &id) const;
 
     /**
      * Retrieves a specific root source by index.
@@ -88,7 +86,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(size_t index) const;
+    //Source getSource(size_t index) const;
 
 
     /**
@@ -96,18 +94,18 @@ public:
      *
      * @return The number of root sources.
      */
-    size_t sourceCount() const;
+    //size_t sourceCount() const;
 
     /**
      * Returns all root sources in this block as a vector.
      *
      * @return All root sources.
      */
-    std::vector<Source> sources() const;
+    //std::vector<Source> sources() const;
 
 
 
-    std::vector<Source> findSources(std::function<bool(const Source &)>) const;
+    //std::vector<Source> findSources(std::function<bool(const Source &)>) const;
 
     /**
      * Create a new root source.
@@ -117,7 +115,7 @@ public:
      *
      * @return The created source object.
      */
-    Source createSource(const std::string &name, const std::string &type);
+    //Source createSource(const std::string &name, const std::string &type);
 
     /**
      * Remove a root source and all its child sources from
@@ -127,7 +125,7 @@ public:
      *
      * @return True if the source was removed, false otherwise.
      */
-    bool removeSource(const std::string &id);
+    //bool removeSource(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning data arrays
@@ -140,7 +138,7 @@ public:
      *
      * @return True if the data array exists, false otherwise.
      */
-    bool hasDataArray(const std::string &id) const;
+    //bool hasDataArray(const std::string &id) const;
 
     /**
      * Retrieves a specific data array from the block.
@@ -150,7 +148,7 @@ public:
      * @return The data array with the specified id. If this
      *         doesn't exist, an exception will be thrown.
      */
-    DataArray getDataArray(const std::string &id) const;
+    //DataArray getDataArray(const std::string &id) const;
 
     /**
      * Retrieves a data array by index.
@@ -159,21 +157,21 @@ public:
      *
      * @return The data array at the specified index.
      */
-    DataArray getDataArray(size_t index) const;
+    //DataArray getDataArray(size_t index) const;
 
     /**
      * Returns all data arrays of this block as a vector.
      *
      * @return All data arrays.
      */
-    std::vector<DataArray> dataArrays() const;
+    //std::vector<DataArray> dataArrays() const;
 
     /**
      * Returns the number of all data arrays of the block.
      *
      * @return The number of data arrays of the block.
      */
-    size_t dataArrayCount() const;
+    //size_t dataArrayCount() const;
 
     /**
      * Create a new data array associated with this block.
@@ -182,7 +180,7 @@ public:
      *
      * @return The newly created data array.
      */
-    DataArray createDataArray(const std::string &name, const std::string &type);
+    //DataArray createDataArray(const std::string &name, const std::string &type);
 
     /**
      * Remove/delete a data array from this block.
@@ -191,7 +189,7 @@ public:
      *
      * @return True if the data array was removed, false otherwise.
      */
-    bool removeDataArray(const std::string &id);
+    //bool removeDataArray(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning simple tags.
@@ -204,7 +202,7 @@ public:
      *
      * @return True if the simple tag exists, false otherwise.
      */
-    bool hasSimpleTag(const std::string &id) const;
+    //bool hasSimpleTag(const std::string &id) const;
 
     /**
      * Retrieves a specific simple tag from the block.
@@ -214,7 +212,7 @@ public:
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    SimpleTag getSimpleTag(const std::string &id) const;
+    //SimpleTag getSimpleTag(const std::string &id) const;
 
     /**
      * Retrieves a specific simple tag by index.
@@ -223,14 +221,14 @@ public:
      *
      * @return The simple tag at the specified index.
      */
-    SimpleTag getSimpleTag(size_t index) const;
+    //SimpleTag getSimpleTag(size_t index) const;
 
     /**
      * Get all simple tags associated with this block.
      *
      * @return All simple tags as a vector.
      */
-    std::vector<SimpleTag> simpleTags() const;
+    //std::vector<SimpleTag> simpleTags() const;
 
     /**
      * Returns the number of simple tag associated with
@@ -238,7 +236,7 @@ public:
      *
      * @return The number of simple tags.
      */
-    size_t simpleTagCount() const;
+    //size_t simpleTagCount() const;
 
     /**
      * Create a new simple tag associated with this block.
@@ -248,7 +246,7 @@ public:
      *
      * @return The newly created tag.
      */
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type);
+    //SimpleTag createSimpleTag(const std::string &name, const std::string &type);
 
     /**
      * Remove a simple tag from the block.
@@ -257,7 +255,7 @@ public:
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool removeSimpleTag(const std::string &id);
+    //bool removeSimpleTag(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning data tags.
@@ -270,7 +268,7 @@ public:
      *
      * @return True if the data tag exists, false otherwise.
      */
-    bool hasDataTag(const std::string &id) const;
+    //bool hasDataTag(const std::string &id) const;
 
     /**
      * Retrieves a specific data tag from the block.
@@ -280,7 +278,7 @@ public:
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    DataTag getDataTag(const std::string &id) const;
+    //DataTag getDataTag(const std::string &id) const;
 
     /**
      * Retrieves a specific data tag by index.
@@ -289,14 +287,14 @@ public:
      *
      * @return The data tag at the specified index.
      */
-    DataTag getDataTag(size_t index) const;
+    //DataTag getDataTag(size_t index) const;
 
     /**
      * Get all simple data associated with this block.
      *
      * @return All simple tags as a vector.
      */
-    std::vector<DataTag> dataTags() const;
+    //std::vector<DataTag> dataTags() const;
 
     /**
      * Returns the number of data tag associated with
@@ -304,7 +302,7 @@ public:
      *
      * @return The number of data tags.
      */
-    size_t dataTagCount() const;
+    //size_t dataTagCount() const;
 
     /**
      * Create a new data tag associated with this block.
@@ -314,7 +312,7 @@ public:
      *
      * @return The newly created tag.
      */
-    DataTag createDataTag(const std::string &name, const std::string &type);
+    //DataTag createDataTag(const std::string &name, const std::string &type);
 
     /**
      * Remove a data tag from the block.
@@ -323,26 +321,31 @@ public:
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool removeDataTag(const std::string &id);
+    //bool removeDataTag(const std::string &id);
 
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
 
+    void swap(BlockHDF5 &other);
+
     /**
      * Assignment operator
      */
-    Block& operator=(const Block &other);
+    BlockHDF5& operator=(const BlockHDF5 &other);
 
     /**
      * Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Block &ent);
+    friend std::ostream& operator<<(std::ostream &out, const BlockHDF5 &ent);
 
-    virtual ~Block();
+
+    virtual ~BlockHDF5();
 
 };
 
-}
 
-#endif // PAN_BOCK_H_INCLUDE
+} // namespace hdf5
+} // namespace nix
+
+#endif // NIX_BLOCK_HDF5_H

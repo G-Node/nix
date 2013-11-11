@@ -6,53 +6,51 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <iostream>
-
-#include <pandora/Util.hpp>
-#include <pandora/Section.hpp>
+#include <nix/hdf5/SectionHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-Section::Section(const Section &section)
-    : NamedEntity(section.group,section.entity_id), file(section.file)
+SectionHDF5::SectionHDF5(const SectionHDF5 &section)
+    : NamedEntityHDF5(section.file(), section.group(), section.id())
 {
     property_group = section.property_group;
     section_group = section.section_group;
 }
 
 
-Section::Section(File file, Group group,const  string &id)
-    : NamedEntity(group,id), file(file)
+SectionHDF5::SectionHDF5(File file, Group group,const  string &id)
+    : NamedEntityHDF5(file, group, id)
 {
     property_group = group.openGroup("properties");
     section_group = group.openGroup("sections");
 }
 
 
-Section::Section(File file, Group group, const string &id, time_t time)
-    : NamedEntity(group,id,time),file(file)
+SectionHDF5::SectionHDF5(File file, Group group, const string &id, time_t time)
+    : NamedEntityHDF5(file, group, id, time)
 {
     property_group = group.openGroup("properties");
     section_group = group.openGroup("sections");
 }
 
-
-void Section::repository(const string &repository) {
+/*
+void SectionHDF5::repository(const string &repository) {
     group.setAttr("repository", repository);
 }
 
 
-string Section::repository() const {
+string SectionHDF5::repository() const {
     string repository;
     group.getAttr("repository", repository);
     return repository;
 }
 
 
-void Section::link(const string &link) {
+void SectionHDF5::link(const string &link) {
     vector<Section> sects = this->file.findSection(link);
     if(sects.size() == 1 && sects[0].type().compare(this->type()) == 0) {
         group.setAttr("link", link);
@@ -68,43 +66,43 @@ void Section::link(const string &link) {
 }
 
 
-string Section::link() const {
+string SectionHDF5::link() const {
     string link;
     group.getAttr("link", link);
     return link;
 }
 
 
-void Section::mapping(const string &mapping) {
+void SectionHDF5::mapping(const string &mapping) {
     group.setAttr("mapping", mapping);
 }
 
 
-string Section::mapping() const {
+string SectionHDF5::mapping() const {
     string mapping;
     group.getAttr("mapping", mapping);
     return mapping;
 }
 
 
-void Section::parent(const string &parent) {
+void SectionHDF5::parent(const string &parent) {
     group.setAttr("parent", parent);
 }
 
 
-string Section::parent() const {
+string SectionHDF5::parent() const {
     string parent;
     group.getAttr("parent", parent);
     return parent;
 }
 
 
-bool Section::hasParent() const{
+bool SectionHDF5::hasParent() const{
     return (parent().length() != 0 && !file.findSection(parent()).empty());
 }
 
 
-Section Section::findParent() const{
+Section SectionHDF5::findParent() const{
     std::vector<Section> s = file.findSection(parent());
     if(s.empty())
         throw std::runtime_error(
@@ -113,7 +111,7 @@ Section Section::findParent() const{
 }
 
 
-Section Section::addSection(const std::string &name, const std::string &type) {
+Section SectionHDF5::addSection(const std::string &name, const std::string &type) {
     string id = util::createId("section");
     Section s(file, section_group.openGroup(id,true), id);
     s.name(name);
@@ -123,7 +121,7 @@ Section Section::addSection(const std::string &name, const std::string &type) {
 }
 
 
-bool Section::removeSection(const std::string &id) {
+bool SectionHDF5::removeSection(const std::string &id) {
     bool success = false;
     if(section_group.hasGroup(id)){
         section_group.removeGroup(id);
@@ -133,12 +131,12 @@ bool Section::removeSection(const std::string &id) {
 }
 
 
-bool Section::hasSection(const std::string &id) const {
+bool SectionHDF5::hasSection(const std::string &id) const {
     return section_group.hasGroup(id);
 }
 
 
-std::vector<Section> Section::getRelatedSections(const std::string &type) const {
+std::vector<Section> SectionHDF5::getRelatedSections(const std::string &type) const {
     std::vector<Section> victor = findDownstream(type);
     if(victor.size() != 0){
         return victor;
@@ -152,7 +150,7 @@ std::vector<Section> Section::getRelatedSections(const std::string &type) const 
 }
 
 
-bool Section::hasRelatedSection(const std::string &type) const {
+bool SectionHDF5::hasRelatedSection(const std::string &type) const {
     std::vector<Section> victor = findDownstream(type);
     if(victor.size() != 0){
         return true;
@@ -165,7 +163,7 @@ bool Section::hasRelatedSection(const std::string &type) const {
 }
 
 
-std::vector<Section> Section::findDownstream(const std::string &type) const {
+std::vector<Section> SectionHDF5::findDownstream(const std::string &type) const {
     std::vector<Section> victor;
     victor = collectIf([&](const Section &section) {
         bool found = section.type() == type;
@@ -175,7 +173,7 @@ std::vector<Section> Section::findDownstream(const std::string &type) const {
 }
 
 
-std::vector<Section> Section::findUpstream(const std::string &type) const {
+std::vector<Section> SectionHDF5::findUpstream(const std::string &type) const {
     std::vector<Section> secs;
     if(hasParent()){
         Section p = findParent();
@@ -192,7 +190,7 @@ std::vector<Section> Section::findUpstream(const std::string &type) const {
 }
 
 
-std::vector<Section> Section::findSideways(const std::string &type) const {
+std::vector<Section> SectionHDF5::findSideways(const std::string &type) const {
     std::vector<Section> victor;
     if(hasParent()){
         Section p = findParent();
@@ -212,7 +210,7 @@ std::vector<Section> Section::findSideways(const std::string &type) const {
 }
 
 
-std::vector<Section> Section::sections() const {
+std::vector<Section> SectionHDF5::sections() const {
     vector<Section>  section_obj;
     size_t section_count = section_group.objectCount();
     for (size_t i = 0; i < section_count; i++) {
@@ -225,20 +223,20 @@ std::vector<Section> Section::sections() const {
 }
 
 
-Section::size_type Section::childCount() const
+Section::size_type SectionHDF5::childCount() const
 {
     return section_group.objectCount();
 }
 
 
-Section Section::getChild(size_t index) const {
+Section SectionHDF5::getChild(size_t index) const {
     string id = section_group.objectName(index);
     Section s(file, section_group.openGroup(id), id);
     return s;
 }
 
 
-std::vector<Property> Section::properties() const {
+std::vector<Property> SectionHDF5::properties() const {
     std::vector<Property> props;
     for (size_t i = 0; i < propertyCount(); i++){
         string id = property_group.objectName(i);
@@ -250,7 +248,7 @@ std::vector<Property> Section::properties() const {
 }
 
 
-std::vector<Property> Section::inheritedProperties() const {
+std::vector<Property> SectionHDF5::inheritedProperties() const {
     std::vector<Property> props;
     if(this->link().length() > 0){
         std::vector<Section> sects = file.findSection(this->link());
@@ -262,7 +260,7 @@ std::vector<Property> Section::inheritedProperties() const {
 }
 
 
-Property Section::getProperty(const std::string &id) const {
+Property SectionHDF5::getProperty(const std::string &id) const {
     if (property_group.hasGroup(id)) {
         return Property(property_group.openGroup(id, false), id);
     } else {
@@ -272,7 +270,7 @@ Property Section::getProperty(const std::string &id) const {
 }
 
 
-Property Section::getPropertyByName(const std::string &name) const {
+Property SectionHDF5::getPropertyByName(const std::string &name) const {
     std::vector<Property> props = properties();
     for (size_t i = 0; i < props.size(); i ++){
         if (props[i].name().compare(name) == 0)
@@ -288,7 +286,7 @@ Property Section::getPropertyByName(const std::string &name) const {
 }
 
 
-Property Section::addProperty(const std::string &name) {
+Property SectionHDF5::addProperty(const std::string &name) {
     if (hasPropertyByName(name)) {
         throw std::runtime_error("Attempt to add a property that already exists!");
     }
@@ -301,14 +299,14 @@ Property Section::addProperty(const std::string &name) {
 }
 
 
-void Section::removeProperty(const std::string &id) {
+void SectionHDF5::removeProperty(const std::string &id) {
     if (property_group.hasObject(id)) {
         property_group.removeGroup(id);
     }
 }
 
 
-size_t Section::propertyCount() const {
+size_t SectionHDF5::propertyCount() const {
     size_t count = property_group.objectCount();
     if (group.hasGroup("values"))
         count--;
@@ -316,22 +314,7 @@ size_t Section::propertyCount() const {
 }
 
 
-bool Section::operator==(const Section &other) const {
-    return entity_id == other.entity_id;
-}
-
-
-bool Section::operator!=(const Section &other) const {
-    return entity_id != other.entity_id;
-}
-
-
-bool Section::hasProperty(const std::string &id) const {
-    return property_group.hasGroup(id);
-}
-
-
-bool Section::hasPropertyByName(const string &name) const {
+bool SectionHDF5::hasPropertyByName(const string &name) const {
     std::vector<Property> props = properties();
     for (size_t i = 0; i < props.size(); i++){
         if (props[i].name().compare(name)==0)
@@ -340,8 +323,15 @@ bool Section::hasPropertyByName(const string &name) const {
     return false;
 }
 
+bool SectionHDF5::hasProperty(const std::string &id) const {
+    return property_group.hasGroup(id);
+}
 
-Section::~Section() {}
+*/
 
 
-} // end namespace pandora
+SectionHDF5::~SectionHDF5() {}
+
+
+} // namespace hdf5
+} // namespace nix

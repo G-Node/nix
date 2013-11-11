@@ -9,13 +9,10 @@
 #ifndef PANDORA_DATA_TYPE_H
 #define PANDORA_DATA_TYPE_H
 
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
-#include <H5Cpp.h>
-#endif
+#include <nix/hdf5/hdf5include.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 enum class DataType {
     Bool,
@@ -42,6 +39,8 @@ H5::DataType data_type_to_h5_memtype(DataType dtype);
 
 size_t data_type_to_size(DataType dtype);
 
-}
+
+} // namespace hdf5
+} // namespace nix
 
 #endif //PANDORA_DATA_TYPE_H

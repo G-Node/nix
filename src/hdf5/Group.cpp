@@ -8,13 +8,11 @@
 
 #include <iostream>
 
-#include <hdf5.h>
-
-#include <pandora/Group.hpp>
-#include <pandora/DataSet.hpp>
+#include <nix/hdf5/Group.hpp>
 #include <boost/multi_array.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 Group::Group()
@@ -147,4 +145,5 @@ Group::~Group() {
 }
 
 
-}
+} // namespace hdf5
+} // namespace nix

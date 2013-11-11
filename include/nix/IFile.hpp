@@ -219,31 +219,8 @@ public:
      */
     virtual void forceCreatedAt(time_t t) = 0;
 
-    //--------------------------------------------------
-    // Other methods and operators
-    //--------------------------------------------------
-
-
-    /**
-     * Comparator.
-     */
-    virtual bool operator==(const IFile &other) const = 0;
-
-    /**
-     * Comparator.
-     */
-    virtual bool operator!=(const IFile &other) const = 0;
-
-    /**
-     * Assignment operator.
-     *
-     * @param The file to assign.
-     *
-     * @return A reference to the assigned file.
-     */
-    virtual IFile& operator=(const IFile &other) = 0;
-
 };
+
 
 } // namespace nix
 

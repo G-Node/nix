@@ -6,7 +6,15 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/File.hpp>
-#include <nix/Block.hpp>
-#include <nix/Section.hpp>
+#ifndef NIX_HDF5_INCLUDE_HPP
+#define NIX_HDF5_INCLUDE_HPP
 
+#include <hdf5.h>
+
+#if defined(_WIN32)
+#include <cpp/H5Cpp.h>
+#else
+#include <H5Cpp.h>
+#endif
+
+#endif // NIX_HDF5_INCLUDE_HPP

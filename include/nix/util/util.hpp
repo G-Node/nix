@@ -7,17 +7,17 @@
 // LICENSE file in the root of the Project.
 
 /**
- * @namespace pandora::util
+ * @namespace nix::util
  * @brief Namespace for utility functions. This namespace is not part of the public API.
  */
 
-#ifndef PAN_UTIL_H_INCLUDED
-#define PAN_UTIL_H_INCLUDED
+#ifndef NIX_UTIL_H
+#define NIX_UTIL_H
 
 #include <string>
 #include <sstream>
 
-namespace pandora {
+namespace nix {
 namespace util {
 
 /**
@@ -76,7 +76,7 @@ template<typename T> T strToNum(const std::string &str) {
 }
 
 } // namespace util
-} // namespace pandora
+} // namespace nix
 
 
-#endif /* PAN_UTIL_H_INCLUDED */
+#endif // NIX_UTIL_H
