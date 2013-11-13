@@ -70,7 +70,7 @@ public:
      *
      * @return
      */
-    virtual int compare(const IEntity &other) const;
+    //virtual int compare(const IEntity &other) const = 0;
 
 
 };

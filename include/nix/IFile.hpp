@@ -22,6 +22,11 @@ enum class FileMode {
 };
 
 
+enum class Implementation {
+    Hdf5 = 0
+};
+
+
 class Block;
 class Section;
 

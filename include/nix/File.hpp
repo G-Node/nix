@@ -38,6 +38,9 @@ public:
     {
     }
 
+    static File open(const std::string name, FileMode mode=FileMode::ReadWrite,
+                     Implementation impl=Implementation::Hdf5);
+
     size_t blockCount() const {
         return impl_ptr->blockCount();
     }
