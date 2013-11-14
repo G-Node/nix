@@ -56,7 +56,7 @@ public:
     std::string definition() const;
 
 
-    virtual int compare(const INamedEntity &other) const;
+    int compare(const INamedEntity &other) const;
 
 
     ~NamedEntityHDF5();

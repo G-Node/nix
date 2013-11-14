@@ -70,6 +70,11 @@ public:
     }
 
 
+    int compare(const INamedEntity &other) const {
+        return impl_ptr->compare(other);
+    }
+
+
     time_t updatedAt() const {
         return impl_ptr->updatedAt();
     }

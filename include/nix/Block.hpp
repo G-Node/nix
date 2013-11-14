@@ -9,6 +9,8 @@
 #ifndef NIX_BLOCK_H
 #define NIX_BLOCK_H
 
+#include <string>
+
 #include <nix/base/ImplContainer.hpp>
 #include <nix/IBlock.hpp>
 
@@ -27,11 +29,6 @@ public:
     }
 
     Block(const std::shared_ptr<IBlock> &p_impl)
-        : ImplContainer(p_impl)
-    {
-    }
-
-    Block(IBlock *p_impl)
         : ImplContainer(p_impl)
     {
     }
@@ -68,6 +65,11 @@ public:
 
     std::string definition() const {
         return impl_ptr->definition();
+    }
+
+
+    int compare(const INamedEntity &other) const {
+        return impl_ptr->compare(other);
     }
 
 

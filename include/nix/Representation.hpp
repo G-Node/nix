@@ -6,26 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_BLOCK_H
-#define NIX_I_BLOCK_H
+#ifndef NIX_REPRESENTATION_H
+#define NIX_REPRESENTATION_H
 
-#include <nix/base/IEntity.hpp>
-#include <nix/base/INamedEntity.hpp>
-
+#include <nix/base/ImplContainer.hpp>
+#include <nix/IRepresentation.hpp>
 
 namespace nix {
 
-// TODO inherit from IEntityWithMetadata
-class IBlock : virtual public base::INamedEntity {
 
-public:
 
-    // TODO add missing methods
-
-};
 
 
 } // namespace nix
 
-
-#endif // NIX_I_BLOCK_H
+#endif // NIX_REPRESENTATION_H

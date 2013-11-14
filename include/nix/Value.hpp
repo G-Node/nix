@@ -6,26 +6,28 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_BLOCK_H
-#define NIX_I_BLOCK_H
+#ifndef NIX_VALUE_H
+#define NIX_VALUE_H
 
-#include <nix/base/IEntity.hpp>
-#include <nix/base/INamedEntity.hpp>
-
+#include <string>
 
 namespace nix {
 
-// TODO inherit from IEntityWithMetadata
-class IBlock : virtual public base::INamedEntity {
 
-public:
+template<typename T>
+struct Value {
 
-    // TODO add missing methods
+    T value;
+    double uncertainty;
+
+    std::string reference;
+    std::string filename;
+    std::string encoder;
+    std::string checksum;
 
 };
 
 
 } // namespace nix
 
-
-#endif // NIX_I_BLOCK_H
+#endif // NIX_VALUE_H

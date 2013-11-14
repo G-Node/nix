@@ -59,7 +59,7 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    virtual int compare(const IEntity &other) const;
+    int compare(const IEntity &other) const;
 
 
     virtual void swap(EntityHDF5 &other);

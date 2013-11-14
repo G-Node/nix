@@ -61,6 +61,15 @@ public:
      */
     virtual std::string definition() const = 0;
 
+    /**
+     * Compare two named entities.
+     *
+     * @param other The entity to compare with.
+     *
+     * @return
+     */
+    virtual int compare(const INamedEntity &other) const = 0;
+
 };
 
 

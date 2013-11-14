@@ -14,7 +14,7 @@
 
 namespace nix {
 
-
+// TODO find solution for tnode
 class ISection : virtual public base::INamedEntity  {
 
 public:

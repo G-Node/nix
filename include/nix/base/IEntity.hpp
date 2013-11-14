@@ -63,16 +63,6 @@ public:
      */
     virtual void forceCreatedAt(time_t t) = 0;
 
-    /**
-     * Compare two entities.
-     *
-     * @param other The entity to compare with.
-     *
-     * @return
-     */
-    //virtual int compare(const IEntity &other) const = 0;
-
-
 };
 
 
