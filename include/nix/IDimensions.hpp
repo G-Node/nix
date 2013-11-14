@@ -31,10 +31,6 @@ public:
 
     virtual DimensionType dimensionType() const = 0;
 
-    virtual bool operator==(const IDimension &other) const = 0;
-
-    virtual bool operator!=(const IDimension &other) const = 0;
-
 };
 
 
