@@ -40,9 +40,11 @@ public:
     {
     }
 
+    /*
     std::shared_ptr<T> impl() const {
         return impl_ptr;
     }
+    */
 
     virtual ImplContainer<T> &operator=(const ImplContainer<T> &other) {
         ImplContainer tmp(other);

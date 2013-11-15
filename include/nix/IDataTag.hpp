@@ -13,6 +13,7 @@
 #include <string>
 
 #include <nix/base/INamedEntity.hpp>
+#include <nix/Representation.hpp>
 
 namespace nix {
 

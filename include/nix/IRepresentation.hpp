@@ -31,6 +31,8 @@ enum class LinkType : int {
  */
 class IRepresentation: virtual public base::IEntity {
 
+public:
+
     /**
      * Setter for the link type.
      *
