@@ -11,95 +11,361 @@
 
 #include <string>
 
-#include <nix/base/ImplContainer.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
 #include <nix/IBlock.hpp>
+#include <nix/Source.hpp>
+#include <nix/DataArray.hpp>
+#include <nix/SimpleTag.hpp>
+#include <nix/DataTag.hpp>
 
 namespace nix {
 
 
-class Block : public IBlock, public base::ImplContainer<IBlock> {
+class Block : virtual public IBlock, public base::EntityWithMetadata<IBlock> {
 
 public:
 
     Block() {}
 
     Block(const Block &other)
-        : ImplContainer(other.impl_ptr)
+        : EntityWithMetadata(other.impl_ptr)
     {
     }
 
     Block(const std::shared_ptr<IBlock> &p_impl)
-        : ImplContainer(p_impl)
+        : EntityWithMetadata(p_impl)
     {
     }
 
-    std::string id() const {
-        return impl_ptr->id();
+
+    //--------------------------------------------------
+    // Methods concerning sources
+    //--------------------------------------------------
+
+    /**
+     * Checks if this block has a specific root source.
+     *
+      * @param id        The id of the source.
+     *
+     * @return True if a source with the given id exists at the root, false
+     *         otherwise.
+     */
+    bool hasSource(const std::string &id) const {
+        return impl_ptr->hasSource(id);
+    }
+
+    /**
+     * Retrieves a specific root source.
+     *
+     * @param id        The id of the source.
+     *
+     * @return The source with the given id. If it doesn't exist an exception
+     *         will be thrown.
+     */
+    Source getSource(const std::string &id) const {
+        return impl_ptr->getSource(id);
+    }
+
+    /**
+     * Retrieves a specific root source by index.
+     *
+     * @param index     The index of the source.
+     *
+     * @return The source at the specified index.
+     */
+    // TODO  maybe remove this method?
+    Source getSource(size_t index) const {
+        return impl_ptr->getSource(index);
     }
 
 
-    void type(const std::string &type) {
-        impl_ptr->type(type);
+    /**
+     * Returns the number of root sources in this block.
+     *
+     * @return The number of root sources.
+     */
+    size_t sourceCount() const {
+        return impl_ptr->sourceCount();
+    }
+
+    /**
+     * Returns all root sources in this block as a vector.
+     *
+     * @return All root sources.
+     */
+    std::vector<Source> sources() const {
+        return impl_ptr->sources();
     }
 
 
-    std::string type() const {
-        return impl_ptr->type();
+
+    std::vector<Source> findSources(std::function<bool(const Source &)> filter) const {
+        return impl_ptr->findSources(filter);
     }
 
-
-    void name(const std::string &name) {
-        impl_ptr->name(name);
+    /**
+     * Create a new root source.
+     *
+     * @param name      The name of the source to create.
+     * @param type      The type of the source.
+     *
+     * @return The created source object.
+     */
+    Source createSource(const std::string &name, const std::string &type) {
+        return impl_ptr->createSource(name, type);
     }
 
-
-    std::string name() const {
-        return impl_ptr->name();
+    /**
+     * Remove a root source and all its child sources from
+     * the block.
+     *
+     * @param id        The id of the source to remove.
+     *
+     * @return True if the source was removed, false otherwise.
+     */
+    bool removeSource(const std::string &id) {
+        return impl_ptr->removeSource(id);
     }
 
+    //--------------------------------------------------
+    // Methods concerning data arrays
+    //--------------------------------------------------
 
-    void definition(const std::string &definition) {
-        impl_ptr->definition(definition);
+    /**
+     * Checks if a specific data array exists in this block.
+     *
+     * @param id        The id of a data array.
+     *
+     * @return True if the data array exists, false otherwise.
+     */
+    bool hasDataArray(const std::string &id) const {
+        return impl_ptr->hasDataArray(id);
     }
 
-
-    std::string definition() const {
-        return impl_ptr->definition();
+    /**
+     * Retrieves a specific data array from the block.
+     *
+     * @param id        The id of an existing data array.
+     *
+     * @return The data array with the specified id. If this
+     *         doesn't exist, an exception will be thrown.
+     */
+    DataArray getDataArray(const std::string &id) const {
+        return impl_ptr->getDataArray(id);
     }
 
-
-    int compare(const INamedEntity &other) const {
-        return impl_ptr->compare(other);
+    /**
+     * Retrieves a data array by index.
+     *
+     * @param index     The index of the data array.
+     *
+     * @return The data array at the specified index.
+     */
+    // TODO maybe remove this method?
+    DataArray getDataArray(size_t index) const {
+        return impl_ptr->getDataArray(index);
     }
 
-
-    time_t updatedAt() const {
-        return impl_ptr->updatedAt();
+    /**
+     * Returns all data arrays of this block as a vector.
+     *
+     * @return All data arrays.
+     */
+    std::vector<DataArray> dataArrays() const {
+        return impl_ptr->dataArrays();
     }
 
-
-    time_t createdAt() const {
-        return impl_ptr->createdAt();
+    /**
+     * Returns the number of all data arrays of the block.
+     *
+     * @return The number of data arrays of the block.
+     */
+    size_t dataArrayCount() const {
+        return dataArrayCount();
     }
 
-
-    void setUpdatedAt() {
-        impl_ptr->setUpdatedAt();
+    /**
+     * Create a new data array associated with this block.
+     *
+     * @param name      The name of the data array to create.
+     *
+     * @return The newly created data array.
+     */
+    DataArray createDataArray(const std::string &name, const std::string &type) {
+        return impl_ptr->createDataArray(name, type);
     }
 
-
-    void forceUpdatedAt() {
-        impl_ptr->forceUpdatedAt();
+    /**
+     * Remove/delete a data array from this block.
+     *
+     * @param id        The id of the data array to remove.
+     *
+     * @return True if the data array was removed, false otherwise.
+     */
+    bool removeDataArray(const std::string &id) {
+        return impl_ptr->removeDataArray(id);
     }
 
+    //--------------------------------------------------
+    // Methods concerning simple tags.
+    //--------------------------------------------------
 
-    void setCreatedAt() {
-        impl_ptr->setCreatedAt();
+    /**
+     * Checks if a specific simple tag exists in the block.
+     *
+     * @param id        The id of a simple tag.
+     *
+     * @return True if the simple tag exists, false otherwise.
+     */
+    bool hasSimpleTag(const std::string &id) const {
+        return impl_ptr->hasSimpleTag(id);
     }
 
+    /**
+     * Retrieves a specific simple tag from the block.
+     *
+     * @param id        The id of the simple tag.
+     *
+     * @return The tag with the specified id. If this tag doesn't exist
+     *         an exception will be thrown.
+     */
+    SimpleTag getSimpleTag(const std::string &id) const {
+        return impl_ptr->getSimpleTag(id);
+    }
 
-    void forceCreatedAt(time_t t) {
-        impl_ptr->forceCreatedAt(t);
+    /**
+     * Retrieves a specific simple tag by index.
+     *
+     * @param index     The index of the tag.
+     *
+     * @return The simple tag at the specified index.
+     */
+    // TODO maybe remove this method?
+    SimpleTag getSimpleTag(size_t index) const {
+        return impl_ptr->getSimpleTag(index);
+    }
+
+    /**
+     * Get all simple tags associated with this block.
+     *
+     * @return All simple tags as a vector.
+     */
+    std::vector<SimpleTag> simpleTags() const {
+        return impl_ptr->simpleTags();
+    }
+
+    /**
+     * Returns the number of simple tag associated with
+     * this block.
+     *
+     * @return The number of simple tags.
+     */
+    size_t simpleTagCount() const {
+        return impl_ptr->simpleTagCount();
+    }
+
+    /**
+     * Create a new simple tag associated with this block.
+     *
+     * @param name      The name of the simple tag to create.
+     * @param type      The type of the tag.
+     *
+     * @return The newly created tag.
+     */
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
+        return createSimpleTag(name, type);
+    }
+
+    /**
+     * Remove a simple tag from the block.
+     *
+     * @param id        The id of the tag to remove.
+     *
+     * @return True if the tag was removed, false otherwise.
+     */
+    bool removeSimpleTag(const std::string &id) {
+        return impl_ptr->removeSimpleTag(id);
+    }
+
+    //--------------------------------------------------
+    // Methods concerning data tags.
+    //--------------------------------------------------
+
+    /**
+     * Checks if a specific data tag exists in the block.
+     *
+     * @param id        The id of a data tag.
+     *
+     * @return True if the data tag exists, false otherwise.
+     */
+    bool hasDataTag(const std::string &id) const {
+        return impl_ptr->hasDataTag(id);
+    }
+
+    /**
+     * Retrieves a specific data tag from the block.
+     *
+     * @param id        The id of the data tag.
+     *
+     * @return The tag with the specified id. If this tag doesn't exist
+     *         an exception will be thrown.
+     */
+    DataTag getDataTag(const std::string &id) const {
+        return impl_ptr->getDataTag(id);
+    }
+
+    /**
+     * Retrieves a specific data tag by index.
+     *
+     * @param index     The index of the tag.
+     *
+     * @return The data tag at the specified index.
+     */
+    // TODO maybe remove this method?
+    DataTag getDataTag(size_t index) const {
+        return impl_ptr->getDataTag(index);
+    }
+
+    /**
+     * Get all simple data associated with this block.
+     *
+     * @return All simple tags as a vector.
+     */
+    std::vector<DataTag> dataTags() const {
+        return impl_ptr->dataTags();
+    }
+
+    /**
+     * Returns the number of data tag associated with
+     * this block.
+     *
+     * @return The number of data tags.
+     */
+    size_t dataTagCount() const {
+        return impl_ptr->dataArrayCount();
+    }
+
+    /**
+     * Create a new data tag associated with this block.
+     *
+     * @param name      The name of the data tag to create.
+     * @param type      The type of the tag.
+     *
+     * @return The newly created tag.
+     */
+    DataTag createDataTag(const std::string &name, const std::string &type) {
+        return impl_ptr->createDataTag(name, type);
+    }
+
+    /**
+     * Remove a data tag from the block.
+     *
+     * @param id        The id of the tag to remove.
+     *
+     * @return True if the tag was removed, false otherwise.
+     */
+    bool removeDataTag(const std::string &id) {
+        return impl_ptr->removeDataTag(id);
     }
 
 };

@@ -48,199 +48,80 @@ public:
     //virtual Section   getChild(size_type index) const;
 
 
-    /**
-     * Set the repository in which a section of this type is defined. Usually
-     * this information is provided in the form of an URL
-     *
-     * @param string the url of the repository.
-     */
-    //void repository(const std::string &repository);
+    void repository(const std::string &repository);
 
-    /**
-     * Returns the repository url.
-     *
-     * @return string the url.
-     */
-    //std::string repository() const;
 
-    /**
-     * Establish a link to another section. The linking section
-     * inherits the properties defined in the linked section.
-     * Properties of the same name are overridden.
-     *
-     * @param the id of the linked section.
-     */
-    //void link(const std::string &link);
+    std::string repository() const;
 
-    /**
-     * Returns the id of the linked section.
-     *
-     * @return string the id.
-     */
-    //std::string link() const;
+
+    void link(const std::string &link);
+
+
+    std::string link() const;
 
     // TODO: how to support includes?!
     // void include(std::string include);
     // std::string include() const;
 
-    /**
-     * Sets the mapping information for this section.
-     *
-     * @param string the mapping information.
-     */
-    //void mapping(const std::string &mapping);
 
-    /**
-     * Return the mapping information.
-     *
-     * @return string
-     */
-    //std::string mapping() const;
+    void mapping(const std::string &mapping);
 
-    /**
-     * Sets the id of the parent section.
-     *
-     * @param string the id.
-     */
-    //void parent(const std::string &parent);
 
-    /**
-     * Returns the parent information.
-     *
-     * @return string
-     */
-    //std::string parent() const;
+    std::string mapping() const;
 
-    /**
-     * Returns the subsections
-     *
-     * @return vector of direct subsections.
-     */
-    //std::vector<Section> sections() const;
 
-    /**
-     * Returns whether or not this section has child sections.
-     */
-    //bool hasChildren() const;
+    void parent(const std::string &parent);
 
-    /**
-     *  Adds a new child section.
-     *
-     *  @param name: the name of the new section
-     *  @param type: the type of the section
-     *
-     *  @return the new section.
-     */
-    //Section addSection(const std::string &name, const std::string &type);
 
-    /**
-     * Performs a search on the tree starting at this section and returns whether a section with
-     * the specified id exists.
-     *
-     * @param id: string the id of requested section
-     * @param depth: uint (default 0). The depth of the search. 0 indicates unlimited depth.
-     *
-     * @return bool
-     */
-    //bool hasSection(const std::string &id) const;
+    std::string parent() const;
 
-    /**
-     * Determines whether this section has a related section of the specified type.
-     *
-     * @param string the type
-     *
-     * @return bool
-     */
-    //bool hasRelatedSection(const std::string &type) const;
 
-    /**
-     * Returns the sections of the given type found on the same level of relation.
-     *
-     * @param string the type
-     *
-     * @return vector<Section> the related sections
-     */
-    //std::vector<Section> getRelatedSections(const std::string &type) const;
+    std::vector<Section> sections() const;
 
-    /**
-     * Remove a subsection from this Section.
-     *
-     * @param string the id of target section.
-     *
-     * @return bool successful or not
-     */
-    //bool removeSection(const std::string &id);
 
-    /**
-     * Returns all Properties.
-     *
-     * @return vector<Property>
-     */
-    //std::vector<Property> properties() const;
+    bool hasChildren() const;
 
-    /**
-     * Returns all Properties inherited from a linked section.
-     * This list may include Properties that are locally overridden.
-     *
-     * @return vector<Property>
-     */
-    //std::vector<Property> inheritedProperties() const;
 
-    /**
-     * Returns the Property identified by id.
-     *
-     * @return Property
-     */
-    //Property getProperty(const std::string &id) const;
+    Section addSection(const std::string &name, const std::string &type);
 
-    /**
-     * Returns the Property that is defined by name.
-     * Method tries to locate the Property also in linked Sections (if any).
-     *
-     * Raises runtime exception if not found. Check with hasPropertyByName.
-     *
-     * @param string name
-     *
-     * @return Property
-     */
-    //Property getPropertyByName(const std::string &name) const;
 
-    /**
-     * Checks if a Property with this id exists in this Section.
-     *
-     * @param string the id.
-     */
-    //bool hasProperty(const std::string &id) const;
+    bool hasSection(const std::string &id) const;
 
-    /**
-     * Checks if a Property with the given name exists.
-     *
-     * @param string the name
-     */
-    //bool hasPropertyByName(const std::string &name) const;
 
-    /**
-     * Add a Property to this section.
-     *
-     * @param string the name of the Property.
-     *
-     * @return the Property
-     */
-    //Property addProperty(const std::string &name);
+    bool hasRelatedSection(const std::string &type) const;
 
-    /**
-     * Removes the Property that is identified by the id.#
-     *
-     * @param string the id.
-     */
-    //void removeProperty(const std::string &id);
 
-    /**
-     * The Number of properties.
-     *
-     * @param size_t
-     */
-    //size_t propertyCount() const;
+    std::vector<Section> getRelatedSections(const std::string &type) const;
+
+
+    bool removeSection(const std::string &id);
+
+
+    std::vector<Property> properties() const;
+
+
+    std::vector<Property> inheritedProperties() const;
+
+
+    Property getProperty(const std::string &id) const;
+
+
+    Property getPropertyByName(const std::string &name) const;
+
+
+    bool hasProperty(const std::string &id) const;
+
+
+    bool hasPropertyByName(const std::string &name) const;
+
+
+    Property addProperty(const std::string &name);
+
+
+    void removeProperty(const std::string &id);
+
+
+    size_t propertyCount() const;
 
     bool operator==(const Section &other) const;
 

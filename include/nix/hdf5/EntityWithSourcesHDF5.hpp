@@ -9,39 +9,36 @@
 #ifndef PAN_ENTITY_WITH_SOURCES_H_INCLUDED
 #define PAN_ENTITY_WITH_SOURCES_H_INCLUDED
 
-#include <string>
-#include <vector>
-#include <iostream>
+#include <nix.hpp>
+#include <nix/base/IEntityWithSources.hpp>
+#include <nix/hdf5/ReferenceList.hpp>
+#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
-#include <pandora/Block.hpp>
-#include <pandora/EntityWithMetadata.hpp>
-#include <pandora/util/ReferenceList.hpp>
+namespace nix {
+namespace hdf5 {
 
-namespace pandora {
-
-class Source;
 
 /**
  * Base class for entities that are associated with sources.
  */
-class EntityWithSources: public EntityWithMetadata {
+class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public EntityWithMetadataHDF5 {
 
 protected:
 
-    Block block;
-    util::ReferenceList sources_refs;
+    Block entity_block;
+    ReferenceList sources_refs;
 
 public:
 
     /**
      * Standard constructor.
      */
-    EntityWithSources(File file, Block block, Group group, const std::string &id);
+    EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    EntityWithSources(File file, Block block, Group group, const std::string &id, time_t time);
+    EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id, time_t time);
 
     /**
      * Get the number of sources associated with this entity.
@@ -110,10 +107,12 @@ public:
     /**
      * Destructor.
      */
-    virtual ~EntityWithSources();
+    virtual ~EntityWithSourcesHDF5();
 
 };
 
-} // of namespace
+
+} // namespace hdf5
+} // namespace nix
 
 #endif /* PAN_ENTITY_WITH_SOURCES_H_INCLUDED */

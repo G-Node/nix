@@ -32,10 +32,10 @@ private:
 
 public:
 
-    EntityHDF5(File file, Group group,const std::string &id);
+    EntityHDF5(File file, Group group, const std::string &id);
 
 
-    EntityHDF5(File file, Group group,const std::string &id, time_t time);
+    EntityHDF5(File file, Group group, const std::string &id, time_t time);
 
 
     std::string id() const;

@@ -6,41 +6,32 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_ENTITY_WITH_METADATA_H_INCLUDED
-#define PAN_ENTITY_WITH_METADATA_H_INCLUDED
+#ifndef NIX_ENTITY_WITH_METADATA_H
+#define NIX_ENTITY_WITH_METADATA_H
 
-#include <string>
-#include <iostream>
+#include <nix/base/NamedEntity.hpp>
+#include <nix/base/IEntityWithMetadata.hpp>
+#include <nix/Section.hpp>
 
-#include <pandora/File.hpp>
-#include <pandora/Section.hpp>
-#include <pandora/NamedEntity.hpp>
+namespace nix {
+namespace base {
 
-namespace pandora {
-
-/**
- * Base class for entities that are associated with metadata such
- * as Block, Source etc.
- *
- * TODO Implement all methods of EntityWithMetadata.
- */
-class EntityWithMetadata : public NamedEntity {
-
-protected:
-
-    File file;
+// TODO what about TNode?
+template <typename T>
+class EntityWithMetadata : virtual public IEntityWithMetadata, public NamedEntity<T> {
 
 public:
 
-    /**
-     * Standard constructor
-     */
-    EntityWithMetadata(File file, Group group, const std::string &id);
+    EntityWithMetadata()
+        : NamedEntity<T>()
+    {
+    }
 
-    /**
-     * Standard constructor that preserves the creation time.
-     */
-    EntityWithMetadata(File file, Group group, const std::string &id, time_t time);
+
+    EntityWithMetadata(const std::shared_ptr<T> &p_impl)
+        : NamedEntity<T>(p_impl)
+    {
+    }
 
     /**
      * Checks if the block has associated metadata.
@@ -48,7 +39,9 @@ public:
      * @return True if the block has metadata (odML section),
      *         false otherwise.
      */
-    bool hasMetadata() const;
+    bool hasMetadata() const {
+        return NamedEntity<T>::impl_ptr->hasMetadata();
+    }
 
     /**
      * Get metadata associated with this entity.
@@ -56,7 +49,9 @@ public:
      * @return The associated section, if no such section exists
      *         an exception will be thrown.
      */
-    Section metadata() const;
+    Section metadata() const {
+        return NamedEntity<T>::impl_ptr->metadata();
+    }
 
     /**
      * Associate the entity with some metadata. Calling this method will replace
@@ -66,7 +61,9 @@ public:
      * @param metadata    The section that should be associated
      *                    with this entity.
      */
-  void metadata(const Section &metadata);
+    void metadata(const Section &metadata) {
+        NamedEntity<T>::impl_ptr->metadata(metadata);
+    }
 
     /**
      * Remove associated metadata from the entity.
@@ -74,16 +71,14 @@ public:
      *
      * @return True if the section was removed, false otherwise.
      */
-    bool removeMetadata();
-
-    /**
-     * Destructor of this class.
-     */
-    virtual ~EntityWithMetadata();
+    bool removeMetadata() {
+        return NamedEntity<T>::impl_ptr->removeMetadata();
+    }
 
 };
 
 
-} /* namespace pandora */
+} // namespace base
+} // namespace nix
 
-#endif /* PAN_ENTITY_WITH_METADATA_H_INCLUDED */
+#endif // NIX_ENTITY_WITH_METADATA_H

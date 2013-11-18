@@ -23,7 +23,7 @@ namespace hdf5 {
 /**
  * Base class for all pandora entities e.g. Block, Section etc.
  */
-class NamedEntityHDF5 : public EntityHDF5, virtual public base::INamedEntity {
+class NamedEntityHDF5 : virtual public base::INamedEntity, public EntityHDF5 {
 
 public:
 

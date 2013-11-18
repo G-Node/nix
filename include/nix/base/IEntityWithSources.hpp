@@ -9,12 +9,16 @@
 #ifndef NIX_I_ENTITY_WITH_SOURCES_H
 #define NIX_I_ENTITY_WITH_SOURCES_H
 
+#include <string>
+#include <vector>
+
 #include <nix/base/IEntityWithMetadata.hpp>
 
 namespace nix {
-namespace base {
 
-class nix::Source;
+class Source;
+
+namespace base {
 
 /**
  * Base class for entities that are associated with sources.
@@ -37,7 +41,7 @@ public:
      *
      * @return True if the source is associated with this entity, false otherwise.
      */
-    virtual bool hasSource(const Source &source) const = 0;
+    //virtual bool hasSource(const Source &source) const = 0;
 
     /**
      * Checks if a specific source is associated with this entity.
@@ -63,15 +67,15 @@ public:
      *
      * @return True if the source was removed, false otherwise.
      */
-    virtual bool removeSource(const Source &source) = 0;
+    virtual bool removeSource(const std::string &id) = 0;
 
     /**
      * Set all sources associated with this entity. All previously
      * associated sources, that are not in the vector will be removed.
      *
-     * @param s     A vector with all sources.
+     * @param sources     A vector with all sources.
      */
-    virtual void sources(const std::vector<Source> &s) = 0;
+    virtual void sources(const std::vector<Source> &sources) = 0;
 
     /**
      * Get all associated sources of this entity.
@@ -85,7 +89,7 @@ public:
      *
      * @param string the source id
      */
-    virtual Source getSource(const std::string id) const = 0;
+    virtual Source getSource(const std::string &id) const = 0;
 
 };
 

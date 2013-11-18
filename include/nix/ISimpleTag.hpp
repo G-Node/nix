@@ -19,6 +19,8 @@ namespace nix {
 class DataArray;
 class Representation;
 
+enum class LinkType;
+
 // TODO inherit from IEntityWithSources
 class ISimpleTag : virtual public base::INamedEntity {
 

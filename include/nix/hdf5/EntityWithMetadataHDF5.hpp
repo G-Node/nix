@@ -6,24 +6,38 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_ENTITY_WITH_METADATA_H
-#define NIX_I_ENTITY_WITH_METADATA_H
+#ifndef PAN_ENTITY_WITH_METADATA_H_INCLUDED
+#define PAN_ENTITY_WITH_METADATA_H_INCLUDED
 
-#include <nix/base/INamedEntity.hpp>
+#include <string>
+#include <iostream>
+
+
+#include <nix.hpp>
+#include <nix/hdf5/NamedEntityHDF5.hpp>
 
 namespace nix {
-
-class Section;
-
-namespace base {
+namespace hdf5 {
 
 /**
  * Base class for entities that are associated with metadata such
  * as Block, Source etc.
+ *
+ * TODO Implement all methods of EntityWithMetadata.
  */
-class IEntityWithMetadata : virtual public INamedEntity {
+class EntityWithMetadataHDF5 : virtual public base::IEntityWithMetadata, public NamedEntityHDF5 {
 
 public:
+
+    /**
+     * Standard constructor
+     */
+    EntityWithMetadataHDF5(File file, Group group, const std::string &id);
+
+    /**
+     * Standard constructor that preserves the creation time.
+     */
+    EntityWithMetadataHDF5(File file, Group group, const std::string &id, time_t time);
 
     /**
      * Checks if the block has associated metadata.
@@ -31,7 +45,7 @@ public:
      * @return True if the block has metadata (odML section),
      *         false otherwise.
      */
-    virtual bool hasMetadata() const = 0;
+    bool hasMetadata() const;
 
     /**
      * Get metadata associated with this entity.
@@ -39,7 +53,7 @@ public:
      * @return The associated section, if no such section exists
      *         an exception will be thrown.
      */
-    virtual Section metadata() const = 0;
+    Section metadata() const;
 
     /**
      * Associate the entity with some metadata. Calling this method will replace
@@ -49,7 +63,7 @@ public:
      * @param metadata    The section that should be associated
      *                    with this entity.
      */
-    virtual void metadata(const Section &metadata) = 0;
+    void metadata(const Section &metadata);
 
     /**
      * Remove associated metadata from the entity.
@@ -57,12 +71,17 @@ public:
      *
      * @return True if the section was removed, false otherwise.
      */
-    virtual bool removeMetadata() = 0;
+    bool removeMetadata();
+
+    /**
+     * Destructor of this class.
+     */
+    virtual ~EntityWithMetadataHDF5();
 
 };
 
 
-} // namespace base
+} // namespace hdf5
 } // namespace nix
 
-#endif // NIX_I_ENTITY_WITH_METADATA_H
+#endif /* PAN_ENTITY_WITH_METADATA_H_INCLUDED */

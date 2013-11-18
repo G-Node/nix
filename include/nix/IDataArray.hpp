@@ -11,16 +11,17 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
-#include <nix/base/INamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
 
 namespace nix {
 
 class Dimension;
 enum class DimensionType;
 
-// TODO inherit from IEntityWithMetadata
-class IDataArray : virtual public base::INamedEntity {
+// TODO inherit from IEntityWithSources
+class IDataArray : virtual public base::IEntityWithMetadata {
 
 public:
 

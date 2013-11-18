@@ -11,27 +11,28 @@
 
 #include <boost/multi_array.hpp>
 
-#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
 #include <nix/IDataArray.hpp>
+#include <nix/Dimensions.hpp>
 
 namespace nix {
 
 
-class DataArray : virtual public IDataArray, public base::NamedEntity<IDataArray> {
+class DataArray : virtual public IDataArray, public base::EntityWithMetadata<IDataArray> {
 
 public:
 
     DataArray()
-        : NamedEntity()
+        : EntityWithMetadata()
     {}
 
     DataArray(const DataArray &other)
-        : NamedEntity(other.impl_ptr)
+        : EntityWithMetadata(other.impl_ptr)
     {
     }
 
     DataArray(const std::shared_ptr<IDataArray> &p_impl)
-        : NamedEntity(p_impl)
+        : EntityWithMetadata(p_impl)
     {
     }
 

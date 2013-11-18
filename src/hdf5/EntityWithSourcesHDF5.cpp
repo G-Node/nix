@@ -1,0 +1,90 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
+#include <nix/util/util.hpp>
+#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+
+
+using namespace std;
+
+namespace nix {
+namespace hdf5 {
+
+
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(File file, Block block, Group group, const string &id)
+    : EntityWithMetadataHDF5(file, group, id), entity_block(block), sources_refs(group, "sources")
+{
+}
+
+
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(File file, Block block, Group group, const string &id, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, time), entity_block(block), sources_refs(group, "sources")
+{
+}
+
+
+size_t EntityWithSourcesHDF5::sourceCount() const {
+    return sources_refs.count();
+}
+
+
+bool EntityWithSourcesHDF5::hasSource(const Source &source) const {
+    return sources_refs.has(source);
+}
+
+
+bool EntityWithSourcesHDF5::hasSource(const string &id) const {
+    return sources_refs.has(id);
+}
+
+
+Source EntityWithSourcesHDF5::getSource(const std::string id) const{
+    return entity_block.getSource(id);
+}
+
+
+vector<Source> EntityWithSourcesHDF5::sources() const {
+    vector<string> ids = sources_refs.get();
+
+    vector<Source> source_obj = block.findSources([&](const Source &source) {
+        return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
+    });
+
+    if (source_obj.size() != ids.size()) {
+        // TODO What is the right thing to do here?
+        throw runtime_error("Could not resolve all ids");
+    }
+
+    return source_obj;
+}
+
+
+void EntityWithSourcesHDF5::addSource(const Source &source) {
+    sources_refs.add(source);
+}
+
+
+void EntityWithSourcesHDF5::sources(const vector<Source> &s) {
+    vector<string> ids(s.size());
+    for (size_t i = 0; i < s.size(); i++) {
+        ids[i] = s[i].id();
+    }
+    sources_refs.set(ids);
+}
+
+
+bool EntityWithSourcesHDF5::removeSource(const Source &source) {
+    return sources_refs.remove(source);
+}
+
+
+EntityWithSourcesHDF5::~EntityWithSourcesHDF5() {}
+
+
+} // namespace hdf5
+} // namespace nix
