@@ -48,7 +48,7 @@ Section EntityWithMetadataHDF5::metadata() const{
     }
     std::string sectionId;
     group().getAttr("metadata", sectionId);
-    return file.getSection(sectionId);
+    return file().getSection(sectionId);
 }
 
 

@@ -109,6 +109,12 @@ public:
      */
     virtual ~EntityWithSourcesHDF5();
 
+protected:
+
+    Block block() const {
+        return entity_block;
+    }
+
 };
 
 
