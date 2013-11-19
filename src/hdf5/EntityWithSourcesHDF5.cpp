@@ -34,7 +34,7 @@ size_t EntityWithSourcesHDF5::sourceCount() const {
 
 
 bool EntityWithSourcesHDF5::hasSource(const Source &source) const {
-    return sources_refs.has(source);
+    return sources_refs.has(source.id());
 }
 
 
@@ -65,7 +65,7 @@ vector<Source> EntityWithSourcesHDF5::sources() const {
 
 
 void EntityWithSourcesHDF5::addSource(const Source &source) {
-    sources_refs.add(source);
+    sources_refs.add(source.id());
 }
 
 
@@ -79,7 +79,7 @@ void EntityWithSourcesHDF5::sources(const vector<Source> &s) {
 
 
 bool EntityWithSourcesHDF5::removeSource(const Source &source) {
-    return sources_refs.remove(source);
+    return sources_refs.remove(source.id());
 }
 
 
