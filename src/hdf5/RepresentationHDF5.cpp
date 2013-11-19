@@ -6,11 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Representation.hpp>
+#include <nix/hdf5/RepresentationHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 string linkTypeToString(LinkType link_type) {
@@ -31,48 +32,49 @@ LinkType linkTypeFromString(const string &str) {
 }
 
 
-Representation::Representation(const Representation &representation)
-    : PandoraEntity(representation.group, representation.entity_id), block(representation.block)
+RepresentationHDF5::RepresentationHDF5(const RepresentationHDF5 &representation)
+    : EntityHDF5(representation.group, representation.entity_id), block(representation.block)
 {}
 
 
-Representation::Representation(Group group, const string &id, Block block)
-    : PandoraEntity(group, id), block(block)
+RepresentationHDF5::RepresentationHDF5(Group group, const string &id, Block block)
+    : EntityHDF5(group, id), block(block)
 {}
 
 
-Representation::Representation(Group group, const string &id, time_t time, Block block)
-    : PandoraEntity(group, id, time), block(block)
+RepresentationHDF5::RepresentationHDF5(Group group, const string &id, time_t time, Block block)
+    : EntityHDF5(group, id, time), block(block)
 {}
 
 
-void Representation::linkType(LinkType link_type) {
+void RepresentationHDF5::linkType(LinkType link_type) {
     group.setAttr("link_type", linkTypeToString(link_type));
     forceUpdatedAt();
 }
 
 
-void Representation::data(const DataArray &data){
+void RepresentationHDF5::data(const DataArray &data){
     group.setAttr("data", data.id());
     forceUpdatedAt();
 }
 
 
-DataArray Representation::data() const{
+DataArray RepresentationHDF5::data() const{
     string dataId;
     group.getAttr("data", dataId);
     return block.getDataArray(dataId);
 }
 
 
-LinkType Representation::linkType() const {
+LinkType RepresentationHDF5::linkType() const {
     string link_type;
     group.getAttr("link_type", link_type);
     return linkTypeFromString(link_type);
 }
 
 
-Representation::~Representation() {}
+RepresentationHDF5::~RepresentationHDF5() {}
 
 
-} // end namespace pandora
+} // namespace hdf5
+} // namespace nix

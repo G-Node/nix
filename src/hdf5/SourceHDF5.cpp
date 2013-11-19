@@ -6,73 +6,73 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Util.hpp>
-#include <pandora/Source.hpp>
+#include <nix/hdf5/SourceHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-Source::Source(const Source &source)
-    : EntityWithMetadata(source.file, source.group, source.entity_id)
+SourceHDF5::SourceHDF5(const Source &source)
+    : EntityWithMetadataHDF5(source.file, source.group, source.entity_id)
 {
     source_group = source.source_group;
 }
 
 
-Source::Source(File file, Group group, const std::string &id)
-    : EntityWithMetadata(file, group, id)
+SourceHDF5::SourceHDF5(File file, Group group, const std::string &id)
+    : EntityWithMetadataHDF5(file, group, id)
 {
     source_group = group.openGroup("sources");
 }
 
 
-Source::Source(File file, Group group, const std::string &id, time_t time)
-    : EntityWithMetadata(file, group, id, time)
+SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, time)
 {
     source_group = group.openGroup("sources");
 }
 
 
-Source::size_type Source::childCount() const {
+SourceHDF5::size_type SourceHDF5::childCount() const {
     return source_group.objectCount();
 }
 
 
-Source Source::getChild(size_type index) const {
+Source SourceHDF5::getChild(size_type index) const {
     string id = source_group.objectName(index);
     return Source(file, source_group.openGroup(id, false), id);
 }
 
 
-bool Source::hasSource(const string &id) const {
+bool SourceHDF5::hasSource(const string &id) const {
     return source_group.hasGroup(id);
 }
 
 
-Source Source::getSource(const string &id) const {
+Source SourceHDF5::getSource(const string &id) const {
     return Source(file, source_group.openGroup(id, false), id);
 }
 
 
-Source Source::getSource(size_t index) const {
+Source SourceHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
     return Source(file, source_group.openGroup(id, false), id);
 }
 
 
-size_t Source::sourceCount() const {
+size_t SourceHDF5::sourceCount() const {
     return source_group.objectCount();
 }
 
 
-std::vector<Source> Source::sources() const {
+std::vector<Source> SourceHDF5::sources() const {
     return collectIf(predCollectAll, true, 1);
 }
 
 
-Source Source::createSource(const string &name, const string &type) {
+Source SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
 
     while(source_group.hasObject(id)) {
@@ -87,7 +87,7 @@ Source Source::createSource(const string &name, const string &type) {
 }
 
 
-ostream& operator<<(ostream &out, const Source &ent) {
+ostream& operator<<(ostream &out, const SourceHDF5 &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
@@ -95,7 +95,7 @@ ostream& operator<<(ostream &out, const Source &ent) {
 }
 
 
-Source& Source::operator=(const Source &other) {
+Source& SourceHDF5::operator=(const SourceHDF5 &other) {
     if (*this != other) {
         this->file = other.file;
         this->group = other.group;
@@ -106,7 +106,8 @@ Source& Source::operator=(const Source &other) {
 }
 
 
-Source::~Source() {}
+SourceHDF5::~SourceHDF5() {}
 
 
-} // end namespace pandora
+} // namespace hdf5
+} // namespace nix

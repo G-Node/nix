@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include <nix/base/INamedEntity.hpp>
+#include <nix/base/IEntityWithSources.hpp>
 #include <nix/Representation.hpp>
 
 namespace nix {
@@ -21,7 +21,7 @@ class Representation;
 class DataArray;
 
 // TODO inherit from IEntityWithSources
-class IDataTag : virtual public base::INamedEntity {
+class IDataTag : virtual public base::IEntityWithSources {
 
 public:
 

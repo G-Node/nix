@@ -6,21 +6,19 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Util.hpp>
-#include <pandora/DataSet.hpp>
-#include <pandora/DataArray.hpp>
-#include <pandora/Dimension.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-const PSize DataArray::MIN_CHUNK_SIZE = {1};
-const PSize DataArray::MAX_SIZE_1D = {H5S_UNLIMITED};
+const PSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
+const PSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
-DataArray::DataArray(const DataArray &data_array)
+DataArrayHDF5::DataArray(const DataArray &data_array)
     : EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
 {
     dimension_group = data_array.dimension_group;
@@ -30,7 +28,7 @@ DataArray::DataArray(const DataArray &data_array)
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, const string &id)
+DataArrayHDF5::DataArray(File file, const Block block, Group group, const string &id)
     : EntityWithSources(file, block, group, id)
 {
     dimension_group = group.openGroup("dimensions");
@@ -46,7 +44,7 @@ DataArray::DataArray(File file, const Block block, Group group, const string &id
 }
 
 
-DataArray::DataArray(File file, const Block block, Group group, const string &id, time_t time)
+DataArrayHDF5::DataArray(File file, const Block block, Group group, const string &id, time_t time)
     : EntityWithSources(file, block, group, id, time)
 {
     dimension_group = group.openGroup("dimensions");
@@ -65,46 +63,46 @@ DataArray::DataArray(File file, const Block block, Group group, const string &id
 // Element getters and setters
 //--------------------------------------------------
 
-string DataArray::label() const {
+string DataArrayHDF5::label() const {
     string value;
     group.getAttr("label", value);
     return value;
 }
 
 
-void DataArray::label(const string &label) {
+void DataArrayHDF5::label(const string &label) {
     group.setAttr("label", label);
     forceUpdatedAt();
 }
 
 
-string DataArray::unit() const {
+string DataArrayHDF5::unit() const {
     string value;
     group.getAttr("unit", value);
     return value;
 }
 
 
-void DataArray::unit(const string &unit) {
+void DataArrayHDF5::unit(const string &unit) {
     group.setAttr("unit", unit);
     forceUpdatedAt();
 }
 
 
-double DataArray::expansionOrigin() const {
+double DataArrayHDF5::expansionOrigin() const {
     double expansion_origin;
     group.getAttr("expansion_origin", expansion_origin);
     return expansion_origin;
 }
 
 
-void DataArray::expansionOrigin(double expansion_origin) {
+void DataArrayHDF5::expansionOrigin(double expansion_origin) {
     group.setAttr("expansion_origin", expansion_origin);
     forceUpdatedAt();
 }
 
 
-vector<double> DataArray::polynomCoefficients()const{
+vector<double> DataArrayHDF5::polynomCoefficients()const{
     vector<double> polynom_coefficients;
 
     if (group.hasData("polynom_coefficients")) {
@@ -116,7 +114,7 @@ vector<double> DataArray::polynomCoefficients()const{
 }
 
 
-void DataArray::polynomCoefficients(vector<double> &coefficients){
+void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
     if (group.hasData("polynom_coefficients")) {
         DataSet ds = group.openData("polynom_coefficients");
         ds.extend({coefficients.size()});
@@ -132,7 +130,7 @@ void DataArray::polynomCoefficients(vector<double> &coefficients){
 // Methods concerning dimensions
 //--------------------------------------------------
 
-vector<shared_ptr<Dimension>> DataArray::dimensions() const {
+vector<shared_ptr<Dimension>> DataArrayHDF5::dimensions() const {
                               vector<shared_ptr<Dimension>> dimensions;
 
                               size_t dim_count = dimensionCount();
@@ -169,12 +167,12 @@ return dimensions;
 }
 
 
-size_t DataArray::dimensionCount() const {
+size_t DataArrayHDF5::dimensionCount() const {
     return dimension_group.objectCount();
 }
 
 
-shared_ptr<Dimension> DataArray::getDimension(size_t id) const {
+shared_ptr<Dimension> DataArrayHDF5::getDimension(size_t id) const {
     string str_id = util::numToStr(id);
     shared_ptr<Dimension> dim;
 
@@ -203,7 +201,7 @@ shared_ptr<Dimension> DataArray::getDimension(size_t id) const {
 }
 
 
-shared_ptr<Dimension> DataArray::createDimension(size_t id, DimensionType type) {
+shared_ptr<Dimension> DataArrayHDF5::createDimension(size_t id, DimensionType type) {
     size_t dim_count = dimensionCount();
 
     if (id <= dim_count) {
@@ -237,7 +235,7 @@ shared_ptr<Dimension> DataArray::createDimension(size_t id, DimensionType type) 
 }
 
 
-bool DataArray::removeDimension(size_t id) {
+bool DataArrayHDF5::removeDimension(size_t id) {
     bool deleted = false;
     size_t dim_count = dimensionCount();
     string str_id = util::numToStr(id);
@@ -262,7 +260,7 @@ bool DataArray::removeDimension(size_t id) {
 // Other methods and functions
 //--------------------------------------------------
 
-double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
+double DataArrayHDF5::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
     double value = 0.0;
     double term = 1.0;
     for(size_t i = 0; i < coefficients.size(); i++){
@@ -273,7 +271,7 @@ double DataArray::applyPolynomial(std::vector<double> &coefficients, double orig
 }
 
 
-DataArray& DataArray::operator=(const DataArray &other) {
+DataArrayHDF5& DataArrayHDF5::operator=(const DataArray &other) {
     if (*this != other) {
         this->file = other.file;
         this->block = other.block;
@@ -286,7 +284,7 @@ DataArray& DataArray::operator=(const DataArray &other) {
 }
 
 
-ostream& operator<<(ostream &out, const DataArray &ent) {
+ostream& operator<<(ostream &out, const DataArrayHDF5 &ent) {
     out << "DataArray: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
@@ -294,6 +292,8 @@ ostream& operator<<(ostream &out, const DataArray &ent) {
 }
 
 
-DataArray::~DataArray(){}
+DataArrayHDF5::~DataArrayHDF5(){}
 
-} //namespace pandora
+
+} // namespace hdf5
+} // namespace nix

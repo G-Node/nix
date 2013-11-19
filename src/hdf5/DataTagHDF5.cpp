@@ -6,37 +6,36 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/DataSet.hpp>
-#include <pandora/DataTag.hpp>
-#include <pandora/Util.hpp>
+#include <nix/hdf5/DataTagHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-DataTag::DataTag(const DataTag &tag)
+DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
     : EntityWithSources(tag.file, tag.block, tag.group, tag.entity_id),reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, const std::string &id)
+DataTagHDF5::DataTagHDF5(File file, const Block block, Group group, const std::string &id)
     : EntityWithSources(file, block, group, id), reference_list(group, "references")
 {
     representation_group = group.openGroup("representations");
 }
 
 
-DataTag::DataTag(File file, const Block block, Group group, const std::string &id, time_t time)
+DataTagHDF5::DataTagHDF5(File file, const Block block, Group group, const std::string &id, time_t time)
     : EntityWithSources(file, block, group, id, time),reference_list(group, "references")
 {
     representation_group = group.openGroup("representations");
 }
 
 
-DataArray DataTag::positions() const {
+DataArray DataTagHDF5::positions() const {
     std::string posId;
     group.getAttr("positions", posId);
     if(posId.length() > 0){
@@ -47,34 +46,34 @@ DataArray DataTag::positions() const {
 }
 
 
-void DataTag::positions(const DataArray &positions) {
+void DataTagHDF5::positions(const DataArray &positions) {
     this->positions(positions.id());
 }
 
 
-void DataTag::positions(const string &positionsId) {
+void DataTagHDF5::positions(const string &positionsId) {
     if(!this->block.hasDataArray(positionsId)){
-        throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
     }
     else{
         if(this->hasExtents()){
             DataArray pos = this->block.getDataArray(positionsId);
             DataArray ext = this->extents();
             if(!checkDimensions(ext,pos))
-                throw runtime_error("DataTag::positions: cannot set Positions because dimensionality of extent and position data do not match!");
+                throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
         }
         group.setAttr("positions", positionsId);
         forceUpdatedAt();
     }
 }
 
-bool DataTag::hasPositions() const{
+bool DataTagHDF5::hasPositions() const{
     std::string posId;
     group.getAttr("positions", posId);
     return (posId.length() > 0);
 }
 
-DataArray DataTag::extents() const {
+DataArray DataTagHDF5::extents() const {
     std::string extId;
     group.getAttr("extents", extId);
     if(extId.length() > 0){
@@ -85,21 +84,21 @@ DataArray DataTag::extents() const {
 }
 
 
-void DataTag::extents(const DataArray &extent) {
+void DataTagHDF5::extents(const DataArray &extent) {
     extents(extent.id());
 }
 
 
-void DataTag::extents(const string &extentsId) {
+void DataTagHDF5::extents(const string &extentsId) {
     if(!this->block.hasDataArray(extentsId)){
-        throw runtime_error("DataTag::extents: cannot set Extent because referenced DataArray does not exist!");
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
     }
     else{
         if(this->hasPositions()){
             DataArray ext = this->block.getDataArray(extentsId);
             DataArray pos = this->positions();
             if(!checkDimensions(ext,pos))
-                throw runtime_error("DataTag::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+                throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
         }
         group.setAttr("extents", extentsId);
         forceUpdatedAt();
@@ -107,7 +106,7 @@ void DataTag::extents(const string &extentsId) {
 }
 
 
-bool DataTag::hasExtents() const{
+bool DataTagHDF5::hasExtents() const{
     std::string extId;
     group.getAttr("extents", extId);
     return (extId.length() > 0);
@@ -115,22 +114,22 @@ bool DataTag::hasExtents() const{
 
 // Methods concerning references.
 
-bool DataTag::hasReference(const DataArray &reference) const {
+bool DataTagHDF5::hasReference(const DataArray &reference) const {
     return hasReference(reference.id());
 }
 
 
-bool DataTag::hasReference(const std::string &id) const {
+bool DataTagHDF5::hasReference(const std::string &id) const {
     return reference_list.has(id);
 }
 
 
-size_t DataTag::referenceCount() const {
+size_t DataTagHDF5::referenceCount() const {
     return reference_list.count();
 }
 
 
-DataArray DataTag::getReference(const std::string &id) const {
+DataArray DataTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
         return block.getDataArray(id);
     } else {
@@ -139,17 +138,17 @@ DataArray DataTag::getReference(const std::string &id) const {
 }
 
 
-void DataTag::addReference(const DataArray &reference) {
+void DataTagHDF5::addReference(const DataArray &reference) {
     reference_list.add(reference);
 }
 
 
-bool DataTag::removeReference(const DataArray &reference) {
+bool DataTagHDF5::removeReference(const DataArray &reference) {
     return reference_list.remove(reference);
 }
 
 
-std::vector<DataArray> DataTag::references() const {
+std::vector<DataArray> DataTagHDF5::references() const {
     vector<string> refs = reference_list.get();
     vector<DataArray> data_obj;
 
@@ -164,7 +163,7 @@ std::vector<DataArray> DataTag::references() const {
 }
 
 
-void DataTag::references(const std::vector<DataArray> &references) {
+void DataTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
 
     for (size_t i = 0; i < references.size(); i++) {
@@ -176,29 +175,29 @@ void DataTag::references(const std::vector<DataArray> &references) {
 
 // Methods concerning representations.
 
-bool DataTag::hasRepresentation(const string &id) const{
+bool DataTagHDF5::hasRepresentation(const string &id) const{
     return representation_group.hasGroup(id);
 }
 
 
-size_t DataTag::representationCount() const{
+size_t DataTagHDF5::representationCount() const{
     return representation_group.objectCount();
 }
 
 
-Representation DataTag::getRepresentation(const std::string &id) const{
+Representation DataTagHDF5::getRepresentation(const std::string &id) const{
     return Representation(representation_group.openGroup(id, false), id, this->block);
 }
 
 
-Representation DataTag::getRepresentation(size_t index) const{
+Representation DataTagHDF5::getRepresentation(size_t index) const{
     string id = representation_group.objectName(index);
     Representation r(representation_group.openGroup(id), id, this->block);
     return r;
 }
 
 
-std::vector<Representation> DataTag::representations() const{
+std::vector<Representation> DataTagHDF5::representations() const{
     vector<Representation>  representation_obj;
     size_t count = representation_group.objectCount();
     for (size_t i = 0; i < count; i++) {
@@ -210,7 +209,7 @@ std::vector<Representation> DataTag::representations() const{
 }
 
 
-Representation DataTag::createRepresentation(DataArray data, LinkType link_type){
+Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_type){
     string id = util::createId("representation");
     while(representation_group.hasObject(id))
         id = util::createId("representation");
@@ -221,7 +220,7 @@ Representation DataTag::createRepresentation(DataArray data, LinkType link_type)
 }
 
 
-bool DataTag::removeRepresentation(const string &id){
+bool DataTagHDF5::removeRepresentation(const string &id){
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
@@ -232,7 +231,7 @@ bool DataTag::removeRepresentation(const string &id){
 
 // Other methods and functions
 
-DataTag& DataTag::operator=(const DataTag &other) {
+DataTag& DataTagHDF5::operator=(const DataTagHDF5 &other) {
     if (*this != other) {
         this->file = other.file;
         this->block = other.block;
@@ -246,7 +245,7 @@ DataTag& DataTag::operator=(const DataTag &other) {
 }
 
 
-ostream& operator<<(ostream &out, const DataTag &ent) {
+ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
     out << "DataTag: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
@@ -254,7 +253,7 @@ ostream& operator<<(ostream &out, const DataTag &ent) {
 }
 
 
-bool DataTag::checkDimensions(const DataArray &a, const DataArray &b)const{
+bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
     bool valid = true;
     boost::multi_array<double,1> aData, bData;
     a.getRawData(aData);
@@ -273,7 +272,7 @@ bool DataTag::checkDimensions(const DataArray &a, const DataArray &b)const{
 }
 
 
-bool DataTag::checkPositionsAndExtents() const{
+bool DataTagHDF5::checkPositionsAndExtents() const{
     bool valid = true;
     if(hasPositions() && hasExtents()){
         DataArray pos = positions();
@@ -287,7 +286,7 @@ bool DataTag::checkPositionsAndExtents() const{
 }
 
 
-DataTag::~DataTag() {}
+DataTagHDF5::~DataTagHDF5() {}
 
-
-} /* namespace pandora */
+} // namespace hdf5
+} // namespace nix

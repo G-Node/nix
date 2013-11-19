@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
 
 namespace nix {
 
@@ -21,7 +21,7 @@ class Dimension;
 enum class DimensionType;
 
 // TODO inherit from IEntityWithSources
-class IDataArray : virtual public base::IEntityWithMetadata {
+class IDataArray : virtual public base::IEntityWithSources {
 
 public:
 

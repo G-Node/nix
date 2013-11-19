@@ -8,12 +8,12 @@
 
 #include <iostream>
 
-#include <pandora/Value.hpp>
-#include <pandora/Property.hpp>
+#include <nix/hdf5/ValueHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 namespace hades {
 
 
@@ -30,4 +30,5 @@ int8_t get_inner<int8_t, bool>(const bool &outer) {
 
 
 } // namespace hades
-} // namespace pandora
+} // namespace hdf5
+} // namespace nix

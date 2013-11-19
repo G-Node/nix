@@ -6,23 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_DIMENSION_H_INCLUDED
-#define PAN_DIMENSION_H_INCLUDED
+#ifndef NIX_DIMENSIONS_HDF5_H
+#define NIX_DIMENSIONS_HDF5_H
 
 #include <string>
 #include <iostream>
 #include <ctime>
 
-#include <pandora/Util.hpp>
-#include <pandora/Group.hpp>
+#include <nix.hpp>
 
 
-namespace pandora {
-
-
-enum class DimensionType : int {
-    SAMPLED_DIMENSION, SET_DIMENSION, RANGE_DIMENSION
-};
+namespace nix {
+namespace hdf5 {
 
 
 DimensionType dimensionTypeFromStr(const std::string &str);
@@ -34,7 +29,7 @@ std::string dimensionTypeToStr(DimensionType dim);
 /**
  * TODO documentation
  */
-class Dimension {
+class DimensionHDF5 : virtual public IDimension {
 
 protected:
 
@@ -43,83 +38,107 @@ protected:
 
 public:
 
-    Dimension(Group group, size_t id);
+    DimensionHDF5(Group group, size_t id);
 
-    Dimension(const Dimension &other);
+
+    DimensionHDF5(const DimensionHDF5 &other);
+
 
     size_t id() const { return dim_id; }
 
-    virtual DimensionType dimensionType() const = 0;
 
-    virtual void swap(Dimension &other);
+    virtual void swap(DimensionHDF5 &other);
 
-    bool operator==(const Dimension &other) const;
 
-    bool operator!=(const Dimension &other) const;
+    bool operator==(const DimensionHDF5 &other) const;
 
-    virtual ~Dimension();
+
+    bool operator!=(const DimensionHDF5 &other) const;
+
+
+    virtual ~DimensionHDF5();
 
 protected:
 
-    void setType();
+    void setType(); // TODO check if this is needed?
+
 };
 
 
 /**
  * TODO documentation
  */
-class SampledDimension : public Dimension {
+class SampledDimensionHDF5 : virtual public ISampledDimension, public DimensionHDF5 {
 
 public:
 
-    SampledDimension(Group group, size_t id);
+    SampledDimensionHDF5(Group group, size_t id);
 
-    SampledDimension(const SampledDimension &other);
+
+    SampledDimensionHDF5(const SampledDimensionHDF5 &other);
+
 
     DimensionType dimensionType() const;
 
+
     std::string label() const;
+
 
     void label(const std::string &label);
 
+
     std::string unit() const;
 
+
     void unit(const std::string &unit);
+
 
     double samplingInterval() const;
 
+
     void samplingInterval(double sampling_interval);
+
 
     double offset() const;
 
+
     void offset(double offset);
 
-    SampledDimension& operator=(const SampledDimension &other);
 
-    virtual ~SampledDimension();
+    SampledDimensionHDF5& operator=(const SampledDimensionHDF5 &other);
+
+
+    virtual ~SampledDimensionHDF5();
+
 };
 
 
 /**
  * TODO documentation
  */
-class SetDimension : public Dimension {
+class SetDimensionHDF5 : virtual public ISetDimension, public DimensionHDF5 {
 
 public:
 
-    SetDimension(Group group, size_t id);
+    SetDimensionHDF5(Group group, size_t id);
 
-    SetDimension(const SetDimension &other);
+
+    SetDimensionHDF5(const SetDimensionHDF5 &other);
+
 
     DimensionType dimensionType() const;
+
 
     std::vector<std::string> labels() const;
 
+
     void labels(const std::vector<std::string> &labels);
 
-    SetDimension& operator=(const SetDimension &other);
 
-    virtual ~SetDimension();
+    SetDimensionHDF5& operator=(const SetDimensionHDF5 &other);
+
+
+    virtual ~SetDimensionHDF5();
 
 };
 
@@ -127,34 +146,46 @@ public:
 /**
  * TODO documentation
  */
-class RangeDimension : public Dimension {
+class RangeDimensionHDF5 : virtual public IRangeDimension, public DimensionHDF5 {
 
 public:
 
-    RangeDimension(Group group, size_t id);
+    RangeDimensionHDF5(Group group, size_t id);
 
-    RangeDimension(const RangeDimension &other);
+
+    RangeDimensionHDF5(const RangeDimensionHDF5 &other);
+
 
     DimensionType dimensionType() const;
 
+
     std::string label() const;
+
 
     void label(const std::string &label);
 
+
     std::string unit() const;
+
 
     void unit(const std::string &unit);
 
+
     std::vector<double> tics() const;
+
 
     void tics(const std::vector<double> &tics);
 
-    RangeDimension& operator=(const RangeDimension &other);
 
-    virtual ~RangeDimension();
+    RangeDimensionHDF5& operator=(const RangeDimensionHDF5 &other);
+
+
+    virtual ~RangeDimensionHDF5();
+
 };
 
 
-} /* namespace pandora */
+} // namespace hdf5
+} // namespace nix
 
-#endif /* PAN_DIMENSION_H_INCLUDED */
+#endif // NIX_DIMENSIONS_HDF5_H

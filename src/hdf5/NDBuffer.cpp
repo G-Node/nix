@@ -7,9 +7,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/NDBuffer.hpp>
+#include <nix/hdf5/NDBuffer.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 NDBuffer::NDBuffer(DataType dtype, PSize dims) : dataType(dtype), extends(dims) {
@@ -50,4 +51,5 @@ size_t NDBuffer::sub2index(const PSize &sub) const {
 }
 
 
-} /* namespace pandora */
+} // namespace hdf5
+} // namespace nix

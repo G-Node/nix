@@ -7,15 +7,16 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PANDORA_NDBUFFER_H
-#define PANDORA_NDBUFFER_H
+#ifndef NIX_NDBUFFER_H
+#define NIX_NDBUFFER_H
 
 #include <vector>
 #include <iostream>
 
-#include <pandora/Charon.hpp>
+#include <nix/hdf5/Charon.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 class NDBuffer {
@@ -119,7 +120,8 @@ public:
 };
 
 
-} //namespace hades
-} //namespace pandora
+} // namespace hades
+} // namespace hdf5
+} // namespace nix
 
-#endif //PANDORA_NDBUFFER_H
+#endif // NIX_NDBUFFER_H

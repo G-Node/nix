@@ -10,20 +10,20 @@
 
 //TODO convenience methods for accessing dimensionality and shape of data
 
+#ifndef NIX_DATA_ARRAY_HDF5_H
+#define NIX_DATA_ARRAY_HDF5_H
+
 #include <memory>
 #include <boost/multi_array.hpp>
 
-#include <pandora/DataSet.hpp>
-#include <pandora/Dimension.hpp>
-#include <pandora/EntityWithSources.hpp>
+#include <nix.hpp>
+#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 
-#ifndef PAN_DATA_ARRAY_H_INCLUDED
-#define PAN_DATA_ARRAY_H_INCLUDED
-
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-class DataArray : public EntityWithSources {
+class DataArrayHDF5 : virtual public IDataArray,  public EntityWithSourcesHDF5 {
 
     static const PSize MIN_CHUNK_SIZE;
     static const PSize MAX_SIZE_1D;
@@ -35,92 +35,52 @@ public:
     /**
      * Copy constructor
      */
-    DataArray(const DataArray &tag);
+    DataArrayHDF5(const DataArrayHDF5 &tag);
 
     /**
      * Standard constructor
      */
-    DataArray(File file, Block block, Group group, const std::string &id);
+    DataArrayHDF5(File file, Block block, Group group, const std::string &id);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    DataArray(File file, Block block, Group group, const std::string &id, time_t time);
+    DataArrayHDF5(File file, Block block, Group group, const std::string &id, time_t time);
 
     //--------------------------------------------------
     // Element getters and setters
     //--------------------------------------------------
 
-    /**
-     * Get the label for the values stored in the DataArray.
-     *
-     * @return string the label
-     */
+
     std::string label() const;
 
-    /**
-     * Set the label for the data stored.
-     *
-     * @param string label
-     */
+
     void label(const std::string &label);
 
 
-    /**
-     * Get the unit of the data stored in this dataArray.
-     *
-     * @return string the unit.
-     */
+
     std::string unit() const;
 
-    /**
-     * Set the unit for the values stored in this DataArray.
-     *
-     * @param string the unit
-     */
+
     void unit(const std::string &unit);
 
 
-    /**
-     * Returns the expansion origin of the calibration polynom.
-     * This is set to 0.0 by default.
-     *
-     * @return double the expansion origin.
-     */
     double expansionOrigin()const;
 
-    /**
-     * Set the expansion origin for the calibration.
-     *
-     * @param double the expansion origin.
-     */
+
     void expansionOrigin(double expansion_origin);
 
-    /**
-     * Set the polynom coefficients for the calibration. By default this is set
-     * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
-     *
-     * @param vector<double> the coefficients
-     */
+
     void polynomCoefficients(std::vector<double> &polynom_coefficients);
 
-    /**
-     * Returns the polynom coefficients.
-     *
-     * @return vector<double> the coefficients.
-     */
+
     std::vector<double> polynomCoefficients() const;
 
     //--------------------------------------------------
     // Methods concerning data access.
     //--------------------------------------------------
 
-    /**
-     * Returns the data stored in the DataArray and applies the calibration.
-     * Output is returned in a boost multi_array.
-     *
-     * @param output argument boost::multi_array<T, dims>
-     */
+
     template<typename T, size_t dims>
     void getData(boost::multi_array<T, dims> &data) const{
         getRawData(data);
@@ -131,11 +91,7 @@ public:
         }
     }
 
-    /**
-     * Returns the data as it is stored. Does not apply the calibration.
-     *
-     * @param output argument boost::multi_array<T, dims>
-     */
+
     template<typename T, size_t dims>
     void getRawData(boost::multi_array<T, dims> &data) const{
         if(group.hasData("data")){
@@ -144,11 +100,7 @@ public:
         }
     }
 
-    /**
-     * Set the rawData that is to be stored in the DataArray.
-     *
-     * @param boost::multi_array<T, dims>
-     */
+
     template<typename T, size_t dims>
     void setRawData(const boost::multi_array<T, dims> &data){
         if (!group.hasData("data")){
@@ -170,11 +122,15 @@ public:
 
     std::vector<std::shared_ptr<Dimension>> dimensions() const;
 
+
     size_t dimensionCount() const;
+
 
     std::shared_ptr<Dimension> getDimension(size_t id) const;
 
+
     std::shared_ptr<Dimension> createDimension(size_t id, DimensionType type);
+
 
     bool removeDimension(size_t id);
 
@@ -182,27 +138,21 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-    /**
-     * Conversion of the data by applying the calibration.
-     */
+
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
-    /**
-     * Assignment operator
-     */
-    DataArray& operator=(const DataArray &other);
+
+    DataArrayHDF5& operator=(const DataArrayHDF5 &other);
 
 
-    /**
-     * Output operator
-     */
-    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+    friend std::ostream& operator<<(std::ostream &out, const DataArrayHDF5 &ent);
 
 
-    ~DataArray();
+    virtual ~DataArrayHDF5();
 };
 
 
-} //namespace pandora
+} // namespace hdf5
+} // namespace nix
 
-#endif // PAN_DATA_ARRAY_H_INCLUDED
+#endif // NIX_DATA_ARRAY_HDF5_H

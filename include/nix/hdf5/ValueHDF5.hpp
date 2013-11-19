@@ -6,15 +6,16 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_VALUE_H_INCLUDE
-#define PAN_VALUE_H_INCLUDE
+#ifndef NIX_VALUE_HDF5_H
+#define NIX_VALUE_HDF5_H
 
 #include <string>
 
-#include <pandora/Group.hpp>
-#include <pandora/File.hpp>
+#include <nix.hpp>
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
+
 
 template<typename T>
 struct FileValue {
@@ -27,7 +28,7 @@ struct FileValue {
 };
 
 template<typename T>
-struct Value {
+struct ValueHDF5 {
     T value;
     double uncertainty;
     std::string reference;
@@ -35,24 +36,24 @@ struct Value {
     std::string encoder;
     std::string checksum;
 
-    Value() {
+    ValueHDF5() {
     }
 
-    Value(const T &val) :
+    ValueHDF5(const T &val) :
         value(val) {
     }
 
-    Value(const T &val, double uc, std::string rf, std::string fn, std::string en, std::string ck) :
+    ValueHDF5(const T &val, double uc, std::string rf, std::string fn, std::string en, std::string ck) :
         value(val), uncertainty(uc), reference(rf), filename(fn), encoder(en), checksum(ck) {
     }
 
-    Value(const FileValue<T> &that) :
+    ValueHDF5(const FileValue<T> &that) :
         value(that.value), uncertainty(that.uncertainty), reference(that.reference), filename(that.filename),
         encoder(that.encoder), checksum(that.checksum) {
     }
 
     template<typename U>
-    Value& operator=(const FileValue<U> &that) {
+    ValueHDF5& operator=(const FileValue<U> &that) {
         value = that.value;
         uncertainty = that.uncertainty;
         filename = that.filename;
@@ -75,7 +76,7 @@ struct Value {
 };
 
 template<> template<typename U>
-FileValue<U> Value<std::string>::toValueBase(const U) const {
+FileValue<U> ValueHDF5<std::string>::toValueBase(const U) const {
     FileValue<U> base;
     base.filename = const_cast<char *> (filename.c_str());
     base.encoder = const_cast<char *> (encoder.c_str());
@@ -86,7 +87,7 @@ FileValue<U> Value<std::string>::toValueBase(const U) const {
 }
 
 template<> template<typename U>
-FileValue<U> Value<bool>::toValueBase(const U) const {
+FileValue<U> ValueHDF5<bool>::toValueBase(const U) const {
     FileValue<U> base;
     base.filename = const_cast<char *> (filename.c_str());
     base.encoder = const_cast<char *> (encoder.c_str());
@@ -99,11 +100,11 @@ FileValue<U> Value<bool>::toValueBase(const U) const {
     return base;
 }
 
-typedef Value<std::string> StringValue;
-typedef Value<double> DoubleValue;
-typedef Value<int64_t> LongValue;
-typedef Value<int32_t> IntValue;
-typedef Value<bool> BoolValue;
+typedef ValueHDF5<std::string> StringValue;
+typedef ValueHDF5<double> DoubleValue;
+typedef ValueHDF5<int64_t> LongValue;
+typedef ValueHDF5<int32_t> IntValue;
+typedef ValueHDF5<bool> BoolValue;
 
 /* **** */
 namespace hades {
@@ -112,23 +113,23 @@ template<typename T>
 H5::DataType ValueToMemtype() {
     TypeSpec<T> spec;
     H5::CompType memtype(sizeof(FileValue<typename TypeSpec<T>::inner_type> ));
-    memtype.insertMember("value", HOFFSET(Value<T>, value), spec.memType);
+    memtype.insertMember("value", HOFFSET(ValueHDF5<T>, value), spec.memType);
 
-    memtype.insertMember("uncertainty", HOFFSET(Value<T>, uncertainty),
+    memtype.insertMember("uncertainty", HOFFSET(ValueHDF5<T>, uncertainty),
                          H5::PredType::NATIVE_DOUBLE);
-    memtype.insertMember("reference", HOFFSET(Value<T>, reference), H5::StrType(
+    memtype.insertMember("reference", HOFFSET(ValueHDF5<T>, reference), H5::StrType(
                              H5::PredType::C_S1, H5T_VARIABLE));
-    memtype.insertMember("filename", HOFFSET(Value<T>, filename), H5::StrType(H5::PredType::C_S1,
+    memtype.insertMember("filename", HOFFSET(ValueHDF5<T>, filename), H5::StrType(H5::PredType::C_S1,
                                                                               H5T_VARIABLE));
-    memtype.insertMember("encoder", HOFFSET(Value<T>, encoder), H5::StrType(H5::PredType::C_S1,
+    memtype.insertMember("encoder", HOFFSET(ValueHDF5<T>, encoder), H5::StrType(H5::PredType::C_S1,
                                                                             H5T_VARIABLE));
-    memtype.insertMember("checksum", HOFFSET(Value<T>, checksum), H5::StrType(H5::PredType::C_S1,
+    memtype.insertMember("checksum", HOFFSET(ValueHDF5<T>, checksum), H5::StrType(H5::PredType::C_S1,
                                                                               H5T_VARIABLE));
     return memtype;
 }
 
 template<typename T>
-struct TypeSpec<Value<T> > {
+struct TypeSpec<ValueHDF5<T> > {
 
     static const bool is_valid = true;
     typedef typename TypeSpec<T>::inner_type inner_type;
@@ -144,12 +145,12 @@ struct TypeSpec<Value<T> > {
 
 
 template<typename T>
-class TypeInfo<std::vector<Value<T> > > {
+class TypeInfo<std::vector<ValueHDF5<T> > > {
 
 public:
 
-    typedef Value<T> element_type;
-    typedef std::vector<Value<T> > myType;
+    typedef ValueHDF5<T> element_type;
+    typedef std::vector<ValueHDF5<T> > myType;
     typedef TypeSpec<element_type> spec_type;
 
     static spec_type type_spec(const myType &value) { return spec_type(); };
@@ -190,13 +191,13 @@ template<
         typename T,
         typename U
         >
-class DataBox<T, Value<U>, typename std::enable_if<std::is_const<T>::value>::type> {
+class DataBox<T, ValueHDF5<U>, typename std::enable_if<std::is_const<T>::value>::type> {
 
 public:
 
     typedef typename std::remove_const<T>::type      vanilla;
     typedef hades::TypeInfo<vanilla>                 type_info_t;
-    typedef typename TypeSpec<Value<U>>::inner_type  inner_type;
+    typedef typename TypeSpec<ValueHDF5<U>>::inner_type  inner_type;
     typedef FileValue<inner_type>                    data_type;
     typedef data_type                               *data_ptr;
 
@@ -204,7 +205,7 @@ public:
     DataBox(T &val) : value(val) {
         size_t nelms = type_info_t::num_elements(value);
         data = new data_type[nelms];
-        const Value<U> *vptr = type_info_t::getData(value);
+        const ValueHDF5<U> *vptr = type_info_t::getData(value);
         for (size_t i = 0; i < nelms; i++) {
             FileValue<inner_type> val;
             val.value = get_inner<inner_type,U>(vptr[i].value);
@@ -236,12 +237,12 @@ template<
         typename T,
         typename U
         >
-class DataBox<T, Value<U>, typename std::enable_if<! std::is_const<T>::value>::type> {
+class DataBox<T, ValueHDF5<U>, typename std::enable_if<! std::is_const<T>::value>::type> {
 
 public:
 
     typedef hades::TypeInfo<T>                       type_info_t;
-    typedef typename TypeSpec<Value<U>>::inner_type  inner_type;
+    typedef typename TypeSpec<ValueHDF5<U>>::inner_type  inner_type;
     typedef FileValue<inner_type>                    data_type;
     typedef data_type                               *data_ptr;
 
@@ -255,14 +256,14 @@ public:
 
     void finish(const H5::DataSpace *space = nullptr) {
         size_t nelms = type_info_t::num_elements(value);
-        Value<U> *vptr = type_info_t::getData(value);
+        ValueHDF5<U> *vptr = type_info_t::getData(value);
 
         for (size_t i = 0; i < nelms; i++) {
             vptr[i] = data[i];
         }
 
         if (space) {
-            TypeSpec<Value<U>> spec;
+            TypeSpec<ValueHDF5<U>> spec;
             H5::DataSet::vlenReclaim(data, spec.memType, *space);
         }
     }
@@ -277,7 +278,8 @@ private:
     T &value;
 };
 
-} //namespace hades
-} //namespace pandora
+} // namespace hades
+} // namespace hdf5
+} // namespace nix
 
-#endif /* VALUE_HPP_ */
+#endif // NIX_VALUE_HDF5_H

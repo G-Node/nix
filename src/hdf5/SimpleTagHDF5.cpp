@@ -6,44 +6,41 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/Util.hpp>
-#include <pandora/DataSet.hpp>
-#include <pandora/SimpleTag.hpp>
-#include <pandora/DataArray.hpp>
-#include <pandora/Representation.hpp>
+#include <nix/hdf5/SimpleTagHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-const PSize SimpleTag::MIN_CHUNK_SIZE = {1};
-const PSize SimpleTag::MAX_SIZE_1D = {H5S_UNLIMITED};
+const PSize SimpleTagHDF5::MIN_CHUNK_SIZE = {1};
+const PSize SimpleTagHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
-SimpleTag::SimpleTag(const SimpleTag &tag)
-    : EntityWithSources(tag.file, tag.block, tag.group, tag.entity_id),
+SimpleTagHDF5::SimpleTagHDF5(const SimpleTag &tag)
+    : EntityWithSourcesHDF5(tag.file, tag.block, tag.group, tag.entity_id),
       references_list(tag.group, "references")
 {
     representation_group = tag.representation_group;
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id)
-    : EntityWithSources(file, block, group, id), references_list(group, "references")
+SimpleTagHDF5::SimpleTagHDF5(File file, const Block block, Group group, const std::string &id)
+    : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
 }
 
 
-SimpleTag::SimpleTag(File file, const Block block, Group group, const std::string &id, time_t time)
-    : EntityWithSources(file, block, group, id, time), references_list(group, "references")
+SimpleTagHDF5::SimpleTagHDF5(File file, const Block block, Group group, const std::string &id, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
 }
 
 
-vector<string> SimpleTag::units() const {
+vector<string> SimpleTagHDF5::units() const {
     vector<string> units;
 
     if (group.hasData("units")) {
@@ -55,7 +52,7 @@ vector<string> SimpleTag::units() const {
 }
 
 
-void SimpleTag::units(vector<string> &units) {
+void SimpleTagHDF5::units(vector<string> &units) {
     if (group.hasData("units")) {
         DataSet ds = group.openData("units");
         ds.extend({units.size()});
@@ -67,7 +64,7 @@ void SimpleTag::units(vector<string> &units) {
 }
 
 
-vector<double> SimpleTag::position() const {
+vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
 
     if (group.hasData("position")) {
@@ -79,7 +76,7 @@ vector<double> SimpleTag::position() const {
 }
 
 
-void SimpleTag::position(const vector<double> &position) {
+void SimpleTagHDF5::position(const vector<double> &position) {
     if (group.hasData("position")) {
         DataSet ds = group.openData("position");
         ds.extend({position.size()});
@@ -91,7 +88,7 @@ void SimpleTag::position(const vector<double> &position) {
 }
 
 
-vector<double> SimpleTag::extent() const {
+vector<double> SimpleTagHDF5::extent() const {
     vector<double> extent;
 
     if (group.hasData("extent")) {
@@ -103,7 +100,7 @@ vector<double> SimpleTag::extent() const {
 }
 
 
-void SimpleTag::extent(const vector<double> &extent) {
+void SimpleTagHDF5::extent(const vector<double> &extent) {
     if (group.hasData("extent")) {
         DataSet ds = group.openData("extent");
         ds.extend({extent.size()});
@@ -116,19 +113,22 @@ void SimpleTag::extent(const vector<double> &extent) {
 
 // Methods concerning references.
 
-bool SimpleTag::hasReference(const DataArray &reference) const {
+bool SimpleTagHDF5::hasReference(const DataArray &reference) const {
     return references_list.has(reference);
 }
 
-bool SimpleTag::hasReference(const std::string &id) const {
+
+bool SimpleTagHDF5::hasReference(const std::string &id) const {
     return references_list.has(id);
 }
 
-size_t SimpleTag::referenceCount() const {
+
+size_t SimpleTagHDF5::referenceCount() const {
     return references_list.count();
 }
 
-DataArray SimpleTag::getReference(const std::string &id) const {
+
+DataArray SimpleTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
         return block.getDataArray(id);
     } else {
@@ -136,7 +136,8 @@ DataArray SimpleTag::getReference(const std::string &id) const {
     }
 }
 
-void SimpleTag::addReference(const DataArray &reference) {
+
+void SimpleTagHDF5::addReference(const DataArray &reference) {
     string reference_id = reference.id();
 
     if (block.hasDataArray(reference_id)) {
@@ -147,11 +148,13 @@ void SimpleTag::addReference(const DataArray &reference) {
     references_list.add(reference_id);
 }
 
-bool SimpleTag::removeReference(const DataArray &reference) {
+
+bool SimpleTagHDF5::removeReference(const DataArray &reference) {
     return references_list.remove(reference);
 }
 
-std::vector<DataArray> SimpleTag::references() const {
+
+std::vector<DataArray> SimpleTagHDF5::references() const {
     vector<string> ids = references_list.get();
     vector<DataArray> refs;
 
@@ -164,7 +167,8 @@ std::vector<DataArray> SimpleTag::references() const {
     return refs;
 }
 
-void SimpleTag::references(const std::vector<DataArray> &references) {
+
+void SimpleTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
 
     for (size_t i = 0; i < references.size(); i++) {
@@ -175,25 +179,30 @@ void SimpleTag::references(const std::vector<DataArray> &references) {
 }
 
 // Methods concerning representations.
-bool SimpleTag::hasRepresentation(const string &id) const{
+
+bool SimpleTagHDF5::hasRepresentation(const string &id) const{
     return representation_group.hasGroup(id);
 }
 
-size_t SimpleTag::representationCount() const{
+
+size_t SimpleTagHDF5::representationCount() const{
     return representation_group.objectCount();
 }
 
-Representation SimpleTag::getRepresentation(const std::string &id) const{
+
+Representation SimpleTagHDF5::getRepresentation(const std::string &id) const{
     return Representation(representation_group.openGroup(id, false), id, this->block);
 }
 
-Representation SimpleTag::getRepresentation(size_t index) const{
+
+Representation SimpleTagHDF5::getRepresentation(size_t index) const{
     string id = representation_group.objectName(index);
     Representation r(representation_group.openGroup(id), id, this->block);
     return r;
 }
 
-std::vector<Representation> SimpleTag::representations() const{
+
+std::vector<Representation> SimpleTagHDF5::representations() const{
     vector<Representation>  representation_obj;
     size_t count = representation_group.objectCount();
     for (size_t i = 0; i < count; i++) {
@@ -204,7 +213,8 @@ std::vector<Representation> SimpleTag::representations() const{
     return representation_obj;
 }
 
-Representation SimpleTag::createRepresentation(DataArray data, LinkType link_type){
+
+Representation SimpleTagHDF5::createRepresentation(DataArray data, LinkType link_type){
     string id = util::createId("representation");
     while(representation_group.hasObject(id))
         id = util::createId("representation");
@@ -214,7 +224,8 @@ Representation SimpleTag::createRepresentation(DataArray data, LinkType link_typ
     return r;
 }
 
-bool SimpleTag::removeRepresentation(const string &id){
+
+bool SimpleTagHDF5::removeRepresentation(const string &id){
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
@@ -225,7 +236,7 @@ bool SimpleTag::removeRepresentation(const string &id){
 
 // Other methods and functions
 
-SimpleTag& SimpleTag::operator=(const SimpleTag &other) {
+SimpleTag& SimpleTagHDF5::operator=(const SimpleTag &other) {
     if (*this != other) {
         this->file = other.file;
         this->block = other.block;
@@ -247,10 +258,11 @@ ostream& operator<<(ostream &out, const SimpleTag &ent) {
 }
 
 
-SimpleTag::~SimpleTag()
+SimpleTagHDF5::~SimpleTagHDF5()
 {
     // TODO Auto-generated destructor stub
 }
 
 
-} /* namespace pandora */
+} // namespace hdf5
+} // namespace nix

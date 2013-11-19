@@ -6,12 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <pandora/DataSet.hpp>
-#include <pandora/Dimension.hpp>
+#include <nix/hdf5/DimensionHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
 DimensionType dimensionTypeFromStr(const string &str) {
@@ -42,142 +42,142 @@ std::string dimensionTypeToStr(DimensionType dim) {
 
 // Implementation of Dimension
 
-Dimension::Dimension(Group group, size_t id)
+DimensionHDF5::DimensionHDF5(Group group, size_t id)
     : group(group), dim_id(id)
 {
 }
 
 
-Dimension::Dimension(const Dimension &other)
+DimensionHDF5::DimensionHDF5(const DimensionHDF5 &other)
     : group(other.group), dim_id(other.dim_id)
 {
 }
 
 
-void Dimension::setType() {
+void DimensionHDF5::setType() {
     group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
 }
 
 
-void Dimension::swap(Dimension &other) {
+void DimensionHDF5::swap(DimensionHDF5 &other) {
     using std::swap;
     swap(group, other.group);
     swap(dim_id, other.dim_id);
 }
 
 
-bool Dimension::operator==(const Dimension &other) const {
+bool DimensionHDF5::operator==(const DimensionHDF5 &other) const {
     return group == other.group;
 }
 
 
-bool Dimension::operator!=(const Dimension &other) const {
+bool DimensionHDF5::operator!=(const DimensionHDF5 &other) const {
     return !(*this == other);
 }
 
 
-Dimension::~Dimension() {}
+DimensionHDF5::~DimensionHDF5() {}
 
 // Implementation of SampledDimension
 
-SampledDimension::SampledDimension(Group group, size_t id)
-    : Dimension(group, id)
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id)
+    : DimensionHDF5(group, id)
 {
     setType();
 }
 
 
-SampledDimension::SampledDimension(const SampledDimension &other)
-    : Dimension(other.group, other.dim_id)
+SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
+    : DimensionHDF5(other.group, other.dim_id)
 {
     setType();
 }
 
 
-DimensionType SampledDimension::dimensionType() const {
+DimensionType SampledDimensionHDF5::dimensionType() const {
     return DimensionType::SAMPLED_DIMENSION;
 }
 
 
-string SampledDimension::label() const {
+string SampledDimensionHDF5::label() const {
     string label;
     group.getAttr("label", label);
     return label;
 }
 
 
-void SampledDimension::label(const string &label) {
+void SampledDimensionHDF5::label(const string &label) {
     group.setAttr("label", label);
 }
 
 
-string SampledDimension::unit() const {
+string SampledDimensionHDF5::unit() const {
     string unit;
     group.getAttr("unit", unit);
     return unit;
 }
 
 
-void SampledDimension::unit(const string &unit) {
+void SampledDimensionHDF5::unit(const string &unit) {
     group.setAttr("unit", unit);
 }
 
 
-double SampledDimension::samplingInterval() const {
+double SampledDimensionHDF5::samplingInterval() const {
     double sampling_interval = 1;
     group.getAttr("sampling_interval", sampling_interval);
     return sampling_interval;
 }
 
 
-void SampledDimension::samplingInterval(double sampling_interval) {
+void SampledDimensionHDF5::samplingInterval(double sampling_interval) {
     group.setAttr("sampling_interval", sampling_interval);
 }
 
 
-double SampledDimension::offset() const {
+double SampledDimensionHDF5::offset() const {
     double offset = 0;
     group.getAttr("offset", offset);
     return offset;
 }
 
 
-void SampledDimension::offset(double offset) {
+void SampledDimensionHDF5::offset(double offset) {
     group.setAttr("offset", offset);
 }
 
 
-SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
-    SampledDimension tmp(other);
+SampledDimensionHDF5& SampledDimensionHDF5::operator=(const SampledDimensionHDF5 &other) {
+    SampledDimensionHDF5 tmp(other);
     swap(tmp);
     return *this;
 }
 
 
-SampledDimension::~SampledDimension() {}
+SampledDimensionHDF5::~SampledDimensionHDF5() {}
 
-// Implementation of SetDimension
+// Implementation of SetDimensionHDF5
 
-SetDimension::SetDimension(Group group, size_t id)
-    : Dimension(group, id)
+SetDimensionHDF5::SetDimensionHDF5(Group group, size_t id)
+    : DimensionHDF5(group, id)
 {
     setType();
 }
 
 
-SetDimension::SetDimension(const SetDimension &other)
-    : Dimension(other.group, other.dim_id)
+SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
+    : DimensionHDF5(other.group, other.dim_id)
 {
     setType();
 }
 
 
-DimensionType SetDimension::dimensionType() const {
+DimensionHDF5Type SetDimensionHDF5::dimensionType() const {
     return DimensionType::SET_DIMENSION;
 }
 
 
-vector<string> SetDimension::labels() const {
+vector<string> SetDimensionHDF5::labels() const {
     vector<string> labels;
 
     if (group.hasData("labels")) {
@@ -189,7 +189,7 @@ vector<string> SetDimension::labels() const {
 }
 
 
-void SetDimension::labels(const vector<string> &labels) {
+void SetDimensionHDF5::labels(const vector<string> &labels) {
     if (group.hasData("labels")) {
         DataSet ds = group.openData("labels");
         ds.extend({labels.size()});
@@ -202,68 +202,68 @@ void SetDimension::labels(const vector<string> &labels) {
 }
 
 
-SetDimension& SetDimension::operator=(const SetDimension &other) {
-    SetDimension tmp(other);
+SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {
+    SetDimensionHDF5 tmp(other);
     swap(tmp);
     return *this;
 }
 
 
-SetDimension::~SetDimension() {}
+SetDimensionHDF5::~SetDimensionHDF5() {}
 
-// Implementation of RangeDimension
+// Implementation of RangeDimensionHDF5
 
-RangeDimension::RangeDimension(Group group, size_t id)
-    : Dimension(group, id)
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id)
+    : DimensionHDF5(group, id)
 {
     setType();
 }
 
 
-RangeDimension::RangeDimension(const RangeDimension &other)
-    : Dimension(other.group, other.dim_id)
+RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
+    : DimensionHDF5(other.group, other.dim_id)
 {
     setType();
 }
 
 
-DimensionType RangeDimension::dimensionType() const {
+DimensionHDF5Type RangeDimensionHDF5::dimensionType() const {
     return DimensionType::RANGE_DIMENSION;
 }
 
 
-string RangeDimension::label() const {
+string RangeDimensionHDF5::label() const {
     string label;
     group.getAttr("label", label);
     return label;
 }
 
 
-void RangeDimension::label(const string &label) {
+void RangeDimensionHDF5::label(const string &label) {
     group.setAttr("label", label);
 }
 
 
-string RangeDimension::unit() const {
+string RangeDimensionHDF5::unit() const {
     string unit;
     group.getAttr("unit", unit);
     return unit;
 }
 
 
-void RangeDimension::unit(const string &unit) {
+void RangeDimensionHDF5::unit(const string &unit) {
     group.setAttr("unit", unit);
 }
 
 
-RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
-    RangeDimension tmp(other);
+RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &other) {
+    RangeDimensionHDF5 tmp(other);
     swap(tmp);
     return *this;
 }
 
 
-vector<double> RangeDimension::tics() const {
+vector<double> RangeDimensionHDF5::tics() const {
     vector<double> tics;
 
     if (group.hasData("tics")) {
@@ -275,7 +275,7 @@ vector<double> RangeDimension::tics() const {
 }
 
 
-void RangeDimension::tics(const vector<double> &tics) {
+void RangeDimensionHDF5::tics(const vector<double> &tics) {
     if (group.hasData("tics")) {
         DataSet ds = group.openData("tics");
         ds.extend({tics.size()});
@@ -287,7 +287,9 @@ void RangeDimension::tics(const vector<double> &tics) {
     }
 }
 
-RangeDimension::~RangeDimension() {}
+RangeDimensionHDF5::~RangeDimensionHDF5() {}
 
-} /* namespace pandora */
+
+} // namespace hdf5
+} // namespace nix
 

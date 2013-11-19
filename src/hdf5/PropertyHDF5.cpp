@@ -1,32 +1,41 @@
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
+
 #include <iostream>
 #include <stdexcept>
 
-#include <pandora/Property.hpp>
+#include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
 
-namespace pandora {
+namespace nix {
+namespace hdf5 {
 
 
-Property::Property(const Property &property)
-    : NamedEntity(property.group, property.entity_id)
+PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
+    : NamedEntityHDF5(property.group, property.entity_id)
 {
 }
 
 
-Property::Property(Group group, const std::string &id)
-    : NamedEntity(group, id)
+PropertyHDF5::PropertyHDF5(Group group, const std::string &id)
+    : NamedEntityHDF5(group, id)
 {
 }
 
 
-Property::Property(Group group,const std::string &id, time_t time)
-    : NamedEntity(group,id,time)
+PropertyHDF5::PropertyHDF5(Group group,const std::string &id, time_t time)
+    : NamedEntityHDF5(group,id,time)
 {
 }
 
 
-void Property::dataType(const string &dataType) {
+void PropertyHDF5::dataType(const string &dataType) {
     string dt = this->dataType();
     if (dt.compare(dataType) == 0) {
         return;
@@ -40,26 +49,26 @@ void Property::dataType(const string &dataType) {
 }
 
 
-string Property::dataType() const {
+string PropertyHDF5::dataType() const {
     string dataType;
     group.getAttr("data_type", dataType);
     return dataType;
 }
 
 
-void Property::mapping(const string &mapping) {
+void PropertyHDF5::mapping(const string &mapping) {
     group.setAttr("mapping", mapping);
 }
 
 
-string Property::mapping() const {
+string PropertyHDF5::mapping() const {
     string mapping;
     group.getAttr("mapping", mapping);
     return mapping;
 }
 
 
-void Property::unit(const string &unit) {
+void PropertyHDF5::unit(const string &unit) {
     if (valueCount() > 0 && this->unit().length() > 0) {
         throw std::runtime_error("Cannot change unit of a not-empty property!");
         return;
@@ -68,14 +77,14 @@ void Property::unit(const string &unit) {
 }
 
 
-string Property::unit() const {
+string PropertyHDF5::unit() const {
     string unit;
     group.getAttr("unit", unit);
     return unit;
 }
 
 
-void Property::removeValue(size_t index){
+void PropertyHDF5::removeValue(size_t index){
     if (group.hasData("values")) {
         if (index >= valueCount()) {
             throw std::runtime_error("Property::stringValue(index): Index out of bounds!");
@@ -85,12 +94,12 @@ void Property::removeValue(size_t index){
 }
 
 
-void Property::removeValues(){
+void PropertyHDF5::removeValues(){
     this->group.removeData("values");
 }
 
 
-bool Property::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) const {
+bool PropertyHDF5::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) const {
     H5::DataType type = dataset.getDataType();
     if (type.getClass() != H5T_COMPOUND) {
         return false;
@@ -103,7 +112,7 @@ bool Property::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) c
 }
 
 
-size_t Property::valueCount() const {
+size_t PropertyHDF5::valueCount() const {
     size_t count = 0;
     if (group.hasData("values")) {
         DataSet dataset = group.openData("values");
@@ -114,16 +123,18 @@ size_t Property::valueCount() const {
 }
 
 
-bool Property::operator==(const Property &other) const {
+bool PropertyHDF5::operator==(const PropertyHDF5 &other) const {
     return entity_id == other.entity_id;
 }
 
-bool Property::operator!=(const Property &other) const {
+
+bool PropertyHDF5::operator!=(const PropertyHDF5 &other) const {
     return entity_id != other.entity_id;
 }
 
 
-Property::~Property() {}
+PropertyHDF5::~PropertyHDF5() {}
 
 
-} // end namespace pandora
+} // namespace hdf5
+} // namespace nix

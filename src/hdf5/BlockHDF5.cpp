@@ -7,6 +7,10 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/BlockHDF5.hpp>
+#include <nix/hdf5/SourceHDF5.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
+#include <nix/hdf5/SimpleTagHDF5.hpp>
+#include <nix/hdf5/DataTag.hpp>
 
 using namespace std;
 
