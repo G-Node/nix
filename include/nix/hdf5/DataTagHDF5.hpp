@@ -16,6 +16,7 @@
 
 #include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include <nix/hdf5/ReferenceList.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -26,23 +27,24 @@ class DataTagHDF5 : virtual public IDataTag, public EntityWithSourcesHDF5 {
 private:
 
     Group representation_group;
-    util::ReferenceList reference_list;
+    ReferenceList reference_list;
 
 public:
 
     DataTagHDF5(const DataTagHDF5 &tag);
 
 
-    DataTagHDF5(File file, Block block, Group group, const std::string &id);
+    DataTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
 
 
-    DataTagHDF5(File file, Block block, Group group, const std::string &id, time_t time);
+    DataTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
+                time_t time);
 
 
     DataArray positions() const;
 
 
-    void positions(const std::string &positionid);
+    void positions(const std::string &id);
 
 
     void positions(const DataArray &positions);
@@ -149,6 +151,9 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+
+    void swap(DataTagHDF5 &other);
 
 
     DataTagHDF5& operator=(const DataTagHDF5 &other);

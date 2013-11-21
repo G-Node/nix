@@ -50,10 +50,12 @@ public:
     RepresentationHDF5(const RepresentationHDF5 &representation);
 
 
-    RepresentationHDF5(Group group, const std::string &id, Block block);
+    RepresentationHDF5(const File &file, const Block &block, const Group &group,
+                       const std::string &id);
 
 
-    RepresentationHDF5(Group group, const std::string &id, time_t time, Block block);
+    RepresentationHDF5(const File &file, const Block &block, const Group &group,
+                       const std::string &id, time_t time);
 
 
     void linkType(LinkType type);

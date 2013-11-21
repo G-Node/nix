@@ -15,6 +15,7 @@
 
 #include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include <nix/hdf5/ReferenceList.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -31,24 +32,25 @@ private:
     static const PSize MAX_SIZE_1D;
 
     Group representation_group;
-    util::ReferenceList references_list;
+    ReferenceList references_list;
 
 public:
 
     /**
      * Copy constructor
      */
-    SimpleTagHDF5(const SimpleTag &tag);
+    SimpleTagHDF5(const SimpleTagHDF5 &tag);
 
     /**
      * Standard constructor
      */
-    SimpleTagHDF5(File file, Block block, Group group, const std::string &id);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    SimpleTagHDF5(File file, Block block, Group group, const std::string &id, time_t time);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
+                  time_t time);
 
 
     std::vector<std::string> units() const;
@@ -124,6 +126,8 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
+    void swap(SimpleTagHDF5 &other);
+
     /**
      * Assignment operator
      */
@@ -137,7 +141,8 @@ public:
     /**
      * Destructor.
      */
-    virtual ~SimpleTag();
+    virtual ~SimpleTagHDF5();
+
 };
 
 

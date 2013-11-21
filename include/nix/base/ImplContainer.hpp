@@ -25,49 +25,58 @@ public:
 
     ImplContainer() {}
 
+
     ImplContainer(T *p_impl)
         : impl_ptr(p_impl)
     {
     }
+
 
     ImplContainer(const std::shared_ptr<T> &p_impl)
         : impl_ptr(p_impl)
     {
     }
 
+
     ImplContainer(const ImplContainer<T> &other)
         : impl_ptr(other.impl_ptr)
     {
     }
 
-    /*
-    std::shared_ptr<T> impl() const {
-        return impl_ptr;
-    }
-    */
 
     virtual ImplContainer<T> &operator=(const ImplContainer<T> &other) {
-        ImplContainer tmp(other);
-
-        swap(*this, tmp);
+        if (*this != other) {
+            ImplContainer tmp(other);
+            swap(tmp);
+        }
         return *this;
     }
+
 
     virtual bool operator==(const ImplContainer<T> &other) {
         return this->impl_ptr == other.impl_ptr;
     }
 
+
     virtual bool operator!=(const ImplContainer<T> &other) {
         return !(*this == other);
     }
 
-    friend void swap(ImplContainer<T> &first, ImplContainer<T> &second) {
+
+    virtual void swap(ImplContainer<T> &second) {
         using std::swap;
 
-        swap(first.impl_ptr, second.impl_ptr);
+        swap(impl_ptr, second.impl_ptr);
     }
 
+
     virtual ~ImplContainer() {}
+
+
+    std::shared_ptr<T> impl() const {
+        return impl_ptr;
+    }
+
 };
 
 

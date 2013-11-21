@@ -34,19 +34,18 @@ public:
     /**
      * Standard constructor
      */
-    SectionHDF5(File file, Group group, const std::string &id);
+    SectionHDF5(const File &file, const Group &group, const std::string &id);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    SectionHDF5(File file, Group group, const std::string &id, time_t time);
+    SectionHDF5(const File &file, const Group &group, const std::string &id, time_t time);
 
 
 
-    //TNode interface
-    //virtual size_type childCount() const;
-    //virtual Section   getChild(size_type index) const;
-
+    //--------------------------------------------------
+    // Attribute getter and setter
+    //--------------------------------------------------
 
     void repository(const std::string &repository);
 
@@ -54,14 +53,12 @@ public:
     std::string repository() const;
 
 
+    // TODO should this thake a section as parameter?
     void link(const std::string &link);
 
 
+    // TODO maybe return a section here (what if there is none)?
     std::string link() const;
-
-    // TODO: how to support includes?!
-    // void include(std::string include);
-    // std::string include() const;
 
 
     void mapping(const std::string &mapping);
@@ -69,63 +66,64 @@ public:
 
     std::string mapping() const;
 
-
-    void parent(const std::string &parent);
-
-
-    std::string parent() const;
+    //--------------------------------------------------
+    // Methods for parent access
+    //--------------------------------------------------
 
 
-    std::vector<Section> sections() const;
+    bool hasParent() const;
 
 
-    bool hasChildren() const;
+    Section parent() const;
+
+    //--------------------------------------------------
+    // Methods for child section access
+    //--------------------------------------------------
 
 
-    Section addSection(const std::string &name, const std::string &type);
+    size_t childCount() const;
 
 
-    bool hasSection(const std::string &id) const;
+    bool hasChild(const std::string &id) const;
 
 
-    bool hasRelatedSection(const std::string &type) const;
+    Section getChild(const std::string &id) const;
 
 
-    std::vector<Section> getRelatedSections(const std::string &type) const;
+
+    std::vector<Section> children() const;
 
 
-    bool removeSection(const std::string &id);
+    Section createChild(const std::string &name, const std::string &type);
 
 
-    std::vector<Property> properties() const;
+    bool removeChild(const std::string &id);
+
+    //--------------------------------------------------
+    // Methods for property access
+    //--------------------------------------------------
 
 
-    std::vector<Property> inheritedProperties() const;
-
-
-    Property getProperty(const std::string &id) const;
-
-
-    Property getPropertyByName(const std::string &name) const;
+    size_t propertyCount() const;
 
 
     bool hasProperty(const std::string &id) const;
 
 
-    bool hasPropertyByName(const std::string &name) const;
+    Property getProperty(const std::string &id) const;
 
 
-    Property addProperty(const std::string &name);
+    std::vector<Property> properties() const;
 
 
-    void removeProperty(const std::string &id);
+    Property createProperty(const std::string &name);
 
 
-    size_t propertyCount() const;
+    bool removeProperty(const std::string &id);
 
-    bool operator==(const Section &other) const;
-
-    bool operator!=(const Section &other) const;
+    //--------------------------------------------------
+    // Ohter methods and operators
+    //--------------------------------------------------
 
     virtual ~SectionHDF5();
 

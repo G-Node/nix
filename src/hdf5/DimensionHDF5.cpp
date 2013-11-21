@@ -16,11 +16,11 @@ namespace hdf5 {
 
 DimensionType dimensionTypeFromStr(const string &str) {
     if (str == "set") {
-        return DimensionType::SET_DIMENSION;
+        return DimensionType::Set;
     } else if (str == "range") {
-        return DimensionType::RANGE_DIMENSION;
+        return DimensionType::Range;
     } else if (str == "sample") {
-        return DimensionType::SAMPLED_DIMENSION;
+        return DimensionType::Sample;
     } else {
         throw runtime_error("Not a valid dimension name");
     }
@@ -29,11 +29,11 @@ DimensionType dimensionTypeFromStr(const string &str) {
 
 std::string dimensionTypeToStr(DimensionType dim) {
     switch (dim) {
-        case DimensionType::SET_DIMENSION:
+        case DimensionType::Set:
             return "set";
-        case DimensionType::RANGE_DIMENSION:
+        case DimensionType::Range:
             return "range";
-        case DimensionType::SAMPLED_DIMENSION:
+        case DimensionType::Sample:
             return "sample";
         default:
             throw runtime_error("Not a valid dimension type");
@@ -78,7 +78,9 @@ bool DimensionHDF5::operator!=(const DimensionHDF5 &other) const {
 
 DimensionHDF5::~DimensionHDF5() {}
 
+//--------------------------------------------------------------
 // Implementation of SampledDimension
+//--------------------------------------------------------------
 
 SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id)
     : DimensionHDF5(group, id)
@@ -95,7 +97,7 @@ SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
 
 
 DimensionType SampledDimensionHDF5::dimensionType() const {
-    return DimensionType::SAMPLED_DIMENSION;
+    return DimensionType::Sample;
 }
 
 
@@ -156,7 +158,9 @@ SampledDimensionHDF5& SampledDimensionHDF5::operator=(const SampledDimensionHDF5
 
 SampledDimensionHDF5::~SampledDimensionHDF5() {}
 
+//--------------------------------------------------------------
 // Implementation of SetDimensionHDF5
+//--------------------------------------------------------------
 
 SetDimensionHDF5::SetDimensionHDF5(Group group, size_t id)
     : DimensionHDF5(group, id)
@@ -172,8 +176,8 @@ SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
 }
 
 
-DimensionHDF5Type SetDimensionHDF5::dimensionType() const {
-    return DimensionType::SET_DIMENSION;
+DimensionType SetDimensionHDF5::dimensionType() const {
+    return DimensionType::Set;
 }
 
 
@@ -211,7 +215,9 @@ SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {
 
 SetDimensionHDF5::~SetDimensionHDF5() {}
 
+//--------------------------------------------------------------
 // Implementation of RangeDimensionHDF5
+//--------------------------------------------------------------
 
 RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id)
     : DimensionHDF5(group, id)
@@ -227,8 +233,8 @@ RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
 }
 
 
-DimensionHDF5Type RangeDimensionHDF5::dimensionType() const {
-    return DimensionType::RANGE_DIMENSION;
+DimensionType RangeDimensionHDF5::dimensionType() const {
+    return DimensionType::Range;
 }
 
 

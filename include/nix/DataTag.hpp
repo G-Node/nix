@@ -10,27 +10,27 @@
 #define NIX_DATA_TAG_H
 
 #include <nix/IDataTag.hpp>
-#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithSources.hpp>
 #include <nix/Representation.hpp>
 
 namespace nix {
 
 
-class DataTag : virtual public IDataTag, public base::NamedEntity<IDataTag> {
+class DataTag : virtual public IDataTag, public base::EntityWithSources<IDataTag> {
 
 public:
 
     DataTag()
-        : NamedEntity()
+        : EntityWithSources()
     {}
 
     DataTag(const DataTag &other)
-        : NamedEntity(other.impl_ptr)
+        : EntityWithSources(other.impl_ptr)
     {
     }
 
     DataTag(const std::shared_ptr<IDataTag> &p_impl)
-        : NamedEntity(p_impl)
+        : EntityWithSources(p_impl)
     {
     }
 

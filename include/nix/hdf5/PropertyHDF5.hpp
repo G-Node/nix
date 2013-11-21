@@ -27,10 +27,10 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(Group group,const std::string &id);
+    PropertyHDF5(const File &file, const Group &group,const std::string &id);
 
 
-    PropertyHDF5(Group group,const std::string &id, time_t time);
+    PropertyHDF5(const File &file, const Group &group,const std::string &id, time_t time);
 
 
     void include(const std::string &include);
@@ -118,8 +118,8 @@ void PropertyHDF5::addValue(const Value<T> &value) {
 
     PSize start;
     DataSet ds((H5::DataSet()));
-    if (group.hasData("values")) {
-        ds = group.openData("values");
+    if (group().hasData("values")) {
+        ds = group().openData("values");
         PSize size = ds.size();
         PSize newSize = size + 1;
         ds.extend(newSize);
@@ -129,7 +129,7 @@ void PropertyHDF5::addValue(const Value<T> &value) {
         PSize size = {1};
         PSize maxsize = {H5S_UNLIMITED};
         PSize chunks = DataSet::guessChunking(size, DataType::Double);
-        ds = DataSet::create(group.h5Group(), charon.getFileType(),  "values", size, &maxsize, &chunks);
+        ds = DataSet::create(group().h5Group(), charon.getFileType(),  "values", size, &maxsize, &chunks);
         start = {0};
     }
 
@@ -142,11 +142,11 @@ void PropertyHDF5::addValue(const Value<T> &value) {
 
 template<typename T>
 void PropertyHDF5::value(size_t index, Value<T> &value) const {
-    if (group.hasData("values")) {
+    if (group().hasData("values")) {
         if (index >= valueCount()) {
             throw std::runtime_error("PropertyHDF5::stringValue(index): Index out of bounds!");
         }
-        DataSet dataset = group.openData("values");
+        DataSet dataset = group().openData("values");
 
         //    ValueInfo<T> info;
         //    if (!checkDataType(dataset, info.h5class)) {

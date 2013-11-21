@@ -6,7 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
+
 #include <nix/hdf5/DataArrayHDF5.hpp>
+#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DimensionHDF5.hpp>
 
 using namespace std;
 
@@ -18,45 +22,24 @@ const PSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
 const PSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
-DataArrayHDF5::DataArray(const DataArray &data_array)
-    : EntityWithSources(data_array.file, data_array.block, data_array.group, data_array.entity_id)
+DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
+    : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id()),
+      dimension_group(data_array.dimension_group)
 {
-    dimension_group = data_array.dimension_group;
-    vector<double> pcs = data_array.polynomCoefficients();
-    polynomCoefficients(pcs);
-    expansionOrigin(data_array.expansionOrigin());
 }
 
 
-DataArrayHDF5::DataArray(File file, const Block block, Group group, const string &id)
-    : EntityWithSources(file, block, group, id)
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, const string &id)
+    : EntityWithSourcesHDF5(file, block, group, id)
 {
-    dimension_group = group.openGroup("dimensions");
-
-    if (!group.hasAttr("polynom_coefficients")) {
-        vector<double> pc = {0,1};
-        polynomCoefficients(pc);
-    }
-
-    if (!group.hasAttr("expansion_origin")) {
-        expansionOrigin(0);
-    }
+    dimension_group = this->group().openGroup("dimensions", true);
 }
 
 
-DataArrayHDF5::DataArray(File file, const Block block, Group group, const string &id, time_t time)
-    : EntityWithSources(file, block, group, id, time)
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, const string &id, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, time)
 {
-    dimension_group = group.openGroup("dimensions");
-
-    if (!group.hasAttr("polynom_coefficients")) {
-        vector<double> pc = {0,1};
-        polynomCoefficients(pc);
-    }
-
-    if (!group.hasAttr("expansion_origin")) {
-        expansionOrigin(0);
-    }
+    dimension_group = this->group().openGroup("dimensions", true);
 }
 
 //--------------------------------------------------
@@ -65,48 +48,49 @@ DataArrayHDF5::DataArray(File file, const Block block, Group group, const string
 
 string DataArrayHDF5::label() const {
     string value;
-    group.getAttr("label", value);
+    group().getAttr("label", value);
     return value;
 }
 
 
 void DataArrayHDF5::label(const string &label) {
-    group.setAttr("label", label);
+    group().setAttr("label", label);
     forceUpdatedAt();
 }
 
 
 string DataArrayHDF5::unit() const {
     string value;
-    group.getAttr("unit", value);
+    group().getAttr("unit", value);
     return value;
 }
 
 
 void DataArrayHDF5::unit(const string &unit) {
-    group.setAttr("unit", unit);
+    group().setAttr("unit", unit);
     forceUpdatedAt();
 }
 
 
+// TODO use defaults
 double DataArrayHDF5::expansionOrigin() const {
     double expansion_origin;
-    group.getAttr("expansion_origin", expansion_origin);
+    group().getAttr("expansion_origin", expansion_origin);
     return expansion_origin;
 }
 
 
 void DataArrayHDF5::expansionOrigin(double expansion_origin) {
-    group.setAttr("expansion_origin", expansion_origin);
+    group().setAttr("expansion_origin", expansion_origin);
     forceUpdatedAt();
 }
 
-
+// TODO use defaults
 vector<double> DataArrayHDF5::polynomCoefficients()const{
     vector<double> polynom_coefficients;
 
-    if (group.hasData("polynom_coefficients")) {
-        DataSet ds = group.openData("polynom_coefficients");
+    if (group().hasData("polynom_coefficients")) {
+        DataSet ds = group().openData("polynom_coefficients");
         ds.read(polynom_coefficients, true);
     }
 
@@ -115,12 +99,12 @@ vector<double> DataArrayHDF5::polynomCoefficients()const{
 
 
 void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
-    if (group.hasData("polynom_coefficients")) {
-        DataSet ds = group.openData("polynom_coefficients");
+    if (group().hasData("polynom_coefficients")) {
+        DataSet ds = group().openData("polynom_coefficients");
         ds.extend({coefficients.size()});
         ds.write(coefficients);
     } else {
-        DataSet ds = DataSet::create(group.h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
+        DataSet ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
         ds.write(coefficients);
     }
     forceUpdatedAt();
@@ -130,40 +114,42 @@ void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
 // Methods concerning dimensions
 //--------------------------------------------------
 
-vector<shared_ptr<Dimension>> DataArrayHDF5::dimensions() const {
-                              vector<shared_ptr<Dimension>> dimensions;
 
-                              size_t dim_count = dimensionCount();
-                              for (size_t i = 0; i < dim_count; i++) {
-    size_t dim_id = i + 1;
-    string str_id = util::numToStr(dim_id);
+vector<Dimension> DataArrayHDF5::dimensions() const {
 
-    if (dimension_group.hasGroup(str_id)) {
-        Group dim_group = dimension_group.openGroup(str_id, false);
-        string dim_type_name;
-        dim_group.getAttr("dimension_type", dim_type_name);
-        DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
+    vector<Dimension> dimensions;
+    size_t dim_count = dimensionCount();
 
-        shared_ptr<Dimension> dim;
-        switch (dim_type) {
-            case DimensionType::SET_DIMENSION:
-                dim = shared_ptr<Dimension>(new SetDimension(dim_group, dim_id));
-                break;
-            case DimensionType::RANGE_DIMENSION:
-                dim = shared_ptr<Dimension>(new RangeDimension(dim_group, dim_id));
-                break;
-            case DimensionType::SAMPLED_DIMENSION:
-                dim = shared_ptr<Dimension>(new SampledDimension(dim_group, dim_id));
-                break;
-            default:
+    for (size_t i = 0; i < dim_count; i++) {
+        size_t dim_id = i + 1;
+        string str_id = util::numToStr(dim_id);
+
+        if (dimension_group.hasGroup(str_id)) {
+            Group dim_group = dimension_group.openGroup(str_id, false);
+            string dim_type_name;
+            dim_group.getAttr("dimension_type", dim_type_name);
+            DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
+
+            Dimension dim;
+
+            if (dim_type == DimensionType::Set ) {
+                shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, dim_id));
+                dim = SetDimension(tmp);
+            } else if (dim_type == DimensionType::Range) {
+                shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, dim_id));
+                dim = RangeDimension(tmp);
+            } else if (dim_type == DimensionType::Sample) {
+                shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, dim_id));
+                dim = SampledDimension(tmp);
+            } else {
                 throw runtime_error("Invalid dimension type");
+            }
+
+            dimensions.push_back(dim);
         }
-
-        dimensions.push_back(dim);
     }
-}
 
-return dimensions;
+    return dimensions;
 }
 
 
@@ -172,9 +158,8 @@ size_t DataArrayHDF5::dimensionCount() const {
 }
 
 
-shared_ptr<Dimension> DataArrayHDF5::getDimension(size_t id) const {
+Dimension DataArrayHDF5::getDimension(size_t id) const {
     string str_id = util::numToStr(id);
-    shared_ptr<Dimension> dim;
 
     if (dimension_group.hasGroup(str_id)) {
         Group dim_group = dimension_group.openGroup(str_id, false);
@@ -182,26 +167,29 @@ shared_ptr<Dimension> DataArrayHDF5::getDimension(size_t id) const {
         dim_group.getAttr("dimension_type", dim_type_name);
         DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
 
-        switch (dim_type) {
-            case DimensionType::SET_DIMENSION:
-                dim = shared_ptr<Dimension>(new SetDimension(dim_group, id));
-                break;
-            case DimensionType::RANGE_DIMENSION:
-                dim = shared_ptr<Dimension>(new RangeDimension(dim_group, id));
-                break;
-            case DimensionType::SAMPLED_DIMENSION:
-                dim = shared_ptr<Dimension>(new SampledDimension(dim_group, id));
-                break;
-            default:
-                throw runtime_error("Invalid dimension type");
-        }
-    }
+        Dimension dim;
 
-    return dim;
+        if (dim_type == DimensionType::Set ) {
+            shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, id));
+            dim = SetDimension(tmp);
+        } else if (dim_type == DimensionType::Range) {
+            shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, id));
+            dim = RangeDimension(tmp);
+        } else if (dim_type == DimensionType::Sample) {
+            shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, id));
+            dim = SampledDimension(tmp);
+        } else {
+            throw runtime_error("Invalid dimension type");
+        }
+
+        return dim;
+    } else {
+        throw runtime_error("No such dimension");
+    }
 }
 
 
-shared_ptr<Dimension> DataArrayHDF5::createDimension(size_t id, DimensionType type) {
+Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
     size_t dim_count = dimensionCount();
 
     if (id <= dim_count) {
@@ -215,20 +203,19 @@ shared_ptr<Dimension> DataArrayHDF5::createDimension(size_t id, DimensionType ty
     }
 
     Group dim_group = dimension_group.openGroup(str_id, true);
-    shared_ptr<Dimension> dim;
+    Dimension dim;
 
-    switch (type) {
-        case DimensionType::SET_DIMENSION:
-            dim = shared_ptr<Dimension>(new SetDimension(dim_group, id));
-            break;
-        case DimensionType::RANGE_DIMENSION:
-            dim = shared_ptr<Dimension>(new RangeDimension(dim_group, id));
-            break;
-        case DimensionType::SAMPLED_DIMENSION:
-            dim = shared_ptr<Dimension>(new SampledDimension(dim_group, id));
-            break;
-        default:
-            throw runtime_error("Invalid dimension type");
+    if (type == DimensionType::Set ) {
+        shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, id));
+        dim = SetDimension(tmp);
+    } else if (type == DimensionType::Range) {
+        shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, id));
+        dim = RangeDimension(tmp);
+    } else if (type == DimensionType::Sample) {
+        shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, id));
+        dim = SampledDimension(tmp);
+    } else {
+        throw runtime_error("Invalid dimension type");
     }
 
     return dim;
@@ -271,15 +258,20 @@ double DataArrayHDF5::applyPolynomial(std::vector<double> &coefficients, double 
 }
 
 
-DataArrayHDF5& DataArrayHDF5::operator=(const DataArray &other) {
+void DataArrayHDF5::swap(DataArrayHDF5 &other) {
+    using std::swap;
+
+    EntityWithSourcesHDF5::swap(other);
+    swap(dimension_group, other.dimension_group);
+}
+
+
+DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
     if (*this != other) {
-        this->file = other.file;
-        this->block = other.block;
-        this->group = other.group;
-        this->entity_id = other.entity_id;
-        this->dimension_group = other.dimension_group;
-        this->sources_refs = other.sources_refs;
+        DataArrayHDF5 tmp(other);
+        swap(tmp);
     }
+
     return *this;
 }
 

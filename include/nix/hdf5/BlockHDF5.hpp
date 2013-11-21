@@ -21,7 +21,8 @@ namespace hdf5 {
 /**
  * Class that represents a pandora Block entity.
  */
-class BlockHDF5 : virtual public IBlock, public EntityWithMetadataHDF5 {
+class BlockHDF5 : virtual public IBlock, public EntityWithMetadataHDF5,
+                  public std::enable_shared_from_this<BlockHDF5> {
 
 private:
 
@@ -176,6 +177,10 @@ public:
 
 
     virtual ~BlockHDF5();
+
+private:
+
+    Block block() const;
 
 };
 

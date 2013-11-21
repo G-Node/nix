@@ -31,8 +31,8 @@ private:
 
 public:
 
-    //typedefs
-    using size_type = TNode<Source>::size_type;
+    //TODO typedefs
+    //using size_type = TNode<Source>::size_type;
 
 
     /**
@@ -52,8 +52,9 @@ public:
 
 
     //TNode interface
-    virtual size_type childCount() const;
-    virtual Source    getChild(size_type index) const;
+    // TODO implement Node features
+    //virtual size_type childCount() const;
+    //virtual Source    getChild(size_type index) const;
 
 
     //--------------------------------------------------
@@ -84,6 +85,10 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+
+    void swap(SourceHDF5 &other);
+
 
     /**
      * Assignment operator.

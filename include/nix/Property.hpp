@@ -40,6 +40,8 @@ public:
     // Attribute getter and setter
     //--------------------------------------------------
 
+    // TODO implement include
+    /*
     void include(const std::string &include) {
         impl_ptr->include(include);
     }
@@ -48,6 +50,7 @@ public:
     std::string include() const {
         return impl_ptr->include();
     }
+    */
 
 
     void mapping(const std::string &mapping) {

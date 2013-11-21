@@ -6,7 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/RepresentationHDF5.hpp>
 
 using namespace std;
 
@@ -15,70 +17,74 @@ namespace hdf5 {
 
 
 DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
-    : EntityWithSources(tag.file, tag.block, tag.group, tag.entity_id),reference_list(tag.reference_list)
+    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
+      reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
 }
 
 
-DataTagHDF5::DataTagHDF5(File file, const Block block, Group group, const std::string &id)
-    : EntityWithSources(file, block, group, id), reference_list(group, "references")
+DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, const string &id)
+    : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
 {
-    representation_group = group.openGroup("representations");
+    representation_group = this->group().openGroup("representations");
 }
 
 
-DataTagHDF5::DataTagHDF5(File file, const Block block, Group group, const std::string &id, time_t time)
-    : EntityWithSources(file, block, group, id, time),reference_list(group, "references")
+DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group,
+                         const std::string &id, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, time), reference_list(group, "references")
 {
-    representation_group = group.openGroup("representations");
+    representation_group = this->group().openGroup("representations");
 }
 
 
 DataArray DataTagHDF5::positions() const {
-    std::string posId;
-    group.getAttr("positions", posId);
-    if(posId.length() > 0){
-        if(this->block.hasDataArray(posId))
-            return this->block.getDataArray(posId);
+    string id;
+    group().getAttr("positions", id);
+
+    if(id.length() > 0 && block().hasDataArray(id)){
+        return block().getDataArray(id);
     }
-    throw runtime_error("Unable to find DataArray with id " + posId + "!");
+
+    throw runtime_error("Unable to find DataArray with id " + id + "!");
 }
 
 
-void DataTagHDF5::positions(const DataArray &positions) {
-    this->positions(positions.id());
+void DataTagHDF5::positions(const DataArray &pos) {
+    positions(pos.id());
 }
 
 
-void DataTagHDF5::positions(const string &positionsId) {
-    if(!this->block.hasDataArray(positionsId)){
+void DataTagHDF5::positions(const string &id) {
+    if(!block().hasDataArray(id)){
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
     }
     else{
-        if(this->hasExtents()){
-            DataArray pos = this->block.getDataArray(positionsId);
-            DataArray ext = this->extents();
+        if(hasExtents()){
+            DataArray pos = block().getDataArray(id);
+            DataArray ext = extents();
             if(!checkDimensions(ext,pos))
                 throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
         }
-        group.setAttr("positions", positionsId);
+        group().setAttr("positions", id);
         forceUpdatedAt();
     }
 }
 
+
 bool DataTagHDF5::hasPositions() const{
     std::string posId;
-    group.getAttr("positions", posId);
+    group().getAttr("positions", posId);
     return (posId.length() > 0);
 }
 
+
 DataArray DataTagHDF5::extents() const {
     std::string extId;
-    group.getAttr("extents", extId);
-    if(extId.length() > 0){
-        if(this->block.hasDataArray(extId))
-            return this->block.getDataArray(extId);
+    group().getAttr("extents", extId);
+    if(extId.length() > 0 && block().hasDataArray(extId)){
+        return block().getDataArray(extId);
     }
     throw runtime_error("Unable to find DataArray with id " + extId + "!");
 }
@@ -90,17 +96,17 @@ void DataTagHDF5::extents(const DataArray &extent) {
 
 
 void DataTagHDF5::extents(const string &extentsId) {
-    if(!this->block.hasDataArray(extentsId)){
+    if(!block().hasDataArray(extentsId)){
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
     }
     else{
-        if(this->hasPositions()){
-            DataArray ext = this->block.getDataArray(extentsId);
-            DataArray pos = this->positions();
+        if(hasPositions()){
+            DataArray ext = block().getDataArray(extentsId);
+            DataArray pos = positions();
             if(!checkDimensions(ext,pos))
                 throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
         }
-        group.setAttr("extents", extentsId);
+        group().setAttr("extents", extentsId);
         forceUpdatedAt();
     }
 }
@@ -108,7 +114,7 @@ void DataTagHDF5::extents(const string &extentsId) {
 
 bool DataTagHDF5::hasExtents() const{
     std::string extId;
-    group.getAttr("extents", extId);
+    group().getAttr("extents", extId);
     return (extId.length() > 0);
 }
 
@@ -131,7 +137,7 @@ size_t DataTagHDF5::referenceCount() const {
 
 DataArray DataTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
-        return block.getDataArray(id);
+        return block().getDataArray(id);
     } else {
         throw runtime_error("No reference with id: " + id);
     }
@@ -139,12 +145,12 @@ DataArray DataTagHDF5::getReference(const std::string &id) const {
 
 
 void DataTagHDF5::addReference(const DataArray &reference) {
-    reference_list.add(reference);
+    reference_list.add(reference.id());
 }
 
 
 bool DataTagHDF5::removeReference(const DataArray &reference) {
-    return reference_list.remove(reference);
+    return reference_list.remove(reference.id());
 }
 
 
@@ -153,8 +159,8 @@ std::vector<DataArray> DataTagHDF5::references() const {
     vector<DataArray> data_obj;
 
     for (size_t i = 0; i < refs.size(); i++) {
-        if (block.hasDataArray(refs[i])) {
-            data_obj.push_back(block.getDataArray(refs[i]));
+        if (block().hasDataArray(refs[i])) {
+            data_obj.push_back(block().getDataArray(refs[i]));
         } else {
             // TODO ???
         }
@@ -185,15 +191,20 @@ size_t DataTagHDF5::representationCount() const{
 }
 
 
-Representation DataTagHDF5::getRepresentation(const std::string &id) const{
-    return Representation(representation_group.openGroup(id, false), id, this->block);
+Representation DataTagHDF5::getRepresentation(const std::string &id) const  {
+    Group group = representation_group.openGroup(id, false);
+    shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
+
+    return Representation(tmp);
 }
 
 
 Representation DataTagHDF5::getRepresentation(size_t index) const{
     string id = representation_group.objectName(index);
-    Representation r(representation_group.openGroup(id), id, this->block);
-    return r;
+    Group group = representation_group.openGroup(id, false);
+    shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
+
+    return Representation(tmp);
 }
 
 
@@ -202,21 +213,26 @@ std::vector<Representation> DataTagHDF5::representations() const{
     size_t count = representation_group.objectCount();
     for (size_t i = 0; i < count; i++) {
         string id = representation_group.objectName(i);
-        Representation r(representation_group.openGroup(id, false), id, this->block);
-        representation_obj.push_back(r);
+        Group group = representation_group.openGroup(id, false);
+        shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
+
+        representation_obj.push_back(Representation(tmp));
     }
     return representation_obj;
 }
 
 
-Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_type){
+Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_type) {
     string id = util::createId("representation");
     while(representation_group.hasObject(id))
         id = util::createId("representation");
-    Representation r(representation_group.openGroup(id, true), id, this->block);
-    r.linkType(link_type);
-    r.data(data);
-    return r;
+
+    Group group = representation_group.openGroup(id, true);
+    shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
+    tmp->linkType(link_type);
+    tmp->data(data);
+
+    return Representation(tmp);
 }
 
 
@@ -231,15 +247,20 @@ bool DataTagHDF5::removeRepresentation(const string &id){
 
 // Other methods and functions
 
-DataTag& DataTagHDF5::operator=(const DataTagHDF5 &other) {
+
+void DataTagHDF5::swap(DataTagHDF5 &other) {
+    using std::swap;
+
+    EntityWithSourcesHDF5::swap(other);
+    swap(representation_group, other.representation_group);
+    swap(reference_list, other.reference_list);
+}
+
+
+DataTagHDF5& DataTagHDF5::operator=(const DataTagHDF5 &other) {
     if (*this != other) {
-        this->file = other.file;
-        this->block = other.block;
-        this->group = other.group;
-        this->entity_id = other.entity_id;
-        this->representation_group = other.representation_group;
-        this->sources_refs = other.sources_refs;
-        this->reference_list = other.reference_list;
+        DataTagHDF5 tmp(other);
+        swap(tmp);
     }
     return *this;
 }

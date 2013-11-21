@@ -51,6 +51,7 @@ public:
      *
      * @param the id of the linked section.
      */
+    // TODO should this thake a section as parameter?
     virtual void link(const std::string &link) = 0;
 
     /**
@@ -58,6 +59,7 @@ public:
      *
      * @return string the id.
      */
+    // TODO maybe return a section here (what if there is none)?
     virtual std::string link() const = 0;
 
     // TODO: how to support includes?!
@@ -78,37 +80,68 @@ public:
      */
     virtual std::string mapping() const = 0;
 
-    // TODO work with sections here
+    //--------------------------------------------------
+    // Methods for parent access
+    //--------------------------------------------------
+
+    /**
+     * Test if the section has a parent.
+     *
+     * @return True if the section has a parent, false otherwise.
+     */
+    virtual bool hasParent() const = 0;
 
     /**
      * Sets the id of the parent section.
      *
      * @param string the id.
      */
-    virtual void parent(const std::string &parent) = 0;
+    // TODO implement (requires moving of the group in hdf5)
+    //virtual void parent(const Section &parent) = 0;
 
     /**
      * Returns the parent information.
      *
      * @return string
      */
-    virtual std::string parent() const = 0;
+    virtual Section parent() const = 0;
 
     //--------------------------------------------------
     // Methods for child section access
     //--------------------------------------------------
 
     /**
+     * Return the number of children in this section.
+     *
+     * @return The number of child sections.
+     */
+    virtual size_t childCount() const = 0;
+
+    /**
+     *
+     *
+     * @param id    The id of requested section.
+     *
+     * @return bool
+     */
+    virtual bool hasChild(const std::string &id) const = 0;
+
+    /**
+     * Get a specific child by id.
+     *
+     * @param id    The id of the child.
+     *
+     * @return The child section.
+     */
+    virtual Section getChild(const std::string &id) const = 0;
+
+
+    /**
      * Returns the subsections
      *
      * @return vector of direct subsections.
      */
-    virtual std::vector<Section> sections() const = 0;
-
-    /**
-     * Returns whether or not this section has child sections.
-     */
-    virtual bool hasChildren() const = 0;
+    virtual std::vector<Section> children() const = 0;
 
     /**
      *  Adds a new child section.
@@ -118,18 +151,7 @@ public:
      *
      *  @return the new section.
      */
-    virtual Section addSection(const std::string &name, const std::string &type) = 0;
-
-    /**
-     * Performs a search on the tree starting at this section and returns whether a section with
-     * the specified id exists.
-     *
-     * @param id: string the id of requested section
-     * @param depth: uint (default 0). The depth of the search. 0 indicates unlimited depth.
-     *
-     * @return bool
-     */
-    virtual bool hasSection(const std::string &id) const = 0;
+    virtual Section createChild(const std::string &name, const std::string &type) = 0;
 
     /**
      * Determines whether this section has a related section of the specified type.
@@ -138,7 +160,8 @@ public:
      *
      * @return bool
      */
-    virtual bool hasRelatedSection(const std::string &type) const = 0;
+    // TODO implement later (maybe only implement on Section not ISection)
+    //virtual bool hasRelatedSection(const std::string &type) const = 0;
 
     /**
      * Returns the sections of the given type found on the same level of relation.
@@ -147,7 +170,8 @@ public:
      *
      * @return vector<Section> the related sections
      */
-    virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
+    // TODO implement later (maybe only implement on Section not ISection)
+    //virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
 
     /**
      * Remove a subsection from this Section.
@@ -156,26 +180,25 @@ public:
      *
      * @return bool successful or not
      */
-    virtual bool removeSection(const std::string &id) = 0;
+    virtual bool removeChild(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods for property access
     //--------------------------------------------------
 
     /**
-     * Returns all Properties.
+     * Returns the number of properties of this section.
      *
-     * @return vector<Property>
+     * @return The number of Properties
      */
-    virtual std::vector<Property> properties() const = 0;
+    virtual size_t propertyCount() const = 0;
 
     /**
-     * Returns all Properties inherited from a linked section.
-     * This list may include Properties that are locally overridden.
+     * Checks if a Property with this id exists in this Section.
      *
-     * @return vector<Property>
+     * @param string the id.
      */
-    virtual std::vector<Property> inheritedProperties() const = 0;
+    virtual bool hasProperty(const std::string &id) const = 0;
 
     /**
      * Returns the Property identified by id.
@@ -194,21 +217,32 @@ public:
      *
      * @return Property
      */
-    virtual Property getPropertyByName(const std::string &name) const = 0;
+    // TODO implement later (maybe only implement on Section not ISection)
+    // virtual Property getPropertyByName(const std::string &name) const = 0;
 
     /**
-     * Checks if a Property with this id exists in this Section.
+     * Returns all Properties.
      *
-     * @param string the id.
+     * @return vector<Property>
      */
-    virtual bool hasProperty(const std::string &id) const = 0;
+    virtual std::vector<Property> properties() const = 0;
+
+    /**
+     * Returns all Properties inherited from a linked section.
+     * This list may include Properties that are locally overridden.
+     *
+     * @return vector<Property>
+     */
+    // TODO implement later (maybe only implement on Section not ISection)
+    // virtual std::vector<Property> inheritedProperties() const = 0;
 
     /**
      * Checks if a Property with the given name exists.
      *
      * @param string the name
      */
-    virtual bool hasPropertyByName(const std::string &name) const = 0;
+    // TODO implement later (maybe only implement on Section not ISection)
+    // virtual bool hasPropertyByName(const std::string &name) const = 0;
 
     /**
      * Add a Property to this section.
@@ -217,14 +251,14 @@ public:
      *
      * @return the Property
      */
-    virtual Property addProperty(const std::string &name) = 0;
+    virtual Property createProperty(const std::string &name) = 0;
 
     /**
      * Removes the Property that is identified by the id.#
      *
      * @param string the id.
      */
-    virtual void removeProperty(const std::string &id) = 0;
+    virtual bool removeProperty(const std::string &id) = 0;
 
 };
 

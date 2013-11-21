@@ -11,28 +11,28 @@
 
 #include <boost/multi_array.hpp>
 
-#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
 #include <nix/IDataArray.hpp>
 #include <nix/Dimensions.hpp>
 
 namespace nix {
 
 
-class DataArray : virtual public IDataArray, public base::EntityWithMetadata<IDataArray> {
+class DataArray : virtual public IDataArray, public base::EntityWithSources<IDataArray> {
 
 public:
 
     DataArray()
-        : EntityWithMetadata()
+        : EntityWithSources()
     {}
 
     DataArray(const DataArray &other)
-        : EntityWithMetadata(other.impl_ptr)
+        : EntityWithSources(other.impl_ptr)
     {
     }
 
     DataArray(const std::shared_ptr<IDataArray> &p_impl)
-        : EntityWithMetadata(p_impl)
+        : EntityWithSources(p_impl)
     {
     }
 
@@ -145,7 +145,8 @@ public:
      */
     template<typename U, size_t dims>
     void getRawData(boost::multi_array<U, dims> &data) const{
-        impl_ptr->getRawData<U, dims>(data);
+        // TODO implement
+        // impl_ptr->getRawData<U, dims>(data);
     }
 
     /**
@@ -155,15 +156,15 @@ public:
      */
     template<typename U, size_t dims>
     void setRawData(const boost::multi_array<U, dims> &data) {
-        impl_ptr->setRawData<U, dims>(data);
+        // TODO implement
+        // impl_ptr->setRawData<U, dims>(data);
     }
 
     //--------------------------------------------------
     // Methods concerning dimensions
-    // TODO alter return values of signatures.
     //--------------------------------------------------
 
-    std::vector<std::shared_ptr<Dimension>> dimensions() const {
+    std::vector<Dimension> dimensions() const {
         return impl_ptr->dimensions();
     }
 
@@ -173,11 +174,11 @@ public:
     }
 
 
-    std::shared_ptr<Dimension> getDimension(size_t id) const {
+    Dimension getDimension(size_t id) const {
         return impl_ptr->getDimension(id);
     }
 
-    std::shared_ptr<Dimension> createDimension(size_t id, DimensionType type) {
+    Dimension createDimension(size_t id, DimensionType type) {
         return impl_ptr->createDimension(id, type);
     }
 

@@ -43,7 +43,7 @@ bool EntityWithSourcesHDF5::hasSource(const string &id) const {
 }
 
 
-Source EntityWithSourcesHDF5::getSource(const std::string id) const{
+Source EntityWithSourcesHDF5::getSource(const string &id) const{
     return entity_block.getSource(id);
 }
 
@@ -78,8 +78,17 @@ void EntityWithSourcesHDF5::sources(const vector<Source> &s) {
 }
 
 
-bool EntityWithSourcesHDF5::removeSource(const Source &source) {
-    return sources_refs.remove(source.id());
+bool EntityWithSourcesHDF5::removeSource(const string &id) {
+    return sources_refs.remove(id);
+}
+
+
+void EntityWithSourcesHDF5::swap(EntityWithSourcesHDF5 &other) {
+    using std::swap;
+
+    EntityWithMetadataHDF5::swap(other);
+    swap(entity_block, other.entity_block);
+    swap(sources_refs, other.sources_refs);
 }
 
 

@@ -18,7 +18,7 @@
 namespace nix {
 
 class Dimension;
-enum class DimensionType;
+enum class DimensionType : int;
 
 // TODO inherit from IEntityWithSources
 class IDataArray : virtual public base::IEntityWithSources {
@@ -99,16 +99,16 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    virtual std::vector<std::shared_ptr<Dimension>> dimensions() const = 0;
+    virtual std::vector<Dimension> dimensions() const = 0;
 
 
     virtual size_t dimensionCount() const = 0;
 
 
-    virtual std::shared_ptr<Dimension> getDimension(size_t id) const = 0;
+    virtual Dimension getDimension(size_t id) const = 0;
 
 
-    virtual std::shared_ptr<Dimension> createDimension(size_t id, DimensionType type) = 0;
+    virtual Dimension createDimension(size_t id, DimensionType type) = 0;
 
 
     virtual bool removeDimension(size_t id) = 0;

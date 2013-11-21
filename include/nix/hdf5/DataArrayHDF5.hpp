@@ -25,6 +25,8 @@ namespace hdf5 {
 
 class DataArrayHDF5 : virtual public IDataArray,  public EntityWithSourcesHDF5 {
 
+private:
+
     static const PSize MIN_CHUNK_SIZE;
     static const PSize MAX_SIZE_1D;
 
@@ -40,12 +42,12 @@ public:
     /**
      * Standard constructor
      */
-    DataArrayHDF5(File file, Block block, Group group, const std::string &id);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    DataArrayHDF5(File file, Block block, Group group, const std::string &id, time_t time);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group, const std::string &id, time_t time);
 
     //--------------------------------------------------
     // Element getters and setters
@@ -94,8 +96,8 @@ public:
 
     template<typename T, size_t dims>
     void getRawData(boost::multi_array<T, dims> &data) const{
-        if(group.hasData("data")){
-            DataSet ds = group.openData("data");
+        if(group().hasData("data")){
+            DataSet ds = group().openData("data");
             ds.read(data, true);
         }
     }
@@ -103,15 +105,15 @@ public:
 
     template<typename T, size_t dims>
     void setRawData(const boost::multi_array<T, dims> &data){
-        if (!group.hasData("data")){
+        if (!group().hasData("data")){
             PSize size = {dims};
             PSize maxsize = {H5S_UNLIMITED};
             PSize chunks = {1};
-            DataSet ds(DataSet::create(group.h5Group(), "data", data, &maxsize, &chunks));
+            DataSet ds(DataSet::create(group().h5Group(), "data", data, &maxsize, &chunks));
             ds.write(data);
         }
         else{
-            DataSet ds = group.openData("data");
+            DataSet ds = group().openData("data");
             ds.write(data);
         }
     }
@@ -120,16 +122,16 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    std::vector<std::shared_ptr<Dimension>> dimensions() const;
+    std::vector<Dimension> dimensions() const;
 
 
     size_t dimensionCount() const;
 
 
-    std::shared_ptr<Dimension> getDimension(size_t id) const;
+    Dimension getDimension(size_t id) const;
 
 
-    std::shared_ptr<Dimension> createDimension(size_t id, DimensionType type);
+    Dimension createDimension(size_t id, DimensionType type);
 
 
     bool removeDimension(size_t id);
@@ -140,6 +142,9 @@ public:
 
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
+
+
+    void swap(DataArrayHDF5 &other);
 
 
     DataArrayHDF5& operator=(const DataArrayHDF5 &other);

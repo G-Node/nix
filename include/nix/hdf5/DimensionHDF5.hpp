@@ -14,6 +14,7 @@
 #include <ctime>
 
 #include <nix.hpp>
+#include <nix/hdf5/Group.hpp>
 
 
 namespace nix {

@@ -75,8 +75,6 @@ public:
     }
 
     // TODO: how to support includes?!
-    // void include(std::string include);
-    // std::string include() const;
 
     /**
      * Sets the mapping information for this section.
@@ -96,23 +94,25 @@ public:
         return impl_ptr->mapping();
     }
 
-    // TODO work with sections here
+    //--------------------------------------------------
+    // Methods for parent access
+    //--------------------------------------------------
 
     /**
-     * Sets the id of the parent section.
+     * Test if the section has a parent.
      *
-     * @param string the id.
+     * @return True if the section has a parent, false otherwise.
      */
-    void parent(const std::string &id) {
-        impl_ptr->parent(id);
+    bool hasParent() const {
+        return impl_ptr->hasParent();
     }
 
     /**
-     * Returns the parent information.
+     * Returns the parent..
      *
      * @return string
      */
-    std::string parent() const {
+    Section parent() const {
         return impl_ptr->parent();
     }
 
@@ -121,19 +121,44 @@ public:
     //--------------------------------------------------
 
     /**
+     * Return the number of children in this section.
+     *
+     * @return The number of child sections.
+     */
+    size_t childCount() const {
+        return impl_ptr->childCount();
+    }
+
+    /**
+     * Check if a specific child exists.
+     *
+     * @param id    The id of the child section.
+     *
+     * @return True if the child exists false otherwise.
+     */
+    bool hasChild(const std::string &id) const {
+        return impl_ptr->hasChild(id);
+    }
+
+    /**
+     * Get a specific child by its id.
+     *
+     * @param id    The id of the child.
+     *
+     * @return The child section.
+     */
+    Section getChild(const std::string &id) const {
+        return impl_ptr->getChild(id);
+    }
+
+
+    /**
      * Returns the subsections
      *
      * @return vector of direct subsections.
      */
-    std::vector<Section> sections() const {
-        return impl_ptr->sections();
-    }
-
-    /**
-     * Returns whether or not this section has child sections.
-     */
-    bool hasChildren() const {
-        return impl_ptr->hasChildren();
+    std::vector<Section> children() const {
+        return impl_ptr->children();
     }
 
     /**
@@ -144,46 +169,10 @@ public:
      *
      *  @return the new section.
      */
-    // TODO should this be named createSection?
-    Section addSection(const std::string &name, const std::string &type) {
-        return impl_ptr->addSection(name, type);
+    Section createChild(const std::string &name, const std::string &type) {
+        return impl_ptr->createChild(name, type);
     }
 
-    /**
-     * Performs a search on the tree starting at this section and returns whether a section with
-     * the specified id exists.
-     *
-     * @param id: string the id of requested section
-     * @param depth: uint (default 0). The depth of the search. 0 indicates unlimited depth.
-     *
-     * @return bool
-     */
-    bool hasSection(const std::string &id) const {
-        return impl_ptr->hasSection(id);
-    }
-
-    /**
-     * Determines whether this section has a related section of the specified type.
-     *
-     * @param string the type
-     *
-     * @return bool
-     */
-    bool hasRelatedSection(const std::string &type) const {
-        return impl_ptr->hasRelatedSection(type);
-    }
-
-    /**
-     * Returns the sections of the given type found on the same level of relation.
-     *
-     * @param string the type
-     *
-     * @return vector<Section> the related sections
-     */
-    // TODO should this be called relatedSections?
-    std::vector<Section> getRelatedSections(const std::string &type) const {
-        return impl_ptr->getRelatedSections(type);
-    }
 
     /**
      * Remove a subsection from this Section.
@@ -192,8 +181,8 @@ public:
      *
      * @return bool successful or not
      */
-    bool removeSection(const std::string &id) {
-        return impl_ptr->removeSection(id);
+    bool removeChild(const std::string &id) {
+        return impl_ptr->removeChild(id);
     }
 
     //--------------------------------------------------
@@ -201,45 +190,12 @@ public:
     //--------------------------------------------------
 
     /**
-     * Returns all Properties.
+     * Returns the number of properties of this section.
      *
-     * @return vector<Property>
+     * @return The number of Properties
      */
-    std::vector<Property> properties() const {
-        return impl_ptr->properties();
-    }
-
-    /**
-     * Returns all Properties inherited from a linked section.
-     * This list may include Properties that are locally overridden.
-     *
-     * @return vector<Property>
-     */
-    std::vector<Property> inheritedProperties() const {
-        return impl_ptr->inheritedProperties();
-    }
-
-    /**
-     * Returns the Property identified by id.
-     *
-     * @return Property
-     */
-    Property getProperty(const std::string &id) const {
-        return impl_ptr->getProperty(id);
-    }
-
-    /**
-     * Returns the Property that is defined by name.
-     * Method tries to locate the Property also in linked Sections (if any).
-     *
-     * Raises runtime exception if not found. Check with hasPropertyByName.
-     *
-     * @param string name
-     *
-     * @return Property
-     */
-    Property getPropertyByName(const std::string &name) const {
-        return impl_ptr->getPropertyByName(name);
+    size_t propertyCount() const {
+        return impl_ptr->propertyCount();
     }
 
     /**
@@ -252,13 +208,21 @@ public:
     }
 
     /**
-     * Checks if a Property with the given name exists.
+     * Returns the Property identified by id.
      *
-     * @param string the name
+     * @return Property
      */
-    // TODO rename to hasPropertyWithName()?
-    bool hasPropertyByName(const std::string &name) const {
-        return impl_ptr->hasPropertyByName(name);
+    Property getProperty(const std::string &id) const {
+        return impl_ptr->getProperty(id);
+    }
+
+    /**
+     * Returns all Properties.
+     *
+     * @return vector<Property>
+     */
+    std::vector<Property> properties() const {
+        return impl_ptr->properties();
     }
 
     /**
@@ -268,8 +232,8 @@ public:
      *
      * @return the Property
      */
-    Property addProperty(const std::string &name) {
-        return impl_ptr->addProperty(name);
+    Property createProperty(const std::string &name) {
+        return impl_ptr->createProperty(name);
     }
 
     /**
@@ -277,9 +241,8 @@ public:
      *
      * @param string the id.
      */
-    // TODO return type bool?
-    void removeProperty(const std::string &id) {
-        impl_ptr->removeProperty(id);
+    bool removeProperty(const std::string &id) {
+        return impl_ptr->removeProperty(id);
     }
 
 };

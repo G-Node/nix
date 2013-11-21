@@ -23,7 +23,7 @@ namespace hdf5 {
  */
 class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public EntityWithMetadataHDF5 {
 
-protected:
+private:
 
     Block entity_block;
     ReferenceList sources_refs;
@@ -47,62 +47,30 @@ public:
      */
     size_t sourceCount() const;
 
-    /**
-     * Checks if a specific source is associated with this entity.
-     *
-     * @param source      The source to check.
-     *
-     * @return True if the source is associated with this entity, false otherwise.
-     */
+
     bool hasSource(const Source &source) const;
 
-    /**
-     * Checks if a specific source is associated with this entity.
-     *
-     * @param id      The source id to check.
-     *
-     * @return True if the source is associated with this entity, false otherwise.
-     */
+
     bool hasSource(const std::string &id) const;
 
-    /**
-     * Add a specific source to the list of associated sources.
-     *
-     * @param source      The source to associate with this entity.
-     */
+
     void addSource(const Source &source);
 
-    /**
-     * Remove a source from the list of associated sources.
-     * This source will not be deleted from the file.
-     *
-     * @param source      The source to remove.
-     *
-     * @return True if the source was removed, false otherwise.
-     */
-    bool removeSource(const Source &source);
 
-    /**
-     * Set all sources associated with this entity. All previously
-     * associated sources, that are not in the vector will be removed.
-     *
-     * @param s     A vector with all sources.
-     */
+    bool removeSource(const std::string &id);
+
+
     void sources(const std::vector<Source> &s);
 
-    /**
-     * Get all associated sources of this entity.
-     *
-     * @return A vector with all sources.
-     */
+
     std::vector<Source> sources() const;
 
-    /**
-     * Returns the source identified by the given id.
-     *
-     * @param string the source id
-     */
-    Source getSource(const std::string id) const;
+
+    Source getSource(const std::string &id) const;
+
+
+    void swap(EntityWithSourcesHDF5 &other);
+
 
     /**
      * Destructor.

@@ -15,6 +15,10 @@
 namespace nix {
 
 
+class SampledDimension;
+class RangeDimension;
+class SetDimension;
+
 /**
  * TODO documentation
  */
@@ -22,13 +26,41 @@ class Dimension : public virtual IDimension, public base::ImplContainer<IDimensi
 
 public:
 
+    Dimension();
+
+
+    Dimension(const std::shared_ptr<IDimension> &p_impl);
+
+
+    Dimension(const Dimension &other);
+
+
+    Dimension(const SampledDimension &other);
+
+
+    Dimension(const RangeDimension &other);
+
+
+    Dimension(const SetDimension &other);
+
+
     size_t id() const {
         return impl_ptr->id();
     }
 
+
     DimensionType dimensionType() const {
         return impl_ptr->dimensionType();
     }
+
+
+    Dimension& operator=(const SampledDimension &other);
+
+
+    Dimension& operator=(const RangeDimension &other);
+
+
+    Dimension& operator=(const SetDimension &other);
 
 };
 
@@ -40,15 +72,14 @@ class SampledDimension : public virtual ISampledDimension, public base::ImplCont
 
 public:
 
-    SampledDimension()
-        : ImplContainer()
-    {
-    }
+    SampledDimension();
 
-    SampledDimension(const std::shared_ptr<ISampledDimension> &p_impl)
-        : ImplContainer(p_impl)
-    {
-    }
+
+    SampledDimension(const std::shared_ptr<ISampledDimension> &p_impl);
+
+
+    SampledDimension(const SampledDimension &other);
+
 
     size_t id() const {
         return impl_ptr->id();
@@ -99,6 +130,12 @@ public:
         return impl_ptr->offset(offset);
     }
 
+
+    SampledDimension& operator=(const SampledDimension &other);
+
+
+    SampledDimension& operator=(const Dimension &other);
+
 };
 
 
@@ -109,31 +146,39 @@ class SetDimension : virtual public ISetDimension, public base::ImplContainer<IS
 
 public:
 
-    SetDimension()
-        : ImplContainer()
-    {
-    }
+    SetDimension();
 
-    SetDimension(const std::shared_ptr<SetDimension> &p_impl)
-        : ImplContainer(p_impl)
-    {
-    }
+
+    SetDimension(const std::shared_ptr<ISetDimension> &p_impl);
+
+
+    SetDimension(const SetDimension &other);
+
 
     size_t id() const {
         return impl_ptr->id();
     }
 
+
     DimensionType dimensionType() const {
         return impl_ptr->dimensionType();
     }
+
 
     std::vector<std::string> labels() const {
         return impl_ptr->labels();
     }
 
+
     void labels(const std::vector<std::string> &labels) {
         impl_ptr->labels(labels);
     }
+
+
+    SetDimension& operator=(const SetDimension &other);
+
+
+    SetDimension& operator=(const Dimension &other);
 
 };
 
@@ -145,15 +190,13 @@ class RangeDimension : virtual public IRangeDimension, public base::ImplContaine
 
 public:
 
-    RangeDimension()
-        : ImplContainer()
-    {
-    }
+    RangeDimension();
 
-    RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl)
-        : ImplContainer(p_impl)
-    {
-    }
+
+    RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl);
+
+
+    RangeDimension(const RangeDimension &other);
 
 
     size_t id() const {
@@ -194,6 +237,12 @@ public:
     void tics(const std::vector<double> &tics) {
         impl_ptr->tics(tics);
     }
+
+
+    RangeDimension& operator=(const RangeDimension &other);
+
+
+    RangeDimension& operator=(const Dimension &other);
 
 };
 

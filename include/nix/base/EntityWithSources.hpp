@@ -68,18 +68,6 @@ public:
     }
 
     /**
-     * Retrieves a specific source by index.
-     *
-     * @param index     The index of the source.
-     *
-     * @return The source at the specified index.
-     */
-    // TODO do we really need this method?
-    Source getSource(size_t index) const {
-        return EntityWithMetadata<T>::impl_ptr->getSource(index);
-    }
-
-    /**
      * Returns all sources that are direct descendant of this source as a vector.
      *
      * @return All direct child sources.
@@ -119,7 +107,7 @@ public:
      * @return True if the source was removed, false otherwise.
      */
     bool removeSource(const std::string &id) {
-        return EntityWithMetadata<T>::impl_ptr->removeSource();
+        return EntityWithMetadata<T>::impl_ptr->removeSource(id);
     }
 
 };
