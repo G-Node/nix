@@ -117,37 +117,6 @@ public:
     bool removeRepresentation(const std::string &id);
 
 
-    template<typename T, size_t dims>
-    void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
-        if (referenceCount() == 0){
-            throw std::runtime_error("DataTagHDF5::getReferencedData: There is no reference attached to this tag!");
-        }
-        if(!hasPositions()){
-            throw std::runtime_error("DataTagHDF5::getReferencedData: There is no positions array attached to this tag!");
-        }
-
-        DataArray pa = positions();
-        boost::multi_array<double,1> posData, extData;
-        pa.getRawData(posData);
-
-        if(index >= posData.shape()[0]){
-            throw std::runtime_error("DataTagHDF5::getReferencedData: index exeeds matrix dimensions in positions data!");
-        }
-
-        if(hasExtents()){
-            DataArray ea = extents();
-            ea.getRawData(extData);
-        }
-
-        //TODO convert position and extent to respective units
-        //TODO get the data slice from the referenced DataArrays
-        std::vector<DataArray> refs = references();
-        for (size_t i = 0; i < refs.size();i++){
-
-        }
-    }
-
-
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------

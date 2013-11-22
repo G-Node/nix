@@ -118,7 +118,9 @@ bool DataTagHDF5::hasExtents() const{
     return (extId.length() > 0);
 }
 
+//--------------------------------------------------
 // Methods concerning references.
+//--------------------------------------------------
 
 bool DataTagHDF5::hasReference(const DataArray &reference) const {
     return hasReference(reference.id());
@@ -179,7 +181,9 @@ void DataTagHDF5::references(const std::vector<DataArray> &references) {
     reference_list.set(ids);
 }
 
+//--------------------------------------------------
 // Methods concerning representations.
+//--------------------------------------------------
 
 bool DataTagHDF5::hasRepresentation(const string &id) const{
     return representation_group.hasGroup(id);
@@ -245,7 +249,9 @@ bool DataTagHDF5::removeRepresentation(const string &id){
     }
 }
 
+//--------------------------------------------------
 // Other methods and functions
+//--------------------------------------------------
 
 
 void DataTagHDF5::swap(DataTagHDF5 &other) {
