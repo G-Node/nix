@@ -144,8 +144,8 @@ public:
      * @param output argument boost::multi_array<T, dims>
      */
     template<typename U, size_t dims>
-    void getRawData(boost::multi_array<U, dims> &data) const{
-        // TODO implement
+    void getRawData(boost::multi_array<U, dims> &data) const {
+        // TODO this does not compile and I do not know why?
         // impl_ptr->getRawData<U, dims>(data);
     }
 
@@ -156,8 +156,7 @@ public:
      */
     template<typename U, size_t dims>
     void setRawData(const boost::multi_array<U, dims> &data) {
-        // TODO implement
-        // impl_ptr->setRawData<U, dims>(data);
+        impl_ptr->setRawData<U, dims>(data);
     }
 
     //--------------------------------------------------

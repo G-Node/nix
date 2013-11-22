@@ -84,17 +84,6 @@ public:
 
 
     template<typename T, size_t dims>
-    void getData(boost::multi_array<T, dims> &data) const{
-        getRawData(data);
-        double origin = expansionOrigin();
-        std::vector<double> polynoms = polynomCoefficients();
-        for(auto i = data.data(); i < (data.data() + data.num_elements()); ++i) {
-            *i = applyPolynomial(polynoms, origin, (double)(*i));
-        }
-    }
-
-
-    template<typename T, size_t dims>
     void getRawData(boost::multi_array<T, dims> &data) const{
         if(group().hasData("data")){
             DataSet ds = group().openData("data");
@@ -139,9 +128,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-
-    double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
 
     void swap(DataArrayHDF5 &other);

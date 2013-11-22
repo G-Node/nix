@@ -247,16 +247,6 @@ bool DataArrayHDF5::removeDimension(size_t id) {
 // Other methods and functions
 //--------------------------------------------------
 
-double DataArrayHDF5::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
-    double value = 0.0;
-    double term = 1.0;
-    for(size_t i = 0; i < coefficients.size(); i++){
-        value += coefficients[i] * term;
-        term *= input - origin;
-    }
-    return value;
-}
-
 
 void DataArrayHDF5::swap(DataArrayHDF5 &other) {
     using std::swap;

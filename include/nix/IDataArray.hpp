@@ -93,7 +93,9 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    // TODO what about the templates?
+    // subclasses have to define the templates:
+    // template<typename U, size_t dims> void getRawData(boost::multi_array<U, dims> &data) const;
+    // template<typename U, size_t dims> void setRawData(const boost::multi_array<U, dims> &data)
 
     //--------------------------------------------------
     // Methods concerning dimensions
