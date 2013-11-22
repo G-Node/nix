@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_ENTITY_WITH_SOURCES_H_INCLUDED
-#define PAN_ENTITY_WITH_SOURCES_H_INCLUDED
+#ifndef NIX_ENTITY_WITH_SOURCES_HDF5_H
+#define NIX_ENTITY_WITH_SOURCES_HDF5_H
 
 #include <nix.hpp>
 #include <nix/base/IEntityWithSources.hpp>
@@ -89,4 +89,4 @@ protected:
 } // namespace hdf5
 } // namespace nix
 
-#endif /* PAN_ENTITY_WITH_SOURCES_H_INCLUDED */
+#endif /* NIX_ENTITY_WITH_SOURCES_HDF5_H */

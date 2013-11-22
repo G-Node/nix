@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PAN_GROUP_H_INCLUDE
-#define PAN_GROUP_H_INCLUDE
+#ifndef NIX_GROUP_H
+#define NIX_GROUP_H
 
 #include <string>
 
@@ -116,4 +116,4 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
 } // namespace nix
 
 
-#endif /* PAN_GROUP_H_INCLUDE */
+#endif /* NIX_GROUP_H */

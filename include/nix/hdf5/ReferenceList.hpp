@@ -7,8 +7,8 @@
 // LICENSE file in the root of the Project.
 
 
-#ifndef PAN_REFERENCE_LIST_H_INCLUDED
-#define PAN_REFERENCE_LIST_H_INCLUDED
+#ifndef NIX_REFERENCE_LIST_H
+#define NIX_REFERENCE_LIST_H
 
 #include <nix/hdf5/Group.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
@@ -83,4 +83,4 @@ size_t ReferenceList::count() const {
 } // namespace hdf5
 } // namespace nix
 
-#endif // PAN_REFERENCE_LIST_H_INCLUDED
+#endif // NIX_REFERENCE_LIST_H
