@@ -53,6 +53,12 @@ public:
     }
 
 
+    virtual ImplContainer<T> &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
+
     virtual bool operator==(const ImplContainer<T> &other) {
         return this->impl_ptr == other.impl_ptr;
     }
@@ -60,6 +66,15 @@ public:
 
     virtual bool operator!=(const ImplContainer<T> &other) {
         return !(*this == other);
+    }
+
+
+    virtual bool operator==(std::nullptr_t nullp) {
+        return impl_ptr == nullp;
+    }
+
+    virtual bool operator!=(std::nullptr_t nullp) {
+        return impl_ptr != nullp;
     }
 
 
