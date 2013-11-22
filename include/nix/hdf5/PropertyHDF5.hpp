@@ -78,8 +78,6 @@ public:
 
     size_t valueCount() const;
 
-    //void addValue(int value, const std::string &reference, const std::string &filename, const std::string filename, const std::string encoder, const std::string checksum);
-
 
     bool operator==(const PropertyHDF5 &other) const;
 
@@ -101,12 +99,6 @@ void PropertyHDF5::addValue(T value, double uncertainty, const std::string filen
                         const std::string encoder, const std::string checksum, const std::string &reference) {
 
     std::string dt = this->dataType();
-    //  if (dt.length() > 0 && dt.compare(info.type) != 0) {
-    //    throw std::runtime_error("Value and data type do not match!");
-    //    return;
-    //  } else {
-    //    dataType(info.type);
-    //  }
     Value<T> tempValue(value, uncertainty, filename, encoder, checksum, reference);
     addValue(tempValue);
 }

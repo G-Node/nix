@@ -22,6 +22,9 @@ class SectionHDF5 : public NamedEntityHDF5, virtual public ISection {
 
 private:
 
+    // TODO add parent section and parent block
+    // Section parent_section;
+    // Block parent_block
     Group property_group, section_group;
 
 public:

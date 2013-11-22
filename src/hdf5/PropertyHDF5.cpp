@@ -89,7 +89,6 @@ void PropertyHDF5::removeValue(size_t index){
         if (index >= valueCount()) {
             throw runtime_error("Property::stringValue(index): Index out of bounds!");
         }
-        //TODO
     }
 }
 
@@ -99,6 +98,7 @@ void PropertyHDF5::removeValues(){
 }
 
 
+// TODO should this be moved to Property.hpp/cpp
 /*
 bool PropertyHDF5::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) const {
     H5::DataType type = dataset.getDataType();

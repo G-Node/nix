@@ -136,9 +136,6 @@ public:
     DataArrayHDF5& operator=(const DataArrayHDF5 &other);
 
 
-    friend std::ostream& operator<<(std::ostream &out, const DataArrayHDF5 &ent);
-
-
     virtual ~DataArrayHDF5();
 };
 

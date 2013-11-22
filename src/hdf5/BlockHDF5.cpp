@@ -370,14 +370,6 @@ BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
 }
 
 
-ostream& operator<<(ostream &out, const BlockHDF5 &ent) {
-    out << "Block: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
-}
-
-
 Block BlockHDF5::block() const {
     shared_ptr<BlockHDF5> tmp = const_pointer_cast<BlockHDF5>(shared_from_this());
     return Block(tmp);

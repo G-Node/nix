@@ -266,14 +266,6 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 }
 
 
-ostream& operator<<(ostream &out, const DataArrayHDF5 &ent) {
-    out << "DataArray: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
-}
-
-
 DataArrayHDF5::~DataArrayHDF5(){}
 
 

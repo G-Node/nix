@@ -15,7 +15,6 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-// TODO set the parent Section with constructor.
 
 SectionHDF5::SectionHDF5(const SectionHDF5 &section)
     : NamedEntityHDF5(section.file(), section.group(), section.id())

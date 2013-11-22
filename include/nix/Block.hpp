@@ -368,6 +368,16 @@ public:
         return impl_ptr->removeDataTag(id);
     }
 
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Block &ent) {
+        out << "Block: {name = " << ent.name();
+        out << ", type = " << ent.type();
+        out << ", id = " << ent.id() << "}";
+        return out;
+    }
+
 };
 
 }

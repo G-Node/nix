@@ -170,11 +170,6 @@ public:
      */
     BlockHDF5& operator=(const BlockHDF5 &other);
 
-    /**
-     * Output operator
-     */
-    friend std::ostream& operator<<(std::ostream &out, const BlockHDF5 &ent);
-
 
     virtual ~BlockHDF5();
 
