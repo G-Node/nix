@@ -31,6 +31,9 @@ class Block;
 class Section;
 
 
+namespace base {
+
+
 /**
  * Class that represents a pandora file.
  */
@@ -227,6 +230,7 @@ public:
 };
 
 
+} // namespace base
 } // namespace nix
 
 #endif

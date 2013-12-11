@@ -10,7 +10,7 @@
 #define NIX_REPRESENTATION_H
 
 #include <nix/base/Entity.hpp>
-#include <nix/IRepresentation.hpp>
+#include <nix/base/IRepresentation.hpp>
 #include <nix/DataArray.hpp>
 
 namespace nix {
@@ -19,7 +19,7 @@ namespace nix {
 /**
  * Class that represents a pandora representation entity
  */
-class Representation : virtual public IRepresentation, public base::Entity<IRepresentation> {
+class Representation : virtual public base::IRepresentation, public base::Entity<base::IRepresentation> {
 
 public:
 
@@ -35,7 +35,7 @@ public:
     }
 
 
-    Representation(const std::shared_ptr<IRepresentation> p_impl)
+    Representation(const std::shared_ptr<base::IRepresentation> p_impl)
         : Entity(p_impl)
     {
     }

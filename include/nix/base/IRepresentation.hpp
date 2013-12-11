@@ -25,6 +25,9 @@ enum class LinkType : int {
 };
 
 
+
+namespace base {
+
 /**
  * Class that represents a pandora representation entity
  * TODO implement methods for DataArray.
@@ -63,6 +66,8 @@ public:
 
 };
 
+
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_REPRESENTATION_H

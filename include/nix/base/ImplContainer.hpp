@@ -23,7 +23,10 @@ protected:
 
 public:
 
-    ImplContainer() {}
+    ImplContainer()
+        : impl_ptr(nullptr)
+    {
+    }
 
 
     ImplContainer(T *p_impl)

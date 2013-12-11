@@ -20,7 +20,10 @@ namespace nix {
 class Dimension;
 enum class DimensionType : int;
 
-// TODO inherit from IEntityWithSources
+
+namespace base {
+
+
 class IDataArray : virtual public base::IEntityWithSources {
 
 public:
@@ -120,6 +123,7 @@ public:
 };
 
 
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_DATA_ARRAY_H

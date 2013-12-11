@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <nix/base/INamedEntity.hpp>
+#include <nix/base/IEntityWithSources.hpp>
 
 namespace nix {
 
@@ -21,8 +21,11 @@ class Representation;
 
 enum class LinkType;
 
-// TODO inherit from IEntityWithSources
-class ISimpleTag : virtual public base::INamedEntity {
+
+namespace base {
+
+
+class ISimpleTag : virtual public base::IEntityWithSources {
 
 public:
 
@@ -174,6 +177,7 @@ public:
 };
 
 
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_SIMPLE_TAG_H

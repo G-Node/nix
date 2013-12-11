@@ -20,6 +20,9 @@ namespace nix {
 class Section;
 class Property;
 
+
+namespace base {
+
 // TODO find solution for tnode
 class ISection : virtual public base::INamedEntity  {
 
@@ -262,6 +265,8 @@ public:
 
 };
 
+
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_SECTION_H

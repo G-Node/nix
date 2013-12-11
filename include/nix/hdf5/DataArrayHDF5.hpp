@@ -23,7 +23,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class DataArrayHDF5 : virtual public IDataArray,  public EntityWithSourcesHDF5 {
+class DataArrayHDF5 : virtual public base::IDataArray,  public EntityWithSourcesHDF5 {
 
 private:
 

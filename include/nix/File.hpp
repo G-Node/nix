@@ -10,14 +10,14 @@
 #define NIX_FILE_H
 
 #include <nix/base/ImplContainer.hpp>
-#include <nix/IFile.hpp>
+#include <nix/base/IFile.hpp>
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
 
 namespace nix {
 
 
-class File : public IFile, public base::ImplContainer<IFile> {
+class File : public base::IFile, public base::ImplContainer<base::IFile> {
 
 public:
 
@@ -28,12 +28,7 @@ public:
     {
     }
 
-    File(const std::shared_ptr<IFile> &p_impl)
-        : ImplContainer(p_impl)
-    {
-    }
-
-    File(IFile *p_impl)
+    File(const std::shared_ptr<base::IFile> &p_impl)
         : ImplContainer(p_impl)
     {
     }
@@ -161,6 +156,15 @@ public:
 
     void forceCreatedAt(time_t t) {
         impl_ptr->forceCreatedAt(t);
+    }
+
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual File &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
     }
 
 };

@@ -12,13 +12,13 @@
 #include <boost/multi_array.hpp>
 
 #include <nix/base/EntityWithSources.hpp>
-#include <nix/IDataArray.hpp>
+#include <nix/base/IDataArray.hpp>
 #include <nix/Dimensions.hpp>
 
 namespace nix {
 
 
-class DataArray : virtual public IDataArray, public base::EntityWithSources<IDataArray> {
+class DataArray : virtual public base::IDataArray, public base::EntityWithSources<base::IDataArray> {
 
 public:
 
@@ -31,7 +31,7 @@ public:
     {
     }
 
-    DataArray(const std::shared_ptr<IDataArray> &p_impl)
+    DataArray(const std::shared_ptr<base::IDataArray> &p_impl)
         : EntityWithSources(p_impl)
     {
     }

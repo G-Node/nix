@@ -10,13 +10,13 @@
 #define NIX_PROPERTY_H
 
 #include <nix/base/NamedEntity.hpp>
-#include <nix/IProperty.hpp>
+#include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
 
 namespace nix {
 
 
-class Property : virtual public IProperty, public base::NamedEntity<IProperty> {
+class Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
 
 public:
 
@@ -31,7 +31,7 @@ public:
     {
     }
 
-    Property(const std::shared_ptr<IProperty> &p_impl)
+    Property(const std::shared_ptr<base::IProperty> &p_impl)
         : NamedEntity(p_impl)
     {
     }

@@ -22,6 +22,10 @@ class DataArray;
 class SimpleTag;
 class DataTag;
 
+
+namespace base {
+
+
 class IBlock : virtual public base::IEntityWithMetadata {
 
 public:
@@ -292,7 +296,7 @@ public:
 
 };
 
-
+} // namespace base
 } // namespace nix
 
 

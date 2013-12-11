@@ -20,7 +20,10 @@ namespace nix {
 class Representation;
 class DataArray;
 
-// TODO inherit from IEntityWithSources
+
+namespace base {
+
+
 class IDataTag : virtual public base::IEntityWithSources {
 
 public:
@@ -192,6 +195,7 @@ public:
 
 };
 
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_DATA_TAG_H

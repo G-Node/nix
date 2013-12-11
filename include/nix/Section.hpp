@@ -10,12 +10,12 @@
 #define NIX_SECTION_H
 
 #include <nix/base/NamedEntity.hpp>
-#include <nix/ISection.hpp>
+#include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 
 namespace nix {
 
-class Section : virtual public ISection, public base::NamedEntity<ISection> {
+class Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
 
 public:
 
@@ -26,7 +26,7 @@ public:
     {
     }
 
-    Section(const std::shared_ptr<ISection> &p_impl)
+    Section(const std::shared_ptr<base::ISection> &p_impl)
         : NamedEntity(p_impl)
     {
     }

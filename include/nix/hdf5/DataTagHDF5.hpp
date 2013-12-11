@@ -22,7 +22,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class DataTagHDF5 : virtual public IDataTag, public EntityWithSourcesHDF5 {
+class DataTagHDF5 : virtual public base::IDataTag, public EntityWithSourcesHDF5 {
 
 private:
 

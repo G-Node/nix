@@ -6,41 +6,27 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_SOURCE_H
-#define NIX_SOURCE_H
+#ifndef NIX_I_SOURCE_H
+#define NIX_I_SOURCE_H
 
-#include <nix/base/EntityWithMetadata.hpp>
-#include <nix/base/ISource.hpp>
+#include <string>
+#include <vector>
+
+#include <nix/base/IEntityWithMetadata.hpp>
 
 namespace nix {
 
 
-// TODO inherit from EntityWithMetadata
-// TODO what about TNode?
-class Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
+class Source;
+
+
+namespace base {
+
+
+// TODO TNode
+class ISource : virtual public IEntityWithMetadata {
 
 public:
-
-    Source()
-        : EntityWithMetadata()
-    {
-    }
-
-
-    Source(const Source &other)
-        : EntityWithMetadata(other.impl_ptr)
-    {
-    }
-
-
-    Source(const std::shared_ptr<base::ISource> &p_impl)
-        : EntityWithMetadata(p_impl)
-    {
-    }
-
-    //--------------------------------------------------
-    // Methods concerning child sources
-    //--------------------------------------------------
 
     /**
      * Checks if this source has a specific source as direct descendant.
@@ -50,9 +36,7 @@ public:
      * @return True if a source with the given id is a direct descendant, false
      *         otherwise.
      */
-    bool hasSource(const std::string &id) const {
-        return impl_ptr->hasSource(id);
-    }
+    virtual bool hasSource(const std::string &id) const = 0;
 
     /**
      * Retrieves a specific child source that is a direct descendant.
@@ -62,9 +46,7 @@ public:
      * @return The source with the given id. If it doesn't exist an exception
      *         will be thrown.
      */
-    Source getSource(const std::string &id) const {
-        return impl_ptr->getSource(id);
-    }
+    virtual Source getSource(const std::string &id) const = 0;
 
     /**
      * Retrieves a specific source by index.
@@ -73,29 +55,21 @@ public:
      *
      * @return The source at the specified index.
      */
-    // TODO do really need this method?
-    //      If not, check for similar methods in other classes.
-    Source getSource(size_t index) const {
-        return impl_ptr->getSource(index);
-    }
+    virtual Source getSource(size_t index) const = 0;
 
     /**
      * Returns the number of sources that are direct descendants of this source.
      *
      * @return The number of direct child sources.
      */
-    size_t sourceCount() const {
-        return impl_ptr->sourceCount();
-    }
+    virtual size_t sourceCount() const = 0;
 
     /**
      * Returns all sources that are direct descendant of this source as a vector.
      *
      * @return All direct child sources.
      */
-    std::vector<Source> sources() const {
-        return impl_ptr->sources();
-    }
+    virtual std::vector<Source> sources() const = 0;
 
     /**
      * Create a new root source.
@@ -105,9 +79,7 @@ public:
      *
      * @return The created source object.
      */
-    Source createSource(const std::string &name, const std::string &type) {
-        return impl_ptr->createSource(name, type);
-    }
+    virtual Source createSource(const std::string &name, const std::string &type) = 0;
 
     /**
      * Remove a root source and all its child sources from
@@ -117,14 +89,12 @@ public:
      *
      * @return True if the source was removed, false otherwise.
      */
-    bool removeSource(const std::string &id) {
-        return impl_ptr->removeSource(id);
-    }
-
+    virtual bool removeSource(const std::string &id) = 0;
 
 };
 
 
+} // namespace base
 } // namespace nix
 
-#endif // NIX_SOURCE_H
+#endif // NIX_I_SOURCE_H

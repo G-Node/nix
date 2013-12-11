@@ -19,7 +19,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class PropertyHDF5 : virtual public IProperty, public NamedEntityHDF5 {
+class PropertyHDF5 : virtual public base::IProperty, public NamedEntityHDF5 {
 
 public:
 

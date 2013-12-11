@@ -38,7 +38,7 @@ LinkType linkTypeFromString(const std::string &str);
 /**
  * Class that represents a pandora representation entity
  */
-class RepresentationHDF5 : virtual public IRepresentation, public EntityHDF5 {
+class RepresentationHDF5 : virtual public base::IRepresentation, public EntityHDF5 {
 
 private:
 

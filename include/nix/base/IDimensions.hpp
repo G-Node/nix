@@ -14,11 +14,12 @@
 
 namespace nix {
 
-
 enum class DimensionType : int {
     Sample, Set, Range
 };
 
+
+namespace base {
 
 /**
  * TODO documentation
@@ -96,6 +97,7 @@ public:
 };
 
 
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_DIMENSIONS_H

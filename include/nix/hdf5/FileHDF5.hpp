@@ -24,7 +24,7 @@ namespace hdf5 {
 /**
  * Class that represents a pandora file.
  */
-class FileHDF5 : public IFile, public std::enable_shared_from_this<FileHDF5> {
+class FileHDF5 : public base::IFile, public std::enable_shared_from_this<FileHDF5> {
 
 private:
 

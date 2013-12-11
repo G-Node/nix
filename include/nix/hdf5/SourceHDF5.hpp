@@ -23,7 +23,7 @@ namespace hdf5 {
  * An entity that represents a source as defined in the pandora
  * data model.
  */
-class SourceHDF5 : virtual public ISource, public EntityWithMetadataHDF5  {
+class SourceHDF5 : virtual public base::ISource, public EntityWithMetadataHDF5  {
 
 private:
 

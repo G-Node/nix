@@ -12,7 +12,7 @@
 #include <string>
 
 #include <nix/base/EntityWithMetadata.hpp>
-#include <nix/IBlock.hpp>
+#include <nix/base/IBlock.hpp>
 #include <nix/Source.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/SimpleTag.hpp>
@@ -21,7 +21,7 @@
 namespace nix {
 
 
-class Block : virtual public IBlock, public base::EntityWithMetadata<IBlock> {
+class Block : virtual public base::IBlock, public base::EntityWithMetadata<base::IBlock> {
 
 public:
 
@@ -32,7 +32,7 @@ public:
     {
     }
 
-    Block(const std::shared_ptr<IBlock> &p_impl)
+    Block(const std::shared_ptr<base::IBlock> &p_impl)
         : EntityWithMetadata(p_impl)
     {
     }

@@ -24,7 +24,7 @@ namespace hdf5 {
 /**
  * Class that represents a pandora tag.
  */
-class SimpleTagHDF5 : virtual public ISimpleTag, public EntityWithSourcesHDF5 {
+class SimpleTagHDF5 : virtual public base::ISimpleTag, public EntityWithSourcesHDF5 {
 
 private:
 

@@ -10,7 +10,7 @@
 #define NIX_DIMENSIONS_H
 
 #include <nix/base/ImplContainer.hpp>
-#include <nix/IDimensions.hpp>
+#include <nix/base/IDimensions.hpp>
 
 namespace nix {
 
@@ -22,14 +22,14 @@ class SetDimension;
 /**
  * TODO documentation
  */
-class Dimension : public virtual IDimension, public base::ImplContainer<IDimension> {
+class Dimension : public virtual base::IDimension, public base::ImplContainer<base::IDimension> {
 
 public:
 
     Dimension();
 
 
-    Dimension(const std::shared_ptr<IDimension> &p_impl);
+    Dimension(const std::shared_ptr<base::IDimension> &p_impl);
 
 
     Dimension(const Dimension &other);
@@ -68,14 +68,14 @@ public:
 /**
  * TODO documentation
  */
-class SampledDimension : public virtual ISampledDimension, public base::ImplContainer<ISampledDimension> {
+class SampledDimension : public virtual base::ISampledDimension, public base::ImplContainer<base::ISampledDimension> {
 
 public:
 
     SampledDimension();
 
 
-    SampledDimension(const std::shared_ptr<ISampledDimension> &p_impl);
+    SampledDimension(const std::shared_ptr<base::ISampledDimension> &p_impl);
 
 
     SampledDimension(const SampledDimension &other);
@@ -142,14 +142,14 @@ public:
 /**
  * TODO documentation
  */
-class SetDimension : virtual public ISetDimension, public base::ImplContainer<ISetDimension> {
+class SetDimension : virtual public base::ISetDimension, public base::ImplContainer<base::ISetDimension> {
 
 public:
 
     SetDimension();
 
 
-    SetDimension(const std::shared_ptr<ISetDimension> &p_impl);
+    SetDimension(const std::shared_ptr<base::ISetDimension> &p_impl);
 
 
     SetDimension(const SetDimension &other);
@@ -186,14 +186,14 @@ public:
 /**
  * TODO documentation
  */
-class RangeDimension : virtual public IRangeDimension, public base::ImplContainer<IRangeDimension> {
+class RangeDimension : virtual public base::IRangeDimension, public base::ImplContainer<base::IRangeDimension> {
 
 public:
 
     RangeDimension();
 
 
-    RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl);
+    RangeDimension(const std::shared_ptr<base::IRangeDimension> &p_impl);
 
 
     RangeDimension(const RangeDimension &other);

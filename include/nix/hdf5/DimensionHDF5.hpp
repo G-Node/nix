@@ -30,7 +30,7 @@ std::string dimensionTypeToStr(DimensionType dim);
 /**
  * TODO documentation
  */
-class DimensionHDF5 : virtual public IDimension {
+class DimensionHDF5 : virtual public base::IDimension {
 
 protected:
 
@@ -69,7 +69,7 @@ protected:
 /**
  * TODO documentation
  */
-class SampledDimensionHDF5 : virtual public ISampledDimension, public DimensionHDF5 {
+class SampledDimensionHDF5 : virtual public base::ISampledDimension, public DimensionHDF5 {
 
 public:
 
@@ -117,7 +117,7 @@ public:
 /**
  * TODO documentation
  */
-class SetDimensionHDF5 : virtual public ISetDimension, public DimensionHDF5 {
+class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF5 {
 
 public:
 
@@ -147,7 +147,7 @@ public:
 /**
  * TODO documentation
  */
-class RangeDimensionHDF5 : virtual public IRangeDimension, public DimensionHDF5 {
+class RangeDimensionHDF5 : virtual public base::IRangeDimension, public DimensionHDF5 {
 
 public:
 

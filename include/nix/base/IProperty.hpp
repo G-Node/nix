@@ -15,6 +15,7 @@
 #include <nix/base/INamedEntity.hpp>
 
 namespace nix {
+namespace base {
 
 class IProperty : virtual public base::INamedEntity {
 
@@ -58,6 +59,7 @@ public:
 };
 
 
+} // namespace base
 } // namespace nix
 
 #endif // NIX_I_PROPERTY_H

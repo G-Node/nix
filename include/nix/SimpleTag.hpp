@@ -9,8 +9,8 @@
 #ifndef NIX_SIMPLE_TAG_H
 #define NIX_SIMPLE_TAG_H
 
-#include <nix/base/NamedEntity.hpp>
-#include <nix/ISimpleTag.hpp>
+#include <nix/base/EntityWithSources.hpp>
+#include <nix/base/ISimpleTag.hpp>
 #include <nix/Section.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Representation.hpp>
@@ -19,24 +19,24 @@ namespace nix {
 
 
 // TODO
-class SimpleTag : virtual public ISimpleTag, public base::NamedEntity<ISimpleTag> {
+class SimpleTag : virtual public base::ISimpleTag, public base::EntityWithSources<base::ISimpleTag> {
 
 public:
 
     SimpleTag()
-        : NamedEntity()
+        : EntityWithSources()
     {
     }
 
 
     SimpleTag(const SimpleTag &other)
-        : NamedEntity(other.impl_ptr)
+        : EntityWithSources(other.impl_ptr)
     {
     }
 
 
-    SimpleTag(const std::shared_ptr<ISimpleTag> &p_impl)
-        : NamedEntity(p_impl)
+    SimpleTag(const std::shared_ptr<base::ISimpleTag> &p_impl)
+        : EntityWithSources(p_impl)
     {
     }
 

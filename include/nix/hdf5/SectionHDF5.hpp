@@ -18,7 +18,7 @@
 namespace nix {
 namespace hdf5 {
 
-class SectionHDF5 : public NamedEntityHDF5, virtual public ISection {
+class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection {
 
 private:
 
