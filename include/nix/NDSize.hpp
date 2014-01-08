@@ -9,6 +9,7 @@
 #ifndef PANDORA_PSIZE_H
 #define PANDORA_PSIZE_H
 
+#include <cstdint>
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
@@ -397,9 +398,9 @@ inline bool operator!=(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
 
 /* *****  */
 
-typedef PSizeBase<hsize_t>  PSize;
+typedef PSizeBase<uint64_t>  PSize;
 
-typedef PSizeBase<hssize_t> PSSize;
+typedef PSizeBase<int64_t> PSSize;
 
 
 } // namespace hdf5
