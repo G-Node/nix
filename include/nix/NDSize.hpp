@@ -96,7 +96,7 @@ public:
     }
 
     PSizeBase<T>& operator++() {
-        std::for_each(begin(), end(), [](hsize_t &val) {
+        std::for_each(begin(), end(), [](T &val) {
             val++;
         });
         return *this;
@@ -138,7 +138,7 @@ public:
 
 
     PSizeBase<T>& operator--() {
-        std::for_each(begin(), end(), [](hsize_t &val) {
+        std::for_each(begin(), end(), [](T &val) {
             val--;
         });
         return *this;
@@ -217,7 +217,7 @@ public:
 
     size_t nelms() const {
         size_t product = 1;
-        std::for_each(begin(), end(), [&](hsize_t val) {
+        std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
         return product;
