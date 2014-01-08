@@ -15,7 +15,6 @@
 #include <initializer_list>
 
 namespace nix {
-namespace hdf5 {
 
 
 template<typename T>
@@ -402,8 +401,6 @@ typedef PSizeBase<uint64_t>  PSize;
 
 typedef PSizeBase<int64_t> PSSize;
 
-
-} // namespace hdf5
 } // namespace nix
 
 #endif // PANDORA_PSIZE_H
