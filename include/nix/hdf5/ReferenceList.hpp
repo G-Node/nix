@@ -19,8 +19,8 @@ namespace hdf5 {
 
 class ReferenceList {
 
-    static const PSize MIN_CHUNK_SIZE;
-    static const PSize MAX_SIZE_1D;
+    static const NDSize MIN_CHUNK_SIZE;
+    static const NDSize MAX_SIZE_1D;
 
     Group group;
     std::string ds_name;

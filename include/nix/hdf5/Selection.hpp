@@ -42,15 +42,15 @@ public:
 
     Selection& operator=(const Selection &other) { space = other.space; return *this; }
 
-    void select(const PSize &count, const PSize &start, Mode mode = Mode::Set);
+    void select(const NDSize &count, const NDSize &start, Mode mode = Mode::Set);
     void select(Preset set);
-    void offset(const PSSize &offset);
+    void offset(const NDSSize &offset);
 
     H5::DataSpace& h5space() { return space; }
     const H5::DataSpace& h5space() const { return space; }
     bool isValid() const { return space.selectValid(); }
-    void bounds(PSize &start, PSize &end) const { space.getSelectBounds(start.data(), end.data()); }
-    PSize size() const;
+    void bounds(NDSize &start, NDSize &end) const { space.getSelectBounds(start.data(), end.data()); }
+    NDSize size() const;
     size_t rank() const {return static_cast<size_t>(space.getSimpleExtentNdims()); }
 
 private:

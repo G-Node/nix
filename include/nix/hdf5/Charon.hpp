@@ -180,7 +180,7 @@ public:
 
     static spec_type type_spec(const T &value) { return spec_type(); };
 
-    static PSize shape(const T &value) { return PSize(); }
+    static NDSize shape(const T &value) { return NDSize(); }
 
     static size_t num_elements(const T &value) {
         return 1;
@@ -194,7 +194,7 @@ public:
         return &value;
     }
 
-    static void resize(T &value, const PSize &dims) {
+    static void resize(T &value, const NDSize &dims) {
         if (dims.size() != 0) {
             throw InvalidRankException("Cannot resize scalar");
         }
@@ -212,8 +212,8 @@ public:
 
     static spec_type type_spec(const vector_type &value) { return spec_type(); };
 
-    static PSize shape(const vector_type &value) {
-        PSize hsize(1);
+    static NDSize shape(const vector_type &value) {
+        NDSize hsize(1);
         hsize[0] = value.size();
         return hsize;
     }
@@ -230,7 +230,7 @@ public:
         return &value[0];
     }
 
-    static void resize(vector_type &value, const PSize &dims) {
+    static void resize(vector_type &value, const NDSize &dims) {
         if (dims.size() != 1) {
             throw InvalidRankException("Cannot change rank of vector"); //FIXME
         }
@@ -252,8 +252,8 @@ public:
 
     static spec_type type_spec(const array_type &value) { return spec_type(); };
 
-    static PSize shape(const array_type &value) {
-        PSize hsize(N);
+    static NDSize shape(const array_type &value) {
+        NDSize hsize(N);
         const size_t *shape = value.shape();
         std::copy(shape, shape + N, hsize.data());
         return hsize;
@@ -271,7 +271,7 @@ public:
         return value.data();
     }
 
-    static void resize(array_type &value, const PSize &dims) {
+    static void resize(array_type &value, const NDSize &dims) {
         if (dims.size() != N) {
             throw InvalidRankException("Cannot change rank of multiarray");
         }
@@ -290,8 +290,8 @@ public:
 
     static spec_type type_spec(const array_type &value) { return spec_type(); };
 
-    static PSize shape(const array_type &value) {
-        PSize hsize(1);
+    static NDSize shape(const array_type &value) {
+        NDSize hsize(1);
         hsize[0] = N;
         return hsize;
     }
@@ -308,7 +308,7 @@ public:
         return value;
     }
 
-    static void resize(array_type &value, const PSize &dims) {
+    static void resize(array_type &value, const NDSize &dims) {
         if (dims.size() != 1 && dims[0] != N) {
             throw InvalidRankException("Cannot resize native arrays");
         }
@@ -326,8 +326,8 @@ public:
 
     static spec_type type_spec(const array_type &value) { return spec_type(); };
 
-    static PSize shape(const array_type &value) {
-        PSize hsize(2);
+    static NDSize shape(const array_type &value) {
+        NDSize hsize(2);
         hsize[0] = M;
         hsize[1] = N;
         return hsize;
@@ -345,7 +345,7 @@ public:
         return value[0];
     }
 
-    static void resize(array_type &value, const PSize &dims) {
+    static void resize(array_type &value, const NDSize &dims) {
         if (dims.size() != 2 && dims[0] != M && dims[1] != N) {
             throw InvalidRankException("Cannot resize native arrays");
         }
@@ -502,8 +502,8 @@ public:
     H5::DataSpace createDataSpace(bool maxdimsUnlimited) const {
 
         if (maxdimsUnlimited) {
-            PSize dims = type_info_t::shape(value);
-            PSize maxdims(dims.size(), H5S_UNLIMITED);
+            NDSize dims = type_info_t::shape(value);
+            NDSize maxdims(dims.size(), H5S_UNLIMITED);
             return createDataSpace(&maxdims);
         } else {
             return createDataSpace();
@@ -511,8 +511,8 @@ public:
 
     }
 
-    H5::DataSpace createDataSpace(const PSize *maxdims = nullptr) const {
-        PSize dims = type_info_t::shape(value);
+    H5::DataSpace createDataSpace(const NDSize *maxdims = nullptr) const {
+        NDSize dims = type_info_t::shape(value);
         H5::DataSpace space;
 
         if (dims.size() == 0) {
@@ -530,7 +530,7 @@ public:
         return space;
     }
 
-    PSize shape() const {
+    NDSize shape() const {
         return value.shape();
     }
 
@@ -544,7 +544,7 @@ public:
         return data;
     }
 
-    void resize(const PSize &size) {
+    void resize(const NDSize &size) {
         type_info_t::resize(value, size);
     }
 

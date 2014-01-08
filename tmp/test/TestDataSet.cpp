@@ -31,10 +31,10 @@ void TestDataSet::setUp() {
     openMode = H5F_ACC_RDWR;
 }
 
-void TestDataSet::testPSize() {
-    PSize a = {23, 42, 1982};
+void TestDataSet::testNDSize() {
+    NDSize a = {23, 42, 1982};
 
-    typedef typename PSize::value_type value_type;
+    typedef typename NDSize::value_type value_type;
 
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);
@@ -67,44 +67,44 @@ void TestDataSet::testPSize() {
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), a[2]);
 
 
-    PSize b = {19, 1940, 18};
+    NDSize b = {19, 1940, 18};
 
-    PSize c = a + b;
+    NDSize c = a + b;
 
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   c[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), c[1]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(2000), c[2]);
 
-    PSize d = c - b;
+    NDSize d = c - b;
 
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   d[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   d[1]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), d[2]);
 
-    PSize f = {1, 2, 3, 4};
+    NDSize f = {1, 2, 3, 4};
     CPPUNIT_ASSERT_THROW(a + f, std::out_of_range);
 
-    PSize g(f.size(), 0);
+    NDSize g(f.size(), 0);
 
     g += f;
 
     CPPUNIT_ASSERT(g == f);
     CPPUNIT_ASSERT(g != a);
 
-    PSize h = b / b;
+    NDSize h = b / b;
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[1]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1), h[2]);
 
-    PSize j(h.size(), static_cast<value_type>(333));
-    PSize k = h * j;
+    NDSize j(h.size(), static_cast<value_type>(333));
+    NDSize k = h * j;
 
     CPPUNIT_ASSERT(j == k);
 
     size_t dp = j.dot(h);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(999), dp);
 
-    PSize s = {3, 4};
+    NDSize s = {3, 4};
     dp = s.dot(s);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(25), dp);
 
@@ -112,18 +112,18 @@ void TestDataSet::testPSize() {
 
 void TestDataSet::testChunkGuessing() {
 
-    PSize dims = {1024, 1024};
+    NDSize dims = {1024, 1024};
 
-    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }
 
 void TestDataSet::testBasic() {
-    PSize dims = {4, 6};
+    NDSize dims = {4, 6};
 
-    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    PSize maxdims(dims.size());
+    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    NDSize maxdims(dims.size());
     maxdims.fill(H5S_UNLIMITED);
 
     DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims, &maxdims, &chunks);
@@ -170,10 +170,10 @@ void TestDataSet::testBasic() {
 
 
 void TestDataSet::testSelection() {
-    PSize dims = {15, 15};
+    NDSize dims = {15, 15};
 
-    PSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    PSize maxdims(dims.size());
+    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    NDSize maxdims(dims.size());
     maxdims.fill(H5S_UNLIMITED);
     DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims, &maxdims, &chunks);
 
@@ -188,17 +188,17 @@ void TestDataSet::testSelection() {
     Selection memSelection(A);
     Selection fileSelection = ds.createSelection();
 
-    PSize fileCount(dims.size());
-    PSize fileStart(dims.size());
+    NDSize fileCount(dims.size());
+    NDSize fileStart(dims.size());
     fileCount.fill(5ULL);
     fileStart.fill(5ULL);
     fileSelection.select(fileCount, fileStart);
 
-    PSize boundsStart(dims.size());
-    PSize boundsEnd(dims.size());
+    NDSize boundsStart(dims.size());
+    NDSize boundsEnd(dims.size());
 
     fileSelection.bounds(boundsStart, boundsEnd);
-    PSize boundsSize = fileSelection.size();
+    NDSize boundsSize = fileSelection.size();
 
     ds.write(A, fileSelection, memSelection);
 
@@ -209,7 +209,7 @@ void TestDataSet::testSelection() {
         for(index j = 0; j != 5; ++j)
             CPPUNIT_ASSERT_EQUAL(A[i][j], B[i][j]);
 
-    PSSize offset(dims.size(), 5);
+    NDSSize offset(dims.size(), 5);
     fileSelection.offset(offset);
     ds.write(A, fileSelection);
 

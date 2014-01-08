@@ -13,7 +13,7 @@ namespace nix {
 namespace hdf5 {
 
 
-NDBuffer::NDBuffer(DataType dtype, PSize dims) : dataType(dtype), extends(dims) {
+NDBuffer::NDBuffer(DataType dtype, NDSize dims) : dataType(dtype), extends(dims) {
     allocate_space();
 }
 
@@ -26,7 +26,7 @@ void NDBuffer::allocate_space() {
 }
 
 
-void NDBuffer::resize(const PSize &new_size) {
+void NDBuffer::resize(const NDSize &new_size) {
     extends = new_size;
     allocate_space();
 }
@@ -35,7 +35,7 @@ void NDBuffer::resize(const PSize &new_size) {
 void NDBuffer::calc_strides() {
     size_t _rank = rank();
 
-    strides = PSize(_rank, 1);
+    strides = NDSize(_rank, 1);
 
     for (size_t i = 1; i < _rank; i++) {
         size_t lst = _rank - i;
@@ -45,7 +45,7 @@ void NDBuffer::calc_strides() {
 }
 
 
-size_t NDBuffer::sub2index(const PSize &sub) const {
+size_t NDBuffer::sub2index(const NDSize &sub) const {
     size_t index = strides.dot(sub);
     return index;
 }

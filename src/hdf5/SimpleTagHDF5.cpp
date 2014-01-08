@@ -18,8 +18,8 @@ namespace nix {
 namespace hdf5 {
 
 
-const PSize SimpleTagHDF5::MIN_CHUNK_SIZE = {1};
-const PSize SimpleTagHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
+const NDSize SimpleTagHDF5::MIN_CHUNK_SIZE = {1};
+const NDSize SimpleTagHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)

@@ -31,7 +31,7 @@ void TestNDBuffer::setUp() {
 }
 
 void TestNDBuffer::basic() {
-    PSize dims(2, 5);
+    NDSize dims(2, 5);
     NDBuffer A(DataType::Double, dims);
 
     int values = 0;
@@ -63,7 +63,7 @@ void TestNDBuffer::basic() {
 }
 
 void TestNDBuffer::testCharon() {
-    PSize dims(2, 5);
+    NDSize dims(2, 5);
     NDBuffer A(DataType::Double, dims);
     Charon<NDBuffer> charon(A);
 

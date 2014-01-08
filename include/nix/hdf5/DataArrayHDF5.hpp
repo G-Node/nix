@@ -27,8 +27,8 @@ class DataArrayHDF5 : virtual public base::IDataArray,  public EntityWithSources
 
 private:
 
-    static const PSize MIN_CHUNK_SIZE;
-    static const PSize MAX_SIZE_1D;
+    static const NDSize MIN_CHUNK_SIZE;
+    static const NDSize MAX_SIZE_1D;
 
     Group dimension_group;
 
@@ -95,9 +95,9 @@ public:
     template<typename T, size_t dims>
     void setRawData(const boost::multi_array<T, dims> &data){
         if (!group().hasData("data")){
-            PSize size = {dims};
-            PSize maxsize = {H5S_UNLIMITED};
-            PSize chunks = {1};
+            NDSize size = {dims};
+            NDSize maxsize = {H5S_UNLIMITED};
+            NDSize chunks = {1};
             DataSet ds(DataSet::create(group().h5Group(), "data", data, &maxsize, &chunks));
             ds.write(data);
         }
