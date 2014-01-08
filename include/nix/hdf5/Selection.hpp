@@ -9,8 +9,8 @@
 #ifndef PANDORA_SELECTION_H
 #define PANDORA_SELECTION_H
 
+#include <nix/NDSize.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/PSize.hpp>
 #include <nix/hdf5/Charon.hpp>
 
 namespace nix {

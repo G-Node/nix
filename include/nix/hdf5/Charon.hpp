@@ -12,8 +12,8 @@
 #include <type_traits>
 #include <boost/multi_array.hpp>
 
+#include <nix/NDSize.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/PSize.hpp>
 #include <nix/hdf5/DataType.hpp>
 
 
