@@ -14,8 +14,8 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-const PSize ReferenceList::MIN_CHUNK_SIZE = {1};
-const PSize ReferenceList::MAX_SIZE_1D = {H5S_UNLIMITED};
+const NDSize ReferenceList::MIN_CHUNK_SIZE = {1};
+const NDSize ReferenceList::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
 ReferenceList::ReferenceList(const ReferenceList &other)
@@ -64,10 +64,10 @@ void ReferenceList::add(const string &id) {
 
     if (group.hasData(ds_name)) {
         DataSet ds = group.openData(ds_name);
-        PSize old_size = ds.size();
-        PSize new_size = old_size + 1;
+        NDSize old_size = ds.size();
+        NDSize new_size = old_size + 1;
         ds.extend(new_size);
-        PSize count = {1};
+        NDSize count = {1};
         Selection sel = ds.createSelection();
         sel.select(count, old_size);
         ds.write(new_ids, sel);
@@ -96,7 +96,7 @@ bool ReferenceList::remove(const string &id) {
         }
 
         if (removed) {
-            PSize new_size = ds.size();
+            NDSize new_size = ds.size();
             ds.extend(--new_size);
             ds.write(ids);
         }

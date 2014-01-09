@@ -157,8 +157,8 @@ public:
 
     static spec_type type_spec(const myType &value) { return spec_type(); };
 
-    static PSize shape(const myType &value) {
-        return  PSize( {value.size()});}
+    static NDSize shape(const myType &value) {
+        return  NDSize( {value.size()});}
 
     static size_t num_elements(const myType &value) {
         return value.size();
@@ -172,7 +172,7 @@ public:
         return &value[0];
     }
 
-    static void resize(myType &value, const PSize &dims) {
+    static void resize(myType &value, const NDSize &dims) {
         if (dims.size() != 1) {
             throw InvalidRankException("Cannot resize scalar");
         }

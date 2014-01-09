@@ -99,7 +99,7 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
 
     H5::DataSpace space = attr.getSpace();
     int rank = space.getSimpleExtentNdims();
-    PSize dims(static_cast<size_t>(rank));
+    NDSize dims(static_cast<size_t>(rank));
     space.getSimpleExtentDims (dims.data(), nullptr);
     charon.resize(dims);
 

@@ -35,22 +35,22 @@ public:
 
 
     static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
-                          const PSize &size, const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+                          const NDSize &size, const NDSize *maxsize = nullptr, const NDSize *chunks = nullptr);
 
     template<typename T>
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value,
-                          const PSize *maxsize = nullptr, const PSize *chunks = nullptr);
+                          const NDSize *maxsize = nullptr, const NDSize *chunks = nullptr);
 
     static DataSet create(const H5::CommonFG &parent, const H5::DataType &fileType,
-                          const std::string &name, const PSize &size, const PSize *maxsize, const PSize *chunks);
+                          const std::string &name, const NDSize &size, const NDSize *maxsize, const NDSize *chunks);
 
-    static PSize guessChunking(PSize dims, DataType dtype);
+    static NDSize guessChunking(NDSize dims, DataType dtype);
 
-    static PSize guessChunking(PSize dims, size_t elementSize);
+    static NDSize guessChunking(NDSize dims, size_t elementSize);
 
-    void extend(const PSize &size);
+    void extend(const NDSize &size);
     Selection createSelection() const;
-    PSize size() const;
+    NDSize size() const;
 
 private:
 
@@ -63,7 +63,7 @@ private:
 
 template<typename T>
 DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data,
-                        const PSize *maxsize, const PSize *chunks)
+                        const NDSize *maxsize, const NDSize *chunks)
 {
     typedef Charon< const T> charon_type;
     charon_type charon(data);
@@ -97,7 +97,7 @@ template<typename T> void DataSet::read(T &value, bool resize)
 
     H5::DataSpace space = h5dset.getSpace();
     if (resize) {
-        PSize dims = this->size();
+        NDSize dims = this->size();
         charon.resize(dims);
     }
 
@@ -122,7 +122,7 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool
     Charon<T> charon(value);
 
     if (resize) {
-        PSize fsize = fileSel.size();
+        NDSize fsize = fileSel.size();
         charon.resize(fsize);
     }
 

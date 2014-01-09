@@ -18,8 +18,8 @@ namespace nix {
 namespace hdf5 {
 
 
-const PSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
-const PSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
+const NDSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
+const NDSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
 
 
 DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)

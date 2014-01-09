@@ -12,13 +12,13 @@ namespace nix {
 namespace hdf5 {
 
 
-void Selection::offset(const PSSize &offset)
+void Selection::offset(const NDSSize &offset)
 {
     space.offsetSimple(offset.data());
 }
 
 
-void Selection::select(const PSize &count, const PSize &start, Mode mode)
+void Selection::select(const NDSize &count, const NDSize &start, Mode mode)
 {
     H5S_seloper_t op = static_cast<H5S_seloper_t>(mode);
     space.selectHyperslab(op, count.data(), start.data());
@@ -39,10 +39,10 @@ void Selection::select(Preset set)
 }
 
 
-PSize Selection::size() const
+NDSize Selection::size() const
 {
     size_t rank = this->rank();
-    PSize start(rank), end(rank);
+    NDSize start(rank), end(rank);
     bounds(start, end);
     return (end - start) + 1;
 }

@@ -108,25 +108,25 @@ template<typename T>
 void PropertyHDF5::addValue(const Value<T> &value) {
     const std::vector<Value<T>> vals = { value };
 
-    PSize start;
+    NDSize start;
     DataSet ds((H5::DataSet()));
     if (group().hasData("values")) {
         ds = group().openData("values");
-        PSize size = ds.size();
-        PSize newSize = size + 1;
+        NDSize size = ds.size();
+        NDSize newSize = size + 1;
         ds.extend(newSize);
         start = size;
     } else {
         Charon<const std::vector<Value<T>>> charon(vals);
-        PSize size = {1};
-        PSize maxsize = {H5S_UNLIMITED};
-        PSize chunks = DataSet::guessChunking(size, DataType::Double);
+        NDSize size = {1};
+        NDSize maxsize = {H5S_UNLIMITED};
+        NDSize chunks = DataSet::guessChunking(size, DataType::Double);
         ds = DataSet::create(group().h5Group(), charon.getFileType(),  "values", size, &maxsize, &chunks);
         start = {0};
     }
 
     Selection fileSel = ds.createSelection();
-    PSize count = {1};
+    NDSize count = {1};
     fileSel.select(count, start);
     ds.write(vals, fileSel);
 }
@@ -148,8 +148,8 @@ void PropertyHDF5::value(size_t index, Value<T> &value) const {
         std::vector<Value<T> > vals;
 
         Selection fileSel = dataset.createSelection();
-        PSize start = {index};
-        PSize count = {1};
+        NDSize start = {index};
+        NDSize count = {1};
         fileSel.select(count, start);
 
         dataset.read(vals, fileSel, true);

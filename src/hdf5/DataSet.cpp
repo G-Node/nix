@@ -24,9 +24,9 @@ DataSet::DataSet(H5::DataSet dset)
 DataSet DataSet::create(const H5::CommonFG &parent,
                         const std::string &name,
                         DataType dtype,
-                        const PSize &size,
-                        const PSize *maxsize,
-                        const PSize *chunks)
+                        const NDSize &size,
+                        const NDSize *maxsize,
+                        const NDSize *chunks)
 {
     H5::DataType fileType = data_type_to_h5_filetype(dtype);
     H5::DataSpace space;
@@ -50,7 +50,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 
 
 DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType,
-                        const std::string &name, const PSize &size, const PSize *maxsize, const PSize *chunks) {
+                        const std::string &name, const NDSize &size, const NDSize *maxsize, const NDSize *chunks) {
     H5::DataSpace space;
 
     if (size.size() > 0) {
@@ -71,7 +71,7 @@ DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType
 }
 
 
-double psize_product(const PSize &dims)
+double psize_product(const NDSize &dims)
 {
     double product = 1;
     std::for_each(dims.begin(), dims.end(), [&](hsize_t val) {
@@ -92,15 +92,15 @@ double psize_product(const PSize &dims)
  * @param dims    Size information to base the guessing on
  * @param dtype   The type of the data to guess the chunks for
  *
- * Internally uses guessChunking(PSize, size_t) for calculations.
+ * Internally uses guessChunking(NDSize, size_t) for calculations.
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-PSize DataSet::guessChunking(PSize dims, DataType dtype)
+NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
 {
 
     const size_t type_size = data_type_to_size(dtype);
-    PSize chunks = guessChunking(dims, type_size);
+    NDSize chunks = guessChunking(dims, type_size);
     return chunks;
 }
 
@@ -119,7 +119,7 @@ PSize DataSet::guessChunking(PSize dims, DataType dtype)
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-PSize DataSet::guessChunking(PSize dims, size_t elementSize)
+NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
 {
     // original source:
     //    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
@@ -128,7 +128,7 @@ PSize DataSet::guessChunking(PSize dims, size_t elementSize)
         throw 1;
     }
 
-    PSize chunks(dims);
+    NDSize chunks(dims);
     double product = 1;
     std::for_each(dims.begin(), dims.end(), [&](hsize_t &val) {
         //todo: check for +infinity
@@ -170,7 +170,7 @@ PSize DataSet::guessChunking(PSize dims, size_t elementSize)
 }
 
 
-void DataSet::extend(const PSize &dims)
+void DataSet::extend(const NDSize &dims)
 {
     //FIXME check for same rank
     h5dset.extend(dims.data());
@@ -184,11 +184,11 @@ Selection DataSet::createSelection() const
 }
 
 
-PSize DataSet::size() const
+NDSize DataSet::size() const
 {
     H5::DataSpace space = h5dset.getSpace();
     size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
-    PSize dims(rank);
+    NDSize dims(rank);
     space.getSimpleExtentDims (dims.data(), nullptr);
     return dims;
 }

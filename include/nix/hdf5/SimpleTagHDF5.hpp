@@ -28,8 +28,8 @@ class SimpleTagHDF5 : virtual public base::ISimpleTag, public EntityWithSourcesH
 
 private:
 
-    static const PSize MIN_CHUNK_SIZE;
-    static const PSize MAX_SIZE_1D;
+    static const NDSize MIN_CHUNK_SIZE;
+    static const NDSize MAX_SIZE_1D;
 
     Group representation_group;
     ReferenceList references_list;

@@ -9,16 +9,16 @@
 #ifndef PANDORA_PSIZE_H
 #define PANDORA_PSIZE_H
 
+#include <cstdint>
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
 
 namespace nix {
-namespace hdf5 {
 
 
 template<typename T>
-class PSizeBase {
+class NDSizeBase {
 
 public:
 
@@ -31,20 +31,20 @@ public:
     typedef size_t   difference_type;
     typedef size_t   size_type;
 
-    PSizeBase()
+    NDSizeBase()
         : rank(0), dims(nullptr)
     {
     }
 
 
-    explicit PSizeBase(size_t _rank)
+    explicit NDSizeBase(size_t _rank)
         : rank(_rank), dims(nullptr)
     {
         allocate();
     }
 
 
-    explicit PSizeBase(size_t _rank, T fillValue)
+    explicit NDSizeBase(size_t _rank, T fillValue)
         : rank(_rank), dims(nullptr)
     {
         allocate();
@@ -52,7 +52,7 @@ public:
     }
 
 
-    PSizeBase(std::initializer_list<T> args)
+    NDSizeBase(std::initializer_list<T> args)
         : rank(args.size())
     {
         allocate();
@@ -60,7 +60,7 @@ public:
     }
 
     //copy
-    PSizeBase(const PSizeBase &other)
+    NDSizeBase(const NDSizeBase &other)
         : rank(other.rank), dims(nullptr)
     {
         allocate();
@@ -68,7 +68,7 @@ public:
     }
 
     //move (not tested due to: http://llvm.org/bugs/show_bug.cgi?id=12208)
-    PSizeBase(PSizeBase &&other)
+    NDSizeBase(NDSizeBase &&other)
         : rank(other.rank), dims(other.dims)
     {
         other.dims = nullptr;
@@ -76,14 +76,14 @@ public:
     }
 
     //copy and move assignment operator (not tested, see above)
-    PSizeBase& operator=(PSizeBase other) {
+    NDSizeBase& operator=(NDSizeBase other) {
         swap(other);
         return *this;
     }
 
 
     T& operator[] (const size_t index) {
-        const PSizeBase *this_const = const_cast<const PSizeBase*>(this);
+        const NDSizeBase *this_const = const_cast<const NDSizeBase*>(this);
         return const_cast<T&>(this_const->operator[](index));
     }
 
@@ -95,22 +95,22 @@ public:
         return dims[index];
     }
 
-    PSizeBase<T>& operator++() {
-        std::for_each(begin(), end(), [](hsize_t &val) {
+    NDSizeBase<T>& operator++() {
+        std::for_each(begin(), end(), [](T &val) {
             val++;
         });
         return *this;
     }
 
 
-    PSizeBase<T> operator++(int) {
-        PSizeBase<T> snapshot(*this);
+    NDSizeBase<T> operator++(int) {
+        NDSizeBase<T> snapshot(*this);
         operator++();
         return snapshot;
     }
 
 
-    PSizeBase<T>& operator+=(const PSizeBase<T> &rhs) {
+    NDSizeBase<T>& operator+=(const NDSizeBase<T> &rhs) {
         if(size() != rhs.size()) {
             throw std::out_of_range (""); //fixme: use different exception
         }
@@ -123,7 +123,7 @@ public:
     }
 
 
-    PSizeBase<T>& operator+=(T val) {
+    NDSizeBase<T>& operator+=(T val) {
         for (size_t i = 0; i < rank; i++) {
             dims[i] += val;
         }
@@ -132,27 +132,27 @@ public:
     }
 
 
-    PSizeBase<T>& operator+=(int val) {
+    NDSizeBase<T>& operator+=(int val) {
         return operator+=(static_cast<T>(val));
     }
 
 
-    PSizeBase<T>& operator--() {
-        std::for_each(begin(), end(), [](hsize_t &val) {
+    NDSizeBase<T>& operator--() {
+        std::for_each(begin(), end(), [](T &val) {
             val--;
         });
         return *this;
     }
 
 
-    PSizeBase<T> operator--(int) {
-        PSizeBase<T> snapshot(*this);
+    NDSizeBase<T> operator--(int) {
+        NDSizeBase<T> snapshot(*this);
         operator--();
         return snapshot;
     }
 
 
-    PSizeBase<T>& operator-=(const PSizeBase<T> &rhs) {
+    NDSizeBase<T>& operator-=(const NDSizeBase<T> &rhs) {
         if(size() != rhs.size()) {
             throw std::out_of_range (""); //fixme: use different exception
         }
@@ -165,7 +165,7 @@ public:
     }
 
 
-    PSizeBase<T>& operator-=(T val) {
+    NDSizeBase<T>& operator-=(T val) {
         for (size_t i = 0; i < rank; i++) {
             dims[i] -= val;
         }
@@ -174,19 +174,19 @@ public:
     }
 
 
-    PSizeBase<T>& operator-=(int val) {
+    NDSizeBase<T>& operator-=(int val) {
         return operator-=(static_cast<T>(val));
     }
 
 
-    void swap(PSizeBase &other) {
+    void swap(NDSizeBase &other) {
         using std::swap;
         swap(dims, other.dims);
         rank = other.rank;
     }
 
 
-    PSizeBase<T>& operator*=(const PSizeBase<T> &rhs) {
+    NDSizeBase<T>& operator*=(const NDSizeBase<T> &rhs) {
         if(size() != rhs.size()) {
             throw std::out_of_range (""); //fixme: use different exception
         }
@@ -199,7 +199,7 @@ public:
     }
 
 
-    PSizeBase<T>& operator/=(const PSizeBase<T> &rhs) {
+    NDSizeBase<T>& operator/=(const NDSizeBase<T> &rhs) {
         if(size() != rhs.size()) {
             throw std::out_of_range (""); //fixme: use different exception
         }
@@ -217,14 +217,14 @@ public:
 
     size_t nelms() const {
         size_t product = 1;
-        std::for_each(begin(), end(), [&](hsize_t val) {
+        std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
         return product;
     }
 
 
-    size_t dot(const PSizeBase<T> &other) const {
+    size_t dot(const NDSizeBase<T> &other) const {
         if(size() != other.size()) {
             throw std::out_of_range (""); //fixme: use different exception
         }
@@ -249,7 +249,7 @@ public:
     }
 
 
-    ~PSizeBase(){
+    ~NDSizeBase(){
         delete[] dims;
     }
 
@@ -283,7 +283,7 @@ private:
 
 
 template<typename T>
-PSizeBase<T> operator-(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator-(NDSizeBase<T> lhs, const NDSizeBase<T> &rhs)
 {
     lhs -= rhs;
     return lhs;
@@ -291,7 +291,7 @@ PSizeBase<T> operator-(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 
 
 template<typename T>
-PSizeBase<T> operator+(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator+(NDSizeBase<T> lhs, const NDSizeBase<T> &rhs)
 {
     lhs += rhs;
     return lhs;
@@ -299,7 +299,7 @@ PSizeBase<T> operator+(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 
 
 template<typename T>
-PSizeBase<T> operator+(PSizeBase<T> lhs, T rhs)
+NDSizeBase<T> operator+(NDSizeBase<T> lhs, T rhs)
 {
     lhs += rhs;
     return lhs;
@@ -307,14 +307,14 @@ PSizeBase<T> operator+(PSizeBase<T> lhs, T rhs)
 
 
 template<typename T>
-PSizeBase<T> operator+(T lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator+(T lhs, const NDSizeBase<T> &rhs)
 {
     return operator+(rhs, lhs);
 }
 
 
 template<typename T>
-PSizeBase<T> operator+(PSizeBase<T> lhs, int rhs)
+NDSizeBase<T> operator+(NDSizeBase<T> lhs, int rhs)
 {
     lhs += rhs;
     return lhs;
@@ -322,13 +322,13 @@ PSizeBase<T> operator+(PSizeBase<T> lhs, int rhs)
 
 
 template<typename T>
-PSizeBase<T> operator+(int lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator+(int lhs, const NDSizeBase<T> &rhs)
 {
     return operator+(rhs, lhs);
 }
 
 template<typename T>
-PSizeBase<T> operator*(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator*(NDSizeBase<T> lhs, const NDSizeBase<T> &rhs)
 {
     lhs *= rhs;
     return lhs;
@@ -336,7 +336,7 @@ PSizeBase<T> operator*(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 
 
 template<typename T>
-PSizeBase<T> operator*(PSizeBase<T> lhs, T rhs)
+NDSizeBase<T> operator*(NDSizeBase<T> lhs, T rhs)
 {
     lhs *= rhs;
     return lhs;
@@ -344,14 +344,14 @@ PSizeBase<T> operator*(PSizeBase<T> lhs, T rhs)
 
 
 template<typename T>
-PSizeBase<T> operator*(T lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator*(T lhs, const NDSizeBase<T> &rhs)
 {
     return operator*(rhs, lhs);
 }
 
 
 template<typename T>
-PSizeBase<T> operator/(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator/(NDSizeBase<T> lhs, const NDSizeBase<T> &rhs)
 {
     lhs /= rhs;
     return lhs;
@@ -359,7 +359,7 @@ PSizeBase<T> operator/(PSizeBase<T> lhs, const PSizeBase<T> &rhs)
 
 
 template<typename T>
-PSizeBase<T> operator/(PSizeBase<T> lhs, T rhs)
+NDSizeBase<T> operator/(NDSizeBase<T> lhs, T rhs)
 {
     lhs /= rhs;
     return lhs;
@@ -367,14 +367,14 @@ PSizeBase<T> operator/(PSizeBase<T> lhs, T rhs)
 
 
 template<typename T>
-PSizeBase<T> operator/(T lhs, const PSizeBase<T> &rhs)
+NDSizeBase<T> operator/(T lhs, const NDSizeBase<T> &rhs)
 {
     return operator/(rhs, lhs);
 }
 
 
 template<typename T>
-inline bool operator==(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+inline bool operator==(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
 {
     if (lhs.size() != rhs.size())
         return false;
@@ -389,7 +389,7 @@ inline bool operator==(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
 
 
 template<typename T>
-inline bool operator!=(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
+inline bool operator!=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
 {
     return !operator==(lhs, rhs);
 }
@@ -397,12 +397,10 @@ inline bool operator!=(const PSizeBase<T> &lhs, const PSizeBase<T> &rhs)
 
 /* *****  */
 
-typedef PSizeBase<hsize_t>  PSize;
+typedef NDSizeBase<uint64_t>  NDSize;
 
-typedef PSizeBase<hssize_t> PSSize;
+typedef NDSizeBase<int64_t> NDSSize;
 
-
-} // namespace hdf5
 } // namespace nix
 
 #endif // PANDORA_PSIZE_H

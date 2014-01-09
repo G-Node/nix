@@ -25,25 +25,25 @@ public:
 
     typedef uint8_t byte_type;
 
-    NDBuffer(DataType dtype, PSize dims);
+    NDBuffer(DataType dtype, NDSize dims);
 
     size_t rank() const { return extends.size(); }
     size_t num_elements() const { return extends.nelms(); }
-    PSize  shape() const { return extends; }
-    PSize  size()const { return extends; }
+    NDSize  shape() const { return extends; }
+    NDSize  size()const { return extends; }
     DataType dtype() const { return dataType ;}
 
     template<typename T> const T get(size_t index) const;
-    template<typename T> const T get(const PSize &index) const;
+    template<typename T> const T get(const NDSize &index) const;
     template<typename T> void set(size_t index, T value);
-    template<typename T> void set(const PSize &index, T value);
+    template<typename T> void set(const NDSize &index, T value);
 
     byte_type *data() { return &dstore[0]; }
     const byte_type *data() const { return &dstore[0]; }
 
-    void resize(const PSize &new_size);
+    void resize(const NDSize &new_size);
 
-    size_t sub2index(const PSize &sub) const;
+    size_t sub2index(const NDSize &sub) const;
 
 private:
 
@@ -51,8 +51,8 @@ private:
     void allocate_space();
     void calc_strides();
 
-    PSize                  extends;
-    PSize                  strides;
+    NDSize                  extends;
+    NDSize                  strides;
     std::vector<byte_type> dstore;
 
 };
@@ -68,7 +68,7 @@ const T NDBuffer::get(size_t index) const
 
 
 template<typename T>
-const T NDBuffer::get(const PSize &index) const
+const T NDBuffer::get(const NDSize &index) const
 {
     size_t pos = sub2index(index);
     const T *dx = reinterpret_cast<const T *>(&dstore[0]);
@@ -85,7 +85,7 @@ void NDBuffer::set(size_t index, T value)
 
 
 template<typename T>
-void NDBuffer::set(const PSize &index, T value)
+void NDBuffer::set(const NDSize &index, T value)
 {
     size_t pos = sub2index(index);
     T* dx = reinterpret_cast<T *>(&dstore[0]);
@@ -104,7 +104,7 @@ public:
 
     static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
 
-    static PSize shape(const NDBuffer &value) { return value.shape(); }
+    static NDSize shape(const NDBuffer &value) { return value.shape(); }
 
     static size_t num_elements(const NDBuffer &value) {
         return value.num_elements();

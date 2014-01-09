@@ -30,7 +30,7 @@ class TestDataSet:public CPPUNIT_NS::TestFixture {
 public:
 
     void setUp();
-    void testPSize();
+    void testNDSize();
     void testChunkGuessing();
     void testBasic();
     void testSelection();
@@ -44,7 +44,7 @@ private:
     H5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestDataSet);
-    CPPUNIT_TEST(testPSize);
+    CPPUNIT_TEST(testNDSize);
     CPPUNIT_TEST(testChunkGuessing);
     CPPUNIT_TEST(testBasic);
     CPPUNIT_TEST(testSelection);
