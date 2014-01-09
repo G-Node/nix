@@ -397,9 +397,15 @@ inline bool operator!=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
 
 /* *****  */
 
-typedef NDSizeBase<uint64_t>  NDSize;
+//Ideally we would use unit64_t (and int64_t) here to directly specify
+//the size we want, but for now we stick with how the hdf5 library
+//defines hsize_t, otherwise we will run into issues when on plaforms
+// where unit64_t is an incompatible type to the type of hsize_t
+//(e.g. Ubuntu 12.04 LTS Server Edition 64 bit.)
 
-typedef NDSizeBase<int64_t> NDSSize;
+typedef NDSizeBase<unsigned long long int>  NDSize;
+
+typedef NDSizeBase<long long int> NDSSize;
 
 } // namespace nix
 
