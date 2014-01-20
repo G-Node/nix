@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
+#include <iostream>
+
 
 namespace nix {
 
@@ -394,6 +396,22 @@ inline bool operator!=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
     return !operator==(lhs, rhs);
 }
 
+
+template<typename T>
+inline std::ostream& operator<<(std::ostream &os, const NDSizeBase<T> &ndsize)
+{
+  os << "NDSize {";
+  for(size_t i = 0; i < ndsize.size(); i++) {
+    if (i != 0) {
+      os << ", ";
+    }
+
+    os << ndsize[i];
+  }
+
+  os << "}\n";
+  return os;
+}
 
 /* *****  */
 
