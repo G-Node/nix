@@ -14,7 +14,7 @@
 
 #include <nix/NDSize.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/DataType.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 
 namespace nix {

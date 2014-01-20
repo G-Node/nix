@@ -8,7 +8,7 @@
 
 #include <stdexcept>
 
-#include <nix/hdf5/DataType.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {

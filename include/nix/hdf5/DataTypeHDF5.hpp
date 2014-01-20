@@ -9,27 +9,11 @@
 #ifndef PANDORA_DATA_TYPE_H
 #define PANDORA_DATA_TYPE_H
 
+#include <nix/DataType.hpp>
 #include <nix/hdf5/hdf5include.hpp>
 
 namespace nix {
 namespace hdf5 {
-
-enum class DataType {
-    Bool,
-    Float,
-    Double,
-    Int8,
-    Int16,
-    Int32,
-    Int64,
-    UInt8,
-    UInt16,
-    UInt32,
-    UInt64,
-    Date,
-    DateTime
-};
-
 
 H5::DataType data_type_to_h5_filetype(DataType dtype);
 
