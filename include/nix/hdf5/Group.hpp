@@ -57,6 +57,11 @@ public:
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
+    template<typename T>
+    void setData(const std::string &name, const T &value);
+    template<typename T>
+    bool getData(const std::string &name, T &value) const;
+
     bool hasGroup(const std::string &name) const;
     Group openGroup(const std::string &name, bool create = true) const;
     void removeGroup(const std::string &name);
@@ -127,6 +132,60 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     return true;
 }
 
+template<typename T>
+void Group::setData(const std::string &name, const T &value)
+{
+    typedef Hydra<const T> hydra_t;
+    typedef typename hydra_t::reader_t reader_t;
+
+    DataSet ds;
+
+    const hydra_t hydra(value);
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
+    if (!hasData(name)) {
+        NDSize maxsize(shape.size(), H5S_UNLIMITED);
+        NDSize chunks(shape.size(), 1);
+        ds = DataSet::create(h5group, name, dtype, shape, &maxsize, &chunks);
+    } else {
+        ds = openData(name);
+        ds.extend(shape); //FIXME: this should be ds.set_extend, for i.e. shrinking
+    }
+
+    reader_t reader = hydra.reader();
+
+    ds.set(dtype, reader.begin());
+    reader.finish();
+}
+
+template<typename T>
+bool Group::getData(const std::string &name, T &value) const
+{
+    typedef Hydra<T> hydra_t;
+    typedef typename hydra_t::writer_t writer_t;
+
+    if (!hasData(name)) {
+        return false;
+    }
+
+    DataSet ds = openData(name);
+
+    hydra_t hydra(value);
+
+    writer_t writer = hydra.writer();
+    DataType dtype = hydra.element_data_type();
+
+    hydra.resize(ds.size());
+    ds.get(dtype, writer.begin());
+    writer.finish();
+
+    if (dtype == DataType::String) {
+        ds.vlenReclaim(dtype, writer.begin());
+    }
+
+    return true;
+}
 
 } // namespace hdf5
 } // namespace nix
