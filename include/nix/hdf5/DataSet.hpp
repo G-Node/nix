@@ -55,6 +55,8 @@ public:
     Selection createSelection() const;
     NDSize size() const;
 
+    void vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace = nullptr);
+
 private:
 
     H5::DataSet h5dset;

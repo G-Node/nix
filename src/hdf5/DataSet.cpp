@@ -207,6 +207,17 @@ NDSize DataSet::size() const
     return dims;
 }
 
+void DataSet::vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace)
+{
+    H5::DataType h5MemType = data_type_to_h5_memtype(memType);
+
+    if (dspace != nullptr) {
+        H5::DataSet::vlenReclaim(data, h5MemType, *dspace);
+    } else {
+        H5::DataSpace space = h5dset.getSpace();
+        H5::DataSet::vlenReclaim(data, h5MemType, space);
+    }
+}
 
 } // namespace hdf5
 } // namespace nix
