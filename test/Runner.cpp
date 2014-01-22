@@ -19,10 +19,12 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include "TestGroup.hpp"
+#include "TestDataArray.hpp"
 
 int main(int argc, char* argv[]) {
 
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
