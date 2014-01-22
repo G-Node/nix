@@ -53,12 +53,12 @@ public:
         fill(fillValue);
     }
 
-
-    NDSizeBase(std::initializer_list<T> args)
+    template<typename U>
+    NDSizeBase(std::initializer_list<U> args)
         : rank(args.size())
     {
         allocate();
-        std::copy(args.begin(), args.end(), dims);
+        std::transform(args.begin(), args.end(), dims, [](const U& val){ return static_cast<T>(val);});
     }
 
     //copy
