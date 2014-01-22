@@ -20,10 +20,13 @@ namespace hdf5 {
 class DataSet {
 
 public:
-
+    DataSet() { }
     explicit DataSet(H5::DataSet dset);
 
     DataSet& operator=(const DataSet &other) {h5dset = other.h5dset; return *this;}
+
+    void get(DataType dtype, void *data) const; //rename later to read
+    void set(DataType dtype, const void *data); //rename later to write
 
     template<typename T> void read(T &value, bool resize = false);
     template<typename T> void read(T &value, const Selection &fileSel, bool resize = false);
@@ -67,7 +70,7 @@ DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, con
 {
     typedef Charon< const T> charon_type;
     charon_type charon(data);
-
+    
     H5::DataSpace space = charon.createDataSpace(maxsize);
     H5::DSetCreatPropList plcreate;
 

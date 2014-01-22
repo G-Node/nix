@@ -71,6 +71,20 @@ DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType
 }
 
 
+void DataSet::get(DataType dtype, void *data) const
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5dset.read(data, memType);
+}
+
+
+void DataSet::set(DataType dtype, const void *data)
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5dset.write(data, memType);
+}
+
+
 double psize_product(const NDSize &dims)
 {
     double product = 1;
