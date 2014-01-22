@@ -18,45 +18,11 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-/*
-#include "TestBlock.hpp"
-#include "TestCharon.hpp"
-#include "TestFile.hpp"
-#include "TestDataArray.hpp"
-#include "TestDataSet.hpp"
-#include "TestDataTag.hpp"
 #include "TestGroup.hpp"
-#include "TestNDBuffer.hpp"
-#include "TestSource.hpp"
-#include "TestNamedEntityWithSources.hpp"
-#include "TestEntityWithMetadata.hpp"
-#include "TestRepresentation.hpp"
-
-#include "TestProperty.hpp"
-#include "TestSection.hpp"
-*/
-
 
 int main(int argc, char* argv[]) {
 
-    /*
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestCharon);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataTag);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestNamedEntityWithSources);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestNDBuffer);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
-
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
-    */
-
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
