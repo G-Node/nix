@@ -365,6 +365,10 @@ public:
         return data_traits<vanilla_type>::shape(value);
     }
 
+    void resize(const NDSize &new_shape) {
+        data_traits<vanilla_type>::resize(value, new_shape);
+    }
+
     writer_t writer() {
         return writer_t(value);
     }
