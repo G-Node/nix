@@ -14,6 +14,8 @@
 #include <memory>
 
 #include <nix/base/EntityWithSources.hpp>
+#include <nix/DataType.hpp>
+#include <nix/NDSize.hpp>
 
 namespace nix {
 
@@ -92,13 +94,6 @@ public:
      */
     virtual std::vector<double> polynomCoefficients() const = 0;
 
-    //--------------------------------------------------
-    // Methods concerning data access.
-    //--------------------------------------------------
-
-    // subclasses have to define the templates:
-    // template<typename U, size_t dims> void getRawData(boost::multi_array<U, dims> &data) const;
-    // template<typename U, size_t dims> void setRawData(const boost::multi_array<U, dims> &data)
 
     //--------------------------------------------------
     // Methods concerning dimensions
@@ -117,6 +112,17 @@ public:
 
 
     virtual bool removeDimension(size_t id) = 0;
+
+
+    //--------------------------------------------------
+    // Methods concerning data access.
+    //--------------------------------------------------
+
+    virtual void write(DataType dtype, NDSize size, const void *data) = 0;
+    virtual void read(DataType dtype, NDSize size, void *buffer) const = 0;
+
+    virtual NDSize getExtent(void) const = 0;
+    virtual void   setExtent(const NDSize &extent) = 0;
 
     // TODO add missing methods
 

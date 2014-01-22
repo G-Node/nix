@@ -269,5 +269,51 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 DataArrayHDF5::~DataArrayHDF5(){}
 
 
+void DataArrayHDF5::write(DataType dtype, NDSize size, const void *data)
+{
+    DataSet ds;
+
+    if (!group().hasData("data")) {
+        NDSize maxsize(size.size(), H5S_UNLIMITED);
+        NDSize chunks(size.size(), 1);
+        ds = DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
+    } else {
+        ds = group().openData("data");
+        ds.extend(size); //FIXME: this should be ds.set_extend, for i.e. shrinking
+    }
+
+     ds.set(dtype, data);
+}
+
+void DataArrayHDF5::read(DataType dtype, NDSize size, void *data) const
+{
+    if (!group().hasData("data")) {
+        return;
+    }
+
+    DataSet ds = group().openData("data");
+    ds.get(dtype, data);
+}
+
+NDSize DataArrayHDF5::getExtent(void) const
+{
+    if (!group().hasData("data")) {
+        return NDSize{};
+    }
+
+    DataSet ds = group().openData("data");
+    return ds.size();
+}
+
+void DataArrayHDF5::setExtent(const NDSize &extent)
+{
+    if (!group().hasData("data")) {
+        return; //FIXME throw exception?
+    }
+
+    DataSet ds = group().openData("data");
+    ds.extend(extent); //FIXME: should be set_extent (for shrinking)
+}
+
 } // namespace hdf5
 } // namespace nix

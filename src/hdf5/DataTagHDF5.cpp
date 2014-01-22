@@ -281,10 +281,11 @@ ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
 
 
 bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
+
     bool valid = true;
     boost::multi_array<double,1> aData, bData;
-    a.getRawData(aData);
-    b.getRawData(bData);
+    a.getData(aData);
+    b.getData(bData);
     valid = aData.num_dimensions() == bData.num_dimensions();
     if(!valid)
         return valid;
@@ -300,13 +301,14 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
 
 
 bool DataTagHDF5::checkPositionsAndExtents() const{
+
     bool valid = true;
     if(hasPositions() && hasExtents()){
         DataArray pos = positions();
         DataArray ext = extents();
         boost::multi_array<double,1> posData, extData;
-        pos.getRawData(posData);
-        ext.getRawData(extData);
+        pos.getData(posData);
+        ext.getData(extData);
         return checkDimensions(pos, ext);
     }
     return valid;
