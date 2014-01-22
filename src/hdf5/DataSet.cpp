@@ -71,6 +71,20 @@ DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType
 }
 
 
+void DataSet::get(DataType dtype, void *data) const
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5dset.read(data, memType);
+}
+
+
+void DataSet::set(DataType dtype, const void *data)
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5dset.write(data, memType);
+}
+
+
 double psize_product(const NDSize &dims)
 {
     double product = 1;
@@ -193,6 +207,17 @@ NDSize DataSet::size() const
     return dims;
 }
 
+void DataSet::vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace)
+{
+    H5::DataType h5MemType = data_type_to_h5_memtype(memType);
+
+    if (dspace != nullptr) {
+        H5::DataSet::vlenReclaim(data, h5MemType, *dspace);
+    } else {
+        H5::DataSpace space = h5dset.getSpace();
+        H5::DataSet::vlenReclaim(data, h5MemType, space);
+    }
+}
 
 } // namespace hdf5
 } // namespace nix

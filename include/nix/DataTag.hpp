@@ -172,6 +172,7 @@ public:
 
     template<typename T, size_t dims>
     void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
+
         if (referenceCount() == 0){
             throw std::runtime_error("DataTagHDF5::getReferencedData: There is no reference attached to this tag!");
         }
@@ -181,7 +182,7 @@ public:
 
         DataArray pa = positions();
         boost::multi_array<double,1> posData, extData;
-        pa.getRawData(posData);
+        pa.getData(posData);
 
         if(index >= posData.shape()[0]){
             throw std::runtime_error("DataTagHDF5::getReferencedData: index exeeds matrix dimensions in positions data!");
@@ -189,7 +190,7 @@ public:
 
         if(hasExtents()){
             DataArray ea = extents();
-            ea.getRawData(extData);
+            ea.getData(extData);
         }
 
         //TODO convert position and extent to respective units
@@ -198,6 +199,7 @@ public:
         for (size_t i = 0; i < refs.size();i++){
 
         }
+
     }
 
     //--------------------------------------------------

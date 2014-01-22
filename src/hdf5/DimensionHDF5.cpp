@@ -184,25 +184,13 @@ DimensionType SetDimensionHDF5::dimensionType() const {
 vector<string> SetDimensionHDF5::labels() const {
     vector<string> labels;
 
-    if (group.hasData("labels")) {
-        DataSet ds = group.openData("labels");
-        ds.read(labels, true);
-    }
-
+    group.getData("labels", labels);
     return labels;
 }
 
 
 void SetDimensionHDF5::labels(const vector<string> &labels) {
-    if (group.hasData("labels")) {
-        DataSet ds = group.openData("labels");
-        ds.extend({labels.size()});
-        ds.write(labels);
-    } else {
-        DataSet ds = DataSet::create(group.h5Group(), "labels", labels,
-                                     nullptr, nullptr);
-        ds.write(labels);
-    }
+   group.setData("labels", labels);
 }
 
 
@@ -271,26 +259,13 @@ RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &othe
 
 vector<double> RangeDimensionHDF5::tics() const {
     vector<double> tics;
-
-    if (group.hasData("tics")) {
-        DataSet ds = group.openData("tics");
-        ds.read(tics, true);
-    }
-
+    group.getData("tics", tics);
     return tics;
 }
 
 
 void RangeDimensionHDF5::tics(const vector<double> &tics) {
-    if (group.hasData("tics")) {
-        DataSet ds = group.openData("tics");
-        ds.extend({tics.size()});
-        ds.write(tics);
-    } else {
-        DataSet ds = DataSet::create(group.h5Group(), "tics", tics,
-                                     nullptr, nullptr);
-        ds.write(tics);
-    }
+    group.setData("tics", tics);
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}

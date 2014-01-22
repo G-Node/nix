@@ -78,34 +78,6 @@ public:
 
     std::vector<double> polynomCoefficients() const;
 
-    //--------------------------------------------------
-    // Methods concerning data access.
-    //--------------------------------------------------
-
-
-    template<typename T, size_t dims>
-    void getRawData(boost::multi_array<T, dims> &data) const{
-        if(group().hasData("data")){
-            DataSet ds = group().openData("data");
-            ds.read(data, true);
-        }
-    }
-
-
-    template<typename T, size_t dims>
-    void setRawData(const boost::multi_array<T, dims> &data){
-        if (!group().hasData("data")){
-            NDSize size = {dims};
-            NDSize maxsize = {H5S_UNLIMITED};
-            NDSize chunks = {1};
-            DataSet ds(DataSet::create(group().h5Group(), "data", data, &maxsize, &chunks));
-            ds.write(data);
-        }
-        else{
-            DataSet ds = group().openData("data");
-            ds.write(data);
-        }
-    }
 
     //--------------------------------------------------
     // Methods concerning dimensions
@@ -135,8 +107,19 @@ public:
 
     DataArrayHDF5& operator=(const DataArrayHDF5 &other);
 
-
     virtual ~DataArrayHDF5();
+
+
+    //--------------------------------------------------
+    // Methods concerning data access.
+    //--------------------------------------------------
+
+
+    void write(DataType dtype, NDSize size, const void *data);
+    void read(DataType dtype, NDSize size, void *buffer) const;
+
+    NDSize getExtent(void) const;
+    void   setExtent(const NDSize &extent);
 };
 
 

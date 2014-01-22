@@ -14,6 +14,9 @@
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSet.hpp>
 
+#include <nix/Hydra.hpp>
+#include <nix/hdf5/DataSpace.hpp>
+
 namespace nix {
 namespace hdf5 {
 
@@ -54,6 +57,11 @@ public:
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
+    template<typename T>
+    void setData(const std::string &name, const T &value);
+    template<typename T>
+    bool getData(const std::string &name, T &value) const;
+
     bool hasGroup(const std::string &name) const;
     Group openGroup(const std::string &name, bool create = true) const;
     void removeGroup(const std::string &name);
@@ -70,47 +78,114 @@ public:
 
 template<typename T> void Group::setAttr(const std::string &name, const T &value) const
 {
-    const Charon<const T> charon(value);
+    typedef Hydra<const T> hydra_t;
+    typedef typename hydra_t::reader_t reader_t;
+
+    const hydra_t hydra(value);
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
     H5::Attribute attr;
 
     if (hasAttr(name)) {
         attr = h5group.openAttribute(name);
     } else {
-        H5::DataType fileType = charon.getFileType();
-        H5::DataSpace fileSpace = charon.createDataSpace(false);
+        H5::DataType fileType = data_type_to_h5_filetype(dtype);
+        H5::DataSpace fileSpace = DataSpace::create(shape, false);
         attr = h5group.createAttribute(name, fileType, fileSpace);
     }
 
-    typedef typename Charon<const T>::dbox_type dbox_type;
-    const dbox_type data = charon.get_data();
-    attr.write(charon.getMemType(), *data);
-    data.finish();
+    reader_t reader = hydra.reader();
+    attr.write(data_type_to_h5_memtype(dtype), reader.begin());
+    reader.finish();
 }
 
 template<typename T> bool Group::getAttr(const std::string &name, T &value) const
 {
+    typedef Hydra<T> hydra_t;
+    typedef typename hydra_t::writer_t writer_t;
 
     if (!hasAttr(name)) {
         return false;
     }
 
-    Charon<T> charon(value);
-    H5::Attribute attr = h5group.openAttribute(name);
+    hydra_t hydra(value);
 
+    //determine attr's size and resize value accordingly
+    H5::Attribute attr = h5group.openAttribute(name);
     H5::DataSpace space = attr.getSpace();
     int rank = space.getSimpleExtentNdims();
     NDSize dims(static_cast<size_t>(rank));
     space.getSimpleExtentDims (dims.data(), nullptr);
-    charon.resize(dims);
+    hydra.resize(dims);
 
-    typedef typename Charon<T>::dbox_type dbox_type;
-    dbox_type data = charon.get_data();
-    attr.read(charon.getMemType(), *data);
-    data.finish(&space);
+    writer_t writer = hydra.writer();
+    DataType dtype = hydra.element_data_type();
+
+    attr.read(data_type_to_h5_memtype(dtype), writer.begin());
+    writer.finish();
+
+    if (dtype == DataType::String) {
+        H5::DataSet::vlenReclaim(writer.begin(), data_type_to_h5_memtype(dtype), space);
+    }
 
     return true;
 }
 
+template<typename T>
+void Group::setData(const std::string &name, const T &value)
+{
+    typedef Hydra<const T> hydra_t;
+    typedef typename hydra_t::reader_t reader_t;
+
+    DataSet ds;
+
+    const hydra_t hydra(value);
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
+    if (!hasData(name)) {
+        NDSize maxsize(shape.size(), H5S_UNLIMITED);
+        NDSize chunks(shape.size(), 1);
+        ds = DataSet::create(h5group, name, dtype, shape, &maxsize, &chunks);
+    } else {
+        ds = openData(name);
+        ds.extend(shape); //FIXME: this should be ds.set_extend, for i.e. shrinking
+    }
+
+    reader_t reader = hydra.reader();
+
+    ds.set(dtype, reader.begin());
+    reader.finish();
+}
+
+template<typename T>
+bool Group::getData(const std::string &name, T &value) const
+{
+    typedef Hydra<T> hydra_t;
+    typedef typename hydra_t::writer_t writer_t;
+
+    if (!hasData(name)) {
+        return false;
+    }
+
+    DataSet ds = openData(name);
+
+    hydra_t hydra(value);
+
+    writer_t writer = hydra.writer();
+    DataType dtype = hydra.element_data_type();
+
+    hydra.resize(ds.size());
+    ds.get(dtype, writer.begin());
+    writer.finish();
+
+    if (dtype == DataType::String) {
+        ds.vlenReclaim(dtype, writer.begin());
+    }
+
+    return true;
+}
 
 } // namespace hdf5
 } // namespace nix

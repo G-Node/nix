@@ -14,11 +14,12 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/Dimensions.hpp>
+#include <nix/Hydra.hpp>
 
 namespace nix {
 
 
-class DataArray : virtual public base::IDataArray, public base::EntityWithSources<base::IDataArray> {
+class DataArray : public base::EntityWithSources<base::IDataArray> {
 
 public:
 
@@ -117,49 +118,6 @@ public:
     }
 
     //--------------------------------------------------
-    // Methods concerning data access.
-    //--------------------------------------------------
-
-    /**
-     * Returns the data stored in the DataArray and applies the calibration.
-     * Output is returned in a boost multi_array.
-     *
-     * @param output argument boost::multi_array<T, dims>
-     */
-    template<typename U, size_t dims>
-    void getData(boost::multi_array<U, dims> &data) const {
-
-        impl_ptr->getRawData<U, dims>(data);
-        double origin = impl_ptr->expansionOrigin();
-        std::vector<double> polynom = impl_ptr->polynomCoefficients();
-
-        for(auto i = data.data(); i < (data.data() + data.num_elements()); ++i) {
-            *i = applyPolynomial(polynom, origin, (double)(*i));
-        }
-    }
-
-    /**
-     * Returns the data as it is stored. Does not apply the calibration.
-     *
-     * @param output argument boost::multi_array<T, dims>
-     */
-    template<typename U, size_t dims>
-    void getRawData(boost::multi_array<U, dims> &data) const {
-        // TODO this does not compile and I do not know why?
-        // impl_ptr->getRawData<U, dims>(data);
-    }
-
-    /**
-     * Set the rawData that is to be stored in the DataArray.
-     *
-     * @param boost::multi_array<T, dims>
-     */
-    template<typename U, size_t dims>
-    void setRawData(const boost::multi_array<U, dims> &data) {
-        impl_ptr->setRawData<U, dims>(data);
-    }
-
-    //--------------------------------------------------
     // Methods concerning dimensions
     //--------------------------------------------------
 
@@ -201,7 +159,54 @@ public:
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
+    //--------------------------------------------------
+    // Methods concerning data access.
+    //--------------------------------------------------
+
+    template<typename T> void getData(T &value) const;
+    template<typename T> void setData(const T &value);
+
  };
+
+
+template<typename T>
+void DataArray::getData(T &value) const
+{
+    typedef Hydra<T> hydra_t;
+    typedef typename hydra_t::writer_t writer_t;
+
+    hydra_t hydra(value);
+
+    NDSize extent = impl_ptr->getExtent();
+    hydra.resize(extent);
+
+
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+    writer_t writer = hydra.writer();
+
+    impl_ptr->read(dtype, shape, writer.begin());
+    writer.finish();
+}
+
+template<typename T>
+void DataArray::setData(const T &value)
+{
+    typedef Hydra<const T> hydra_t;
+    typedef typename hydra_t::reader_t reader_t;
+
+    const hydra_t hydra(value);
+
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
+    impl_ptr->setExtent(shape);
+
+    reader_t reader = hydra.reader();
+
+    impl_ptr->write(dtype, shape, reader.begin());
+    reader.finish();
+}
 
 
 } // namespace nix

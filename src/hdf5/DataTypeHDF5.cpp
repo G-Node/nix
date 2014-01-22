@@ -8,7 +8,7 @@
 
 #include <stdexcept>
 
-#include <nix/hdf5/DataType.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -27,6 +27,7 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
         case DataType::UInt64: return H5::PredType::STD_U64LE;
         case DataType::Float:  return H5::PredType::IEEE_F32LE;
         case DataType::Double: return H5::PredType::IEEE_F64LE;
+        case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
 
         default:
             throw std::invalid_argument("Unkown DataType"); //FIXME
@@ -49,6 +50,7 @@ H5::DataType data_type_to_h5_memtype(DataType dtype) {
         case DataType::UInt64: return H5::PredType::NATIVE_UINT64;
         case DataType::Float:  return H5::PredType::NATIVE_FLOAT;
         case DataType::Double: return H5::PredType::NATIVE_DOUBLE;
+        case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
 
         default:
             throw std::invalid_argument("Unkown DataType"); //FIXME
