@@ -37,25 +37,12 @@ bool ReferenceList::has(const string &id) const {
 
 vector<string> ReferenceList::get() const {
     vector<string> ids;
-
-    if (group.hasData(ds_name)) {
-        DataSet ds = group.openData(ds_name);
-        ds.read(ids, true);
-    }
-
+    group.getData(ds_name, ids);
     return ids;
 }
 
 void ReferenceList::set(const vector<string> &ids) {
-    if (group.hasData(ds_name)) {
-        DataSet ds = group.openData(ds_name);
-        ds.extend({ids.size()});
-        ds.write(ids);
-    } else {
-        DataSet ds = DataSet::create(group.h5Group(), ds_name, ids,
-                                     &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
-        ds.write(ids);
-    }
+    group.setData(ds_name, ids);
 }
 
 

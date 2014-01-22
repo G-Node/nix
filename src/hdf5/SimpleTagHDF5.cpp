@@ -17,11 +17,6 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-
-const NDSize SimpleTagHDF5::MIN_CHUNK_SIZE = {1};
-const NDSize SimpleTagHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
-
-
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
     : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
       references_list(tag.group(), "references")
@@ -48,73 +43,37 @@ SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &
 
 vector<string> SimpleTagHDF5::units() const {
     vector<string> units;
-
-    if (group().hasData("units")) {
-        DataSet ds = group().openData("units");
-        ds.read(units, true);
-    }
-
+    group().getData("units", units);
     return units;
 }
 
 
 void SimpleTagHDF5::units(vector<string> &units) {
-    if (group().hasData("units")) {
-        DataSet ds = group().openData("units");
-        ds.extend({units.size()});
-        ds.write(units);
-    } else {
-        DataSet ds = DataSet::create(group().h5Group(), "units", units, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
-        ds.write(units);
-    }
+    group().setData("units", units);
 }
 
 
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
-
-    if (group().hasData("position")) {
-        DataSet ds = group().openData("position");
-        ds.read(position, true);
-    }
-
+    group().getData("position", position);
     return position;
 }
 
 
 void SimpleTagHDF5::position(const vector<double> &position) {
-    if (group().hasData("position")) {
-        DataSet ds = group().openData("position");
-        ds.extend({position.size()});
-        ds.write(position);
-    } else {
-        DataSet ds = DataSet::create(group().h5Group(), "position", position, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
-        ds.write(position);
-    }
+    group().setData("position", position);
 }
 
 
 vector<double> SimpleTagHDF5::extent() const {
     vector<double> extent;
-
-    if (group().hasData("extent")) {
-        DataSet ds = group().openData("extent");
-        ds.read(extent, true);
-    }
-
+    group().getData("extent", extent);
     return extent;
 }
 
 
 void SimpleTagHDF5::extent(const vector<double> &extent) {
-    if (group().hasData("extent")) {
-        DataSet ds = group().openData("extent");
-        ds.extend({extent.size()});
-        ds.write(extent);
-    } else {
-        DataSet ds = DataSet::create(group().h5Group(), "extent", extent, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
-        ds.write(extent);
-    }
+    group().setData("extent", extent);
 }
 
 // Methods concerning references.
