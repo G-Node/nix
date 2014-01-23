@@ -94,6 +94,9 @@ public:
     void get(DataType dtype, const NDSize &size, void *data) const; //rename later to read
     void set(DataType dtype, const NDSize &size, const void *data); //rename later to write
 
+    void read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const;
+    void write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel);
+
     template<typename T> void read(T &value, bool resize = false);
     template<typename T> void read(T &value, const Selection &fileSel, bool resize = false);
     template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel);

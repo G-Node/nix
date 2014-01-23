@@ -79,7 +79,6 @@ void DataSet::get(DataType dtype, const NDSize &size, void *data) const
 
 void DataSet::set(DataType dtype, const NDSize &size, const void *data)
 {
-    //FIXME
     H5::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {
         StringReader reader(size, static_cast<const std::string *>(data));
@@ -87,8 +86,37 @@ void DataSet::set(DataType dtype, const NDSize &size, const void *data)
     } else {
         h5dset.write(data, memType);
     }
+}
+
+
+void DataSet::read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+
+    if (dtype == DataType::String) {
+        StringWriter writer(size, static_cast<std::string *>(data));
+        h5dset.read(*writer, memType, memSel.h5space(), fileSel.h5space());
+        writer.finish();
+        H5::DataSpace space = h5dset.getSpace();
+        H5::DataSet::vlenReclaim(*writer, memType, memSel.h5space());
+    } else {
+        h5dset.read(data, memType, memSel.h5space(), fileSel.h5space());
+
+    }
 
 }
+
+void DataSet::write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel)
+{
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    if (dtype == DataType::String) {
+        StringReader reader(size, static_cast<const std::string *>(data));
+        h5dset.write(*reader, memType, memSel.h5space(), fileSel.h5space());
+    } else {
+        h5dset.write(data, memType, memSel.h5space(), fileSel.h5space());
+    }
+}
+
 
 
 double psize_product(const NDSize &dims)
