@@ -89,7 +89,11 @@ void DataSet::set(DataType dtype, const NDSize &size, const void *data)
 }
 
 
-void DataSet::read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const
+void DataSet::read(DataType        dtype,
+                   const NDSize    &size,
+                   void            *data,
+                   const Selection &fileSel,
+                   const Selection &memSel) const
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
 
@@ -106,7 +110,11 @@ void DataSet::read(DataType dtype, const NDSize &size, void *data, const Selecti
 
 }
 
-void DataSet::write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel)
+void DataSet::write(DataType         dtype,
+                    const NDSize    &size,
+                    const void      *data,
+                    const Selection &fileSel,
+                    const Selection &memSel)
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {

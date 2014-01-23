@@ -10,7 +10,6 @@
 #define PANDORA_DATASET_H
 
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/Charon.hpp>
 #include <nix/hdf5/Selection.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
@@ -97,13 +96,13 @@ public:
     void read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const;
     void write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel);
 
-    template<typename T> void read(T &value, bool resize = false);
-    template<typename T> void read(T &value, const Selection &fileSel, bool resize = false);
-    template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel);
+    template<typename T> void read(T &value, bool resize = false) const;
+    template<typename T> void read(T &value, const Selection &fileSel, bool resize = false) const;
+    template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel) const;
 
-    template<typename T> void write(const T &value) const;
-    template<typename T> void write(const T &value, const Selection &fileSel) const;
-    template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel) const;
+    template<typename T> void write(const T &value);
+    template<typename T> void write(const T &value, const Selection &fileSel);
+    template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
 
     static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
@@ -161,22 +160,18 @@ DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, con
  * @param value    Reference to a variable to store the data in
  * @param resize   Resize variable to fit the size of the DataSet
  */
-template<typename T> void DataSet::read(T &value, bool resize)
+template<typename T> void DataSet::read(T &value, bool resize) const
 {
-    typedef Charon<T> charon_type;
-    typedef typename charon_type::dbox_type dbox_type;
+    Hydra<T> hydra(value);
 
-    charon_type charon(value);
-
-    H5::DataSpace space = h5dset.getSpace();
     if (resize) {
         NDSize dims = this->size();
-        charon.resize(dims);
+        hydra.resize(dims);
     }
 
-    dbox_type data = charon.get_data();
-    h5dset.read(*data, charon.getMemType());
-    data.finish(&space);
+    DataType dtype = hydra.element_data_type();
+    NDSize size = hydra.shape();
+    this->get(dtype, size, hydra.data());
 }
 
 /**
@@ -190,13 +185,12 @@ template<typename T> void DataSet::read(T &value, bool resize)
  * @param fileSel  Selection to indicate which subspace of the DataSet to read
  * @param resize   Resize variable to fit the size of the Selection
  */
-template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool resize)
+template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool resize) const
 {
-    Charon<T> charon(value);
-
     if (resize) {
+        Hydra<T> hydra(value);
         NDSize fsize = fileSel.size();
-        charon.resize(fsize);
+        hydra.resize(fsize);
     }
 
     read(value, fileSel, Selection(value));
@@ -209,16 +203,13 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool
  * @param fileSel  Selection to indicate which subspace of the DataSet to read
  * @param memSel   Selection to indicate which subspace of the memory to read into
  */
-template<typename T> void DataSet::read(T &value, const Selection &fileSel, const Selection &memSel)
+template<typename T> void DataSet::read(T &value, const Selection &fileSel, const Selection &memSel) const
 {
-    typedef Charon<T> charon_type;
-    typedef typename charon_type::dbox_type dbox_type;
+    Hydra<T> hydra(value);
 
-    charon_type charon(value);
-    dbox_type data = charon.get_data();
-    h5dset.read(*data, charon.getMemType(), memSel.h5space(), fileSel.h5space());
-    const H5::DataSpace space = memSel.h5space();
-    data.finish(&space);
+    H5::DataType dtype = data_type_to_h5_memtype(hydra.element_data_type());
+    NDSize size = hydra.shape();
+    this->read(dtype, size, hydra.data(), fileSel, memSel);
 }
 
 /* ************************************************************************* */
@@ -229,17 +220,13 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, cons
  * NB: Size of the DataSet and the variable must be the same
  * @param value    Reference to a variable to read the data from
  */
-template<typename T> void DataSet::write(const T &value) const
+template<typename T> void DataSet::write(const T &value)
 {
-    typedef Charon<const T> charon_type;
-    typedef typename charon_type::dbox_type dbox_type;
+    const Hydra<const T> hydra(value);
 
-    charon_type charon(value);
-
-    dbox_type data = charon.get_data();
-    h5dset.write(*data, charon.getMemType());
-
-    data.finish();
+    DataType dtype = hydra.element_data_type();
+    NDSize size = hydra.shape();
+    this->set(dtype, size, hydra.data());
 }
 
 /**
@@ -249,7 +236,7 @@ template<typename T> void DataSet::write(const T &value) const
  * @param value    Reference to a variable to read the data from
  * @param fileSel    Selection to indicate into which subspace of value to read data from
  */
-template<typename T> void DataSet::write(const T &value, const Selection &fileSel) const
+template<typename T> void DataSet::write(const T &value, const Selection &fileSel)
 {
     write(value, fileSel, Selection(value));
 }
@@ -262,15 +249,14 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
  * @param fileSel  Selection to indicate into which subspace of value to read data from
  * @param memSel   Selection to indicate into which subspace of the DataSpace to write to
  */
-template<typename T> void DataSet::write(const T &value, const Selection &fileSel, const Selection &memSel) const
+template<typename T> void DataSet::write(const T &value, const Selection &fileSel, const Selection &memSel)
 {
-    typedef Charon<const T> charon_type;
-    typedef typename charon_type::dbox_type dbox_type;
+    const Hydra<const T> hydra(value);
 
-    charon_type charon(value);
-    dbox_type data = charon.get_data();
-    h5dset.write(*data, charon.getMemType(), memSel.h5space(), fileSel.h5space());
-    data.finish();
+    DataType dtype = hydra.element_data_type();
+    NDSize size = hydra.shape();
+
+    this->write(dtype, size, hydra.data(), memSel.h5space(), fileSel.h5space());
 }
 
 
