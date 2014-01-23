@@ -72,6 +72,13 @@ public:
 
     H5::Group h5Group() const;
     virtual ~Group();
+
+private:
+    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, void *data);
+    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, std::string *data);
+
+    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const void *data);
+    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const std::string *data);
 }; // group Group
 
 //template functions
@@ -79,7 +86,6 @@ public:
 template<typename T> void Group::setAttr(const std::string &name, const T &value) const
 {
     typedef Hydra<const T> hydra_t;
-    typedef typename hydra_t::reader_t reader_t;
 
     const hydra_t hydra(value);
     DataType dtype = hydra.element_data_type();
@@ -95,21 +101,18 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
         attr = h5group.createAttribute(name, fileType, fileSpace);
     }
 
-    reader_t reader = hydra.reader();
-    attr.write(data_type_to_h5_memtype(dtype), reader.begin());
-    reader.finish();
+    writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
 }
+
+
 
 template<typename T> bool Group::getAttr(const std::string &name, T &value) const
 {
-    typedef Hydra<T> hydra_t;
-    typedef typename hydra_t::writer_t writer_t;
-
     if (!hasAttr(name)) {
         return false;
     }
 
-    hydra_t hydra(value);
+    Hydra<T> hydra(value);
 
     //determine attr's size and resize value accordingly
     H5::Attribute attr = h5group.openAttribute(name);
@@ -119,15 +122,10 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     space.getSimpleExtentDims (dims.data(), nullptr);
     hydra.resize(dims);
 
-    writer_t writer = hydra.writer();
     DataType dtype = hydra.element_data_type();
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
 
-    attr.read(data_type_to_h5_memtype(dtype), writer.begin());
-    writer.finish();
-
-    if (dtype == DataType::String) {
-        H5::DataSet::vlenReclaim(writer.begin(), data_type_to_h5_memtype(dtype), space);
-    }
+    readAttr(attr, memType, dims, hydra.data());
 
     return true;
 }
@@ -135,15 +133,11 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
 template<typename T>
 void Group::setData(const std::string &name, const T &value)
 {
-    typedef Hydra<const T> hydra_t;
-    typedef typename hydra_t::reader_t reader_t;
-
-    DataSet ds;
-
-    const hydra_t hydra(value);
+    const Hydra<const T> hydra(value);
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
+    DataSet ds;
     if (!hasData(name)) {
         NDSize maxsize(shape.size(), H5S_UNLIMITED);
         NDSize chunks(shape.size(), 1);
@@ -153,36 +147,24 @@ void Group::setData(const std::string &name, const T &value)
         ds.extend(shape); //FIXME: this should be ds.set_extend, for i.e. shrinking
     }
 
-    reader_t reader = hydra.reader();
-
-    ds.set(dtype, reader.begin());
-    reader.finish();
+    ds.set(dtype, shape, hydra.data());
 }
 
 template<typename T>
 bool Group::getData(const std::string &name, T &value) const
 {
-    typedef Hydra<T> hydra_t;
-    typedef typename hydra_t::writer_t writer_t;
-
     if (!hasData(name)) {
         return false;
     }
 
+    Hydra<T> hydra(value);
     DataSet ds = openData(name);
 
-    hydra_t hydra(value);
-
-    writer_t writer = hydra.writer();
     DataType dtype = hydra.element_data_type();
+    NDSize shape = ds.size();
 
-    hydra.resize(ds.size());
-    ds.get(dtype, writer.begin());
-    writer.finish();
-
-    if (dtype == DataType::String) {
-        ds.vlenReclaim(dtype, writer.begin());
-    }
+    hydra.resize(shape);
+    ds.get(dtype, shape, hydra.data());
 
     return true;
 }

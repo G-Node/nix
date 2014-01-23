@@ -282,7 +282,7 @@ void DataArrayHDF5::write(DataType dtype, NDSize size, const void *data)
         ds.extend(size); //FIXME: this should be ds.set_extend, for i.e. shrinking
     }
 
-     ds.set(dtype, data);
+    ds.set(dtype, size, data);
 }
 
 void DataArrayHDF5::read(DataType dtype, NDSize size, void *data) const
@@ -292,7 +292,7 @@ void DataArrayHDF5::read(DataType dtype, NDSize size, void *data) const
     }
 
     DataSet ds = group().openData("data");
-    ds.get(dtype, data);
+    ds.get(dtype, size, data);
 }
 
 NDSize DataArrayHDF5::getExtent(void) const

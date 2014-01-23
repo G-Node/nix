@@ -238,105 +238,6 @@ public:
 };
 
 /* *** */
-/* new interface */
-// DataWriter for wirting to, i.e. reading from disk: non-const types */
-template<typename T, typename ElementType>
-class DataWriter {
-public:
-    typedef data_traits<T>  data_traits_t;
-    typedef ElementType     data_type;
-    typedef data_type      *data_ptr;
-
-    DataWriter(T &val) : value(val) {}
-
-    data_ptr begin() { return data_traits_t::get_data(value); }
-    void finish() { }
-
-private:
-    T &value;
-};
-
-template<typename T>
-class DataWriter<T, std::string> {
-public:
-    typedef data_traits<T>  data_traits_t;
-    typedef char           *data_type;
-    typedef data_type      *data_ptr;
-
-    DataWriter(T &val) : value(val) {
-        size_t nelms = data_traits_t::num_elements(value);
-        data = new data_type[nelms];
-    }
-
-    data_ptr begin() {
-        return data;
-    }
-
-    void finish() {
-        size_t nelms = data_traits_t::num_elements(value);
-        auto vptr = data_traits_t::get_data(value);
-
-        for (size_t i = 0; i < nelms; i++) {
-            vptr[i] = data[i];
-        }
-    }
-
-    ~DataWriter() {
-        delete[] data;
-    }
-
-private:
-    T        &value;
-    data_ptr  data;
-};
-
-template <typename T, typename ElementType>
-class DataReader {
-public:
-    typedef data_traits<T>        data_traits_t;
-    typedef const ElementType     data_type;
-    typedef data_type            *data_ptr;
-
-    DataReader(const T &val) : value(val) {}
-
-    data_ptr begin() const { return data_traits_t::get_data(value); }
-    void finish() const { }
-
-private:
-    const T &value;
-};
-
-template<typename T>
-class DataReader<T, std::string> {
-public:
-    typedef data_traits<T>   data_traits_t;
-    typedef char const      *data_type;
-    typedef data_type       *data_ptr;
-
-    DataReader(const T &val) : value(val) {
-        size_t nelms = data_traits_t::num_elements(value);
-        data = new data_type[nelms];
-        auto vptr = data_traits_t::get_data(value);
-
-        for (size_t i = 0; i < nelms; i++) {
-            data[i] = vptr[i].c_str();
-        }
-    }
-
-    data_ptr begin() const { return data; }
-
-    void finish() const { }
-
-    ~DataReader() {
-        delete[] data;
-    }
-
-private:
-    const T  &value;
-    data_ptr  data;
-};
-
-
 
 template<typename T>
 class Hydra {
@@ -346,11 +247,6 @@ public:
     typedef typename std::remove_const<T>::type  vanilla_type;
     typedef data_traits<vanilla_type>            data_traits_t;
     typedef typename data_traits_t::element_type element_t;
-
-    static const bool vtype_is_const = std::is_const<T>::value;
-
-    typedef       DataWriter<vanilla_type, element_t> writer_t;
-    typedef const DataReader<vanilla_type, element_t> reader_t;
 
     Hydra(reference value_ref) : value(value_ref) {
         static_assert(to_data_type<element_t>::is_valid,
@@ -369,12 +265,12 @@ public:
         data_traits<vanilla_type>::resize(value, new_shape);
     }
 
-    writer_t writer() {
-        return writer_t(value);
+    element_t *data() {
+        return data_traits<vanilla_type>::get_data(value);
     }
 
-    reader_t reader() const {
-        return reader_t(value);
+    const element_t *data() const {
+        return data_traits<vanilla_type>::get_data(value);
     }
 
 private:

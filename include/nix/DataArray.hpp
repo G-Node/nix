@@ -172,40 +172,27 @@ public:
 template<typename T>
 void DataArray::getData(T &value) const
 {
-    typedef Hydra<T> hydra_t;
-    typedef typename hydra_t::writer_t writer_t;
-
-    hydra_t hydra(value);
+    Hydra<T> hydra(value);
 
     NDSize extent = impl_ptr->getExtent();
     hydra.resize(extent);
 
-
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
-    writer_t writer = hydra.writer();
 
-    impl_ptr->read(dtype, shape, writer.begin());
-    writer.finish();
+    impl_ptr->read(dtype, shape, hydra.data());
 }
 
 template<typename T>
 void DataArray::setData(const T &value)
 {
-    typedef Hydra<const T> hydra_t;
-    typedef typename hydra_t::reader_t reader_t;
-
-    const hydra_t hydra(value);
+    const Hydra<const T> hydra(value);
 
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
     impl_ptr->setExtent(shape);
-
-    reader_t reader = hydra.reader();
-
-    impl_ptr->write(dtype, shape, reader.begin());
-    reader.finish();
+    impl_ptr->write(dtype, shape, hydra.data());
 }
 
 
