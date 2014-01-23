@@ -13,11 +13,9 @@
 #include <vector>
 #include <iostream>
 
-#include <nix/hdf5/Charon.hpp>
+#include <nix/Hydra.hpp>
 
 namespace nix {
-namespace hdf5 {
-
 
 class NDBuffer {
 
@@ -94,34 +92,44 @@ void NDBuffer::set(const NDSize &index, T value)
 
 /* ****************************************** */
 
-namespace hades {
-
 template<>
-class TypeInfo<NDBuffer> {
-public:
-    typedef uint8_t element_type;
-    typedef TypeSpec<DataType> spec_type;
+struct data_traits<NDBuffer> {
 
-    static spec_type type_spec(const NDBuffer &value) { return spec_type(value.dtype()); };
+    typedef NDBuffer        value_type;
+    typedef NDBuffer&       reference;
+    typedef const NDBuffer& const_reference;
 
-    static NDSize shape(const NDBuffer &value) { return value.shape(); }
+    typedef uint8_t        element_type;
+    typedef uint8_t*       element_pointer;
+    typedef const uint8_t* const_element_pointer;
 
-    static size_t num_elements(const NDBuffer &value) {
+    static DataType data_type(const_reference value) {
+        return value.dtype();
+    }
+
+    static NDSize shape(const_reference value) {
+        return value.shape();
+    }
+
+    static size_t num_elements(const_reference value) {
         return value.num_elements();
     }
 
-    static const element_type* getData(const NDBuffer &value) {
+    static const_element_pointer get_data(const_reference value) {
         return value.data();
     }
 
-    static element_type* getData(NDBuffer &value) {
+    static element_pointer get_data(reference value) {
         return value.data();
     }
+
+    static void resize(reference value, const NDSize &dims) {
+        value.resize(dims);
+    }
+
 };
 
 
-} // namespace hades
-} // namespace hdf5
 } // namespace nix
 
 #endif // NIX_NDBUFFER_H

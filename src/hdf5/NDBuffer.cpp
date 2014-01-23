@@ -9,8 +9,9 @@
 
 #include <nix/hdf5/NDBuffer.hpp>
 
+#include <nix/hdf5/DataTypeHDF5.hpp>
+
 namespace nix {
-namespace hdf5 {
 
 
 NDBuffer::NDBuffer(DataType dtype, NDSize dims) : dataType(dtype), extends(dims) {
@@ -19,7 +20,7 @@ NDBuffer::NDBuffer(DataType dtype, NDSize dims) : dataType(dtype), extends(dims)
 
 
 void NDBuffer::allocate_space() {
-    size_t type_size = data_type_to_size(dataType);
+    size_t type_size = hdf5::data_type_to_size(dataType);
     dstore.resize(extends.nelms() * type_size);
 
     calc_strides();
@@ -50,6 +51,4 @@ size_t NDBuffer::sub2index(const NDSize &sub) const {
     return index;
 }
 
-
-} // namespace hdf5
 } // namespace nix
