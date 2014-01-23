@@ -72,6 +72,13 @@ public:
 
     H5::Group h5Group() const;
     virtual ~Group();
+
+private:
+    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, void *data);
+    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, std::string *data);
+
+    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const void *data);
+    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const std::string *data);
 }; // group Group
 
 //template functions
@@ -96,9 +103,12 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
     }
 
     reader_t reader = hydra.reader();
-    attr.write(data_type_to_h5_memtype(dtype), reader.begin());
+    //attr.write(data_type_to_h5_memtype(dtype), reader.begin());
+    writeAttr(attr, data_type_to_h5_memtype(dtype), shape, reader.begin());
     reader.finish();
 }
+
+
 
 template<typename T> bool Group::getAttr(const std::string &name, T &value) const
 {
@@ -121,13 +131,10 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
 
     writer_t writer = hydra.writer();
     DataType dtype = hydra.element_data_type();
-
-    attr.read(data_type_to_h5_memtype(dtype), writer.begin());
+    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    //attr.read(data_type_to_h5_memtype(dtype), writer.begin());
+    readAttr(attr, memType, dims, writer.begin());
     writer.finish();
-
-    if (dtype == DataType::String) {
-        H5::DataSet::vlenReclaim(writer.begin(), data_type_to_h5_memtype(dtype), space);
-    }
 
     return true;
 }
@@ -155,7 +162,7 @@ void Group::setData(const std::string &name, const T &value)
 
     reader_t reader = hydra.reader();
 
-    ds.set(dtype, reader.begin());
+    ds.set(dtype, shape, reader.begin());
     reader.finish();
 }
 
@@ -175,14 +182,11 @@ bool Group::getData(const std::string &name, T &value) const
 
     writer_t writer = hydra.writer();
     DataType dtype = hydra.element_data_type();
+    NDSize shape = ds.size();
 
-    hydra.resize(ds.size());
-    ds.get(dtype, writer.begin());
+    hydra.resize(shape);
+    ds.get(dtype, shape, writer.begin());
     writer.finish();
-
-    if (dtype == DataType::String) {
-        ds.vlenReclaim(dtype, writer.begin());
-    }
 
     return true;
 }

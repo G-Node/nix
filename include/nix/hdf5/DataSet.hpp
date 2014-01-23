@@ -16,6 +16,69 @@
 namespace nix {
 namespace hdf5 {
 
+class StringWriter {
+public:
+    typedef std::string  value_type;
+    typedef value_type  *pointer;
+    typedef char        *data_type;
+    typedef data_type   *data_ptr;
+
+
+    StringWriter(const NDSize &size, pointer stringdata)
+        : nelms(size.nelms()), data(stringdata) {
+        buffer = new data_type[nelms];
+    }
+
+    data_ptr operator*() {
+        return buffer;
+    }
+
+    void finish() {
+        for (size_t i = 0; i < nelms; i++) {
+            data[i] = buffer[i];
+        }
+    }
+
+    ~StringWriter() {
+        delete[] buffer;
+    }
+
+private:
+    size_t   nelms;
+    pointer  data;
+    data_ptr buffer;
+};
+
+class StringReader {
+public:
+    typedef const std::string   value_type;
+    typedef value_type         *pointer;
+    typedef const char         *data_type;
+    typedef data_type          *data_ptr;
+
+
+    StringReader(const NDSize &size, pointer stringdata)
+        : nelms(size.nelms()), data(stringdata) {
+        buffer = new data_type[nelms];
+        for (size_t i = 0; i < nelms; i++) {
+            buffer[i] = data[i].c_str();
+        }
+    }
+
+    data_ptr operator*() {
+        return buffer;
+    }
+
+    ~StringReader() {
+        delete[] buffer;
+    }
+
+private:
+    size_t   nelms;
+    pointer  data;
+    data_ptr buffer;
+};
+
 
 class DataSet {
 
@@ -25,8 +88,8 @@ public:
 
     DataSet& operator=(const DataSet &other) {h5dset = other.h5dset; return *this;}
 
-    void get(DataType dtype, void *data) const; //rename later to read
-    void set(DataType dtype, const void *data); //rename later to write
+    void get(DataType dtype, const NDSize &size, void *data) const; //rename later to read
+    void set(DataType dtype, const NDSize &size, const void *data); //rename later to write
 
     template<typename T> void read(T &value, bool resize = false);
     template<typename T> void read(T &value, const Selection &fileSel, bool resize = false);

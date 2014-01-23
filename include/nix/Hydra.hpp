@@ -256,40 +256,6 @@ private:
     T &value;
 };
 
-template<typename T>
-class DataWriter<T, std::string> {
-public:
-    typedef data_traits<T>  data_traits_t;
-    typedef char           *data_type;
-    typedef data_type      *data_ptr;
-
-    DataWriter(T &val) : value(val) {
-        size_t nelms = data_traits_t::num_elements(value);
-        data = new data_type[nelms];
-    }
-
-    data_ptr begin() {
-        return data;
-    }
-
-    void finish() {
-        size_t nelms = data_traits_t::num_elements(value);
-        auto vptr = data_traits_t::get_data(value);
-
-        for (size_t i = 0; i < nelms; i++) {
-            vptr[i] = data[i];
-        }
-    }
-
-    ~DataWriter() {
-        delete[] data;
-    }
-
-private:
-    T        &value;
-    data_ptr  data;
-};
-
 template <typename T, typename ElementType>
 class DataReader {
 public:
@@ -305,37 +271,6 @@ public:
 private:
     const T &value;
 };
-
-template<typename T>
-class DataReader<T, std::string> {
-public:
-    typedef data_traits<T>   data_traits_t;
-    typedef char const      *data_type;
-    typedef data_type       *data_ptr;
-
-    DataReader(const T &val) : value(val) {
-        size_t nelms = data_traits_t::num_elements(value);
-        data = new data_type[nelms];
-        auto vptr = data_traits_t::get_data(value);
-
-        for (size_t i = 0; i < nelms; i++) {
-            data[i] = vptr[i].c_str();
-        }
-    }
-
-    data_ptr begin() const { return data; }
-
-    void finish() const { }
-
-    ~DataReader() {
-        delete[] data;
-    }
-
-private:
-    const T  &value;
-    data_ptr  data;
-};
-
 
 
 template<typename T>

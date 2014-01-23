@@ -144,6 +144,24 @@ Group::~Group() {
     h5group.close();
 }
 
+void Group::readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, void *data) {
+    attr.read(memType, data);
+}
+
+ void Group::readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, std::string *data) {
+    StringWriter writer(size, data);
+    attr.read(memType, *writer);
+    writer.finish();
+    H5::DataSet::vlenReclaim(*writer, memType, attr.getSpace()); //recycle space?
+}
+
+void Group::writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const void *data) {
+    attr.write(memType, data);
+}
+void Group::writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const std::string *data) {
+    StringReader reader(size, data);
+    attr.write(memType, *reader);
+}
 
 } // namespace hdf5
 } // namespace nix
