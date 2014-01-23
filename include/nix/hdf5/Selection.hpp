@@ -10,8 +10,9 @@
 #define PANDORA_SELECTION_H
 
 #include <nix/NDSize.hpp>
+#include <nix/Hydra.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/Charon.hpp>
+#include <nix/hdf5/DataSpace.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -60,8 +61,9 @@ private:
 template<typename T>
 Selection::Selection (const T &value)
 {
-    Charon<const T> charon(value);
-    space = charon.createDataSpace(true);
+    const Hydra<const T> hydra(value);
+    NDSize size = hydra.shape();
+    space = DataSpace::create(size, true);
 }
 
 
