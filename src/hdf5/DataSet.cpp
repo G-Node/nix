@@ -29,23 +29,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
                         const NDSize *chunks)
 {
     H5::DataType fileType = data_type_to_h5_filetype(dtype);
-    H5::DataSpace space;
-
-    if (size.size() > 0) {
-        int rank = static_cast<int>(size.size());
-        const hsize_t *maxdims = maxsize != nullptr ? maxsize->data() : nullptr;
-        space = H5::DataSpace(rank, size.data(), maxdims);
-    }
-
-    H5::DSetCreatPropList plcreate;
-
-    if (chunks != nullptr) {
-        int rank = static_cast<int>(chunks->size());
-        plcreate.setChunk(rank, chunks->data());
-    }
-
-    H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
-    return DataSet(dset);
+    return create(parent, fileType, name, size, maxsize, chunks);
 }
 
 
