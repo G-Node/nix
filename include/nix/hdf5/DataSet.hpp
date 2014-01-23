@@ -12,6 +12,9 @@
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/Charon.hpp>
 #include <nix/hdf5/Selection.hpp>
+#include <nix/hdf5/DataSpace.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
+#include <nix/Hydra.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -133,18 +136,17 @@ template<typename T>
 DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data,
                         const NDSize *maxsize, const NDSize *chunks)
 {
-    typedef Charon< const T> charon_type;
-    charon_type charon(data);
-    
-    H5::DataSpace space = charon.createDataSpace(maxsize);
-    H5::DSetCreatPropList plcreate;
+    Hydra<const T> hydra(data);
 
+    H5::DSetCreatPropList plcreate;
     if (chunks != nullptr) {
         int rank = static_cast<int>(chunks->size());
         plcreate.setChunk(rank, chunks->data());
     }
 
-    H5::DataSet dset = parent.createDataSet(name, charon.getFileType(), space, plcreate);
+    H5::DataSpace space = DataSpace::create(hydra.shape(), maxsize);
+    H5::DataType fileType = data_type_to_h5_filetype(hydra.element_data_type());
+    H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
     return DataSet(dset);
 }
 
