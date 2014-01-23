@@ -29,12 +29,17 @@ DataSet DataSet::create(const H5::CommonFG &parent,
                         const NDSize *chunks)
 {
     H5::DataType fileType = data_type_to_h5_filetype(dtype);
-    return create(parent, fileType, name, size, maxsize, chunks);
+    return create(parent, name, fileType, size, maxsize, chunks);
 }
 
 
-DataSet DataSet::create(const H5::CommonFG &parent, const H5::DataType &fileType,
-                        const std::string &name, const NDSize &size, const NDSize *maxsize, const NDSize *chunks) {
+DataSet DataSet::create(const H5::CommonFG &parent,
+                        const std::string &name,
+                        const H5::DataType &fileType,
+                        const NDSize &size,
+                        const NDSize *maxsize,
+                        const NDSize *chunks)
+{
     H5::DataSpace space;
 
     if (size.size() > 0) {
