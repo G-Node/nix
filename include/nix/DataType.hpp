@@ -30,7 +30,9 @@ enum class DataType {
     UInt64,
     String,
     Date,
-    DateTime
+    DateTime,
+
+    Nothing = -1
 };
 
 template<typename T>
