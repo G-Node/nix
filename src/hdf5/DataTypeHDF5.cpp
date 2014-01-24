@@ -10,6 +10,9 @@
 
 #include <nix/hdf5/DataTypeHDF5.hpp>
 
+#include <iostream>
+#include <cassert>
+
 namespace nix {
 namespace hdf5 {
 
@@ -84,6 +87,29 @@ size_t data_type_to_size(DataType dtype) {
         default:
             throw std::invalid_argument("Unkown DataType");
     }
+}
+
+#define NOT_IMPLEMENTED false
+
+DataType
+data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
+{
+    if (vclass == H5T_INTEGER) {
+        switch (vsize) {
+        case 1: return vsign == H5T_SGN_2 ? DataType::Int8  : DataType::UInt8;
+        case 2: return vsign == H5T_SGN_2 ? DataType::Int16 : DataType::UInt16;
+        case 4: return vsign == H5T_SGN_2 ? DataType::Int32 : DataType::UInt32;
+        case 8: return vsign == H5T_SGN_2 ? DataType::Int64 : DataType::UInt64;
+        }
+    } else if (vclass == H5T_FLOAT) {
+        return vsize == 8 ? DataType::Double : DataType::Float;
+    } else if (vclass == H5T_STRING) {
+        return DataType::String;
+    }
+
+    std::cerr << "FIXME: Not implemented " << vclass << " " << vsize << " " << vsign << " " << std::endl;
+    assert(NOT_IMPLEMENTED);
+    return DataType::Nothing;
 }
 
 } // namespace hdf4
