@@ -12,6 +12,7 @@
 #define NIX_DATATYPE_H
 
 #include <cstdint>
+#include <ostream>
 
 namespace nix {
 
@@ -106,6 +107,9 @@ struct to_data_type<std::string> {
     static const bool is_valid = true;
     static const DataType value = DataType::String;
 };
+
+std::ostream &operator<<(std::ostream &out, const DataType dtype);
+
 
 } // nix::
 
