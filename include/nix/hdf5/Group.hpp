@@ -147,7 +147,7 @@ void Group::setData(const std::string &name, const T &value)
         ds.extend(shape); //FIXME: this should be ds.set_extend, for i.e. shrinking
     }
 
-    ds.set(dtype, shape, hydra.data());
+    ds.write(dtype, shape, hydra.data());
 }
 
 template<typename T>
@@ -164,7 +164,7 @@ bool Group::getData(const std::string &name, T &value) const
     NDSize shape = ds.size();
 
     hydra.resize(shape);
-    ds.get(dtype, shape, hydra.data());
+    ds.read(dtype, shape, hydra.data());
 
     return true;
 }

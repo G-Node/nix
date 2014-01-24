@@ -60,7 +60,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
 }
 
 
-void DataSet::get(DataType dtype, const NDSize &size, void *data) const
+void DataSet::read(DataType dtype, const NDSize &size, void *data) const
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
 
@@ -77,7 +77,7 @@ void DataSet::get(DataType dtype, const NDSize &size, void *data) const
 }
 
 
-void DataSet::set(DataType dtype, const NDSize &size, const void *data)
+void DataSet::write(DataType dtype, const NDSize &size, const void *data)
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {

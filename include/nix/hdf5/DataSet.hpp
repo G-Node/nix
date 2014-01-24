@@ -90,8 +90,8 @@ public:
 
     DataSet& operator=(const DataSet &other) {h5dset = other.h5dset; return *this;}
 
-    void get(DataType dtype, const NDSize &size, void *data) const; //rename later to read
-    void set(DataType dtype, const NDSize &size, const void *data); //rename later to write
+    void read(DataType dtype, const NDSize &size, void *data) const;
+    void write(DataType dtype, const NDSize &size, const void *data);
 
     void read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const;
     void write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel);
@@ -171,7 +171,7 @@ template<typename T> void DataSet::read(T &value, bool resize) const
 
     DataType dtype = hydra.element_data_type();
     NDSize size = hydra.shape();
-    this->get(dtype, size, hydra.data());
+    read(dtype, size, hydra.data());
 }
 
 /**
@@ -226,7 +226,7 @@ template<typename T> void DataSet::write(const T &value)
 
     DataType dtype = hydra.element_data_type();
     NDSize size = hydra.shape();
-    this->set(dtype, size, hydra.data());
+    write(dtype, size, hydra.data());
 }
 
 /**
