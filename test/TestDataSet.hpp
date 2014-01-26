@@ -34,6 +34,7 @@ public:
     void testChunkGuessing();
     void testBasic();
     void testSelection();
+    void testValueIO();
     void tearDown();
 
 private:
@@ -48,6 +49,7 @@ private:
     CPPUNIT_TEST(testChunkGuessing);
     CPPUNIT_TEST(testBasic);
     CPPUNIT_TEST(testSelection);
+    CPPUNIT_TEST(testValueIO);
     CPPUNIT_TEST_SUITE_END ();
 };
 

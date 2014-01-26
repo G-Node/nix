@@ -222,6 +222,43 @@ void TestDataSet::testSelection() {
             CPPUNIT_ASSERT_EQUAL(A[i][j], C[i][j]);
 }
 
+/* helper functions vor testValueIO */
+
+template<typename T>
+void test_val_generic(H5::Group &h5group, const T &test_value)
+{
+    std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
+
+    nix::NDSize size = {1};
+    nix::NDSize maxsize = {H5S_UNLIMITED};
+    nix::NDSize chunks = nix::hdf5::DataSet::guessChunking(size, values[0].type());
+    H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
+
+    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size, &maxsize, &chunks);
+
+    ds.write(values);
+    std::vector<nix::Value> checkValues;
+
+    ds.read(checkValues);
+
+    CPPUNIT_ASSERT_EQUAL(values.size(), checkValues.size());
+
+    for (size_t i = 0; i < values.size(); ++i) {
+        CPPUNIT_ASSERT_EQUAL(values[i].get<T>(), checkValues[i].get<T>());
+    }
+
+}
+
+void TestDataSet::testValueIO() {
+
+    test_val_generic(h5group, true);
+    test_val_generic(h5group, 42);
+    test_val_generic(h5group, 42U);
+
+    test_val_generic(h5group, std::string("String Value"));
+
+}
+
 void TestDataSet::tearDown() {
     h5group.close();
     h5file.close();
