@@ -207,7 +207,7 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, cons
 {
     Hydra<T> hydra(value);
 
-    H5::DataType dtype = data_type_to_h5_memtype(hydra.element_data_type());
+    DataType dtype = hydra.element_data_type();
     NDSize size = hydra.shape();
     this->read(dtype, size, hydra.data(), fileSel, memSel);
 }
