@@ -45,6 +45,16 @@ public:
 
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
+    Value(char *value) : dtype(DataType::String) {
+        new (&v_string) std::string();
+        v_string = value;
+    }
+
+    Value(const char *value) : dtype(DataType::String) {
+        new (&v_string) std::string();
+        v_string = value;
+    }
+
     template<typename T>
     explicit Value(const T &value) : dtype(to_data_type<T>::value) {
         if (dtype == DataType::String) {
