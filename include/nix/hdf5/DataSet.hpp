@@ -14,6 +14,7 @@
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
 #include <nix/Hydra.hpp>
+#include <nix/Value.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -96,6 +97,9 @@ public:
     void read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const;
     void write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel);
 
+    void read(std::vector<Value> &values) const;
+    void write(const std::vector<Value> &values);
+
     template<typename T> void read(T &value, bool resize = false) const;
     template<typename T> void read(T &value, const Selection &fileSel, bool resize = false) const;
     template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel) const;
@@ -123,7 +127,11 @@ public:
     Selection createSelection() const;
     NDSize size() const;
 
-    void vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace = nullptr);
+    void vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace = nullptr) const;
+
+    static H5::DataType fileTypeForValue(DataType dtype);
+    static H5::DataType memTypeForValue(DataType dtype);
+
 
 private:
 
