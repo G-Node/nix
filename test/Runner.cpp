@@ -18,12 +18,14 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
 #include "TestValue.hpp"
 
 int main(int argc, char* argv[]) {
 
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);

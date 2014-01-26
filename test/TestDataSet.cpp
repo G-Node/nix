@@ -8,9 +8,10 @@
 
 #include "TestDataSet.hpp"
 
-#include <pandora/DataSet.hpp>
-#include <pandora/Selection.hpp>
+#include <nix/hdf5/Selection.hpp>
 
+using namespace nix; //quick fix for now
+using namespace nix::hdf5;
 
 unsigned int & TestDataSet::open_mode()
 {

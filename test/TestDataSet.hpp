@@ -21,9 +21,9 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <pandora.hpp>
+#include <nix.hpp>
+#include <nix/hdf5/DataSet.hpp>
 
-using namespace pandora;
 
 class TestDataSet:public CPPUNIT_NS::TestFixture {
 
