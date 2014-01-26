@@ -104,6 +104,10 @@ size_t data_type_to_size(DataType dtype) {
         case DataType::Double:
             return 8;
 
+        //strings are char *, but not sure that is the correct thing to do here
+        case DataType::String:
+            return sizeof(char *);
+
         default:
             std::cerr << "Missing dtype: " << dtype << std::endl;
             throw std::invalid_argument("Unkown DataType");
