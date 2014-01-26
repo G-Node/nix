@@ -90,6 +90,8 @@ void PropertyHDF5::removeValue(size_t index){
             throw runtime_error("Property::stringValue(index): Index out of bounds!");
         }
     }
+
+    //FIXME: Implement
 }
 
 

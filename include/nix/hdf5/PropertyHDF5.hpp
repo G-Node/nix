@@ -59,19 +59,6 @@ public:
     std::string unit() const;
 
 
-    template<typename T>
-    void addValue(const Value<T> &value);
-
-
-    template<typename T>
-    void addValue(const T value, double uncertainty = 0.0, const std::string filename = "",
-                  const std::string encoder = "", const std::string checksum = "", const std::string &reference = "");
-
-
-    template<typename T>
-    void value(size_t index, Value<T> &value) const;
-
-
     void removeValue(size_t index);
 
 
@@ -94,70 +81,6 @@ private:
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
 };
-
-
-template<typename T>
-void PropertyHDF5::addValue(T value, double uncertainty, const std::string filename,
-                        const std::string encoder, const std::string checksum, const std::string &reference) {
-
-    std::string dt = this->dataType();
-    Value<T> tempValue(value, uncertainty, filename, encoder, checksum, reference);
-    addValue(tempValue);
-}
-
-
-template<typename T>
-void PropertyHDF5::addValue(const Value<T> &value) {
-    const std::vector<Value<T>> vals = { value };
-
-    NDSize start;
-    DataSet ds((H5::DataSet()));
-    if (group().hasData("values")) {
-        ds = group().openData("values");
-        NDSize size = ds.size();
-        NDSize newSize = size + 1;
-        ds.extend(newSize);
-        start = size;
-    } else {
-        Charon<const std::vector<Value<T>>> charon(vals);
-        NDSize size = {1};
-        NDSize maxsize = {H5S_UNLIMITED};
-        NDSize chunks = DataSet::guessChunking(size, DataType::Double);
-        ds = DataSet::create(group().h5Group(), charon.getFileType(),  "values", size, &maxsize, &chunks);
-        start = {0};
-    }
-
-    Selection fileSel = ds.createSelection();
-    NDSize count = {1};
-    fileSel.select(count, start);
-    ds.write(vals, fileSel);
-}
-
-
-template<typename T>
-void PropertyHDF5::value(size_t index, Value<T> &value) const {
-    if (group().hasData("values")) {
-        if (index >= valueCount()) {
-            throw std::runtime_error("PropertyHDF5::stringValue(index): Index out of bounds!");
-        }
-        DataSet dataset = group().openData("values");
-
-        //    ValueInfo<T> info;
-        //    if (!checkDataType(dataset, info.h5class)) {
-        //      throw std::runtime_error("PropertyHDF5::stringValue(index): Value DataType is not String!");
-        //    }
-
-        std::vector<Value<T> > vals;
-
-        Selection fileSel = dataset.createSelection();
-        NDSize start = {index};
-        NDSize count = {1};
-        fileSel.select(count, start);
-
-        dataset.read(vals, fileSel, true);
-        value = vals[0];
-    }
-}
 
 
 } // namespace hdf5
