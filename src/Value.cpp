@@ -239,6 +239,27 @@ std::ostream& operator<<(std::ostream &out, const Value &value)
     return out;
 }
 
+bool operator==(const Value &a, const Value &b)
+{
+    if (a.type() != b.type()) {
+        return false;
+    }
+
+    switch(a.type()) {
+    case DataType::Nothing: return true;
+    case DataType::Bool:   return a.get<bool>() == b.get<bool>();
+    case DataType::Int32:  return a.get<int32_t>() == b.get<int32_t>();
+    case DataType::UInt32: return a.get<uint32_t>() == b.get<uint32_t>();
+    case DataType::Int64:  return a.get<int64_t>() == b.get<int64_t>();
+    case DataType::UInt64: return a.get<uint64_t>() == b.get<uint64_t>();
+    case DataType::Double: return a.get<double>() == b.get<double>();
+    case DataType::String: return a.get<std::string>() == b.get<std::string>();
+#ifndef CHECK_SUPOORTED_VALUES
+    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return false;
+#endif
+        }
+}
+
 void swap(Value &a, Value &b)
 {
     a.swap(b);

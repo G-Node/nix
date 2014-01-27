@@ -144,6 +144,8 @@ inline const char * Value::get<const char *>() const {
 
 
 std::ostream& operator<<(std::ostream &out, const Value &value);
+bool operator==(const Value &a, const Value &b);
+inline bool operator!=(const Value &a, const Value &b) { return !(a == b); }
 void swap(Value &a, Value &b);
 
 
