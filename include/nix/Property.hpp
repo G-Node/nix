@@ -86,11 +86,6 @@ public:
     // Methods for Value access
     //--------------------------------------------------
 
-    void removeValue(size_t index) {
-        impl_ptr->removeValue(index);
-    }
-
-
     void removeValues() {
         impl_ptr->removeValues();
     }

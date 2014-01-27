@@ -48,7 +48,6 @@ public:
 
     // TODO what about the templates
 
-    virtual void removeValue(size_t index) = 0;
 
 
     virtual void removeValues() = 0;

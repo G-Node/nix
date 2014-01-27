@@ -84,17 +84,6 @@ string PropertyHDF5::unit() const {
 }
 
 
-void PropertyHDF5::removeValue(size_t index){
-    if (group().hasData("values")) {
-        if (index >= valueCount()) {
-            throw runtime_error("Property::stringValue(index): Index out of bounds!");
-        }
-    }
-
-    //FIXME: Implement
-}
-
-
 void PropertyHDF5::removeValues(){
     group().removeData("values");
 }
