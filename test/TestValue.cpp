@@ -56,6 +56,9 @@ void TestValue::testObject() {
 
 
     nix::Value v1 = sVal; //copy constructor
+    CPPUNIT_ASSERT_EQUAL(v1, sVal); // check ==
+    CPPUNIT_ASSERT(v1 != dVal);
+
     CPPUNIT_ASSERT_EQUAL(v1.get<std::string>(), strc);
 
     v1 = dVal; //assignment op (copy)

@@ -177,7 +177,6 @@ void Value::swap(Value &other) {
 
 void Value::assign_variant_from(const Value &other) {
     switch (other.dtype) {
-    case DataType::Nothing: set(false);          break;
     case DataType::Bool:    set(other.v_bool);   break;
     case DataType::Int32:   set(other.v_int32);  break;
     case DataType::UInt32:  set(other.v_uint32); break;
@@ -185,8 +184,12 @@ void Value::assign_variant_from(const Value &other) {
     case DataType::UInt64:  set(other.v_uint64); break;
     case DataType::Double:  set(other.v_double); break;
     case DataType::String:  set(other.v_string); break;
+    case DataType::Nothing: set(false);
+        dtype = DataType::Nothing;
+            break;
+
 #ifndef CHECK_SUPOORTED_VALUES
-        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
 }
