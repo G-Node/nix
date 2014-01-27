@@ -95,7 +95,13 @@ public:
         return impl_ptr->valueCount();
     }
 
-    // TODO what about the templates
+    void setValues(const std::vector<Value> &values) {
+        impl_ptr->setValues(values);
+    }
+
+    std::vector<Value> getValues(void) const {
+        return impl_ptr->getValues();
+    }
 
     virtual ~Property() {}
 

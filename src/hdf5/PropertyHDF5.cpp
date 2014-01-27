@@ -115,6 +115,40 @@ size_t PropertyHDF5::valueCount() const {
     return count;
 }
 
+void PropertyHDF5::setValues(const std::vector<Value> &values)
+{
+    DataSet dataset;
+
+    if (values.size() < 1) {
+        return; //FIXME: set_extent the dataset to 0
+    }
+
+    if (group().hasData("values")) {
+        dataset = group().openData("values");
+    } else {
+        NDSize size = {1};
+        NDSize maxsize = {H5S_UNLIMITED};
+        NDSize chunks = DataSet::guessChunking(size, values[0].type());
+        H5::DataType fileType = DataSet::fileTypeForValue(values[0].type());
+
+        dataset = DataSet::create(group().h5Group(), "values", fileType, size, &maxsize, &chunks);
+    }
+
+    dataset.write(values);
+}
+
+std::vector<Value> PropertyHDF5::getValues(void) const
+{
+    std::vector<Value> values;
+    if (!group().hasData("values")) {
+        return values;
+    }
+
+    DataSet dataset = group().openData("values");
+    dataset.read(values);
+    return values;
+}
+
 
 PropertyHDF5::~PropertyHDF5() {}
 
