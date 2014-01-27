@@ -59,13 +59,14 @@ public:
     std::string unit() const;
 
 
-    void removeValue(size_t index);
-
-
     void removeValues();
 
 
     size_t valueCount() const;
+
+    void setValues(const std::vector<Value> &values);
+
+    std::vector<Value> getValues(void) const;
 
 
     bool operator==(const PropertyHDF5 &other) const;
