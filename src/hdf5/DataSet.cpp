@@ -469,11 +469,11 @@ void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
 
 void DataSet::write(const std::vector<Value> &values)
 {
+    setExtent(NDSize{values.size()});
+
     if (values.size() < 1) {
         return; //nothing to do
     }
-
-    extend(NDSize{values.size()}); //FIXME: should be set_extent
 
     switch(values[0].type()) {
 
