@@ -248,6 +248,13 @@ void DataSet::extend(const NDSize &dims)
     h5dset.extend(dims.data());
 }
 
+void DataSet::setExtent(const NDSize &dims)
+{
+    herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
+    if (err < 0) {
+        throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
+    }
+}
 
 Selection DataSet::createSelection() const
 {
