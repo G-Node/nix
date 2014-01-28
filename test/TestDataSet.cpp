@@ -146,6 +146,7 @@ void TestDataSet::testBasic() {
         for(index j = 0; j != 6; ++j)
             CPPUNIT_ASSERT_EQUAL(A[i][j], B[i][j]);
 
+    //** check for setExtent()
     array_type C(boost::extents[8][12]);
     values = 0;
     for(index i = 0; i != 8; ++i)
@@ -155,8 +156,28 @@ void TestDataSet::testBasic() {
     dims[0] = 8;
     dims[1] = 12;
 
-    ds.extend(dims);
+    ds.setExtent(dims);
     ds.write(C);
+
+    array_type E(boost::extents[8][12]);
+    ds.read(E);
+
+    for(index i = 0; i != 8; ++i)
+        for(index j = 0; j != 12; ++j)
+             CPPUNIT_ASSERT_EQUAL(C[i][j], E[i][j]);
+
+    NDSize newSize = {4, 6};
+    ds.setExtent(newSize);
+    NDSize newDSSize = ds.size();
+    CPPUNIT_ASSERT_EQUAL(newSize, newDSSize);
+
+    array_type F(boost::extents[4][6]);
+    ds.read(F);
+    for(index i = 0; i != 4; ++i)
+        for(index j = 0; j != 6; ++j)
+            CPPUNIT_ASSERT_EQUAL(E[i][j], F[i][j]);
+
+    //***
 
     DataSet ds2 = DataSet::create(h5group, "dsDouble2", A);
     ds2.write(A);
@@ -166,6 +187,7 @@ void TestDataSet::testBasic() {
     for(index i = 0; i != 4; ++i)
         for(index j = 0; j != 6; ++j)
             CPPUNIT_ASSERT_EQUAL(A[i][j], D[i][j]);
+
 }
 
 

@@ -241,13 +241,13 @@ NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
     return chunks;
 }
 
-
-void DataSet::extend(const NDSize &dims)
+void DataSet::setExtent(const NDSize &dims)
 {
-    //FIXME check for same rank
-    h5dset.extend(dims.data());
+    herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
+    if (err < 0) {
+        throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
+    }
 }
-
 
 Selection DataSet::createSelection() const
 {
@@ -462,11 +462,11 @@ void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
 
 void DataSet::write(const std::vector<Value> &values)
 {
+    setExtent(NDSize{values.size()});
+
     if (values.size() < 1) {
         return; //nothing to do
     }
-
-    extend(NDSize{values.size()}); //FIXME: should be set_extent
 
     switch(values[0].type()) {
 

@@ -123,7 +123,7 @@ public:
 
     static NDSize guessChunking(NDSize dims, size_t elementSize);
 
-    void extend(const NDSize &size);
+    void setExtent(const NDSize &dims);
     Selection createSelection() const;
     NDSize size() const;
 

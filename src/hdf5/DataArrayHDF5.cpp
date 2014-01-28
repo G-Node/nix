@@ -99,14 +99,14 @@ vector<double> DataArrayHDF5::polynomCoefficients()const{
 
 
 void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
+    DataSet ds;
     if (group().hasData("polynom_coefficients")) {
-        DataSet ds = group().openData("polynom_coefficients");
-        ds.extend({coefficients.size()});
-        ds.write(coefficients);
+        ds = group().openData("polynom_coefficients");
+        ds.setExtent({coefficients.size()});
     } else {
-        DataSet ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
-        ds.write(coefficients);
+        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
     }
+    ds.write(coefficients);
     forceUpdatedAt();
 }
 
@@ -279,7 +279,7 @@ void DataArrayHDF5::write(DataType dtype, NDSize size, const void *data)
         ds = DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
     } else {
         ds = group().openData("data");
-        ds.extend(size); //FIXME: this should be ds.set_extend, for i.e. shrinking
+        ds.setExtent(size);
     }
 
     ds.write(dtype, size, data);
@@ -312,7 +312,7 @@ void DataArrayHDF5::setExtent(const NDSize &extent)
     }
 
     DataSet ds = group().openData("data");
-    ds.extend(extent); //FIXME: should be set_extent (for shrinking)
+    ds.setExtent(extent);
 }
 
 } // namespace hdf5

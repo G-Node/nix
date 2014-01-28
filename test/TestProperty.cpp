@@ -39,4 +39,23 @@ void TestProperty::testValues()
         CPPUNIT_ASSERT_EQUAL(strValues[i], ctrlValues[i]);
     }
 
+    strValues.emplace_back("Tochter");
+    strValues.emplace_back("aus");
+    strValues.emplace_back("Elysium");
+    strValues.emplace_back("Wir betreten feuertrunken");
+
+    p1.setValues(strValues);
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+
+    strValues.erase(strValues.begin()+6);
+    p1.setValues(strValues);
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+
+    nix::Property p2 = section.createProperty("toDelete");
+    p2.setValues(strValues);
+    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
+    strValues.clear();
+    p2.setValues(strValues);
+    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
+    p2.removeValues();
 }

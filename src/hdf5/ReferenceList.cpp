@@ -53,7 +53,7 @@ void ReferenceList::add(const string &id) {
         DataSet ds = group.openData(ds_name);
         NDSize old_size = ds.size();
         NDSize new_size = old_size + 1;
-        ds.extend(new_size);
+        ds.setExtent(new_size);
         NDSize count = {1};
         Selection sel = ds.createSelection();
         sel.select(count, old_size);
@@ -84,7 +84,7 @@ bool ReferenceList::remove(const string &id) {
 
         if (removed) {
             NDSize new_size = ds.size();
-            ds.extend(--new_size);
+            ds.setExtent(--new_size);
             ds.write(ids);
         }
     }
