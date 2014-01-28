@@ -144,7 +144,7 @@ void Group::setData(const std::string &name, const T &value)
         ds = DataSet::create(h5group, name, dtype, shape, &maxsize, &chunks);
     } else {
         ds = openData(name);
-        ds.extend(shape); //FIXME: this should be ds.set_extend, for i.e. shrinking
+        ds.setExtent(shape);
     }
 
     ds.write(dtype, shape, hydra.data());

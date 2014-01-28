@@ -84,7 +84,7 @@ bool ReferenceList::remove(const string &id) {
 
         if (removed) {
             NDSize new_size = ds.size();
-            ds.extend(--new_size);
+            ds.setExtent(--new_size);
             ds.write(ids);
         }
     }

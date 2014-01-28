@@ -279,7 +279,7 @@ void DataArrayHDF5::write(DataType dtype, NDSize size, const void *data)
         ds = DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
     } else {
         ds = group().openData("data");
-        ds.extend(size); //FIXME: this should be ds.set_extend, for i.e. shrinking
+        ds.setExtent(size);
     }
 
     ds.write(dtype, size, data);
@@ -312,7 +312,7 @@ void DataArrayHDF5::setExtent(const NDSize &extent)
     }
 
     DataSet ds = group().openData("data");
-    ds.extend(extent); //FIXME: should be set_extent (for shrinking)
+    ds.setExtent(extent);
 }
 
 } // namespace hdf5
