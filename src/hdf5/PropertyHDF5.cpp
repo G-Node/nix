@@ -119,13 +119,15 @@ void PropertyHDF5::setValues(const std::vector<Value> &values)
 {
     DataSet dataset;
 
-    if (values.size() < 1) {
-        return; //FIXME: set_extent the dataset to 0
-    }
 
     if (group().hasData("values")) {
         dataset = group().openData("values");
     } else {
+
+        if (values.size() < 1) {
+            return; //Nothing to do, since we also cannot guess the correct DataType
+        }
+
         NDSize size = {1};
         NDSize maxsize = {H5S_UNLIMITED};
         NDSize chunks = DataSet::guessChunking(size, values[0].type());
