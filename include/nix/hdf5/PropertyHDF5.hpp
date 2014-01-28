@@ -15,8 +15,6 @@
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
-#include <nix/hdf5/Charon.hpp>
-
 namespace nix {
 namespace hdf5 {
 
