@@ -241,13 +241,6 @@ NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
     return chunks;
 }
 
-
-void DataSet::extend(const NDSize &dims)
-{
-    //FIXME check for same rank
-    h5dset.extend(dims.data());
-}
-
 void DataSet::setExtent(const NDSize &dims)
 {
     herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
