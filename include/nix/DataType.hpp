@@ -108,6 +108,8 @@ struct to_data_type<std::string> {
     static const DataType value = DataType::String;
 };
 
+size_t data_type_to_size(DataType dtype);
+
 std::ostream &operator<<(std::ostream &out, const DataType dtype);
 
 

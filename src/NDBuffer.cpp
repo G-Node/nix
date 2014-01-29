@@ -8,7 +8,6 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/NDBuffer.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 
@@ -19,7 +18,7 @@ NDBuffer::NDBuffer(DataType dtype, NDSize dims) : dataType(dtype), extends(dims)
 
 
 void NDBuffer::allocate_space() {
-    size_t type_size = hdf5::data_type_to_size(dataType);
+    size_t type_size = data_type_to_size(dataType);
     dstore.resize(extends.nelms() * type_size);
 
     calc_strides();

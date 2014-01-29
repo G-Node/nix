@@ -79,41 +79,6 @@ H5::DataType data_type_to_h5_memtype(DataType dtype) {
     return H5::DataType();
 }
 
-
-size_t data_type_to_size(DataType dtype) {
-    switch(dtype) {
-
-        case DataType::Bool:
-            return sizeof(bool);
-
-        case DataType::Int8:
-        case DataType::UInt8:
-            return 1;
-
-        case DataType::Int16:
-        case DataType::UInt16:
-            return 2;
-
-        case DataType::Int32:
-        case DataType::UInt32:
-        case DataType::Float:
-            return 4;
-
-        case DataType::Int64:
-        case DataType::UInt64:
-        case DataType::Double:
-            return 8;
-
-        //strings are char *, but not sure that is the correct thing to do here
-        case DataType::String:
-            return sizeof(char *);
-
-        default:
-            std::cerr << "Missing dtype: " << dtype << std::endl;
-            throw std::invalid_argument("Unkown DataType");
-    }
-}
-
 #define NOT_IMPLEMENTED false
 
 DataType
