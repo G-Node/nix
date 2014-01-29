@@ -62,7 +62,7 @@ public:
     int compare(const IEntity &other) const;
 
 
-    virtual void swap(EntityHDF5 &other);
+    void swap(EntityHDF5 &other);
 
 
     bool operator==(const EntityHDF5 &other) const;

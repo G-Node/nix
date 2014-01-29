@@ -353,7 +353,7 @@ bool BlockHDF5::removeDataTag(const std::string &id){
 void BlockHDF5::swap(BlockHDF5 &other) {
     using std::swap;
 
-    EntityWithMetadataHDF5::swap(other);
+    EntityHDF5::swap(other);
     swap(source_group, other.source_group);
     swap(data_array_group, other.data_array_group);
     swap(simple_tag_group, other.simple_tag_group);
