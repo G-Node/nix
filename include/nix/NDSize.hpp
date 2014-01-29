@@ -228,7 +228,7 @@ public:
 
     size_t dot(const NDSizeBase<T> &other) const {
         if(size() != other.size()) {
-            throw std::out_of_range (""); //fixme: use different exception
+            throw std::out_of_range ("Dimensions do not match"); //fixme: use different exception
         }
 
         size_t res  = 0;
