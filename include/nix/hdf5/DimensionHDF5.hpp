@@ -48,7 +48,7 @@ public:
     size_t id() const { return dim_id; }
 
 
-    virtual void swap(DimensionHDF5 &other);
+    void swap(DimensionHDF5 &other);
 
 
     bool operator==(const DimensionHDF5 &other) const;
