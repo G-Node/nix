@@ -24,7 +24,7 @@
 #include <nix.hpp>
 
 
-class TestNDBuffer : public CPPUNIT_NS::TestFixture {
+class TestNDArray : public CPPUNIT_NS::TestFixture {
 
 public:
 
@@ -36,7 +36,7 @@ public:
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestNDBuffer);
+    CPPUNIT_TEST_SUITE(TestNDArray);
     CPPUNIT_TEST(basic);
     CPPUNIT_TEST_SUITE_END ();
 };

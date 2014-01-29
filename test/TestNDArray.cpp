@@ -6,16 +6,16 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestNDBuffer.hpp"
+#include "TestNDArray.hpp"
 
-#include <nix/NDBuffer.hpp>
+#include <nix/NDArray.hpp>
 
-void TestNDBuffer::setUp() {
+void TestNDArray::setUp() {
 }
 
-void TestNDBuffer::basic() {
+void TestNDArray::basic() {
     nix::NDSize dims(2, 5);
-    nix::NDBuffer A(nix::DataType::Double, dims);
+    nix::NDArray A(nix::DataType::Double, dims);
 
     int values = 0;
     for(size_t i = 0; i != 5; ++i)
@@ -32,7 +32,7 @@ void TestNDBuffer::basic() {
     CPPUNIT_ASSERT_EQUAL(static_cast<double>(24), A.get<double>({4, 4}));
 
     dims = {3, 4, 5};
-    nix::NDBuffer B(nix::DataType::Double, dims);
+    nix::NDArray B(nix::DataType::Double, dims);
     values = 0;
     for(size_t i = 0; i != dims[0]; ++i)
         for(size_t j = 0; j != dims[1]; ++j)
@@ -45,5 +45,5 @@ void TestNDBuffer::basic() {
 
 }
 
-void TestNDBuffer::tearDown() {
+void TestNDArray::tearDown() {
 }
