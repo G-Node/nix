@@ -18,6 +18,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include "TestFile.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
@@ -27,6 +28,7 @@
 
 int main(int argc, char* argv[]) {
 
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);

@@ -20,28 +20,32 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Block.hpp"
-#include "pandora/Section.hpp"
-
-using namespace std;
-using namespace pandora;
+#include <nix.hpp>
 
 class TestFile: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestFile);
+    CPPUNIT_TEST(testFormat);
+    CPPUNIT_TEST(testVersion);
+    CPPUNIT_TEST(testCreatedAt);
+    CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testBlockAccess);
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
+    nix::File file_open, file_other, file_null;
+    time_t statup_time;
 
 public:
 
     void setUp();
     void tearDown();
+    void testFormat();
+    void testVersion();
+    void testCreatedAt();
+    void testUpdatedAt();
     void testBlockAccess();
     void testSectionAccess();
     void testOperators();
