@@ -23,6 +23,7 @@
 #include "TestDataArray.hpp"
 #include "TestValue.hpp"
 #include "TestProperty.hpp"
+#include "TestNDArray.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -31,6 +32,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;

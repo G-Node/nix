@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <type_traits>
 #include "TestDataSet.hpp"
 
 #include <nix/hdf5/Selection.hpp>
@@ -278,6 +279,53 @@ void TestDataSet::testValueIO() {
     test_val_generic(h5group, 42U);
 
     test_val_generic(h5group, std::string("String Value"));
+
+}
+
+
+void TestDataSet::testNDArrayIO()
+{
+    nix::NDSize dims({5, 5});
+    nix::NDArray A(nix::DataType::Double, dims);
+
+    int values = 0;
+    for(size_t i = 0; i != 5; ++i)
+        for(size_t j = 0; j != 5; ++j)
+            A.set<double>({i,j}, values++);
+
+    DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", A);
+    ds.write(A);
+
+    nix::NDArray Atest(nix::DataType::Double, dims);
+    ds.read(Atest);
+
+    for(size_t i = 0; i != 5; ++i)
+        for(size_t j = 0; j != 5; ++j)
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(A.get<double>({i,j}),
+                                         Atest.get<double>({i,j}),
+                                         std::numeric_limits<double>::epsilon());
+
+     //**
+    dims = {3, 4, 5};
+    NDArray B(nix::DataType::Double, dims);
+    values = 0;
+    for(size_t i = 0; i != dims[0]; ++i)
+        for(size_t j = 0; j != dims[1]; ++j)
+            for(size_t k = 0; k != dims[2]; ++k)
+                B.set<double>({i,j,k}, values++);
+
+    ds = nix::hdf5::DataSet::create(h5group, "NDArray3x4x5", B);
+    ds.write(B);
+
+    nix::NDArray Btest(nix::DataType::Double, dims);
+    ds.read(Btest);
+
+    for(size_t i = 0; i != dims[0]; ++i)
+        for(size_t j = 0; j != dims[1]; ++j)
+            for(size_t k = 0; k != dims[2]; ++k)
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(B.get<double>({i,j,k}),
+                                             Btest.get<double>({i,j,k}),
+                                             std::numeric_limits<double>::epsilon());
 
 }
 

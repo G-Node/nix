@@ -21,6 +21,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include <nix/NDArray.hpp>
 #include <nix.hpp>
 #include <nix/hdf5/DataSet.hpp>
 
@@ -35,6 +36,7 @@ public:
     void testBasic();
     void testSelection();
     void testValueIO();
+    void testNDArrayIO();
     void tearDown();
 
 private:
@@ -50,6 +52,7 @@ private:
     CPPUNIT_TEST(testBasic);
     CPPUNIT_TEST(testSelection);
     CPPUNIT_TEST(testValueIO);
+    CPPUNIT_TEST(testNDArrayIO);
     CPPUNIT_TEST_SUITE_END ();
 };
 

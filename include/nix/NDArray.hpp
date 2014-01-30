@@ -7,8 +7,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_NDBUFFER_H
-#define NIX_NDBUFFER_H
+#ifndef NIX_NDARRAY_H
+#define NIX_NDARRAY_H
 
 #include <vector>
 #include <iostream>
@@ -17,13 +17,13 @@
 
 namespace nix {
 
-class NDBuffer {
+class NDArray {
 
 public:
 
     typedef uint8_t byte_type;
 
-    NDBuffer(DataType dtype, NDSize dims);
+    NDArray(DataType dtype, NDSize dims);
 
     size_t rank() const { return extends.size(); }
     size_t num_elements() const { return extends.nelms(); }
@@ -58,7 +58,7 @@ private:
 /* ******************************************* */
 
 template<typename T>
-const T NDBuffer::get(size_t index) const
+const T NDArray::get(size_t index) const
 {
     const T *dx = reinterpret_cast<const T *>(&dstore[0]);
     return dx[index];
@@ -66,7 +66,7 @@ const T NDBuffer::get(size_t index) const
 
 
 template<typename T>
-const T NDBuffer::get(const NDSize &index) const
+const T NDArray::get(const NDSize &index) const
 {
     size_t pos = sub2index(index);
     const T *dx = reinterpret_cast<const T *>(&dstore[0]);
@@ -75,7 +75,7 @@ const T NDBuffer::get(const NDSize &index) const
 
 
 template<typename T>
-void NDBuffer::set(size_t index, T value)
+void NDArray::set(size_t index, T value)
 {
     T* dx = reinterpret_cast<T *>(&dstore[0]);
     dx[index] = value;
@@ -83,7 +83,7 @@ void NDBuffer::set(size_t index, T value)
 
 
 template<typename T>
-void NDBuffer::set(const NDSize &index, T value)
+void NDArray::set(const NDSize &index, T value)
 {
     size_t pos = sub2index(index);
     T* dx = reinterpret_cast<T *>(&dstore[0]);
@@ -93,11 +93,11 @@ void NDBuffer::set(const NDSize &index, T value)
 /* ****************************************** */
 
 template<>
-struct data_traits<NDBuffer> {
+struct data_traits<NDArray> {
 
-    typedef NDBuffer        value_type;
-    typedef NDBuffer&       reference;
-    typedef const NDBuffer& const_reference;
+    typedef NDArray        value_type;
+    typedef NDArray&       reference;
+    typedef const NDArray& const_reference;
 
     typedef uint8_t        element_type;
     typedef uint8_t*       element_pointer;
@@ -132,4 +132,4 @@ struct data_traits<NDBuffer> {
 
 } // namespace nix
 
-#endif // NIX_NDBUFFER_H
+#endif // NIX_NDARRAY_H

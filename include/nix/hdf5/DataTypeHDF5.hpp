@@ -20,8 +20,6 @@ H5::DataType data_type_to_h5_filetype(DataType dtype);
 
 H5::DataType data_type_to_h5_memtype(DataType dtype);
 
-
-size_t data_type_to_size(DataType dtype);
 DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
 
 } // namespace hdf5

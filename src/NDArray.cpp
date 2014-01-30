@@ -7,33 +7,31 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/NDBuffer.hpp>
-
-#include <nix/hdf5/DataTypeHDF5.hpp>
+#include <nix/NDArray.hpp>
 
 namespace nix {
 
 
-NDBuffer::NDBuffer(DataType dtype, NDSize dims) : dataType(dtype), extends(dims) {
+NDArray::NDArray(DataType dtype, NDSize dims) : dataType(dtype), extends(dims) {
     allocate_space();
 }
 
 
-void NDBuffer::allocate_space() {
-    size_t type_size = hdf5::data_type_to_size(dataType);
+void NDArray::allocate_space() {
+    size_t type_size = data_type_to_size(dataType);
     dstore.resize(extends.nelms() * type_size);
 
     calc_strides();
 }
 
 
-void NDBuffer::resize(const NDSize &new_size) {
+void NDArray::resize(const NDSize &new_size) {
     extends = new_size;
     allocate_space();
 }
 
 
-void NDBuffer::calc_strides() {
+void NDArray::calc_strides() {
     size_t _rank = rank();
 
     strides = NDSize(_rank, 1);
@@ -46,7 +44,7 @@ void NDBuffer::calc_strides() {
 }
 
 
-size_t NDBuffer::sub2index(const NDSize &sub) const {
+size_t NDArray::sub2index(const NDSize &sub) const {
     size_t index = strides.dot(sub);
     return index;
 }

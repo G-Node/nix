@@ -21,12 +21,10 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <pandora.hpp>
+#include <nix.hpp>
 
 
-using namespace pandora;
-
-class TestNDBuffer : public CPPUNIT_NS::TestFixture {
+class TestNDArray : public CPPUNIT_NS::TestFixture {
 
 public:
 
@@ -37,14 +35,9 @@ public:
 
 
 private:
-    static unsigned int &open_mode();
 
-    H5::H5File h5file;
-    H5::Group h5group;
-
-    CPPUNIT_TEST_SUITE(TestNDBuffer);
+    CPPUNIT_TEST_SUITE(TestNDArray);
     CPPUNIT_TEST(basic);
-    CPPUNIT_TEST(testCharon);
     CPPUNIT_TEST_SUITE_END ();
 };
 

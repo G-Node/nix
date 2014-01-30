@@ -67,6 +67,18 @@ struct to_data_type<double> {
 };
 
 template<>
+struct to_data_type<int8_t> {
+    static const bool is_valid = true;
+    static const DataType value = DataType::Int8;
+};
+
+template<>
+struct to_data_type<uint8_t> {
+    static const bool is_valid = true;
+    static const DataType value = DataType::UInt8;
+};
+
+template<>
 struct to_data_type<int16_t> {
     static const bool is_valid = true;
     static const DataType value = DataType::Int16;
@@ -107,6 +119,8 @@ struct to_data_type<std::string> {
     static const bool is_valid = true;
     static const DataType value = DataType::String;
 };
+
+size_t data_type_to_size(DataType dtype);
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype);
 
