@@ -368,6 +368,15 @@ public:
         return impl_ptr->removeDataTag(id);
     }
 
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual Block &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
     /**
      * Output operator
      */
