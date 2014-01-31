@@ -41,6 +41,17 @@ std::string createId(std::string prefix = "", int length = 16);
 std::string timeToStr(time_t time);
 
 /**
+ * Get the scaling between two SI units that are identified by the two strings.
+ *
+ * @param origin_unit the original unit
+ * @param destination_unit the one into which a scaling should be done
+ *
+ * @return A float with the appropriate scaling
+ * @throw Runtime Exception when units cannot be converted into each other by mere scaling
+ */
+float getScaling(const std::string &origin_unit, const std::string &destination_unit);
+
+/**
  * Convert a string representation of a date into a time value.
  *
  * @param time    The string representation of a date.
@@ -74,6 +85,8 @@ template<typename T> T strToNum(const std::string &str) {
     T number;
     return s >> number ? number : 0;
 }
+
+
 
 } // namespace util
 } // namespace nix
