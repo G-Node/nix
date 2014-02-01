@@ -41,6 +41,15 @@ std::string createId(std::string prefix = "", int length = 16);
 std::string timeToStr(time_t time);
 
 /**
+ * Checks if the passed string represents a valid SI unit.
+ *
+ * @param unit a string that is supposed to represent an SI unit.
+ * @return bool true or false
+ */
+bool checkUnit(const std::string &unit);
+
+
+/**
  * Get the scaling between two SI units that are identified by the two strings.
  *
  * @param origin_unit the original unit

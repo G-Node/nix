@@ -63,31 +63,36 @@ time_t strToTime(const string &time) {
 }
 
 
-void prefixAndUnits(const string &combined_unit, string &prefix, string &unit){
+void splitUnit(const string &combined_unit, string &prefix, string &unit){
 	boost::regex prefix_and_unit(PREFIXES + UNITS);
 	boost::regex prefix_only(PREFIXES);
 
 	if(boost::regex_match(combined_unit, prefix_and_unit)){
-			boost::match_results<std::string::const_iterator> m;
-			boost::regex_search(combined_unit, m, prefix_only);
-			prefix = m[0];
-			unit = m.suffix();
-		}
-		else{
-			unit = combined_unit;
-			prefix = "";
-		}
+		boost::match_results<std::string::const_iterator> m;
+		boost::regex_search(combined_unit, m, prefix_only);
+		prefix = m[0];
+		unit = m.suffix();
+	}
+	else{
+		unit = combined_unit;
+		prefix = "";
+	}
 }
+
+
+bool checkUnit(const string &unit){
+	boost::regex opt_prefix_and_unit(PREFIXES + "?" + UNITS);
+	return boost::regex_match(unit, opt_prefix_and_unit);
+}
+
 
 double getScaling(const string &origin_unit, const string &destination_unit){
 	double scaling = 1.0;
-	boost::regex opt_prefix_and_unit(PREFIXES + "?" + UNITS);
-
-	if (boost::regex_match(origin_unit, opt_prefix_and_unit) && boost::regex_match(destination_unit, opt_prefix_and_unit)){
+	if (checkUnit(origin_unit) && checkUnit(destination_unit)){
 		string org_unit, org_prefix;
 		string dest_unit, dest_prefix;
-		prefixAndUnits(origin_unit, org_prefix, org_unit);
-		prefixAndUnits(destination_unit, dest_prefix, dest_unit);
+		splitUnit(origin_unit, org_prefix, org_unit);
+		splitUnit(destination_unit, dest_prefix, dest_unit);
 		if(dest_unit.compare(org_unit) != 0){
 			throw runtime_error("Origin and destination units are not the same!");
 		}
@@ -101,7 +106,7 @@ double getScaling(const string &origin_unit, const string &destination_unit){
 			scaling = PREFIX_FACTORS.at(dest_prefix) / PREFIX_FACTORS.at(org_prefix);
 		}
 	}else{
-		throw runtime_error("Origin and destination units cannot be scaled!");
+		throw runtime_error("Origin unit and/or destination unit are not valid!");
 	}
 	return scaling;
 }
