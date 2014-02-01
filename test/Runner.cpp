@@ -22,6 +22,7 @@
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
+#include "TestDataTag.hpp"
 #include "TestValue.hpp"
 #include "TestProperty.hpp"
 #include "TestNDArray.hpp"
@@ -33,6 +34,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
