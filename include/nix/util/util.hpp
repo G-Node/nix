@@ -46,10 +46,10 @@ std::string timeToStr(time_t time);
  * @param origin_unit the original unit
  * @param destination_unit the one into which a scaling should be done
  *
- * @return A float with the appropriate scaling
+ * @return A double with the appropriate scaling
  * @throw Runtime Exception when units cannot be converted into each other by mere scaling
  */
-float getScaling(const std::string &origin_unit, const std::string &destination_unit);
+double getScaling(const std::string &origin_unit, const std::string &destination_unit);
 
 /**
  * Convert a string representation of a date into a time value.
