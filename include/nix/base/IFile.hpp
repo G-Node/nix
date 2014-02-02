@@ -227,6 +227,13 @@ public:
      */
     virtual void forceCreatedAt(time_t t) = 0;
 
+    /**
+     * Close the file.
+     */
+    virtual void close() = 0;
+
+    virtual bool isOpen() const = 0;
+
 };
 
 
