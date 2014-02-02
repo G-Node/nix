@@ -185,11 +185,8 @@ void TestBlock::testDataTagAccess() {
         ids.push_back(tag.id());
     }
 
-    // TODO fails here
-    /*
     CPPUNIT_ASSERT(block.dataTagCount() == names.size());
     CPPUNIT_ASSERT(block.dataTags().size() == names.size());
-
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         DataTag tag = block.getDataTag(*it);
@@ -201,7 +198,6 @@ void TestBlock::testDataTagAccess() {
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);
-    */
 }
 
 

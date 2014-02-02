@@ -342,7 +342,7 @@ public:
      * @return The number of data tags.
      */
     size_t dataTagCount() const {
-        return impl_ptr->dataArrayCount();
+        return impl_ptr->dataTagCount();
     }
 
     /**
