@@ -21,32 +21,28 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <pandora.hpp>
+#include <nix.hpp>
 
-using namespace pandora;
 
 class TestBlock : public CPPUNIT_NS::TestFixture {
 
 private:
 
     CPPUNIT_TEST_SUITE(TestBlock);
-    CPPUNIT_TEST(testAddRemoveDataArray);
+    CPPUNIT_TEST(testUpdatedAt);
+    CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
+    nix::File file;
+    nix::Block block, block_other, block_null;
+    time_t startup_time;
+
 public:
 
-    void setUp() {
-        f1 = new File("test_block.h5", FileMode::ReadWrite);
-    }
+    void setUp();
+    void tearDown();
 
-    void tearDown() {
-        delete f1;
-    }
-
-
-    void testAddRemoveDataArray() {
-        // TODO implement testAddRemoveDataArray()
-    }
+    void testUpdatedAt();
+    void testCreatedAt();
 
 };
