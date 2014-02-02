@@ -181,7 +181,7 @@ public:
      * @return The number of data arrays of the block.
      */
     size_t dataArrayCount() const {
-        return dataArrayCount();
+        return impl_ptr->dataArrayCount();
     }
 
     /**
@@ -273,7 +273,7 @@ public:
      * @return The newly created tag.
      */
     SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
-        return createSimpleTag(name, type);
+        return impl_ptr->createSimpleTag(name, type);
     }
 
     /**
