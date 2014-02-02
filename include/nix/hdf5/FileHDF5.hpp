@@ -133,6 +133,12 @@ public:
     void forceCreatedAt(time_t t);
 
 
+    void close();
+
+
+    bool isOpen() const;
+
+
     bool operator==(const FileHDF5 &other) const;
 
 
