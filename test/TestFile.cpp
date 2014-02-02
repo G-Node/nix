@@ -23,8 +23,8 @@ void TestFile::setUp() {
 
 
 void TestFile::tearDown() {
-    file_open = NULL;      // TODO fix this as soon as there is a nicer method for closing files
-    file_other = NULL;
+    file_open.close();
+    file_other.close();
 }
 
 
