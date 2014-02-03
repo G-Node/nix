@@ -41,6 +41,7 @@ private:
     CPPUNIT_TEST(testSimpleTagAccess);
     CPPUNIT_TEST(testDataTagAccess);
 
+    CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
 
