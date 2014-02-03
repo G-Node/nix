@@ -269,6 +269,48 @@ string FileHDF5::format() const {
 }
 
 
+void FileHDF5::close() {
+
+    if (!isOpen())
+        return;
+
+    unsigned types = H5F_OBJ_GROUP|H5F_OBJ_DATASET|H5F_OBJ_DATATYPE;
+
+    hsize_t obj_count = h5file.getObjCount(types);
+    hid_t*  objs = new hid_t[obj_count];
+    h5file.getObjIDs(types, obj_count, objs);
+
+
+    for (hsize_t i = 0; i < obj_count; i++) {
+        hid_t   obj = objs[i];
+        hsize_t ref_count = H5Iget_ref(obj);
+
+        for (hsize_t j = 0; j < ref_count; j++) {
+            H5Oclose(obj);
+        }
+    }
+
+    delete[] objs;
+
+    h5file.close();
+}
+
+
+bool FileHDF5::isOpen() const {
+    hid_t file_id = h5file.getId();
+
+    if (file_id == 0)
+        return false;
+
+    H5I_type_t id_type = H5Iget_type(file_id);
+
+    if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
+        return false;
+    else
+        return true;
+}
+
+
 File FileHDF5::file() const {
     shared_ptr<FileHDF5> ptr = const_pointer_cast<FileHDF5>(shared_from_this());
     return File(ptr);
@@ -331,8 +373,7 @@ FileHDF5& FileHDF5::operator=(const FileHDF5 &other) {
 
 
 FileHDF5::~FileHDF5() {
-    setUpdatedAt();
-    h5file.close();
+    close();
 }
 
 

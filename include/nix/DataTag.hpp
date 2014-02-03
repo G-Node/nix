@@ -281,6 +281,16 @@ public:
         return impl_ptr->removeRepresentation(id);
     }
 
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const DataTag &ent) {
+        out << "DataTag: {name = " << ent.name();
+        out << ", type = " << ent.type();
+        out << ", id = " << ent.id() << "}";
+        return out;
+    }
+
 };
 
 

@@ -110,7 +110,8 @@ Source BlockHDF5::createSource(const string &name,const string &type) {
         id = util::createId("source");
     }
 
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), source_group.openGroup(id, false), id));
+    Group group = source_group.openGroup(id, true);
+    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), group, id));
     tmp->name(name);
     tmp->type(type);
 
