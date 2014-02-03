@@ -121,6 +121,25 @@ public:
         return impl_ptr->removeSource(id);
     }
 
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual Source &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Source &ent) {
+        out << "Source: {name = " << ent.name();
+        out << ", type = " << ent.type();
+        out << ", id = " << ent.id() << "}";
+        return out;
+    }
+
 
 };
 
