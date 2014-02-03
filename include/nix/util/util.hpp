@@ -46,7 +46,7 @@ std::string timeToStr(time_t time);
  * @param unit a string that is supposed to represent an SI unit.
  * @return bool true or false
  */
-bool checkUnit(const std::string &unit);
+bool checkSIUnit(const std::string &unit);
 
 
 /**
@@ -58,7 +58,7 @@ bool checkUnit(const std::string &unit);
  * @return A double with the appropriate scaling
  * @throw Runtime Exception when units cannot be converted into each other by mere scaling
  */
-double getScaling(const std::string &origin_unit, const std::string &destination_unit);
+double getSIScaling(const std::string &origin_unit, const std::string &destination_unit);
 
 /**
  * Convert a string representation of a date into a time value.

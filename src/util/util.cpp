@@ -80,15 +80,15 @@ void splitUnit(const string &combined_unit, string &prefix, string &unit){
 }
 
 
-bool checkUnit(const string &unit){
+bool checkSIUnit(const string &unit){
 	boost::regex opt_prefix_and_unit(PREFIXES + "?" + UNITS);
 	return boost::regex_match(unit, opt_prefix_and_unit);
 }
 
 
-double getScaling(const string &origin_unit, const string &destination_unit){
+double getSIScaling(const string &origin_unit, const string &destination_unit){
 	double scaling = 1.0;
-	if (checkUnit(origin_unit) && checkUnit(destination_unit)){
+	if (checkSIUnit(origin_unit) && checkSIUnit(destination_unit)){
 		string org_unit, org_prefix;
 		string dest_unit, dest_prefix;
 		splitUnit(origin_unit, org_prefix, org_unit);
