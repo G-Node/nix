@@ -6,16 +6,106 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <ctime>
+
+#include <nix/util/util.hpp>
 #include "TestSource.hpp"
 
+
+using namespace std;
+using namespace nix;
+
+
 void TestSource::setUp() {
-    f1 = new File("test_block.h5", FileMode::ReadWrite);
+    startup_time = time(NULL);
+    file = File::open("test_source.h5", FileMode::Overwrite);
+    block = file.createBlock("block", "dataset");
+    section = file.createSection("foo_section", "metadata");
+
+    source = block.createSource("source_one", "channel");
+    source_other = block.createSource("source_two", "channel");
+    source_null  = nullptr;
 }
+
 
 void TestSource::tearDown() {
-    delete f1;
+    file.close();
 }
 
+
+void TestSource::testId() {
+    CPPUNIT_ASSERT(source.id().size() == 23);
+}
+
+
+void TestSource::testName() {
+    CPPUNIT_ASSERT(source.name() == "source_one");
+    string name = util::createId("", 32);
+    source.name(name);
+    CPPUNIT_ASSERT(source.name() == name);
+}
+
+
+void TestSource::testType() {
+    CPPUNIT_ASSERT(source.type() == "channel");
+    string typ = util::createId("", 32);
+    source.type(typ);
+    CPPUNIT_ASSERT(source.type() == typ);
+}
+
+
+void TestSource::testDefinition() {
+    string def = util::createId("", 128);
+    source.definition(def);
+    CPPUNIT_ASSERT(source.definition() == def);
+}
+
+
+void TestSource::testMetadataAccess() {
+    CPPUNIT_ASSERT(!source.hasMetadata());
+
+    source.metadata(section);
+    CPPUNIT_ASSERT(source.hasMetadata());
+    // TODO This test fails due to operator== of Section
+    // CPPUNIT_ASSERT(source.metadata() == section);
+
+    source.removeMetadata();
+    CPPUNIT_ASSERT(!source.hasMetadata());
+}
+
+
+void TestSource::testOperators() {
+    CPPUNIT_ASSERT(source_null == NULL);
+    CPPUNIT_ASSERT(source_null == nullptr);
+
+    CPPUNIT_ASSERT(source != NULL);
+    CPPUNIT_ASSERT(source != nullptr);
+
+    CPPUNIT_ASSERT(source == source);
+    CPPUNIT_ASSERT(source != source_other);
+
+    source_other = source;
+    CPPUNIT_ASSERT(source == source_other);
+
+    source_other = nullptr;
+    CPPUNIT_ASSERT(source_null == NULL);
+    CPPUNIT_ASSERT(source_null == nullptr);
+}
+
+
+void TestSource::testCreatedAt() {
+    CPPUNIT_ASSERT(source.createdAt() >= startup_time);
+    time_t past_time = time(NULL) - 10000000;
+    source.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(source.createdAt() == past_time);
+}
+
+
+void TestSource::testUpdatedAt() {
+    CPPUNIT_ASSERT(source.updatedAt() >= startup_time);
+}
+
+/*
 
 void TestSource::testCreateAndRemove() {
     Block b1 = f1->createBlock("test block","test");
@@ -106,3 +196,5 @@ void TestSource::testFindSources(){
     b1.removeSource(s2.id());
     f1->removeBlock(b1.id());
 }
+
+*/

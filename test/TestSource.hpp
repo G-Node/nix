@@ -20,34 +20,46 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Block.hpp"
-#include "pandora/Section.hpp"
-#include "pandora/Source.hpp"
-
-using namespace std;
-using namespace pandora;
+#include <nix.hpp>
 
 class TestSource:public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestSource);
 
-    CPPUNIT_TEST(testCreateAndRemove);
-    CPPUNIT_TEST(testIterators);
-    CPPUNIT_TEST(testFindSources);
+    CPPUNIT_TEST(testId);
+    CPPUNIT_TEST(testType);
+    CPPUNIT_TEST(testName);
+    CPPUNIT_TEST(testDefinition);
 
-    CPPUNIT_TEST_SUITE_END ();
+    CPPUNIT_TEST(testMetadataAccess);
 
-    File *f1;
+    CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testUpdatedAt);
+    CPPUNIT_TEST(testCreatedAt);
+
+    CPPUNIT_TEST_SUITE_END();
+
+    nix::File file;
+    nix::Block block;
+    nix::Section section;
+    nix::Source source, source_other, source_null;
+    time_t startup_time;
 
 public:
 
     void setUp();
     void tearDown();
-    void testCreateAndRemove();
-    void testIterators();
-    void testFindSources();
 
+    void testId();
+    void testType();
+    void testName();
+    void testDefinition();
+
+    void testMetadataAccess();
+
+    void testOperators();
+    void testUpdatedAt();
+    void testCreatedAt();
 };
 
