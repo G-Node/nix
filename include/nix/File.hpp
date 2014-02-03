@@ -162,6 +162,21 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
+
+    void close() {
+        if (impl_ptr != nullptr)
+            impl_ptr->close();
+    }
+
+
+    bool isOpen() const {
+        if (impl_ptr == nullptr)
+            return false;
+        else
+            return impl_ptr->isOpen();
+    }
+
+
     virtual File &operator=(std::nullptr_t nullp) {
         impl_ptr = nullp;
         return *this;
