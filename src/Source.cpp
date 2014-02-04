@@ -36,7 +36,7 @@ Source::Source(const std::shared_ptr<base::ISource> &p_impl)
 //--------------------------------------------------
 
 
-bool nix::null_filter(const Source &src) {
+bool nix::acceptAllFilter(const Source &src) {
     return true;
 }
 

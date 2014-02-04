@@ -18,7 +18,7 @@
 namespace nix {
 
 
-bool null_filter(const Source &src);
+bool acceptAllFilter(const Source &src);
 
 // TODO inherit from EntityWithMetadata
 // TODO what about TNode?
@@ -95,7 +95,7 @@ public:
 
     /**
      * Recoursively searches through all sources and their descendents and returns every source
-     * that passes the specified filter. Further the results of the method is limited by the maximum
+     * that passes the specified filter. Further the result of the method is limited by the maximum
      * depth.
      *
      * @param filter        A simple filter funcion that is applied on every source.
@@ -103,7 +103,7 @@ public:
      *
      * @return All matching sources as a vector.
      */
-    std::vector<Source> findSources(std::function<bool(const Source&)> filter = null_filter,
+    std::vector<Source> findSources(std::function<bool(const Source&)> filter = acceptAllFilter,
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 

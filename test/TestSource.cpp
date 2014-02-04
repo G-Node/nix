@@ -127,9 +127,9 @@ void TestSource::testFindSource() {
 
     // test depth limit
     CPPUNIT_ASSERT(source.findSources().size() == 14);
-    CPPUNIT_ASSERT(source.findSources(null_filter, 2).size() == 10);
-    CPPUNIT_ASSERT(source.findSources(null_filter, 1).size() == 4);
-    CPPUNIT_ASSERT(source.findSources(null_filter, 0).size() == 1);
+    CPPUNIT_ASSERT(source.findSources(acceptAllFilter, 2).size() == 10);
+    CPPUNIT_ASSERT(source.findSources(acceptAllFilter, 1).size() == 4);
+    CPPUNIT_ASSERT(source.findSources(acceptAllFilter, 0).size() == 1);
 
     // test filter
     auto filter_typ1 = [](const Source &s) { return s.type() == "typ1"; };
