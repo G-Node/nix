@@ -74,6 +74,39 @@ void TestSource::testMetadataAccess() {
 }
 
 
+void TestSource::testSourceAccess() {
+    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+
+    CPPUNIT_ASSERT(source.sourceCount() == 0);
+    CPPUNIT_ASSERT(source.sources().size() == 0);
+
+
+    vector<string> ids;
+    for (auto it = names.begin(); it != names.end(); it++) {
+        Source child_source = source.createSource(*it, "channel");
+        CPPUNIT_ASSERT(child_source.name() == *it);
+
+        ids.push_back(child_source.id());
+    }
+
+
+    CPPUNIT_ASSERT(source.sourceCount() == names.size());
+    CPPUNIT_ASSERT(source.sources().size() == names.size());
+
+
+    for (auto it = ids.begin(); it != ids.end(); it++) {
+        Source child_source = source.getSource(*it);
+        CPPUNIT_ASSERT(source.hasSource(*it) == true);
+        CPPUNIT_ASSERT(child_source.id() == *it);
+
+        source.removeSource(*it);
+    }
+
+    CPPUNIT_ASSERT(source.sourceCount() == 0);
+    CPPUNIT_ASSERT(source.sources().size() == 0);
+}
+
+
 void TestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == NULL);
     CPPUNIT_ASSERT(source_null == nullptr);
