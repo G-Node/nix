@@ -34,6 +34,7 @@ private:
 
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
+    CPPUNIT_TEST(testFindSource);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
@@ -59,6 +60,7 @@ public:
 
     void testMetadataAccess();
     void testSourceAccess();
+    void testFindSource();
 
     void testOperators();
     void testUpdatedAt();

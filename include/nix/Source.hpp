@@ -9,11 +9,16 @@
 #ifndef NIX_SOURCE_H
 #define NIX_SOURCE_H
 
+#include <limits>
+#include <functional>
+
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
 namespace nix {
 
+
+bool null_filter(const Source &src);
 
 // TODO inherit from EntityWithMetadata
 // TODO what about TNode?
@@ -21,22 +26,13 @@ class Source : virtual public base::ISource, public base::EntityWithMetadata<bas
 
 public:
 
-    Source()
-        : EntityWithMetadata()
-    {
-    }
+    Source();
 
 
-    Source(const Source &other)
-        : EntityWithMetadata(other.impl_ptr)
-    {
-    }
+    Source(const Source &other);
 
 
-    Source(const std::shared_ptr<base::ISource> &p_impl)
-        : EntityWithMetadata(p_impl)
-    {
-    }
+    Source(const std::shared_ptr<base::ISource> &p_impl);
 
     //--------------------------------------------------
     // Methods concerning child sources
@@ -98,6 +94,20 @@ public:
     }
 
     /**
+     * Recoursively searches through all sources and their descendents and returns every source
+     * that passes the specified filter. Further the results of the method is limited by the maximum
+     * depth.
+     *
+     * @param filter        A simple filter funcion that is applied on every source.
+     * @param max_depth     The maximum depth of the search.
+     *
+     * @return All matching sources as a vector.
+     */
+    std::vector<Source> findSources(std::function<bool(const Source&)> filter = null_filter,
+                                    size_t max_depth = std::numeric_limits<size_t>::max()) const;
+
+
+    /**
      * Create a new root source.
      *
      * @param name      The name of the source to create.
@@ -133,12 +143,7 @@ public:
     /**
      * Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Source &ent) {
-        out << "Source: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
+    friend std::ostream& operator<<(std::ostream &out, const Source &ent);
 
 
 };

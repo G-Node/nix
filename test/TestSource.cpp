@@ -107,6 +107,39 @@ void TestSource::testSourceAccess() {
 }
 
 
+void TestSource::testFindSource() {
+    // prepare
+    Source l1n1 = source.createSource("l1n1", "typ1");
+    Source l1n2 = source.createSource("l1n2", "typ2");
+    Source l1n3 = source.createSource("l1n3", "typ3");
+
+    Source l2n1 = l1n1.createSource("l2n1", "typ1");
+    Source l2n2 = l1n1.createSource("l2n2", "typ2");
+    Source l2n3 = l1n1.createSource("l2n3", "typ2");
+    Source l2n4 = l1n3.createSource("l2n4", "typ2");
+    Source l2n5 = l1n3.createSource("l2n5", "typ2");
+    Source l2n6 = l1n3.createSource("l2n6", "typ3");
+
+    Source l3n1 = l2n1.createSource("l2n3", "typ1");
+    Source l3n2 = l2n3.createSource("l2n3", "typ2");
+    Source l3n3 = l2n3.createSource("l2n3", "typ2");
+    Source l3n4 = l2n5.createSource("l2n3", "typ2");
+
+    // test depth limit
+    CPPUNIT_ASSERT(source.findSources().size() == 14);
+    CPPUNIT_ASSERT(source.findSources(null_filter, 2).size() == 10);
+    CPPUNIT_ASSERT(source.findSources(null_filter, 1).size() == 4);
+    CPPUNIT_ASSERT(source.findSources(null_filter, 0).size() == 1);
+
+    // test filter
+    auto filter_typ1 = [](const Source &s) { return s.type() == "typ1"; };
+    auto filter_typ2 = [](const Source &s) { return s.type() == "typ2"; };
+
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
+    CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 8);
+}
+
+
 void TestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == NULL);
     CPPUNIT_ASSERT(source_null == nullptr);
