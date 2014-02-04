@@ -20,8 +20,7 @@ namespace nix {
 namespace hdf5 {
 
 /**
- * An entity that represents a source as defined in the pandora
- * data model.
+ * An entity that implements ISource for the HDF5 back-end.
  */
 class SourceHDF5 : virtual public base::ISource, public EntityWithMetadataHDF5  {
 
@@ -30,9 +29,6 @@ private:
     Group source_group;
 
 public:
-
-    //TODO typedefs
-    //using size_type = TNode<Source>::size_type;
 
 
     /**
@@ -49,13 +45,6 @@ public:
      * Default constructor that preserves the creation time.
      */
     SourceHDF5(File file, Group group, const std::string &id, time_t time);
-
-
-    //TNode interface
-    // TODO implement Node features
-    //virtual size_type childCount() const;
-    //virtual Source    getChild(size_type index) const;
-
 
     //--------------------------------------------------
     // Methods concerning child sources
@@ -90,14 +79,9 @@ public:
     void swap(SourceHDF5 &other);
 
 
-    /**
-     * Assignment operator.
-     */
     SourceHDF5& operator=(const SourceHDF5 &other);
 
-    /**
-     * Output operator
-     */
+
     friend std::ostream& operator<<(std::ostream &out, const SourceHDF5 &ent);
 
 
