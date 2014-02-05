@@ -6,16 +6,88 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <ctime>
+
+#include <nix/util/util.hpp>
 #include "TestSection.hpp"
 
+using namespace std;
+using namespace nix;
+
+
 void TestSection::setUp() {
-    f1 = new File("test_block.h5", FileMode::ReadWrite);
+    startup_time = time(NULL);
+    file = File::open("test_section.h5", FileMode::Overwrite);
+
+    section = file.createSection("section", "metadata");
+    section_other = file.createSection("other_section", "metadata");
+    section_null  = nullptr;
 }
 
 void TestSection::tearDown() {
-    delete f1;
+    file.close();
 }
 
+void TestSection::testId() {
+    CPPUNIT_ASSERT(section.id().size() == 24);
+}
+
+
+void TestSection::testName() {
+    CPPUNIT_ASSERT(section.name() == "section");
+    string name = util::createId("", 32);
+    section.name(name);
+    CPPUNIT_ASSERT(section.name() == name);
+}
+
+
+void TestSection::testType() {
+    CPPUNIT_ASSERT(section.type() == "metadata");
+    string typ = util::createId("", 32);
+    section.type(typ);
+    CPPUNIT_ASSERT(section.type() == typ);
+}
+
+
+void TestSection::testDefinition() {
+    string def = util::createId("", 128);
+    section.definition(def);
+    CPPUNIT_ASSERT(section.definition() == def);
+}
+
+
+void TestSection::testOperators() {
+    CPPUNIT_ASSERT(section_null == NULL);
+    CPPUNIT_ASSERT(section_null == nullptr);
+
+    CPPUNIT_ASSERT(section != NULL);
+    CPPUNIT_ASSERT(section != nullptr);
+
+    CPPUNIT_ASSERT(section == section);
+    CPPUNIT_ASSERT(section != section_other);
+
+    section_other = section;
+    CPPUNIT_ASSERT(section == section_other);
+
+    section_other = nullptr;
+    CPPUNIT_ASSERT(section_null == NULL);
+    CPPUNIT_ASSERT(section_null == nullptr);
+}
+
+
+void TestSection::testCreatedAt() {
+    CPPUNIT_ASSERT(section.createdAt() >= startup_time);
+    time_t past_time = time(NULL) - 10000000;
+    section.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(section.createdAt() == past_time);
+}
+
+
+void TestSection::testUpdatedAt() {
+    CPPUNIT_ASSERT(section.updatedAt() >= startup_time);
+}
+
+/*
 void TestSection::testAddAndRemove() {
     const char *names[5] = { "section_a", "section_b", "section_c", "section_d",
                              "section_e" };
@@ -37,7 +109,7 @@ void TestSection::testAddAndRemove() {
         f1->removeSection(ids[i]);
     }
     CPPUNIT_ASSERT(f1->sectionCount() == count);
-    /*
+
    Section test = f1->findSection(lastSectionId)[0];
    stringstream errmsg;
    errmsg << "Error while accessing Section with id: " << lastSectionId
@@ -65,8 +137,9 @@ void TestSection::testAddAndRemove() {
    size_t childCount = test.childCount();
    CPPUNIT_ASSERT_MESSAGE(msg2.str(), childCount == 2);
    CPPUNIT_ASSERT_MESSAGE(msg2.str(), test.hasChildren());
-   */
+
 }
+
 
 void TestSection::testDepthRetrieving() {
     Section s1 = f1->createSection("Iterator test", "test");
@@ -278,3 +351,4 @@ void TestSection::testSectionLinks() {
     f1->removeSection(base.id());
     f1->removeSection(base2.id());
 }
+*/

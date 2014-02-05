@@ -20,33 +20,43 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Block.hpp"
-#include "pandora/Section.hpp"
-#include "pandora/Property.hpp"
-
-using namespace std;
-using namespace pandora;
+#include <nix.hpp>
 
 class TestSection: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestSection);
-    CPPUNIT_TEST(testAddAndRemove);
-    CPPUNIT_TEST(testDepthRetrieving);
-    CPPUNIT_TEST(testRelatedSections);
-    CPPUNIT_TEST(testAddingProperties);
-    CPPUNIT_TEST(testAccessingProperties);
-    CPPUNIT_TEST(testRemovingProperties);
-    CPPUNIT_TEST(testSectionLinks);
+
+    CPPUNIT_TEST(testId);
+    CPPUNIT_TEST(testType);
+    CPPUNIT_TEST(testName);
+    CPPUNIT_TEST(testDefinition);
+
+    CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testUpdatedAt);
+    CPPUNIT_TEST(testCreatedAt);
+
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
+    nix::File file;
+    nix::Section section, section_other, section_null;
+    time_t startup_time;
 
 public:
 
     void setUp();
     void tearDown();
+
+    void testId();
+    void testType();
+    void testName();
+    void testDefinition();
+
+    void testOperators();
+    void testUpdatedAt();
+    void testCreatedAt();
+
+    /*
     void testAddAndRemove();
     void testDepthRetrieving();
     void testRelatedSections();
@@ -54,6 +64,7 @@ public:
     void testAccessingProperties();
     void testRemovingProperties();
     void testSectionLinks();
+    */
 
 };
 
