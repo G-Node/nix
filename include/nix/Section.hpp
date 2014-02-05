@@ -19,17 +19,14 @@ class Section : virtual public base::ISection, public base::NamedEntity<base::IS
 
 public:
 
-    Section() {}
+    Section();
 
-    Section(const Section &other)
-        : NamedEntity(other.impl_ptr)
-    {
-    }
 
-    Section(const std::shared_ptr<base::ISection> &p_impl)
-        : NamedEntity(p_impl)
-    {
-    }
+    Section(const Section &other);
+
+
+    Section(const std::shared_ptr<base::ISection> &p_impl);
+
 
     //--------------------------------------------------
     // Attribute getter and setter
@@ -244,6 +241,20 @@ public:
     bool removeProperty(const std::string &id) {
         return impl_ptr->removeProperty(id);
     }
+
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual Section &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Section &ent);
 
 };
 
