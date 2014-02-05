@@ -10,30 +10,83 @@
 
 #include "TestDataTag.hpp"
 #include <sstream>
+
 using namespace nix;
 using namespace nix::hdf5;
 
-//TODO What about the polynomials in DataArray??
 
 void TestDataTag::setUp() {
-	file = nix::File::open("test_DataArray.h5");
+	startup_time = time(NULL);
+	file = File::open("test_dataTag.h5", FileMode::Overwrite);
+	block = file.createBlock("block", "dataset");
+	tag = block.createDataTag("tag_one", "test_tag");
+	tag_other = block.createDataTag("tag_two", "test_tag");
+	tag_null = nullptr;
+
+	positions = block.createDataArray("positions_DataArray", "dataArray");
+	extents = block.createDataArray("extents_DataArray", "dataArray");
+	typedef boost::multi_array<double, 1> array_type;
+	typedef array_type::index index;
+	array_type A(boost::extents[5]);
+	for(index i = 0; i != 5; ++i){
+		A[i] = 100.0*i;
+	}
+	positions.setData(A);
+
+	array_type B(boost::extents[10]);
+	for(index i = 0; i != 10; ++i){
+		B[i] = 100.0*i;
+	}
+	extents.setData(B);
+
+	section = file.createSection("foo_section", "metadata");
 }
 
 
 void TestDataTag::tearDown(){
-
+	file.removeBlock(block.id());
+	file.removeSection(section.id());
+	file.close();
 }
 
+
+void TestDataTag::testId() {
+    CPPUNIT_ASSERT(tag.id().size() == 25);
+}
+
+
+void TestDataTag::testName() {
+    CPPUNIT_ASSERT(tag.name() == "tag_one");
+    std::string name = util::createId("", 32);
+    tag.name(name);
+    CPPUNIT_ASSERT(tag.name() == name);
+}
+
+
+void TestDataTag::testType() {
+    CPPUNIT_ASSERT(tag.type() == "test_tag");
+    std::string type = util::createId("", 32);
+    tag.type(type);
+    CPPUNIT_ASSERT(tag.type() == type);
+}
+
+
+void TestDataTag::testDefinition() {
+    std::string def = util::createId("", 128);
+    tag.definition(def);
+    CPPUNIT_ASSERT(tag.definition() == def);
+}
+
+
 void TestDataTag::testCreateRemove() {
-	Block b = file.createBlock("DataTagTest","Test");
 	std::vector<std::string> ids;
-	size_t count = b.dataTagCount();
+	size_t count = block.dataTagCount();
 	const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d",
 			"tag_e" };
 	for (int i = 0; i < 5; i++) {
 		std::string type = "Event";
-		DataTag dt1 = b.createDataTag(names[i], type);
-		DataTag dt2 = b.getDataTag(dt1.id());
+		DataTag dt1 = block.createDataTag(names[i], type);
+		DataTag dt2 = block.getDataTag(dt1.id());
 		ids.push_back(dt1.id());
 
 		std::stringstream errmsg;
@@ -43,24 +96,22 @@ void TestDataTag::testCreateRemove() {
 	}
 	std::stringstream errmsg2;
 	errmsg2 << "Error creating DataTags. Counts do not match!";
-	CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), b.dataTagCount() == (count+5));
+	CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.dataTagCount() == (count+5));
 
 	for (size_t i = 0; i < ids.size(); i++) {
-		b.removeDataTag(ids[i]);
+		block.removeDataTag(ids[i]);
 	}
 
 	std::stringstream errmsg1;
 	errmsg1 << "Error while removing dataTags!";
-	CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), b.dataTagCount() == count);
-	file.removeBlock(b.id());
+	CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.dataTagCount() == count);
 }
 
 
 void TestDataTag::testReferences(){
-	Block b = file.createBlock("DataTagTest","Test");
-	DataArray da_1 = b.createDataArray("TestReference 1","Reference");
-	DataArray da_2 = b.createDataArray("TestReference 2","Reference");
-	DataTag dt = b.createDataTag("TestDataTag1","Tag");
+	DataArray da_1 = block.createDataArray("TestReference 1","Reference");
+	DataArray da_2 = block.createDataArray("TestReference 2","Reference");
+	DataTag dt = block.createDataTag("TestDataTag1","Tag");
 
 	std::stringstream counterrmsg;
 	counterrmsg << "TestDataTag::testReference: Counts do not match!";
@@ -90,75 +141,53 @@ void TestDataTag::testReferences(){
 	CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
 	dt.removeReference(da_2);
 	CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
+
+	block.removeDataArray(da_1.id());
+	block.removeDataArray(da_1.id());
+	block.removeDataTag(dt.id());
 }
 
 
 void TestDataTag::testExtents(){
-	Block b = file.createBlock("DataTagTest","Test");
-	DataArray da = b.createDataArray("TestExtents","Extents");
-	DataTag dt = b.createDataTag("TestDataTag1","Tag");
+	CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"),std::runtime_error);
 
-	typedef boost::multi_array<double, 1> array_type;
-	typedef array_type::index index;
-	array_type A(boost::extents[5]);
-	for(index i = 0; i != 5; ++i){
-		A[i] = 100.0*i;
-	}
-	da.setData(A);
-	dt.extents(da);
-	CPPUNIT_ASSERT_NO_THROW(dt.hasExtents());
-	CPPUNIT_ASSERT(dt.extents() == da);
-
-	CPPUNIT_ASSERT(dt.removeExtents());
-	file.removeBlock(b.id());
+	tag.extents(extents);
+	CPPUNIT_ASSERT(tag.hasExtents());
+	CPPUNIT_ASSERT(tag.removeExtents());
+	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
 
 void TestDataTag::testPositions(){
-	Block b = file.createBlock("DataTagTest","Test");
-	DataArray da = b.createDataArray("TestPosition","Position");
-	DataTag dt = b.createDataTag("TestDataTag1","Tag");
+	CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"),std::runtime_error);
 
-	typedef boost::multi_array<double, 1> array_type;
-	typedef array_type::index index;
-	array_type A(boost::extents[5]);
-	for(index i = 0; i != 5; ++i){
-		A[i] = 100.0*i;
-	}
-	da.setData(A);
-	dt.positions(da);
-	CPPUNIT_ASSERT_NO_THROW(dt.hasPositions());
-	CPPUNIT_ASSERT(dt.positions() == da);
-
-	CPPUNIT_ASSERT(dt.removePositions());
-	CPPUNIT_ASSERT(dt.hasPositions() == false);
-	file.removeBlock(b.id());
+	tag.positions(positions);
+	CPPUNIT_ASSERT(tag.hasPositions());
+	CPPUNIT_ASSERT(tag.removePositions());
+	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
 
 void TestDataTag::testPositionExtents(){
-	Block b = file.createBlock("DataTagTest","Test");
-	DataArray da_1 = b.createDataArray("TestPosition","Position");
-	typedef boost::multi_array<double, 1> array_type;
-	typedef array_type::index index;
-	array_type A(boost::extents[5]);
-	for(index i = 0; i != 5; ++i){
-		A[i] = 100.0*i;
-	}
-	da_1.setData(A);
-
-	array_type B(boost::extents[10]);
-	for(index i = 0; i != 10; ++i){
-		B[i] = 100.0*i;
-	}
-	DataArray da_2 = b.createDataArray("TestExtent","Extent");
-	da_2.setData(B);
-
-	DataTag dt = b.createDataTag("TestDataTag1","Tag");
-	dt.positions(da_1);
-	CPPUNIT_ASSERT_THROW(dt.extents("some_unknown_data_array_id"),std::runtime_error);
-	CPPUNIT_ASSERT_THROW(dt.extents(da_2),std::runtime_error);
-
-	file.removeBlock(b.id());
+	tag.positions(positions);
+	CPPUNIT_ASSERT_THROW(tag.extents(extents),std::runtime_error);
+	tag.removeExtents();
+	tag.removePositions();
 }
 
+
+void TestDataTag::testMetadataAccess() {
+    CPPUNIT_ASSERT(!tag.hasMetadata());
+
+    tag.metadata(section);
+    CPPUNIT_ASSERT(tag.hasMetadata());
+    // TODO This test fails due to operator== of Section
+    // CPPUNIT_ASSERT(source.metadata() == section);
+
+    tag.removeMetadata();
+    CPPUNIT_ASSERT(!tag.hasMetadata());
+}
+
+void TestDataTag::testSources(){
+	//TODO
+}

@@ -29,22 +29,39 @@ class TestDataTag: public CPPUNIT_NS::TestFixture {
 private:
 
     nix::File file;
+    nix::Block block;
+    nix::DataArray positions, extents;
+    nix::DataTag tag, tag_other, tag_null;
+    nix::Section section;
+    time_t startup_time;
+
 
 	CPPUNIT_TEST_SUITE(TestDataTag);
+	CPPUNIT_TEST(testId);
+	CPPUNIT_TEST(testName);
+	CPPUNIT_TEST(testType);
+	CPPUNIT_TEST(testDefinition);
 	CPPUNIT_TEST(testCreateRemove);
 	CPPUNIT_TEST(testExtents);
 	CPPUNIT_TEST(testPositions);
 	CPPUNIT_TEST(testPositionExtents);
 	CPPUNIT_TEST(testReferences);
+	CPPUNIT_TEST(testMetadataAccess);
 	CPPUNIT_TEST_SUITE_END ();
 
 public:
 
 	void setUp();
 	void tearDown();
+	void testId();
+	void testName();
+	void testType();
+	void testDefinition();
 	void testCreateRemove();
 	void testExtents();
 	void testPositions();
 	void testReferences();
 	void testPositionExtents();
+	void testMetadataAccess();
+	void testSources();
 };

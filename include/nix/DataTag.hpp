@@ -298,6 +298,11 @@ public:
 		return impl_ptr->removeRepresentation(id);
 	}
 
+	virtual DataTag &operator=(std::nullptr_t nullp) {
+		impl_ptr = nullp;
+		return *this;
+	}
+
 	/**
 	 * Output operator
 	 */
