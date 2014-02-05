@@ -59,12 +59,11 @@ public:
 
     /**
      * Setter for the positions of a tag.
-     * TODO can be removed from interface
      *
      * @param position   DataArray.
      */
     void positions(const DataArray &positions) {
-        impl_ptr->positions(positions);
+        impl_ptr->positions(positions.id());
     }
 
     /**
@@ -88,12 +87,11 @@ public:
 
     /**
      * Sets the extents DataArray of the tag.
-     * TODO can be removed from interface
      *
      * @param extent      The extent vector.
      */
     void extents(const DataArray &extents) {
-        impl_ptr->extents(extents);
+        impl_ptr->extents(extents.id());
     }
 
     /**

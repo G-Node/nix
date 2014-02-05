@@ -51,11 +51,6 @@ DataArray DataTagHDF5::positions() const {
 }
 
 
-void DataTagHDF5::positions(const DataArray &pos) {
-    positions(pos.id());
-}
-
-
 void DataTagHDF5::positions(const string &id) {
     if(!block().hasDataArray(id)){
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
@@ -87,11 +82,6 @@ DataArray DataTagHDF5::extents() const {
         return block().getDataArray(extId);
     }
     throw runtime_error("Unable to find DataArray with id " + extId + "!");
-}
-
-
-void DataTagHDF5::extents(const DataArray &extent) {
-    extents(extent.id());
 }
 
 

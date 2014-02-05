@@ -48,13 +48,6 @@ public:
     virtual void positions(const std::string &positionid) = 0;
 
     /**
-     * Setter for the positions of a tag.
-     *
-     * @param position   DataArray.
-     */
-    virtual void positions(const DataArray &positions) = 0;
-
-    /**
      * Returns whether this DataArray contains positions.
      *
      * @return bool
@@ -68,13 +61,6 @@ public:
      * @return The extents of the tag.
      */
     virtual DataArray extents() const = 0;
-
-    /**
-     * Sets the extents DataArray of the tag.
-     *
-     * @param extent      The extent vector.
-     */
-    virtual void extents(const DataArray &extents) = 0;
 
     /**
      * Set the reference to the extents DataArray.
