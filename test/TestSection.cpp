@@ -2,7 +2,7 @@
 //
 // All rights reserved.
 //
-// Redistribution and use in source and binary forms, with or without
+// Redistribution and use in Section and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
@@ -53,6 +53,95 @@ void TestSection::testDefinition() {
     string def = util::createId("", 128);
     section.definition(def);
     CPPUNIT_ASSERT(section.definition() == def);
+}
+
+
+void TestSection::testRepository() {
+    CPPUNIT_ASSERT(section.repository() == "");
+    string rep = "http://foo.bar/" + util::createId("", 32);
+    section.repository(rep);
+    CPPUNIT_ASSERT(section.repository() == rep);
+}
+
+
+void TestSection::testLink() {
+    CPPUNIT_ASSERT(section.link() == "");
+    section.repository(section_other.id());
+    CPPUNIT_ASSERT(section.repository() == section_other.id());
+}
+
+
+void TestSection::testMapping() {
+    CPPUNIT_ASSERT(section.mapping() == "");
+    string map = "http://foo.bar/" + util::createId("", 32);
+    section.mapping(map);
+    CPPUNIT_ASSERT(section.mapping() == map);
+}
+
+
+void TestSection::testSectionAccess() {
+    vector<string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
+
+    CPPUNIT_ASSERT(section.sectionCount() == 0);
+    CPPUNIT_ASSERT(section.sections().size() == 0);
+
+
+    vector<string> ids;
+    for (auto it = names.begin(); it != names.end(); it++) {
+        Section child_section = section.createSection(*it, "metadata");
+        CPPUNIT_ASSERT(child_section.name() == *it);
+
+        ids.push_back(child_section.id());
+    }
+
+
+    CPPUNIT_ASSERT(section.sectionCount() == names.size());
+    CPPUNIT_ASSERT(section.sections().size() == names.size());
+
+
+    for (auto it = ids.begin(); it != ids.end(); it++) {
+        Section child_section = section.getSection(*it);
+        CPPUNIT_ASSERT(section.hasSection(*it) == true);
+        CPPUNIT_ASSERT(child_section.id() == *it);
+
+        section.removeSection(*it);
+    }
+
+    CPPUNIT_ASSERT(section.sectionCount() == 0);
+    CPPUNIT_ASSERT(section.sections().size() == 0);
+}
+
+
+void TestSection::testFindSection() {
+    // prepare
+    Section l1n1 = section.createSection("l1n1", "typ1");
+    Section l1n2 = section.createSection("l1n2", "typ2");
+    Section l1n3 = section.createSection("l1n3", "typ3");
+
+    Section l2n1 = l1n1.createSection("l2n1", "typ1");
+    Section l2n2 = l1n1.createSection("l2n2", "typ2");
+    Section l2n3 = l1n1.createSection("l2n3", "typ2");
+    Section l2n4 = l1n3.createSection("l2n4", "typ2");
+    Section l2n5 = l1n3.createSection("l2n5", "typ2");
+    Section l2n6 = l1n3.createSection("l2n6", "typ3");
+
+    Section l3n1 = l2n1.createSection("l2n3", "typ1");
+    Section l3n2 = l2n3.createSection("l2n3", "typ2");
+    Section l3n3 = l2n3.createSection("l2n3", "typ2");
+    Section l3n4 = l2n5.createSection("l2n3", "typ2");
+
+    // test depth limit
+    CPPUNIT_ASSERT(section.findSections().size() == 14);
+    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 2).size() == 10);
+    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 1).size() == 4);
+    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 0).size() == 1);
+
+    // test filter
+    auto filter_typ1 = [](const Section &s) { return s.type() == "typ1"; };
+    auto filter_typ2 = [](const Section &s) { return s.type() == "typ2"; };
+
+    CPPUNIT_ASSERT(section.findSections(filter_typ1).size() == 3);
+    CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
 }
 
 

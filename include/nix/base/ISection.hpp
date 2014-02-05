@@ -118,7 +118,7 @@ public:
      *
      * @return The number of child sections.
      */
-    virtual size_t childCount() const = 0;
+    virtual size_t sectionCount() const = 0;
 
     /**
      *
@@ -127,7 +127,7 @@ public:
      *
      * @return bool
      */
-    virtual bool hasChild(const std::string &id) const = 0;
+    virtual bool hasSection(const std::string &id) const = 0;
 
     /**
      * Get a specific child by id.
@@ -136,7 +136,17 @@ public:
      *
      * @return The child section.
      */
-    virtual Section getChild(const std::string &id) const = 0;
+    virtual Section getSection(const std::string &id) const = 0;
+
+
+    /**
+     * Get a child section by its index.
+     *
+     * @param index The index of the child.
+     *
+     * @return The child section.
+     */
+    virtual Section getSection(size_t index) const = 0;
 
 
     /**
@@ -144,7 +154,7 @@ public:
      *
      * @return vector of direct subsections.
      */
-    virtual std::vector<Section> children() const = 0;
+    virtual std::vector<Section> sections() const = 0;
 
     /**
      *  Adds a new child section.
@@ -154,7 +164,7 @@ public:
      *
      *  @return the new section.
      */
-    virtual Section createChild(const std::string &name, const std::string &type) = 0;
+    virtual Section createSection(const std::string &name, const std::string &type) = 0;
 
     /**
      * Determines whether this section has a related section of the specified type.
@@ -183,7 +193,7 @@ public:
      *
      * @return bool successful or not
      */
-    virtual bool removeChild(const std::string &id) = 0;
+    virtual bool removeSection(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods for property access

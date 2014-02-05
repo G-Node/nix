@@ -32,6 +32,12 @@ private:
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
 
+    CPPUNIT_TEST(testRepository);
+    CPPUNIT_TEST(testLink);
+    CPPUNIT_TEST(testMapping);
+    CPPUNIT_TEST(testSectionAccess);
+    CPPUNIT_TEST(testFindSection);
+
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
@@ -51,6 +57,12 @@ public:
     void testType();
     void testName();
     void testDefinition();
+
+    void testRepository();
+    void testLink();
+    void testMapping();
+    void testSectionAccess();
+    void testFindSection();
 
     void testOperators();
     void testUpdatedAt();

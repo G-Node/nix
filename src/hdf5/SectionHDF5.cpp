@@ -99,32 +99,17 @@ bool SectionHDF5::hasParent() const {
 //--------------------------------------------------
 
 
-size_t SectionHDF5::childCount() const {
+size_t SectionHDF5::sectionCount() const {
     return section_group.objectCount();
 }
 
 
-bool SectionHDF5::hasChild(const string &id) const {
+bool SectionHDF5::hasSection(const string &id) const {
     return section_group.hasGroup(id);
 }
 
 
-vector<Section> SectionHDF5::children() const {
-    vector<Section>  section_obj;
-
-    size_t section_count = section_group.objectCount();
-    for (size_t i = 0; i < section_count; i++) {
-        string id = section_group.objectName(i);
-        Group g = section_group.openGroup(id, false);
-
-        shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), g, id));
-        section_obj.push_back(Section(tmp));
-    }
-    return section_obj;
-}
-
-
-Section SectionHDF5::getChild(const string &id) const {
+Section SectionHDF5::getSection(const string &id) const {
     Group g = section_group.openGroup(id, false);
 
     shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), g, id));
@@ -132,26 +117,52 @@ Section SectionHDF5::getChild(const string &id) const {
 }
 
 
-Section SectionHDF5::createChild(const string &name, const string &type) {
-    string new_id = util::createId("property");
+Section SectionHDF5::getSection(size_t index) const {
+    string id = section_group.objectName(index);
+
+    return getSection(id);
+}
+
+
+vector<Section> SectionHDF5::sections() const {
+    vector<Section>  secs;
+
+    size_t section_count = section_group.objectCount();
+    for (size_t i = 0; i < section_count; i++) {
+        string id = section_group.objectName(i);
+        Group grp = section_group.openGroup(id, false);
+
+        shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), grp, id));
+        secs.push_back(Section(tmp));
+    }
+
+    return secs;
+}
+
+
+Section SectionHDF5::createSection(const string &name, const string &type) {
+    string new_id = util::createId("section");
+
     while (section_group.hasObject(new_id)) {
-        new_id = util::createId("property");
+        new_id = util::createId("section");
     }
 
     Group g = section_group.openGroup(new_id, true);
-
     shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), g, new_id));
+    tmp->name(name);
+    tmp->type(type);
+
     return Section(tmp);
 }
 
 
-bool SectionHDF5::removeChild(const string &id) {
-    bool success = false;
-    if(section_group.hasGroup(id)){
+bool SectionHDF5::removeSection(const string &id) {
+    if (section_group.hasGroup(id)) {
         section_group.removeGroup(id);
-        success = true;
+        return true;
+    } else {
+        return false;
     }
-    return success;
 }
 
 

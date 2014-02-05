@@ -9,11 +9,19 @@
 #ifndef NIX_SECTION_H
 #define NIX_SECTION_H
 
+#include <limits>
+#include <functional>
+
+#include <nix/util/util.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 
 namespace nix {
+
+
+//bool acceptAllFilter<T>(const T &e);
+
 
 class Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
 
@@ -50,6 +58,8 @@ public:
     std::string repository() const {
         return impl_ptr->repository();
     }
+
+    // TODO maybe link should accept and return the other section?
 
     /**
      * Establish a link to another section. The linking section
@@ -122,8 +132,8 @@ public:
      *
      * @return The number of child sections.
      */
-    size_t childCount() const {
-        return impl_ptr->childCount();
+    size_t sectionCount() const {
+        return impl_ptr->sectionCount();
     }
 
     /**
@@ -133,8 +143,8 @@ public:
      *
      * @return True if the child exists false otherwise.
      */
-    bool hasChild(const std::string &id) const {
-        return impl_ptr->hasChild(id);
+    bool hasSection(const std::string &id) const {
+        return impl_ptr->hasSection(id);
     }
 
     /**
@@ -144,19 +154,42 @@ public:
      *
      * @return The child section.
      */
-    Section getChild(const std::string &id) const {
-        return impl_ptr->getChild(id);
+    Section getSection(const std::string &id) const {
+        return impl_ptr->getSection(id);
     }
 
+    /**
+     * Get a child section by its index.
+     *
+     * @param index The index of the child.
+     *
+     * @return The child section.
+     */
+    virtual Section getSection(size_t index) const {
+        return impl_ptr->getSection(index);
+    }
 
     /**
      * Returns the subsections
      *
      * @return vector of direct subsections.
      */
-    std::vector<Section> children() const {
-        return impl_ptr->children();
+    std::vector<Section> sections() const {
+        return impl_ptr->sections();
     }
+
+    /**
+     * Recoursively searches through all child sections and their descendents and returns every
+     * section that passes the specified filter. Further the result of the method is limited by
+     * the maximum epth.
+     *
+     * @param filter        A simple filter funcion that is applied on every section.
+     * @param max_depth     The maximum depth of the search.
+     *
+     * @return All matching section as a vector.
+     */
+    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
+                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
      *  Adds a new child section.
@@ -166,10 +199,9 @@ public:
      *
      *  @return the new section.
      */
-    Section createChild(const std::string &name, const std::string &type) {
-        return impl_ptr->createChild(name, type);
+    Section createSection(const std::string &name, const std::string &type) {
+        return impl_ptr->createSection(name, type);
     }
-
 
     /**
      * Remove a subsection from this Section.
@@ -178,8 +210,8 @@ public:
      *
      * @return bool successful or not
      */
-    bool removeChild(const std::string &id) {
-        return impl_ptr->removeChild(id);
+    bool removeSection(const std::string &id) {
+        return impl_ptr->removeSection(id);
     }
 
     //--------------------------------------------------

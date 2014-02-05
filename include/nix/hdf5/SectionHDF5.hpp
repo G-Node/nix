@@ -84,23 +84,25 @@ public:
     //--------------------------------------------------
 
 
-    size_t childCount() const;
+    size_t sectionCount() const;
 
 
-    bool hasChild(const std::string &id) const;
+    bool hasSection(const std::string &id) const;
 
 
-    Section getChild(const std::string &id) const;
+    Section getSection(const std::string &id) const;
 
 
-
-    std::vector<Section> children() const;
-
-
-    Section createChild(const std::string &name, const std::string &type);
+    Section getSection(size_t index) const;
 
 
-    bool removeChild(const std::string &id);
+    std::vector<Section> sections() const;
+
+
+    Section createSection(const std::string &name, const std::string &type);
+
+
+    bool removeSection(const std::string &id);
 
     //--------------------------------------------------
     // Methods for property access
@@ -132,9 +134,8 @@ public:
 
 private:
 
-    //bool hasParent() const;
 
-    //Section findParent() const;
+    // TODO  this should be implemented in nix::Section
 
     //std::vector<Section> findUpstream(const std::string &type) const;
 
