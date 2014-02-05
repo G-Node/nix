@@ -74,6 +74,13 @@ bool DataTagHDF5::hasPositions() const{
     return (posId.length() > 0);
 }
 
+bool DataTagHDF5::removePositions(){
+	if (hasPositions()){
+		group().removeAttr("positions");
+		return true;
+	}
+	return false;
+}
 
 DataArray DataTagHDF5::extents() const {
     std::string extId;
@@ -108,6 +115,14 @@ bool DataTagHDF5::hasExtents() const{
     return (extId.length() > 0);
 }
 
+
+bool DataTagHDF5::removeExtents(){
+	if (hasExtents()){
+		group().removeAttr("extents");
+		return true;
+	}
+	return false;
+}
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------
