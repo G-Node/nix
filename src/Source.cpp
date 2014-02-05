@@ -36,10 +36,6 @@ Source::Source(const std::shared_ptr<base::ISource> &p_impl)
 //--------------------------------------------------
 
 
-bool nix::acceptAllFilter(const Source &src) {
-    return true;
-}
-
 struct SourceCont {
 
     SourceCont(Source s, size_t d = 0)
@@ -49,6 +45,7 @@ struct SourceCont {
     Source source;
     size_t depth;
 };
+
 
 std::vector<Source> Source::findSources(std::function<bool(const Source&)> filter,
                                         size_t max_depth) const {
@@ -85,6 +82,7 @@ std::vector<Source> Source::findSources(std::function<bool(const Source&)> filte
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+
 
 std::ostream& nix::operator<<(ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
