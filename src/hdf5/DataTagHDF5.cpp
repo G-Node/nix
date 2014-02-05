@@ -51,11 +51,6 @@ DataArray DataTagHDF5::positions() const {
 }
 
 
-void DataTagHDF5::positions(const DataArray &pos) {
-    positions(pos.id());
-}
-
-
 void DataTagHDF5::positions(const string &id) {
     if(!block().hasDataArray(id)){
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
@@ -79,6 +74,13 @@ bool DataTagHDF5::hasPositions() const{
     return (posId.length() > 0);
 }
 
+bool DataTagHDF5::removePositions(){
+	if (hasPositions()){
+		group().removeAttr("positions");
+		return true;
+	}
+	return false;
+}
 
 DataArray DataTagHDF5::extents() const {
     std::string extId;
@@ -87,11 +89,6 @@ DataArray DataTagHDF5::extents() const {
         return block().getDataArray(extId);
     }
     throw runtime_error("Unable to find DataArray with id " + extId + "!");
-}
-
-
-void DataTagHDF5::extents(const DataArray &extent) {
-    extents(extent.id());
 }
 
 
@@ -118,6 +115,14 @@ bool DataTagHDF5::hasExtents() const{
     return (extId.length() > 0);
 }
 
+
+bool DataTagHDF5::removeExtents(){
+	if (hasExtents()){
+		group().removeAttr("extents");
+		return true;
+	}
+	return false;
+}
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------
