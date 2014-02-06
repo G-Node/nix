@@ -18,13 +18,12 @@
 namespace nix {
 namespace hdf5 {
 
-class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection {
+class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
+                    public std::enable_shared_from_this<SectionHDF5> {
 
 private:
 
-    // TODO add parent section and parent block
-    // Section parent_section;
-    // Block parent_block
+    Section parent_section;
     Group property_group, section_group;
 
 public:
@@ -40,10 +39,21 @@ public:
     SectionHDF5(const File &file, const Group &group, const std::string &id);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor with parent.
+     */
+    SectionHDF5(const File &file, const Section &parent, const Group &group,
+                const std::string &id);
+
+    /**
+     * Constructor that preserves the creation time.
      */
     SectionHDF5(const File &file, const Group &group, const std::string &id, time_t time);
 
+    /**
+     * Constructor with parent that preserves the creation time.
+     */
+    SectionHDF5(const File &file, const Section &parent, const Group &group,
+                const std::string &id, time_t time);
 
 
     //--------------------------------------------------
@@ -72,10 +82,8 @@ public:
     //--------------------------------------------------
 
 
-    bool hasParent() const;
-
-
     Section parent() const;
+
 
     //--------------------------------------------------
     // Methods for child section access

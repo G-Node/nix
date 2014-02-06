@@ -56,6 +56,15 @@ void TestSection::testDefinition() {
 }
 
 
+void TestSection::testParent() {
+    CPPUNIT_ASSERT(section.parent() == nullptr);
+
+    Section child = section.createSection("child", "section");
+    CPPUNIT_ASSERT(child.parent() != nullptr);
+    CPPUNIT_ASSERT(child.parent().id() == section.id());
+}
+
+
 void TestSection::testRepository() {
     CPPUNIT_ASSERT(section.repository() == "");
     string rep = "http://foo.bar/" + util::createId("", 32);

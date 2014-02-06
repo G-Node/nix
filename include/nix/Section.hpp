@@ -105,16 +105,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Test if the section has a parent.
-     *
-     * @return True if the section has a parent, false otherwise.
-     */
-    bool hasParent() const {
-        return impl_ptr->hasParent();
-    }
-
-    /**
-     * Returns the parent..
+     * Returns the parent.
      *
      * @return string
      */

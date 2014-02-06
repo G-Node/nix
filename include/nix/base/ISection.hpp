@@ -86,21 +86,6 @@ public:
     //--------------------------------------------------
 
     /**
-     * Test if the section has a parent.
-     *
-     * @return True if the section has a parent, false otherwise.
-     */
-    virtual bool hasParent() const = 0;
-
-    /**
-     * Sets the id of the parent section.
-     *
-     * @param string the id.
-     */
-    // TODO implement (requires moving of the group in hdf5)
-    //virtual void parent(const Section &parent) = 0;
-
-    /**
      * Returns the parent information.
      *
      * @return string

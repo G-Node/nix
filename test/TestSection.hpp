@@ -32,6 +32,7 @@ private:
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
 
+    CPPUNIT_TEST(testParent);
     CPPUNIT_TEST(testRepository);
     CPPUNIT_TEST(testLink);
     CPPUNIT_TEST(testMapping);
@@ -59,6 +60,7 @@ public:
     void testName();
     void testDefinition();
 
+    void testParent();
     void testRepository();
     void testLink();
     void testMapping();

@@ -25,7 +25,14 @@ SectionHDF5::SectionHDF5(const SectionHDF5 &section)
 
 
 SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id)
-    : NamedEntityHDF5(file, group, id)
+    : SectionHDF5(file, nullptr, group, id)
+{
+}
+
+
+SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+                         const string &id)
+    : NamedEntityHDF5(file, group, id), parent_section(parent)
 {
     property_group = this->group().openGroup("properties");
     section_group = this->group().openGroup("sections");
@@ -33,7 +40,14 @@ SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id)
 
 
 SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, time_t time)
-    : NamedEntityHDF5(file, group, id, time)
+    : SectionHDF5(file, nullptr, group, id, time)
+{
+}
+
+
+SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+                         const string &id, time_t time)
+    : NamedEntityHDF5(file, group, id, time), parent_section(parent)
 {
     property_group = this->group().openGroup("properties");
     section_group = this->group().openGroup("sections");
@@ -99,16 +113,11 @@ string SectionHDF5::mapping() const {
 // Methods for parent access
 //--------------------------------------------------
 
+
 Section SectionHDF5::parent() const {
-    // TODO implement
-    return Section();
+    return parent_section;
 }
 
-
-bool SectionHDF5::hasParent() const {
-    // TODO implement
-    return false;
-}
 
 //--------------------------------------------------
 // Methods for child section access
@@ -167,8 +176,10 @@ Section SectionHDF5::createSection(const string &name, const string &type) {
         new_id = util::createId("section");
     }
 
-    Group g = section_group.openGroup(new_id, true);
-    shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), g, new_id));
+    Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
+
+    Group grp = section_group.openGroup(new_id, true);
+    shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), parent, grp, new_id));
     tmp->name(name);
     tmp->type(type);
 
