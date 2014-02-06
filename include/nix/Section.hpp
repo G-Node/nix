@@ -20,14 +20,15 @@
 namespace nix {
 
 
-//bool acceptAllFilter<T>(const T &e);
-
 
 class Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
 
 public:
 
     Section();
+
+
+    Section(std::nullptr_t ptr);
 
 
     Section(const Section &other);
@@ -59,8 +60,6 @@ public:
         return impl_ptr->repository();
     }
 
-    // TODO maybe link should accept and return the other section?
-
     /**
      * Establish a link to another section. The linking section
      * inherits the properties defined in the linked section.
@@ -68,7 +67,7 @@ public:
      *
      * @param the id of the linked section.
      */
-    void link(const std::string &link) {
+    void link(const Section &link) {
         impl_ptr->link(link);
     }
 
@@ -77,7 +76,7 @@ public:
      *
      * @return string the id.
      */
-    std::string link() const {
+   Section link() const {
         return impl_ptr->link();
     }
 
@@ -189,7 +188,7 @@ public:
      * @return All matching section as a vector.
      */
     std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
-                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
+                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
      *  Adds a new child section.

@@ -100,9 +100,8 @@ public:
     }
 
 
-    std::vector<Section> findSection(const std::string &id) const {
-        return impl_ptr->findSection(id);
-    }
+    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
+                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 
     Section createSection(const std::string &name, const std::string &type) {

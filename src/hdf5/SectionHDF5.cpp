@@ -55,16 +55,32 @@ string SectionHDF5::repository() const {
 }
 
 
-void SectionHDF5::link(const string &link) {
-    // TODO check existence and type of the linked section
-    group().setAttr("link", link);
+void SectionHDF5::link(const Section &link) {
+    if (link != nullptr) {
+        group().setAttr("link", link.id());
+    } else if (group().hasAttr("link")) {
+        group().removeAttr("link");
+    }
 }
 
 
-string SectionHDF5::link() const {
-    string link;
-    group().getAttr("link", link);
-    return link;
+Section SectionHDF5::link() const {
+    string id;
+    group().getAttr("link", id);
+
+    vector<Section> found;
+    if (id != "") {
+        auto filter = [&](const Section &s) {
+            return id == s.id();
+        };
+
+        found = file().findSections(filter);
+    }
+
+    if (found.size() > 0)
+        return found[0];
+    else
+        return Section();
 }
 
 

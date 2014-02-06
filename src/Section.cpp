@@ -20,6 +20,12 @@ Section::Section()
 }
 
 
+Section::Section(nullptr_t ptr)
+    : NamedEntity()
+{
+}
+
+
 Section::Section(const Section &other)
     : NamedEntity(other.impl_ptr)
 {

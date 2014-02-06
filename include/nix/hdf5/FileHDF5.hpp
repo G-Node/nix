@@ -96,9 +96,6 @@ public:
     std::vector<Section> sections() const;
 
 
-    std::vector<Section> findSection(const std::string &id) const;
-
-
     Section createSection(const std::string &name, const std::string &type);
 
 

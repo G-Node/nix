@@ -54,16 +54,14 @@ public:
      *
      * @param the id of the linked section.
      */
-    // TODO should this thake a section as parameter?
-    virtual void link(const std::string &link) = 0;
+    virtual void link(const Section &link) = 0;
 
     /**
      * Returns the id of the linked section.
      *
      * @return string the id.
      */
-    // TODO maybe return a section here (what if there is none)?
-    virtual std::string link() const = 0;
+    virtual Section link() const = 0;
 
     // TODO: how to support includes?!
     // void include(std::string include) = 0;

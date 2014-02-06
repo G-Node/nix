@@ -56,12 +56,10 @@ public:
     std::string repository() const;
 
 
-    // TODO should this thake a section as parameter?
-    void link(const std::string &link);
+    void link(const Section &link);
 
 
-    // TODO maybe return a section here (what if there is none)?
-    std::string link() const;
+    Section link() const;
 
 
     void mapping(const std::string &mapping);

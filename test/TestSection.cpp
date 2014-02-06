@@ -65,9 +65,14 @@ void TestSection::testRepository() {
 
 
 void TestSection::testLink() {
-    CPPUNIT_ASSERT(section.link() == "");
-    section.repository(section_other.id());
-    CPPUNIT_ASSERT(section.repository() == section_other.id());
+    CPPUNIT_ASSERT(section.link() == nullptr);
+
+    section.link(section_other);
+    CPPUNIT_ASSERT(section.link() != nullptr);
+    CPPUNIT_ASSERT(section.link().id() == section_other.id());
+
+    section.link(nullptr);
+    CPPUNIT_ASSERT(section.link() == nullptr);
 }
 
 
