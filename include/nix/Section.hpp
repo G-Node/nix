@@ -246,6 +246,39 @@ public:
     }
 
     /**
+     * Returns the property defined by its index.
+     *
+     * @param index     The index of the property
+     *
+     * @return The property.
+     */
+    Property getProperty(size_t index) const {
+        return impl_ptr->getProperty(index);
+    }
+
+    /**
+     * Checks if a property with a certian name exists.
+     *
+     * @param name      The name of the property.
+     *
+     * @return True if a property with the given name exists false otherwise.
+     */
+    bool hasPropertyWithName(const std::string &name) const {
+        return impl_ptr->hasPropertyWithName(name);
+    }
+
+    /**
+     * Returns a property identified by its name.
+     *
+     * @param name      The name of the property.
+     *
+     * @return The found property.
+     */
+    Property getPropertyByName(const std::string &name) const {
+        return impl_ptr->getPropertyByName(name);
+    }
+
+    /**
      * Returns all Properties.
      *
      * @return vector<Property>
@@ -253,6 +286,15 @@ public:
     std::vector<Property> properties() const {
         return impl_ptr->properties();
     }
+
+    /**
+     * Returns all Properties inherited from a linked section.
+     * This list may include Properties that are locally overridden.
+     *
+     * @return vector<Property>
+     */
+    // TODO implement later (maybe only implement on Section not ISection)
+    // virtual std::vector<Property> inheritedProperties() const = 0;
 
     /**
      * Add a Property to this section.

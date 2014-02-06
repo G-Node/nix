@@ -110,10 +110,14 @@ bool SectionHDF5::hasSection(const string &id) const {
 
 
 Section SectionHDF5::getSection(const string &id) const {
-    Group g = section_group.openGroup(id, false);
+    if (section_group.hasGroup(id)) {
+        Group grp = section_group.openGroup(id, false);
 
-    shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), g, id));
-    return Section(tmp);
+        shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), grp, id));
+        return Section(tmp);
+    } else {
+        return Section();
+    }
 }
 
 
@@ -171,18 +175,14 @@ bool SectionHDF5::removeSection(const string &id) {
 //--------------------------------------------------
 
 
-vector<Property> SectionHDF5::properties() const {
-    vector<Property> props;
 
-    for (size_t i = 0; i < propertyCount(); i++){
-        string id = property_group.objectName(i);
-        Group g = property_group.openGroup(id,false);
+size_t SectionHDF5::propertyCount() const {
+    return property_group.objectCount();
+}
 
-        shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), g, id));
-        props.push_back(Property(tmp));
-    }
 
-    return props;
+bool SectionHDF5::hasProperty(const string &id) const {
+    return property_group.hasGroup(id);
 }
 
 
@@ -193,23 +193,86 @@ Property SectionHDF5::getProperty(const string &id) const {
         shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), g, id));
         return Property(tmp);
     } else {
-        throw runtime_error("Requested Property does not exist! Always check with hasProperty!");
+        return Property();
     }
 }
 
 
+Property SectionHDF5::getProperty(size_t index) const {
+    string id = property_group.objectName(index);
+
+    return getProperty(id);
+}
+
+
+bool SectionHDF5::hasPropertyWithName(const string &name) const {
+    bool found = false;
+
+    for (size_t i = 0; i < propertyCount(); i++) {
+        string id = property_group.objectName(i);
+        Group grp = property_group.openGroup(id);
+
+        string other_name;
+        grp.getAttr("name", other_name);
+
+        if (other_name == name) {
+            found = true;
+            break;
+        }
+    }
+
+    return found;
+}
+
+
+Property SectionHDF5::getPropertyByName(const string &name) const {
+    Property prop;
+
+    for (size_t i = 0; i < propertyCount(); i++) {
+        string id = property_group.objectName(i);
+        Group grp = property_group.openGroup(id);
+
+        string other_name;
+        grp.getAttr("name", other_name);
+
+        if (other_name == name) {
+            shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, id));
+            prop = Property(tmp);
+            break;
+        }
+    }
+
+    return prop;
+}
+
+
+vector<Property> SectionHDF5::properties() const {
+    vector<Property> props;
+
+    for (size_t i = 0; i < propertyCount(); i++){
+        string id = property_group.objectName(i);
+        Group grp = property_group.openGroup(id,false);
+
+        shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, id));
+        props.push_back(Property(tmp));
+    }
+
+    return props;
+}
+
+
 Property SectionHDF5::createProperty(const string &name) {
-    // check for existing property name
-    //if (hasPropertyByName(name)) {
-    //    throw runtime_error("Attempt to add a property that already exists!");
-    //}
+    if (hasPropertyWithName(name))
+        throw runtime_error("Try to create a property with existing name: " + name);
+
     string new_id = util::createId("property");
+
     while (property_group.hasObject(new_id))
         new_id = util::createId("property");
 
-    Group g = property_group.openGroup(new_id, true);
+    Group grp = property_group.openGroup(new_id, true);
 
-    shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), g, new_id));
+    shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, new_id));
     tmp->name(name);
 
     return Property(tmp);
@@ -224,17 +287,6 @@ bool SectionHDF5::removeProperty(const string &id) {
         return false;
     }
 }
-
-
-size_t SectionHDF5::propertyCount() const {
-    return property_group.objectCount();
-}
-
-
-bool SectionHDF5::hasProperty(const string &id) const {
-    return property_group.hasGroup(id);
-}
-
 
 
 SectionHDF5::~SectionHDF5() {}

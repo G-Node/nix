@@ -37,6 +37,7 @@ private:
     CPPUNIT_TEST(testMapping);
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testFindSection);
+    CPPUNIT_TEST(testPropertyAccess);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
@@ -63,6 +64,7 @@ public:
     void testMapping();
     void testSectionAccess();
     void testFindSection();
+    void testPropertyAccess();
 
     void testOperators();
     void testUpdatedAt();

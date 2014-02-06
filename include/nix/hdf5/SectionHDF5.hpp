@@ -118,6 +118,15 @@ public:
     Property getProperty(const std::string &id) const;
 
 
+    Property getProperty(size_t index) const;
+
+
+    bool hasPropertyWithName(const std::string &name) const;
+
+
+    Property getPropertyByName(const std::string &name) const;
+
+
     std::vector<Property> properties() const;
 
 

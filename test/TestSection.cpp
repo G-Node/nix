@@ -145,6 +145,44 @@ void TestSection::testFindSection() {
 }
 
 
+void TestSection::testPropertyAccess() {
+    vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
+
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+    CPPUNIT_ASSERT(section.properties().size() == 0);
+
+
+    vector<string> ids;
+    for (auto it = names.begin(); it != names.end(); it++) {
+        Property prop = section.createProperty(*it);
+        CPPUNIT_ASSERT(prop.name() == *it);
+        CPPUNIT_ASSERT(section.hasPropertyWithName(*it));
+
+        Property prop_copy = section.getPropertyByName(*it);
+
+        CPPUNIT_ASSERT(prop_copy.id() == prop.id());
+
+        ids.push_back(prop.id());
+    }
+
+
+    CPPUNIT_ASSERT(section.propertyCount() == names.size());
+    CPPUNIT_ASSERT(section.properties().size() == names.size());
+
+
+    for (auto it = ids.begin(); it != ids.end(); it++) {
+        Property prop = section.getProperty(*it);
+        CPPUNIT_ASSERT(section.hasProperty(*it));
+        CPPUNIT_ASSERT(prop.id() == *it);
+
+        section.removeProperty(*it);
+    }
+
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+    CPPUNIT_ASSERT(section.properties().size() == 0);
+}
+
+
 void TestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == NULL);
     CPPUNIT_ASSERT(section_null == nullptr);

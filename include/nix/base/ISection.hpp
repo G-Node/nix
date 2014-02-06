@@ -23,7 +23,7 @@ class Property;
 
 namespace base {
 
-// TODO find solution for tnode
+
 class ISection : virtual public base::INamedEntity  {
 
 public:
@@ -221,17 +221,31 @@ public:
     virtual Property getProperty(const std::string &id) const = 0;
 
     /**
-     * Returns the Property that is defined by name.
-     * Method tries to locate the Property also in linked Sections (if any).
+     * Returns the property defined by its index.
      *
-     * Raises runtime exception if not found. Check with hasPropertyByName.
+     * @param index     The index of the property
      *
-     * @param string name
-     *
-     * @return Property
+     * @return The property.
      */
-    // TODO implement later (maybe only implement on Section not ISection)
-    // virtual Property getPropertyByName(const std::string &name) const = 0;
+    virtual Property getProperty(size_t index) const = 0;
+
+    /**
+     * Checks if a property with a certian name exists.
+     *
+     * @param name      The name of the property.
+     *
+     * @return True if a property with the given name exists false otherwise.
+     */
+    virtual bool hasPropertyWithName(const std::string &name) const = 0;
+
+    /**
+     * Returns a property identified by its name.
+     *
+     * @param name      The name of the property.
+     *
+     * @return The found property.
+     */
+    virtual Property getPropertyByName(const std::string &name) const = 0;
 
     /**
      * Returns all Properties.
@@ -239,23 +253,6 @@ public:
      * @return vector<Property>
      */
     virtual std::vector<Property> properties() const = 0;
-
-    /**
-     * Returns all Properties inherited from a linked section.
-     * This list may include Properties that are locally overridden.
-     *
-     * @return vector<Property>
-     */
-    // TODO implement later (maybe only implement on Section not ISection)
-    // virtual std::vector<Property> inheritedProperties() const = 0;
-
-    /**
-     * Checks if a Property with the given name exists.
-     *
-     * @param string the name
-     */
-    // TODO implement later (maybe only implement on Section not ISection)
-    // virtual bool hasPropertyByName(const std::string &name) const = 0;
 
     /**
      * Add a Property to this section.
