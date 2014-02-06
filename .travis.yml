@@ -2,15 +2,14 @@ language: cpp
 env:
   global:
     - CMAKE_BUILD_TYPE=DEBUG
-    - STDLIB=libstdc++
   matrix:
     - COMPILER=g++-4.8
-    - COMPILER=clang
+    - COMPILER=clang CXXFLAGS="-stdlib=libstdc++"
 
 before_script:
 - mkdir -p build
 - cd build
-- CXX=${COMPILER} CXXFLAGS="-stdlib=${STDLIB}" cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+- CXX=${COMPILER} cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
 - cd ..
 
 script:
