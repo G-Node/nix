@@ -187,13 +187,13 @@ public:
 	virtual Representation createRepresentation(DataArray data, LinkType link_type) = 0;
 
 	/**
-	 * Remove a representation from the tag.
+	 * Delete a representation from the tag.
 	 *
 	 * @param id        The id of the representation to remove.
 	 *
 	 * @return True if the representation was removed, false otherwise.
 	 */
-	virtual bool removeRepresentation(const std::string &id) = 0;
+	virtual bool deleteRepresentation(const std::string &id) = 0;
 
 };
 

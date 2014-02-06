@@ -288,14 +288,14 @@ public:
 	}
 
 	/**
-	 * Remove a representation from the tag.
+	 * Delete a representation from the tag.
 	 *
-	 * @param id        The id of the representation to remove.
+	 * @param id        The id of the representation to delete.
 	 *
 	 * @return True if the representation was removed, false otherwise.
 	 */
-	bool removeRepresentation(const std::string &id) {
-		return impl_ptr->removeRepresentation(id);
+	bool deleteRepresentation(const std::string &id) {
+		return impl_ptr->deleteRepresentation(id);
 	}
 
 	virtual DataTag &operator=(std::nullptr_t nullp) {

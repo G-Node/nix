@@ -245,7 +245,7 @@ Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_t
 }
 
 
-bool DataTagHDF5::removeRepresentation(const string &id){
+bool DataTagHDF5::deleteRepresentation(const string &id){
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
