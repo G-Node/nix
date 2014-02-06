@@ -85,6 +85,39 @@ std::vector<Section> Section::findSections(std::function<bool (const Section &)>
     return results;
 }
 
+//-----------------------------------------------------
+// Methods for property access
+//-----------------------------------------------------
+
+
+vector<Property> Section::inheritedProperties() const {
+
+    vector<Property> own = properties();
+
+    if (link() == nullptr)
+        return own;
+
+    vector<Property> linked = link().properties();
+
+    for (auto it_linked = linked.begin(); it_linked != linked.end(); ++it_linked) {
+
+        bool not_own = true;
+        for (auto it_own = own.begin(); it_own != own.end(); ++it_own) {
+            if (it_linked->name() == it_own->name()) {
+                not_own = false;
+                break;
+            }
+        }
+
+        if (not_own) {
+            own.push_back(*it_linked);
+        }
+
+    }
+
+    return own;
+}
+
 
 //------------------------------------------------------
 // Operators and other functions

@@ -76,7 +76,7 @@ public:
      *
      * @return string the id.
      */
-   Section link() const {
+    Section link() const {
         return impl_ptr->link();
     }
 
@@ -182,6 +182,27 @@ public:
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
+     * Determines whether this section has a related section of the specified type.
+     *
+     * @param string the type
+     *
+     * @return bool
+     */
+    // TODO implement maybe later
+    //virtual bool hasRelatedSection(const std::string &type) const = 0;
+
+    /**
+     * Returns the sections of the given type found on the same level of relation.
+     *
+     * @param string the type
+     *
+     * @return vector<Section> the related sections
+     */
+    // TODO implement maybe later
+    //virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
+
+
+    /**
      *  Adds a new child section.
      *
      *  @param name: the name of the new section
@@ -283,8 +304,7 @@ public:
      *
      * @return vector<Property>
      */
-    // TODO implement later (maybe only implement on Section not ISection)
-    // virtual std::vector<Property> inheritedProperties() const = 0;
+    std::vector<Property> inheritedProperties() const;
 
     /**
      * Add a Property to this section.

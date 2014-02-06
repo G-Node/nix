@@ -147,17 +147,6 @@ public:
 
     virtual ~SectionHDF5();
 
-private:
-
-
-    // TODO  this should be implemented in nix::Section
-
-    //std::vector<Section> findUpstream(const std::string &type) const;
-
-    //std::vector<Section> findSideways(const std::string &type) const;
-
-    //std::vector<Section> findDownstream(const std::string &type) const;
-
 };
 
 

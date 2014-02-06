@@ -63,10 +63,6 @@ public:
      */
     virtual Section link() const = 0;
 
-    // TODO: how to support includes?!
-    // void include(std::string include) = 0;
-    // std::string include() const = 0;
-
     /**
      * Sets the mapping information for this section.
      *
@@ -121,7 +117,6 @@ public:
      */
     virtual Section getSection(const std::string &id) const = 0;
 
-
     /**
      * Get a child section by its index.
      *
@@ -130,7 +125,6 @@ public:
      * @return The child section.
      */
     virtual Section getSection(size_t index) const = 0;
-
 
     /**
      * Returns the subsections
@@ -148,26 +142,6 @@ public:
      *  @return the new section.
      */
     virtual Section createSection(const std::string &name, const std::string &type) = 0;
-
-    /**
-     * Determines whether this section has a related section of the specified type.
-     *
-     * @param string the type
-     *
-     * @return bool
-     */
-    // TODO implement later (maybe only implement on Section not ISection)
-    //virtual bool hasRelatedSection(const std::string &type) const = 0;
-
-    /**
-     * Returns the sections of the given type found on the same level of relation.
-     *
-     * @param string the type
-     *
-     * @return vector<Section> the related sections
-     */
-    // TODO implement later (maybe only implement on Section not ISection)
-    //virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
 
     /**
      * Remove a subsection from this Section.

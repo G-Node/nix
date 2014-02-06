@@ -72,15 +72,5 @@ public:
     void testUpdatedAt();
     void testCreatedAt();
 
-    /*
-    void testAddAndRemove();
-    void testDepthRetrieving();
-    void testRelatedSections();
-    void testAddingProperties();
-    void testAccessingProperties();
-    void testRemovingProperties();
-    void testSectionLinks();
-    */
-
 };
 
