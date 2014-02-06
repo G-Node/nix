@@ -20,6 +20,8 @@
 
 #include "TestFile.hpp"
 #include "TestBlock.hpp"
+#include "TestSource.hpp"
+#include "TestSection.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
@@ -33,6 +35,8 @@ int main(int argc, char* argv[]) {
 
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);

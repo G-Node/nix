@@ -10,7 +10,6 @@
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
-#include <limits>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -23,23 +22,23 @@
 
 #include <nix.hpp>
 
-
-class TestBlock : public CPPUNIT_NS::TestFixture {
-
+class TestSection: public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestBlock);
+    CPPUNIT_TEST_SUITE(TestSection);
 
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
 
-    CPPUNIT_TEST(testMetadataAccess);
-    CPPUNIT_TEST(testSourceAccess);
-    CPPUNIT_TEST(testDataArrayAccess);
-    CPPUNIT_TEST(testSimpleTagAccess);
-    CPPUNIT_TEST(testDataTagAccess);
+    CPPUNIT_TEST(testParent);
+    CPPUNIT_TEST(testRepository);
+    CPPUNIT_TEST(testLink);
+    CPPUNIT_TEST(testMapping);
+    CPPUNIT_TEST(testSectionAccess);
+    CPPUNIT_TEST(testFindSection);
+    CPPUNIT_TEST(testPropertyAccess);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
@@ -48,8 +47,7 @@ private:
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
-    nix::Section section;
-    nix::Block block, block_other, block_null;
+    nix::Section section, section_other, section_null;
     time_t startup_time;
 
 public:
@@ -62,14 +60,17 @@ public:
     void testName();
     void testDefinition();
 
-    void testMetadataAccess();
-    void testSourceAccess();
-    void testDataArrayAccess();
-    void testSimpleTagAccess();
-    void testDataTagAccess();
+    void testParent();
+    void testRepository();
+    void testLink();
+    void testMapping();
+    void testSectionAccess();
+    void testFindSection();
+    void testPropertyAccess();
 
     void testOperators();
     void testUpdatedAt();
     void testCreatedAt();
 
 };
+

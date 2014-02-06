@@ -95,7 +95,10 @@ template<typename T> T strToNum(const std::string &str) {
     return s >> number ? number : 0;
 }
 
-
+template<typename T>
+bool acceptAllFilter(const T &e) {
+    return true;
+}
 
 } // namespace util
 } // namespace nix

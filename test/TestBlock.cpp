@@ -65,8 +65,6 @@ void TestBlock::testMetadataAccess() {
 
     block.metadata(section);
     CPPUNIT_ASSERT(block.hasMetadata());
-    // TODO This test fails due to operator== of Section
-    // CPPUNIT_ASSERT(block.metadata() == section);
 
     block.removeMetadata();
     CPPUNIT_ASSERT(!block.hasMetadata());

@@ -18,13 +18,12 @@
 namespace nix {
 namespace hdf5 {
 
-class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection {
+class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
+                    public std::enable_shared_from_this<SectionHDF5> {
 
 private:
 
-    // TODO add parent section and parent block
-    // Section parent_section;
-    // Block parent_block
+    Section parent_section;
     Group property_group, section_group;
 
 public:
@@ -40,10 +39,21 @@ public:
     SectionHDF5(const File &file, const Group &group, const std::string &id);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor with parent.
+     */
+    SectionHDF5(const File &file, const Section &parent, const Group &group,
+                const std::string &id);
+
+    /**
+     * Constructor that preserves the creation time.
      */
     SectionHDF5(const File &file, const Group &group, const std::string &id, time_t time);
 
+    /**
+     * Constructor with parent that preserves the creation time.
+     */
+    SectionHDF5(const File &file, const Section &parent, const Group &group,
+                const std::string &id, time_t time);
 
 
     //--------------------------------------------------
@@ -56,12 +66,10 @@ public:
     std::string repository() const;
 
 
-    // TODO should this thake a section as parameter?
-    void link(const std::string &link);
+    void link(const Section &link);
 
 
-    // TODO maybe return a section here (what if there is none)?
-    std::string link() const;
+    Section link() const;
 
 
     void mapping(const std::string &mapping);
@@ -74,33 +82,33 @@ public:
     //--------------------------------------------------
 
 
-    bool hasParent() const;
-
-
     Section parent() const;
+
 
     //--------------------------------------------------
     // Methods for child section access
     //--------------------------------------------------
 
 
-    size_t childCount() const;
+    size_t sectionCount() const;
 
 
-    bool hasChild(const std::string &id) const;
+    bool hasSection(const std::string &id) const;
 
 
-    Section getChild(const std::string &id) const;
+    Section getSection(const std::string &id) const;
 
 
-
-    std::vector<Section> children() const;
-
-
-    Section createChild(const std::string &name, const std::string &type);
+    Section getSection(size_t index) const;
 
 
-    bool removeChild(const std::string &id);
+    std::vector<Section> sections() const;
+
+
+    Section createSection(const std::string &name, const std::string &type);
+
+
+    bool removeSection(const std::string &id);
 
     //--------------------------------------------------
     // Methods for property access
@@ -116,6 +124,15 @@ public:
     Property getProperty(const std::string &id) const;
 
 
+    Property getProperty(size_t index) const;
+
+
+    bool hasPropertyWithName(const std::string &name) const;
+
+
+    Property getPropertyByName(const std::string &name) const;
+
+
     std::vector<Property> properties() const;
 
 
@@ -129,18 +146,6 @@ public:
     //--------------------------------------------------
 
     virtual ~SectionHDF5();
-
-private:
-
-    //bool hasParent() const;
-
-    //Section findParent() const;
-
-    //std::vector<Section> findUpstream(const std::string &type) const;
-
-    //std::vector<Section> findSideways(const std::string &type) const;
-
-    //std::vector<Section> findDownstream(const std::string &type) const;
 
 };
 

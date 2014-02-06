@@ -25,4 +25,19 @@ File File::open(const std::string name, FileMode mode, Implementation impl) {
 }
 
 
+vector<Section> File::findSections(function<bool(const Section&)> filter, size_t max_depth) const {
+
+    vector<Section> results;
+
+    vector<Section> roots = sections();
+    for (auto it = roots.begin(); it != roots.end(); ++it) {
+
+        vector<Section> secs = it->findSections(filter, max_depth);
+        results.insert(results.end(), secs.begin(), secs.end());
+    }
+
+    return results;
+}
+
+
 }

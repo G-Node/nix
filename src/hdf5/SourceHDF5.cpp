@@ -35,17 +35,6 @@ SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, time_t tim
     source_group = group.openGroup("sources");
 }
 
-/*
-SourceHDF5::size_type SourceHDF5::childCount() const {
-    return source_group.objectCount();
-}
-
-
-Source SourceHDF5::getChild(size_type index) const {
-    string id = source_group.objectName(index);
-    return Source(file, source_group.openGroup(id, false), id);
-}*/
-
 
 bool SourceHDF5::hasSource(const string &id) const {
     return source_group.hasGroup(id);
@@ -53,15 +42,16 @@ bool SourceHDF5::hasSource(const string &id) const {
 
 
 Source SourceHDF5::getSource(const string &id) const {
-    auto tmp = shared_ptr<SourceHDF5>(new SourceHDF5(file(), source_group.openGroup(id, false), id));
+    Group grp = source_group.openGroup(id, false);
+    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
     return Source(tmp);
 }
 
 
 Source SourceHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
-    auto tmp = shared_ptr<SourceHDF5>(new SourceHDF5(file(), source_group.openGroup(id, false), id));
-    return Source(tmp);
+
+    return getSource(id);
 }
 
 
@@ -72,8 +62,16 @@ size_t SourceHDF5::sourceCount() const {
 
 std::vector<Source> SourceHDF5::sources() const {
     vector<Source> srcs;
-    // TODO implement
-    // return collectIf(predCollectAll, true, 1);
+
+    size_t src_count = sourceCount();
+    for (size_t i = 0; i < src_count; i++) {
+        string id  = source_group.objectName(i);
+        Group  grp = source_group.openGroup(id, false);
+
+        shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
+        srcs.push_back(Source(tmp));
+    }
+
     return srcs;
 }
 
@@ -85,7 +83,8 @@ Source SourceHDF5::createSource(const string &name, const string &type) {
         id = util::createId("source");
     }
 
-    auto tmp = shared_ptr<SourceHDF5>(new SourceHDF5(file(), source_group.openGroup(id, true), id));
+    Group grp = source_group.openGroup(id, true);
+    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
     tmp->name(name);
     tmp->type(type);
 
@@ -100,14 +99,6 @@ bool SourceHDF5::removeSource(const string &id) {
     } else {
         return false;
     }
-}
-
-
-ostream& operator<<(ostream &out, const SourceHDF5 &ent) {
-    out << "Source: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
 }
 
 
