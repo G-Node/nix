@@ -10,7 +10,7 @@ env:
 before_script:
 - mkdir -p build
 - cd build
-- CXX=${COMPILER} CXXFLAGS=${STDLIB} cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
+- CXX=${COMPILER} CXXFLAGS="-stdlib=${STDLIB}" cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
 - cd ..
 
 script:
