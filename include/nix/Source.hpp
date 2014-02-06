@@ -12,16 +12,13 @@
 #include <limits>
 #include <functional>
 
+#include <nix/util/util.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
 namespace nix {
 
 
-bool acceptAllFilter(const Source &src);
-
-// TODO inherit from EntityWithMetadata
-// TODO what about TNode?
 class Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
 
 public:
@@ -103,7 +100,7 @@ public:
      *
      * @return All matching sources as a vector.
      */
-    std::vector<Source> findSources(std::function<bool(const Source&)> filter = acceptAllFilter,
+    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::acceptAllFilter<Source>,
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 

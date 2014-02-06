@@ -147,15 +147,6 @@ public:
     virtual std::vector<Section> sections() const = 0;
 
     /**
-     * Return the Section specified by the id.
-     *
-     * @param id      The id of the Section
-     *
-     * @return a vector of sections with the given id. Is empty if none found
-     */
-    virtual std::vector<Section> findSection(const std::string &id) const = 0;
-
-    /**
      * Creates a new Section with a given name and type. Both must not be empty.
      *
      * @param name    The given name of the section.

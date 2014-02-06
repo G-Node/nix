@@ -159,31 +159,6 @@ Section FileHDF5::getSection(size_t index) const{
 }
 
 
-std::vector<Section> FileHDF5::findSection(const std::string &id) const{
-    vector<Section> s = sections();
-    vector<Section> sects;
-    for(size_t i = 0; i < s.size(); i++){
-        if(s[i].id().compare(id)==0){
-            sects.push_back(s[i]);
-            return sects;
-        }
-    }
-    // TODO uncomment end fix error
-    /*
-    for(size_t i = 0; i < s.size(); i++){
-        sects = s[i].collectIf([&](const Section &section) {
-            bool found = section.id() == id;
-            return found;
-        });
-        if (sects.size() > 0){
-            return sects;
-        }
-    }
-    */
-    return sects;
-}
-
-
 Section FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId("section");
     while(metadata.hasObject(id))
@@ -197,15 +172,12 @@ Section FileHDF5::createSection(const string &name, const  string &type) {
 
 
 bool FileHDF5::removeSection(const std::string &id){
-    bool success = false;
-
-    std::vector<Section> sects = findSection(id);
-    if(!sects.empty()){
+    if (metadata.hasGroup(id)) {
         metadata.removeGroup(id);
-        success = true;
+        return true;
+    } else {
+        return false;
     }
-
-    return success;
 }
 
 
