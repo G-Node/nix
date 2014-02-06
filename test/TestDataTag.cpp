@@ -51,30 +51,30 @@ void TestDataTag::tearDown(){
 
 
 void TestDataTag::testId() {
-    CPPUNIT_ASSERT(tag.id().size() == 25);
+	CPPUNIT_ASSERT(tag.id().size() == 25);
 }
 
 
 void TestDataTag::testName() {
-    CPPUNIT_ASSERT(tag.name() == "tag_one");
-    std::string name = util::createId("", 32);
-    tag.name(name);
-    CPPUNIT_ASSERT(tag.name() == name);
+	CPPUNIT_ASSERT(tag.name() == "tag_one");
+	std::string name = util::createId("", 32);
+	tag.name(name);
+	CPPUNIT_ASSERT(tag.name() == name);
 }
 
 
 void TestDataTag::testType() {
-    CPPUNIT_ASSERT(tag.type() == "test_tag");
-    std::string type = util::createId("", 32);
-    tag.type(type);
-    CPPUNIT_ASSERT(tag.type() == type);
+	CPPUNIT_ASSERT(tag.type() == "test_tag");
+	std::string type = util::createId("", 32);
+	tag.type(type);
+	CPPUNIT_ASSERT(tag.type() == type);
 }
 
 
 void TestDataTag::testDefinition() {
-    std::string def = util::createId("", 128);
-    tag.definition(def);
-    CPPUNIT_ASSERT(tag.definition() == def);
+	std::string def = util::createId("", 128);
+	tag.definition(def);
+	CPPUNIT_ASSERT(tag.definition() == def);
 }
 
 
@@ -91,7 +91,7 @@ void TestDataTag::testCreateRemove() {
 
 		std::stringstream errmsg;
 		errmsg << "Error while accessing dataTag: dt1.id() = " << dt1.id()
-            		   << " / dt2.id() = " << dt2.id();
+            				   << " / dt2.id() = " << dt2.id();
 		CPPUNIT_ASSERT_MESSAGE(errmsg.str(), dt1.id().compare(dt2.id()) == 0);
 	}
 	std::stringstream errmsg2;
@@ -177,17 +177,77 @@ void TestDataTag::testPositionExtents(){
 
 
 void TestDataTag::testMetadataAccess() {
-    CPPUNIT_ASSERT(!tag.hasMetadata());
+	CPPUNIT_ASSERT(!tag.hasMetadata());
 
-    tag.metadata(section);
-    CPPUNIT_ASSERT(tag.hasMetadata());
-    // TODO This test fails due to operator== of Section
-    // CPPUNIT_ASSERT(source.metadata() == section);
+	tag.metadata(section);
+	CPPUNIT_ASSERT(tag.hasMetadata());
+	// TODO This test fails due to operator== of Section
+	// CPPUNIT_ASSERT(source.metadata() == section);
 
-    tag.removeMetadata();
-    CPPUNIT_ASSERT(!tag.hasMetadata());
+	tag.removeMetadata();
+	CPPUNIT_ASSERT(!tag.hasMetadata());
 }
 
-void TestDataTag::testSources(){
-	//TODO
+
+void TestDataTag::testSourceAccess(){
+	std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+	CPPUNIT_ASSERT(tag.sourceCount() == 0);
+	CPPUNIT_ASSERT(tag.sources().size() == 0);
+
+	std::vector<std::string> ids;
+	for (auto it = names.begin(); it != names.end(); it++) {
+		Source child_source = block.createSource(*it,"channel");
+		tag.addSource(child_source);
+		CPPUNIT_ASSERT(child_source.name() == *it);
+		ids.push_back(child_source.id());
+	}
+
+	CPPUNIT_ASSERT(tag.sourceCount() == names.size());
+	//TODO the following test crashes!!!
+	//std::vector<Source> sources = tag.sources();
+	//std::cerr << "\n" <<sources.size() << "\n";
+	//CPPUNIT_ASSERT(tag.sources().size() == names.size());
+
+	for (auto it = ids.begin(); it != ids.end(); it++) {
+		Source child_source = tag.getSource(*it);
+		CPPUNIT_ASSERT(tag.hasSource(*it) == true);
+		CPPUNIT_ASSERT(child_source.id() == *it);
+
+		tag.removeSource(*it);
+		block.removeSource(*it);
+	}
+
+	CPPUNIT_ASSERT(tag.sourceCount() == 0);
+	//CPPUNIT_ASSERT(tag.sources().size() == 0);
+}
+
+void TestDataTag::testOperators() {
+    CPPUNIT_ASSERT(tag_null == NULL);
+    CPPUNIT_ASSERT(tag_null == nullptr);
+
+    CPPUNIT_ASSERT(tag != NULL);
+    CPPUNIT_ASSERT(tag != nullptr);
+
+    CPPUNIT_ASSERT(tag == tag);
+    CPPUNIT_ASSERT(tag != tag_other);
+
+    tag_other = tag;
+    CPPUNIT_ASSERT(tag == tag_other);
+
+    tag_other = nullptr;
+    CPPUNIT_ASSERT(tag_null == NULL);
+    CPPUNIT_ASSERT(tag_null == nullptr);
+}
+
+
+void TestDataTag::testCreatedAt() {
+    CPPUNIT_ASSERT(tag.createdAt() >= startup_time);
+    time_t past_time = time(NULL) - 10000000;
+    tag.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(tag.createdAt() == past_time);
+}
+
+
+void TestDataTag::testUpdatedAt() {
+    CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
