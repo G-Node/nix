@@ -195,13 +195,6 @@ public:
     virtual SimpleTag getSimpleTag(size_t index) const = 0;
 
     /**
-     * Get all simple tags associated with this block.
-     *
-     * @return All simple tags as a vector.
-     */
-    virtual std::vector<SimpleTag> simpleTags() const = 0;
-
-    /**
      * Returns the number of simple tag associated with
      * this block.
      *
