@@ -254,7 +254,7 @@ public:
      *
      * @return simple tags as a vector
      */
-	auto simpleTags(FLTR<SimpleTag>::type filter = fltr<SimpleTag>()) const 
+	std::vector<SimpleTag> simpleTags(FLTR<SimpleTag>::type filter = fltr<SimpleTag>()) const 
 	{
 		auto f = [this] (size_t i) { return getSimpleTag(i); };
 		return getMultiple<SimpleTag>(	
