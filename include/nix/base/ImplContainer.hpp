@@ -48,7 +48,7 @@ protected:
 	std::vector<TENT> getMultiple(	
 		TFUNC const &getEnt,
 		int nT, 
-		std::function<bool(TENT)> filter = ([](TENT t){ return true; })) const 
+		std::function<bool(TENT)> filter) const 
 	{
 		std::vector<TENT> e;
 		int i = 0;
@@ -63,20 +63,6 @@ protected:
 		}
 
 		return e;
-	}
-	
-	template<typename TENT>
-	struct FLTR
-	{
-		typedef std::function<bool(TENT)> type;
-	};
-	
-	template<typename T_ENT>
-	static const std::function<bool(T_ENT)> fltr()
-	{
-		static std::function<bool(T_ENT)> const std = [](T_ENT t){ return true; };
-		
-		return std;
 	}
 	
 public:

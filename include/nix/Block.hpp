@@ -254,13 +254,13 @@ public:
      *
      * @return simple tags as a vector
      */
-	std::vector<SimpleTag> simpleTags(FLTR<SimpleTag>::type filter = fltr<SimpleTag>()) const 
+	std::vector<SimpleTag> simpleTags(	std::function<bool(SimpleTag)> filter 
+										= [](SimpleTag t){ return true; }) const
 	{
 		auto f = [this] (size_t i) { return getSimpleTag(i); };
-		return getMultiple<SimpleTag>(	
-								f,
-								simpleTagCount(), 
-								filter);
+		return getMultiple<SimpleTag>(	f,
+										simpleTagCount(), 
+										filter);
 	}
 
     /**
