@@ -127,10 +127,6 @@ bool DataTagHDF5::removeExtents(){
 // Methods concerning references.
 //--------------------------------------------------
 
-bool DataTagHDF5::hasReference(const DataArray &reference) const {
-    return hasReference(reference.id());
-}
-
 
 bool DataTagHDF5::hasReference(const std::string &id) const {
     return reference_list.has(id);
@@ -156,8 +152,8 @@ void DataTagHDF5::addReference(const DataArray &reference) {
 }
 
 
-bool DataTagHDF5::removeReference(const DataArray &reference) {
-    return reference_list.remove(reference.id());
+bool DataTagHDF5::removeReference(const std::string &id) {
+    return reference_list.remove(id);
 }
 
 

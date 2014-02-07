@@ -136,9 +136,8 @@ public:
 	// TODO implement when done with the DataArray class.
 	//--------------------------------------------------
 
-	// TODO can be removed from interface
 	bool hasReference(const DataArray &reference) const {
-		return impl_ptr->hasReference(reference);
+		return impl_ptr->hasReference(reference.id());
 	}
 
 
@@ -162,8 +161,8 @@ public:
 	}
 
 
-	bool removeReference(const DataArray &reference) {
-		return impl_ptr->removeReference(reference);
+	bool removeReference(const std::string &id) {
+		return impl_ptr->removeReference(id);
 	}
 
 	/**

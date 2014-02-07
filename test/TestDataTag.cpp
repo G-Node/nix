@@ -107,6 +107,7 @@ void TestDataTag::testCreateRemove() {
 	CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.dataTagCount() == count);
 }
 
+//TODO Constraints on References are not tested yet.
 
 void TestDataTag::testReferences(){
 	DataArray da_1 = block.createDataArray("TestReference 1","Reference");
@@ -131,15 +132,14 @@ void TestDataTag::testReferences(){
 
 	std::stringstream hasReferrmsg;
 	hasReferrmsg << "TestDataTag::testReference: hadReference did not work!";
-	CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1));
 	CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1.id()));
-	CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_2));
+	CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_2.id()));
 
 	std::stringstream delReferrmsg;
 	delReferrmsg << "TestDataTag::testReference: removeReference did not work!";
-	dt.removeReference(da_1);
+	dt.removeReference(da_1.id());
 	CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
-	dt.removeReference(da_2);
+	dt.removeReference(da_2.id());
 	CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
 
 	block.removeDataArray(da_1.id());

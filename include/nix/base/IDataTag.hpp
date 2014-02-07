@@ -97,9 +97,6 @@ public:
 	// TODO implement when done with the DataArray class.
 	//--------------------------------------------------
 
-	virtual bool hasReference(const DataArray &reference) const = 0;
-
-
 	virtual bool hasReference(const std::string &id) const = 0;
 
 
@@ -112,7 +109,7 @@ public:
 	virtual void addReference(const DataArray &reference) = 0;
 
 
-	virtual bool removeReference(const DataArray &reference) = 0;
+	virtual bool removeReference(const std::string &id) = 0;
 
 	/**
 	 * Getter for all referenced DataArrays.
