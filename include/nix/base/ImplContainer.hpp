@@ -22,9 +22,9 @@ protected:
 
     std::shared_ptr<T> impl_ptr;
 
-	/**
-	 * Get entities by index
-	 * 
+    /**
+     * Get entities by index
+     * 
      * Get multiple entities of given type and return them as vector.
      * The template param specifies which type.
      * The parameter "getEnt" is the function used to get the entities 
@@ -38,33 +38,33 @@ protected:
      * whether to get it or not.
      * 
      * @param class "get function": std::function of return type T_ENT and 
-     * 				param type "int" to get entities
+     *              param type "int" to get entities
      * @param int number of entities to get
      * @param class "filter function": std::function of return type bool
-     * 				and param type T_ENT to filter which entities to get
+     *              and param type T_ENT to filter which entities to get
      * @return class entities of the given type as a vector
      */
-	template<typename TENT, typename TFUNC>
-	std::vector<TENT> getMultiple(	
-		TFUNC const &getEnt,
-		int nT, 
-		std::function<bool(TENT)> filter) const 
-	{
-		std::vector<TENT> e;
-		int i = 0;
-		 
-		if(nT < 1) { return e; }
-		e.resize(nT);
+    template<typename TENT, typename TFUNC>
+    std::vector<TENT> getMultiple(
+        TFUNC const &getEnt,
+        int nT, 
+        std::function<bool(TENT)> filter) const 
+    {
+        std::vector<TENT> e;
+        int i = 0;
+         
+        if(nT < 1) { return e; }
+        e.resize(nT);
 
-		for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
-			if(filter(*it)) {
-				*it = getEnt( i++ );
-			}
-		}
+        for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
+            if(filter(*it)) {
+                *it = getEnt( i++ );
+            }
+        }
 
-		return e;
-	}
-	
+        return e;
+    }
+    
 public:
 
     ImplContainer()
