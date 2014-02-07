@@ -246,12 +246,21 @@ public:
     }
 
     /**
-     * Get all simple tags associated with this block.
+     * Get simple tags associated with this block.
+     * 
+     * The parameter "filter" is defaulted to giving back all tags. To
+     * use your own filter pass a lambda that accepts a "SimpleTag"
+     * as parameter and returns a bool telling whether to get it or not.
      *
-     * @return All simple tags as a vector.
+     * @return simple tags as a vector
      */
-    std::vector<SimpleTag> simpleTags() const {
-        return impl_ptr->simpleTags();
+    std::vector<SimpleTag> simpleTags(std::function<bool(SimpleTag)> filter 
+                                      = [](SimpleTag t){ return true; }) const
+    {
+        auto f = [this] (size_t i) { return getSimpleTag(i); };
+        return getMultiple<SimpleTag>(f,
+                                      simpleTagCount(), 
+                                      filter);
     }
 
     /**

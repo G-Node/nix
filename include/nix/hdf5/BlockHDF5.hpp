@@ -123,9 +123,6 @@ public:
     SimpleTag getSimpleTag(size_t index) const;
 
 
-    std::vector<SimpleTag> simpleTags() const;
-
-
     size_t simpleTagCount() const;
 
 
