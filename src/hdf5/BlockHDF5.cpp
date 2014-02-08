@@ -164,20 +164,6 @@ size_t BlockHDF5::simpleTagCount() const {
 }
 
 
-vector<SimpleTag> BlockHDF5::simpleTags() const {
-    vector<SimpleTag> tag_obj;
-
-    size_t tag_count = simpleTagCount();
-    for (size_t i = 0; i < tag_count; i++) {
-        string id = simple_tag_group.objectName(i);
-        shared_ptr<SimpleTagHDF5> tmp(new SimpleTagHDF5(file(), block(), simple_tag_group.openGroup(id, true), id));
-        tag_obj.push_back(SimpleTag(tmp));
-    }
-
-    return tag_obj;
-}
-
-
 SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type) {
     string id = util::createId("simple_tag");
 
