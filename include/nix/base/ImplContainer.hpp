@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <vector>
+#include <functional>
 
 namespace nix {
 namespace base {
