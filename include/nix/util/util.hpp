@@ -16,6 +16,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 namespace nix {
 namespace util {
@@ -46,19 +47,44 @@ std::string timeToStr(time_t time);
  * @param unit a string that is supposed to represent an SI unit.
  * @return bool true or false
  */
-bool checkSIUnit(const std::string &unit);
+bool isSIUnit(const std::string &unit);
 
+/**
+ * Checks if the passed string is a valid combination of SI units.
+ * For example mV^2*Hz^-1. Method accepts only the * notation.
+ *
+ * @param unit a string that should be tested
+ * @return bool
+ */
+bool isCompoundSIUnit(const std::string &unit);
 
 /**
  * Get the scaling between two SI units that are identified by the two strings.
  *
- * @param origin_unit the original unit
- * @param destination_unit the one into which a scaling should be done
+ * @param originUnit the original unit
+ * @param destinationUnit the one into which a scaling should be done
  *
  * @return A double with the appropriate scaling
  * @throw Runtime Exception when units cannot be converted into each other by mere scaling
  */
-double getSIScaling(const std::string &origin_unit, const std::string &destination_unit);
+double getSIScaling(const std::string &originUnit, const std::string &destinationUnit);
+
+/**
+ * Splits an SI unit into prefix, unit and the power components.
+ * @param fullUnit
+ * @param prefix
+ * @param unit
+ * @param power
+ */
+void splitUnit(const std::string &fullUnit, std::string &prefix, std::string &unit, std::string &power);
+
+/**
+ * Splits a SI unit compound into its atomic parts.
+ *
+ * @param compoundUnit string representing an SI unit that consists of many atomic units
+ * @param atomicUnits vector<string> that takes the atomic units
+ */
+void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
 
 /**
  * Convert a string representation of a date into a time value.

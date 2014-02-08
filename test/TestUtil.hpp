@@ -29,11 +29,18 @@ private:
 
     CPPUNIT_TEST_SUITE(TestUtil);
     CPPUNIT_TEST(testUnitScaling);
+    CPPUNIT_TEST(testIsSIUnit);
+    CPPUNIT_TEST(testSIUnitSplit);
+    CPPUNIT_TEST(testIsCompoundSIUnit);
+    CPPUNIT_TEST(testSplitCompoundUnit);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
 
     void testUnitScaling();
-
+    void testIsSIUnit();
+    void testSIUnitSplit();
+    void testIsCompoundSIUnit();
+    void testSplitCompoundUnit();
 };
 

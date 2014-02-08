@@ -25,9 +25,12 @@ const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
 const string  PREFIXES = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|u|n|p|f|a|z|y)";
 const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%)";
+const string  POWER = "(\\^[+-]?[1-9]\\d*)";
+
 const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a", 1.0e-18}, {"f", 1.0e-15},
 	{"p", 1.0e-12}, {"n",1.0e-9}, {"u", 1.0e-6}, {"m", 1.0e-3}, {"c", 1.0e-2}, {"d",1.0e-1}, {"da", 1.0e1}, {"h", 1.0e2},
 	{"k", 1.0e3}, {"M",1.0e6}, {"G", 1.0e9}, {"T", 1.0e12}, {"P", 1.0e15}, {"E",1.0e18}, {"Z", 1.0e21}, {"Y", 1.0e24}};
+
 
 string createId(string prefix, int length) {
     static bool initialized = false;
@@ -63,36 +66,71 @@ time_t strToTime(const string &time) {
 }
 
 
-void splitUnit(const string &combined_unit, string &prefix, string &unit){
+void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power){
+	boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
 	boost::regex prefix_and_unit(PREFIXES + UNITS);
+	boost::regex unit_and_power(UNITS + POWER);
+	boost::regex unit_only(UNITS);
 	boost::regex prefix_only(PREFIXES);
 
-	if(boost::regex_match(combined_unit, prefix_and_unit)){
+	if(boost::regex_match(combinedUnit, prefix_and_unit_and_power)){
 		boost::match_results<std::string::const_iterator> m;
-		boost::regex_search(combined_unit, m, prefix_only);
+		boost::regex_search(combinedUnit, m, prefix_only);
+		prefix = m[0];
+		string suffix = m.suffix();
+		boost::regex_search(suffix,m,unit_only);
+		unit = m[0];
+		power = m.suffix();
+	}
+	else if(boost::regex_match(combinedUnit, prefix_and_unit)){
+		boost::match_results<std::string::const_iterator> m;
+		boost::regex_search(combinedUnit, m, prefix_only);
 		prefix = m[0];
 		unit = m.suffix();
+		power = "";
 	}
 	else{
-		unit = combined_unit;
+		unit = combinedUnit;
 		prefix = "";
+		power = "";
 	}
 }
 
 
-bool checkSIUnit(const string &unit){
-	boost::regex opt_prefix_and_unit(PREFIXES + "?" + UNITS);
-	return boost::regex_match(unit, opt_prefix_and_unit);
+void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits){
+	boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
+	boost::regex separator("(\\*|/)");
+	boost::match_results<std::string::const_iterator> m;
+	boost::regex_search(compoundUnit, m, opt_prefix_and_unit_and_power);
+	while(m.suffix().length() > 0){
+		string suffix = m.suffix();
+		atomicUnits.push_back(m[0]);
+		boost::regex_search(suffix.substr(1), m, opt_prefix_and_unit_and_power);
+	}
+	atomicUnits.push_back(m[0]);
 }
 
 
-double getSIScaling(const string &origin_unit, const string &destination_unit){
+bool isSIUnit(const string &unit){
+	boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
+	return boost::regex_match(unit, opt_prefix_and_unit_and_power);
+}
+
+
+bool isCompoundSIUnit(const string &unit){
+	string atomic_unit = PREFIXES + "?" + UNITS + POWER + "?";
+	boost::regex compound_unit("(" + atomic_unit + "(\\*|/))+"+ atomic_unit);
+	return boost::regex_match(unit, compound_unit);
+}
+
+
+double getSIScaling(const string &originUnit, const string &destinationUnit){
 	double scaling = 1.0;
-	if (checkSIUnit(origin_unit) && checkSIUnit(destination_unit)){
-		string org_unit, org_prefix;
-		string dest_unit, dest_prefix;
-		splitUnit(origin_unit, org_prefix, org_unit);
-		splitUnit(destination_unit, dest_prefix, dest_unit);
+	if (isSIUnit(originUnit) && isSIUnit(destinationUnit)){
+		string org_unit, org_prefix, org_power;
+		string dest_unit, dest_prefix, dest_power;
+		splitUnit(originUnit, org_prefix, org_unit, org_power);
+		splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
 		if(dest_unit.compare(org_unit) != 0){
 			throw runtime_error("Origin and destination units are not the same!");
 		}
