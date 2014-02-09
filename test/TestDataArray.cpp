@@ -75,7 +75,7 @@ void TestDataArray::testData()
 
     dB.setData(D, {10, 10});
 
-    array2D_type E(boost::extents[5][5]);
+    array2D_type E(boost::extents[1][1]);
     dB.getData(E, {5,5}, {10, 10});
 
     for(index i = 0; i != 5; ++i)
@@ -84,4 +84,11 @@ void TestDataArray::testData()
                 std::numeric_limits<double>::epsilon());
 
 
+    array2D_type F(boost::extents[5][5]);
+    dB.getData(F, {10, 10});
+
+    for(index i = 0; i != 5; ++i)
+        for(index j = 0; j != 5; ++j)
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(D[i][j], F[i][j],
+                std::numeric_limits<double>::epsilon());
 }
