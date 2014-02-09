@@ -166,6 +166,9 @@ public:
     template<typename T> void getData(T &value) const;
     template<typename T> void setData(const T &value);
 
+    template<typename T> void getData(T &value, const NDSize &count, const NDSize &offset) const;
+    template<typename T> void setData(const T &value, const NDSize &offset);
+
  };
 
 
@@ -197,6 +200,26 @@ void DataArray::setData(const T &value)
     impl_ptr->write(dtype, hydra.data(), shape, offset);
 }
 
+template<typename T>
+void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) const
+{
+    Hydra<T> hydra(value);
+    DataType dtype = hydra.element_data_type();
+
+    hydra.resize(count);
+    impl_ptr->read(dtype, hydra.data(), count, offset);
+}
+
+template<typename T>
+void DataArray::setData(const T &value, const NDSize &offset)
+{
+    const Hydra<const T> hydra(value);
+
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
+    impl_ptr->write(dtype, hydra.data(), shape, offset);
+}
 
 } // namespace nix
 
