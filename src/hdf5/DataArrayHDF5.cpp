@@ -269,30 +269,38 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 DataArrayHDF5::~DataArrayHDF5(){}
 
 
-void DataArrayHDF5::write(DataType dtype, NDSize size, const void *data)
+void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
 {
     DataSet ds;
 
     if (!group().hasData("data")) {
-        NDSize maxsize(size.size(), H5S_UNLIMITED);
-        NDSize chunks(size.size(), 1);
-        ds = DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
+        NDSize maxsize(count.size(), H5S_UNLIMITED);
+        NDSize chunks(count.size(), 1); //FIXME
+        ds = DataSet::create(group().h5Group(), "data", dtype, count, &maxsize, &chunks);
     } else {
         ds = group().openData("data");
-        ds.setExtent(size);
     }
 
-    ds.write(dtype, size, data);
+    Selection fileSel = ds.createSelection();
+    fileSel.select(count, offset);
+    Selection memSel(DataSpace::create(count, nullptr));
+
+    ds.write(dtype, count, data, fileSel, memSel);
 }
 
-void DataArrayHDF5::read(DataType dtype, NDSize size, void *data) const
+void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const
 {
     if (!group().hasData("data")) {
         return;
     }
 
     DataSet ds = group().openData("data");
-    ds.read(dtype, size, data);
+
+    Selection fileSel = ds.createSelection();
+    fileSel.select(count, offset);
+    Selection memSel(DataSpace::create(count, nullptr));
+
+    ds.read(dtype, count, data, fileSel, memSel);
 }
 
 NDSize DataArrayHDF5::getExtent(void) const

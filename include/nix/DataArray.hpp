@@ -179,8 +179,9 @@ void DataArray::getData(T &value) const
 
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
+    NDSize offset(shape.size(), 0LL);
 
-    impl_ptr->read(dtype, shape, hydra.data());
+    impl_ptr->read(dtype, hydra.data(), shape, offset);
 }
 
 template<typename T>
@@ -190,9 +191,10 @@ void DataArray::setData(const T &value)
 
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
+    NDSize offset(shape.size(), 0LL);
 
     impl_ptr->setExtent(shape);
-    impl_ptr->write(dtype, shape, hydra.data());
+    impl_ptr->write(dtype, hydra.data(), shape, offset);
 }
 
 
