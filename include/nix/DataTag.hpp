@@ -185,7 +185,8 @@ public:
 		impl_ptr->references(references);
 	}
 
-
+	//TODO to be implemented later
+	/*
 	template<typename T, size_t dims>
 	void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
 
@@ -215,9 +216,8 @@ public:
 		for (size_t i = 0; i < refs.size();i++){
 
 		}
-
 	}
-
+	*/
 	//--------------------------------------------------
 	// Methods concerning representations.
 	//--------------------------------------------------
