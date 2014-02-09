@@ -18,6 +18,8 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include "TestEntity.hpp"
+#include "TestEntityWithMetadata.hpp"
 #include "TestFile.hpp"
 #include "TestBlock.hpp"
 #include "TestSource.hpp"
@@ -32,7 +34,8 @@
 #include "TestUtil.hpp"
 
 int main(int argc, char* argv[]) {
-
+	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
+	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
