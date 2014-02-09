@@ -94,8 +94,8 @@ public:
     void read(DataType dtype, const NDSize &size, void *data) const;
     void write(DataType dtype, const NDSize &size, const void *data);
 
-    void read(DataType dtype, const NDSize &size, void *data, const Selection &fileSel, const Selection &memSel) const;
-    void write(DataType dtype, const NDSize &size, const void *data, const Selection &fileSel, const Selection &memSel);
+    void read(DataType dtype, void *data, const Selection &fileSel, const Selection &memSel) const;
+    void write(DataType dtype, const void *data, const Selection &fileSel, const Selection &memSel);
 
     void read(std::vector<Value> &values) const;
     void write(const std::vector<Value> &values);
@@ -216,8 +216,7 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, cons
     Hydra<T> hydra(value);
 
     DataType dtype = hydra.element_data_type();
-    NDSize size = hydra.shape();
-    this->read(dtype, size, hydra.data(), fileSel, memSel);
+    this->read(dtype, hydra.data(), fileSel, memSel);
 }
 
 /* ************************************************************************* */
@@ -260,11 +259,9 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
 template<typename T> void DataSet::write(const T &value, const Selection &fileSel, const Selection &memSel)
 {
     const Hydra<const T> hydra(value);
-
     DataType dtype = hydra.element_data_type();
-    NDSize size = hydra.shape();
 
-    this->write(dtype, size, hydra.data(), fileSel, memSel);
+    this->write(dtype, hydra.data(), fileSel, memSel);
 }
 
 

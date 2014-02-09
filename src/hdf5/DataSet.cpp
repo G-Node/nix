@@ -106,7 +106,6 @@ void DataSet::write(DataType dtype, const NDSize &size, const void *data)
 
 
 void DataSet::read(DataType        dtype,
-                   const NDSize    &size,
                    void            *data,
                    const Selection &fileSel,
                    const Selection &memSel) const
@@ -114,6 +113,7 @@ void DataSet::read(DataType        dtype,
     H5::DataType memType = data_type_to_h5_memtype(dtype);
 
     if (dtype == DataType::String) {
+        NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
         h5dset.read(*writer, memType, memSel.h5space(), fileSel.h5space());
         writer.finish();
@@ -127,13 +127,13 @@ void DataSet::read(DataType        dtype,
 }
 
 void DataSet::write(DataType         dtype,
-                    const NDSize    &size,
                     const void      *data,
                     const Selection &fileSel,
                     const Selection &memSel)
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {
+        NDSize size = memSel.size();
         StringReader reader(size, static_cast<const std::string *>(data));
         h5dset.write(*reader, memType, memSel.h5space(), fileSel.h5space());
     } else {
