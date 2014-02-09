@@ -30,18 +30,41 @@
 
 class TestProperty : public CPPUNIT_NS::TestFixture {
 
+private:
+
+    CPPUNIT_TEST_SUITE(TestProperty);
+
+    CPPUNIT_TEST(testId);
+    CPPUNIT_TEST(testType);
+    CPPUNIT_TEST(testName);
+    CPPUNIT_TEST(testDefinition);
+
+    CPPUNIT_TEST(testValues);
+
+    CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testUpdatedAt);
+    CPPUNIT_TEST(testCreatedAt);
+
+    CPPUNIT_TEST_SUITE_END();
+
+    time_t startup_time;
+    nix::File file;
+    nix::Section section;
+    nix::Property property, property_other, property_null;
+
 public:
 
     void setUp();
-    void testValues();
     void tearDown();
 
+    void testId();
+    void testType();
+    void testName();
+    void testDefinition();
 
-private:
+    void testValues();
 
-    nix::File file;
-
-    CPPUNIT_TEST_SUITE(TestProperty);
-    CPPUNIT_TEST(testValues);
-    CPPUNIT_TEST_SUITE_END();
+    void testOperators();
+    void testUpdatedAt();
+    void testCreatedAt();
 };

@@ -103,6 +103,23 @@ public:
         return impl_ptr->getValues();
     }
 
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual Property &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Property &ent) {
+        out << "Property: {name = " << ent.name() << "}";
+        return out;
+    }
+
     virtual ~Property() {}
 
 };
