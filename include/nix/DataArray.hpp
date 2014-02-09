@@ -163,8 +163,16 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
+    void setDataExtent(const NDSize &extent) {
+        impl_ptr->setExtent(extent);
+    }
+
     template<typename T> void getData(T &value) const;
     template<typename T> void setData(const T &value);
+
+    template<typename T> void getData(T &value, const NDSize &count, const NDSize &offset) const;
+    template<typename T> void getData(T &value, const NDSize &offset) const;
+    template<typename T> void setData(const T &value, const NDSize &offset);
 
  };
 
@@ -180,7 +188,7 @@ void DataArray::getData(T &value) const
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    impl_ptr->read(dtype, shape, hydra.data());
+    impl_ptr->read(dtype, hydra.data(), shape, {});
 }
 
 template<typename T>
@@ -192,9 +200,40 @@ void DataArray::setData(const T &value)
     NDSize shape = hydra.shape();
 
     impl_ptr->setExtent(shape);
-    impl_ptr->write(dtype, shape, hydra.data());
+    impl_ptr->write(dtype, hydra.data(), shape, {});
 }
 
+template<typename T>
+void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) const
+{
+    Hydra<T> hydra(value);
+    DataType dtype = hydra.element_data_type();
+
+    hydra.resize(count);
+    impl_ptr->read(dtype, hydra.data(), count, offset);
+}
+
+template<typename T>
+void DataArray::getData(T &value, const NDSize &offset) const
+{
+    Hydra<T> hydra(value);
+    DataType dtype = hydra.element_data_type();
+
+    NDSize count = hydra.shape();
+    impl_ptr->read(dtype, hydra.data(), count, offset);
+}
+
+
+template<typename T>
+void DataArray::setData(const T &value, const NDSize &offset)
+{
+    const Hydra<const T> hydra(value);
+
+    DataType dtype = hydra.element_data_type();
+    NDSize shape = hydra.shape();
+
+    impl_ptr->write(dtype, hydra.data(), shape, offset);
+}
 
 } // namespace nix
 

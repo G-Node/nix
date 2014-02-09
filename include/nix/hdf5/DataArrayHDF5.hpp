@@ -115,8 +115,8 @@ public:
     //--------------------------------------------------
 
 
-    void write(DataType dtype, NDSize size, const void *data);
-    void read(DataType dtype, NDSize size, void *buffer) const;
+    void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
+    void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
 
     NDSize getExtent(void) const;
     void   setExtent(const NDSize &extent);
