@@ -57,14 +57,16 @@ void TestDataArray::testData()
 
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array_type::index index;
-    array2D_type C(boost::extents[20][20]);
+    array2D_type C(boost::extents[5][5]);
 
-    for(index i = 0; i != 20; ++i)
-        for(index j = 0; j != 20; ++j)
+    for(index i = 0; i != 5; ++i)
+        for(index j = 0; j != 5; ++j)
             C[i][j] = 0.0;
 
     nix::DataArray dB = block.createDataArray("random", "double");
     dB.setData(C);
+
+    dB.setDataExtent({20, 20});
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)

@@ -163,6 +163,10 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
+    void setDataExtent(const NDSize &extent) {
+        impl_ptr->setExtent(extent);
+    }
+
     template<typename T> void getData(T &value) const;
     template<typename T> void setData(const T &value);
 
