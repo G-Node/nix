@@ -281,11 +281,15 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
         ds = group().openData("data");
     }
 
-    Selection fileSel = ds.createSelection();
-    fileSel.select(count, offset);
-    Selection memSel(DataSpace::create(count, nullptr));
+    if (offset.size()) {
+        Selection fileSel = ds.createSelection();
+        fileSel.select(count, offset);
+        Selection memSel(DataSpace::create(count, nullptr));
 
-    ds.write(dtype, data, fileSel, memSel);
+        ds.write(dtype, data, fileSel, memSel);
+    } else {
+        ds.write(dtype, count, data);
+    }
 }
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const
@@ -296,11 +300,16 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
     DataSet ds = group().openData("data");
 
-    Selection fileSel = ds.createSelection();
-    fileSel.select(count, offset);
-    Selection memSel(DataSpace::create(count, nullptr));
+    if (offset.size()) {
+        Selection fileSel = ds.createSelection();
+        fileSel.select(count, offset);
+        Selection memSel(DataSpace::create(count, nullptr));
 
-    ds.read(dtype, data, fileSel, memSel);
+        ds.read(dtype, data, fileSel, memSel);
+    } else {
+        ds.read(dtype, count, data);
+    }
+
 }
 
 NDSize DataArrayHDF5::getExtent(void) const
