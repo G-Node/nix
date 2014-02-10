@@ -12,6 +12,7 @@
 #include <limits>
 #include <functional>
 
+#include <nix/util/filter.hpp>
 #include <nix/util/util.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
@@ -100,7 +101,7 @@ public:
      *
      * @return All matching sources as a vector.
      */
-    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::acceptAllFilter<Source>,
+    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 

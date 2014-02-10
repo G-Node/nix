@@ -124,13 +124,13 @@ void TestSource::testFindSource() {
 
     // test depth limit
     CPPUNIT_ASSERT(source.findSources().size() == 14);
-    CPPUNIT_ASSERT(source.findSources(util::acceptAllFilter<Source>, 2).size() == 10);
-    CPPUNIT_ASSERT(source.findSources(util::acceptAllFilter<Source>, 1).size() == 4);
-    CPPUNIT_ASSERT(source.findSources(util::acceptAllFilter<Source>, 0).size() == 1);
+    CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 2).size() == 10);
+    CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 1).size() == 4);
+    CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 0).size() == 1);
 
     // test filter
-    auto filter_typ1 = [](const Source &s) { return s.type() == "typ1"; };
-    auto filter_typ2 = [](const Source &s) { return s.type() == "typ2"; };
+    auto filter_typ1 = util::TypeFilter<Source>("typ1");
+    auto filter_typ2 = util::TypeFilter<Source>("typ2");
 
     CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
     CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 8);
