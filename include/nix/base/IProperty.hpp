@@ -48,14 +48,16 @@ public:
     virtual std::string unit() const = 0;
 
 
-
     virtual void removeValues() = 0;
+
 
     virtual size_t valueCount() const = 0;
 
-    virtual void setValues(const std::vector<Value> &values) = 0;
 
-    virtual std::vector<Value> getValues(void) const = 0;
+    virtual void values(const std::vector<Value> &values) = 0;
+
+
+    virtual std::vector<Value> values(void) const = 0;
 };
 
 

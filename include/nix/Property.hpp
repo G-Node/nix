@@ -95,12 +95,29 @@ public:
         return impl_ptr->valueCount();
     }
 
-    void setValues(const std::vector<Value> &values) {
-        impl_ptr->setValues(values);
+    void values(const std::vector<Value> &values) {
+        impl_ptr->values(values);
     }
 
-    std::vector<Value> getValues(void) const {
-        return impl_ptr->getValues();
+    std::vector<Value> values(void) const {
+        return impl_ptr->values();
+    }
+
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    virtual Property &operator=(std::nullptr_t nullp) {
+        impl_ptr = nullp;
+        return *this;
+    }
+
+    /**
+     * Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Property &ent) {
+        out << "Property: {name = " << ent.name() << "}";
+        return out;
     }
 
     virtual ~Property() {}
