@@ -20,30 +20,27 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include "pandora/File.hpp"
-#include "pandora/Block.hpp"
-#include "pandora/DataArray.hpp"
-#include "pandora/DataTag.hpp"
+#include <nix.hpp>
+#include <nix/util/util.hpp>
 
-using namespace std;
-using namespace pandora;
 
-class TestDataTag: public CPPUNIT_NS::TestFixture {
+class TestUtil: public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestDataTag);
-    CPPUNIT_TEST(testCreateRemove);
-    CPPUNIT_TEST(testReferences);
-    CPPUNIT_TEST(testPositionExtents);
+    CPPUNIT_TEST_SUITE(TestUtil);
+    CPPUNIT_TEST(testUnitScaling);
+    CPPUNIT_TEST(testIsSIUnit);
+    CPPUNIT_TEST(testSIUnitSplit);
+    CPPUNIT_TEST(testIsCompoundSIUnit);
+    CPPUNIT_TEST(testSplitCompoundUnit);
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
-
-
 public:
-    void setUp();
-    void tearDown();
-    void testCreateRemove();
-    void testReferences();
-    void testPositionExtents();
+
+    void testUnitScaling();
+    void testIsSIUnit();
+    void testSIUnitSplit();
+    void testIsCompoundSIUnit();
+    void testSplitCompoundUnit();
 };
+

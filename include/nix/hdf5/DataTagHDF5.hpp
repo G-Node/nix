@@ -47,11 +47,9 @@ public:
     void positions(const std::string &id);
 
 
-    void positions(const DataArray &positions);
-
-
     bool hasPositions() const;
 
+    bool removePositions();
 
     DataArray extents() const;
 
@@ -61,15 +59,13 @@ public:
 
     void extents(const std::string &extentsId);
 
-
     bool hasExtents() const;
+
+    bool removeExtents();
 
     //--------------------------------------------------
     // Methods concerning references.
     //--------------------------------------------------
-
-    bool hasReference(const DataArray &reference) const;
-
 
     bool hasReference(const std::string &id) const;
 
@@ -83,7 +79,7 @@ public:
     void addReference(const DataArray &reference);
 
 
-    bool removeReference(const DataArray &reference);
+    bool removeReference(const std::string &id);
 
 
     std::vector<DataArray> references() const;
@@ -114,7 +110,7 @@ public:
     Representation createRepresentation(DataArray data, LinkType link_type);
 
 
-    bool removeRepresentation(const std::string &id);
+    bool deleteRepresentation(const std::string &id);
 
 
     //--------------------------------------------------
