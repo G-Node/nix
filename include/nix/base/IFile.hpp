@@ -86,13 +86,13 @@ public:
     virtual Block createBlock(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Delete a block from the file.
+     * Deletes a block from the file.
      *
      * @param id    The id of the block to delete.
      *
      * @return True if the block has been removed, false otherwise.
      */
-    virtual bool removeBlock(const std::string &id) = 0;
+    virtual bool deleteBlock(const std::string &id) = 0;
 
     /**
      * Returns all blocks in this file.
@@ -159,7 +159,7 @@ public:
     /**
      * Deletes the Section that is specified with the id.
      */
-    virtual bool removeSection(const std::string &id) = 0;
+    virtual bool deleteSection(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods for file attribute access.

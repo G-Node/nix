@@ -61,8 +61,8 @@ public:
     }
 
 
-    bool removeBlock(const std::string &id) {
-        return impl_ptr->removeBlock(id);
+    bool deleteBlock(const std::string &id) {
+        return impl_ptr->deleteBlock(id);
     }
 
 
@@ -109,8 +109,8 @@ public:
     }
 
 
-    bool removeSection(const std::string &id) {
-        return impl_ptr->removeSection(id);
+    bool deleteSection(const std::string &id) {
+        return impl_ptr->deleteSection(id);
     }
 
     //--------------------------------------------------
