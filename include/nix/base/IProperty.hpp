@@ -58,6 +58,9 @@ public:
 
 
     virtual std::vector<Value> values(void) const = 0;
+
+
+    virtual ~IProperty() {}
 };
 
 

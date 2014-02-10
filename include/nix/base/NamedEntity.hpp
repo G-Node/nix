@@ -67,6 +67,9 @@ public:
         return Entity<T>::impl_ptr->compare(other);
     }
 
+
+    virtual ~NamedEntity() {}
+
 };
 
 

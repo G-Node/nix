@@ -91,6 +91,9 @@ public:
      */
     virtual Source getSource(const std::string &id) const = 0;
 
+
+    virtual ~IEntityWithSources() {}
+
 };
 
 

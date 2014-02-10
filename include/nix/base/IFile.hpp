@@ -223,7 +223,11 @@ public:
      */
     virtual void close() = 0;
 
+
     virtual bool isOpen() const = 0;
+
+
+    virtual ~IFile() {}
 
 };
 

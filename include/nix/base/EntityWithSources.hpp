@@ -110,6 +110,9 @@ public:
         return EntityWithMetadata<T>::impl_ptr->removeSource(id);
     }
 
+
+    virtual ~EntityWithSources() {}
+
 };
 
 } // namespace base
