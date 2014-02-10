@@ -70,6 +70,9 @@ public:
      */
     virtual int compare(const INamedEntity &other) const = 0;
 
+
+    virtual ~INamedEntity() {}
+
 };
 
 

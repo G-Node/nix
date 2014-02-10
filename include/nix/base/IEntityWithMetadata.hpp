@@ -59,6 +59,9 @@ public:
      */
     virtual bool removeMetadata() = 0;
 
+
+    virtual ~IEntityWithMetadata() {}
+
 };
 
 

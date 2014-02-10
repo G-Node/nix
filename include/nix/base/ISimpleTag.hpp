@@ -174,6 +174,9 @@ public:
      */
     virtual bool removeRepresentation(const std::string &id) = 0;
 
+
+    virtual ~ISimpleTag() {}
+
 };
 
 

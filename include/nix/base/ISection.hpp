@@ -227,6 +227,9 @@ public:
      */
     virtual bool removeProperty(const std::string &id) = 0;
 
+
+    virtual ~ISection() {}
+
 };
 
 

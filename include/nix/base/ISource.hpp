@@ -91,6 +91,9 @@ public:
      */
     virtual bool removeSource(const std::string &id) = 0;
 
+
+    virtual ~ISource() {}
+
 };
 
 
