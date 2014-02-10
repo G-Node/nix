@@ -108,7 +108,7 @@ public:
     Section createSection(const std::string &name, const std::string &type);
 
 
-    bool removeSection(const std::string &id);
+    bool deleteSection(const std::string &id);
 
     //--------------------------------------------------
     // Methods for property access
@@ -139,7 +139,7 @@ public:
     Property createProperty(const std::string &name);
 
 
-    bool removeProperty(const std::string &id);
+    bool deleteProperty(const std::string &id);
 
     //--------------------------------------------------
     // Ohter methods and operators

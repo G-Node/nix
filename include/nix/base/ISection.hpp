@@ -144,13 +144,13 @@ public:
     virtual Section createSection(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Remove a subsection from this Section.
+     * Deletes  a subsection from this Section.
      *
      * @param string the id of target section.
      *
      * @return bool successful or not
      */
-    virtual bool removeSection(const std::string &id) = 0;
+    virtual bool deleteSection(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods for property access
@@ -221,11 +221,11 @@ public:
     virtual Property createProperty(const std::string &name) = 0;
 
     /**
-     * Removes the Property that is identified by the id.#
+     * Delete the Property that is identified by the id.#
      *
      * @param string the id.
      */
-    virtual bool removeProperty(const std::string &id) = 0;
+    virtual bool deleteProperty(const std::string &id) = 0;
 
 
     virtual ~ISection() {}
