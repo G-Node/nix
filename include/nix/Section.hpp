@@ -214,14 +214,14 @@ public:
     }
 
     /**
-     * Remove a subsection from this Section.
+     * Deletes a subsection from this Section.
      *
      * @param string the id of target section.
      *
      * @return bool successful or not
      */
-    bool removeSection(const std::string &id) {
-        return impl_ptr->removeSection(id);
+    bool deleteSection(const std::string &id) {
+        return impl_ptr->deleteSection(id);
     }
 
     //--------------------------------------------------
@@ -317,12 +317,12 @@ public:
     }
 
     /**
-     * Removes the Property that is identified by the id.#
+     * Deletess the Property that is identified by the id.#
      *
      * @param string the id.
      */
-    bool removeProperty(const std::string &id) {
-        return impl_ptr->removeProperty(id);
+    bool deleteProperty(const std::string &id) {
+        return impl_ptr->deleteProperty(id);
     }
 
     //------------------------------------------------------

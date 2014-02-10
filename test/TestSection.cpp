@@ -120,7 +120,7 @@ void TestSection::testSectionAccess() {
         CPPUNIT_ASSERT(section.hasSection(*it) == true);
         CPPUNIT_ASSERT(child_section.id() == *it);
 
-        section.removeSection(*it);
+        section.deleteSection(*it);
     }
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -194,7 +194,7 @@ void TestSection::testPropertyAccess() {
         CPPUNIT_ASSERT(section.hasProperty(*it));
         CPPUNIT_ASSERT(prop.id() == *it);
 
-        section.removeProperty(*it);
+        section.deleteProperty(*it);
     }
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
