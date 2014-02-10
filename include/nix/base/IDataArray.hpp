@@ -126,6 +126,8 @@ public:
 
     // TODO add missing methods
 
+    virtual ~IDataArray() {}
+
 };
 
 

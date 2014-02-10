@@ -75,6 +75,9 @@ public:
         return NamedEntity<T>::impl_ptr->removeMetadata();
     }
 
+
+    virtual ~EntityWithMetadata() {}
+
 };
 
 

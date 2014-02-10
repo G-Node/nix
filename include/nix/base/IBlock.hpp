@@ -287,6 +287,9 @@ public:
      */
     virtual bool removeDataTag(const std::string &id) = 0;
 
+
+    virtual ~IBlock() {}
+
 };
 
 } // namespace base

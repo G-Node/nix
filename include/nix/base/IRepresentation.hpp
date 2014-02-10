@@ -64,6 +64,9 @@ public:
      */
     virtual DataArray data() const = 0;
 
+
+    virtual ~IRepresentation() {}
+
 };
 
 

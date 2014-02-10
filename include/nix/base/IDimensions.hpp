@@ -32,6 +32,8 @@ public:
 
     virtual DimensionType dimensionType() const = 0;
 
+    virtual ~IDimension() {}
+
 };
 
 
@@ -58,6 +60,8 @@ public:
 
     virtual void offset(double offset) = 0;
 
+    virtual ~ISampledDimension() {}
+
 };
 
 
@@ -71,6 +75,8 @@ public:
     virtual std::vector<std::string> labels() const = 0;
 
     virtual void labels(const std::vector<std::string> &labels) = 0;
+
+    virtual ~ISetDimension() {}
 
 };
 
@@ -93,6 +99,8 @@ public:
     virtual std::vector<double> tics() const = 0;
 
     virtual void tics(const std::vector<double> &tics) = 0;
+
+    virtual ~IRangeDimension() {}
 
 };
 
