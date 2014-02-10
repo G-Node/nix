@@ -115,7 +115,7 @@ size_t PropertyHDF5::valueCount() const {
     return count;
 }
 
-void PropertyHDF5::setValues(const std::vector<Value> &values)
+void PropertyHDF5::values(const std::vector<Value> &values)
 {
     DataSet dataset;
 
@@ -139,7 +139,7 @@ void PropertyHDF5::setValues(const std::vector<Value> &values)
     dataset.write(values);
 }
 
-std::vector<Value> PropertyHDF5::getValues(void) const
+std::vector<Value> PropertyHDF5::values(void) const
 {
     std::vector<Value> values;
     if (!group().hasData("values")) {

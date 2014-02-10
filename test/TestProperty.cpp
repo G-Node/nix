@@ -74,10 +74,10 @@ void TestProperty::testValues()
                                           nix::Value("schoener"),
                                           nix::Value("Goetterfunken") };
 
-    p1.setValues(strValues);
+    p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
-    std::vector<nix::Value> ctrlValues = p1.getValues();
+    std::vector<nix::Value> ctrlValues = p1.values();
 
     for(size_t i = 0; i < ctrlValues.size(); ++i) {
         CPPUNIT_ASSERT_EQUAL(strValues[i], ctrlValues[i]);
@@ -88,18 +88,18 @@ void TestProperty::testValues()
     strValues.emplace_back("Elysium");
     strValues.emplace_back("Wir betreten feuertrunken");
 
-    p1.setValues(strValues);
+    p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
     strValues.erase(strValues.begin()+6);
-    p1.setValues(strValues);
+    p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
     nix::Property p2 = section.createProperty("toDelete");
-    p2.setValues(strValues);
+    p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     strValues.clear();
-    p2.setValues(strValues);
+    p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     p2.removeValues();
 }

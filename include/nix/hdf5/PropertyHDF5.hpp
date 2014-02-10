@@ -62,9 +62,9 @@ public:
 
     size_t valueCount() const;
 
-    void setValues(const std::vector<Value> &values);
+    void values(const std::vector<Value> &values);
 
-    std::vector<Value> getValues(void) const;
+    std::vector<Value> values(void) const;
 
 
     bool operator==(const PropertyHDF5 &other) const;
