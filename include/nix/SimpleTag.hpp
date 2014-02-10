@@ -224,14 +224,14 @@ public:
     }
 
     /**
-     * Remove a representation from the tag.
+     * Deletes a representation.
      *
      * @param id        The id of the representation to remove.
      *
      * @return True if the representation was removed, false otherwise.
      */
-    bool removeRepresentation(const std::string &id) {
-        return impl_ptr->removeRepresentation(id);
+    bool deleteRepresentation(const std::string &id) {
+        return impl_ptr->deleteRepresentation(id);
     }
 
 
