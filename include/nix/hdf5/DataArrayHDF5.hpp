@@ -95,7 +95,7 @@ public:
     Dimension createDimension(size_t id, DimensionType type);
 
 
-    bool removeDimension(size_t id);
+    bool deleteDimension(size_t id);
 
     //--------------------------------------------------
     // Other methods and functions

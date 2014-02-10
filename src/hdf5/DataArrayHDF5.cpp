@@ -222,7 +222,7 @@ Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
 }
 
 
-bool DataArrayHDF5::removeDimension(size_t id) {
+bool DataArrayHDF5::deleteDimension(size_t id) {
     bool deleted = false;
     size_t dim_count = dimensionCount();
     string str_id = util::numToStr(id);
