@@ -116,15 +116,15 @@ public:
     }
 
     /**
-     * Remove a root source and all its child sources from
+     * Deletes a root source and all its child sources from
      * the block.
      *
      * @param id        The id of the source to remove.
      *
      * @return True if the source was removed, false otherwise.
      */
-    bool removeSource(const std::string &id) {
-        return impl_ptr->removeSource(id);
+    bool deleteSource(const std::string &id) {
+        return impl_ptr->deleteSource(id);
     }
 
     //--------------------------------------------------
@@ -196,14 +196,14 @@ public:
     }
 
     /**
-     * Remove/delete a data array from this block.
+     * Deletes a data array from this block.
      *
      * @param id        The id of the data array to remove.
      *
      * @return True if the data array was removed, false otherwise.
      */
-    bool removeDataArray(const std::string &id) {
-        return impl_ptr->removeDataArray(id);
+    bool deleteDataArray(const std::string &id) {
+        return impl_ptr->deleteDataArray(id);
     }
 
     //--------------------------------------------------
@@ -286,14 +286,14 @@ public:
     }
 
     /**
-     * Remove a simple tag from the block.
+     * Deletes a simple tag from the block.
      *
      * @param id        The id of the tag to remove.
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool removeSimpleTag(const std::string &id) {
-        return impl_ptr->removeSimpleTag(id);
+    bool deleteSimpleTag(const std::string &id) {
+        return impl_ptr->deleteSimpleTag(id);
     }
 
     //--------------------------------------------------
@@ -367,14 +367,14 @@ public:
     }
 
     /**
-     * Remove a data tag from the block.
+     * Deletes a data tag from the block.
      *
      * @param id        The id of the tag to remove.
      *
-     * @return True if the tag was removed, false otherwise.
+     * @return True if the tag was deleted, false otherwise.
      */
-    bool removeDataTag(const std::string &id) {
-        return impl_ptr->removeDataTag(id);
+    bool deleteDataTag(const std::string &id) {
+        return impl_ptr->deleteDataTag(id);
     }
 
     //------------------------------------------------------

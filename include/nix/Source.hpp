@@ -118,15 +118,15 @@ public:
     }
 
     /**
-     * Remove a root source and all its child sources from
+     * Delete a root source and all its child sources from
      * the source.
      *
-     * @param id        The id of the source to remove.
+     * @param id        The id of the source to delete.
      *
-     * @return True if the source was removed, false otherwise.
+     * @return True if the source was deleted, false otherwise.
      */
-    bool removeSource(const std::string &id) {
-        return impl_ptr->removeSource(id);
+    bool deleteSource(const std::string &id) {
+        return impl_ptr->deleteSource(id);
     }
 
     //------------------------------------------------------

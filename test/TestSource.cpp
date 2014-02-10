@@ -96,7 +96,7 @@ void TestSource::testSourceAccess() {
         CPPUNIT_ASSERT(source.hasSource(*it) == true);
         CPPUNIT_ASSERT(child_source.id() == *it);
 
-        source.removeSource(*it);
+        source.deleteSource(*it);
     }
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);

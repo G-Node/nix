@@ -92,7 +92,7 @@ Source SourceHDF5::createSource(const string &name, const string &type) {
 }
 
 
-bool SourceHDF5::removeSource(const string &id) {
+bool SourceHDF5::deleteSource(const string &id) {
     if (source_group.hasGroup(id)) {
         source_group.removeGroup(id);
         return true;
