@@ -119,15 +119,15 @@ Source BlockHDF5::createSource(const string &name,const string &type) {
 }
 
 
-bool BlockHDF5::removeSource(const string &id) {
-    bool removed = false;
+bool BlockHDF5::deleteSource(const string &id) {
+    bool deleted = false;
 
     if (hasSource(id)) {
         source_group.removeGroup(id);
-        removed = true;
+        deleted = true;
     }
 
-    return removed;
+    return deleted;
 }
 
 
@@ -179,15 +179,15 @@ SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type) {
 }
 
 
-bool BlockHDF5::removeSimpleTag(const string &id) {
-    bool removed = false;
+bool BlockHDF5::deleteSimpleTag(const string &id) {
+    bool deleted = false;
 
     if (hasSimpleTag(id)) {
         simple_tag_group.removeGroup(id);
-        removed = true;
+        deleted = true;
     }
 
-    return removed;
+    return deleted;
 }
 
 
@@ -253,15 +253,15 @@ DataArray BlockHDF5::createDataArray(const std::string &name, const std::string 
 }
 
 
-bool BlockHDF5::removeDataArray(const string &id) {
-    bool removed = false;
+bool BlockHDF5::deleteDataArray(const string &id) {
+    bool deleted = false;
 
     if (hasDataArray(id)) {
         data_array_group.removeGroup(id);
-        removed = true;
+        deleted = true;
     }
 
-    return removed;
+    return deleted;
 }
 
 
@@ -327,13 +327,13 @@ std::vector<DataTag> BlockHDF5::dataTags() const{
 }
 
 
-bool BlockHDF5::removeDataTag(const std::string &id){
-    bool removed = false;
+bool BlockHDF5::deleteDataTag(const std::string &id){
+    bool deleted = false;
     if (hasDataTag(id)) {
         data_tag_group.removeGroup(id);
-        removed = true;
+        deleted = true;
     }
-    return removed;
+    return deleted;
 }
 
 
