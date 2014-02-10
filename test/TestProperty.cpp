@@ -101,7 +101,7 @@ void TestProperty::testValues()
     strValues.clear();
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
-    p2.removeValues();
+    p2.deleteValues();
 }
 
 
