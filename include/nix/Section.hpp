@@ -13,13 +13,12 @@
 #include <functional>
 
 #include <nix/util/util.hpp>
+#include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 
 namespace nix {
-
-
 
 class Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
 
@@ -178,7 +177,7 @@ public:
      *
      * @return All matching section as a vector.
      */
-    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
+    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
