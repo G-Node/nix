@@ -44,8 +44,8 @@ void TestDataTag::setUp() {
 
 
 void TestDataTag::tearDown(){
-	file.removeBlock(block.id());
-	file.removeSection(section.id());
+	file.deleteBlock(block.id());
+	file.deleteSection(section.id());
 	file.close();
 }
 
