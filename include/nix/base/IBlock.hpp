@@ -89,14 +89,14 @@ public:
     virtual Source createSource(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Remove a root source and all its child sources from
+     * Deletes a root source and all its child sources from
      * the block.
      *
-     * @param id        The id of the source to remove.
+     * @param id        The id of the source to delete.
      *
      * @return True if the source was removed, false otherwise.
      */
-    virtual bool removeSource(const std::string &id) = 0;
+    virtual bool deleteSource(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods concerning data arrays
@@ -154,13 +154,13 @@ public:
     virtual DataArray createDataArray(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Remove/delete a data array from this block.
+     * Deletes a data array from this block.
      *
-     * @param id        The id of the data array to remove.
+     * @param id        The id of the data array to delete.
      *
-     * @return True if the data array was removed, false otherwise.
+     * @return True if the data array was deleted, false otherwise.
      */
-    virtual bool removeDataArray(const std::string &id) = 0;
+    virtual bool deleteDataArray(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods concerning simple tags.
@@ -213,13 +213,13 @@ public:
     virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Remove a simple tag from the block.
+     * Deletes a simple tag from the block.
      *
      * @param id        The id of the tag to remove.
      *
      * @return True if the tag was removed, false otherwise.
      */
-    virtual bool removeSimpleTag(const std::string &id) = 0;
+    virtual bool deleteSimpleTag(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods concerning data tags.
@@ -279,13 +279,16 @@ public:
     virtual DataTag createDataTag(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Remove a data tag from the block.
+     * Deletes a data tag from the block.
      *
      * @param id        The id of the tag to remove.
      *
      * @return True if the tag was removed, false otherwise.
      */
-    virtual bool removeDataTag(const std::string &id) = 0;
+    virtual bool deleteDataTag(const std::string &id) = 0;
+
+
+    virtual ~IBlock() {}
 
 };
 

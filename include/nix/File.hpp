@@ -63,8 +63,8 @@ public:
     }
 
 
-    bool removeBlock(const std::string &id) {
-        return impl_ptr->removeBlock(id);
+    bool deleteBlock(const std::string &id) {
+        return impl_ptr->deleteBlock(id);
     }
 
 
@@ -102,7 +102,7 @@ public:
     }
 
 
-    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
+    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 
@@ -111,8 +111,8 @@ public:
     }
 
 
-    bool removeSection(const std::string &id) {
-        return impl_ptr->removeSection(id);
+    bool deleteSection(const std::string &id) {
+        return impl_ptr->deleteSection(id);
     }
 
     //--------------------------------------------------

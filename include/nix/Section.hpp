@@ -13,6 +13,7 @@
 #include <functional>
 
 #include <nix/util/util.hpp>
+#include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
@@ -180,7 +181,7 @@ public:
      *
      * @return All matching section as a vector.
      */
-    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::acceptAllFilter<Section>,
+    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
@@ -217,14 +218,14 @@ public:
     }
 
     /**
-     * Remove a subsection from this Section.
+     * Deletes a subsection from this Section.
      *
      * @param string the id of target section.
      *
      * @return bool successful or not
      */
-    bool removeSection(const std::string &id) {
-        return impl_ptr->removeSection(id);
+    bool deleteSection(const std::string &id) {
+        return impl_ptr->deleteSection(id);
     }
 
     //--------------------------------------------------
@@ -320,12 +321,12 @@ public:
     }
 
     /**
-     * Removes the Property that is identified by the id.#
+     * Deletess the Property that is identified by the id.#
      *
      * @param string the id.
      */
-    bool removeProperty(const std::string &id) {
-        return impl_ptr->removeProperty(id);
+    bool deleteProperty(const std::string &id) {
+        return impl_ptr->deleteProperty(id);
     }
 
     //------------------------------------------------------

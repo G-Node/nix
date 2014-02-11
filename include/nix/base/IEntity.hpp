@@ -65,6 +65,8 @@ public:
      */
     virtual void forceCreatedAt(time_t t) = 0;
 
+
+    virtual ~IEntity() {}
 };
 
 

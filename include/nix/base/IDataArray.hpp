@@ -111,7 +111,7 @@ public:
     virtual Dimension createDimension(size_t id, DimensionType type) = 0;
 
 
-    virtual bool removeDimension(size_t id) = 0;
+    virtual bool deleteDimension(size_t id) = 0;
 
 
     //--------------------------------------------------
@@ -125,6 +125,8 @@ public:
     virtual void   setExtent(const NDSize &extent) = 0;
 
     // TODO add missing methods
+
+    virtual ~IDataArray() {}
 
 };
 

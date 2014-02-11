@@ -12,6 +12,7 @@
 #include <limits>
 #include <functional>
 
+#include <nix/util/filter.hpp>
 #include <nix/util/util.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
@@ -102,7 +103,7 @@ public:
      *
      * @return All matching sources as a vector.
      */
-    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::acceptAllFilter<Source>,
+    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 
@@ -119,15 +120,15 @@ public:
     }
 
     /**
-     * Remove a root source and all its child sources from
+     * Delete a root source and all its child sources from
      * the source.
      *
-     * @param id        The id of the source to remove.
+     * @param id        The id of the source to delete.
      *
-     * @return True if the source was removed, false otherwise.
+     * @return True if the source was deleted, false otherwise.
      */
-    bool removeSource(const std::string &id) {
-        return impl_ptr->removeSource(id);
+    bool deleteSource(const std::string &id) {
+        return impl_ptr->deleteSource(id);
     }
 
     //------------------------------------------------------

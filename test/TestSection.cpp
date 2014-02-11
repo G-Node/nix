@@ -120,7 +120,7 @@ void TestSection::testSectionAccess() {
         CPPUNIT_ASSERT(section.hasSection(*it) == true);
         CPPUNIT_ASSERT(child_section.id() == *it);
 
-        section.removeSection(*it);
+        section.deleteSection(*it);
     }
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -148,13 +148,13 @@ void TestSection::testFindSection() {
 
     // test depth limit
     CPPUNIT_ASSERT(section.findSections().size() == 14);
-    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 2).size() == 10);
-    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 1).size() == 4);
-    CPPUNIT_ASSERT(section.findSections(util::acceptAllFilter<Section>, 0).size() == 1);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 2).size() == 10);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 1).size() == 4);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 0).size() == 1);
 
     // test filter
-    auto filter_typ1 = [](const Section &s) { return s.type() == "typ1"; };
-    auto filter_typ2 = [](const Section &s) { return s.type() == "typ2"; };
+    auto filter_typ1 = util::TypeFilter<Section>("typ1");
+    auto filter_typ2 = util::TypeFilter<Section>("typ2");
 
     CPPUNIT_ASSERT(section.findSections(filter_typ1).size() == 3);
     CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
@@ -194,7 +194,7 @@ void TestSection::testPropertyAccess() {
         CPPUNIT_ASSERT(section.hasProperty(*it));
         CPPUNIT_ASSERT(prop.id() == *it);
 
-        section.removeProperty(*it);
+        section.deleteProperty(*it);
     }
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);

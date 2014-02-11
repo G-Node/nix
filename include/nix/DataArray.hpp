@@ -141,8 +141,8 @@ public:
         return impl_ptr->createDimension(id, type);
     }
 
-    bool removeDimension(size_t id) {
-        return impl_ptr->removeDimension(id);
+    bool deleteDimension(size_t id) {
+        return impl_ptr->deleteDimension(id);
     }
 
     //--------------------------------------------------

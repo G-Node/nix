@@ -48,7 +48,7 @@ public:
     virtual std::string unit() const = 0;
 
 
-    virtual void removeValues() = 0;
+    virtual void deleteValues() = 0;
 
 
     virtual size_t valueCount() const = 0;
@@ -58,6 +58,9 @@ public:
 
 
     virtual std::vector<Value> values(void) const = 0;
+
+
+    virtual ~IProperty() {}
 };
 
 

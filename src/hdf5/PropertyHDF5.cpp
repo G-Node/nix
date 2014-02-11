@@ -84,7 +84,7 @@ string PropertyHDF5::unit() const {
 }
 
 
-void PropertyHDF5::removeValues(){
+void PropertyHDF5::deleteValues(){
     group().removeData("values");
 }
 

@@ -67,6 +67,9 @@ public:
     }
 
 
+    virtual ~Entity() {}
+
+
 };
 
 } // namespace base

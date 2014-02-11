@@ -95,7 +95,7 @@ void TestBlock::testSourceAccess() {
         CPPUNIT_ASSERT(block.hasSource(*it) == true);
         CPPUNIT_ASSERT(src.id() == *it);
 
-        block.removeSource(*it);
+        block.deleteSource(*it);
     }
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
@@ -129,7 +129,7 @@ void TestBlock::testDataArrayAccess() {
         CPPUNIT_ASSERT(block.hasDataArray(*it) == true);
         CPPUNIT_ASSERT(data_array.id() == *it);
 
-        block.removeDataArray(*it);
+        block.deleteDataArray(*it);
     }
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
@@ -161,7 +161,7 @@ void TestBlock::testSimpleTagAccess() {
         CPPUNIT_ASSERT(block.hasSimpleTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
-        block.removeSimpleTag(*it);
+        block.deleteSimpleTag(*it);
     }
 
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
@@ -191,7 +191,7 @@ void TestBlock::testDataTagAccess() {
         CPPUNIT_ASSERT(block.hasDataTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
-        block.removeDataTag(*it);
+        block.deleteDataTag(*it);
     }
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
