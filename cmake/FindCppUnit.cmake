@@ -3,6 +3,7 @@
 FIND_PATH(CPPUNIT_INCLUDE_DIR cppunit/TestCase.h
   /usr/local/include
   /usr/include
+  $ENV{CPPUNIT_ROOT}/include
 )
 
 # With Win32, important to have both
