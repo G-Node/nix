@@ -15,14 +15,26 @@
 namespace nix {
 namespace util {
 
+/**
+ * Base struct to be inherited by all filter implementations.
+ * Child classes will have to implement ()-operator and will
+ * all inherit typedef "type" which corresponds to the type of "()". 
+ */
 template<typename T>
 struct Filter : public std::unary_function<T, bool> {
 
     virtual bool operator()(const T&) = 0;
 
+	typedef std::function<bool(T)> type;
+
 };
 
 
+/**
+ * One Filter struct to that filters nothing but always returns true.
+ * Use "AcceptAll<T>()" to pass it on as filter and "::type" to define 
+ * its' type.
+ */
 template<typename T>
 struct AcceptAll : public Filter<T> {
 
