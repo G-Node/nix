@@ -79,7 +79,7 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(CppUnit)
-include_directories(${CPPUNIT_INCLUDE_DIRS})
+include_directories(${CPPUNIT_INCLUDE_DIR})
 
 file(GLOB Tests_SOURCES "test/Test*.cpp")
 
