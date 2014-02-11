@@ -50,7 +50,7 @@ void TestEntityWithSources::testSourceAccess() {
         CPPUNIT_ASSERT(block.hasSource(*it) == true);
         CPPUNIT_ASSERT(src.id() == *it);
 
-        block.removeSource(*it);
+        block.deleteSource(*it);
     }
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
