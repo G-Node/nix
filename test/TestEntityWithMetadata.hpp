@@ -21,23 +21,28 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <pandora.hpp>
+#include <nix.hpp>
 
-using namespace pandora;
 
 class TestEntityWithMetadata: public CPPUNIT_NS::TestFixture {
 
 private:
 
     CPPUNIT_TEST_SUITE(TestEntityWithMetadata);
-    CPPUNIT_TEST(testMetadata);
+
+    CPPUNIT_TEST(testMetadataAccess);
+
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
+    nix::File file;
+    nix::Section section;
+    nix::Block block;
+
 public:
 
     void setUp();
     void tearDown();
-    void testMetadata();
+
+    void testMetadataAccess();
 
 };

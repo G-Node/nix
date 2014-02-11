@@ -21,24 +21,24 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <pandora.hpp>
+#include <nix.hpp>
 
-using namespace pandora;
 
-class TestNamedEntityWithSources : public CPPUNIT_NS::TestFixture {
+class TestEntityWithSources : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestNamedEntityWithSources);
-    CPPUNIT_TEST(testAddRemoveSource);
+    CPPUNIT_TEST_SUITE(TestEntityWithSources);
+    CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST_SUITE_END ();
 
-    File *f1;
-    std::string s_id1, s_id2, b_id;
+    nix::File file;
+    nix::Block block;
+
 public:
 
     void setUp();
     void tearDown();
-    void testAddRemoveSource();
 
+    void testSourceAccess();
 };
