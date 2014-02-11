@@ -73,7 +73,7 @@ void TestFile::testBlockAccess() {
         CPPUNIT_ASSERT(file_open.hasBlock(*it) == true);
         CPPUNIT_ASSERT(bl.id() == *it);
 
-        file_open.removeBlock(*it);
+        file_open.deleteBlock(*it);
     }
 
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
@@ -103,7 +103,7 @@ void TestFile::testSectionAccess() {
         CPPUNIT_ASSERT(file_open.hasSection(*it) == true);
         CPPUNIT_ASSERT(sec.id() == *it);
 
-        file_open.removeSection(*it);
+        file_open.deleteSection(*it);
     }
 
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);

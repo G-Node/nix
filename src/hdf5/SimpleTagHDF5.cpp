@@ -200,7 +200,7 @@ Representation SimpleTagHDF5::createRepresentation(DataArray data, LinkType link
 }
 
 
-bool SimpleTagHDF5::removeRepresentation(const string &id){
+bool SimpleTagHDF5::deleteRepresentation(const string &id){
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;

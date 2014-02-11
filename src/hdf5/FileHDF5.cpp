@@ -114,7 +114,7 @@ Block FileHDF5::createBlock(const std::string &name, const string &type) {
 }
 
 
-bool FileHDF5::removeBlock(const std::string &id) {
+bool FileHDF5::deleteBlock(const std::string &id) {
     if (data.hasGroup(id)) {
         data.removeGroup(id);
         return true;
@@ -171,7 +171,7 @@ Section FileHDF5::createSection(const string &name, const  string &type) {
 }
 
 
-bool FileHDF5::removeSection(const std::string &id){
+bool FileHDF5::deleteSection(const std::string &id){
     if (metadata.hasGroup(id)) {
         metadata.removeGroup(id);
         return true;

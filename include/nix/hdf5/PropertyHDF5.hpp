@@ -57,7 +57,7 @@ public:
     std::string unit() const;
 
 
-    void removeValues();
+    void deleteValues();
 
 
     size_t valueCount() const;

@@ -72,7 +72,7 @@ public:
     Block createBlock(const std::string &name, const std::string &type);
 
 
-    bool removeBlock(const std::string &id);
+    bool deleteBlock(const std::string &id);
 
 
     std::vector<Block> blocks() const;
@@ -99,7 +99,7 @@ public:
     Section createSection(const std::string &name, const std::string &type);
 
 
-    bool removeSection(const std::string &id);
+    bool deleteSection(const std::string &id);
 
     //--------------------------------------------------
     // Methods for file attribute access.

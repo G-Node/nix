@@ -119,7 +119,7 @@ public:
     Representation createRepresentation(DataArray data, LinkType link_type);
 
 
-    bool removeRepresentation(const std::string &id);
+    bool deleteRepresentation(const std::string &id);
 
 
     //--------------------------------------------------

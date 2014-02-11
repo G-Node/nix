@@ -187,7 +187,7 @@ Section SectionHDF5::createSection(const string &name, const string &type) {
 }
 
 
-bool SectionHDF5::removeSection(const string &id) {
+bool SectionHDF5::deleteSection(const string &id) {
     if (section_group.hasGroup(id)) {
         section_group.removeGroup(id);
         return true;
@@ -306,7 +306,7 @@ Property SectionHDF5::createProperty(const string &name) {
 }
 
 
-bool SectionHDF5::removeProperty(const string &id) {
+bool SectionHDF5::deleteProperty(const string &id) {
     if (property_group.hasObject(id)) {
         property_group.removeGroup(id);
         return true;

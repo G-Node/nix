@@ -69,7 +69,7 @@ public:
     Source createSource(const std::string &name, const std::string &type);
 
 
-    bool removeSource(const std::string &id);
+    bool deleteSource(const std::string &id);
 
     //--------------------------------------------------
     // Other methods and functions

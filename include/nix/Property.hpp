@@ -86,8 +86,8 @@ public:
     // Methods for Value access
     //--------------------------------------------------
 
-    void removeValues() {
-        impl_ptr->removeValues();
+    void deleteValues() {
+        impl_ptr->deleteValues();
     }
 
 

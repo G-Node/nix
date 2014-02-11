@@ -83,7 +83,7 @@ public:
     Source createSource(const std::string &name, const std::string &type);
 
 
-    bool removeSource(const std::string &id);
+    bool deleteSource(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning data arrays
@@ -107,7 +107,7 @@ public:
     DataArray createDataArray(const std::string &name, const std::string &type);
 
 
-    bool removeDataArray(const std::string &id);
+    bool deleteDataArray(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning simple tags.
@@ -129,7 +129,7 @@ public:
     SimpleTag createSimpleTag(const std::string &name, const std::string &type);
 
 
-    bool removeSimpleTag(const std::string &id);
+    bool deleteSimpleTag(const std::string &id);
 
     //--------------------------------------------------
     // Methods concerning data tags.
@@ -154,7 +154,7 @@ public:
     DataTag createDataTag(const std::string &name, const std::string &type);
 
 
-    bool removeDataTag(const std::string &id);
+    bool deleteDataTag(const std::string &id);
 
     //--------------------------------------------------
     // Other methods and functions

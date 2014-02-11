@@ -44,8 +44,8 @@ void TestDataTag::setUp() {
 
 
 void TestDataTag::tearDown(){
-	file.removeBlock(block.id());
-	file.removeSection(section.id());
+	file.deleteBlock(block.id());
+	file.deleteSection(section.id());
 	file.close();
 }
 
@@ -99,7 +99,7 @@ void TestDataTag::testCreateRemove() {
 	CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.dataTagCount() == (count+5));
 
 	for (size_t i = 0; i < ids.size(); i++) {
-		block.removeDataTag(ids[i]);
+		block.deleteDataTag(ids[i]);
 	}
 
 	std::stringstream errmsg1;
@@ -142,9 +142,9 @@ void TestDataTag::testReferences(){
 	dt.removeReference(da_2.id());
 	CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
 
-	block.removeDataArray(da_1.id());
-	block.removeDataArray(da_1.id());
-	block.removeDataTag(dt.id());
+	block.deleteDataArray(da_1.id());
+	block.deleteDataArray(da_1.id());
+	block.deleteDataTag(dt.id());
 }
 
 
@@ -214,7 +214,7 @@ void TestDataTag::testSourceAccess(){
 		CPPUNIT_ASSERT(child_source.id() == *it);
 
 		tag.removeSource(*it);
-		block.removeSource(*it);
+		block.deleteSource(*it);
 	}
 
 	CPPUNIT_ASSERT(tag.sourceCount() == 0);
