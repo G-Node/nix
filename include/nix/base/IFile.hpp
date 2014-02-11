@@ -12,17 +12,19 @@
 #include <string>
 #include <vector>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-enum class FileMode {
+NIXAPI enum class FileMode {
     ReadOnly = 0,
     ReadWrite,
     Overwrite
 };
 
 
-enum class Implementation {
+NIXAPI enum class Implementation {
     Hdf5 = 0
 };
 

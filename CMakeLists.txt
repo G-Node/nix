@@ -4,11 +4,13 @@
 cmake_minimum_required (VERSION 2.6)
 project (pandora CXX)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
+if(NOT WIN32)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+endif()
 
 if(USE_NO_DEPRECATED_DECLARATIONS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
@@ -57,6 +59,18 @@ file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
 
+if(WIN32)
+  set_target_properties(pandora PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
+	                         "$<TARGET_FILE_DIR:pandora>"
+	                 COMMENT "Copying HDF5 C DLL")
+  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
+	                         "$<TARGET_FILE_DIR:pandora>"
+	                 COMMENT "Copying HDF5 CXX DLL")
+endif()
+
 set_target_properties(pandora PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION 1.0
@@ -79,7 +93,7 @@ enable_testing()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(CppUnit)
-include_directories(${CPPUNIT_INCLUDE_DIRS})
+include_directories(${CPPUNIT_INCLUDE_DIR})
 
 file(GLOB Tests_SOURCES "test/Test*.cpp")
 

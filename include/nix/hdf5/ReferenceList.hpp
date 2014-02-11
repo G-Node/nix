@@ -13,11 +13,13 @@
 #include <nix/hdf5/Group.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace hdf5 {
 
 
-class ReferenceList {
+class NIXAPI ReferenceList {
 
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;

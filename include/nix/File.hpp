@@ -14,10 +14,12 @@
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class File : public base::IFile, public base::ImplContainer<base::IFile> {
+class NIXAPI File : public base::IFile, public base::ImplContainer<base::IFile> {
 
 public:
 

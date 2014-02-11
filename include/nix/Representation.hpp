@@ -13,13 +13,15 @@
 #include <nix/base/IRepresentation.hpp>
 #include <nix/DataArray.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
 /**
  * Class that represents a pandora representation entity
  */
-class Representation : virtual public base::IRepresentation, public base::Entity<base::IRepresentation> {
+class NIXAPI Representation : virtual public base::IRepresentation, public base::Entity<base::IRepresentation> {
 
 public:
 

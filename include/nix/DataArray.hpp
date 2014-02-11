@@ -16,10 +16,12 @@
 #include <nix/Dimensions.hpp>
 #include <nix/Hydra.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class DataArray : public base::EntityWithSources<base::IDataArray> {
+class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray> {
 
 public:
 

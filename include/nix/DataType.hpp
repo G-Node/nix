@@ -14,9 +14,11 @@
 #include <cstdint>
 #include <ostream>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
-enum class DataType {
+NIXAPI enum class DataType {
     Bool,
     Char,
     Float,
@@ -120,9 +122,9 @@ struct to_data_type<std::string> {
     static const DataType value = DataType::String;
 };
 
-size_t data_type_to_size(DataType dtype);
+NIXAPI size_t data_type_to_size(DataType dtype);
 
-std::ostream &operator<<(std::ostream &out, const DataType dtype);
+NIXAPI std::ostream& operator<<(std::ostream &out, const DataType dtype);
 
 
 } // nix::

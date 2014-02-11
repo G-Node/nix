@@ -15,6 +15,7 @@
 #include <initializer_list>
 #include <iostream>
 
+#include <nix/Platform.hpp>
 
 namespace nix {
 

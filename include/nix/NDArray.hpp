@@ -15,9 +15,11 @@
 
 #include <nix/Hydra.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
-class NDArray {
+class NIXAPI NDArray {
 
 public:
 

@@ -18,10 +18,12 @@
 #include <nix/SimpleTag.hpp>
 #include <nix/DataTag.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class Block : virtual public base::IBlock, public base::EntityWithMetadata<base::IBlock> {
+class NIXAPI Block : virtual public base::IBlock, public base::EntityWithMetadata<base::IBlock> {
 
 public:
 

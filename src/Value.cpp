@@ -15,9 +15,11 @@
 namespace nix {
 
 void Value::maybe_deallocte_string() {
+#ifndef _WIN32
     if (dtype == DataType::String) {
         v_string.~basic_string();
     }
+#endif
 }
 
 /**************/
@@ -67,11 +69,13 @@ void Value::set(double value) {
 
 void Value::set(const std::string &value) {
 
+#ifndef _WIN32
     //If the active member is not a string
     //we have to inialize the string object
     if (dtype != DataType::String) {
         new (&v_string) std::string();
     }
+#endif
 
     dtype = DataType::String;
     v_string = value;

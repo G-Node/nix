@@ -18,9 +18,13 @@
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
-class Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
+
+
+class NIXAPI Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
 
 public:
 

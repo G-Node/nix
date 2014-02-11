@@ -16,6 +16,8 @@
 #include <nix/Hydra.hpp>
 #include <nix/Value.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace hdf5 {
 
@@ -83,7 +85,7 @@ private:
 };
 
 
-class DataSet {
+class NIXAPI DataSet {
 
 public:
     DataSet() { }

@@ -36,7 +36,11 @@ void TestDataSet::setUp() {
 void TestDataSet::testNDSize() {
     NDSize a = {23, 42, 1982};
 
-    typedef typename NDSize::value_type value_type;
+#ifndef _WIN32
+	typedef typename NDSize::value_type value_type;
+#else
+    typedef NDSize::value_type value_type;
+#endif
 
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);

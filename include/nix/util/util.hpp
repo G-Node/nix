@@ -18,6 +18,8 @@
 #include <sstream>
 #include <vector>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace util {
 
@@ -29,7 +31,7 @@ namespace util {
  *
  * @return The generated id string.
  */
-std::string createId(std::string prefix = "", int length = 16);
+NIXAPI std::string createId(std::string prefix = "", int length = 16);
 
 /**
  * Convert a time value into a string representation.
@@ -39,7 +41,7 @@ std::string createId(std::string prefix = "", int length = 16);
  *
  * @return The sting representation of time.
  */
-std::string timeToStr(time_t time);
+NIXAPI std::string timeToStr(time_t time);
 
 /**
  * Checks if the passed string represents a valid SI unit.
@@ -47,7 +49,7 @@ std::string timeToStr(time_t time);
  * @param unit a string that is supposed to represent an SI unit.
  * @return bool true or false
  */
-bool isSIUnit(const std::string &unit);
+NIXAPI bool isSIUnit(const std::string &unit);
 
 /**
  * Checks if the passed string is a valid combination of SI units.
@@ -56,7 +58,7 @@ bool isSIUnit(const std::string &unit);
  * @param unit a string that should be tested
  * @return bool
  */
-bool isCompoundSIUnit(const std::string &unit);
+NIXAPI bool isCompoundSIUnit(const std::string &unit);
 
 /**
  * Get the scaling between two SI units that are identified by the two strings.
@@ -67,7 +69,7 @@ bool isCompoundSIUnit(const std::string &unit);
  * @return A double with the appropriate scaling
  * @throw Runtime Exception when units cannot be converted into each other by mere scaling
  */
-double getSIScaling(const std::string &originUnit, const std::string &destinationUnit);
+NIXAPI double getSIScaling(const std::string &originUnit, const std::string &destinationUnit);
 
 /**
  * Splits an SI unit into prefix, unit and the power components.
@@ -76,7 +78,7 @@ double getSIScaling(const std::string &originUnit, const std::string &destinatio
  * @param unit
  * @param power
  */
-void splitUnit(const std::string &fullUnit, std::string &prefix, std::string &unit, std::string &power);
+NIXAPI void splitUnit(const std::string &fullUnit, std::string &prefix, std::string &unit, std::string &power);
 
 /**
  * Splits a SI unit compound into its atomic parts.
@@ -84,7 +86,7 @@ void splitUnit(const std::string &fullUnit, std::string &prefix, std::string &un
  * @param compoundUnit string representing an SI unit that consists of many atomic units
  * @param atomicUnits vector<string> that takes the atomic units
  */
-void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
+NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
 
 /**
  * Convert a string representation of a date into a time value.
@@ -93,7 +95,7 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
  *
  * @return The time value that is represented by the time parameter.
  */
-time_t strToTime(const std::string &time);
+NIXAPI time_t strToTime(const std::string &time);
 
 /**
  * Convert a number into a string representation.

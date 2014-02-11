@@ -11,6 +11,8 @@
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/NDSize.hpp>
 
+#include <nix/Platform.hpp>
+
 #ifndef NIX_DATASPACE_H
 #define NIX_DATASPACE_H
 
@@ -18,8 +20,8 @@ namespace nix {
 namespace hdf5 {
 namespace DataSpace {
 
-H5::DataSpace create(const NDSize &dims, const NDSize *maxdims = nullptr);
-H5::DataSpace create(const NDSize &dims, bool maxdimsUnlimited);
+H5::DataSpace NIXAPI create(const NDSize &dims, const NDSize *maxdims = nullptr);
+H5::DataSpace NIXAPI create(const NDSize &dims, bool maxdimsUnlimited);
 
 } //::nix::hdf5::DataSpace
 } //::nix::hdf5
