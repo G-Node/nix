@@ -142,6 +142,7 @@ void TestGroup::testVector() {
 }
 
 void TestGroup::testArray() {
+
     nix::hdf5::Group group(h5group);
     int ia1d[5] = {1, 2, 3, 4, 5};
 
@@ -153,6 +154,7 @@ void TestGroup::testArray() {
         CPPUNIT_ASSERT_EQUAL(ia1d[i], tia1d[i]);
     }
 
+#ifndef _WIN32 //cf. issue #72
     int ia2d[3][2] = { {1, 2}, {3, 4}, {5, 6} };
     group.setAttr("t_intarray2d", ia2d);
     int tia2d[3][2] = { {0, }, };
@@ -161,4 +163,5 @@ void TestGroup::testArray() {
     for (int i = 0; i < 3*2; i++) {
         CPPUNIT_ASSERT_EQUAL(*(ia2d[0] + i), *(tia2d[0] + i));
     }
+#endif
 }
