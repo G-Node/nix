@@ -256,7 +256,7 @@ public:
      *
      * @return simple tags as a vector
      */
-    std::vector<SimpleTag> simpleTags(std::function<bool(SimpleTag)> filter
+    std::vector<SimpleTag> simpleTags(util::AcceptAll<SimpleTag>::type filter
                                       = util::AcceptAll<SimpleTag>()) const
     {
         auto f = [this] (size_t i) { return getSimpleTag(i); };
