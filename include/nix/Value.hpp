@@ -31,8 +31,14 @@ private:
         int32_t     v_int32;
         uint64_t    v_uint64;
         int64_t     v_int64;
+#ifndef _WIN32
         std::string v_string;
+#endif
     };
+
+#ifdef _WIN32
+	std::string v_string;
+#endif
 
 public:
     double uncertainty;
@@ -45,29 +51,22 @@ public:
 
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
-    Value(char *value) : dtype(DataType::String) {
-        new (&v_string) std::string();
-        v_string = value;
+    Value(char *value) : dtype(DataType::Nothing) {
+		set(std::string(value));
     }
 
-    Value(const char *value) : dtype(DataType::String) {
-        new (&v_string) std::string();
-        v_string = value;
+    Value(const char *value) : dtype(DataType::Nothing) {
+		set(std::string(value));
     }
 
     template<typename T>
-    explicit Value(const T &value) : dtype(to_data_type<T>::value) {
-        if (dtype == DataType::String) {
-            new (&v_string) std::string();
-        }
-
+    explicit Value(const T &value) : dtype(DataType::Nothing) {
         set(value);
     }
 
     template<size_t N>
-    explicit Value(const char (&value)[N]) : dtype(DataType::String) {
-        new (&v_string) std::string();
-        v_string = value;
+    explicit Value(const char (&value)[N]) : dtype(DataType::Nothing) {
+		set(std::string(value));
     }
 
     Value(const Value &other) {
