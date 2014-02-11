@@ -10,6 +10,7 @@
 
 #include "TestDataTag.hpp"
 #include <sstream>
+#include <ctime>
 
 using namespace nix;
 using namespace nix::hdf5;
