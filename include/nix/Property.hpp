@@ -13,10 +13,12 @@
 #include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
+class NIXAPI Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
 
 public:
 

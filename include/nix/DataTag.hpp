@@ -13,10 +13,12 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Representation.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class DataTag : virtual public base::IDataTag, public base::EntityWithSources<base::IDataTag> {
+class NIXAPI DataTag : virtual public base::IDataTag, public base::EntityWithSources<base::IDataTag> {
 
 public:
 

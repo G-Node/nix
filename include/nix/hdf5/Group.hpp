@@ -17,6 +17,8 @@
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace hdf5 {
 
@@ -24,7 +26,7 @@ namespace hdf5 {
 /**
  * TODO documentation
  */
-class Group {
+class NIXAPI Group {
 
 private:
 

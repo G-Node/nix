@@ -15,11 +15,13 @@
 #include <nix/DataArray.hpp>
 #include <nix/Representation.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
 // TODO
-class SimpleTag : virtual public base::ISimpleTag, public base::EntityWithSources<base::ISimpleTag> {
+class NIXAPI SimpleTag : virtual public base::ISimpleTag, public base::EntityWithSources<base::ISimpleTag> {
 
 public:
 

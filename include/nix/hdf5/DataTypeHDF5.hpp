@@ -12,15 +12,17 @@
 #include <nix/DataType.hpp>
 #include <nix/hdf5/hdf5include.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace hdf5 {
 
-H5::DataType data_type_to_h5_filetype(DataType dtype);
+NIXAPI H5::DataType data_type_to_h5_filetype(DataType dtype);
 
 
-H5::DataType data_type_to_h5_memtype(DataType dtype);
+NIXAPI H5::DataType data_type_to_h5_memtype(DataType dtype);
 
-DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
+NIXAPI DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
 
 } // namespace hdf5
 } // namespace nix

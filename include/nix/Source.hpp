@@ -16,10 +16,12 @@
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 
 
-class Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
+class NIXAPI Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
 
 public:
 

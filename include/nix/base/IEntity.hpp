@@ -9,11 +9,13 @@
 #ifndef NIX_I_ENTITY_H
 #define NIX_I_ENTITY_H
 
+#include <nix/Platform.hpp>
+
 namespace nix {
 namespace base {
 
 
-class IEntity {
+class NIXAPI IEntity {
 
 public:
 

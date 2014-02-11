@@ -10,11 +10,6 @@
 #define NIX_HDF5_INCLUDE_HPP
 
 #include <hdf5.h>
-
-#if defined(_WIN32)
-#include <cpp/H5Cpp.h>
-#else
 #include <H5Cpp.h>
-#endif
 
 #endif // NIX_HDF5_INCLUDE_HPP

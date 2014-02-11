@@ -17,10 +17,11 @@
 #include <iostream>
 
 #include <nix/DataType.hpp>
+#include <nix/Platform.hpp>
 
 namespace nix {
 
-class Value {
+class NIXAPI Value {
 private:
     DataType dtype;
 
@@ -142,10 +143,10 @@ inline const char * Value::get<const char *>() const {
 }
 
 
-std::ostream& operator<<(std::ostream &out, const Value &value);
-bool operator==(const Value &a, const Value &b);
+NIXAPI std::ostream& operator<<(std::ostream &out, const Value &value);
+NIXAPI bool operator==(const Value &a, const Value &b);
 inline bool operator!=(const Value &a, const Value &b) { return !(a == b); }
-void swap(Value &a, Value &b);
+NIXAPI void swap(Value &a, Value &b);
 
 
 } // namespace nix
