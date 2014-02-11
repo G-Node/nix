@@ -59,6 +59,18 @@ file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
 add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
 target_link_libraries(pandora ${LINK_LIBS})
 
+if(WIN32)
+  set_target_properties(pandora PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
+	                         "$<TARGET_FILE_DIR:pandora>"
+	                 COMMENT "Copying HDF5 C DLL")
+  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
+	                         "$<TARGET_FILE_DIR:pandora>"
+	                 COMMENT "Copying HDF5 CXX DLL")
+endif()
+
 set_target_properties(pandora PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION 1.0
