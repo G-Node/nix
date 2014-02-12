@@ -10,6 +10,7 @@
 #define NIX_I_NAMEDENTITY_H
 
 #include <nix/base/IEntity.hpp>
+#include <boost/optional.hpp>
 
 namespace nix {
 namespace base {
@@ -45,7 +46,7 @@ public:
      *
      * @return The name of the entity.
      */
-    virtual std::string name() const = 0;
+    virtual boost::optional<std::string> name() const = 0;
 
     /**
      * Setter for the definition of the entity.
@@ -59,7 +60,7 @@ public:
      *
      * @return The definition of the entity.
      */
-    virtual std::string definition() const = 0;
+    virtual boost::optional<std::string> definition() const = 0;
 
     /**
      * Compare two named entities.
