@@ -90,20 +90,26 @@ public:
         return impl_ptr->sourceCount();
     }
 
+
     /**
-     * Returns all root sources in this block as a vector.
+     * Get sources associated with this block.
      *
-     * @return All root sources.
+     * The parameter "filter" is defaulted to giving back all sources.
+     * To use your own filter pass a lambda that accepts a "Source"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sources as a vector
      */
-    std::vector<Source> sources() const {
-        return impl_ptr->sources();
+    std::vector<Source> sources(util::AcceptAll<Source>::type filter
+                                = util::AcceptAll<Source>()) const
+    {
+        auto f = [this] (size_t i) { return getSource(i); };
+        return getMultiple<Source>(f,
+                                   sourceCount(),
+                                   filter);
     }
 
-
-
-    std::vector<Source> findSources(std::function<bool(const Source &)> filter) const {
-        return impl_ptr->findSources(filter);
-    }
 
     /**
      * Create a new root source.
@@ -169,12 +175,22 @@ public:
     }
 
     /**
-     * Returns all data arrays of this block as a vector.
+     * Get data arrays associated with this block.
      *
-     * @return All data arrays.
+     * The parameter "filter" is defaulted to giving back all arrays. To
+     * use your own filter pass a lambda that accepts a "DataArray"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object data arrays as a vector     
      */
-    std::vector<DataArray> dataArrays() const {
-        return impl_ptr->dataArrays();
+    std::vector<DataArray> dataArrays(util::AcceptAll<DataArray>::type filter
+                                      = util::AcceptAll<DataArray>()) const
+    {
+        auto f = [this] (size_t i) { return getDataArray(i); };
+        return getMultiple<DataArray>(f,
+                                      dataArrayCount(),
+                                      filter);
     }
 
     /**
@@ -254,7 +270,8 @@ public:
      * use your own filter pass a lambda that accepts a "SimpleTag"
      * as parameter and returns a bool telling whether to get it or not.
      *
-     * @return simple tags as a vector
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object simple tags as a vector     
      */
     std::vector<SimpleTag> simpleTags(util::AcceptAll<SimpleTag>::type filter
                                       = util::AcceptAll<SimpleTag>()) const
@@ -338,12 +355,22 @@ public:
     }
 
     /**
-     * Get all simple data associated with this block.
+     * Get data tags associated with this block.
      *
-     * @return All simple tags as a vector.
+     * The parameter "filter" is defaulted to giving back all tags. To
+     * use your own filter pass a lambda that accepts a "DataTag"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object data tags as a vector     
      */
-    std::vector<DataTag> dataTags() const {
-        return impl_ptr->dataTags();
+    std::vector<DataTag> dataTags(util::AcceptAll<DataTag>::type filter
+                                  = util::AcceptAll<DataTag>()) const
+    {
+        auto f = [this] (size_t i) { return getDataTag(i); };
+        return getMultiple<DataTag>(f,
+                                    dataTagCount(),
+                                    filter);
     }
 
     /**

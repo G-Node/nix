@@ -51,7 +51,7 @@ Source EntityWithSourcesHDF5::getSource(const string &id) const{
 vector<Source> EntityWithSourcesHDF5::sources() const {
     vector<string> ids = sources_refs.get();
 
-    vector<Source> source_obj = block().findSources([&](const Source &source) {
+    vector<Source> source_obj = block().sources([&](const Source &source) {
         return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
     });
 
