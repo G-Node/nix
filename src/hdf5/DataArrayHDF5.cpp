@@ -115,44 +115,6 @@ void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
 //--------------------------------------------------
 
 
-vector<Dimension> DataArrayHDF5::dimensions() const {
-
-    vector<Dimension> dimensions;
-    size_t dim_count = dimensionCount();
-
-    for (size_t i = 0; i < dim_count; i++) {
-        size_t dim_id = i + 1;
-        string str_id = util::numToStr(dim_id);
-
-        if (dimension_group.hasGroup(str_id)) {
-            Group dim_group = dimension_group.openGroup(str_id, false);
-            string dim_type_name;
-            dim_group.getAttr("dimension_type", dim_type_name);
-            DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
-
-            Dimension dim;
-
-            if (dim_type == DimensionType::Set ) {
-                shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, dim_id));
-                dim = SetDimension(tmp);
-            } else if (dim_type == DimensionType::Range) {
-                shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, dim_id));
-                dim = RangeDimension(tmp);
-            } else if (dim_type == DimensionType::Sample) {
-                shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, dim_id));
-                dim = SampledDimension(tmp);
-            } else {
-                throw runtime_error("Invalid dimension type");
-            }
-
-            dimensions.push_back(dim);
-        }
-    }
-
-    return dimensions;
-}
-
-
 size_t DataArrayHDF5::dimensionCount() const {
     return dimension_group.objectCount();
 }

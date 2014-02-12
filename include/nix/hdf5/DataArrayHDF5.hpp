@@ -83,9 +83,6 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    std::vector<Dimension> dimensions() const;
-
-
     size_t dimensionCount() const;
 
 
