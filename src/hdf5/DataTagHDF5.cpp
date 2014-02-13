@@ -154,7 +154,7 @@ DataArray DataTagHDF5::getReference(size_t index) const {
 	if(index < refs.size()) {
 		id = refs[index];
 	} else {
-		throw runtime_error("No data array id: " + id);
+		throw runtime_error("No data array index: " + index);
 	}
 	// get referenced array
 	if(block().hasDataArray(id)) {
@@ -212,20 +212,6 @@ Representation DataTagHDF5::getRepresentation(size_t index) const{
     shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
 
     return Representation(tmp);
-}
-
-
-std::vector<Representation> DataTagHDF5::representations() const{
-    vector<Representation>  representation_obj;
-    size_t count = representation_group.objectCount();
-    for (size_t i = 0; i < count; i++) {
-        string id = representation_group.objectName(i);
-        Group group = representation_group.openGroup(id, false);
-        shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
-
-        representation_obj.push_back(Representation(tmp));
-    }
-    return representation_obj;
 }
 
 

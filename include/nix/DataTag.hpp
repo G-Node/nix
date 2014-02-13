@@ -282,14 +282,26 @@ public:
 		return impl_ptr->getRepresentation(index);
 	}
 
-	/**
-	 * Getter for all representations of the tag.
-	 *
-	 * @return All representations as vector.
-	 */
-	std::vector<Representation> representations() const {
-		return impl_ptr->representations();
-	}
+    /**
+     * Get all representations of this data tag.
+     *
+     * The parameter "filter" is defaulted to giving back all 
+     * representations. To use your own filter pass a lambda 
+     * that accepts a "Representation" as parameter and returns a bool 
+     * telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object representations as a vector     
+     */
+    std::vector<Representation> representations(
+                                  util::AcceptAll<Representation>::type filter
+                                  = util::AcceptAll<Representation>()) const
+    {
+        auto f = [this] (size_t i) { return getRepresentation(i); };
+        return getMultiple<Representation>(f,
+                                    representationCount(),
+                                    filter);
+    }
 
 	/**
 	 * Create a new representation.

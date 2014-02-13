@@ -186,8 +186,8 @@ public:
      *
      * @param id        The id of the representation.
      *
-     * @return The representation with the specified id. If it doesn't exist
-     *         an exception will be thrown.
+     * @return The representation with the specified id. If it 
+     *         doesn't exist an exception will be thrown.
      */
     Representation getRepresentation(const std::string &id) const {
         return impl_ptr->getRepresentation(id);
@@ -198,7 +198,8 @@ public:
      *
      * @param index        The index of the representation.
      *
-     * @return The representation with the specified index.
+     * @return The representation with the specified index. If it 
+     *         doesn't exist an exception will be thrown.
      */
     Representation getRepresentation(size_t index) const {
         return impl_ptr->getRepresentation(index);

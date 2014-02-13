@@ -163,13 +163,6 @@ public:
     virtual Representation getRepresentation(size_t index) const = 0;
 
     /**
-     * Getter for all representations of the tag.
-     *
-     * @return All representations as vector.
-     */
-    virtual std::vector<Representation> representations() const = 0;
-
-    /**
      * Create a new representation.
      *
      * @param data      The data array of this representation.

@@ -104,9 +104,6 @@ public:
     Representation getRepresentation(size_t index) const;
 
 
-    std::vector<Representation> representations() const;
-
-
     Representation createRepresentation(DataArray data, LinkType link_type);
 
 
