@@ -124,14 +124,14 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get dimensions associated with this block.
+     * Get dimensions associated with this data array.
      *
-     * The parameter "filter" is defaulted to giving back all arrays. To
-     * use your own filter pass a lambda that accepts a "DataArray"
+     * The parameter "filter" is defaulted to giving back all dimensions. 
+     * To use your own filter pass a lambda that accepts a "Dimension"
      * as parameter and returns a bool telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object data arrays as a vector     
+     * @return object dimensions as a vector     
      */
     std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
                                       = util::AcceptAll<Dimension>()) const

@@ -106,17 +106,13 @@ public:
     virtual DataArray getReference(const std::string &id) const = 0;
 
 
+    virtual DataArray getReference(size_t index) const = 0;
+
+
     virtual void addReference(const DataArray &reference) = 0;
 
 
     virtual bool removeReference(const std::string &id) = 0;
-
-    /**
-     * Getter for all referenced DataArrays.
-     *
-     * @return All referenced DataArrays
-     */
-    virtual std::vector<DataArray> references() const = 0;
 
     /**
      * Setter for all referenced DataArrays. Previously referenced

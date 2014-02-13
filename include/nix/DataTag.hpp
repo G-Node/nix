@@ -158,6 +158,11 @@ public:
 	}
 
 
+	DataArray getReference(size_t index) const {
+		return impl_ptr->getReference(index);
+	}
+	
+
 	void addReference(const DataArray &reference) {
 		impl_ptr->addReference(reference);
 	}
@@ -167,14 +172,24 @@ public:
 		return impl_ptr->removeReference(id);
 	}
 
-	/**
-	 * Getter for all referenced DataArrays.
-	 *
-	 * @return All referenced DataArrays
-	 */
-	std::vector<DataArray> references() const {
-		return impl_ptr->references();
-	}
+    /**
+     * Get referenced data arrays associated with this data tag.
+     *
+     * The parameter "filter" is defaulted to giving back all arrays. To
+     * use your own filter pass a lambda that accepts a "DataArray"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object referenced data arrays as a vector     
+     */
+    std::vector<DataArray> references(util::AcceptAll<DataArray>::type filter
+                                      = util::AcceptAll<DataArray>()) const
+    {
+        auto f = [this] (size_t i) { return getReference(i); };
+        return getMultiple<DataArray>(f,
+                                      referenceCount(),
+                                      filter);
+    }
 
 	/**
 	 * Setter for all referenced DataArrays. Previously referenced
