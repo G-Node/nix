@@ -74,9 +74,6 @@ public:
 
     bool deleteBlock(const std::string &id);
 
-
-    std::vector<Block> blocks() const;
-
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
@@ -91,9 +88,6 @@ public:
 
 
     size_t sectionCount() const;
-
-
-    std::vector<Section> sections() const;
 
 
     Section createSection(const std::string &name, const std::string &type);

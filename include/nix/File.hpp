@@ -68,9 +68,25 @@ public:
     }
 
 
-    std::vector<Block> blocks() const {
-        return impl_ptr->blocks();
+    /**
+     * Get blocks associated with this file.
+     *
+     * The parameter "filter" is defaulted to giving back all blocks. To
+     * use your own filter pass a lambda that accepts a "Block"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object blocks as a vector     
+     */
+    std::vector<Block> blocks(util::AcceptAll<Block>::type filter
+                                  = util::AcceptAll<Block>()) const
+    {
+        auto f = [this] (size_t i) { return getBlock(i); };
+        return getMultiple<Block>(f, 
+                                  blockCount(), 
+                                  filter);
     }
+    
 
     //--------------------------------------------------
     // Methods concerning sections
@@ -97,8 +113,24 @@ public:
     }
 
 
-    std::vector<Section> sections() const {
-        return impl_ptr->sections();
+
+    /**
+     * Get sections associated with this file.
+     *
+     * The parameter "filter" is defaulted to giving back all sections. 
+     * To use your own filter pass a lambda that accepts a "Section"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sections as a vector     
+     */
+    std::vector<Section> sections(util::AcceptAll<Section>::type filter
+                                  = util::AcceptAll<Section>()) const
+    {
+        auto f = [this] (size_t i) { return getSection(i); };
+        return getMultiple<Section>(f,
+                                    sectionCount(),
+                                    filter);
     }
 
 
