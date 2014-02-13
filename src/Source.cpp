@@ -46,8 +46,17 @@ struct SourceCont {
     size_t depth;
 };
 
-
-std::vector<Source> Source::findSources(std::function<bool(const Source&)> filter,
+/**
+ * Go through the tree of sources originating from this source until
+ * a max. level of "max_depth" and check for each source whether
+ * to return it depending on predicate function "filter".
+ * Return resulting vector of sources.
+ * 
+ * @param object filter function of type {@link nix::util::Filter::type}
+ * @param int maximum depth to search tree
+ * @return object vector of sources
+ */
+std::vector<Source> Source::findSources(std::function<bool(const Source &)> filter,
                                         size_t max_depth) const {
     vector<Source>   results;
     list<SourceCont> todo;
