@@ -89,16 +89,11 @@ public:
 
     virtual DataArray getReference(const std::string &id) const = 0;
 
+    virtual DataArray getReference(size_t index) const = 0;
+
     virtual void addReference(const DataArray &reference) = 0;
 
     virtual bool removeReference(const DataArray &reference) = 0;
-
-    /**
-     * Getter for all referenced DataArrays.
-     *
-     * @return All referenced DataArrays
-     */
-    virtual std::vector<DataArray> references() const = 0;
 
     /**
      * Setter for all referenced DataArrays. Previously referenced
@@ -147,13 +142,6 @@ public:
      * @return The representation with the specified index.
      */
     virtual Representation getRepresentation(size_t index) const = 0;
-
-    /**
-     * Getter for all representations of the tag.
-     *
-     * @return All representations as vector.
-     */
-    virtual std::vector<Representation> representations() const = 0;
 
     /**
      * Create a new representation.

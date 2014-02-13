@@ -102,6 +102,25 @@ DataArray SimpleTagHDF5::getReference(const std::string &id) const {
 }
 
 
+DataArray SimpleTagHDF5::getReference(size_t index) const {
+	std::vector<std::string> refs = references_list.get();
+	std::string id;
+	
+	// get reference id
+	if(index < refs.size()) {
+		id = refs[index];
+	} else {
+		throw runtime_error("No data array index: " + index);
+	}
+	// get referenced array
+	if(block().hasDataArray(id)) {
+		return block().getDataArray(id);
+	} else {
+		throw runtime_error("No data array id: " + id);
+	}
+}
+
+
 void SimpleTagHDF5::addReference(const DataArray &reference) {
     string reference_id = reference.id();
 
@@ -116,20 +135,6 @@ void SimpleTagHDF5::addReference(const DataArray &reference) {
 
 bool SimpleTagHDF5::removeReference(const DataArray &reference) {
     return references_list.remove(reference.id());
-}
-
-
-std::vector<DataArray> SimpleTagHDF5::references() const {
-    vector<string> ids = references_list.get();
-    vector<DataArray> refs;
-
-    for (size_t i = 0; i < ids.size(); i++) {
-        if (block().hasDataArray(ids[i])) {
-            refs.push_back(block().getDataArray(ids[i]));
-        }
-    }
-
-    return refs;
 }
 
 
@@ -169,20 +174,6 @@ Representation SimpleTagHDF5::getRepresentation(size_t index) const{
     shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), rep_g, rep_id));
 
     return Representation(tmp);
-}
-
-
-std::vector<Representation> SimpleTagHDF5::representations() const{
-    vector<Representation>  representation_obj;
-    size_t count = representation_group.objectCount();
-    for (size_t i = 0; i < count; i++) {
-        string rep_id = representation_group.objectName(i);
-        Group rep_g = representation_group.openGroup(rep_id, false);
-        shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), rep_g, rep_id));
-
-        representation_obj.push_back(Representation(tmp));
-    }
-    return representation_obj;
 }
 
 

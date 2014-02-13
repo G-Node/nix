@@ -124,9 +124,14 @@ public:
 
 
     DataArray getReference(const std::string &id) const {
-        return getReference(id);
+        return impl_ptr->getReference(id);
     }
 
+
+	DataArray getReference(size_t index) const {
+		return impl_ptr->getReference(index);
+	}
+	
 
     void addReference(const DataArray &reference) {
         impl_ptr->addReference(reference);
@@ -138,12 +143,22 @@ public:
     }
 
     /**
-     * Getter for all referenced DataArrays.
+     * Get referenced data arrays associated with this simple tag.
      *
-     * @return All referenced DataArrays
+     * The parameter "filter" is defaulted to giving back all arrays. To
+     * use your own filter pass a lambda that accepts a "DataArray"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object referenced data arrays as a vector     
      */
-    std::vector<DataArray> references() const {
-        return impl_ptr->references();
+    std::vector<DataArray> references(util::AcceptAll<DataArray>::type filter
+                                      = util::AcceptAll<DataArray>()) const
+    {
+        auto f = [this] (size_t i) { return getReference(i); };
+        return getMultiple<DataArray>(f,
+                                      referenceCount(),
+                                      filter);
     }
 
     /**
@@ -206,12 +221,24 @@ public:
     }
 
     /**
-     * Getter for all representations of the tag.
+     * Get all representations of this simple tag.
      *
-     * @return All representations as vector.
+     * The parameter "filter" is defaulted to giving back all 
+     * representations. To use your own filter pass a lambda 
+     * that accepts a "Representation" as parameter and returns a bool 
+     * telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object representations as a vector     
      */
-    std::vector<Representation> representations() const {
-        return impl_ptr->representations();
+    std::vector<Representation> representations(
+                                  util::AcceptAll<Representation>::type filter
+                                  = util::AcceptAll<Representation>()) const
+    {
+        auto f = [this] (size_t i) { return getRepresentation(i); };
+        return getMultiple<Representation>(f,
+                                    representationCount(),
+                                    filter);
     }
 
     /**
