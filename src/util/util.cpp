@@ -8,6 +8,7 @@
 
 #include <string>
 #include <cstdlib>
+#include <mutex>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
@@ -33,11 +34,11 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 
 string createId(string prefix, int length) {
-    static bool initialized = false;
-    if(!initialized) {
-        initialized = true;
-        srand(time(NULL));
-    }
+    static std::once_flag rand_init;
+    std::call_once(rand_init, []() {
+            srand(time(NULL));
+        });
+
     string id;
     if (prefix.length() > 0) {
         id.append(prefix);
