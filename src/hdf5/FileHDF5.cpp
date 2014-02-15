@@ -127,7 +127,7 @@ Section FileHDF5::getSection(const std::string &id) const{
 
 
 Section FileHDF5::getSection(size_t index) const{
-    string id = data.objectName(index);
+    string id = metadata.objectName(index);    
     return getSection(id);
 }
 
