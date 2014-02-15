@@ -127,13 +127,6 @@ public:
     virtual Section getSection(size_t index) const = 0;
 
     /**
-     * Returns the subsections
-     *
-     * @return vector of direct subsections.
-     */
-    virtual std::vector<Section> sections() const = 0;
-
-    /**
      *  Adds a new child section.
      *
      *  @param name: the name of the new section
@@ -203,13 +196,6 @@ public:
      * @return The found property.
      */
     virtual Property getPropertyByName(const std::string &name) const = 0;
-
-    /**
-     * Returns all Properties.
-     *
-     * @return vector<Property>
-     */
-    virtual std::vector<Property> properties() const = 0;
 
     /**
      * Add a Property to this section.

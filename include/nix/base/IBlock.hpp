@@ -67,16 +67,6 @@ public:
      */
     virtual size_t sourceCount() const = 0;
 
-    /**
-     * Returns all root sources in this block as a vector.
-     *
-     * @return All root sources.
-     */
-    virtual std::vector<Source> sources() const = 0;
-
-
-    virtual std::vector<Source> findSources(std::function<bool(const Source &)>) const = 0;
-
 
     /**
      * Create a new root source.
@@ -129,13 +119,6 @@ public:
      * @return The data array at the specified index.
      */
     virtual DataArray getDataArray(size_t index) const = 0;
-
-    /**
-     * Returns all data arrays of this block as a vector.
-     *
-     * @return All data arrays.
-     */
-    virtual std::vector<DataArray> dataArrays() const = 0;
 
     /**
      * Returns the number of all data arrays of the block.
@@ -252,13 +235,6 @@ public:
      * @return The data tag at the specified index.
      */
     virtual DataTag getDataTag(size_t index) const = 0;
-
-    /**
-     * Get all simple data associated with this block.
-     *
-     * @return All simple tags as a vector.
-     */
-    virtual std::vector<DataTag> dataTags() const = 0;
 
     /**
      * Returns the number of data tag associated with

@@ -88,20 +88,6 @@ Block FileHDF5::getBlock(size_t index) const {
 }
 
 
-vector<Block> FileHDF5::blocks() const {
-    vector<Block>  block_obj;
-
-    size_t block_count = data.objectCount();
-    for (size_t i = 0; i < block_count; i++) {
-        string id = data.objectName(i);
-        shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), data.openGroup(id, false), id));
-        block_obj.push_back(Block(ptr));
-    }
-
-    return block_obj;
-}
-
-
 Block FileHDF5::createBlock(const std::string &name, const string &type) {
     string id = util::createId("block");
     while(data.hasObject(id))
@@ -129,19 +115,6 @@ size_t FileHDF5::blockCount() const {
 }
 
 
-std::vector<Section> FileHDF5::sections()const{
-    vector<Section>  section_obj;
-    size_t section_count = metadata.objectCount();
-    for (size_t i = 0; i < section_count; i++) {
-        string id = metadata.objectName(i);
-        shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, false), id));
-        Section section(ptr);
-        section_obj.push_back(section);
-    }
-    return section_obj;
-}
-
-
 bool FileHDF5::hasSection(const std::string &id) const{
     return metadata.hasGroup(id);
 }
@@ -154,7 +127,7 @@ Section FileHDF5::getSection(const std::string &id) const{
 
 
 Section FileHDF5::getSection(size_t index) const{
-    string id = data.objectName(index);
+    string id = metadata.objectName(index);    
     return getSection(id);
 }
 

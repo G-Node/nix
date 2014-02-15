@@ -99,9 +99,6 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    virtual std::vector<Dimension> dimensions() const = 0;
-
-
     virtual size_t dimensionCount() const = 0;
 
 

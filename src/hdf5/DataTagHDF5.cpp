@@ -140,12 +140,29 @@ size_t DataTagHDF5::referenceCount() const {
 
 DataArray DataTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
-        return block().getDataArray(id);
+		return block().getDataArray(id);
     } else {
         throw runtime_error("No reference with id: " + id);
     }
 }
 
+DataArray DataTagHDF5::getReference(size_t index) const {
+	std::vector<std::string> refs = reference_list.get();
+	std::string id;
+	
+	// get reference id
+	if(index < refs.size()) {
+		id = refs[index];
+	} else {
+		throw runtime_error("No data array index: " + index);
+	}
+	// get referenced array
+	if(block().hasDataArray(id)) {
+		return block().getDataArray(id);
+	} else {
+		throw runtime_error("No data array id: " + id);
+	}
+}
 
 void DataTagHDF5::addReference(const DataArray &reference) {
     reference_list.add(reference.id());
@@ -154,21 +171,6 @@ void DataTagHDF5::addReference(const DataArray &reference) {
 
 bool DataTagHDF5::removeReference(const std::string &id) {
     return reference_list.remove(id);
-}
-
-
-std::vector<DataArray> DataTagHDF5::references() const {
-    vector<string> refs = reference_list.get();
-    vector<DataArray> data_obj;
-
-    for (size_t i = 0; i < refs.size(); i++) {
-        if (block().hasDataArray(refs[i])) {
-            data_obj.push_back(block().getDataArray(refs[i]));
-        } else {
-            // TODO ???
-        }
-    }
-    return data_obj;
 }
 
 
@@ -210,20 +212,6 @@ Representation DataTagHDF5::getRepresentation(size_t index) const{
     shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
 
     return Representation(tmp);
-}
-
-
-std::vector<Representation> DataTagHDF5::representations() const{
-    vector<Representation>  representation_obj;
-    size_t count = representation_group.objectCount();
-    for (size_t i = 0; i < count; i++) {
-        string id = representation_group.objectName(i);
-        Group group = representation_group.openGroup(id, false);
-        shared_ptr<RepresentationHDF5> tmp(new RepresentationHDF5(file(), block(), group, id));
-
-        representation_obj.push_back(Representation(tmp));
-    }
-    return representation_obj;
 }
 
 

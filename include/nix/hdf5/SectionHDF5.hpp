@@ -102,9 +102,6 @@ public:
     Section getSection(size_t index) const;
 
 
-    std::vector<Section> sections() const;
-
-
     Section createSection(const std::string &name, const std::string &type);
 
 
@@ -131,9 +128,6 @@ public:
 
 
     Property getPropertyByName(const std::string &name) const;
-
-
-    std::vector<Property> properties() const;
 
 
     Property createProperty(const std::string &name);

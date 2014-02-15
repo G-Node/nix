@@ -96,13 +96,6 @@ public:
      */
     virtual bool deleteBlock(const std::string &id) = 0;
 
-    /**
-     * Returns all blocks in this file.
-     *
-     * @return All blocks in this file as a vector.
-     */
-    virtual std::vector<Block> blocks() const = 0;
-
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
@@ -140,13 +133,6 @@ public:
      * @return size_t   The number of sections.
      */
     virtual size_t sectionCount() const = 0;
-
-    /**
-     * Returns all root sections in this file.
-     *
-     * @returns All root sections as vector.
-     */
-    virtual std::vector<Section> sections() const = 0;
 
     /**
      * Creates a new Section with a given name and type. Both must not be empty.

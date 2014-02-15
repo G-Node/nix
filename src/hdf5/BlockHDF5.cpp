@@ -74,35 +74,6 @@ size_t BlockHDF5::sourceCount() const {
 }
 
 
-std::vector<Source> BlockHDF5::sources() const {
-    vector<Source> source_obj;
-
-    size_t source_count = sourceCount();
-    for (size_t i = 0; i < source_count; i++) {
-        Source s = getSource(i);
-        source_obj.push_back(s);
-    }
-
-    return source_obj;
-}
-
-
-std::vector<Source> BlockHDF5::findSources(std::function<bool(const Source &)> predicate) const
-{
-    vector<Source> result;
-
-    size_t source_count = sourceCount();
-    for (size_t i = 0; i < source_count; i++) {
-        // TODO implement
-        // Source s = getSource(i);
-        // vector<Source> tmp = s.collectIf(predicate);
-        // result.insert(result.begin(), tmp.begin(), tmp.end());
-    }
-
-    return result;
-}
-
-
 Source BlockHDF5::createSource(const string &name,const string &type) {
     string id = util::createId("source");
 
@@ -224,20 +195,6 @@ size_t BlockHDF5::dataArrayCount() const {
 }
 
 
-vector<DataArray> BlockHDF5::dataArrays() const {
-    vector<DataArray> array_obj;
-
-    size_t array_count = dataArrayCount();
-    for (size_t i = 0; i < array_count; i++) {
-        string id = data_array_group.objectName(i);
-        shared_ptr<DataArrayHDF5> tmp(new DataArrayHDF5(file(), block(), data_array_group.openGroup(id, true), id));
-        array_obj.push_back(DataArray(tmp));
-    }
-
-    return array_obj;
-}
-
-
 DataArray BlockHDF5::createDataArray(const std::string &name, const std::string &type) {
     string id = util::createId("data_array");
 
@@ -309,21 +266,6 @@ DataTag BlockHDF5::getDataTag(size_t index) const {
 
 size_t BlockHDF5::dataTagCount() const{
     return data_tag_group.objectCount();
-}
-
-
-std::vector<DataTag> BlockHDF5::dataTags() const{
-    vector<DataTag> tag_obj;
-
-    size_t tag_count = dataTagCount();
-    for (size_t i = 0; i < tag_count; i++) {
-        string id = data_tag_group.objectName(i);
-
-        shared_ptr<DataTagHDF5> tmp(new DataTagHDF5(file(), block(), data_tag_group.openGroup(id), id));
-        tag_obj.push_back(DataTag(tmp));
-    }
-
-    return tag_obj;
 }
 
 

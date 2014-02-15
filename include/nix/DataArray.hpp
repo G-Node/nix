@@ -123,8 +123,23 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    std::vector<Dimension> dimensions() const {
-        return impl_ptr->dimensions();
+    /**
+     * Get dimensions associated with this data array.
+     *
+     * The parameter "filter" is defaulted to giving back all dimensions. 
+     * To use your own filter pass a lambda that accepts a "Dimension"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object dimensions as a vector     
+     */
+    std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
+                                      = util::AcceptAll<Dimension>()) const
+    {
+        auto f = [this] (size_t i) { return getDimension(i); };
+        return getMultiple<Dimension>(f,
+                                      dimensionCount(),
+                                      filter);
     }
 
 

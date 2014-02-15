@@ -76,13 +76,13 @@ public:
     DataArray getReference(const std::string &id) const;
 
 
+    DataArray getReference(size_t index) const;
+    
+
     void addReference(const DataArray &reference);
 
 
     bool removeReference(const std::string &id);
-
-
-    std::vector<DataArray> references() const;
 
 
     void references(const std::vector<DataArray> &references);
@@ -102,9 +102,6 @@ public:
 
 
     Representation getRepresentation(size_t index) const;
-
-
-    std::vector<Representation> representations() const;
 
 
     Representation createRepresentation(DataArray data, LinkType link_type);

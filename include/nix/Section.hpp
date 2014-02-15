@@ -162,13 +162,24 @@ public:
         return impl_ptr->getSection(index);
     }
 
+
     /**
-     * Returns the subsections
+     * Get sub sections associated with this section.
      *
-     * @return vector of direct subsections.
+     * The parameter "filter" is defaulted to giving back all sections. 
+     * To use your own filter pass a lambda that accepts a "Section"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sub sections as a vector     
      */
-    std::vector<Section> sections() const {
-        return impl_ptr->sections();
+    std::vector<Section> sections(util::AcceptAll<Section>::type filter
+                                  = util::AcceptAll<Section>()) const
+    {
+        auto f = [this] (size_t i) { return getSection(i); };
+        return getMultiple<Section>(f,
+                                    sectionCount(),
+                                    filter);
     }
 
     /**
@@ -292,13 +303,24 @@ public:
         return impl_ptr->getPropertyByName(name);
     }
 
+
     /**
-     * Returns all Properties.
+     * Get properties associated with this section.
      *
-     * @return vector<Property>
+     * The parameter "filter" is defaulted to giving back all properties. 
+     * To use your own filter pass a lambda that accepts a "Property"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object properties as a vector     
      */
-    std::vector<Property> properties() const {
-        return impl_ptr->properties();
+    std::vector<Property> properties(util::AcceptAll<Property>::type filter
+                                  = util::AcceptAll<Property>()) const
+    {
+        auto f = [this] (size_t i) { return getProperty(i); };
+        return getMultiple<Property>(f,
+                                    propertyCount(),
+                                    filter);
     }
 
     /**

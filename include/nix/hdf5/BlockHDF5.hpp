@@ -73,13 +73,6 @@ public:
     size_t sourceCount() const;
 
 
-    std::vector<Source> sources() const;
-
-
-
-    std::vector<Source> findSources(std::function<bool(const Source &)>) const;
-
-
     Source createSource(const std::string &name, const std::string &type);
 
 
@@ -96,9 +89,6 @@ public:
 
 
     DataArray getDataArray(size_t index) const;
-
-
-    std::vector<DataArray> dataArrays() const;
 
 
     size_t dataArrayCount() const;
@@ -143,9 +133,6 @@ public:
 
 
     DataTag getDataTag(size_t index) const;
-
-
-    std::vector<DataTag> dataTags() const;
 
 
     size_t dataTagCount() const;

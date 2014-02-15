@@ -153,22 +153,6 @@ Section SectionHDF5::getSection(size_t index) const {
 }
 
 
-vector<Section> SectionHDF5::sections() const {
-    vector<Section>  secs;
-
-    size_t section_count = section_group.objectCount();
-    for (size_t i = 0; i < section_count; i++) {
-        string id = section_group.objectName(i);
-        Group grp = section_group.openGroup(id, false);
-
-        shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), grp, id));
-        secs.push_back(Section(tmp));
-    }
-
-    return secs;
-}
-
-
 Section SectionHDF5::createSection(const string &name, const string &type) {
     string new_id = util::createId("section");
 
@@ -270,21 +254,6 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
     }
 
     return prop;
-}
-
-
-vector<Property> SectionHDF5::properties() const {
-    vector<Property> props;
-
-    for (size_t i = 0; i < propertyCount(); i++){
-        string id = property_group.objectName(i);
-        Group grp = property_group.openGroup(id,false);
-
-        shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, id));
-        props.push_back(Property(tmp));
-    }
-
-    return props;
 }
 
 
