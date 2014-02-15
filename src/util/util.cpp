@@ -35,9 +35,7 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 string createId(string prefix, int length) {
     static std::once_flag rand_init;
-    std::call_once(rand_init, []() {
-            srand(time(NULL));
-        });
+    std::call_once(rand_init, [](){ srand(static_cast<unsigned int>(time(0))); });
 
     string id;
     if (prefix.length() > 0) {
