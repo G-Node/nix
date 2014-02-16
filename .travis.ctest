@@ -12,8 +12,15 @@ set(CTEST_NOTES_FILES ${CTEST_BINARY_DIRECTORY}/travis.cfg)
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION "$ENV{CMAKE_BUILD_TYPE}")
 
+find_program(CLANG_CHECK clang-check)
+
 ctest_start(Continuous)
 ctest_configure()
 ctest_build()
+
+if(CLANG_CHECK AND $ENV{COMPILER} MATCHES "clang")
+  ctest_build(TARGET check)
+endif()
+
 ctest_test()
 ctest_submit()
