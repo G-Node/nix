@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <vector>
+#include <list>
 #include <functional>
 
 namespace nix {
@@ -24,7 +25,8 @@ protected:
     std::shared_ptr<T> impl_ptr;
 
     /**
-     * Get entities by index
+     * Low level helper to get multiple entities via a getter function
+     * that has to be provided.
      * 
      * Get multiple entities of given type and return them as vector.
      * The template param specifies which type.
@@ -37,6 +39,8 @@ protected:
      * of given type. To use your own filter pass a lambda that accepts 
      * an entity of given type as parameter and returns a bool telling 
      * whether to get it or not.
+     * NOTE: there is no need to specify 2nd template param TFUNC as it
+     * should be automatically deduced.
      * 
      * @param class "get function": std::function of return type T_ENT and 
      *              param type "int" to get entities
@@ -46,8 +50,8 @@ protected:
      * @return class entities of the given type as a vector
      */
     template<typename TENT, typename TFUNC>
-    std::vector<TENT> getMultiple(
-        TFUNC const &getEnt,
+    std::vector<TENT> getEntities(
+        TFUNC const &getEntity,
         int nT, 
         std::function<bool(TENT)> filter) const 
     {
@@ -59,13 +63,71 @@ protected:
 
         for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
             if(filter(*it)) {
-                *it = getEnt( i++ );
+                *it = getEntity( i++ );
             }
         }
 
         return e;
     }
     
+
+    /**
+     * Helper struct for other low level helpers.
+     */
+    template<typename TENT>
+    struct EntCont {
+        EntCont(TENT s, size_t d = 0)
+            : entity(s), depth(d)
+        {}
+
+        TENT entity;
+        size_t depth;
+    };
+    
+    
+    /**
+     * Go through the tree of sources originating from this source until
+     * a max. level of "max_depth" and check for each source whether
+     * to return it depending on predicate function "filter".
+     * Return resulting vector of sources.
+     * 
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @param int maximum depth to search tree
+     * @return object vector of sources
+     */
+    template<typename TENT>
+    std::vector<TENT> findEntities(TENT const self, 
+                                   std::function<bool(TENT)> filter,
+                                   size_t max_depth) const 
+    {
+        std::vector<TENT>  results;
+        std::list<EntCont<TENT>> todo;
+
+        todo.push_back(EntCont<TENT>(self));
+
+        while(todo.size() > 0) 
+        {
+            EntCont<TENT> current = todo.front();
+            todo.pop_front();
+
+            bool filter_ok = filter(current.entity);
+            if (filter_ok) {
+                results.push_back(current.entity);
+            }
+
+            if (current.depth < max_depth) {
+                std::vector<TENT> children = current.entity.children();
+                size_t next_depth = current.depth + 1;
+
+                for (auto it = children.begin(); it != children.end(); ++it) {
+                    todo.push_back(EntCont<TENT>(*it, next_depth));
+                }
+            }
+        }
+
+        return results;
+    }
+
 public:
 
     ImplContainer()

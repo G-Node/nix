@@ -60,22 +60,6 @@ size_t SourceHDF5::sourceCount() const {
 }
 
 
-std::vector<Source> SourceHDF5::sources() const {
-    vector<Source> srcs;
-
-    size_t src_count = sourceCount();
-    for (size_t i = 0; i < src_count; i++) {
-        string id  = source_group.objectName(i);
-        Group  grp = source_group.openGroup(id, false);
-
-        shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
-        srcs.push_back(Source(tmp));
-    }
-
-    return srcs;
-}
-
-
 Source SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
 

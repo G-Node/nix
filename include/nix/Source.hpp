@@ -23,8 +23,9 @@ namespace nix {
 
 
 class NIXAPI Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
-
+	
 public:
+
 
     Source();
 
@@ -85,27 +86,51 @@ public:
     }
 
     /**
-     * Returns all sources that are direct descendant of this source as a vector.
+     * Equivalent to {@link sources} method, returning all children.
      *
-     * @return All direct child sources.
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sources as a vector
      */
-    std::vector<Source> sources() const {
-        return impl_ptr->sources();
+    std::vector<Source> children() const {
+        return sources();
     }
 
     /**
-     * Recoursively searches through all sources and their descendents and returns every source
-     * that passes the specified filter. Further the result of the method is limited by the maximum
-     * depth.
+     * Get sources associated with this source (aka "child" sources).
      *
-     * @param filter        A simple filter funcion that is applied on every source.
-     * @param max_depth     The maximum depth of the search.
+     * The parameter "filter" is defaulted to giving back all sources.
+     * To use your own filter pass a lambda that accepts a "Source"
+     * as parameter and returns a bool telling whether to get it or not.
      *
-     * @return All matching sources as a vector.
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sources as a vector
      */
-    std::vector<Source> findSources(std::function<bool(const Source&)> filter = util::AcceptAll<Source>(),
-                                    size_t max_depth = std::numeric_limits<size_t>::max()) const;
+    std::vector<Source> sources(util::AcceptAll<Source>::type filter
+                                = util::AcceptAll<Source>()) const
+    {
+        auto f = [this] (size_t i) { return getSource(i); };
+        return getEntities<Source>(f,
+                                   sourceCount(),
+                                   filter);
+    }
 
+    /**
+     * Go through the tree of sources originating from this source until
+     * a max. level of "max_depth" and check for each source whether
+     * to return it depending on predicate function "filter".
+     * Return resulting vector of sources.
+     * 
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @param int maximum depth to search tree
+     * @return object vector of sources
+     */
+    std::vector<Source> findSources(util::AcceptAll<Source>::type filter = util::AcceptAll<Source>(),
+                                            size_t max_depth = std::numeric_limits<size_t>::max()) const
+    {
+        return findEntities<Source>(*this,
+                                    filter,
+                                    max_depth);
+    }
 
     /**
      * Create a new root source.

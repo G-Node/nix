@@ -82,7 +82,7 @@ public:
                                   = util::AcceptAll<Block>()) const
     {
         auto f = [this] (size_t i) { return getBlock(i); };
-        return getMultiple<Block>(f, 
+        return getEntities<Block>(f, 
                                   blockCount(), 
                                   filter);
     }
@@ -113,7 +113,6 @@ public:
     }
 
 
-
     /**
      * Get sections associated with this file.
      *
@@ -128,7 +127,7 @@ public:
                                   = util::AcceptAll<Section>()) const
     {
         auto f = [this] (size_t i) { return getSection(i); };
-        return getMultiple<Section>(f,
+        return getEntities<Section>(f,
                                     sectionCount(),
                                     filter);
     }

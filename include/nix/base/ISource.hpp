@@ -65,13 +65,6 @@ public:
     virtual size_t sourceCount() const = 0;
 
     /**
-     * Returns all sources that are direct descendant of this source as a vector.
-     *
-     * @return All direct child sources.
-     */
-    virtual std::vector<Source> sources() const = 0;
-
-    /**
      * Create a new root source.
      *
      * @param name      The name of the source to create.
