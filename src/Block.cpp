@@ -25,7 +25,7 @@ namespace nix {
      * @return object vector of sources
      */
     std::vector<Source> Block::findSources(
-                           std::function<bool(const Source &)> filter, 
+                           util::AcceptAll<Source> filter, 
                            size_t max_depth) const
     {
         vector<Source> probes = sources();

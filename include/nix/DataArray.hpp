@@ -137,7 +137,7 @@ public:
                                       = util::AcceptAll<Dimension>()) const
     {
         auto f = [this] (size_t i) { return getDimension(i); };
-        return getMultiple<Dimension>(f,
+        return getEntities<Dimension>(f,
                                       dimensionCount(),
                                       filter);
     }

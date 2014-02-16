@@ -156,7 +156,7 @@ public:
                                       = util::AcceptAll<DataArray>()) const
     {
         auto f = [this] (size_t i) { return getReference(i); };
-        return getMultiple<DataArray>(f,
+        return getEntities<DataArray>(f,
                                       referenceCount(),
                                       filter);
     }
@@ -236,7 +236,7 @@ public:
                                   = util::AcceptAll<Representation>()) const
     {
         auto f = [this] (size_t i) { return getRepresentation(i); };
-        return getMultiple<Representation>(f,
+        return getEntities<Representation>(f,
                                     representationCount(),
                                     filter);
     }

@@ -25,8 +25,9 @@ namespace nix {
 
 
 class NIXAPI Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
-
+    
 public:
+
 
     Section();
 
@@ -162,6 +163,15 @@ public:
         return impl_ptr->getSection(index);
     }
 
+    /**
+     * Equivalent to {@link sections} method, returning all children.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object sections as a vector
+     */
+    std::vector<Section> children() const {
+        return sections();
+    }
 
     /**
      * Get sub sections associated with this section.
@@ -177,24 +187,29 @@ public:
                                   = util::AcceptAll<Section>()) const
     {
         auto f = [this] (size_t i) { return getSection(i); };
-        return getMultiple<Section>(f,
+        return getEntities<Section>(f,
                                     sectionCount(),
                                     filter);
     }
 
     /**
-     * Recoursively searches through all child sections and their descendents and returns every
-     * section that passes the specified filter. Further the result of the method is limited by
-     * the maximum epth.
-     *
-     * @param filter        A simple filter funcion that is applied on every section.
-     * @param max_depth     The maximum depth of the search.
-     *
-     * @return All matching section as a vector.
+     * Go through the tree of sources originating from this source until
+     * a max. level of "max_depth" and check for each source whether
+     * to return it depending on predicate function "filter".
+     * Return resulting vector of sources.
+     * 
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @param int maximum depth to search tree
+     * @return object vector of sources
      */
-    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::AcceptAll<Section>(),
-                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
-
+    std::vector<Section> findSections(util::AcceptAll<Section>::type filter = util::AcceptAll<Section>(),
+                                      size_t max_depth = std::numeric_limits<size_t>::max()) const
+    {
+        return findEntities<Section>(*this,
+                                    filter,
+                                    max_depth);
+    }
+    
     /**
      * Determines whether this section has a related section of the specified type.
      *
@@ -318,7 +333,7 @@ public:
                                   = util::AcceptAll<Property>()) const
     {
         auto f = [this] (size_t i) { return getProperty(i); };
-        return getMultiple<Property>(f,
+        return getEntities<Property>(f,
                                     propertyCount(),
                                     filter);
     }

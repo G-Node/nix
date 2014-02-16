@@ -31,9 +31,8 @@ private:
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testBlockAccess);
-
-    CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testSectionAccess);
+    CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file_open, file_other, file_null;
@@ -48,9 +47,6 @@ public:
     void testCreatedAt();
     void testUpdatedAt();
     void testBlockAccess();
-
-    void testOperators();
     void testSectionAccess();
-
+    void testOperators();
 };
-

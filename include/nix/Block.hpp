@@ -105,7 +105,7 @@ public:
                                 = util::AcceptAll<Source>()) const
     {
         auto f = [this] (size_t i) { return getSource(i); };
-        return getMultiple<Source>(f,
+        return getEntities<Source>(f,
                                    sourceCount(),
                                    filter);
     }
@@ -122,7 +122,7 @@ public:
      * @return object vector of sources
      */
     std::vector<Source> findSources(
-                           std::function<bool(const Source &)> filter, 
+                           util::AcceptAll<Source> filter, 
                            size_t max_depth) const;
 
     /**
@@ -202,7 +202,7 @@ public:
                                       = util::AcceptAll<DataArray>()) const
     {
         auto f = [this] (size_t i) { return getDataArray(i); };
-        return getMultiple<DataArray>(f,
+        return getEntities<DataArray>(f,
                                       dataArrayCount(),
                                       filter);
     }
@@ -291,7 +291,7 @@ public:
                                       = util::AcceptAll<SimpleTag>()) const
     {
         auto f = [this] (size_t i) { return getSimpleTag(i); };
-        return getMultiple<SimpleTag>(f,
+        return getEntities<SimpleTag>(f,
                                       simpleTagCount(),
                                       filter);
     }
@@ -363,7 +363,6 @@ public:
      *
      * @return The data tag at the specified index.
      */
-    // TODO maybe remove this method?
     DataTag getDataTag(size_t index) const {
         return impl_ptr->getDataTag(index);
     }
@@ -382,7 +381,7 @@ public:
                                   = util::AcceptAll<DataTag>()) const
     {
         auto f = [this] (size_t i) { return getDataTag(i); };
-        return getMultiple<DataTag>(f,
+        return getEntities<DataTag>(f,
                                     dataTagCount(),
                                     filter);
     }

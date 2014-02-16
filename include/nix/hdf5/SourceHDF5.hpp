@@ -63,9 +63,6 @@ public:
     size_t sourceCount() const;
 
 
-    std::vector<Source> sources() const;
-
-
     Source createSource(const std::string &name, const std::string &type);
 
 
