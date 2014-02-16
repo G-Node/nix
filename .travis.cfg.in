@@ -1,0 +1,9 @@
+"travis" : {
+	 "branch"       : "$ENV{TRAVIS_BRANCH}",
+	 "build_number" : "$ENV{TRAVIS_BUILD_NUMBER}",
+	 "commit"       : "$ENV{TRAVIS_COMMIT}",
+	 "commit_range" : "$ENV{TRAVIS_COMMIT_RANGE}",
+	 "job_number"   : "$ENV{TRAVIS_JOB_NUMBER}",
+	 "pull_request" : "$ENV{TRAVIS_PULL_REQUEST}",
+	 "repo_slug"    : "$ENV{TRAVIS_REPO_SLUG}"
+}
