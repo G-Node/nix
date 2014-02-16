@@ -85,6 +85,19 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   target_link_libraries(playground pandora)
 endif()
 
+
+######## static analysis
+find_program(CLANG_CHECK clang-check)
+if(CLANG_CHECK)
+  MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
+
+  add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${pandora_SOURCES}
+                    DEPENDS pandora
+		    SOURCES ${pandora_SOURCES})
+endif()
+
+
 ########################################
 # Tests
 
