@@ -6,21 +6,8 @@ env:
     - COMPILER=g++-4.8
     - COMPILER=clang CXXFLAGS="-stdlib=libstdc++"
 
-before_script:
-- mkdir -p build
-- cd build
-- CXX=${COMPILER} cmake -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} ..
-- cd ..
-
 script:
-- cd build
-- make
-- cd ..
-
-after_success:
-- cd build
-- ctest -D Experimental
-- cd ..
+- CXX=${COMPILER} ctest -VV -S .travis.ctest
 
 install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y

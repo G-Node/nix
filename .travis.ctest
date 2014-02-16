@@ -1,0 +1,14 @@
+set(CTEST_SITE "travis")
+set(CTEST_BUILD_NAME "travis-$ENV{TRAVIS_BRANCH}-$ENV{TRAVIS_BUILD_NUMBER}-$ENV{COMPILER}")
+
+set(CTEST_SOURCE_DIRECTORY "$ENV{TRAVIS_BUILD_DIR}")
+set(CTEST_BINARY_DIRECTORY "${CTEST_SOURCE_DIRECTORY}/build")
+
+set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+set(CTEST_BUILD_CONFIGURATION "$ENV{CMAKE_BUILD_TYPE}")
+
+ctest_start(Continuous)
+ctest_configure()
+ctest_build()
+ctest_test()
+ctest_submit()
