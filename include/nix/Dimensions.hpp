@@ -121,7 +121,7 @@ public:
     }
 
 
-    double offset() const {
+    boost::optional<double> offset() const {
         return impl_ptr->offset();
     }
 
