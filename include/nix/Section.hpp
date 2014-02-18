@@ -165,6 +165,10 @@ public:
 
     /**
      * Equivalent to {@link sections} method, returning all children.
+     * NOTE: Sections upon being created in sections, automatically get
+     * set their "parent" pointer to their parent section. Thus the set
+     * of all children of a section is equivalent to the set of all
+     * sub-sections of a section.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
      * @return object sections as a vector
