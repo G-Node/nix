@@ -1,0 +1,31 @@
+set(CTEST_SOURCE_DIRECTORY ".")
+set(CTEST_BINARY_DIRECTORY "${CTEST_SOURCE_DIRECTORY}/build")
+
+find_program(GIT git)
+find_program(UNAME uname)
+
+execute_process(COMMAND ${UNAME} -s OUTPUT_VARIABLE OSNAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${UNAME} -n OUTPUT_VARIABLE HOST   OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${UNAME} -m OUTPUT_VARIABLE ARCH   OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+execute_process(COMMAND ${GIT} rev-parse --abbrev-ref HEAD OUTPUT_VARIABLE GIT_BRANCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${GIT} rev-parse HEAD              OUTPUT_VARIABLE GIT_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+string(SUBSTRING ${GIT_COMMIT} 0 7 COMMIT_ID)
+
+set(CTEST_SITE ${HOST})
+set(CTEST_BUILD_NAME "${COMMIT_ID}-${OSNAME}-${ARCH}")
+
+configure_file(${CTEST_SOURCE_DIRECTORY}/.git.cfg.in ${CTEST_BINARY_DIRECTORY}/git.cfg)
+set(CTEST_NOTES_FILES ${CTEST_BINARY_DIRECTORY}/git.cfg)
+
+set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+set(CTEST_BUILD_CONFIGURATION "Debug")
+
+find_program(CLANG_CHECK clang-check)
+
+ctest_start(Continuous)
+ctest_configure()
+ctest_build()
+ctest_test()
+ctest_submit()

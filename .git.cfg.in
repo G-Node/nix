@@ -1,0 +1,4 @@
+"git" : {
+	 "branch"       : "${GIT_BRANCH}",
+	 "commit"       : "${GIT_COMMIT}"
+}
