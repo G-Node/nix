@@ -48,12 +48,18 @@ public:
 
 
     std::string name() const;
-
+    
+    
+    void name(const none_t t);
+    
 
     void definition(const std::string &definition);
 
 
     std::string definition() const;
+    
+    
+    void definition(const none_t t);
 
 
     int compare(const INamedEntity &other) const;

@@ -14,6 +14,8 @@
 #include <list>
 #include <functional>
 
+#include "boost/optional.hpp"
+
 namespace nix {
 namespace base {
 
@@ -22,6 +24,7 @@ class ImplContainer {
 
 protected:
 
+	typedef boost::none_t none_t;
     std::shared_ptr<T> impl_ptr;
 
     /**

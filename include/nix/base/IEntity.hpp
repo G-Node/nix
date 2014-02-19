@@ -11,11 +11,17 @@
 
 #include <nix/Platform.hpp>
 
+#include "boost/optional.hpp"
+
 namespace nix {
 namespace base {
 
 
 class NIXAPI IEntity {
+
+protected:
+
+	typedef boost::none_t none_t;
 
 public:
 
