@@ -36,6 +36,50 @@ Source::Source(const std::shared_ptr<base::ISource> &p_impl)
 //--------------------------------------------------
 
 
+/*
+ * Helper struct for {@link findSources}.
+ */
+struct SourceCont {
+    SourceCont(Source s, size_t d = 0)
+        : entity(s), depth(d)
+    {}
+
+    Source entity;
+    size_t depth;
+};
+
+
+std::vector<Source> Source::findSources(std::function<bool(Source)> filter,
+                                size_t max_depth) const 
+{
+    std::vector<Source>  results;
+    std::list<SourceCont> todo;
+
+    todo.push_back(SourceCont(*this));
+
+    while(todo.size() > 0) 
+    {
+        SourceCont current = todo.front();
+        todo.pop_front();
+
+        bool filter_ok = filter(current.entity);
+        if (filter_ok) {
+            results.push_back(current.entity);
+        }
+
+        if (current.depth < max_depth) {
+            std::vector<Source> children = current.entity.children();
+            size_t next_depth = current.depth + 1;
+
+            for (auto it = children.begin(); it != children.end(); ++it) {
+                todo.push_back(SourceCont(*it, next_depth));
+            }
+        }
+    }
+
+    return results;
+}
+
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------

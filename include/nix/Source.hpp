@@ -114,6 +114,7 @@ public:
                                    filter);
     }
 
+
     /**
      * Go through the tree of sources originating from this source until
      * a max. level of "max_depth" and check for each source whether
@@ -124,13 +125,9 @@ public:
      * @param int maximum depth to search tree
      * @return object vector of sources
      */
-    std::vector<Source> findSources(util::AcceptAll<Source>::type filter = util::AcceptAll<Source>(),
-                                            size_t max_depth = std::numeric_limits<size_t>::max()) const
-    {
-        return findEntities<Source>(*this,
-                                    filter,
-                                    max_depth);
-    }
+    std::vector<Source> findSources(std::function<bool(Source)> filter = util::AcceptAll<Source>(),
+                                    size_t max_depth = std::numeric_limits<size_t>::max()) const;
+
 
     /**
      * Create a new root source.
