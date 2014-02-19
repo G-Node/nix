@@ -75,7 +75,7 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
         }
 
         if (current.depth < max_depth) {
-            std::vector<Section> children = current.entity.children();
+            std::vector<Section> children = current.entity.sections();
             size_t next_depth = current.depth + 1;
 
             for (auto it = children.begin(); it != children.end(); ++it) {
