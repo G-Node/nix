@@ -86,16 +86,6 @@ public:
     }
 
     /**
-     * Equivalent to {@link sources} method, returning all children.
-     *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object sources as a vector
-     */
-    std::vector<Source> children() const {
-        return sources();
-    }
-
-    /**
      * Get sources associated with this source (aka "child" sources).
      *
      * The parameter "filter" is defaulted to giving back all sources.
