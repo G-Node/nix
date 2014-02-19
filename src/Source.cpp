@@ -68,7 +68,7 @@ std::vector<Source> Source::findSources(std::function<bool(Source)> filter,
         }
 
         if (current.depth < max_depth) {
-            std::vector<Source> children = current.entity.source();
+            std::vector<Source> children = current.entity.sources();
             size_t next_depth = current.depth + 1;
 
             for (auto it = children.begin(); it != children.end(); ++it) {
