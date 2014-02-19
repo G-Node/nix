@@ -68,12 +68,35 @@ public:
     }
 
     /**
-     * Returns all sources that are direct descendant of this source as a vector.
+     * Retrieves a specific source by index.
      *
-     * @return All direct child sources.
+     * @param index     The index of the source.
+     *
+     * @return The source at the specified index.
      */
-    std::vector<Source> sources() const {
-        return EntityWithMetadata<T>::impl_ptr->sources();
+    Source getSource(const size_t index) const {
+        return EntityWithMetadata<T>::impl_ptr->getSource(index);
+    }
+    
+    /**
+     * Get sources associated with this entity.
+     *
+     * The parameter "filter" is defaulted to giving back all entities.
+     * To use your own filter pass a lambda that accepts an "EntityWithSources"
+     * as parameter and returns a bool telling whether to get it or not.
+     *
+     * @param object filter function of type {@link nix::util::Filter::type}
+     * @return object entities as a vector
+     */    
+    std::vector<Source> sources(util::AcceptAll<Source>::type filter
+                                = util::AcceptAll<Source>()) const
+    {
+        auto f = [this] (size_t i) { return getSource(i); };
+        // NOTE: we need to use special notation here since compiler otherwise
+        // reads: ((this->getEntities) < Source) > f
+        return this->template getEntities<Source>(f,
+                                   sourceCount(),
+                                   filter);
     }
 
     /**
