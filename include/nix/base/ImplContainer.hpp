@@ -70,64 +70,6 @@ protected:
         return e;
     }
     
-
-    /**
-     * Helper struct for other low level helpers.
-     */
-    template<typename TENT>
-    struct EntCont {
-        EntCont(TENT s, size_t d = 0)
-            : entity(s), depth(d)
-        {}
-
-        TENT entity;
-        size_t depth;
-    };
-    
-    
-    /**
-     * Go through the tree of sources originating from this source until
-     * a max. level of "max_depth" and check for each source whether
-     * to return it depending on predicate function "filter".
-     * Return resulting vector of sources.
-     * 
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @param int maximum depth to search tree
-     * @return object vector of sources
-     */
-    template<typename TENT>
-    std::vector<TENT> findEntities(TENT const self, 
-                                   std::function<bool(TENT)> filter,
-                                   size_t max_depth) const 
-    {
-        std::vector<TENT>  results;
-        std::list<EntCont<TENT>> todo;
-
-        todo.push_back(EntCont<TENT>(self));
-
-        while(todo.size() > 0) 
-        {
-            EntCont<TENT> current = todo.front();
-            todo.pop_front();
-
-            bool filter_ok = filter(current.entity);
-            if (filter_ok) {
-                results.push_back(current.entity);
-            }
-
-            if (current.depth < max_depth) {
-                std::vector<TENT> children = current.entity.children();
-                size_t next_depth = current.depth + 1;
-
-                for (auto it = children.begin(); it != children.end(); ++it) {
-                    todo.push_back(EntCont<TENT>(*it, next_depth));
-                }
-            }
-        }
-
-        return results;
-    }
-
 public:
 
     ImplContainer()

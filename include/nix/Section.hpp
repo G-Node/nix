@@ -164,20 +164,6 @@ public:
     }
 
     /**
-     * Equivalent to {@link sections} method, returning all children.
-     * NOTE: Sections upon being created in sections, automatically get
-     * set their "parent" pointer to their parent section. Thus the set
-     * of all children of a section is equivalent to the set of all
-     * sub-sections of a section.
-     *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object sections as a vector
-     */
-    std::vector<Section> children() const {
-        return sections();
-    }
-
-    /**
      * Get sub sections associated with this section.
      *
      * The parameter "filter" is defaulted to giving back all sections. 
@@ -197,23 +183,19 @@ public:
     }
 
     /**
-     * Go through the tree of sources originating from this source until
-     * a max. level of "max_depth" and check for each source whether
+     * Go through the tree of sections originating from this section until
+     * a max. level of "max_depth" and check for each section whether
      * to return it depending on predicate function "filter".
-     * Return resulting vector of sources.
+     * Return resulting vector of sections.
      * 
      * @param object filter function of type {@link nix::util::Filter::type}
      * @param int maximum depth to search tree
-     * @return object vector of sources
+     * @return object vector of sections
      */
-    std::vector<Section> findSections(util::AcceptAll<Section>::type filter = util::AcceptAll<Section>(),
-                                      size_t max_depth = std::numeric_limits<size_t>::max()) const
-    {
-        return findEntities<Section>(*this,
-                                    filter,
-                                    max_depth);
-    }
-    
+    std::vector<Section> findSections(std::function<bool(Section)> filter = util::AcceptAll<Section>(),
+                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
+
+
     /**
      * Determines whether this section has a related section of the specified type.
      *

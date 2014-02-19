@@ -63,11 +63,11 @@ public:
     void sources(const std::vector<Source> &s);
 
 
-    std::vector<Source> sources() const;
-
-
     Source getSource(const std::string &id) const;
 
+
+	Source getSource(const size_t index) const;
+	
 
     void swap(EntityWithSourcesHDF5 &other);
 

@@ -47,22 +47,9 @@ Source EntityWithSourcesHDF5::getSource(const string &id) const{
     return entity_block.getSource(id);
 }
 
-
-vector<Source> EntityWithSourcesHDF5::sources() const {
-    vector<string> ids = sources_refs.get();
-
-    vector<Source> source_obj = block().sources([&](const Source &source) {
-        return std::find(ids.begin(), ids.end(), source.id()) != ids.end();
-    });
-
-    if (source_obj.size() != ids.size()) {
-        // TODO What is the right thing to do here?
-        throw runtime_error("Could not resolve all ids");
-    }
-
-    return source_obj;
+Source EntityWithSourcesHDF5::getSource(const size_t index) const{
+    return entity_block.getSource(index);
 }
-
 
 void EntityWithSourcesHDF5::addSource(const Source &source) {
     sources_refs.add(source.id());
