@@ -48,7 +48,7 @@ public:
     }
 
 
-    std::string name() const {
+    boost::optional<std::string> name() const {
         return Entity<T>::impl_ptr->name();
     }
 
@@ -58,7 +58,7 @@ public:
     }
 
 
-    std::string definition() const {
+    boost::optional<std::string> definition() const {
         return Entity<T>::impl_ptr->definition();
     }
 

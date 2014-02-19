@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace nix::base;
-
+using namespace boost;
 namespace nix {
 namespace hdf5 {
 
@@ -48,10 +48,12 @@ void NamedEntityHDF5::name(const string &name) {
 }
 
 
-string NamedEntityHDF5::name() const {
+optional<string> NamedEntityHDF5::name() const {
+    optional<string> ret;
     string name;
     group().getAttr("name", name);
-    return name;
+    ret = name;
+    return ret;
 }
 
 
@@ -61,15 +63,20 @@ void NamedEntityHDF5::definition(const string &definition) {
 }
 
 
-string NamedEntityHDF5::definition() const {
-    string definition;
+optional<string> NamedEntityHDF5::definition() const {
+	optional<string> ret;
+	string definition;
     group().getAttr("definition", definition);
-    return definition;
+    ret = definition;
+    return ret;
 }
 
 
 int NamedEntityHDF5::compare(const INamedEntity &other) const {
-    int cmp = name().compare(other.name());
+	int cmp = 0;
+	if (name() && other.name()){
+		cmp = (*name()).compare(*other.name());
+	}
     if (cmp == 0) {
         cmp = id().compare(other.id());
     }
