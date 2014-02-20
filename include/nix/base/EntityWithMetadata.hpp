@@ -68,12 +68,11 @@ public:
     /**
      * Remove associated metadata from the entity.
      * The section will not be deleted.
-     *
-     * @return True if the section was removed, false otherwise.
      */
-    bool removeMetadata() {
-        return NamedEntity<T>::impl_ptr->removeMetadata();
-    }
+    void metadata(const none_t t)
+	{
+		NamedEntity<T>::impl_ptr->metadata(t);
+	}
 
 
     virtual ~EntityWithMetadata() {}

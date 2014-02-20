@@ -22,7 +22,8 @@ class NIXAPI IEntity {
 protected:
 
 	typedef boost::none_t none_t;
-
+    none_t none = boost::none;
+	
 public:
 
     /**

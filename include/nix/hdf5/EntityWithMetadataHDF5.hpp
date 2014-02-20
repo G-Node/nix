@@ -46,7 +46,7 @@ public:
     void metadata(const Section &metadata);
 
 
-    bool removeMetadata();
+    void metadata(const none_t t);
 
 
     virtual ~EntityWithMetadataHDF5();

@@ -8,6 +8,7 @@
 
 #include <nix/util/util.hpp>
 #include "TestEntityWithMetadata.hpp"
+#include "TestSource.hpp"
 
 using namespace std;
 using namespace nix;
@@ -33,7 +34,7 @@ void TestEntityWithMetadata::testMetadataAccess() {
     block.metadata(section);
     CPPUNIT_ASSERT(block.hasMetadata());
 
-    block.removeMetadata();
+    block.metadata(boost::none);
     CPPUNIT_ASSERT(!block.hasMetadata());
 }
 

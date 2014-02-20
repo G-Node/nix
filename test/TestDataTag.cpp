@@ -185,7 +185,7 @@ void TestDataTag::testMetadataAccess() {
 	// TODO This test fails due to operator== of Section
 	// CPPUNIT_ASSERT(source.metadata() == section);
 
-	tag.removeMetadata();
+	tag.metadata(boost::none);
 	CPPUNIT_ASSERT(!tag.hasMetadata());
 }
 
