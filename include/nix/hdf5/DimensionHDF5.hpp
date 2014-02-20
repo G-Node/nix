@@ -100,7 +100,7 @@ public:
     void samplingInterval(double sampling_interval);
 
 
-    double offset() const;
+    boost::optional<double> offset() const;
 
 
     void offset(double offset);

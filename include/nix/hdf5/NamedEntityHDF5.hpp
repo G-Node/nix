@@ -47,18 +47,18 @@ public:
     void name(const std::string &name);
 
 
-    std::string name() const;
+    boost::optional<std::string> name() const;
     
     
     void name(const none_t t);
     
 
+    boost::optional<std::string> definition() const;
+    
+    
     void definition(const std::string &definition);
 
 
-    std::string definition() const;
-    
-    
     void definition(const none_t t);
 
 

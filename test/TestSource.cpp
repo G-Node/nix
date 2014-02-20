@@ -38,10 +38,10 @@ void TestSource::testId() {
 
 
 void TestSource::testName() {
-    CPPUNIT_ASSERT(source.name() == "source_one");
+    CPPUNIT_ASSERT(*source.name() == "source_one");
     string name = util::createId("", 32);
     source.name(name);
-    CPPUNIT_ASSERT(source.name() == name);
+    CPPUNIT_ASSERT(*source.name() == name);
 }
 
 
@@ -56,7 +56,7 @@ void TestSource::testType() {
 void TestSource::testDefinition() {
     string def = util::createId("", 128);
     source.definition(def);
-    CPPUNIT_ASSERT(source.definition() == def);
+    CPPUNIT_ASSERT(*source.definition() == def);
 }
 
 
