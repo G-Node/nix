@@ -78,20 +78,22 @@ public:
     virtual void sources(const std::vector<Source> &sources) = 0;
 
     /**
-     * Get all associated sources of this entity.
-     *
-     * @return A vector with all sources.
-     */
-    virtual std::vector<Source> sources() const = 0;
-
-    /**
      * Returns the source identified by the given id.
      *
      * @param string the source id
      */
     virtual Source getSource(const std::string &id) const = 0;
 
-
+    /**
+     * Retrieves a specific child source that is a direct descendant.
+     *
+     * @param id        The id of the source.
+     *
+     * @return The source with the given id. If it doesn't exist an exception
+     *         will be thrown.
+     */
+    virtual Source getSource(const size_t index) const = 0;
+    
     virtual ~IEntityWithSources() {}
 
 };

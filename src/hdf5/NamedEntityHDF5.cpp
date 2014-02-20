@@ -57,6 +57,14 @@ optional<string> NamedEntityHDF5::name() const {
 }
 
 
+void NamedEntityHDF5::name(const none_t t) {
+    if(group().hasAttr("definition")) {
+        group().removeAttr("name");
+    }
+    forceUpdatedAt();
+}
+
+
 void NamedEntityHDF5::definition(const string &definition) {
     group().setAttr("definition", definition);
     forceUpdatedAt();
@@ -69,6 +77,14 @@ optional<string> NamedEntityHDF5::definition() const {
     group().getAttr("definition", definition);
     ret = definition;
     return ret;
+}
+
+
+void NamedEntityHDF5::definition(const none_t t) {
+    if(group().hasAttr("definition")) {
+        group().removeAttr("definition");
+    }
+    forceUpdatedAt();
 }
 
 

@@ -66,7 +66,7 @@ void TestSource::testMetadataAccess() {
     source.metadata(section);
     CPPUNIT_ASSERT(source.hasMetadata());
 
-    source.removeMetadata();
+    source.metadata(boost::none);
     CPPUNIT_ASSERT(!source.hasMetadata());
 }
 

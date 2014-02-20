@@ -43,15 +43,51 @@ Section::Section(const shared_ptr<base::ISection> &p_impl)
 //-----------------------------------------------------
 
 
+/*
+ * Helper struct for {@link findSections}.
+ */
 struct SectionCont {
-
     SectionCont(Section s, size_t d = 0)
-        : section(s), depth(d)
+    : entity(s), depth(d)
     {}
 
-    Section section;
+    Section entity;
     size_t depth;
 };
+    
+
+std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
+                                  size_t max_depth) const 
+{
+    std::vector<Section>  results;
+    std::list<SectionCont> todo;
+
+    todo.push_back(SectionCont(*this));
+
+    while(todo.size() > 0) 
+    {
+        SectionCont current = todo.front();
+        todo.pop_front();
+
+        bool filter_ok = filter(current.entity);
+        if (filter_ok) {
+            results.push_back(current.entity);
+        }
+
+        if (current.depth < max_depth) {
+            std::vector<Section> children = current.entity.sections();
+            size_t next_depth = current.depth + 1;
+
+            for (auto it = children.begin(); it != children.end(); ++it) {
+                todo.push_back(SectionCont(*it, next_depth));
+            }
+        }
+    }
+
+    return results;
+}
+    
+
 
 
 //-----------------------------------------------------

@@ -47,10 +47,11 @@ Section EntityWithMetadataHDF5::metadata() const{
 }
 
 
-bool EntityWithMetadataHDF5::removeMetadata(){
-    if(hasMetadata())
+
+void EntityWithMetadataHDF5::metadata(const none_t t) {
+    if(group().hasAttr("metadata")) {
         group().removeAttr("metadata");
-    return true;
+    }
 }
 
 

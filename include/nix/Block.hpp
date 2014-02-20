@@ -22,7 +22,8 @@
 
 namespace nix {
 
-
+// NOTE: though "Block" is an entity with sources it does not inherit "EntityWithSources" 
+// since other than that it stores not just references to sources but creates them
 class NIXAPI Block : virtual public base::IBlock, public base::EntityWithMetadata<base::IBlock> {
 
 public:

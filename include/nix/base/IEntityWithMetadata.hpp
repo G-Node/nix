@@ -54,10 +54,8 @@ public:
     /**
      * Remove associated metadata from the entity.
      * The section will not be deleted.
-     *
-     * @return True if the section was removed, false otherwise.
      */
-    virtual bool removeMetadata() = 0;
+    virtual void metadata(const none_t t) = 0;
 
 
     virtual ~IEntityWithMetadata() {}
