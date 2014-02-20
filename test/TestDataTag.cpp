@@ -57,10 +57,10 @@ void TestDataTag::testId() {
 
 
 void TestDataTag::testName() {
-	CPPUNIT_ASSERT(tag.name() == "tag_one");
+	CPPUNIT_ASSERT(*tag.name() == "tag_one");
 	std::string name = util::createId("", 32);
 	tag.name(name);
-	CPPUNIT_ASSERT(tag.name() == name);
+	CPPUNIT_ASSERT(*tag.name() == name);
 }
 
 
@@ -75,7 +75,7 @@ void TestDataTag::testType() {
 void TestDataTag::testDefinition() {
 	std::string def = util::createId("", 128);
 	tag.definition(def);
-	CPPUNIT_ASSERT(tag.definition() == def);
+	CPPUNIT_ASSERT(*tag.definition() == def);
 }
 
 

@@ -33,10 +33,10 @@ void TestEntity::testId() {
 
 
 void TestEntity::testName() {
-    CPPUNIT_ASSERT(block.name() == "block_one");
+    CPPUNIT_ASSERT(*block.name() == "block_one");
     string name = util::createId("", 32);
     block.name(name);
-    CPPUNIT_ASSERT(block.name() == name);
+    CPPUNIT_ASSERT(*block.name() == name);
 }
 
 
@@ -51,7 +51,7 @@ void TestEntity::testType() {
 void TestEntity::testDefinition() {
     string def = util::createId("", 128);
     block.definition(def);
-    CPPUNIT_ASSERT(block.definition() == def);
+    CPPUNIT_ASSERT(*block.definition() == def);
 }
 
 

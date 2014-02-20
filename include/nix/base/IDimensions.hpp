@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <boost/optional.hpp>
 
 namespace nix {
 
@@ -56,7 +57,7 @@ public:
 
     virtual void samplingInterval(double interval) = 0;
 
-    virtual double offset() const = 0;
+    virtual boost::optional<double> offset() const = 0;
 
     virtual void offset(double offset) = 0;
 
