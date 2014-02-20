@@ -56,6 +56,9 @@ public:
     boost::optional<std::string> definition() const;
     
     
+    void definition(const std::string &definition);
+
+
     void definition(const none_t t);
 
 
