@@ -44,10 +44,15 @@ public:
     /**
      * Getter for the name of the entity.
      *
-     * @return The name of the entity.
+     * @return boost::optional<string> The name of the entity.
      */
     virtual boost::optional<std::string> name() const = 0;
-
+    
+    /**
+     * Deleter for the name of the entity.
+     */
+    virtual void name(const none_t t) = 0;
+    
     /**
      * Setter for the definition of the entity.
      *
@@ -61,6 +66,11 @@ public:
      * @return The definition of the entity.
      */
     virtual boost::optional<std::string> definition() const = 0;
+    
+    /**
+     * Deleter for the definition of the entity.
+     */
+    virtual void definition(const none_t t) = 0;
 
     /**
      * Compare two named entities.

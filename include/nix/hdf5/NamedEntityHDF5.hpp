@@ -48,12 +48,18 @@ public:
 
 
     boost::optional<std::string> name() const;
+    
+    
+    void name(const none_t t);
+    
 
-
+    boost::optional<std::string> definition() const;
+    
+    
     void definition(const std::string &definition);
 
 
-    boost::optional<std::string> definition() const;
+    void definition(const none_t t);
 
 
     int compare(const INamedEntity &other) const;

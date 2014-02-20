@@ -53,6 +53,12 @@ public:
     }
 
 
+    void name(const none_t t)
+	{
+		Entity<T>::impl_ptr->name(t);
+	}
+	
+
     void definition(const std::string &definition) {
         Entity<T>::impl_ptr->definition(definition);
     }
@@ -61,6 +67,12 @@ public:
     boost::optional<std::string> definition() const {
         return Entity<T>::impl_ptr->definition();
     }
+
+
+    void definition(const none_t t)
+	{
+		Entity<T>::impl_ptr->definition(t);
+	}
 
 
     int compare(const INamedEntity &other) const {

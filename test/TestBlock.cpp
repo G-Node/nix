@@ -66,7 +66,7 @@ void TestBlock::testMetadataAccess() {
     block.metadata(section);
     CPPUNIT_ASSERT(block.hasMetadata());
 
-    block.removeMetadata();
+    block.metadata(boost::none);
     CPPUNIT_ASSERT(!block.hasMetadata());
 }
 
