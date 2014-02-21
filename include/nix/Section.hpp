@@ -63,7 +63,16 @@ public:
     std::string repository() const {
         return impl_ptr->repository();
     }
-
+    
+    /**
+     * Deleter for the repository url.
+     *
+     * @param boost::none_t.
+     */
+    void repository(const boost::none_t t) {
+        impl_ptr->repository(t);
+    }
+    
     /**
      * Establish a link to another section. The linking section
      * inherits the properties defined in the linked section.
@@ -82,6 +91,16 @@ public:
      */
     Section link() const {
         return impl_ptr->link();
+    }
+    
+    /**
+     * Deleter for the reference to the linked section.
+     * NOTE: this function does not affect the linked section object.
+     *
+     * @param boost::none_t.
+     */
+    void link(const boost::none_t t) {
+        impl_ptr->link(t);
     }
 
     // TODO: how to support includes?!
@@ -103,7 +122,16 @@ public:
     std::string mapping() const {
         return impl_ptr->mapping();
     }
-
+    
+    /**
+     * Deleter for the mapping information.
+     *
+     * @param boost::none_t.
+     */
+    void mapping(const boost::none_t t) {
+        impl_ptr->mapping(t);
+    }
+    
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------

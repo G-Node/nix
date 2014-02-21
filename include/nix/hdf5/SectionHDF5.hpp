@@ -66,17 +66,27 @@ public:
     std::string repository() const;
 
 
+    void repository(const none_t t);
+
+
     void link(const Section &link);
 
 
     Section link() const;
 
 
+    void link(const none_t t);
+    
+
     void mapping(const std::string &mapping);
 
 
     std::string mapping() const;
 
+
+    void mapping(const none_t t);
+    
+    
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------
