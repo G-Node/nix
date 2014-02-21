@@ -36,17 +36,26 @@ public:
     virtual std::string mapping() const = 0;
 
 
+    virtual void mapping(const none_t t) = 0;
+    
+
     virtual void dataType(const std::string &dataType) = 0;
 
 
     virtual std::string dataType() const = 0;
 
 
+    virtual void dataType(const none_t t) = 0;
+    
+
     virtual void unit(const std::string &unit) = 0;
 
 
     virtual std::string unit() const = 0;
 
+
+    virtual void unit(const none_t t) = 0;
+    
 
     virtual void deleteValues() = 0;
 
@@ -58,6 +67,9 @@ public:
 
 
     virtual std::vector<Value> values(void) const = 0;
+    
+    
+    virtual void values(const boost::none_t t) = 0;
 
 
     virtual ~IProperty() {}
