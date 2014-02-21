@@ -47,9 +47,11 @@ public:
     void positions(const std::string &id);
 
 
+    void positions(const none_t t);
+
+
     bool hasPositions() const;
 
-    bool removePositions();
 
     DataArray extents() const;
 
@@ -59,9 +61,12 @@ public:
 
     void extents(const std::string &extentsId);
 
-    bool hasExtents() const;
 
-    bool removeExtents();
+    void extents(const none_t t);
+	
+	
+    bool hasExtents() const;
+    
 
     //--------------------------------------------------
     // Methods concerning references.

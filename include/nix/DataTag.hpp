@@ -69,22 +69,22 @@ public:
 	}
 
 	/**
+	 * Deleter for the reference to the positions DataArray from the DataTag.
+     * Note: This function does not delete the referenced DataArray!
+     * 
+	 * @param boost::none_t.
+	 */
+    void positions(const boost::none_t t) {
+        impl_ptr->positions(t);
+    }
+    
+	/**
 	 * Returns whether this DataArray contains positions.
 	 *
 	 * @return bool
 	 */
 	bool hasPositions() const {
 		return impl_ptr->hasPositions();
-	}
-
-	/**
-	 * Removes the positions reference form the DataTag, does not delete the
-	 * referenced DataArray itself.
-	 *
-	 * @return bool
-	 */
-	bool removePositions(){
-		return impl_ptr->removePositions();
 	}
 
 	/**
@@ -116,6 +116,16 @@ public:
 	}
 
 	/**
+	 * Deleter for the reference to the extents DataArray.
+     * Note: This function does not delete the referenced DataArray!
+	 *
+	 * @param boost::none_t.
+	 */
+    void extents(const boost::none_t t) {
+        impl_ptr->extents(t);
+    }
+
+	/**
 	 * Returns whether this DataArray contains extents.
 	 *
 	 * @return bool
@@ -124,15 +134,7 @@ public:
 		return impl_ptr->hasExtents();
 	}
 
-	/**
-	 * Removes the extents reference form the DataTag, does not delete the
-	 * referenced DataArray itself.
-	 *
-	 * @return bool
-	 */
-	bool removeExtents(){
-		return impl_ptr->removeExtents();
-	}
+
 	//--------------------------------------------------
 	// Methods concerning references.
 	// TODO implement when done with the DataArray class.

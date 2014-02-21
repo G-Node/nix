@@ -154,7 +154,8 @@ void TestDataTag::testExtents(){
 
 	tag.extents(extents);
 	CPPUNIT_ASSERT(tag.hasExtents());
-	CPPUNIT_ASSERT(tag.removeExtents());
+	tag.extents(boost::none);
+	CPPUNIT_ASSERT(tag.hasExtents() == false);
 	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
@@ -164,7 +165,7 @@ void TestDataTag::testPositions(){
 
 	tag.positions(positions);
 	CPPUNIT_ASSERT(tag.hasPositions());
-	CPPUNIT_ASSERT(tag.removePositions());
+	tag.positions(boost::none);
 	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
@@ -172,8 +173,10 @@ void TestDataTag::testPositions(){
 void TestDataTag::testPositionExtents(){
 	tag.positions(positions);
 	CPPUNIT_ASSERT_THROW(tag.extents(extents),std::runtime_error);
-	tag.removeExtents();
-	tag.removePositions();
+	tag.extents(boost::none);
+	tag.positions(boost::none);
+	CPPUNIT_ASSERT(tag.hasExtents() == false);
+	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
 

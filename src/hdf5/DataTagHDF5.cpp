@@ -68,19 +68,20 @@ void DataTagHDF5::positions(const string &id) {
 }
 
 
+void DataTagHDF5::positions(const none_t t) {
+    if(group().hasAttr("positions")) {
+        group().removeAttr("positions");
+    }
+	forceUpdatedAt();
+}
+
+
 bool DataTagHDF5::hasPositions() const{
     std::string posId;
     group().getAttr("positions", posId);
     return (posId.length() > 0);
 }
 
-bool DataTagHDF5::removePositions(){
-	if (hasPositions()){
-		group().removeAttr("positions");
-		return true;
-	}
-	return false;
-}
 
 DataArray DataTagHDF5::extents() const {
     std::string extId;
@@ -108,6 +109,13 @@ void DataTagHDF5::extents(const string &extentsId) {
     }
 }
 
+void DataTagHDF5::extents(const none_t t) {
+    if(group().hasAttr("extents")) {
+        group().removeAttr("extents");
+    }
+	forceUpdatedAt();
+}
+
 
 bool DataTagHDF5::hasExtents() const{
     std::string extId;
@@ -116,13 +124,6 @@ bool DataTagHDF5::hasExtents() const{
 }
 
 
-bool DataTagHDF5::removeExtents(){
-	if (hasExtents()){
-		group().removeAttr("extents");
-		return true;
-	}
-	return false;
-}
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------

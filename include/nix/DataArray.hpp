@@ -63,7 +63,9 @@ public:
 
     /**
      * Deleter for the label for the data stored.
-     */
+	 *
+	 * @param boost::none_t.
+	 */
     void label(const boost::none_t t) {
         impl_ptr->label(t);
     }
