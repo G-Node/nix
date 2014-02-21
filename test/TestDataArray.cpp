@@ -61,7 +61,7 @@ void TestDataArray::testData()
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
-            C[i][j] = 0.0;
+            C[i][j] = 42.0;
 
     nix::DataArray dB = block.createDataArray("random", "double");
     dB.setData(C);
