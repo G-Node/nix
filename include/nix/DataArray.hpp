@@ -184,6 +184,9 @@ public:
         impl_ptr->setExtent(extent);
     }
 
+    void createData(DataType dtype, const NDSize &size) {
+        impl_ptr->createData(dtype, size);
+    }
     template<typename T> void getData(T &value) const;
     template<typename T> void setData(const T &value);
 
