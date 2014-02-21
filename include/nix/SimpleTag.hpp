@@ -66,6 +66,15 @@ public:
     }
 
     /**
+     * Deleter for the units of a tag.
+     *
+     * @param boost::none_t.
+     */
+    void units(const boost::none_t t) {
+        impl_ptr->units(t);
+    }
+    
+    /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
      *
@@ -102,6 +111,15 @@ public:
      */
     void extent(const std::vector<double> &extent) {
         impl_ptr->extent(extent);
+    }
+    
+    /**
+     * Deleter for the extent of a tag.
+     *
+     * @param boost::none_t.
+     */
+    void extent(const boost::none_t t) {
+        impl_ptr->extent(t);
     }
 
     //--------------------------------------------------

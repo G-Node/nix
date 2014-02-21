@@ -53,6 +53,14 @@ void SimpleTagHDF5::units(vector<string> &units) {
 }
 
 
+void SimpleTagHDF5::units(const none_t t) {
+    if(group().hasAttr("units")) {
+        group().removeAttr("units");
+    }
+    forceUpdatedAt();
+}
+
+
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
     group().getData("position", position);
@@ -75,6 +83,15 @@ vector<double> SimpleTagHDF5::extent() const {
 void SimpleTagHDF5::extent(const vector<double> &extent) {
     group().setData("extent", extent);
 }
+
+
+void SimpleTagHDF5::extent(const none_t t) {
+    if(group().hasAttr("extent")) {
+        group().removeAttr("extent");
+    }
+    forceUpdatedAt();
+}
+
 
 // Methods concerning references.
 
