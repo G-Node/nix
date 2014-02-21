@@ -47,9 +47,6 @@ public:
     void positions(const std::string &id);
 
 
-    void positions(const none_t t);
-
-
     bool hasPositions() const;
 
 

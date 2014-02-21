@@ -68,14 +68,6 @@ void DataTagHDF5::positions(const string &id) {
 }
 
 
-void DataTagHDF5::positions(const none_t t) {
-    if(group().hasAttr("positions")) {
-        group().removeAttr("positions");
-    }
-	forceUpdatedAt();
-}
-
-
 bool DataTagHDF5::hasPositions() const{
     std::string posId;
     group().getAttr("positions", posId);

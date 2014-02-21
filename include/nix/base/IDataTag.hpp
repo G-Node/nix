@@ -46,14 +46,6 @@ public:
      * @param position   string.
      */
     virtual void positions(const std::string &positionid) = 0;
-
-	/**
-	 * Deleter for the reference to the positions DataArray from the DataTag.
-     * Note: This function does not delete the referenced DataArray!
-	 *
-	 * @param boost::none_t.
-	 */
-    virtual void positions(const boost::none_t t) = 0;
     
     /**
      * Returns whether this DataArray contains positions.

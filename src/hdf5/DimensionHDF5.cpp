@@ -156,7 +156,6 @@ void SampledDimensionHDF5::offset(const none_t t) {
     if(group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
-    forceUpdatedAt();
 }
 
 
@@ -208,7 +207,6 @@ void SetDimensionHDF5::labels(const none_t t) {
     if(group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
-    forceUpdatedAt();
 }
 
 SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {

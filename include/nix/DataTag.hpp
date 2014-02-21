@@ -67,16 +67,6 @@ public:
 	void positions(const DataArray &positions) {
 		impl_ptr->positions(positions.id());
 	}
-
-	/**
-	 * Deleter for the reference to the positions DataArray from the DataTag.
-     * Note: This function does not delete the referenced DataArray!
-     * 
-	 * @param boost::none_t.
-	 */
-    void positions(const boost::none_t t) {
-        impl_ptr->positions(t);
-    }
     
 	/**
 	 * Returns whether this DataArray contains positions.
