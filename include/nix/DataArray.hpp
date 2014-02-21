@@ -187,6 +187,9 @@ public:
     void createData(DataType dtype, const NDSize &size) {
         impl_ptr->createData(dtype, size);
     }
+
+    template<typename T> void createData(const T &value, const NDSize &size = {});
+
     template<typename T> void getData(T &value) const;
     template<typename T> void setData(const T &value);
 
@@ -196,6 +199,14 @@ public:
 
  };
 
+template<typename T>
+void DataArray::createData(const T &value, const NDSize &size)
+{
+    const Hydra<const T> hydra(value);
+    DataType dtype = hydra.element_data_type();
+
+    createData(dtype, size.size() ? size : hydra.shape());
+}
 
 template<typename T>
 void DataArray::getData(T &value) const
