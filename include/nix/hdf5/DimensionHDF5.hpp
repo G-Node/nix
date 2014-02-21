@@ -106,6 +106,9 @@ public:
     void offset(double offset);
 
 
+    void offset(const none_t t);
+        
+
     SampledDimensionHDF5& operator=(const SampledDimensionHDF5 &other);
 
 
@@ -134,6 +137,9 @@ public:
 
 
     void labels(const std::vector<std::string> &labels);
+
+
+    void labels(const none_t t);
 
 
     SetDimensionHDF5& operator=(const SetDimensionHDF5 &other);

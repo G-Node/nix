@@ -152,6 +152,14 @@ void SampledDimensionHDF5::offset(double offset) {
 }
 
 
+void SampledDimensionHDF5::offset(const none_t t) {
+    if(group.hasAttr("offset")) {
+        group.removeAttr("offset");
+    }
+    forceUpdatedAt();
+}
+
+
 SampledDimensionHDF5& SampledDimensionHDF5::operator=(const SampledDimensionHDF5 &other) {
     SampledDimensionHDF5 tmp(other);
     swap(tmp);
@@ -196,6 +204,12 @@ void SetDimensionHDF5::labels(const vector<string> &labels) {
    group.setData("labels", labels);
 }
 
+void SetDimensionHDF5::labels(const none_t t) {
+    if(group.hasAttr("offset")) {
+        group.removeAttr("offset");
+    }
+    forceUpdatedAt();
+}
 
 SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {
     SetDimensionHDF5 tmp(other);
