@@ -61,6 +61,12 @@ public:
         impl_ptr->label(label);
     }
 
+    /**
+     * Deleter for the label for the data stored.
+     */
+    void label(const boost::none_t t) {
+        impl_ptr->label(t);
+    }
 
     /**
      * Get the unit of the data stored in this dataArray.
@@ -80,6 +86,12 @@ public:
         impl_ptr->unit(unit);
     }
 
+    /**
+     * Deleter for the unit for the values stored in this DataArray.
+     */
+    void unit(const boost::none_t t) {
+        impl_ptr->label(t);
+    }
 
     /**
      * Returns the expansion origin of the calibration polynom.
