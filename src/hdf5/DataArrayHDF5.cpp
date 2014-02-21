@@ -59,14 +59,6 @@ void DataArrayHDF5::label(const string &label) {
 }
 
 
-void DataArrayHDF5::label(const none_t t) {
-    if(group().hasAttr("label")) {
-        group().removeAttr("label");
-    }
-    forceUpdatedAt();
-}
-
-
 string DataArrayHDF5::unit() const {
     string value;
     group().getAttr("unit", value);
@@ -76,14 +68,6 @@ string DataArrayHDF5::unit() const {
 
 void DataArrayHDF5::unit(const string &unit) {
     group().setAttr("unit", unit);
-    forceUpdatedAt();
-}
-
-
-void DataArrayHDF5::unit(const none_t t) {
-    if(group().hasAttr("unit")) {
-        group().removeAttr("unit");
-    }
     forceUpdatedAt();
 }
 

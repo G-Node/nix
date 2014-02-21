@@ -62,15 +62,6 @@ public:
     }
 
     /**
-     * Deleter for the label for the data stored.
-	 *
-	 * @param boost::none_t.
-	 */
-    void label(const boost::none_t t) {
-        impl_ptr->label(t);
-    }
-
-    /**
      * Get the unit of the data stored in this dataArray.
      *
      * @return string the unit.
@@ -86,13 +77,6 @@ public:
      */
     void unit(const std::string &unit) {
         impl_ptr->unit(unit);
-    }
-
-    /**
-     * Deleter for the unit for the values stored in this DataArray.
-     */
-    void unit(const boost::none_t t) {
-        impl_ptr->label(t);
     }
 
     /**

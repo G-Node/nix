@@ -60,16 +60,10 @@ public:
     void label(const std::string &label);
 
 
-    void label(const none_t t);
-
-
     std::string unit() const;
 
 
     void unit(const std::string &unit);
-
-
-    void unit(const none_t t);
     
 
     double expansionOrigin()const;
