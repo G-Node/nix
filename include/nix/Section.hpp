@@ -372,7 +372,7 @@ private:
 
     std::vector<Section> findUpstream(const std::string &type) const;
 
-    std::vector<Section> findSideways(const std::string &type) const;
+    std::vector<Section> findSideways(const std::string &type, const std::string &caller_id) const;
 
     size_t tree_depth() const;
 };
