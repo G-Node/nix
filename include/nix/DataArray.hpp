@@ -197,6 +197,9 @@ public:
     template<typename T> void getData(T &value, const NDSize &offset) const;
     template<typename T> void setData(const T &value, const NDSize &offset);
 
+    NDSize getDataExtent() const {
+        return impl_ptr->getExtent();
+    }
  };
 
 template<typename T>
