@@ -209,13 +209,12 @@ public:
     /**
      * Returns the sections of the given type found on the same level of relation.
      *
-     * @param string the type
+     * @param object filter funciton of the
      *
      * @return vector<Section> the related sections
      */
     // TODO implement maybe later
-    //virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
-
+    std::vector<Section> findRelated(const std::string &type) const;
 
     /**
      *  Adds a new child section.
@@ -366,6 +365,16 @@ public:
      */
     friend std::ostream& operator<<(std::ostream &out, const Section &ent);
 
+
+private:
+
+    std::vector<Section> findDownstream(const std::string &type) const;
+
+    std::vector<Section> findUpstream(const std::string &type) const;
+
+    std::vector<Section> findSideways(const std::string &type, const std::string &caller_id) const;
+
+    size_t tree_depth() const;
 };
 
 
