@@ -91,7 +91,9 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
 std::vector<Section> Section::findRelated(const  string &type) const
 {
     std::vector<Section> results = findDownstream(type);
-
+    if (results.size() == 0){
+        results = findUpstream(type);
+    }
     return results;
 }
 
@@ -148,6 +150,7 @@ size_t Section::tree_depth() const{
   return depth;
 }
 
+
 vector<Section> Section::findDownstream(const string &type) const{
     vector<Section> results;
     size_t max_depth = tree_depth();
@@ -158,6 +161,24 @@ vector<Section> Section::findDownstream(const string &type) const{
     }
     return results;
 }
+
+
+vector<Section> Section::findUpstream(const string &type) const{
+    vector<Section> results;
+    Section p = parent();
+    if(p != nullptr){
+        if (p.type().compare(type) == 0){
+            results.push_back(p);
+            return results;
+        }
+        results = p.findUpstream(type);
+        if(results.size() > 0){
+            return results;
+        }
+    }
+    return results;
+}
+
 
 std::ostream& nix::operator<<(ostream &out, const Section &ent) {
     out << "Section: {name = " << ent.name();
