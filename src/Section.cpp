@@ -91,9 +91,26 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
 std::vector<Section> Section::findRelated(const  string &type) const
 {
     std::vector<Section> results = findDownstream(type);
+    if(results.size() > 0){ //This checking of results can be removed if we decide not to include this in findSection
+        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
+            if((*it).id().compare(id()) == 0){
+                results.erase(it, it+1);
+                if (it == results.end())
+                    break;
+            }
+        }
+    }
     if (results.size() == 0){
         results = findUpstream(type);
     }
+    if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
+        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
+            if((*it).id().compare(id()) == 0){
+                results.erase(it, it+1);
+                if (it == results.end())
+                    break;
+            }
+        }
     if (results.size() == 0){
         results = findSideways(type, id());
     }
@@ -188,6 +205,8 @@ vector<Section> Section::findSideways(const string &type, const string &caller_i
             for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
                 if((*it).id().compare(caller_id) == 0){
                     results.erase(it, it+1);
+                    if (it == results.end())
+                        break;
                 }
             }
             return results;
