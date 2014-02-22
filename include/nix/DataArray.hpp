@@ -180,10 +180,6 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    void setDataExtent(const NDSize &extent) {
-        impl_ptr->setExtent(extent);
-    }
-
     void createData(DataType dtype, const NDSize &size) {
         impl_ptr->createData(dtype, size);
     }
@@ -200,6 +196,11 @@ public:
     NDSize getDataExtent() const {
         return impl_ptr->getExtent();
     }
+
+    void setDataExtent(const NDSize &extent) {
+        impl_ptr->setExtent(extent);
+    }
+
  };
 
 template<typename T>
