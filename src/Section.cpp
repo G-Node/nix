@@ -88,6 +88,14 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
 }
     
 
+std::vector<Section> Section::findRelated(const  string &type) const
+{
+    std::vector<Section>  results;
+    size_t depth = tree_depth();
+
+    return results;
+}
+
 
 
 //-----------------------------------------------------
@@ -127,6 +135,19 @@ vector<Property> Section::inheritedProperties() const {
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+size_t Section::tree_depth() const{
+  vector<Section> children = sections();
+  size_t depth = 0;
+  if (children.size() > 0){
+      for (vector<Section>::iterator it = children.begin(); it != children.end(); ++it){
+          size_t temp = (*it).tree_depth();
+          if(temp > depth)
+              depth = temp;
+      }
+      depth += 1;
+  }
+  return depth;
+}
 
 
 std::ostream& nix::operator<<(ostream &out, const Section &ent) {
