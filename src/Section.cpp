@@ -94,9 +94,11 @@ std::vector<Section> Section::findRelated(const  string &type) const
     if (results.size() == 0){
         results = findUpstream(type);
     }
+    if (results.size() == 0){
+        results = findSideways(type, id());
+    }
     return results;
 }
-
 
 
 //-----------------------------------------------------
@@ -171,10 +173,26 @@ vector<Section> Section::findUpstream(const string &type) const{
             results.push_back(p);
             return results;
         }
-        results = p.findUpstream(type);
+        return p.findUpstream(type);
+    }
+    return results;
+}
+
+
+vector<Section> Section::findSideways(const string &type, const string &caller_id) const{
+    vector<Section> results;
+    Section p = parent();
+    if(p != nullptr){
+        results = p.findSections(util::TypeFilter<Section>(type),1);
         if(results.size() > 0){
+            for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
+                if((*it).id().compare(caller_id) == 0){
+                    results.erase(it, it+1);
+                }
+            }
             return results;
         }
+        return p.findSideways(type, caller_id);
     }
     return results;
 }
