@@ -65,9 +65,13 @@ void TestDataArray::testData()
 
     nix::DataArray dB = block.createDataArray("random", "double");
     dB.createData(C, {20, 20});
+
+    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{20, 20}));
+
     dB.setData(C, {0,0});
 
     dB.setDataExtent({40, 40});
+    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
