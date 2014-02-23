@@ -147,7 +147,7 @@ void TestDataSet::testDataType() {
 
     const NDSize dims = {5, 5};
 
-    for (int i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+    for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
         DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims, nullptr, nullptr);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }
