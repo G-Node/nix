@@ -195,25 +195,13 @@ public:
     std::vector<Section> findSections(std::function<bool(Section)> filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
-
-    /**
-     * Determines whether this section has a related section of the specified type.
-     *
-     * @param string the type
-     *
-     * @return bool
-     */
-    // TODO implement maybe later
-    //virtual bool hasRelatedSection(const std::string &type) const = 0;
-
     /**
      * Returns the sections of the given type found on the same level of relation.
      *
-     * @param object filter funciton of the
+     * @param string the type of the section
      *
      * @return vector<Section> the related sections
      */
-    // TODO implement maybe later
     std::vector<Section> findRelated(const std::string &type) const;
 
     /**
