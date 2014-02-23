@@ -125,6 +125,35 @@ void TestDataSet::testChunkGuessing() {
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }
 
+
+void TestDataSet::testDataType() {
+    static struct _type_info {
+        std::string name;
+        nix::DataType dtype;
+    } _types[] = {
+        {"bool", nix::DataType::Bool},
+        {"int8", nix::DataType::Int8},
+        {"uint8", nix::DataType::UInt8},
+        {"int16", nix::DataType::Int16},
+        {"uint16", nix::DataType::UInt16},
+        {"int32", nix::DataType::Int32},
+        {"uint32", nix::DataType::UInt32},
+        {"int64", nix::DataType::Int64},
+        {"uint64", nix::DataType::UInt64},
+        {"float", nix::DataType::Float},
+        {"double", nix::DataType::Double},
+        {"string", nix::DataType::String}
+    };
+
+    const NDSize dims = {5, 5};
+
+    for (int i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+        DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims, nullptr, nullptr);
+        CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
+    }
+
+}
+
 void TestDataSet::testBasic() {
     NDSize dims = {4, 6};
 
