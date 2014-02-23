@@ -201,6 +201,10 @@ public:
         impl_ptr->setExtent(extent);
     }
 
+    DataType getDataType(void) const {
+        return impl_ptr->getDataType();
+    }
+
  };
 
 template<typename T>
