@@ -118,6 +118,8 @@ public:
 
     NDSize getExtent(void) const;
     void   setExtent(const NDSize &extent);
+
+    DataType getDataType(void) const;
 };
 
 
