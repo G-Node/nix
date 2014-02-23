@@ -38,6 +38,10 @@ void TestDataArray::testData()
 
     dA.setData(A);
 
+    //test the getDataType() function
+    nix::DataType dtype = dA.getDataType();
+    CPPUNIT_ASSERT_EQUAL(dtype, nix::DataType::Double);
+
     array_type B(boost::extents[1][1][1]);
     dA.getData(B);
 
