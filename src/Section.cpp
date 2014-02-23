@@ -93,7 +93,7 @@ std::vector<Section> Section::findRelated(std::function<bool(Section)> filter) c
     std::vector<Section> results = findDownstream(filter);
     if(results.size() > 0){ //This checking of results can be removed if we decide not to include this in findSection
         for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
-            if((*it).id().compare(id()) == 0){
+            if((*it).id() == id()){
                 results.erase(it, it+1);
                 if (it == results.end())
                     break;
@@ -105,7 +105,7 @@ std::vector<Section> Section::findRelated(std::function<bool(Section)> filter) c
     }
     if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
         for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
-            if((*it).id().compare(id()) == 0){
+            if((*it).id() == id()){
                 results.erase(it, it+1);
                 if (it == results.end())
                     break;
@@ -160,7 +160,7 @@ size_t Section::tree_depth() const{
   size_t depth = 0;
   if (children.size() > 0){
       for (vector<Section>::iterator it = children.begin(); it != children.end(); ++it){
-          size_t temp = (*it).tree_depth();
+          size_t temp = it->tree_depth();
           if(temp > depth)
               depth = temp;
       }
@@ -204,7 +204,7 @@ vector<Section> Section::findSideways(std::function<bool(Section)> filter, const
         results = p.findSections(filter,1);
         if(results.size() > 0){
             for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
-                if((*it).id().compare(caller_id) == 0){
+                if(it->id() == caller_id){
                     results.erase(it, it+1);
                     if (it == results.end())
                         break;
