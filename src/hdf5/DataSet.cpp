@@ -278,6 +278,21 @@ void DataSet::vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace) c
 }
 
 
+DataType DataSet::dataType(void) const
+{
+    hid_t ftype = H5Dget_type(h5dset.getId());
+    H5T_class_t ftclass = H5Tget_class(ftype);
+    //if is a compound type, we should catched that here
+
+    size_t size = H5Tget_size(ftype);
+    H5T_sign_t sign = H5Tget_sign(ftype);
+
+    DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
+    H5Tclose(ftype);
+
+    return dtype;
+}
+
 /* Value related functions */
 
 template<typename T>
