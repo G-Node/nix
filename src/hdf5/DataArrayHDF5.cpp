@@ -231,6 +231,18 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 DataArrayHDF5::~DataArrayHDF5(){}
 
 
+void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
+{
+    if (group().hasData("data")) {
+        throw new std::runtime_error("DataArray alread exists"); //FIXME, better exception
+    }
+
+    NDSize maxsize(size.size(), H5S_UNLIMITED);
+    NDSize chunks = DataSet::guessChunking(size, dtype);
+
+    DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
+}
+
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
 {
     DataSet ds;

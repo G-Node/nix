@@ -61,22 +61,27 @@ void TestDataArray::testData()
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
-            C[i][j] = 0.0;
+            C[i][j] = 42.0;
 
     nix::DataArray dB = block.createDataArray("random", "double");
-    dB.setData(C);
+    dB.createData(C, {20, 20});
 
-    dB.setDataExtent({20, 20});
+    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{20, 20}));
+
+    dB.setData(C, {0,0});
+
+    dB.setDataExtent({40, 40});
+    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
             D[i][j] = 42.0;
 
-    dB.setData(D, {10, 10});
+    dB.setData(D, {20, 20});
 
     array2D_type E(boost::extents[1][1]);
-    dB.getData(E, {5,5}, {10, 10});
+    dB.getData(E, {5,5}, {20, 20});
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
@@ -85,7 +90,7 @@ void TestDataArray::testData()
 
 
     array2D_type F(boost::extents[5][5]);
-    dB.getData(F, {10, 10});
+    dB.getData(F, {20, 20});
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
