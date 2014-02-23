@@ -198,11 +198,11 @@ public:
     /**
      * Returns the sections of the given type found on the same level of relation.
      *
-     * @param string the type of the section
+     * @param object filter function of the type {@link nix::util::Filter::type}
      *
      * @return vector<Section> the related sections
      */
-    std::vector<Section> findRelated(const std::string &type) const;
+    std::vector<Section> findRelated(std::function<bool(Section)> filter = util::AcceptAll<Section>()) const;
 
     /**
      *  Adds a new child section.
@@ -356,11 +356,11 @@ public:
 
 private:
 
-    std::vector<Section> findDownstream(const std::string &type) const;
+    std::vector<Section> findDownstream(std::function<bool(Section)> filter) const;
 
-    std::vector<Section> findUpstream(const std::string &type) const;
+    std::vector<Section> findUpstream(std::function<bool(Section)> filter) const;
 
-    std::vector<Section> findSideways(const std::string &type, const std::string &caller_id) const;
+    std::vector<Section> findSideways(std::function<bool(Section)> filter, const std::string &caller_id) const;
 
     size_t tree_depth() const;
 };

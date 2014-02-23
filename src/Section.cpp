@@ -88,9 +88,9 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
 }
     
 
-std::vector<Section> Section::findRelated(const  string &type) const
+std::vector<Section> Section::findRelated(std::function<bool(Section)> filter) const
 {
-    std::vector<Section> results = findDownstream(type);
+    std::vector<Section> results = findDownstream(filter);
     if(results.size() > 0){ //This checking of results can be removed if we decide not to include this in findSection
         for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
             if((*it).id().compare(id()) == 0){
@@ -101,7 +101,7 @@ std::vector<Section> Section::findRelated(const  string &type) const
         }
     }
     if (results.size() == 0){
-        results = findUpstream(type);
+        results = findUpstream(filter);
     }
     if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
         for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
@@ -112,7 +112,7 @@ std::vector<Section> Section::findRelated(const  string &type) const
             }
         }
     if (results.size() == 0){
-        results = findSideways(type, id());
+        results = findSideways(filter, id());
     }
     return results;
 }
@@ -170,37 +170,38 @@ size_t Section::tree_depth() const{
 }
 
 
-vector<Section> Section::findDownstream(const string &type) const{
+vector<Section> Section::findDownstream(std::function<bool(Section)> filter) const{
     vector<Section> results;
     size_t max_depth = tree_depth();
     size_t actual_depth = 1;
     while (results.size() == 0 && actual_depth <= max_depth){
-        results = findSections(util::TypeFilter<Section>(type), actual_depth);
+        results = findSections(filter, actual_depth);
         actual_depth += 1;
     }
     return results;
 }
 
 
-vector<Section> Section::findUpstream(const string &type) const{
+vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const{
     vector<Section> results;
     Section p = parent();
+
     if(p != nullptr){
-        if (p.type().compare(type) == 0){
-            results.push_back(p);
+        results = p.findSections(filter,1);
+        if(results.size() > 0){
             return results;
         }
-        return p.findUpstream(type);
+        return p.findUpstream(filter);
     }
     return results;
 }
 
 
-vector<Section> Section::findSideways(const string &type, const string &caller_id) const{
+vector<Section> Section::findSideways(std::function<bool(Section)> filter, const string &caller_id) const{
     vector<Section> results;
     Section p = parent();
     if(p != nullptr){
-        results = p.findSections(util::TypeFilter<Section>(type),1);
+        results = p.findSections(filter,1);
         if(results.size() > 0){
             for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it){
                 if((*it).id().compare(caller_id) == 0){
@@ -211,7 +212,7 @@ vector<Section> Section::findSideways(const string &type, const string &caller_i
             }
             return results;
         }
-        return p.findSideways(type, caller_id);
+        return p.findSideways(filter, caller_id);
     }
     return results;
 }
