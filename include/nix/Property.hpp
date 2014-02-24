@@ -60,7 +60,7 @@ public:
     }
 
 
-    std::string mapping() const {
+    boost::optional<std::string> mapping() const {
         return impl_ptr->mapping();
     }
     
@@ -90,7 +90,7 @@ public:
     }
 
 
-    std::string unit() const {
+    boost::optional<std::string> unit() const {
         return impl_ptr->unit();
     }
     

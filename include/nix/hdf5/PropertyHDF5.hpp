@@ -42,7 +42,7 @@ public:
     void mapping(const std::string &mapping);
 
 
-    std::string mapping() const;
+    boost::optional<std::string> mapping() const;
 
 
     void mapping(const none_t t);
@@ -60,7 +60,7 @@ public:
     void unit(const std::string &unit);
 
 
-    std::string unit() const;
+    boost::optional<std::string> unit() const;
 
 
     void unit(const none_t t);

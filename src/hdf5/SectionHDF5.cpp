@@ -62,10 +62,13 @@ void SectionHDF5::repository(const string &repository) {
 }
 
 
-string SectionHDF5::repository() const {
+boost::optional<string> SectionHDF5::repository() const {
+    boost::optional<string> ret;
     string repository;
-    group().getAttr("repository", repository);
-    return repository;
+    if(group().getAttr("repository", repository)) {
+		ret = repository;
+	}
+    return ret;
 }
 
 
@@ -119,10 +122,13 @@ void SectionHDF5::mapping(const string &mapping) {
 }
 
 
-string SectionHDF5::mapping() const {
+boost::optional<string> SectionHDF5::mapping() const {
+    boost::optional<string> ret;
     string mapping;
-    group().getAttr("mapping", mapping);
-    return mapping;
+    if(group().getAttr("mapping", mapping)) {
+		ret = mapping;
+	}
+    return ret;
 }
 
 
