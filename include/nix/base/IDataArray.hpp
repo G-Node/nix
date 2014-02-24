@@ -123,6 +123,8 @@ public:
     virtual NDSize getExtent(void) const = 0;
     virtual void   setExtent(const NDSize &extent) = 0;
 
+    virtual DataType getDataType(void) const = 0;
+
     // TODO add missing methods
 
     virtual ~IDataArray() {}

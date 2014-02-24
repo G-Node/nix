@@ -134,6 +134,7 @@ public:
     static H5::DataType fileTypeForValue(DataType dtype);
     static H5::DataType memTypeForValue(DataType dtype);
 
+    DataType dataType(void) const;
 
 private:
 

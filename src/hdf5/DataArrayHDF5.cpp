@@ -306,5 +306,17 @@ void DataArrayHDF5::setExtent(const NDSize &extent)
     ds.setExtent(extent);
 }
 
+DataType DataArrayHDF5::getDataType(void) const
+{
+    if (!group().hasData("data")) {
+        //we could also throw an exception but I think returning
+        //Nothing here is better (ck)
+        return DataType::Nothing;
+    }
+
+    DataSet ds = group().openData("data");
+    return ds.dataType();
+}
+
 } // namespace hdf5
 } // namespace nix
