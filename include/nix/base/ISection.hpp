@@ -43,9 +43,9 @@ public:
     /**
      * Returns the repository url.
      *
-     * @return string the url.
+     * @return boost::optional<string> the url.
      */
-    virtual std::string repository() const = 0;
+    virtual boost::optional<std::string> repository() const = 0;
 
     /**
      * Deleter for the repository url.
@@ -88,9 +88,9 @@ public:
     /**
      * Return the mapping information.
      *
-     * @return string
+     * @return boost::optional<std::string>
      */
-    virtual std::string mapping() const = 0;
+    virtual boost::optional<std::string> mapping() const = 0;
 
     /**
      * Deleter for the mapping information.

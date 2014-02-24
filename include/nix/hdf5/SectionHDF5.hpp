@@ -63,7 +63,7 @@ public:
     void repository(const std::string &repository);
 
 
-    std::string repository() const;
+    boost::optional<std::string> repository() const;
 
 
     void repository(const none_t t);
@@ -81,7 +81,7 @@ public:
     void mapping(const std::string &mapping);
 
 
-    std::string mapping() const;
+    boost::optional<std::string> mapping() const;
 
 
     void mapping(const none_t t);

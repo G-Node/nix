@@ -69,10 +69,13 @@ void PropertyHDF5::mapping(const string &mapping) {
 }
 
 
-string PropertyHDF5::mapping() const {
+boost::optional<string> PropertyHDF5::mapping() const {
+    boost::optional<string> ret;
     string mapping;
-    group().getAttr("mapping", mapping);
-    return mapping;
+    if(group().getAttr("mapping", mapping)) {
+		ret = mapping;
+	}
+    return ret;
 }
 
 
@@ -85,7 +88,7 @@ void PropertyHDF5::mapping(const none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if (valueCount() > 0 && this->unit().length() > 0) {
+    if (valueCount() > 0 && this->unit()) {
         throw runtime_error("Cannot change unit of a not-empty property!");
         return;
     }
@@ -93,10 +96,13 @@ void PropertyHDF5::unit(const string &unit) {
 }
 
 
-string PropertyHDF5::unit() const {
+boost::optional<string> PropertyHDF5::unit() const {
+    boost::optional<std::string> ret;
     string unit;
-    group().getAttr("unit", unit);
-    return unit;
+    if(group().getAttr("unit", unit)) {
+		ret = unit;
+	}
+    return ret;
 }
 
 
