@@ -33,6 +33,7 @@
 #include "TestProperty.hpp"
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
+#include "TestImplContainer.hpp"
 
 int main(int argc, char* argv[]) {
 	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -50,7 +51,8 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
-
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
+    
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
     testresult.addListener(&collectedresults);

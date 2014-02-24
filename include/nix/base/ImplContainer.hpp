@@ -97,6 +97,15 @@ public:
     {
     }
 
+    bool isNone() const {
+        return !impl_ptr;
+    }
+
+
+    explicit operator bool() const {
+        return !isNone();
+    }
+
 
     virtual ImplContainer<T> &operator=(const ImplContainer<T> &other) {
         if (*this != other) {
@@ -122,13 +131,16 @@ public:
         return !(*this == other);
     }
 
-
-    virtual bool operator==(std::nullptr_t nullp) const {
-        return impl_ptr == nullp;
+    // bool "==" operator "boost::none_t" overload: when an object
+    // is compared to "none_t" (e.g. boost::none) internally we compare
+    // the "impl_ptr" to the null pointer.
+    virtual bool operator==(none_t t) const {
+        return impl_ptr == nullptr;
     }
 
-    virtual bool operator!=(std::nullptr_t nullp) const {
-        return impl_ptr != nullp;
+    // bool "=!" operator "boost::none_t" overload: same as "==" operator.
+    virtual bool operator!=(none_t t) const {
+        return impl_ptr != nullptr;
     }
 
 
