@@ -69,14 +69,14 @@ public:
      */
     virtual void extents(const std::string &extentsId) = 0;
 
-	/**
-	 * Deleter for the reference to the extents DataArray.
+    /**
+     * Deleter for the reference to the extents DataArray.
      * Note: This function does not delete the referenced DataArray!
-	 *
-	 * @param boost::none_t.
-	 */
+     *
+     * @param boost::none_t.
+     */
     virtual void extents(const none_t t) = 0;
-	
+    
     /**
      * Returns whether this DataArray contains extents.
      *

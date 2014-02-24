@@ -120,21 +120,21 @@ DataArray SimpleTagHDF5::getReference(const std::string &id) const {
 
 
 DataArray SimpleTagHDF5::getReference(size_t index) const {
-	std::vector<std::string> refs = references_list.get();
-	std::string id;
-	
-	// get reference id
-	if(index < refs.size()) {
-		id = refs[index];
-	} else {
-		throw runtime_error("No data array index: " + index);
-	}
-	// get referenced array
-	if(block().hasDataArray(id)) {
-		return block().getDataArray(id);
-	} else {
-		throw runtime_error("No data array id: " + id);
-	}
+    std::vector<std::string> refs = references_list.get();
+    std::string id;
+    
+    // get reference id
+    if(index < refs.size()) {
+        id = refs[index];
+    } else {
+        throw runtime_error("No data array index: " + index);
+    }
+    // get referenced array
+    if(block().hasDataArray(id)) {
+        return block().getDataArray(id);
+    } else {
+        throw runtime_error("No data array id: " + id);
+    }
 }
 
 

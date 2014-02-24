@@ -68,13 +68,13 @@ public:
     /**
      * Remove associated metadata from the entity.
      * The section will not be deleted.
-	 *
-	 * @param boost::none_t.
+     *
+     * @param boost::none_t.
      */
     void metadata(const none_t t)
-	{
-		NamedEntity<T>::impl_ptr->metadata(t);
-	}
+    {
+        NamedEntity<T>::impl_ptr->metadata(t);
+    }
 
 
     virtual ~EntityWithMetadata() {}

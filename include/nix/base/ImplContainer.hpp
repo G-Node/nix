@@ -24,8 +24,8 @@ class ImplContainer {
 
 protected:
 
-	typedef boost::none_t none_t;
-	none_t none = boost::none;
+    typedef boost::none_t none_t;
+    none_t none = boost::none;
     std::shared_ptr<T> impl_ptr;
 
     /**

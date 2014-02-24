@@ -105,7 +105,7 @@ void DataTagHDF5::extents(const none_t t) {
     if(group().hasAttr("extents")) {
         group().removeAttr("extents");
     }
-	forceUpdatedAt();
+    forceUpdatedAt();
 }
 
 
@@ -133,28 +133,28 @@ size_t DataTagHDF5::referenceCount() const {
 
 DataArray DataTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
-		return block().getDataArray(id);
+        return block().getDataArray(id);
     } else {
         throw runtime_error("No reference with id: " + id);
     }
 }
 
 DataArray DataTagHDF5::getReference(size_t index) const {
-	std::vector<std::string> refs = reference_list.get();
-	std::string id;
-	
-	// get reference id
-	if(index < refs.size()) {
-		id = refs[index];
-	} else {
-		throw runtime_error("No data array index: " + index);
-	}
-	// get referenced array
-	if(block().hasDataArray(id)) {
-		return block().getDataArray(id);
-	} else {
-		throw runtime_error("No data array id: " + id);
-	}
+    std::vector<std::string> refs = reference_list.get();
+    std::string id;
+    
+    // get reference id
+    if(index < refs.size()) {
+        id = refs[index];
+    } else {
+        throw runtime_error("No data array index: " + index);
+    }
+    // get referenced array
+    if(block().hasDataArray(id)) {
+        return block().getDataArray(id);
+    } else {
+        throw runtime_error("No data array id: " + id);
+    }
 }
 
 void DataTagHDF5::addReference(const DataArray &reference) {

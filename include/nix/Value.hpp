@@ -38,7 +38,7 @@ private:
     };
 
 #ifdef _WIN32
-	std::string v_string;
+    std::string v_string;
 #endif
 
 public:
@@ -53,11 +53,11 @@ public:
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
     Value(char *value) : dtype(DataType::Nothing) {
-		set(std::string(value));
+        set(std::string(value));
     }
 
     Value(const char *value) : dtype(DataType::Nothing) {
-		set(std::string(value));
+        set(std::string(value));
     }
 
     template<typename T>
@@ -67,7 +67,7 @@ public:
 
     template<size_t N>
     explicit Value(const char (&value)[N]) : dtype(DataType::Nothing) {
-		set(std::string(value));
+        set(std::string(value));
     }
 
     Value(const Value &other) {

@@ -66,8 +66,8 @@ public:
     
     
     void mapping(const boost::none_t t) {
-		impl_ptr->mapping();
-	}
+        impl_ptr->mapping();
+    }
 
 
     void dataType(const std::string &data_type) {
@@ -96,8 +96,8 @@ public:
     
     
     void unit(const boost::none_t t) {
-		return impl_ptr->unit(t);
-	}
+        return impl_ptr->unit(t);
+    }
 
     //--------------------------------------------------
     // Methods for Value access
@@ -122,7 +122,7 @@ public:
     
     void values(const boost::none_t t) {
         impl_ptr->values(t);
-	}
+    }
 
     //------------------------------------------------------
     // Operators and other functions

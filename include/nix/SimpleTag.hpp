@@ -146,10 +146,10 @@ public:
     }
 
 
-	DataArray getReference(size_t index) const {
-		return impl_ptr->getReference(index);
-	}
-	
+    DataArray getReference(size_t index) const {
+        return impl_ptr->getReference(index);
+    }
+    
 
     void addReference(const DataArray &reference) {
         impl_ptr->addReference(reference);
