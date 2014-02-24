@@ -25,7 +25,7 @@ struct Filter : public std::unary_function<T, bool> {
 
     virtual bool operator()(const T&) = 0;
 
-	typedef std::function<bool(const T&)> type;
+    typedef std::function<bool(const T&)> type;
 
 };
 

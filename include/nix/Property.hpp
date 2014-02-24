@@ -63,6 +63,11 @@ public:
     std::string mapping() const {
         return impl_ptr->mapping();
     }
+    
+    
+    void mapping(const boost::none_t t) {
+        impl_ptr->mapping();
+    }
 
 
     void dataType(const std::string &data_type) {
@@ -75,6 +80,11 @@ public:
     }
 
 
+    void dataType(const boost::none_t t) {
+        impl_ptr->dataType(t);
+    }
+    
+
     void unit(const std::string &unit) {
         impl_ptr->unit(unit);
     }
@@ -82,6 +92,11 @@ public:
 
     std::string unit() const {
         return impl_ptr->unit();
+    }
+    
+    
+    void unit(const boost::none_t t) {
+        return impl_ptr->unit(t);
     }
 
     //--------------------------------------------------
@@ -103,6 +118,10 @@ public:
 
     std::vector<Value> values(void) const {
         return impl_ptr->values();
+    }
+    
+    void values(const boost::none_t t) {
+        impl_ptr->values(t);
     }
 
     //------------------------------------------------------

@@ -56,6 +56,14 @@ string PropertyHDF5::dataType() const {
 }
 
 
+void PropertyHDF5::dataType(const none_t t) {
+    if(group().hasAttr("data_type")) {
+        group().removeAttr("data_type");
+    }
+    forceUpdatedAt();
+}
+
+
 void PropertyHDF5::mapping(const string &mapping) {
     group().setAttr("mapping", mapping);
 }
@@ -65,6 +73,14 @@ string PropertyHDF5::mapping() const {
     string mapping;
     group().getAttr("mapping", mapping);
     return mapping;
+}
+
+
+void PropertyHDF5::mapping(const none_t t) {
+    if(group().hasAttr("mapping")) {
+        group().removeAttr("mapping");
+    }
+    forceUpdatedAt();
 }
 
 
@@ -81,6 +97,14 @@ string PropertyHDF5::unit() const {
     string unit;
     group().getAttr("unit", unit);
     return unit;
+}
+
+
+void PropertyHDF5::unit(const none_t t) {
+    if(group().hasAttr("unit")) {
+        group().removeAttr("unit");
+    }
+    forceUpdatedAt();
 }
 
 
@@ -149,6 +173,14 @@ std::vector<Value> PropertyHDF5::values(void) const
     DataSet dataset = group().openData("values");
     dataset.read(values);
     return values;
+}
+
+
+void PropertyHDF5::values(const none_t t) {
+    if(group().hasAttr("values")) {
+        group().removeAttr("values");
+    }
+    forceUpdatedAt();
 }
 
 

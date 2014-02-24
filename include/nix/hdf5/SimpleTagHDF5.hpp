@@ -59,6 +59,9 @@ public:
     void units(std::vector<std::string> &units);
 
 
+    void units(const none_t t);
+    
+
     std::vector<double> position() const;
 
 
@@ -69,6 +72,10 @@ public:
 
 
     void extent(const std::vector<double> &extent);
+
+
+    void extent(const none_t t);
+
 
     //--------------------------------------------------
     // Methods concerning references.

@@ -54,10 +54,10 @@ public:
 
 
     void name(const none_t t)
-	{
-		Entity<T>::impl_ptr->name(t);
-	}
-	
+    {
+        Entity<T>::impl_ptr->name(t);
+    }
+    
 
     void definition(const std::string &definition) {
         Entity<T>::impl_ptr->definition(definition);
@@ -70,9 +70,9 @@ public:
 
 
     void definition(const none_t t)
-	{
-		Entity<T>::impl_ptr->definition(t);
-	}
+    {
+        Entity<T>::impl_ptr->definition(t);
+    }
 
 
     int compare(const INamedEntity &other) const {

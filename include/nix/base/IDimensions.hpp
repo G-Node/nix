@@ -27,6 +27,9 @@ namespace base {
  */
 class IDimension {
 
+protected:
+    typedef boost::none_t none_t;
+
 public:
 
     virtual size_t id() const = 0;
@@ -61,6 +64,8 @@ public:
 
     virtual void offset(double offset) = 0;
 
+    virtual void offset(const none_t t) = 0;
+    
     virtual ~ISampledDimension() {}
 
 };
@@ -76,6 +81,8 @@ public:
     virtual std::vector<std::string> labels() const = 0;
 
     virtual void labels(const std::vector<std::string> &labels) = 0;
+
+    virtual void labels(const none_t t) = 0;
 
     virtual ~ISetDimension() {}
 

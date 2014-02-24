@@ -188,6 +188,15 @@ public:
         return impl_ptr->offset(offset);
     }
 
+    /**
+     * Deleter for the offset of this dimension.
+     * -optional-
+     *
+     * @param boost::none_t
+     */
+    void offset(const boost::none_t t) {
+        impl_ptr->offset(t);
+    }
 
     SampledDimension& operator=(const SampledDimension &other);
 
@@ -256,6 +265,15 @@ public:
         impl_ptr->labels(labels);
     }
 
+    /**
+     * Deleter for the labels of this dimension.
+     * -optional-
+     *
+     * @param boost::none_t
+     */
+    void labels(const boost::none_t t) {
+        impl_ptr->labels(t);
+    }
 
     SetDimension& operator=(const SetDimension &other);
 
