@@ -66,8 +66,8 @@ public:
     Source getSource(const std::string &id) const;
 
 
-	Source getSource(const size_t index) const;
-	
+    Source getSource(const size_t index) const;
+    
 
     void swap(EntityWithSourcesHDF5 &other);
 

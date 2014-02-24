@@ -46,21 +46,13 @@ public:
      * @param position   string.
      */
     virtual void positions(const std::string &positionid) = 0;
-
+    
     /**
      * Returns whether this DataArray contains positions.
      *
      * @return bool
      */
     virtual bool hasPositions() const = 0;
-
-    /**
-     * Removes the reference to the positions DataArray from the DataTag.
-     * Note: This function does not delete the referenced DataArray!
-     *
-     * @return bool
-     */
-    virtual bool removePositions() = 0;
 
     /**
      * Getter for the extents of the tag which are stored in a#
@@ -78,19 +70,20 @@ public:
     virtual void extents(const std::string &extentsId) = 0;
 
     /**
+     * Deleter for the reference to the extents DataArray.
+     * Note: This function does not delete the referenced DataArray!
+     *
+     * @param boost::none_t.
+     */
+    virtual void extents(const none_t t) = 0;
+    
+    /**
      * Returns whether this DataArray contains extents.
      *
      * @return bool
      */
     virtual bool hasExtents() const = 0;
 
-    /**
-     * Removes the reference to the extents DataArray from the DataTag.
-     * Note: This function does not delete the referenced DataArray!
-     *
-     * @return bool
-     */
-    virtual bool removeExtents() = 0;
 
     //--------------------------------------------------
     // Methods concerning references.

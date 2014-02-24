@@ -45,17 +45,26 @@ public:
     std::string mapping() const;
 
 
+    void mapping(const none_t t);
+
+
     void dataType(const std::string &dataType);
 
 
     std::string dataType() const;
 
 
+    void dataType(const none_t t);
+    
+
     void unit(const std::string &unit);
 
 
     std::string unit() const;
 
+
+    void unit(const none_t t);
+    
 
     void deleteValues();
 
@@ -66,6 +75,8 @@ public:
 
     std::vector<Value> values(void) const;
 
+    void values(const boost::none_t t);
+    
 
     bool operator==(const PropertyHDF5 &other) const;
 

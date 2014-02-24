@@ -61,7 +61,6 @@ public:
         impl_ptr->label(label);
     }
 
-
     /**
      * Get the unit of the data stored in this dataArray.
      *
@@ -79,7 +78,6 @@ public:
     void unit(const std::string &unit) {
         impl_ptr->unit(unit);
     }
-
 
     /**
      * Returns the expansion origin of the calibration polynom.

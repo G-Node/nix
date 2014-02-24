@@ -45,6 +45,13 @@ public:
     virtual void units(std::vector<std::string> &units) = 0;
 
     /**
+     * Deleter for the units of a tag.
+     *
+     * @param boost::none_t.
+     */
+    virtual void units(const none_t t) = 0;
+    
+    /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
      *
@@ -74,7 +81,14 @@ public:
      * @param extent      The extent vector.
      */
     virtual void extent(const std::vector<double> &extent) = 0;
-
+    
+    /**
+     * Deleter for the extent of a tag.
+     *
+     * @param boost::none_t.
+     */
+    virtual void extent(const none_t t) = 0;
+    
     //--------------------------------------------------
     // Methods concerning references.
     // TODO implement when done with the DataArray class.

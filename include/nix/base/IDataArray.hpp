@@ -48,7 +48,6 @@ public:
      */
     virtual void label(const std::string &label) = 0;
 
-
     /**
      * Get the unit of the data stored in this dataArray.
      *
@@ -62,7 +61,6 @@ public:
      * @param string the unit
      */
     virtual void unit(const std::string &unit) = 0;
-
 
     /**
      * Returns the expansion origin of the calibration polynom.

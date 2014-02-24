@@ -44,7 +44,7 @@ public:
     /**
      * Associate the entity with some metadata. Calling this method will replace
      * previously stored information.
-     *
+     * 
      *
      * @param metadata    The section that should be associated
      *                    with this entity.
@@ -54,6 +54,9 @@ public:
     /**
      * Remove associated metadata from the entity.
      * The section will not be deleted.
+     * Note: This function does not delete the referenced Section!
+     * 
+     * @param boost::none_t.
      */
     virtual void metadata(const none_t t) = 0;
 

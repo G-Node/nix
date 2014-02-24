@@ -48,6 +48,13 @@ public:
     virtual std::string repository() const = 0;
 
     /**
+     * Deleter for the repository url.
+     *
+     * @param boost::none_t.
+     */
+    virtual void repository(const boost::none_t t) = 0;
+    
+    /**
      * Establish a link to another section. The linking section
      * inherits the properties defined in the linked section.
      * Properties of the same name are overridden.
@@ -64,6 +71,14 @@ public:
     virtual Section link() const = 0;
 
     /**
+     * Deleter for the reference to the linked section.
+     * NOTE: this function does not affect the linked section object.
+     *
+     * @param boost::none_t.
+     */
+    virtual void link(const none_t t) = 0;
+    
+    /**
      * Sets the mapping information for this section.
      *
      * @param string the mapping information.
@@ -77,6 +92,13 @@ public:
      */
     virtual std::string mapping() const = 0;
 
+    /**
+     * Deleter for the mapping information.
+     *
+     * @param boost::none_t.
+     */
+    virtual void mapping(const none_t t) = 0;
+    
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------

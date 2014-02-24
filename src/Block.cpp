@@ -35,7 +35,7 @@ namespace nix {
         for (typename std::vector<Source>::iterator it = probes.begin(); it!=probes.end(); ++it)
         {
             matches = it->findSources(filter, max_depth);
-			result.insert( result.end(), matches.begin(), matches.end() );
+            result.insert( result.end(), matches.begin(), matches.end() );
         }
 
         return result;

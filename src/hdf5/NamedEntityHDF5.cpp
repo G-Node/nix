@@ -72,8 +72,8 @@ void NamedEntityHDF5::definition(const string &definition) {
 
 
 optional<string> NamedEntityHDF5::definition() const {
-	optional<string> ret;
-	string definition;
+    optional<string> ret;
+    string definition;
     group().getAttr("definition", definition);
     ret = definition;
     return ret;
@@ -89,10 +89,10 @@ void NamedEntityHDF5::definition(const none_t t) {
 
 
 int NamedEntityHDF5::compare(const INamedEntity &other) const {
-	int cmp = 0;
-	if (name() && other.name()){
-		cmp = (*name()).compare(*other.name());
-	}
+    int cmp = 0;
+    if (name() && other.name()){
+        cmp = (*name()).compare(*other.name());
+    }
     if (cmp == 0) {
         cmp = id().compare(other.id());
     }

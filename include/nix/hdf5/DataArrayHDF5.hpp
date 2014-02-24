@@ -60,12 +60,11 @@ public:
     void label(const std::string &label);
 
 
-
     std::string unit() const;
 
 
     void unit(const std::string &unit);
-
+    
 
     double expansionOrigin()const;
 
