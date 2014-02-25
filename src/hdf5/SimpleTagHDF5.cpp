@@ -11,6 +11,7 @@
 #include <nix/hdf5/SimpleTagHDF5.hpp>
 #include <nix/hdf5/RepresentationHDF5.hpp>
 #include <nix/hdf5/DataSet.hpp>
+#include <nix/Exception.hpp>
 
 using namespace std;
 
@@ -127,7 +128,7 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
     if(index < refs.size()) {
         id = refs[index];
     } else {
-        throw runtime_error("No data array index: " + index);
+        throw OutOfBounds("No data array at given index", index);
     }
     // get referenced array
     if(block().hasDataArray(id)) {
