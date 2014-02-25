@@ -9,6 +9,7 @@
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
 #include "TestDataTag.hpp"
+#include <nix/Exception.hpp>
 #include <sstream>
 #include <ctime>
 
@@ -114,6 +115,8 @@ void TestDataTag::testReferences(){
 	DataArray da_1 = block.createDataArray("TestReference 1","Reference");
 	DataArray da_2 = block.createDataArray("TestReference 2","Reference");
 	DataTag dt = block.createDataTag("TestDataTag1","Tag");
+
+    CPPUNIT_ASSERT_THROW(dt.getReference(42), nix::OutOfBounds);
 
 	std::stringstream counterrmsg;
 	counterrmsg << "TestDataTag::testReference: Counts do not match!";
