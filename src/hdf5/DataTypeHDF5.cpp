@@ -42,24 +42,20 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
 }
 
 
+template<size_t>
+H5::DataType bool_to_predtype(void) { throw std::invalid_argument("sizeof(bool) > 8 not supported."); };
+
+template<> H5::DataType bool_to_predtype<1>() { return H5::PredType::NATIVE_B8;  }
+template<> H5::DataType bool_to_predtype<2>() { return H5::PredType::NATIVE_B16; }
+template<> H5::DataType bool_to_predtype<4>() { return H5::PredType::NATIVE_B32; }
+template<> H5::DataType bool_to_predtype<8>() { return H5::PredType::NATIVE_B64; }
+
+
 H5::DataType data_type_to_h5_memtype(DataType dtype) {
 
-    //special case the bool
-    //we treat them as bit fields for now, since hdf5 has no bool support
-    //as of 1.8.12
-    if (dtype == DataType::Bool) {
-        switch(sizeof(bool)) {
-        case 1: return H5::PredType::NATIVE_B8;
-        case 2: return H5::PredType::NATIVE_B16;
-        case 4: return H5::PredType::NATIVE_B32;
-        case 8: return H5::PredType::NATIVE_B64;
-        default:
-            throw std::invalid_argument("sizeof(bool) > 8 not supported.");
-        }
-    }
 
     switch(dtype) {
-
+        case DataType::Bool:   return bool_to_predtype<sizeof(bool)>();
         case DataType::Int8:   return H5::PredType::NATIVE_INT8;
         case DataType::Int16:  return H5::PredType::NATIVE_INT16;
         case DataType::Int32:  return H5::PredType::NATIVE_INT32;
