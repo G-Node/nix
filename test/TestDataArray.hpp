@@ -24,6 +24,7 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include <boost/math/constants/constants.hpp>
+#include <boost/math/tools/rational.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
 #include <nix.hpp>
@@ -35,13 +36,36 @@ public:
     void setUp();
     void tearDown();
 
+    void testId();
+    void testType();
+    void testName();
+    void testDefinition();
     void testData();
+    void testPolynomial();
+    void testLabel();
+    void testUnit();
+    void testDimension();
+    void testOperator();
 
 private:
 
-    nix::File file;
-
     CPPUNIT_TEST_SUITE(TestDataArray);
+
+    CPPUNIT_TEST(testId);
+    CPPUNIT_TEST(testType);
+    CPPUNIT_TEST(testName);
+    CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testData);
+    CPPUNIT_TEST(testPolynomial);
+    CPPUNIT_TEST(testLabel);
+    CPPUNIT_TEST(testUnit);
+    CPPUNIT_TEST(testDimension);
+    CPPUNIT_TEST(testOperator);
+    
     CPPUNIT_TEST_SUITE_END ();
+
+    nix::File file;    
+    nix::Block block;
+    nix::DataArray array1, array2;
+    time_t startup_time;
 };

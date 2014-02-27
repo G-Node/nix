@@ -59,19 +59,24 @@ protected:
         int nT, 
         std::function<bool(TENT)> filter) const 
     {
-        std::vector<TENT> e;
-        int i = 0;
-         
-        if(nT < 1) { return e; }
-        e.resize(nT);
+        std::vector<TENT> entities;
+        TENT candidate;
+        int skipped = 0;
+        if(nT < 1) { return entities; }
 
-        for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
-            if(filter(*it)) {
-                *it = getEntity( i++ );
+		// loop until numeric limits of "size_t" or until "nT" entities have been found
+        for (int i = 0; i < std::numeric_limits<size_t>::max(); i++) {
+            try {
+                candidate = getEntity( i );
+                if(filter(candidate)) entities.push_back(candidate);
+                else skipped++;
+                if( entities.size()+skipped >= nT ) break;
+            } catch(std::exception& e) {
+                continue;
             }
         }
 
-        return e;
+        return entities;
     }
     
 public:
