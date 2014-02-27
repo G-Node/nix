@@ -28,16 +28,33 @@ DimensionType dimensionTypeFromStr(const string &str) {
 
 
 std::string dimensionTypeToStr(DimensionType dim) {
+
+    //The way this switch + string.empty() checking is
+    // done here might seem a bit convoluted, but the
+    // idea behind it is:
+    // a) have no default case in the switch to get a
+    //    compile warning in case a new element is
+    //    added to the enum
+    // b) still be safe and throw an exception in case
+    //    not all enum cases are handled properly
+
+    std::string dimType;
+
     switch (dim) {
         case DimensionType::Set:
-            return "set";
+            dimType = "set";
         case DimensionType::Range:
-            return "range";
+            dimType = "range";
         case DimensionType::Sample:
-            return "sample";
-        default:
-            throw runtime_error("Not a valid dimension type");
+            dimType = "sample";
     }
+
+    if (dimType.empty()) {
+        throw runtime_error("Not a valid dimension type");
+    }
+
+    return dimType;
+
 }
 
 // Implementation of Dimension

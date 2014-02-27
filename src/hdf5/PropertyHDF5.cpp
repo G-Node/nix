@@ -42,7 +42,6 @@ void PropertyHDF5::dataType(const string &dataType) {
     } else {
         if (valueCount() > 0 && this->dataType().length() > 0) {
             throw runtime_error("Cannot change data type of a not empty property!");
-            return;
         }
     }
     group().setAttr("data_type", dataType);
@@ -87,7 +86,6 @@ void PropertyHDF5::mapping(const none_t t) {
 void PropertyHDF5::unit(const string &unit) {
     if (valueCount() > 0 && this->unit().length() > 0) {
         throw runtime_error("Cannot change unit of a not-empty property!");
-        return;
     }
     group().setAttr("unit", unit);
 }
