@@ -52,7 +52,7 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
 
 
 template<size_t>
-H5::DataType bool_to_predtype(void) { throw std::invalid_argument("sizeof(bool) > 8 not supported."); };
+H5::DataType bool_to_predtype(void) { throw std::invalid_argument("sizeof(bool) > 8 not supported."); }
 
 template<> H5::DataType bool_to_predtype<1>() { return H5::PredType::NATIVE_B8;  }
 template<> H5::DataType bool_to_predtype<2>() { return H5::PredType::NATIVE_B16; }
