@@ -14,18 +14,15 @@
 #include <list>
 #include <functional>
 
-#include "boost/optional.hpp"
+#include <nix/None.hpp>
 
 namespace nix {
 namespace base {
 
 template<typename T>
 class ImplContainer {
-
 protected:
 
-    typedef boost::none_t none_t;
-    none_t none = boost::none;
     std::shared_ptr<T> impl_ptr;
 
     /**
