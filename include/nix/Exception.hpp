@@ -15,6 +15,12 @@
 
 namespace nix {
 
+#ifdef _MSC_VER
+#define NOEXCEPT
+#else
+#define NOEXCEPT noexcept
+#endif
+
 class OutOfBounds : public std::out_of_range {
 public:
     OutOfBounds(const std::string &what_arg, size_t where) :
@@ -29,7 +35,7 @@ public:
         return index;
     }
 
-    const char *what() const noexcept {
+    const char *what() const NOEXCEPT {
         return msg.c_str();
     }
 

@@ -32,7 +32,7 @@ namespace nix {
         vector<Source> matches;
         vector<Source> result;
 
-        for (typename std::vector<Source>::iterator it = probes.begin(); it!=probes.end(); ++it)
+        for (std::vector<Source>::iterator it = probes.begin(); it!=probes.end(); ++it)
         {
             matches = it->findSources(filter, max_depth);
             result.insert( result.end(), matches.begin(), matches.end() );
