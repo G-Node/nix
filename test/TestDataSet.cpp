@@ -286,11 +286,9 @@ void test_val_generic(H5::Group &h5group, const T &test_value)
     std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
 
     nix::NDSize size = {1};
-    nix::NDSize maxsize = {H5S_UNLIMITED};
-    nix::NDSize chunks = nix::hdf5::DataSet::guessChunking(size, values[0].type());
     H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
 
-    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size, &maxsize, &chunks);
+    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size);
 
     ds.write(values);
     std::vector<nix::Value> checkValues;
