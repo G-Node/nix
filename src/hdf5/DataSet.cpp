@@ -51,26 +51,26 @@ DataSet DataSet::create(const H5::CommonFG &parent,
                         const std::string &name,
                         const H5::DataType &fileType,
                         const NDSize &size,
-                        const NDSize *maxsize,
-                        const NDSize *chunks,
+                        const NDSize &maxsize,
+                        const NDSize &chunks,
                         bool maxSizeUnlimited,
                         bool guessChunks)
 {
     H5::DataSpace space;
 
     if (size) {
-        if (maxsize == nullptr) {
-            space = DataSpace::create(size, maxSizeUnlimited);
+        if (maxsize) {
+            space = DataSpace::create(size, maxsize);
         } else {
-            space = DataSpace::create(size, *maxsize);
+            space = DataSpace::create(size, maxSizeUnlimited);
         }
     }
 
     H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
 
-    if (chunks != nullptr) {
-        int rank = static_cast<int>(chunks->size());
-        plcreate.setChunk(rank, &(*chunks)[0]);
+    if (chunks) {
+        int rank = static_cast<int>(chunks.size());
+        plcreate.setChunk(rank, chunks.data());
     } else if (guessChunks) {
         NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
         plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
