@@ -118,7 +118,8 @@ public:
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value);
 
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const H5::DataType &fileType,
-                          const NDSize &size, const NDSize *maxsize, const NDSize *chunks);
+                          const NDSize &size, const NDSize *maxsize, const NDSize *chunks,
+                          bool maxSizeUnlimited = true, bool guessChunks = true);
 
     static NDSize guessChunking(NDSize dims, DataType dtype);
 
