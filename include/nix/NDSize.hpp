@@ -84,6 +84,10 @@ public:
         return *this;
     }
 
+    // safe bool of the future (i.e. C++11)
+    explicit operator bool() const {
+        return rank > 0;
+    }
 
     T& operator[] (const size_t index) {
         const NDSizeBase *this_const = const_cast<const NDSizeBase*>(this);
