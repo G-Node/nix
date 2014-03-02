@@ -19,9 +19,9 @@ H5::DataSpace create(const NDSize &dims, const NDSize *maxdims)
 {
     H5::DataSpace space;
 
-    if (dims.size() == 0) {
+    if (!dims) {
         space = H5::DataSpace();
-        return space; //no need to delete shape
+        return space;
     }
 
     int rank = (int) dims.size();
