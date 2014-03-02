@@ -17,11 +17,6 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-
-const NDSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
-const NDSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
-
-
 DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
     : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id()),
       dimension_group(data_array.dimension_group)
@@ -104,7 +99,7 @@ void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
+        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients);
     }
     ds.write(coefficients);
     forceUpdatedAt();

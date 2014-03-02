@@ -14,9 +14,6 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-const NDSize ReferenceList::MIN_CHUNK_SIZE = {1};
-const NDSize ReferenceList::MAX_SIZE_1D = {H5S_UNLIMITED};
-
 
 ReferenceList::ReferenceList(const ReferenceList &other)
     : group(other.group), ds_name(other.ds_name)
@@ -59,8 +56,7 @@ void ReferenceList::add(const string &id) {
         sel.select(count, old_size);
         ds.write(new_ids, sel);
     } else {
-        DataSet ds = DataSet::create(group.h5Group(), ds_name, new_ids,
-                                     &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
+        DataSet ds = DataSet::create(group.h5Group(), ds_name, new_ids);
         ds.write(new_ids);
     }
 }
