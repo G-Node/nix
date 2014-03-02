@@ -111,8 +111,7 @@ public:
     template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
 
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
-                          const NDSize &size, const NDSize *maxsize = nullptr, const NDSize *chunks = nullptr);
+    static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype, const NDSize &size);
 
     template<typename T>
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value);

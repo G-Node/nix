@@ -157,11 +157,7 @@ void TestDataSet::testDataType() {
 void TestDataSet::testBasic() {
     NDSize dims = {4, 6};
 
-    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    NDSize maxdims(dims.size());
-    maxdims.fill(H5S_UNLIMITED);
-
-    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims, &maxdims, &chunks);
+    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -229,10 +225,7 @@ void TestDataSet::testBasic() {
 void TestDataSet::testSelection() {
     NDSize dims = {15, 15};
 
-    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    NDSize maxdims(dims.size());
-    maxdims.fill(H5S_UNLIMITED);
-    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims, &maxdims, &chunks);
+    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;

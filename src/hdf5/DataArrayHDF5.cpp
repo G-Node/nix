@@ -232,10 +232,7 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
         throw new std::runtime_error("DataArray alread exists"); //FIXME, better exception
     }
 
-    NDSize maxsize(size.size(), H5S_UNLIMITED);
-    NDSize chunks = DataSet::guessChunking(size, dtype);
-
-    DataSet::create(group().h5Group(), "data", dtype, size, &maxsize, &chunks);
+    DataSet::create(group().h5Group(), "data", dtype, size);
 }
 
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
@@ -243,9 +240,7 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     DataSet ds;
 
     if (!group().hasData("data")) {
-        NDSize maxsize(count.size(), H5S_UNLIMITED);
-        NDSize chunks(count.size(), 1); //FIXME
-        ds = DataSet::create(group().h5Group(), "data", dtype, count, &maxsize, &chunks);
+        ds = DataSet::create(group().h5Group(), "data", dtype, count);
     } else {
         ds = group().openData("data");
     }

@@ -40,12 +40,10 @@ DataSet::DataSet(H5::DataSet dset)
 DataSet DataSet::create(const H5::CommonFG &parent,
                         const std::string &name,
                         DataType dtype,
-                        const NDSize &size,
-                        const NDSize *maxsize,
-                        const NDSize *chunks)
+                        const NDSize &size)
 {
     H5::DataType fileType = data_type_to_h5_filetype(dtype);
-    return create(parent, name, fileType, size, maxsize, chunks);
+    return create(parent, name, fileType, size);
 }
 
 
