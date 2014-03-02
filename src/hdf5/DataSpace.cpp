@@ -15,7 +15,7 @@ namespace hdf5 {
 namespace DataSpace {
 
 
-H5::DataSpace create(const NDSize &dims, const NDSize *maxdims)
+H5::DataSpace create(const NDSize &dims, const NDSize &maxdims)
 {
     H5::DataSpace space;
 
@@ -25,8 +25,8 @@ H5::DataSpace create(const NDSize &dims, const NDSize *maxdims)
     }
 
     int rank = (int) dims.size();
-    if (maxdims != nullptr) {
-        space = H5::DataSpace(rank, dims.data(), maxdims->data());
+    if (maxdims) {
+        space = H5::DataSpace(rank, dims.data(), maxdims.data());
     } else {
         space = H5::DataSpace(rank, dims.data());
     }
@@ -39,9 +39,9 @@ H5::DataSpace create(const NDSize &dims, bool maxdimsUnlimited)
 
     if (maxdimsUnlimited) {
         NDSize maxdims(dims.size(), H5S_UNLIMITED);
-        return create(dims, &maxdims);
+        return create(dims, maxdims);
     } else {
-        return create(dims, nullptr);
+        return create(dims);
     }
 
 }

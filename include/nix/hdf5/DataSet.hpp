@@ -157,7 +157,7 @@ DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, con
         plcreate.setChunk(rank, chunks->data());
     }
 
-    H5::DataSpace space = DataSpace::create(hydra.shape(), maxsize);
+    H5::DataSpace space = DataSpace::create(hydra.shape(), maxsize ? *maxsize : NDSize{});
     H5::DataType fileType = data_type_to_h5_filetype(hydra.element_data_type());
     H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
     return DataSet(dset);

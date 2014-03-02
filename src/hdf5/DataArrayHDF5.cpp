@@ -258,7 +258,7 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
         fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, nullptr));
+        Selection memSel(DataSpace::create(count, false));
 
         ds.write(dtype, data, fileSel, memSel);
     } else {
@@ -277,7 +277,7 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
         fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, nullptr));
+        Selection memSel(DataSpace::create(count, false));
 
         ds.read(dtype, data, fileSel, memSel);
     } else {
