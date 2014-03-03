@@ -151,11 +151,10 @@ void PropertyHDF5::values(const std::vector<Value> &values)
         }
 
         NDSize size = {1};
-        NDSize maxsize = {H5S_UNLIMITED};
-        NDSize chunks = DataSet::guessChunking(size, values[0].type());
-        H5::DataType fileType = DataSet::fileTypeForValue(values[0].type());
+        DataType dtype = values[0].type();
+        H5::DataType fileType = DataSet::fileTypeForValue(dtype);
 
-        dataset = DataSet::create(group().h5Group(), "values", fileType, size, &maxsize, &chunks);
+        dataset = DataSet::create(group().h5Group(), "values", fileType, size);
     }
 
     dataset.write(values);

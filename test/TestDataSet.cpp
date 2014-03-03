@@ -34,13 +34,13 @@ void TestDataSet::setUp() {
 }
 
 void TestDataSet::testNDSize() {
+    NDSize invalidSize = {};
     NDSize a = {23, 42, 1982};
 
-#ifndef _WIN32
-	typedef typename NDSize::value_type value_type;
-#else
+    CPPUNIT_ASSERT(!invalidSize); // testing operator bool()
+    CPPUNIT_ASSERT(a ? true : false);
+
     typedef NDSize::value_type value_type;
-#endif
 
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(23),   a[0]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   a[1]);
@@ -148,7 +148,7 @@ void TestDataSet::testDataType() {
     const NDSize dims = {5, 5};
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
-        DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims, nullptr, nullptr);
+        DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }
 
@@ -157,11 +157,7 @@ void TestDataSet::testDataType() {
 void TestDataSet::testBasic() {
     NDSize dims = {4, 6};
 
-    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    NDSize maxdims(dims.size());
-    maxdims.fill(H5S_UNLIMITED);
-
-    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims, &maxdims, &chunks);
+    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -229,10 +225,7 @@ void TestDataSet::testBasic() {
 void TestDataSet::testSelection() {
     NDSize dims = {15, 15};
 
-    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
-    NDSize maxdims(dims.size());
-    maxdims.fill(H5S_UNLIMITED);
-    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims, &maxdims, &chunks);
+    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -286,11 +279,9 @@ void test_val_generic(H5::Group &h5group, const T &test_value)
     std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
 
     nix::NDSize size = {1};
-    nix::NDSize maxsize = {H5S_UNLIMITED};
-    nix::NDSize chunks = nix::hdf5::DataSet::guessChunking(size, values[0].type());
     H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
 
-    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size, &maxsize, &chunks);
+    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size);
 
     ds.write(values);
     std::vector<nix::Value> checkValues;

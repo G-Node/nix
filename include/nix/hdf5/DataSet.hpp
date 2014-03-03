@@ -111,15 +111,14 @@ public:
     template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
 
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype,
-                          const NDSize &size, const NDSize *maxsize = nullptr, const NDSize *chunks = nullptr);
+    static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype, const NDSize &size);
 
     template<typename T>
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value,
-                          const NDSize *maxsize = nullptr, const NDSize *chunks = nullptr);
+    static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value);
 
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const H5::DataType &fileType,
-                          const NDSize &size, const NDSize *maxsize, const NDSize *chunks);
+                          const NDSize &size, const NDSize &maxsize = {}, const NDSize &chunks = {},
+                          bool maxSizeUnlimited = true, bool guessChunks = true);
 
     static NDSize guessChunking(NDSize dims, DataType dtype);
 
@@ -146,19 +145,22 @@ private:
 
 
 template<typename T>
-DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data,
-                        const NDSize *maxsize, const NDSize *chunks)
+DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data)
 {
-    Hydra<const T> hydra(data);
+    const Hydra<const T> hydra(data);
 
+    DataType dtype = hydra.element_data_type();
+    H5::DataType fileType = data_type_to_h5_filetype(dtype);
+
+    NDSize shape = hydra.shape();
+    NDSize maxsize(shape.size(), H5S_UNLIMITED);
+
+    NDSize chunks = guessChunking(shape, dtype);
     H5::DSetCreatPropList plcreate;
-    if (chunks != nullptr) {
-        int rank = static_cast<int>(chunks->size());
-        plcreate.setChunk(rank, chunks->data());
-    }
+    int rank = static_cast<int>(chunks.size());
+    plcreate.setChunk(rank, chunks.data());
 
-    H5::DataSpace space = DataSpace::create(hydra.shape(), maxsize);
-    H5::DataType fileType = data_type_to_h5_filetype(hydra.element_data_type());
+    H5::DataSpace space = DataSpace::create(shape, maxsize);
     H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
     return DataSet(dset);
 }
