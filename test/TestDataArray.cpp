@@ -183,10 +183,7 @@ void TestDataArray::testDimension()
     dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
 
     CPPUNIT_ASSERT(array2.getDimension(1).dimensionType() == nix::DimensionType::Sample);
-
-    array2.getDimension(dims[0].id());
-    array2.getDimension(dims[1].id());
-    array2.getDimension(dims[1].id());    CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
+	CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
 
     CPPUNIT_ASSERT(array2.dimensionCount() == 3);
@@ -212,14 +209,7 @@ void TestDataArray::testDimension()
     array2.deleteDimension(3);
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 1);    
-    CPPUNIT_ASSERT(dims.size() == 1);    
-      
-    /*CPPUNIT_ASSERT(array2.dimensionTypeFromStr("sample") == nix::DimensionType::Sample);
-    CPPUNIT_ASSERT(array2.dimensionTypeFromStr("set") == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(array2.dimensionTypeFromStr("range") == nix::DimensionType::Range);*/
-    /*CPPUNIT_ASSERT(array2.dimensionTypeToStr(nix::DimensionType::Sample) == "sample");
-    CPPUNIT_ASSERT(array2.dimensionTypeToStr(nix::DimensionType::Set) == "set");
-    CPPUNIT_ASSERT(array2.dimensionTypeToStr(nix::DimensionType::Range) == "range");*/
+    CPPUNIT_ASSERT(dims.size() == 1);
 }
 
 

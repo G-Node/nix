@@ -47,7 +47,7 @@ protected:
      * should be automatically deduced.
      * 
      * @param class "get function": std::function of return type T_ENT and 
-     *              param type "int" to get entities
+     *              param type "size_t" to get entities
      * @param size_t number of entities to get
      * @param class "filter function": std::function of return type bool
      *              and param type T_ENT to filter which entities to get
@@ -62,15 +62,19 @@ protected:
         std::vector<TENT> entities;
         TENT candidate;
         size_t skipped = 0;
-        if(nT < 1) { return entities; }
+        if(nT < 1) { 
+			return entities; 
+		}
 
 		// loop until numeric limits of "size_t" or until "nT" entities have been found
         for (size_t i = 0; i < std::numeric_limits<size_t>::max(); i++) {
             try {
-                candidate = getEntity( i );
+                candidate = getEntity(i);
                 if(filter(candidate)) entities.push_back(candidate);
                 else skipped++;
-                if( entities.size()+skipped >= nT ) break;
+                if(entities.size()+skipped >= nT) {
+					break;
+				}
             } catch(std::exception& e) {
                 continue;
             }
