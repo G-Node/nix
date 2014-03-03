@@ -33,7 +33,7 @@ protected:
      * The template param specifies which type.
      * The parameter "getEnt" is the function used to get the entities 
      * of given type T_ENT and has to be of return type T_ENT with 
-     * parameter "int" specifying the index of the entity to get.
+     * parameter "size_t" specifying the index of the entity to get.
      * The parameter "nT" should give the number of entities to get and
      * should be =>0 & <= the total number of existing entities.
      * The parameter "filter" is defaulted to giving back all entities 
@@ -45,7 +45,7 @@ protected:
      * 
      * @param class "get function": std::function of return type T_ENT and 
      *              param type "int" to get entities
-     * @param int number of entities to get
+     * @param size_t number of entities to get
      * @param class "filter function": std::function of return type bool
      *              and param type T_ENT to filter which entities to get
      * @return class entities of the given type as a vector
@@ -53,12 +53,12 @@ protected:
     template<typename TENT, typename TFUNC>
     std::vector<TENT> getEntities(
         TFUNC const &getEntity,
-        int nT, 
+        size_t nT,
         std::function<bool(TENT)> filter) const 
     {
         std::vector<TENT> e;
-        int i = 0;
-         
+        size_t i = 0;
+
         if(nT < 1) { return e; }
         e.resize(nT);
 
