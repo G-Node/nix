@@ -104,7 +104,7 @@ void TestDataArray::testData()
     array2.setData(C, {0,0});
 
     array2.setDataExtent({40, 40});
-    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{40, 40}));
+    CPPUNIT_ASSERT_EQUAL(array2.getDataExtent(), (nix::NDSize{40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
@@ -149,7 +149,7 @@ void TestDataArray::testPolynomial()
     
     array2.polynomCoefficients(coefficients2);
     std::vector<double> ret = array2.polynomCoefficients();
-    for(int i=0; i<ret.size(); i++) {
+    for(size_t i=0; i<ret.size(); i++) {
 		CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
 	}
 	
@@ -178,13 +178,17 @@ void TestDataArray::testDimension()
 {
     std::vector<nix::Dimension> dims;
 
-    array2.createDimension(1, nix::DimensionType::Sample);
-    array2.createDimension(2, nix::DimensionType::Set);
-    array2.createDimension(3, nix::DimensionType::Range);
+    dims.push_back(array2.createDimension(1, nix::DimensionType::Sample));
+    dims.push_back(array2.createDimension(2, nix::DimensionType::Set));
+    dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
+
     CPPUNIT_ASSERT(array2.getDimension(1).dimensionType() == nix::DimensionType::Sample);
-    CPPUNIT_ASSERT(array2.getDimension(2).dimensionType() == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(array2.getDimension(3).dimensionType() == nix::DimensionType::Range);
-    
+
+    array2.getDimension(dims[0].id());
+    array2.getDimension(dims[1].id());
+    array2.getDimension(dims[1].id());    CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
+
     CPPUNIT_ASSERT(array2.dimensionCount() == 3);
 
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
