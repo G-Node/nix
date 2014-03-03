@@ -17,11 +17,6 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
-
-const NDSize DataArrayHDF5::MIN_CHUNK_SIZE = {1};
-const NDSize DataArrayHDF5::MAX_SIZE_1D = {H5S_UNLIMITED};
-
-
 DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
     : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id()),
       dimension_group(data_array.dimension_group)
@@ -104,7 +99,7 @@ void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients, &MAX_SIZE_1D, &MIN_CHUNK_SIZE);
+        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients);
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -231,14 +226,21 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 DataArrayHDF5::~DataArrayHDF5(){}
 
 
+void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
+{
+    if (group().hasData("data")) {
+        throw new std::runtime_error("DataArray alread exists"); //FIXME, better exception
+    }
+
+    DataSet::create(group().h5Group(), "data", dtype, size);
+}
+
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
 {
     DataSet ds;
 
     if (!group().hasData("data")) {
-        NDSize maxsize(count.size(), H5S_UNLIMITED);
-        NDSize chunks(count.size(), 1); //FIXME
-        ds = DataSet::create(group().h5Group(), "data", dtype, count, &maxsize, &chunks);
+        ds = DataSet::create(group().h5Group(), "data", dtype, count);
     } else {
         ds = group().openData("data");
     }
@@ -246,7 +248,7 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
         fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, nullptr));
+        Selection memSel(DataSpace::create(count, false));
 
         ds.write(dtype, data, fileSel, memSel);
     } else {
@@ -265,7 +267,7 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
         fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, nullptr));
+        Selection memSel(DataSpace::create(count, false));
 
         ds.read(dtype, data, fileSel, memSel);
     } else {
@@ -292,6 +294,18 @@ void DataArrayHDF5::setExtent(const NDSize &extent)
 
     DataSet ds = group().openData("data");
     ds.setExtent(extent);
+}
+
+DataType DataArrayHDF5::getDataType(void) const
+{
+    if (!group().hasData("data")) {
+        //we could also throw an exception but I think returning
+        //Nothing here is better (ck)
+        return DataType::Nothing;
+    }
+
+    DataSet ds = group().openData("data");
+    return ds.dataType();
 }
 
 } // namespace hdf5

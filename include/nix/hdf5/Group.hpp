@@ -141,9 +141,7 @@ void Group::setData(const std::string &name, const T &value)
 
     DataSet ds;
     if (!hasData(name)) {
-        NDSize maxsize(shape.size(), H5S_UNLIMITED);
-        NDSize chunks(shape.size(), 1);
-        ds = DataSet::create(h5group, name, dtype, shape, &maxsize, &chunks);
+        ds = DataSet::create(h5group, name, dtype, shape);
     } else {
         ds = openData(name);
         ds.setExtent(shape);

@@ -57,6 +57,9 @@ void TestDataArray::testDefinition() {
 
 void TestDataArray::testData()
 {
+    nix::Block block = file.createBlock("testData", "testdata");
+    nix::DataArray dA = block.createDataArray("narf", "bla");
+
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[3][4][2]);
@@ -92,21 +95,26 @@ void TestDataArray::testData()
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
-            C[i][j] = 0.0;
+            C[i][j] = 42.0;
 
-    array2.setData(C);
+    array2.createData(C, {20, 20});
 
-    array2.setDataExtent({20, 20});
+    CPPUNIT_ASSERT_EQUAL(array2.getDataExtent(), (nix::NDSize{20, 20}));
+
+    array2.setData(C, {0,0});
+
+    array2.setDataExtent({40, 40});
+    CPPUNIT_ASSERT_EQUAL(dB.getDataExtent(), (nix::NDSize{40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
             D[i][j] = 42.0;
 
-    array2.setData(D, {10, 10});
+    array2.setData(D, {20, 20});
 
     array2D_type E(boost::extents[1][1]);
-    array2.getData(E, {5,5}, {10, 10});
+    array2.getData(E, {5,5}, {20, 20});
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
@@ -115,7 +123,7 @@ void TestDataArray::testData()
 
 
     array2D_type F(boost::extents[5][5]);
-    array2.getData(F, {10, 10});
+    array2.getData(F, {20, 20});
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)

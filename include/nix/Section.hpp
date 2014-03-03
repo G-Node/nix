@@ -223,27 +223,14 @@ public:
     std::vector<Section> findSections(std::function<bool(Section)> filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
-
-    /**
-     * Determines whether this section has a related section of the specified type.
-     *
-     * @param string the type
-     *
-     * @return bool
-     */
-    // TODO implement maybe later
-    //virtual bool hasRelatedSection(const std::string &type) const = 0;
-
     /**
      * Returns the sections of the given type found on the same level of relation.
      *
-     * @param string the type
+     * @param object filter function of the type {@link nix::util::Filter::type}
      *
      * @return vector<Section> the related sections
      */
-    // TODO implement maybe later
-    //virtual std::vector<Section> getRelatedSections(const std::string &type) const = 0;
-
+    std::vector<Section> findRelated(std::function<bool(Section)> filter = util::AcceptAll<Section>()) const;
 
     /**
      *  Adds a new child section.
@@ -394,6 +381,16 @@ public:
      */
     friend std::ostream& operator<<(std::ostream &out, const Section &ent);
 
+
+private:
+
+    std::vector<Section> findDownstream(std::function<bool(Section)> filter) const;
+
+    std::vector<Section> findUpstream(std::function<bool(Section)> filter) const;
+
+    std::vector<Section> findSideways(std::function<bool(Section)> filter, const std::string &caller_id) const;
+
+    size_t tree_depth() const;
 };
 
 

@@ -160,6 +160,53 @@ void TestSection::testFindSection() {
     CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
 }
 
+void TestSection::testFindRelated(){
+    Section l1n1 = section.createSection("l1n1", "typ1");
+
+    Section l2n1 = l1n1.createSection("l2n1", "t1");
+    Section l2n2 = l1n1.createSection("l2n2", "t2");
+
+    Section l3n1 = l2n1.createSection("l3n1", "t3");
+    Section l3n2 = l2n2.createSection("l3n2", "t3");
+    Section l3n3 = l2n2.createSection("l3n3", "t4");
+
+    Section l4n1 = l3n2.createSection("l4n1", "typ2");
+    Section l4n2 = l3n3.createSection("l4n2", "typ2");
+
+    Section l5n1 = l4n1.createSection("l5n1", "typ2");
+
+    string t1 = "t1";
+    string t3 = "t3";
+    string t4 = "t4";
+    string typ2 = "typ2";
+    string typ1 = "typ1";
+
+    vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
+    CPPUNIT_ASSERT(related.size() == 1);
+
+    related = l1n1.findRelated(util::TypeFilter<Section>(t3));
+    CPPUNIT_ASSERT(related.size() == 2);
+
+    related = l1n1.findRelated(util::TypeFilter<Section>(t4));
+    CPPUNIT_ASSERT(related.size() == 1);
+
+    related = l1n1.findRelated(util::TypeFilter<Section>(typ2));
+    CPPUNIT_ASSERT(related.size() == 2);
+
+    related = l4n1.findRelated(util::TypeFilter<Section>(typ1));
+    CPPUNIT_ASSERT(related.size() == 1);
+
+    related = l4n1.findRelated(util::TypeFilter<Section>(t1));
+    CPPUNIT_ASSERT(related.size() == 1);
+
+    related = l3n2.findRelated(util::TypeFilter<Section>(t1));
+    CPPUNIT_ASSERT(related.size() == 1);
+
+    related = l3n2.findRelated(util::TypeFilter<Section>(t3));
+    CPPUNIT_ASSERT(related.size() == 0);
+    section.deleteSection(l1n1.id());
+}
+
 
 void TestSection::testPropertyAccess() {
     vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };

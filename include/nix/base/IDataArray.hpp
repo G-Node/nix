@@ -113,11 +113,15 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
+    virtual void createData(DataType dtype, const NDSize &size) = 0;
+
     virtual void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) = 0;
     virtual void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const = 0;
 
     virtual NDSize getExtent(void) const = 0;
     virtual void   setExtent(const NDSize &extent) = 0;
+
+    virtual DataType getDataType(void) const = 0;
 
     // TODO add missing methods
 

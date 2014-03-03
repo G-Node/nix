@@ -110,12 +110,15 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
+    virtual void createData(DataType dtype, const NDSize &size);
 
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
     void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
 
     NDSize getExtent(void) const;
     void   setExtent(const NDSize &extent);
+
+    DataType getDataType(void) const;
 };
 
 

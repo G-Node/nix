@@ -10,20 +10,13 @@
 #define NIX_I_ENTITY_H
 
 #include <nix/Platform.hpp>
-
-#include "boost/optional.hpp"
+#include <nix/None.hpp>
 
 namespace nix {
 namespace base {
 
 
 class NIXAPI IEntity {
-
-protected:
-
-    typedef boost::none_t none_t;
-    none_t none = boost::none;
-    
 public:
 
     /**

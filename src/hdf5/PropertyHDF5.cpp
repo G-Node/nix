@@ -42,7 +42,6 @@ void PropertyHDF5::dataType(const string &dataType) {
     } else {
         if (valueCount() > 0 && this->dataType().length() > 0) {
             throw runtime_error("Cannot change data type of a not empty property!");
-            return;
         }
     }
     group().setAttr("data_type", dataType);
@@ -90,7 +89,6 @@ void PropertyHDF5::mapping(const none_t t) {
 void PropertyHDF5::unit(const string &unit) {
     if (valueCount() > 0 && this->unit()) {
         throw runtime_error("Cannot change unit of a not-empty property!");
-        return;
     }
     group().setAttr("unit", unit);
 }
@@ -159,11 +157,10 @@ void PropertyHDF5::values(const std::vector<Value> &values)
         }
 
         NDSize size = {1};
-        NDSize maxsize = {H5S_UNLIMITED};
-        NDSize chunks = DataSet::guessChunking(size, values[0].type());
-        H5::DataType fileType = DataSet::fileTypeForValue(values[0].type());
+        DataType dtype = values[0].type();
+        H5::DataType fileType = DataSet::fileTypeForValue(dtype);
 
-        dataset = DataSet::create(group().h5Group(), "values", fileType, size, &maxsize, &chunks);
+        dataset = DataSet::create(group().h5Group(), "values", fileType, size);
     }
 
     dataset.write(values);
