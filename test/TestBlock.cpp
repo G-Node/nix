@@ -115,14 +115,23 @@ void TestBlock::testDataArrayAccess() {
     for (auto it = names.begin(); it != names.end(); it++) {
         DataArray data_array = block.createDataArray(*it, "channel");
         CPPUNIT_ASSERT(data_array.name() == *it);
+        CPPUNIT_ASSERT(data_array.type() == "channel");
 
         ids.push_back(data_array.id());
     }
 
-
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
 
+    vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
+    CPPUNIT_ASSERT_EQUAL(names.size(), filteredArrays.size());
+
+    filteredArrays = block.dataArrays(util::NameFilter<DataArray>("data_array_c"));
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), filteredArrays.size());
+    if (filteredArrays.size() > 0) {
+        boost::optional<std::string> name = filteredArrays[0].name();
+        CPPUNIT_ASSERT(name && *name == "data_array_c");
+    }
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         DataArray data_array = block.getDataArray(*it);
@@ -134,6 +143,8 @@ void TestBlock::testDataArrayAccess() {
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
+
+
 }
 
 
