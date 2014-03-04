@@ -16,7 +16,7 @@ namespace nix {
 namespace base {
 
 
-class INamedEntity : virtual public IEntity {
+class NIXAPI INamedEntity : virtual public IEntity {
 
 public:
 

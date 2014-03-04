@@ -32,7 +32,7 @@ namespace base {
  * Class that represents a pandora representation entity
  * TODO implement methods for DataArray.
  */
-class IRepresentation: virtual public base::IEntity {
+class NIXAPI IRepresentation: virtual public base::IEntity {
 
 public:
 
