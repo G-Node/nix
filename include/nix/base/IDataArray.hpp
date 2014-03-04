@@ -26,7 +26,7 @@ enum class DimensionType : int;
 namespace base {
 
 
-class IDataArray : virtual public base::IEntityWithSources {
+class NIXAPI IDataArray : virtual public base::IEntityWithSources {
 
 public:
 

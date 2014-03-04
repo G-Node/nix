@@ -21,7 +21,7 @@ namespace base {
  * Base class for entities that are associated with metadata such
  * as Block, Source etc.
  */
-class IEntityWithMetadata : virtual public INamedEntity {
+class NIXAPI IEntityWithMetadata : virtual public INamedEntity {
 
 public:
 

@@ -24,7 +24,7 @@ class DataArray;
 namespace base {
 
 
-class IDataTag : virtual public base::IEntityWithSources {
+class NIXAPI IDataTag : virtual public base::IEntityWithSources {
 
 public:
 
