@@ -43,10 +43,13 @@ std::string dimensionTypeToStr(DimensionType dim) {
     switch (dim) {
         case DimensionType::Set:
             dimType = "set";
+            break;
         case DimensionType::Range:
             dimType = "range";
+            break;
         case DimensionType::Sample:
             dimType = "sample";
+            break;
     }
 
     if (dimType.empty()) {
