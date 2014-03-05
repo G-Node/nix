@@ -127,13 +127,13 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
         Dimension dim;
 
         if (dim_type == DimensionType::Set ) {
-            shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, id));
+            auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
             dim = SetDimension(tmp);
         } else if (dim_type == DimensionType::Range) {
-            shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, id));
+            auto tmp = make_shared<RangeDimensionHDF5>(dim_group, id);
             dim = RangeDimension(tmp);
         } else if (dim_type == DimensionType::Sample) {
-            shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, id));
+            auto tmp = make_shared<SampledDimensionHDF5>(dim_group, id);
             dim = SampledDimension(tmp);
         } else {
             throw runtime_error("Invalid dimension type");
@@ -163,13 +163,13 @@ Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
     Dimension dim;
 
     if (type == DimensionType::Set ) {
-        shared_ptr<SetDimensionHDF5> tmp(new SetDimensionHDF5(dim_group, id));
+        auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
         dim = SetDimension(tmp);
     } else if (type == DimensionType::Range) {
-        shared_ptr<RangeDimensionHDF5> tmp(new RangeDimensionHDF5(dim_group, id));
+        auto tmp = make_shared<RangeDimensionHDF5>(dim_group, id);
         dim = RangeDimension(tmp);
     } else if (type == DimensionType::Sample) {
-        shared_ptr<SampledDimensionHDF5> tmp(new SampledDimensionHDF5(dim_group, id));
+        auto tmp = make_shared<SampledDimensionHDF5>(dim_group, id);
         dim = SampledDimension(tmp);
     } else {
         throw runtime_error("Invalid dimension type");

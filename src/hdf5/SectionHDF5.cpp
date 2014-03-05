@@ -168,7 +168,7 @@ Section SectionHDF5::getSection(const string &id) const {
     if (section_group.hasGroup(id)) {
         Group grp = section_group.openGroup(id, false);
 
-        shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), grp, id));
+        auto tmp = make_shared<SectionHDF5>(file(), grp, id);
         return Section(tmp);
     } else {
         return Section();
@@ -193,7 +193,7 @@ Section SectionHDF5::createSection(const string &name, const string &type) {
     Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
 
     Group grp = section_group.openGroup(new_id, true);
-    shared_ptr<SectionHDF5> tmp(new SectionHDF5(file(), parent, grp, new_id));
+    auto tmp = make_shared<SectionHDF5>(file(), parent, grp, new_id);
     tmp->name(name);
     tmp->type(type);
 
@@ -231,7 +231,7 @@ Property SectionHDF5::getProperty(const string &id) const {
     if (property_group.hasGroup(id)) {
         Group g = property_group.openGroup(id,false);
 
-        shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), g, id));
+        auto tmp = make_shared<PropertyHDF5>(file(), g, id);
         return Property(tmp);
     } else {
         return Property();
@@ -277,7 +277,7 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
         grp.getAttr("name", other_name);
 
         if (other_name == name) {
-            shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, id));
+            auto tmp = make_shared<PropertyHDF5>(file(), grp, id);
             prop = Property(tmp);
             break;
         }
@@ -298,7 +298,7 @@ Property SectionHDF5::createProperty(const string &name) {
 
     Group grp = property_group.openGroup(new_id, true);
 
-    shared_ptr<PropertyHDF5> tmp(new PropertyHDF5(file(), grp, new_id));
+    auto tmp = make_shared<PropertyHDF5>(file(), grp, new_id);
     tmp->name(name);
 
     return Property(tmp);

@@ -43,7 +43,7 @@ bool SourceHDF5::hasSource(const string &id) const {
 
 Source SourceHDF5::getSource(const string &id) const {
     Group grp = source_group.openGroup(id, false);
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
+    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id);
     return Source(tmp);
 }
 
@@ -68,7 +68,7 @@ Source SourceHDF5::createSource(const string &name, const string &type) {
     }
 
     Group grp = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), grp, id));
+    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id);
     tmp->name(name);
     tmp->type(type);
 
