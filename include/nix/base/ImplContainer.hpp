@@ -22,6 +22,7 @@ namespace base {
 
 template<typename T>
 class ImplContainer {
+
 protected:
 
     std::shared_ptr<T> impl_ptr;

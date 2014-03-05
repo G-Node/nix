@@ -124,6 +124,7 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
         dim_group.getAttr("dimension_type", dim_type_name);
         DimensionType dim_type = dimensionTypeFromStr(dim_type_name);
 
+    
         Dimension dim;
 
         if (dim_type == DimensionType::Set ) {

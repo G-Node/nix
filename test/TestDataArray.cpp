@@ -89,6 +89,7 @@ void TestDataArray::testData()
 
     CPPUNIT_ASSERT_EQUAL(errors, 0);
 
+
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array_type::index index;
     array2D_type C(boost::extents[5][5]);
@@ -130,96 +131,4 @@ void TestDataArray::testData()
         for(index j = 0; j != 5; ++j)
             CPPUNIT_ASSERT_DOUBLES_EQUAL(D[i][j], F[i][j],
                 std::numeric_limits<double>::epsilon());
-}
-
-void TestDataArray::testPolynomial()
-{
-    double PI = boost::math::constants::pi<double>();
-    boost::array<double, 10> coefficients1;
-    std::vector<double> coefficients2;
-    for(int i=0; i<10; i++) {
-        coefficients1[i] = i;
-        coefficients2.push_back(i);
-    }
-
-    double res1 = array1.applyPolynomial(coefficients2, 0, PI);
-    double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
-
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, std::numeric_limits<double>::epsilon());
-
-    array2.polynomCoefficients(coefficients2);
-    std::vector<double> ret = array2.polynomCoefficients();
-    for(size_t i=0; i<ret.size(); i++) {
-        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
- }
-
- array2.expansionOrigin(3);
- double retval = array2.expansionOrigin();
- CPPUNIT_ASSERT(retval == 3);
-}
-
-void TestDataArray::testLabel()
-{
-    std::string testStr = "somestring";
-
-    array1.label(testStr);
-    CPPUNIT_ASSERT(array1.label() == testStr);
-}
-
-void TestDataArray::testUnit()
-{
-    std::string testStr = "somestring";
-
-    array1.unit(testStr);
-    CPPUNIT_ASSERT(array1.unit() == testStr);
-}
-
-void TestDataArray::testDimension()
-{
-    std::vector<nix::Dimension> dims;
-
-    dims.push_back(array2.createDimension(1, nix::DimensionType::Sample));
-    dims.push_back(array2.createDimension(2, nix::DimensionType::Set));
-    dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
-
-    CPPUNIT_ASSERT(array2.getDimension(1).dimensionType() == nix::DimensionType::Sample);
-
-    array2.getDimension(dims[0].id());
-    array2.getDimension(dims[1].id());
-    array2.getDimension(dims[1].id());
-
-    CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
-
-    CPPUNIT_ASSERT(array2.dimensionCount() == 3);
-
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
-    CPPUNIT_ASSERT(dims.size() == 1);
-    CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Set; });
-    CPPUNIT_ASSERT(dims.size() == 1);
-    CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Set);
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Range; });
-    CPPUNIT_ASSERT(dims.size() == 1);
-    CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Range);
-
-    dims = array2.dimensions();
-    CPPUNIT_ASSERT(dims.size() == 3);
-    CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
-    CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(dims[2].dimensionType() == nix::DimensionType::Range);
-
-    array2.deleteDimension(1);
-    array2.deleteDimension(2);
-    array2.deleteDimension(3);
-    dims = array2.dimensions();
-    CPPUNIT_ASSERT(array2.dimensionCount() == 1);
-    CPPUNIT_ASSERT(dims.size() == 1);
-}
-
-
-void TestDataArray::testOperator()
-{
-	std::stringstream mystream;
-	mystream << array1;
 }
