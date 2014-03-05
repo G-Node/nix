@@ -134,15 +134,15 @@ void TestDataArray::testData()
 
 void TestDataArray::testPolynomial()
 {
-	double PI = boost::math::constants::pi<double>();
-	boost::array<double, 10> coefficients1;
-	std::vector<double> coefficients2;
-	for(int i=0; i<10; i++) {
-		coefficients1[i] = i;
-		coefficients2.push_back(i);
-	}
+    double PI = boost::math::constants::pi<double>();
+    boost::array<double, 10> coefficients1;
+    std::vector<double> coefficients2;
+    for(int i=0; i<10; i++) {
+        coefficients1[i] = i;
+        coefficients2.push_back(i);
+    }
 
-	double res1 = array1.applyPolynomial(coefficients2, 0, PI);
+    double res1 = array1.applyPolynomial(coefficients2, 0, PI);
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
     CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, std::numeric_limits<double>::epsilon());
@@ -150,12 +150,12 @@ void TestDataArray::testPolynomial()
     array2.polynomCoefficients(coefficients2);
     std::vector<double> ret = array2.polynomCoefficients();
     for(size_t i=0; i<ret.size(); i++) {
-		CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
-	}
+        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
+ }
 
-	array2.expansionOrigin(3);
-	double retval = array2.expansionOrigin();
-	CPPUNIT_ASSERT(retval == 3);
+ array2.expansionOrigin(3);
+ double retval = array2.expansionOrigin();
+ CPPUNIT_ASSERT(retval == 3);
 }
 
 void TestDataArray::testLabel()
