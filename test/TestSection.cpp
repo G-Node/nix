@@ -68,7 +68,7 @@ void TestSection::testParent() {
 
 
 void TestSection::testRepository() {
-    CPPUNIT_ASSERT(section.repository() == "");
+    CPPUNIT_ASSERT(!section.repository());
     string rep = "http://foo.bar/" + util::createId("", 32);
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
@@ -88,7 +88,7 @@ void TestSection::testLink() {
 
 
 void TestSection::testMapping() {
-    CPPUNIT_ASSERT(section.mapping() == "");
+    CPPUNIT_ASSERT(!section.mapping());
     string map = "http://foo.bar/" + util::createId("", 32);
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);

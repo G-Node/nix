@@ -58,9 +58,9 @@ public:
     /**
      * Returns the repository url.
      *
-     * @return string the url.
+     * @return boost::optional<string> the url.
      */
-    std::string repository() const {
+    boost::optional<std::string> repository() const {
         return impl_ptr->repository();
     }
     
@@ -117,9 +117,9 @@ public:
     /**
      * Return the mapping information.
      *
-     * @return string
+     * @return boost::optional<std::string>
      */
-    std::string mapping() const {
+    boost::optional<std::string> mapping() const {
         return impl_ptr->mapping();
     }
     
