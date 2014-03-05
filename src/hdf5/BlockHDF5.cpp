@@ -57,14 +57,14 @@ bool BlockHDF5::hasSource(const string &id) const {
 
 
 Source BlockHDF5::getSource(const string &id) const {
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), source_group.openGroup(id, false), id));
+    auto tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
     return Source(tmp);
 }
 
 
 Source BlockHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), source_group.openGroup(id, false), id));
+    auto tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
     return Source(tmp);
 }
 
@@ -82,7 +82,7 @@ Source BlockHDF5::createSource(const string &name,const string &type) {
     }
 
     Group group = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp(new SourceHDF5(file(), group, id));
+    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id);
     tmp->name(name);
     tmp->type(type);
 
@@ -111,7 +111,7 @@ bool BlockHDF5::hasSimpleTag(const string &id) const {
 
 SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
     if (hasSimpleTag(id)) {
-        shared_ptr<SimpleTagHDF5> tmp(new SimpleTagHDF5(file(), block(), simple_tag_group.openGroup(id, true), id));
+        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), simple_tag_group.openGroup(id, true), id);
         return SimpleTag(tmp);
     } else {
         throw runtime_error("Unable to find SimpleTag with id " + id + "!");
@@ -122,7 +122,7 @@ SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
 SimpleTag BlockHDF5::getSimpleTag(size_t index) const {
     if (index < simpleTagCount()) {
         string id = simple_tag_group.objectName(index);
-        shared_ptr<SimpleTagHDF5> tmp(new SimpleTagHDF5(file(), block(), simple_tag_group.openGroup(id, true), id));
+        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), simple_tag_group.openGroup(id, true), id);
         return SimpleTag(tmp);
     } else {
         throw runtime_error("Unable to find SimpleTag with the given index!");
@@ -142,7 +142,7 @@ SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type) {
         id = util::createId("simple_tag");
     }
 
-    shared_ptr<SimpleTagHDF5> tmp(new SimpleTagHDF5(file(), block(), simple_tag_group.openGroup(id, true), id));
+    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), simple_tag_group.openGroup(id, true), id);
     tmp->name(name);
     tmp->type(type);
 
@@ -171,7 +171,7 @@ bool BlockHDF5::hasDataArray(const string &id) const {
 
 DataArray BlockHDF5::getDataArray(const string &id) const {
     if (hasDataArray(id)) {
-        shared_ptr<DataArrayHDF5> tmp(new DataArrayHDF5(file(), block(), data_array_group.openGroup(id, true), id));
+        auto tmp = make_shared<DataArrayHDF5>(file(), block(), data_array_group.openGroup(id, true), id);
         return DataArray(tmp);
     } else {
         throw runtime_error("Unable to find DataArray with id " + id + "!");
@@ -182,7 +182,7 @@ DataArray BlockHDF5::getDataArray(const string &id) const {
 DataArray BlockHDF5::getDataArray(size_t index) const {
     if (index < dataArrayCount()) {
         string id = data_array_group.objectName(index);
-        shared_ptr<DataArrayHDF5> tmp(new DataArrayHDF5(file(), block(), data_array_group.openGroup(id, true), id));
+        auto tmp = make_shared<DataArrayHDF5>(file(), block(), data_array_group.openGroup(id, true), id);
         return DataArray(tmp);
     } else {
         throw runtime_error("Unable to find DataArray with the given index!");
@@ -202,7 +202,7 @@ DataArray BlockHDF5::createDataArray(const std::string &name, const std::string 
         id = util::createId("data_array");
     }
 
-    shared_ptr<DataArrayHDF5> tmp(new DataArrayHDF5(file(), block(), data_array_group.openGroup(id, true), id));
+    auto tmp = make_shared<DataArrayHDF5>(file(), block(), data_array_group.openGroup(id, true), id);
     tmp->name(name);
     tmp->type(type);
 
@@ -230,7 +230,7 @@ DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &typ
         id = util::createId("data_tag");
     }
 
-    shared_ptr<DataTagHDF5> tmp(new DataTagHDF5(file(), block(), data_tag_group.openGroup(id), id));
+    auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id);
     tmp->name(name);
     tmp->type(type);
 
@@ -245,7 +245,7 @@ bool BlockHDF5::hasDataTag(const std::string &id) const{
 
 DataTag BlockHDF5::getDataTag(const std::string &id) const{
     if (hasDataTag(id)) {
-        shared_ptr<DataTagHDF5> tmp(new DataTagHDF5(file(), block(), data_tag_group.openGroup(id), id));
+        auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id);
         return DataTag(tmp);
     } else {
         throw runtime_error("Unable to find DataTag with id " + id + "!");
@@ -256,7 +256,7 @@ DataTag BlockHDF5::getDataTag(const std::string &id) const{
 DataTag BlockHDF5::getDataTag(size_t index) const {
     if (index < dataTagCount()) {
         string id = data_tag_group.objectName(index);
-        shared_ptr<DataTagHDF5> tmp(new DataTagHDF5(file(), block(), data_tag_group.openGroup(id, true), id));
+        auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id, true), id);
         return DataTag(tmp);
     } else {
         throw runtime_error("Unable to find DataTag with the given index!");
