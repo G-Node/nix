@@ -23,7 +23,7 @@ namespace base {
 /**
  * Base class for entities that are associated with sources.
  */
-class IEntityWithSources : virtual public IEntityWithMetadata {
+class NIXAPI IEntityWithSources : virtual public IEntityWithMetadata {
 
 public:
 

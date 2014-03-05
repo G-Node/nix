@@ -39,7 +39,7 @@ namespace base {
 /**
  * Class that represents a pandora file.
  */
-class IFile {
+class NIXAPI IFile {
 
 public:
 

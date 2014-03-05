@@ -26,7 +26,7 @@ class DataTag;
 namespace base {
 
 
-class IBlock : virtual public base::IEntityWithMetadata {
+class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
 

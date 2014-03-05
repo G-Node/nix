@@ -18,7 +18,7 @@
 namespace nix {
 namespace base {
 
-class IProperty : virtual public base::INamedEntity {
+class NIXAPI IProperty : virtual public base::INamedEntity {
 
 public:
 

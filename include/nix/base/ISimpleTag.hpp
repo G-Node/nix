@@ -25,7 +25,7 @@ enum class LinkType;
 namespace base {
 
 
-class ISimpleTag : virtual public base::IEntityWithSources {
+class NIXAPI ISimpleTag : virtual public base::IEntityWithSources {
 
 public:
 

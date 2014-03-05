@@ -9,6 +9,8 @@
 #ifndef NIX_I_DIMENSIONS_H
 #define NIX_I_DIMENSIONS_H
 
+#include <nix/Platform.hpp>
+
 #include <string>
 #include <vector>
 #include <boost/optional.hpp>
@@ -25,7 +27,7 @@ namespace base {
 /**
  * TODO documentation
  */
-class IDimension {
+class NIXAPI IDimension {
 
 protected:
     typedef boost::none_t none_t;
@@ -44,7 +46,7 @@ public:
 /**
  * TODO documentation
  */
-class ISampledDimension : virtual public IDimension {
+class NIXAPI ISampledDimension : virtual public IDimension {
 
 public:
 
@@ -74,7 +76,7 @@ public:
 /**
  * TODO documentation
  */
-class ISetDimension : virtual public IDimension {
+class NIXAPI ISetDimension : virtual public IDimension {
 
 public:
 
@@ -92,7 +94,7 @@ public:
 /**
  * TODO documentation
  */
-class IRangeDimension : virtual public IDimension {
+class NIXAPI IRangeDimension : virtual public IDimension {
 
 public:
 

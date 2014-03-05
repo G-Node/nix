@@ -24,7 +24,7 @@ namespace base {
 
 
 // TODO TNode
-class ISource : virtual public IEntityWithMetadata {
+class NIXAPI ISource : virtual public IEntityWithMetadata {
 
 public:
 

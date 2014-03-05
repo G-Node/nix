@@ -14,6 +14,7 @@
 #include <list>
 #include <functional>
 
+#include <nix/Platform.hpp> //for pragma warnings on windows
 #include <nix/None.hpp>
 
 namespace nix {

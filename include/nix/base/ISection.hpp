@@ -24,7 +24,7 @@ class Property;
 namespace base {
 
 
-class ISection : virtual public base::INamedEntity  {
+class NIXAPI ISection : virtual public base::INamedEntity  {
 
 public:
 

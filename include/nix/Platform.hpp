@@ -14,7 +14,7 @@
  #else
  #define NIXAPI __declspec(dllimport)
  #endif
- #pragma warning(disable: 4250)
+#pragma warning(disable: 4250 4251)
 #else
  #define NIXAPI
 #endif
