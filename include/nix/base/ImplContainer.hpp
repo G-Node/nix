@@ -45,7 +45,7 @@ protected:
      * should be automatically deduced.
      * 
      * @param class "get function": std::function of return type T_ENT and 
-     *              param type "int" to get entities
+     *              param type "size_t" to get entities
      * @param size_t number of entities to get
      * @param class "filter function": std::function of return type bool
      *              and param type T_ENT to filter which entities to get
@@ -57,19 +57,21 @@ protected:
         size_t nT,
         std::function<bool(TENT)> filter) const 
     {
-        std::vector<TENT> e;
-        size_t i = 0;
+        std::vector<TENT> entities;
+        TENT candidate;
 
-        if(nT < 1) { return e; }
-        e.resize(nT);
+        if (nT < 1) { 
+            return entities; 
+        }
 
-        for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
-            if(filter(*it)) {
-                *it = getEntity( i++ );
+        for (size_t i = 0; i < nT; i++) {
+            candidate = getEntity(i);
+            if (candidate && filter(candidate)) {
+                entities.push_back(candidate);
             }
         }
 
-        return e;
+        return entities;
     }
     
 public:
