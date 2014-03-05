@@ -14,13 +14,11 @@
 using namespace std;
 using namespace nix;
 
-
 void TestImplContainer::setUp() {
     startup_time = time(NULL);
     file = File::open("test_implcontainer.h5", FileMode::Overwrite);
 
     section = file.createSection("foo_section", "metadata");
-	nix::Section empty_section();
 }
 
 

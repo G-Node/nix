@@ -25,8 +25,6 @@ class ImplContainer {
 
 protected:
 
-    typedef boost::none_t none_t;
-    none_t none = boost::none;
     std::shared_ptr<T> impl_ptr;
 
     /**
@@ -48,7 +46,7 @@ protected:
      * should be automatically deduced.
      * 
      * @param class "get function": std::function of return type T_ENT and 
-     *              param type "size_t" to get entities
+     *              param type "int" to get entities
      * @param size_t number of entities to get
      * @param class "filter function": std::function of return type bool
      *              and param type T_ENT to filter which entities to get
@@ -60,28 +58,19 @@ protected:
         size_t nT,
         std::function<bool(TENT)> filter) const 
     {
-        std::vector<TENT> entities;
-        TENT candidate;
-        size_t skipped = 0;
-        if(nT < 1) { 
-			return entities; 
-		}
+        std::vector<TENT> e;
+        size_t i = 0;
 
-		// loop until numeric limits of "size_t" or until "nT" entities have been found
-        for (size_t i = 0; i < std::numeric_limits<size_t>::max(); i++) {
-            try {
-                candidate = getEntity(i);
-                if(filter(candidate)) entities.push_back(candidate);
-                else skipped++;
-                if(entities.size()+skipped >= nT) {
-					break;
-				}
-            } catch(std::exception& e) {
-                continue;
+        if(nT < 1) { return e; }
+        e.resize(nT);
+
+        for (typename std::vector<TENT>::iterator it = e.begin(); it!=e.end(); ++it) {
+            if(filter(*it)) {
+                *it = getEntity( i++ );
             }
         }
 
-        return entities;
+        return e;
     }
     
 public:
@@ -108,15 +97,13 @@ public:
         : impl_ptr(other.impl_ptr)
     {
     }
-    
-    bool isNone() const
-    {
-        return !impl_ptr;    
+
+    bool isNone() const {
+        return !impl_ptr;
     }
 
 
-    explicit operator bool() const
-    {
+    explicit operator bool() const {
         return !isNone();
     }
 
@@ -149,14 +136,12 @@ public:
     // is compared to "none_t" (e.g. boost::none) internally we compare
     // the "impl_ptr" to the null pointer.
     virtual bool operator==(none_t t) const {
-        std::nullptr_t nullp;
-        return impl_ptr == nullp;
+        return impl_ptr == nullptr;
     }
 
     // bool "=!" operator "boost::none_t" overload: same as "==" operator.
     virtual bool operator!=(none_t t) const {
-        std::nullptr_t nullp;
-        return impl_ptr != nullp;
+        return impl_ptr != nullptr;
     }
 
 

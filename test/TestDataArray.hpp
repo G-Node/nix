@@ -61,10 +61,10 @@ private:
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
     CPPUNIT_TEST(testOperator);
-    
+
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;    
+    nix::File file;
     nix::Block block;
     nix::DataArray array1, array2;
     time_t startup_time;
