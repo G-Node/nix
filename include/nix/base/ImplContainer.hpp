@@ -25,8 +25,6 @@ template<typename T>
 class ImplContainer {
 protected:
 
-    std::shared_ptr<T> impl_ptr;
-
     /**
      * Low level helper to get multiple entities via a getter function
      * that has to be provided.
@@ -179,6 +177,10 @@ protected:
     void nullify() {
         impl_ptr = nullptr;
     }
+
+private:
+    std::shared_ptr<T> impl_ptr;
+
 };
 
 
