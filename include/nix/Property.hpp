@@ -45,58 +45,58 @@ public:
     // TODO implement include
     /*
     void include(const std::string &include) {
-        impl_ptr->include(include);
+        backend()->include(include);
     }
 
 
     std::string include() const {
-        return impl_ptr->include();
+        return backend()->include();
     }
     */
 
 
     void mapping(const std::string &mapping) {
-        impl_ptr->mapping(mapping);
+        backend()->mapping(mapping);
     }
 
 
     boost::optional<std::string> mapping() const {
-        return impl_ptr->mapping();
+        return backend()->mapping();
     }
     
     
     void mapping(const boost::none_t t) {
-        impl_ptr->mapping();
+        backend()->mapping();
     }
 
 
     void dataType(const std::string &data_type) {
-        impl_ptr->dataType(data_type);
+        backend()->dataType(data_type);
     }
 
 
     std::string dataType() const {
-        return impl_ptr->dataType();
+        return backend()->dataType();
     }
 
 
     void dataType(const boost::none_t t) {
-        impl_ptr->dataType(t);
+        backend()->dataType(t);
     }
     
 
     void unit(const std::string &unit) {
-        impl_ptr->unit(unit);
+        backend()->unit(unit);
     }
 
 
     boost::optional<std::string> unit() const {
-        return impl_ptr->unit();
+        return backend()->unit();
     }
     
     
     void unit(const boost::none_t t) {
-        return impl_ptr->unit(t);
+        return backend()->unit(t);
     }
 
     //--------------------------------------------------
@@ -104,24 +104,24 @@ public:
     //--------------------------------------------------
 
     void deleteValues() {
-        impl_ptr->deleteValues();
+        backend()->deleteValues();
     }
 
 
     size_t valueCount() const {
-        return impl_ptr->valueCount();
+        return backend()->valueCount();
     }
 
     void values(const std::vector<Value> &values) {
-        impl_ptr->values(values);
+        backend()->values(values);
     }
 
     std::vector<Value> values(void) const {
-        return impl_ptr->values();
+        return backend()->values();
     }
     
     void values(const boost::none_t t) {
-        impl_ptr->values(t);
+        backend()->values(t);
     }
 
     //------------------------------------------------------

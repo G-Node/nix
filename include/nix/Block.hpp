@@ -54,7 +54,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const std::string &id) const {
-        return impl_ptr->hasSource(id);
+        return backend()->hasSource(id);
     }
 
     /**
@@ -66,7 +66,7 @@ public:
      *         will be thrown.
      */
     Source getSource(const std::string &id) const {
-        return impl_ptr->getSource(id);
+        return backend()->getSource(id);
     }
 
     /**
@@ -78,7 +78,7 @@ public:
      */
     // TODO  maybe remove this method?
     Source getSource(size_t index) const {
-        return impl_ptr->getSource(index);
+        return backend()->getSource(index);
     }
 
 
@@ -88,7 +88,7 @@ public:
      * @return The number of root sources.
      */
     size_t sourceCount() const {
-        return impl_ptr->sourceCount();
+        return backend()->sourceCount();
     }
 
 
@@ -135,7 +135,7 @@ public:
      * @return The created source object.
      */
     Source createSource(const std::string &name, const std::string &type) {
-        return impl_ptr->createSource(name, type);
+        return backend()->createSource(name, type);
     }
 
     /**
@@ -147,7 +147,7 @@ public:
      * @return True if the source was removed, false otherwise.
      */
     bool deleteSource(const std::string &id) {
-        return impl_ptr->deleteSource(id);
+        return backend()->deleteSource(id);
     }
 
     //--------------------------------------------------
@@ -162,7 +162,7 @@ public:
      * @return True if the data array exists, false otherwise.
      */
     bool hasDataArray(const std::string &id) const {
-        return impl_ptr->hasDataArray(id);
+        return backend()->hasDataArray(id);
     }
 
     /**
@@ -174,7 +174,7 @@ public:
      *         doesn't exist, an exception will be thrown.
      */
     DataArray getDataArray(const std::string &id) const {
-        return impl_ptr->getDataArray(id);
+        return backend()->getDataArray(id);
     }
 
     /**
@@ -186,7 +186,7 @@ public:
      */
     // TODO maybe remove this method?
     DataArray getDataArray(size_t index) const {
-        return impl_ptr->getDataArray(index);
+        return backend()->getDataArray(index);
     }
 
     /**
@@ -214,7 +214,7 @@ public:
      * @return The number of data arrays of the block.
      */
     size_t dataArrayCount() const {
-        return impl_ptr->dataArrayCount();
+        return backend()->dataArrayCount();
     }
 
     /**
@@ -225,7 +225,7 @@ public:
      * @return The newly created data array.
      */
     DataArray createDataArray(const std::string &name, const std::string &type) {
-        return impl_ptr->createDataArray(name, type);
+        return backend()->createDataArray(name, type);
     }
 
     /**
@@ -236,7 +236,7 @@ public:
      * @return True if the data array was removed, false otherwise.
      */
     bool deleteDataArray(const std::string &id) {
-        return impl_ptr->deleteDataArray(id);
+        return backend()->deleteDataArray(id);
     }
 
     //--------------------------------------------------
@@ -251,7 +251,7 @@ public:
      * @return True if the simple tag exists, false otherwise.
      */
     bool hasSimpleTag(const std::string &id) const {
-        return impl_ptr->hasSimpleTag(id);
+        return backend()->hasSimpleTag(id);
     }
 
     /**
@@ -263,7 +263,7 @@ public:
      *         an exception will be thrown.
      */
     SimpleTag getSimpleTag(const std::string &id) const {
-        return impl_ptr->getSimpleTag(id);
+        return backend()->getSimpleTag(id);
     }
 
     /**
@@ -275,7 +275,7 @@ public:
      */
     // TODO maybe remove this method?
     SimpleTag getSimpleTag(size_t index) const {
-        return impl_ptr->getSimpleTag(index);
+        return backend()->getSimpleTag(index);
     }
 
     /**
@@ -304,7 +304,7 @@ public:
      * @return The number of simple tags.
      */
     size_t simpleTagCount() const {
-        return impl_ptr->simpleTagCount();
+        return backend()->simpleTagCount();
     }
 
     /**
@@ -316,7 +316,7 @@ public:
      * @return The newly created tag.
      */
     SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
-        return impl_ptr->createSimpleTag(name, type);
+        return backend()->createSimpleTag(name, type);
     }
 
     /**
@@ -327,7 +327,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteSimpleTag(const std::string &id) {
-        return impl_ptr->deleteSimpleTag(id);
+        return backend()->deleteSimpleTag(id);
     }
 
     //--------------------------------------------------
@@ -342,7 +342,7 @@ public:
      * @return True if the data tag exists, false otherwise.
      */
     bool hasDataTag(const std::string &id) const {
-        return impl_ptr->hasDataTag(id);
+        return backend()->hasDataTag(id);
     }
 
     /**
@@ -354,7 +354,7 @@ public:
      *         an exception will be thrown.
      */
     DataTag getDataTag(const std::string &id) const {
-        return impl_ptr->getDataTag(id);
+        return backend()->getDataTag(id);
     }
 
     /**
@@ -365,7 +365,7 @@ public:
      * @return The data tag at the specified index.
      */
     DataTag getDataTag(size_t index) const {
-        return impl_ptr->getDataTag(index);
+        return backend()->getDataTag(index);
     }
 
     /**
@@ -394,7 +394,7 @@ public:
      * @return The number of data tags.
      */
     size_t dataTagCount() const {
-        return impl_ptr->dataTagCount();
+        return backend()->dataTagCount();
     }
 
     /**
@@ -406,7 +406,7 @@ public:
      * @return The newly created tag.
      */
     DataTag createDataTag(const std::string &name, const std::string &type) {
-        return impl_ptr->createDataTag(name, type);
+        return backend()->createDataTag(name, type);
     }
 
     /**
@@ -417,7 +417,7 @@ public:
      * @return True if the tag was deleted, false otherwise.
      */
     bool deleteDataTag(const std::string &id) {
-        return impl_ptr->deleteDataTag(id);
+        return backend()->deleteDataTag(id);
     }
 
     //------------------------------------------------------

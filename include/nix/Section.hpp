@@ -52,7 +52,7 @@ public:
      * @param string the url of the repository.
      */
     void repository(const std::string &repository) {
-        impl_ptr->repository(repository);
+        backend()->repository(repository);
     }
 
     /**
@@ -61,7 +61,7 @@ public:
      * @return boost::optional<string> the url.
      */
     boost::optional<std::string> repository() const {
-        return impl_ptr->repository();
+        return backend()->repository();
     }
     
     /**
@@ -70,7 +70,7 @@ public:
      * @param boost::none_t.
      */
     void repository(const boost::none_t t) {
-        impl_ptr->repository(t);
+        backend()->repository(t);
     }
     
     /**
@@ -81,7 +81,7 @@ public:
      * @param the id of the linked section.
      */
     void link(const Section &link) {
-        impl_ptr->link(link);
+        backend()->link(link);
     }
 
     /**
@@ -90,7 +90,7 @@ public:
      * @return string the id.
      */
     Section link() const {
-        return impl_ptr->link();
+        return backend()->link();
     }
     
     /**
@@ -100,7 +100,7 @@ public:
      * @param boost::none_t.
      */
     void link(const boost::none_t t) {
-        impl_ptr->link(t);
+        backend()->link(t);
     }
 
     // TODO: how to support includes?!
@@ -111,7 +111,7 @@ public:
      * @param string the mapping information.
      */
     void mapping(const std::string &mapping) {
-        impl_ptr->mapping(mapping);
+        backend()->mapping(mapping);
     }
 
     /**
@@ -120,7 +120,7 @@ public:
      * @return boost::optional<std::string>
      */
     boost::optional<std::string> mapping() const {
-        return impl_ptr->mapping();
+        return backend()->mapping();
     }
     
     /**
@@ -129,7 +129,7 @@ public:
      * @param boost::none_t.
      */
     void mapping(const boost::none_t t) {
-        impl_ptr->mapping(t);
+        backend()->mapping(t);
     }
     
     //--------------------------------------------------
@@ -142,7 +142,7 @@ public:
      * @return string
      */
     Section parent() const {
-        return impl_ptr->parent();
+        return backend()->parent();
     }
 
     //--------------------------------------------------
@@ -155,7 +155,7 @@ public:
      * @return The number of child sections.
      */
     size_t sectionCount() const {
-        return impl_ptr->sectionCount();
+        return backend()->sectionCount();
     }
 
     /**
@@ -166,7 +166,7 @@ public:
      * @return True if the child exists false otherwise.
      */
     bool hasSection(const std::string &id) const {
-        return impl_ptr->hasSection(id);
+        return backend()->hasSection(id);
     }
 
     /**
@@ -177,7 +177,7 @@ public:
      * @return The child section.
      */
     Section getSection(const std::string &id) const {
-        return impl_ptr->getSection(id);
+        return backend()->getSection(id);
     }
 
     /**
@@ -188,7 +188,7 @@ public:
      * @return The child section.
      */
     virtual Section getSection(size_t index) const {
-        return impl_ptr->getSection(index);
+        return backend()->getSection(index);
     }
 
     /**
@@ -241,7 +241,7 @@ public:
      *  @return the new section.
      */
     Section createSection(const std::string &name, const std::string &type) {
-        return impl_ptr->createSection(name, type);
+        return backend()->createSection(name, type);
     }
 
     /**
@@ -252,7 +252,7 @@ public:
      * @return bool successful or not
      */
     bool deleteSection(const std::string &id) {
-        return impl_ptr->deleteSection(id);
+        return backend()->deleteSection(id);
     }
 
     //--------------------------------------------------
@@ -265,7 +265,7 @@ public:
      * @return The number of Properties
      */
     size_t propertyCount() const {
-        return impl_ptr->propertyCount();
+        return backend()->propertyCount();
     }
 
     /**
@@ -274,7 +274,7 @@ public:
      * @param string the id.
      */
     bool hasProperty(const std::string &id) const {
-        return impl_ptr->hasProperty(id);
+        return backend()->hasProperty(id);
     }
 
     /**
@@ -283,7 +283,7 @@ public:
      * @return Property
      */
     Property getProperty(const std::string &id) const {
-        return impl_ptr->getProperty(id);
+        return backend()->getProperty(id);
     }
 
     /**
@@ -294,7 +294,7 @@ public:
      * @return The property.
      */
     Property getProperty(size_t index) const {
-        return impl_ptr->getProperty(index);
+        return backend()->getProperty(index);
     }
 
     /**
@@ -305,7 +305,7 @@ public:
      * @return True if a property with the given name exists false otherwise.
      */
     bool hasPropertyWithName(const std::string &name) const {
-        return impl_ptr->hasPropertyWithName(name);
+        return backend()->hasPropertyWithName(name);
     }
 
     /**
@@ -316,7 +316,7 @@ public:
      * @return The found property.
      */
     Property getPropertyByName(const std::string &name) const {
-        return impl_ptr->getPropertyByName(name);
+        return backend()->getPropertyByName(name);
     }
 
 
@@ -355,7 +355,7 @@ public:
      * @return the Property
      */
     Property createProperty(const std::string &name) {
-        return impl_ptr->createProperty(name);
+        return backend()->createProperty(name);
     }
 
     /**
@@ -364,7 +364,7 @@ public:
      * @param string the id.
      */
     bool deleteProperty(const std::string &id) {
-        return impl_ptr->deleteProperty(id);
+        return backend()->deleteProperty(id);
     }
 
     //------------------------------------------------------

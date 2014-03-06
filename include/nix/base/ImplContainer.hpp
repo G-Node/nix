@@ -16,6 +16,7 @@
 
 #include <nix/Platform.hpp> //for pragma warnings on windows
 #include <nix/None.hpp>
+#include <nix/Exception.hpp>
 
 namespace nix {
 namespace base {
@@ -158,6 +159,18 @@ public:
         return impl_ptr;
     }
 
+protected:
+    T* backend() {
+        if (isNone()) {
+            throw std::runtime_error("Trying to access object with invalid object");
+        }
+
+        return impl_ptr.get();
+    }
+
+    const T* backend() const {
+        return const_cast<ImplContainer *>(this)->backend();
+    }
 };
 
 

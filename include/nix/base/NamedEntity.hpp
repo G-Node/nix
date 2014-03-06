@@ -34,49 +34,49 @@ public:
 
 
     void type(const std::string &type) {
-        Entity<T>::impl_ptr->type(type);
+        Entity<T>::backend()->type(type);
     }
 
 
     std::string type() const {
-        return Entity<T>::impl_ptr->type();
+        return Entity<T>::backend()->type();
     }
 
 
     void name(const std::string &name) {
-        Entity<T>::impl_ptr->name(name);
+        Entity<T>::backend()->name(name);
     }
 
 
     boost::optional<std::string> name() const {
-        return Entity<T>::impl_ptr->name();
+        return Entity<T>::backend()->name();
     }
 
 
     void name(const none_t t)
     {
-        Entity<T>::impl_ptr->name(t);
+        Entity<T>::backend()->name(t);
     }
     
 
     void definition(const std::string &definition) {
-        Entity<T>::impl_ptr->definition(definition);
+        Entity<T>::backend()->definition(definition);
     }
 
 
     boost::optional<std::string> definition() const {
-        return Entity<T>::impl_ptr->definition();
+        return Entity<T>::backend()->definition();
     }
 
 
     void definition(const none_t t)
     {
-        Entity<T>::impl_ptr->definition(t);
+        Entity<T>::backend()->definition(t);
     }
 
 
     int compare(const INamedEntity &other) const {
-        return Entity<T>::impl_ptr->compare(other);
+        return Entity<T>::backend()->compare(other);
     }
 
 

@@ -51,12 +51,12 @@ public:
 
 
     size_t id() const {
-        return impl_ptr->id();
+        return backend()->id();
     }
 
 
     DimensionType dimensionType() const {
-        return impl_ptr->dimensionType();
+        return backend()->dimensionType();
     }
 
 
@@ -98,7 +98,7 @@ public:
      * @return size_t, the id, i.e. the order.
      */
     size_t id() const {
-        return impl_ptr->id();
+        return backend()->id();
     }
 
     /**
@@ -107,7 +107,7 @@ public:
      * @return DimensionType either Sample, Range, or Set.
      */
     DimensionType dimensionType() const {
-        return impl_ptr->dimensionType();
+        return backend()->dimensionType();
     }
 
     /**
@@ -116,7 +116,7 @@ public:
      * @return string the label.
      */
     std::string label() const {
-        return impl_ptr->label();
+        return backend()->label();
     }
 
     /**
@@ -126,7 +126,7 @@ public:
      * @param label string
      */
     void label(const std::string &label) {
-        impl_ptr->label(label);
+        backend()->label(label);
     }
 
     /**
@@ -135,7 +135,7 @@ public:
      * @return string the unit
      */
     std::string unit() const {
-        return impl_ptr->unit();
+        return backend()->unit();
     }
 
     /**
@@ -145,7 +145,7 @@ public:
      * @param unit, string
      */
     void unit(const std::string &unit) {
-        impl_ptr->unit(unit);
+        backend()->unit(unit);
     }
 
     /**
@@ -154,7 +154,7 @@ public:
      * @return double, the sampling interval
      */
     double samplingInterval() const {
-       return impl_ptr->samplingInterval();
+       return backend()->samplingInterval();
     }
 
     /**
@@ -164,7 +164,7 @@ public:
      * @param interval double
      */
     void samplingInterval(double interval) {
-        impl_ptr->samplingInterval(interval);
+        backend()->samplingInterval(interval);
     }
 
     /**
@@ -174,7 +174,7 @@ public:
      * @return boost::optional<double> the offset
      */
     boost::optional<double> offset() const {
-        return impl_ptr->offset();
+        return backend()->offset();
     }
 
     /**
@@ -185,7 +185,7 @@ public:
      * @param offset double
      */
     void offset(double offset) {
-        return impl_ptr->offset(offset);
+        return backend()->offset(offset);
     }
 
     /**
@@ -195,7 +195,7 @@ public:
      * @param boost::none_t
      */
     void offset(const boost::none_t t) {
-        impl_ptr->offset(t);
+        backend()->offset(t);
     }
 
     SampledDimension& operator=(const SampledDimension &other);
@@ -234,7 +234,7 @@ public:
     * @return size_t, the id, i.e. the order.
     */
     size_t id() const {
-        return impl_ptr->id();
+        return backend()->id();
     }
 
     /**
@@ -243,7 +243,7 @@ public:
      * @return DimensionType either Sample, Range, or Set.
      */
     DimensionType dimensionType() const {
-        return impl_ptr->dimensionType();
+        return backend()->dimensionType();
     }
 
     /**
@@ -252,7 +252,7 @@ public:
      * @return vector<string> the labels
      */
     std::vector<std::string> labels() const {
-        return impl_ptr->labels();
+        return backend()->labels();
     }
 
     /**
@@ -262,7 +262,7 @@ public:
      * @param labels, vector<string>
      */
     void labels(const std::vector<std::string> &labels) {
-        impl_ptr->labels(labels);
+        backend()->labels(labels);
     }
 
     /**
@@ -272,7 +272,7 @@ public:
      * @param boost::none_t
      */
     void labels(const boost::none_t t) {
-        impl_ptr->labels(t);
+        backend()->labels(t);
     }
 
     SetDimension& operator=(const SetDimension &other);
@@ -311,7 +311,7 @@ public:
      * @return size_t, the id, i.e. the order.
      */
     size_t id() const {
-        return impl_ptr->id();
+        return backend()->id();
     }
 
     /**
@@ -320,7 +320,7 @@ public:
      * @return DimensionType either Sample, Range, or Set.
      */
     DimensionType dimensionType() const {
-        return impl_ptr->dimensionType();
+        return backend()->dimensionType();
     }
 
     /**
@@ -329,7 +329,7 @@ public:
      * @return string the label
      */
     std::string label() const {
-        return impl_ptr->label();
+        return backend()->label();
     }
 
     /**
@@ -339,7 +339,7 @@ public:
      * @param label string
      */
     void label(const std::string &label) {
-        impl_ptr->label(label);
+        backend()->label(label);
     }
 
     /**
@@ -348,7 +348,7 @@ public:
      * @return string the unit.
      */
     std::string unit() const {
-        return impl_ptr->unit();
+        return backend()->unit();
     }
 
     /**
@@ -359,7 +359,7 @@ public:
      * @param unit string
      */
     void unit(const std::string &unit) {
-        impl_ptr->unit(unit);
+        backend()->unit(unit);
     }
 
     /**
@@ -368,7 +368,7 @@ public:
      * @return vector<double> the tics.
      */
     std::vector<double> tics() const {
-        return impl_ptr->tics();
+        return backend()->tics();
     }
 
     /**
@@ -379,7 +379,7 @@ public:
      * @param tics vector<double>
      */
     void tics(const std::vector<double> &tics) {
-        impl_ptr->tics(tics);
+        backend()->tics(tics);
     }
 
 

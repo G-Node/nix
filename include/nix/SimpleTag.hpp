@@ -53,7 +53,7 @@ public:
      * @return All units of the tag as a vector.
      */
     std::vector<std::string> units() const {
-        return impl_ptr->units();
+        return backend()->units();
     }
 
     /**
@@ -62,7 +62,7 @@ public:
      * @param units     All units as a vector.
      */
     void units(std::vector<std::string> &units) {
-        impl_ptr->units(units);
+        backend()->units(units);
     }
 
     /**
@@ -71,7 +71,7 @@ public:
      * @param boost::none_t.
      */
     void units(const boost::none_t t) {
-        impl_ptr->units(t);
+        backend()->units(t);
     }
     
     /**
@@ -81,7 +81,7 @@ public:
      * @return The position vector.
      */
     std::vector<double> position() const {
-        return impl_ptr->position();
+        return backend()->position();
     }
 
     /**
@@ -90,7 +90,7 @@ public:
      * @param position    The position vector.
      */
     void position(const std::vector<double> &position) {
-        impl_ptr->position(position);
+        backend()->position(position);
     }
 
     /**
@@ -101,7 +101,7 @@ public:
      * @return The extent of the tag.
      */
     std::vector<double> extent() const {
-        return impl_ptr->extent();
+        return backend()->extent();
     }
 
     /**
@@ -110,7 +110,7 @@ public:
      * @param extent      The extent vector.
      */
     void extent(const std::vector<double> &extent) {
-        impl_ptr->extent(extent);
+        backend()->extent(extent);
     }
     
     /**
@@ -119,7 +119,7 @@ public:
      * @param boost::none_t.
      */
     void extent(const boost::none_t t) {
-        impl_ptr->extent(t);
+        backend()->extent(t);
     }
 
     //--------------------------------------------------
@@ -133,31 +133,31 @@ public:
 
 
     bool hasReference(const std::string &id) const {
-        return impl_ptr->hasReference(id);
+        return backend()->hasReference(id);
     }
 
     size_t referenceCount() const {
-        return impl_ptr->referenceCount();
+        return backend()->referenceCount();
     }
 
 
     DataArray getReference(const std::string &id) const {
-        return impl_ptr->getReference(id);
+        return backend()->getReference(id);
     }
 
 
     DataArray getReference(size_t index) const {
-        return impl_ptr->getReference(index);
+        return backend()->getReference(index);
     }
     
 
     void addReference(const DataArray &reference) {
-        impl_ptr->addReference(reference);
+        backend()->addReference(reference);
     }
 
 
     bool removeReference(const DataArray &reference) {
-        return impl_ptr->removeReference(reference);
+        return backend()->removeReference(reference);
     }
 
     /**
@@ -187,7 +187,7 @@ public:
      * @param references    All referenced arrays.
      */
     void references(const std::vector<DataArray> &references) {
-        impl_ptr->references(references);
+        backend()->references(references);
     }
 
     //--------------------------------------------------
@@ -202,7 +202,7 @@ public:
      * @return True if the representation exists, false otherwise.
      */
     bool hasRepresentation(const std::string &id) const {
-        return impl_ptr->hasRepresentation(id);
+        return backend()->hasRepresentation(id);
     }
 
     /**
@@ -211,7 +211,7 @@ public:
      * @return The number of representations.
      */
     size_t representationCount() const {
-        return impl_ptr->representationCount();
+        return backend()->representationCount();
     }
 
     /**
@@ -223,7 +223,7 @@ public:
      *         doesn't exist an exception will be thrown.
      */
     Representation getRepresentation(const std::string &id) const {
-        return impl_ptr->getRepresentation(id);
+        return backend()->getRepresentation(id);
     }
 
     /**
@@ -235,7 +235,7 @@ public:
      *         doesn't exist an exception will be thrown.
      */
     Representation getRepresentation(size_t index) const {
-        return impl_ptr->getRepresentation(index);
+        return backend()->getRepresentation(index);
     }
 
     /**
@@ -268,7 +268,7 @@ public:
      * @return The created representation object.
      */
     Representation createRepresentation(DataArray data, LinkType link_type) {
-        return impl_ptr->createRepresentation(data, link_type);
+        return backend()->createRepresentation(data, link_type);
     }
 
     /**
@@ -279,7 +279,7 @@ public:
      * @return True if the representation was removed, false otherwise.
      */
     bool deleteRepresentation(const std::string &id) {
-        return impl_ptr->deleteRepresentation(id);
+        return backend()->deleteRepresentation(id);
     }
 
 
