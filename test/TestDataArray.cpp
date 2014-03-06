@@ -181,35 +181,47 @@ void TestDataArray::testDimension()
     dims.push_back(array2.createDimension(1, nix::DimensionType::Sample));
     dims.push_back(array2.createDimension(2, nix::DimensionType::Set));
     dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
+    dims.push_back(array2.appendDimension(nix::DimensionType::Sample));
+    dims.push_back(array2.appendDimension(nix::DimensionType::Set));
+    dims[3] = array2.createDimension(4, nix::DimensionType::Range);
 
     CPPUNIT_ASSERT(array2.getDimension(dims[0].id()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(array2.getDimension(dims[3].id()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(array2.getDimension(dims[4].id()).dimensionType() == nix::DimensionType::Set);
 
-    CPPUNIT_ASSERT(array2.dimensionCount() == 3);
+    CPPUNIT_ASSERT(array2.dimensionCount() == 5);
 
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
     CPPUNIT_ASSERT(dims.size() == 1);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Set; });
-    CPPUNIT_ASSERT(dims.size() == 1);
+    CPPUNIT_ASSERT(dims.size() == 2);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Range; });
-    CPPUNIT_ASSERT(dims.size() == 1);
+    CPPUNIT_ASSERT(dims.size() == 2);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Range);
 
     dims = array2.dimensions();
-    CPPUNIT_ASSERT(dims.size() == 3);
+    CPPUNIT_ASSERT(dims.size() == 5);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(dims[2].dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(dims[4].dimensionType() == nix::DimensionType::Set);
 
+    // since deleteDimension renumbers indices to be continuous we test that too
+    array2.deleteDimension(5);
+    array2.deleteDimension(4);
     array2.deleteDimension(1);
-    array2.deleteDimension(2);
-    array2.deleteDimension(3);
+    array2.deleteDimension(1);
+    array2.deleteDimension(1);
     dims = array2.dimensions();
-    CPPUNIT_ASSERT(array2.dimensionCount() == 1);
-    CPPUNIT_ASSERT(dims.size() == 1);
+    CPPUNIT_ASSERT(array2.dimensionCount() == 0);
+    CPPUNIT_ASSERT(dims.size() == 0);
 }
 
 
