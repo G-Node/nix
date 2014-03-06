@@ -149,8 +149,8 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
     size_t dim_count = dimensionCount();
 
-    if (id <= dim_count) {
-        id = dim_count + 1;
+    if (id > (dim_count + 1) || id <= 0) { // dim_count+1 since index starts at 1
+        runtime_error("Invalid dimension id: has to be 0 < id <= #(dimensions)+1");
     }
 
     string str_id = util::numToStr(id);

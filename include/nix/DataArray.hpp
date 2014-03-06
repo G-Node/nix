@@ -136,11 +136,11 @@ public:
     {
         auto f = [this] (size_t i) { 
             nix::Dimension empty_dim;
-            try { return getDimension(i); } 
+            try { return getDimension(i+1); } // +1 since index starts at 1
             catch(std::exception& e) { return empty_dim; } 
         };
         return getEntities<Dimension>(f,
-                                      dimensionCount()+1, // since index starts at 1
+                                      dimensionCount(), 
                                       filter);
     }
 
@@ -153,6 +153,12 @@ public:
     Dimension getDimension(size_t id) const {
         return backend()->getDimension(id);
     }
+
+
+    Dimension appendDimension(DimensionType type) {
+        return backend()->createDimension(backend()->dimensionCount() + 1, type);
+    }
+
 
     Dimension createDimension(size_t id, DimensionType type) {
         return backend()->createDimension(id, type);
