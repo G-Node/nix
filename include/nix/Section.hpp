@@ -372,7 +372,7 @@ public:
     //------------------------------------------------------
 
     virtual Section &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+        nullify();
         return *this;
     }
 

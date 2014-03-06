@@ -30,7 +30,7 @@ public:
     {}
 
     DataArray(const DataArray &other)
-        : EntityWithSources(other.impl_ptr)
+        : EntityWithSources(other.impl())
     {
     }
 

@@ -25,8 +25,6 @@ template<typename T>
 class ImplContainer {
 protected:
 
-    std::shared_ptr<T> impl_ptr;
-
     /**
      * Low level helper to get multiple entities via a getter function
      * that has to be provided.
@@ -156,23 +154,47 @@ public:
 
     virtual ~ImplContainer() {}
 
+    //const version of impl() see non-const version
+    //for details of how and when to use
+    const std::shared_ptr<T> & impl() const {
+        return impl_ptr;
+    }
 
-    std::shared_ptr<T> impl() const {
+    //Get a reference to the internal shared pointer (impl_ptr)
+    //*no* checking is done to see if the impl_ptr is set or not
+    std::shared_ptr<T> & impl() {
         return impl_ptr;
     }
 
 protected:
+
+    //Access to the pointer to the specific "backend" instance, i.e. the
+    //implementation of e.g. IFile (like FileHDF5 for hdf5). This pointer
+    //is held internally by a std::shared_ptr (impl_ptr).
+    //NB: A check *is* done to see if the shared_ptr is valid, i.e. holding
+    //    a pointer, and exception is thrown otherwise
     T* backend() {
         if (isNone()) {
+            //FIXME: come up with a better exception (cf. github issue #134)
             throw std::runtime_error("Trying to access object with invalid object");
         }
 
         return impl_ptr.get();
     }
 
+    //const version of backend() see non-const version
+    //for details of how and when to use
     const T* backend() const {
         return const_cast<ImplContainer *>(this)->backend();
     }
+
+    void nullify() {
+        impl_ptr = nullptr;
+    }
+
+private:
+    std::shared_ptr<T> impl_ptr;
+
 };
 
 

@@ -32,7 +32,7 @@ public:
 
 
     Representation(const Representation &other)
-        : Entity(other.impl_ptr)
+        : Entity(other.impl())
     {
     }
 

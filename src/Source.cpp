@@ -20,7 +20,7 @@ Source::Source()
 
 
 Source::Source(const Source &other)
-    : EntityWithMetadata(other.impl_ptr)
+    : EntityWithMetadata(other.impl())
 {
 }
 

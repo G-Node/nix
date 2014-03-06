@@ -27,7 +27,7 @@ public:
 {}
 
     DataTag(const DataTag &other)
-    : EntityWithSources(other.impl_ptr)
+        : EntityWithSources(other.impl())
     {
     }
 
@@ -318,8 +318,8 @@ public:
         return backend()->deleteRepresentation(id);
     }
 
-    virtual DataTag &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual DataTag &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

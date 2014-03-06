@@ -31,7 +31,7 @@ public:
     Block() {}
 
     Block(const Block &other)
-        : EntityWithMetadata(other.impl_ptr)
+        : EntityWithMetadata(other.impl())
     {
     }
 
@@ -424,8 +424,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Block &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual Block &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

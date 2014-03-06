@@ -26,7 +26,7 @@ public:
     File() {}
 
     File(const File &other)
-        : ImplContainer(other.impl_ptr)
+        : ImplContainer(other.impl())
     {
     }
 
@@ -196,21 +196,19 @@ public:
 
 
     void close() {
-        if (impl_ptr != nullptr)
+        if (!isNone()) {
             backend()->close();
+        }
     }
 
 
     bool isOpen() const {
-        if (impl_ptr == nullptr)
-            return false;
-        else
-            return backend()->isOpen();
+        return !isNone() && backend()->isOpen();
     }
 
 
-    virtual File &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual File &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

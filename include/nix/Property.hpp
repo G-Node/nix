@@ -29,7 +29,7 @@ public:
 
 
     Property(const Property &other)
-        : NamedEntity(other.impl_ptr)
+        : NamedEntity(other.impl())
     {
     }
 
@@ -128,8 +128,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Property &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual Property &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 
