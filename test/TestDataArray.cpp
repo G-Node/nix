@@ -182,12 +182,7 @@ void TestDataArray::testDimension()
     dims.push_back(array2.createDimension(2, nix::DimensionType::Set));
     dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
 
-    CPPUNIT_ASSERT(array2.getDimension(1).dimensionType() == nix::DimensionType::Sample);
-
-    array2.getDimension(dims[0].id());
-    array2.getDimension(dims[1].id());
-    array2.getDimension(dims[1].id());
-
+    CPPUNIT_ASSERT(array2.getDimension(dims[0].id()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
 
