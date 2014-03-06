@@ -171,6 +171,10 @@ protected:
     const T* backend() const {
         return const_cast<ImplContainer *>(this)->backend();
     }
+
+    void nullify() {
+        impl_ptr = nullptr;
+    }
 };
 
 
