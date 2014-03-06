@@ -28,7 +28,7 @@ class SetDimension;
  *
  * See detailed descriptions below.
  */
-class Dimension : public virtual base::IDimension, public base::ImplContainer<base::IDimension> {
+class NIXAPI Dimension : public virtual base::IDimension, public base::ImplContainer<base::IDimension> {
 
 public:
 
@@ -78,7 +78,7 @@ public:
  * SampledDimensions are characterized by the label of the dimension, the unit in which the sampling_interval
  * is given. If not otherwise stated the dimension starts with zero offset.
  */
-class SampledDimension : public virtual base::ISampledDimension, public base::ImplContainer<base::ISampledDimension> {
+class NIXAPI SampledDimension : public virtual base::ISampledDimension, public base::ImplContainer<base::ISampledDimension> {
 
 public:
 
@@ -213,7 +213,7 @@ public:
  *
  * SetDimensions are characterized by a set of labels.
  */
-class SetDimension : virtual public base::ISetDimension, public base::ImplContainer<base::ISetDimension> {
+class NIXAPI SetDimension : virtual public base::ISetDimension, public base::ImplContainer<base::ISetDimension> {
 
 public:
 
@@ -291,7 +291,7 @@ public:
  * RangeDimensions are characterized by an array of tics that are given in a certain unit and
  * must be given in an ascending order. The dimension has also a label.
  */
-class RangeDimension : virtual public base::IRangeDimension, public base::ImplContainer<base::IRangeDimension> {
+class NIXAPI RangeDimension : virtual public base::IRangeDimension, public base::ImplContainer<base::IRangeDimension> {
 
 public:
 
