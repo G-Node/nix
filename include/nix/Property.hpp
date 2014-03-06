@@ -128,8 +128,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Property &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual Property &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

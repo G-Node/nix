@@ -147,8 +147,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Source &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual Source &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

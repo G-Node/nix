@@ -318,8 +318,8 @@ public:
         return backend()->deleteRepresentation(id);
     }
 
-    virtual DataTag &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual DataTag &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 

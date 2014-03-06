@@ -209,8 +209,8 @@ public:
     }
 
 
-    virtual File &operator=(std::nullptr_t nullp) {
-        impl_ptr = nullp;
+    virtual File &operator=(std::nullptr_t) {
+        nullify();
         return *this;
     }
 
