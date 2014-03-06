@@ -134,11 +134,7 @@ public:
     std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
                                       = util::AcceptAll<Dimension>()) const
     {
-        auto f = [this] (size_t i) { 
-            nix::Dimension empty_dim;
-            try { return getDimension(i+1); } // +1 since index starts at 1
-            catch(std::exception& e) { return empty_dim; } 
-        };
+        auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
         return getEntities<Dimension>(f,
                                       dimensionCount(), 
                                       filter);
