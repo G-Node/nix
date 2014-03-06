@@ -27,7 +27,7 @@ public:
 {}
 
     DataTag(const DataTag &other)
-    : EntityWithSources(other.impl_ptr)
+        : EntityWithSources(other.impl())
     {
     }
 

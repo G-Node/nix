@@ -32,7 +32,7 @@ public:
 
 
     SimpleTag(const SimpleTag &other)
-        : EntityWithSources(other.impl_ptr)
+        : EntityWithSources(other.impl())
     {
     }
 

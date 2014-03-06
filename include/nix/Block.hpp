@@ -31,7 +31,7 @@ public:
     Block() {}
 
     Block(const Block &other)
-        : EntityWithMetadata(other.impl_ptr)
+        : EntityWithMetadata(other.impl())
     {
     }
 

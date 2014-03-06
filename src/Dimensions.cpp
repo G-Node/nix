@@ -57,8 +57,8 @@ Dimension::Dimension(const SetDimension &other)
 Dimension& Dimension::operator=(const SampledDimension &other) {
     shared_ptr<IDimension> tmp(dynamic_pointer_cast<IDimension>(other.impl()));
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -68,8 +68,8 @@ Dimension& Dimension::operator=(const SampledDimension &other) {
 Dimension& Dimension::operator=(const RangeDimension &other) {
     shared_ptr<IDimension> tmp(dynamic_pointer_cast<IDimension>(other.impl()));
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -79,8 +79,8 @@ Dimension& Dimension::operator=(const RangeDimension &other) {
 Dimension& Dimension::operator=(const SetDimension &other) {
     shared_ptr<IDimension> tmp(dynamic_pointer_cast<IDimension>(other.impl()));
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -111,8 +111,8 @@ SampledDimension::SampledDimension(const SampledDimension &other)
 SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
     shared_ptr<ISampledDimension> tmp(other.impl());
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -122,8 +122,8 @@ SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
 SampledDimension& SampledDimension::operator=(const Dimension &other) {
     shared_ptr<ISampledDimension> tmp(dynamic_pointer_cast<ISampledDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Sample && impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (other.dimensionType() == DimensionType::Sample && impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -155,8 +155,8 @@ SetDimension::SetDimension(const SetDimension &other)
 SetDimension& SetDimension::operator=(const SetDimension &other) {
     shared_ptr<ISetDimension> tmp(other.impl());
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -166,8 +166,8 @@ SetDimension& SetDimension::operator=(const SetDimension &other) {
 SetDimension& SetDimension::operator=(const Dimension &other) {
     shared_ptr<ISetDimension> tmp(dynamic_pointer_cast<ISetDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Set && impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -200,8 +200,8 @@ RangeDimension::RangeDimension(const RangeDimension &other)
 RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
     shared_ptr<IRangeDimension> tmp(other.impl());
 
-    if (impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -211,8 +211,8 @@ RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
 RangeDimension& RangeDimension::operator=(const Dimension &other) {
     shared_ptr<IRangeDimension> tmp(dynamic_pointer_cast<IRangeDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Set && impl_ptr != tmp) {
-        std::swap(impl_ptr, tmp);
+    if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;

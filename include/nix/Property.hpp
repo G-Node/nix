@@ -29,7 +29,7 @@ public:
 
 
     Property(const Property &other)
-        : NamedEntity(other.impl_ptr)
+        : NamedEntity(other.impl())
     {
     }
 
