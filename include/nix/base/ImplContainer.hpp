@@ -155,7 +155,11 @@ public:
     virtual ~ImplContainer() {}
 
 
-    std::shared_ptr<T> impl() const {
+    const std::shared_ptr<T> & impl() const {
+        return impl_ptr;
+    }
+
+    std::shared_ptr<T> & impl() {
         return impl_ptr;
     }
 
