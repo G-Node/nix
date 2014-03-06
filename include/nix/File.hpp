@@ -39,32 +39,32 @@ public:
                      Implementation impl=Implementation::Hdf5);
 
     size_t blockCount() const {
-        return impl_ptr->blockCount();
+        return backend()->blockCount();
     }
 
 
     bool hasBlock(const std::string &id) const {
-        return impl_ptr->hasBlock(id);
+        return backend()->hasBlock(id);
     }
 
 
     Block getBlock(const std::string &id) const {
-        return impl_ptr->getBlock(id);
+        return backend()->getBlock(id);
     }
 
 
     Block getBlock(size_t index) const {
-        return impl_ptr->getBlock(index);
+        return backend()->getBlock(index);
     }
 
 
     Block createBlock(const std::string &name, const std::string &type) {
-        return impl_ptr->createBlock(name, type);
+        return backend()->createBlock(name, type);
     }
 
 
     bool deleteBlock(const std::string &id) {
-        return impl_ptr->deleteBlock(id);
+        return backend()->deleteBlock(id);
     }
 
 
@@ -94,22 +94,22 @@ public:
 
 
     bool hasSection(const std::string &id) const {
-        return impl_ptr->hasSection(id);
+        return backend()->hasSection(id);
     }
 
 
     Section getSection(const std::string &id) const {
-        return impl_ptr->getSection(id);
+        return backend()->getSection(id);
     }
 
 
     Section getSection(size_t index) const {
-        return impl_ptr->getSection(index);
+        return backend()->getSection(index);
     }
 
 
     size_t sectionCount() const {
-        return impl_ptr->sectionCount();
+        return backend()->sectionCount();
     }
 
 
@@ -138,12 +138,12 @@ public:
 
 
     Section createSection(const std::string &name, const std::string &type) {
-        return impl_ptr->createSection(name, type);
+        return backend()->createSection(name, type);
     }
 
 
     bool deleteSection(const std::string &id) {
-        return impl_ptr->deleteSection(id);
+        return backend()->deleteSection(id);
     }
 
     //--------------------------------------------------
@@ -152,42 +152,42 @@ public:
 
 
     std::string version() const {
-        return impl_ptr->version();
+        return backend()->version();
     }
 
 
     std::string format() const {
-        return impl_ptr->format();
+        return backend()->format();
     }
 
 
     time_t createdAt() const {
-        return impl_ptr->createdAt();
+        return backend()->createdAt();
     }
 
 
     time_t updatedAt() const {
-        return impl_ptr->updatedAt();
+        return backend()->updatedAt();
     }
 
 
     void setUpdatedAt() {
-        impl_ptr->setUpdatedAt();
+        backend()->setUpdatedAt();
     }
 
 
     void forceUpdatedAt() {
-        impl_ptr->forceUpdatedAt();
+        backend()->forceUpdatedAt();
     }
 
 
     void setCreatedAt() {
-        impl_ptr->setCreatedAt();
+        backend()->setCreatedAt();
     }
 
 
     void forceCreatedAt(time_t t) {
-        impl_ptr->forceCreatedAt(t);
+        backend()->forceCreatedAt(t);
     }
 
     //------------------------------------------------------
@@ -197,7 +197,7 @@ public:
 
     void close() {
         if (impl_ptr != nullptr)
-            impl_ptr->close();
+            backend()->close();
     }
 
 
@@ -205,7 +205,7 @@ public:
         if (impl_ptr == nullptr)
             return false;
         else
-            return impl_ptr->isOpen();
+            return backend()->isOpen();
     }
 
 

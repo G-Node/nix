@@ -40,7 +40,7 @@ public:
      *         false otherwise.
      */
     bool hasMetadata() const {
-        return NamedEntity<T>::impl_ptr->hasMetadata();
+        return NamedEntity<T>::backend()->hasMetadata();
     }
 
     /**
@@ -50,7 +50,7 @@ public:
      *         an exception will be thrown.
      */
     Section metadata() const {
-        return NamedEntity<T>::impl_ptr->metadata();
+        return NamedEntity<T>::backend()->metadata();
     }
 
     /**
@@ -62,7 +62,7 @@ public:
      *                    with this entity.
      */
     void metadata(const Section &metadata) {
-        NamedEntity<T>::impl_ptr->metadata(metadata);
+        NamedEntity<T>::backend()->metadata(metadata);
     }
 
     /**
@@ -73,7 +73,7 @@ public:
      */
     void metadata(const none_t t)
     {
-        NamedEntity<T>::impl_ptr->metadata(t);
+        NamedEntity<T>::backend()->metadata(t);
     }
 
 

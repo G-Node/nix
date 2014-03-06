@@ -33,37 +33,37 @@ public:
 
 
     std::string id() const {
-        return ImplContainer<T>::impl_ptr->id();
+        return ImplContainer<T>::backend()->id();
     }
 
 
     time_t updatedAt() const {
-        return ImplContainer<T>::impl_ptr->updatedAt();
+        return ImplContainer<T>::backend()->updatedAt();
     }
 
 
     time_t createdAt() const {
-        return ImplContainer<T>::impl_ptr->createdAt();
+        return ImplContainer<T>::backend()->createdAt();
     }
 
 
     void setUpdatedAt() {
-        ImplContainer<T>::impl_ptr->setUpdatedAt();
+        ImplContainer<T>::backend()->setUpdatedAt();
     }
 
 
     void forceUpdatedAt() {
-        ImplContainer<T>::impl_ptr->forceUpdatedAt();
+        ImplContainer<T>::backend()->forceUpdatedAt();
     }
 
 
     void setCreatedAt() {
-        ImplContainer<T>::impl_ptr->setCreatedAt();
+        ImplContainer<T>::backend()->setCreatedAt();
     }
 
 
     void forceCreatedAt(time_t t) {
-        ImplContainer<T>::impl_ptr->forceCreatedAt(t);
+        ImplContainer<T>::backend()->forceCreatedAt(t);
     }
 
 

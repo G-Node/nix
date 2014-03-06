@@ -48,7 +48,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const std::string &id) const {
-        return impl_ptr->hasSource(id);
+        return backend()->hasSource(id);
     }
 
     /**
@@ -60,7 +60,7 @@ public:
      *         will be thrown.
      */
     Source getSource(const std::string &id) const {
-        return impl_ptr->getSource(id);
+        return backend()->getSource(id);
     }
 
     /**
@@ -73,7 +73,7 @@ public:
     // TODO do really need this method?
     //      If not, check for similar methods in other classes.
     Source getSource(size_t index) const {
-        return impl_ptr->getSource(index);
+        return backend()->getSource(index);
     }
 
     /**
@@ -82,7 +82,7 @@ public:
      * @return The number of direct child sources.
      */
     size_t sourceCount() const {
-        return impl_ptr->sourceCount();
+        return backend()->sourceCount();
     }
 
     /**
@@ -128,7 +128,7 @@ public:
      * @return The created source object.
      */
     Source createSource(const std::string &name, const std::string &type) {
-        return impl_ptr->createSource(name, type);
+        return backend()->createSource(name, type);
     }
 
     /**
@@ -140,7 +140,7 @@ public:
      * @return True if the source was deleted, false otherwise.
      */
     bool deleteSource(const std::string &id) {
-        return impl_ptr->deleteSource(id);
+        return backend()->deleteSource(id);
     }
 
     //------------------------------------------------------

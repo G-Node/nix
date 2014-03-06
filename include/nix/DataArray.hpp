@@ -49,7 +49,7 @@ public:
      * @return string the label
      */
     std::string label() const {
-        return impl_ptr->label();
+        return backend()->label();
     }
 
     /**
@@ -58,7 +58,7 @@ public:
      * @param string label
      */
     void label(const std::string &label) {
-        impl_ptr->label(label);
+        backend()->label(label);
     }
 
     /**
@@ -67,7 +67,7 @@ public:
      * @return string the unit.
      */
     std::string unit() const {
-        return impl_ptr->unit();
+        return backend()->unit();
     }
 
     /**
@@ -76,7 +76,7 @@ public:
      * @param string the unit
      */
     void unit(const std::string &unit) {
-        impl_ptr->unit(unit);
+        backend()->unit(unit);
     }
 
     /**
@@ -86,7 +86,7 @@ public:
      * @return double the expansion origin.
      */
     double expansionOrigin() const {
-        return impl_ptr->expansionOrigin();
+        return backend()->expansionOrigin();
     }
 
     /**
@@ -95,7 +95,7 @@ public:
      * @param double the expansion origin.
      */
     void expansionOrigin(double expansion_origin) {
-        impl_ptr->expansionOrigin(expansion_origin);
+        backend()->expansionOrigin(expansion_origin);
     }
 
     /**
@@ -105,7 +105,7 @@ public:
      * @param vector<double> the coefficients
      */
     void polynomCoefficients(std::vector<double> &polynom_coefficients) {
-        impl_ptr->polynomCoefficients(polynom_coefficients);
+        backend()->polynomCoefficients(polynom_coefficients);
     }
 
     /**
@@ -114,7 +114,7 @@ public:
      * @return vector<double> the coefficients.
      */
     std::vector<double> polynomCoefficients() const {
-        return impl_ptr->polynomCoefficients();
+        return backend()->polynomCoefficients();
     }
 
     //--------------------------------------------------
@@ -142,20 +142,20 @@ public:
 
 
     size_t dimensionCount() const {
-        return impl_ptr->dimensionCount();
+        return backend()->dimensionCount();
     }
 
 
     Dimension getDimension(size_t id) const {
-        return impl_ptr->getDimension(id);
+        return backend()->getDimension(id);
     }
 
     Dimension createDimension(size_t id, DimensionType type) {
-        return impl_ptr->createDimension(id, type);
+        return backend()->createDimension(id, type);
     }
 
     bool deleteDimension(size_t id) {
-        return impl_ptr->deleteDimension(id);
+        return backend()->deleteDimension(id);
     }
 
     //--------------------------------------------------
@@ -179,7 +179,7 @@ public:
     //--------------------------------------------------
 
     void createData(DataType dtype, const NDSize &size) {
-        impl_ptr->createData(dtype, size);
+        backend()->createData(dtype, size);
     }
 
     template<typename T> void createData(const T &value, const NDSize &size = {});
@@ -192,15 +192,15 @@ public:
     template<typename T> void setData(const T &value, const NDSize &offset);
 
     NDSize getDataExtent() const {
-        return impl_ptr->getExtent();
+        return backend()->getExtent();
     }
 
     void setDataExtent(const NDSize &extent) {
-        impl_ptr->setExtent(extent);
+        backend()->setExtent(extent);
     }
 
     DataType getDataType(void) const {
-        return impl_ptr->getDataType();
+        return backend()->getDataType();
     }
 
  };
@@ -219,13 +219,13 @@ void DataArray::getData(T &value) const
 {
     Hydra<T> hydra(value);
 
-    NDSize extent = impl_ptr->getExtent();
+    NDSize extent = backend()->getExtent();
     hydra.resize(extent);
 
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    impl_ptr->read(dtype, hydra.data(), shape, {});
+    backend()->read(dtype, hydra.data(), shape, {});
 }
 
 template<typename T>
@@ -236,8 +236,8 @@ void DataArray::setData(const T &value)
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    impl_ptr->setExtent(shape);
-    impl_ptr->write(dtype, hydra.data(), shape, {});
+    backend()->setExtent(shape);
+    backend()->write(dtype, hydra.data(), shape, {});
 }
 
 template<typename T>
@@ -247,7 +247,7 @@ void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) con
     DataType dtype = hydra.element_data_type();
 
     hydra.resize(count);
-    impl_ptr->read(dtype, hydra.data(), count, offset);
+    backend()->read(dtype, hydra.data(), count, offset);
 }
 
 template<typename T>
@@ -257,7 +257,7 @@ void DataArray::getData(T &value, const NDSize &offset) const
     DataType dtype = hydra.element_data_type();
 
     NDSize count = hydra.shape();
-    impl_ptr->read(dtype, hydra.data(), count, offset);
+    backend()->read(dtype, hydra.data(), count, offset);
 }
 
 
@@ -269,7 +269,7 @@ void DataArray::setData(const T &value, const NDSize &offset)
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    impl_ptr->write(dtype, hydra.data(), shape, offset);
+    backend()->write(dtype, hydra.data(), shape, offset);
 }
 
 } // namespace nix

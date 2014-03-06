@@ -40,7 +40,7 @@ public:
      * @return The number of direct child sources.
      */
     size_t sourceCount() const {
-        return EntityWithMetadata<T>::impl_ptr->sourceCount();
+        return EntityWithMetadata<T>::backend()->sourceCount();
     }
 
     /**
@@ -52,7 +52,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const std::string &id) const {
-        return EntityWithMetadata<T>::impl_ptr->hasSource(id);
+        return EntityWithMetadata<T>::backend()->hasSource(id);
     }
 
     /**
@@ -64,7 +64,7 @@ public:
      *         will be thrown.
      */
     Source getSource(const std::string &id) const {
-        return EntityWithMetadata<T>::impl_ptr->getSource(id);
+        return EntityWithMetadata<T>::backend()->getSource(id);
     }
 
     /**
@@ -75,7 +75,7 @@ public:
      * @return The source at the specified index.
      */
     Source getSource(const size_t index) const {
-        return EntityWithMetadata<T>::impl_ptr->getSource(index);
+        return EntityWithMetadata<T>::backend()->getSource(index);
     }
     
     /**
@@ -106,7 +106,7 @@ public:
      * @param sources     A vector with all sources.
      */
     virtual void sources(const std::vector<Source> &sources) {
-        return EntityWithMetadata<T>::impl_ptr->sources(sources);
+        return EntityWithMetadata<T>::backend()->sources(sources);
     }
 
     /**
@@ -118,7 +118,7 @@ public:
      * @return The created source object.
      */
     void addSource(const Source &source) {
-        EntityWithMetadata<T>::impl_ptr->addSource(source);
+        EntityWithMetadata<T>::backend()->addSource(source);
     }
 
     /**
@@ -130,7 +130,7 @@ public:
      * @return True if the source was removed, false otherwise.
      */
     bool removeSource(const std::string &id) {
-        return EntityWithMetadata<T>::impl_ptr->removeSource(id);
+        return EntityWithMetadata<T>::backend()->removeSource(id);
     }
 
 

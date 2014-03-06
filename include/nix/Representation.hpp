@@ -49,7 +49,7 @@ public:
      * @param type    The link type to set.
      */
     void linkType(LinkType type) {
-        impl_ptr->linkType(type);
+        backend()->linkType(type);
     }
 
     /**
@@ -58,7 +58,7 @@ public:
      * @return The current link type of the representation.
      */
     LinkType linkType() const {
-        return impl_ptr->linkType();
+        return backend()->linkType();
     }
 
     /**
@@ -67,7 +67,7 @@ public:
      * @param data    The data array to set.
      */
     void data(const DataArray &data) {
-        impl_ptr->data(data);
+        backend()->data(data);
     }
 
     /**
@@ -76,7 +76,7 @@ public:
      * @return The associated data array.
      */
     DataArray data() const {
-        return impl_ptr->data();
+        return backend()->data();
     }
 
     /**
