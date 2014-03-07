@@ -70,20 +70,10 @@ public:
     }
 
 
-    void dataType(const std::string &data_type) {
-        backend()->dataType(data_type);
-    }
-
-
-    std::string dataType() const {
+    boost::optional<DataType> dataType() const {
         return backend()->dataType();
     }
 
-
-    void dataType(const boost::none_t t) {
-        backend()->dataType(t);
-    }
-    
 
     void unit(const std::string &unit) {
         backend()->unit(unit);

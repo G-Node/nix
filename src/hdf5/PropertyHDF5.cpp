@@ -35,31 +35,12 @@ PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &i
 }
 
 
-void PropertyHDF5::dataType(const string &dataType) {
-    string dt = this->dataType();
-    if (dt.compare(dataType) == 0) {
-        return;
-    } else {
-        if (valueCount() > 0 && this->dataType().length() > 0) {
-            throw runtime_error("Cannot change data type of a not empty property!");
-        }
+boost::optional<DataType> PropertyHDF5::dataType() const {
+    boost::optional<DataType> result;
+    if (this->valueCount() > 0){
+        result = this->values()[0].type();
     }
-    group().setAttr("data_type", dataType);
-}
-
-
-string PropertyHDF5::dataType() const {
-    string dataType;
-    group().getAttr("data_type", dataType);
-    return dataType;
-}
-
-
-void PropertyHDF5::dataType(const none_t t) {
-    if(group().hasAttr("data_type")) {
-        group().removeAttr("data_type");
-    }
-    forceUpdatedAt();
+    return result;
 }
 
 
