@@ -162,6 +162,8 @@ public:
 
     //Get a reference to the internal shared pointer (impl_ptr)
     //*no* checking is done to see if the impl_ptr is set or not
+    //Use this function with utmost care and prefer backend() for
+    //normal operations!
     std::shared_ptr<T> & impl() {
         return impl_ptr;
     }
@@ -175,8 +177,7 @@ protected:
     //    a pointer, and exception is thrown otherwise
     T* backend() {
         if (isNone()) {
-            //FIXME: come up with a better exception (cf. github issue #134)
-            throw std::runtime_error("Trying to access object with invalid object");
+            throw UninitializedEntity();
         }
 
         return impl_ptr.get();
