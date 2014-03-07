@@ -33,6 +33,7 @@ private:
     CPPUNIT_TEST(testBool);
     CPPUNIT_TEST(testNone);
     CPPUNIT_TEST(testisNone);
+    CPPUNIT_TEST(testAccess);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -48,4 +49,5 @@ public:
     void testBool();
     void testNone();
     void testisNone();
+    void testAccess();
 };

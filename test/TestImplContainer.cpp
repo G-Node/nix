@@ -43,3 +43,8 @@ void TestImplContainer::testisNone() {
     CPPUNIT_ASSERT(!(section.isNone()));
     CPPUNIT_ASSERT(empty_section.isNone());
 }
+
+void TestImplContainer::testAccess() {
+    CPPUNIT_ASSERT(section.id().size());
+    CPPUNIT_ASSERT_THROW(empty_section.id(), UninitializedEntity);
+}
