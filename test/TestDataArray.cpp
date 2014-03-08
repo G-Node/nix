@@ -169,9 +169,11 @@ void TestDataArray::testLabel()
 void TestDataArray::testUnit()
 {
     std::string testStr = "somestring";
+    std::string validUnit = "mV^2";
 
-    array1.unit(testStr);
-    CPPUNIT_ASSERT(array1.unit() == testStr);
+    CPPUNIT_ASSERT_THROW(array1.unit(testStr), nix::InvalidUnitException);
+    CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
+    CPPUNIT_ASSERT(array1.unit() == validUnit);
 }
 
 void TestDataArray::testDimension()
