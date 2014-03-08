@@ -128,6 +128,29 @@ void TestProperty::testDataType(){
 }
 
 
+void TestProperty::testUnit(){
+    nix::Section section = file.createSection("testSection", "test");
+    nix::Property p1 = section.createProperty("testProperty");
+    nix::Value v(22.2);
+    v.uncertainty = 1.2;
+    std::vector<Value> values = {v};
+    std::string inv_unit = "invalid unit";
+    std::string valid_unit = "mV*cm^-2";
+    std::string second_unit = "mV";
+    p1.values(values);
+
+    CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnitException);
+    CPPUNIT_ASSERT(!p1.unit());
+    p1.unit(valid_unit);
+    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
+    CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error);
+    p1.unit(boost::none);
+    CPPUNIT_ASSERT(!p1.unit());
+    CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
+    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == second_unit);
+}
+
+
 void TestProperty::testOperators() {
     CPPUNIT_ASSERT(property_null == NULL);
     CPPUNIT_ASSERT(property_null == nullptr);

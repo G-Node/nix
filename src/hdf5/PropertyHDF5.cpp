@@ -71,6 +71,9 @@ void PropertyHDF5::unit(const string &unit) {
     if (valueCount() > 0 && this->unit()) {
         throw runtime_error("Cannot change unit of a not-empty property!");
     }
+    if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
+        throw InvalidUnitException("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
+    }
     group().setAttr("unit", unit);
 }
 
