@@ -105,6 +105,29 @@ void TestProperty::testValues()
 }
 
 
+void TestProperty::testDataType(){
+    nix::Section section = file.createSection("Area51", "Boolean");
+    nix::Property p1 = section.createProperty("strProperty");
+    nix::Property p2 = section.createProperty("doubleProperty");
+    CPPUNIT_ASSERT(!p1.dataType());
+    std::vector<nix::Value> strValues = { nix::Value("Freude"),
+                                          nix::Value("schoener"),
+                                          nix::Value("Goetterfunken") };
+    p1.values(strValues);
+    CPPUNIT_ASSERT(p1.dataType() && *p1.dataType() == DataType::String);
+    p1.deleteValues();
+    CPPUNIT_ASSERT(!p1.dataType());
+
+    std::vector<nix::Value> doubleValues = { nix::Value(1.0),
+                                             nix::Value(2.0),
+                                             nix::Value(-99.99) };
+    p2.values(doubleValues);
+    CPPUNIT_ASSERT(p2.dataType() && *p2.dataType() == DataType::Double);
+
+    file.deleteSection(section.id());
+}
+
+
 void TestProperty::testOperators() {
     CPPUNIT_ASSERT(property_null == NULL);
     CPPUNIT_ASSERT(property_null == nullptr);
