@@ -274,14 +274,14 @@ void TestDataSet::testSelection() {
 /* helper functions vor testValueIO */
 
 template<typename T>
-void test_val_generic(H5::Group &h5group, const T &test_value)
+void test_val_generic(H5::Group &h5group, const T &test_value, std::string name)
 {
     std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
 
     nix::NDSize size = {1};
     H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
 
-    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, typeid(T).name(), fileType, size);
+    nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, name, fileType, size);
 
     ds.write(values);
     std::vector<nix::Value> checkValues;
@@ -298,11 +298,11 @@ void test_val_generic(H5::Group &h5group, const T &test_value)
 
 void TestDataSet::testValueIO() {
 
-    test_val_generic(h5group, true);
-    test_val_generic(h5group, 42);
-    test_val_generic(h5group, 42U);
+    test_val_generic(h5group, true, "boolValue");
+    test_val_generic(h5group, 42.0, "doubleValue");
+    test_val_generic(h5group, 42U, "unsighedValue");
 
-    test_val_generic(h5group, std::string("String Value"));
+    test_val_generic(h5group, std::string("String Value"), "stringValue");
 
 }
 
