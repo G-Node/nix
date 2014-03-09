@@ -142,7 +142,7 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
 void SimpleTagHDF5::addReference(const DataArray &reference) {
     string reference_id = reference.id();
 
-    if (block().hasDataArray(reference_id)) {
+    if (!block().hasDataArray(reference_id)) {
         throw runtime_error("Unable to find data array with reference_id " +
                             reference_id + " on block " + block().id());
     }
