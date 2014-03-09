@@ -55,8 +55,8 @@ void SimpleTagHDF5::units(vector<string> &units) {
 
 
 void SimpleTagHDF5::units(const none_t t) {
-    if(group().hasAttr("units")) {
-        group().removeAttr("units");
+    if(group().hasData("units")) {
+        group().removeData("units");
     }
     forceUpdatedAt();
 }
@@ -87,8 +87,8 @@ void SimpleTagHDF5::extent(const vector<double> &extent) {
 
 
 void SimpleTagHDF5::extent(const none_t t) {
-    if(group().hasAttr("extent")) {
-        group().removeAttr("extent");
+    if(group().hasData("extent")) {
+        group().removeData("extent");
     }
     forceUpdatedAt();
 }
