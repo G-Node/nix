@@ -145,7 +145,10 @@ public:
      * @param unit, string
      */
     void unit(const std::string &unit) {
-        backend()->unit(unit);
+    	if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
+    		throw InvalidUnitException("Unit is not SI or composite of SI units.", "SampledDimension::unit(const string &unit)");
+    	}
+    	backend()->unit(unit);
     }
 
     /**
@@ -348,7 +351,7 @@ public:
      * @return string the unit.
      */
     std::string unit() const {
-        return backend()->unit();
+    	return backend()->unit();
     }
 
     /**
@@ -359,7 +362,10 @@ public:
      * @param unit string
      */
     void unit(const std::string &unit) {
-        backend()->unit(unit);
+    	if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
+    		throw InvalidUnitException("Unit is not SI or composite of SI units.", "RangeDimension::unit(const string &unit)");
+    	}
+    	backend()->unit(unit);
     }
 
     /**
