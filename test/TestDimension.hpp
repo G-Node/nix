@@ -33,18 +33,18 @@ private:
     CPPUNIT_TEST(testSampledDimUnit);
     CPPUNIT_TEST(testSampledDimSamplingInterval);
     CPPUNIT_TEST(testSampledDimOperators);
-    /*
+
     CPPUNIT_TEST(testSetDimLabels);
-    CPPUNIT_TEST(testSetDimOperators);
 
     CPPUNIT_TEST(testRangeDimLabel);
     CPPUNIT_TEST(testRangeDimUnit);
-    CPPUNIT_TEST(testRangeDimOperators);
-	*/
+    CPPUNIT_TEST(testRangeTics);
+
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
     nix::DataArray data_array;
+    nix::Block block;
 
 public:
 
@@ -60,11 +60,10 @@ public:
     void testSampledDimOperators();
 
     void testSetDimLabels();
-    void testSetDimOperators();
 
     void testRangeDimLabel();
+    void testRangeTics();
     void testRangeDimUnit();
-    void testRangeDimOperators();
 
 
 };
