@@ -211,7 +211,7 @@ RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
 RangeDimension& RangeDimension::operator=(const Dimension &other) {
     shared_ptr<IRangeDimension> tmp(dynamic_pointer_cast<IRangeDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
+    if (other.dimensionType() == DimensionType::Range && impl() != tmp) {
         std::swap(impl(), tmp);
     }
 
