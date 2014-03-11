@@ -66,7 +66,7 @@ public:
             //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))){ TODO
         	if(!(util::isSIUnit(*iter))){
                 std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
-                throw InvalidUnitException(msg, "SimpleTag::units(vector<string> &units)");
+                throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
             }
         }
         backend()->units(units);

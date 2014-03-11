@@ -139,7 +139,7 @@ void TestProperty::testUnit(){
     std::string second_unit = "mV";
     p1.values(values);
 
-    CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnitException);
+    CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnit);
     CPPUNIT_ASSERT(!p1.unit());
     p1.unit(valid_unit);
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);

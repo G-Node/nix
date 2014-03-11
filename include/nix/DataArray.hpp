@@ -77,7 +77,7 @@ public:
      */
     void unit(const std::string &unit) {
         if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
-            throw InvalidUnitException("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
+            throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
         }
         backend()->unit(unit);
     }

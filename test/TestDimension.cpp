@@ -66,7 +66,7 @@ void TestDimension::testSampledDimUnit() {
 	CPPUNIT_ASSERT(d.dimensionType() == nix::DimensionType::Sample);
 	if(d.dimensionType() == nix::DimensionType::Sample){
 		sd = d;
-		CPPUNIT_ASSERT_THROW(sd.unit(invalidUnit), nix::InvalidUnitException);
+		CPPUNIT_ASSERT_THROW(sd.unit(invalidUnit), nix::InvalidUnit);
 		CPPUNIT_ASSERT_NO_THROW(sd.unit(validUnit));
 		CPPUNIT_ASSERT(sd.unit() == validUnit);
 	}
@@ -176,7 +176,7 @@ void TestDimension::testRangeDimUnit(){
 	CPPUNIT_ASSERT(d.dimensionType() == nix::DimensionType::Range);
 	if(d.dimensionType() == nix::DimensionType::Range){
 		rd = d;
-		CPPUNIT_ASSERT_THROW(rd.unit(invalidUnit), nix::InvalidUnitException);
+		CPPUNIT_ASSERT_THROW(rd.unit(invalidUnit), nix::InvalidUnit);
 		CPPUNIT_ASSERT_NO_THROW(rd.unit(validUnit));
 		CPPUNIT_ASSERT(rd.unit() == validUnit);
 	}

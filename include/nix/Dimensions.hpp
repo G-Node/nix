@@ -147,7 +147,7 @@ public:
     void unit(const std::string &unit) {
     	//if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){ TODO support compuond SI units.
     	if (!(util::isSIUnit(unit))){
-    		throw InvalidUnitException("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
+    		throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
     	}
     	backend()->unit(unit);
     }
@@ -369,7 +369,7 @@ public:
     void unit(const std::string &unit) {
     	//if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
     	if (!(util::isSIUnit(unit))){
-    		throw InvalidUnitException("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
+    		throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
     	}
     	backend()->unit(unit);
     }

@@ -112,7 +112,7 @@ public:
             throw std::runtime_error("Cannot change unit of a not-empty property!");
         }
         if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
-            throw InvalidUnitException("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
+            throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
         }
         backend()->unit(unit);
     }

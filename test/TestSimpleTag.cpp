@@ -240,7 +240,7 @@ void TestSimpleTag::testUnits(){
 
     st.units(boost::none);
     CPPUNIT_ASSERT(st.units().size() == 0);
-    CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnitException);
+    CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
     block.deleteSimpleTag(st.id());
 }
