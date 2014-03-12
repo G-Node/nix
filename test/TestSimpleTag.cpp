@@ -106,8 +106,8 @@ void TestSimpleTag::testReferences(){
     counterrmsg << "TestDataTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 0);
 
-    st.addReference(da_1);
-    st.addReference(da_2);
+    st.addReference(da_1.id());
+    st.addReference(da_2.id());
 
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 2);
 

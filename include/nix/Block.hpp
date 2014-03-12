@@ -40,7 +40,6 @@ public:
     {
     }
 
-
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------
@@ -48,7 +47,7 @@ public:
     /**
      * Checks if this block has a specific root source.
      *
-      * @param id        The id of the source.
+     * @param id        The id of the source.
      *
      * @return True if a source with the given id exists at the root, false
      *         otherwise.
@@ -76,11 +75,9 @@ public:
      *
      * @return The source at the specified index.
      */
-    // TODO  maybe remove this method?
     Source getSource(size_t index) const {
         return backend()->getSource(index);
     }
-
 
     /**
      * Returns the number of root sources in this block.
@@ -90,7 +87,6 @@ public:
     size_t sourceCount() const {
         return backend()->sourceCount();
     }
-
 
     /**
      * Get sources associated with this block.
@@ -110,7 +106,6 @@ public:
                                    sourceCount(),
                                    filter);
     }
-
 
     /**
      * Go through the tree of sources originating from every source in this 
@@ -184,7 +179,6 @@ public:
      *
      * @return The data array at the specified index.
      */
-    // TODO maybe remove this method?
     DataArray getDataArray(size_t index) const {
         return backend()->getDataArray(index);
     }
@@ -273,7 +267,6 @@ public:
      *
      * @return The simple tag at the specified index.
      */
-    // TODO maybe remove this method?
     SimpleTag getSimpleTag(size_t index) const {
         return backend()->getSimpleTag(index);
     }

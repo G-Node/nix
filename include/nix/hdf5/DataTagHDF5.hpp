@@ -81,7 +81,7 @@ public:
     DataArray getReference(size_t index) const;
     
 
-    void addReference(const DataArray &reference);
+    void addReference(const std::string &id);
 
 
     bool removeReference(const std::string &id);

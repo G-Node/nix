@@ -122,8 +122,8 @@ void TestDataTag::testReferences(){
 	counterrmsg << "TestDataTag::testReference: Counts do not match!";
 	CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
 
-	dt.addReference(da_1);
-	dt.addReference(da_2);
+	dt.addReference(da_1.id());
+	dt.addReference(da_2.id());
 	CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
 
 	DataArray ref1 = dt.getReference(da_1.id());
@@ -155,7 +155,7 @@ void TestDataTag::testReferences(){
 void TestDataTag::testExtents(){
 	CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"),std::runtime_error);
 
-	tag.extents(extents);
+	tag.extents(extents.id());
 	CPPUNIT_ASSERT(tag.hasExtents());
 	tag.extents(boost::none);
 	CPPUNIT_ASSERT(tag.hasExtents() == false);
@@ -166,14 +166,14 @@ void TestDataTag::testExtents(){
 void TestDataTag::testPositions(){
 	CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"),std::runtime_error);
 
-	tag.positions(positions);
+	tag.positions(positions.id());
 	CPPUNIT_ASSERT(tag.hasPositions());
 }
 
 
 void TestDataTag::testPositionExtents(){
-	tag.positions(positions);
-	CPPUNIT_ASSERT_THROW(tag.extents(extents),std::runtime_error);
+	tag.positions(positions.id());
+	CPPUNIT_ASSERT_THROW(tag.extents(extents.id()),std::runtime_error);
 	tag.extents(boost::none);
 	CPPUNIT_ASSERT(tag.hasExtents() == false);
 }

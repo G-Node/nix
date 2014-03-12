@@ -133,32 +133,70 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
-
+    /**
+     * Checks if a DataArray with the specified id is referenced in
+     * this DataTag.
+     *
+     * @param std::string the id
+     *
+     * @return bool
+     */
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
     
 
+    /**
+     * Returns the count of references.
+     *
+     * @return size_t the count
+     */
     size_t referenceCount() const {
         return backend()->referenceCount();
     }
 
-
+    /**
+     * Returns the specified DataArray.
+     *
+     * @param std::string the id
+     *
+     * @return DataArray object may be false if not found.
+     *
+     */
     DataArray getReference(const std::string &id) const {
         return backend()->getReference(id);
     }
 
-
+    /**
+     * Returns a certain reference that is specified by its index.
+     *
+     * @param size_t the index
+     *
+     * @return DataArray result may be false if not found
+     *
+     */
     DataArray getReference(size_t index) const {
         return backend()->getReference(index);
     }
     
-
-    void addReference(const DataArray &reference) {
-        backend()->addReference(reference);
+    /**
+     * Adds a reference to a DataArray to the list of References.
+     *
+     * @param std::string the id of a DataArray.
+     *
+     */
+    void addReference(const std::string &id) {
+        backend()->addReference(id);
     }
 
-
+    /**
+     * Removes a certain DataArray from the list of References.
+     *
+     * @param the id of the DataArray
+     *
+     * @return bool whether the operation succeeded.
+     *
+     */
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
     }
