@@ -133,15 +133,11 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
-    // TODO can be removed from interface.
-    bool hasReference(const DataArray &reference) const {
-        return hasReference(reference.id());
-    }
-
 
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
+    
 
     size_t referenceCount() const {
         return backend()->referenceCount();
@@ -163,8 +159,8 @@ public:
     }
 
 
-    bool removeReference(const DataArray &reference) {
-        return backend()->removeReference(reference);
+    bool removeReference(const std::string &id) {
+        return backend()->removeReference(id);
     }
 
     /**

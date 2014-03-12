@@ -130,10 +130,6 @@ public:
     // TODO implement when done with the DataArray class.
     //--------------------------------------------------
 
-    bool hasReference(const DataArray &reference) const {
-        return backend()->hasReference(reference.id());
-    }
-
 
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);

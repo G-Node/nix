@@ -81,8 +81,6 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
-    bool hasReference(const DataArray &reference) const;
-
 
     bool hasReference(const std::string &id) const;
 
@@ -99,7 +97,7 @@ public:
     void addReference(const DataArray &reference);
 
 
-    bool removeReference(const DataArray &reference);
+    bool removeReference(const std::string &id);
 
 
     void references(const std::vector<DataArray> &references);
