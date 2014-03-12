@@ -28,17 +28,22 @@ EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const str
 
 
 void EntityWithMetadataHDF5::metadata(const Section &metadata) {
-    if (!file().hasSection(metadata.id())){
-        throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
-    } else {
-        group().setAttr("metadata", metadata.id());
-        forceUpdatedAt();
+    if (metadata == none) {
+        EntityWithMetadataHDF5::metadata(none);
+    }
+    else {
+        if (!file().hasSection(metadata.id())) {
+            throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
+        } else {
+            group().setAttr("metadata", metadata.id());
+            forceUpdatedAt();
+        }
     }
 }
 
 
 Section EntityWithMetadataHDF5::metadata() const{
-    if(!hasMetadata()){
+    if(!hasMetadata()) {
         throw runtime_error("EntityWithMetadataHDF5::metadata: This entity does not reference metadata!");
     }
     std::string sectionId;

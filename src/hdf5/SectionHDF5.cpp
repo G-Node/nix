@@ -81,10 +81,10 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const Section &link) {
-    if (link != nullptr) {
+    if (link == none) {
+        SectionHDF5::link(none);
+    } else {
         group().setAttr("link", link.id());
-    } else if (group().hasAttr("link")) {
-        group().removeAttr("link");
     }
 }
 

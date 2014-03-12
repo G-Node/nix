@@ -65,7 +65,12 @@ public:
      * @param position   DataArray.
      */
     void positions(const DataArray &positions) {
-        backend()->positions(positions.id());
+        if(positions == none) {
+            throw runtime_error("Empty positions entity (DataArray) given");
+        }
+        else {
+            backend()->positions(positions.id());
+        }
     }
     
     /**
@@ -93,7 +98,12 @@ public:
      * @param extent      The extent vector.
      */
     void extents(const DataArray &extents) {
-        backend()->extents(extents.id());
+        if(extents == none) {
+            backend()->extents(none)
+        }
+        else {
+            backend()->extents(extents.id());
+        }
     }
 
     /**
