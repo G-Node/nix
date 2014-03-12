@@ -54,6 +54,23 @@ public:
     }
 };
 
+
+class InvalidUnit: public std::exception {
+public:
+    InvalidUnit(const std::string &what_arg, const std::string &caller_arg):
+    what_msg(what_arg), caller(caller_arg){ }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("InvalidUnit: ");
+        sstream << what_msg << " evoked at: " << caller;
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string what_msg;
+    std::string caller;
+};
+
 }
 
 #endif

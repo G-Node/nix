@@ -145,7 +145,11 @@ public:
      * @param unit, string
      */
     void unit(const std::string &unit) {
-        backend()->unit(unit);
+    	//if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){ TODO support compuond SI units.
+    	if (!(util::isSIUnit(unit))){
+    		throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
+    	}
+    	backend()->unit(unit);
     }
 
     /**
@@ -158,12 +162,16 @@ public:
     }
 
     /**
-     * Set the sampling interval in which the dimension has been sampled.
+     * Set the sampling interval in which the dimension has been sampled. Value must be
+     * larger than 0.0!
      * -obligatory-
      *
      * @param interval double
      */
     void samplingInterval(double interval) {
+    	if(interval <= 0.0){
+    		throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
+    	}
         backend()->samplingInterval(interval);
     }
 
@@ -348,7 +356,7 @@ public:
      * @return string the unit.
      */
     std::string unit() const {
-        return backend()->unit();
+    	return backend()->unit();
     }
 
     /**
@@ -359,7 +367,11 @@ public:
      * @param unit string
      */
     void unit(const std::string &unit) {
-        backend()->unit(unit);
+    	//if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
+    	if (!(util::isSIUnit(unit))){
+    		throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
+    	}
+    	backend()->unit(unit);
     }
 
     /**

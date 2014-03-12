@@ -131,7 +131,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit){
         splitUnit(originUnit, org_prefix, org_unit, org_power);
         splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
         if(dest_unit.compare(org_unit) != 0){
-            throw runtime_error("Origin and destination units are not the same!");
+            throw nix::InvalidUnit("Origin unit and/or destination units are not the same!", "nix::util::getSIScaling");
         }
         if(dest_prefix.length() == 0){
             scaling = 1.0 / PREFIX_FACTORS.at(org_prefix);
@@ -143,7 +143,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit){
             scaling = PREFIX_FACTORS.at(dest_prefix) / PREFIX_FACTORS.at(org_prefix);
         }
     }else{
-        throw runtime_error("Origin unit and/or destination unit are not valid!");
+        throw nix::InvalidUnit("Origin unit and/or destination unit are not valid!", "nix::util::getSIScaling");
     }
     return scaling;
 }

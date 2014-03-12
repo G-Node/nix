@@ -29,11 +29,13 @@
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
 #include "TestDataTag.hpp"
+#include "TestSimpleTag.hpp"
 #include "TestValue.hpp"
 #include "TestProperty.hpp"
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
 #include "TestImplContainer.hpp"
+#include "TestDimension.hpp"
 
 int main(int argc, char* argv[]) {
 	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -47,11 +49,13 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataTag);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSimpleTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
     
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;

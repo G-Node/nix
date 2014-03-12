@@ -15,7 +15,7 @@ using namespace nix;
 
 
 void TestUtil::testUnitScaling(){
-	CPPUNIT_ASSERT_THROW(util::getSIScaling("mOhm","ms"), std::runtime_error);
+	CPPUNIT_ASSERT_THROW(util::getSIScaling("mOhm","ms"), nix::InvalidUnit);
 	CPPUNIT_ASSERT(util::getSIScaling("mV","kV") == 1e+6);
 	CPPUNIT_ASSERT(util::getSIScaling("V","kV") == 1e+03);
 	CPPUNIT_ASSERT(util::getSIScaling("kV","V") == 1e-03);

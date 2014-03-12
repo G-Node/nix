@@ -55,8 +55,8 @@ void SimpleTagHDF5::units(vector<string> &units) {
 
 
 void SimpleTagHDF5::units(const none_t t) {
-    if(group().hasAttr("units")) {
-        group().removeAttr("units");
+    if(group().hasData("units")) {
+        group().removeData("units");
     }
     forceUpdatedAt();
 }
@@ -87,8 +87,8 @@ void SimpleTagHDF5::extent(const vector<double> &extent) {
 
 
 void SimpleTagHDF5::extent(const none_t t) {
-    if(group().hasAttr("extent")) {
-        group().removeAttr("extent");
+    if(group().hasData("extent")) {
+        group().removeData("extent");
     }
     forceUpdatedAt();
 }
@@ -142,7 +142,7 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
 void SimpleTagHDF5::addReference(const DataArray &reference) {
     string reference_id = reference.id();
 
-    if (block().hasDataArray(reference_id)) {
+    if (!block().hasDataArray(reference_id)) {
         throw runtime_error("Unable to find data array with reference_id " +
                             reference_id + " on block " + block().id());
     }

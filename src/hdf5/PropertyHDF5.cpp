@@ -7,7 +7,6 @@
 // LICENSE file in the root of the Project.
 
 #include <iostream>
-#include <stdexcept>
 
 #include <nix/hdf5/PropertyHDF5.hpp>
 
@@ -68,10 +67,8 @@ void PropertyHDF5::mapping(const none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if (valueCount() > 0 && this->unit()) {
-        throw runtime_error("Cannot change unit of a not-empty property!");
-    }
     group().setAttr("unit", unit);
+    forceUpdatedAt();
 }
 
 

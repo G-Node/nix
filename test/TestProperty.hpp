@@ -41,6 +41,7 @@ private:
 
     CPPUNIT_TEST(testValues);
     CPPUNIT_TEST(testDataType);
+    CPPUNIT_TEST(testUnit);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
@@ -64,6 +65,7 @@ public:
     void testDefinition();
     void testDataType();
     void testValues();
+    void testUnit();
 
     void testOperators();
     void testUpdatedAt();

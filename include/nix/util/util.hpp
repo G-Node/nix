@@ -19,6 +19,7 @@
 #include <vector>
 
 #include <nix/Platform.hpp>
+#include <nix/Exception.hpp>
 
 namespace nix {
 namespace util {
