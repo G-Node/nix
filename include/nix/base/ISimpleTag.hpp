@@ -103,7 +103,7 @@ public:
 
     virtual DataArray getReference(size_t index) const = 0;
 
-    virtual void addReference(const DataArray &reference) = 0;
+    virtual void addReference(const std::string &id) = 0;
 
     virtual bool removeReference(const std::string &id) = 0;
 
