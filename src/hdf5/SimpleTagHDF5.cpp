@@ -195,8 +195,7 @@ Representation SimpleTagHDF5::createRepresentation(DataArray data, LinkType link
     string rep_id = util::createId("representation");
     while(representation_group.hasObject(rep_id))
         rep_id = util::createId("representation");
-
-    Group rep_g = representation_group.openGroup(rep_id, false);
+    Group rep_g = representation_group.openGroup(rep_id, true);
     auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, rep_id);
     tmp->linkType(link_type);
     tmp->data(data);

@@ -36,6 +36,7 @@
 #include "TestUtil.hpp"
 #include "TestImplContainer.hpp"
 #include "TestDimension.hpp"
+#include "TestRepresentation.hpp"
 
 int main(int argc, char* argv[]) {
 	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -56,6 +57,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
     
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
