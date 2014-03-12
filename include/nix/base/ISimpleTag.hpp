@@ -95,8 +95,6 @@ public:
     // TODO add hasXy getXy addXy and removeXy methods for references.
     //--------------------------------------------------
 
-    virtual bool hasReference(const DataArray &reference) const = 0;
-
     virtual bool hasReference(const std::string &id) const = 0;
 
     virtual size_t referenceCount() const = 0;
@@ -107,7 +105,7 @@ public:
 
     virtual void addReference(const DataArray &reference) = 0;
 
-    virtual bool removeReference(const DataArray &reference) = 0;
+    virtual bool removeReference(const std::string &id) = 0;
 
     /**
      * Setter for all referenced DataArrays. Previously referenced

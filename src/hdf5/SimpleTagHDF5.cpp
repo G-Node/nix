@@ -96,10 +96,6 @@ void SimpleTagHDF5::extent(const none_t t) {
 
 // Methods concerning references.
 
-bool SimpleTagHDF5::hasReference(const DataArray &reference) const {
-    return references_list.has(reference.id());
-}
-
 
 bool SimpleTagHDF5::hasReference(const std::string &id) const {
     return references_list.has(id);
@@ -151,8 +147,8 @@ void SimpleTagHDF5::addReference(const DataArray &reference) {
 }
 
 
-bool SimpleTagHDF5::removeReference(const DataArray &reference) {
-    return references_list.remove(reference.id());
+bool SimpleTagHDF5::removeReference(const std::string &id) {
+    return references_list.remove(id);
 }
 
 
