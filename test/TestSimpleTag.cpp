@@ -126,9 +126,9 @@ void TestSimpleTag::testReferences(){
 
     std::stringstream delReferrmsg;
     delReferrmsg << "TestSimpleTag::testReference: removeReference did not work!";
-    st.removeReference(da_1);
+    st.removeReference(da_1.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 1);
-    st.removeReference(da_2);
+    st.removeReference(da_2.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 0);
 
     block.deleteDataArray(da_1.id());
