@@ -158,8 +158,8 @@ DataArray DataTagHDF5::getReference(size_t index) const {
     }
 }
 
-void DataTagHDF5::addReference(const DataArray &reference) {
-    reference_list.add(reference.id());
+void DataTagHDF5::addReference(const std::string &id) {
+    reference_list.add(id);
 }
 
 
