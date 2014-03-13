@@ -143,26 +143,52 @@ public:
                                       filter);
     }
 
-
+    /**
+     * Returns the number of dimensions stored in the DataArray.
+     * This must match the dimensionality of the data stored in this property.
+     *
+     * @return size_t the count
+     */
     size_t dimensionCount() const {
         return backend()->dimensionCount();
     }
 
-
+    /**
+     * Returns the Dimension object for the passed dimension of the data.
+     *
+     * @return Dimension the dimension
+     */
     Dimension getDimension(size_t id) const {
         return backend()->getDimension(id);
     }
 
-
+    /**
+     * Append a new Dimension description to the list of stored dimensions.
+     *
+     * @param nix::DimensionType
+     *
+     * @return the new Dimension
+     */
     Dimension appendDimension(DimensionType type) {
         return backend()->createDimension(backend()->dimensionCount() + 1, type);
     }
 
-
+    /**
+     * Create a new Dimension with a specified id, respectively the dimension that
+     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     *
+     * @param size_t the dimension id.
+     * @param DimentsionType the dimensiont type
+     *
+     * @return Dimension the created dimension descriptor
+     */
     Dimension createDimension(size_t id, DimensionType type) {
         return backend()->createDimension(id, type);
     }
 
+    /**
+     * Deletes a dimension from the list of dimension descriptors.
+     */
     bool deleteDimension(size_t id) {
         return backend()->deleteDimension(id);
     }
