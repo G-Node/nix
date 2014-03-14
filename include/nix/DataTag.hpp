@@ -66,7 +66,7 @@ public:
      */
     void positions(const DataArray &positions) {
         if(positions == none) {
-            throw runtime_error("Empty positions entity (DataArray) given");
+            throw std::runtime_error("Empty positions entity (DataArray) given");
         }
         else {
             backend()->positions(positions.id());
@@ -99,7 +99,7 @@ public:
      */
     void extents(const DataArray &extents) {
         if(extents == none) {
-            backend()->extents(none)
+            backend()->extents(none);
         }
         else {
             backend()->extents(extents.id());

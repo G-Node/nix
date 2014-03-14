@@ -49,8 +49,13 @@ string DataArrayHDF5::label() const {
 
 
 void DataArrayHDF5::label(const string &label) {
-    group().setAttr("label", label);
-    forceUpdatedAt();
+    if(label.empty()) {
+        throw std::runtime_error("Empty string given");
+    }
+    else {
+        group().setAttr("label", label);
+        forceUpdatedAt();
+    }
 }
 
 
@@ -62,8 +67,13 @@ string DataArrayHDF5::unit() const {
 
 
 void DataArrayHDF5::unit(const string &unit) {
-    group().setAttr("unit", unit);
-    forceUpdatedAt();
+    if(unit.empty()) {
+        throw std::runtime_error("Empty string given");
+    }
+    else {
+        group().setAttr("unit", unit);
+        forceUpdatedAt();
+    }
 }
 
 

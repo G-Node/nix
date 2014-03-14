@@ -53,18 +53,23 @@ DataArray DataTagHDF5::positions() const {
 
 
 void DataTagHDF5::positions(const string &id) {
-    if(!block().hasDataArray(id)){
-        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+    if(id.empty()) {
+        throw runtime_error("Empty string given");
     }
-    else{
-        if(hasExtents()){
-            DataArray pos = block().getDataArray(id);
-            DataArray ext = extents();
-            if(!checkDimensions(ext,pos))
-                throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
+    else {
+        if(!block().hasDataArray(id)){
+            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
         }
-        group().setAttr("positions", id);
-        forceUpdatedAt();
+        else{
+            if(hasExtents()){
+                DataArray pos = block().getDataArray(id);
+                DataArray ext = extents();
+                if(!checkDimensions(ext,pos))
+                    throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
+            }
+            group().setAttr("positions", id);
+            forceUpdatedAt();
+        }
     }
 }
 
@@ -87,18 +92,23 @@ DataArray DataTagHDF5::extents() const {
 
 
 void DataTagHDF5::extents(const string &extentsId) {
-    if(!block().hasDataArray(extentsId)){
-        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+    if(extentsId.empty()) {
+        throw runtime_error("Empty string given");
     }
-    else{
-        if(hasPositions()){
-            DataArray ext = block().getDataArray(extentsId);
-            DataArray pos = positions();
-            if(!checkDimensions(ext,pos))
-                throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+    else {
+        if(!block().hasDataArray(extentsId)) {
+            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
         }
-        group().setAttr("extents", extentsId);
-        forceUpdatedAt();
+        else {
+            if(hasPositions()) {
+                DataArray ext = block().getDataArray(extentsId);
+                DataArray pos = positions();
+                if(!checkDimensions(ext,pos))
+                    throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+            }
+            group().setAttr("extents", extentsId);
+            forceUpdatedAt();
+        }
     }
 }
 
