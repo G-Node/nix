@@ -45,7 +45,7 @@ boost::optional<DataType> PropertyHDF5::dataType() const {
 
 void PropertyHDF5::mapping(const string &mapping) {
     if(mapping.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("mapping");
     }
     else {
         group().setAttr("mapping", mapping);
@@ -74,7 +74,7 @@ void PropertyHDF5::mapping(const none_t t) {
 
 void PropertyHDF5::unit(const string &unit) {
     if(unit.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("unit");
     }
     else {
         group().setAttr("unit", unit);

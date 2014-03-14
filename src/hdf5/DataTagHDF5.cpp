@@ -54,7 +54,7 @@ DataArray DataTagHDF5::positions() const {
 
 void DataTagHDF5::positions(const string &id) {
     if(id.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("id");
     }
     else {
         if(!block().hasDataArray(id)){
@@ -93,7 +93,7 @@ DataArray DataTagHDF5::extents() const {
 
 void DataTagHDF5::extents(const string &extentsId) {
     if(extentsId.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("extentsId");
     }
     else {
         if(!block().hasDataArray(extentsId)) {

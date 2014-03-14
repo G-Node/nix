@@ -59,7 +59,7 @@ SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &g
 
 void SectionHDF5::repository(const string &repository) {
     if(repository.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("repository");
     }
     else {
         group().setAttr("repository", repository);
@@ -125,7 +125,7 @@ void SectionHDF5::link(const none_t t) {
 
 void SectionHDF5::mapping(const string &mapping) {
     if(mapping.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("mapping");
     }
     else {
         group().setAttr("mapping", mapping);

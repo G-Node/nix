@@ -31,7 +31,7 @@ NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, time_
 
 void NamedEntityHDF5::type(const string &type) {
     if(type.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("type");
     }
     else {
         group().setAttr("type", type);
@@ -49,7 +49,7 @@ string NamedEntityHDF5::type() const {
 
 void NamedEntityHDF5::name(const string &name) {
     if(name.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("name");
     }
     else {
         group().setAttr("name", name);
@@ -77,7 +77,7 @@ void NamedEntityHDF5::name(const none_t t) {
 
 void NamedEntityHDF5::definition(const string &definition) {
     if(definition.empty()) {
-        throw std::runtime_error("Empty string given");
+        throw EmptyString("definition");
     }
     else {
         group().setAttr("definition", definition);

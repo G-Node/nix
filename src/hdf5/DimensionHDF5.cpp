@@ -133,7 +133,7 @@ string SampledDimensionHDF5::label() const {
 
 void SampledDimensionHDF5::label(const string &label) {
     if(label.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("label");
     }
     else {
         group.setAttr("label", label);
@@ -151,7 +151,7 @@ string SampledDimensionHDF5::unit() const {
 
 void SampledDimensionHDF5::unit(const string &unit) {
     if(unit.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("unit");
     }
     else {
         group.setAttr("unit", unit);
@@ -285,7 +285,7 @@ string RangeDimensionHDF5::label() const {
 
 void RangeDimensionHDF5::label(const string &label) {
     if(label.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("label");
     }
     else {
         group.setAttr("label", label);
@@ -303,7 +303,7 @@ string RangeDimensionHDF5::unit() const {
 
 void RangeDimensionHDF5::unit(const string &unit) {
     if(unit.empty()) {
-        throw runtime_error("Empty string given");
+        throw EmptyString("unit");
     }
     else {
         group.setAttr("unit", unit);
