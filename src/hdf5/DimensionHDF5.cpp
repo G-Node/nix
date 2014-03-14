@@ -6,7 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
+
 #include <nix/hdf5/DimensionHDF5.hpp>
+#include <nix/hdf5/DataSet.hpp>
 
 using namespace std;
 
@@ -134,7 +137,7 @@ void SampledDimensionHDF5::label(const string &label) {
     }
     else {
         group.setAttr("label", label);
-        forceUpdatedAt();
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
 }
 
@@ -152,7 +155,7 @@ void SampledDimensionHDF5::unit(const string &unit) {
     }
     else {
         group.setAttr("unit", unit);
-        forceUpdatedAt();
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
 }
 
@@ -286,7 +289,7 @@ void RangeDimensionHDF5::label(const string &label) {
     }
     else {
         group.setAttr("label", label);
-        forceUpdatedAt();
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
 }
 
@@ -304,7 +307,7 @@ void RangeDimensionHDF5::unit(const string &unit) {
     }
     else {
         group.setAttr("unit", unit);
-        forceUpdatedAt();
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
 }
 

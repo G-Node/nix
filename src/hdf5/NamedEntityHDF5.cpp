@@ -30,7 +30,7 @@ NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, time_
 
 
 void NamedEntityHDF5::type(const string &type) {
-    if(definition.empty()) {
+    if(type.empty()) {
         throw std::runtime_error("Empty string given");
     }
     else {
@@ -48,7 +48,7 @@ string NamedEntityHDF5::type() const {
 
 
 void NamedEntityHDF5::name(const string &name) {
-    if(definition.empty()) {
+    if(name.empty()) {
         throw std::runtime_error("Empty string given");
     }
     else {
