@@ -30,8 +30,13 @@ NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, time_
 
 
 void NamedEntityHDF5::type(const string &type) {
-    group().setAttr("type", type);
-    forceUpdatedAt();
+    if(type.empty()) {
+        throw EmptyString("type");
+    }
+    else {
+        group().setAttr("type", type);
+        forceUpdatedAt();
+    }
 }
 
 
@@ -43,8 +48,13 @@ string NamedEntityHDF5::type() const {
 
 
 void NamedEntityHDF5::name(const string &name) {
-    group().setAttr("name", name);
-    forceUpdatedAt();
+    if(name.empty()) {
+        throw EmptyString("name");
+    }
+    else {
+        group().setAttr("name", name);
+        forceUpdatedAt();
+    }
 }
 
 
@@ -66,8 +76,13 @@ void NamedEntityHDF5::name(const none_t t) {
 
 
 void NamedEntityHDF5::definition(const string &definition) {
-    group().setAttr("definition", definition);
-    forceUpdatedAt();
+    if(definition.empty()) {
+        throw EmptyString("definition");
+    }
+    else {
+        group().setAttr("definition", definition);
+        forceUpdatedAt();
+    }
 }
 
 

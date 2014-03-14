@@ -57,8 +57,13 @@ void RepresentationHDF5::linkType(LinkType link_type) {
 
 
 void RepresentationHDF5::data(const DataArray &data){
-    group().setAttr("data", data.id());
-    forceUpdatedAt();
+    if(data == none) {
+        throw runtime_error("Empty data entity (DataArray) given");
+    }
+    else {
+        group().setAttr("data", data.id());
+        forceUpdatedAt();
+    }
 }
 
 

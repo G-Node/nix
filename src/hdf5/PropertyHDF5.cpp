@@ -44,7 +44,13 @@ boost::optional<DataType> PropertyHDF5::dataType() const {
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    group().setAttr("mapping", mapping);
+    if(mapping.empty()) {
+        throw EmptyString("mapping");
+    }
+    else {
+        group().setAttr("mapping", mapping);
+        forceUpdatedAt();
+    }
 }
 
 
@@ -67,8 +73,13 @@ void PropertyHDF5::mapping(const none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    group().setAttr("unit", unit);
-    forceUpdatedAt();
+    if(unit.empty()) {
+        throw EmptyString("unit");
+    }
+    else {
+        group().setAttr("unit", unit);
+        forceUpdatedAt();
+    }
 }
 
 

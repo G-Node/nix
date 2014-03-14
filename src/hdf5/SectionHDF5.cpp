@@ -58,7 +58,13 @@ SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &g
 //--------------------------------------------------
 
 void SectionHDF5::repository(const string &repository) {
-    group().setAttr("repository", repository);
+    if(repository.empty()) {
+        throw EmptyString("repository");
+    }
+    else {
+        group().setAttr("repository", repository);
+        forceUpdatedAt();
+    }
 }
 
 
@@ -81,10 +87,10 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const Section &link) {
-    if (link != nullptr) {
+    if (link == none) {
+        SectionHDF5::link(none);
+    } else {
         group().setAttr("link", link.id());
-    } else if (group().hasAttr("link")) {
-        group().removeAttr("link");
     }
 }
 
@@ -118,7 +124,13 @@ void SectionHDF5::link(const none_t t) {
 
 
 void SectionHDF5::mapping(const string &mapping) {
-    group().setAttr("mapping", mapping);
+    if(mapping.empty()) {
+        throw EmptyString("mapping");
+    }
+    else {
+        group().setAttr("mapping", mapping);
+        forceUpdatedAt();
+    }
 }
 
 

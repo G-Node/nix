@@ -55,10 +55,26 @@ public:
 };
 
 
+class EmptyString: public std::exception {
+public:
+    EmptyString(const std::string &caller_arg):
+    caller(caller_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("EmptyString: ");
+        sstream << "Empty string given - not a valid value for " << caller;
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string caller;
+};
+
+
 class InvalidUnit: public std::exception {
 public:
     InvalidUnit(const std::string &what_arg, const std::string &caller_arg):
-    what_msg(what_arg), caller(caller_arg){ }
+    what_msg(what_arg), caller(caller_arg) { }
 
     const char *what() const NOEXCEPT {
         std::stringstream sstream("InvalidUnit: ");

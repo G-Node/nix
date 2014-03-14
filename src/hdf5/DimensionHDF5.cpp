@@ -6,7 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
+
 #include <nix/hdf5/DimensionHDF5.hpp>
+#include <nix/hdf5/DataSet.hpp>
 
 using namespace std;
 
@@ -129,7 +132,13 @@ string SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    group.setAttr("label", label);
+    if(label.empty()) {
+        throw EmptyString("label");
+    }
+    else {
+        group.setAttr("label", label);
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
+    }
 }
 
 
@@ -141,7 +150,13 @@ string SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    group.setAttr("unit", unit);
+    if(unit.empty()) {
+        throw EmptyString("unit");
+    }
+    else {
+        group.setAttr("unit", unit);
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
+    }
 }
 
 
@@ -269,7 +284,13 @@ string RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    group.setAttr("label", label);
+    if(label.empty()) {
+        throw EmptyString("label");
+    }
+    else {
+        group.setAttr("label", label);
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
+    }
 }
 
 
@@ -281,7 +302,13 @@ string RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    group.setAttr("unit", unit);
+    if(unit.empty()) {
+        throw EmptyString("unit");
+    }
+    else {
+        group.setAttr("unit", unit);
+        // NOTE: forceUpdatedAt() not possible since not reachable from here
+    }
 }
 
 
