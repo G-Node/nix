@@ -43,25 +43,58 @@ bool EntityWithSourcesHDF5::hasSource(const string &id) const {
 }
 
 
-Source EntityWithSourcesHDF5::getSource(const string &id) const{
-    return entity_block.getSource(id);
+Source EntityWithSourcesHDF5::getSource(const string &id) const {
+    if (hasSource(id)) {
+        util::IdFilter<Source> checkID(id);
+        vector<Source> result_vect = entity_block.findSources(checkID);
+        if(!result_vect.empty()) return result_vect.back();
+    }
+    // if above block did not return
+    nix::Source empty_source;
+    return empty_source;
 }
 
-Source EntityWithSourcesHDF5::getSource(const size_t index) const{
-    return entity_block.getSource(index);
+Source EntityWithSourcesHDF5::getSource(const size_t index) const {
+    const string id = util::numToStr<size_t>(index);
+    if (hasSource(id)) {
+        util::IdFilter<Source> checkID(id);
+        vector<Source> result_vect = entity_block.findSources(checkID);
+        if(!result_vect.empty()) return result_vect.back();
+    }
+    // if above block did not return
+    nix::Source empty_source;
+    return empty_source;
 }
 
 void EntityWithSourcesHDF5::addSource(const Source &source) {
-    sources_refs.add(source.id());
+    util::IdFilter<Source> checkID(source.id());
+    vector<Source> result_vect = entity_block.findSources(checkID);
+    if(!result_vect.empty()) {
+        sources_refs.add(source.id());
+    }
+    else {
+        throw std::runtime_error("Given source does not exist in this block!");
+    }    
 }
 
 
 void EntityWithSourcesHDF5::sources(const vector<Source> &s) {
+    // gather IDs
     vector<string> ids(s.size());
     for (size_t i = 0; i < s.size(); i++) {
         ids[i] = s[i].id();
     }
-    sources_refs.set(ids);
+    // reduce them to those actually existing in block
+    util::IdsFilter<Source> checkIDs(ids);
+    vector<Source> result_vect = entity_block.findSources(checkIDs);
+    // set remaining IDs
+    if(!result_vect.empty()) {
+        ids.resize(result_vect.size());
+        for (size_t i = 0; i < result_vect.size(); i++) {
+            ids[i] = result_vect[i].id();
+        }
+        sources_refs.set(ids);
+    }
 }
 
 

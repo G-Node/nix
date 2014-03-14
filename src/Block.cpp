@@ -14,19 +14,8 @@ using namespace std;
 
 namespace nix {
 
-    /**
-     * Go through the tree of sources originating from every source in this 
-     * block until a max. level of "max_depth" and check for each source
-     * whether to return it depending on predicate function "filter".
-     * Return resulting vector of sources, which may contain duplicates.
-     * 
-     * @param object filter function of type std::function<bool(const Source &)>
-     * @param int maximum depth to search tree
-     * @return object vector of sources
-     */
-    std::vector<Source> Block::findSources(
-                           util::AcceptAll<Source> filter, 
-                           size_t max_depth) const
+    std::vector<Source> Block::findSources(std::function<bool(Source)> filter,
+                                           size_t max_depth) const 
     {
         vector<Source> probes = sources();
         vector<Source> matches;
