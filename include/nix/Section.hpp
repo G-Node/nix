@@ -72,16 +72,31 @@ public:
     void repository(const boost::none_t t) {
         backend()->repository(t);
     }
-    
+
     /**
      * Establish a link to another section. The linking section
      * inherits the properties defined in the linked section.
      * Properties of the same name are overridden.
      *
-     * @param the id of the linked section.
+     * @param std::string the id of the linked section.
+     */
+    void link(const std::string &id) {
+        backend()->link(id);
+    }
+
+    /**
+     * Establish a link to another section. The linking section
+     * inherits the properties defined in the linked section.
+     * Properties of the same name are overridden.
+     *
+     * @param Section the linked section.
      */
     void link(const Section &link) {
-        backend()->link(link);
+        if (link == none) {
+            backend()->link(none);
+        } else {
+            backend()->link(link.id());
+        }
     }
 
     /**

@@ -56,6 +56,7 @@ void RepresentationHDF5::linkType(LinkType link_type) {
 }
 
 
+<<<<<<< HEAD
 void RepresentationHDF5::data(const DataArray &data){
     if(data == none) {
         throw runtime_error("Empty data entity (DataArray) given");
@@ -64,6 +65,11 @@ void RepresentationHDF5::data(const DataArray &data){
         group().setAttr("data", data.id());
         forceUpdatedAt();
     }
+=======
+void RepresentationHDF5::data(const std::string &data_array_id){
+    group().setAttr("data", data_array_id);
+    forceUpdatedAt();
+>>>>>>> refactoring of user interface classes.
 }
 
 

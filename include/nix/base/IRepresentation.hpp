@@ -53,9 +53,9 @@ public:
     /**
      * Sets the data array associated with this representation.
      *
-     * @param data    The data array to set.
+     * @param data    The id of the data array to set.
      */
-    virtual void data(const DataArray &data) = 0;
+    virtual void data(const std::string &data_array_id) = 0;
 
     /**
      * Gets the data array associated with this representation.

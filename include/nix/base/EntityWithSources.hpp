@@ -56,6 +56,18 @@ public:
     }
 
     /**
+     * Checks if this source has a specific source as direct descendant.
+     *
+     * @param Source        The source.
+     *
+     * @return True if a source with the given id is a direct descendant, false
+     *         otherwise.
+     */
+    bool hasSource(const Source &source) const {
+        return EntityWithMetadata<T>::backend()->hasSource(source.id());
+    }
+
+    /**
      * Retrieves a specific child source that is a direct descendant.
      *
      * @param id        The id of the source.
@@ -110,15 +122,22 @@ public:
     }
 
     /**
-     * Create a new root source.
+     * Add a Source to this entity.
      *
-     * @param name      The name of the source to create.
-     * @param type      The type of the source.
-     *
-     * @return The created source object.
+     * @param Source    The source.
      */
     void addSource(const Source &source) {
-        EntityWithMetadata<T>::backend()->addSource(source);
+        EntityWithMetadata<T>::backend()->addSource(source.id());
+    }
+
+    /**
+     * Add a Source to this entity.
+     *
+     * @param std::string     The id of the source.
+     *
+     */
+    void addSource(const std::string &id) {
+        EntityWithMetadata<T>::backend()->addSource(id);
     }
 
     /**
@@ -133,6 +152,17 @@ public:
         return EntityWithMetadata<T>::backend()->removeSource(id);
     }
 
+    /**
+     * Remove a root source and all its child sources from
+     * the source.
+     *
+     * @param Source      The source to remove.
+     *
+     * @return True if the source was removed, false otherwise.
+     */
+    bool removeSource(const Source &source) {
+        return EntityWithMetadata<T>::backend()->removeSource(source.id());
+    }
 
     virtual ~EntityWithSources() {}
 

@@ -48,13 +48,10 @@ public:
     size_t sourceCount() const;
 
 
-    bool hasSource(const Source &source) const;
-
-
     bool hasSource(const std::string &id) const;
 
 
-    void addSource(const Source &source);
+    void addSource(const std::string &id);
 
 
     bool removeSource(const std::string &id);

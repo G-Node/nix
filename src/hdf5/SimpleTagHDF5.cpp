@@ -135,15 +135,13 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
 }
 
 
-void SimpleTagHDF5::addReference(const DataArray &reference) {
-    string reference_id = reference.id();
-
-    if (!block().hasDataArray(reference_id)) {
+void SimpleTagHDF5::addReference(const std::string &id) {
+    if (!block().hasDataArray(id)) {
         throw runtime_error("Unable to find data array with reference_id " +
-                            reference_id + " on block " + block().id());
+                            id + " on block " + block().id());
     }
 
-    references_list.add(reference_id);
+    references_list.add(id);
 }
 
 
@@ -191,14 +189,14 @@ Representation SimpleTagHDF5::getRepresentation(size_t index) const{
 }
 
 
-Representation SimpleTagHDF5::createRepresentation(DataArray data, LinkType link_type){
+Representation SimpleTagHDF5::createRepresentation(const std::string &data_array_id, LinkType link_type){
     string rep_id = util::createId("representation");
     while(representation_group.hasObject(rep_id))
         rep_id = util::createId("representation");
     Group rep_g = representation_group.openGroup(rep_id, true);
     auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, rep_id);
     tmp->linkType(link_type);
-    tmp->data(data);
+    tmp->data(data_array_id);
 
     return Representation(tmp);
 }

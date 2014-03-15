@@ -46,10 +46,11 @@ public:
      * previously stored information.
      * 
      *
-     * @param metadata    The section that should be associated
+     * @param std::string  the id of the metadata that should be associated
      *                    with this entity.
      */
-    virtual void metadata(const Section &metadata) = 0;
+    virtual void metadata(const std::string &id) = 0;
+
 
     /**
      * Remove associated metadata from the entity.

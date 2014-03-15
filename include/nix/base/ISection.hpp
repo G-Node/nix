@@ -61,7 +61,7 @@ public:
      *
      * @param the id of the linked section.
      */
-    virtual void link(const Section &link) = 0;
+    virtual void link(const std::string &id) = 0;
 
     /**
      * Returns the id of the linked section.

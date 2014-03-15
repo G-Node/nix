@@ -69,7 +69,7 @@ public:
     void repository(const none_t t);
 
 
-    void link(const Section &link);
+    void link(const std::string &id);
 
 
     Section link() const;

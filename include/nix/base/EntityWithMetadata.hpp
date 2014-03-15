@@ -62,7 +62,24 @@ public:
      *                    with this entity.
      */
     void metadata(const Section &metadata) {
-        NamedEntity<T>::backend()->metadata(metadata);
+        if(metadata == none){
+            NamedEntity<T>::backend()->metadata(none);
+        }
+        else{
+            NamedEntity<T>::backend()->metadata(metadata.id());
+        }
+    }
+
+    /**
+     * Associate the entity with some metadata. Calling this method will replace
+     * previously stored information.
+     * Note: This function does not delete the referenced Section!
+     *
+     * @param std::string       The id of the section that should be associated
+     *                          with this entity.
+     */
+    void metadata(const std::string &id) {
+        NamedEntity<T>::backend()->metadata(id);
     }
 
     /**

@@ -43,7 +43,7 @@ public:
     Section metadata() const;
 
 
-    void metadata(const Section &metadata);
+    void metadata(const std::string &id);
 
 
     void metadata(const none_t t);

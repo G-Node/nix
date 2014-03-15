@@ -168,8 +168,8 @@ DataArray DataTagHDF5::getReference(size_t index) const {
     }
 }
 
-void DataTagHDF5::addReference(const DataArray &reference) {
-    reference_list.add(reference.id());
+void DataTagHDF5::addReference(const std::string &id) {
+    reference_list.add(id);
 }
 
 
@@ -219,7 +219,7 @@ Representation DataTagHDF5::getRepresentation(size_t index) const{
 }
 
 
-Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_type) {
+Representation DataTagHDF5::createRepresentation(const std::string &data_array_id, LinkType link_type) {
     string id = util::createId("representation");
     while(representation_group.hasObject(id))
         id = util::createId("representation");
@@ -227,7 +227,7 @@ Representation DataTagHDF5::createRepresentation(DataArray data, LinkType link_t
     Group group = representation_group.openGroup(id, true);
     auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id);
     tmp->linkType(link_type);
-    tmp->data(data);
+    tmp->data(data_array_id);
 
     return Representation(tmp);
 }

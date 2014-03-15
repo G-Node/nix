@@ -33,11 +33,6 @@ size_t EntityWithSourcesHDF5::sourceCount() const {
 }
 
 
-bool EntityWithSourcesHDF5::hasSource(const Source &source) const {
-    return sources_refs.has(source.id());
-}
-
-
 bool EntityWithSourcesHDF5::hasSource(const string &id) const {
     return sources_refs.has(id);
 }
@@ -75,6 +70,10 @@ void EntityWithSourcesHDF5::addSource(const Source &source) {
     else {
         throw std::runtime_error("Given source does not exist in this block!");
     }    
+}
+
+void EntityWithSourcesHDF5::addSource(const std::string &id) {
+    sources_refs.add(id);
 }
 
 

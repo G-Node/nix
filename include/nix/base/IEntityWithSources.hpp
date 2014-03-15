@@ -34,6 +34,8 @@ public:
      */
     virtual size_t sourceCount() const = 0;
 
+
+    virtual void addSource(const std::string &id) = 0;
     /**
      * Checks if a specific source is associated with this entity.
      *
@@ -51,13 +53,6 @@ public:
      * @return True if the source is associated with this entity, false otherwise.
      */
     virtual bool hasSource(const std::string &id) const = 0;
-
-    /**
-     * Add a specific source to the list of associated sources.
-     *
-     * @param source      The source to associate with this entity.
-     */
-    virtual void addSource(const Source &source) = 0;
 
     /**
      * Remove a source from the list of associated sources.
