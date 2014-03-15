@@ -11,6 +11,7 @@
 #define NIX_FILTER_H
 
 #include <functional>
+#include <unordered_set>
 
 namespace nix {
 namespace util {
@@ -58,6 +59,26 @@ struct IdFilter : public Filter<T> {
 
     virtual bool operator()(const T &e) {
         return e.id() == id;
+    }
+
+};
+
+
+template<typename T>
+struct IdsFilter : public Filter<T> {
+
+    std::unordered_set<std::string> ids;
+
+
+    IdsFilter(const std::vector<std::string> &ids_vect)
+        : ids(ids_vect.begin(), ids_vect.end())
+    {}
+
+
+    virtual bool operator()(const T &e) {
+        // std::unordered_set.count is a fast by-hash-getter that
+        // returns 1 (if val found) or 0 (if not found).
+        return (bool) ids.count(e.id());
     }
 
 };

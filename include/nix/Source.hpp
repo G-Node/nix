@@ -109,7 +109,7 @@ public:
      * Go through the tree of sources originating from this source until
      * a max. level of "max_depth" and check for each source whether
      * to return it depending on predicate function "filter".
-     * Return resulting vector of sources.
+     * Return resulting vector of sources or empty vector if none found.
      * 
      * @param object filter function of type {@link nix::util::Filter::type}
      * @param int maximum depth to search tree
