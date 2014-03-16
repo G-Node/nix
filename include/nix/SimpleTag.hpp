@@ -154,6 +154,9 @@ public:
      * @return bool
      */
     bool hasReference(const DataArray &reference) const {
+        if (reference == none){
+            throw std::runtime_error("SimpleTag::hasReference: Emty DataArray entity given!");
+        }
         return backend()->hasReference(reference.id());
     }
 
@@ -197,6 +200,9 @@ public:
      *
      */
     void addReference(const DataArray &reference) {
+        if (reference == none){
+            throw std::runtime_error("SimpleTag::addReference: Empty DataArray entity given!");
+        }
         backend()->addReference(reference.id());
     }
 
@@ -219,6 +225,9 @@ public:
      *
      */
     bool removeReference(const DataArray &reference) {
+        if(reference == none){
+            throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
+        }
         return backend()->removeReference(reference.id());
     }
      /**
@@ -276,6 +285,20 @@ public:
      */
     bool hasRepresentation(const std::string &id) const {
         return backend()->hasRepresentation(id);
+    }
+
+    /**
+     * Checks if a specific representation exists on the tag.
+     *
+     * @param representation        The Representation.
+     *
+     * @return True if the representation exists, false otherwise.
+     */
+    bool hasRepresentation(const Representation &representation) const {
+        if(representation == none){
+            throw std::runtime_error("SimpleTag::hasRepresentation: Empty DataArray entity given!");
+        }
+        return backend()->hasRepresentation(representation.id());
     }
 
     /**
@@ -341,6 +364,9 @@ public:
      * @return The created representation object.
      */
     Representation createRepresentation(const DataArray &data, LinkType link_type) {
+        if(data == none){
+            throw std::runtime_error("SimpleTag::createRepresentation: Empty DataArray entity given!");
+        }
         return backend()->createRepresentation(data.id(), link_type);
     }
 
@@ -367,6 +393,19 @@ public:
         return backend()->deleteRepresentation(id);
     }
 
+    /**
+     * Deletes a representation.
+     *
+     * @param representation        The representation to remove.
+     *
+     * @return True if the representation was removed, false otherwise.
+     */
+    bool deleteRepresentation(const Representation &representation) {
+        if (representation == none){
+            throw std::runtime_error("SimpleTag::deleteRepresentation: Empty Representation entity given!");
+        }
+        return backend()->deleteRepresentation(representation.id());
+    }
 
     //--------------------------------------------------
     // Other methods and functions
