@@ -52,6 +52,21 @@ public:
     }
 
     /**
+     * Checks if this source has a specific source as direct descendant.
+     *
+     * @param source         The Source.
+     *
+     * @return True if a source with the given id is a direct descendant, false
+     *         otherwise.
+     */
+    bool hasSource(const Source &source) const {
+        if(source == none){
+            throw std::runtime_error("Source::hasSource: emtpy Source entity given!");
+        }
+        return backend()->hasSource(source.id());
+    }
+
+    /**
      * Retrieves a specific child source that is a direct descendant.
      *
      * @param id        The id of the source.
@@ -141,6 +156,21 @@ public:
      */
     bool deleteSource(const std::string &id) {
         return backend()->deleteSource(id);
+    }
+
+    /**
+     * Delete a root source and all its child sources from
+     * the source.
+     *
+     * @param source        The Source to delete.
+     *
+     * @return True if the source was deleted, false otherwise.
+     */
+    bool deleteSource(const Source &source) {
+        if (source == none){
+            throw std::runtime_error("Source::deleteSource: empty Source entity given!");
+        }
+        return backend()->deleteSource(source.id());
     }
 
     //------------------------------------------------------
