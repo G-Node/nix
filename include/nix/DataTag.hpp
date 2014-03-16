@@ -27,7 +27,7 @@ public:
 {}
 
     DataTag(const DataTag &other)
-        : EntityWithSources(other.impl())
+    : EntityWithSources(other.impl())
     {
     }
 
@@ -149,6 +149,9 @@ public:
      * @return bool
      */
     bool hasReference(const DataArray &reference) const {
+        if (reference == none){
+            throw std::runtime_error("DataTag::hasReference: Empty DataArray entity given!");
+        }
         return backend()->hasReference(reference.id());
     }
 
@@ -214,19 +217,37 @@ public:
      *
      */
     void addReference(const DataArray &reference) {
+        if (reference == none){
+            throw std::runtime_error("DataTag::addReference: Empty DataArray entity given!");
+        }
     	backend()->addReference(reference.id());
     }
 
     /**
      * Removes a certain DataArray from the list of References.
      *
-     * @param the id of the DataArray
+     * @param  id      The id of the DataArray
      *
-     * @return bool whether the operation succeeded.
+     * @return bool    whether the operation succeeded.
      *
      */
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
+    }
+
+    /**
+     * Removes a certain DataArray from the list of References.
+     *
+     * @param reference   The DataArray reference
+     *
+     * @return bool         whether the operation succeeded.
+     *
+     */
+    bool removeReference(const DataArray &reference) {
+        if (reference == none){
+            throw std::runtime_error("DataTag::removeReference: Empty DataArray reference given!");
+        }
+        return backend()->removeReference(reference.id());
     }
 
     /**
@@ -305,6 +326,20 @@ public:
      */
     bool hasRepresentation(const std::string &id) const {
         return backend()->hasRepresentation(id);
+    }
+
+    /**
+     * Checks if a specific representation exists on the tag.
+     *
+     * @param representation        The Representation.
+     *
+     * @return bool                 True if the representation exists, false otherwise.
+     */
+    bool hasRepresentation(const Representation &representation) const {
+        if (representation == none){
+            throw std::runtime_error("DataTag::hasRepresentation: Empty representation given!");
+        }
+        return backend()->hasRepresentation(representation.id());
     }
 
     /**
@@ -393,6 +428,20 @@ public:
      */
     bool deleteRepresentation(const std::string &id) {
         return backend()->deleteRepresentation(id);
+    }
+
+    /**
+     * Delete a representation from the tag.
+     *
+     * @param representation        The representation to delete.
+     *
+     * @return bool True if the representation was removed, false otherwise.
+     */
+    bool deleteRepresentation(const Representation &representation) {
+        if (representation == none){
+            throw std::runtime_error("DataTag::deleteRepresentation: Empty Representation entity given!");
+        }
+        return backend()->deleteRepresentation(representation.id());
     }
 
     virtual DataTag &operator=(std::nullptr_t) {
