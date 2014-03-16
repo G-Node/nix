@@ -54,6 +54,9 @@ public:
     void addSource(const std::string &id);
 
 
+    void addSource(const Source &source);
+
+
     bool removeSource(const std::string &id);
 
 

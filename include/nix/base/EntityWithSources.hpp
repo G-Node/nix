@@ -118,17 +118,9 @@ public:
      * @param sources     A vector with all sources.
      */
     virtual void sources(const std::vector<Source> &sources) {
-        return EntityWithMetadata<T>::backend()->sources(sources);
+        EntityWithMetadata<T>::backend()->sources(sources);
     }
 
-    /**
-     * Add a Source to this entity.
-     *
-     * @param Source    The source.
-     */
-    void addSource(const Source &source) {
-        EntityWithMetadata<T>::backend()->addSource(source.id());
-    }
 
     /**
      * Add a Source to this entity.
@@ -139,6 +131,18 @@ public:
     void addSource(const std::string &id) {
         EntityWithMetadata<T>::backend()->addSource(id);
     }
+
+
+    /**
+     * Add a Source to this entity.
+     *
+     * @param Source     The source.
+     *
+     */
+    void addSource(const Source &source) {
+        EntityWithMetadata<T>::backend()->addSource(source.id());
+    }
+
 
     /**
      * Remove a root source and all its child sources from
