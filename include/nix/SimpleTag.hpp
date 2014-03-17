@@ -132,33 +132,112 @@ public:
     //--------------------------------------------------
     // Methods concerning references.
     //--------------------------------------------------
-
-
+   
+    /**
+     * Checks if a DataArray with the specified id is referenced in
+     * this DataTag.
+     *
+     * @param std::string the id
+     *
+     * @return bool
+     */
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
     
+    /**
+     * Checks if the specified DataArray is referenced in
+     * this SimpleTag.
+     *
+     * @param DataArray     the dataArray
+     *
+     * @return bool
+     */
+    bool hasReference(const DataArray &reference) const {
+        if (reference == none){
+            throw std::runtime_error("SimpleTag::hasReference: Emty DataArray entity given!");
+        }
+        return backend()->hasReference(reference.id());
+    }
 
+    /**
+     * Returns the count of references.
+     *
+     * @return size_t the count
+     */
     size_t referenceCount() const {
         return backend()->referenceCount();
     }
 
-
+    /**
+     * Returns the specified DataArray.
+     *
+     * @param std::string the id
+     *
+     * @return DataArray object may be false if not found.
+     *
+     */
     DataArray getReference(const std::string &id) const {
         return backend()->getReference(id);
     }
 
-
+    /**
+     * Returns a certain reference that is specified by its index.
+     *
+     * @param size_t the index
+     *
+     * @return DataArray result may be false if not found
+     *
+     */
     DataArray getReference(size_t index) const {
         return backend()->getReference(index);
     }
     
-
+    /**
+     * Adds a reference to a DataArray to the list of References.
+     *
+     * @param DataArray the DataArray tha should be referenced.
+     *
+     */
     void addReference(const DataArray &reference) {
-        backend()->addReference(reference);
+        if (reference == none){
+            throw std::runtime_error("SimpleTag::addReference: Empty DataArray entity given!");
+        }
+        backend()->addReference(reference.id());
     }
 
+    /**
+     * Adds a reference to a DataArray to the list of References.
+     *
+     * @param std::string the id of a DataArray.
+     *
+     */
+    void addReference(const std::string &id) {
+    	backend()->addReference(id);
+    }
 
+    /**
+     * Removes a certain DataArray from the list of References.
+     *
+     * @param DataArray the DataArray
+     *
+     * @return bool whether the operation succeeded.
+     *
+     */
+    bool removeReference(const DataArray &reference) {
+        if(reference == none){
+            throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
+        }
+        return backend()->removeReference(reference.id());
+    }
+     /**
+     * Removes a certain DataArray from the list of References.
+     *
+     * @param string the id of the DataArray
+     *
+     * @return bool whether the operation succeeded.
+     *
+     */
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
     }
@@ -206,6 +285,20 @@ public:
      */
     bool hasRepresentation(const std::string &id) const {
         return backend()->hasRepresentation(id);
+    }
+
+    /**
+     * Checks if a specific representation exists on the tag.
+     *
+     * @param representation        The Representation.
+     *
+     * @return True if the representation exists, false otherwise.
+     */
+    bool hasRepresentation(const Representation &representation) const {
+        if(representation == none){
+            throw std::runtime_error("SimpleTag::hasRepresentation: Empty DataArray entity given!");
+        }
+        return backend()->hasRepresentation(representation.id());
     }
 
     /**
@@ -270,8 +363,23 @@ public:
      *
      * @return The created representation object.
      */
-    Representation createRepresentation(DataArray data, LinkType link_type) {
-        return backend()->createRepresentation(data, link_type);
+    Representation createRepresentation(const DataArray &data, LinkType link_type) {
+        if(data == none){
+            throw std::runtime_error("SimpleTag::createRepresentation: Empty DataArray entity given!");
+        }
+        return backend()->createRepresentation(data.id(), link_type);
+    }
+
+    /**
+     * Create a new representation.
+     *
+     * @param data_array_id      The id of data array of this representation.
+     * @param type      The link type of this representation.
+     *
+     * @return The created representation object.
+     */
+    Representation createRepresentation(const std::string &data_array_id, LinkType link_type) {
+        return backend()->createRepresentation(data_array_id, link_type);
     }
 
     /**
@@ -285,6 +393,19 @@ public:
         return backend()->deleteRepresentation(id);
     }
 
+    /**
+     * Deletes a representation.
+     *
+     * @param representation        The representation to remove.
+     *
+     * @return True if the representation was removed, false otherwise.
+     */
+    bool deleteRepresentation(const Representation &representation) {
+        if (representation == none){
+            throw std::runtime_error("SimpleTag::deleteRepresentation: Empty Representation entity given!");
+        }
+        return backend()->deleteRepresentation(representation.id());
+    }
 
     //--------------------------------------------------
     // Other methods and functions

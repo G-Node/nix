@@ -64,7 +64,7 @@ public:
     LinkType linkType() const;
 
 
-    void data(const DataArray &data);
+    void data(const std::string &data_array_id);
 
 
     DataArray data() const;

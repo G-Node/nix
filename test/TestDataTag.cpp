@@ -181,7 +181,6 @@ void TestDataTag::testPositionExtents(){
 
 void TestDataTag::testMetadataAccess() {
 	CPPUNIT_ASSERT(!tag.hasMetadata());
-
 	tag.metadata(section);
 	CPPUNIT_ASSERT(tag.hasMetadata());
 	// TODO This test fails due to operator== of Section

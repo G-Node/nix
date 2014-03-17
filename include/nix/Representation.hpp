@@ -64,10 +64,24 @@ public:
     /**
      * Sets the data array associated with this representation.
      *
-     * @param data    The data array to set.
+     * @param std::string       The id of the data array to set.
      */
-    void data(const DataArray &data) {
-        backend()->data(data);
+    void data(const std::string &data_array_id) {
+        backend()->data(data_array_id);
+    }
+
+    /**
+     * Sets the data array associated with this representation.
+     *
+     * @param DataArray    The data array to set.
+     */
+    void data(const DataArray &data){
+        if(data == none) {
+            throw std::runtime_error("Empty data entity (DataArray) given");
+        }
+        else {
+            backend()->data(data.id());
+        }
     }
 
     /**

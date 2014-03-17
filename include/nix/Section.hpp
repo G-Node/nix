@@ -72,16 +72,31 @@ public:
     void repository(const boost::none_t t) {
         backend()->repository(t);
     }
-    
+
     /**
      * Establish a link to another section. The linking section
      * inherits the properties defined in the linked section.
      * Properties of the same name are overridden.
      *
-     * @param the id of the linked section.
+     * @param std::string the id of the linked section.
+     */
+    void link(const std::string &id) {
+        backend()->link(id);
+    }
+
+    /**
+     * Establish a link to another section. The linking section
+     * inherits the properties defined in the linked section.
+     * Properties of the same name are overridden.
+     *
+     * @param Section the linked section.
      */
     void link(const Section &link) {
-        backend()->link(link);
+        if (link == none) {
+            backend()->link(none);
+        } else {
+            backend()->link(link.id());
+        }
     }
 
     /**
@@ -170,6 +185,20 @@ public:
     }
 
     /**
+     * Check if a specific child exists.
+     *
+     * @param section    The section.
+     *
+     * @return True if the child exists false otherwise.
+     */
+    bool hasSection(const Section &section) const {
+        if(section == none){
+            throw std::runtime_error("Section::hasSection: Empty Section entity given!");
+        }
+        return backend()->hasSection(section.id());
+    }
+
+    /**
      * Get a specific child by its id.
      *
      * @param id    The id of the child.
@@ -255,6 +284,20 @@ public:
         return backend()->deleteSection(id);
     }
 
+    /**
+     * Deletes a subsection from this Section.
+     *
+     * @param section   the target section.
+     *
+     * @return bool successful or not
+     */
+    bool deleteSection(const Section &section) {
+        if(section == none){
+            throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
+        }
+        return backend()->deleteSection(section.id());
+    }
+
     //--------------------------------------------------
     // Methods for property access
     //--------------------------------------------------
@@ -275,6 +318,18 @@ public:
      */
     bool hasProperty(const std::string &id) const {
         return backend()->hasProperty(id);
+    }
+
+    /**
+     * Checks if a Property exists in this Section.
+     *
+     * @param property      The Property.
+     */
+    bool hasProperty(const Property &property) const {
+        if(property == none){
+            throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
+        }
+        return backend()->hasProperty(property.id());
     }
 
     /**
@@ -319,7 +374,6 @@ public:
         return backend()->getPropertyByName(name);
     }
 
-
     /**
      * Get properties associated with this section.
      *
@@ -359,12 +413,24 @@ public:
     }
 
     /**
-     * Deletess the Property that is identified by the id.#
+     * Deletes the Property that is identified by the id.
      *
      * @param string the id.
      */
     bool deleteProperty(const std::string &id) {
         return backend()->deleteProperty(id);
+    }
+
+    /**
+     * Deletes the Property from this section.
+     *
+     * @param property      The Property.
+     */
+    bool deleteProperty(const Property &property) {
+        if(property == none){
+            throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
+        }
+        return backend()->deleteProperty(property.id());
     }
 
     //------------------------------------------------------

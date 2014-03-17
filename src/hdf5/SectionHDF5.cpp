@@ -86,11 +86,11 @@ void SectionHDF5::repository(const none_t t) {
 }
 
 
-void SectionHDF5::link(const Section &link) {
-    if (link == none) {
-        SectionHDF5::link(none);
-    } else {
-        group().setAttr("link", link.id());
+void SectionHDF5::link(const std::string &id) {
+    if (file().hasSection(id)) {
+        group().setAttr("link", id);
+    } else if (group().hasAttr("link")) {
+        group().removeAttr("link");
     }
 }
 

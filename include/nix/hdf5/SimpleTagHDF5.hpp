@@ -81,7 +81,6 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
-
     bool hasReference(const std::string &id) const;
 
 
@@ -94,7 +93,7 @@ public:
     DataArray getReference(size_t index) const;
 
 
-    void addReference(const DataArray &reference);
+    void addReference(const std::string &id);
 
 
     bool removeReference(const std::string &id);
@@ -118,7 +117,7 @@ public:
     Representation getRepresentation(size_t index) const;
 
 
-    Representation createRepresentation(DataArray data, LinkType link_type);
+    Representation createRepresentation(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteRepresentation(const std::string &id);

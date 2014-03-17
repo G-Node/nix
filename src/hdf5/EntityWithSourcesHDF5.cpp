@@ -33,11 +33,6 @@ size_t EntityWithSourcesHDF5::sourceCount() const {
 }
 
 
-bool EntityWithSourcesHDF5::hasSource(const Source &source) const {
-    return sources_refs.has(source.id());
-}
-
-
 bool EntityWithSourcesHDF5::hasSource(const string &id) const {
     return sources_refs.has(id);
 }
@@ -66,6 +61,15 @@ Source EntityWithSourcesHDF5::getSource(const size_t index) const {
     return empty_source;
 }
 
+void EntityWithSourcesHDF5::addSource(const std::string &id) {
+    sources_refs.add(id);
+}
+
+/**
+ * Add a Source to this entity.
+ *
+ * @param Source    The source.
+ */
 void EntityWithSourcesHDF5::addSource(const Source &source) {
     util::IdFilter<Source> checkID(source.id());
     vector<Source> result_vect = entity_block.findSources(checkID);
@@ -74,7 +78,7 @@ void EntityWithSourcesHDF5::addSource(const Source &source) {
     }
     else {
         throw std::runtime_error("Given source does not exist in this block!");
-    }    
+    }
 }
 
 

@@ -40,7 +40,6 @@ public:
     {
     }
 
-
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------
@@ -48,7 +47,7 @@ public:
     /**
      * Checks if this block has a specific root source.
      *
-      * @param id        The id of the source.
+     * @param id        The id of the source.
      *
      * @return True if a source with the given id exists at the root, false
      *         otherwise.
@@ -56,6 +55,22 @@ public:
     bool hasSource(const std::string &id) const {
         return backend()->hasSource(id);
     }
+
+    /**
+     * Checks if this block contains a specific source.
+     *
+     * @param source        The source.
+     *
+     * @return True if a given source exists at the root, false
+     *         otherwise.
+     */
+    bool hasSource(const Source &source) const {
+        if(source == none){
+            throw std::runtime_error("Empty Source entity given");
+        }
+        return backend()->hasSource(source.id());
+    }
+
 
     /**
      * Retrieves a specific root source.
@@ -76,11 +91,9 @@ public:
      *
      * @return The source at the specified index.
      */
-    // TODO  maybe remove this method?
     Source getSource(size_t index) const {
         return backend()->getSource(index);
     }
-
 
     /**
      * Returns the number of root sources in this block.
@@ -90,7 +103,6 @@ public:
     size_t sourceCount() const {
         return backend()->sourceCount();
     }
-
 
     /**
      * Get sources associated with this block.
@@ -110,7 +122,6 @@ public:
                                    sourceCount(),
                                    filter);
     }
-
 
     /**
      * Go through the tree of sources originating from every source in this 
@@ -150,6 +161,21 @@ public:
         return backend()->deleteSource(id);
     }
 
+    /**
+     * Deletes a root source and all its child sources from
+     * the block.
+     *
+     * @param source        The source to remove.
+     *
+     * @return True if the source was removed, false otherwise.
+     */
+    bool deleteSource(const Source &source) {
+        if (source == none){
+            throw std::runtime_error("Empty Source entity given");
+        }
+        return backend()->deleteSource(source.id());
+    }
+
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
@@ -163,6 +189,20 @@ public:
      */
     bool hasDataArray(const std::string &id) const {
         return backend()->hasDataArray(id);
+    }
+
+    /**
+     * Checks if a specific data array exists in this block.
+     *
+     * @param data_array        The data array.
+     *
+     * @return True if the data array exists, false otherwise.
+     */
+    bool hasDataArray(const DataArray &data_array) const {
+        if (data_array == none){
+            throw std::runtime_error("Empty DataArray entity given!");
+        }
+        return backend()->hasDataArray(data_array.id());
     }
 
     /**
@@ -184,7 +224,6 @@ public:
      *
      * @return The data array at the specified index.
      */
-    // TODO maybe remove this method?
     DataArray getDataArray(size_t index) const {
         return backend()->getDataArray(index);
     }
@@ -239,6 +278,19 @@ public:
         return backend()->deleteDataArray(id);
     }
 
+    /**
+     * Deletes a data array from this block.
+     *
+     * @param data_array        The data array to remove.
+     *
+     * @return True if the data array was removed, false otherwise.
+     */
+    bool deleteDataArray(const DataArray &data_array) {
+        if (data_array == none){
+            throw std::runtime_error("Empty DataArray entity given!");
+        }
+        return backend()->deleteDataArray(data_array.id());
+    }
     //--------------------------------------------------
     // Methods concerning simple tags.
     //--------------------------------------------------
@@ -253,6 +305,21 @@ public:
     bool hasSimpleTag(const std::string &id) const {
         return backend()->hasSimpleTag(id);
     }
+
+    /**
+     * Checks if a specific simple tag exists in the block.
+     *
+     * @param simple_tag        The simple tag.
+     *
+     * @return True if the simple tag exists, false otherwise.
+     */
+    bool hasSimpleTag(const SimpleTag &simple_tag) const {
+        if(simple_tag == none){
+            throw std::runtime_error("Empty SimpleTag entity given!");
+        }
+        return backend()->hasSimpleTag(simple_tag.id());
+    }
+
 
     /**
      * Retrieves a specific simple tag from the block.
@@ -273,7 +340,6 @@ public:
      *
      * @return The simple tag at the specified index.
      */
-    // TODO maybe remove this method?
     SimpleTag getSimpleTag(size_t index) const {
         return backend()->getSimpleTag(index);
     }
@@ -330,6 +396,20 @@ public:
         return backend()->deleteSimpleTag(id);
     }
 
+    /**
+     * Deletes a simple tag from the block.
+     *
+     * @param simple_tag The tag to remove.
+     *
+     * @return True if the tag was removed, false otherwise.
+     */
+    bool deleteSimpleTag(const SimpleTag &simple_tag) {
+        if (simple_tag == none){
+            throw std::runtime_error("Block::deleteSimpleTag: Empty SimpleTag entity given!");
+        }
+        return backend()->deleteSimpleTag(simple_tag.id());
+    }
+
     //--------------------------------------------------
     // Methods concerning data tags.
     //--------------------------------------------------
@@ -343,6 +423,20 @@ public:
      */
     bool hasDataTag(const std::string &id) const {
         return backend()->hasDataTag(id);
+    }
+
+    /**
+     * Checks if a specific data tag exists in the block.
+     *
+     * @param data_tag        The data tag.
+     *
+     * @return True if the data tag exists, false otherwise.
+     */
+    bool hasDataTag(const DataTag &data_tag) const {
+        if (data_tag == none){
+            throw std::runtime_error("Block::hasDataTag: Empty DataTag entitiy given!");
+        }
+        return backend()->hasDataTag(data_tag.id());
     }
 
     /**
@@ -420,6 +514,19 @@ public:
         return backend()->deleteDataTag(id);
     }
 
+    /**
+     * Deletes a data tag from the block.
+     *
+     * @param data_tag        The tag to remove.
+     *
+     * @return True if the tag was deleted, false otherwise.
+     */
+    bool deleteDataTag(const DataTag &data_tag) {
+        if (data_tag == none){
+            throw std::runtime_error("Block::deleteDataTag: Empty DataTag entitiy given!");
+        }
+        return backend()->deleteDataTag(data_tag.id());
+    }
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------

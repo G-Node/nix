@@ -19,7 +19,6 @@
 
 namespace nix {
 
-
 class NIXAPI Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
 
 public:
@@ -28,7 +27,6 @@ public:
         : NamedEntity()
     {
     }
-
 
     Property(const Property &other)
         : NamedEntity(other.impl())
@@ -43,18 +41,6 @@ public:
     //--------------------------------------------------
     // Attribute getter and setter
     //--------------------------------------------------
-
-    // TODO implement include
-    /*
-    void include(const std::string &include) {
-        backend()->include(include);
-    }
-
-
-    std::string include() const {
-        return backend()->include();
-    }
-    */
 
     /**
      * Set the mapping information for this Property. The mapping defines how

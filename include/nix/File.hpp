@@ -47,6 +47,12 @@ public:
         return backend()->hasBlock(id);
     }
 
+    bool hasBlock(const Block &block) const {
+        if (block == none){
+            throw std::runtime_error("File::hasBlock: Empty Block entity given!");
+        }
+        return backend()->hasBlock(block.id());
+    }
 
     Block getBlock(const std::string &id) const {
         return backend()->getBlock(id);
@@ -68,6 +74,13 @@ public:
     }
 
 
+    bool deleteBlock(const Block &block) {
+        if (block == none){
+            throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
+        }
+        return backend()->deleteBlock(block.id());
+    }
+
     /**
      * Get blocks associated with this file.
      *
@@ -86,15 +99,21 @@ public:
                                   blockCount(), 
                                   filter);
     }
-    
 
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
 
-
     bool hasSection(const std::string &id) const {
         return backend()->hasSection(id);
+    }
+
+
+    bool hasSection(const Section &section) const {
+        if(section == none){
+            throw std::runtime_error("File::hasSection: Empty Section entity given!");
+        }
+        return backend()->hasSection(section.id());
     }
 
 
@@ -146,10 +165,17 @@ public:
         return backend()->deleteSection(id);
     }
 
+
+    bool deleteSection(const Section &section){
+        if(section == none){
+            throw std::runtime_error("File::hasSection: Empty Section entity given!");
+        }
+        return deleteSection(section.id());
+    }
+
     //--------------------------------------------------
     // Methods for file attribute access.
     //--------------------------------------------------
-
 
     std::string version() const {
         return backend()->version();

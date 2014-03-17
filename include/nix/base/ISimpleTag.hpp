@@ -103,7 +103,7 @@ public:
 
     virtual DataArray getReference(size_t index) const = 0;
 
-    virtual void addReference(const DataArray &reference) = 0;
+    virtual void addReference(const std::string &id) = 0;
 
     virtual bool removeReference(const std::string &id) = 0;
 
@@ -158,12 +158,12 @@ public:
     /**
      * Create a new representation.
      *
-     * @param data      The data array of this representation.
-     * @param type      The link type of this representation.
+     * @param std::string   The id of the data array of this representation.
+     * @param LinkType      The link type of this representation.
      *
      * @return The created representation object.
      */
-    virtual Representation createRepresentation(DataArray data, LinkType link_type) = 0;
+    virtual Representation createRepresentation(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
      * Deletes a representation from the tag.

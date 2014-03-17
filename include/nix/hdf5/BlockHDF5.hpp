@@ -55,7 +55,6 @@ public:
      */
     BlockHDF5(File file, Group group, const std::string &id, time_t time);
 
-
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------
@@ -67,7 +66,6 @@ public:
 
 
     Source getSource(size_t index) const;
-
 
 
     size_t sourceCount() const;
@@ -103,7 +101,6 @@ public:
     // Methods concerning simple tags.
     //--------------------------------------------------
 
-
     bool hasSimpleTag(const std::string &id) const;
 
 
@@ -124,7 +121,6 @@ public:
     //--------------------------------------------------
     // Methods concerning data tags.
     //--------------------------------------------------
-
 
     bool hasDataTag(const std::string &id) const;
 
