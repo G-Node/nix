@@ -159,8 +159,12 @@ DataArray DataTagHDF5::getReference(size_t index) const {
     } else {
         throw OutOfBounds("No data array at given index", index);
     }
-    // block will return empty object if entity not found
-    return block().getDataArray(id);
+    // get referenced array
+    if(hasReference(id) && block().hasDataArray(id)) {
+        return block().getDataArray(id);
+    } else {
+        throw runtime_error("No data array id: " + id);
+    }
 }
 
 void DataTagHDF5::addReference(const std::string &id) {
