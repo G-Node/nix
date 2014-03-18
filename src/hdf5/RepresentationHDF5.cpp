@@ -63,16 +63,28 @@ void RepresentationHDF5::data(const std::string &data_array_id){
 
 
 DataArray RepresentationHDF5::data() const{
-    string dataId;
-    group().getAttr("data", dataId);
-    return block.getDataArray(dataId);
+    if(group().hasAttr("data")) {
+        string dataId;
+        group().getAttr("data", dataId);
+        if(block.hasDataArray(dataId)) {
+            return block.getDataArray(dataId);
+        } else {
+            throw std::runtime_error("Data array not found by id in Block");
+        }
+    } else {
+        throw std::runtime_error("data field not set in group");
+    }
 }
 
 
 LinkType RepresentationHDF5::linkType() const {
-    string link_type;
-    group().getAttr("link_type", link_type);
-    return linkTypeFromString(link_type);
+    if(group().hasAttr("link_type")) {
+        string link_type;
+        group().getAttr("link_type", link_type);
+        return linkTypeFromString(link_type);
+    } else {
+        throw std::runtime_error("link_type field not set in group");
+    }
 }
 
 

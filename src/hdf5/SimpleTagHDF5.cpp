@@ -76,7 +76,7 @@ void SimpleTagHDF5::position(const vector<double> &position) {
 
 vector<double> SimpleTagHDF5::extent() const {
     vector<double> extent;
-    group().getData("extent", extent);
+    group().getData("extent", extent);        
     return extent;
 }
 
@@ -109,6 +109,7 @@ size_t SimpleTagHDF5::referenceCount() const {
 
 DataArray SimpleTagHDF5::getReference(const std::string &id) const {
     if (hasReference(id)) {
+        // block will return empty object if entity not found
         return block().getDataArray(id);
     } else {
         throw runtime_error("No reference with id: " + id);
@@ -127,7 +128,7 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
         throw OutOfBounds("No data array at given index", index);
     }
     // get referenced array
-    if(block().hasDataArray(id)) {
+    if(hasReference(id) && block().hasDataArray(id)) {
         return block().getDataArray(id);
     } else {
         throw runtime_error("No data array id: " + id);
@@ -173,19 +174,19 @@ size_t SimpleTagHDF5::representationCount() const {
 
 
 Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
-    Group rep_g = representation_group.openGroup(id, false);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, id);
-
-    return Representation(tmp);
+    if(hasRepresentation(id)) {
+        auto tmp = make_shared<RepresentationHDF5>(file(), block(), representation_group.openGroup(id, false), id);
+        return Representation(tmp);
+    } else {
+        return Representation();
+    }
 }
 
 
 Representation SimpleTagHDF5::getRepresentation(size_t index) const{
-    string rep_id = representation_group.objectName(index);
-    Group rep_g = representation_group.openGroup(rep_id, false);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, rep_id);
+    string id = representation_group.objectName(index);
 
-    return Representation(tmp);
+    return getRepresentation(id);
 }
 
 

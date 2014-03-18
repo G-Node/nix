@@ -67,8 +67,11 @@ void TestDataArray::testData()
             for(index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
 
+    CPPUNIT_ASSERT_EQUAL(array1.hasData(), false);
+    array1.createData(A, {3, 4, 2});
+    CPPUNIT_ASSERT_EQUAL(array1.hasData(), true);
     array1.setData(A);
-
+    
     //test the getDataType() function
     nix::DataType dtype = array1.getDataType();
     CPPUNIT_ASSERT_EQUAL(dtype, nix::DataType::Double);
@@ -98,7 +101,9 @@ void TestDataArray::testData()
             C[i][j] = 42.0;
 
 
+    CPPUNIT_ASSERT_EQUAL(array2.hasData(), false);
     array2.createData(C, {20, 20});
+    CPPUNIT_ASSERT_EQUAL(array2.hasData(), true);
     CPPUNIT_ASSERT_EQUAL(array2.getDataExtent(), (nix::NDSize{20, 20}));
 
     array2.setData(C, {0,0});

@@ -151,7 +151,8 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 
         return dim;
     } else {
-        throw runtime_error("No such dimension");
+        // TODO: decide whether not better throw exception here (since obligatory)
+        return Dimension();
     }
 }
 
@@ -239,10 +240,16 @@ DataArrayHDF5::~DataArrayHDF5(){}
 void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
 {
     if (group().hasData("data")) {
-        throw new std::runtime_error("DataArray alread exists"); //FIXME, better exception
+        throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
     }
 
     DataSet::create(group().h5Group(), "data", dtype, size);
+    DataSet ds = group().openData("data");
+}
+
+bool DataArrayHDF5::hasData()
+{
+    return group().hasData("data");
 }
 
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
@@ -299,7 +306,7 @@ NDSize DataArrayHDF5::getExtent(void) const
 void DataArrayHDF5::setExtent(const NDSize &extent)
 {
     if (!group().hasData("data")) {
-        return; //FIXME throw exception?
+        throw runtime_error("Data field not found in DataArray!");
     }
 
     DataSet ds = group().openData("data");
@@ -310,7 +317,7 @@ DataType DataArrayHDF5::getDataType(void) const
 {
     if (!group().hasData("data")) {
         //we could also throw an exception but I think returning
-        //Nothing here is better (ck)
+        //Nothing here is better (ck) - agreed (bm)
         return DataType::Nothing;
     }
 

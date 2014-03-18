@@ -44,11 +44,11 @@ DataArray DataTagHDF5::positions() const {
     string id;
     group().getAttr("positions", id);
 
-    if(id.length() > 0 && block().hasDataArray(id)){
+    if(block().hasDataArray(id)) {
         return block().getDataArray(id);
-    }
-
-    throw runtime_error("Unable to find DataArray with id " + id + "!");
+    } else {
+        throw runtime_error("DataArray with positions not found in Block!");
+    }    
 }
 
 
@@ -84,10 +84,9 @@ bool DataTagHDF5::hasPositions() const{
 DataArray DataTagHDF5::extents() const {
     std::string extId;
     group().getAttr("extents", extId);
-    if(extId.length() > 0 && block().hasDataArray(extId)){
-        return block().getDataArray(extId);
-    }
-    throw runtime_error("Unable to find DataArray with id " + extId + "!");
+    
+    // block will return empty object if entity not found
+    return block().getDataArray(extId);
 }
 
 
@@ -143,10 +142,10 @@ size_t DataTagHDF5::referenceCount() const {
 
 
 DataArray DataTagHDF5::getReference(const std::string &id) const {
-    if (hasReference(id)) {
+    if (hasReference(id) && block().hasDataArray(id)) {
         return block().getDataArray(id);
     } else {
-        throw runtime_error("No reference with id: " + id);
+        throw std::runtime_error("Reference not found by given id");
     }
 }
 
@@ -161,7 +160,7 @@ DataArray DataTagHDF5::getReference(size_t index) const {
         throw OutOfBounds("No data array at given index", index);
     }
     // get referenced array
-    if(block().hasDataArray(id)) {
+    if(hasReference(id) && block().hasDataArray(id)) {
         return block().getDataArray(id);
     } else {
         throw runtime_error("No data array id: " + id);
@@ -203,19 +202,18 @@ size_t DataTagHDF5::representationCount() const{
 
 
 Representation DataTagHDF5::getRepresentation(const std::string &id) const  {
-    Group group = representation_group.openGroup(id, false);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id);
-
-    return Representation(tmp);
+    if (representation_group.hasGroup(id)) { 
+        auto tmp = make_shared<RepresentationHDF5>(file(), block(), representation_group.openGroup(id, false), id);
+        return Representation(tmp);
+    } else {
+        return Representation();
+    }
 }
 
 
 Representation DataTagHDF5::getRepresentation(size_t index) const{
     string id = representation_group.objectName(index);
-    Group group = representation_group.openGroup(id, false);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id);
-
-    return Representation(tmp);
+    return getRepresentation(id);
 }
 
 

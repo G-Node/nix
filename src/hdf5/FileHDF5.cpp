@@ -77,8 +77,12 @@ bool FileHDF5::hasBlock(const std::string &id) const {
 
 
 Block FileHDF5::getBlock(const std::string &id) const {
-    shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), data.openGroup(id, false), id));
-    return Block(ptr);
+    if(hasBlock(id)) {
+        shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), data.openGroup(id, false), id));
+        return Block(ptr);
+    } else {
+        return Block();
+    }
 }
 
 
@@ -115,14 +119,18 @@ size_t FileHDF5::blockCount() const {
 }
 
 
-bool FileHDF5::hasSection(const std::string &id) const{
+bool FileHDF5::hasSection(const std::string &id) const {
     return metadata.hasGroup(id);
 }
 
 
-Section FileHDF5::getSection(const std::string &id) const{
-    shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, false), id));
-    return Section(ptr);
+Section FileHDF5::getSection(const std::string &id) const {
+    if(hasSection(id)) {
+        shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, false), id));
+        return Section(ptr);
+    } else {
+        return Section();
+    }
 }
 
 

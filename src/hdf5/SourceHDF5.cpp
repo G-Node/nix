@@ -42,15 +42,18 @@ bool SourceHDF5::hasSource(const string &id) const {
 
 
 Source SourceHDF5::getSource(const string &id) const {
-    Group grp = source_group.openGroup(id, false);
-    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id);
-    return Source(tmp);
+    if(source_group.hasGroup(id)) {
+        shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
+        return Source(tmp);
+    } else {
+        return Source();
+    }
 }
 
 
 Source SourceHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
-
+	// all checks done by "getSource(const string &id)"
     return getSource(id);
 }
 

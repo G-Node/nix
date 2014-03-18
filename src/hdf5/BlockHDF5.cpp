@@ -57,15 +57,18 @@ bool BlockHDF5::hasSource(const string &id) const {
 
 
 Source BlockHDF5::getSource(const string &id) const {
-    auto tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
-    return Source(tmp);
+    if (hasSource(id)) {
+        auto tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
+        return Source(tmp);
+    } else {
+        return nix::Source();
+    }
 }
 
 
 Source BlockHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
-    auto tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
-    return Source(tmp);
+    return getSource(id);
 }
 
 
@@ -114,19 +117,14 @@ SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
         auto tmp = make_shared<SimpleTagHDF5>(file(), block(), simple_tag_group.openGroup(id, true), id);
         return SimpleTag(tmp);
     } else {
-        throw runtime_error("Unable to find SimpleTag with id " + id + "!");
+        return nix::SimpleTag();
     }
 }
 
 
 SimpleTag BlockHDF5::getSimpleTag(size_t index) const {
-    if (index < simpleTagCount()) {
-        string id = simple_tag_group.objectName(index);
-        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), simple_tag_group.openGroup(id, true), id);
-        return SimpleTag(tmp);
-    } else {
-        throw runtime_error("Unable to find SimpleTag with the given index!");
-    }
+    string id = simple_tag_group.objectName(index);
+    return getSimpleTag(id);
 }
 
 
@@ -174,19 +172,14 @@ DataArray BlockHDF5::getDataArray(const string &id) const {
         auto tmp = make_shared<DataArrayHDF5>(file(), block(), data_array_group.openGroup(id, true), id);
         return DataArray(tmp);
     } else {
-        throw runtime_error("Unable to find DataArray with id " + id + "!");
+        return nix::DataArray();
     }
 }
 
 
 DataArray BlockHDF5::getDataArray(size_t index) const {
-    if (index < dataArrayCount()) {
-        string id = data_array_group.objectName(index);
-        auto tmp = make_shared<DataArrayHDF5>(file(), block(), data_array_group.openGroup(id, true), id);
-        return DataArray(tmp);
-    } else {
-        throw runtime_error("Unable to find DataArray with the given index!");
-    }
+    string id = data_array_group.objectName(index);
+    return getDataArray(id);
 }
 
 
@@ -248,19 +241,14 @@ DataTag BlockHDF5::getDataTag(const std::string &id) const{
         auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id);
         return DataTag(tmp);
     } else {
-        throw runtime_error("Unable to find DataTag with id " + id + "!");
+        return nix::DataTag();
     }
 }
 
 
 DataTag BlockHDF5::getDataTag(size_t index) const {
-    if (index < dataTagCount()) {
-        string id = data_tag_group.objectName(index);
-        auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id, true), id);
-        return DataTag(tmp);
-    } else {
-        throw runtime_error("Unable to find DataTag with the given index!");
-    }
+    string id = data_tag_group.objectName(index);
+    return getDataTag(id);
 }
 
 
