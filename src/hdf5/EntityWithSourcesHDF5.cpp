@@ -56,7 +56,7 @@ Source EntityWithSourcesHDF5::getSource(const size_t index) const {
         if(!result_vect.empty()) return result_vect.back();
     }
     // if above block did not return
-    return nix::Source;
+    return nix::Source();
 }
 
 void EntityWithSourcesHDF5::addSource(const std::string &id) {
