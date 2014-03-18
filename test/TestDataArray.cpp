@@ -66,9 +66,10 @@ void TestDataArray::testData()
         for(index j = 0; j != 4; ++j)
             for(index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
-
+                
+    array1.createData(A, {3, 4, 2});
     array1.setData(A);
-
+    
     //test the getDataType() function
     nix::DataType dtype = array1.getDataType();
     CPPUNIT_ASSERT_EQUAL(dtype, nix::DataType::Double);

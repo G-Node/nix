@@ -271,6 +271,9 @@ void DataArray::setData(const T &value)
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
+    if(!backend()->hasData()) { 
+        backend()->createData(dtype, shape);
+    }
     backend()->setExtent(shape);
     backend()->write(dtype, hydra.data(), shape, {});
 }

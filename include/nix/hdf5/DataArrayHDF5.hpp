@@ -103,6 +103,7 @@ public:
 
     DataArrayHDF5& operator=(const DataArrayHDF5 &other);
 
+
     virtual ~DataArrayHDF5();
 
 
@@ -111,6 +112,8 @@ public:
     //--------------------------------------------------
 
     virtual void createData(DataType dtype, const NDSize &size);
+    
+    bool hasData();
 
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
     void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
