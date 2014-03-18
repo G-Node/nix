@@ -216,6 +216,10 @@ public:
     void createData(DataType dtype, const NDSize &size) {
         backend()->createData(dtype, size);
     }
+    
+    bool hasData() {
+        return backend()->hasData();
+    }
 
     template<typename T> void createData(const T &value, const NDSize &size = {});
 
