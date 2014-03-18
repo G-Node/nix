@@ -178,9 +178,7 @@ bool SectionHDF5::hasSection(const string &id) const {
 
 Section SectionHDF5::getSection(const string &id) const {
     if (section_group.hasGroup(id)) {
-        Group grp = section_group.openGroup(id, false);
-
-        auto tmp = make_shared<SectionHDF5>(file(), grp, id);
+        auto tmp = make_shared<SectionHDF5>(file(), section_group.openGroup(id, false), id);
         return Section(tmp);
     } else {
         return Section();
@@ -241,9 +239,7 @@ bool SectionHDF5::hasProperty(const string &id) const {
 
 Property SectionHDF5::getProperty(const string &id) const {
     if (property_group.hasGroup(id)) {
-        Group g = property_group.openGroup(id,false);
-
-        auto tmp = make_shared<PropertyHDF5>(file(), g, id);
+        auto tmp = make_shared<PropertyHDF5>(file(), property_group.openGroup(id,false), id);
         return Property(tmp);
     } else {
         return Property();
@@ -295,6 +291,7 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
         }
     }
 
+    // return empty object if not found (since then "prop" is still empty Property)
     return prop;
 }
 
