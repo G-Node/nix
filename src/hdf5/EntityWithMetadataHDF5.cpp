@@ -37,13 +37,15 @@ void EntityWithMetadataHDF5::metadata(const std::string &id) {
 }
 
 
-Section EntityWithMetadataHDF5::metadata() const{
-    if(!hasMetadata()) {
-        throw runtime_error("EntityWithMetadataHDF5::metadata: This entity does not reference metadata!");
+Section EntityWithMetadataHDF5::metadata() const {
+    if (hasMetadata()) {
+        std::string sectionId;
+        group().getAttr("metadata", sectionId);
+        return file().getSection(sectionId);
     }
-    std::string sectionId;
-    group().getAttr("metadata", sectionId);
-    return file().getSection(sectionId);
+    else {
+        return nix::Section();
+    }
 }
 
 
