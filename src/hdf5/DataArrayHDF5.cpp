@@ -151,6 +151,7 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 
         return dim;
     } else {
+        // TODO: decide whether not better throw exception here (since obligatory)
         return Dimension();
     }
 }
