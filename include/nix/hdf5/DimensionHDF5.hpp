@@ -178,10 +178,10 @@ public:
     void unit(const std::string &unit);
 
 
-    std::vector<double> tics() const;
+    std::vector<double> ticks() const;
 
 
-    void tics(const std::vector<double> &tics);
+    void ticks(const std::vector<double> &ticks);
 
 
     RangeDimensionHDF5& operator=(const RangeDimensionHDF5 &other);

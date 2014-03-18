@@ -11,6 +11,7 @@
 
 #include <nix/base/ImplContainer.hpp>
 #include <nix/base/IDimensions.hpp>
+#include <nix/Exception.hpp>
 
 namespace nix {
 
@@ -375,23 +376,27 @@ public:
     }
 
     /**
-     * Retruns the set of tics stored in this RangeDimension.
+     * Retruns the set of ticks stored in this RangeDimension.
      *
-     * @return vector<double> the tics.
+     * @return vector<double> the ticks.
      */
-    std::vector<double> tics() const {
-        return backend()->tics();
+    std::vector<double> ticks() const {
+        return backend()->ticks();
     }
 
     /**
-     * Sets the tics of the RangeDimension. Tics must be ordered
+     * Sets the ticks of the RangeDimension. Ticks must be ordered
      * in ascending order.
      * -obligatory-
      *
-     * @param tics vector<double>
+     * @param ticks vector<double>
      */
-    void tics(const std::vector<double> &tics) {
-        backend()->tics(tics);
+    void ticks(const std::vector<double> &ticks) {
+    	if (!std::is_sorted(ticks.begin(), ticks.end())){
+    		std::string caller = "Range::ticks()";
+    		throw UnsortedTicks(caller);
+    	}
+        backend()->ticks(ticks);
     }
 
 

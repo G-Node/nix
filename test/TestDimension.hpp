@@ -38,7 +38,7 @@ private:
 
     CPPUNIT_TEST(testRangeDimLabel);
     CPPUNIT_TEST(testRangeDimUnit);
-    CPPUNIT_TEST(testRangeTics);
+    CPPUNIT_TEST(testRangeTicks);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -62,7 +62,7 @@ public:
     void testSetDimLabels();
 
     void testRangeDimLabel();
-    void testRangeTics();
+    void testRangeTicks();
     void testRangeDimUnit();
 
 

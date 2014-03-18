@@ -106,9 +106,9 @@ public:
 
     virtual void unit(const std::string &unit) = 0;
 
-    virtual std::vector<double> tics() const = 0;
+    virtual std::vector<double> ticks() const = 0;
 
-    virtual void tics(const std::vector<double> &tics) = 0;
+    virtual void ticks(const std::vector<double> &ticks) = 0;
 
     virtual ~IRangeDimension() {}
 

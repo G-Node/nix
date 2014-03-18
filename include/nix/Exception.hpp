@@ -71,6 +71,22 @@ private:
 };
 
 
+class UnsortedTicks: public std::exception {
+public:
+    UnsortedTicks(const std::string &caller_arg):
+    caller(caller_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("UnsortedTics: ");
+        sstream << "Ticks are not given in a ascending order: " << caller;
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string caller;
+};
+
+
 class InvalidUnit: public std::exception {
 public:
     InvalidUnit(const std::string &what_arg, const std::string &caller_arg):

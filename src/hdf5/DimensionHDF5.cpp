@@ -319,15 +319,15 @@ RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &othe
 }
 
 
-vector<double> RangeDimensionHDF5::tics() const {
-    vector<double> tics;
-    group.getData("tics", tics);
-    return tics;
+vector<double> RangeDimensionHDF5::ticks() const {
+    vector<double> ticks;
+    group.getData("ticks", ticks);
+    return ticks;
 }
 
 
-void RangeDimensionHDF5::tics(const vector<double> &tics) {
-    group.setData("tics", tics);
+void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
+    group.setData("ticks", ticks);
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}

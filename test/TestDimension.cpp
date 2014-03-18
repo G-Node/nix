@@ -184,27 +184,31 @@ void TestDimension::testRangeDimUnit(){
 }
 
 
-void TestDimension::testRangeTics(){
+void TestDimension::testRangeTicks(){
 	Dimension d = data_array.appendDimension(nix::DimensionType::Range);
 	RangeDimension rd;
-	std::vector<double> tics = {1.0, 2.0, 3.4, 42.0};
-	std::vector<double> new_tics = {-100.0, -10.0, 0.0, 10.0, 100.0};
+	std::vector<double> ticks = {1.0, 2.0, 3.4, 42.0};
+	std::vector<double> new_ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
+	std::vector<double> unordered_ticks = {-20.0, -100.0, 10.0, -10.0, 0.0};
+	std::vector<double> double_ticks = {-20.0, -10.0, 10.0, -10.0, -20.0};
 
 	CPPUNIT_ASSERT(d.dimensionType() == nix::DimensionType::Range);
 	if(d.dimensionType() == nix::DimensionType::Range){
 		rd = d;
-		CPPUNIT_ASSERT_NO_THROW(rd.tics(tics));
-		std::vector<double> retrieved_tics = rd.tics();
-		CPPUNIT_ASSERT(retrieved_tics.size() == tics.size());
-		for (size_t i = 0; i < tics.size(); i++){
-			CPPUNIT_ASSERT(tics[i] == retrieved_tics[i]);
+		CPPUNIT_ASSERT_THROW(rd.ticks(unordered_ticks), nix::UnsortedTicks);
+		CPPUNIT_ASSERT_THROW(rd.ticks(double_ticks), nix::UnsortedTicks);
+		CPPUNIT_ASSERT_NO_THROW(rd.ticks(ticks));
+		std::vector<double> retrieved_ticks = rd.ticks();
+		CPPUNIT_ASSERT(retrieved_ticks.size() == ticks.size());
+		for (size_t i = 0; i < ticks.size(); i++){
+			CPPUNIT_ASSERT(ticks[i] == retrieved_ticks[i]);
 		}
 
-		rd.tics(new_tics);
-		retrieved_tics = rd.tics();
-		CPPUNIT_ASSERT(retrieved_tics.size() == new_tics.size());
-		for (size_t i = 0; i < new_tics.size(); i++){
-			CPPUNIT_ASSERT(new_tics[i] == retrieved_tics[i]);
+		rd.ticks(new_ticks);
+		retrieved_ticks = rd.ticks();
+		CPPUNIT_ASSERT(retrieved_ticks.size() == new_ticks.size());
+		for (size_t i = 0; i < new_ticks.size(); i++){
+			CPPUNIT_ASSERT(new_ticks[i] == retrieved_ticks[i]);
 		}
 	}
 	data_array.deleteDimension(d.id());
