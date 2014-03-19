@@ -156,9 +156,9 @@ void TestDataTag::testExtents(){
 	CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"),std::runtime_error);
 
 	tag.extents(extents);
-	CPPUNIT_ASSERT(tag.hasExtents());
-	tag.extents(boost::none);
-	CPPUNIT_ASSERT(tag.hasExtents() == false);
+	CPPUNIT_ASSERT(tag.extents() == true);
+	tag.extents(none);
+	CPPUNIT_ASSERT(tag.extents() == false);
 	CPPUNIT_ASSERT(tag.hasPositions() == false);
 }
 
@@ -167,15 +167,15 @@ void TestDataTag::testPositions(){
 	CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"),std::runtime_error);
 
 	tag.positions(positions);
-	CPPUNIT_ASSERT(tag.hasPositions());
+	CPPUNIT_ASSERT(tag.positions() == true);
 }
 
 
 void TestDataTag::testPositionExtents(){
 	tag.positions(positions);
 	CPPUNIT_ASSERT_THROW(tag.extents(extents),std::runtime_error);
-	tag.extents(boost::none);
-	CPPUNIT_ASSERT(tag.hasExtents() == false);
+	tag.extents(none);
+	CPPUNIT_ASSERT(tag.extents() == false);
 }
 
 
@@ -186,7 +186,7 @@ void TestDataTag::testMetadataAccess() {
 	// TODO This test fails due to operator== of Section
 	// CPPUNIT_ASSERT(source.metadata() == section);
 
-	tag.metadata(boost::none);
+	tag.metadata(none);
 	CPPUNIT_ASSERT(!tag.hasMetadata());
 }
 
@@ -224,11 +224,11 @@ void TestDataTag::testSourceAccess(){
 }
 
 void TestDataTag::testOperators() {
-    CPPUNIT_ASSERT(tag_null == NULL);
-    CPPUNIT_ASSERT(tag_null == nullptr);
+    CPPUNIT_ASSERT(tag_null == false);
+    CPPUNIT_ASSERT(tag_null == none);
 
-    CPPUNIT_ASSERT(tag != NULL);
-    CPPUNIT_ASSERT(tag != nullptr);
+    CPPUNIT_ASSERT(tag != false);
+    CPPUNIT_ASSERT(tag != none);
 
     CPPUNIT_ASSERT(tag == tag);
     CPPUNIT_ASSERT(tag != tag_other);
@@ -236,9 +236,9 @@ void TestDataTag::testOperators() {
     tag_other = tag;
     CPPUNIT_ASSERT(tag == tag_other);
 
-    tag_other = nullptr;
-    CPPUNIT_ASSERT(tag_null == NULL);
-    CPPUNIT_ASSERT(tag_null == nullptr);
+    tag_other = none;
+    CPPUNIT_ASSERT(tag_null == false);
+    CPPUNIT_ASSERT(tag_null == none);
 }
 
 

@@ -149,7 +149,7 @@ void TestSimpleTag::testExtent(){
         CPPUNIT_ASSERT(retrieved[i] == extent[i]);
     }
 
-    st.extent(boost::none);
+    st.extent(none);
     CPPUNIT_ASSERT(st.extent().size() == 0);
     block.deleteSimpleTag(st.id());
 }
@@ -189,7 +189,7 @@ void TestSimpleTag::testMetadataAccess() {
     // TODO This test fails due to operator== of Section
     // CPPUNIT_ASSERT(source.metadata() == section);
 
-    tag.metadata(boost::none);
+    tag.metadata(none);
     CPPUNIT_ASSERT(!tag.hasMetadata());
 }
 
@@ -238,7 +238,7 @@ void TestSimpleTag::testUnits(){
         CPPUNIT_ASSERT(retrieved_units[i] == valid_units[i]);
     }
 
-    st.units(boost::none);
+    st.units(none);
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
@@ -247,11 +247,11 @@ void TestSimpleTag::testUnits(){
 
 
 void TestSimpleTag::testOperators() {
-    CPPUNIT_ASSERT(tag_null == NULL);
-    CPPUNIT_ASSERT(tag_null == nullptr);
+    CPPUNIT_ASSERT(tag_null == false);
+    CPPUNIT_ASSERT(tag_null == none);
 
-    CPPUNIT_ASSERT(tag != NULL);
-    CPPUNIT_ASSERT(tag != nullptr);
+    CPPUNIT_ASSERT(tag != false);
+    CPPUNIT_ASSERT(tag != none);
 
     CPPUNIT_ASSERT(tag == tag);
     CPPUNIT_ASSERT(tag != tag_other);
@@ -259,9 +259,9 @@ void TestSimpleTag::testOperators() {
     tag_other = tag;
     CPPUNIT_ASSERT(tag == tag_other);
 
-    tag_other = nullptr;
-    CPPUNIT_ASSERT(tag_null == NULL);
-    CPPUNIT_ASSERT(tag_null == nullptr);
+    tag_other = none;
+    CPPUNIT_ASSERT(tag_null == false);
+    CPPUNIT_ASSERT(tag_null == none);
 }
 
 

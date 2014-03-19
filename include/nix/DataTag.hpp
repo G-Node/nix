@@ -444,7 +444,7 @@ public:
         return backend()->deleteRepresentation(representation.id());
     }
 
-    virtual DataTag &operator=(std::nullptr_t) {
+    virtual DataTag &operator=(none_t) {
         nullify();
         return *this;
     }

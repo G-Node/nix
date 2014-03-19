@@ -177,7 +177,7 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Source &operator=(std::nullptr_t) {
+    virtual Source &operator=(none_t) {
         nullify();
         return *this;
     }

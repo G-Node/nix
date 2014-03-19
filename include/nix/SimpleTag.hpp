@@ -411,7 +411,7 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-    virtual SimpleTag &operator=(std::nullptr_t) {
+    virtual SimpleTag &operator=(none_t) {
         nullify();
         return *this;
     }

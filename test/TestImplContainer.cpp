@@ -34,8 +34,8 @@ void TestImplContainer::testBool() {
 
 
 void TestImplContainer::testNone() {
-    CPPUNIT_ASSERT(section != boost::none);
-    CPPUNIT_ASSERT(empty_section == boost::none);
+    CPPUNIT_ASSERT(section != none);
+    CPPUNIT_ASSERT(empty_section == none);
 }
 
 

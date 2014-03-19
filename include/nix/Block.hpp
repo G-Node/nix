@@ -531,7 +531,7 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Block &operator=(std::nullptr_t) {
+    virtual Block &operator=(none_t) {
         nullify();
         return *this;
     }

@@ -112,11 +112,11 @@ void TestFile::testSectionAccess() {
 
 
 void TestFile::testOperators(){
-    CPPUNIT_ASSERT(file_null == NULL);
-    CPPUNIT_ASSERT(file_null == nullptr);
+    CPPUNIT_ASSERT(file_null == false);
+    CPPUNIT_ASSERT(file_null == none);
 
-    CPPUNIT_ASSERT(file_open != NULL);
-    CPPUNIT_ASSERT(file_open != nullptr);
+    CPPUNIT_ASSERT(file_open != false);
+    CPPUNIT_ASSERT(file_open != none);
 
     CPPUNIT_ASSERT(file_open == file_open);
     CPPUNIT_ASSERT(file_open != file_other);
@@ -124,8 +124,8 @@ void TestFile::testOperators(){
     file_other = file_open;
     CPPUNIT_ASSERT(file_other == file_open);
 
-    file_other = nullptr;
-    CPPUNIT_ASSERT(file_null == NULL);
-    CPPUNIT_ASSERT(file_null == nullptr);
+    file_other = none;
+    CPPUNIT_ASSERT(file_null == false);
+    CPPUNIT_ASSERT(file_null == none);
 }
 

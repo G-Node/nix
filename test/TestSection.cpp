@@ -250,11 +250,11 @@ void TestSection::testPropertyAccess() {
 
 
 void TestSection::testOperators() {
-    CPPUNIT_ASSERT(section_null == NULL);
-    CPPUNIT_ASSERT(section_null == nullptr);
+    CPPUNIT_ASSERT(section_null == false);
+    CPPUNIT_ASSERT(section_null == none);
 
-    CPPUNIT_ASSERT(section != NULL);
-    CPPUNIT_ASSERT(section != nullptr);
+    CPPUNIT_ASSERT(section != false);
+    CPPUNIT_ASSERT(section != none);
 
     CPPUNIT_ASSERT(section == section);
     CPPUNIT_ASSERT(section != section_other);
@@ -262,9 +262,9 @@ void TestSection::testOperators() {
     section_other = section;
     CPPUNIT_ASSERT(section == section_other);
 
-    section_other = nullptr;
-    CPPUNIT_ASSERT(section_null == NULL);
-    CPPUNIT_ASSERT(section_null == nullptr);
+    section_other = none;
+    CPPUNIT_ASSERT(section_null == false);
+    CPPUNIT_ASSERT(section_null == none);
 }
 
 

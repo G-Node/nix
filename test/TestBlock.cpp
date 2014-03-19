@@ -66,7 +66,7 @@ void TestBlock::testMetadataAccess() {
     block.metadata(section);
     CPPUNIT_ASSERT(block.hasMetadata());
 
-    block.metadata(boost::none);
+    block.metadata(none);
     CPPUNIT_ASSERT(!block.hasMetadata());
 }
 
@@ -211,11 +211,11 @@ void TestBlock::testDataTagAccess() {
 
 
 void TestBlock::testOperators() {
-    CPPUNIT_ASSERT(block_null == NULL);
-    CPPUNIT_ASSERT(block_null == nullptr);
+    CPPUNIT_ASSERT(block_null == false);
+    CPPUNIT_ASSERT(block_null == none);
 
-    CPPUNIT_ASSERT(block != NULL);
-    CPPUNIT_ASSERT(block != nullptr);
+    CPPUNIT_ASSERT(block != false);
+    CPPUNIT_ASSERT(block != none);
 
     CPPUNIT_ASSERT(block == block);
     CPPUNIT_ASSERT(block != block_other);
@@ -223,9 +223,9 @@ void TestBlock::testOperators() {
     block_other = block;
     CPPUNIT_ASSERT(block == block_other);
 
-    block_other = nullptr;
-    CPPUNIT_ASSERT(block_null == NULL);
-    CPPUNIT_ASSERT(block_null == nullptr);
+    block_other = none;
+    CPPUNIT_ASSERT(block_null == false);
+    CPPUNIT_ASSERT(block_null == none);
 }
 
 
