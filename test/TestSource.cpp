@@ -66,7 +66,7 @@ void TestSource::testMetadataAccess() {
     source.metadata(section);
     CPPUNIT_ASSERT(source.hasMetadata());
 
-    source.metadata(boost::none);
+    source.metadata(none);
     CPPUNIT_ASSERT(!source.hasMetadata());
 }
 
@@ -138,11 +138,11 @@ void TestSource::testFindSource() {
 
 
 void TestSource::testOperators() {
-    CPPUNIT_ASSERT(source_null == NULL);
-    CPPUNIT_ASSERT(source_null == nullptr);
+    CPPUNIT_ASSERT(source_null == false);
+    CPPUNIT_ASSERT(source_null == none);
 
-    CPPUNIT_ASSERT(source != NULL);
-    CPPUNIT_ASSERT(source != nullptr);
+    CPPUNIT_ASSERT(source != false);
+    CPPUNIT_ASSERT(source != none);
 
     CPPUNIT_ASSERT(source == source);
     CPPUNIT_ASSERT(source != source_other);
@@ -150,9 +150,9 @@ void TestSource::testOperators() {
     source_other = source;
     CPPUNIT_ASSERT(source == source_other);
 
-    source_other = nullptr;
-    CPPUNIT_ASSERT(source_null == NULL);
-    CPPUNIT_ASSERT(source_null == nullptr);
+    source_other = none;
+    CPPUNIT_ASSERT(source_null == false);
+    CPPUNIT_ASSERT(source_null == none);
 }
 
 

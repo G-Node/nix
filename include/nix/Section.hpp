@@ -437,7 +437,7 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Section &operator=(std::nullptr_t nullp) {
+    virtual Section &operator=(none_t) {
         nullify();
         return *this;
     }

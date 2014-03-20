@@ -233,7 +233,7 @@ public:
     }
 
 
-    virtual File &operator=(std::nullptr_t) {
+    virtual File &operator=(none_t) {
         nullify();
         return *this;
     }

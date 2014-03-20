@@ -176,7 +176,7 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    virtual Property &operator=(std::nullptr_t) {
+    virtual Property &operator=(none_t) {
         nullify();
         return *this;
     }

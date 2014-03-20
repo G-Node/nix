@@ -144,7 +144,7 @@ void TestProperty::testUnit(){
     p1.unit(valid_unit);
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
     CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error);
-    p1.unit(boost::none);
+    p1.unit(none);
     CPPUNIT_ASSERT(!p1.unit());
     CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == second_unit);
@@ -152,11 +152,11 @@ void TestProperty::testUnit(){
 
 
 void TestProperty::testOperators() {
-    CPPUNIT_ASSERT(property_null == NULL);
-    CPPUNIT_ASSERT(property_null == nullptr);
+    CPPUNIT_ASSERT(property_null == false);
+    CPPUNIT_ASSERT(property_null == none);
 
-    CPPUNIT_ASSERT(property != NULL);
-    CPPUNIT_ASSERT(property != nullptr);
+    CPPUNIT_ASSERT(property != false);
+    CPPUNIT_ASSERT(property != none);
 
     CPPUNIT_ASSERT(property == property);
     CPPUNIT_ASSERT(property != property_other);
@@ -164,9 +164,9 @@ void TestProperty::testOperators() {
     property_other = property;
     CPPUNIT_ASSERT(property == property_other);
 
-    property_other = nullptr;
-    CPPUNIT_ASSERT(property_null == NULL);
-    CPPUNIT_ASSERT(property_null == nullptr);
+    property_other = none;
+    CPPUNIT_ASSERT(property_null == false);
+    CPPUNIT_ASSERT(property_null == none);
 }
 
 
