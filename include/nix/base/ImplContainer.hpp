@@ -132,20 +132,35 @@ public:
         return !(*this == other);
     }
 
-    // bool "==" operator "boost::none_t" overload: when an object
-    // is compared to "none_t" (e.g. boost::none) internally we compare
-    // the "impl_ptr" to the null pointer.
+    /**
+     * bool "==" operator "boost::none_t" overload: when an object
+     * is compared to "none_t" (e.g. boost::none) internally we compare
+     * the "impl_ptr" to the null pointer.
+     * 
+     * @param boost::none_t
+     * @return bool
+     */
     virtual bool operator==(none_t t) const {
         return impl_ptr == nullptr;
     }
     
-    // bool "==" operator "bool" overload: when an object is compared 
-    // to "bool" internally we compare "!isNone" to the "bool".
+    /**
+     * bool "==" operator "bool" overload: when an object is compared 
+     * to "bool" internally we compare "!isNone" to the "bool".
+     * 
+     * @param bool
+     * @return bool
+     */
     virtual bool operator==(bool b) const {
         return !isNone() == b;
     }
 
-    // bool "=!" operator "boost::none_t" overload: same as "==" operator.
+    /**
+     * bool "=!" operator "boost::none_t" overload: same as "==" operator.
+     * 
+     * @param boost::none_t
+     * @return bool
+     */
     virtual bool operator!=(none_t t) const {
         return impl_ptr != nullptr;
     }
@@ -160,27 +175,39 @@ public:
 
     virtual ~ImplContainer() {}
 
-    //const version of impl() see non-const version
-    //for details of how and when to use
+    /**
+     * const version of impl() see non-const version
+     * for details of how and when to use
+     * 
+     * @return object pointer
+     */
     const std::shared_ptr<T> & impl() const {
         return impl_ptr;
     }
 
-    //Get a reference to the internal shared pointer (impl_ptr)
-    //*no* checking is done to see if the impl_ptr is set or not
-    //Use this function with utmost care and prefer backend() for
-    //normal operations!
+    /**
+     * Get a reference to the internal shared pointer (impl_ptr)
+     * *no* checking is done to see if the impl_ptr is set or not
+     * Use this function with utmost care and prefer backend() for
+     * normal operations!
+     * 
+     * @return object pointer
+     */
     std::shared_ptr<T> & impl() {
         return impl_ptr;
     }
 
 protected:
 
-    //Access to the pointer to the specific "backend" instance, i.e. the
-    //implementation of e.g. IFile (like FileHDF5 for hdf5). This pointer
-    //is held internally by a std::shared_ptr (impl_ptr).
-    //NB: A check *is* done to see if the shared_ptr is valid, i.e. holding
-    //    a pointer, and exception is thrown otherwise
+    /**
+     * Access to the pointer to the specific "backend" instance, i.e. the
+     * implementation of e.g. IFile (like FileHDF5 for hdf5). This pointer
+     * is held internally by a std::shared_ptr (impl_ptr).
+     * NB: A check *is* done to see if the shared_ptr is valid, i.e. holding
+     * a pointer, and exception is thrown otherwise
+     * 
+     * @return object pointer
+     */
     T* backend() {
         if (isNone()) {
             throw UninitializedEntity();
@@ -189,8 +216,12 @@ protected:
         return impl_ptr.get();
     }
 
-    //const version of backend() see non-const version
-    //for details of how and when to use
+    /**
+     * const version of backend() see non-const version
+     * for details of how and when to use
+     * 
+     * @return object pointer
+     */
     const T* backend() const {
         return const_cast<ImplContainer *>(this)->backend();
     }
