@@ -156,11 +156,11 @@ void TestDataArray::testPolynomial()
     std::vector<double> ret = array2.polynomCoefficients();
     for(size_t i=0; i<ret.size(); i++) {
         CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
- }
+    }
 
- array2.expansionOrigin(3);
- double retval = array2.expansionOrigin();
- CPPUNIT_ASSERT(retval == 3);
+    array2.expansionOrigin(3);
+    boost::optional<double> retval = array2.expansionOrigin();
+    CPPUNIT_ASSERT(*retval == 3);
 }
 
 void TestDataArray::testLabel()
@@ -184,13 +184,21 @@ void TestDataArray::testUnit()
 void TestDataArray::testDimension()
 {
     std::vector<nix::Dimension> dims;
+    std::vector<double> ticks(5);
+    double samplingInterval;
+    
+    // set samplingInterval & ticks
+    samplingInterval = boost::math::constants::pi<double>();
+    for (auto it = ticks.begin(); it != ticks.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
 
-    dims.push_back(array2.createDimension(1, nix::DimensionType::Sample));
-    dims.push_back(array2.createDimension(2, nix::DimensionType::Set));
-    dims.push_back(array2.createDimension(3, nix::DimensionType::Range));
-    dims.push_back(array2.appendDimension(nix::DimensionType::Sample));
-    dims.push_back(array2.appendDimension(nix::DimensionType::Set));
-    dims[3] = array2.createDimension(4, nix::DimensionType::Range);
+    dims.push_back(array2.createSampledDimension(1, samplingInterval));
+    dims.push_back(array2.createSetDimension(2));
+    dims.push_back(array2.createRangeDimension(3, ticks));
+    dims.push_back(array2.appendSampledDimension(samplingInterval));
+    dims.push_back(array2.appendSetDimension());
+    dims[3] = array2.createRangeDimension(4, ticks);
 
     CPPUNIT_ASSERT(array2.getDimension(dims[0].id()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
@@ -211,7 +219,6 @@ void TestDataArray::testDimension()
     CPPUNIT_ASSERT(dims.size() == 2);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Range);
-
     dims = array2.dimensions();
     CPPUNIT_ASSERT(dims.size() == 5);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
@@ -226,6 +233,7 @@ void TestDataArray::testDimension()
     array2.deleteDimension(1);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
+
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);

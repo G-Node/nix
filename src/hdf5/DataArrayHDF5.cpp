@@ -41,10 +41,12 @@ DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &
 // Element getters and setters
 //--------------------------------------------------
 
-string DataArrayHDF5::label() const {
+boost::optional<std::string> DataArrayHDF5::label() const {
+    boost::optional<std::string> ret;
     string value;
     group().getAttr("label", value);
-    return value;
+    ret = value;
+    return ret;
 }
 
 
@@ -59,10 +61,20 @@ void DataArrayHDF5::label(const string &label) {
 }
 
 
-string DataArrayHDF5::unit() const {
+void DataArrayHDF5::label(const none_t t) {
+    if(group().hasAttr("label")) {
+        group().removeAttr("label");
+    }
+    forceUpdatedAt();
+}
+
+
+boost::optional<std::string> DataArrayHDF5::unit() const {
+    boost::optional<std::string> ret;
     string value;
     group().getAttr("unit", value);
-    return value;
+    ret = value;
+    return ret;
 }
 
 
@@ -77,16 +89,34 @@ void DataArrayHDF5::unit(const string &unit) {
 }
 
 
+void DataArrayHDF5::unit(const none_t t) {
+    if(group().hasAttr("unit")) {
+        group().removeAttr("unit");
+    }
+    forceUpdatedAt();
+}
+
+
 // TODO use defaults
-double DataArrayHDF5::expansionOrigin() const {
+boost::optional<double> DataArrayHDF5::expansionOrigin() const {
+    boost::optional<double> ret;
     double expansion_origin;
     group().getAttr("expansion_origin", expansion_origin);
-    return expansion_origin;
+    ret = expansion_origin;
+    return ret;
 }
 
 
 void DataArrayHDF5::expansionOrigin(double expansion_origin) {
     group().setAttr("expansion_origin", expansion_origin);
+    forceUpdatedAt();
+}
+
+
+void DataArrayHDF5::expansionOrigin(const none_t t) {
+    if(group().hasAttr("expansionOrigin")) {
+        group().removeAttr("expansionOrigin");
+    }
     forceUpdatedAt();
 }
 
@@ -115,6 +145,14 @@ void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
     forceUpdatedAt();
 }
 
+
+void DataArrayHDF5::polynomCoefficients(const none_t t) {
+    if(group().hasAttr("polynom_coefficients")) {
+        group().removeAttr("polynom_coefficients");
+    }
+    forceUpdatedAt();
+}
+
 //--------------------------------------------------
 // Methods concerning dimensions
 //--------------------------------------------------
@@ -140,10 +178,14 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
             auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
             dim = SetDimension(tmp);
         } else if (dim_type == DimensionType::Range) {
-            auto tmp = make_shared<RangeDimensionHDF5>(dim_group, id);
+            std::vector<double> ticks;
+            dim_group.getData("ticks", ticks);
+            auto tmp = make_shared<RangeDimensionHDF5>(dim_group, id, ticks);
             dim = RangeDimension(tmp);
         } else if (dim_type == DimensionType::Sample) {
-            auto tmp = make_shared<SampledDimensionHDF5>(dim_group, id);
+            double samplingInterval;
+            dim_group.getAttr("sampling_interval", samplingInterval);
+            auto tmp = make_shared<SampledDimensionHDF5>(dim_group, id, samplingInterval);
             dim = SampledDimension(tmp);
         } else {
             throw runtime_error("Invalid dimension type");
@@ -151,13 +193,13 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 
         return dim;
     } else {
-        // TODO: decide whether not better throw exception here (since obligatory)
         return Dimension();
     }
 }
 
 
-Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
+template<DimensionType type, typename T>
+Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
     size_t dim_count = dimensionCount();
 
     if (id > (dim_count + 1) || id <= 0) { // dim_count+1 since index starts at 1
@@ -173,20 +215,62 @@ Dimension DataArrayHDF5::createDimension(size_t id, DimensionType type) {
     Group dim_group = dimension_group.openGroup(str_id, true);
     Dimension dim;
 
-    if (type == DimensionType::Set ) {
-        auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
-        dim = SetDimension(tmp);
-    } else if (type == DimensionType::Range) {
-        auto tmp = make_shared<RangeDimensionHDF5>(dim_group, id);
-        dim = RangeDimension(tmp);
-    } else if (type == DimensionType::Sample) {
-        auto tmp = make_shared<SampledDimensionHDF5>(dim_group, id);
-        dim = SampledDimension(tmp);
+    if (type == DimensionType::Range || type == DimensionType::Sample) {
+        typedef typename std::conditional<type == DimensionType::Range, 
+                                          RangeDimensionHDF5, 
+                                          SampledDimensionHDF5>::type 
+                                          dimTypeHDF5;
+        typedef typename std::conditional<type == DimensionType::Range, 
+                                          RangeDimension, 
+                                          SampledDimension>::type 
+                                          dimType;
+        auto tmp = make_shared<dimTypeHDF5>(dim_group, id, var);
+        dim = dimType(tmp);
     } else {
         throw runtime_error("Invalid dimension type");
     }
 
     return dim;
+}
+
+
+template<>
+Dimension DataArrayHDF5::_createDimension<DimensionType::Set, none_t>(size_t id, none_t var) {
+    size_t dim_count = dimensionCount();
+
+    if (id > (dim_count + 1) || id <= 0) { // dim_count+1 since index starts at 1
+        runtime_error("Invalid dimension id: has to be 0 < id <= #(dimensions)+1");
+    }
+
+    string str_id = util::numToStr(id);
+
+    if (dimension_group.hasGroup(str_id)) {
+        dimension_group.removeGroup(str_id);
+    }
+
+    Group dim_group = dimension_group.openGroup(str_id, true);
+    Dimension dim;
+
+    // no dim-type check needed since method only called if type=DimensionType::Set
+    auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
+    dim = SetDimension(tmp);
+
+    return dim;
+}
+
+
+Dimension DataArrayHDF5::createSetDimension(size_t id) {
+    return _createDimension<DimensionType::Set>(id);
+}
+
+
+Dimension DataArrayHDF5::createRangeDimension(size_t id, std::vector<double> ticks) {
+    return _createDimension<DimensionType::Range>(id, ticks);
+}
+
+
+Dimension DataArrayHDF5::createSampledDimension(size_t id, double samplingInterval) {
+    return _createDimension<DimensionType::Sample>(id, samplingInterval);
 }
 
 

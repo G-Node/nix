@@ -50,14 +50,18 @@ class NIXAPI ISampledDimension : virtual public IDimension {
 
 public:
 
-    virtual std::string label() const = 0;
+    virtual boost::optional<std::string> label() const = 0;
 
     virtual void label(const std::string &label) = 0;
 
-    virtual std::string unit() const = 0;
+    virtual void label(const none_t t) = 0;
+    
+    virtual boost::optional<std::string> unit() const = 0;
 
     virtual void unit(const std::string &unit) = 0;
 
+    virtual void unit(const none_t t) = 0;
+    
     virtual double samplingInterval() const = 0;
 
     virtual void samplingInterval(double interval) = 0;
@@ -98,14 +102,18 @@ class NIXAPI IRangeDimension : virtual public IDimension {
 
 public:
 
-    virtual std::string label() const = 0;
+    virtual boost::optional<std::string> label() const = 0;
 
     virtual void label(const std::string &label) = 0;
 
-    virtual std::string unit() const = 0;
+    virtual void label(const none_t t) = 0;
+    
+    virtual boost::optional<std::string> unit() const = 0;
 
     virtual void unit(const std::string &unit) = 0;
 
+    virtual void unit(const none_t t) = 0;
+    
     virtual std::vector<double> ticks() const = 0;
 
     virtual void ticks(const std::vector<double> &ticks) = 0;

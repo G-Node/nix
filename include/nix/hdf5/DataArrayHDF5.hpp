@@ -54,28 +54,40 @@ public:
     //--------------------------------------------------
 
 
-    std::string label() const;
+    boost::optional<std::string> label() const;
 
 
     void label(const std::string &label);
 
 
-    std::string unit() const;
+    void label(const none_t t);
+        
+
+    boost::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
-    
 
-    double expansionOrigin()const;
+
+    void unit(const none_t t);
+        
+
+    boost::optional<double> expansionOrigin() const;
 
 
     void expansionOrigin(double expansion_origin);
 
 
+    void expansionOrigin(const none_t t);
+    
+
     void polynomCoefficients(std::vector<double> &polynom_coefficients);
 
 
     std::vector<double> polynomCoefficients() const;
+
+
+    void polynomCoefficients(const none_t t);
 
 
     //--------------------------------------------------
@@ -88,7 +100,17 @@ public:
     Dimension getDimension(size_t id) const;
 
 
-    Dimension createDimension(size_t id, DimensionType type);
+    Dimension createSetDimension(size_t id);
+
+
+    Dimension createRangeDimension(size_t id, std::vector<double> ticks);
+
+
+    Dimension createSampledDimension(size_t id, double samplingInterval);
+    
+        
+    template<DimensionType type, typename T = none_t>
+    Dimension _createDimension(size_t id, T var = none);
 
 
     bool deleteDimension(size_t id);
