@@ -50,6 +50,8 @@ void TestSimpleTag::testName() {
     std::string name = util::createId("", 32);
     tag.name(name);
     CPPUNIT_ASSERT(*tag.name() == name);
+	tag.name(none);
+	CPPUNIT_ASSERT(*tag.name() == "");
 }
 
 
@@ -65,6 +67,8 @@ void TestSimpleTag::testDefinition() {
     std::string def = util::createId("", 128);
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
+	tag.definition(none);
+	CPPUNIT_ASSERT(*tag.definition() == "");
 }
 
 
@@ -227,10 +231,7 @@ void TestSimpleTag::testSourceAccess() {
     }
 
     CPPUNIT_ASSERT(tag.sourceCount() == names.size());
-    //TODO the following test crashes!!!
-    //std::vector<Source> sources = tag.sources();
-    //std::cerr << "\n" <<sources.size() << "\n";
-    //CPPUNIT_ASSERT(tag.sources().size() == names.size());
+    CPPUNIT_ASSERT(tag.sources().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source child_source = tag.getSource(*it);

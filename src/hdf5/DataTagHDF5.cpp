@@ -22,21 +22,25 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
       reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
+    positions(tag.positions().id());
 }
 
 
-DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, const string &id)
+DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
+                         const string &id, const DataArray _positions)
     : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
+    positions(_positions.id());
 }
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group,
-                         const std::string &id, time_t time)
+                         const std::string &id, const DataArray _positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, time), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
+    positions(_positions.id());
 }
 
 
@@ -64,7 +68,7 @@ void DataTagHDF5::positions(const string &id) {
             if(hasExtents()){
                 DataArray pos = block().getDataArray(id);
                 DataArray ext = extents();
-                if(!checkDimensions(ext,pos))
+                if(!checkDimensions(ext, pos))
                     throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
             }
             group().setAttr("positions", id);
@@ -102,7 +106,7 @@ void DataTagHDF5::extents(const string &extentsId) {
             if(hasPositions()) {
                 DataArray ext = block().getDataArray(extentsId);
                 DataArray pos = positions();
-                if(!checkDimensions(ext,pos))
+                if(!checkDimensions(ext, pos))
                     throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
             }
             group().setAttr("extents", extentsId);
@@ -282,8 +286,8 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
         return valid;
 
     boost::multi_array<double,1>::size_type dims = aData.num_dimensions();
-    for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++){
-        valid = (aData.shape()[i] != bData.shape()[i]);
+    for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++) {
+        valid = (aData.shape()[i] == bData.shape()[i]);
         if(!valid)
             return valid;
     }

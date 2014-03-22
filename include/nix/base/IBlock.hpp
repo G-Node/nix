@@ -254,7 +254,8 @@ public:
      *
      * @return The newly created tag.
      */
-    virtual DataTag createDataTag(const std::string &name, const std::string &type) = 0;
+    virtual DataTag createDataTag(const std::string &name, const std::string &type, 
+                                  const DataArray positions) = 0;
 
     /**
      * Deletes a data tag from the block.

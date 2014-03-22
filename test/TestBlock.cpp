@@ -186,13 +186,24 @@ void TestBlock::testSimpleTagAccess() {
 
 void TestBlock::testDataTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    // create a valid positions data array below
+    typedef boost::multi_array<double, 3>::index index;
+    DataArray positions = block.createDataArray("array_one", "testdata");
+    boost::multi_array<double, 3> A(boost::extents[3][4][2]);
+    int values = 0;
+    for(index i = 0; i != 3; ++i)
+        for(index j = 0; j != 4; ++j)
+            for(index k = 0; k != 2; ++k)
+                A[i][j][k] = values++;
+
+    positions.createData(A, {3, 4, 2});
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        DataTag tag = block.createDataTag(*it, "segment");
+        DataTag tag = block.createDataTag(*it, "segment", positions);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());

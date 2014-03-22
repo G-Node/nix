@@ -34,11 +34,12 @@ public:
     DataTagHDF5(const DataTagHDF5 &tag);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
+    DataTagHDF5(const File &file, const Block &block, const Group &group, 
+                const std::string &id, const DataArray _positions);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                time_t time);
+    DataTagHDF5(const File &file, const Block &block, const Group &group, 
+                const std::string &id, const DataArray _positions, time_t time);
 
 
     DataArray positions() const;

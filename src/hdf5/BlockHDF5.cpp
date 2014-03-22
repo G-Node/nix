@@ -221,13 +221,14 @@ bool BlockHDF5::deleteDataArray(const string &id) {
 
 // Methods related to DataTag
 
-DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &type){
+DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &type, 
+                                 const DataArray positions) {
     string id = util::createId("data_tag");
     while (hasDataTag(id)) {
         id = util::createId("data_tag");
     }
 
-    auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id);
+    auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id, positions);
     tmp->name(name);
     tmp->type(type);
 
@@ -235,14 +236,18 @@ DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &typ
 }
 
 
-bool BlockHDF5::hasDataTag(const std::string &id) const{
+bool BlockHDF5::hasDataTag(const std::string &id) const {
     return data_tag_group.hasObject(id);
 }
 
 
-DataTag BlockHDF5::getDataTag(const std::string &id) const{
+DataTag BlockHDF5::getDataTag(const std::string &id) const {
     if (hasDataTag(id)) {
-        auto tmp = make_shared<DataTagHDF5>(file(), block(), data_tag_group.openGroup(id), id);
+        Group tag_group = data_tag_group.openGroup(id);
+        std::string positions_id;
+        tag_group.getAttr("positions", positions_id);
+        DataArray positions = getDataArray(positions_id);
+        auto tmp = make_shared<DataTagHDF5>(file(), block(), tag_group, id, positions);
         return DataTag(tmp);
     } else {
         return nix::DataTag();
@@ -261,7 +266,7 @@ size_t BlockHDF5::dataTagCount() const{
 }
 
 
-bool BlockHDF5::deleteDataTag(const std::string &id){
+bool BlockHDF5::deleteDataTag(const std::string &id) {
     bool deleted = false;
     if (hasDataTag(id)) {
         data_tag_group.removeGroup(id);

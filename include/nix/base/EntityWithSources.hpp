@@ -19,7 +19,7 @@ namespace base {
 
 // TODO what about TNode?
 template <typename T>
-class EntityWithSources : virtual public IEntityWithSources, public EntityWithMetadata<T> {
+class NIXAPI EntityWithSources : virtual public base::IEntityWithSources, public base::EntityWithMetadata<T> {
 
 public:
 
@@ -101,14 +101,15 @@ public:
      * @return object entities as a vector
      */    
     std::vector<Source> sources(util::AcceptAll<Source>::type filter
-                                = util::AcceptAll<Source>()) const
+                                      = util::AcceptAll<Source>()) const
     {
         auto f = [this] (size_t i) { return getSource(i); };
         // NOTE: we need to use special notation here since compiler otherwise
         // reads: ((this->getEntities) < Source) > f
-        return this->template getEntities<Source>(f,
+        /*return this->template getEntities<Source>(f,
                                    sourceCount(),
-                                   filter);
+                                   filter);*/
+        return nix::base::ImplContainer<T>::template getEntities<nix::Source, decltype(f)>(f,sourceCount(),filter);
     }
 
     /**
