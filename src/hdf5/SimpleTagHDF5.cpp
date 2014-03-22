@@ -23,22 +23,25 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
       references_list(tag.group(), "references")
 {
     representation_group = tag.representation_group;
+    position(tag.position());
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id)
+                             const string &id, const vector<double> _position)
     : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
+    position(_position);
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, time_t time)
+                             const string &id, const vector<double> _position, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
+    position(_position);
 }
 
 
@@ -64,8 +67,13 @@ void SimpleTagHDF5::units(const none_t t) {
 
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
-    group().getData("position", position);
-    return position;
+    
+    if(group().hasData("position")) {
+        group().getData("position", position);
+        return position;
+    } else {
+        throw runtime_error("position not found!");
+    }    
 }
 
 
@@ -112,7 +120,7 @@ DataArray SimpleTagHDF5::getReference(const std::string &id) const {
         // block will return empty object if entity not found
         return block().getDataArray(id);
     } else {
-        throw runtime_error("No reference with id: " + id);
+        return DataArray();
     }
 }
 
@@ -128,10 +136,11 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
         throw OutOfBounds("No data array at given index", index);
     }
     // get referenced array
-    if(hasReference(id) && block().hasDataArray(id)) {
+    if(hasReference(id)) {
+        // block will return empty object if DataArray not found
         return block().getDataArray(id);
     } else {
-        throw runtime_error("No data array id: " + id);
+        return DataArray();
     }
 }
 

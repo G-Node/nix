@@ -190,10 +190,12 @@ public:
      *
      * @param name      The name of the simple tag to create.
      * @param type      The type of the tag.
+     * @param vector<double> position
      *
      * @return The newly created tag.
      */
-    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type) = 0;
+    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
+                                      const std::vector<double> position) = 0;
 
     /**
      * Deletes a simple tag from the block.

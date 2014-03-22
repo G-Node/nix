@@ -25,7 +25,6 @@ void TestDimension::setUp() {
 void TestDimension::tearDown() {
 	file.deleteBlock(block.id());
 	file.close();
-
 }
 
 
@@ -37,7 +36,7 @@ void TestDimension::testId() {
 }
 
 
-void TestDimension::testSampledDimLabel(){
+void TestDimension::testSampledDimLabel() {
 	std::string label = "aLabel";
 	std::string other_label = "anotherLabel";    
     double samplingInterval = boost::math::constants::pi<double>();
@@ -130,7 +129,7 @@ void TestDimension::testSampledDimOperators() {
 }
 
 
-void TestDimension::testSetDimLabels(){
+void TestDimension::testSetDimLabels() {
 	std::vector<std::string> labels = {"label_a", "label_b","label_c","label_d","label_e"};
 	std::vector<std::string> new_labels = {"new label_a", "new label_b","new label_c"};
 
@@ -158,7 +157,7 @@ void TestDimension::testSetDimLabels(){
 }
 
 
-void TestDimension::testRangeDimLabel(){
+void TestDimension::testRangeDimLabel() {
 	std::string label = "aLabel";
 	std::string other_label = "anotherLabel";
     std::vector<double> ticks(5);
@@ -181,7 +180,7 @@ void TestDimension::testRangeDimLabel(){
 }
 
 
-void TestDimension::testRangeDimUnit(){
+void TestDimension::testRangeDimUnit() {
 	std::string invalidUnit = "invalidunit";
 	std::string validUnit = "ms";
     std::vector<double> ticks(5);
@@ -203,7 +202,7 @@ void TestDimension::testRangeDimUnit(){
 }
 
 
-void TestDimension::testRangeTicks(){
+void TestDimension::testRangeTicks() {
 	std::vector<double> ticks = {1.0, 2.0, 3.4, 42.0};
 	std::vector<double> new_ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
 	std::vector<double> unordered_ticks = {-20.0, -100.0, 10.0, -10.0, 0.0};

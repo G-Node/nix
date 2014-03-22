@@ -44,13 +44,14 @@ public:
     /**
      * Standard constructor
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, 
+                  const std::string &id, const vector<double> _position);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                  time_t time);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, 
+                  const std::string &id, const vector<double> _position, time_t time);
 
 
     std::vector<std::string> units() const;

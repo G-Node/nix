@@ -378,11 +378,13 @@ public:
      *
      * @param name      The name of the simple tag to create.
      * @param type      The type of the tag.
+     * @param vector<double> position
      *
      * @return The newly created tag.
      */
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
-        return backend()->createSimpleTag(name, type);
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
+                              const std::vector<double> position) {
+        return backend()->createSimpleTag(name, type, position);
     }
 
     /**

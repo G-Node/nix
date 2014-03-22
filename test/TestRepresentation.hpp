@@ -19,6 +19,7 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
+#include <boost/math/constants/constants.hpp>
 
 #include <nix.hpp>
 
