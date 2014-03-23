@@ -184,7 +184,14 @@ size_t SimpleTagHDF5::representationCount() const {
 
 Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
     if(hasRepresentation(id)) {
-        auto tmp = make_shared<RepresentationHDF5>(file(), block(), representation_group.openGroup(id, false), id);
+        Group group = representation_group.openGroup(id, false);
+        string link_type;
+        group.getAttr("link_type", link_type);
+        LinkType linkType = linkTypeFromString(link_type);
+        string dataId;
+        group.getAttr("data", dataId);
+        DataArray data = block().getDataArray(dataId);
+        auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
         return Representation(tmp);
     } else {
         return Representation();
@@ -203,10 +210,10 @@ Representation SimpleTagHDF5::createRepresentation(const std::string &data_array
     string rep_id = util::createId("representation");
     while(representation_group.hasObject(rep_id))
         rep_id = util::createId("representation");
-    Group rep_g = representation_group.openGroup(rep_id, true);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, rep_id);
-    tmp->linkType(link_type);
-    tmp->data(data_array_id);
+        
+    Group group = representation_group.openGroup(rep_id, true);
+    DataArray data = block().getDataArray(data_array_id);
+    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, rep_id, data, link_type);
 
     return Representation(tmp);
 }

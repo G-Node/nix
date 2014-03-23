@@ -51,11 +51,11 @@ public:
 
 
     RepresentationHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id);
+                       const std::string &id, DataArray _data, LinkType _link_type);
 
 
     RepresentationHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id, time_t time);
+                       const std::string &id, DataArray _data, LinkType _link_type, time_t time);
 
 
     void linkType(LinkType type);
