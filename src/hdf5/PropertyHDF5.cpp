@@ -58,8 +58,8 @@ boost::optional<string> PropertyHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
     if(group().getAttr("mapping", mapping)) {
-		ret = mapping;
-	}
+        ret = mapping;
+    }
     return ret;
 }
 
@@ -87,8 +87,8 @@ boost::optional<string> PropertyHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
     if(group().getAttr("unit", unit)) {
-		ret = unit;
-	}
+        ret = unit;
+    }
     return ret;
 }
 

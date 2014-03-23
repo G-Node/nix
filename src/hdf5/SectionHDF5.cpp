@@ -74,8 +74,8 @@ boost::optional<string> SectionHDF5::repository() const {
     boost::optional<string> ret;
     string repository;
     if(group().getAttr("repository", repository)) {
-		ret = repository;
-	}
+        ret = repository;
+    }
     return ret;
 }
 
@@ -140,8 +140,8 @@ boost::optional<string> SectionHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
     if(group().getAttr("mapping", mapping)) {
-		ret = mapping;
-	}
+        ret = mapping;
+    }
     return ret;
 }
 
