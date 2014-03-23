@@ -61,13 +61,13 @@ void TestBlock::testDefinition() {
 
 
 void TestBlock::testMetadataAccess() {
-    CPPUNIT_ASSERT(!block.hasMetadata());
+    CPPUNIT_ASSERT(!block.metadata());
 
     block.metadata(section);
-    CPPUNIT_ASSERT(block.hasMetadata());
+    CPPUNIT_ASSERT(block.metadata());
 
     block.metadata(none);
-    CPPUNIT_ASSERT(!block.hasMetadata());
+    CPPUNIT_ASSERT(!block.metadata());
 }
 
 
