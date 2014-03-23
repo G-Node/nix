@@ -18,6 +18,8 @@
 
 #include <nix/Platform.hpp>
 
+using namespace std;
+
 namespace nix {
 
 
@@ -46,9 +48,9 @@ public:
     /**
      * Get the label for the values stored in the DataArray.
      *
-     * @return string the label
+     * @return boost::optional<std::string> the label
      */
-    std::string label() const {
+    boost::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -60,16 +62,36 @@ public:
     void label(const std::string &label) {
         backend()->label(label);
     }
-
+    
+    /**
+     * Deleter for the label attribute.
+     *
+     * @param boost::none_t.
+     */
+    void label(const none_t t)
+    {
+        backend()->label(t);
+    }
+    
     /**
      * Get the unit of the data stored in this dataArray.
      *
      * @return string the unit.
      */
-    std::string unit() const {
+    boost::optional<string> unit() const {
         return backend()->unit();
     }
-
+    
+    /**
+     * Deleter for the unit attribute.
+     *
+     * @param boost::none_t.
+     */
+    void unit(const none_t t)
+    {
+        backend()->unit(t);
+    }
+    
     /**
      * Set the unit for the values stored in this DataArray.
      *
@@ -88,7 +110,7 @@ public:
      *
      * @return double the expansion origin.
      */
-    double expansionOrigin() const {
+    boost::optional<double> expansionOrigin() const {
         return backend()->expansionOrigin();
     }
 
@@ -100,7 +122,17 @@ public:
     void expansionOrigin(double expansion_origin) {
         backend()->expansionOrigin(expansion_origin);
     }
-
+    
+    /**
+     * Deleter for the expansionOrigin attribute.
+     *
+     * @param boost::none_t.
+     */
+    void expansionOrigin(const none_t t)
+    {
+        backend()->unit(t);
+    }
+    
     /**
      * Set the polynom coefficients for the calibration. By default this is set
      * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
@@ -120,6 +152,16 @@ public:
         return backend()->polynomCoefficients();
     }
 
+    /**
+     * Deleter for the polynomCoefficients attribute.
+     *
+     * @param boost::none_t.
+     */
+    void polynomCoefficients(const none_t t)
+    {
+        backend()->polynomCoefficients(t);
+    }
+    
     //--------------------------------------------------
     // Methods concerning dimensions
     //--------------------------------------------------
@@ -163,28 +205,78 @@ public:
     }
 
     /**
-     * Append a new Dimension description to the list of stored dimensions.
+     * Append a new Set Dimension description to the list of stored dimensions.
      *
      * @param nix::DimensionType
      *
      * @return the new Dimension
      */
-    Dimension appendDimension(DimensionType type) {
-        return backend()->createDimension(backend()->dimensionCount() + 1, type);
+    Dimension appendSetDimension() {
+        return backend()->createSetDimension(backend()->dimensionCount() + 1);
     }
 
     /**
-     * Create a new Dimension with a specified id, respectively the dimension that
+     * Append a new Range Dimension description to the list of stored dimensions.
+     *
+     * @param nix::DimensionType
+     *
+     * @return the new Dimension
+     */
+    Dimension appendRangeDimension(std::vector<double> ticks) {
+        return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
+    }
+
+    /**
+     * Append a new Sampled Dimension description to the list of stored dimensions.
+     *
+     * @param nix::DimensionType
+     *
+     * @return the new Dimension
+     */
+    Dimension appendSampledDimension(double samplingInterval) {
+        return backend()->createSampledDimension(backend()->dimensionCount() + 1, samplingInterval);
+    }
+
+    /**
+     * Create a new Set Dimension with a specified id, respectively the dimension that
      * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
      *
      * @param size_t the dimension id.
-     * @param DimentsionType the dimensiont type
      *
      * @return Dimension the created dimension descriptor
      */
-    Dimension createDimension(size_t id, DimensionType type) {
-        return backend()->createDimension(id, type);
+    Dimension createSetDimension(size_t id) {
+        return backend()->createSetDimension(id);
     }
+    
+
+    /**
+     * Create a new Range Dimension with a specified id, respectively the dimension that
+     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     *
+     * @param size_t the dimension id.
+     * @param vector<double> vector with ticks for dimension
+     *
+     * @return Dimension the created dimension descriptor
+     */
+    Dimension createRangeDimension(size_t id, std::vector<double> ticks) {
+        return backend()->createRangeDimension(id, ticks);
+    }
+    
+
+    /**
+     * Create a new Sampled Dimension with a specified id, respectively the dimension that
+     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     *
+     * @param size_t the dimension id.
+     * @param double sampling interval
+     *
+     * @return Dimension the created dimension descriptor
+     */
+    Dimension createSampledDimension(size_t id, double samplingInterval) {
+        return backend()->createSampledDimension(id, samplingInterval);
+    }
+    
 
     /**
      * Deletes a dimension from the list of dimension descriptors.

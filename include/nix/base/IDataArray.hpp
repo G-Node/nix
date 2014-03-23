@@ -37,9 +37,9 @@ public:
     /**
      * Get the label for the values stored in the DataArray.
      *
-     * @return string the label
+     * @return boost::optional<std::string> the label
      */
-    virtual std::string label() const = 0;
+    virtual boost::optional<std::string> label() const = 0;
 
     /**
      * Set the label for the data stored.
@@ -49,11 +49,18 @@ public:
     virtual void label(const std::string &label) = 0;
 
     /**
+     * Deleter for the label attribute.
+     *
+     * @param boost::none_t.
+     */    
+    virtual void label(const none_t t) = 0;
+    
+    /**
      * Get the unit of the data stored in this dataArray.
      *
-     * @return string the unit.
+     * @return boost::optional<std::string> the unit.
      */
-    virtual std::string unit() const = 0;
+    virtual boost::optional<std::string> unit() const = 0;
 
     /**
      * Set the unit for the values stored in this DataArray.
@@ -61,6 +68,15 @@ public:
      * @param string the unit
      */
     virtual void unit(const std::string &unit) = 0;
+    
+
+    /**
+     * Deleter for the unit attribute.
+     *
+     * @param boost::none_t.
+     */    
+    virtual void unit(const none_t t) = 0;
+        
 
     /**
      * Returns the expansion origin of the calibration polynom.
@@ -68,15 +84,22 @@ public:
      *
      * @return double the expansion origin.
      */
-    virtual double expansionOrigin()const = 0;
+    virtual boost::optional<double> expansionOrigin()const = 0;
 
     /**
      * Set the expansion origin for the calibration.
      *
      * @param double the expansion origin.
      */
-    virtual void expansionOrigin(double expansion_origin) = 0;
+    virtual void expansionOrigin(double expansion_origin) = 0;    
 
+    /**
+     * Deleter for the expansionOrigin attribute.
+     *
+     * @param boost::none_t.
+     */    
+    virtual void expansionOrigin(const none_t t) = 0;
+    
     /**
      * Set the polynom coefficients for the calibration. By default this is set
      * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
@@ -93,6 +116,13 @@ public:
     virtual std::vector<double> polynomCoefficients() const = 0;
 
 
+    /**
+     * Deleter for the polynomCoefficients attribute.
+     *
+     * @param boost::none_t.
+     */  
+    virtual void polynomCoefficients(const none_t t) = 0;
+
     //--------------------------------------------------
     // Methods concerning dimensions
     //--------------------------------------------------
@@ -103,7 +133,13 @@ public:
     virtual Dimension getDimension(size_t id) const = 0;
 
 
-    virtual Dimension createDimension(size_t id, DimensionType type) = 0;
+    virtual Dimension createSetDimension(size_t id) = 0;
+
+
+    virtual Dimension createRangeDimension(size_t id, std::vector<double> ticks) = 0;
+
+
+    virtual Dimension createSampledDimension(size_t id, double samplingInterval) = 0;
 
 
     virtual bool deleteDimension(size_t id) = 0;

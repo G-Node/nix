@@ -105,10 +105,11 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id)
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id, double _samplingInterval)
     : DimensionHDF5(group, id)
 {
     setType();
+    samplingInterval(_samplingInterval);
 }
 
 
@@ -116,6 +117,7 @@ SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
     : DimensionHDF5(other.group, other.dim_id)
 {
     setType();
+    samplingInterval(other.samplingInterval());
 }
 
 
@@ -124,10 +126,12 @@ DimensionType SampledDimensionHDF5::dimensionType() const {
 }
 
 
-string SampledDimensionHDF5::label() const {
+boost::optional<std::string> SampledDimensionHDF5::label() const {
+    boost::optional<std::string> ret;
     string label;
     group.getAttr("label", label);
-    return label;
+    ret = label;
+    return ret;
 }
 
 
@@ -142,10 +146,20 @@ void SampledDimensionHDF5::label(const string &label) {
 }
 
 
-string SampledDimensionHDF5::unit() const {
+void SampledDimensionHDF5::label(const none_t t) {
+    if(group.hasAttr("label")) {
+        group.removeAttr("label");
+    }
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
+}
+
+
+boost::optional<std::string> SampledDimensionHDF5::unit() const {
+    boost::optional<std::string> ret;
     string unit;
     group.getAttr("unit", unit);
-    return unit;
+    ret = unit;
+    return ret;
 }
 
 
@@ -157,6 +171,14 @@ void SampledDimensionHDF5::unit(const string &unit) {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
+}
+
+
+void SampledDimensionHDF5::unit(const none_t t) {
+    if(group.hasAttr("unit")) {
+        group.removeAttr("unit");
+    }
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -257,10 +279,11 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id)
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id, vector<double> _ticks)
     : DimensionHDF5(group, id)
 {
     setType();
+    ticks(_ticks);
 }
 
 
@@ -268,6 +291,7 @@ RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
     : DimensionHDF5(other.group, other.dim_id)
 {
     setType();
+    ticks(other.ticks());
 }
 
 
@@ -276,10 +300,12 @@ DimensionType RangeDimensionHDF5::dimensionType() const {
 }
 
 
-string RangeDimensionHDF5::label() const {
+boost::optional<std::string> RangeDimensionHDF5::label() const {
+    boost::optional<std::string> ret;
     string label;
     group.getAttr("label", label);
-    return label;
+    ret = label;
+    return ret;
 }
 
 
@@ -294,10 +320,20 @@ void RangeDimensionHDF5::label(const string &label) {
 }
 
 
-string RangeDimensionHDF5::unit() const {
+void RangeDimensionHDF5::label(const none_t t) {
+    if(group.hasAttr("label")) {
+        group.removeAttr("label");
+    }
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
+}
+
+
+boost::optional<std::string> RangeDimensionHDF5::unit() const {
+    boost::optional<std::string> ret;
     string unit;
     group.getAttr("unit", unit);
-    return unit;
+    ret = unit;
+    return ret;
 }
 
 
@@ -309,6 +345,14 @@ void RangeDimensionHDF5::unit(const string &unit) {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
+}
+
+
+void RangeDimensionHDF5::unit(const none_t t) {
+    if(group.hasAttr("unit")) {
+        group.removeAttr("unit");
+    }
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 

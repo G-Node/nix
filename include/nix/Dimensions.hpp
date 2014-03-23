@@ -116,7 +116,7 @@ public:
      *
      * @return string the label.
      */
-    std::string label() const {
+    boost::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -128,6 +128,16 @@ public:
      */
     void label(const std::string &label) {
         backend()->label(label);
+    }    
+    
+    /**
+     * Deleter for the label attribute.
+     *
+     * @param boost::none_t.
+     */
+    void label(const none_t t)
+    {
+        backend()->label(t);
     }
 
     /**
@@ -135,7 +145,7 @@ public:
      *
      * @return string the unit
      */
-    std::string unit() const {
+    boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
@@ -152,7 +162,17 @@ public:
     	}
     	backend()->unit(unit);
     }
-
+    
+    /**
+     * Deleter for the label attribute.
+     *
+     * @param boost::none_t.
+     */
+    void unit(const none_t t)
+    {
+        backend()->unit(t);
+    }
+    
     /**
      * Returns the sampling interval in which the dimension has been sampled.
      *
@@ -337,7 +357,7 @@ public:
      *
      * @return string the label
      */
-    std::string label() const {
+     boost::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -350,13 +370,23 @@ public:
     void label(const std::string &label) {
         backend()->label(label);
     }
-
+    
+    /**
+     * Deleter for the label attribute.
+     *
+     * @param boost::none_t.
+     */
+    void label(const none_t t)
+    {
+        backend()->label(t);
+    }
+    
     /**
      * Returns the unit of this RangeDimension.
      *
      * @return string the unit.
      */
-    std::string unit() const {
+    boost::optional<std::string> unit() const {
     	return backend()->unit();
     }
 
@@ -374,7 +404,17 @@ public:
     	}
     	backend()->unit(unit);
     }
-
+    
+    /**
+     * Deleter for the unit attribute.
+     *
+     * @param boost::none_t.
+     */
+    void unit(const none_t t)
+    {
+        backend()->unit(t);
+    }
+    
     /**
      * Retruns the set of ticks stored in this RangeDimension.
      *

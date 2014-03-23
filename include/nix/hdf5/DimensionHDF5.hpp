@@ -73,7 +73,7 @@ class SampledDimensionHDF5 : virtual public base::ISampledDimension, public Dime
 
 public:
 
-    SampledDimensionHDF5(Group group, size_t id);
+    SampledDimensionHDF5(Group group, size_t id, double samplingInterval);
 
 
     SampledDimensionHDF5(const SampledDimensionHDF5 &other);
@@ -82,17 +82,23 @@ public:
     DimensionType dimensionType() const;
 
 
-    std::string label() const;
+    boost::optional<std::string> label() const;
 
 
     void label(const std::string &label);
+    
+    
+    void label(none_t t);
+    
 
-
-    std::string unit() const;
+    boost::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
 
+    
+    void unit(none_t t);
+    
 
     double samplingInterval() const;
 
@@ -157,7 +163,7 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(Group group, size_t id);
+    RangeDimensionHDF5(Group group, size_t id, vector<double> _ticks);
 
 
     RangeDimensionHDF5(const RangeDimensionHDF5 &other);
@@ -166,17 +172,23 @@ public:
     DimensionType dimensionType() const;
 
 
-    std::string label() const;
+    boost::optional<std::string> label() const;
 
 
     void label(const std::string &label);
+    
+    
+    void label(none_t t);
 
 
-    std::string unit() const;
+    boost::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
-
+    
+    
+    void unit(none_t t);
+    
 
     std::vector<double> ticks() const;
 
