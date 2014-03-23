@@ -72,7 +72,7 @@ vector<double> SimpleTagHDF5::position() const {
         group().getData("position", position);
         return position;
     } else {
-        throw runtime_error("position not found!");
+        throw MissingAttr("position");
     }    
 }
 

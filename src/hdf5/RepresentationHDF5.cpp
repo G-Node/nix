@@ -61,18 +61,28 @@ RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, con
 
 
 void RepresentationHDF5::linkType(LinkType link_type) {
+    // linkTypeToString will generate an error if link_type is invalid
     group().setAttr("link_type", linkTypeToString(link_type));
     forceUpdatedAt();
 }
 
 
-void RepresentationHDF5::data(const std::string &data_array_id){
-    group().setAttr("data", data_array_id);
-    forceUpdatedAt();
+void RepresentationHDF5::data(const std::string &data_array_id) {
+    if(data_array_id.empty()) {
+        throw EmptyString("data DataArray id");
+    }
+    else {
+        if(!block.hasDataArray(data_array_id)) {
+            throw runtime_error("RepresentationHDF5::data: cannot set Representation data because referenced DataArray does not exist!");
+        } else {
+            group().setAttr("data", data_array_id);
+            forceUpdatedAt();
+        }
+    }
 }
 
 
-DataArray RepresentationHDF5::data() const{
+DataArray RepresentationHDF5::data() const {
     if(group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
@@ -82,7 +92,7 @@ DataArray RepresentationHDF5::data() const{
             throw std::runtime_error("Data array not found by id in Block");
         }
     } else {
-        throw std::runtime_error("data field not set in group");
+        throw MissingAttr("data");
     }
 }
 
@@ -93,7 +103,7 @@ LinkType RepresentationHDF5::linkType() const {
         group().getAttr("link_type", link_type);
         return linkTypeFromString(link_type);
     } else {
-        throw std::runtime_error("link_type field not set in group");
+        throw MissingAttr("data");
     }
 }
 

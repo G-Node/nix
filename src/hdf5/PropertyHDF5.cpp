@@ -136,7 +136,6 @@ void PropertyHDF5::values(const std::vector<Value> &values)
 {
     DataSet dataset;
 
-
     if (group().hasData("values")) {
         dataset = group().openData("values");
     } else {
