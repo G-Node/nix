@@ -405,11 +405,12 @@ public:
      * Add a Property to this section.
      *
      * @param string the name of the Property.
+     * @param string the type of the Property.
      *
      * @return the Property
      */
-    Property createProperty(const std::string &name) {
-        return backend()->createProperty(name);
+    Property createProperty(const std::string &name, const std::string &type) {
+        return backend()->createProperty(name, type);
     }
 
     /**

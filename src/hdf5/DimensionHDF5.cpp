@@ -183,9 +183,14 @@ void SampledDimensionHDF5::unit(const none_t t) {
 
 
 double SampledDimensionHDF5::samplingInterval() const {
-    double sampling_interval = 1;
-    group.getAttr("sampling_interval", sampling_interval);
-    return sampling_interval;
+    double sampling_interval;
+    
+    if(group.hasAttr("sampling_interval")) {
+        group.getAttr("sampling_interval", sampling_interval);
+        return sampling_interval;
+    } else {
+        throw runtime_error("samplingInterval not found!");
+    }    
 }
 
 
@@ -365,8 +370,13 @@ RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &othe
 
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
-    group.getData("ticks", ticks);
-    return ticks;
+
+    if(group.hasData("ticks")) {
+        group.getData("ticks", ticks);
+        return ticks;
+    } else {
+        throw runtime_error("ticks not found!");
+    }
 }
 
 

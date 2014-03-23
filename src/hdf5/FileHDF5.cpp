@@ -78,7 +78,10 @@ bool FileHDF5::hasBlock(const std::string &id) const {
 
 Block FileHDF5::getBlock(const std::string &id) const {
     if(hasBlock(id)) {
-        shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), data.openGroup(id, false), id));
+        Group group = data.openGroup(id, false);
+        std::string type;
+        group.getAttr("type", type);
+        shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), group, id, type));
         return Block(ptr);
     } else {
         return Block();
@@ -94,12 +97,16 @@ Block FileHDF5::getBlock(size_t index) const {
 
 Block FileHDF5::createBlock(const std::string &name, const string &type) {
     string id = util::createId("block");
-    while(data.hasObject(id))
+    
+    while(data.hasObject(id)) {
         id = util::createId("block");
-    shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), data.openGroup(id, true), id));
+    }
+        
+    Group group = data.openGroup(id, true);
+    shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), group, id, type));
     Block b(ptr);
     b.name(name);
-    b.type(type);
+    
     return b;
 }
 
@@ -126,7 +133,10 @@ bool FileHDF5::hasSection(const std::string &id) const {
 
 Section FileHDF5::getSection(const std::string &id) const {
     if(hasSection(id)) {
-        shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, false), id));
+        Group group = metadata.openGroup(id, false);
+        std::string type;
+        group.getAttr("type", type);
+        shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), group, id, type));
         return Section(ptr);
     } else {
         return Section();
@@ -144,10 +154,9 @@ Section FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId("section");
     while(metadata.hasObject(id))
         id = util::createId("section");
-    shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, true), id));
+    shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, true), id, type));
     Section section(ptr);
     section.name(name);
-    section.type(type);
     return section;
 }
 

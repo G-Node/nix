@@ -207,7 +207,7 @@ public:
      *
      */
     void addReference(const std::string &id) {
-    	backend()->addReference(id);
+        backend()->addReference(id);
     }
 
     /**
@@ -220,7 +220,7 @@ public:
         if (reference == none){
             throw std::runtime_error("DataTag::addReference: Empty DataArray entity given!");
         }
-    	backend()->addReference(reference.id());
+        backend()->addReference(reference.id());
     }
 
     /**

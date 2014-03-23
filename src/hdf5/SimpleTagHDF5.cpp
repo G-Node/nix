@@ -19,26 +19,29 @@ namespace nix {
 namespace hdf5 {
 
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
+    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type()),
       references_list(tag.group(), "references")
 {
     representation_group = tag.representation_group;
+    position(tag.position());
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id)
-    : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
+                             const string &id, const string &type, const vector<double> _position)
+    : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
+    position(_position);
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, time), references_list(group, "references")
+SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+                             const string &type, const vector<double> _position, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, type, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
+    position(_position);
 }
 
 
@@ -64,8 +67,13 @@ void SimpleTagHDF5::units(const none_t t) {
 
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
-    group().getData("position", position);
-    return position;
+    
+    if(group().hasData("position")) {
+        group().getData("position", position);
+        return position;
+    } else {
+        throw runtime_error("position not found!");
+    }    
 }
 
 
@@ -112,7 +120,7 @@ DataArray SimpleTagHDF5::getReference(const std::string &id) const {
         // block will return empty object if entity not found
         return block().getDataArray(id);
     } else {
-        throw runtime_error("No reference with id: " + id);
+        return DataArray();
     }
 }
 
@@ -128,10 +136,11 @@ DataArray SimpleTagHDF5::getReference(size_t index) const {
         throw OutOfBounds("No data array at given index", index);
     }
     // get referenced array
-    if(hasReference(id) && block().hasDataArray(id)) {
+    if(hasReference(id)) {
+        // block will return empty object if DataArray not found
         return block().getDataArray(id);
     } else {
-        throw runtime_error("No data array id: " + id);
+        return DataArray();
     }
 }
 
@@ -175,7 +184,14 @@ size_t SimpleTagHDF5::representationCount() const {
 
 Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
     if(hasRepresentation(id)) {
-        auto tmp = make_shared<RepresentationHDF5>(file(), block(), representation_group.openGroup(id, false), id);
+        Group group = representation_group.openGroup(id, false);
+        string link_type;
+        group.getAttr("link_type", link_type);
+        LinkType linkType = linkTypeFromString(link_type);
+        string dataId;
+        group.getAttr("data", dataId);
+        DataArray data = block().getDataArray(dataId);
+        auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
         return Representation(tmp);
     } else {
         return Representation();
@@ -194,10 +210,10 @@ Representation SimpleTagHDF5::createRepresentation(const std::string &data_array
     string rep_id = util::createId("representation");
     while(representation_group.hasObject(rep_id))
         rep_id = util::createId("representation");
-    Group rep_g = representation_group.openGroup(rep_id, true);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), rep_g, rep_id);
-    tmp->linkType(link_type);
-    tmp->data(data_array_id);
+        
+    Group group = representation_group.openGroup(rep_id, true);
+    DataArray data = block().getDataArray(data_array_id);
+    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, rep_id, data, link_type);
 
     return Representation(tmp);
 }

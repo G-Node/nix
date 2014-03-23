@@ -18,21 +18,23 @@ namespace nix {
 namespace hdf5 {
 
 DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
-    : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id()),
+    : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id(), data_array.type()),
       dimension_group(data_array.dimension_group)
 {
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, const string &id)
-    : EntityWithSourcesHDF5(file, block, group, id)
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+                             const string &id, const string &type)
+    : EntityWithSourcesHDF5(file, block, group, id, type)
 {
     dimension_group = this->group().openGroup("dimensions", true);
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, const string &id, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, time)
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+                             const string &id, const string &type, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, type, time)
 {
     dimension_group = this->group().openGroup("dimensions", true);
 }

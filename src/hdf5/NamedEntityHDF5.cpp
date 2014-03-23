@@ -17,15 +17,17 @@ namespace nix {
 namespace hdf5 {
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id)
+NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type)
     : EntityHDF5(file, group, id)
 {
+    type(_type);
 }
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, time_t time)
+NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, time_t time)
     : EntityHDF5(file, group, id, time)
 {
+    type(_type);
 }
 
 
@@ -68,7 +70,7 @@ optional<string> NamedEntityHDF5::name() const {
 
 
 void NamedEntityHDF5::name(const none_t t) {
-    if(group().hasAttr("definition")) {
+    if(group().hasAttr("name")) {
         group().removeAttr("name");
     }
     forceUpdatedAt();

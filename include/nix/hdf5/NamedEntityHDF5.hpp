@@ -30,12 +30,12 @@ public:
     /**
      * Standard constructor
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id);
+    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id, time_t time);
+    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type, time_t time);
 
 
     void type(const std::string &type);

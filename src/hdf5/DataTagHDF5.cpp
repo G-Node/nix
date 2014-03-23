@@ -18,25 +18,33 @@ namespace hdf5 {
 
 
 DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
+    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type()),
       reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
+    // TODO: the line below currently throws an exception if the DataArray
+    // is not in block - to consider if we prefer copying it to the block
+    positions(tag.positions().id());
 }
 
 
-DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, const string &id)
-    : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
+DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
+                         const string &id, const std::string &type, const DataArray _positions)
+    : EntityWithSourcesHDF5(file, block, group, id, type), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
+    // TODO: the line below currently throws an exception if positions is
+    // not in block - to consider if we prefer copying it to the block
+    positions(_positions.id());
 }
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group,
-                         const std::string &id, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, time), reference_list(group, "references")
+                         const std::string &id, const std::string &type, const DataArray _positions, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, type, time), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
+    positions(_positions.id());
 }
 
 
@@ -64,7 +72,7 @@ void DataTagHDF5::positions(const string &id) {
             if(hasExtents()){
                 DataArray pos = block().getDataArray(id);
                 DataArray ext = extents();
-                if(!checkDimensions(ext,pos))
+                if(!checkDimensions(ext, pos))
                     throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
             }
             group().setAttr("positions", id);
@@ -102,7 +110,7 @@ void DataTagHDF5::extents(const string &extentsId) {
             if(hasPositions()) {
                 DataArray ext = block().getDataArray(extentsId);
                 DataArray pos = positions();
-                if(!checkDimensions(ext,pos))
+                if(!checkDimensions(ext, pos))
                     throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
             }
             group().setAttr("extents", extentsId);
@@ -203,7 +211,14 @@ size_t DataTagHDF5::representationCount() const{
 
 Representation DataTagHDF5::getRepresentation(const std::string &id) const  {
     if (representation_group.hasGroup(id)) { 
-        auto tmp = make_shared<RepresentationHDF5>(file(), block(), representation_group.openGroup(id, false), id);
+        Group group = representation_group.openGroup(id, false);
+        string link_type;
+        group.getAttr("link_type", link_type);
+        LinkType linkType = linkTypeFromString(link_type);
+        string dataId;
+        group.getAttr("data", dataId);
+        DataArray data = block().getDataArray(dataId);
+        auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
         return Representation(tmp);
     } else {
         return Representation();
@@ -223,9 +238,8 @@ Representation DataTagHDF5::createRepresentation(const std::string &data_array_i
         id = util::createId("representation");
 
     Group group = representation_group.openGroup(id, true);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id);
-    tmp->linkType(link_type);
-    tmp->data(data_array_id);
+    DataArray data = block().getDataArray(data_array_id);
+    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, link_type);
 
     return Representation(tmp);
 }
@@ -282,8 +296,8 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
         return valid;
 
     boost::multi_array<double,1>::size_type dims = aData.num_dimensions();
-    for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++){
-        valid = (aData.shape()[i] != bData.shape()[i]);
+    for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++) {
+        valid = (aData.shape()[i] == bData.shape()[i]);
         if(!valid)
             return valid;
     }

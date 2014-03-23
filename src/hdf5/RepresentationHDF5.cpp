@@ -39,15 +39,25 @@ RepresentationHDF5::RepresentationHDF5(const RepresentationHDF5 &representation)
 
 
 RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id)
+                                       const string &id, DataArray _data, LinkType _link_type)
     : EntityHDF5(file, group, id), block(block)
-{}
+{
+    linkType(_link_type);
+    // TODO: the line below currently throws an exception if the DataArray
+    // is not in block - to consider if we prefer copying it to the block
+    data(_data.id());
+}
 
 
 RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, time_t time)
+                                       const string &id, DataArray _data, LinkType _link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
-{}
+{
+    linkType(_link_type);
+    // TODO: the line below currently throws an exception if the DataArray
+    // is not in block - to consider if we prefer copying it to the block
+    data(_data.id()); 
+}
 
 
 void RepresentationHDF5::linkType(LinkType link_type) {

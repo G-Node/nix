@@ -11,7 +11,11 @@ void TestRepresentation::setUp() {
     file = File::open("test_representation.h5", FileMode::Overwrite);
     block = file.createBlock("representationTest","test");
     data_array = block.createDataArray("representationTest", "Test");
-    tag = block.createSimpleTag("representationTest", "Test");
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    tag = block.createSimpleTag("representationTest", "Test", positions);
 }
 
 

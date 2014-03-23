@@ -21,15 +21,19 @@ void TestSimpleTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_dataTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
-    tag = block.createSimpleTag("tag_one", "test_tag");
-    tag_other = block.createSimpleTag("tag_two", "test_tag");
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    tag = block.createSimpleTag("tag_one", "test_tag", positions);
+    tag_other = block.createSimpleTag("tag_two", "test_tag", positions);
     tag_null = nullptr;
 
     section = file.createSection("foo_section", "metadata");
 }
 
 
-void TestSimpleTag::tearDown(){
+void TestSimpleTag::tearDown() {
     file.deleteBlock(block.id());
     file.deleteSection(section.id());
     file.close();
@@ -46,6 +50,8 @@ void TestSimpleTag::testName() {
     std::string name = util::createId("", 32);
     tag.name(name);
     CPPUNIT_ASSERT(*tag.name() == name);
+	tag.name(none);
+	CPPUNIT_ASSERT(*tag.name() == "");
 }
 
 
@@ -61,17 +67,22 @@ void TestSimpleTag::testDefinition() {
     std::string def = util::createId("", 128);
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
+	tag.definition(none);
+	CPPUNIT_ASSERT(*tag.definition() == "");
 }
 
 
 void TestSimpleTag::testCreateRemove() {
     std::vector<std::string> ids;
     size_t count = block.simpleTagCount();
-    const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d",
-            "tag_e" };
+    const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        SimpleTag st1 = block.createSimpleTag(names[i], type);
+        SimpleTag st1 = block.createSimpleTag(names[i], type, positions);
         SimpleTag st2 = block.getSimpleTag(st1.id());
         ids.push_back(st1.id());
 
@@ -95,10 +106,14 @@ void TestSimpleTag::testCreateRemove() {
 
 //TODO Constraints on References are not tested yet.
 
-void TestSimpleTag::testReferences(){
+void TestSimpleTag::testReferences() {
     DataArray da_1 = block.createDataArray("TestReference 1","Reference");
     DataArray da_2 = block.createDataArray("TestReference 2","Reference");
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1","Tag");
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
@@ -137,8 +152,12 @@ void TestSimpleTag::testReferences(){
 }
 
 
-void TestSimpleTag::testExtent(){
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1","Tag");
+void TestSimpleTag::testExtent() {
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -155,13 +174,17 @@ void TestSimpleTag::testExtent(){
 }
 
 
-void TestSimpleTag::testPosition(){
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1","Tag");
+void TestSimpleTag::testPosition() {
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
 
     std::vector<double> position = {1.0, 2.0, 3.0};
     std::vector<double> new_position = {2.0};
 
-    CPPUNIT_ASSERT(st.position().size() == 0);
+    CPPUNIT_ASSERT(st.position().size() == 5);
     st.position(position);
     std::vector<double> retrieved = st.position();
     CPPUNIT_ASSERT(retrieved.size() == position.size());
@@ -194,7 +217,7 @@ void TestSimpleTag::testMetadataAccess() {
 }
 
 
-void TestSimpleTag::testSourceAccess(){
+void TestSimpleTag::testSourceAccess() {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
     CPPUNIT_ASSERT(tag.sources().size() == 0);
@@ -208,10 +231,7 @@ void TestSimpleTag::testSourceAccess(){
     }
 
     CPPUNIT_ASSERT(tag.sourceCount() == names.size());
-    //TODO the following test crashes!!!
-    //std::vector<Source> sources = tag.sources();
-    //std::cerr << "\n" <<sources.size() << "\n";
-    //CPPUNIT_ASSERT(tag.sources().size() == names.size());
+    CPPUNIT_ASSERT(tag.sources().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source child_source = tag.getSource(*it);
@@ -226,8 +246,12 @@ void TestSimpleTag::testSourceAccess(){
 }
 
 
-void TestSimpleTag::testUnits(){
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1","Tag");
+void TestSimpleTag::testUnits() {
+    std::vector<double> positions(5);
+    for (auto it = positions.begin(); it != positions.end(); ++it) {
+        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    }
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};

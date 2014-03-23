@@ -64,7 +64,7 @@ public:
     void units(std::vector<std::string> &units) {
         for(std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter){
             //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))){ TODO
-        	if(!(util::isSIUnit(*iter))){
+            if(!(util::isSIUnit(*iter))){
                 std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
                 throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
             }
@@ -213,7 +213,7 @@ public:
      *
      */
     void addReference(const std::string &id) {
-    	backend()->addReference(id);
+        backend()->addReference(id);
     }
 
     /**

@@ -42,12 +42,14 @@ public:
     /**
      * Standard constructor
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group, const std::string &id);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+                  const std::string &id, const std::string &type);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group, const std::string &id, time_t time);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+                  const std::string &id, const std::string &type, time_t time);
 
     //--------------------------------------------------
     // Element getters and setters
