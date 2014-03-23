@@ -198,7 +198,7 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 }
 
 
-template<DimensionType type, typename T>
+template<DimensionType dtype, typename T>
 Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
     size_t dim_count = dimensionCount();
 
@@ -215,12 +215,12 @@ Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
     Group dim_group = dimension_group.openGroup(str_id, true);
     Dimension dim;
 
-    if (type == DimensionType::Range || type == DimensionType::Sample) {
-        typedef typename std::conditional<type == DimensionType::Range, 
+    if (dtype == DimensionType::Range || dtype == DimensionType::Sample) {
+        typedef typename std::conditional<dtype == DimensionType::Range, 
                                           RangeDimensionHDF5, 
                                           SampledDimensionHDF5>::type 
                                           dimTypeHDF5;
-        typedef typename std::conditional<type == DimensionType::Range, 
+        typedef typename std::conditional<dtype == DimensionType::Range, 
                                           RangeDimension, 
                                           SampledDimension>::type 
                                           dimType;
