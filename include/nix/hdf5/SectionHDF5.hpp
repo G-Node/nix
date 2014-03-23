@@ -36,24 +36,26 @@ public:
     /**
      * Standard constructor
      */
-    SectionHDF5(const File &file, const Group &group, const std::string &id);
+    SectionHDF5(const File &file, const Group &group, const string &id, 
+                const string &type);
 
     /**
      * Standard constructor with parent.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const std::string &id);
+                const string &id, const string &type);
 
     /**
      * Constructor that preserves the creation time.
      */
-    SectionHDF5(const File &file, const Group &group, const std::string &id, time_t time);
+    SectionHDF5(const File &file, const Group &group, const string &id, 
+                const string &type, time_t time);
 
     /**
      * Constructor with parent that preserves the creation time.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const std::string &id, time_t time);
+                const string &id, const string &type, time_t time);
 
 
     //--------------------------------------------------
@@ -140,7 +142,7 @@ public:
     Property getPropertyByName(const std::string &name) const;
 
 
-    Property createProperty(const std::string &name);
+    Property createProperty(const std::string &name, const std::string &type);
 
 
     bool deleteProperty(const std::string &id);

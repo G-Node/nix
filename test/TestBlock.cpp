@@ -166,10 +166,8 @@ void TestBlock::testSimpleTagAccess() {
         ids.push_back(tag.id());
     }
 
-
     CPPUNIT_ASSERT(block.simpleTagCount() == names.size());
     CPPUNIT_ASSERT(block.simpleTags().size() == names.size());
-
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         SimpleTag tag = block.getSimpleTag(*it);

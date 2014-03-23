@@ -17,19 +17,19 @@ namespace hdf5 {
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
-    : NamedEntityHDF5(property.file(), property.group(), property.id())
+    : NamedEntityHDF5(property.file(), property.group(), property.id(), property.type())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id)
-    : NamedEntityHDF5(file, group, id)
+PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &type)
+    : NamedEntityHDF5(file, group, id, type)
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, time_t time)
-    : NamedEntityHDF5(file, group, id, time)
+PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &type, time_t time)
+    : NamedEntityHDF5(file, group, id, type, time)
 {
 }
 

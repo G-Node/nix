@@ -18,7 +18,7 @@ namespace hdf5 {
 
 
 DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
+    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type()),
       reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
@@ -29,8 +29,8 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
-                         const string &id, const DataArray _positions)
-    : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
+                         const string &id, const std::string &type, const DataArray _positions)
+    : EntityWithSourcesHDF5(file, block, group, id, type), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
     // TODO: the line below currently throws an exception if positions is
@@ -40,8 +40,8 @@ DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &grou
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group,
-                         const std::string &id, const DataArray _positions, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, time), reference_list(group, "references")
+                         const std::string &id, const std::string &type, const DataArray _positions, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, type, time), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
     positions(_positions.id());

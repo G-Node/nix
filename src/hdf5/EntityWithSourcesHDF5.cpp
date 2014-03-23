@@ -16,14 +16,18 @@ namespace nix {
 namespace hdf5 {
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(File file, Block block, Group group, const string &id)
-    : EntityWithMetadataHDF5(file, group, id), entity_block(block), sources_refs(group, "sources")
+EntityWithSourcesHDF5::EntityWithSourcesHDF5
+                    (File file, Block block, Group group, const string &id, 
+                     const string &type)
+    : EntityWithMetadataHDF5(file, group, id, type), entity_block(block), sources_refs(group, "sources")
 {
 }
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(File file, Block block, Group group, const string &id, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, time), entity_block(block), sources_refs(group, "sources")
+EntityWithSourcesHDF5::EntityWithSourcesHDF5
+                       (File file, Block block, Group group, const string &id, 
+                        const string &type, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, type, time), entity_block(block), sources_refs(group, "sources")
 {
 }
 

@@ -19,7 +19,7 @@ namespace nix {
 namespace hdf5 {
 
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id()),
+    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type()),
       references_list(tag.group(), "references")
 {
     representation_group = tag.representation_group;
@@ -28,17 +28,17 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, const vector<double> _position)
-    : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
+                             const string &id, const string &type, const vector<double> _position)
+    : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
     position(_position);
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, const vector<double> _position, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, time), references_list(group, "references")
+SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+                             const string &type, const vector<double> _position, time_t time)
+    : EntityWithSourcesHDF5(file, block, group, id, type, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
     position(_position);

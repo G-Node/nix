@@ -17,37 +17,39 @@ namespace hdf5 {
 
 
 SectionHDF5::SectionHDF5(const SectionHDF5 &section)
-    : NamedEntityHDF5(section.file(), section.group(), section.id())
+    : NamedEntityHDF5(section.file(), section.group(), section.id(), section.type())
 {
     property_group = section.property_group;
     section_group = section.section_group;
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id)
-    : SectionHDF5(file, nullptr, group, id)
+SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, 
+                         const string &type)
+    : SectionHDF5(file, nullptr, group, id, type)
 {
 }
 
 
 SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
-                         const string &id)
-    : NamedEntityHDF5(file, group, id), parent_section(parent)
+                         const string &id, const string &type)
+    : NamedEntityHDF5(file, group, id, type), parent_section(parent)
 {
     property_group = this->group().openGroup("properties");
     section_group = this->group().openGroup("sections");
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, time_t time)
-    : SectionHDF5(file, nullptr, group, id, time)
+SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, 
+                         const string &type, time_t time)
+    : SectionHDF5(file, nullptr, group, id, type, time)
 {
 }
 
 
 SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
-                         const string &id, time_t time)
-    : NamedEntityHDF5(file, group, id, time), parent_section(parent)
+                         const string &id, const string &type, time_t time)
+    : NamedEntityHDF5(file, group, id, type, time), parent_section(parent)
 {
     property_group = this->group().openGroup("properties");
     section_group = this->group().openGroup("sections");
@@ -178,7 +180,10 @@ bool SectionHDF5::hasSection(const string &id) const {
 
 Section SectionHDF5::getSection(const string &id) const {
     if (section_group.hasGroup(id)) {
-        auto tmp = make_shared<SectionHDF5>(file(), section_group.openGroup(id, false), id);
+        Group group = section_group.openGroup(id, false);
+        std::string type;
+        group.getAttr("type", type);
+        auto tmp = make_shared<SectionHDF5>(file(), group, id, type);
         return Section(tmp);
     } else {
         return Section();
@@ -203,9 +208,8 @@ Section SectionHDF5::createSection(const string &name, const string &type) {
     Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
 
     Group grp = section_group.openGroup(new_id, true);
-    auto tmp = make_shared<SectionHDF5>(file(), parent, grp, new_id);
+    auto tmp = make_shared<SectionHDF5>(file(), parent, grp, new_id, type);
     tmp->name(name);
-    tmp->type(type);
 
     return Section(tmp);
 }
@@ -239,7 +243,10 @@ bool SectionHDF5::hasProperty(const string &id) const {
 
 Property SectionHDF5::getProperty(const string &id) const {
     if (property_group.hasGroup(id)) {
-        auto tmp = make_shared<PropertyHDF5>(file(), property_group.openGroup(id,false), id);
+        Group group = property_group.openGroup(id, false);
+        string type;
+        group.getAttr("type", type);
+        auto tmp = make_shared<PropertyHDF5>(file(), group, id, type);
         return Property(tmp);
     } else {
         return Property();
@@ -285,7 +292,9 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
         grp.getAttr("name", other_name);
 
         if (other_name == name) {
-            auto tmp = make_shared<PropertyHDF5>(file(), grp, id);
+            string type;
+            grp.getAttr("type", type);
+            auto tmp = make_shared<PropertyHDF5>(file(), grp, id, type);
             prop = Property(tmp);
             break;
         }
@@ -296,7 +305,7 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
 }
 
 
-Property SectionHDF5::createProperty(const string &name) {
+Property SectionHDF5::createProperty(const string &name, const string &type) {
     if (hasPropertyWithName(name))
         throw runtime_error("Try to create a property with existing name: " + name);
 
@@ -307,7 +316,7 @@ Property SectionHDF5::createProperty(const string &name) {
 
     Group grp = property_group.openGroup(new_id, true);
 
-    auto tmp = make_shared<PropertyHDF5>(file(), grp, new_id);
+    auto tmp = make_shared<PropertyHDF5>(file(), grp, new_id, type);
     tmp->name(name);
 
     return Property(tmp);

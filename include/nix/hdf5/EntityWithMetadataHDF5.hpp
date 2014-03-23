@@ -29,12 +29,14 @@ public:
     /**
      * Standard constructor
      */
-    EntityWithMetadataHDF5(File file, Group group, const std::string &id);
+    EntityWithMetadataHDF5(File file, Group group, const std::string &id, 
+                           const string &type);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    EntityWithMetadataHDF5(File file, Group group, const std::string &id, time_t time);
+    EntityWithMetadataHDF5(File file, Group group, const std::string &id, 
+                           const string &type, time_t time);
 
 
     bool hasMetadata() const;

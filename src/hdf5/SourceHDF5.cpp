@@ -16,21 +16,21 @@ namespace hdf5 {
 
 
 SourceHDF5::SourceHDF5(const SourceHDF5 &source)
-    : EntityWithMetadataHDF5(source.file(), source.group(), source.id())
+    : EntityWithMetadataHDF5(source.file(), source.group(), source.id(), source.type())
 {
     source_group = source.source_group;
 }
 
 
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id)
-    : EntityWithMetadataHDF5(file, group, id)
+SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type)
+    : EntityWithMetadataHDF5(file, group, id, type)
 {
     source_group = group.openGroup("sources");
 }
 
 
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, time)
+SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, type, time)
 {
     source_group = group.openGroup("sources");
 }
@@ -43,7 +43,10 @@ bool SourceHDF5::hasSource(const string &id) const {
 
 Source SourceHDF5::getSource(const string &id) const {
     if(source_group.hasGroup(id)) {
-        shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), source_group.openGroup(id, false), id);
+        Group group = source_group.openGroup(id, false);
+        std::string type;
+        group.getAttr("type", type);
+        shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id, type);
         return Source(tmp);
     } else {
         return Source();
@@ -71,9 +74,8 @@ Source SourceHDF5::createSource(const string &name, const string &type) {
     }
 
     Group grp = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id);
+    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id, type);
     tmp->name(name);
-    tmp->type(type);
 
     return Source(tmp);
 }

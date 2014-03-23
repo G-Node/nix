@@ -25,8 +25,8 @@ void TestProperty::setUp()
 
     section = file.createSection("cool section", "metadata");
 
-    property = section.createProperty("prop");
-    property_other = section.createProperty("other");
+    property = section.createProperty("prop", "sometype");
+    property_other = section.createProperty("other", "sometype");
     property_null = nullptr;
 }
 
@@ -67,7 +67,7 @@ void TestProperty::testDefinition() {
 void TestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty");
+    nix::Property p1 = section.createProperty("strProperty", "str");
 
 
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
@@ -95,7 +95,7 @@ void TestProperty::testValues()
     p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
-    nix::Property p2 = section.createProperty("toDelete");
+    nix::Property p2 = section.createProperty("toDelete", "tmp");
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     strValues.clear();
@@ -107,8 +107,8 @@ void TestProperty::testValues()
 
 void TestProperty::testDataType(){
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty");
-    nix::Property p2 = section.createProperty("doubleProperty");
+    nix::Property p1 = section.createProperty("strProperty", "str");
+    nix::Property p2 = section.createProperty("doubleProperty", "dbl");
     CPPUNIT_ASSERT(!p1.dataType());
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
                                           nix::Value("schoener"),
@@ -130,7 +130,7 @@ void TestProperty::testDataType(){
 
 void TestProperty::testUnit(){
     nix::Section section = file.createSection("testSection", "test");
-    nix::Property p1 = section.createProperty("testProperty");
+    nix::Property p1 = section.createProperty("testProperty", "testType");
     nix::Value v(22.2);
     v.uncertainty = 1.2;
     std::vector<Value> values = {v};
