@@ -53,9 +53,19 @@ public:
     bool hasSource(const std::string &id) const;
 
 
+    /**
+     * Add a Source to this entity.
+     *
+     * @param string    The source id.
+     */
     void addSource(const std::string &id);
 
 
+    /**
+     * Add a Source to this entity.
+     *
+     * @param Source    The source.
+     */
     void addSource(const Source &source);
 
 

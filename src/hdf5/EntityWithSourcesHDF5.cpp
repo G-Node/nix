@@ -72,23 +72,18 @@ Source EntityWithSourcesHDF5::getSource(const size_t index) const {
 }
 
 void EntityWithSourcesHDF5::addSource(const std::string &id) {
-    sources_refs.add(id);
-}
-
-/**
- * Add a Source to this entity.
- *
- * @param Source    The source.
- */
-void EntityWithSourcesHDF5::addSource(const Source &source) {
-    util::IdFilter<Source> checkID(source.id());
+    util::IdFilter<Source> checkID(id);
     vector<Source> result_vect = entity_block.findSources(checkID);
     if(!result_vect.empty()) {
-        sources_refs.add(source.id());
+        sources_refs.add(id);
     }
     else {
         throw std::runtime_error("Given source does not exist in this block!");
     }
+}
+
+void EntityWithSourcesHDF5::addSource(const Source &source) {
+    addSource(source.id());
 }
 
 

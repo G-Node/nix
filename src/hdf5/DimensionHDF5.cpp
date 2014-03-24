@@ -189,7 +189,7 @@ double SampledDimensionHDF5::samplingInterval() const {
         group.getAttr("sampling_interval", sampling_interval);
         return sampling_interval;
     } else {
-        throw runtime_error("samplingInterval not found!");
+        throw MissingAttr("sampling_interval");
     }    
 }
 
@@ -375,7 +375,7 @@ vector<double> RangeDimensionHDF5::ticks() const {
         group.getData("ticks", ticks);
         return ticks;
     } else {
-        throw runtime_error("ticks not found!");
+        throw MissingAttr("ticks");
     }
 }
 

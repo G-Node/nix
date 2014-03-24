@@ -44,8 +44,12 @@ void NamedEntityHDF5::type(const string &type) {
 
 string NamedEntityHDF5::type() const {
     string type;
-    group().getAttr("type", type);
-    return type;
+    if(group().hasAttr("type")) {
+        group().getAttr("type", type);
+        return type;
+    } else {
+        throw MissingAttr("type");
+    }
 }
 
 

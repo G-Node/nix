@@ -50,7 +50,12 @@ DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &grou
 
 DataArray DataTagHDF5::positions() const {
     string id;
-    group().getAttr("positions", id);
+    
+    if(group().hasAttr("positions")) {
+        group().getAttr("positions", id);
+    } else {
+        throw MissingAttr("positions");
+    }
 
     if(block().hasDataArray(id)) {
         return block().getDataArray(id);
@@ -62,14 +67,13 @@ DataArray DataTagHDF5::positions() const {
 
 void DataTagHDF5::positions(const string &id) {
     if(id.empty()) {
-        throw EmptyString("id");
+        throw EmptyString("positions DataArray id");
     }
     else {
-        if(!block().hasDataArray(id)){
+        if(!block().hasDataArray(id)) {
             throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-        }
-        else{
-            if(hasExtents()){
+        } else {
+            if(hasExtents()) {
                 DataArray pos = block().getDataArray(id);
                 DataArray ext = extents();
                 if(!checkDimensions(ext, pos))
@@ -82,7 +86,7 @@ void DataTagHDF5::positions(const string &id) {
 }
 
 
-bool DataTagHDF5::hasPositions() const{
+bool DataTagHDF5::hasPositions() const {
     std::string posId;
     group().getAttr("positions", posId);
     return (posId.length() > 0);
@@ -127,7 +131,7 @@ void DataTagHDF5::extents(const none_t t) {
 }
 
 
-bool DataTagHDF5::hasExtents() const{
+bool DataTagHDF5::hasExtents() const {
     std::string extId;
     group().getAttr("extents", extId);
     return (extId.length() > 0);
@@ -150,10 +154,11 @@ size_t DataTagHDF5::referenceCount() const {
 
 
 DataArray DataTagHDF5::getReference(const std::string &id) const {
-    if (hasReference(id) && block().hasDataArray(id)) {
+    if (hasReference(id)) {
+        // block will return empty object if entity not found
         return block().getDataArray(id);
     } else {
-        throw std::runtime_error("Reference not found by given id");
+        return DataArray();
     }
 }
 
@@ -199,17 +204,17 @@ void DataTagHDF5::references(const std::vector<DataArray> &references) {
 // Methods concerning representations.
 //--------------------------------------------------
 
-bool DataTagHDF5::hasRepresentation(const string &id) const{
+bool DataTagHDF5::hasRepresentation(const string &id) const {
     return representation_group.hasGroup(id);
 }
 
 
-size_t DataTagHDF5::representationCount() const{
+size_t DataTagHDF5::representationCount() const {
     return representation_group.objectCount();
 }
 
 
-Representation DataTagHDF5::getRepresentation(const std::string &id) const  {
+Representation DataTagHDF5::getRepresentation(const std::string &id) const {
     if (representation_group.hasGroup(id)) { 
         Group group = representation_group.openGroup(id, false);
         string link_type;
@@ -226,7 +231,7 @@ Representation DataTagHDF5::getRepresentation(const std::string &id) const  {
 }
 
 
-Representation DataTagHDF5::getRepresentation(size_t index) const{
+Representation DataTagHDF5::getRepresentation(size_t index) const {
     string id = representation_group.objectName(index);
     return getRepresentation(id);
 }
@@ -245,7 +250,7 @@ Representation DataTagHDF5::createRepresentation(const std::string &data_array_i
 }
 
 
-bool DataTagHDF5::deleteRepresentation(const string &id){
+bool DataTagHDF5::deleteRepresentation(const string &id) {
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
@@ -285,7 +290,7 @@ ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
 }
 
 
-bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
+bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
 
     bool valid = true;
     boost::multi_array<double,1> aData, bData;
@@ -305,10 +310,10 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const{
 }
 
 
-bool DataTagHDF5::checkPositionsAndExtents() const{
+bool DataTagHDF5::checkPositionsAndExtents() const {
 
     bool valid = true;
-    if(hasPositions() && hasExtents()){
+    if(hasPositions() && hasExtents()) {
         DataArray pos = positions();
         DataArray ext = extents();
         boost::multi_array<double,1> posData, extData;

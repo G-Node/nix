@@ -62,8 +62,7 @@ SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &g
 void SectionHDF5::repository(const string &repository) {
     if(repository.empty()) {
         throw EmptyString("repository");
-    }
-    else {
+    } else {
         group().setAttr("repository", repository);
         forceUpdatedAt();
     }
@@ -89,10 +88,12 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const std::string &id) {
-    if (file().hasSection(id)) {
+    if(id.empty()) {
+        throw EmptyString("mapping");
+    } else if (file().hasSection(id)) {
         group().setAttr("link", id);
-    } else if (group().hasAttr("link")) {
-        group().removeAttr("link");
+    } else {
+        throw std::runtime_error("Section not found in file!");
     }
 }
 
@@ -128,8 +129,7 @@ void SectionHDF5::link(const none_t t) {
 void SectionHDF5::mapping(const string &mapping) {
     if(mapping.empty()) {
         throw EmptyString("mapping");
-    }
-    else {
+    } else {
         group().setAttr("mapping", mapping);
         forceUpdatedAt();
     }

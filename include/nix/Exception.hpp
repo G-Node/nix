@@ -71,6 +71,22 @@ private:
 };
 
 
+class MissingAttr: public std::exception {
+public:
+    MissingAttr(const std::string &attr_arg):
+    attr(attr_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("MissingAttribute: ");
+        sstream << "Obligatory attribute " << attr << " is not set!";
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string attr;
+};
+
+
 class UnsortedTicks: public std::exception {
 public:
     UnsortedTicks(const std::string &caller_arg):
