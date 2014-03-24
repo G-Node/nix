@@ -38,6 +38,7 @@ private:
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
+    CPPUNIT_TEST(testMapping);
 
     CPPUNIT_TEST(testValues);
     CPPUNIT_TEST(testDataType);
@@ -63,6 +64,7 @@ public:
     void testType();
     void testName();
     void testDefinition();
+    void testMapping();
     void testDataType();
     void testValues();
     void testUnit();

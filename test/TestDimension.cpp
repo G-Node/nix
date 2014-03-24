@@ -50,6 +50,8 @@ void TestDimension::testSampledDimLabel() {
 	CPPUNIT_ASSERT(*(sd.label()) == label);
 	sd.label(other_label);
 	CPPUNIT_ASSERT(*(sd.label()) == other_label);
+	CPPUNIT_ASSERT_NO_THROW(sd.label(boost::none));
+    CPPUNIT_ASSERT(*(sd.label()) == "");
 
 	data_array.deleteDimension(d.id());
 }
@@ -68,7 +70,9 @@ void TestDimension::testSampledDimUnit() {
 	CPPUNIT_ASSERT_THROW(sd.unit(invalidUnit), nix::InvalidUnit);
 	CPPUNIT_ASSERT_NO_THROW(sd.unit(validUnit));
 	CPPUNIT_ASSERT(*(sd.unit()) == validUnit);
-
+	CPPUNIT_ASSERT_NO_THROW(sd.unit(boost::none));
+	CPPUNIT_ASSERT(*(sd.unit()) == "");
+    
 	data_array.deleteDimension(d.id());
 }
 
@@ -83,6 +87,7 @@ void TestDimension::testSampledDimSamplingInterval() {
     
 	SampledDimension sd;
 	sd = d;
+    CPPUNIT_ASSERT(sd.samplingInterval() == boost::math::constants::pi<double>());
 	CPPUNIT_ASSERT_THROW(sd.samplingInterval(impossible_sampling_interval), std::runtime_error);
 	CPPUNIT_ASSERT_THROW(sd.samplingInterval(invalid_sampling_interval), std::runtime_error);
 	CPPUNIT_ASSERT_NO_THROW(sd.samplingInterval(samplingInterval));
@@ -103,7 +108,9 @@ void TestDimension::testSampledDimOffset() {
 	sd = d;
 	CPPUNIT_ASSERT_NO_THROW(sd.offset(offset));
 	CPPUNIT_ASSERT(*(sd.offset()) == offset);
-
+	CPPUNIT_ASSERT_NO_THROW(sd.offset(boost::none));
+    CPPUNIT_ASSERT(sd.offset() == 0);
+    
 	data_array.deleteDimension(d.id());
 }
 
@@ -175,6 +182,8 @@ void TestDimension::testRangeDimLabel() {
 	CPPUNIT_ASSERT(*(rd.label()) == label);
 	rd.label(other_label);
 	CPPUNIT_ASSERT(*(rd.label()) == other_label);
+	CPPUNIT_ASSERT_NO_THROW(rd.label(boost::none));
+    CPPUNIT_ASSERT(*(rd.label()) == "");
 
 	data_array.deleteDimension(d.id());
 }
@@ -197,7 +206,9 @@ void TestDimension::testRangeDimUnit() {
 	CPPUNIT_ASSERT_THROW(rd.unit(invalidUnit), nix::InvalidUnit);
 	CPPUNIT_ASSERT_NO_THROW(rd.unit(validUnit));
 	CPPUNIT_ASSERT(*(rd.unit()) == validUnit);
-
+	CPPUNIT_ASSERT_NO_THROW(rd.unit(boost::none));
+    CPPUNIT_ASSERT(*(rd.unit()) == "");
+    
 	data_array.deleteDimension(d.id());
 }
 
@@ -210,10 +221,11 @@ void TestDimension::testRangeTicks() {
 
 	Dimension d = data_array.appendRangeDimension(ticks);
 	CPPUNIT_ASSERT(d.dimensionType() == nix::DimensionType::Range);
-
+    
 	RangeDimension rd;
 	rd = d;
-	std::vector<double> retrieved_ticks = rd.ticks();
+    CPPUNIT_ASSERT(rd.ticks().size() == ticks.size());
+    std::vector<double> retrieved_ticks = rd.ticks();
 	CPPUNIT_ASSERT(retrieved_ticks.size() == ticks.size());
 	for (size_t i = 0; i < ticks.size(); i++){
 		CPPUNIT_ASSERT(ticks[i] == retrieved_ticks[i]);

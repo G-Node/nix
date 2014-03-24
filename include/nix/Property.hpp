@@ -73,7 +73,7 @@ public:
      * @param boost::none_t
      */
     void mapping(const boost::none_t t) {
-        backend()->mapping();
+        backend()->mapping(t);
     }
 
     /**

@@ -56,6 +56,7 @@ void TestFile::testBlockAccess() {
 
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
+    CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -78,6 +79,7 @@ void TestFile::testBlockAccess() {
 
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
+    CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
 }
 
 
@@ -86,6 +88,7 @@ void TestFile::testSectionAccess() {
 
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
+    CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -108,6 +111,7 @@ void TestFile::testSectionAccess() {
 
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
+    CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
 }
 
 

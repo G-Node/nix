@@ -202,10 +202,10 @@ void SampledDimensionHDF5::samplingInterval(double sampling_interval) {
 boost::optional<double> SampledDimensionHDF5::offset() const {
     boost::optional<double> ret;
     double offset = 0;
-    if(group.getAttr("offset", offset)){
+    if(group.getAttr("offset", offset)) {
         ret = offset;
     }
-    return offset;
+    return ret;
 }
 
 

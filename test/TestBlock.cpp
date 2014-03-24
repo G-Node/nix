@@ -76,6 +76,7 @@ void TestBlock::testSourceAccess() {
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
+    CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -100,6 +101,7 @@ void TestBlock::testSourceAccess() {
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
+    CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
 }
 
 
@@ -109,7 +111,7 @@ void TestBlock::testDataArrayAccess() {
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
-
+    CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -143,7 +145,7 @@ void TestBlock::testDataArrayAccess() {
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
-
+    CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
 
 }
 
@@ -157,6 +159,7 @@ void TestBlock::testSimpleTagAccess() {
     
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
+    CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -179,6 +182,7 @@ void TestBlock::testSimpleTagAccess() {
 
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
+    CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
 }
 
 
@@ -198,7 +202,8 @@ void TestBlock::testDataTagAccess() {
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);
-
+    CPPUNIT_ASSERT(block.getDataTag("invalid_id") == false);
+    
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         DataTag tag = block.createDataTag(*it, "segment", positions);
@@ -220,6 +225,7 @@ void TestBlock::testDataTagAccess() {
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);
+    CPPUNIT_ASSERT(block.getDataTag("invalid_id") == false);
 }
 
 

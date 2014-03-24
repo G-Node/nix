@@ -47,20 +47,33 @@ void TestProperty::testName() {
     string name = util::createId("", 32);
     property.name(name);
     CPPUNIT_ASSERT(*property.name() == name);
+    property.name(none);
+    CPPUNIT_ASSERT(*property.name() == "");
 }
 
 
 void TestProperty::testType() {
-    string typ = util::createId("", 32);
+    string typ = "some_str";
     property.type(typ);
     CPPUNIT_ASSERT(property.type() == typ);
 }
 
 
 void TestProperty::testDefinition() {
-    string def = util::createId("", 128);
+    string def = "some_str";
     property.definition(def);
     CPPUNIT_ASSERT(*property.definition() == def);
+    property.definition(boost::none);
+    CPPUNIT_ASSERT(*property.definition() == "");
+}
+
+
+void TestProperty::testMapping() {
+    string map = "some_str";
+    property.mapping(map);
+    CPPUNIT_ASSERT(*property.mapping() == map);
+    property.mapping(boost::none);
+    CPPUNIT_ASSERT((property.mapping()) == false);
 }
 
 
@@ -102,6 +115,8 @@ void TestProperty::testValues()
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     p2.deleteValues();
+    p2.values(none);
+    CPPUNIT_ASSERT(p2.values().empty() == true);
 }
 
 

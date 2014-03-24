@@ -38,6 +38,8 @@ void TestSection::testName() {
     string name = util::createId("", 32);
     section.name(name);
     CPPUNIT_ASSERT(*section.name() == name);
+    section.name(boost::none);
+    CPPUNIT_ASSERT(*section.name() == "");
 }
 
 
@@ -72,18 +74,20 @@ void TestSection::testRepository() {
     string rep = "http://foo.bar/" + util::createId("", 32);
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
+    section.repository(boost::none);
+    CPPUNIT_ASSERT(section.repository() == false);
 }
 
 
 void TestSection::testLink() {
-    CPPUNIT_ASSERT(section.link() == nullptr);
+    CPPUNIT_ASSERT(section.link() == false);
 
     section.link(section_other);
-    CPPUNIT_ASSERT(section.link() != nullptr);
+    CPPUNIT_ASSERT(section.link() != false);
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
 
-    section.link(nullptr);
-    CPPUNIT_ASSERT(section.link() == nullptr);
+    section.link(boost::none);
+    CPPUNIT_ASSERT(section.link() == false);
 }
 
 
@@ -92,6 +96,8 @@ void TestSection::testMapping() {
     string map = "http://foo.bar/" + util::createId("", 32);
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
+    section.mapping(boost::none);
+    CPPUNIT_ASSERT(section.mapping() == false);
 }
 
 
@@ -100,7 +106,7 @@ void TestSection::testSectionAccess() {
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
-
+    CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -110,10 +116,8 @@ void TestSection::testSectionAccess() {
         ids.push_back(child_section.id());
     }
 
-
     CPPUNIT_ASSERT(section.sectionCount() == names.size());
     CPPUNIT_ASSERT(section.sections().size() == names.size());
-
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Section child_section = section.getSection(*it);
@@ -125,6 +129,7 @@ void TestSection::testSectionAccess() {
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
+    CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
 }
 
 
@@ -214,7 +219,7 @@ void TestSection::testPropertyAccess() {
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
-
+    CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(), it2 = types.begin(); it != names.end(); ++it, ++it2) {
@@ -248,6 +253,7 @@ void TestSection::testPropertyAccess() {
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
+    CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 }
 
 
