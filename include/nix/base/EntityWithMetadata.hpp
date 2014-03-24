@@ -34,16 +34,6 @@ public:
     }
 
     /**
-     * Checks if the block has associated metadata.
-     *
-     * @return True if the block has metadata (odML section),
-     *         false otherwise.
-     */
-    bool hasMetadata() const {
-        return NamedEntity<T>::backend()->hasMetadata();
-    }
-
-    /**
      * Get metadata associated with this entity.
      *
      * @return The associated section, if no such section exists

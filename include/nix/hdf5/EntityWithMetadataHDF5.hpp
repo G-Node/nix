@@ -39,9 +39,6 @@ public:
                            const string &type, time_t time);
 
 
-    bool hasMetadata() const;
-
-
     Section metadata() const;
 
 

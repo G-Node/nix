@@ -26,14 +26,6 @@ class NIXAPI IEntityWithMetadata : virtual public INamedEntity {
 public:
 
     /**
-     * Checks if the block has associated metadata.
-     *
-     * @return True if the block has metadata (odML section),
-     *         false otherwise.
-     */
-    virtual bool hasMetadata() const = 0;
-
-    /**
      * Get metadata associated with this entity.
      *
      * @return The associated section, if no such section exists

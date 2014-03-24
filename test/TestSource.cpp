@@ -61,13 +61,13 @@ void TestSource::testDefinition() {
 
 
 void TestSource::testMetadataAccess() {
-    CPPUNIT_ASSERT(!source.hasMetadata());
+    CPPUNIT_ASSERT(!source.metadata());
 
     source.metadata(section);
-    CPPUNIT_ASSERT(source.hasMetadata());
+    CPPUNIT_ASSERT(source.metadata());
 
     source.metadata(none);
-    CPPUNIT_ASSERT(!source.hasMetadata());
+    CPPUNIT_ASSERT(!source.metadata());
 }
 
 

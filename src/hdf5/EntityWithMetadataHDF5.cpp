@@ -38,7 +38,7 @@ void EntityWithMetadataHDF5::metadata(const std::string &id) {
 
 
 Section EntityWithMetadataHDF5::metadata() const {
-    if (hasMetadata()) {
+    if (group().hasAttr("metadata")) {
         std::string sectionId;
         group().getAttr("metadata", sectionId);
         return file().getSection(sectionId);
@@ -54,13 +54,6 @@ void EntityWithMetadataHDF5::metadata(const none_t t) {
     if(group().hasAttr("metadata")) {
         group().removeAttr("metadata");
     }
-}
-
-
-bool EntityWithMetadataHDF5::hasMetadata() const{
-    std::string sectionId;
-    group().getAttr("metadata", sectionId);
-    return (sectionId.length() > 0);
 }
 
 

@@ -76,13 +76,6 @@ public:
      * @param boost::none_t.
      */
     virtual void extents(const none_t t) = 0;
-    
-    /**
-     * Returns whether this DataArray contains extents.
-     *
-     * @return bool
-     */
-    virtual bool hasExtents() const = 0;
 
 
     //--------------------------------------------------

@@ -29,13 +29,13 @@ void TestEntityWithMetadata::tearDown() {
 
 
 void TestEntityWithMetadata::testMetadataAccess() {
-    CPPUNIT_ASSERT(!block.hasMetadata());
+    CPPUNIT_ASSERT(!block.metadata());
 
     block.metadata(section);
-    CPPUNIT_ASSERT(block.hasMetadata());
+    CPPUNIT_ASSERT(block.metadata());
 
     block.metadata(boost::none);
-    CPPUNIT_ASSERT(!block.hasMetadata());
+    CPPUNIT_ASSERT(!block.metadata());
 }
 
 

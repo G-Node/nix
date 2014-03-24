@@ -125,15 +125,6 @@ public:
         backend()->extents(t);
     }
 
-    /**
-     * Returns whether this DataArray contains extents.
-     *
-     * @return bool
-     */
-    bool hasExtents() const {
-        return backend()->hasExtents();
-    }
-
 
     //--------------------------------------------------
     // Methods concerning references.

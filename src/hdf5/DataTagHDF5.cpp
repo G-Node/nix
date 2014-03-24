@@ -73,7 +73,7 @@ void DataTagHDF5::positions(const string &id) {
         if(!block().hasDataArray(id)) {
             throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
         } else {
-            if(hasExtents()) {
+            if(extents()) {
                 DataArray pos = block().getDataArray(id);
                 DataArray ext = extents();
                 if(!checkDimensions(ext, pos))
@@ -128,13 +128,6 @@ void DataTagHDF5::extents(const none_t t) {
         group().removeAttr("extents");
     }
     forceUpdatedAt();
-}
-
-
-bool DataTagHDF5::hasExtents() const {
-    std::string extId;
-    group().getAttr("extents", extId);
-    return (extId.length() > 0);
 }
 
 
@@ -311,9 +304,9 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
 
 
 bool DataTagHDF5::checkPositionsAndExtents() const {
-
     bool valid = true;
-    if(hasPositions() && hasExtents()) {
+
+    if(hasPositions() && extents()) {
         DataArray pos = positions();
         DataArray ext = extents();
         boost::multi_array<double,1> posData, extData;
@@ -321,6 +314,7 @@ bool DataTagHDF5::checkPositionsAndExtents() const {
         ext.getData(extData);
         return checkDimensions(pos, ext);
     }
+
     return valid;
 }
 
