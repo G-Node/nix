@@ -76,7 +76,7 @@ void TestSource::testSourceAccess() {
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
-
+    CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -86,10 +86,8 @@ void TestSource::testSourceAccess() {
         ids.push_back(child_source.id());
     }
 
-
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
-
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source child_source = source.getSource(*it);
@@ -101,6 +99,7 @@ void TestSource::testSourceAccess() {
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
+    CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
 }
 
 
