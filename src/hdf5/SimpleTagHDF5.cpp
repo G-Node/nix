@@ -23,25 +23,22 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
       references_list(tag.group(), "references")
 {
     representation_group = tag.representation_group;
-    position(tag.position());
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, const string &type, const vector<double> _position)
+                             const string &id, const string &type)
     : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
-    position(_position);
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
-                             const string &type, const vector<double> _position, time_t time)
+                             const string &type, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
-    position(_position);
 }
 
 
@@ -70,15 +67,22 @@ vector<double> SimpleTagHDF5::position() const {
     
     if(group().hasData("position")) {
         group().getData("position", position);
-        return position;
-    } else {
-        throw MissingAttr("position");
-    }    
+    } 
+    
+    return position;
 }
 
 
 void SimpleTagHDF5::position(const vector<double> &position) {
     group().setData("position", position);
+}
+
+
+void SimpleTagHDF5::position(const none_t t) {
+    if(group().hasData("position")) {
+        group().removeData("position");
+    }
+    forceUpdatedAt();
 }
 
 
@@ -194,7 +198,7 @@ Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
         auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
         return Representation(tmp);
     } else {
-        return Representation();
+        throw MissingAttr("Representation id");
     }
 }
 

@@ -120,7 +120,7 @@ void TestProperty::testValues()
 }
 
 
-void TestProperty::testDataType(){
+void TestProperty::testDataType() {
     nix::Section section = file.createSection("Area51", "Boolean");
     nix::Property p1 = section.createProperty("strProperty", "str");
     nix::Property p2 = section.createProperty("doubleProperty", "dbl");

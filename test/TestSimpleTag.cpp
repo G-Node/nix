@@ -25,8 +25,8 @@ void TestSimpleTag::setUp() {
     for (auto it = positions.begin(); it != positions.end(); ++it) {
         *it = *(std::prev(it)) + boost::math::constants::pi<double>();
     }
-    tag = block.createSimpleTag("tag_one", "test_tag", positions);
-    tag_other = block.createSimpleTag("tag_two", "test_tag", positions);
+    tag = block.createSimpleTag("tag_one", "test_tag");
+    tag_other = block.createSimpleTag("tag_two", "test_tag");
     tag_null = nullptr;
 
     section = file.createSection("foo_section", "metadata");
@@ -82,7 +82,7 @@ void TestSimpleTag::testCreateRemove() {
     }
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        SimpleTag st1 = block.createSimpleTag(names[i], type, positions);
+        SimpleTag st1 = block.createSimpleTag(names[i], type);
         SimpleTag st2 = block.getSimpleTag(st1.id());
         ids.push_back(st1.id());
 
@@ -109,11 +109,7 @@ void TestSimpleTag::testCreateRemove() {
 void TestSimpleTag::testReferences() {
     DataArray da_1 = block.createDataArray("TestReference 1","Reference");
     DataArray da_2 = block.createDataArray("TestReference 2","Reference");
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
-    }
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
 
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
@@ -153,11 +149,7 @@ void TestSimpleTag::testReferences() {
 
 
 void TestSimpleTag::testExtent() {
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
-    }
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -179,12 +171,11 @@ void TestSimpleTag::testPosition() {
     for (auto it = positions.begin(); it != positions.end(); ++it) {
         *it = *(std::prev(it)) + boost::math::constants::pi<double>();
     }
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
 
     std::vector<double> position = {1.0, 2.0, 3.0};
     std::vector<double> new_position = {2.0};
 
-    CPPUNIT_ASSERT(st.position().size() == 5);
     st.position(position);
     std::vector<double> retrieved = st.position();
     CPPUNIT_ASSERT(retrieved.size() == position.size());
@@ -247,11 +238,7 @@ void TestSimpleTag::testSourceAccess() {
 
 
 void TestSimpleTag::testUnits() {
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
-    }
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", positions);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};

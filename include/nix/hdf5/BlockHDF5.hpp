@@ -115,8 +115,7 @@ public:
     size_t simpleTagCount() const;
 
 
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
-                              const std::vector<double> position);
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type);
 
 
     bool deleteSimpleTag(const std::string &id);

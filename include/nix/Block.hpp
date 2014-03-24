@@ -382,9 +382,8 @@ public:
      *
      * @return The newly created tag.
      */
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
-                              const std::vector<double> positions) {
-        return backend()->createSimpleTag(name, type, positions);
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
+        return backend()->createSimpleTag(name, type);
     }
 
     /**

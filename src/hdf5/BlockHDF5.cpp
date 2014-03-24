@@ -117,11 +117,9 @@ bool BlockHDF5::hasSimpleTag(const string &id) const {
 SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
-        vector<double> position;
-        tag_group.getData("position", position);
         string type;
         tag_group.getAttr("type", type);
-        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, position);
+        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type);
         return SimpleTag(tmp);
     } else {
         return nix::SimpleTag();
@@ -140,8 +138,7 @@ size_t BlockHDF5::simpleTagCount() const {
 }
 
 
-SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type, 
-                                     const std::vector<double> position) {
+SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type) {
     string id = util::createId("simple_tag");
 
     while(hasSimpleTag(id)) {
@@ -149,7 +146,7 @@ SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type,
     }
 
     Group group = simple_tag_group.openGroup(id, true);
-    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), group, id, type, position);
+    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), group, id, type);
     tmp->name(name);
 
     return SimpleTag(tmp);

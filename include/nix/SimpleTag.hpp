@@ -99,7 +99,16 @@ public:
     void position(const std::vector<double> &position) {
         backend()->position(position);
     }
-
+    
+    /**
+     * Deleter for the position of a tag.
+     *
+     * @param boost::none_t.
+     */
+    void position(const boost::none_t t) {
+        backend()->position(t);
+    }
+    
     /**
      * Getter for the extent of a tag. Given a specified position
      * vector, the extent vector defined the size of a region of

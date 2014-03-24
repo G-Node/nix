@@ -152,10 +152,6 @@ void TestBlock::testDataArrayAccess() {
 
 void TestBlock::testSimpleTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
-    }
     
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
@@ -163,7 +159,7 @@ void TestBlock::testSimpleTagAccess() {
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        SimpleTag tag = block.createSimpleTag(*it, "segment", positions);
+        SimpleTag tag = block.createSimpleTag(*it, "segment");
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());
