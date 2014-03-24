@@ -37,6 +37,8 @@ void TestDataArray::testName() {
     std::string name = nix::util::createId("", 32);
     array1.name(name);
     CPPUNIT_ASSERT(*array1.name() == name);
+    array1.label(boost::none);
+    CPPUNIT_ASSERT(*array1.label() == "");
 }
 
 
@@ -52,6 +54,8 @@ void TestDataArray::testDefinition() {
     std::string def = nix::util::createId("", 128);
     array1.definition(def);
     CPPUNIT_ASSERT(*array1.definition() == def);
+    array1.definition(boost::none);
+    CPPUNIT_ASSERT(*array1.definition() == "");
 }
 
 
@@ -68,6 +72,9 @@ void TestDataArray::testData()
                 A[i][j][k] = values++;
 
     CPPUNIT_ASSERT_EQUAL(array1.hasData(), false);
+    CPPUNIT_ASSERT_EQUAL(array1.getDataType(), nix::DataType::Nothing);
+    CPPUNIT_ASSERT(array1.getDataExtent() == nix::NDSize{});
+    CPPUNIT_ASSERT(array1.getDimension(1) == false);
     array1.createData(A, {3, 4, 2});
     CPPUNIT_ASSERT_EQUAL(array1.hasData(), true);
     array1.setData(A);
@@ -168,7 +175,9 @@ void TestDataArray::testLabel()
     std::string testStr = "somestring";
 
     array1.label(testStr);
-    CPPUNIT_ASSERT(array1.label() == testStr);
+    CPPUNIT_ASSERT(*array1.label() == testStr);
+    array1.label(boost::none);
+    CPPUNIT_ASSERT(*array1.label() == "");
 }
 
 void TestDataArray::testUnit()
@@ -179,6 +188,8 @@ void TestDataArray::testUnit()
     CPPUNIT_ASSERT_THROW(array1.unit(testStr), nix::InvalidUnit);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
     CPPUNIT_ASSERT(array1.unit() == validUnit);
+    CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
+    CPPUNIT_ASSERT(*array1.unit() == "");
 }
 
 void TestDataArray::testDimension()
