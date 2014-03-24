@@ -39,9 +39,9 @@
 #include "TestRepresentation.hpp"
 
 int main(int argc, char* argv[]) {
-	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
-	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
-	CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
