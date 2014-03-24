@@ -26,8 +26,8 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, const string &type)
+SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+                             const string &type)
     : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
@@ -198,7 +198,7 @@ Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
         auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
         return Representation(tmp);
     } else {
-        throw MissingAttr("Representation id");
+        return Representation();
     }
 }
 

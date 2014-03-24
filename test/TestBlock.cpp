@@ -158,7 +158,7 @@ void TestBlock::testSimpleTagAccess() {
     CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
+    for (auto it = names.begin(); it != names.end(); ++it) {
         SimpleTag tag = block.createSimpleTag(*it, "segment");
         CPPUNIT_ASSERT(tag.name() == *it);
 
@@ -168,7 +168,7 @@ void TestBlock::testSimpleTagAccess() {
     CPPUNIT_ASSERT(block.simpleTagCount() == names.size());
     CPPUNIT_ASSERT(block.simpleTags().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
+    for (auto it = ids.begin(); it != ids.end(); ++it) {
         SimpleTag tag = block.getSimpleTag(*it);
         CPPUNIT_ASSERT(block.hasSimpleTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
