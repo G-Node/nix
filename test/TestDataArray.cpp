@@ -14,7 +14,7 @@
 
 void TestDataArray::setUp()
 {
-	startup_time = time(NULL);
+    startup_time = time(NULL);
     file = nix::File::open("test_DataArray.h5", nix::FileMode::Overwrite);
 
     block = file.createBlock("block_one", "dataset");
@@ -24,7 +24,7 @@ void TestDataArray::setUp()
 
 void TestDataArray::tearDown()
 {
-	file.close();
+    file.close();
 }
 
 void TestDataArray::testId() {
@@ -253,6 +253,6 @@ void TestDataArray::testDimension()
 
 void TestDataArray::testOperator()
 {
-	std::stringstream mystream;
-	mystream << array1;
+    std::stringstream mystream;
+    mystream << array1;
 }
