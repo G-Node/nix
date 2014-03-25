@@ -21,12 +21,16 @@ void TestSimpleTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_dataTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
     }
-    tag = block.createSimpleTag("tag_one", "test_tag");
-    tag_other = block.createSimpleTag("tag_two", "test_tag");
+    
+    tag = block.createSimpleTag("tag_one", "test_tag", refs);
+    tag_other = block.createSimpleTag("tag_two", "test_tag", refs);
     tag_null = nullptr;
 
     section = file.createSection("foo_section", "metadata");
@@ -76,13 +80,16 @@ void TestSimpleTag::testCreateRemove() {
     std::vector<std::string> ids;
     size_t count = block.simpleTagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
     }
+    
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        SimpleTag st1 = block.createSimpleTag(names[i], type);
+        SimpleTag st1 = block.createSimpleTag(names[i], type, refs);
         SimpleTag st2 = block.getSimpleTag(st1.id());
         ids.push_back(st1.id());
 
@@ -95,12 +102,15 @@ void TestSimpleTag::testCreateRemove() {
     errmsg2 << "Error creating SimpleTags. Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.simpleTagCount() == (count+5));
 
+    for (auto it = refs.begin(); it != refs.end(); it++) {
+        block.deleteDataArray((*it).id());
+    }
     for (size_t i = 0; i < ids.size(); i++) {
         block.deleteSimpleTag(ids[i]);
     }
 
     std::stringstream errmsg1;
-    errmsg1 << "Error while removing dataTags!";
+    errmsg1 << "Error while removing simpleTags!";
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.simpleTagCount() == count);
 }
 
@@ -109,18 +119,25 @@ void TestSimpleTag::testCreateRemove() {
 void TestSimpleTag::testReferences() {
     DataArray da_1 = block.createDataArray("TestReference 1","Reference");
     DataArray da_2 = block.createDataArray("TestReference 2","Reference");
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
+    }
+    
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestDataTag::testReference: Counts do not match!";
-    CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 0);
+    CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 5);
 
     st.addReference(da_1.id());
     st.addReference(da_2.id());
 
-    CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 2);
+    CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 7);
 
     std::stringstream retrieveerrmsg;
     DataArray ref1 = st.getReference(da_1.id());
@@ -128,7 +145,7 @@ void TestSimpleTag::testReferences() {
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
 
     std::vector<DataArray> arrays = st.references();
-    CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);
+    CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 7);
 
     std::stringstream hasReferrmsg;
     hasReferrmsg << "TestSimpleTag::testReference: hadReference did not work!";
@@ -138,18 +155,28 @@ void TestSimpleTag::testReferences() {
     std::stringstream delReferrmsg;
     delReferrmsg << "TestSimpleTag::testReference: removeReference did not work!";
     st.removeReference(da_1.id());
-    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 1);
+    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 6);
     st.removeReference(da_2.id());
-    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 0);
+    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 5);
 
     block.deleteDataArray(da_1.id());
     block.deleteDataArray(da_1.id());
+    for (auto it = refs.begin(); it != refs.end(); it++) {
+        block.deleteDataArray((*it).id());
+    }
     block.deleteSimpleTag(st.id());
 }
 
 
 void TestSimpleTag::testExtent() {
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
+    }
+    
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -162,16 +189,22 @@ void TestSimpleTag::testExtent() {
 
     st.extent(none);
     CPPUNIT_ASSERT(st.extent().size() == 0);
+    for (auto it = refs.begin(); it != refs.end(); it++) {
+        block.deleteDataArray((*it).id());
+    }
     block.deleteSimpleTag(st.id());
 }
 
 
 void TestSimpleTag::testPosition() {
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
     }
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
+    
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<double> position = {1.0, 2.0, 3.0};
     std::vector<double> new_position = {2.0};
@@ -190,6 +223,9 @@ void TestSimpleTag::testPosition() {
 
     for(size_t i = 0; i < retrieved.size(); i++){
         CPPUNIT_ASSERT(retrieved[i] == new_position[i]);
+    }
+    for (auto it = refs.begin(); it != refs.end(); it++) {
+        block.deleteDataArray((*it).id());
     }
     block.deleteSimpleTag(st.id());
 }
@@ -238,7 +274,14 @@ void TestSimpleTag::testSourceAccess() {
 
 
 void TestSimpleTag::testUnits() {
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag");
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
+    }
+    
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -253,6 +296,9 @@ void TestSimpleTag::testUnits() {
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
+    for (auto it = refs.begin(); it != refs.end(); it++) {
+        block.deleteDataArray((*it).id());
+    }
     block.deleteSimpleTag(st.id());
 }
 

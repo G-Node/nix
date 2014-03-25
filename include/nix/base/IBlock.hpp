@@ -194,7 +194,8 @@ public:
      *
      * @return The newly created tag.
      */
-    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type) = 0;
+    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
+                                      const std::vector<DataArray> &refs) = 0;
 
     /**
      * Deletes a simple tag from the block.

@@ -382,8 +382,9 @@ public:
      *
      * @return The newly created tag.
      */
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type) {
-        return backend()->createSimpleTag(name, type);
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
+                              const std::vector<DataArray> &refs) {
+        return backend()->createSimpleTag(name, type, refs);
     }
 
     /**

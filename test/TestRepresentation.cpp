@@ -10,8 +10,16 @@ using namespace nix;
 void TestRepresentation::setUp() {
     file = File::open("test_representation.h5", FileMode::Overwrite);
     block = file.createBlock("representationTest","test");
+
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
+    }
+
     data_array = block.createDataArray("representationTest", "Test");
-    tag = block.createSimpleTag("representationTest", "Test");
+    tag = block.createSimpleTag("representationTest", "Test", refs);
 }
 
 

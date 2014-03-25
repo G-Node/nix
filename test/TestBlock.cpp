@@ -152,14 +152,20 @@ void TestBlock::testDataArrayAccess() {
 
 void TestBlock::testSimpleTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
+    }
+                                 
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
     CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        SimpleTag tag = block.createSimpleTag(*it, "segment");
+        SimpleTag tag = block.createSimpleTag(*it, "segment", refs);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());

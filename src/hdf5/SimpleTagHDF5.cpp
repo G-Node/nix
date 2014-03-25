@@ -27,18 +27,30 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
-                             const string &type)
-    : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
+                             const string &type, const std::vector<DataArray> &refs)
+    : SimpleTagHDF5(file, block, group, id, type, refs, util::getTime())
 {
-    representation_group = group.openGroup("representations");
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
-                             const string &type, time_t time)
+                             const string &type, const std::vector<DataArray> &refs, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
+    
+    bool valid = false;
+    for(auto it = refs.begin(); it != refs.end(); ++it) {
+        // NOTE: arrays might be empty - we drop them & but require one valid!
+        //       arrays not found in block => addReference: o_O => ERROR
+        if(*it) {
+            addReference((*it).id());
+            valid = true;
+        }
+    }
+    if(!valid) {
+        throw std::runtime_error("SimpleTag requires at least one valid referenced DataArray to be constructed!");
+    }
 }
 
 
