@@ -152,18 +152,20 @@ void TestBlock::testDataArrayAccess() {
 
 void TestBlock::testSimpleTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+                                 
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
     CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        SimpleTag tag = block.createSimpleTag(*it, "segment", positions);
+    for (auto it = names.begin(); it != names.end(); ++it) {
+        SimpleTag tag = block.createSimpleTag(*it, "segment", refs);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());
@@ -172,7 +174,7 @@ void TestBlock::testSimpleTagAccess() {
     CPPUNIT_ASSERT(block.simpleTagCount() == names.size());
     CPPUNIT_ASSERT(block.simpleTags().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
+    for (auto it = ids.begin(); it != ids.end(); ++it) {
         SimpleTag tag = block.getSimpleTag(*it);
         CPPUNIT_ASSERT(block.hasSimpleTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);

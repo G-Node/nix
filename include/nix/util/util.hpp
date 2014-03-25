@@ -45,6 +45,23 @@ NIXAPI std::string createId(std::string prefix = "", int length = 16);
 NIXAPI std::string timeToStr(time_t time);
 
 /**
+ * Convert a string representation of a date into a time value.
+ *
+ * @param time    The string representation of a date.
+ *
+ * @return The time value that is represented by the time parameter.
+ */
+NIXAPI time_t strToTime(const std::string &time);
+
+/**
+ * Convert a time value into a string representation.
+ * @todo Maybe its better to use C++11 std::chrono::time_point instead of time_t
+ *
+ * @return The default time.
+ */
+NIXAPI time_t getTime();
+
+/**
  * Checks if the passed string represents a valid SI unit.
  *
  * @param unit a string that is supposed to represent an SI unit.
@@ -88,15 +105,6 @@ NIXAPI void splitUnit(const std::string &fullUnit, std::string &prefix, std::str
  * @param atomicUnits vector<string> that takes the atomic units
  */
 NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
-
-/**
- * Convert a string representation of a date into a time value.
- *
- * @param time    The string representation of a date.
- *
- * @return The time value that is represented by the time parameter.
- */
-NIXAPI time_t strToTime(const std::string &time);
 
 /**
  * Convert a number into a string representation.

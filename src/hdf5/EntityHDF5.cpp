@@ -47,14 +47,14 @@ time_t EntityHDF5::updatedAt() const {
 
 void EntityHDF5::setUpdatedAt() {
     if (!group().hasAttr("updated_at")) {
-        time_t t = time(NULL);
+        time_t t = util::getTime();
         group().setAttr("updated_at", util::timeToStr(t));
     }
 }
 
 
 void EntityHDF5::forceUpdatedAt() {
-    time_t t = time(NULL);
+    time_t t = util::getTime();
     group().setAttr("updated_at", util::timeToStr(t));
 }
 
@@ -68,7 +68,7 @@ time_t EntityHDF5::createdAt() const {
 
 void EntityHDF5::setCreatedAt() {
     if (!group().hasAttr("created_at")) {
-        time_t t = time(NULL);
+        time_t t = util::getTime();
         group().setAttr("created_at", util::timeToStr(t));
     }
 }

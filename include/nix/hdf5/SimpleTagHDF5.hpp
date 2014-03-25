@@ -44,14 +44,14 @@ public:
     /**
      * Standard constructor
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, 
-                  const std::string &id, const string &type, const vector<double> _position);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id, 
+                  const string &type, const std::vector<DataArray> &refs);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, 
-                  const std::string &id, const string &type, const vector<double> _position, time_t time);
+    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id, 
+                  const string &type, const std::vector<DataArray> &refs, const time_t time);
 
 
     std::vector<std::string> units() const;
@@ -67,6 +67,9 @@ public:
 
 
     void position(const std::vector<double> &position);
+
+
+    void position(const none_t t);
 
 
     std::vector<double> extent() const;

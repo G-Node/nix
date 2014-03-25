@@ -168,8 +168,8 @@ std::vector<Value> PropertyHDF5::values(void) const
 
 
 void PropertyHDF5::values(const none_t t) {
-    if(group().hasAttr("values")) {
-        group().removeAttr("values");
+    if(group().hasData("values")) {
+        group().removeData("values");
     }
     forceUpdatedAt();
 }

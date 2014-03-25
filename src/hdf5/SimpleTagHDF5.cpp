@@ -23,25 +23,34 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
       references_list(tag.group(), "references")
 {
     representation_group = tag.representation_group;
-    position(tag.position());
-}
-
-
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group,
-                             const string &id, const string &type, const vector<double> _position)
-    : EntityWithSourcesHDF5(file, block, group, id, type), references_list(group, "references")
-{
-    representation_group = group.openGroup("representations");
-    position(_position);
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
-                             const string &type, const vector<double> _position, time_t time)
+                             const string &type, const std::vector<DataArray> &refs)
+    : SimpleTagHDF5(file, block, group, id, type, refs, util::getTime())
+{
+}
+
+
+SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+                             const string &type, const std::vector<DataArray> &refs, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, time), references_list(group, "references")
 {
     representation_group = group.openGroup("representations");
-    position(_position);
+    
+    bool valid = false;
+    for(auto it = refs.begin(); it != refs.end(); ++it) {
+        // NOTE: arrays might be empty - we drop them & but require one valid!
+        //       arrays not found in block => addReference: o_O => ERROR
+        if(*it) {
+            addReference((*it).id());
+            valid = true;
+        }
+    }
+    if(!valid) {
+        throw std::runtime_error("SimpleTag requires at least one valid referenced DataArray to be constructed!");
+    }
 }
 
 
@@ -70,15 +79,22 @@ vector<double> SimpleTagHDF5::position() const {
     
     if(group().hasData("position")) {
         group().getData("position", position);
-        return position;
-    } else {
-        throw MissingAttr("position");
-    }    
+    } 
+    
+    return position;
 }
 
 
 void SimpleTagHDF5::position(const vector<double> &position) {
     group().setData("position", position);
+}
+
+
+void SimpleTagHDF5::position(const none_t t) {
+    if(group().hasData("position")) {
+        group().removeData("position");
+    }
+    forceUpdatedAt();
 }
 
 

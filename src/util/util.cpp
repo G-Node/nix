@@ -65,6 +65,11 @@ time_t strToTime(const string &time) {
 }
 
 
+time_t getTime() {
+    return time(NULL);
+}
+
+
 void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power){
     boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
     boost::regex prefix_and_unit(PREFIXES + UNITS);

@@ -65,7 +65,14 @@ public:
      * @param position    The position vector.
      */
     virtual void position(const std::vector<double> &position) = 0;
-
+    
+    /**
+     * Deleter for the position of a tag.
+     *
+     * @param boost::none_t.
+     */
+    virtual void position(const boost::none_t t) = 0;
+    
     /**
      * Getter for the extent of a tag. Given a specified position
      * vector, the extent vector defined the size of a region of

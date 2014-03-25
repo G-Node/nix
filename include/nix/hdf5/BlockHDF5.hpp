@@ -116,7 +116,7 @@ public:
 
 
     SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
-                              const std::vector<double> position);
+                              const std::vector<DataArray> &refs);
 
 
     bool deleteSimpleTag(const std::string &id);

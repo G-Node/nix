@@ -10,12 +10,16 @@ using namespace nix;
 void TestRepresentation::setUp() {
     file = File::open("test_representation.h5", FileMode::Overwrite);
     block = file.createBlock("representationTest","test");
-    data_array = block.createDataArray("representationTest", "Test");
-    std::vector<double> positions(5);
-    for (auto it = positions.begin(); it != positions.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+
+    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                   "data_array_d", "data_array_e" };
+    vector<DataArray> refs;
+    for (auto it = array_names.begin(); it != array_names.end(); it++) {
+        refs.push_back(block.createDataArray(*it, "reference"));
     }
-    tag = block.createSimpleTag("representationTest", "Test", positions);
+
+    data_array = block.createDataArray("representationTest", "Test");
+    tag = block.createSimpleTag("representationTest", "Test", refs);
 }
 
 
