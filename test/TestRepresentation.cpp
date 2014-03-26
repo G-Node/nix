@@ -30,25 +30,30 @@ void TestRepresentation::tearDown() {
 
 
 void TestRepresentation::testId() {
-    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Indexed);
+    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.id().size() == 31);
     tag.deleteRepresentation(rp.id());
 }
 
 
 void TestRepresentation::testLinkType(){
-    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Indexed);
-    CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Indexed);
-    rp.linkType(nix::LinkType::Tagged);
+    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
     rp.linkType(nix::LinkType::Untagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Untagged);
+    rp.linkType(nix::LinkType::Tagged);
+    CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
+    
+    CPPUNIT_ASSERT_THROW(tag.createRepresentation(data_array, nix::LinkType::Indexed), std::runtime_error);
+    rp.linkType(nix::LinkType::Indexed);
+    CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Indexed);
+
     tag.deleteRepresentation(rp.id());
 }
 
 
 void TestRepresentation::testData() {
-    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Indexed);
+    Representation rp = tag.createRepresentation(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test");
     CPPUNIT_ASSERT(rp.data().id() == data_array.id());
     rp.data(da_2);
