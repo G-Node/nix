@@ -18,7 +18,15 @@
 namespace nix {
 namespace hdf5 {
 
-
+/**
+ * ReferenceList is a sub-class of {@link Group} classes: it always
+ * lives in a group and requires one upon construction to nest itself
+ * in. Thus when copying an entity it is enough to copy its group(s),
+ * any ReferenceList will come along.
+ * Its' intended use is to store references to other entities, e.g.
+ * referenced {@link DataArray} entities in {@link SimpleTag} or 
+ * {@link DataTag} entities. 
+ */
 class NIXAPI ReferenceList {
 
     static const NDSize MIN_CHUNK_SIZE;

@@ -33,10 +33,8 @@ SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
 
 SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
                          const string &id, const string &type)
-    : NamedEntityHDF5(file, group, id, type), parent_section(parent)
+    : SectionHDF5(file, parent, group, id, type, util::getTime())
 {
-    property_group = this->group().openGroup("properties");
-    section_group = this->group().openGroup("sections");
 }
 
 

@@ -61,7 +61,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     setUpdatedAt();
 
     if(!checkHeader()) {
-        /// TODO throw an exception here
+        throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
 

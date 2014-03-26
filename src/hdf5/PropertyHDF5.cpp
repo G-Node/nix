@@ -23,7 +23,7 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 
 
 PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &type)
-    : NamedEntityHDF5(file, group, id, type)
+    : PropertyHDF5(file, group, id, type, util::getTime())
 {
 }
 

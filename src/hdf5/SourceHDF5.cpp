@@ -23,9 +23,8 @@ SourceHDF5::SourceHDF5(const SourceHDF5 &source)
 
 
 SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type)
-    : EntityWithMetadataHDF5(file, group, id, type)
+    : SourceHDF5(file, group, id, type, util::getTime())
 {
-    source_group = group.openGroup("sources");
 }
 
 

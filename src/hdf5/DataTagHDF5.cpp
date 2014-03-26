@@ -22,20 +22,14 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
       reference_list(tag.reference_list)
 {
     representation_group = tag.representation_group;
-    // TODO: the line below currently throws an exception if the DataArray
-    // is not in block - to consider if we prefer copying it to the block
     positions(tag.positions().id());
 }
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
                          const string &id, const std::string &type, const DataArray _positions)
-    : EntityWithSourcesHDF5(file, block, group, id, type), reference_list(group, "references")
+    : DataTagHDF5(file, block, group, id, type, _positions, util::getTime())
 {
-    representation_group = this->group().openGroup("representations");
-    // TODO: the line below currently throws an exception if positions is
-    // not in block - to consider if we prefer copying it to the block
-    positions(_positions.id());
 }
 
 
@@ -44,6 +38,8 @@ DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &grou
     : EntityWithSourcesHDF5(file, block, group, id, type, time), reference_list(group, "references")
 {
     representation_group = this->group().openGroup("representations");
+    // TODO: the line below currently throws an exception if positions is
+    // not in block - to consider if we prefer copying it to the block
     positions(_positions.id());
 }
 

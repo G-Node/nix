@@ -40,12 +40,8 @@ RepresentationHDF5::RepresentationHDF5(const RepresentationHDF5 &representation)
 
 RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, const Group &group,
                                        const string &id, DataArray _data, LinkType _link_type)
-    : EntityHDF5(file, group, id), block(block)
+    : RepresentationHDF5(file, block, group, id, _data, _link_type, util::getTime())
 {
-    linkType(_link_type);
-    // TODO: the line below currently throws an exception if the DataArray
-    // is not in block - to consider if we prefer copying it to the block
-    data(_data.id());
 }
 
 
