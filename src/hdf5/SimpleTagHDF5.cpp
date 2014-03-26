@@ -215,14 +215,18 @@ Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
 }
 
 
-Representation SimpleTagHDF5::getRepresentation(size_t index) const{
+Representation SimpleTagHDF5::getRepresentation(size_t index) const {
     string id = representation_group.objectName(index);
 
     return getRepresentation(id);
 }
 
 
-Representation SimpleTagHDF5::createRepresentation(const std::string &data_array_id, LinkType link_type){
+Representation SimpleTagHDF5::createRepresentation(const std::string &data_array_id, LinkType link_type) {
+    if(link_type == LinkType::Indexed) {
+        throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
+    }
+    
     string rep_id = util::createId("representation");
     while(representation_group.hasObject(rep_id))
         rep_id = util::createId("representation");
@@ -235,7 +239,7 @@ Representation SimpleTagHDF5::createRepresentation(const std::string &data_array
 }
 
 
-bool SimpleTagHDF5::deleteRepresentation(const string &id){
+bool SimpleTagHDF5::deleteRepresentation(const string &id) {
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
