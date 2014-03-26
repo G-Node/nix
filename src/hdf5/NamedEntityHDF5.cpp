@@ -18,9 +18,8 @@ namespace hdf5 {
 
 
 NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type)
-    : EntityHDF5(file, group, id)
+    : NamedEntityHDF5(file, group, id, _type, util::getTime())
 {
-    type(_type);
 }
 
 

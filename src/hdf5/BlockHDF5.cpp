@@ -27,12 +27,8 @@ BlockHDF5::BlockHDF5(const BlockHDF5 &block)
 
 
 BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type)
-    : EntityWithMetadataHDF5(file, group, id, type)
+    : BlockHDF5(file, group, id, type, util::getTime())
 {
-    source_group = group.openGroup("sources");
-    data_array_group = group.openGroup("data_arrays");
-    simple_tag_group = group.openGroup("simple_tags");
-    data_tag_group = group.openGroup("data_tags");
 }
 
 

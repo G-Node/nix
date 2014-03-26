@@ -16,7 +16,7 @@ namespace hdf5 {
 
 
 EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type)
-    : NamedEntityHDF5(file, group, id, type)
+    : EntityWithMetadataHDF5(file, group, id, type, util::getTime())
 {
 }
 

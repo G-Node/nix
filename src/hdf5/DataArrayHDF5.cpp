@@ -26,9 +26,8 @@ DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
 
 DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, 
                              const string &id, const string &type)
-    : EntityWithSourcesHDF5(file, block, group, id, type)
+    : DataArrayHDF5(file, block, group, id, type, util::getTime())
 {
-    dimension_group = this->group().openGroup("dimensions", true);
 }
 
 
