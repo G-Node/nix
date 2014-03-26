@@ -36,7 +36,7 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 string createId(string prefix, int length) {
     static std::once_flag rand_init;
-    std::call_once(rand_init, [](){ srand(static_cast<unsigned int>(time(0))); });
+    std::call_once(rand_init, []() { srand(static_cast<unsigned int>(time(0))); });
 
     string id;
     if (prefix.length() > 0) {
@@ -71,14 +71,14 @@ time_t getTime() {
 }
 
 
-void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power){
+void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power) {
     boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
     boost::regex prefix_and_unit(PREFIXES + UNITS);
     boost::regex unit_and_power(UNITS + POWER);
     boost::regex unit_only(UNITS);
     boost::regex prefix_only(PREFIXES);
 
-    if(boost::regex_match(combinedUnit, prefix_and_unit_and_power)){
+    if(boost::regex_match(combinedUnit, prefix_and_unit_and_power)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -88,7 +88,7 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         power = m.suffix();
         power = power.substr(1);
     }
-    else if(boost::regex_match(combinedUnit, unit_and_power)){
+    else if(boost::regex_match(combinedUnit, unit_and_power)) {
         prefix = "";
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, unit_only);
@@ -96,7 +96,7 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         power = m.suffix();
         power = power.substr(1);
     }
-    else if(boost::regex_match(combinedUnit, prefix_and_unit)){
+    else if(boost::regex_match(combinedUnit, prefix_and_unit)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -111,12 +111,12 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
 }
 
 
-void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits){
+void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits) {
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
     boost::regex_search(compoundUnit, m, opt_prefix_and_unit_and_power);
-    while(m.suffix().length() > 0){
+    while(m.suffix().length() > 0) {
         string suffix = m.suffix();
         atomicUnits.push_back(m[0]);
         boost::regex_search(suffix.substr(1), m, opt_prefix_and_unit_and_power);
@@ -125,13 +125,13 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
 }
 
 
-bool isSIUnit(const string &unit){
+bool isSIUnit(const string &unit) {
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     return boost::regex_match(unit, opt_prefix_and_unit_and_power);
 }
 
 
-bool isCompoundSIUnit(const string &unit){
+bool isCompoundSIUnit(const string &unit) {
     string atomic_unit = PREFIXES + "?" + UNITS + POWER + "?";
     boost::regex compound_unit("(" + atomic_unit + "(\\*|/))+"+ atomic_unit);
     return boost::regex_match(unit, compound_unit);
@@ -168,7 +168,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     }else{
         throw nix::InvalidUnit("Origin unit and/or destination unit are not valid!", "nix::util::getSIScaling");
     }
-    return scaling ;
+    return scaling;
 }
 
 } // namespace util

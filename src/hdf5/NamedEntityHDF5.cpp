@@ -110,7 +110,7 @@ void NamedEntityHDF5::definition(const none_t t) {
 
 int NamedEntityHDF5::compare(const INamedEntity &other) const {
     int cmp = 0;
-    if (name() && other.name()){
+    if (name() && other.name()) {
         cmp = (*name()).compare(*other.name());
     }
     if (cmp == 0) {

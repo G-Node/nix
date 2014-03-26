@@ -98,7 +98,7 @@ public:
      * @param string the unit
      */
     void unit(const std::string &unit) {
-        if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))){
+        if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
             throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
         }
         backend()->unit(unit);

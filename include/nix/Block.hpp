@@ -65,7 +65,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const Source &source) const {
-        if(source == none){
+        if(source == none) {
             throw std::runtime_error("Empty Source entity given");
         }
         return backend()->hasSource(source.id());
@@ -170,7 +170,7 @@ public:
      * @return True if the source was removed, false otherwise.
      */
     bool deleteSource(const Source &source) {
-        if (source == none){
+        if (source == none) {
             throw std::runtime_error("Empty Source entity given");
         }
         return backend()->deleteSource(source.id());
@@ -199,7 +199,7 @@ public:
      * @return True if the data array exists, false otherwise.
      */
     bool hasDataArray(const DataArray &data_array) const {
-        if (data_array == none){
+        if (data_array == none) {
             throw std::runtime_error("Empty DataArray entity given!");
         }
         return backend()->hasDataArray(data_array.id());
@@ -286,7 +286,7 @@ public:
      * @return True if the data array was removed, false otherwise.
      */
     bool deleteDataArray(const DataArray &data_array) {
-        if (data_array == none){
+        if (data_array == none) {
             throw std::runtime_error("Empty DataArray entity given!");
         }
         return backend()->deleteDataArray(data_array.id());
@@ -314,7 +314,7 @@ public:
      * @return True if the simple tag exists, false otherwise.
      */
     bool hasSimpleTag(const SimpleTag &simple_tag) const {
-        if(simple_tag == none){
+        if(simple_tag == none) {
             throw std::runtime_error("Empty SimpleTag entity given!");
         }
         return backend()->hasSimpleTag(simple_tag.id());
@@ -406,7 +406,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteSimpleTag(const SimpleTag &simple_tag) {
-        if (simple_tag == none){
+        if (simple_tag == none) {
             throw std::runtime_error("Block::deleteSimpleTag: Empty SimpleTag entity given!");
         }
         return backend()->deleteSimpleTag(simple_tag.id());
@@ -435,7 +435,7 @@ public:
      * @return True if the data tag exists, false otherwise.
      */
     bool hasDataTag(const DataTag &data_tag) const {
-        if (data_tag == none){
+        if (data_tag == none) {
             throw std::runtime_error("Block::hasDataTag: Empty DataTag entitiy given!");
         }
         return backend()->hasDataTag(data_tag.id());
@@ -525,7 +525,7 @@ public:
      * @return True if the tag was deleted, false otherwise.
      */
     bool deleteDataTag(const DataTag &data_tag) {
-        if (data_tag == none){
+        if (data_tag == none) {
             throw std::runtime_error("Block::deleteDataTag: Empty DataTag entitiy given!");
         }
         return backend()->deleteDataTag(data_tag.id());

@@ -192,7 +192,7 @@ public:
      * @return True if the child exists false otherwise.
      */
     bool hasSection(const Section &section) const {
-        if(section == none){
+        if(section == none) {
             throw std::runtime_error("Section::hasSection: Empty Section entity given!");
         }
         return backend()->hasSection(section.id());
@@ -292,7 +292,7 @@ public:
      * @return bool successful or not
      */
     bool deleteSection(const Section &section) {
-        if(section == none){
+        if(section == none) {
             throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
         }
         return backend()->deleteSection(section.id());
@@ -326,7 +326,7 @@ public:
      * @param property      The Property.
      */
     bool hasProperty(const Property &property) const {
-        if(property == none){
+        if(property == none) {
             throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
         }
         return backend()->hasProperty(property.id());
@@ -428,7 +428,7 @@ public:
      * @param property      The Property.
      */
     bool deleteProperty(const Property &property) {
-        if(property == none){
+        if(property == none) {
             throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
         }
         return backend()->deleteProperty(property.id());

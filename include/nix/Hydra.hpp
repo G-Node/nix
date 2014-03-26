@@ -212,7 +212,7 @@ public:
         NDSize ndsize(N);
         const size_t *ma_shape = value.shape();
         std::transform(ma_shape, ma_shape + N, ndsize.data(),
-                       [](NDSize::const_reference val){ return static_cast<T>(val);});
+                       [](NDSize::const_reference val) { return static_cast<T>(val);});
         return ndsize;
     }
 

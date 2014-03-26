@@ -60,7 +60,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const Source &source) const {
-        if(source == none){
+        if(source == none) {
             throw std::runtime_error("Source::hasSource: emtpy Source entity given!");
         }
         return backend()->hasSource(source.id());
@@ -167,7 +167,7 @@ public:
      * @return True if the source was deleted, false otherwise.
      */
     bool deleteSource(const Source &source) {
-        if (source == none){
+        if (source == none) {
             throw std::runtime_error("Source::deleteSource: empty Source entity given!");
         }
         return backend()->deleteSource(source.id());

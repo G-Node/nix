@@ -134,7 +134,7 @@ vector<double> DataArrayHDF5::polynomCoefficients()const{
 }
 
 
-void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients){
+void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients) {
     DataSet ds;
     if (group().hasData("polynom_coefficients")) {
         ds = group().openData("polynom_coefficients");
@@ -319,7 +319,7 @@ DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
 }
 
 
-DataArrayHDF5::~DataArrayHDF5(){}
+DataArrayHDF5::~DataArrayHDF5() {}
 
 
 void DataArrayHDF5::createData(DataType dtype, const NDSize &size)

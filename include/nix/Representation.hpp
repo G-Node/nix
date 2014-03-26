@@ -75,7 +75,7 @@ public:
      *
      * @param DataArray    The data array to set.
      */
-    void data(const DataArray &data){
+    void data(const DataArray &data) {
         if(data == none) {
             throw std::runtime_error("Empty data entity (DataArray) given");
         }

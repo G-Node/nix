@@ -48,7 +48,7 @@ public:
     }
 
     bool hasBlock(const Block &block) const {
-        if (block == none){
+        if (block == none) {
             throw std::runtime_error("File::hasBlock: Empty Block entity given!");
         }
         return backend()->hasBlock(block.id());
@@ -75,7 +75,7 @@ public:
 
 
     bool deleteBlock(const Block &block) {
-        if (block == none){
+        if (block == none) {
             throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
         }
         return backend()->deleteBlock(block.id());
@@ -110,7 +110,7 @@ public:
 
 
     bool hasSection(const Section &section) const {
-        if(section == none){
+        if(section == none) {
             throw std::runtime_error("File::hasSection: Empty Section entity given!");
         }
         return backend()->hasSection(section.id());
@@ -166,8 +166,8 @@ public:
     }
 
 
-    bool deleteSection(const Section &section){
-        if(section == none){
+    bool deleteSection(const Section &section) {
+        if(section == none) {
             throw std::runtime_error("File::hasSection: Empty Section entity given!");
         }
         return deleteSection(section.id());
