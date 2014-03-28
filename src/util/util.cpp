@@ -9,6 +9,7 @@
 #include <string>
 #include <cstdlib>
 #include <mutex>
+#include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
@@ -82,9 +83,18 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
         string suffix = m.suffix();
-        boost::regex_search(suffix,m,unit_only);
+        boost::regex_search(suffix, m, unit_only);
         unit = m[0];
         power = m.suffix();
+        power = power.substr(1);
+    }
+    else if(boost::regex_match(combinedUnit, unit_and_power)){
+        prefix = "";
+        boost::match_results<std::string::const_iterator> m;
+        boost::regex_search(combinedUnit, m, unit_only);
+        unit = m[0];
+        power = m.suffix();
+        power = power.substr(1);
     }
     else if(boost::regex_match(combinedUnit, prefix_and_unit)){
         boost::match_results<std::string::const_iterator> m;
@@ -128,29 +138,37 @@ bool isCompoundSIUnit(const string &unit){
 }
 
 
-double getSIScaling(const string &originUnit, const string &destinationUnit){
+double getSIScaling(const string &originUnit, const string &destinationUnit) {
     double scaling = 1.0;
-    if (isSIUnit(originUnit) && isSIUnit(destinationUnit)){
+    if (isSIUnit(originUnit) && isSIUnit(destinationUnit)) {
         string org_unit, org_prefix, org_power;
         string dest_unit, dest_prefix, dest_power;
         splitUnit(originUnit, org_prefix, org_unit, org_power);
         splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
-        if(dest_unit.compare(org_unit) != 0){
-            throw nix::InvalidUnit("Origin unit and/or destination units are not the same!", "nix::util::getSIScaling");
+            
+        if (!(dest_unit == org_unit) || !(org_power == dest_power) ) {
+            throw nix::InvalidUnit("Origin unit and/or destination units cannot be scaled!", "nix::util::getSIScaling");
         }
-        if(dest_prefix.length() == 0){
-            scaling = 1.0 / PREFIX_FACTORS.at(org_prefix);
+        if ((org_prefix == dest_prefix) && (org_power == dest_power)) {
+            return scaling;
+        }                
+        if (dest_prefix.empty() && !org_prefix.empty()) {
+            scaling = PREFIX_FACTORS.at(org_prefix);
         }
-        else if (org_prefix.length() == 0){
-            scaling = PREFIX_FACTORS.at(dest_prefix);
+        else if (org_prefix.empty() && !dest_prefix.empty()) {
+            scaling = 1.0 / PREFIX_FACTORS.at(dest_prefix);
         }
-        else{
-            scaling = PREFIX_FACTORS.at(dest_prefix) / PREFIX_FACTORS.at(org_prefix);
+        else if (!org_prefix.empty() && !dest_prefix.empty()) {
+            scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
+        }
+        if (!org_power.empty()) {
+            int power = std::stoi(org_power);    
+            scaling = pow(scaling, power);
         }
     }else{
         throw nix::InvalidUnit("Origin unit and/or destination unit are not valid!", "nix::util::getSIScaling");
     }
-    return scaling;
+    return scaling ;
 }
 
 } // namespace util

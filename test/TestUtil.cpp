@@ -16,9 +16,14 @@ using namespace nix;
 
 void TestUtil::testUnitScaling(){
     CPPUNIT_ASSERT_THROW(util::getSIScaling("mOhm","ms"), nix::InvalidUnit);
-    CPPUNIT_ASSERT(util::getSIScaling("mV","kV") == 1e+6);
-    CPPUNIT_ASSERT(util::getSIScaling("V","kV") == 1e+03);
-    CPPUNIT_ASSERT(util::getSIScaling("kV","V") == 1e-03);
+    CPPUNIT_ASSERT(util::getSIScaling("mV","kV") == 1e-6);
+    CPPUNIT_ASSERT(util::getSIScaling("V","kV") == 1e-03);
+    CPPUNIT_ASSERT(util::getSIScaling("kV","V") == 1e+03);
+    CPPUNIT_ASSERT_THROW(util::getSIScaling("mV^2","V"), nix::InvalidUnit);
+    CPPUNIT_ASSERT(util::getSIScaling("V^2","V^2") == 1.0);
+    CPPUNIT_ASSERT(util::getSIScaling("V","mV") == 1e+03);
+    CPPUNIT_ASSERT(util::getSIScaling("V^2","mV^2") == 1e+06);
+    CPPUNIT_ASSERT(util::getSIScaling("mV^2","kV^2") == 1e-12);
 }
 
 void TestUtil::testIsSIUnit(){
@@ -33,16 +38,19 @@ void TestUtil::testSIUnitSplit(){
     string unit_2 = "mV";
     string unit_3 = "mV^2";
     string unit_4 = "mV^-2";
+    string unit_5 = "m^2";
 
     string unit, prefix, power;
     util::splitUnit(unit_1, prefix, unit, power);
-    CPPUNIT_ASSERT(prefix.compare("") == 0 && unit.compare("V") == 0 && power.compare("") == 0);
+    CPPUNIT_ASSERT(prefix == "" && unit == "V" && power == "");
     util::splitUnit(unit_2, prefix, unit, power);
-    CPPUNIT_ASSERT(prefix.compare("m") == 0 && unit.compare("V") == 0 && power.compare("") == 0);
+    CPPUNIT_ASSERT(prefix == "m" && unit == "V" && power == "");
     util::splitUnit(unit_3, prefix, unit, power);
-    CPPUNIT_ASSERT(prefix.compare("m") == 0 && unit.compare("V") == 0 && power.compare("^2") == 0);
+    CPPUNIT_ASSERT(prefix == "m" && unit == "V" && power == "2");
     util::splitUnit(unit_4, prefix, unit, power);
-    CPPUNIT_ASSERT(prefix.compare("m") == 0 && unit.compare("V") == 0 && power.compare("^-2") == 0);
+    CPPUNIT_ASSERT(prefix == "m" && unit == "V" && power == "-2");
+    util::splitUnit(unit_5, prefix, unit, power);
+    CPPUNIT_ASSERT(prefix == "" && unit == "m" && power == "2");
 }
 
 void TestUtil::testIsCompoundSIUnit(){
@@ -64,6 +72,6 @@ void TestUtil::testSplitCompoundUnit(){
 
     util::splitCompoundUnit(unit, atomic_units);
     CPPUNIT_ASSERT(atomic_units.size() == 4);
-    CPPUNIT_ASSERT(atomic_units[0].compare("mV") == 0 && atomic_units[1].compare("cm^2") == 0 &&
-            atomic_units[2].compare("kg") == 0 && atomic_units[3].compare("V") == 0);
+    CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^2" &&
+            atomic_units[2] == "kg" && atomic_units[3] == "V");
 }
