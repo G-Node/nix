@@ -36,7 +36,7 @@ PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &i
 
 boost::optional<DataType> PropertyHDF5::dataType() const {
     boost::optional<DataType> result;
-    if (this->valueCount() > 0){
+    if (this->valueCount() > 0) {
         result = this->values()[0].type();
     }
     return result;
@@ -101,7 +101,7 @@ void PropertyHDF5::unit(const none_t t) {
 }
 
 
-void PropertyHDF5::deleteValues(){
+void PropertyHDF5::deleteValues() {
     group().removeData("values");
 }
 

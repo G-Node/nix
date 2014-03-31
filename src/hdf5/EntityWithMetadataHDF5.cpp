@@ -28,7 +28,7 @@ EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const str
 
 
 void EntityWithMetadataHDF5::metadata(const std::string &id) {
-    if (!file().hasSection(id)){
+    if (!file().hasSection(id)) {
         throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
     } else {
         group().setAttr("metadata", id);

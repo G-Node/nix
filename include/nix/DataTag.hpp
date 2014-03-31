@@ -140,7 +140,7 @@ public:
      * @return bool
      */
     bool hasReference(const DataArray &reference) const {
-        if (reference == none){
+        if (reference == none) {
             throw std::runtime_error("DataTag::hasReference: Empty DataArray entity given!");
         }
         return backend()->hasReference(reference.id());
@@ -208,7 +208,7 @@ public:
      *
      */
     void addReference(const DataArray &reference) {
-        if (reference == none){
+        if (reference == none) {
             throw std::runtime_error("DataTag::addReference: Empty DataArray entity given!");
         }
         backend()->addReference(reference.id());
@@ -235,7 +235,7 @@ public:
      *
      */
     bool removeReference(const DataArray &reference) {
-        if (reference == none){
+        if (reference == none) {
             throw std::runtime_error("DataTag::removeReference: Empty DataArray reference given!");
         }
         return backend()->removeReference(reference.id());
@@ -276,10 +276,10 @@ public:
     template<typename T, size_t dims>
     void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
 
-        if (referenceCount() == 0){
+        if (referenceCount() == 0) {
             throw std::runtime_error("DataTagHDF5::getReferencedData: There is no reference attached to this tag!");
         }
-        if(!hasPositions()){
+        if(!hasPositions()) {
             throw std::runtime_error("DataTagHDF5::getReferencedData: There is no positions array attached to this tag!");
         }
 
@@ -287,11 +287,11 @@ public:
         boost::multi_array<double,1> posData, extData;
         pa.getData(posData);
 
-        if(index >= posData.shape()[0]){
+        if(index >= posData.shape()[0]) {
             throw std::runtime_error("DataTagHDF5::getReferencedData: index exeeds matrix dimensions in positions data!");
         }
 
-        if(hasExtents()){
+        if(hasExtents()) {
             DataArray ea = extents();
             ea.getData(extData);
         }
@@ -299,7 +299,7 @@ public:
         //TODO convert position and extent to respective units
         //TODO get the data slice from the referenced DataArrays
         std::vector<DataArray> refs = references();
-        for (size_t i = 0; i < refs.size();i++){
+        for (size_t i = 0; i < refs.size();i++) {
 
         }
     }
@@ -327,7 +327,7 @@ public:
      * @return bool                 True if the representation exists, false otherwise.
      */
     bool hasRepresentation(const Representation &representation) const {
-        if (representation == none){
+        if (representation == none) {
             throw std::runtime_error("DataTag::hasRepresentation: Empty representation given!");
         }
         return backend()->hasRepresentation(representation.id());
@@ -429,7 +429,7 @@ public:
      * @return bool True if the representation was removed, false otherwise.
      */
     bool deleteRepresentation(const Representation &representation) {
-        if (representation == none){
+        if (representation == none) {
             throw std::runtime_error("DataTag::deleteRepresentation: Empty Representation entity given!");
         }
         return backend()->deleteRepresentation(representation.id());

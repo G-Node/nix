@@ -59,7 +59,7 @@ public:
         : rank(args.size())
     {
         allocate();
-        std::transform(args.begin(), args.end(), dims, [](const U& val){ return static_cast<T>(val);});
+        std::transform(args.begin(), args.end(), dims, [](const U& val) { return static_cast<T>(val);});
     }
 
     //copy
@@ -256,7 +256,7 @@ public:
     }
 
 
-    ~NDSizeBase(){
+    ~NDSizeBase() {
         delete[] dims;
     }
 

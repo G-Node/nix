@@ -62,9 +62,9 @@ public:
      * @param units     All units as a vector.
      */
     void units(std::vector<std::string> &units) {
-        for(std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter){
-            //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))){ TODO
-            if(!(util::isSIUnit(*iter))){
+        for(std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
+            //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
+            if(!(util::isSIUnit(*iter))) {
                 std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
                 throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
             }
@@ -163,7 +163,7 @@ public:
      * @return bool
      */
     bool hasReference(const DataArray &reference) const {
-        if (reference == none){
+        if (reference == none) {
             throw std::runtime_error("SimpleTag::hasReference: Emty DataArray entity given!");
         }
         return backend()->hasReference(reference.id());
@@ -209,7 +209,7 @@ public:
      *
      */
     void addReference(const DataArray &reference) {
-        if (reference == none){
+        if (reference == none) {
             throw std::runtime_error("SimpleTag::addReference: Empty DataArray entity given!");
         }
         backend()->addReference(reference.id());
@@ -234,7 +234,7 @@ public:
      *
      */
     bool removeReference(const DataArray &reference) {
-        if(reference == none){
+        if(reference == none) {
             throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
         }
         return backend()->removeReference(reference.id());
@@ -304,7 +304,7 @@ public:
      * @return True if the representation exists, false otherwise.
      */
     bool hasRepresentation(const Representation &representation) const {
-        if(representation == none){
+        if(representation == none) {
             throw std::runtime_error("SimpleTag::hasRepresentation: Empty DataArray entity given!");
         }
         return backend()->hasRepresentation(representation.id());
@@ -373,7 +373,7 @@ public:
      * @return The created representation object.
      */
     Representation createRepresentation(const DataArray &data, LinkType link_type) {
-        if(data == none){
+        if(data == none) {
             throw std::runtime_error("SimpleTag::createRepresentation: Empty DataArray entity given!");
         }
         return backend()->createRepresentation(data.id(), link_type);
@@ -410,7 +410,7 @@ public:
      * @return True if the representation was removed, false otherwise.
      */
     bool deleteRepresentation(const Representation &representation) {
-        if (representation == none){
+        if (representation == none) {
             throw std::runtime_error("SimpleTag::deleteRepresentation: Empty Representation entity given!");
         }
         return backend()->deleteRepresentation(representation.id());
