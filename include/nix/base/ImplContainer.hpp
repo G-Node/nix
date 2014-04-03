@@ -17,12 +17,137 @@
 #include <nix/Platform.hpp> //for pragma warnings on windows
 #include <nix/None.hpp>
 #include <nix/Exception.hpp>
+#include <nix/util/util.hpp>
+#include <nix/base/IDimensions.hpp>
+#include <nix/base/IFile.hpp>
+
+using namespace nix::base;
+using namespace nix::util;
 
 namespace nix {
 namespace base {
 
 template<typename T>
-class ImplContainer {
+class IdContainer {
+
+private:
+    /**
+     * @var string unique id of the entity stored in the frontend 
+     */
+    std::string id;
+
+public:
+    /**
+     * IdContainer ctor that doesnt set the id, thus {@link checkID}
+     * wont work.
+     * 
+     * @return object
+     */
+    IdContainer() : id("") {}
+    
+    /**
+     * IdContainer ctor
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return object
+     */
+    IdContainer(const T* _backend) {
+        if(_backend == nullptr) return;
+        id = _backend->id();
+    }
+    
+    /**
+     * IdContainer dtor, virtual
+     */
+    virtual ~IdContainer() {}
+    
+protected:
+    /**
+     * Checker function for the entity id: if the id stored in this class
+     * should not match the one delivered by the referened backend object
+     * throw an error!
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return void
+     */
+    void checkID(const T* _backend) {
+        if(_backend == nullptr) return;
+        if(id == "") return;       
+        if (numToStr(_backend->id()) != this->id) {
+            throw DetachedEntity();
+        }
+    }
+};
+
+template<>
+class IdContainer<IFile> {
+public:
+    /**
+     * Empty dummy IdContainer ctor for IFile case
+     * 
+     * @return object
+     */
+    IdContainer() {}
+    
+    /**
+     * Empty dummy IdContainer ctor for IFile case
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return object
+     */
+    IdContainer(const IFile* _backend) {}
+        
+    /**
+     * IdContainer dtor, virtual
+     */
+    virtual ~IdContainer() {}
+protected:
+    /**
+     * Dummy function that does nothing, provided to be conform 
+     * with non specialized objects.
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return void
+     */
+    void checkID(const IFile* _backend) {}
+};
+template<>
+class IdContainer<IDimension> {
+public:
+    /**
+     * Empty dummy IdContainer ctor for IDimension case
+     * 
+     * @return object
+     */
+    IdContainer() {}
+    
+    /**
+     * Empty dummy IdContainer ctor for IDimension case
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return object
+     */
+    IdContainer(const IDimension* _backend) {}
+        
+    /**
+     * IdContainer dtor, virtual
+     */
+    virtual ~IdContainer() {}
+protected:
+    /**
+     * Dummy function that does nothing, provided to be conform 
+     * with non specialized objects.
+     * 
+     * @param pointer pointer to the referenced backend object
+     * @return void
+     */
+    void checkID(const IDimension* _backend) {}
+};
+
+
+
+template<typename T>
+class ImplContainer : public IdContainer<T> {
 protected:
 
     /**
@@ -76,25 +201,25 @@ protected:
 public:
 
     ImplContainer()
-        : impl_ptr(nullptr)
+        : IdContainer<T>(), impl_ptr(nullptr)
     {
     }
 
 
     ImplContainer(T *p_impl)
-        : impl_ptr(p_impl)
+        : IdContainer<T>(p_impl), impl_ptr(p_impl)
     {
     }
 
 
     ImplContainer(const std::shared_ptr<T> &p_impl)
-        : impl_ptr(p_impl)
+        : IdContainer<T>(p_impl.get()), impl_ptr(p_impl)
     {
     }
 
 
     ImplContainer(const ImplContainer<T> &other)
-        : impl_ptr(other.impl_ptr)
+        : IdContainer<T>(other.impl_ptr.get()), impl_ptr(other.impl_ptr)
     {
     }
 
@@ -212,6 +337,7 @@ protected:
         if (isNone()) {
             throw UninitializedEntity();
         }
+        IdContainer<T>::checkID(impl_ptr.get());
 
         return impl_ptr.get();
     }
