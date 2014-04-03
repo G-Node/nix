@@ -54,6 +54,13 @@ public:
     }
 };
 
+class DetachedEntity : public std::exception {
+public:
+    DetachedEntity() { }
+    const char *what() const NOEXCEPT {
+        return "The ID of the Entity being accessed does not match the stored id anymore!";
+    }
+};
 
 class EmptyString: public std::exception {
 public:
