@@ -2,7 +2,7 @@
 # Pandora CMake
 
 cmake_minimum_required (VERSION 2.6)
-project (pandora CXX)
+project (nix CXX)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
@@ -53,28 +53,28 @@ endif(DOXYGEN_FOUND)
 ########################################
 
 include_directories(include)
-file(GLOB_RECURSE pandora_SOURCES src/*.cpp)
-file(GLOB_RECURSE pandora_INCLUDES include/*.hpp)
+file(GLOB_RECURSE nix_SOURCES src/*.cpp)
+file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
-add_library(pandora SHARED ${pandora_INCLUDES} ${pandora_SOURCES})
-target_link_libraries(pandora ${LINK_LIBS})
+add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
+target_link_libraries(nix ${LINK_LIBS})
 
 if(WIN32)
-  set_target_properties(pandora PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
-  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+  set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
-	                         "$<TARGET_FILE_DIR:pandora>"
+	                         "$<TARGET_FILE_DIR:nix>"
 	                 COMMENT "Copying HDF5 C DLL")
-  ADD_CUSTOM_COMMAND(TARGET pandora POST_BUILD
+  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
-	                         "$<TARGET_FILE_DIR:pandora>"
+	                         "$<TARGET_FILE_DIR:nix>"
 	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
-set_target_properties(pandora PROPERTIES
+set_target_properties(nix PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION 1.0
-  PUBLIC_HEADER "${pandora_INCLUDES}")
+  PUBLIC_HEADER "${nix_INCLUDES}")
 
 #IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
@@ -82,7 +82,7 @@ set_target_properties(pandora PROPERTIES
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   add_executable(playground EXCLUDE_FROM_ALL main.cpp)
-  target_link_libraries(playground pandora)
+  target_link_libraries(playground nix)
 endif()
 
 
@@ -92,9 +92,9 @@ if(CLANG_CHECK)
   MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
 
-  add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${pandora_SOURCES}
-                    DEPENDS pandora
-		    SOURCES ${pandora_SOURCES})
+  add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
+                    DEPENDS nix
+		    SOURCES ${nix_SOURCES})
 endif()
 
 
@@ -111,7 +111,7 @@ include_directories(${CPPUNIT_INCLUDE_DIR})
 file(GLOB Tests_SOURCES "test/Test*.cpp")
 
 add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} pandora)
+target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 foreach(test ${Tests_SOURCES})
   get_filename_component(TestFileName ${test} NAME_WE)
@@ -121,6 +121,15 @@ foreach(test ${Tests_SOURCES})
 endforeach(test)
 
 include(CTest)
+
+
+########################################
+# Install
+
+install(FILES ${CMAKE_MODULE_PATH}/libnix.so DESTINATION lib)
+install(DIRECTORY include/ DESTINATION include)
+
+
 
 ########################################
 
