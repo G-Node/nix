@@ -3,10 +3,12 @@ Maintainer: Jan Grewe <jan.grewe@g-node.org>
 Section: science
 Priority: extra
 Standards-Version: 3.9.4
-Build-Depends: debhelper (>= 9)
+Build-Depends: debhelper (>= 9), libboost-date-time-dev (>=1.49), libboost-regex-dev (>=1.49), libhdf5-dev (>=1.8)
+Vcs-Git: https://github.com/G-Node/pandora.git
+Homepage: https://www.github.com/g-node/pandora
 
 Package: nix
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libboost-date-time-dev (>=1.49), libboost-regex-dev (>=1.49), libhdf5-dev (>=1.8)
 Description: IO-libray for nix data files. 
- Neuroscience information exchange - data model for annotated (neuroscience) data. For more information visit https://github.com/G-Node/pandora/network
+ Neuroscience information exchange - data model for annotated (neuroscience) data. For more information visit https://github.com/G-Node/pandora
