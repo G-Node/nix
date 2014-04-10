@@ -1,5 +1,5 @@
 Source: nix
-Maintainer: Jan Grewe <jan.grewe@g-node.org>
+Maintainer: G-Node Debian Team <debian-team@g-node.org>, Jan Grewe <jan.grewe@g-node.org>, Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>, Christian Kellner <christian@kellner.me>
 Section: science
 Priority: extra
 Standards-Version: 3.9.4
