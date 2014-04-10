@@ -1,5 +1,5 @@
-nix (1.0-1) UNRELEASED; urgency=low
+nix (0.9-1) UNRELEASED; urgency=low
 
-  * Initial release. (Closes: #XXXXXX)
+  Initial release. (Closes: #XXXXXX)
 
  -- Jan Grewe <jan.grewe@g-node.org>  Mon, 07 Apr 2014 17:16:30 +0200
