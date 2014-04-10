@@ -3,7 +3,7 @@ Maintainer: G-Node Debian Team <debian-team@g-node.org>, Jan Grewe <jan.grewe@g-
 Section: science
 Priority: extra
 Standards-Version: 3.9.4
-Build-Depends: debhelper (>= 9), libboost-date-time-dev (>=1.49), libboost-regex-dev (>=1.49), libhdf5-dev (>=1.8)
+Build-Depends: debhelper (>= 9), libboost-date-time-dev (>=1.49), libboost-regex-dev (>=1.49), libhdf5-dev (>=1.8), cmake (>=2.8.10)
 Vcs-Git: https://github.com/G-Node/pandora.git
 Homepage: https://www.github.com/g-node/pandora
 
