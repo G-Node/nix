@@ -309,7 +309,7 @@ public:
         backend()->createData(dtype, size);
     }
     
-    bool hasData() {
+    bool hasData() const {
         return backend()->hasData();
     }
 
