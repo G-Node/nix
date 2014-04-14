@@ -332,7 +332,7 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
     DataSet ds = group().openData("data");
 }
 
-bool DataArrayHDF5::hasData()
+bool DataArrayHDF5::hasData() const
 {
     return group().hasData("data");
 }

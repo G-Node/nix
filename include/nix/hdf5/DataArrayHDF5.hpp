@@ -137,7 +137,7 @@ public:
 
     virtual void createData(DataType dtype, const NDSize &size);
     
-    bool hasData();
+    bool hasData() const;
 
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
     void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
