@@ -75,19 +75,19 @@ void TestSection::testRepository() {
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
-    CPPUNIT_ASSERT(section.repository() == false);
+    CPPUNIT_ASSERT(!section.repository());
 }
 
 
 void TestSection::testLink() {
-    CPPUNIT_ASSERT(section.link() == false);
+    CPPUNIT_ASSERT(!section.link());
 
     section.link(section_other);
-    CPPUNIT_ASSERT(section.link() != false);
+    CPPUNIT_ASSERT(section.link());
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
 
     section.link(boost::none);
-    CPPUNIT_ASSERT(section.link() == false);
+    CPPUNIT_ASSERT(!section.link());
 }
 
 
@@ -97,7 +97,7 @@ void TestSection::testMapping() {
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
-    CPPUNIT_ASSERT(section.mapping() == false);
+    CPPUNIT_ASSERT(!section.mapping());
 }
 
 

@@ -73,7 +73,7 @@ void TestProperty::testMapping() {
     property.mapping(map);
     CPPUNIT_ASSERT(*property.mapping() == map);
     property.mapping(boost::none);
-    CPPUNIT_ASSERT((property.mapping()) == false);
+    CPPUNIT_ASSERT(!property.mapping());
 }
 
 
