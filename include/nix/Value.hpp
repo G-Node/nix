@@ -42,7 +42,7 @@ private:
 #endif
 
 public:
-    double uncertainty;
+    double uncertainty = 0.0;
 
     std::string reference;
     std::string filename;
