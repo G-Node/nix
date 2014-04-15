@@ -70,7 +70,7 @@ public:
         set(std::string(value));
     }
 
-    Value(const Value &other) {
+    Value(const Value &other) : Value() {
         assign_variant_from(other);
     }
 
