@@ -165,6 +165,17 @@ public:
         return impl_ptr != nullptr;
     }
 
+    /**
+     * bool "!=" operator "bool" overload: when an object is compared
+     * to "bool" internally we compare "!isNone" to the "bool".
+     *
+     * @param bool
+     * @return bool
+     */
+    virtual bool operator!=(bool b) const {
+        return isNone() == b;
+    }
+
 
     virtual void swap(ImplContainer<T> &second) {
         using std::swap;
