@@ -167,10 +167,9 @@ void TestDimension::testSetDimLabels() {
 void TestDimension::testRangeDimLabel() {
     std::string label = "aLabel";
     std::string other_label = "anotherLabel";
-    std::vector<double> ticks(5);
-
-    for (auto it = ticks.begin(); it != ticks.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    std::vector<double> ticks;
+    for (size_t i = 0; i < 5; i++) {
+        ticks.push_back(i * boost::math::constants::pi<double>());
     }
 
     Dimension d = data_array.appendRangeDimension(ticks);
@@ -190,12 +189,11 @@ void TestDimension::testRangeDimLabel() {
 void TestDimension::testRangeDimUnit() {
     std::string invalidUnit = "invalidunit";
     std::string validUnit = "ms";
-    std::vector<double> ticks(5);
-
-    for (auto it = ticks.begin(); it != ticks.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    
+    std::vector<double> ticks;
+    for (size_t i = 0; i < 5; i++) {
+        ticks.push_back(i * boost::math::constants::pi<double>());
     }
-
     Dimension d = data_array.appendRangeDimension(ticks);
     CPPUNIT_ASSERT(d.dimensionType() == nix::DimensionType::Range);
     
@@ -206,7 +204,7 @@ void TestDimension::testRangeDimUnit() {
     CPPUNIT_ASSERT(*(rd.unit()) == validUnit);
     CPPUNIT_ASSERT_NO_THROW(rd.unit(boost::none));
     CPPUNIT_ASSERT(*(rd.unit()) == "");
-
+    
     data_array.deleteDimension(d.id());
 }
 
