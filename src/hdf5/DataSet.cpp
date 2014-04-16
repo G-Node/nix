@@ -316,7 +316,21 @@ struct FileValue  {
     explicit FileValue(const T &vref) : value(vref) { }
 };
 
+template<>
+struct FileValue<bool>  {
 
+    unsigned char value;
+
+    double  uncertainty;
+    char   *reference;
+    char   *filename;
+    char   *encoder;
+    char   *checksum;
+
+    //ctors
+    FileValue() {}
+    explicit FileValue(const bool &vref) : value(vref) { }
+};
 
 //
 
@@ -353,37 +367,30 @@ H5::DataType h5_type_for_value(bool forMemory)
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 //
-
-H5::DataType DataSet::fileTypeForValue(DataType dtype)
+static H5::DataType h5_type_for_value_dtype(DataType dtype, bool forMemory)
 {
     switch(dtype) {
-    case DataType::Bool:   return h5_type_for_value<bool>(false);
-    case DataType::Int32:  return h5_type_for_value<int32_t>(false);
-    case DataType::UInt32: return h5_type_for_value<uint32_t>(false);
-    case DataType::Int64:  return h5_type_for_value<int64_t>(false);
-    case DataType::UInt64: return h5_type_for_value<uint64_t>(false);
-    case DataType::Double: return h5_type_for_value<double>(false);
-    case DataType::String: return h5_type_for_value<char *>(false);
+    case DataType::Bool:   return h5_type_for_value<bool>(forMemory);
+    case DataType::Int32:  return h5_type_for_value<int32_t>(forMemory);
+    case DataType::UInt32: return h5_type_for_value<uint32_t>(forMemory);
+    case DataType::Int64:  return h5_type_for_value<int64_t>(forMemory);
+    case DataType::UInt64: return h5_type_for_value<uint64_t>(forMemory);
+    case DataType::Double: return h5_type_for_value<double>(forMemory);
+    case DataType::String: return h5_type_for_value<char *>(forMemory);
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return H5::DataType{};
 #endif
     }
 }
 
+H5::DataType DataSet::fileTypeForValue(DataType dtype)
+{
+    return h5_type_for_value_dtype(dtype, false);
+}
+
 H5::DataType DataSet::memTypeForValue(DataType dtype)
 {
-    switch(dtype) {
-    case DataType::Bool:   return h5_type_for_value<bool>(true);
-    case DataType::Int32:  return h5_type_for_value<int32_t>(true);
-    case DataType::UInt32: return h5_type_for_value<uint32_t>(true);
-    case DataType::Int64:  return h5_type_for_value<int64_t>(true);
-    case DataType::UInt64: return h5_type_for_value<uint64_t>(true);
-    case DataType::Double: return h5_type_for_value<double>(true);
-    case DataType::String: return h5_type_for_value<char *>(true);
-#ifndef CHECK_SUPOORTED_VALUES
-    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return H5::DataType{};
-#endif
-    }
+    return h5_type_for_value_dtype(dtype, true);
 }
 
 template<typename T>
@@ -399,7 +406,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
     h5ds.read(fileValues.data(), memType);
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
-            Value temp(val.value);
+            Value temp(static_cast<T>(val.value)); //we cast because of the bool specialization
             temp.uncertainty = val.uncertainty;
             temp.reference = val.reference;
             temp.filename = val.filename;
