@@ -157,7 +157,9 @@ void TestDataArray::testPolynomial()
     double res1 = array1.applyPolynomial(coefficients2, 0, PI);
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, std::numeric_limits<double>::epsilon());
+    //evalutate_polynomial from boost might use a different algorithm
+    //therefore we raise the allowed detlta to 10e-10
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, 10e-10);
 
     array2.polynomCoefficients(coefficients2);
     std::vector<double> ret = array2.polynomCoefficients();
