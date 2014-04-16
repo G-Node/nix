@@ -65,6 +65,9 @@ file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
 add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
+set_target_properties(nix PROPERTIES
+		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+		      SOVERSION ${VERSION_ABI})
 
 if(WIN32)
   set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
