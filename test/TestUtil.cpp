@@ -14,7 +14,7 @@ using namespace std;
 using namespace nix;
 
 
-void TestUtil::testUnitScaling(){
+void TestUtil::testUnitScaling() {
     CPPUNIT_ASSERT_THROW(util::getSIScaling("mOhm","ms"), nix::InvalidUnit);
     CPPUNIT_ASSERT(util::getSIScaling("mV","kV") == 1e-6);
     CPPUNIT_ASSERT(util::getSIScaling("V","kV") == 1e-03);
@@ -26,14 +26,14 @@ void TestUtil::testUnitScaling(){
     CPPUNIT_ASSERT(util::getSIScaling("mV^2","kV^2") == 1e-12);
 }
 
-void TestUtil::testIsSIUnit(){
+void TestUtil::testIsSIUnit() {
     CPPUNIT_ASSERT(util::isSIUnit("V"));
     CPPUNIT_ASSERT(util::isSIUnit("mV"));
     CPPUNIT_ASSERT(util::isSIUnit("mV^-2"));
     CPPUNIT_ASSERT(util::isSIUnit("mV/cm") == false);
 }
 
-void TestUtil::testSIUnitSplit(){
+void TestUtil::testSIUnitSplit() {
     string unit_1 = "V";
     string unit_2 = "mV";
     string unit_3 = "mV^2";
@@ -53,7 +53,7 @@ void TestUtil::testSIUnitSplit(){
     CPPUNIT_ASSERT(prefix == "" && unit == "m" && power == "2");
 }
 
-void TestUtil::testIsCompoundSIUnit(){
+void TestUtil::testIsCompoundSIUnit() {
     string unit_1 = "mV*cm^-2";
     string unit_2 = "mV/cm^2";
     string unit_3 = "mV/cm^2*kg";
@@ -66,12 +66,13 @@ void TestUtil::testIsCompoundSIUnit(){
 }
 
 
-void TestUtil::testSplitCompoundUnit(){
+void TestUtil::testSplitCompoundUnit() {
     string unit = "mV/cm^2*kg*V";
     vector<string> atomic_units;
-
+    
     util::splitCompoundUnit(unit, atomic_units);
+
     CPPUNIT_ASSERT(atomic_units.size() == 4);
     CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^2" &&
-            atomic_units[2] == "kg" && atomic_units[3] == "V");
+                   atomic_units[2] == "kg" && atomic_units[3] == "V");
 }
