@@ -1,0 +1,2 @@
+usr/include/* /usr/include/nix
+usr/lib/libnix.so
