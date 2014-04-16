@@ -195,13 +195,11 @@ void TestDataArray::testUnit()
 void TestDataArray::testDimension()
 {
     std::vector<nix::Dimension> dims;
-    std::vector<double> ticks(5);
-    double samplingInterval;
+    std::vector<double> ticks;
+    double samplingInterval = boost::math::constants::pi<double>();
     
-    // set samplingInterval & ticks
-    samplingInterval = boost::math::constants::pi<double>();
-    for (auto it = ticks.begin(); it != ticks.end(); ++it) {
-        *it = *(std::prev(it)) + boost::math::constants::pi<double>();
+    for(size_t i = 0; i < 5; i++) {
+        ticks.push_back(i * boost::math::constants::pi<double>());
     }
 
     dims.push_back(array2.createSampledDimension(1, samplingInterval));
