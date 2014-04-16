@@ -316,7 +316,21 @@ struct FileValue  {
     explicit FileValue(const T &vref) : value(vref) { }
 };
 
+template<>
+struct FileValue<bool>  {
 
+    unsigned char value;
+
+    double  uncertainty;
+    char   *reference;
+    char   *filename;
+    char   *encoder;
+    char   *checksum;
+
+    //ctors
+    FileValue() {}
+    explicit FileValue(const bool &vref) : value(vref) { }
+};
 
 //
 
@@ -399,7 +413,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
     h5ds.read(fileValues.data(), memType);
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
-            Value temp(val.value);
+            Value temp(static_cast<T>(val.value)); //we cast because of the bool specialization
             temp.uncertainty = val.uncertainty;
             temp.reference = val.reference;
             temp.filename = val.filename;
