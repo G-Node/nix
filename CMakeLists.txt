@@ -139,7 +139,9 @@ include(CTest)
 ########################################
 # Install
 
-install(FILES ${CMAKE_MODULE_PATH}/libnix.so DESTINATION lib)
+install(TARGETS nix
+        LIBRARY DESTINATION lib
+        FRAMEWORK DESTINATION "/Library/Frameworks")
 install(DIRECTORY include/ DESTINATION include)
 
 
