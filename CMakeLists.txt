@@ -81,10 +81,13 @@ if(WIN32)
 	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
-set_target_properties(nix PROPERTIES
-  FRAMEWORK TRUE
-  FRAMEWORK_VERSION 1.0
-  PUBLIC_HEADER "${nix_INCLUDES}")
+
+if(NIX_FRAMEWORK)
+  set_target_properties(nix PROPERTIES
+                        FRAMEWORK FALSE
+                        FRAMEWORK_VERSION 1.0
+                        PUBLIC_HEADER "${nix_INCLUDES}")
+endif()
 
 #IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
