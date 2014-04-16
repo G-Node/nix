@@ -4,6 +4,13 @@
 cmake_minimum_required (VERSION 2.6)
 project (nix CXX)
 
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 9)
+set(VERSION_PATCH 0)
+
+set(VERSION_ABI   1)
+
+
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wunreachable-code")
@@ -58,6 +65,9 @@ file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
 add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
+set_target_properties(nix PROPERTIES
+		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+		      SOVERSION ${VERSION_ABI})
 
 if(WIN32)
   set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
@@ -71,10 +81,13 @@ if(WIN32)
 	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
-set_target_properties(nix PROPERTIES
-  FRAMEWORK TRUE
-  FRAMEWORK_VERSION 1.0
-  PUBLIC_HEADER "${nix_INCLUDES}")
+
+if(NIX_FRAMEWORK)
+  set_target_properties(nix PROPERTIES
+                        FRAMEWORK FALSE
+                        FRAMEWORK_VERSION 1.0
+                        PUBLIC_HEADER "${nix_INCLUDES}")
+endif()
 
 #IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
 #  set(CMAKE_VERBOSE_MAKEFILE TRUE)
@@ -126,7 +139,9 @@ include(CTest)
 ########################################
 # Install
 
-install(FILES ${CMAKE_MODULE_PATH}/libnix.so DESTINATION lib)
+install(TARGETS nix
+        LIBRARY DESTINATION lib
+        FRAMEWORK DESTINATION "/Library/Frameworks")
 install(DIRECTORY include/ DESTINATION include)
 
 
