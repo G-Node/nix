@@ -1,24 +1,14 @@
-nix (0.9-4) saucy; urgency=low
+nix (0.9.1-1) saucy; urgency=low
+ 
+  * Separate -dev und binary package
+  * Add -dbg package
+  * Add git-buildpackage config (gbp.conf)
+  * Properly version the binary package
 
-  Simplifying dependencies (Closes: #XXXXXX)
-
- -- Jan Grewe <jan.grewe@g-node.org>  Fri, 11 Apr 2014 09:52:05 +0200
-
-nix (0.9-3) saucy; urgency=low
-
-  Add libcppunit to list of dependencies. (Closes: #XXXXXX)
-
- -- Jan Grewe <jan.grewe@g-node.org>  Fri, 11 Apr 2014 09:27:15 +0200
-
-
-nix (0.9-2) saucy; urgency=low
-
-  Add cmake to list of dependencies. (Closes: #XXXXXX)
-
- -- Jan Grewe <jan.grewe@g-node.org>  Thu, 10 Apr 2014 21:20:30 +0200
+ -- Christian Kellner <ck@xatom.net>  Wed, 16 Apr 2014 18:27:42 +0200
 
 nix (0.9-1) saucy; urgency=low
 
-  Initial release. (Closes: #XXXXXX)
+  * Initial debian packaging. 
 
  -- Jan Grewe <jan.grewe@g-node.org>  Mon, 07 Apr 2014 17:16:30 +0200
