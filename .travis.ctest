@@ -16,7 +16,7 @@ find_program(CLANG_CHECK clang-check)
 
 find_program(VALGRIND valgrind)
 set(CTEST_MEMORYCHECK_COMMAND ${VALGRIND})
-set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "--track-origins=yes --leak-check=yes --show-reachable=yes --num-callers=50")
+set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "-q --track-origins=yes --leak-check=yes --show-reachable=yes --num-callers=50")
 
 
 ctest_start(Continuous)
