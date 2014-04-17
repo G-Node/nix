@@ -71,25 +71,22 @@ int main(int argc, char* argv[]) {
 
     CPPUNIT_NS::Test *test = registry.makeTest();;
 
+    //if XXX or TestXXX was supplied, only run that specific test
+    //by passing the name to TestRunner::run()
+    std::string testName;
+
     if (argc > 1) {
-        std::string testName = argv[1];
+        testName = argv[1];
         static std::string testPrefix = "Test";
 
         if (testName.compare(0, 4, testPrefix)) {
             testName = testPrefix + testName;
         }
         std::cout << testName << std::endl;
-
-        try {
-            test = test->findTest(testName);
-        } catch (std::invalid_argument &iae) {
-            std::cerr << "Test not found: \"" << argv[1] << "\". Aborting." << std::endl;
-            return -1;
-        }
     }
 
     testrunner.addTest(test);
-    testrunner.run(testresult);
+    testrunner.run(testresult, testName);
 
     CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
     compileroutputter.write();
