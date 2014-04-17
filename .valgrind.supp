@@ -1,0 +1,26 @@
+{
+   H5PropListCalloc
+   Memcheck:Leak
+   fun:calloc
+   fun:H5TS_cancel_count_inc
+   fun:H5Iget_type
+   fun:*PropList*
+   obj:*libhdf5_cpp*
+   fun:call_init*
+   fun:_dl_init
+   ...
+}
+{
+   H5PropListMalloc
+   Memcheck:Leak
+   fun:malloc
+   fun:H5FL_reg_malloc
+   fun:H5E_get_stack
+   fun:H5E_clear_stack
+   fun:H5Iget_type
+   fun:*PropList*
+   obj:*libhdf5_cpp*
+   fun:call_init*
+   fun:_dl_init
+   ...
+}
