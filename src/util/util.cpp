@@ -87,23 +87,20 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    }
-    else if(boost::regex_match(combinedUnit, unit_and_power)) {
+    } else if(boost::regex_match(combinedUnit, unit_and_power)) {
         prefix = "";
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, unit_only);
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    }
-    else if(boost::regex_match(combinedUnit, prefix_and_unit)) {
+    } else if(boost::regex_match(combinedUnit, prefix_and_unit)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
         unit = m.suffix();
         power = "";
-    }
-    else{
+    } else {
         unit = combinedUnit;
         prefix = "";
         power = "";
@@ -112,14 +109,15 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
 
 
 void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits) {
+    string s = compoundUnit;
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
-    boost::regex_search(compoundUnit, m, opt_prefix_and_unit_and_power);
-    while(m.suffix().length() > 0) {
+    
+    while(boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
         atomicUnits.push_back(m[0]);
-        boost::regex_search(suffix.substr(1), m, opt_prefix_and_unit_and_power);
+        s = suffix.substr(1);
     }
     atomicUnits.push_back(m[0]);
 }
@@ -154,18 +152,16 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
         }                
         if (dest_prefix.empty() && !org_prefix.empty()) {
             scaling = PREFIX_FACTORS.at(org_prefix);
-        }
-        else if (org_prefix.empty() && !dest_prefix.empty()) {
+        } else if (org_prefix.empty() && !dest_prefix.empty()) {
             scaling = 1.0 / PREFIX_FACTORS.at(dest_prefix);
-        }
-        else if (!org_prefix.empty() && !dest_prefix.empty()) {
+        } else if (!org_prefix.empty() && !dest_prefix.empty()) {
             scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
         }
         if (!org_power.empty()) {
             int power = std::stoi(org_power);    
             scaling = pow(scaling, power);
         }
-    }else{
+    } else {
         throw nix::InvalidUnit("Origin unit and/or destination unit are not valid!", "nix::util::getSIScaling");
     }
     return scaling;
