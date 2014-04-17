@@ -19,6 +19,9 @@ set(CTEST_MEMORYCHECK_COMMAND ${VALGRIND})
 set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "-q --track-origins=yes --leak-check=yes --show-reachable=yes --num-callers=50")
 set(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE ${CTEST_SOURCE_DIRECTORY}/.valgrind.supp)
 
+find_program(GCOV gcov-4.8)
+set(CTEST_COVERAGE_COMMAND ${GCOV})
+
 ctest_start(Continuous)
 ctest_configure()
 ctest_build()
@@ -33,4 +36,5 @@ if(VALGRIND AND $ENV{COMPILER} MATCHES "clang")
   ctest_memcheck()
 endif()
 
+ctest_coverage()
 ctest_submit()
