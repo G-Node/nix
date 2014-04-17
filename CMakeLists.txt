@@ -17,6 +17,13 @@ if(NOT WIN32)
 
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
+
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    MESSAGE(STATUS "Activating coverage support.")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+  endif()
+
 endif()
 
 if(USE_NO_DEPRECATED_DECLARATIONS)
