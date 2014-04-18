@@ -1,11 +1,11 @@
 language: cpp
 env:
   matrix:
-    - COMPILER=g++-4.8
-    - COMPILER=clang CXXFLAGS="-stdlib=libstdc++ -Qunused-arguments"
+    - COMPILER=g++-4.8 CTEST_ARGS=-V
+    - COMPILER=clang CXXFLAGS="-stdlib=libstdc++ -Qunused-arguments" CTEST_ARGS=-VV
 
 script:
-- CXX=${COMPILER} ctest -VV -S .travis.ctest
+- CXX=${COMPILER} ctest ${CTEST_ARGS} -S .travis.ctest
 
 install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
