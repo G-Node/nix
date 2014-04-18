@@ -1,7 +1,5 @@
 language: cpp
 env:
-  global:
-    - CMAKE_BUILD_TYPE=DEBUG
   matrix:
     - COMPILER=g++-4.8
     - COMPILER=clang CXXFLAGS="-stdlib=libstdc++ -Qunused-arguments"

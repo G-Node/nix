@@ -21,6 +21,7 @@ set(CTEST_NOTES_FILES ${CTEST_BINARY_DIRECTORY}/git.cfg)
 
 set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
 set(CTEST_BUILD_CONFIGURATION "Debug")
+set(CTEST_CONFIGURATION_TYPE "Debug")
 
 find_program(CLANG_CHECK clang-check)
 
