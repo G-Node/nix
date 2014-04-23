@@ -119,6 +119,22 @@ private:
     std::string caller;
 };
 
+
+class IncompatibleDimensions: public std::exception {
+public:
+    IncompatibleDimensions(const std::string &what_arg, const std::string &caller_arg):
+    what_msg(what_arg), caller(caller_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("IncompatibleDimensions: ");
+        sstream << what_msg << " evoked at: " << caller;
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string what_msg;
+    std::string caller;
+};
 }
 
 #endif

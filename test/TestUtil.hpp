@@ -42,5 +42,6 @@ public:
     void testSIUnitSplit();
     void testIsCompoundSIUnit();
     void testSplitCompoundUnit();
+    void testPositionToIndex();
 };
 

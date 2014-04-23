@@ -21,8 +21,10 @@
 #include <nix/Platform.hpp>
 #include <nix/Exception.hpp>
 
+
 namespace nix {
 namespace util {
+
 
 /**
  * Generates an ID-String.
