@@ -33,6 +33,11 @@ public:
     {
     }
 
+    EntityWithMetadata(std::shared_ptr<T> &&ptr)
+        : NamedEntity<T>(std::move(ptr))
+    {
+    }
+
     /**
      * Get metadata associated with this entity.
      *
