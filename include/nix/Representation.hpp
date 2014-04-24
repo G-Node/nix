@@ -37,7 +37,7 @@ public:
     }
 
 
-    Representation(const std::shared_ptr<base::IRepresentation> p_impl)
+    Representation(const std::shared_ptr<base::IRepresentation> &p_impl)
         : Entity(p_impl)
     {
     }
