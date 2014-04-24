@@ -31,6 +31,11 @@ public:
     {
     }
 
+    Entity(std::shared_ptr<T> &&ptr)
+        : ImplContainer<T>(std::move(ptr))
+    {
+    }
+
 
     std::string id() const {
         return ImplContainer<T>::backend()->id();
