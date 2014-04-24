@@ -32,6 +32,10 @@ public:
     {
     }
 
+    NamedEntity(std::shared_ptr<T> &&ptr)
+        : Entity<T>(std::move(ptr))
+    {
+    }
 
     void type(const std::string &type) {
         Entity<T>::backend()->type(type);
