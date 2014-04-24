@@ -38,6 +38,12 @@ public:
     {
     }
 
+    Property(std::shared_ptr<base::IProperty> &&ptr)
+        : NamedEntity(std::move(ptr))
+    {
+    }
+
+
     //--------------------------------------------------
     // Attribute getter and setter
     //--------------------------------------------------
