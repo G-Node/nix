@@ -35,6 +35,11 @@ public:
     {
     }
 
+    File(std::shared_ptr<base::IFile> &&ptr)
+        : ImplContainer(std::move(ptr))
+    {
+    }
+
     static File open(const std::string name, FileMode mode=FileMode::ReadWrite,
                      Implementation impl=Implementation::Hdf5);
 
