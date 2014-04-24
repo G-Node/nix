@@ -42,6 +42,10 @@ public:
     {
     }
 
+    Representation(std::shared_ptr<base::IRepresentation> &&ptr)
+        : Entity(std::move(ptr))
+    {
+    }
 
     /**
      * Setter for the link type.
