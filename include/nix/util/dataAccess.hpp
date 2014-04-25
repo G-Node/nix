@@ -14,10 +14,11 @@
 #ifndef NIX_DATAACCESS_H
 #define NIX_DATAACCESS_H
 
+#include <nix/util/util.hpp>
+#include <nix.hpp>
+
 namespace nix {
 namespace util {
-
-class Dimension;
 
 /**
  * Converts a position given in a unit into an index according to the dimension descriptor.
@@ -27,12 +28,22 @@ class Dimension;
  *
  * @param position double, the position
  * @param unit string, the unit in which the position is given
- * @param dimension Dimension, the nix::Dimension descriptor for the respective dimension.
+ * @param dimension SetDimension, the dimension descriptor for the respective dimension.
  *
  * @return int the index
- * @throws nix::incompatibleDimension or invalidUnit exceptions.
+ * @throws nix::incompatibleDimension or nix::OutOfBounds exceptions.
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const Dimension &dimension);
+NIXAPI int positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
+
+/**
+ *
+ */
+NIXAPI int positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
+
+/**
+ *
+ */
+NIXAPI int positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 }
 }
