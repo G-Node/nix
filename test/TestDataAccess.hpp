@@ -27,11 +27,23 @@ class TestDataAccess: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestDataAccess);
-    CPPUNIT_TEST(testPositionToIndex);
+    CPPUNIT_TEST(testPositionToIndexSampledDimension);
+    CPPUNIT_TEST(testPositionToIndexSetDimension);
+    CPPUNIT_TEST(testPositionToIndexRangeDimension);
     CPPUNIT_TEST_SUITE_END ();
 
-public:
+    nix::File file;
+    nix::DataArray data_array;
+    nix::Block block;
+    nix::SampledDimension sampledDim;
+    nix::RangeDimension rangeDim;
+    nix::SetDimension setDim;
 
-    void testPositionToIndex();
+public:
+    void setUp();
+    void tearDown();
+    void testPositionToIndexSetDimension();
+    void testPositionToIndexSampledDimension();
+    void testPositionToIndexRangeDimension();
 };
 
