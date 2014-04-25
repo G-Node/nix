@@ -7,11 +7,11 @@ This document gives some information about how to contribute to the NIX project.
 Contributing
 ------------
 
-If you want to contribute to the project please first create a fork of the repository GitHub.
-When you are done with the implementation of a new feature or with the fixing of a bug, please send 
+If you want to contribute to the project please first create a fork of the repository on GitHub.
+When you are done with implementing a new feature or with fixing a bug, please send 
 us a pull request.
 
-If you contribute to the project more regularly, it would be very much appreciated if you 
+If you contribute to the project regularly, it would be very much appreciated if you 
 would stick to the following development workflow:
 
 1. Select an *issue* from the issue tracker that you want to work on and assign the issue to your account. 
@@ -19,7 +19,8 @@ would stick to the following development workflow:
    *issue* or its respective discussion should contain a brief concept about how the solution will look like.
 
 2. During the implementation of the feature or bug-fix add your changes in small atomic commits.
-   Commit messages should be short but expressive. The first line of the message should not exceed 50 characters.
+   Commit messages should be short but expressive. 
+   The first line of the message should not exceed **50** characters.
    If possible reference fixed issues in the commit message (e.g. "fixes #101"). 
 
 3. When done with the implementation, compile and test the code with clang **and** g++. 
@@ -28,6 +29,16 @@ would stick to the following development workflow:
 4. Send us a pull request with your changes. 
    The pull request message should explain the changes and reference the *issue* addressed by your code.
    Your pull request will be reviewed by one of our team members.
+
+
+The issue tracker
+-----------------
+
+Please try to avoid duplicates of issues. If you encounter duplicated issues, please close all of them except 
+one, reference the closed issues in the one that is left open and add missing information from the closed issues 
+(if necessary) to the remaining issue.
+
+Assign meaningful tags to newly crated issues and if possible assign them to milestones.
 
 
 Reviewing pull requests
@@ -56,6 +67,19 @@ Code style
 * Add Doxygen comments to methods (with javadoc like markup)
 
 * In doubt just look at some existing files and adjust your code style and naming scheme accordingly.
+
+
+Testing
+-------
+   
+* Unit test can be found in the test sub directory.
+
+* Provide a unit test for every class, method or function.
+
+* Please make sure that all tests pass before merging/sending pull requests.
+
+* Since continuous integration for the windows platform is still work in progress, contributors should 
+  build and test code that contains a significant amount of changes also under windows (see: Win32.md). 
 
 
 Design patterns
@@ -87,11 +111,5 @@ Sub-entities with 1-n relationship are accessible from their parent entity throu
 where *Entity* is the name of the entity, e.g. *getSource* or *sources*.
 
 
-Testing
--------
-   
-   - Unit test can be found in the test sub directory.
-   - Every implemented method must be tested.
-   - Please make sure that all tests pass before merging/sending pull
-   requests. 
+
 
