@@ -103,7 +103,7 @@ specific implementation, depending on which template parameter *Block* was given
 Entity relations
 ----------------
 
-The Pandora data entities can have different types of relationships. For example a *Block* can have different 
+The NIX data entities can have different types of relationships. For example a *Block* can have different 
 *Sections* and *Sources,* while *Sections* and *Sources* can have different child *Sections* or *Sources* respectively 
 and so on. 
 In general the entities can have 1-n or n-m relationships. 
