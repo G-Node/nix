@@ -56,8 +56,12 @@ void TestDataAccess::testPositionToIndexRangeDimension() {
     string invalid_unit = "kV";
     string scaled_unit = "s";
 
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, "", sampledDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, sampledDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, "", rangeDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(1.0, unit, rangeDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(8.0, unit, rangeDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.001, scaled_unit, rangeDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.008, scaled_unit, rangeDim), nix::OutOfBounds);
     CPPUNIT_ASSERT(util::positionToIndex(3.4, unit, rangeDim) == 2);
     CPPUNIT_ASSERT(util::positionToIndex(3.6, unit, rangeDim) == 2);
     CPPUNIT_ASSERT(util::positionToIndex(4.0, unit, rangeDim) == 3);

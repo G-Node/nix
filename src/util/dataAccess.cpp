@@ -72,6 +72,9 @@ int positionToIndex(double position, const string &unit, const RangeDimension &d
         }
     }
     vector<double> ticks = dimension.ticks();
+    if (position*scaling < *ticks.begin() || position*scaling > *prev(ticks.end())) {
+        throw nix::OutOfBounds("Position is out of bounds of the given RangeDimension!", 0);
+    }
     vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position * scaling);
     if (*low == position) {
         return low - ticks.begin();
