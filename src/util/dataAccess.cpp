@@ -59,18 +59,27 @@ int positionToIndex(double position, const string &unit, const SetDimension &dim
 int positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
     int index;
     boost::optional<string> dim_unit = dimension.unit();
+    double scaling = 1.0;
+
     if ((!dim_unit && unit.length() > 0) || (dim_unit && unit.length() == 0)) {
         throw nix::IncompatibleDimensions("Units of position and RangeDimension must both be given!", "nix::util::positionToIndex");
     }
+    if (dim_unit) {
+        try {
+            scaling = util::getSIScaling(unit, *dim_unit);
+        } catch (...) {
+            throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
+        }
+    }
     vector<double> ticks = dimension.ticks();
-    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position);
+    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position * scaling);
     if (*low == position) {
         return low - ticks.begin();
     }
-    if (low != ticks.begin() && *low != position) {
+    if (low != ticks.begin() && *low != position * scaling) {
         double diff_low, diff_before;
         diff_low = abs(*low - position);
-        diff_before = abs(*(std::prev(low)) - position);
+        diff_before = abs(*(std::prev(low)) - position * scaling);
         if (diff_low < diff_before) {
             index = low - ticks.begin();
         } else {
