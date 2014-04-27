@@ -36,6 +36,11 @@ public:
     {
     }
 
+    DataTag(std::shared_ptr<base::IDataTag> &&ptr)
+    : EntityWithSources(std::move(ptr))
+    {
+    }
+
     //--------------------------------------------------
     // Positions and extents
     //--------------------------------------------------

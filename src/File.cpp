@@ -17,8 +17,7 @@ namespace nix {
 
 File File::open(const std::string name, FileMode mode, Implementation impl) {
     if (impl == Implementation::Hdf5) {
-        shared_ptr<hdf5::FileHDF5> ptr(new hdf5::FileHDF5(name, mode));
-        return File(ptr);
+        return File(std::make_shared<hdf5::FileHDF5>(name, mode));
     } else {
         throw runtime_error("Unknown implementation!");
     }

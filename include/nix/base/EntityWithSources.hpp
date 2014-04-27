@@ -34,6 +34,11 @@ public:
     {
     }
 
+    EntityWithSources(std::shared_ptr<T> &&ptr)
+        : EntityWithMetadata<T>(std::move(ptr))
+    {
+    }
+
     /**
      * Returns the number of sources that are direct descendants of this source.
      *
