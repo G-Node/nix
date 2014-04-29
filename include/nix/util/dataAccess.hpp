@@ -45,6 +45,9 @@ NIXAPI int positionToIndex(double position, const std::string &unit, const Sampl
  */
 NIXAPI int positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
+
+NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
+
 }
 }
 
