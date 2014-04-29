@@ -42,6 +42,21 @@ void TestDataAccess::setUp() {
 
     rangeDim = data_array.appendRangeDimension(ticks);
     rangeDim.unit(unit);
+
+    vector<DataArray> refs;
+    refs.push_back(data_array);
+    vector<double> position {0.0, 2.0, 3.4};
+    vector<double> extent {0.0, 6.0, 2.3};
+    vector<string> units {"", "ms", "ms"};
+    position_tag = block.createSimpleTag("position tag", "event", refs);
+    position_tag.position(position);
+    position_tag.units(units);
+
+    segment_tag = block.createSimpleTag("region tag", "segment", refs);
+    segment_tag.position(position);
+    segment_tag.extent(extent);
+    segment_tag.units(units);
+
 }
 
 
@@ -90,4 +105,21 @@ void TestDataAccess::testPositionToIndexSetDimension() {
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "", setDim));
     CPPUNIT_ASSERT(util::positionToIndex(0.5, "", setDim) == 1);
     CPPUNIT_ASSERT(util::positionToIndex(0.45, "", setDim) == 0);
+}
+
+
+void TestDataAccess::testOffsetAndCount() {
+    NDSize offsets, counts;
+    util::getOffsetAndCount(position_tag, data_array, offsets, counts);
+
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+
+    util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
 }
