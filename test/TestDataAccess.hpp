@@ -21,27 +21,29 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include <nix.hpp>
-#include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
 
-
-class TestUtil: public CPPUNIT_NS::TestFixture {
+class TestDataAccess: public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestUtil);
-    CPPUNIT_TEST(testUnitScaling);
-    CPPUNIT_TEST(testIsSIUnit);
-    CPPUNIT_TEST(testSIUnitSplit);
-    CPPUNIT_TEST(testIsCompoundSIUnit);
-    CPPUNIT_TEST(testSplitCompoundUnit);
+    CPPUNIT_TEST_SUITE(TestDataAccess);
+    CPPUNIT_TEST(testPositionToIndexSampledDimension);
+    CPPUNIT_TEST(testPositionToIndexSetDimension);
+    CPPUNIT_TEST(testPositionToIndexRangeDimension);
     CPPUNIT_TEST_SUITE_END ();
 
-public:
+    nix::File file;
+    nix::DataArray data_array;
+    nix::Block block;
+    nix::SampledDimension sampledDim;
+    nix::RangeDimension rangeDim;
+    nix::SetDimension setDim;
 
-    void testUnitScaling();
-    void testIsSIUnit();
-    void testSIUnitSplit();
-    void testIsCompoundSIUnit();
-    void testSplitCompoundUnit();
-    void testPositionToIndex();
+public:
+    void setUp();
+    void tearDown();
+    void testPositionToIndexSetDimension();
+    void testPositionToIndexSampledDimension();
+    void testPositionToIndexRangeDimension();
 };
 

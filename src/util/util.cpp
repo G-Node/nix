@@ -15,6 +15,7 @@
 #include <boost/regex.hpp>
 #include <nix/util/util.hpp>
 
+
 using namespace std;
 
 namespace nix {
@@ -166,6 +167,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     }
     return scaling;
 }
+
 
 } // namespace util
 } // namespace nix

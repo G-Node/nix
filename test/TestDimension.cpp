@@ -8,8 +8,9 @@
 
 #include <ctime>
 
-#include <nix/util/util.hpp>
+
 #include "TestDimension.hpp"
+#include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
