@@ -131,6 +131,7 @@ include_directories(${CPPUNIT_INCLUDE_DIR})
 file(GLOB Tests_SOURCES "test/Test*.cpp")
 
 add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 foreach(test ${Tests_SOURCES})
