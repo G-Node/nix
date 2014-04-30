@@ -72,8 +72,10 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
         }
     }
     vector<double> ticks = dimension.ticks();
-    if (position*scaling < *ticks.begin() || position*scaling > *prev(ticks.end())) {
-        throw nix::OutOfBounds("Position is out of bounds of the given RangeDimension!", 0);
+    if (position*scaling < *ticks.begin()) {
+        return 0;
+    } else if (position*scaling > *prev(ticks.end())) {
+        return prev(ticks.end()) - ticks.begin();
     }
     vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position * scaling);
     if (*low == position) {
@@ -81,8 +83,8 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
     }
     if (low != ticks.begin() && *low != position * scaling) {
         double diff_low, diff_before;
-        diff_low = abs(*low - position);
-        diff_before = abs(*(std::prev(low)) - position * scaling);
+        diff_low = fabs(*low - position);
+        diff_before = fabs(*(std::prev(low)) - position * scaling);
         if (diff_low < diff_before) {
             index = low - ticks.begin();
         } else {
