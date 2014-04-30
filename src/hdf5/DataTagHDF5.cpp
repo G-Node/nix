@@ -289,7 +289,6 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
     if(!valid)
         return valid;
 
-    boost::multi_array<double,1>::size_type dims = aData.num_dimensions();
     for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++) {
         valid = (aData.shape()[i] == bData.shape()[i]);
         if(!valid)
