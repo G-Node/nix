@@ -47,12 +47,11 @@ size_t positionToIndex(double position, const string &unit, const SetDimension &
     if (unit.length() > 0) {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    if (index >= 0 && (size_t)index < dimension.labels().size()){
+    if ((size_t)index < dimension.labels().size()){
         return index;
     } else {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", (int)position);
     }
-    return index;
 }
 
 
