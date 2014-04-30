@@ -33,17 +33,17 @@ namespace util {
  * @return int the index
  * @throws nix::incompatibleDimension or nix::OutOfBounds exceptions.
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
 /**
  *
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
 
 /**
  *
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 }
 }

@@ -19,8 +19,8 @@ namespace nix {
 namespace util {
 
 
-int positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
-    int index;
+size_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
+    size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
     if ((!dim_unit && unit.length() > 0) || (dim_unit && unit.length() == 0)) {
@@ -36,14 +36,14 @@ int positionToIndex(double position, const string &unit, const SampledDimension 
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = (int)round(position * scaling / dimension.samplingInterval());
+    index = (size_t)round(position * scaling / dimension.samplingInterval());
     return index;
 }
 
 
-int positionToIndex(double position, const string &unit, const SetDimension &dimension) {
-    int index;
-    index = (int) round(position);
+size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
+    size_t index;
+    index = (size_t) round(position);
     if (unit.length() > 0) {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
@@ -56,8 +56,8 @@ int positionToIndex(double position, const string &unit, const SetDimension &dim
 }
 
 
-int positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
-    int index;
+size_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
+    size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
