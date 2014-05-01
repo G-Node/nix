@@ -18,16 +18,16 @@ namespace hdf5 {
 
 EntityWithSourcesHDF5::EntityWithSourcesHDF5
                     (File file, Block block, Group group, const string &id, 
-                     const string &type)
-    : EntityWithSourcesHDF5(file, block, group, id, type, util::getTime())
+                     const string &type, const string &name)
+    : EntityWithSourcesHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
 EntityWithSourcesHDF5::EntityWithSourcesHDF5
                        (File file, Block block, Group group, const string &id, 
-                        const string &type, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, type, time), entity_block(block), sources_refs(group, "sources")
+                        const string &type, const string &name, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block), sources_refs(group, "sources")
 {
 }
 

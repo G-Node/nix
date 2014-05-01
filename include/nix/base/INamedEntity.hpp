@@ -44,14 +44,9 @@ public:
     /**
      * Getter for the name of the entity.
      *
-     * @return boost::optional<string> The name of the entity.
+     * @return string The name of the entity.
      */
-    virtual boost::optional<std::string> name() const = 0;
-    
-    /**
-     * Deleter for the name of the entity.
-     */
-    virtual void name(const none_t t) = 0;
+    virtual std::string name() const = 0;
     
     /**
      * Setter for the definition of the entity.

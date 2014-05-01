@@ -17,16 +17,17 @@ namespace nix {
 namespace hdf5 {
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type)
-    : NamedEntityHDF5(file, group, id, _type, util::getTime())
+NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, const string &_name)
+    : NamedEntityHDF5(file, group, id, _type, _name, util::getTime())
 {
 }
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, time_t time)
+NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, const string &_name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
     type(_type);
+    name(_name);
 }
 
 
@@ -63,20 +64,14 @@ void NamedEntityHDF5::name(const string &name) {
 }
 
 
-optional<string> NamedEntityHDF5::name() const {
-    optional<string> ret;
+string NamedEntityHDF5::name() const {
     string name;
-    group().getAttr("name", name);
-    ret = name;
-    return ret;
-}
-
-
-void NamedEntityHDF5::name(const none_t t) {
     if(group().hasAttr("name")) {
-        group().removeAttr("name");
+        group().getAttr("name", name);
+        return name;
+    } else {
+        throw MissingAttr("name");
     }
-    forceUpdatedAt();
 }
 
 
@@ -110,8 +105,8 @@ void NamedEntityHDF5::definition(const none_t t) {
 
 int NamedEntityHDF5::compare(const INamedEntity &other) const {
     int cmp = 0;
-    if (name() && other.name()) {
-        cmp = (*name()).compare(*other.name());
+    if (!name().empty() && !other.name().empty()) {
+        cmp = (name()).compare(other.name());
     }
     if (cmp == 0) {
         cmp = id().compare(other.id());

@@ -15,14 +15,14 @@ namespace nix {
 namespace hdf5 {
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type)
-    : EntityWithMetadataHDF5(file, group, id, type, util::getTime())
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type, const string &name)
+    : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type, time_t time)
-    : NamedEntityHDF5(file, group, id, type, time)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type, const string &name, time_t time)
+    : NamedEntityHDF5(file, group, id, type, name, time)
 {
 }
 

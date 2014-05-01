@@ -30,12 +30,12 @@ public:
     /**
      * Standard constructor
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type);
+    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type, const string &_name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type, time_t time);
+    NamedEntityHDF5(File file, Group group, const std::string &id, const string &_type, const string &_name, time_t time);
 
 
     void type(const std::string &type);
@@ -47,10 +47,7 @@ public:
     void name(const std::string &name);
 
 
-    boost::optional<std::string> name() const;
-    
-    
-    void name(const none_t t);
+    std::string name() const;
     
 
     boost::optional<std::string> definition() const;

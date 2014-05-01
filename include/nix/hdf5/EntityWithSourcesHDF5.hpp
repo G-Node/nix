@@ -34,13 +34,13 @@ public:
      * Standard constructor.
      */
     EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id, 
-                          const string &type);
+                          const string &type, const string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
     EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id, 
-                          const string &type, time_t time);
+                          const string &type, const string &name, time_t time);
 
     /**
      * Get the number of sources associated with this entity.

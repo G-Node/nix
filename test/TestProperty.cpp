@@ -43,12 +43,10 @@ void TestProperty::testId() {
 
 
 void TestProperty::testName() {
-    CPPUNIT_ASSERT(*property.name() == "prop");
+    CPPUNIT_ASSERT(property.name() == "prop");
     string name = util::createId("", 32);
     property.name(name);
-    CPPUNIT_ASSERT(*property.name() == name);
-    property.name(none);
-    CPPUNIT_ASSERT(*property.name() == "");
+    CPPUNIT_ASSERT(property.name() == name);
 }
 
 
