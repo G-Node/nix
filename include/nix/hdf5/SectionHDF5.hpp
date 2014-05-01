@@ -37,25 +37,25 @@ public:
      * Standard constructor
      */
     SectionHDF5(const File &file, const Group &group, const string &id, 
-                const string &type);
+                const string &type, const string &name);
 
     /**
      * Standard constructor with parent.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const string &id, const string &type);
+                const string &id, const string &type, const string &name);
 
     /**
      * Constructor that preserves the creation time.
      */
     SectionHDF5(const File &file, const Group &group, const string &id, 
-                const string &type, time_t time);
+                const string &type, const string &name, time_t time);
 
     /**
      * Constructor with parent that preserves the creation time.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const string &id, const string &type, time_t time);
+                const string &id, const string &type, const string &name, time_t time);
 
 
     //--------------------------------------------------

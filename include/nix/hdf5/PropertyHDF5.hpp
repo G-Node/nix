@@ -27,10 +27,10 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(const File &file, const Group &group,const std::string &id, const string &type);
+    PropertyHDF5(const File &file, const Group &group,const std::string &id, const string &type, const string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group,const std::string &id, const string &type, time_t time);
+    PropertyHDF5(const File &file, const Group &group,const std::string &id, const string &type, const string &name, time_t time);
 
     
     // TODO: include methods are not implemented!

@@ -19,21 +19,21 @@ namespace nix {
 namespace hdf5 {
 
 BlockHDF5::BlockHDF5(const BlockHDF5 &block)
-    : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type()),
+    : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
       source_group(block.source_group), data_array_group(block.data_array_group),
       simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
 {
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type)
-    : BlockHDF5(file, group, id, type, util::getTime())
+BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name)
+    : BlockHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, type, time)
+BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     source_group = group.openGroup("sources");
     data_array_group = group.openGroup("data_arrays");
@@ -55,9 +55,11 @@ bool BlockHDF5::hasSource(const string &id) const {
 Source BlockHDF5::getSource(const string &id) const {
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
-        std::string type;
+        string type;
+        string name;
         group.getAttr("type", type);
-        auto tmp = make_shared<SourceHDF5>(file(), group, id, type);
+        group.getAttr("name", name);
+        auto tmp = make_shared<SourceHDF5>(file(), group, id, type, name);
         return Source(tmp);
     } else {
         return nix::Source();
@@ -84,8 +86,7 @@ Source BlockHDF5::createSource(const string &name, const string &type) {
     }
 
     Group group = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id, type);
-    tmp->name(name);
+    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id, type, name);
 
     return Source(tmp);
 }
@@ -114,7 +115,9 @@ SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
         string type;
+        string name;
         tag_group.getAttr("type", type);
+        tag_group.getAttr("name", name);
         vector<string> ref_ids;
         tag_group.getData("references", ref_ids);
         vector<DataArray> refs;
@@ -122,7 +125,7 @@ SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
             // NOTE: arrays might not exist & be empty, but let SimpleTag ctor called below handle that!
             refs.push_back(getDataArray(*it));
         }
-        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, refs);
+        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs);
         return SimpleTag(tmp);
     } else {
         return nix::SimpleTag();
@@ -150,8 +153,7 @@ SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type,
     }
 
     Group group = simple_tag_group.openGroup(id, true);
-    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), group, id, type, refs);
-    tmp->name(name);
+    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, refs);
 
     return SimpleTag(tmp);
 }
@@ -180,8 +182,10 @@ DataArray BlockHDF5::getDataArray(const string &id) const {
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
         std::string type;
+        std::string name;
         group.getAttr("type", type);
-        auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type);
+        group.getAttr("name", name);
+        auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
         return DataArray(tmp);
     } else {
         return nix::DataArray();
@@ -208,8 +212,7 @@ DataArray BlockHDF5::createDataArray(const std::string &name, const std::string 
     }
 
     Group group = data_array_group.openGroup(id, true);
-    auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type);
-    tmp->name(name);
+    auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
     return DataArray(tmp);
 }
@@ -237,8 +240,7 @@ DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &typ
     }
 
     Group group = data_tag_group.openGroup(id);
-    auto tmp = make_shared<DataTagHDF5>(file(), block(), group, id, type, positions);
-    tmp->name(name);
+    auto tmp = make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
 
     return DataTag(tmp);
 }
@@ -256,8 +258,10 @@ DataTag BlockHDF5::getDataTag(const std::string &id) const {
         tag_group.getAttr("positions", positions_id);
         DataArray positions = getDataArray(positions_id);
         std::string type;
+        std::string name;
         tag_group.getAttr("type", type);
-        auto tmp = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, positions);
+        tag_group.getAttr("name", name);
+        auto tmp = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
         return DataTag(tmp);
     } else {
         return nix::DataTag();

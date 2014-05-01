@@ -50,12 +50,10 @@ void TestSimpleTag::testId() {
 
 
 void TestSimpleTag::testName() {
-    CPPUNIT_ASSERT(*tag.name() == "tag_one");
+    CPPUNIT_ASSERT(tag.name() == "tag_one");
     std::string name = util::createId("", 32);
     tag.name(name);
-    CPPUNIT_ASSERT(*tag.name() == name);
-    tag.name(none);
-    CPPUNIT_ASSERT(*tag.name() == "");
+    CPPUNIT_ASSERT(tag.name() == name);
 }
 
 

@@ -52,14 +52,8 @@ public:
     }
 
 
-    boost::optional<std::string> name() const {
+    std::string name() const {
         return Entity<T>::backend()->name();
-    }
-
-
-    void name(const none_t t)
-    {
-        Entity<T>::backend()->name(t);
     }
     
 
