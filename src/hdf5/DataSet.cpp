@@ -232,7 +232,7 @@ NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
         }
 
         double cbytes = csize * elementSize;
-        if ((cbytes < target_size || (abs(cbytes - target_size) / target_size) < 0.5)
+        if ((cbytes < target_size || (std::abs(cbytes - target_size) / target_size) < 0.5)
                 && cbytes < CHUNK_MAX) {
             break;
         }
