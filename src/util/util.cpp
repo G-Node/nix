@@ -168,18 +168,6 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
-template<typename T> std::string numToStr(T number) {
-    std::stringstream s;
-    s << number;
-    return s.str();
-}
-
-template<typename T> T strToNum(const std::string &str) {
-    std::stringstream s(str);
-    T number;
-    return s >> number ? number : 0;
-}
-
 template<typename T>
 bool TtoBool(T var) {
     return (bool)var;

@@ -116,7 +116,12 @@ NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::
  *
  * @return The string representation of number
  */
-template<typename T> std::string numToStr(T number);
+template<typename T> 
+std::string numToStr(T number) {
+    std::stringstream s;
+    s << number;
+    return s.str();
+}
 
 /**
  * Convert a string representing a number into a number.
@@ -125,7 +130,10 @@ template<typename T> std::string numToStr(T number);
  *
  * @return The number that was represented by the string.
  */
-template<typename T> T strToNum(const std::string &str);
+template<typename T> 
+T strToNum(const std::string &str) {
+    return boost::lexical_cast<T>(str);
+}
 
 /**
  * Check whether a given type is of type "boost::optional".
