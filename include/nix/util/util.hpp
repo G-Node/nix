@@ -17,6 +17,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <boost/optional.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <nix/Platform.hpp>
 #include <nix/Exception.hpp>
@@ -24,7 +26,6 @@
 
 namespace nix {
 namespace util {
-
 
 /**
  * Generates an ID-String.
@@ -115,11 +116,7 @@ NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::
  *
  * @return The string representation of number
  */
-template<typename T> std::string numToStr(T number) {
-    std::stringstream s;
-    s << number;
-    return s.str();
-}
+template<typename T> std::string numToStr(T number);
 
 /**
  * Convert a string representing a number into a number.
@@ -128,12 +125,35 @@ template<typename T> std::string numToStr(T number) {
  *
  * @return The number that was represented by the string.
  */
-template<typename T> T strToNum(const std::string &str) {
-    std::stringstream s(str);
-    T number;
-    return s >> number ? number : 0;
-}
+template<typename T> T strToNum(const std::string &str);
 
+/**
+ * Check whether a given type is of type "boost::optional".
+ * Usage: 
+ * myBool = is_optional<decltype(myVar)>::value; 
+ * myBool = is_optional<MY_TYPE>::value; 
+ *
+ * @param type   Template param: The type to check.
+ *
+ * @return bool (use '::value' to check result)
+ */
+template<typename>
+struct is_optional : std::false_type {};
+template<typename T>
+struct is_optional<boost::optional<T>> : std::true_type {};
+
+/**
+ * Convert an unknown type to bool - only handles string explicitely
+ * and attempts cast to bool an all other types. Useful when type
+ * is either bool-convertible or string, but unknown which of the two.
+ * 
+ *
+ * @param type   The variable to convert.
+ *
+ * @return bool
+ */
+template<typename T>
+bool TtoBool(T var);
 
 } // namespace util
 } // namespace nix
