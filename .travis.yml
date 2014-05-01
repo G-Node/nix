@@ -8,7 +8,7 @@ script:
 - CXX=${COMPILER} ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
 
 before_install:
-  - sudo pip install cpp-coveralls
+  - if [[ "$COMPILER" == "g++-4.8" ]]; then sudo pip install cpp-coveralls; fi
 
 install:
 - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
@@ -18,7 +18,7 @@ install:
 - sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost1.54-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 valgrind cmake
 
 after_success:
-  - coveralls --exclude test
+  - if [[ "$COMPILER" == "g++-4.8" ]]; then coveralls --exclude test --exclude tmp; fi
 
 notifications:
   irc: "chat.freenode.net#gnode"
