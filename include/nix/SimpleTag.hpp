@@ -42,6 +42,12 @@ public:
     {
     }
 
+
+    SimpleTag(std::shared_ptr<base::ISimpleTag> &&ptr)
+        : EntityWithSources(std::move(ptr))
+    {
+    }
+
     //--------------------------------------------------
     // Element getters and setters
     //--------------------------------------------------

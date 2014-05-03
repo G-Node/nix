@@ -38,6 +38,13 @@ Section::Section(const shared_ptr<base::ISection> &p_impl)
 }
 
 
+Section::Section(shared_ptr<base::ISection> &&ptr)
+    : NamedEntity(std::move(ptr))
+{
+}
+
+
+
 //-----------------------------------------------------
 // Methods concerning child sections
 //-----------------------------------------------------

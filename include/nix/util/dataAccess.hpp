@@ -33,21 +33,21 @@ namespace util {
  * @return int the index
  * @throws nix::incompatibleDimension or nix::OutOfBounds exceptions.
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
 /**
  * Returns the index of a position.
  * see positionToIndex(double position, const std::string &unit, const SetDimension &dimension)
  * for more information.
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
 
 /**
  * Returns the index of a position.
  * see positionToIndex(double position, const std::string &unit, const SetDimension &dimension)
  * for more information
  */
-NIXAPI int positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
+NIXAPI size_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 /**
  * Returns the offsets and element counts associated with position and extent of a SimpleTag and the referenced

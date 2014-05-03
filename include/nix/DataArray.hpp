@@ -41,6 +41,11 @@ public:
     {
     }
 
+    DataArray(std::shared_ptr<base::IDataArray> &&ptr)
+        : EntityWithSources(std::move(ptr))
+    {
+    }
+
     //--------------------------------------------------
     // Element getters and setters
     //--------------------------------------------------

@@ -40,6 +40,11 @@ public:
     {
     }
 
+    Block(std::shared_ptr<base::IBlock> &&ptr)
+        : EntityWithMetadata(std::move(ptr))
+    {
+    }
+
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------

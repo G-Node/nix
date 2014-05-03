@@ -39,6 +39,9 @@ public:
     Dimension(const std::shared_ptr<base::IDimension> &p_impl);
 
 
+    Dimension(std::shared_ptr<base::IDimension> &&ptr);
+
+
     Dimension(const Dimension &other);
 
 
@@ -87,6 +90,9 @@ public:
 
 
     SampledDimension(const std::shared_ptr<base::ISampledDimension> &p_impl);
+
+
+    SampledDimension(std::shared_ptr<base::ISampledDimension> &&ptr);
 
 
     SampledDimension(const SampledDimension &other);
@@ -252,6 +258,9 @@ public:
     SetDimension(const std::shared_ptr<base::ISetDimension> &p_impl);
 
 
+    SetDimension(std::shared_ptr<base::ISetDimension> &&ptr);
+
+
     SetDimension(const SetDimension &other);
 
 
@@ -328,6 +337,9 @@ public:
 
 
     RangeDimension(const std::shared_ptr<base::IRangeDimension> &p_impl);
+
+
+    RangeDimension(std::shared_ptr<base::IRangeDimension> &&ptr);
 
 
     RangeDimension(const RangeDimension &other);

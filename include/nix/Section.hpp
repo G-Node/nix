@@ -41,6 +41,8 @@ public:
     Section(const std::shared_ptr<base::ISection> &p_impl);
 
 
+    Section(std::shared_ptr<base::ISection> &&ptr);
+
     //--------------------------------------------------
     // Attribute getter and setter
     //--------------------------------------------------

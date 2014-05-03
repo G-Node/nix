@@ -37,8 +37,8 @@ int positionToIndex(double position, const string &unit, const Dimension &dimens
 }
 
 
-int positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
-    int index;
+size_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
+    size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
     if ((!dim_unit && unit.length() > 0) || (dim_unit && unit.length() == 0)) {
@@ -54,28 +54,27 @@ int positionToIndex(double position, const string &unit, const SampledDimension 
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = (int)round(position * scaling / dimension.samplingInterval());
+    index = (size_t)round(position * scaling / dimension.samplingInterval());
     return index;
 }
 
 
-int positionToIndex(double position, const string &unit, const SetDimension &dimension) {
-    int index;
-    index = (int) round(position);
+size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
+    size_t index;
+    index = (size_t) round(position);
     if (unit.length() > 0) {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    if (index >= 0 && (size_t)index < dimension.labels().size()){
+    if ((size_t)index < dimension.labels().size()){
         return index;
     } else {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", (int)position);
     }
-    return index;
 }
 
 
-int positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
-    int index;
+size_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
+    size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
@@ -90,8 +89,10 @@ int positionToIndex(double position, const string &unit, const RangeDimension &d
         }
     }
     vector<double> ticks = dimension.ticks();
-    if (position*scaling < *ticks.begin() || position*scaling > *prev(ticks.end())) {
-        throw nix::OutOfBounds("Position is out of bounds of the given RangeDimension!", 0);
+    if (position*scaling < *ticks.begin()) {
+        return 0;
+    } else if (position*scaling > *prev(ticks.end())) {
+        return prev(ticks.end()) - ticks.begin();
     }
     vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position * scaling);
     if (*low == position) {
@@ -99,8 +100,8 @@ int positionToIndex(double position, const string &unit, const RangeDimension &d
     }
     if (low != ticks.begin() && *low != position * scaling) {
         double diff_low, diff_before;
-        diff_low = abs(*low - position);
-        diff_before = abs(*(std::prev(low)) - position * scaling);
+        diff_low = fabs(*low - position);
+        diff_before = fabs(*(std::prev(low)) - position * scaling);
         if (diff_low < diff_before) {
             index = low - ticks.begin();
         } else {

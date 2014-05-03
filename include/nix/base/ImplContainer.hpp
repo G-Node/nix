@@ -13,6 +13,7 @@
 #include <vector>
 #include <list>
 #include <functional>
+#include <utility>
 
 #include <nix/Platform.hpp> //for pragma warnings on windows
 #include <nix/None.hpp>
@@ -89,6 +90,11 @@ public:
 
     ImplContainer(const std::shared_ptr<T> &p_impl)
         : impl_ptr(p_impl)
+    {
+    }
+
+    ImplContainer(std::shared_ptr<T> &&ptr)
+        : impl_ptr(std::move(ptr))
     {
     }
 
