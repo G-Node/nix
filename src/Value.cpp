@@ -151,7 +151,7 @@ void Value::swap(Value &other) {
     //now for the variant members
     if (dtype == other.dtype) {
         switch(dtype) {
-        case DataType::Nothing: /* nothing to do, iterally  */ break;
+        case DataType::Nothing: /* nothing to do, literally */ break;
         case DataType::Bool:   swap(v_bool, other.v_bool);     break;
         case DataType::Int32:  swap(v_int32, other.v_int32);   break;
         case DataType::UInt32: swap(v_uint32, other.v_uint32); break;
@@ -159,7 +159,7 @@ void Value::swap(Value &other) {
         case DataType::UInt64: swap(v_uint64, other.v_uint64); break;
         case DataType::Double: swap(v_double, other.v_double); break;
         case DataType::String: swap(v_string, other.v_string); break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
         }
@@ -177,7 +177,7 @@ void Value::swap(Value &other) {
         case DataType::UInt64:  swap_helper<uint64_t>(other);    break;
         case DataType::Double:  swap_helper<double>(other);      break;
         case DataType::String:  swap_helper<std::string>(other); break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
         }
@@ -195,7 +195,7 @@ void Value::assign_variant_from(const Value &other) {
     case DataType::String:  set(other.v_string); break;
     case DataType::Nothing: set(none);           break;
 
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
@@ -264,7 +264,7 @@ bool operator==(const Value &a, const Value &b)
     case DataType::UInt64: return a.get<uint64_t>() == b.get<uint64_t>();
     case DataType::Double: return a.get<double>() == b.get<double>();
     case DataType::String: return a.get<std::string>() == b.get<std::string>();
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return false;
 #endif
         }
