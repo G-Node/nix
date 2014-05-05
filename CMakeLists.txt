@@ -153,6 +153,10 @@ install(TARGETS nix
 install(DIRECTORY include/ DESTINATION include)
 
 
+#pkg-config support
+configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
+install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
+
 
 ########################################
 
