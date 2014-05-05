@@ -94,6 +94,8 @@ int main(int argc, char* argv[]) {
 
     CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
     compileroutputter.write();
+    
+    std::cout << "\n";
 
     return !collectedresults.wasSuccessful();
 }

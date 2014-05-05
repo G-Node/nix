@@ -168,13 +168,13 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
-template<typename T>
-bool TtoBool(T var) {
-    return (bool)var;
+
+bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT) {
+    return (isOptional && acceptsNoneT);
 }
-template<>
-bool TtoBool<std::string>(std::string var) {
-    return boost::lexical_cast<bool>(var);
+
+bool isValidObligatory(bool isOptional, bool isSet, bool acceptsNoneT) {
+    return (!isOptional && !acceptsNoneT && isSet);
 }
 
 } // namespace util
