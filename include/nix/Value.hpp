@@ -75,7 +75,7 @@ public:
         assign_variant_from(other);
     }
 
-    Value(Value &&other) : Value() {
+    Value(Value &&other) NOEXCEPT : Value() {
         swap(other);
     }
 
