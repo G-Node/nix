@@ -75,7 +75,7 @@ Code style
 
 * Method names are written in camelCase.
 
-* Add Doxygen comments to methods (with javadoc like markup)
+* Add Doxygen comments to methods (with javadoc like markup).
 
 * In doubt just look at some existing files and adjust your code style and naming scheme accordingly.
 
@@ -86,9 +86,8 @@ Conventions for names
 Naming of getter- and setter-methods for properties follows one of two possible patterns:
 
 * Pattern for simple-type properties (numeric, string, single entity):
-  Methods for properties are named as the property, prefixed by their function e.g. *getPropertyX* or *deletePropertyX*. 
-  Methods that delete entities (referenced as property) are named with *deletePropertyX*, those that just remove the 
-  reference to the entities (but do not delete) are named *removePropertyX*.
+  Getter and setter methods for properties are named according to the property name (e.g. setting the name of an 
+  entity is done with *name(const string &name)* and retrieved with *name()*).
 
 * Pattern for properties that store multiple enitties (as vector):
   The following methods may exist, where *Entity* is replaced by the actual entities names: *getEntity*, 
@@ -97,7 +96,7 @@ Naming of getter- and setter-methods for properties follows one of two possible 
 
   * *getEntity*: always exists and is a single entity getter.
   
-  * *getEntities*: always exists and is a multiple entity getter with optional filter parameter.
+  * *entities*: always exists and is a multiple entity getter with optional filter parameter.
 
   * *hasEntity*: must exist if the property is optional, i.e. does not have to be set, may exist otherwise.
 
@@ -122,12 +121,12 @@ start with "I" and the templated container branch in which an interface class is
 template to the root *ImplContainer* (implementation container). 
 On top of both branches follows the actual user API class for interacting with a NIX entity, e.g. *Block*.
 
-The frontend user API classes are however just wrapper or container (as indicated by their inheritance 
+The front-end user API classes are however just wrapper or container (as indicated by their inheritance 
 from *ImplContainer*), meaning they just reference specific back-end implementations (e.g. HDF5) that 
-do the actual work for all frontend methods (by which they get called).
-Thus, for each front facing API entity like Block an implementation specific entity like *BlockHDF5* 
-exists, that implements the same interface (*IBlock*) as Block for the respective backend. 
-Other then the frontend API classes that inherit *ImplContainer* currently also implement the interface 
+do the actual work for all front-end methods (by which they get called).
+Thus, for each front facing API entity like *Block* an implementation specific entity like *BlockHDF5* 
+exists, that implements the same interface (*IBlock*) as *Block* for the respective back-end. 
+Other then the front-end API classes that inherit *ImplContainer* currently also implement the interface 
 (e.g. *IBlock*) these specific implementations inherit only along the interface branch.
 
 
