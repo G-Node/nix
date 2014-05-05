@@ -169,20 +169,14 @@ void Value::swap(Value &other) {
     } else {
 
         switch(dtype) {
-        case DataType::Nothing:
-            assign_variant_from(other);
-            other.maybe_deallocte_string();
-            other.dtype = DataType::Nothing;
-            other.v_bool = false;
-            break;
-
-        case DataType::Bool:   swap_helper<bool>(other);        break;
-        case DataType::Int32:  swap_helper<int32_t>(other);     break;
-        case DataType::UInt32: swap_helper<uint32_t>(other);    break;
-        case DataType::Int64:  swap_helper<int64_t>(other);     break;
-        case DataType::UInt64: swap_helper<uint64_t>(other);    break;
-        case DataType::Double: swap_helper<double>(other);      break;
-        case DataType::String: swap_helper<std::string>(other); break;
+        case DataType::Nothing: swap_helper<none_t>(other);     break;
+        case DataType::Bool:    swap_helper<bool>(other);        break;
+        case DataType::Int32:   swap_helper<int32_t>(other);     break;
+        case DataType::UInt32:  swap_helper<uint32_t>(other);    break;
+        case DataType::Int64:   swap_helper<int64_t>(other);     break;
+        case DataType::UInt64:  swap_helper<uint64_t>(other);    break;
+        case DataType::Double:  swap_helper<double>(other);      break;
+        case DataType::String:  swap_helper<std::string>(other); break;
 #ifndef CHECK_SUPOORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
