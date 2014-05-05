@@ -49,3 +49,7 @@ src/pandora_cpp.cpp
 
 #ignore sublime specific files
 *.sublime-*
+
+# kdevelop
+.kdev4
+nix.kdev4
