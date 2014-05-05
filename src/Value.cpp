@@ -25,6 +25,13 @@ void Value::maybe_deallocte_string() {
 /**************/
 /* setters */
 
+void Value::set(none_t) {
+    maybe_deallocte_string();
+
+    dtype = DataType::Nothing;
+    v_bool = false;
+}
+
 void Value::set(bool value) {
     maybe_deallocte_string();
 
@@ -83,6 +90,10 @@ void Value::set(const std::string &value) {
 
 /**************/
 /* getters */
+
+void Value::get(none_t &tag) const {
+    check_argument_type(DataType::Nothing);
+}
 
 void Value::get(bool &value) const {
     check_argument_type(DataType::Bool);
