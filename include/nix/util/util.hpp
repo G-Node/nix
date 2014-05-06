@@ -25,6 +25,21 @@
 namespace nix {
 namespace util {
 
+/**
+ * Remove blank spaces from the entire string
+ *
+ * @param str   The string to trim (will be modified in-place)
+ */
+NIXAPI void deblankString(std::string &str);
+
+/**
+ * Remove blank spaces from the entire string
+ *
+ * @param str   The string to trim
+ *
+ * @return The trimmed string
+ */
+NIXAPI std::string deblankString(const std::string &str);
 
 /**
  * Generates an ID-String.

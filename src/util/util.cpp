@@ -72,6 +72,22 @@ time_t getTime() {
 }
 
 
+void deblankString(std::string &str) {
+    typedef std::string::value_type char_type;
+
+    str.erase(std::remove_if(str.begin(),
+                             str.end(),
+                             [](char_type c) { return std::isblank(c); }),
+              str.end());
+}
+
+std::string deblankString(const std::string &str) {
+    std::string str_copy = str;
+    deblankString(str_copy);
+    return str_copy;
+}
+
+
 void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power) {
     boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
     boost::regex prefix_and_unit(PREFIXES + UNITS);
