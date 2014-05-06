@@ -14,6 +14,32 @@ using namespace std;
 using namespace nix;
 
 
+void TestUtil::testStrUtils() {
+    string a = " a ";
+    string b = "\tb\t";
+    string c = " c c\tc ";
+
+    const string ac = a;
+    const string bc = b;
+    const string cc = c;
+
+    string ad = util::deblankString(ac);
+    string bd = util::deblankString(bc);
+    string cd = util::deblankString(cc);
+
+    util::deblankString(a);
+    util::deblankString(b);
+    util::deblankString(c);
+
+    CPPUNIT_ASSERT_EQUAL(string("a"), a);
+    CPPUNIT_ASSERT_EQUAL(string("b"), b);
+    CPPUNIT_ASSERT_EQUAL(string("ccc"), c);
+
+    CPPUNIT_ASSERT_EQUAL(ad, a);
+    CPPUNIT_ASSERT_EQUAL(bd, b);
+    CPPUNIT_ASSERT_EQUAL(cd, c);
+}
+
 void TestUtil::testUnitScaling() {
     CPPUNIT_ASSERT_THROW(util::getSIScaling("mOhm","ms"), nix::InvalidUnit);
     CPPUNIT_ASSERT(util::getSIScaling("mV","kV") == 1e-6);

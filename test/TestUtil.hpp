@@ -28,6 +28,7 @@ class TestUtil: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestUtil);
+    CPPUNIT_TEST(testStrUtils);
     CPPUNIT_TEST(testUnitScaling);
     CPPUNIT_TEST(testIsSIUnit);
     CPPUNIT_TEST(testSIUnitSplit);
@@ -37,6 +38,7 @@ private:
 
 public:
 
+    void testStrUtils();
     void testUnitScaling();
     void testIsSIUnit();
     void testSIUnitSplit();
