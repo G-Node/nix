@@ -14,13 +14,9 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace nix {
+#include <nix/Platform.hpp>
 
-#ifdef _MSC_VER
-#define NOEXCEPT
-#else
-#define NOEXCEPT noexcept
-#endif
+namespace nix {
 
 class OutOfBounds : public std::out_of_range {
 public:

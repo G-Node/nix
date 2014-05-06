@@ -66,6 +66,9 @@ void TestValue::testObject() {
 
     v1 = nix::Value(31337); //assignment op (move)
     CPPUNIT_ASSERT_EQUAL(v1.get<int>(), 31337);
+
+    v1.set(nix::none); //set v1 to none
+    CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
 }
 
 

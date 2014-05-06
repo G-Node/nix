@@ -18,6 +18,7 @@
 
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
+#include <nix/None.hpp>
 
 namespace nix {
 
@@ -74,7 +75,7 @@ public:
         assign_variant_from(other);
     }
 
-    Value(Value &&other) : Value() {
+    Value(Value &&other) NOEXCEPT : Value() {
         swap(other);
     }
 
@@ -87,6 +88,7 @@ public:
         maybe_deallocte_string();
     }
 
+    void set(none_t);
     void set(bool   value);
     void set(int32_t value);
     void set(uint32_t value);
@@ -102,6 +104,7 @@ public:
         return temp;
     }
 
+    void get(none_t &tag) const;
     void get(bool &out) const;
     void get(int32_t &value) const;
     void get(uint32_t &value) const;

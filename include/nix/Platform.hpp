@@ -18,3 +18,9 @@
 #else
  #define NIXAPI
 #endif
+
+#ifdef _MSC_VER
+#define NOEXCEPT
+#else
+#define NOEXCEPT noexcept
+#endif
