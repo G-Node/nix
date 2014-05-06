@@ -60,7 +60,11 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Ra
  */
 NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
 
-}
-}
+/**
+ *
+ */
+NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
 
+}
+}
 #endif // NIX_DATAACCESS_H

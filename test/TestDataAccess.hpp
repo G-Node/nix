@@ -36,6 +36,7 @@ private:
     nix::File file;
     nix::DataArray data_array;
     nix::SimpleTag position_tag, segment_tag;
+    nix::DataTag data_tag;
     nix::Block block;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim;

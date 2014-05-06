@@ -56,7 +56,47 @@ void TestDataAccess::setUp() {
     segment_tag.position(position);
     segment_tag.extent(extent);
     segment_tag.units(units);
+    //setup dataTag
+    typedef boost::multi_array<double, 2> position_type;
+    position_type event_positions(boost::extents[2][3]);
+    position_type event_extents(boost::extents[2][3]);
+    event_positions[0][0] = 0.0;
+    event_positions[0][1] = 3.0;
+    event_positions[0][2] = 3.4;
 
+    event_extents[0][0] = 0.0;
+    event_extents[0][1] = 6.0;
+    event_extents[0][2] = 2.3;
+
+    event_positions[1][0] = 0.0;
+    event_positions[1][1] = 8.0;
+    event_positions[1][2] = 2.3;
+
+    event_extents[1][0] = 0.0;
+    event_extents[1][1] = 3.0;
+    event_extents[1][2] = 2.0;
+
+    std::vector<std::string> event_labels = {"event 1", "event 2"};
+    std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};
+
+    DataArray event_array = block.createDataArray("positions", "test");
+    event_array.setData(event_positions);
+    SetDimension event_set_dim;
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(event_labels);
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(dim_labels);
+
+    DataArray extent_array = block.createDataArray("extents", "test");
+    extent_array.setData(event_extents);
+    SetDimension extent_set_dim;
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(event_labels);
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(dim_labels);
+
+    data_tag = block.createDataTag("data_tag", "events", event_array);
+    data_tag.extents(extent_array);
 }
 
 
@@ -122,4 +162,19 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
+
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(data_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(data_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
+
+    util::getOffsetAndCount(data_tag, data_array, 0, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
+    
+    util::getOffsetAndCount(data_tag, data_array, 1, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 3);
 }
