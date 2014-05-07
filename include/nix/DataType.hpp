@@ -123,6 +123,7 @@ struct to_data_type<std::string> {
 };
 
 NIXAPI size_t data_type_to_size(DataType dtype);
+NIXAPI std::string data_type_to_string(DataType dtype);
 
 NIXAPI std::ostream& operator<<(std::ostream &out, const DataType dtype);
 
