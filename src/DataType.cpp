@@ -13,71 +13,36 @@
 
 namespace nix {
 
-std::ostream &operator<<(std::ostream &out, const DataType dtype) {
-    out << "DataType::";
+std::string data_type_to_string(DataType dtype) {
+
+    std::string str;
 
     switch(dtype) {
 
-    case DataType::Bool:
-        out << "Bool";
-        break;
-
-    case DataType::Char:
-        out << "Char";
-        break;
-
-    case DataType::Float:
-        out << "Float";
-        break;
-
-    case DataType::Double:
-        out << "Double";
-        break;
-
-    case DataType::Int8:
-        out << "Int8";
-        break;
-
-    case DataType::Int16:
-        out << "Int16";
-        break;
-
-    case DataType::Int32:
-        out << "Int32";
-        break;
-
-    case DataType::Int64:
-        out << "Int64";
-        break;
-
-    case DataType::UInt8:
-        out << "UInt8";
-        break;
-
-    case DataType::UInt16:
-        out << "UInt16";
-        break;
-
-    case DataType::UInt32:
-        out << "UInt32";
-        break;
-
-    case DataType::UInt64:
-        out << "UInt64";
-        break;
-
-    case DataType::String:
-        out << "String";
-        break;
-
-    case DataType::Nothing:
-        out << "Nothing";
-        break;
-
+    case DataType::Bool:    str = "Bool";    break;
+    case DataType::Char:    str = "Char";    break;
+    case DataType::Float:   str = "Float";   break;
+    case DataType::Double:  str = "Double";  break;
+    case DataType::Int8:    str = "Int8";    break;
+    case DataType::Int16:   str = "Int16";   break;
+    case DataType::Int32:   str = "Int32";   break;
+    case DataType::Int64:   str = "Int64";   break;
+    case DataType::UInt8:   str = "UInt8";   break;
+    case DataType::UInt16:  str = "UInt16";  break;
+    case DataType::UInt32:  str = "UInt32";  break;
+    case DataType::UInt64:  str = "UInt64";  break;
+    case DataType::String:  str = "String";  break;
+    case DataType::Nothing: str = "Nothing"; break;
     default:
-        out << "FIXME";
+        str = "FIXME";
     }
 
+    return str;
+}
+
+
+std::ostream &operator<<(std::ostream &out, const DataType dtype) {
+    out << "DataType::" << data_type_to_string(dtype);
     return out;
 }
 
