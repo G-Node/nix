@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
 #include <nix/hdf5/RepresentationHDF5.hpp>
@@ -280,21 +281,7 @@ ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
 
 
 bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
-
-    bool valid = true;
-    boost::multi_array<double,1> aData, bData;
-    a.getData(aData);
-    b.getData(bData);
-    valid = aData.num_dimensions() == bData.num_dimensions();
-    if(!valid)
-        return valid;
-
-    for(boost::multi_array<double,1>::size_type i = 0; i < *aData.shape(); i++) {
-        valid = (aData.shape()[i] == bData.shape()[i]);
-        if(!valid)
-            return valid;
-    }
-    return valid;
+    return a.getDataExtent() == b.getDataExtent();
 }
 
 

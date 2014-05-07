@@ -36,16 +36,35 @@ namespace util {
 NIXAPI size_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
 /**
- *
+ * Returns the index of a position.
+ * see positionToIndex(double position, const std::string &unit, const SetDimension &dimension)
+ * for more information.
  */
 NIXAPI size_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
 
 /**
- *
+ * Returns the index of a position.
+ * see positionToIndex(double position, const std::string &unit, const SetDimension &dimension)
+ * for more information
  */
 NIXAPI size_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
-}
-}
+/**
+ * Returns the offsets and element counts associated with position and extent of a SimpleTag and the referenced
+ * DataArray.
+ *
+ * @param tag the SimpleTag
+ * @param array the referenced DataArray
+ * @param offsets NDSize output argument the offset into the data
+ * @param counts NDSize output argument the number of elements to read from data
+ */
+NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
 
+/**
+ *
+ */
+NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
+
+}
+}
 #endif // NIX_DATAACCESS_H

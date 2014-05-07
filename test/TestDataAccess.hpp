@@ -30,10 +30,13 @@ private:
     CPPUNIT_TEST(testPositionToIndexSampledDimension);
     CPPUNIT_TEST(testPositionToIndexSetDimension);
     CPPUNIT_TEST(testPositionToIndexRangeDimension);
+    CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
     nix::DataArray data_array;
+    nix::SimpleTag position_tag, segment_tag;
+    nix::DataTag data_tag;
     nix::Block block;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim;
@@ -45,5 +48,6 @@ public:
     void testPositionToIndexSetDimension();
     void testPositionToIndexSampledDimension();
     void testPositionToIndexRangeDimension();
+    void testOffsetAndCount();
 };
 
