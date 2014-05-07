@@ -20,7 +20,6 @@ namespace nix {
 namespace util {
 
 //TODO maybe a relaxed handling of units would be better, e.g. if none given, take the one from the dimension...
-// kind of an example why an virtual method in Dimension would not be too bad... :-)
 int positionToIndex(double position, const string &unit, const Dimension &dimension) {
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
         SampledDimension dim;
@@ -46,7 +45,7 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
         throw nix::IncompatibleDimensions("Units of position and SampledDimension must both be given!", "nix::util::positionToIndex");
     }
     if ((dimension.offset() && position < *dimension.offset()) || (!dimension.offset() && position < 0.0)) {
-        throw nix::OutOfBounds("Position is out of bounds in SampledDimension.", (int)position);
+        throw nix::OutOfBounds("Position is out of bounds in SampledDimension.", static_cast<int>(position));
     }
     if (dim_unit) {
         try {
@@ -55,21 +54,21 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = (size_t)round(position * scaling / dimension.samplingInterval());
+    index = static_cast<size_t>(round(position * scaling / dimension.samplingInterval()));
     return index;
 }
 
 
 size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
     size_t index;
-    index = (size_t) round(position);
+    index = static_cast<size_t>(round(position));
     if (unit.length() > 0) {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    if ((size_t)index < dimension.labels().size()){
+    if (static_cast<size_t>(index) < dimension.labels().size()){
         return index;
     } else {
-        throw nix::OutOfBounds("Position is out of bounds in setDimension.", (int)position);
+        throw nix::OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
     }
 }
 
