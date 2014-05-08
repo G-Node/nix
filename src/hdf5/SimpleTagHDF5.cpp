@@ -9,7 +9,7 @@
 
 #include <nix/util/util.hpp>
 #include <nix/hdf5/SimpleTagHDF5.hpp>
-#include <nix/hdf5/RepresentationHDF5.hpp>
+#include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/hdf5/DataSet.hpp>
 #include <nix/Exception.hpp>
 
@@ -199,7 +199,7 @@ size_t SimpleTagHDF5::featureCount() const {
 }
 
 
-Representation SimpleTagHDF5::getFeature(const std::string &id) const {
+Feature SimpleTagHDF5::getFeature(const std::string &id) const {
     if(hasFeature(id)) {
         Group group = feature_group.openGroup(id, false);
         string link_type;
@@ -208,22 +208,22 @@ Representation SimpleTagHDF5::getFeature(const std::string &id) const {
         string dataId;
         group.getAttr("data", dataId);
         DataArray data = block().getDataArray(dataId);
-        auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
-        return Representation(tmp);
+        auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
+        return Feature(tmp);
     } else {
-        return Representation();
+        return Feature();
     }
 }
 
 
-Representation SimpleTagHDF5::getFeature(size_t index) const {
+Feature SimpleTagHDF5::getFeature(size_t index) const {
     string id = feature_group.objectName(index);
 
     return getFeature(id);
 }
 
 
-Representation SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
+Feature SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
     if(link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
     }
@@ -234,9 +234,9 @@ Representation SimpleTagHDF5::createFeature(const std::string &data_array_id, Li
 
     Group group = feature_group.openGroup(rep_id, true);
     DataArray data = block().getDataArray(data_array_id);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, rep_id, data, link_type);
+    auto tmp = make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 
-    return Representation(tmp);
+    return Feature(tmp);
 }
 
 

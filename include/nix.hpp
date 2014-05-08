@@ -12,7 +12,7 @@
 #include <nix/Dimensions.hpp>
 #include <nix/File.hpp>
 #include <nix/Property.hpp>
-#include <nix/Representation.hpp>
+#include <nix/Feature.hpp>
 #include <nix/Section.hpp>
 #include <nix/SimpleTag.hpp>
 #include <nix/Source.hpp>

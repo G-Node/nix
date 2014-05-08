@@ -115,13 +115,13 @@ public:
     size_t featureCount() const;
 
 
-    Representation getFeature(const std::string &id) const;
+    Feature getFeature(const std::string &id) const;
 
 
-    Representation getFeature(size_t index) const;
+    Feature getFeature(size_t index) const;
 
 
-    Representation createFeature(const std::string &data_array_id, LinkType link_type);
+    Feature createFeature(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);

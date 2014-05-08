@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_REPRESENTATION_HDF5_H
-#define NIX_REPRESENTATION_HDF5_H
+#ifndef NIX_FEATURE_HDF5_H
+#define NIX_FEATURE_HDF5_H
 
 #include <string>
 #include <vector>
@@ -36,9 +36,9 @@ LinkType linkTypeFromString(const std::string &str);
 
 
 /**
- * Class that represents a pandora representation entity
+ * Class that represents a pandora feature entity
  */
-class RepresentationHDF5 : virtual public base::IRepresentation, public EntityHDF5 {
+class FeatureHDF5 : virtual public base::IFeature, public EntityHDF5 {
 
 private:
 
@@ -47,14 +47,14 @@ private:
 public:
 
 
-    RepresentationHDF5(const RepresentationHDF5 &representation);
+    FeatureHDF5(const FeatureHDF5 &feature);
 
 
-    RepresentationHDF5(const File &file, const Block &block, const Group &group,
+    FeatureHDF5(const File &file, const Block &block, const Group &group,
                        const std::string &id, DataArray _data, LinkType _link_type);
 
 
-    RepresentationHDF5(const File &file, const Block &block, const Group &group,
+    FeatureHDF5(const File &file, const Block &block, const Group &group,
                        const std::string &id, DataArray _data, LinkType _link_type, time_t time);
 
 
@@ -70,7 +70,7 @@ public:
     DataArray data() const;
 
 
-    virtual ~RepresentationHDF5();
+    virtual ~FeatureHDF5();
 
 };
 
@@ -78,4 +78,4 @@ public:
 } // namespace hdf5
 } // namespace nix
 
-#endif // NIX_REPRESENTATION_HDF5_H
+#endif // NIX_FEATURE_HDF5_H

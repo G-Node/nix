@@ -17,7 +17,7 @@
 namespace nix {
 
 class DataArray;
-class Representation;
+class Feature;
 
 enum class LinkType;
 
@@ -50,7 +50,7 @@ public:
      * @param boost::none_t.
      */
     virtual void units(const none_t t) = 0;
-    
+
     /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
@@ -65,14 +65,14 @@ public:
      * @param position    The position vector.
      */
     virtual void position(const std::vector<double> &position) = 0;
-    
+
     /**
      * Deleter for the position of a tag.
      *
      * @param boost::none_t.
      */
     virtual void position(const boost::none_t t) = 0;
-    
+
     /**
      * Getter for the extent of a tag. Given a specified position
      * vector, the extent vector defined the size of a region of
@@ -88,14 +88,14 @@ public:
      * @param extent      The extent vector.
      */
     virtual void extent(const std::vector<double> &extent) = 0;
-    
+
     /**
      * Deleter for the extent of a tag.
      *
      * @param boost::none_t.
      */
     virtual void extent(const none_t t) = 0;
-    
+
     //--------------------------------------------------
     // Methods concerning references.
     // TODO implement when done with the DataArray class.
@@ -151,7 +151,7 @@ public:
      * @return The feature with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    virtual Representation getFeature(const std::string &id) const = 0;
+    virtual Feature getFeature(const std::string &id) const = 0;
 
     /**
      * Retrieves a specific feature from the tag.
@@ -160,7 +160,7 @@ public:
      *
      * @return The feature with the specified index.
      */
-    virtual Representation getFeature(size_t index) const = 0;
+    virtual Feature getFeature(size_t index) const = 0;
 
     /**
      * Create a new feature.
@@ -170,7 +170,7 @@ public:
      *
      * @return The created feature object.
      */
-    virtual Representation createFeature(const std::string &data_array_id, LinkType link_type) = 0;
+    virtual Feature createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
      * Deletes a feature from the tag.

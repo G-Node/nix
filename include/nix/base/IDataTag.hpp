@@ -13,11 +13,11 @@
 #include <string>
 
 #include <nix/base/IEntityWithSources.hpp>
-#include <nix/Representation.hpp>
+#include <nix/Feature.hpp>
 
 namespace nix {
 
-class Representation;
+class Feature;
 class DataArray;
 
 
@@ -137,7 +137,7 @@ public:
      * @return The feature with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    virtual Representation getFeature(const std::string &id) const = 0;
+    virtual Feature getFeature(const std::string &id) const = 0;
 
     /**
      * Retrieves a specific feature from the tag.
@@ -146,7 +146,7 @@ public:
      *
      * @return The feature with the specified index.
      */
-    virtual Representation getFeature(size_t index) const = 0;
+    virtual Feature getFeature(size_t index) const = 0;
 
     /**
      * Create a new feature.
@@ -156,7 +156,7 @@ public:
      *
      * @return The created feature object.
      */
-    virtual Representation createFeature(const std::string &data_array_id, LinkType link_type) = 0;
+    virtual Feature createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
      * Delete a feature from the tag.

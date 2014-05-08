@@ -13,7 +13,7 @@
 #include <nix/base/ISimpleTag.hpp>
 #include <nix/Section.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/Representation.hpp>
+#include <nix/Feature.hpp>
 
 #include <nix/Platform.hpp>
 
@@ -309,7 +309,7 @@ public:
      *
      * @return True if the feature exists, false otherwise.
      */
-    bool hasFeature(const Representation &feature) const {
+    bool hasFeature(const Feature &feature) const {
         if(feature == none) {
             throw std::runtime_error("SimpleTag::hasFeature: Empty DataArray entity given!");
         }
@@ -333,7 +333,7 @@ public:
      * @return The feature with the specified id. If it 
      *         doesn't exist an exception will be thrown.
      */
-    Representation getFeature(const std::string &id) const {
+    Feature getFeature(const std::string &id) const {
         return backend()->getFeature(id);
     }
 
@@ -345,7 +345,7 @@ public:
      * @return The feature with the specified index. If it 
      *         doesn't exist an exception will be thrown.
      */
-    Representation getFeature(size_t index) const {
+    Feature getFeature(size_t index) const {
         return backend()->getFeature(index);
     }
 
@@ -360,12 +360,12 @@ public:
      * @param object filter function of type {@link nix::util::Filter::type}
      * @return object features as a vector
      */
-    std::vector<Representation> features(
-                                  util::AcceptAll<Representation>::type filter
-                                  = util::AcceptAll<Representation>()) const
+    std::vector<Feature> features(
+                                  util::AcceptAll<Feature>::type filter
+                                  = util::AcceptAll<Feature>()) const
     {
         auto f = [this] (size_t i) { return getFeature(i); };
-        return getEntities<Representation>(f,
+        return getEntities<Feature>(f,
                                     featureCount(),
                                     filter);
     }
@@ -378,7 +378,7 @@ public:
      *
      * @return The created feature object.
      */
-    Representation createFeature(const DataArray &data, LinkType link_type) {
+    Feature createFeature(const DataArray &data, LinkType link_type) {
         if(data == none) {
             throw std::runtime_error("SimpleTag::createFeature: Empty DataArray entity given!");
         }
@@ -393,7 +393,7 @@ public:
      *
      * @return The created feature object.
      */
-    Representation createFeature(const std::string &data_array_id, LinkType link_type) {
+    Feature createFeature(const std::string &data_array_id, LinkType link_type) {
         return backend()->createFeature(data_array_id, link_type);
     }
 
@@ -415,7 +415,7 @@ public:
      *
      * @return True if the feature was removed, false otherwise.
      */
-    bool deleteFeature(const Representation &feature) {
+    bool deleteFeature(const Feature &feature) {
         if (feature == none) {
             throw std::runtime_error("SimpleTag::deleteFeature: Empty Feature entity given!");
         }

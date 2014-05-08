@@ -9,7 +9,7 @@
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
-#include <nix/hdf5/RepresentationHDF5.hpp>
+#include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
@@ -204,7 +204,7 @@ size_t DataTagHDF5::featureCount() const {
 }
 
 
-Representation DataTagHDF5::getFeature(const std::string &id) const {
+Feature DataTagHDF5::getFeature(const std::string &id) const {
     if (feature_group.hasGroup(id)) { 
         Group group = feature_group.openGroup(id, false);
         string link_type;
@@ -213,30 +213,30 @@ Representation DataTagHDF5::getFeature(const std::string &id) const {
         string dataId;
         group.getAttr("data", dataId);
         DataArray data = block().getDataArray(dataId);
-        auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, linkType);
-        return Representation(tmp);
+        auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
+        return Feature(tmp);
     } else {
-        return Representation();
+        return Feature();
     }
 }
 
 
-Representation DataTagHDF5::getFeature(size_t index) const {
+Feature DataTagHDF5::getFeature(size_t index) const {
     string id = feature_group.objectName(index);
     return getFeature(id);
 }
 
 
-Representation DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
+Feature DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
     string id = util::createId("feature");
     while(feature_group.hasObject(id))
         id = util::createId("feature");
 
     Group group = feature_group.openGroup(id, true);
     DataArray data = block().getDataArray(data_array_id);
-    auto tmp = make_shared<RepresentationHDF5>(file(), block(), group, id, data, link_type);
+    auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
 
-    return Representation(tmp);
+    return Feature(tmp);
 }
 
 

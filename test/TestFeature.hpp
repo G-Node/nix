@@ -23,10 +23,10 @@
 
 #include <nix.hpp>
 
-class TestRepresentation: public CPPUNIT_NS::TestFixture {
+class TestFeature: public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestRepresentation);
+    CPPUNIT_TEST_SUITE(TestFeature);
 
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testLinkType);
