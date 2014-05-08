@@ -11,7 +11,7 @@ Dependencies
      Download link: http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
      The required edition is "Visual Studio Express 2013 for Windows Desktop" (the download is free, but registration is needed)
      From now on exectue commands (marked with "`>`") from the "Developer Command Prompt for VS2013" found under the Visual Studio Tools submenu in the Visual Studio 2013 start menu.
-     Expressions inside "`< >`" are to be replaced (together with brackets) by a value: "`<A>`" => "`15`" if A was 15.
+     Expressions inside brackets "`< >`" are to be replaced (together with brackets) by a value: "`<A>`" => "`15`" if A was 15.
      If "Developer Command Prompt for VS2013" is missing in your installation follow these steps: https://stackoverflow.com/questions/21476588/where-is-developer-command-prompt-for-vs2013
    - **CMake**
      Needed for HDF5 and nix
@@ -23,7 +23,7 @@ Dependencies
    - Create a build sub-folder (e.g. "build") in the HDF5 folder
    - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
    - From within the build folder execute:
-     `> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF  -DHDF5_BUILD_FORTRAN:BOOL=OFF ..`
+     ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF ..```
    - From within the hdf5 folder execute:
        Build HDF5 via: `> cmake --build . --config Release`
    - Install Nullsoft installer version 2.x from: http://nsis.sourceforge.net - newer versions 3.x will _not_ work!
