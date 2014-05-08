@@ -134,14 +134,14 @@ public:
      *
      * @return True if the representation exists, false otherwise.
      */
-    virtual bool hasRepresentation(const std::string &id) const = 0;
+    virtual bool hasFeature(const std::string &id) const = 0;
 
     /**
      * Returns the number of representations in this block.
      *
      * @return The number of representations.
      */
-    virtual size_t representationCount() const = 0;
+    virtual size_t featureCount() const = 0;
 
     /**
      * Retrieves a specific representation from the tag.
@@ -151,7 +151,7 @@ public:
      * @return The representation with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    virtual Representation getRepresentation(const std::string &id) const = 0;
+    virtual Representation getFeature(const std::string &id) const = 0;
 
     /**
      * Retrieves a specific representation from the tag.
@@ -160,7 +160,7 @@ public:
      *
      * @return The representation with the specified index.
      */
-    virtual Representation getRepresentation(size_t index) const = 0;
+    virtual Representation getFeature(size_t index) const = 0;
 
     /**
      * Create a new representation.
@@ -170,7 +170,7 @@ public:
      *
      * @return The created representation object.
      */
-    virtual Representation createRepresentation(const std::string &data_array_id, LinkType link_type) = 0;
+    virtual Representation createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
      * Deletes a representation from the tag.
@@ -179,7 +179,7 @@ public:
      *
      * @return True if the representation was removed, false otherwise.
      */
-    virtual bool deleteRepresentation(const std::string &id) = 0;
+    virtual bool deleteFeature(const std::string &id) = 0;
 
 
     virtual ~ISimpleTag() {}

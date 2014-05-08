@@ -187,20 +187,20 @@ void SimpleTagHDF5::references(const std::vector<DataArray> &references) {
     references_list.set(ids);
 }
 
-// Methods concerning representations.
+// Methods concerning features.
 
-bool SimpleTagHDF5::hasRepresentation(const string &id) const {
+bool SimpleTagHDF5::hasFeature(const string &id) const {
     return representation_group.hasGroup(id);
 }
 
 
-size_t SimpleTagHDF5::representationCount() const {
+size_t SimpleTagHDF5::featureCount() const {
     return representation_group.objectCount();
 }
 
 
-Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
-    if(hasRepresentation(id)) {
+Representation SimpleTagHDF5::getFeature(const std::string &id) const {
+    if(hasFeature(id)) {
         Group group = representation_group.openGroup(id, false);
         string link_type;
         group.getAttr("link_type", link_type);
@@ -216,14 +216,14 @@ Representation SimpleTagHDF5::getRepresentation(const std::string &id) const {
 }
 
 
-Representation SimpleTagHDF5::getRepresentation(size_t index) const {
+Representation SimpleTagHDF5::getFeature(size_t index) const {
     string id = representation_group.objectName(index);
 
-    return getRepresentation(id);
+    return getFeature(id);
 }
 
 
-Representation SimpleTagHDF5::createRepresentation(const std::string &data_array_id, LinkType link_type) {
+Representation SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
     if(link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
     }
@@ -240,7 +240,7 @@ Representation SimpleTagHDF5::createRepresentation(const std::string &data_array
 }
 
 
-bool SimpleTagHDF5::deleteRepresentation(const string &id) {
+bool SimpleTagHDF5::deleteFeature(const string &id) {
     if (representation_group.hasGroup(id)) {
         representation_group.removeGroup(id);
         return true;
