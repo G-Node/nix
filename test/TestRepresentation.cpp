@@ -31,7 +31,7 @@ void TestRepresentation::tearDown() {
 
 void TestRepresentation::testId() {
     Representation rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-    CPPUNIT_ASSERT(rp.id().size() == 31);
+    CPPUNIT_ASSERT(rp.id().size() == 24);
     tag.deleteFeature(rp.id());
 }
 

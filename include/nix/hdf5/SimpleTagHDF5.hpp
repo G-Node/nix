@@ -31,7 +31,7 @@ private:
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
 
-    Group representation_group;
+    Group feature_group;
     ReferenceList references_list;
 
 public:
@@ -61,7 +61,7 @@ public:
 
 
     void units(const none_t t);
-    
+
 
     std::vector<double> position() const;
 
