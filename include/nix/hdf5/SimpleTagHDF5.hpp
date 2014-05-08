@@ -106,7 +106,7 @@ public:
     void references(const std::vector<DataArray> &references);
 
     //--------------------------------------------------
-    // Methods concerning representations.
+    // Methods concerning features.
     //--------------------------------------------------
 
     bool hasFeature(const std::string &id) const;

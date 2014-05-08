@@ -288,26 +288,26 @@ public:
     }
 
     //--------------------------------------------------
-    // Methods concerning representations.
+    // Methods concerning features.
     //--------------------------------------------------
 
     /**
-     * Checks if a specific representation exists on the tag.
+     * Checks if a specific feature exists on the tag.
      *
-     * @param id        The id of a representation.
+     * @param id        The id of a feature.
      *
-     * @return True if the representation exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
     bool hasFeature(const std::string &id) const {
         return backend()->hasFeature(id);
     }
 
     /**
-     * Checks if a specific representation exists on the tag.
+     * Checks if a specific feature exists on the tag.
      *
-     * @param representation        The Representation.
+     * @param feature        The Feature.
      *
-     * @return True if the representation exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
     bool hasFeature(const Representation &feature) const {
         if(feature == none) {
@@ -317,20 +317,20 @@ public:
     }
 
     /**
-     * Returns the number of representations in this block.
+     * Returns the number of features in this block.
      *
-     * @return The number of representations.
+     * @return The number of features.
      */
     size_t featureCount() const {
         return backend()->featureCount();
     }
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param id        The id of the representation.
+     * @param id        The id of the feature.
      *
-     * @return The representation with the specified id. If it 
+     * @return The feature with the specified id. If it 
      *         doesn't exist an exception will be thrown.
      */
     Representation getFeature(const std::string &id) const {
@@ -338,11 +338,11 @@ public:
     }
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param index        The index of the representation.
+     * @param index        The index of the feature.
      *
-     * @return The representation with the specified index. If it 
+     * @return The feature with the specified index. If it 
      *         doesn't exist an exception will be thrown.
      */
     Representation getFeature(size_t index) const {
@@ -350,15 +350,15 @@ public:
     }
 
     /**
-     * Get all representations of this simple tag.
+     * Get all features of this simple tag.
      *
      * The parameter "filter" is defaulted to giving back all 
-     * representations. To use your own filter pass a lambda 
-     * that accepts a "Representation" as parameter and returns a bool 
+     * features. To use your own filter pass a lambda 
+     * that accepts a "Feature" as parameter and returns a bool 
      * telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object representations as a vector
+     * @return object features as a vector
      */
     std::vector<Representation> features(
                                   util::AcceptAll<Representation>::type filter
@@ -371,12 +371,12 @@ public:
     }
 
     /**
-     * Create a new representation.
+     * Create a new feature.
      *
-     * @param data      The data array of this representation.
-     * @param type      The link type of this representation.
+     * @param data      The data array of this feature.
+     * @param type      The link type of this feature.
      *
-     * @return The created representation object.
+     * @return The created feature object.
      */
     Representation createFeature(const DataArray &data, LinkType link_type) {
         if(data == none) {
@@ -386,34 +386,34 @@ public:
     }
 
     /**
-     * Create a new representation.
+     * Create a new feature.
      *
-     * @param data_array_id      The id of data array of this representation.
-     * @param type      The link type of this representation.
+     * @param data_array_id      The id of data array of this feature.
+     * @param type      The link type of this feature.
      *
-     * @return The created representation object.
+     * @return The created feature object.
      */
     Representation createFeature(const std::string &data_array_id, LinkType link_type) {
         return backend()->createFeature(data_array_id, link_type);
     }
 
     /**
-     * Deletes a representation.
+     * Deletes a feature.
      *
-     * @param id        The id of the representation to remove.
+     * @param id        The id of the feature to remove.
      *
-     * @return True if the representation was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
     bool deleteFeature(const std::string &id) {
         return backend()->deleteFeature(id);
     }
 
     /**
-     * Deletes a representation.
+     * Deletes a feature.
      *
-     * @param representation        The representation to remove.
+     * @param feature        The feature to remove.
      *
-     * @return True if the representation was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
     bool deleteFeature(const Representation &feature) {
         if (feature == none) {
