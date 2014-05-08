@@ -9,6 +9,7 @@
 #include <ctime>
 
 #include "TestFile.hpp"
+#include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
@@ -131,5 +132,16 @@ void TestFile::testOperators(){
     file_other = none;
     CPPUNIT_ASSERT(file_null == false);
     CPPUNIT_ASSERT(file_null == none);
+}
+
+void TestFile::testReopen() {
+
+    //file_open is currently open
+    Block b = file_open.createBlock("a", "a");
+    b = none;
+    file_open.close();
+
+    file_open = nix::File::open("test_file_b.h5");
+    b = file_open.createBlock("b", "b");
 }
 
