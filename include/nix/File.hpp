@@ -229,6 +229,7 @@ public:
     void close() {
         if (!isNone()) {
             backend()->close();
+            nullify();
         }
     }
 
