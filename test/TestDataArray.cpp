@@ -142,6 +142,29 @@ void TestDataArray::testData()
         for(index j = 0; j != 5; ++j)
             CPPUNIT_ASSERT_DOUBLES_EQUAL(D[i][j], F[i][j],
                 std::numeric_limits<double>::epsilon());
+
+
+    nix::DataArray da3 = block.createDataArray("direct-vector", "double");
+
+    CPPUNIT_ASSERT_EQUAL(da3.hasData(), false);
+    CPPUNIT_ASSERT_EQUAL(da3.getDataType(), nix::DataType::Nothing);
+    CPPUNIT_ASSERT(da3.getDataExtent() == nix::NDSize{});
+    CPPUNIT_ASSERT(da3.getDimension(1) == false);
+
+    da3.createData(nix::DataType::Double, {5});
+    CPPUNIT_ASSERT_EQUAL(da3.hasData(), true);
+
+    std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0};
+    da3.setData(nix::DataType::Double, dv.data(), {5}, {0});
+
+    std::vector<double> dvin;
+    dvin.resize(5);
+    da3.getData(nix::DataType::Double, dvin.data(), {5}, {0});
+
+    for(size_t i = 0; i < dvin.size(); i++) {
+        CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[i], dvin[i],
+                                     std::numeric_limits<double>::epsilon());
+    }
 }
 
 void TestDataArray::testPolynomial()

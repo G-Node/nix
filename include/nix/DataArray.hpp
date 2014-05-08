@@ -327,6 +327,21 @@ public:
     template<typename T> void getData(T &value, const NDSize &offset) const;
     template<typename T> void setData(const T &value, const NDSize &offset);
 
+    void getData(DataType dtype,
+                 void *data,
+                 const NDSize &count,
+                 const NDSize &offset) const {
+        backend()->read(dtype, data, count, offset);
+    }
+
+    void setData(DataType dtype,
+                 const void *data,
+                 const NDSize &count,
+                 const NDSize &offset)
+    {
+        backend()->write(dtype, data, count, offset);
+    }
+
     NDSize getDataExtent() const {
         return backend()->getExtent();
     }
