@@ -13,7 +13,7 @@
 #include <nix/base/ISimpleTag.hpp>
 #include <nix/Section.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/Representation.hpp>
+#include <nix/Feature.hpp>
 
 #include <nix/Platform.hpp>
 
@@ -288,138 +288,138 @@ public:
     }
 
     //--------------------------------------------------
-    // Methods concerning representations.
+    // Methods concerning features.
     //--------------------------------------------------
 
     /**
-     * Checks if a specific representation exists on the tag.
+     * Checks if a specific feature exists on the tag.
      *
-     * @param id        The id of a representation.
+     * @param id        The id of a feature.
      *
-     * @return True if the representation exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
-    bool hasRepresentation(const std::string &id) const {
-        return backend()->hasRepresentation(id);
+    bool hasFeature(const std::string &id) const {
+        return backend()->hasFeature(id);
     }
 
     /**
-     * Checks if a specific representation exists on the tag.
+     * Checks if a specific feature exists on the tag.
      *
-     * @param representation        The Representation.
+     * @param feature        The Feature.
      *
-     * @return True if the representation exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
-    bool hasRepresentation(const Representation &representation) const {
-        if(representation == none) {
-            throw std::runtime_error("SimpleTag::hasRepresentation: Empty DataArray entity given!");
+    bool hasFeature(const Feature &feature) const {
+        if(feature == none) {
+            throw std::runtime_error("SimpleTag::hasFeature: Empty DataArray entity given!");
         }
-        return backend()->hasRepresentation(representation.id());
+        return backend()->hasFeature(feature.id());
     }
 
     /**
-     * Returns the number of representations in this block.
+     * Returns the number of features in this block.
      *
-     * @return The number of representations.
+     * @return The number of features.
      */
-    size_t representationCount() const {
-        return backend()->representationCount();
+    size_t featureCount() const {
+        return backend()->featureCount();
     }
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param id        The id of the representation.
+     * @param id        The id of the feature.
      *
-     * @return The representation with the specified id. If it 
+     * @return The feature with the specified id. If it 
      *         doesn't exist an exception will be thrown.
      */
-    Representation getRepresentation(const std::string &id) const {
-        return backend()->getRepresentation(id);
+    Feature getFeature(const std::string &id) const {
+        return backend()->getFeature(id);
     }
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param index        The index of the representation.
+     * @param index        The index of the feature.
      *
-     * @return The representation with the specified index. If it 
+     * @return The feature with the specified index. If it 
      *         doesn't exist an exception will be thrown.
      */
-    Representation getRepresentation(size_t index) const {
-        return backend()->getRepresentation(index);
+    Feature getFeature(size_t index) const {
+        return backend()->getFeature(index);
     }
 
     /**
-     * Get all representations of this simple tag.
+     * Get all features of this simple tag.
      *
      * The parameter "filter" is defaulted to giving back all 
-     * representations. To use your own filter pass a lambda 
-     * that accepts a "Representation" as parameter and returns a bool 
+     * features. To use your own filter pass a lambda 
+     * that accepts a "Feature" as parameter and returns a bool 
      * telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object representations as a vector     
+     * @return object features as a vector
      */
-    std::vector<Representation> representations(
-                                  util::AcceptAll<Representation>::type filter
-                                  = util::AcceptAll<Representation>()) const
+    std::vector<Feature> features(
+                                  util::AcceptAll<Feature>::type filter
+                                  = util::AcceptAll<Feature>()) const
     {
-        auto f = [this] (size_t i) { return getRepresentation(i); };
-        return getEntities<Representation>(f,
-                                    representationCount(),
+        auto f = [this] (size_t i) { return getFeature(i); };
+        return getEntities<Feature>(f,
+                                    featureCount(),
                                     filter);
     }
 
     /**
-     * Create a new representation.
+     * Create a new feature.
      *
-     * @param data      The data array of this representation.
-     * @param type      The link type of this representation.
+     * @param data      The data array of this feature.
+     * @param type      The link type of this feature.
      *
-     * @return The created representation object.
+     * @return The created feature object.
      */
-    Representation createRepresentation(const DataArray &data, LinkType link_type) {
+    Feature createFeature(const DataArray &data, LinkType link_type) {
         if(data == none) {
-            throw std::runtime_error("SimpleTag::createRepresentation: Empty DataArray entity given!");
+            throw std::runtime_error("SimpleTag::createFeature: Empty DataArray entity given!");
         }
-        return backend()->createRepresentation(data.id(), link_type);
+        return backend()->createFeature(data.id(), link_type);
     }
 
     /**
-     * Create a new representation.
+     * Create a new feature.
      *
-     * @param data_array_id      The id of data array of this representation.
-     * @param type      The link type of this representation.
+     * @param data_array_id      The id of data array of this feature.
+     * @param type      The link type of this feature.
      *
-     * @return The created representation object.
+     * @return The created feature object.
      */
-    Representation createRepresentation(const std::string &data_array_id, LinkType link_type) {
-        return backend()->createRepresentation(data_array_id, link_type);
+    Feature createFeature(const std::string &data_array_id, LinkType link_type) {
+        return backend()->createFeature(data_array_id, link_type);
     }
 
     /**
-     * Deletes a representation.
+     * Deletes a feature.
      *
-     * @param id        The id of the representation to remove.
+     * @param id        The id of the feature to remove.
      *
-     * @return True if the representation was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
-    bool deleteRepresentation(const std::string &id) {
-        return backend()->deleteRepresentation(id);
+    bool deleteFeature(const std::string &id) {
+        return backend()->deleteFeature(id);
     }
 
     /**
-     * Deletes a representation.
+     * Deletes a feature.
      *
-     * @param representation        The representation to remove.
+     * @param feature        The feature to remove.
      *
-     * @return True if the representation was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
-    bool deleteRepresentation(const Representation &representation) {
-        if (representation == none) {
-            throw std::runtime_error("SimpleTag::deleteRepresentation: Empty Representation entity given!");
+    bool deleteFeature(const Feature &feature) {
+        if (feature == none) {
+            throw std::runtime_error("SimpleTag::deleteFeature: Empty Feature entity given!");
         }
-        return backend()->deleteRepresentation(representation.id());
+        return backend()->deleteFeature(feature.id());
     }
 
     //--------------------------------------------------

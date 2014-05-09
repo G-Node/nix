@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_REPRESENTATION_H
-#define NIX_I_REPRESENTATION_H
+#ifndef NIX_I_FEATURE_H
+#define NIX_I_FEATURE_H
 
 #include <nix/base/IEntity.hpp>
 
@@ -29,10 +29,10 @@ enum class LinkType : int {
 namespace base {
 
 /**
- * Class that represents a pandora representation entity
+ * Class that represents a pandora feature entity
  * TODO implement methods for DataArray.
  */
-class NIXAPI IRepresentation: virtual public base::IEntity {
+class NIXAPI IFeature: virtual public base::IEntity {
 
 public:
 
@@ -46,26 +46,26 @@ public:
     /**
      * Getter for the link type.
      *
-     * @return The current link type of the representation.
+     * @return The current link type of the feature.
      */
     virtual LinkType linkType() const = 0;
 
     /**
-     * Sets the data array associated with this representation.
+     * Sets the data array associated with this feature.
      *
      * @param data    The id of the data array to set.
      */
     virtual void data(const std::string &data_array_id) = 0;
 
     /**
-     * Gets the data array associated with this representation.
+     * Gets the data array associated with this feature.
      *
      * @return The associated data array.
      */
     virtual DataArray data() const = 0;
 
 
-    virtual ~IRepresentation() {}
+    virtual ~IFeature() {}
 
 };
 
@@ -73,4 +73,4 @@ public:
 } // namespace base
 } // namespace nix
 
-#endif // NIX_I_REPRESENTATION_H
+#endif // NIX_I_FEATURE_H

@@ -21,14 +21,14 @@ void TestSimpleTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_dataTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
-    
+
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     tag = block.createSimpleTag("tag_one", "test_tag", refs);
     tag_other = block.createSimpleTag("tag_two", "test_tag", refs);
     tag_null = nullptr;
@@ -123,7 +123,7 @@ void TestSimpleTag::testReferences() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
@@ -173,7 +173,7 @@ void TestSimpleTag::testExtent() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
@@ -201,7 +201,7 @@ void TestSimpleTag::testPosition() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<double> position = {1.0, 2.0, 3.0};

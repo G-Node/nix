@@ -6,11 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_REPRESENTATION_H
-#define NIX_REPRESENTATION_H
+#ifndef NIX_FEATURE_H
+#define NIX_FEATURE_H
 
 #include <nix/base/Entity.hpp>
-#include <nix/base/IRepresentation.hpp>
+#include <nix/base/IFeature.hpp>
 #include <nix/DataArray.hpp>
 
 #include <nix/Platform.hpp>
@@ -19,30 +19,30 @@ namespace nix {
 
 
 /**
- * Class that represents a pandora representation entity
+ * Class that represents a pandora feature entity
  */
-class NIXAPI Representation : virtual public base::IRepresentation, public base::Entity<base::IRepresentation> {
+class NIXAPI Feature : virtual public base::IFeature, public base::Entity<base::IFeature> {
 
 public:
 
-    Representation()
+    Feature()
         : Entity()
     {
     }
 
 
-    Representation(const Representation &other)
+    Feature(const Feature &other)
         : Entity(other.impl())
     {
     }
 
 
-    Representation(const std::shared_ptr<base::IRepresentation> &p_impl)
+    Feature(const std::shared_ptr<base::IFeature> &p_impl)
         : Entity(p_impl)
     {
     }
 
-    Representation(std::shared_ptr<base::IRepresentation> &&ptr)
+    Feature(std::shared_ptr<base::IFeature> &&ptr)
         : Entity(std::move(ptr))
     {
     }
@@ -59,14 +59,14 @@ public:
     /**
      * Getter for the link type.
      *
-     * @return The current link type of the representation.
+     * @return The current link type of the feature.
      */
     LinkType linkType() const {
         return backend()->linkType();
     }
 
     /**
-     * Sets the data array associated with this representation.
+     * Sets the data array associated with this feature.
      *
      * @param std::string       The id of the data array to set.
      */
@@ -75,7 +75,7 @@ public:
     }
 
     /**
-     * Sets the data array associated with this representation.
+     * Sets the data array associated with this feature.
      *
      * @param DataArray    The data array to set.
      */
@@ -89,7 +89,7 @@ public:
     }
 
     /**
-     * Gets the data array associated with this representation.
+     * Gets the data array associated with this feature.
      *
      * @return The associated data array.
      */
@@ -100,10 +100,10 @@ public:
     /**
      * Destructor.
      */
-    virtual ~Representation() {}
+    virtual ~Feature() {}
 };
 
 
 } // namespace nix
 
-#endif // NIX_REPRESENTATION_H
+#endif // NIX_FEATURE_H
