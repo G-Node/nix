@@ -193,7 +193,6 @@ void TestDataAccess::testPositionInData() {
 }
 
 void TestDataAccess::testRetrieveData() {
-
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, -1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, 1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, -1, 0), nix::OutOfBounds);
@@ -205,4 +204,14 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 1, 0), nix::OutOfBounds);
+
+    data = util::retrieveData(position_tag, 0);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1);
+
+    data = util::retrieveData(segment_tag, 0);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 }
