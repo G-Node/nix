@@ -56,7 +56,8 @@ void TestUtil::testIsSIUnit() {
     CPPUNIT_ASSERT(util::isSIUnit("V"));
     CPPUNIT_ASSERT(util::isSIUnit("mV"));
     CPPUNIT_ASSERT(util::isSIUnit("mV^-2"));
-    CPPUNIT_ASSERT(util::isSIUnit("mV/cm") == false);
+    CPPUNIT_ASSERT(!util::isSIUnit("mV/cm"));
+    CPPUNIT_ASSERT(util::isSIUnit("dB"));
 }
 
 void TestUtil::testSIUnitSplit() {
@@ -95,7 +96,7 @@ void TestUtil::testIsCompoundSIUnit() {
 void TestUtil::testSplitCompoundUnit() {
     string unit = "mV/cm^2*kg*V";
     vector<string> atomic_units;
-    
+
     util::splitCompoundUnit(unit, atomic_units);
 
     CPPUNIT_ASSERT(atomic_units.size() == 4);

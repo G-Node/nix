@@ -27,7 +27,7 @@ const int    ID_BASE = 32;
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
 const string  PREFIXES = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|u|n|p|f|a|z|y)";
-const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%)";
+const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB)";
 const string  POWER = "(\\^[+-]?[1-9]\\d*)";
 
 const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a", 1.0e-18}, {"f", 1.0e-15},
@@ -130,7 +130,7 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
-    
+
     while(boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
         atomicUnits.push_back(m[0]);
@@ -160,13 +160,13 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
         string dest_unit, dest_prefix, dest_power;
         splitUnit(originUnit, org_prefix, org_unit, org_power);
         splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
-            
+
         if (!(dest_unit == org_unit) || !(org_power == dest_power) ) {
             throw nix::InvalidUnit("Origin unit and/or destination units cannot be scaled!", "nix::util::getSIScaling");
         }
         if ((org_prefix == dest_prefix) && (org_power == dest_power)) {
             return scaling;
-        }                
+        }
         if (dest_prefix.empty() && !org_prefix.empty()) {
             scaling = PREFIX_FACTORS.at(org_prefix);
         } else if (org_prefix.empty() && !dest_prefix.empty()) {
@@ -175,7 +175,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
             scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
         }
         if (!org_power.empty()) {
-            int power = std::stoi(org_power);    
+            int power = std::stoi(org_power);
             scaling = pow(scaling, power);
         }
     } else {
