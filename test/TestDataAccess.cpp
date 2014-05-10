@@ -178,3 +178,16 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 3);
 }
+
+
+void TestDataAccess::testPositionInData() {
+    NDSize offsets, counts;
+    util::getOffsetAndCount(data_tag, data_array, 0, offsets, counts);
+    CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
+    CPPUNIT_ASSERT(util::positionAndExtentInData(data_array, offsets, counts));
+
+    util::getOffsetAndCount(data_tag, data_array, 1, offsets, counts);
+    CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
+    CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
+}
+
