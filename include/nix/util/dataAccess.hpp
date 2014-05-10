@@ -15,6 +15,7 @@
 #define NIX_DATAACCESS_H
 
 #include <nix/util/util.hpp>
+#include <nix/NDArray.hpp>
 #include <nix.hpp>
 
 namespace nix {
@@ -64,6 +65,17 @@ NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSi
  *
  */
 NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
+
+/**
+ * Retrieve the data referenced by the given position and extent of the DataTag.
+ *
+ * @param tag, the DataTag
+ * @param position_index, size_t the index of the position.
+ * @param reference_index, size_t the index of the reference from which data should be returned.
+ *
+ * @return NDArray the data.
+ */
+NIXAPI NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference_index);
 
 /**
  * Checks whether a given position is in the extent of the given DataArray.
