@@ -78,6 +78,16 @@ NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t
 NIXAPI NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference_index);
 
 /**
+ * Retrieve the data referenced by the given position and extent of the SimpleTag.
+ *
+ * @param tag, the SimpleTag
+ * @param reference_index, size_t the index of the reference from which data should be returned.
+ *
+ * @return NDArray the data.
+ */
+NIXAPI NDArray retrieveData(const SimpleTag &tag, size_t reference_index);
+
+/**
  * Checks whether a given position is in the extent of the given DataArray.
  *
  * @param DataArray data the DataArray.

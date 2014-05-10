@@ -226,6 +226,27 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+
+
+NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
+    vector<double> positions = tag.position();
+    vector<double> extents = tag.extent();
+    vector<DataArray> refs = tag.references();
+    if (refs.size() == 0) {
+        throw nix::OutOfBounds("There are no references in this tag!", 0);
+    }
+    if (reference_index < 0 || !(reference_index < tag.referenceCount())) {
+        throw nix::OutOfBounds("Reference index out of bounds.", 0);
+    }
+    size_t dimension_count = refs[reference_index].dimensionCount();
+    if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
+    }
+
+    NDSize offset, count;
+    getOffsetAndCount(tag, refs[reference_index], offset, count);
+    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
+        throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
     NDArray data(refs[reference_index].getDataType(), count);
     refs[reference_index].getData(data, count, offset);
