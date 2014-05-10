@@ -97,6 +97,7 @@ void TestDataAccess::setUp() {
 
     data_tag = block.createDataTag("data_tag", "events", event_array);
     data_tag.extents(extent_array);
+    data_tag.addReference(data_array);
 }
 
 
@@ -171,7 +172,7 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
-    
+
     util::getOffsetAndCount(data_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
@@ -191,3 +192,17 @@ void TestDataAccess::testPositionInData() {
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
 
+void TestDataAccess::testRetrieveData() {
+
+    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, -1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 10, 0), nix::OutOfBounds);
+
+    NDArray data = util::retrieveData(data_tag, 0, 0);
+    NDSize data_size = data.size();
+    CPPUNIT_ASSERT(data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+
+    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 1, 0), nix::OutOfBounds);
+}
