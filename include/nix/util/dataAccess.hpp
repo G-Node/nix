@@ -66,14 +66,26 @@ NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSi
 NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
 
 /**
- * Retrieve the data referenced by the given position and extent of the DataTag.
+ * Checks whether a given position is in the extent of the given DataArray.
  *
- * @param tag, the DataTag
- * @param index, size_t the index of the position.
+ * @param DataArray data the DataArray.
+ * @param NDSize position the position
  *
- * @return NDArray the data.
+ * @return bool
  */
-NIXAPI NDArray retrieveData(const DataTag &tag, size_t index);
+NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
+
+/**
+ * Checks whether a given position plus count is in the extent of the given DataArray.
+ *
+ * @param DataArray data the DataArray.
+ * @param NDSize position, the position
+ * @param NDSize count, the number of elements per dimension.
+ *
+ * @return bool
+ */
+NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
+
 }
 }
 #endif // NIX_DATAACCESS_H

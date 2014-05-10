@@ -182,20 +182,25 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
 }
 
 
-NDArray retrieveData(const DataTag &tag, size_t index) {
-    DataArray positions = tag.positions();
-    DataArray extents = tag.extents();
-    size_t dimension_count = array.dimensionCount();
+bool positionInData(const DataArray &data, const NDSize &position) {
+    NDSize data_size = data.getDataExtent();
+    bool valid = true;
 
-    if (index >= positions.getDataExtent()[0] || index >= extents.getDataExtent()[0]) {
-        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
+    if (!(data_size.size() == position.size())) {
+        return false;
     }
-    if (positions.getDataExtent()[1] > dimension_count || extents.getDataExtent()[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::getOffsetAndCount");
+    for (size_t i = 0; i < data_size.size(); i++) {
+        valid &= position[i] < data_size[i];
     }
-
+    return valid;
 }
 
+
+bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count) {
+    NDSize pos = position + count;
+    pos -= 1;
+    return positionInData(data, pos);
+}
 
 } // namespace util
 } // namespace nix
