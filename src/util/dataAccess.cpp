@@ -209,11 +209,11 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
     if (refs.size() == 0) {
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
-    if (position_index < 0 || position_index >= positions.getDataExtent()[0] ||
+    if (position_index >= positions.getDataExtent()[0] ||
         (extents && position_index >= extents.getDataExtent()[0])) {
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
-    if (reference_index < 0 || !(reference_index < tag.referenceCount())) {
+    if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
     size_t dimension_count = refs[reference_index].dimensionCount();
@@ -226,6 +226,11 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+    }
+    NDArray data(refs[reference_index].getDataType(), count);
+    refs[reference_index].getData(data, count, offset);
+    return data;
+}
 
 
 NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
@@ -235,7 +240,7 @@ NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
     if (refs.size() == 0) {
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
-    if (reference_index < 0 || !(reference_index < tag.referenceCount())) {
+    if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
     size_t dimension_count = refs[reference_index].dimensionCount();
