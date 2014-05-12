@@ -11,7 +11,6 @@
 #include <cmath>
 #include <boost/optional.hpp>
 #include <nix/util/dataAccess.hpp>
-#include <nix/NDArray.hpp>
 #include <algorithm>
 
 using namespace std;
@@ -144,7 +143,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
     size_t dimension_count = array.dimensionCount();
 
     if (index >= position_extent[0] || index >= extent_extent[0]) {
-        throw nix::OutOfBounds("Index out of bounds of postions or extents!", 0);
+        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
     if (position_extent[1] > dimension_count || extent_extent[1] > dimension_count) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::getOffsetAndCount");
@@ -179,6 +178,84 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
     }
     offsets = data_offset;
     counts = data_count;
+}
+
+
+bool positionInData(const DataArray &data, const NDSize &position) {
+    NDSize data_size = data.getDataExtent();
+    bool valid = true;
+
+    if (!(data_size.size() == position.size())) {
+        return false;
+    }
+    for (size_t i = 0; i < data_size.size(); i++) {
+        valid &= position[i] < data_size[i];
+    }
+    return valid;
+}
+
+
+bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count) {
+    NDSize pos = position + count;
+    pos -= 1;
+    return positionInData(data, pos);
+}
+
+
+NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference_index) {
+    DataArray positions = tag.positions();
+    DataArray extents = tag.extents();
+    vector<DataArray> refs = tag.references();
+    if (refs.size() == 0) {
+        throw nix::OutOfBounds("There are no references in this tag!", 0);
+    }
+    if (position_index >= positions.getDataExtent()[0] ||
+        (extents && position_index >= extents.getDataExtent()[0])) {
+        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
+    }
+    if (!(reference_index < tag.referenceCount())) {
+        throw nix::OutOfBounds("Reference index out of bounds.", 0);
+    }
+    size_t dimension_count = refs[reference_index].dimensionCount();
+    if (positions.getDataExtent()[1] > dimension_count ||
+        (extents &&extents.getDataExtent()[1] > dimension_count)) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
+    }
+
+    NDSize offset, count;
+    getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
+    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
+        throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+    }
+    NDArray data(refs[reference_index].getDataType(), count);
+    refs[reference_index].getData(data, count, offset);
+    return data;
+}
+
+
+NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
+    vector<double> positions = tag.position();
+    vector<double> extents = tag.extent();
+    vector<DataArray> refs = tag.references();
+    if (refs.size() == 0) {
+        throw nix::OutOfBounds("There are no references in this tag!", 0);
+    }
+    if (!(reference_index < tag.referenceCount())) {
+        throw nix::OutOfBounds("Reference index out of bounds.", 0);
+    }
+    size_t dimension_count = refs[reference_index].dimensionCount();
+    if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
+    }
+
+    NDSize offset, count;
+    getOffsetAndCount(tag, refs[reference_index], offset, count);
+    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
+        throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
+    }
+    NDArray data(refs[reference_index].getDataType(), count);
+    refs[reference_index].getData(data, count, offset);
+    return data;
 }
 
 } // namespace util
