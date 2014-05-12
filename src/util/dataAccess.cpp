@@ -138,8 +138,8 @@ void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &off
 void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
-    NDSize position_extent = positions.getDataExtent();
-    NDSize extent_extent = extents.getDataExtent();
+    NDSize position_extent = positions.dataExtent();
+    NDSize extent_extent = extents.dataExtent();
     size_t dimension_count = array.dimensionCount();
 
     if (index >= position_extent[0] || index >= extent_extent[0]) {
@@ -150,8 +150,8 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
     }
     NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
     NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
-    NDArray offset(positions.getDataType(), temp_count);
-    NDArray extent(extents.getDataType(), temp_count);
+    NDArray offset(positions.dataType(), temp_count);
+    NDArray extent(extents.dataType(), temp_count);
     positions.getData(offset, temp_count, temp_offset);
     extents.getData(extent, temp_count, temp_offset);
 
@@ -182,7 +182,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
 
 
 bool positionInData(const DataArray &data, const NDSize &position) {
-    NDSize data_size = data.getDataExtent();
+    NDSize data_size = data.dataExtent();
     bool valid = true;
 
     if (!(data_size.size() == position.size())) {
@@ -209,16 +209,16 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
     if (refs.size() == 0) {
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
-    if (position_index >= positions.getDataExtent()[0] ||
-        (extents && position_index >= extents.getDataExtent()[0])) {
+    if (position_index >= positions.dataExtent()[0] ||
+        (extents && position_index >= extents.dataExtent()[0])) {
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
     if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
     size_t dimension_count = refs[reference_index].dimensionCount();
-    if (positions.getDataExtent()[1] > dimension_count ||
-        (extents &&extents.getDataExtent()[1] > dimension_count)) {
+    if (positions.dataExtent()[1] > dimension_count ||
+        (extents &&extents.dataExtent()[1] > dimension_count)) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
     }
 
@@ -227,7 +227,7 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].getDataType(), count);
+    NDArray data(refs[reference_index].dataType(), count);
     refs[reference_index].getData(data, count, offset);
     return data;
 }
@@ -253,7 +253,7 @@ NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].getDataType(), count);
+    NDArray data(refs[reference_index].dataType(), count);
     refs[reference_index].getData(data, count, offset);
     return data;
 }

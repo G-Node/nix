@@ -72,15 +72,15 @@ void TestDataArray::testData()
                 A[i][j][k] = values++;
 
     CPPUNIT_ASSERT_EQUAL(array1.hasData(), false);
-    CPPUNIT_ASSERT_EQUAL(array1.getDataType(), nix::DataType::Nothing);
-    CPPUNIT_ASSERT(array1.getDataExtent() == nix::NDSize{});
+    CPPUNIT_ASSERT_EQUAL(array1.dataType(), nix::DataType::Nothing);
+    CPPUNIT_ASSERT(array1.dataExtent() == nix::NDSize{});
     CPPUNIT_ASSERT(array1.getDimension(1) == false);
     array1.createData(A, {3, 4, 2});
     CPPUNIT_ASSERT_EQUAL(array1.hasData(), true);
     array1.setData(A);
     
     //test the getDataType() function
-    nix::DataType dtype = array1.getDataType();
+    nix::DataType dtype = array1.dataType();
     CPPUNIT_ASSERT_EQUAL(dtype, nix::DataType::Double);
 
     array_type B(boost::extents[1][1][1]);
@@ -111,11 +111,11 @@ void TestDataArray::testData()
     CPPUNIT_ASSERT_EQUAL(array2.hasData(), false);
     array2.createData(C, {20, 20});
     CPPUNIT_ASSERT_EQUAL(array2.hasData(), true);
-    CPPUNIT_ASSERT_EQUAL(array2.getDataExtent(), (nix::NDSize{20, 20}));
+    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{20, 20}));
 
     array2.setData(C, {0,0});
-    array2.setDataExtent({40, 40});
-    CPPUNIT_ASSERT_EQUAL(array2.getDataExtent(), (nix::NDSize{40, 40}));
+    array2.dataExtent({40, 40});
+    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
@@ -147,8 +147,8 @@ void TestDataArray::testData()
     nix::DataArray da3 = block.createDataArray("direct-vector", "double");
 
     CPPUNIT_ASSERT_EQUAL(da3.hasData(), false);
-    CPPUNIT_ASSERT_EQUAL(da3.getDataType(), nix::DataType::Nothing);
-    CPPUNIT_ASSERT(da3.getDataExtent() == nix::NDSize{});
+    CPPUNIT_ASSERT_EQUAL(da3.dataType(), nix::DataType::Nothing);
+    CPPUNIT_ASSERT(da3.dataExtent() == nix::NDSize{});
     CPPUNIT_ASSERT(da3.getDimension(1) == false);
 
     da3.createData(nix::DataType::Double, {5});

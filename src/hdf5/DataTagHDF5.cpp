@@ -281,7 +281,7 @@ ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
 
 
 bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
-    return a.getDataExtent() == b.getDataExtent();
+    return a.dataExtent() == b.dataExtent();
 }
 
 
