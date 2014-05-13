@@ -342,16 +342,16 @@ public:
         backend()->write(dtype, data, count, offset);
     }
 
-    NDSize getDataExtent() const {
-        return backend()->getExtent();
+    NDSize dataExtent() const {
+        return backend()->dataExtent();
     }
 
-    void setDataExtent(const NDSize &extent) {
-        backend()->setExtent(extent);
+    void dataExtent(const NDSize &extent) {
+        backend()->dataExtent(extent);
     }
 
-    DataType getDataType(void) const {
-        return backend()->getDataType();
+    DataType dataType(void) const {
+        return backend()->dataType();
     }
 
  };
@@ -370,7 +370,7 @@ void DataArray::getData(T &value) const
 {
     Hydra<T> hydra(value);
 
-    NDSize extent = backend()->getExtent();
+    NDSize extent = backend()->dataExtent();
     hydra.resize(extent);
 
     DataType dtype = hydra.element_data_type();
@@ -390,7 +390,7 @@ void DataArray::setData(const T &value)
     if(!backend()->hasData()) { 
         backend()->createData(dtype, shape);
     }
-    backend()->setExtent(shape);
+    backend()->dataExtent(shape);
     backend()->write(dtype, hydra.data(), shape, {});
 }
 
