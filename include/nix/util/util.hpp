@@ -17,6 +17,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <boost/optional.hpp>
+#include <boost/none_t.hpp>
 
 #include <nix/Platform.hpp>
 #include <nix/Exception.hpp>
@@ -130,7 +132,8 @@ NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::
  *
  * @return The string representation of number
  */
-template<typename T> std::string numToStr(T number) {
+template<typename T> 
+std::string numToStr(T number) {
     std::stringstream s;
     s << number;
     return s.str();
@@ -143,12 +146,103 @@ template<typename T> std::string numToStr(T number) {
  *
  * @return The number that was represented by the string.
  */
-template<typename T> T strToNum(const std::string &str) {
+template<typename T> 
+T strToNum(const std::string &str) {
     std::stringstream s(str);
     T number;
     return s >> number ? number : 0;
 }
 
+/**
+ * Check whether a given type is of type "boost::optional"
+ * Usage: 
+ * myBool = is_optional<decltype(myVar)>::value; 
+ * myBool = is_optional<MY_TYPE>::value; 
+ *
+ * @param type   Template param: The type to check.
+ *
+ * @return bool (use '::value' to check result)
+ */
+template<typename>
+struct is_optional : std::false_type {};
+template<typename T>
+struct is_optional<boost::optional<T>> : std::true_type {};
+
+/**
+ * Optional de-referencing: 
+ * De-reference boost optional type if such given, returned var 
+ * unchanged otherwise.
+ *
+ * @param mixed The variable to de-reference.
+ *
+ * @return mixed
+ */
+template<typename T>
+T deRef(T var) {
+    return var;
+}
+template<typename R>
+R deRef(boost::optional<R> var) {
+    if(var) return *var;
+    else return R();
+}
+
+/**
+ * Check if the given info about an attribute's getter-setter pair 
+ * amounts to correct optional attribute behaviour;
+ *
+ * @param bool telling whether attribute getter returns boost::optional
+ * @param bool telling whether attribute getter returns value == true
+ * @param bool telling whether attribute setter accepts boost::none
+ *
+ * @return bool
+ */
+bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT);
+
+/**
+ * Check if the given info about an attribute's getter-setter pair 
+ * amounts to correct obligatory attribute behaviour;
+ *
+ * @param bool telling whether attribute getter returns boost::optional
+ * @param bool telling whether attribute getter returns value == true
+ * @param bool telling whether attribute setter accepts boost::none
+ *
+ * @return bool
+ */
+bool isValidObligatory(bool isOptional, bool isSet, bool acceptsNoneT);
+
+// hacky way to allow testing for none_t-overloads of entity methods
+// usage: add 'methodX' to below enum and 'ACCEPT(methodX)' at end of block, 
+// then 'acceptsNoneT = accepts_noneT<nix::parentClass, T_FN::methodX>::value;'
+enum T_FN { id, type, name, definition, label, labels, unit, metadata, 
+            ticks, offset, extent, extents, position, positions, values, 
+            references, expansionOrigin, samplingInterval, mapping, units, 
+            data, linkType, link, repository, sources };
+template<typename T, T_FN S>
+class accepts_noneT 
+{ 
+    template <typename U, void (U::*)(boost::none_t)> struct Check; 
+    template <typename U> static char func(Check<U, &U::id> *); 
+    template <typename U> static int func(...); 
+public: 
+    enum { value = sizeof(func<T>(0)) == sizeof(char) }; 
+};
+#define ACCEPTS(M) \
+    template<typename T> \
+    class accepts_noneT<T, T_FN::M> \
+    { \
+        template <typename U, void (U::*)(boost::none_t)> struct Check; \
+        template <typename U> static char func(Check<U, &U::M> *); \
+        template <typename U> static int func(...); \
+    public: \
+        enum { value = sizeof(func<T>(0)) == sizeof(char) }; \
+    };
+ACCEPTS(id) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
+ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
+ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions) 
+ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
+ACCEPTS(mapping) ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
+ACCEPTS(repository) ACCEPTS(units) ACCEPTS(sources)
 
 } // namespace util
 } // namespace nix
