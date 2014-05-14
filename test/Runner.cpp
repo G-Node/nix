@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
-	CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
