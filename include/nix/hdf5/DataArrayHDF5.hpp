@@ -142,10 +142,10 @@ public:
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
     void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
 
-    NDSize getExtent(void) const;
-    void   setExtent(const NDSize &extent);
+    NDSize dataExtent(void) const;
+    void   dataExtent(const NDSize &extent);
 
-    DataType getDataType(void) const;
+    DataType dataType(void) const;
 };
 
 

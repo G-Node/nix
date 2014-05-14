@@ -36,9 +36,8 @@
 #include "TestUtil.hpp"
 #include "TestImplContainer.hpp"
 #include "TestDimension.hpp"
-#include "TestRepresentation.hpp"
+#include "TestFeature.hpp"
 #include "TestDataAccess.hpp"
-#include "TestOptionalObligatory.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -60,9 +59,9 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestRepresentation);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
-    
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
+	CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
+
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
     testresult.addListener(&collectedresults);

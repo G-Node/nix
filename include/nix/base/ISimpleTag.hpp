@@ -17,7 +17,7 @@
 namespace nix {
 
 class DataArray;
-class Representation;
+class Feature;
 
 enum class LinkType;
 
@@ -50,7 +50,7 @@ public:
      * @param boost::none_t.
      */
     virtual void units(const none_t t) = 0;
-    
+
     /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
@@ -65,14 +65,14 @@ public:
      * @param position    The position vector.
      */
     virtual void position(const std::vector<double> &position) = 0;
-    
+
     /**
      * Deleter for the position of a tag.
      *
      * @param boost::none_t.
      */
     virtual void position(const boost::none_t t) = 0;
-    
+
     /**
      * Getter for the extent of a tag. Given a specified position
      * vector, the extent vector defined the size of a region of
@@ -88,14 +88,14 @@ public:
      * @param extent      The extent vector.
      */
     virtual void extent(const std::vector<double> &extent) = 0;
-    
+
     /**
      * Deleter for the extent of a tag.
      *
      * @param boost::none_t.
      */
     virtual void extent(const none_t t) = 0;
-    
+
     //--------------------------------------------------
     // Methods concerning references.
     // TODO implement when done with the DataArray class.
@@ -124,62 +124,62 @@ public:
     virtual void references(const std::vector<DataArray> &references) = 0;
 
     //--------------------------------------------------
-    // Methods concerning representations.
+    // Methods concerning features.
     //--------------------------------------------------
 
     /**
-     * Checks if a specific representation exists on the tag.
+     * Checks if a specific feature exists on the tag.
      *
-     * @param id        The id of a representation.
+     * @param id        The id of a feature.
      *
-     * @return True if the representation exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
-    virtual bool hasRepresentation(const std::string &id) const = 0;
+    virtual bool hasFeature(const std::string &id) const = 0;
 
     /**
-     * Returns the number of representations in this block.
+     * Returns the number of features in this block.
      *
-     * @return The number of representations.
+     * @return The number of features.
      */
-    virtual size_t representationCount() const = 0;
+    virtual size_t featureCount() const = 0;
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param id        The id of the representation.
+     * @param id        The id of the feature.
      *
-     * @return The representation with the specified id. If it doesn't exist
+     * @return The feature with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    virtual Representation getRepresentation(const std::string &id) const = 0;
+    virtual Feature getFeature(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific representation from the tag.
+     * Retrieves a specific feature from the tag.
      *
-     * @param index        The index of the representation.
+     * @param index        The index of the feature.
      *
-     * @return The representation with the specified index.
+     * @return The feature with the specified index.
      */
-    virtual Representation getRepresentation(size_t index) const = 0;
+    virtual Feature getFeature(size_t index) const = 0;
 
     /**
-     * Create a new representation.
+     * Create a new feature.
      *
-     * @param std::string   The id of the data array of this representation.
-     * @param LinkType      The link type of this representation.
+     * @param std::string   The id of the data array of this feature.
+     * @param LinkType      The link type of this feature.
      *
-     * @return The created representation object.
+     * @return The created feature object.
      */
-    virtual Representation createRepresentation(const std::string &data_array_id, LinkType link_type) = 0;
+    virtual Feature createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
-     * Deletes a representation from the tag.
+     * Deletes a feature from the tag.
      *
-     * @param id        The id of the representation to remove.
+     * @param id        The id of the feature to remove.
      *
-     * @return True if the representation was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
-    virtual bool deleteRepresentation(const std::string &id) = 0;
+    virtual bool deleteFeature(const std::string &id) = 0;
 
 
     virtual ~ISimpleTag() {}

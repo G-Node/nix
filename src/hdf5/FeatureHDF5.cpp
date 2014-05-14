@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/RepresentationHDF5.hpp>
+#include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
 
@@ -32,20 +32,20 @@ LinkType linkTypeFromString(const string &str) {
 }
 
 
-RepresentationHDF5::RepresentationHDF5(const RepresentationHDF5 &representation)
-    : EntityHDF5(representation.file(), representation.group(), representation.id()),
-      block(representation.block)
+FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
+    : EntityHDF5(feature.file(), feature.group(), feature.id()),
+      block(feature.block)
 {}
 
 
-RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
                                        const string &id, DataArray _data, LinkType _link_type)
-    : RepresentationHDF5(file, block, group, id, _data, _link_type, util::getTime())
+    : FeatureHDF5(file, block, group, id, _data, _link_type, util::getTime())
 {
 }
 
 
-RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
                                        const string &id, DataArray _data, LinkType _link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
@@ -56,20 +56,20 @@ RepresentationHDF5::RepresentationHDF5(const File &file, const Block &block, con
 }
 
 
-void RepresentationHDF5::linkType(LinkType link_type) {
+void FeatureHDF5::linkType(LinkType link_type) {
     // linkTypeToString will generate an error if link_type is invalid
     group().setAttr("link_type", linkTypeToString(link_type));
     forceUpdatedAt();
 }
 
 
-void RepresentationHDF5::data(const std::string &data_array_id) {
+void FeatureHDF5::data(const std::string &data_array_id) {
     if(data_array_id.empty()) {
         throw EmptyString("data DataArray id");
     }
     else {
         if(!block.hasDataArray(data_array_id)) {
-            throw runtime_error("RepresentationHDF5::data: cannot set Representation data because referenced DataArray does not exist!");
+            throw runtime_error("FeatureHDF5::data: cannot set Feature data because referenced DataArray does not exist!");
         } else {
             group().setAttr("data", data_array_id);
             forceUpdatedAt();
@@ -78,7 +78,7 @@ void RepresentationHDF5::data(const std::string &data_array_id) {
 }
 
 
-DataArray RepresentationHDF5::data() const {
+DataArray FeatureHDF5::data() const {
     if(group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
@@ -93,7 +93,7 @@ DataArray RepresentationHDF5::data() const {
 }
 
 
-LinkType RepresentationHDF5::linkType() const {
+LinkType FeatureHDF5::linkType() const {
     if(group().hasAttr("link_type")) {
         string link_type;
         group().getAttr("link_type", link_type);
@@ -104,7 +104,7 @@ LinkType RepresentationHDF5::linkType() const {
 }
 
 
-RepresentationHDF5::~RepresentationHDF5() {}
+FeatureHDF5::~FeatureHDF5() {}
 
 
 } // namespace hdf5

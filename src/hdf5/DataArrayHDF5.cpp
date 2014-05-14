@@ -378,7 +378,7 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
 }
 
-NDSize DataArrayHDF5::getExtent(void) const
+NDSize DataArrayHDF5::dataExtent(void) const
 {
     if (!group().hasData("data")) {
         return NDSize{};
@@ -388,7 +388,7 @@ NDSize DataArrayHDF5::getExtent(void) const
     return ds.size();
 }
 
-void DataArrayHDF5::setExtent(const NDSize &extent)
+void DataArrayHDF5::dataExtent(const NDSize &extent)
 {
     if (!group().hasData("data")) {
         throw runtime_error("Data field not found in DataArray!");
@@ -398,7 +398,7 @@ void DataArrayHDF5::setExtent(const NDSize &extent)
     ds.setExtent(extent);
 }
 
-DataType DataArrayHDF5::getDataType(void) const
+DataType DataArrayHDF5::dataType(void) const
 {
     if (!group().hasData("data")) {
         //we could also throw an exception but I think returning

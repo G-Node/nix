@@ -31,7 +31,7 @@ private:
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
 
-    Group representation_group;
+    Group feature_group;
     ReferenceList references_list;
 
 public:
@@ -61,7 +61,7 @@ public:
 
 
     void units(const none_t t);
-    
+
 
     std::vector<double> position() const;
 
@@ -106,25 +106,25 @@ public:
     void references(const std::vector<DataArray> &references);
 
     //--------------------------------------------------
-    // Methods concerning representations.
+    // Methods concerning features.
     //--------------------------------------------------
 
-    bool hasRepresentation(const std::string &id) const;
+    bool hasFeature(const std::string &id) const;
 
 
-    size_t representationCount() const;
+    size_t featureCount() const;
 
 
-    Representation getRepresentation(const std::string &id) const;
+    Feature getFeature(const std::string &id) const;
 
 
-    Representation getRepresentation(size_t index) const;
+    Feature getFeature(size_t index) const;
 
 
-    Representation createRepresentation(const std::string &data_array_id, LinkType link_type);
+    Feature createFeature(const std::string &data_array_id, LinkType link_type);
 
 
-    bool deleteRepresentation(const std::string &id);
+    bool deleteFeature(const std::string &id);
 
 
     //--------------------------------------------------
