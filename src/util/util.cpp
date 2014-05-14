@@ -184,14 +184,5 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
-
-bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT) {
-    return (isOptional && acceptsNoneT);
-}
-
-bool isValidObligatory(bool isOptional, bool isSet, bool acceptsNoneT) {
-    return (!isOptional && !acceptsNoneT && isSet);
-}
-
 } // namespace util
 } // namespace nix

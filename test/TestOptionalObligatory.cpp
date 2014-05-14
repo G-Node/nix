@@ -16,47 +16,56 @@
 using namespace std;
 using namespace nix;
 
-template<typename T>
-bool TtoBool(T var) {
-    return (bool)var;
-}
-template<>
-bool TtoBool<std::vector<std::string>>(std::vector<std::string> var) {
-    return !(var.empty());
-}
-template<>
-bool TtoBool<std::vector<double>>(std::vector<double> var) {
-    return !(var.empty());
-}
-template<>
-bool TtoBool<nix::Section>(nix::Section var) {
-    return !(var.isNone());
-}
-template<>
-bool TtoBool<nix::DataArray>(nix::DataArray var) {
-    return !(var.isNone());
-}
-template<>
-bool TtoBool<nix::LinkType>(nix::LinkType var) {
-    return true; // LinkType as enum is always set
-}
-template<>
-bool TtoBool<std::vector<nix::Value>>(std::vector<nix::Value> var) {
-    return !(var.empty());
-}
-template<>
-bool TtoBool<std::vector<nix::DataArray>>(std::vector<nix::DataArray> var) {
-    return !(var.empty());
-}
-template<>
-bool TtoBool<std::vector<nix::Source>>(std::vector<nix::Source> var) {
-    return !(var.empty());
-}
-template<>
-bool TtoBool<std::string>(std::string var) {
-    return (bool)var.length();
-}
+namespace test {
+    template<typename T>
+    bool TtoBool(T var) {
+        return (bool)var;
+    }
+    template<>
+    bool TtoBool<std::vector<std::string>>(std::vector<std::string> var) {
+        return !(var.empty());
+    }
+    template<>
+    bool TtoBool<std::vector<double>>(std::vector<double> var) {
+        return !(var.empty());
+    }
+    template<>
+    bool TtoBool<nix::Section>(nix::Section var) {
+        return !(var.isNone());
+    }
+    template<>
+    bool TtoBool<nix::DataArray>(nix::DataArray var) {
+        return !(var.isNone());
+    }
+    template<>
+    bool TtoBool<nix::LinkType>(nix::LinkType var) {
+        return true; // LinkType as enum is always set
+    }
+    template<>
+    bool TtoBool<std::vector<nix::Value>>(std::vector<nix::Value> var) {
+        return !(var.empty());
+    }
+    template<>
+    bool TtoBool<std::vector<nix::DataArray>>(std::vector<nix::DataArray> var) {
+        return !(var.empty());
+    }
+    template<>
+    bool TtoBool<std::vector<nix::Source>>(std::vector<nix::Source> var) {
+        return !(var.empty());
+    }
+    template<>
+    bool TtoBool<std::string>(std::string var) {
+        return (bool)var.length();
+    }
 
+    bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT) {
+        return (isOptional && acceptsNoneT);
+    }
+
+    bool isValidObligatory(bool isOptional, bool isSet, bool acceptsNoneT) {
+        return (!isOptional && !acceptsNoneT && isSet);
+    }
+} // namespace test
 
 void TestOptionalObligatory::setUp() {
     startup_time = time(NULL);
@@ -122,344 +131,344 @@ void TestOptionalObligatory::tearDown() {
 }
 
 void TestOptionalObligatory::testNamedEntityId() {
-    acceptsNoneT = util::accepts_noneT<nix::base::NamedEntity<base::IBlock>, util::T_FN::id>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::NamedEntity<base::IBlock>, test::id>::value;
     isOptional   = std::is_class<decltype(block.id())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.id())>::value;
-    isSet        = TtoBool(util::deRef(block.id()));
+    isSet        = test::TtoBool(util::deRef(block.id()));
     summarize("NamedEntity::id", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testNamedEntityType() {
-    acceptsNoneT = util::accepts_noneT<nix::base::NamedEntity<base::IBlock>, util::T_FN::type>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::NamedEntity<base::IBlock>, test::type>::value;
     isOptional   = std::is_class<decltype(block.type())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.type())>::value;
-    isSet        = TtoBool(util::deRef(block.type()));
+    isSet        = test::TtoBool(util::deRef(block.type()));
     summarize("NamedEntity::type", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testNamedEntityName() {
-    acceptsNoneT = util::accepts_noneT<nix::base::NamedEntity<base::IBlock>, util::T_FN::name>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::NamedEntity<base::IBlock>, test::name>::value;
     isOptional   = std::is_class<decltype(block.name())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.name())>::value;
-    isSet        = TtoBool(util::deRef(block.name()));
+    isSet        = test::TtoBool(util::deRef(block.name()));
     summarize("NamedEntity::name", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testNamedEntityDefinition() {
-    acceptsNoneT = util::accepts_noneT<nix::base::NamedEntity<base::IBlock>, util::T_FN::definition>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::NamedEntity<base::IBlock>, test::definition>::value;
     isOptional   = std::is_class<decltype(block.definition())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.definition())>::value;
-    isSet        = TtoBool(util::deRef(block.definition()));
+    isSet        = test::TtoBool(util::deRef(block.definition()));
     summarize("NamedEntity::definition", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testEntityWithMetadataMetadata() {
-    acceptsNoneT = util::accepts_noneT<nix::base::EntityWithMetadata<base::IBlock>, util::T_FN::metadata>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::EntityWithMetadata<base::IBlock>, test::metadata>::value;
     isOptional   = std::is_class<decltype(block.metadata())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.metadata())>::value;
-    isSet        = TtoBool(util::deRef(block.metadata()));
+    isSet        = test::TtoBool(util::deRef(block.metadata()));
     summarize("EntityWithMetadata::metadata", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testEntityWithSourcesSources() {
-    acceptsNoneT = util::accepts_noneT<nix::base::EntityWithSources<base::IBlock>, util::T_FN::sources>::value;
+    acceptsNoneT = test::accepts_noneT<nix::base::EntityWithSources<base::IBlock>, test::sources>::value;
     isOptional   = std::is_class<decltype(block.sources())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(block.sources())>::value;
-    isSet        = TtoBool(util::deRef(block.sources()));
+    isSet        = test::TtoBool(util::deRef(block.sources()));
     summarize("EntityWithSources::sources", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testDataArrayLabel() {
-    acceptsNoneT = util::accepts_noneT<nix::DataArray, util::T_FN::label>::value;
+    acceptsNoneT = test::accepts_noneT<nix::DataArray, test::label>::value;
     isOptional   = std::is_class<decltype(dataArray.label())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(dataArray.label())>::value;
-    isSet        = TtoBool(util::deRef(dataArray.label()));
+    isSet        = test::TtoBool(util::deRef(dataArray.label()));
     summarize("DataArray::label", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testDataArrayUnit() {
-    acceptsNoneT = util::accepts_noneT<nix::DataArray, util::T_FN::unit>::value;
+    acceptsNoneT = test::accepts_noneT<nix::DataArray, test::unit>::value;
     isOptional   = std::is_class<decltype(dataArray.unit())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(dataArray.unit())>::value;
-    isSet        = TtoBool(util::deRef(dataArray.unit()));
+    isSet        = test::TtoBool(util::deRef(dataArray.unit()));
     summarize("DataArray::unit", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testDataArrayExpansionOrigin() {
-    acceptsNoneT = util::accepts_noneT<nix::DataArray, util::T_FN::expansionOrigin>::value;
+    acceptsNoneT = test::accepts_noneT<nix::DataArray, test::expansionOrigin>::value;
     isOptional   = std::is_class<decltype(dataArray.expansionOrigin())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(dataArray.expansionOrigin())>::value;
-    isSet        = TtoBool(util::deRef(dataArray.expansionOrigin()));
+    isSet        = test::TtoBool(util::deRef(dataArray.expansionOrigin()));
     summarize("DataArray::expansionOrigin", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSetDimensionId() {
-    acceptsNoneT = util::accepts_noneT<nix::SetDimension, util::T_FN::id>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SetDimension, test::id>::value;
     isOptional   = std::is_class<decltype(setDim.id())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(setDim.id())>::value;
-    isSet        = TtoBool(util::deRef(setDim.id()));
+    isSet        = test::TtoBool(util::deRef(setDim.id()));
     summarize("SetDimension::id", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSetDimensionLabels() {
-    acceptsNoneT = util::accepts_noneT<nix::SetDimension, util::T_FN::labels>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SetDimension, test::labels>::value;
     isOptional   = std::is_class<decltype(setDim.labels())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(setDim.labels())>::value;
-    isSet        = TtoBool(util::deRef(setDim.labels()));
+    isSet        = test::TtoBool(util::deRef(setDim.labels()));
     summarize("SetDimension::labels", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSampledDimensionId() {
-    acceptsNoneT = util::accepts_noneT<nix::SampledDimension, util::T_FN::id>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SampledDimension, test::id>::value;
     isOptional   = std::is_class<decltype(sampledDim.id())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(sampledDim.id())>::value;
-    isSet        = TtoBool(util::deRef(sampledDim.id()));
+    isSet        = test::TtoBool(util::deRef(sampledDim.id()));
     summarize("SampledDimension::id", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSampledDimensionLabel() {
-    acceptsNoneT = util::accepts_noneT<nix::SampledDimension, util::T_FN::label>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SampledDimension, test::label>::value;
     isOptional   = std::is_class<decltype(sampledDim.label())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(sampledDim.label())>::value;
-    isSet        = TtoBool(util::deRef(sampledDim.label()));
+    isSet        = test::TtoBool(util::deRef(sampledDim.label()));
     summarize("SampledDimension::label", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSampledDimensionOffset() {
-    acceptsNoneT = util::accepts_noneT<nix::SampledDimension, util::T_FN::offset>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SampledDimension, test::offset>::value;
     isOptional   = std::is_class<decltype(sampledDim.offset())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(sampledDim.offset())>::value;
-    isSet        = TtoBool(util::deRef(sampledDim.offset()));
+    isSet        = test::TtoBool(util::deRef(sampledDim.offset()));
     summarize("SampledDimension::offset", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSampledDimensionSamplingInterval() {
-    acceptsNoneT = util::accepts_noneT<nix::SampledDimension, util::T_FN::samplingInterval>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SampledDimension, test::samplingInterval>::value;
     isOptional   = std::is_class<decltype(sampledDim.samplingInterval())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(sampledDim.samplingInterval())>::value;
-    isSet        = TtoBool(util::deRef(sampledDim.samplingInterval()));
+    isSet        = test::TtoBool(util::deRef(sampledDim.samplingInterval()));
     summarize("SampledDimension::samplingInterval", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSampledDimensionUnit() {
-    acceptsNoneT = util::accepts_noneT<nix::SampledDimension, util::T_FN::unit>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SampledDimension, test::unit>::value;
     isOptional   = std::is_class<decltype(sampledDim.unit())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(sampledDim.unit())>::value;
-    isSet        = TtoBool(util::deRef(sampledDim.unit()));
+    isSet        = test::TtoBool(util::deRef(sampledDim.unit()));
     summarize("SampledDimension::unit", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRangeDimensionId() {
-    acceptsNoneT = util::accepts_noneT<nix::RangeDimension, util::T_FN::id>::value;
+    acceptsNoneT = test::accepts_noneT<nix::RangeDimension, test::id>::value;
     isOptional   = std::is_class<decltype(rangeDim.id())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rangeDim.id())>::value;
-    isSet        = TtoBool(util::deRef(rangeDim.id()));
+    isSet        = test::TtoBool(util::deRef(rangeDim.id()));
     summarize("RangeDimension::id", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRangeDimensionLabel() {
-    acceptsNoneT = util::accepts_noneT<nix::RangeDimension, util::T_FN::label>::value;
+    acceptsNoneT = test::accepts_noneT<nix::RangeDimension, test::label>::value;
     isOptional   = std::is_class<decltype(rangeDim.label())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rangeDim.label())>::value;
-    isSet        = TtoBool(util::deRef(rangeDim.label()));
+    isSet        = test::TtoBool(util::deRef(rangeDim.label()));
     summarize("RangeDimension::label", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRangeDimensionTicks() {
-    acceptsNoneT = util::accepts_noneT<nix::RangeDimension, util::T_FN::ticks>::value;
+    acceptsNoneT = test::accepts_noneT<nix::RangeDimension, test::ticks>::value;
     isOptional   = std::is_class<decltype(rangeDim.ticks())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rangeDim.ticks())>::value;
-    isSet        = TtoBool(util::deRef(rangeDim.ticks()));
+    isSet        = test::TtoBool(util::deRef(rangeDim.ticks()));
     summarize("RangeDimension::ticks", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRangeDimensionUnit() {
-    acceptsNoneT = util::accepts_noneT<nix::RangeDimension, util::T_FN::unit>::value;
+    acceptsNoneT = test::accepts_noneT<nix::RangeDimension, test::unit>::value;
     isOptional   = std::is_class<decltype(rangeDim.unit())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rangeDim.unit())>::value;
-    isSet        = TtoBool(util::deRef(rangeDim.unit()));
+    isSet        = test::TtoBool(util::deRef(rangeDim.unit()));
     summarize("RangeDimension::unit", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testPropertyMapping() {
-    acceptsNoneT = util::accepts_noneT<nix::Property, util::T_FN::mapping>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Property, test::mapping>::value;
     isOptional   = std::is_class<decltype(property.mapping())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(property.mapping())>::value;
-    isSet        = TtoBool(util::deRef(property.mapping()));
+    isSet        = test::TtoBool(util::deRef(property.mapping()));
     summarize("Property::mapping", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testPropertyUnit() {
-    acceptsNoneT = util::accepts_noneT<nix::Property, util::T_FN::unit>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Property, test::unit>::value;
     isOptional   = std::is_class<decltype(property.unit())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(property.unit())>::value;
-    isSet        = TtoBool(util::deRef(property.unit()));
+    isSet        = test::TtoBool(util::deRef(property.unit()));
     summarize("Property::unit", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testPropertyValues() {
-    acceptsNoneT = util::accepts_noneT<nix::Property, util::T_FN::values>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Property, test::values>::value;
     isOptional   = std::is_class<decltype(property.values())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(property.values())>::value;
-    isSet        = TtoBool(util::deRef(property.values()));
+    isSet        = test::TtoBool(util::deRef(property.values()));
     summarize("Property::values", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRepresentationData() {
-    acceptsNoneT = util::accepts_noneT<nix::Representation, util::T_FN::data>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Representation, test::data>::value;
     isOptional   = std::is_class<decltype(rep.data())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rep.data())>::value;
-    isSet        = TtoBool(util::deRef(rep.data()));
+    isSet        = test::TtoBool(util::deRef(rep.data()));
     summarize("Representation::data", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testRepresentationLinkType() {
-    acceptsNoneT = util::accepts_noneT<nix::Representation, util::T_FN::linkType>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Representation, test::linkType>::value;
     isOptional   = std::is_class<decltype(rep.linkType())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(rep.linkType())>::value;
-    isSet        = TtoBool(util::deRef(rep.linkType()));
+    isSet        = test::TtoBool(util::deRef(rep.linkType()));
     summarize("Representation::linkType", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSectionLink() {
-    acceptsNoneT = util::accepts_noneT<nix::Section, util::T_FN::link>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Section, test::link>::value;
     isOptional   = std::is_class<decltype(section.link())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(section.link())>::value;
-    isSet        = TtoBool(util::deRef(section.link()));
+    isSet        = test::TtoBool(util::deRef(section.link()));
     summarize("Section::link", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSectionMapping() {
-    acceptsNoneT = util::accepts_noneT<nix::Section, util::T_FN::mapping>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Section, test::mapping>::value;
     isOptional   = std::is_class<decltype(section.mapping())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(section.mapping())>::value;
-    isSet        = TtoBool(util::deRef(section.mapping()));
+    isSet        = test::TtoBool(util::deRef(section.mapping()));
     summarize("Mapping::mapping", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSectionRepository() {
-    acceptsNoneT = util::accepts_noneT<nix::Section, util::T_FN::repository>::value;
+    acceptsNoneT = test::accepts_noneT<nix::Section, test::repository>::value;
     isOptional   = std::is_class<decltype(section.repository())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(section.repository())>::value;
-    isSet        = TtoBool(util::deRef(section.repository()));
+    isSet        = test::TtoBool(util::deRef(section.repository()));
     summarize("Repository::repository", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSimpleTagExtent() {
-    acceptsNoneT = util::accepts_noneT<nix::SimpleTag, util::T_FN::extent>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SimpleTag, test::extent>::value;
     isOptional   = std::is_class<decltype(simpleTag.extent())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(simpleTag.extent())>::value;
-    isSet        = TtoBool(util::deRef(simpleTag.extent()));
+    isSet        = test::TtoBool(util::deRef(simpleTag.extent()));
     summarize("SimpleTag::extent", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSimpleTagPosition() {
-    acceptsNoneT = util::accepts_noneT<nix::SimpleTag, util::T_FN::position>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SimpleTag, test::position>::value;
     isOptional   = std::is_class<decltype(simpleTag.position())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(simpleTag.position())>::value;
-    isSet        = TtoBool(util::deRef(simpleTag.position()));
+    isSet        = test::TtoBool(util::deRef(simpleTag.position()));
     summarize("SimpleTag::position", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testSimpleTagUnits() {
-    acceptsNoneT = util::accepts_noneT<nix::SimpleTag, util::T_FN::units>::value;
+    acceptsNoneT = test::accepts_noneT<nix::SimpleTag, test::units>::value;
     isOptional   = std::is_class<decltype(simpleTag.units())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(simpleTag.units())>::value;
-    isSet        = TtoBool(util::deRef(simpleTag.units()));
+    isSet        = test::TtoBool(util::deRef(simpleTag.units()));
     summarize("SimpleTag::units", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testDataTagExtents() {
-    acceptsNoneT = util::accepts_noneT<nix::DataTag, util::T_FN::extents>::value;
+    acceptsNoneT = test::accepts_noneT<nix::DataTag, test::extents>::value;
     isOptional   = std::is_class<decltype(dataTag.extents())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(dataTag.extents())>::value;
-    isSet        = TtoBool(util::deRef(dataTag.extents()));
+    isSet        = test::TtoBool(util::deRef(dataTag.extents()));
     summarize("DataTag::extents", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 void TestOptionalObligatory::testDataTagPositions() {
-    acceptsNoneT = util::accepts_noneT<nix::DataTag, util::T_FN::positions>::value;
+    acceptsNoneT = test::accepts_noneT<nix::DataTag, test::positions>::value;
     isOptional   = std::is_class<decltype(dataTag.positions())>::value ? 
                    acceptsNoneT : 
                    util::is_optional<decltype(dataTag.positions())>::value;
-    isSet        = TtoBool(util::deRef(dataTag.positions()));
+    isSet        = test::TtoBool(util::deRef(dataTag.positions()));
     summarize("DataTag::positions", isOptional, isSet, acceptsNoneT);
-    CPPUNIT_ASSERT(util::isValidOptional(isOptional, isSet, acceptsNoneT) || 
-                   util::isValidObligatory(isOptional, isSet, acceptsNoneT));
+    CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
+                   test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
 
 
 void TestOptionalObligatory::summarize(std::string name, bool isOptional, bool isSet, bool acceptsNoneT)
 {
     summary += name; summary += ": ";
-    if(util::isValidOptional(isOptional, isSet, acceptsNoneT)) {
+    if(test::isValidOptional(isOptional, isSet, acceptsNoneT)) {
         summary += "OPTIONAL";
     }
-    else if(util::isValidObligatory(isOptional, isSet, acceptsNoneT)) {
+    else if(test::isValidObligatory(isOptional, isSet, acceptsNoneT)) {
         summary += "OBLIGATORY";
     }
     else {
