@@ -38,6 +38,7 @@
 #include "TestDimension.hpp"
 #include "TestFeature.hpp"
 #include "TestDataAccess.hpp"
+#include "TestOptionalObligatory.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);

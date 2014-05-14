@@ -126,8 +126,8 @@ private:
     CPPUNIT_TEST(testPropertyMapping);
     CPPUNIT_TEST(testPropertyUnit);
     CPPUNIT_TEST(testPropertyValues);
-    CPPUNIT_TEST(testRepresentationData);
-    CPPUNIT_TEST(testRepresentationLinkType);
+    CPPUNIT_TEST(testFeatureData);
+    CPPUNIT_TEST(testFeatureLinkType);
     CPPUNIT_TEST(testSectionLink);
     CPPUNIT_TEST(testSectionMapping);
     CPPUNIT_TEST(testSectionRepository);
@@ -150,7 +150,7 @@ private:
     nix::SetDimension setDim;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim;
-    nix::Representation rep;
+    nix::Feature feature;
     time_t startup_time;
 
     bool isOptional;   // whether getter return value is boost::optional
@@ -187,8 +187,8 @@ public:
     void testPropertyMapping();
     void testPropertyUnit();
     void testPropertyValues();
-    void testRepresentationData();
-    void testRepresentationLinkType();
+    void testFeatureData();
+    void testFeatureLinkType();
     void testSectionLink();
     void testSectionMapping();
     void testSectionRepository();

@@ -92,7 +92,7 @@ void TestOptionalObligatory::setUp() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    simpleTag = block.createSimpleTag("representationTest", "Test", refs);
+    simpleTag = block.createSimpleTag("featureTest", "Test", refs);
     
     // dataTag----------------------------------------------------------
     positions = block.createDataArray("positions_DataArray", "dataArray");
@@ -122,8 +122,8 @@ void TestOptionalObligatory::setUp() {
     }
     rangeDim = dataArray.appendRangeDimension(ticks);
     
-    // representation
-    rep = simpleTag.createRepresentation(dataArray, nix::LinkType::Tagged);
+    // feature
+    feature = simpleTag.createFeature(dataArray, nix::LinkType::Tagged);
 }
 
 void TestOptionalObligatory::tearDown() {
@@ -360,23 +360,23 @@ void TestOptionalObligatory::testPropertyValues() {
     CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
                    test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
-void TestOptionalObligatory::testRepresentationData() {
-    acceptsNoneT = test::accepts_noneT<nix::Representation, test::data>::value;
-    isOptional   = std::is_class<decltype(rep.data())>::value ? 
+void TestOptionalObligatory::testFeatureData() {
+    acceptsNoneT = test::accepts_noneT<nix::Feature, test::data>::value;
+    isOptional   = std::is_class<decltype(feature.data())>::value ? 
                    acceptsNoneT : 
-                   util::is_optional<decltype(rep.data())>::value;
-    isSet        = test::TtoBool(util::deRef(rep.data()));
-    summarize("Representation::data", isOptional, isSet, acceptsNoneT);
+                   util::is_optional<decltype(feature.data())>::value;
+    isSet        = test::TtoBool(util::deRef(feature.data()));
+    summarize("Feature::data", isOptional, isSet, acceptsNoneT);
     CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
                    test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
-void TestOptionalObligatory::testRepresentationLinkType() {
-    acceptsNoneT = test::accepts_noneT<nix::Representation, test::linkType>::value;
-    isOptional   = std::is_class<decltype(rep.linkType())>::value ? 
+void TestOptionalObligatory::testFeatureLinkType() {
+    acceptsNoneT = test::accepts_noneT<nix::Feature, test::linkType>::value;
+    isOptional   = std::is_class<decltype(feature.linkType())>::value ? 
                    acceptsNoneT : 
-                   util::is_optional<decltype(rep.linkType())>::value;
-    isSet        = test::TtoBool(util::deRef(rep.linkType()));
-    summarize("Representation::linkType", isOptional, isSet, acceptsNoneT);
+                   util::is_optional<decltype(feature.linkType())>::value;
+    isSet        = test::TtoBool(util::deRef(feature.linkType()));
+    summarize("Feature::linkType", isOptional, isSet, acceptsNoneT);
     CPPUNIT_ASSERT(test::isValidOptional(isOptional, isSet, acceptsNoneT) || 
                    test::isValidObligatory(isOptional, isSet, acceptsNoneT));
 }
