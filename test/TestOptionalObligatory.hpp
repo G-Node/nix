@@ -155,7 +155,7 @@ private:
 
     bool isOptional;   // whether getter return value is boost::optional
     bool isSet;        // whether getter return value is set
-    bool acceptsNoneT; // whether setter accepts boost::none
+    // bool acceptsNoneT; // whether setter accepts boost::none (declared in place)
     
     std::string summary;
     
