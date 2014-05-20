@@ -17,5 +17,10 @@
 #include <nix/SimpleTag.hpp>
 #include <nix/Source.hpp>
 #include <nix/Value.hpp>
+#include <nix/validate/checks.hpp>
+#include <nix/validate/result.hpp>
+#include <nix/validate/conditions.hpp>
+#include <nix/validate/validate.hpp>
+
 
 
