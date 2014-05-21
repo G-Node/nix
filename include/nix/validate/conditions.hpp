@@ -46,9 +46,20 @@ namespace validate {
      *
      * @returns {Function} The created condition check.
      */
+    
     template<typename TFUNC, typename T>
     conditionType
-    must(TFUNC const &get, typename notFalse<T>::type const check, const string &msg);
+    must(TFUNC const &get, typename Check<T>::type const check, const string &msg) {        
+        return [get, check, msg] () -> Result {
+            auto val = get();
+
+            if (! check(val)) {
+                return Result(msg, none);
+            } else {
+                return Result();
+            }
+        };
+    }
 
     /**
      * Creates a condition check that produces a warning with the given message if
@@ -60,9 +71,21 @@ namespace validate {
      *
      * @returns {Function} The created condition check.
      */
+
     template<typename TFUNC, typename T>
     conditionType
-    should(TFUNC const &get, typename notFalse<T>::type const check, const string &msg);
+    should(TFUNC const &get, typename Check<T>::type const check, const string &msg) {
+        return [get, check, msg] () -> Result {
+            auto val = get();
+
+            if (! check(val)) {
+                return Result(none, msg);
+            } else {
+                return Result();
+            }
+        };
+    }
+    
     
 } // namespace validate
 } // namespace nix

@@ -52,14 +52,6 @@ public:
     Result(const vector<string> &_errors, none_t t);
     
     /**
-     * Neither errors nor warnings ctor.
-     *
-     * @param vector Vector of waning messages
-     * @param boost::none_t boost none
-     */
-    Result(none_t t, none_t u);
-    
-    /**
      * Non-vector standard ctor.
      *
      * @param vector Vector of error messages
@@ -85,6 +77,14 @@ public:
     Result(const string &_errors, none_t t);
     
     /**
+     * Neither errors nor warnings ctor.
+     *
+     * @param vector Vector of waning messages
+     * @param boost::none_t boost none
+     */
+    Result(none_t t, none_t u);
+    
+    /**
      * Returns the {@link errors} and {@link warnings} vectors
      * concatenated in one vector.
      *
@@ -99,7 +99,7 @@ public:
      *
      * @return Result
      */    
-    Result concat(const Result &result) const;
+    Result concat(const Result &result);
 
     /**
      * Returns true if neither errors nor warnings have been added, 
@@ -124,6 +124,20 @@ public:
      * @return bool
      */   
     bool hasWarnings() const;
+
+    /**
+     * Output operator
+     * 
+     * @return std::ostream&
+     */
+    friend std::ostream& operator<<(std::ostream &out, const Result &res) {
+        auto msgs = res.all();
+        for(auto it = msgs.begin(); it != msgs.end(); ++it) {
+            out << *it << std::endl;
+        }
+        
+        return out;
+    }
 };
 
 } // namespace validate

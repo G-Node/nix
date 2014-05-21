@@ -13,33 +13,8 @@ using namespace std;
 namespace nix {
 namespace validate {
     
-    template<typename TFUNC, typename T>
-    conditionType
-    must(TFUNC const &get, typename Check<T>::type const check, const string &msg) {        
-        return [get, check, msg] () -> Result {
-            auto val = get();
-
-            if (! check(val)) {
-                return Result(msg, none);
-            } else {
-                return Result();
-            }
-        };
-    }
-
-    template<typename TFUNC, typename T>
-    conditionType
-    should(TFUNC const &get, typename Check<T>::type const check, const string &msg) {
-        return [get, check, msg] () -> Result {
-            auto val = get();
-
-            if (! check(val)) {
-                return Result(none, msg);
-            } else {
-                return Result();
-            }
-        };
-    }
+    // NOTE: we cant have _templated_ function definitions here, since
+    // the linker wouldnt find specific template realizations.
 
 } // namespace validate
 } // namespace nix

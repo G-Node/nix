@@ -24,6 +24,7 @@
 #include <nix.hpp>
 #include <nix/validate/validate.hpp>
 
+using namespace nix;
 
 class TestValidate : public CPPUNIT_NS::TestFixture {
 
@@ -35,6 +36,9 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
     
+    File file;
+    Section section;
+    Block block;
     time_t startup_time;
 
 public:

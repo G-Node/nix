@@ -10,7 +10,6 @@
 #ifndef NIX_CHECKS_H
 #define NIX_CHECKS_H
 
-#include <functional>
 #include <nix/validate/toBool.hpp>
 
 namespace nix {
@@ -42,6 +41,22 @@ namespace validate {
 
         virtual bool operator()(const T &val) {
             return TtoBool(val);
+        }
+
+    };
+    
+    /**
+     * One Check struct that checks whether the given value casts to false
+     * using {@link TtoBool} or to true. "T" has got to be a type handled
+     * by {@link TtoBool}.
+     * Use "notFalse<T>()" to pass it on as check and "::type" to define 
+     * its' type.
+     */
+    template<typename T>
+    struct isFalse : public Check<T> {
+
+        virtual bool operator()(const T &val) {
+            return ! TtoBool(val);
         }
 
     };

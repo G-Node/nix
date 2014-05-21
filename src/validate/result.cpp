@@ -7,6 +7,8 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/validate/result.hpp>
+#include <vector>
+#include <string>
 
 using namespace std;
 
@@ -24,17 +26,17 @@ Result::Result(none_t t, const vector<string> &_warnings)
 Result::Result(const vector<string> &_errors, none_t t)
     : Result(_errors, vector<string>()) {}
 
-Result::Result(none_t t, none_t t)
-    : Result(vector<string>(), vector<string>()) {}
-
 Result::Result(const string &_errors, const string &_warnings) 
-    : Result(string(), _warnings) {}
+    : Result(vector<string> {_errors}, vector<string> {_warnings}) {}
 
 Result::Result(none_t t, const string &_warnings) 
-    : Result(string(), _warnings) {}
+    : Result(vector<string>(), vector<string> {_warnings}) {}
 
 Result::Result(const string &_errors, none_t t)
-    : Result(_errors, string()) {}
+    : Result(vector<string> {_errors}, vector<string>()) {}
+
+Result::Result(none_t t, none_t u)
+    : Result(vector<string>(), vector<string>()) {}
 
 vector<string> Result::all() const {
     vector<string> all;
@@ -46,7 +48,7 @@ vector<string> Result::all() const {
     return all;
 }
 
-Result Result::concat(const Result &result) const {
+Result Result::concat(const Result &result) {
     errors.reserve(errors.size() + result.errors.size());
     errors.insert(errors.end(), result.errors.begin(), result.errors.end());
     warnings.reserve(warnings.size() + result.warnings.size());
