@@ -14,10 +14,19 @@ using namespace std;
 
 namespace nix {
 namespace validate {
+    
+const char* Result::prefixErr = "ERROR: ";
+const char* Result::prefixWarn = "WARNING: ";
 
 Result::Result(const vector<string> &_errors, const vector<string> &_warnings) {
-    errors = _errors;
-    warnings = _warnings;
+    // make temp copies to set prefixes on
+    vector<string> __errors = _errors;    
+    vector<string> __warnings = _warnings;
+    // set prefixes
+    setPrefixes(__errors, __warnings);
+    // assign to member vars
+    errors = __errors;
+    warnings = __warnings;
 }
 
 Result::Result(none_t t, const vector<string> &_warnings) 
@@ -37,6 +46,15 @@ Result::Result(const string &_errors, none_t t)
 
 Result::Result(none_t t, none_t u)
     : Result(vector<string>(), vector<string>()) {}
+    
+void Result::setPrefixes(vector<string> &_errors, vector<string> &_warnings) const {
+    for(auto it=_errors.begin(); it!=_errors.end(); ++it) {
+        (*it).insert(0, prefixErr);
+    }
+    for(auto it=_warnings.begin(); it!=_warnings.end(); ++it) {
+        (*it).insert(0, prefixWarn);
+    }
+}
 
 vector<string> Result::all() const {
     vector<string> all;

@@ -23,8 +23,8 @@ namespace validate {
      */
     template<typename TFUNC, typename T>
     struct condition {
-        typedef std::function<
-            std::function<Result(void)>
+        typedef function<
+            function<Result(void)>
             (const TFUNC&, 
             typename Check<T>::type, 
             const string&)> 
@@ -34,7 +34,7 @@ namespace validate {
     /**
      * Actual condition type, return type of conditions functionals
      */     
-    typedef std::function<Result(void)> conditionType;
+    typedef function<Result(void)> conditionType;
 
     /**
      * Creates a condition check that produces an error with the given message if
@@ -51,12 +51,17 @@ namespace validate {
     conditionType
     must(TFUNC const &get, typename Check<T>::type const check, const string &msg) {        
         return [get, check, msg] () -> Result {
-            auto val = get();
-
-            if (! check(val)) {
-                return Result(msg, none);
-            } else {
-                return Result();
+            // execute getter call & check for error
+            try {
+                auto val = get();
+                // compare value & check for validity
+                if (! check(val)) {
+                    return Result(msg, none);
+                } else {
+                    return Result();
+                }
+            } catch (exception e) {
+                return Result(e.what(), none);
             }
         };
     }
@@ -76,12 +81,17 @@ namespace validate {
     conditionType
     should(TFUNC const &get, typename Check<T>::type const check, const string &msg) {
         return [get, check, msg] () -> Result {
-            auto val = get();
-
-            if (! check(val)) {
-                return Result(none, msg);
-            } else {
-                return Result();
+            // execute getter call & check for error
+            try {
+                auto val = get();
+                // compare value & check for validity
+                if (! check(val)) {
+                    return Result(none, msg);
+                } else {
+                    return Result();
+                }
+            } catch (exception e) {
+                return Result(e.what(), none);
             }
         };
     }

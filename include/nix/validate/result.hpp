@@ -23,6 +23,23 @@ enum TRES {
 class Result {
     vector<string> errors;
     vector<string> warnings;
+    static const char* prefixErr;
+    static const char* prefixWarn;
+
+    /**
+     * Takes a pair of vector<string> vars, the first with errors the
+     * second with warnings, and sets according prefix on all strings
+     * in both vectors. 
+     * NOTE: does _not_ check if prefixes already set and thus will 
+     * produce duplicate prefixes.
+     * NOTE: since declared "const" will refuse to operate on class
+     * own vectors.
+     *
+     * @param vector<string> vector of error strings
+     * @param vector<string> vector of warning strings
+     * @return void
+     */
+    void setPrefixes(vector<string> &_errors, vector<string> &_warnings) const;
 
 public:
     
@@ -130,10 +147,10 @@ public:
      * 
      * @return std::ostream&
      */
-    friend std::ostream& operator<<(std::ostream &out, const Result &res) {
+    friend std::ostream& operator<<(ostream &out, const Result &res) {
         auto msgs = res.all();
         for(auto it = msgs.begin(); it != msgs.end(); ++it) {
-            out << *it << std::endl;
+            out << *it << endl;
         }
         
         return out;

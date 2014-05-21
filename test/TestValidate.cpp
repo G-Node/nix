@@ -30,19 +30,24 @@ void TestValidate::test() {
     typedef decltype(t) T;
     typedef function<T()> TFUNC;
     
-    // Check that id is not false
+    // id must not be false
+    auto myProperty1 = [&](){ return block.id(); };
     std::function<bool(T)> myCheck1 = notFalse<T>();
     condition<TFUNC, T>::type myConditionFunc1 = must<TFUNC, T>;
-    conditionType myCondition1 = myConditionFunc1([&](){ return block.id(); }, myCheck1, "foo is going on!");
+    conditionType myCondition1 = myConditionFunc1(myProperty1, myCheck1, "id is false!");
     
-    // Check that id is false
+    // id must be false
     std::function<bool(T)> myCheck2 = isFalse<T>();
-    condition<TFUNC, T>::type myConditionFunc2 = must<TFUNC, T>;
-    conditionType myCondition2 = myConditionFunc2([&](){ return block.id(); }, myCheck2, "foo is NOT going on!");
+    conditionType myCondition2 = myConditionFunc1(myProperty1, myCheck2, "id is not false!");
+    
+    // id should be false
+    condition<TFUNC, T>::type myConditionFunc2 = should<TFUNC, T>;
+    conditionType myCondition3 = myConditionFunc2(myProperty1, myCheck2, "id is not false!");
         
-    vector<conditionType> myConditions {myCondition1, myCondition2};
+    vector<conditionType> myConditions {myCondition1, myCondition2, myCondition3};
     
     Result myResult = validator(myConditions);
     
-    std::cout << myResult;
+    cout << endl;
+    cout << myResult;
 }
