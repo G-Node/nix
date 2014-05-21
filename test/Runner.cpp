@@ -38,6 +38,7 @@
 #include "TestDimension.hpp"
 #include "TestFeature.hpp"
 #include "TestDataAccess.hpp"
+#include "TestOptionalObligatory.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -60,6 +61,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
@@ -92,6 +94,8 @@ int main(int argc, char* argv[]) {
 
     CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
     compileroutputter.write();
+    
+    std::cout << "\n";
 
     return !collectedresults.wasSuccessful();
 }

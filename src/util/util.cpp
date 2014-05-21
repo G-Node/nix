@@ -184,6 +184,5 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
-
 } // namespace util
 } // namespace nix
