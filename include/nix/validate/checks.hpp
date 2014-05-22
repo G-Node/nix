@@ -16,49 +16,37 @@ namespace nix {
 namespace validate {
     
     /**
-     * Base struct to be inherited by all test implementations.
-     * Child classes will have to implement ()-operator and will
-     * all inherit typedef "type" which corresponds to the type of "()". 
-     */
-    template<typename T>
-    struct Check : public std::unary_function<T, bool> {
-
-        virtual bool operator()(const T&) = 0;
-
-        typedef std::function<bool(const T&)> type;
-
-    };
-    
-    /**
      * One Check struct that checks whether the given value casts to true
      * using {@link TtoBool} or to false. "T" has got to be a type handled
      * by {@link TtoBool}.
-     * Use "notFalse<T>()" to pass it on as check and "::type" to define 
-     * its' type.
      */
-    template<typename T>
-    struct notFalse : public Check<T> {
-
-        virtual bool operator()(const T &val) {
+    struct notFalse {
+        template<typename T>
+        bool operator()(const T &val) {
             return TtoBool(val);
         }
-
+        
+        template<typename T>
+        const bool operator()(const T &val) const {
+            return const_cast<notFalse *>(this)->operator()(val);
+        }
     };
     
     /**
      * One Check struct that checks whether the given value casts to false
      * using {@link TtoBool} or to true. "T" has got to be a type handled
      * by {@link TtoBool}.
-     * Use "notFalse<T>()" to pass it on as check and "::type" to define 
-     * its' type.
      */
-    template<typename T>
-    struct isFalse : public Check<T> {
-
-        virtual bool operator()(const T &val) {
+    struct isFalse {
+        template<typename T>
+        bool operator()(const T &val) {
             return ! TtoBool(val);
         }
-
+        
+        template<typename T>
+        const bool operator()(const T &val) const {
+            return const_cast<isFalse *>(this)->operator()(val);
+        }
     };
     
 } // namespace validate

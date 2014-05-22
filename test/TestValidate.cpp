@@ -25,24 +25,18 @@ void TestValidate::tearDown() {
     file.close();
 }
 
-void TestValidate::test() {    
-    auto t = block.id();
-    typedef decltype(t) T;
-    typedef function<T()> TFUNC;
-    
+void TestValidate::test() {
     // id must not be false
     auto myProperty1 = [&](){ return block.id(); };
-    auto myCheck1 = notFalse<T>();
-    auto myConditionFunc1 = must<TFUNC, T>;
-    auto myCondition1 = myConditionFunc1(myProperty1, myCheck1, "id is false!");
+    auto myCheck1 = notFalse();
+    auto myCondition1 = must(myProperty1, myCheck1, "id is false!");
     
     // id must be false
-    auto myCheck2 = isFalse<T>();
-    auto myCondition2 = myConditionFunc1(myProperty1, myCheck2, "id is not false!");
+    auto myCheck2 = isFalse();
+    auto myCondition2 = must(myProperty1, myCheck2, "id is not false!");
     
     // id should be false
-    auto myConditionFunc2 = should<TFUNC, T>;
-    auto myCondition3 = myConditionFunc2(myProperty1, myCheck2, "id is not false!");
+    auto myCondition3 = should(myProperty1, myCheck2, "id is not false!");
         
     vector<conditionType> myConditions {myCondition1, myCondition2, myCondition3};
     

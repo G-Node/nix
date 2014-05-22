@@ -19,26 +19,16 @@ namespace nix {
 namespace validate {
 
     /**
-     * Struct to yield the meta-type / decltype of a condition
-     */
-    template<typename TFUNC, typename T>
-    struct condition {
-        typedef function<
-            function<Result(void)>
-            (const TFUNC&, 
-            typename Check<T>::type, 
-            const string&)> 
-            type;
-    };
-    
-    /**
      * Actual condition type, return type of conditions functionals
      */     
     typedef function<Result(void)> conditionType;
 
     /**
-     * Creates a condition check that produces an error with the given message if
-     * the fields value does not pass the test.
+     * Creates a condition check that produces an error with the given 
+     * message if the given function call's return value does not pass 
+     * the test.
+     * Also catches and reports any errors occuring on execution of 
+     * the given function call.
      *
      * @param lambda Getter function returning TVAL
      * @param test      The test itself (e.g. notNothing or notEmpty)
@@ -47,9 +37,9 @@ namespace validate {
      * @returns {Function} The created condition check.
      */
     
-    template<typename TFUNC, typename T>
+    template<typename TFUNC, typename TCHECK>
     conditionType
-    must(TFUNC const &get, typename Check<T>::type const check, const string &msg) {        
+    must(TFUNC const &get, TCHECK const &check, const string &msg) {        
         return [get, check, msg] () -> Result {
             // execute getter call & check for error
             try {
@@ -67,8 +57,11 @@ namespace validate {
     }
 
     /**
-     * Creates a condition check that produces a warning with the given message if
-     * the fields value does not pass the test.
+     * Creates a condition check that produces a warning with the given
+     * message if the given function call's return value does not pass 
+     * the test.
+     * Also catches and reports any errors occuring on execution of 
+     * the given function call.
      *
      * @param field     The field name to test.
      * @param test      The test itself (e.g. notNothing or notEmpty)
@@ -77,9 +70,9 @@ namespace validate {
      * @returns {Function} The created condition check.
      */
 
-    template<typename TFUNC, typename T>
+    template<typename TFUNC, typename TCHECK>
     conditionType
-    should(TFUNC const &get, typename Check<T>::type const check, const string &msg) {
+    should(TFUNC const &get, TCHECK const check, const string &msg) {
         return [get, check, msg] () -> Result {
             // execute getter call & check for error
             try {
