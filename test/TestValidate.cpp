@@ -32,17 +32,17 @@ void TestValidate::test() {
     
     // id must not be false
     auto myProperty1 = [&](){ return block.id(); };
-    std::function<bool(T)> myCheck1 = notFalse<T>();
-    condition<TFUNC, T>::type myConditionFunc1 = must<TFUNC, T>;
-    conditionType myCondition1 = myConditionFunc1(myProperty1, myCheck1, "id is false!");
+    auto myCheck1 = notFalse<T>();
+    auto myConditionFunc1 = must<TFUNC, T>;
+    auto myCondition1 = myConditionFunc1(myProperty1, myCheck1, "id is false!");
     
     // id must be false
-    std::function<bool(T)> myCheck2 = isFalse<T>();
-    conditionType myCondition2 = myConditionFunc1(myProperty1, myCheck2, "id is not false!");
+    auto myCheck2 = isFalse<T>();
+    auto myCondition2 = myConditionFunc1(myProperty1, myCheck2, "id is not false!");
     
     // id should be false
-    condition<TFUNC, T>::type myConditionFunc2 = should<TFUNC, T>;
-    conditionType myCondition3 = myConditionFunc2(myProperty1, myCheck2, "id is not false!");
+    auto myConditionFunc2 = should<TFUNC, T>;
+    auto myCondition3 = myConditionFunc2(myProperty1, myCheck2, "id is not false!");
         
     vector<conditionType> myConditions {myCondition1, myCondition2, myCondition3};
     
