@@ -6,15 +6,15 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/validate/conditions.hpp>
+#include <nix/valid/conditions.hpp>
 
 using namespace std;
 
 namespace nix {
-namespace validation {
+namespace valid {
     
     // NOTE: we cant have _templated_ function definitions here, since
     // the linker wouldnt find specific template realizations.
 
-} // namespace validation
+} // namespace valid
 } // namespace nix

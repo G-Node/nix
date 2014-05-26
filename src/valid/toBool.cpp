@@ -6,14 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/validate/toBool.hpp>
-#include <nix/validate/conditions.hpp>
-#include <nix/validate/result.hpp>
+#include <nix/valid/toBool.hpp>
+#include <nix/valid/conditions.hpp>
+#include <nix/valid/result.hpp>
 
 using namespace std;
 
 namespace nix {
-namespace validation {
+namespace valid {
     
     template<typename T>
     bool toBool(T var) {
@@ -60,5 +60,5 @@ namespace validation {
         return false;
     }
     
-} // namespace validation
+} // namespace valid
 } // namespace nix

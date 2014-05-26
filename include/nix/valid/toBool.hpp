@@ -15,7 +15,7 @@
 #include <nix.hpp>
 
 namespace nix {
-namespace validation {
+namespace valid {
     
     template<typename T>
     bool toBool(T var);
@@ -40,7 +40,7 @@ namespace validation {
     template<>
     bool toBool<none_t>(none_t var);
     
-} // namespace validation
+} // namespace valid
 } // namespace nix
 
 #endif // NIX_TOBOOL_H

@@ -6,15 +6,15 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/validate/validate.hpp>
-#include <nix/validate/checks.hpp>
-#include <nix/validate/conditions.hpp>
-#include <nix/validate/result.hpp>
+#include <nix/valid/validate.hpp>
+#include <nix/valid/checks.hpp>
+#include <nix/valid/conditions.hpp>
+#include <nix/valid/result.hpp>
 
 using namespace std;
 
 namespace nix {
-namespace validation {
+namespace valid {
     
 void test() {
 }
@@ -41,5 +41,5 @@ Result validate(initializer_list<condition> li) {
     return validate(conditions);
 }
 
-} // namespace validation
+} // namespace valid
 } // namespace nix

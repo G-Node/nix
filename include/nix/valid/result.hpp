@@ -14,7 +14,7 @@
 using namespace std;
 
 namespace nix {
-namespace validation {
+namespace valid {
 
 class Result {
     vector<string> errors;
@@ -153,7 +153,7 @@ public:
     }
 };
 
-} // namespace validation
+} // namespace valid
 } // namespace nix
 
 #endif // NIX_RESULT_H

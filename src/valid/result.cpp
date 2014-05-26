@@ -6,14 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/validate/result.hpp>
+#include <nix/valid/result.hpp>
 #include <vector>
 #include <string>
 
 using namespace std;
 
 namespace nix {
-namespace validation {
+namespace valid {
     
 const char* Result::prefixErr = "ERROR: ";
 const char* Result::prefixWarn = "WARNING: ";
@@ -87,5 +87,5 @@ bool Result::hasWarnings() const {
     return warnings.size() > 0;
 }
 
-} // namespace validation
+} // namespace valid
 } // namespace nix

@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace nix;
-using namespace validation;
+using namespace valid;
 
 void TestValidate::setUp() {
     file = File::open("test_validate.h5", FileMode::Overwrite);

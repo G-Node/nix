@@ -11,12 +11,12 @@
 #define NIX_VALIDATE_H
 
 #include <boost/logic/tribool.hpp>
-#include <nix/validate/result.hpp>
-#include <nix/validate/conditions.hpp>
+#include <nix/valid/result.hpp>
+#include <nix/valid/conditions.hpp>
 #include <cstdarg>
 
 namespace nix {
-namespace validation {
+namespace valid {
 
 void test();
 
@@ -38,7 +38,7 @@ Result validate(vector<condition> conditions);
   */
 Result validate(initializer_list<condition> li);
 
-} // namespace validation
+} // namespace valid
 } // namespace nix
 
 #endif // NIX_VALIDATE_H

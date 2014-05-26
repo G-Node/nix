@@ -11,12 +11,12 @@
 #define NIX_CHECKS_H
 
 #include <boost/logic/tribool.hpp>
-#include <nix/validate/toBool.hpp>
+#include <nix/valid/toBool.hpp>
 
 using namespace boost::logic;
 
 namespace nix {
-namespace validation {
+namespace valid {
     
 // we rename "indeterminate" to "error"
 BOOST_TRIBOOL_THIRD_STATE(error)
@@ -93,7 +93,7 @@ BOOST_TRIBOOL_THIRD_STATE(error)
         }
     };
     
-} // namespace validation
+} // namespace valid
 } // namespace nix
 
 #endif // NIX_CHECKS_H

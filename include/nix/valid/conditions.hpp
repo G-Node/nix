@@ -13,11 +13,11 @@
 #include <string>
 #include <functional>
 #include <boost/logic/tribool.hpp>
-#include <nix/validate/result.hpp>
-#include <nix/validate/checks.hpp>
+#include <nix/valid/result.hpp>
+#include <nix/valid/checks.hpp>
 
 namespace nix {
-namespace validation {
+namespace valid {
     
     /**
      * Actual condition type, return type of conditions functionals
@@ -110,7 +110,7 @@ namespace validation {
         };
     }
    
-} // namespace validation
+} // namespace valid
 } // namespace nix
 
 #endif // NIX_CONDITIONS_H
