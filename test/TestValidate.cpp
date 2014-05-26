@@ -12,7 +12,7 @@
 
 using namespace std;
 using namespace nix;
-using namespace validate;
+using namespace validation;
 
 void TestValidate::setUp() {
     file = File::open("test_validate.h5", FileMode::Overwrite);
@@ -26,21 +26,16 @@ void TestValidate::tearDown() {
 }
 
 void TestValidate::test() {
-    // id must not be false
     auto myProperty1 = [&](){ return block.id(); };
     auto myCheck1 = notFalse();
-    auto myCondition1 = must(myProperty1, myCheck1, "id is false!");
-    
-    // id must be false
     auto myCheck2 = isFalse();
-    auto myCondition2 = must(myProperty1, myCheck2, "id is not false!");
     
-    // id should be false
-    auto myCondition3 = should(myProperty1, myCheck2, "id is not false!");
         
-    vector<conditionType> myConditions {myCondition1, myCondition2, myCondition3};
-    
-    Result myResult = validator(myConditions);
+    Result myResult = validate(vector<condition> {
+        must(myProperty1, myCheck1, "id is false!"), 
+        must(myProperty1, myCheck2, "id is not false!"), 
+        should(myProperty1, myCheck2, "id is not false!")
+    });
     
     cout << endl;
     cout << myResult;

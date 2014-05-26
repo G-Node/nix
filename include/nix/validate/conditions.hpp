@@ -12,16 +12,17 @@
 
 #include <string>
 #include <functional>
+#include <boost/logic/tribool.hpp>
 #include <nix/validate/result.hpp>
 #include <nix/validate/checks.hpp>
 
 namespace nix {
-namespace validate {
-
+namespace validation {
+    
     /**
      * Actual condition type, return type of conditions functionals
      */     
-    typedef function<Result(void)> conditionType;
+    typedef function<Result(void)> condition;
 
     /**
      * Creates a condition check that produces an error with the given 
@@ -35,24 +36,34 @@ namespace validate {
      * @param msg       The message to produce if the test fails.
      *
      * @returns {Function} The created condition check.
-     */
-    
+     */    
     template<typename TFUNC, typename TCHECK>
-    conditionType
+    condition
     must(TFUNC const &get, TCHECK const &check, const string &msg) {        
         return [get, check, msg] () -> Result {
+            bool errOccured = false;
+            string errMsg;
+            typedef typename std::result_of<decltype(get)()>::type return_type;
+            return_type val;
+            
             // execute getter call & check for error
             try {
                 auto val = get();
-                // compare value & check for validity
-                if (! check(val)) {
-                    return Result(msg, none);
-                } else {
-                    return Result();
-                }
             } catch (exception e) {
-                return Result(e.what(), none);
+                errOccured = true;
+                errMsg = e.what();
+            }        
+
+            // compare value & check for validity
+            if (check(val, errOccured)) { 
+                return Result();                // passed
             }
+            else if (!check(val, errOccured)) { 
+                return Result(msg, none);       // failed
+            }
+            else { 
+                return Result(errMsg, none);    // error
+            }    
         };
     }
 
@@ -69,28 +80,37 @@ namespace validate {
      *
      * @returns {Function} The created condition check.
      */
-
     template<typename TFUNC, typename TCHECK>
-    conditionType
+    condition
     should(TFUNC const &get, TCHECK const check, const string &msg) {
         return [get, check, msg] () -> Result {
+            bool errOccured = false;
+            string errMsg;
+            typedef typename std::result_of<decltype(get)()>::type return_type;
+            return_type val;
+            
             // execute getter call & check for error
             try {
-                auto val = get();
-                // compare value & check for validity
-                if (! check(val)) {
-                    return Result(none, msg);
-                } else {
-                    return Result();
-                }
+                val = get();
             } catch (exception e) {
-                return Result(e.what(), none);
+                errOccured = true;
+                errMsg = e.what();
+            }
+
+            // compare value & check for validity
+            if (check(val, errOccured)) { 
+                return Result();                // passed
+            }
+            else if (!check(val, errOccured)) { 
+                return Result(none, msg);       // failed
+            }
+            else { 
+                return Result(errMsg, none);    // error
             }
         };
     }
-    
-    
-} // namespace validate
+   
+} // namespace validation
 } // namespace nix
 
 #endif // NIX_CONDITIONS_H

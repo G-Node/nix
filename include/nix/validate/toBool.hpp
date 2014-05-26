@@ -15,30 +15,32 @@
 #include <nix.hpp>
 
 namespace nix {
-namespace validate {
+namespace validation {
     
     template<typename T>
-    bool TtoBool(T var);
+    bool toBool(T var);
     template<>
-    bool TtoBool<std::vector<std::string>>(std::vector<std::string> var);
+    bool toBool<std::vector<std::string>>(std::vector<std::string> var);
     template<>
-    bool TtoBool<std::vector<double>>(std::vector<double> var);
+    bool toBool<std::vector<double>>(std::vector<double> var);
     template<>
-    bool TtoBool<nix::Section>(nix::Section var);
+    bool toBool<nix::Section>(nix::Section var);
     template<>
-    bool TtoBool<nix::DataArray>(nix::DataArray var);
+    bool toBool<nix::DataArray>(nix::DataArray var);
     template<>
-    bool TtoBool<nix::LinkType>(nix::LinkType var);
+    bool toBool<nix::LinkType>(nix::LinkType var);
     template<>
-    bool TtoBool<std::vector<nix::Value>>(std::vector<nix::Value> var);
+    bool toBool<std::vector<nix::Value>>(std::vector<nix::Value> var);
     template<>
-    bool TtoBool<std::vector<nix::DataArray>>(std::vector<nix::DataArray> var);
+    bool toBool<std::vector<nix::DataArray>>(std::vector<nix::DataArray> var);
     template<>
-    bool TtoBool<std::vector<nix::Source>>(std::vector<nix::Source> var);
+    bool toBool<std::vector<nix::Source>>(std::vector<nix::Source> var);
     template<>
-    bool TtoBool<std::string>(std::string var);
+    bool toBool<std::string>(std::string var);
+    template<>
+    bool toBool<none_t>(none_t var);
     
-} // namespace validate
+} // namespace validation
 } // namespace nix
 
 #endif // NIX_TOBOOL_H

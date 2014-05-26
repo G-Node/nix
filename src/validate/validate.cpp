@@ -14,12 +14,12 @@
 using namespace std;
 
 namespace nix {
-namespace validate {
+namespace validation {
     
 void test() {
 }
 
-Result validator(vector<conditionType> conditions) {
+Result validate(vector<condition> conditions) {
     Result result = Result();
 
     for (size_t j=0; j<conditions.size(); j++) {
@@ -31,5 +31,15 @@ Result validator(vector<conditionType> conditions) {
     return result;
 }
 
-} // namespace validate
+Result validate(initializer_list<condition> li) {
+    vector<condition> conditions;
+    
+    for (auto it = li.begin(); it != li.end(); ++it) {
+         conditions.push_back(*it);
+    }
+    
+    return validate(conditions);
+}
+
+} // namespace validation
 } // namespace nix

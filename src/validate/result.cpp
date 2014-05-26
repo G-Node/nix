@@ -13,7 +13,7 @@
 using namespace std;
 
 namespace nix {
-namespace validate {
+namespace validation {
     
 const char* Result::prefixErr = "ERROR: ";
 const char* Result::prefixWarn = "WARNING: ";
@@ -87,5 +87,5 @@ bool Result::hasWarnings() const {
     return warnings.size() > 0;
 }
 
-} // namespace validate
+} // namespace validation
 } // namespace nix

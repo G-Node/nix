@@ -14,11 +14,7 @@
 using namespace std;
 
 namespace nix {
-namespace validate {
-
-enum TRES {
-    ERR, OK, FAIL
-};
+namespace validation {
 
 class Result {
     vector<string> errors;
@@ -157,7 +153,7 @@ public:
     }
 };
 
-} // namespace validate
+} // namespace validation
 } // namespace nix
 
 #endif // NIX_RESULT_H

@@ -11,10 +11,10 @@
 using namespace std;
 
 namespace nix {
-namespace validate {
+namespace validation {
     
     // NOTE: we cant have _templated_ function definitions here, since
     // the linker wouldnt find specific template realizations.
 
-} // namespace validate
+} // namespace validation
 } // namespace nix

@@ -10,46 +10,90 @@
 #ifndef NIX_CHECKS_H
 #define NIX_CHECKS_H
 
+#include <boost/logic/tribool.hpp>
 #include <nix/validate/toBool.hpp>
 
+using namespace boost::logic;
+
 namespace nix {
-namespace validate {
+namespace validation {
     
+// we rename "indeterminate" to "error"
+BOOST_TRIBOOL_THIRD_STATE(error)
+
     /**
      * One Check struct that checks whether the given value casts to true
-     * using {@link TtoBool} or to false. "T" has got to be a type handled
-     * by {@link TtoBool}.
+     * using {@link toBool} or to false. "T" has got to be a type handled
+     * by {@link toBool}. Returns boost tribool.
+     * Does not tolerate errors, returns "error" if error occurs.
      */
     struct notFalse {
         template<typename T>
-        bool operator()(const T &val) {
-            return TtoBool(val);
+        tribool operator()(const T &val, bool errOccured) {
+            return errOccured ? error : (tribool)toBool(val);
         }
         
         template<typename T>
-        const bool operator()(const T &val) const {
-            return const_cast<notFalse *>(this)->operator()(val);
+        const tribool operator()(const T &val, bool errOccured) const {
+            return const_cast<notFalse *>(this)->operator()(val, errOccured);
+        }
+    };
+    
+    /**
+     * One Check struct that checks whether the given value casts to true
+     * using {@link toBool} or to false. "T" has got to be a type handled
+     * by {@link toBool}. Returns boost tribool.
+     * Ignores errors and proceeds with test if error occurs.
+     */
+    struct notFalseErr {
+        template<typename T>
+        tribool operator()(const T &val, bool errOccured) {
+            return toBool(val);
+        }
+        
+        template<typename T>
+        const tribool operator()(const T &val, bool errOccured) const {
+            return const_cast<notFalseErr *>(this)->operator()(val, errOccured);
         }
     };
     
     /**
      * One Check struct that checks whether the given value casts to false
-     * using {@link TtoBool} or to true. "T" has got to be a type handled
-     * by {@link TtoBool}.
+     * using {@link toBool} or to true. "T" has got to be a type handled
+     * by {@link toBool}. Returns boost tribool.
+     * Does not tolerate errors, returns "error" if error occurs.
      */
     struct isFalse {
         template<typename T>
-        bool operator()(const T &val) {
-            return ! TtoBool(val);
+        tribool operator()(const T &val, bool errOccured) {
+            return errOccured ? error : (tribool)!toBool(val);
         }
         
         template<typename T>
-        const bool operator()(const T &val) const {
-            return const_cast<isFalse *>(this)->operator()(val);
+        const tribool operator()(const T &val, bool errOccured) const {
+            return const_cast<isFalse *>(this)->operator()(val, errOccured);
         }
     };
     
-} // namespace validate
+    /**
+     * One Check struct that checks whether the given value casts to false
+     * using {@link toBool} or to true. "T" has got to be a type handled
+     * by {@link toBool}. Returns boost tribool.
+     * Ignores errors and proceeds with test if error occurs.
+     */
+    struct isFalseErr {
+        template<typename T>
+        tribool operator()(const T &val, bool errOccured) {
+            return ! toBool(val);
+        }
+        
+        template<typename T>
+        const tribool operator()(const T &val, bool errOccured) const {
+            return const_cast<isFalseErr *>(this)->operator()(val, errOccured);
+        }
+    };
+    
+} // namespace validation
 } // namespace nix
 
 #endif // NIX_CHECKS_H
