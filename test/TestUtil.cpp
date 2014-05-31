@@ -115,7 +115,7 @@ void TestUtil::testConvertToSeconds() {
     CPPUNIT_ASSERT(util::convertToSeconds(unit_min, m_value) == 1500);
 }
 
-void TestUtil::testConvertToKelvin(){
+void TestUtil::testConvertToKelvin() {
     string unit_f = "°F";
     string unit_f2 = "F";
     string unit_c = "°C";
@@ -125,4 +125,9 @@ void TestUtil::testConvertToKelvin(){
     CPPUNIT_ASSERT(util::convertToKelvin(unit_c2, temperature) == 373.15);
     CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f, temperature)) == 311.0);
     CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f2, temperature)) == 311.0);
+}
+
+void TestUtil::testUnitSanitizer() {
+    std::string unit = " mul/µs ";
+    CPPUNIT_ASSERT(util::unitSanitizer(unit) == "ul/us");
 }
