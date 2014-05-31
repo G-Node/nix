@@ -18,6 +18,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
 
@@ -80,6 +81,12 @@ NIXAPI time_t strToTime(const std::string &time);
  * @return The default time.
  */
 NIXAPI time_t getTime();
+
+/*
+ *
+ *
+ */
+NIXAPI std::string unitSanitizer(const std::string &unit);
 
 /**
  * Converts minutes and hours to seconds.

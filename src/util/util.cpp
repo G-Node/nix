@@ -87,6 +87,27 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
+/*
+ * Sanitizer function that deblanks units and replaces mu and µ
+ * with the "u" replacement.
+ *
+ * @param unit the old unit
+ *
+ * @return the sanitized unit
+ */
+std::string unitSanitizer(const std::string &unit) {
+     std::string new_unit = deblankString(unit);
+     while (new_unit.find("mu") != string::npos) {
+          size_t pos = new_unit.find("mu");
+          new_unit = new_unit.replace(pos, 2,"u");
+
+     }
+     while (new_unit.find("µ") != string::npos) {
+          size_t pos = new_unit.find("µ");
+          new_unit = new_unit.replace(pos, 2,"u");
+     }
+     return new_unit;
+}
 
 void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power) {
     boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
@@ -95,7 +116,7 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
     boost::regex unit_only(UNITS);
     boost::regex prefix_only(PREFIXES);
 
-    if(boost::regex_match(combinedUnit, prefix_and_unit_and_power)) {
+    if (boost::regex_match(combinedUnit, prefix_and_unit_and_power)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -104,14 +125,14 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    } else if(boost::regex_match(combinedUnit, unit_and_power)) {
+    } else if (boost::regex_match(combinedUnit, unit_and_power)) {
         prefix = "";
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, unit_only);
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    } else if(boost::regex_match(combinedUnit, prefix_and_unit)) {
+    } else if (boost::regex_match(combinedUnit, prefix_and_unit)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -131,7 +152,7 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
 
-    while(boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
+    while (boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
         atomicUnits.push_back(m[0]);
         s = suffix.substr(1);
