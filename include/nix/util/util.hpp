@@ -16,6 +16,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 #include <vector>
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
@@ -79,6 +80,30 @@ NIXAPI time_t strToTime(const std::string &time);
  * @return The default time.
  */
 NIXAPI time_t getTime();
+
+/**
+ * Converts minutes and hours to seconds.
+ *
+ * @param unit the original unit (i.e. h for hour, or min for minutes)
+ * @param value the original value
+ * @return the value in converted to seconds
+*/
+template <typename T>
+NIXAPI T convertToSeconds(const std::string &unit, T value){
+     T seconds;
+     if (unit == "min") {
+          seconds = value * 60;
+     }
+     else if (unit == "h") {
+          std::string new_unit = "min";
+          seconds = convertToSeconds(new_unit, value * 60);
+     }
+     else {
+          std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
+          seconds = value;
+     }
+     return seconds;
+}
 
 /**
  * Checks if the passed string represents a valid SI unit.
