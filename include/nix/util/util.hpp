@@ -89,7 +89,7 @@ NIXAPI time_t getTime();
  * @return the value in converted to seconds
 */
 template <typename T>
-NIXAPI T convertToSeconds(const std::string &unit, T value){
+NIXAPI T convertToSeconds(const std::string &unit, T value) {
      T seconds;
      if (unit == "min") {
           seconds = value * 60;
@@ -105,6 +105,21 @@ NIXAPI T convertToSeconds(const std::string &unit, T value){
      return seconds;
 }
 
+template<typename T>
+NIXAPI T convertToKelvin(const std::string &unit, T value) {
+     T temperature;
+     if (unit == "°C" || unit == "C") {
+          temperature = value + 273.15;
+     }
+     else if (unit == "°F" || unit == "F") {
+          temperature = (value - 32) * 5/9 + 273.15;
+     }
+     else {
+          std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
+          temperature = value;
+     }
+     return temperature;
+}
 /**
  * Checks if the passed string represents a valid SI unit.
  *
