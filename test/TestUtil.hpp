@@ -34,6 +34,7 @@ private:
     CPPUNIT_TEST(testSIUnitSplit);
     CPPUNIT_TEST(testIsCompoundSIUnit);
     CPPUNIT_TEST(testSplitCompoundUnit);
+    CPPUNIT_TEST(testConvertToSeconds);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -45,5 +46,6 @@ public:
     void testIsCompoundSIUnit();
     void testSplitCompoundUnit();
     void testPositionToIndex();
+    void testConvertToSeconds();
 };
 

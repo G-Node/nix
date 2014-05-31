@@ -103,3 +103,14 @@ void TestUtil::testSplitCompoundUnit() {
     CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^2" &&
                    atomic_units[2] == "kg" && atomic_units[3] == "V");
 }
+
+void TestUtil::testConvertToSeconds() {
+    string unit_min = "min";
+    string unit_h = "h";
+    double min_value = 25.5;
+    double h_value = 12.25;
+    int64_t m_value = 25;
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_min, min_value) == 1530.0);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_h, h_value) == 44100.0);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_min, m_value) == 1500);
+}
