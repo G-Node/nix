@@ -35,6 +35,7 @@ private:
     CPPUNIT_TEST(testIsCompoundSIUnit);
     CPPUNIT_TEST(testSplitCompoundUnit);
     CPPUNIT_TEST(testConvertToSeconds);
+    CPPUNIT_TEST(testConvertToKelvin);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -47,5 +48,6 @@ public:
     void testSplitCompoundUnit();
     void testPositionToIndex();
     void testConvertToSeconds();
+    void testConvertToKelvin();
 };
 

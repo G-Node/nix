@@ -105,6 +105,13 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
      return seconds;
 }
 
+/**
+ * Converts temperatures given in degrees Celsius of Fahren to Kelvin.
+ *
+ * @param unit the original unit {"F", "°F", "C", "°C"}
+ * @param value the original value
+ * @return the temperature in Kelvin
+ */
 template<typename T>
 NIXAPI T convertToKelvin(const std::string &unit, T value) {
      T temperature;

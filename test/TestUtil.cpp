@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <ctime>
-
+#include <cmath>
 #include "TestUtil.hpp"
 
 using namespace std;
@@ -113,4 +113,16 @@ void TestUtil::testConvertToSeconds() {
     CPPUNIT_ASSERT(util::convertToSeconds(unit_min, min_value) == 1530.0);
     CPPUNIT_ASSERT(util::convertToSeconds(unit_h, h_value) == 44100.0);
     CPPUNIT_ASSERT(util::convertToSeconds(unit_min, m_value) == 1500);
+}
+
+void TestUtil::testConvertToKelvin(){
+    string unit_f = "°F";
+    string unit_f2 = "F";
+    string unit_c = "°C";
+    string unit_c2 = "C";
+    double temperature = 100.0;
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_c, temperature) == 373.15);
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_c2, temperature) == 373.15);
+    CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f, temperature)) == 311.0);
+    CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f2, temperature)) == 311.0);
 }
