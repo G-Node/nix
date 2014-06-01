@@ -38,6 +38,7 @@ public:
     void testSelection();
     void testValueIO();
     void testNDArrayIO();
+    void testValArrayIO();
     void tearDown();
 
 private:
@@ -55,6 +56,7 @@ private:
     CPPUNIT_TEST(testSelection);
     CPPUNIT_TEST(testValueIO);
     CPPUNIT_TEST(testNDArrayIO);
+    CPPUNIT_TEST(testValArrayIO);
     CPPUNIT_TEST_SUITE_END ();
 };
 
