@@ -27,7 +27,7 @@ const int    ID_BASE = 32;
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
 const string  PREFIXES = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|u|n|p|f|a|z|y)";
-const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%)";
+const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB)";
 const string  POWER = "(\\^[+-]?[1-9]\\d*)";
 
 const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a", 1.0e-18}, {"f", 1.0e-15},
@@ -87,6 +87,27 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
+/*
+ * Sanitizer function that deblanks units and replaces mu and µ
+ * with the "u" replacement.
+ *
+ * @param unit the old unit
+ *
+ * @return the sanitized unit
+ */
+std::string unitSanitizer(const std::string &unit) {
+     std::string new_unit = deblankString(unit);
+     while (new_unit.find("mu") != string::npos) {
+          size_t pos = new_unit.find("mu");
+          new_unit = new_unit.replace(pos, 2, "u");
+
+     }
+     while (new_unit.find("µ") != string::npos) {
+          size_t pos = new_unit.find("µ");
+          new_unit = new_unit.replace(pos, 2, "u");
+     }
+     return new_unit;
+}
 
 void splitUnit(const string &combinedUnit, string &prefix, string &unit, string &power) {
     boost::regex prefix_and_unit_and_power(PREFIXES + UNITS + POWER);
@@ -95,7 +116,7 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
     boost::regex unit_only(UNITS);
     boost::regex prefix_only(PREFIXES);
 
-    if(boost::regex_match(combinedUnit, prefix_and_unit_and_power)) {
+    if (boost::regex_match(combinedUnit, prefix_and_unit_and_power)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -104,14 +125,14 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    } else if(boost::regex_match(combinedUnit, unit_and_power)) {
+    } else if (boost::regex_match(combinedUnit, unit_and_power)) {
         prefix = "";
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, unit_only);
         unit = m[0];
         power = m.suffix();
         power = power.substr(1);
-    } else if(boost::regex_match(combinedUnit, prefix_and_unit)) {
+    } else if (boost::regex_match(combinedUnit, prefix_and_unit)) {
         boost::match_results<std::string::const_iterator> m;
         boost::regex_search(combinedUnit, m, prefix_only);
         prefix = m[0];
@@ -130,8 +151,8 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
-    
-    while(boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
+
+    while (boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
         atomicUnits.push_back(m[0]);
         s = suffix.substr(1);
@@ -160,13 +181,13 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
         string dest_unit, dest_prefix, dest_power;
         splitUnit(originUnit, org_prefix, org_unit, org_power);
         splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
-            
+
         if (!(dest_unit == org_unit) || !(org_power == dest_power) ) {
             throw nix::InvalidUnit("Origin unit and/or destination units cannot be scaled!", "nix::util::getSIScaling");
         }
         if ((org_prefix == dest_prefix) && (org_power == dest_power)) {
             return scaling;
-        }                
+        }
         if (dest_prefix.empty() && !org_prefix.empty()) {
             scaling = PREFIX_FACTORS.at(org_prefix);
         } else if (org_prefix.empty() && !dest_prefix.empty()) {
@@ -175,7 +196,7 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
             scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
         }
         if (!org_power.empty()) {
-            int power = std::stoi(org_power);    
+            int power = std::stoi(org_power);
             scaling = pow(scaling, power);
         }
     } else {

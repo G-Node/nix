@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <ctime>
-
+#include <cmath>
 #include "TestUtil.hpp"
 
 using namespace std;
@@ -56,7 +56,8 @@ void TestUtil::testIsSIUnit() {
     CPPUNIT_ASSERT(util::isSIUnit("V"));
     CPPUNIT_ASSERT(util::isSIUnit("mV"));
     CPPUNIT_ASSERT(util::isSIUnit("mV^-2"));
-    CPPUNIT_ASSERT(util::isSIUnit("mV/cm") == false);
+    CPPUNIT_ASSERT(!util::isSIUnit("mV/cm"));
+    CPPUNIT_ASSERT(util::isSIUnit("dB"));
 }
 
 void TestUtil::testSIUnitSplit() {
@@ -95,10 +96,45 @@ void TestUtil::testIsCompoundSIUnit() {
 void TestUtil::testSplitCompoundUnit() {
     string unit = "mV/cm^2*kg*V";
     vector<string> atomic_units;
-    
+
     util::splitCompoundUnit(unit, atomic_units);
 
     CPPUNIT_ASSERT(atomic_units.size() == 4);
     CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^2" &&
                    atomic_units[2] == "kg" && atomic_units[3] == "V");
+}
+
+void TestUtil::testConvertToSeconds() {
+    string unit_min = "min";
+    string unit_h = "h";
+    string unit_s = "s";
+    double min_value = 25.5;
+    double h_value = 12.25;
+    double s_value = 100;
+    int64_t m_value = 25;
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_min, min_value) == 1530.0);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_h, h_value) == 44100.0);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_min, m_value) == 1500);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_s, s_value) == s_value);
+}
+
+void TestUtil::testConvertToKelvin() {
+    string unit_f = "°F";
+    string unit_f2 = "F";
+    string unit_c = "°C";
+    string unit_c2 = "C";
+    string unit_k = "K";
+    string unit_k2 ="°K" ;
+    double temperature = 100.0;
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_c, temperature) == 373.15);
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_c2, temperature) == 373.15);
+    CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f, temperature)) == 311.0);
+    CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f2, temperature)) == 311.0);
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_k, temperature) == temperature);
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_k2, temperature) == temperature);
+}
+
+void TestUtil::testUnitSanitizer() {
+    std::string unit = " mul/µs ";
+    CPPUNIT_ASSERT(util::unitSanitizer(unit) == "ul/us");
 }
