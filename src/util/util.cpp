@@ -99,12 +99,12 @@ std::string unitSanitizer(const std::string &unit) {
      std::string new_unit = deblankString(unit);
      while (new_unit.find("mu") != string::npos) {
           size_t pos = new_unit.find("mu");
-          new_unit = new_unit.replace(pos, 2,"u");
+          new_unit = new_unit.replace(pos, 2, "u");
 
      }
      while (new_unit.find("µ") != string::npos) {
           size_t pos = new_unit.find("µ");
-          new_unit = new_unit.replace(pos, 2,"u");
+          new_unit = new_unit.replace(pos, 2, "u");
      }
      return new_unit;
 }

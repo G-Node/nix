@@ -100,12 +100,12 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
      T seconds;
      if (unit == "min") {
           seconds = value * 60;
-     }
-     else if (unit == "h") {
+     } else if (unit == "h") {
           std::string new_unit = "min";
           seconds = convertToSeconds(new_unit, value * 60);
-     }
-     else {
+     } else if (unit == "s") {
+         seconds = value;
+     } else {
           std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
           seconds = value;
      }
@@ -124,16 +124,17 @@ NIXAPI T convertToKelvin(const std::string &unit, T value) {
      T temperature;
      if (unit == "°C" || unit == "C") {
           temperature = value + 273.15;
-     }
-     else if (unit == "°F" || unit == "F") {
+     } else if (unit == "°F" || unit == "F") {
           temperature = (value - 32) * 5/9 + 273.15;
-     }
-     else {
+     } else if (unit == "°K" || unit == "K") {
+         temperature = value;
+     } else {
           std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
           temperature = value;
      }
      return temperature;
 }
+
 /**
  * Checks if the passed string represents a valid SI unit.
  *
