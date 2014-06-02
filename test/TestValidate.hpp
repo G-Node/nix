@@ -38,7 +38,8 @@ private:
     
     File file;
     Section section;
-    Block block;
+    Block block1;
+    Block block2;
     time_t startup_time;
 
 public:
