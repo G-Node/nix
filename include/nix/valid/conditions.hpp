@@ -47,7 +47,7 @@ namespace valid {
             
             // execute getter call & check for error
             try {
-                auto val = get();
+                val = get();
             } catch (exception e) {
                 errOccured = true;
                 errMsg = e.what();
