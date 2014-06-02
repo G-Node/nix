@@ -27,27 +27,28 @@ namespace valid {
      * Creates a condition check that produces an error with the given 
      * message if the given function call's return value does not pass 
      * the test.
-     * Also catches and reports any errors occuring on execution of 
-     * the given function call.
+     * Also catches any errors occuring on execution of the given 
+     * function call.
      *
-     * @param lambda Getter function returning TVAL
-     * @param test      The test itself (e.g. notNothing or notEmpty)
-     * @param msg       The message to produce if the test fails.
+     * @param pointer-to-object Parent object
+     * @param pointer-to-member Getter method in parent object
+     * @param check      The test itself (e.g. notFalse or notEmpty)
+     * @param string     The message to produce if the test fails.
      *
      * @returns {Function} The created condition check.
      */    
-    template<typename TFUNC, typename TCHECK>
+    template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    must(TFUNC const &get, TCHECK const &check, const string &msg) {        
-        return [get, check, msg] () -> Result {
+    must(const TOBJ parent, const TFUNC get, TCHECK const &check, const string &msg) {        
+        return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
             string errMsg;
-            typedef typename std::result_of<decltype(get)()>::type return_type;
+            typedef decltype((parent->*get)()) return_type;
             return_type val;
             
             // execute getter call & check for error
             try {
-                val = get();
+                val = (parent->*get)();
             } catch (exception e) {
                 errOccured = true;
                 errMsg = e.what();
@@ -69,27 +70,28 @@ namespace valid {
      * Creates a condition check that produces a warning with the given
      * message if the given function call's return value does not pass 
      * the test.
-     * Also catches and reports any errors occuring on execution of 
-     * the given function call.
+     * Also catches any errors occuring on execution of the given 
+     * function call.
      *
-     * @param field     The field name to test.
-     * @param test      The test itself (e.g. notNothing or notEmpty)
-     * @param msg       The message to produce if the test fails.
+     * @param pointer-to-object Parent object
+     * @param pointer-to-member Getter method in parent object
+     * @param check      The test itself (e.g. notFalse or notEmpty)
+     * @param string     The message to produce if the test fails.
      *
      * @returns {Function} The created condition check.
      */
-    template<typename TFUNC, typename TCHECK>
+    template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    should(TFUNC const &get, TCHECK const check, const string &msg) {
-        return [get, check, msg] () -> Result {
+    should(TOBJ parent, TFUNC const &get, TCHECK const check, const string &msg) {
+        return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
             string errMsg;
-            typedef typename std::result_of<decltype(get)()>::type return_type;
+            typedef decltype((parent->*get)()) return_type;
             return_type val;
             
             // execute getter call & check for error
             try {
-                val = get();
+                val = (parent->*get)();
             } catch (exception e) {
                 errOccured = true;
                 errMsg = e.what();

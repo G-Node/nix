@@ -26,15 +26,16 @@ void TestValidate::tearDown() {
 }
 
 void TestValidate::test() {
-    auto myProperty1 = [&](){ return block.id(); };
+    auto myParent1 = &block;
+    auto myProperty1 = &Block::id; // [&](){ return block.id(); };
     auto myCheck1 = notFalse();
     auto myCheck2 = isFalse();
     
         
     Result myResult = validate(vector<condition> {
-        must(myProperty1, myCheck1, "id is false!"), 
-        must(myProperty1, myCheck2, "id is not false!"), 
-        should(myProperty1, myCheck2, "id is not false!")
+        must(myParent1, myProperty1, myCheck1, "id is false!"), 
+        must(myParent1, myProperty1, myCheck2, "id is not false!"), 
+        should(myParent1, myProperty1, myCheck2, "id is not false!")
     });
     
     cout << endl;
