@@ -12,7 +12,6 @@
 
 #include <string>
 #include <functional>
-#include <boost/logic/tribool.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/checks.hpp>
 
@@ -55,15 +54,14 @@ namespace valid {
             }        
 
             // compare value & check for validity
-            if (check(val, errOccured)) { 
-                return Result();                // passed
+            if(errOccured) {
+                return Result(msg, none); // error
             }
-            else if (!check(val, errOccured)) { 
-                return Result(msg, none);       // failed
+            else if (!check(val)) { 
+                return Result(msg, none); // failed
             }
-            else { 
-                return Result(errMsg, none);    // error
-            }    
+            
+            return Result(); // passed
         };
     }
 
@@ -98,15 +96,14 @@ namespace valid {
             }
 
             // compare value & check for validity
-            if (check(val, errOccured)) { 
-                return Result();                // passed
+            if(errOccured) {
+                return Result(none, msg); // error
             }
-            else if (!check(val, errOccured)) { 
-                return Result(none, msg);       // failed
+            else if (!check(val)) { 
+                return Result(none, msg); // failed
             }
-            else { 
-                return Result(errMsg, none);    // error
-            }
+            
+            return Result(); // passed
         };
     }
    

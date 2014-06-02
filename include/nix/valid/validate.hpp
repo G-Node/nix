@@ -10,7 +10,6 @@
 #ifndef NIX_VALIDATE_H
 #define NIX_VALIDATE_H
 
-#include <boost/logic/tribool.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/conditions.hpp>
 #include <cstdarg>
