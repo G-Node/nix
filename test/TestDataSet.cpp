@@ -353,6 +353,23 @@ void TestDataSet::testNDArrayIO()
 
 }
 
+void TestDataSet::testValArrayIO() {
+    std::valarray<double> va_double(10);
+    std::iota(std::begin(va_double), std::end(va_double), 0);
+
+    DataSet ds = nix::hdf5::DataSet::create(h5group, "ValArrayd10", va_double);
+    ds.write(va_double);
+
+    std::valarray<double> va_double1{};
+    ds.read(va_double1, true);
+
+    CPPUNIT_ASSERT_EQUAL(va_double.size(), va_double1.size());
+    for(size_t i = 0; i << va_double.size(); i++) {
+        CPPUNIT_ASSERT_DOUBLES_EQUAL(va_double[i], va_double1[i],
+                                     std::numeric_limits<double>::epsilon());
+    }
+}
+
 void TestDataSet::tearDown() {
     h5group.close();
     h5file.close();

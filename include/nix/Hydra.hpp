@@ -11,6 +11,8 @@
 #include <type_traits>
 
 #include <boost/multi_array.hpp>
+#include <valarray>
+
 #include <nix/NDSize.hpp>
 #include <nix/DataType.hpp>
 
@@ -182,6 +184,51 @@ public:
 
         if (dims.size() != 1) {
             throw InvalidRankException("Cannot change rank of vector"); //FIXME
+        }
+
+        if (dims[0] == value.size())
+            return;
+
+        value.resize(dims[0]);
+    }
+};
+
+template<typename T>
+class data_traits<std::valarray<T>> {
+public:
+
+    typedef std::valarray<T>     value_type;
+    typedef value_type&          reference;
+    typedef const value_type&    const_reference;
+
+    typedef T        element_type;
+    typedef T*       element_pointer;
+    typedef const T* const_element_pointer;
+
+    static DataType data_type(const_reference val) {
+        return to_data_type<element_type>::value;
+    }
+
+    static NDSize shape(const_reference value) {
+        return NDSize{value.size()};
+    }
+
+    static size_t num_elements(const_reference value) {
+        return value.size();
+    }
+
+    static const_element_pointer get_data(const_reference value) {
+        return &value[0];
+    }
+
+    static element_pointer get_data(value_type &value) {
+        return &value[0];
+    }
+
+    static void resize(reference value, const NDSize &dims) {
+
+        if (dims.size() != 1) {
+            throw InvalidRankException("Cannot change rank of valarray");
         }
 
         if (dims[0] == value.size())
