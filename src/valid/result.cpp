@@ -20,13 +20,13 @@ const char* Result::prefixWarn = "WARNING: ";
 
 Result::Result(const vector<string> &_errors, const vector<string> &_warnings) {
     // make temp copies to set prefixes on
-    vector<string> __errors = _errors;    
-    vector<string> __warnings = _warnings;
+    vector<string> tmp_errors = _errors;    
+    vector<string> tmp_warnings = _warnings;
     // set prefixes
-    setPrefixes(__errors, __warnings);
+    setPrefixes(tmp_errors, tmp_warnings);
     // assign to member vars
-    errors = __errors;
-    warnings = __warnings;
+    errors = tmp_errors;
+    warnings = tmp_warnings;
 }
 
 Result::Result(none_t t, const vector<string> &_warnings) 
