@@ -18,6 +18,8 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <cmath>
+#include <type_traits>
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
@@ -125,7 +127,8 @@ NIXAPI T convertToKelvin(const std::string &unit, T value) {
      if (unit == "°C" || unit == "C") {
           temperature = value + 273.15;
      } else if (unit == "°F" || unit == "F") {
-          temperature = (value - 32) * 5/9 + 273.15;
+          double temp = (value - 32) * 5.0/9 + 273.15;
+          temperature = std::is_integral<T>::value ? std::round(temp) : temp;
      } else if (unit == "°K" || unit == "K") {
          temperature = value;
      } else {
