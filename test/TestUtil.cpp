@@ -132,6 +132,9 @@ void TestUtil::testConvertToKelvin() {
     CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f2, temperature)) == 311.0);
     CPPUNIT_ASSERT(util::convertToKelvin(unit_k, temperature) == temperature);
     CPPUNIT_ASSERT(util::convertToKelvin(unit_k2, temperature) == temperature);
+
+    int temp_fi = 100;
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_f, temp_fi) == 311);
 }
 
 void TestUtil::testUnitSanitizer() {
