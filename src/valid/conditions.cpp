@@ -8,8 +8,6 @@
 
 #include <nix/valid/conditions.hpp>
 
-using namespace std;
-
 namespace nix {
 namespace valid {
     

@@ -22,20 +22,11 @@ void test();
 /**
   * Generic validator
   *
-  * @param vector vector of conditions
-  *
-  * @returns object The validation results as {@Result} object
-  */
-Result validate(vector<condition> conditions);
-
-/**
-  * Generic validator
-  *
   * @param initializer_list initializer list of conditions
   *
   * @returns object The validation results as {@Result} object
   */
-Result validate(initializer_list<condition> li);
+Result validate(std::initializer_list<condition> li);
 
 } // namespace valid
 } // namespace nix

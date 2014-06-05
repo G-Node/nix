@@ -10,44 +10,38 @@
 #include <vector>
 #include <string>
 
-using namespace std;
-
 namespace nix {
 namespace valid {
     
 const char* Result::prefixErr = "ERROR: ";
 const char* Result::prefixWarn = "WARNING: ";
 
-Result::Result(const vector<string> &_errors, const vector<string> &_warnings) {
-    // make temp copies to set prefixes on
-    vector<string> tmp_errors = _errors;    
-    vector<string> tmp_warnings = _warnings;
-    // set prefixes
-    setPrefixes(tmp_errors, tmp_warnings);
+Result::Result(const std::vector<std::string> &errors, 
+               const std::vector<std::string> &warnings) {
     // assign to member vars
-    errors = tmp_errors;
-    warnings = tmp_warnings;
+    this->errors = errors;
+    this->warnings = warnings;
 }
 
-Result::Result(none_t t, const vector<string> &_warnings) 
-    : Result(vector<string>(), _warnings) {}
+Result::Result(none_t t, const std::vector<std::string> &_warnings) 
+    : Result(std::vector<std::string>(), _warnings) {}
 
-Result::Result(const vector<string> &_errors, none_t t)
-    : Result(_errors, vector<string>()) {}
+Result::Result(const std::vector<std::string> &_errors, none_t t)
+    : Result(_errors, std::vector<std::string>()) {}
 
-Result::Result(const string &_errors, const string &_warnings) 
-    : Result(vector<string> {_errors}, vector<string> {_warnings}) {}
+Result::Result(const std::string &_errors, const std::string &_warnings) 
+    : Result(std::vector<std::string> {_errors}, std::vector<std::string> {_warnings}) {}
 
-Result::Result(none_t t, const string &_warnings) 
-    : Result(vector<string>(), vector<string> {_warnings}) {}
+Result::Result(none_t t, const std::string &_warnings) 
+    : Result(std::vector<std::string>(), std::vector<std::string> {_warnings}) {}
 
-Result::Result(const string &_errors, none_t t)
-    : Result(vector<string> {_errors}, vector<string>()) {}
+Result::Result(const std::string &_errors, none_t t)
+    : Result(std::vector<std::string> {_errors}, std::vector<std::string>()) {}
 
 Result::Result(none_t t, none_t u)
-    : Result(vector<string>(), vector<string>()) {}
+    : Result(std::vector<std::string>(), std::vector<std::string>()) {}
     
-void Result::setPrefixes(vector<string> &_errors, vector<string> &_warnings) const {
+void Result::setPrefixes(std::vector<std::string> &_errors, std::vector<std::string> &_warnings) const {
     for(auto it=_errors.begin(); it!=_errors.end(); ++it) {
         (*it).insert(0, prefixErr);
     }
@@ -56,14 +50,12 @@ void Result::setPrefixes(vector<string> &_errors, vector<string> &_warnings) con
     }
 }
 
-vector<string> Result::all() const {
-    vector<string> all;
-    
-    all.reserve(errors.size() + warnings.size());
-    all.insert(all.end(), errors.begin(), errors.end());
-    all.insert(all.end(), warnings.begin(), warnings.end());
+std::vector<std::string> Result::getWarnings() const {
+    return warnings;
+}
 
-    return all;
+std::vector<std::string> Result::getErrors() const {
+    return errors;
 }
 
 Result Result::concat(const Result &result) {

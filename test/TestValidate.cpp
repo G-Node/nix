@@ -10,7 +10,6 @@
 #include <functional>
 #include "TestValidate.hpp"
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -26,18 +25,11 @@ void TestValidate::tearDown() {
     file.close();
 }
 
-void TestValidate::test() {
-    auto myParent1 = &block1;
-    auto myParent2 = &block2;
-    auto myProperty1 = &Block::id; // [&](){ return block.id(); };
-    auto myCheck1 = notFalse();
-    auto myCheck2 = isFalse();
-    
-        
-    Result myResult = validate(vector<condition> {
-        must(myParent1, myProperty1, myCheck1, "id is false!"), 
-        must(myParent2, myProperty1, myCheck2, "id is not false!"), 
-        should(myParent1, myProperty1, myCheck2, "id is not false!")
+void TestValidate::test() {        
+    Result myResult = validate(std::initializer_list<condition> {
+        must(block1, &Block::id, notEmpty(), "id is empty!"), 
+        must(block2, &Block::id, isEmpty(), "id is not empty!"), 
+        should(block2, &Block::id, isEmpty(), "id is not empty!")
     });
     
     cout << endl;

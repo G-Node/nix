@@ -11,34 +11,19 @@
 #include <nix/valid/conditions.hpp>
 #include <nix/valid/result.hpp>
 
-using namespace std;
-
 namespace nix {
 namespace valid {
-    
-void test() {
-}
 
-Result validate(vector<condition> conditions) {
+Result validate(std::initializer_list<condition> li) {
     Result result = Result();
-
-    for (size_t j=0; j<conditions.size(); j++) {
-        result = result.concat(
-            conditions[j]()
-        );
-    }
-
-    return result;
-}
-
-Result validate(initializer_list<condition> li) {
-    vector<condition> conditions;
     
     for (auto it = li.begin(); it != li.end(); ++it) {
-         conditions.push_back(*it);
+         result = result.concat(
+            (*it)()
+        );
     }
     
-    return validate(conditions);
+    return result;
 }
 
 } // namespace valid

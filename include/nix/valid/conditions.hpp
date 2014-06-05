@@ -6,7 +6,6 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-
 #ifndef NIX_CONDITIONS_H
 #define NIX_CONDITIONS_H
 
@@ -21,7 +20,7 @@ namespace valid {
     /**
      * Actual condition type, return type of conditions functionals
      */     
-    typedef function<Result(void)> condition;
+    typedef std::function<Result(void)> condition;
 
     /**
      * Creates a condition check that produces an error with the given 
@@ -39,17 +38,17 @@ namespace valid {
      */    
     template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    must(const TOBJ parent, const TFUNC get, TCHECK const &check, const string &msg) {        
+    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {        
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            string errMsg;
-            typedef decltype((parent->*get)()) return_type;
+            std::string errMsg;
+            typedef decltype((parent.*get)()) return_type;
             return_type val;
             
             // execute getter call & check for error
             try {
-                val = (parent->*get)();
-            } catch (exception e) {
+                val = (parent.*get)();
+            } catch (std::exception e) {
                 errOccured = true;
                 errMsg = e.what();
             }        
@@ -82,17 +81,17 @@ namespace valid {
      */
     template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    should(TOBJ parent, TFUNC const &get, TCHECK const check, const string &msg) {
+    should(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            string errMsg;
-            typedef decltype((parent->*get)()) return_type;
+            std::string errMsg;
+            typedef decltype((parent.*get)()) return_type;
             return_type val;
             
             // execute getter call & check for error
             try {
-                val = (parent->*get)();
-            } catch (exception e) {
+                val = (parent.*get)();
+            } catch (std::exception e) {
                 errOccured = true;
                 errMsg = e.what();
             }

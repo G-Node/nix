@@ -11,14 +11,12 @@
 
 #include <nix/None.hpp>
 
-using namespace std;
-
 namespace nix {
 namespace valid {
 
 class Result {
-    vector<string> errors;
-    vector<string> warnings;
+    std::vector<std::string> errors;
+    std::vector<std::string> warnings;
     static const char* prefixErr;
     static const char* prefixWarn;
 
@@ -35,7 +33,8 @@ class Result {
      * @param vector<string> vector of warning strings
      * @return void
      */
-    void setPrefixes(vector<string> &_errors, vector<string> &_warnings) const;
+    void setPrefixes(std::vector<std::string> &_errors, 
+                     std::vector<std::string> &_warnings) const;
 
 public:
     
@@ -45,8 +44,8 @@ public:
      * @param vector Vector of error messages
      * @param vector Vector of waning messages
      */
-    Result( const vector<string> &errors = vector<string>(), 
-            const vector<string> &warnings = vector<string>());
+    Result( const std::vector<std::string> &errors = std::vector<std::string>(), 
+            const std::vector<std::string> &warnings = std::vector<std::string>());
     
     /**
      * Only warnings ctor.
@@ -54,7 +53,7 @@ public:
      * @param boost::none_t boost none
      * @param vector Vector of waning messages
      */
-    Result(none_t t, const vector<string> &_warnings);
+    Result(none_t t, const std::vector<std::string> &_warnings);
     
     /**
      * Only errors ctor.
@@ -62,7 +61,7 @@ public:
      * @param vector Vector of waning messages
      * @param boost::none_t boost none
      */
-    Result(const vector<string> &_errors, none_t t);
+    Result(const std::vector<std::string> &_errors, none_t t);
     
     /**
      * Non-vector standard ctor.
@@ -70,8 +69,8 @@ public:
      * @param vector Vector of error messages
      * @param vector Vector of waning messages
      */
-    Result( const string &errors, 
-            const string &warnings);
+    Result( const std::string &errors, 
+            const std::string &warnings);
     
     /**
      * Non-vector only warnings ctor.
@@ -79,7 +78,7 @@ public:
      * @param boost::none_t boost none
      * @param vector Vector of waning messages
      */
-    Result(none_t t, const string &_warnings);
+    Result(none_t t, const std::string &_warnings);
     
     /**
      * Non-vector only errors ctor.
@@ -87,7 +86,7 @@ public:
      * @param vector Vector of waning messages
      * @param boost::none_t boost none
      */
-    Result(const string &_errors, none_t t);
+    Result(const std::string &_errors, none_t t);
     
     /**
      * Neither errors nor warnings ctor.
@@ -98,12 +97,18 @@ public:
     Result(none_t t, none_t u);
     
     /**
-     * Returns the {@link errors} and {@link warnings} vectors
-     * concatenated in one vector.
+     * Returns the {@link warnings} vector. 
      *
      * @return vector
      */
-    vector<string> all() const;
+    std::vector<std::string> getWarnings() const;
+    
+    /**
+     * Returns the {@link errors} vector.
+     *
+     * @return vector
+     */
+    std::vector<std::string> getErrors() const;
 
     /**
      * Concatenates the {@link errors} and {@link warnings} vectors
@@ -143,10 +148,18 @@ public:
      * 
      * @return std::ostream&
      */
-    friend std::ostream& operator<<(ostream &out, const Result &res) {
-        auto msgs = res.all();
-        for(auto it = msgs.begin(); it != msgs.end(); ++it) {
-            out << *it << endl;
+    friend std::ostream& operator<<(std::ostream &out, const Result &res) {
+        // make temp copies to set prefixes on
+        std::vector<std::string> tmp_errors = res.getErrors();    
+        std::vector<std::string> tmp_warnings = res.getWarnings();
+        // set prefixes
+        res.setPrefixes(tmp_errors, tmp_warnings);
+        // output messages with prefixes
+        for(auto it = tmp_warnings.begin(); it != tmp_warnings.end(); ++it) {
+            out << *it << std::endl;
+        }
+        for(auto it = tmp_errors.begin(); it != tmp_errors.end(); ++it) {
+            out << *it << std::endl;
         }
         
         return out;
