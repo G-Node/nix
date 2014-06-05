@@ -12,6 +12,7 @@
 
 using namespace nix;
 using namespace valid;
+using namespace std;
 
 void TestValidate::setUp() {
     file = File::open("test_validate.h5", FileMode::Overwrite);
@@ -25,13 +26,13 @@ void TestValidate::tearDown() {
     file.close();
 }
 
-void TestValidate::test() {        
+void TestValidate::test() {
     Result myResult = validate(std::initializer_list<condition> {
-        must(block1, &Block::id, notEmpty(), "id is empty!"), 
-        must(block2, &Block::id, isEmpty(), "id is not empty!"), 
+        must(block1, &Block::id, notEmpty(), "id is empty!"),
+        must(block2, &Block::id, isEmpty(), "id is not empty!"),
         should(block2, &Block::id, isEmpty(), "id is not empty!")
     });
-    
+
     cout << std::endl;
     cout << myResult;
 }

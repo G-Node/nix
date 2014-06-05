@@ -34,12 +34,12 @@ public:
     DataTagHDF5(const DataTagHDF5 &tag);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group, 
-                const std::string &id, const std::string &type, const string &name, const DataArray _positions);
+    DataTagHDF5(const File &file, const Block &block, const Group &group,
+                const std::string &id, const std::string &type, const std::string &name, const DataArray _positions);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group, 
-                const std::string &id, const std::string &type, const string &name, const DataArray _positions, time_t time);
+    DataTagHDF5(const File &file, const Block &block, const Group &group,
+                const std::string &id, const std::string &type, const std::string &name, const DataArray _positions, time_t time);
 
 
     DataArray positions() const;
@@ -61,7 +61,7 @@ public:
 
 
     void extents(const none_t t);
-    
+
 
     //--------------------------------------------------
     // Methods concerning references.
@@ -77,7 +77,7 @@ public:
 
 
     DataArray getReference(size_t index) const;
-    
+
 
     void addReference(const std::string &id);
 

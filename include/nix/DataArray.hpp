@@ -18,8 +18,6 @@
 
 #include <nix/Platform.hpp>
 
-using namespace std;
-
 namespace nix {
 
 
@@ -67,7 +65,7 @@ public:
     void label(const std::string &label) {
         backend()->label(label);
     }
-    
+
     /**
      * Deleter for the label attribute.
      *
@@ -77,16 +75,16 @@ public:
     {
         backend()->label(t);
     }
-    
+
     /**
      * Get the unit of the data stored in this dataArray.
      *
      * @return string the unit.
      */
-    boost::optional<string> unit() const {
+    boost::optional<std::string> unit() const {
         return backend()->unit();
     }
-    
+
     /**
      * Deleter for the unit attribute.
      *
@@ -96,7 +94,7 @@ public:
     {
         backend()->unit(t);
     }
-    
+
     /**
      * Set the unit for the values stored in this DataArray.
      *
@@ -127,7 +125,7 @@ public:
     void expansionOrigin(double expansion_origin) {
         backend()->expansionOrigin(expansion_origin);
     }
-    
+
     /**
      * Deleter for the expansionOrigin attribute.
      *
@@ -137,7 +135,7 @@ public:
     {
         backend()->unit(t);
     }
-    
+
     /**
      * Set the polynom coefficients for the calibration. By default this is set
      * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
@@ -166,7 +164,7 @@ public:
     {
         backend()->polynomCoefficients(t);
     }
-    
+
     //--------------------------------------------------
     // Methods concerning dimensions
     //--------------------------------------------------
@@ -174,19 +172,19 @@ public:
     /**
      * Get dimensions associated with this data array.
      *
-     * The parameter "filter" is defaulted to giving back all dimensions. 
+     * The parameter "filter" is defaulted to giving back all dimensions.
      * To use your own filter pass a lambda that accepts a "Dimension"
      * as parameter and returns a bool telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object dimensions as a vector     
+     * @return object dimensions as a vector
      */
     std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
                                       = util::AcceptAll<Dimension>()) const
     {
         auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
         return getEntities<Dimension>(f,
-                                      dimensionCount(), 
+                                      dimensionCount(),
                                       filter);
     }
 
@@ -253,7 +251,7 @@ public:
     Dimension createSetDimension(size_t id) {
         return backend()->createSetDimension(id);
     }
-    
+
 
     /**
      * Create a new Range Dimension with a specified id, respectively the dimension that
@@ -267,7 +265,7 @@ public:
     Dimension createRangeDimension(size_t id, std::vector<double> ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
-    
+
 
     /**
      * Create a new Sampled Dimension with a specified id, respectively the dimension that
@@ -281,7 +279,7 @@ public:
     Dimension createSampledDimension(size_t id, double samplingInterval) {
         return backend()->createSampledDimension(id, samplingInterval);
     }
-    
+
 
     /**
      * Deletes a dimension from the list of dimension descriptors.
@@ -313,7 +311,7 @@ public:
     void createData(DataType dtype, const NDSize &size) {
         backend()->createData(dtype, size);
     }
-    
+
     bool hasData() const {
         return backend()->hasData();
     }

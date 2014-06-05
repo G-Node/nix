@@ -163,7 +163,7 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(Group group, size_t id, vector<double> _ticks);
+    RangeDimensionHDF5(Group group, size_t id, std::vector<double> _ticks);
 
 
     RangeDimensionHDF5(const RangeDimensionHDF5 &other);
@@ -176,8 +176,8 @@ public:
 
 
     void label(const std::string &label);
-    
-    
+
+
     void label(none_t t);
 
 
@@ -185,10 +185,10 @@ public:
 
 
     void unit(const std::string &unit);
-    
-    
+
+
     void unit(none_t t);
-    
+
 
     std::vector<double> ticks() const;
 

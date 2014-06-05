@@ -39,12 +39,12 @@ public:
     /**
      * Default constructor.
      */
-    SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name);
+    SourceHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Default constructor that preserves the creation time.
      */
-    SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name, time_t time);
+    SourceHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Methods concerning child sources
