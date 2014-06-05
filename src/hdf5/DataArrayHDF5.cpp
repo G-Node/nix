@@ -45,8 +45,12 @@ DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &
 boost::optional<std::string> DataArrayHDF5::label() const {
     boost::optional<std::string> ret;
     string value;
-    group().getAttr("label", value);
-    ret = value;
+    bool have_attr = group().getAttr("label", value);
+
+    if (have_attr) {
+        ret = value;
+    }
+
     return ret;
 }
 
