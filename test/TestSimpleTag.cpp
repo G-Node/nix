@@ -15,7 +15,7 @@
 
 using namespace nix;
 using namespace nix::hdf5;
-
+using namespace std;
 
 void TestSimpleTag::setUp() {
     startup_time = time(NULL);

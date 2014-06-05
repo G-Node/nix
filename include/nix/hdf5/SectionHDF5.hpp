@@ -36,26 +36,26 @@ public:
     /**
      * Standard constructor
      */
-    SectionHDF5(const File &file, const Group &group, const string &id, 
-                const string &type, const string &name);
+    SectionHDF5(const File &file, const Group &group, const std::string &id,
+                const std::string &type, const std::string &name);
 
     /**
      * Standard constructor with parent.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const string &id, const string &type, const string &name);
+                const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Constructor that preserves the creation time.
      */
-    SectionHDF5(const File &file, const Group &group, const string &id, 
-                const string &type, const string &name, time_t time);
+    SectionHDF5(const File &file, const Group &group, const std::string &id,
+                const std::string &type, const std::string &name, time_t time);
 
     /**
      * Constructor with parent that preserves the creation time.
      */
     SectionHDF5(const File &file, const Section &parent, const Group &group,
-                const string &id, const string &type, const string &name, time_t time);
+                const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 
     //--------------------------------------------------
@@ -78,7 +78,7 @@ public:
 
 
     void link(const none_t t);
-    
+
 
     void mapping(const std::string &mapping);
 
@@ -87,8 +87,8 @@ public:
 
 
     void mapping(const none_t t);
-    
-    
+
+
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------

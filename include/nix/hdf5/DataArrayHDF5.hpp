@@ -42,14 +42,14 @@ public:
     /**
      * Standard constructor
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group, 
-                  const std::string &id, const std::string &type, const string &name);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group,
+                  const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group, 
-                  const std::string &id, const std::string &type, const string &name, time_t time);
+    DataArrayHDF5(const File &file, const Block &block, const Group &group,
+                  const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Element getters and setters
@@ -63,7 +63,7 @@ public:
 
 
     void label(const none_t t);
-        
+
 
     boost::optional<std::string> unit() const;
 
@@ -72,7 +72,7 @@ public:
 
 
     void unit(const none_t t);
-        
+
 
     boost::optional<double> expansionOrigin() const;
 
@@ -81,7 +81,7 @@ public:
 
 
     void expansionOrigin(const none_t t);
-    
+
 
     void polynomCoefficients(std::vector<double> &polynom_coefficients);
 
@@ -109,8 +109,8 @@ public:
 
 
     Dimension createSampledDimension(size_t id, double samplingInterval);
-    
-        
+
+
     template<DimensionType type, typename T = none_t>
     Dimension _createDimension(size_t id, T var = none);
 
@@ -136,7 +136,7 @@ public:
     //--------------------------------------------------
 
     virtual void createData(DataType dtype, const NDSize &size);
-    
+
     bool hasData() const;
 
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);

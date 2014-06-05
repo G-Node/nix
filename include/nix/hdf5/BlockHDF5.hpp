@@ -46,7 +46,7 @@ public:
      * @param type      The type of this block.
      * @param name      The name of this block.
      */
-    BlockHDF5(File file, Group group, const std::string &id, const std::string &type, const string &name);
+    BlockHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for a Block.
@@ -57,7 +57,7 @@ public:
      * @param type      The type of this block.
      * @param name      The name of this block.
      */
-    BlockHDF5(File file, Group group, const std::string &id, const std::string &type, const string &name, time_t time);
+    BlockHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Methods concerning sources
