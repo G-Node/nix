@@ -37,8 +37,6 @@ void TestDataArray::testName() {
     std::string name = nix::util::createId("", 32);
     array1.name(name);
     CPPUNIT_ASSERT(array1.name() == name);
-    array1.label(boost::none);
-    CPPUNIT_ASSERT(*array1.label() == "");
 }
 
 
