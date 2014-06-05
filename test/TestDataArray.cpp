@@ -202,7 +202,7 @@ void TestDataArray::testLabel()
     array1.label(testStr);
     CPPUNIT_ASSERT(*array1.label() == testStr);
     array1.label(boost::none);
-    CPPUNIT_ASSERT(*array1.label() == "");
+    CPPUNIT_ASSERT(array1.label() == nix::none);
 }
 
 void TestDataArray::testUnit()
