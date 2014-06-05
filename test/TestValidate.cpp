@@ -32,6 +32,6 @@ void TestValidate::test() {
         should(block2, &Block::id, isEmpty(), "id is not empty!")
     });
     
-    cout << endl;
+    cout << std::endl;
     cout << myResult;
 }
