@@ -14,14 +14,18 @@
 namespace nix {
 namespace valid {
 
-class Result {
-    std::vector<std::string> errors;
-    std::vector<std::string> warnings;
+typedef typename std::pair<std::string, std::string> strPair;
+    
+class Result {    
+    
+    std::vector<strPair> errors;
+    std::vector<strPair> warnings;
     static const char* prefixErr;
     static const char* prefixWarn;
+    static const char* prefixID;
 
     /**
-     * Takes a pair of vector<string> vars, the first with errors the
+     * Takes a pair of vector<strPair> vars, the first with errors the
      * second with warnings, and sets according prefix on all strings
      * in both vectors. 
      * NOTE: does _not_ check if prefixes already set and thus will 
@@ -29,12 +33,28 @@ class Result {
      * NOTE: since declared "const" will refuse to operate on class
      * own vectors.
      *
-     * @param vector<string> vector of error strings
-     * @param vector<string> vector of warning strings
+     * @param vector<strPair> vector of error strings
+     * @param vector<strPair> vector of warning strings
      * @return void
      */
-    void setPrefixes(std::vector<std::string> &_errors, 
-                     std::vector<std::string> &_warnings) const;
+    void setPrefixes(std::vector<strPair> &errs, 
+                     std::vector<strPair> &warns) const;
+                     
+    /**
+     * Takes a pair of vector<strPair> vars, the first with errors the
+     * second with warnings, and sets each msgs id as prefix in its msg
+     * string in both vectors. 
+     * NOTE: does _not_ check if id prefixes already set and thus will 
+     * produce duplicate prefixes.
+     * NOTE: since declared "const" will refuse to operate on class
+     * own vectors.
+     *
+     * @param vector<strPair> vector of error messages
+     * @param vector<strPair> vector of warning messages
+     * @return void
+     */
+    void setIdPrefixes(std::vector<strPair> &errs, 
+                       std::vector<strPair> &warns) const;
 
 public:
     
@@ -44,8 +64,8 @@ public:
      * @param vector Vector of error messages
      * @param vector Vector of waning messages
      */
-    Result( const std::vector<std::string> &errors = std::vector<std::string>(), 
-            const std::vector<std::string> &warnings = std::vector<std::string>());
+    Result(const std::vector<strPair> &errs = std::vector<strPair>(), 
+           const std::vector<strPair> &warns = std::vector<strPair>());
     
     /**
      * Only warnings ctor.
@@ -53,7 +73,7 @@ public:
      * @param boost::none_t boost none
      * @param vector Vector of waning messages
      */
-    Result(none_t t, const std::vector<std::string> &_warnings);
+    Result(none_t t, const std::vector<strPair> &warns);
     
     /**
      * Only errors ctor.
@@ -61,7 +81,7 @@ public:
      * @param vector Vector of waning messages
      * @param boost::none_t boost none
      */
-    Result(const std::vector<std::string> &_errors, none_t t);
+    Result(const std::vector<strPair> & errs, none_t t);
     
     /**
      * Non-vector standard ctor.
@@ -69,8 +89,8 @@ public:
      * @param vector Vector of error messages
      * @param vector Vector of waning messages
      */
-    Result( const std::string &errors, 
-            const std::string &warnings);
+    Result( const strPair &err, 
+            const strPair &warn);
     
     /**
      * Non-vector only warnings ctor.
@@ -78,7 +98,7 @@ public:
      * @param boost::none_t boost none
      * @param vector Vector of waning messages
      */
-    Result(none_t t, const std::string &_warnings);
+    Result(none_t t, const strPair &warn);
     
     /**
      * Non-vector only errors ctor.
@@ -86,7 +106,7 @@ public:
      * @param vector Vector of waning messages
      * @param boost::none_t boost none
      */
-    Result(const std::string &_errors, none_t t);
+    Result(const strPair &err, none_t t);
     
     /**
      * Neither errors nor warnings ctor.
@@ -101,14 +121,14 @@ public:
      *
      * @return vector
      */
-    std::vector<std::string> getWarnings() const;
+    std::vector<strPair> getWarnings() const;
     
     /**
      * Returns the {@link errors} vector.
      *
      * @return vector
      */
-    std::vector<std::string> getErrors() const;
+    std::vector<strPair> getErrors() const;
 
     /**
      * Concatenates the {@link errors} and {@link warnings} vectors
@@ -150,16 +170,18 @@ public:
      */
     friend std::ostream& operator<<(std::ostream &out, const Result &res) {
         // make temp copies to set prefixes on
-        std::vector<std::string> tmp_errors = res.getErrors();    
-        std::vector<std::string> tmp_warnings = res.getWarnings();
+        std::vector<strPair> tmp_errors = res.getErrors();    
+        std::vector<strPair> tmp_warnings = res.getWarnings();
         // set prefixes
         res.setPrefixes(tmp_errors, tmp_warnings);
+        // set ID prefixes
+        res.setIdPrefixes(tmp_errors, tmp_warnings);
         // output messages with prefixes
         for(auto it = tmp_warnings.begin(); it != tmp_warnings.end(); ++it) {
-            out << *it << std::endl;
+            out << (*it).second << std::endl;
         }
         for(auto it = tmp_errors.begin(); it != tmp_errors.end(); ++it) {
-            out << *it << std::endl;
+            out << (*it).second << std::endl;
         }
         
         return out;

@@ -126,7 +126,8 @@ NIXAPI void splitUnit(const std::string &fullUnit, std::string &prefix, std::str
 NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
 
 /**
- * Convert a number into a string representation.
+ * Convert a number (or anything else that is understood by 
+ * "stringstream <<") into a string representation.
  *
  * @param number  The number to convert
  *

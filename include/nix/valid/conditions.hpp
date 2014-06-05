@@ -11,6 +11,8 @@
 
 #include <string>
 #include <functional>
+#include <nix/util/util.hpp>
+#include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/checks.hpp>
 
@@ -41,24 +43,22 @@ namespace valid {
     must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {        
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            std::string errMsg;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
+            std::string id = nix::util::numToStr(
+                                ID<hasID<TOBJ>::value>().get(parent)
+                             );
             
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
             } catch (std::exception e) {
                 errOccured = true;
-                errMsg = e.what();
             }        
 
             // compare value & check for validity
-            if(errOccured) {
-                return Result(msg, none); // error
-            }
-            else if (!check(val)) { 
-                return Result(msg, none); // failed
+            if(!check(val) || errOccured) {
+                return Result(strPair(id, msg), none); // failed || error
             }
             
             return Result(); // passed
@@ -84,24 +84,22 @@ namespace valid {
     should(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            std::string errMsg;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
+            std::string id = nix::util::numToStr(
+                                ID<hasID<TOBJ>::value>().get(parent)
+                             );
             
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
             } catch (std::exception e) {
                 errOccured = true;
-                errMsg = e.what();
             }
 
             // compare value & check for validity
-            if(errOccured) {
-                return Result(none, msg); // error
-            }
-            else if (!check(val)) { 
-                return Result(none, msg); // failed
+            if(!check(val) || errOccured) { // failed || error
+                return Result(none, strPair(id, msg)); 
             }
             
             return Result(); // passed

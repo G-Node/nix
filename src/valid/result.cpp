@@ -15,46 +15,70 @@ namespace valid {
     
 const char* Result::prefixErr = "ERROR: ";
 const char* Result::prefixWarn = "WARNING: ";
+const char* Result::prefixID = "ID __ID__: ";
 
-Result::Result(const std::vector<std::string> &errors, 
-               const std::vector<std::string> &warnings) {
+Result::Result(const std::vector<strPair> &errs, 
+               const std::vector<strPair> &warns) {
     // assign to member vars
-    this->errors = errors;
-    this->warnings = warnings;
+    this->errors = errs;
+    this->warnings = warns;
 }
 
-Result::Result(none_t t, const std::vector<std::string> &_warnings) 
-    : Result(std::vector<std::string>(), _warnings) {}
+Result::Result(none_t t, const std::vector<strPair> &warns) 
+    : Result(std::vector<strPair>(), warns) {}
 
-Result::Result(const std::vector<std::string> &_errors, none_t t)
-    : Result(_errors, std::vector<std::string>()) {}
+Result::Result(const std::vector<strPair> &errs, none_t t)
+    : Result(errs, std::vector<strPair>()) {}
 
-Result::Result(const std::string &_errors, const std::string &_warnings) 
-    : Result(std::vector<std::string> {_errors}, std::vector<std::string> {_warnings}) {}
+Result::Result(const strPair &err, const strPair &warn) 
+    : Result(std::vector<strPair> {err}, std::vector<strPair> {warn}) {}
 
-Result::Result(none_t t, const std::string &_warnings) 
-    : Result(std::vector<std::string>(), std::vector<std::string> {_warnings}) {}
+Result::Result(none_t t, const strPair &warn) 
+    : Result(std::vector<strPair>(), std::vector<strPair> {warn}) {}
 
-Result::Result(const std::string &_errors, none_t t)
-    : Result(std::vector<std::string> {_errors}, std::vector<std::string>()) {}
+Result::Result(const strPair &err, none_t t)
+    : Result(std::vector<strPair> {err}, std::vector<strPair>()) {}
 
 Result::Result(none_t t, none_t u)
-    : Result(std::vector<std::string>(), std::vector<std::string>()) {}
+    : Result(std::vector<strPair>(), std::vector<strPair>()) {}
     
-void Result::setPrefixes(std::vector<std::string> &_errors, std::vector<std::string> &_warnings) const {
-    for(auto it=_errors.begin(); it!=_errors.end(); ++it) {
-        (*it).insert(0, prefixErr);
+void Result::setPrefixes(std::vector<strPair> &errs, std::vector<strPair> &warns) const {
+    for(auto it=errs.begin(); it!=errs.end(); ++it) {
+        (*it).second.insert(0, prefixErr);
     }
-    for(auto it=_warnings.begin(); it!=_warnings.end(); ++it) {
-        (*it).insert(0, prefixWarn);
+    for(auto it=warns.begin(); it!=warns.end(); ++it) {
+        (*it).second.insert(0, prefixWarn);
+    }
+}
+    
+void Result::setIdPrefixes(std::vector<strPair> &errs, std::vector<strPair> &warns) const {
+    for(auto it=errs.begin(); it!=errs.end(); ++it) {
+        // copy prefix in string
+        std::string prefixIDcpy = std::string(prefixID);
+        // replace placeholder with id
+        prefixIDcpy.replace(prefixIDcpy.find("__ID__"), 
+                            std::string("__ID__").length(),
+                            (*it).first);
+        // insert id prefix in msg string
+        (*it).second.insert(0, prefixIDcpy);
+    }
+    for(auto it=warns.begin(); it!=warns.end(); ++it) {
+        // copy prefix in string
+        std::string prefixIDcpy = std::string(prefixID);
+        // replace placeholder with id
+        prefixIDcpy.replace(prefixIDcpy.find("__ID__"), 
+                            std::string("__ID__").length(),
+                            (*it).first);
+        // insert id prefix in msg string
+        (*it).second.insert(0, prefixIDcpy);
     }
 }
 
-std::vector<std::string> Result::getWarnings() const {
+std::vector<strPair> Result::getWarnings() const {
     return warnings;
 }
 
-std::vector<std::string> Result::getErrors() const {
+std::vector<strPair> Result::getErrors() const {
     return errors;
 }
 
