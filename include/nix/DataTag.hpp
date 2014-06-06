@@ -77,7 +77,7 @@ public:
             backend()->positions(positions.id());
         }
     }
-    
+
     /**
      * Returns whether this DataArray contains positions.
      *
@@ -130,6 +130,40 @@ public:
         backend()->extents(t);
     }
 
+    /**
+     * Getter for the units of the tag. The units are applied to all values for position
+     * and extent in order to calculate the right position vectors in referenced data arrays.
+     *
+     * @return All units of the tag as a vector.
+     */
+    std::vector<std::string> units() const {
+        return backend()->units();
+    }
+
+    /**
+     * Setter for the units of a tag.
+     *
+     * @param units     All units as a vector.
+     */
+    void units(std::vector<std::string> &units) {
+        for (std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
+            //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
+            if ((*iter).length() > 0 && !(util::isSIUnit(*iter))) {
+                std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
+                throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
+            }
+        }
+        backend()->units(units);
+    }
+
+    /**
+     * Deleter for the units of a tag.
+     *
+     * @param boost::none_t.
+     */
+    void units(const boost::none_t t) {
+        backend()->units(t);
+    }
 
     //--------------------------------------------------
     // Methods concerning references.

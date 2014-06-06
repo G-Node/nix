@@ -43,6 +43,7 @@ private:
     CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testCreateRemove);
     CPPUNIT_TEST(testExtents);
+    CPPUNIT_TEST(testUnits);
     CPPUNIT_TEST(testPositions);
     CPPUNIT_TEST(testPositionExtents);
     CPPUNIT_TEST(testReferences);
@@ -63,6 +64,7 @@ public:
     void testDefinition();
     void testCreateRemove();
     void testExtents();
+    void testUnits();
     void testPositions();
     void testReferences();
     void testPositionExtents();
