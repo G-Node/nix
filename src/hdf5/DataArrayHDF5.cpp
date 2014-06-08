@@ -108,8 +108,10 @@ void DataArrayHDF5::unit(const none_t t) {
 boost::optional<double> DataArrayHDF5::expansionOrigin() const {
     boost::optional<double> ret;
     double expansion_origin;
-    group().getAttr("expansion_origin", expansion_origin);
-    ret = expansion_origin;
+    bool have_attr = group().getAttr("expansion_origin", expansion_origin);
+    if (have_attr) {
+        ret = expansion_origin;
+    }
     return ret;
 }
 
