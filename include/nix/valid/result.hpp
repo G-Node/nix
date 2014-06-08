@@ -11,6 +11,9 @@
 
 #include <nix/None.hpp>
 
+#include <vector>
+#include <string>
+
 namespace nix {
 namespace valid {
 
