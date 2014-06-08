@@ -77,8 +77,10 @@ void DataArrayHDF5::label(const none_t t) {
 boost::optional<std::string> DataArrayHDF5::unit() const {
     boost::optional<std::string> ret;
     string value;
-    group().getAttr("unit", value);
-    ret = value;
+    bool have_attr = group().getAttr("unit", value);
+    if (have_attr) {
+        ret = value;
+    }
     return ret;
 }
 
