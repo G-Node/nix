@@ -212,7 +212,7 @@ void TestDataArray::testUnit()
     CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
     CPPUNIT_ASSERT(array1.unit() == validUnit);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
-    CPPUNIT_ASSERT(*array1.unit() == "");
+    CPPUNIT_ASSERT(array1.unit() == nix::none);
 }
 
 void TestDataArray::testDimension()
