@@ -40,7 +40,8 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
     size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
-    if ((!dim_unit && unit != "none") || (dim_unit && unit == "none")) {
+
+    if (!dim_unit && unit != "none") {
         throw nix::IncompatibleDimensions("Units of position and SampledDimension must both be given!", "nix::util::positionToIndex");
     }
     if ((dimension.offset() && position < *dimension.offset()) || (!dimension.offset() && position < 0.0)) {
@@ -77,9 +78,6 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
-    if ((!dim_unit && unit != "none") || (dim_unit && unit == "none")) {
-        throw nix::IncompatibleDimensions("Units of position and RangeDimension must both be given!", "nix::util::positionToIndex");
-    }
     if (dim_unit && unit != "none") {
         try {
             scaling = util::getSIScaling(unit, *dim_unit);
@@ -157,10 +155,15 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
 
     NDSize data_offset(dimension_count, static_cast<size_t>(0));
     NDSize data_count(dimension_count, static_cast<size_t>(0));
+    vector<string> units = tag.units();
 
     for (size_t i = 0; i < offset.num_elements(); ++i) {
         Dimension dimension = array.getDimension(i+1);
         string unit = "none";
+        if (i <= units.size() && units.size() > 0) {
+            unit = units[i];
+        }
+        /*
         if (dimension.dimensionType() == nix::DimensionType::Sample) {
             SampledDimension dim;
             dim = dimension;
@@ -170,6 +173,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
             dim = dimension;
             unit = dim.unit() ? *dim.unit() : "none";
         }
+        */
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
 
         if (i < extent.num_elements()) {

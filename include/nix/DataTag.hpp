@@ -148,7 +148,7 @@ public:
     void units(std::vector<std::string> &units) {
         for (std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
             //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
-            if ((*iter).length() > 0 && !(util::isSIUnit(*iter))) {
+            if ((*iter).length() > 0 && (*iter != "none" && !(util::isSIUnit(*iter)))) {
                 std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
                 throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
             }
