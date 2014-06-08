@@ -191,6 +191,8 @@ void TestDataArray::testPolynomial()
     array2.expansionOrigin(3);
     boost::optional<double> retval = array2.expansionOrigin();
     CPPUNIT_ASSERT(*retval == 3);
+    array2.expansionOrigin(nix::none);
+    CPPUNIT_ASSERT(array2.expansionOrigin() == nix::none);
 }
 
 void TestDataArray::testLabel()
