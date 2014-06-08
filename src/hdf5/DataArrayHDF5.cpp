@@ -121,8 +121,8 @@ void DataArrayHDF5::expansionOrigin(double expansion_origin) {
 
 
 void DataArrayHDF5::expansionOrigin(const none_t t) {
-    if(group().hasAttr("expansionOrigin")) {
-        group().removeAttr("expansionOrigin");
+    if(group().hasAttr("expansion_origin")) {
+        group().removeAttr("expansion_origin");
     }
     forceUpdatedAt();
 }
