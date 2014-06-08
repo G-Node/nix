@@ -77,8 +77,10 @@ void DataArrayHDF5::label(const none_t t) {
 boost::optional<std::string> DataArrayHDF5::unit() const {
     boost::optional<std::string> ret;
     string value;
-    group().getAttr("unit", value);
-    ret = value;
+    bool have_attr = group().getAttr("unit", value);
+    if (have_attr) {
+        ret = value;
+    }
     return ret;
 }
 
@@ -106,8 +108,10 @@ void DataArrayHDF5::unit(const none_t t) {
 boost::optional<double> DataArrayHDF5::expansionOrigin() const {
     boost::optional<double> ret;
     double expansion_origin;
-    group().getAttr("expansion_origin", expansion_origin);
-    ret = expansion_origin;
+    bool have_attr = group().getAttr("expansion_origin", expansion_origin);
+    if (have_attr) {
+        ret = expansion_origin;
+    }
     return ret;
 }
 
@@ -119,8 +123,8 @@ void DataArrayHDF5::expansionOrigin(double expansion_origin) {
 
 
 void DataArrayHDF5::expansionOrigin(const none_t t) {
-    if(group().hasAttr("expansionOrigin")) {
-        group().removeAttr("expansionOrigin");
+    if(group().hasAttr("expansion_origin")) {
+        group().removeAttr("expansion_origin");
     }
     forceUpdatedAt();
 }
