@@ -141,11 +141,11 @@ void TestDataAccess::testPositionToIndexSampledDimension() {
 void TestDataAccess::testPositionToIndexSetDimension() {
     string unit = "ms";
 
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "", setDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, setDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "", setDim));
-    CPPUNIT_ASSERT(util::positionToIndex(0.5, "", setDim) == 1);
-    CPPUNIT_ASSERT(util::positionToIndex(0.45, "", setDim) == 0);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
+    CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
+    CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", setDim) == 0);
 }
 
 

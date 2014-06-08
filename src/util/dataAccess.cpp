@@ -40,13 +40,13 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
     size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
-    if ((!dim_unit && unit.length() > 0) || (dim_unit && unit.length() == 0)) {
+    if ((!dim_unit && unit != "none") || (dim_unit && unit == "none")) {
         throw nix::IncompatibleDimensions("Units of position and SampledDimension must both be given!", "nix::util::positionToIndex");
     }
     if ((dimension.offset() && position < *dimension.offset()) || (!dimension.offset() && position < 0.0)) {
         throw nix::OutOfBounds("Position is out of bounds in SampledDimension.", static_cast<int>(position));
     }
-    if (dim_unit) {
+    if (dim_unit && unit != "none") {
         try {
             scaling = util::getSIScaling(unit, *dim_unit);
         } catch (...) {
@@ -61,7 +61,7 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
 size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
     size_t index;
     index = static_cast<size_t>(round(position));
-    if (unit.length() > 0) {
+    if (unit.length() > 0 && unit != "none") {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
     if (static_cast<size_t>(index) < dimension.labels().size()){
@@ -77,14 +77,14 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
-    if ((!dim_unit && unit.length() > 0) || (dim_unit && unit.length() == 0)) {
+    if ((!dim_unit && unit != "none") || (dim_unit && unit == "none")) {
         throw nix::IncompatibleDimensions("Units of position and RangeDimension must both be given!", "nix::util::positionToIndex");
     }
-    if (dim_unit) {
+    if (dim_unit && unit != "none") {
         try {
             scaling = util::getSIScaling(unit, *dim_unit);
         } catch (...) {
-            throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
+            throw nix::IncompatibleDimensions("Provided units are not scalable!", "nix::util::positionToIndex");
         }
     }
     vector<double> ticks = dimension.ticks();
@@ -125,9 +125,9 @@ void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &off
     }
     for (size_t i = 0; i < position.size(); ++i) {
         Dimension dim = array.getDimension(i+1);
-        temp_offset[i] = positionToIndex(position[i], i > units.size() ? "" : units[i], dim);
+        temp_offset[i] = positionToIndex(position[i], i > units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            temp_count[i] = 1 + positionToIndex(position[i] + extent[i], i > units.size() ? "" : units[i], dim) - temp_offset[i];
+            temp_count[i] = 1 + positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
         }
     }
     offset = temp_offset;
@@ -160,15 +160,15 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
 
     for (size_t i = 0; i < offset.num_elements(); ++i) {
         Dimension dimension = array.getDimension(i+1);
-        string unit = "";
+        string unit = "none";
         if (dimension.dimensionType() == nix::DimensionType::Sample) {
             SampledDimension dim;
             dim = dimension;
-            unit = dim.unit() ? *dim.unit() : "";
+            unit = dim.unit() ? *dim.unit() : "none";
         } else if (dimension.dimensionType() == nix::DimensionType::Range) {
             RangeDimension dim;
             dim = dimension;
-            unit = dim.unit() ? *dim.unit() : "";
+            unit = dim.unit() ? *dim.unit() : "none";
         }
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
 

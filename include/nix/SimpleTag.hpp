@@ -86,7 +86,7 @@ public:
     void units(const boost::none_t t) {
         backend()->units(t);
     }
-    
+
     /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
