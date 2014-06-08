@@ -87,14 +87,6 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
-/*
- * Sanitizer function that deblanks units and replaces mu and µ
- * with the "u" replacement.
- *
- * @param unit the old unit
- *
- * @return the sanitized unit
- */
 std::string unitSanitizer(const std::string &unit) {
      std::string new_unit = deblankString(unit);
      while (new_unit.find("mu") != string::npos) {
