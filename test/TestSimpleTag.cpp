@@ -84,7 +84,7 @@ void TestSimpleTag::testCreateRemove() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
         SimpleTag st1 = block.createSimpleTag(names[i], type, refs);
@@ -278,11 +278,13 @@ void TestSimpleTag::testUnits() {
     for (auto it = array_names.begin(); it != array_names.end(); it++) {
         refs.push_back(block.createDataArray(*it, "reference"));
     }
-    
+
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
+    std::vector<std::string> insane_units = {"muV ", " muS"};
+
     CPPUNIT_ASSERT_NO_THROW(st.units(valid_units));
     CPPUNIT_ASSERT(st.units().size() == valid_units.size());
     std::vector<std::string> retrieved_units = st.units();
@@ -297,6 +299,13 @@ void TestSimpleTag::testUnits() {
     for (auto it = refs.begin(); it != refs.end(); it++) {
         block.deleteDataArray((*it).id());
     }
+
+    st.units(insane_units);
+    retrieved_units = st.units();
+    CPPUNIT_ASSERT(retrieved_units.size() == 2);
+    CPPUNIT_ASSERT(retrieved_units[0] == "uV");
+    CPPUNIT_ASSERT(retrieved_units[1] == "uS");
+
     block.deleteSimpleTag(st.id());
 }
 

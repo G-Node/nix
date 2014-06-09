@@ -68,14 +68,17 @@ public:
      * @param units     All units as a vector.
      */
     void units(std::vector<std::string> &units) {
+        std::vector<std::string> sanitized;
         for (std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
             //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
-            if ((*iter).length() > 0 && (*iter != "none" && !(util::isSIUnit(*iter)))) {
-                std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
+            std::string unit = util::unitSanitizer(*iter);
+            if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
+                std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
                 throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
             }
+            sanitized.push_back(unit);
         }
-        backend()->units(units);
+        backend()->units(sanitized);
     }
 
     /**
