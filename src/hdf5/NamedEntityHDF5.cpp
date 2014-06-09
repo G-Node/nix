@@ -89,8 +89,10 @@ void NamedEntityHDF5::definition(const string &definition) {
 optional<string> NamedEntityHDF5::definition() const {
     optional<string> ret;
     string definition;
-    group().getAttr("definition", definition);
-    ret = definition;
+    bool have_attr = group().getAttr("definition", definition);
+    if (have_attr) {
+        ret = definition;
+    }
     return ret;
 }
 
