@@ -33,6 +33,7 @@ private:
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
+    CPPUNIT_TEST(testDataTagUnitSupport);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
@@ -53,5 +54,6 @@ public:
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
+    void testDataTagUnitSupport();
 };
 

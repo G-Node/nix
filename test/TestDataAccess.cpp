@@ -191,8 +191,6 @@ void TestDataAccess::testPositionInData() {
 }
 
 void TestDataAccess::testRetrieveData() {
-    vector<string> valid_units;
-    vector<string> invalid_units;
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, -1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, 1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, -1, 0), nix::OutOfBounds);
@@ -214,4 +212,19 @@ void TestDataAccess::testRetrieveData() {
     data_size = data.size();
     CPPUNIT_ASSERT(data.rank() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+}
+
+void TestDataAccess::testDataTagUnitSupport() {
+    vector<string> valid_units{"none","ms","s"};
+    vector<string> invalid_units{"mV", "Ohm", "muV"};
+
+    DataTag testTag = block.createDataTag("test", "testTag", data_tag.positions());
+    testTag.units(valid_units);
+    testTag.addReference(data_array);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));
+    testTag.units(none);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));
+    testTag.units(invalid_units);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, 0, 0), nix::IncompatibleDimensions);
+
 }
