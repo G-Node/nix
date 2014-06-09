@@ -52,6 +52,8 @@ void TestEntity::testDefinition() {
     string def = util::createId("", 128);
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
+    block.definition(nix::none);
+    CPPUNIT_ASSERT(block.definition() == nix::none);
 }
 
 

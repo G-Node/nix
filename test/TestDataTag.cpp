@@ -79,7 +79,7 @@ void TestDataTag::testDefinition() {
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
     tag.definition(none);
-    CPPUNIT_ASSERT(*tag.definition() == "");
+    CPPUNIT_ASSERT(tag.definition() == nix::none);
 }
 
 
