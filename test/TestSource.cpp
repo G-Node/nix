@@ -57,6 +57,8 @@ void TestSource::testDefinition() {
     string def = util::createId("", 128);
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
+    source.definition(nix::none);
+    CPPUNIT_ASSERT(source.definition() == nix::none);
 }
 
 

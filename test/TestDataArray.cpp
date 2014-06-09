@@ -53,7 +53,7 @@ void TestDataArray::testDefinition() {
     array1.definition(def);
     CPPUNIT_ASSERT(*array1.definition() == def);
     array1.definition(boost::none);
-    CPPUNIT_ASSERT(*array1.definition() == "");
+    CPPUNIT_ASSERT(array1.definition() == nix::none);
 }
 
 

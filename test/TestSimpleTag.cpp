@@ -69,8 +69,8 @@ void TestSimpleTag::testDefinition() {
     std::string def = util::createId("", 128);
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
-    tag.definition(none);
-    CPPUNIT_ASSERT(*tag.definition() == "");
+    tag.definition(nix::none);
+    CPPUNIT_ASSERT(tag.definition() == nix::none);
 }
 
 

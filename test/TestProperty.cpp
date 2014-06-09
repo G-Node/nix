@@ -61,8 +61,8 @@ void TestProperty::testDefinition() {
     string def = "some_str";
     property.definition(def);
     CPPUNIT_ASSERT(*property.definition() == def);
-    property.definition(boost::none);
-    CPPUNIT_ASSERT(*property.definition() == "");
+    property.definition(nix::none);
+    CPPUNIT_ASSERT(property.definition() == nix::none);
 }
 
 

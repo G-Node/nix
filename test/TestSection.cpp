@@ -53,6 +53,8 @@ void TestSection::testDefinition() {
     string def = util::createId("", 128);
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
+    section.definition(nix::none);
+    CPPUNIT_ASSERT(section.definition() == nix::none);
 }
 
 
