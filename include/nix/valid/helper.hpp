@@ -15,6 +15,20 @@ namespace nix {
 namespace valid {
 
     /**
+     * Struct with message text and id string to save a message and the
+     * entity id together, used by {@link Results}.
+     */
+    struct Message {
+        std::string id;
+        std::string msg;
+        
+        Message(std::string newId, std::string newMsg)
+        : id(newId), msg(newMsg)
+        {
+        }
+    };
+
+    /**
      * Helper class that checks whether a given class or struct has
      * a method called "id"
      * USAGE: hasID<TOBJ>::value

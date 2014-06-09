@@ -58,7 +58,7 @@ namespace valid {
 
             // compare value & check for validity
             if(errOccured || !check(val)) {
-                return Result(strPair(id, msg), none); // failed || error
+                return Result(Message(id, msg), none); // failed || error
             }
 
             return Result(); // passed
@@ -99,7 +99,7 @@ namespace valid {
 
             // compare value & check for validity
             if(errOccured || !check(val)) { // failed || error
-                return Result(none, strPair(id, msg));
+                return Result(none, Message(id, msg));
             }
 
             return Result(); // passed
