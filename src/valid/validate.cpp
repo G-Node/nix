@@ -16,13 +16,13 @@ namespace valid {
 
 Result validate(std::initializer_list<condition> li) {
     Result result = Result();
-    
+
     for (auto it = li.begin(); it != li.end(); ++it) {
          result = result.concat(
             (*it)()
         );
     }
-    
+
     return result;
 }
 

@@ -12,28 +12,28 @@
 
 namespace nix {
 namespace valid {
-    
+
 const char* Result::prefixErr = "ERROR: ";
 const char* Result::prefixWarn = "WARNING: ";
 const char* Result::prefixID = "ID __ID__: ";
 
-Result::Result(const std::vector<strPair> &errs, 
+Result::Result(const std::vector<strPair> &errs,
                const std::vector<strPair> &warns) {
     // assign to member vars
     this->errors = errs;
     this->warnings = warns;
 }
 
-Result::Result(none_t t, const std::vector<strPair> &warns) 
+Result::Result(none_t t, const std::vector<strPair> &warns)
     : Result(std::vector<strPair>(), warns) {}
 
 Result::Result(const std::vector<strPair> &errs, none_t t)
     : Result(errs, std::vector<strPair>()) {}
 
-Result::Result(const strPair &err, const strPair &warn) 
+Result::Result(const strPair &err, const strPair &warn)
     : Result(std::vector<strPair> {err}, std::vector<strPair> {warn}) {}
 
-Result::Result(none_t t, const strPair &warn) 
+Result::Result(none_t t, const strPair &warn)
     : Result(std::vector<strPair>(), std::vector<strPair> {warn}) {}
 
 Result::Result(const strPair &err, none_t t)
@@ -41,7 +41,7 @@ Result::Result(const strPair &err, none_t t)
 
 Result::Result(none_t t, none_t u)
     : Result(std::vector<strPair>(), std::vector<strPair>()) {}
-    
+
 void Result::setPrefixes(std::vector<strPair> &errs, std::vector<strPair> &warns) const {
     for(auto it=errs.begin(); it!=errs.end(); ++it) {
         (*it).second.insert(0, prefixErr);
@@ -50,13 +50,13 @@ void Result::setPrefixes(std::vector<strPair> &errs, std::vector<strPair> &warns
         (*it).second.insert(0, prefixWarn);
     }
 }
-    
+
 void Result::setIdPrefixes(std::vector<strPair> &errs, std::vector<strPair> &warns) const {
     for(auto it=errs.begin(); it!=errs.end(); ++it) {
         // copy prefix in string
         std::string prefixIDcpy = std::string(prefixID);
         // replace placeholder with id
-        prefixIDcpy.replace(prefixIDcpy.find("__ID__"), 
+        prefixIDcpy.replace(prefixIDcpy.find("__ID__"),
                             std::string("__ID__").length(),
                             (*it).first);
         // insert id prefix in msg string
@@ -66,7 +66,7 @@ void Result::setIdPrefixes(std::vector<strPair> &errs, std::vector<strPair> &war
         // copy prefix in string
         std::string prefixIDcpy = std::string(prefixID);
         // replace placeholder with id
-        prefixIDcpy.replace(prefixIDcpy.find("__ID__"), 
+        prefixIDcpy.replace(prefixIDcpy.find("__ID__"),
                             std::string("__ID__").length(),
                             (*it).first);
         // insert id prefix in msg string
@@ -87,7 +87,7 @@ Result Result::concat(const Result &result) {
     errors.insert(errors.end(), result.errors.begin(), result.errors.end());
     warnings.reserve(warnings.size() + result.warnings.size());
     warnings.insert(warnings.end(), result.warnings.begin(), result.warnings.end());
-            
+
     return *this;
 }
 

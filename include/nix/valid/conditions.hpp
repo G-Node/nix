@@ -18,17 +18,17 @@
 
 namespace nix {
 namespace valid {
-    
+
     /**
      * Actual condition type, return type of conditions functionals
-     */     
+     */
     typedef std::function<Result(void)> condition;
 
     /**
-     * Creates a condition check that produces an error with the given 
-     * message if the given function call's return value does not pass 
+     * Creates a condition check that produces an error with the given
+     * message if the given function call's return value does not pass
      * the test.
-     * Also catches any errors occuring on execution of the given 
+     * Also catches any errors occuring on execution of the given
      * function call.
      *
      * @param pointer-to-object Parent object
@@ -37,10 +37,10 @@ namespace valid {
      * @param string     The message to produce if the test fails.
      *
      * @returns {Function} The created condition check.
-     */    
+     */
     template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {        
+    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
@@ -48,28 +48,28 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
-            
+
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
             } catch (std::exception e) {
                 errOccured = true;
-            }        
+            }
 
             // compare value & check for validity
             if(!check(val) || errOccured) {
                 return Result(strPair(id, msg), none); // failed || error
             }
-            
+
             return Result(); // passed
         };
     }
 
     /**
      * Creates a condition check that produces a warning with the given
-     * message if the given function call's return value does not pass 
+     * message if the given function call's return value does not pass
      * the test.
-     * Also catches any errors occuring on execution of the given 
+     * Also catches any errors occuring on execution of the given
      * function call.
      *
      * @param pointer-to-object Parent object
@@ -89,7 +89,7 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
-            
+
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
@@ -99,13 +99,13 @@ namespace valid {
 
             // compare value & check for validity
             if(!check(val) || errOccured) { // failed || error
-                return Result(none, strPair(id, msg)); 
+                return Result(none, strPair(id, msg));
             }
-            
+
             return Result(); // passed
         };
     }
-   
+
 } // namespace valid
 } // namespace nix
 

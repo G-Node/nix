@@ -13,12 +13,12 @@
 
 namespace nix {
 namespace valid {
-    
+
     /**
      * Helper class that checks whether a given class or struct has
      * a method called "id"
      * USAGE: hasID<TOBJ>::value
-     */   
+     */
     template <typename T>
     class hasID
     {
@@ -31,17 +31,17 @@ namespace valid {
     public:
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
-    
+
     /**
      * Helper class with "get" method that will execute a given
      * objects "id" method & return result if "HAS_ID" template param
      * is true and return string "unknown" otherwise.
      * NOTE: id can be of any type, use "auto" type to store it.
      * USAGE: ID< hasID<TOBJ>::value >().get(obj)
-     */   
+     */
     template <bool HAS_ID>
     class ID {
-    public:    
+    public:
         template <typename TOBJ>
         auto get(TOBJ parent) -> decltype(parent.id()) {
             return parent.id();
@@ -55,7 +55,7 @@ namespace valid {
             return std::string("unknown");
         }
     };
-    
+
 } // namespace valid
 } // namespace nix
 

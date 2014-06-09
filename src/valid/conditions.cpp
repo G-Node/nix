@@ -10,7 +10,7 @@
 
 namespace nix {
 namespace valid {
-    
+
     // NOTE: we cant have _templated_ function definitions here, since
     // the linker wouldnt find specific template realizations.
 
