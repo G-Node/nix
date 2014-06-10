@@ -72,7 +72,7 @@ void TestDimension::testSampledDimUnit() {
     CPPUNIT_ASSERT_NO_THROW(sd.unit(validUnit));
     CPPUNIT_ASSERT(*(sd.unit()) == validUnit);
     CPPUNIT_ASSERT_NO_THROW(sd.unit(boost::none));
-    CPPUNIT_ASSERT(*(sd.unit()) == "");
+    CPPUNIT_ASSERT(sd.unit() == boost::none);
 
     data_array.deleteDimension(d.id());
 }
