@@ -129,8 +129,10 @@ DimensionType SampledDimensionHDF5::dimensionType() const {
 boost::optional<std::string> SampledDimensionHDF5::label() const {
     boost::optional<std::string> ret;
     string label;
-    group.getAttr("label", label);
-    ret = label;
+    bool have_attr = group.getAttr("label", label);
+    if (have_attr) {
+        ret = label;
+    }
     return ret;
 }
 
@@ -157,8 +159,10 @@ void SampledDimensionHDF5::label(const none_t t) {
 boost::optional<std::string> SampledDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    group.getAttr("unit", unit);
-    ret = unit;
+    bool have_attr = group.getAttr("unit", unit);
+    if (have_attr) {
+        ret = unit;
+    }
     return ret;
 }
 
