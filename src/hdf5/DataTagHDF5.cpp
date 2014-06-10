@@ -128,6 +128,25 @@ void DataTagHDF5::extents(const none_t t) {
 }
 
 
+vector<string> DataTagHDF5::units() const {
+    vector<string> units;
+    group().getData("units", units);
+    return units;
+}
+
+
+void DataTagHDF5::units(vector<string> &units) {
+    group().setData("units", units);
+    forceUpdatedAt();
+}
+
+
+void DataTagHDF5::units(const none_t t) {
+    if(group().hasData("units")) {
+        group().removeData("units");
+    }
+    forceUpdatedAt();
+}
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------

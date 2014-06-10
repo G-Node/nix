@@ -47,7 +47,7 @@ void TestDataAccess::setUp() {
     refs.push_back(data_array);
     vector<double> position {0.0, 2.0, 3.4};
     vector<double> extent {0.0, 6.0, 2.3};
-    vector<string> units {"", "ms", "ms"};
+    vector<string> units {"none", "ms", "ms"};
     position_tag = block.createSimpleTag("position tag", "event", refs);
     position_tag.position(position);
     position_tag.units(units);
@@ -112,7 +112,6 @@ void TestDataAccess::testPositionToIndexRangeDimension() {
     string invalid_unit = "kV";
     string scaled_unit = "s";
 
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, "", rangeDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT(util::positionToIndex(1.0, unit, rangeDim) == 0);
     CPPUNIT_ASSERT(util::positionToIndex(8.0, unit, rangeDim) == 4);
@@ -132,7 +131,6 @@ void TestDataAccess::testPositionToIndexSampledDimension() {
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(-1.0, unit, sampledDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.005, invalid_unit, sampledDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.005, "", sampledDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT(util::positionToIndex(5.0, unit, sampledDim) == 5);
     CPPUNIT_ASSERT(util::positionToIndex(0.005, scaled_unit, sampledDim) == 5);
 }
@@ -141,11 +139,11 @@ void TestDataAccess::testPositionToIndexSampledDimension() {
 void TestDataAccess::testPositionToIndexSetDimension() {
     string unit = "ms";
 
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "", setDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, setDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "", setDim));
-    CPPUNIT_ASSERT(util::positionToIndex(0.5, "", setDim) == 1);
-    CPPUNIT_ASSERT(util::positionToIndex(0.45, "", setDim) == 0);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
+    CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
+    CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", setDim) == 0);
 }
 
 
@@ -214,4 +212,19 @@ void TestDataAccess::testRetrieveData() {
     data_size = data.size();
     CPPUNIT_ASSERT(data.rank() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+}
+
+void TestDataAccess::testDataTagUnitSupport() {
+    vector<string> valid_units{"none","ms","s"};
+    vector<string> invalid_units{"mV", "Ohm", "muV"};
+
+    DataTag testTag = block.createDataTag("test", "testTag", data_tag.positions());
+    testTag.units(valid_units);
+    testTag.addReference(data_array);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));
+    testTag.units(none);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));
+    testTag.units(invalid_units);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, 0, 0), nix::IncompatibleDimensions);
+
 }

@@ -111,6 +111,34 @@ void TestDataTag::testCreateRemove() {
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.dataTagCount() == count);
 }
 
+void TestDataTag::testUnits() {
+    DataTag dt = block.createDataTag("TestDataTag1", "Tag", positions);
+
+    std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
+    std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
+    std::vector<std::string> insane_units = {"muV ", " muS"};
+
+    CPPUNIT_ASSERT_NO_THROW(dt.units(valid_units));
+    CPPUNIT_ASSERT(dt.units().size() == valid_units.size());
+    std::vector<std::string> retrieved_units = dt.units();
+    for (size_t i = 0; i < retrieved_units.size(); i++) {
+        CPPUNIT_ASSERT(retrieved_units[i] == valid_units[i]);
+    }
+
+    dt.units(none);
+    CPPUNIT_ASSERT(dt.units().size() == 0);
+    CPPUNIT_ASSERT_THROW(dt.units(invalid_units), nix::InvalidUnit);
+    CPPUNIT_ASSERT(dt.units().size() == 0);
+
+    dt.units(insane_units);
+    retrieved_units = dt.units();
+    CPPUNIT_ASSERT(retrieved_units.size() == 2);
+    CPPUNIT_ASSERT(retrieved_units[0] == "uV");
+    CPPUNIT_ASSERT(retrieved_units[1] == "uS");
+
+    block.deleteSimpleTag(dt.id());
+}
+
 //TODO Constraints on References are not tested yet.
 
 void TestDataTag::testReferences(){
@@ -156,16 +184,16 @@ void TestDataTag::testReferences(){
 
 void TestDataTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
-    
+
     typedef boost::multi_array<double, 1> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[5]);
     for(index i = 0; i < 5; ++i){
         A[i] = 100.0*i;
-    }    
+    }
     positions.setData(A);
     extents.setData(A);
-    
+
     tag.positions(positions);
     tag.extents(extents);
     CPPUNIT_ASSERT(tag.extents() == true);
@@ -188,9 +216,9 @@ void TestDataTag::testPositionExtents() {
     array_type A(boost::extents[10]);
     for(index i = 0; i < 10; ++i){
         A[i] = 100.0*i;
-    }    
+    }
     positions.setData(A);
-    
+
     tag.positions(positions);
     CPPUNIT_ASSERT_THROW(tag.extents(extents), std::runtime_error);
     tag.extents(none);

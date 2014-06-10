@@ -9,10 +9,11 @@
 #ifndef NIX_DATA_TAG_H
 #define NIX_DATA_TAG_H
 
+#include <algorithm>
+
 #include <nix/base/IDataTag.hpp>
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
-
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -77,7 +78,7 @@ public:
             backend()->positions(positions.id());
         }
     }
-    
+
     /**
      * Returns whether this DataArray contains positions.
      *
@@ -130,6 +131,43 @@ public:
         backend()->extents(t);
     }
 
+    /**
+     * Getter for the units of the tag. The units are applied to all values for position
+     * and extent in order to calculate the right position vectors in referenced data arrays.
+     *
+     * @return All units of the tag as a vector.
+     */
+    std::vector<std::string> units() const {
+        return backend()->units();
+    }
+
+    /**
+     * Setter for the units of a tag.
+     *
+     * @param units     All units as a vector.
+     */
+    void units(std::vector<std::string> &units) {
+        std::vector<std::string> sanitized;
+        sanitized.reserve(units.size());
+        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
+                std::string unit = util::unitSanitizer(x);
+                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
+                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
+                    throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
+                }
+                return unit;
+            });
+        backend()->units(sanitized);
+    }
+
+    /**
+     * Deleter for the units of a tag.
+     *
+     * @param boost::none_t.
+     */
+    void units(const boost::none_t t) {
+        backend()->units(t);
+    }
 
     //--------------------------------------------------
     // Methods concerning references.

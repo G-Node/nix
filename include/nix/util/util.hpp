@@ -85,8 +85,12 @@ NIXAPI time_t strToTime(const std::string &time);
 NIXAPI time_t getTime();
 
 /*
+ * Sanitizer function that deblanks units and replaces mu and µ
+ * with the "u" replacement.
  *
+ * @param unit the old unit
  *
+ * @return the sanitized unit
  */
 NIXAPI std::string unitSanitizer(const std::string &unit);
 

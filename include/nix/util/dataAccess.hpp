@@ -28,7 +28,7 @@ namespace util {
  * must be scalable versions of the same SI unit.
  *
  * @param position double, the position
- * @param unit string, the unit in which the position is given
+ * @param unit string, the unit in which the position is given, may be "none"
  * @param dimension SetDimension, the dimension descriptor for the respective dimension.
  *
  * @return int the index

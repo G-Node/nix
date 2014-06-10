@@ -46,7 +46,7 @@ public:
      * @param position   string.
      */
     virtual void positions(const std::string &positionid) = 0;
-    
+
     /**
      * Returns whether this DataArray contains positions.
      *
@@ -77,6 +77,27 @@ public:
      */
     virtual void extents(const none_t t) = 0;
 
+    /**
+     * Getter for the units of the tag. The units are applied to all values for position
+     * and extent in order to calculate the right position vectors in referenced data arrays.
+     *
+     * @return All units of the tag as a vector.
+     */
+    virtual std::vector<std::string> units() const = 0;
+
+    /**
+     * Setter for the units of a tag.
+     *
+     * @param units     All units as a vector.
+     */
+    virtual void units(std::vector<std::string> &units) = 0;
+
+    /**
+     * Deleter for the units of a tag.
+     *
+     * @param boost::none_t.
+     */
+    virtual void units(const none_t t) = 0;
 
     //--------------------------------------------------
     // Methods concerning references.

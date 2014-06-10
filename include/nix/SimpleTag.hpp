@@ -9,12 +9,13 @@
 #ifndef NIX_SIMPLE_TAG_H
 #define NIX_SIMPLE_TAG_H
 
+#include <algorithm>
+
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/ISimpleTag.hpp>
 #include <nix/Section.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
-
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -68,14 +69,17 @@ public:
      * @param units     All units as a vector.
      */
     void units(std::vector<std::string> &units) {
-        for (std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
-            //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
-            if ((*iter).length() > 0 && !(util::isSIUnit(*iter))) {
-                std::string msg = "Unit " + *iter +"is not a SI unit. Note: so far only atomic SI units are supported.";
-                throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
-            }
-        }
-        backend()->units(units);
+        std::vector<std::string> sanitized;
+        sanitized.reserve(units.size());
+        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
+                std::string unit = util::unitSanitizer(x);
+                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
+                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
+                    throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
+                }
+                return unit;
+            });
+        backend()->units(sanitized);
     }
 
     /**
@@ -86,7 +90,7 @@ public:
     void units(const boost::none_t t) {
         backend()->units(t);
     }
-    
+
     /**
      * Getter for the position of a tag. The position is a vector that
      * points into referenced DataArrays.
@@ -105,7 +109,7 @@ public:
     void position(const std::vector<double> &position) {
         backend()->position(position);
     }
-    
+
     /**
      * Deleter for the position of a tag.
      *
@@ -114,7 +118,7 @@ public:
     void position(const boost::none_t t) {
         backend()->position(t);
     }
-    
+
     /**
      * Getter for the extent of a tag. Given a specified position
      * vector, the extent vector defined the size of a region of
@@ -134,7 +138,7 @@ public:
     void extent(const std::vector<double> &extent) {
         backend()->extent(extent);
     }
-    
+
     /**
      * Deleter for the extent of a tag.
      *
@@ -147,7 +151,7 @@ public:
     //--------------------------------------------------
     // Methods concerning references.
     //--------------------------------------------------
-   
+
     /**
      * Checks if a DataArray with the specified id is referenced in
      * this DataTag.
@@ -159,7 +163,7 @@ public:
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
-    
+
     /**
      * Checks if the specified DataArray is referenced in
      * this SimpleTag.
@@ -207,7 +211,7 @@ public:
     DataArray getReference(size_t index) const {
         return backend()->getReference(index);
     }
-    
+
     /**
      * Adds a reference to a DataArray to the list of References.
      *
@@ -265,7 +269,7 @@ public:
      * as parameter and returns a bool telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object referenced data arrays as a vector     
+     * @return object referenced data arrays as a vector
      */
     std::vector<DataArray> references(util::AcceptAll<DataArray>::type filter
                                       = util::AcceptAll<DataArray>()) const
@@ -330,7 +334,7 @@ public:
      *
      * @param id        The id of the feature.
      *
-     * @return The feature with the specified id. If it 
+     * @return The feature with the specified id. If it
      *         doesn't exist an exception will be thrown.
      */
     Feature getFeature(const std::string &id) const {
@@ -342,7 +346,7 @@ public:
      *
      * @param index        The index of the feature.
      *
-     * @return The feature with the specified index. If it 
+     * @return The feature with the specified index. If it
      *         doesn't exist an exception will be thrown.
      */
     Feature getFeature(size_t index) const {
@@ -352,9 +356,9 @@ public:
     /**
      * Get all features of this simple tag.
      *
-     * The parameter "filter" is defaulted to giving back all 
-     * features. To use your own filter pass a lambda 
-     * that accepts a "Feature" as parameter and returns a bool 
+     * The parameter "filter" is defaulted to giving back all
+     * features. To use your own filter pass a lambda
+     * that accepts a "Feature" as parameter and returns a bool
      * telling whether to get it or not.
      *
      * @param object filter function of type {@link nix::util::Filter::type}
