@@ -9,10 +9,11 @@
 #ifndef NIX_DATA_TAG_H
 #define NIX_DATA_TAG_H
 
+#include <algorithm>
+
 #include <nix/base/IDataTag.hpp>
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
-
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -147,15 +148,15 @@ public:
      */
     void units(std::vector<std::string> &units) {
         std::vector<std::string> sanitized;
-        for (std::vector<std::string>::iterator iter = units.begin(); iter != units.end(); ++iter) {
-            //if (!(util::isSIUnit(*iter) || util::isCompoundSIUnit(*iter))) { TODO
-            std::string unit = util::unitSanitizer(*iter);
-            if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
-                std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
-                throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
-            }
-            sanitized.push_back(unit);
-        }
+        sanitized.reserve(units.size());
+        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
+                std::string unit = util::unitSanitizer(x);
+                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
+                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
+                    throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
+                }
+                return unit;
+            });
         backend()->units(sanitized);
     }
 
