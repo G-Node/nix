@@ -17,93 +17,82 @@
 namespace nix {
 namespace base {
 
-// TODO what about TNode?
+
+/**
+ * @brief Base class for entities that can be associated with one or more sources.
+ *
+ * In order to describe the provenance of data some entities of the NIX data model can
+ * be associated with {@link nix::Source} entities. This class serves as a base class for
+ * those.
+ */
 template <typename T>
 class NIXAPI EntityWithSources : virtual public base::IEntityWithSources, public base::EntityWithMetadata<T> {
 
 public:
 
+    /**
+     * @brief Constructor that creates a null entity.
+     */
     EntityWithSources()
         : EntityWithMetadata<T>()
     {
     }
 
-
+    /**
+     * @brief Constructor that creates a new entity from a shared pointer to
+     * an implementation instance.
+     */
     EntityWithSources(const std::shared_ptr<T> &p_impl)
         : EntityWithMetadata<T>(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new entity from a
+     * shared pointer to an implementation instance.
+     */
     EntityWithSources(std::shared_ptr<T> &&ptr)
         : EntityWithMetadata<T>(std::move(ptr))
     {
     }
 
-    /**
-     * Returns the number of sources that are direct descendants of this source.
-     *
-     * @return The number of direct child sources.
-     */
     size_t sourceCount() const {
         return EntityWithMetadata<T>::backend()->sourceCount();
     }
 
-    /**
-     * Checks if this source has a specific source as direct descendant.
-     *
-     * @param id        The id of the source.
-     *
-     * @return True if a source with the given id is a direct descendant, false
-     *         otherwise.
-     */
     bool hasSource(const std::string &id) const {
         return EntityWithMetadata<T>::backend()->hasSource(id);
     }
 
     /**
-     * Checks if this source has a specific source as direct descendant.
+     * @brief Checks if a specific source is associated with this entity.
      *
-     * @param Source        The source.
+     * @param source    The source to check.
      *
-     * @return True if a source with the given id is a direct descendant, false
-     *         otherwise.
+     * @return True if the source is associated with this entity, false otherwise.
      */
     bool hasSource(const Source &source) const {
         return EntityWithMetadata<T>::backend()->hasSource(source.id());
     }
 
-    /**
-     * Retrieves a specific child source that is a direct descendant.
-     *
-     * @param id        The id of the source.
-     *
-     * @return The source with the given id. If it doesn't exist an exception
-     *         will be thrown.
-     */
     Source getSource(const std::string &id) const {
         return EntityWithMetadata<T>::backend()->getSource(id);
     }
 
-    /**
-     * Retrieves a specific source by index.
-     *
-     * @param index     The index of the source.
-     *
-     * @return The source at the specified index.
-     */
     Source getSource(const size_t index) const {
         return EntityWithMetadata<T>::backend()->getSource(index);
     }
     
     /**
-     * Get sources associated with this entity.
+     * @brief Get all sources associated with this entity.
      *
      * The parameter "filter" is defaulted to giving back all entities.
      * To use your own filter pass a lambda that accepts an "EntityWithSources"
      * as parameter and returns a bool telling whether to get it or not.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object entities as a vector
+     * @param filter Filter function.
+     *
+     * @return All associated sources that match the given filter as a vector
      */    
     std::vector<Source> sources(util::AcceptAll<Source>::type filter
                                       = util::AcceptAll<Source>()) const
@@ -117,56 +106,38 @@ public:
         return nix::base::ImplContainer<T>::template getEntities<nix::Source, decltype(f)>(f,sourceCount(),filter);
     }
 
-    /**
-     * Set all sources associated with this entity. All previously
-     * associated sources, that are not in the vector will be removed.
-     *
-     * @param sources     A vector with all sources.
-     */
     virtual void sources(const std::vector<Source> &sources) {
         EntityWithMetadata<T>::backend()->sources(sources);
     }
 
-
-    /**
-     * Add a Source to this entity.
-     *
-     * @param std::string     The id of the source.
-     *
-     */
     void addSource(const std::string &id) {
         EntityWithMetadata<T>::backend()->addSource(id);
     }
 
 
     /**
-     * Add a Source to this entity.
+     * @brief Associate a new source with the entity.
      *
-     * @param Source     The source.
+     * If a source already is associated with the entity, the call will have no effect.
      *
+     * @param source    The source to add.
      */
     void addSource(const Source &source) {
         EntityWithMetadata<T>::backend()->addSource(source.id());
     }
 
 
-    /**
-     * Remove a root source and all its child sources from
-     * the source.
-     *
-     * @param id        The id of the source to remove.
-     *
-     * @return True if the source was removed, false otherwise.
-     */
     bool removeSource(const std::string &id) {
         return EntityWithMetadata<T>::backend()->removeSource(id);
     }
 
     /**
-     * Remove a root source and all its child sources from
-     * the source.
+     * @brief Remove a source from the list of associated sources.
      *
-     * @param Source      The source to remove.
+     * This method just removes the association between the entity and the source.
+     * The source itself will not be deleted from the file.
+     *
+     * @param source    The source to remove.
      *
      * @return True if the source was removed, false otherwise.
      */
@@ -174,6 +145,9 @@ public:
         return EntityWithMetadata<T>::backend()->removeSource(source.id());
     }
 
+    /**
+     * Destructor
+     */
     virtual ~EntityWithSources() {}
 
 };
