@@ -203,8 +203,8 @@ void TestDimension::testRangeDimUnit() {
     CPPUNIT_ASSERT_THROW(rd.unit(invalidUnit), nix::InvalidUnit);
     CPPUNIT_ASSERT_NO_THROW(rd.unit(validUnit));
     CPPUNIT_ASSERT(*(rd.unit()) == validUnit);
-    CPPUNIT_ASSERT_NO_THROW(rd.unit(boost::none));
-    CPPUNIT_ASSERT(*(rd.unit()) == "");
+    CPPUNIT_ASSERT_NO_THROW(rd.unit(nix::none));
+    CPPUNIT_ASSERT(rd.unit() == nix::none);
     
     data_array.deleteDimension(d.id());
 }
