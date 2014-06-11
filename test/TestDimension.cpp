@@ -182,6 +182,8 @@ void TestDimension::testRangeDimLabel() {
     CPPUNIT_ASSERT(*(rd.label()) == label);
     rd.label(other_label);
     CPPUNIT_ASSERT(*(rd.label()) == other_label);
+    rd.label(nix::none);
+    CPPUNIT_ASSERT(rd.label() == nix::none);
 
     data_array.deleteDimension(d.id());
 }
@@ -203,8 +205,8 @@ void TestDimension::testRangeDimUnit() {
     CPPUNIT_ASSERT_THROW(rd.unit(invalidUnit), nix::InvalidUnit);
     CPPUNIT_ASSERT_NO_THROW(rd.unit(validUnit));
     CPPUNIT_ASSERT(*(rd.unit()) == validUnit);
-    CPPUNIT_ASSERT_NO_THROW(rd.unit(boost::none));
-    CPPUNIT_ASSERT(*(rd.unit()) == "");
+    CPPUNIT_ASSERT_NO_THROW(rd.unit(nix::none));
+    CPPUNIT_ASSERT(rd.unit() == nix::none);
     
     data_array.deleteDimension(d.id());
 }
