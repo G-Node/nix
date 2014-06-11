@@ -17,8 +17,6 @@
 namespace nix {
 namespace valid {
 
-void test();
-
 /**
   * Generic validator
   *

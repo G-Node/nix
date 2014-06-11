@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/valid/conditions.hpp>
+#include <nix/valid/helper.hpp>
 
 namespace nix {
 namespace valid {

@@ -11,22 +11,24 @@
 
 #include <string>
 #include <functional>
+#include <nix/util/util.hpp>
+#include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/checks.hpp>
 
 namespace nix {
 namespace valid {
-    
+
     /**
      * Actual condition type, return type of conditions functionals
-     */     
+     */
     typedef std::function<Result(void)> condition;
 
     /**
-     * Creates a condition check that produces an error with the given 
-     * message if the given function call's return value does not pass 
+     * Creates a condition check that produces an error with the given
+     * message if the given function call's return value does not pass
      * the test.
-     * Also catches any errors occuring on execution of the given 
+     * Also catches any errors occuring on execution of the given
      * function call.
      *
      * @param pointer-to-object Parent object
@@ -35,41 +37,39 @@ namespace valid {
      * @param string     The message to produce if the test fails.
      *
      * @returns {Function} The created condition check.
-     */    
+     */
     template<typename TOBJ, typename TFUNC, typename TCHECK>
     condition
-    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {        
+    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            std::string errMsg;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
-            
+            std::string id = nix::util::numToStr(
+                                ID<hasID<TOBJ>::value>().get(parent)
+                             );
+
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
             } catch (std::exception e) {
                 errOccured = true;
-                errMsg = e.what();
-            }        
+            }
 
             // compare value & check for validity
-            if(errOccured) {
-                return Result(msg, none); // error
+            if(errOccured || !check(val)) {
+                return Result(Message(id, msg), none); // failed || error
             }
-            else if (!check(val)) { 
-                return Result(msg, none); // failed
-            }
-            
+
             return Result(); // passed
         };
     }
 
     /**
      * Creates a condition check that produces a warning with the given
-     * message if the given function call's return value does not pass 
+     * message if the given function call's return value does not pass
      * the test.
-     * Also catches any errors occuring on execution of the given 
+     * Also catches any errors occuring on execution of the given
      * function call.
      *
      * @param pointer-to-object Parent object
@@ -84,30 +84,28 @@ namespace valid {
     should(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
-            std::string errMsg;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
-            
+            std::string id = nix::util::numToStr(
+                                ID<hasID<TOBJ>::value>().get(parent)
+                             );
+
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
             } catch (std::exception e) {
                 errOccured = true;
-                errMsg = e.what();
             }
 
             // compare value & check for validity
-            if(errOccured) {
-                return Result(none, msg); // error
+            if(errOccured || !check(val)) { // failed || error
+                return Result(none, Message(id, msg));
             }
-            else if (!check(val)) { 
-                return Result(none, msg); // failed
-            }
-            
+
             return Result(); // passed
         };
     }
-   
+
 } // namespace valid
 } // namespace nix
 

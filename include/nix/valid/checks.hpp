@@ -14,7 +14,7 @@ namespace valid {
 
     /**
      * One Check struct that checks whether the given value casts to true
-     * using {@link toBool} or to false. 
+     * using {@link toBool} or to false.
      * T can be: boost::optional, boost::none, nix-entity
      * and any basic type.
      */
@@ -26,10 +26,10 @@ namespace valid {
             return val;
         }
     };
-    
+
     /**
      * One Check struct that checks whether the given value casts to false
-     * using {@link toBool} or to true. 
+     * using {@link toBool} or to true.
      * T can be: boost::optional, boost::none, nix-entity
      * and any basic type.
      */
@@ -39,19 +39,19 @@ namespace valid {
             return !val;
         }
     };
-    
+
     /**
-     * One Check struct that checks whether the given value is not empty 
+     * One Check struct that checks whether the given value is not empty
      * or is empty.
      * T can be: any STL container.
      */
-    struct notEmpty {          
+    struct notEmpty {
         template<typename T>
         bool operator()(const T &val) const {
             return !(val.empty());
         }
     };
-    
+
     /**
      * One Check struct that checks whether the given value is empty or
      * not.
@@ -63,7 +63,7 @@ namespace valid {
             return val.empty();
         }
     };
-    
+
 } // namespace valid
 } // namespace nix
 
