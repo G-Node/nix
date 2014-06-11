@@ -86,23 +86,16 @@ public:
     /**
      * @brief Get all sources associated with this entity.
      *
-     * The parameter "filter" is defaulted to giving back all entities.
-     * To use your own filter pass a lambda that accepts an "EntityWithSources"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter sources by various
+     * criteria. By default a filter that accepts every source used.
      *
-     * @param filter Filter function.
+     * @param filter    A filter function.
      *
      * @return All associated sources that match the given filter as a vector
      */    
-    std::vector<Source> sources(util::AcceptAll<Source>::type filter
-                                      = util::AcceptAll<Source>()) const
+    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
     {
         auto f = [this] (size_t i) { return getSource(i); };
-        // NOTE: we need to use special notation here since compiler otherwise
-        // reads: ((this->getEntities) < Source) > f
-        /*return this->template getEntities<Source>(f,
-                                   sourceCount(),
-                                   filter);*/
         return nix::base::ImplContainer<T>::template getEntities<nix::Source, decltype(f)>(f,sourceCount(),filter);
     }
 
