@@ -8,13 +8,12 @@
 
 
 #include <nix.hpp>
-#include <nix/hdf5/BlockHDF5.hpp>
 
 using namespace std;
 
 namespace nix {
 
-    std::vector<Source> Block::findSources(std::function<bool(Source)> filter,
+    std::vector<Source> Block::findSources(util::Filter<Source>::type filter,
                                            size_t max_depth) const 
     {
         vector<Source> probes = sources();

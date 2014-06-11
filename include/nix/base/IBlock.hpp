@@ -25,15 +25,19 @@ class DataTag;
 
 namespace base {
 
-
+/**
+ * @brief Interface for implementations of the Block entity.
+ *
+ * See {@link nix::Block} for a more detailed description.
+ */
 class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
 
     /**
-     * Checks if this block has a specific root source.
+     * @brief Checks if this block has a specific root source.
      *
-      * @param id        The id of the source.
+     * @param id        The id of the source.
      *
      * @return True if a source with the given id exists at the root, false
      *         otherwise.
@@ -41,7 +45,7 @@ public:
     virtual bool hasSource(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific root source.
+     * @brief Retrieves a specific root source by its id.
      *
      * @param id        The id of the source.
      *
@@ -51,7 +55,7 @@ public:
     virtual Source getSource(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific root source by index.
+     * @brief Retrieves a specific root source by index.
      *
      * @param index     The index of the source.
      *
@@ -61,7 +65,7 @@ public:
 
 
     /**
-     * Returns the number of root sources in this block.
+     * @brief Returns the number of root sources in this block.
      *
      * @return The number of root sources.
      */
@@ -69,7 +73,7 @@ public:
 
 
     /**
-     * Create a new root source.
+     * @brief Create a new root source.
      *
      * @param name      The name of the source to create.
      * @param type      The type of the source.
@@ -79,12 +83,14 @@ public:
     virtual Source createSource(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Deletes a root source and all its child sources from
-     * the block.
+     * @brief Deletes a root source.
+     *
+     * This will also delete all child sources of this root source from the file.
+     * The deletion of a source can't be undone.
      *
      * @param id        The id of the source to delete.
      *
-     * @return True if the source was removed, false otherwise.
+     * @return True if the source was deleted, false otherwise.
      */
     virtual bool deleteSource(const std::string &id) = 0;
 
@@ -93,7 +99,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Checks if a specific data array exists in this block.
+     * @brief Checks if a specific data array exists in this block.
      *
      * @param id        The id of a data array.
      *
@@ -102,7 +108,7 @@ public:
     virtual bool hasDataArray(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific data array from the block.
+     * @brief Retrieves a specific data array from the block by id.
      *
      * @param id        The id of an existing data array.
      *
@@ -112,7 +118,7 @@ public:
     virtual DataArray getDataArray(const std::string &id) const = 0;
 
     /**
-     * Retrieves a data array by index.
+     * @brief Retrieves a data array by index.
      *
      * @param index     The index of the data array.
      *
@@ -121,23 +127,27 @@ public:
     virtual DataArray getDataArray(size_t index) const = 0;
 
     /**
-     * Returns the number of all data arrays of the block.
+     * @brief Returns the number of all data arrays of the block.
      *
      * @return The number of data arrays of the block.
      */
     virtual size_t dataArrayCount() const = 0;
 
     /**
-     * Create a new data array associated with this block.
+     * @brief Create a new data array associated with this block.
      *
      * @param name      The name of the data array to create.
+     * @param type      The type of the data array.
      *
      * @return The newly created data array.
      */
     virtual DataArray createDataArray(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Deletes a data array from this block.
+     * @brief Deletes a data array from this block.
+     *
+     * This deletes a data array and all its dimensions from the block and the file.
+     * The deletion can't be undone.
      *
      * @param id        The id of the data array to delete.
      *
@@ -150,7 +160,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Checks if a specific simple tag exists in the block.
+     * @brief Checks if a specific simple tag exists in the block.
      *
      * @param id        The id of a simple tag.
      *
@@ -159,7 +169,7 @@ public:
     virtual bool hasSimpleTag(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific simple tag from the block.
+     * @brief Retrieves a specific simple tag from the block by its id.
      *
      * @param id        The id of the simple tag.
      *
@@ -169,7 +179,7 @@ public:
     virtual SimpleTag getSimpleTag(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific simple tag by index.
+     * @brief Retrieves a specific simple tag by index.
      *
      * @param index     The index of the tag.
      *
@@ -178,19 +188,18 @@ public:
     virtual SimpleTag getSimpleTag(size_t index) const = 0;
 
     /**
-     * Returns the number of simple tag associated with
-     * this block.
+     * @brief Returns the number of simple tags within this block.
      *
      * @return The number of simple tags.
      */
     virtual size_t simpleTagCount() const = 0;
 
     /**
-     * Create a new simple tag associated with this block.
+     * @brief Create a new simple tag associated with this block.
      *
      * @param name      The name of the simple tag to create.
      * @param type      The type of the tag.
-     * @param vector<double> position
+     * @param refs      A Vector with referenced data array entities.
      *
      * @return The newly created tag.
      */
@@ -198,7 +207,10 @@ public:
                                       const std::vector<DataArray> &refs) = 0;
 
     /**
-     * Deletes a simple tag from the block.
+     * @brief Deletes a simple tag from the block.
+     *
+     * Deletes a simple tag with all its features from the block and the file.
+     * The deletion can't be undone.
      *
      * @param id        The id of the tag to remove.
      *
@@ -211,7 +223,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Checks if a specific data tag exists in the block.
+     * @brief Checks if a specific data tag exists in the block.
      *
      * @param id        The id of a data tag.
      *
@@ -220,7 +232,7 @@ public:
     virtual bool hasDataTag(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific data tag from the block.
+     * @brief Retrieves a specific data tag from the block by its id.
      *
      * @param id        The id of the data tag.
      *
@@ -230,7 +242,7 @@ public:
     virtual DataTag getDataTag(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific data tag by index.
+     * @brief Retrieves a specific data tag by index.
      *
      * @param index     The index of the tag.
      *
@@ -239,18 +251,18 @@ public:
     virtual DataTag getDataTag(size_t index) const = 0;
 
     /**
-     * Returns the number of data tag associated with
-     * this block.
+     * @brief Returns the number of data tags associated with this block.
      *
      * @return The number of data tags.
      */
     virtual size_t dataTagCount() const = 0;
 
     /**
-     * Create a new data tag associated with this block.
+     * @brief Create a new data tag associated with this block.
      *
      * @param name      The name of the data tag to create.
      * @param type      The type of the tag.
+     * @param positions The positions of the tag.
      *
      * @return The newly created tag.
      */
@@ -258,7 +270,10 @@ public:
                                   const DataArray positions) = 0;
 
     /**
-     * Deletes a data tag from the block.
+     * @brief Deletes a data tag from the block.
+     *
+     * Deletes a data tag and all its features from the block and the file.
+     * The deletion can't be undone.
      *
      * @param id        The id of the tag to remove.
      *
@@ -267,6 +282,9 @@ public:
     virtual bool deleteDataTag(const std::string &id) = 0;
 
 
+    /**
+     * @brief Destructor
+     */
     virtual ~IBlock() {}
 
 };
