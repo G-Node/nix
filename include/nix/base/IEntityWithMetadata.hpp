@@ -40,8 +40,8 @@ public:
      *
      * Calling this method will replace previously stored information.
      *
-     * @param id the id of the {@link nix::Section} that should be associated
-     *                    with this entity.
+     * @param id        The id of the {@link nix::Section} that should be associated
+     *                  with this entity.
      */
     virtual void metadata(const std::string &id) = 0;
 
@@ -52,7 +52,7 @@ public:
      * This method just removes the association between the respective
      * {@link nix::Section} but will not remove it from the file.
      * 
-     * @param t 
+     * @param t         None
      */
     virtual void metadata(const none_t t) = 0;
 
