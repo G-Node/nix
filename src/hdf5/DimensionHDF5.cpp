@@ -340,8 +340,10 @@ void RangeDimensionHDF5::label(const none_t t) {
 boost::optional<std::string> RangeDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    group.getAttr("unit", unit);
-    ret = unit;
+    bool have_attr = group.getAttr("unit", unit);
+    if (have_attr) {
+        ret = unit;
+    }
     return ret;
 }
 
