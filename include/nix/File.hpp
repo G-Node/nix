@@ -23,23 +23,53 @@ class NIXAPI File : public base::IFile, public base::ImplContainer<base::IFile> 
 
 public:
 
+    /**
+     * @brief Constructor that creates a null file.
+     */
     File() {}
 
+    /**
+     * @brief Copy constructor.
+     *
+     * @param other     The file to copy.
+     */
     File(const File &other)
         : ImplContainer(other.impl())
     {
     }
 
+    /**
+     * @brief Constructor that creates a new file from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     File(const std::shared_ptr<base::IFile> &p_impl)
         : ImplContainer(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new entity from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     File(std::shared_ptr<base::IFile> &&ptr)
         : ImplContainer(std::move(ptr))
     {
     }
 
+    /**
+     * @brief Opens a file.
+     *
+     * @param name      The name/path of the file.
+     * @param mode      The open mode.
+     * @param impl      The back-end implementation the should be used to open the file.
+     *                  (currently only hdf5)
+     *
+     * @return The opened file.
+     */
     static File open(const std::string name, FileMode mode=FileMode::ReadWrite,
                      Implementation impl=Implementation::Hdf5);
 
@@ -52,6 +82,13 @@ public:
         return backend()->hasBlock(id);
     }
 
+    /**
+     * @brief Check if a block exists in the file.
+     *
+     * @param block     The block to check.
+     *
+     * @return True if the block exists, false otherwise.
+     */
     bool hasBlock(const Block &block) const {
         if (block == none) {
             throw std::runtime_error("File::hasBlock: Empty Block entity given!");
@@ -78,7 +115,13 @@ public:
         return backend()->deleteBlock(id);
     }
 
-
+    /**
+     * @brief Deletes a block from the file.
+     *
+     * @param block    The block to delete.
+     *
+     * @return True if the block has been removed, false otherwise.
+     */
     bool deleteBlock(const Block &block) {
         if (block == none) {
             throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
@@ -87,21 +130,20 @@ public:
     }
 
     /**
-     * Get blocks associated with this file.
+     * @brief Get all blocks within this file.
      *
-     * The parameter "filter" is defaulted to giving back all blocks. To
-     * use your own filter pass a lambda that accepts a "Block"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter block by various
+     * criteria. By default a filter is used that accepts every block.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object blocks as a vector     
+     * @param filter    A filter function.
+     *
+     * @return A vector of filtered Block entities.
      */
-    std::vector<Block> blocks(util::AcceptAll<Block>::type filter
-                                  = util::AcceptAll<Block>()) const
+    std::vector<Block> blocks(util::Filter<Block>::type filter = util::AcceptAll<Block>()) const
     {
         auto f = [this] (size_t i) { return getBlock(i); };
-        return getEntities<Block>(f, 
-                                  blockCount(), 
+        return getEntities<Block>(f,
+                                  blockCount(),
                                   filter);
     }
 
@@ -138,17 +180,16 @@ public:
 
 
     /**
-     * Get sections associated with this file.
+     * @brief Get all root sections within this file.
      *
-     * The parameter "filter" is defaulted to giving back all sections. 
-     * To use your own filter pass a lambda that accepts a "Section"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter sections by various
+     * criteria. By default a filter is used that accepts every section.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object sections as a vector     
+     * @param filter    A filter function.
+     *
+     * @return A vector of filtered Section entities.
      */
-    std::vector<Section> sections(util::AcceptAll<Section>::type filter
-                                  = util::AcceptAll<Section>()) const
+    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const
     {
         auto f = [this] (size_t i) { return getSection(i); };
         return getEntities<Section>(f,
@@ -156,8 +197,21 @@ public:
                                     filter);
     }
 
-
-    std::vector<Section> findSections(std::function<bool(const Section&)> filter = util::AcceptAll<Section>(),
+    /**
+     * @brief Get all sections in this file recursively.
+     *
+     * This method traverses the trees of all section in the file. The traversal
+     * is accomplished via breadth first and can be limited by depth. On each node or
+     * section a filter is applied. If the filter returns true the respective section
+     * will be added to the result list.
+     * By default a filter is used that accepts every section.
+     *
+     * @param filter       A filter function.
+     * @param max_depth    The maximum depth of traversal.
+     *
+     * @return A vector containing the filtered sections.
+     */
+    std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
 
@@ -170,7 +224,13 @@ public:
         return backend()->deleteSection(id);
     }
 
-
+    /**
+     * @brief Deletes the Section.
+     *
+     * @param section   The section to delete.
+     *
+     * @return True if the section was deleted, false otherwise.
+     */
     bool deleteSection(const Section &section) {
         if(section == none) {
             throw std::runtime_error("File::hasSection: Empty Section entity given!");
@@ -238,7 +298,9 @@ public:
         return !isNone() && backend()->isOpen();
     }
 
-
+    /**
+     * @brief Assignment operator for none.
+     */
     virtual File &operator=(none_t) {
         nullify();
         return *this;

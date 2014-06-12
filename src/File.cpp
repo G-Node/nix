@@ -24,7 +24,7 @@ File File::open(const std::string name, FileMode mode, Implementation impl) {
 }
 
 
-vector<Section> File::findSections(function<bool(const Section&)> filter, size_t max_depth) const {
+vector<Section> File::findSections(util::Filter<Section>::type filter, size_t max_depth) const {
 
     vector<Section> results;
 

@@ -116,7 +116,7 @@ public:
     virtual bool hasSection(const std::string &id) const = 0;
 
     /**
-     * Get root section with a given id.
+     * @brief Get a root section with the given id.
      *
      * @param id      The id of the section.
      *
@@ -125,7 +125,7 @@ public:
     virtual Section getSection(const std::string &id) const = 0;
 
     /**
-     * Get root section with a given index/position.
+     * @brief Get root section with a given index/position.
      *
      * @param index      The index of the section.
      *
@@ -134,24 +134,28 @@ public:
     virtual Section getSection(size_t index) const = 0;
 
     /**
-     * Returns the number of Sections stored in the File.
+     * @brief Returns the number of root sections stored in the File.
      *
      * @return size_t   The number of sections.
      */
     virtual size_t sectionCount() const = 0;
 
     /**
-     * Creates a new Section with a given name and type. Both must not be empty.
+     * @brief Creates a new Section with a given name and type. Both must not be empty.
      *
-     * @param name    The given name of the section.
+     * @param name    The name of the section.
      * @param type    The type of the section.
      *
-     * @return   the created Section.
+     * @return The created Section.
      */
     virtual Section createSection(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Deletes the Section that is specified with the id.
+     * @brief Deletes the Section that is specified with the id.
+     *
+     * @param id        The id of the section to delete.
+     *
+     * @return True if the section was deleted, false otherwise.
      */
     virtual bool deleteSection(const std::string &id) = 0;
 
@@ -160,67 +164,72 @@ public:
     //--------------------------------------------------
 
     /**
-     * Read the pandora version from the file.
+     * @brief Read the NIX format version from the file.
      *
-     * @return The version of the pandora file.
+     * @return The format version of the NIX file.
      */
     virtual std::string version() const = 0;
 
     /**
-     * Read the format hint from the file.
+     * @brief Read the format hint from the file.
      *
      * @return The format hint.
      */
     virtual std::string format() const = 0;
 
     /**
-     * Get the creation date of the file.
+     * @brief Get the creation date of the file.
      *
      * @return The creation date of the file.
      */
     virtual time_t createdAt() const = 0;
 
     /**
-     * Get the date of the last update.
+     * @brief Get the date of the last update.
      *
      * @return The date of the last update.
      */
     virtual time_t updatedAt() const = 0;
 
     /**
-     * Sets the time of the last update to the current time if
+     * @brief Sets the time of the last update to the current time if
      * the field is not set.
      */
     virtual void setUpdatedAt() = 0;
 
     /**
-     * Sets the time of the last update to the current time.
+     * @brief Sets the time of the last update to the current time.
      */
     virtual void forceUpdatedAt() = 0;
 
     /**
-     * Sets the creation time to the current time if the attribute
-     * created_at is not set.
+     * @brief Sets the creation time to the current time if the field is not set.
      */
     virtual void setCreatedAt() = 0;
 
     /**
-     * Sets the creation time to the provided value even if the
-     * attribute created_at is set.
+     * @brief Sets the creation time to the provided value even if the
+     * attribute is set.
      *
-     * @param time The creation time to set.
+     * @param time      The creation time to set.
      */
-    virtual void forceCreatedAt(time_t t) = 0;
+    virtual void forceCreatedAt(time_t time) = 0;
 
     /**
-     * Close the file.
+     * @brief Close the file.
      */
     virtual void close() = 0;
 
-
+    /**
+     * @brief Check if the file is currently open.
+     *
+     * @return True if the file is open, false otherwise.
+     */
     virtual bool isOpen() const = 0;
 
-
+    /**
+     * @brief Destructor
+     */
     virtual ~IFile() {}
 
 };
