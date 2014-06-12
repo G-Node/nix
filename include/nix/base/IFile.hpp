@@ -16,14 +16,18 @@
 
 namespace nix {
 
-
+/**
+ * @brief File open modes
+ */
 NIXAPI enum class FileMode {
     ReadOnly = 0,
     ReadWrite,
     Overwrite
 };
 
-
+/**
+ * @brief NIX back-end implementations.
+ */
 NIXAPI enum class Implementation {
     Hdf5 = 0
 };
@@ -37,21 +41,23 @@ namespace base {
 
 
 /**
- * Class that represents a pandora file.
+ * @brief Interface that represents a NIX file.
+ *
+ * See {@link nix::File} for a more detailed description.
  */
 class NIXAPI IFile {
 
 public:
 
     /**
-     * Get the number of blocks in in the file.
+     * @brief Get the number of blocks in in the file.
      *
      * @return The number of blocks.
      */
     virtual size_t blockCount() const = 0;
 
     /**
-     * Check if a block exists in the file.
+     * @brief Check if a block exists in the file.
      *
      * @param id    The ID of the block.
      *
@@ -60,7 +66,7 @@ public:
     virtual bool hasBlock(const std::string &id) const = 0;
 
     /**
-     * Read an existing block from the file.
+     * @brief Read an existing block from the file.
      *
      * @param id    The ID of the block.
      *
@@ -69,7 +75,7 @@ public:
     virtual Block getBlock(const std::string &id) const = 0;
 
     /**
-     * Read an existing with block from the file, addressed by index.
+     * @brief Read an existing with block from the file, addressed by index.
      *
      * @param index   The index of the block to read.
      *
@@ -78,7 +84,7 @@ public:
     virtual Block getBlock(size_t index) const = 0;
 
     /**
-     * Create an new block, that is immediately persisted in the file.
+     * @brief Create an new block, that is immediately persisted in the file.
      *
      * @param name    The name of the block.
      * @param type    The type of the block.
@@ -88,7 +94,7 @@ public:
     virtual Block createBlock(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Deletes a block from the file.
+     * @brief Deletes a block from the file.
      *
      * @param id    The id of the block to delete.
      *
@@ -101,7 +107,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Check if a specific root section exists in the file.
+     * @brief Check if a specific root section exists in the file.
      *
      * @param id      The ID of the section.
      *
