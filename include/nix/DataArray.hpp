@@ -42,7 +42,7 @@ namespace nix {
  * floating point numbers but rather as (16 bit) integer values as, for example
  * read from a data acquisition board.
  * In order to convert such data to the correct values, we follow the approach
- * taken by the comedi data-acquisition library {@link http://www.comedi.org}
+ * taken by the comedi data-acquisition library (http://www.comedi.org)
  * and provide {@link polynomCoefficients} and an {@link expansionOrigin}.
  *
  * ### Crate a new data array with a 10 x 10 float matrix as data
@@ -238,14 +238,14 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get dimensions associated with this data array.
+     * Get all dimensions associated with this data array.
      *
-     * The parameter "filter" is defaulted to giving back all dimensions.
-     * To use your own filter pass a lambda that accepts a "Dimension"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter sources by various
+     * criteria. By default a filter is used that accepts every source.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object dimensions as a vector
+     * @param filter    A filter function ({@link nix::util::Filter::type})
+     *
+     * @return The filtered dimensions as a vector
      */
     std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
                                       = util::AcceptAll<Dimension>()) const
@@ -330,6 +330,7 @@ public:
      * of the data at the specified index.
      *
      * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param ticks     Vector with {@link nix::RangeDimension::ticks}.
      *
      * @return The created dimension descriptor.
      */
@@ -343,7 +344,8 @@ public:
      * This adds a new dimension descriptor of the type {@link nix::SampledDimension} that describes the dimension
      * of the data at the specified index.
      *
-     * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param id                The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param samplingInterval  The sampling interval of the dimension.
      *
      * @return The created dimension descriptor.
      */
