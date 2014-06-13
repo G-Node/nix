@@ -24,100 +24,148 @@ enum class LinkType;
 
 namespace base {
 
-
+/**
+ * @brief Interface for implementations of the SimpleTag entity.
+ *
+ * See {@link nix::SimpleTag} for a more detailed description.
+ */
 class NIXAPI ISimpleTag : virtual public base::IEntityWithSources {
 
 public:
 
     /**
-     * Getter for the units of the tag. The units are applied to all values for position
-     * and extent in order to calculate the right position vectors in referenced data arrays.
+     * @brief Gets the units of the tag.
+     *
+     * The units are applied to all values for position and extent in order to calculate the
+     * right position vectors in referenced data arrays.
      *
      * @return All units of the tag as a vector.
      */
     virtual std::vector<std::string> units() const = 0;
 
     /**
-     * Setter for the units of a tag.
+     * @brief Sets the units of a tag.
      *
      * @param units     All units as a vector.
      */
     virtual void units(std::vector<std::string> &units) = 0;
 
     /**
-     * Deleter for the units of a tag.
+     * @brief Deleter for the units of a tag.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     virtual void units(const none_t t) = 0;
 
     /**
-     * Getter for the position of a tag. The position is a vector that
-     * points into referenced DataArrays.
+     * @brief Gets the position of a tag.
+     *
+     * The position is a vector that points into referenced DataArrays.
      *
      * @return The position vector.
      */
     virtual std::vector<double> position() const = 0;
 
     /**
-     * Setter for the position of a tag.
+     * @brief Sets the position of a tag.
      *
-     * @param position    The position vector.
+     * @param position  The position vector.
      */
     virtual void position(const std::vector<double> &position) = 0;
 
     /**
-     * Deleter for the position of a tag.
+     * @brief Deleter for the position of a tag.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     virtual void position(const boost::none_t t) = 0;
 
     /**
-     * Getter for the extent of a tag. Given a specified position
-     * vector, the extent vector defined the size of a region of
-     * interest in the referenced DataArrays.
+     * @brief Gets the extent of a tag.
+     *
+     * Given a specified position vector, the extent vector defined the size
+     * of a region of interest in the referenced DataArray entities.
      *
      * @return The extent of the tag.
      */
     virtual std::vector<double> extent() const = 0;
 
     /**
-     * Setter for the extent of a tag.
+     * @brief Sets the extent of a tag.
      *
-     * @param extent      The extent vector.
+     * @param extent    The extent vector.
      */
     virtual void extent(const std::vector<double> &extent) = 0;
 
     /**
-     * Deleter for the extent of a tag.
+     * @brief Deleter for the extent of a tag.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     virtual void extent(const none_t t) = 0;
 
     //--------------------------------------------------
     // Methods concerning references.
-    // TODO implement when done with the DataArray class.
-    // TODO add hasXy getXy addXy and removeXy methods for references.
     //--------------------------------------------------
 
+    /**
+     * @brief Checks whether a DataArray is referenced by the tag.
+     *
+     * @param id        The id of the DataArray to check.
+     *
+     * @return True if the data array is referenced, false otherwise.
+     */
     virtual bool hasReference(const std::string &id) const = 0;
 
+    /**
+     * @brief Gets the number of referenced DataArray entities of the tag.
+     *
+     * @return The number of referenced data arrays.
+     */
     virtual size_t referenceCount() const = 0;
 
+    /**
+     * @brief Gets a specific referenced DataArray from the tag.
+     *
+     * @param id        The id of the referenced DataArray.
+     *
+     * @return The referenced data array.
+     */
     virtual DataArray getReference(const std::string &id) const = 0;
 
+    /**
+     * @brief Gets a referenced DataArray by its index.
+     *
+     * @param index     The index of the DataArray.
+     *
+     * @return The referenced data array.
+     */
     virtual DataArray getReference(size_t index) const = 0;
 
+    /**
+     * @brief Add a DataArray to the list of referenced data of the tag.
+     *
+     * @param id        The id of the DataArray to add.
+     */
     virtual void addReference(const std::string &id) = 0;
 
+    /**
+     * @brief Remove a DataArray from the list of referenced data of the tag.
+     *
+     * This method just removes the association between the data array and the
+     * tag, the data array itself will not be removed from the file.
+     *
+     * @param id        The id of the DataArray to remove.
+     *
+     * @returns True if the DataArray was removed, false otherwise.
+     */
     virtual bool removeReference(const std::string &id) = 0;
 
     /**
-     * Setter for all referenced DataArrays. Previously referenced
-     * DataArrays, that are not in the references vector will be
-     * removed.
+     * @brief Sets all referenced DataArray entities.
+     *
+     * Previously referenced data arrays, that are not in the references vector
+     * will be removed.
      *
      * @param references    All referenced arrays.
      */
@@ -128,7 +176,7 @@ public:
     //--------------------------------------------------
 
     /**
-     * Checks if a specific feature exists on the tag.
+     * @brief Checks if a specific feature exists on the tag.
      *
      * @param id        The id of a feature.
      *
@@ -137,14 +185,14 @@ public:
     virtual bool hasFeature(const std::string &id) const = 0;
 
     /**
-     * Returns the number of features in this block.
+     * @brief Gets the number of features in this block.
      *
      * @return The number of features.
      */
     virtual size_t featureCount() const = 0;
 
     /**
-     * Retrieves a specific feature from the tag.
+     * @brief Retrieves a specific feature from the tag.
      *
      * @param id        The id of the feature.
      *
@@ -154,7 +202,7 @@ public:
     virtual Feature getFeature(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific feature from the tag.
+     * @brief Retrieves a specific feature from the tag.
      *
      * @param index        The index of the feature.
      *
@@ -163,17 +211,17 @@ public:
     virtual Feature getFeature(size_t index) const = 0;
 
     /**
-     * Create a new feature.
+     * @brief Create a new feature.
      *
-     * @param std::string   The id of the data array of this feature.
-     * @param LinkType      The link type of this feature.
+     * @param data_array_id     The id of the data array of this feature.
+     * @param link_type         The link type of this feature.
      *
      * @return The created feature object.
      */
     virtual Feature createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
     /**
-     * Deletes a feature from the tag.
+     * @brief Deletes a feature from the tag.
      *
      * @param id        The id of the feature to remove.
      *
@@ -182,6 +230,9 @@ public:
     virtual bool deleteFeature(const std::string &id) = 0;
 
 
+    /**
+     * @brief Destructor
+     */
     virtual ~ISimpleTag() {}
 
 };
