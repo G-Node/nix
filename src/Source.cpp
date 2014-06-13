@@ -54,7 +54,7 @@ struct SourceCont {
 };
 
 
-std::vector<Source> Source::findSources(std::function<bool(Source)> filter,
+std::vector<Source> Source::findSources(util::Filter<Source>::type filter,
                                         size_t max_depth) const 
 {
     std::vector<Source>  results;
@@ -62,7 +62,7 @@ std::vector<Source> Source::findSources(std::function<bool(Source)> filter,
 
     todo.push_back(SourceCont(*this));
 
-    while(todo.size() > 0) 
+    while(todo.size() > 0)
     {
         SourceCont current = todo.front();
         todo.pop_front();

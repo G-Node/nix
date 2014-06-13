@@ -174,6 +174,7 @@ public:
      * of the data at the specified index.
      *
      * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param ticks     The ticks of the range dimension.
      *
      * @return The created dimension descriptor.
      */
@@ -185,7 +186,9 @@ public:
      * This adds a new dimension descriptor of the type {@link nix::SampledDimension} that describes the dimension
      * of the data at the specified index.
      *
-     * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param id                The index of the dimension. Must be a value > 0
+     *                          and <= `dimensionCount + 1`.
+     * @param samplingInterval  The sampling interval of the sampled dimension.
      *
      * @return The created dimension descriptor.
      */

@@ -22,6 +22,9 @@
 
 namespace nix {
 
+/**
+ * @brief Class that corresponds to the odML Value.
+ */
 class NIXAPI Value {
 private:
     DataType dtype;

@@ -69,7 +69,7 @@ public:
      * @brief Sets the creation time to the provided value even if the
      * field is already set.
      *
-     * @param time The creation time to set.
+     * @param t The creation time to set.
      */
     virtual void forceCreatedAt(time_t t) = 0;
 
