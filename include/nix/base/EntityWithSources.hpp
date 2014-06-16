@@ -82,7 +82,7 @@ public:
     Source getSource(const size_t index) const {
         return EntityWithMetadata<T>::backend()->getSource(index);
     }
-    
+
     /**
      * @brief Get all sources associated with this entity.
      *
@@ -92,7 +92,7 @@ public:
      * @param filter    A filter function.
      *
      * @return All associated sources that match the given filter as a vector
-     */    
+     */
     std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
     {
         auto f = [this] (size_t i) { return getSource(i); };
@@ -111,7 +111,7 @@ public:
     /**
      * @brief Associate a new source with the entity.
      *
-     * If a source already is associated with the entity, the call will have no effect.
+     * Calling this method will have no effect if the source is already associated to this entity.
      *
      * @param source    The source to add.
      */
