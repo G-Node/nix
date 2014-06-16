@@ -136,7 +136,7 @@ public:
      * @brief Get all descendant sources of the source recursively.
      *
      * This method traverses the sub-tree of all child sources of the source. The traversal
-     * is accomplished via breadth first and can be limited by depth. On each node or
+     * is accomplished via breadth first and can be limited in depth. On each node or
      * source a filter is applied. If the filter returns true the respective source
      * will be added to the result list.
      * By default a filter is used that accepts every source.

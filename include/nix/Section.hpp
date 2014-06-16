@@ -189,7 +189,7 @@ public:
      * @brief Get all descendant sections of the section recursively.
      *
      * This method traverses the sub-tree of all child sections of the section. The traversal
-     * is accomplished via breadth first and can be limited by depth. On each node or
+     * is accomplished via breadth first and can be limited in depth. On each node or
      * section a filter is applied. If the filter returns true the respective section
      * will be added to the result list.
      * By default a filter is used that accepts every section.

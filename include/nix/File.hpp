@@ -217,7 +217,7 @@ public:
      * @brief Get all sections in this file recursively.
      *
      * This method traverses the trees of all section in the file. The traversal
-     * is accomplished via breadth first and can be limited by depth. On each node or
+     * is accomplished via breadth first and can be limited in depth. On each node or
      * section a filter is applied. If the filter returns true the respective section
      * will be added to the result list.
      * By default a filter is used that accepts every section.
