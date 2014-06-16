@@ -229,11 +229,11 @@ public:
      * @brief Get referenced data arrays associated with this simple tag.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts every data array.
+     * criteria. By default a filter is used that accepts all data arrays.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered data arrays.
+     * @return A vector containing the matching data arrays.
      */
     std::vector<DataArray> references(util::Filter<DataArray>::type filter = util::AcceptAll<DataArray>()) const
     {
@@ -285,11 +285,11 @@ public:
      * @brief Get all Features of this tag.
      *
      * The parameter filter can be used to filter features by various
-     * criteria. By default a filter is used that accepts every feature.
+     * criteria. By default a filter is used that accepts all features.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered features.
+     * @return A vector containing the matching features.
      */
     std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const
     {

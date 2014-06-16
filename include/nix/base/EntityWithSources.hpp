@@ -87,7 +87,7 @@ public:
      * @brief Get all sources associated with this entity.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter that accepts every source used.
+     * criteria. By default a filter that accepts all sources is used.
      *
      * @param filter    A filter function.
      *

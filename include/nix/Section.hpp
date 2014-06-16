@@ -171,11 +171,11 @@ public:
      * @brief Get all direct child sections of the section.
      *
      * The parameter filter can be used to filter sections by various
-     * criteria. By default a filter is used that accepts every section.
+     * criteria. By default a filter is used that accepts all sections.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered child sections.
+     * @return A vector containing the matching child sections.
      */
     std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const
     {
@@ -192,12 +192,12 @@ public:
      * is accomplished via breadth first and can be limited in depth. On each node or
      * section a filter is applied. If the filter returns true the respective section
      * will be added to the result list.
-     * By default a filter is used that accepts every section.
+     * By default a filter is used that accepts all sections.
      *
      * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
-     * @return A vector containing the filtered descendant sections.
+     * @return A vector containing the matching descendant sections.
      */
     std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
@@ -279,11 +279,11 @@ public:
      * @brief Get all properties of the section.
      *
      * The parameter filter can be used to filter properties by various
-     * criteria. By default a filter is used that accepts every property.
+     * criteria. By default a filter is used that accepts all properties.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered properties.
+     * @return A vector containing the matching properties.
      */
     std::vector<Property> properties(util::Filter<Property>::type filter = util::AcceptAll<Property>()) const
     {

@@ -149,7 +149,7 @@ public:
      * @brief Get all blocks within this file.
      *
      * The parameter filter can be used to filter block by various
-     * criteria. By default a filter is used that accepts every block.
+     * criteria. By default a filter is used that accepts all blocks.
      *
      * @param filter    A filter function.
      *
@@ -199,7 +199,7 @@ public:
      * @brief Get all root sections within this file.
      *
      * The parameter filter can be used to filter sections by various
-     * criteria. By default a filter is used that accepts every section.
+     * criteria. By default a filter is used that accepts all sections.
      *
      * @param filter    A filter function.
      *
@@ -220,12 +220,12 @@ public:
      * is accomplished via breadth first and can be limited in depth. On each node or
      * section a filter is applied. If the filter returns true the respective section
      * will be added to the result list.
-     * By default a filter is used that accepts every section.
+     * By default a filter is used that accepts all sections.
      *
      * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
-     * @return A vector containing the filtered sections.
+     * @return A vector containing the matching sections.
      */
     std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;

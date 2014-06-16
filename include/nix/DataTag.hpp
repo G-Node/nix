@@ -241,7 +241,7 @@ public:
      * @brief Get all referenced data arrays associated with the tag.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts every data array.
+     * criteria. By default a filter is used that accepts all data arrays.
      *
      * @param filter       A filter function.
      *
@@ -297,7 +297,7 @@ public:
      * @brief Get all Feature entities contained in the tag.
      *
      * The parameter filter can be used to filter features by various
-     * criteria. By default a filter is used that accepts every Feature.
+     * criteria. By default a filter is used that accepts all features.
      *
      * @param filter       A filter function.
      *

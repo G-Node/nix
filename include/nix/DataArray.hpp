@@ -257,7 +257,7 @@ public:
      * Get all dimensions associated with this data array.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter is used that accepts every source.
+     * criteria. By default a filter is used that accepts all sources.
      *
      * @param filter    A filter function ({@link nix::util::Filter::type})
      *

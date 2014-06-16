@@ -170,11 +170,11 @@ public:
      * @brief Get all root sources associated with this block.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter is used that accepts every source.
+     * criteria. By default a filter is used that accepts all sources.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered root sources.
+     * @return A vector containing the matching root sources.
      */
     std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
     {
@@ -191,12 +191,12 @@ public:
      * is accomplished via breadth first and can be limited in depth. On each node or
      * source a filter is applied. If the filter returns true the respective source
      * will be added to the result list.
-     * By default a filter is used that accepts every source.
+     * By default a filter is used that accepts all sources.
      *
      * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
-     * @return A vector containing the filtered sources.
+     * @return A vector containing the matching sources.
      */
     std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
@@ -261,7 +261,7 @@ public:
      * @brief Get data arrays within this block.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts every data array.
+     * criteria. By default a filter is used that accepts all data arrays.
      *
      * @param filter    A filter function.
      *
@@ -340,7 +340,7 @@ public:
      * @brief Get simple tags within this block.
      *
      * The parameter filter can be used to filter simple tags by various
-     * criteria. By default a filter is used that accepts every tag.
+     * criteria. By default a filter is used that accepts all tags.
      *
      * @param filter    A filter function.
      *
@@ -418,7 +418,7 @@ public:
      * @brief Get data tags within this block.
      *
      * The parameter filter can be used to filter data tags by various
-     * criteria. By default a filter is used that accepts every tag.
+     * criteria. By default a filter is used that accepts all tags.
      *
      * @param filter    A filter function.
      *

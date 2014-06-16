@@ -117,11 +117,11 @@ public:
      * @brief Get all direct child sources associated with this source.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter is used that accepts every source.
+     * criteria. By default a filter is used that accepts all sources.
      *
      * @param filter    A filter function.
      *
-     * @return A vector containing the filtered child sources.
+     * @return A vector containing the matching child sources.
      */
     std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
     {
@@ -139,12 +139,12 @@ public:
      * is accomplished via breadth first and can be limited in depth. On each node or
      * source a filter is applied. If the filter returns true the respective source
      * will be added to the result list.
-     * By default a filter is used that accepts every source.
+     * By default a filter is used that accepts all sources.
      *
      * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
-     * @return A vector containing the filtered descendant sources.
+     * @return A vector containing the matching descendant sources.
      */
     std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
