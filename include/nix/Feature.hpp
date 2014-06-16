@@ -48,7 +48,19 @@ class NIXAPI Feature : virtual public base::IFeature, public base::Entity<base::
 public:
 
     /**
-     * @brief Constructor that creates a null feature.
+     * @brief Constructor that creates an uninitialized Feature.
+     *
+     * Calling any method on an uninitialized feature will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a feature is initialized:
+     *
+     * ~~~
+     * Feature e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Feature()
         : Entity()
@@ -57,6 +69,10 @@ public:
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like Feature is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The feature to copy.
      */

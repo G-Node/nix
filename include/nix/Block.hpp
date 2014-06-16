@@ -78,12 +78,28 @@ class NIXAPI Block : virtual public base::IBlock, public base::EntityWithMetadat
 public:
 
     /**
-     * @brief Constructor that creates a null entity.
+     * @brief Constructor that creates an uninitialized Block.
+     *
+     * Calling any method on an uninitialized block will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a block is initialized:
+     *
+     * ~~~
+     * Block e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Block() {}
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like block is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The block to copy.
      */
@@ -176,7 +192,7 @@ public:
      * source a filter is applied. If the filter returns true the respective source
      * will be added to the result list.
      * By default a filter is used that accepts every source.
-     * 
+     *
      * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
@@ -342,7 +358,7 @@ public:
         return backend()->simpleTagCount();
     }
 
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
+    SimpleTag createSimpleTag(const std::string &name, const std::string &type,
                               const std::vector<DataArray> &refs) {
         return backend()->createSimpleTag(name, type, refs);
     }
@@ -421,7 +437,7 @@ public:
         return backend()->dataTagCount();
     }
 
-    DataTag createDataTag(const std::string &name, const std::string &type, 
+    DataTag createDataTag(const std::string &name, const std::string &type,
                           const DataArray position) {
         return backend()->createDataTag(name, type, position);
     }

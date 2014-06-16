@@ -36,12 +36,28 @@ class NIXAPI Source : virtual public base::ISource, public base::EntityWithMetad
 public:
 
     /**
-     * @brief Constructor that creates a null source.
+     * @brief Constructor that creates an uninitialized Source.
+     *
+     * Calling any method on an uninitialized source will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a source is initialized:
+     *
+     * ~~~
+     * Source e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Source();
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like Source is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The source to copy.
      */

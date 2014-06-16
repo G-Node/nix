@@ -24,12 +24,28 @@ class NIXAPI File : public base::IFile, public base::ImplContainer<base::IFile> 
 public:
 
     /**
-     * @brief Constructor that creates a null file.
+     * @brief Constructor that creates an uninitialized File.
+     *
+     * Calling any method on an uninitialized file will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a file is initialized:
+     *
+     * ~~~
+     * File e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     File() {}
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like File is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The file to copy.
      */

@@ -45,10 +45,34 @@ class NIXAPI DataTag : virtual public base::IDataTag, public base::EntityWithSou
 
 public:
 
+    /**
+     *  @brief Constructor that creates an uninitialized DataTag.
+     *
+     * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a tag is initialized:
+     *
+     * ~~~
+     * DataTag e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     DataTag()
         : EntityWithSources()
     {}
 
+    /**
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like DataTag is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The tag to copy.
+     */
     DataTag(const DataTag &other)
         : EntityWithSources(other.impl())
     {

@@ -36,7 +36,19 @@ class NIXAPI Property : virtual public base::IProperty, public base::NamedEntity
 public:
 
     /**
-     * @brief Constructor that creates a null property.
+     * @brief Constructor that creates an uninitialized Property.
+     *
+     * Calling any method on an uninitialized property will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a property is initialized:
+     *
+     * ~~~
+     * Property e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Property()
         : NamedEntity()
@@ -45,6 +57,10 @@ public:
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like Property is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The property to copy.
      */

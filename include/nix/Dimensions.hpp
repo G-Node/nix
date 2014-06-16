@@ -30,7 +30,19 @@ class NIXAPI Dimension : public virtual base::IDimension, public base::ImplConta
 public:
 
     /**
-     * @brief Constructor that creates a null dimension.
+     * @brief Constructor that creates an uninitialized Dimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * Dimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Dimension();
 
@@ -54,12 +66,20 @@ public:
     /**
      * @brief Copy constructor
      *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
      * @param other     The dimension to copy.
      */
     Dimension(const Dimension &other);
 
     /**
      * @brief Copy constructor that converts a SampledDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The dimension to copy.
      */
@@ -68,12 +88,20 @@ public:
     /**
      * @brief Copy constructor that converts a RangeDimension to Dimension.
      *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
      * @param other     The dimension to copy.
      */
     Dimension(const RangeDimension &other);
 
     /**
      * @brief Copy constructor that converts a SetDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The dimension to copy.
      */
@@ -141,7 +169,19 @@ class NIXAPI SampledDimension : public virtual base::ISampledDimension, public b
 public:
 
     /**
-     * @brief Constructor that creates a null dimension.
+     * @brief Constructor that creates an uninitialized SampledDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * SampledDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     SampledDimension();
 
@@ -163,6 +203,10 @@ public:
 
     /**
      * @brief Copy constructor
+     *
+     * Copying of all NIX front facing objects like SampledDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The dimension to copy.
      */
@@ -257,7 +301,19 @@ class NIXAPI SetDimension : virtual public base::ISetDimension, public base::Imp
 public:
 
     /**
-     * @brief Constructor that creates a null dimension.
+     * @brief Constructor that creates an uninitialized SetDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * SetDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     SetDimension();
 
@@ -278,7 +334,11 @@ public:
     SetDimension(std::shared_ptr<base::ISetDimension> &&ptr);
 
     /**
-     * @brief Copy constructor
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like SetDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The dimension to copy.
      */
@@ -335,7 +395,19 @@ class NIXAPI RangeDimension : virtual public base::IRangeDimension, public base:
 public:
 
     /**
-     * @brief Constructor that creates a null dimension.
+     * @brief Constructor that creates an uninitialized RangeDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * RangeDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     RangeDimension();
 
@@ -357,6 +429,10 @@ public:
 
     /**
      * @brief Copy constructor
+     *
+     * Copying of all NIX front facing objects like RangeDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The dimension to copy.
      */

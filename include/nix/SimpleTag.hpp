@@ -49,7 +49,19 @@ class NIXAPI SimpleTag : virtual public base::ISimpleTag, public base::EntityWit
 public:
 
     /**
-     * @brief Constructor that creates a null tag.
+     * @brief Constructor that creates an uninitialized SimpleTag.
+     *
+     * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a tag is initialized:
+     *
+     * ~~~
+     * SimpleTag e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     SimpleTag()
         : EntityWithSources()
@@ -58,6 +70,10 @@ public:
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like SimpleTag is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The tag to copy.
      */

@@ -29,7 +29,19 @@ class NIXAPI Section : virtual public base::ISection, public base::NamedEntity<b
 public:
 
     /**
-     * @brief Constructor that creates a null Section.
+     * @brief Constructor that creates an uninitialized Section.
+     *
+     * Calling any method on an uninitialized section will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a section is initialized:
+     *
+     * ~~~
+     * Section e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
      */
     Section();
 
@@ -40,6 +52,10 @@ public:
 
     /**
      * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like Section is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
      *
      * @param other     The Section to copy.
      */
