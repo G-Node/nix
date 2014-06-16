@@ -27,8 +27,8 @@ namespace nix {
  * information.
  *
  * The {@link DataArray} is the core entity of the NIX data model, its purpose is to
- * store arbitrary n-dimensional data. In addition to the common fields the DataArray
- * stores sufficient information to understand the physical nature of the stored data.
+ * store arbitrary n-dimensional data. In addition to the common fields id, name, type, and definition
+ * the DataArray stores sufficient information to understand the physical nature of the stored data.
  *
  * A guiding principle of the data model is provides enough information to create a
  * plot of the stored data. In order to do so, the DataArray defines a property
