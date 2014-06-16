@@ -34,7 +34,7 @@ namespace nix {
  * plot of the stored data. In order to do so, the DataArray defines a property
  * {@link dataType} which provides the physical type of the stored data (for example
  * 16 bit integer or double precision IEEE floatingpoint number).
- * The property {@link unit} specifies the si unit of the values stored in the
+ * The property {@link unit} specifies the SI unit of the values stored in the
  * DataArray{} whereas the {@link label} defines what is given in this units.
  * Together, both specify what corresponds to the the y-axis of a plot.
  *

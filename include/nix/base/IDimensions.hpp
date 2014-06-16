@@ -103,7 +103,7 @@ public:
     /**
      * @brief Gets the unit of a dimension.
      *
-     * The unit describes which si unit applies to this dimension
+     * The unit describes which SI unit applies to this dimension
      * and to its sampling interval.
      *
      * @return The unit of the dimension.
@@ -255,7 +255,7 @@ public:
     /**
      * @brief Gets the unit of a dimension.
      *
-     * The unit describes which si unit applies to this dimension
+     * The unit describes which SI unit applies to this dimension
      * and to its sampling interval.
      *
      * @return The unit of the dimension.

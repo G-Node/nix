@@ -147,7 +147,7 @@ NIXAPI T convertToKelvin(const std::string &unit, T value) {
  *
  * @param unit  A string that is supposed to represent an SI unit.
  *
- * @return True if a valid si unit, false otherwise.
+ * @return True if a valid SI unit, false otherwise.
  */
 NIXAPI bool isSIUnit(const std::string &unit);
 
