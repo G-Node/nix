@@ -108,8 +108,8 @@ public:
     Dimension(const SetDimension &other);
 
 
-    size_t id() const {
-        return backend()->id();
+    size_t index() const {
+        return backend()->index();
     }
 
 
@@ -212,8 +212,8 @@ public:
      */
     SampledDimension(const SampledDimension &other);
 
-    size_t id() const {
-        return backend()->id();
+    size_t index() const {
+        return backend()->index();
     }
 
     DimensionType dimensionType() const {
@@ -344,8 +344,8 @@ public:
      */
     SetDimension(const SetDimension &other);
 
-    size_t id() const {
-        return backend()->id();
+    size_t index() const {
+        return backend()->index();
     }
 
     DimensionType dimensionType() const {
@@ -438,8 +438,8 @@ public:
      */
     RangeDimension(const RangeDimension &other);
 
-    size_t id() const {
-        return backend()->id();
+    size_t index() const {
+        return backend()->index();
     }
 
     DimensionType dimensionType() const {

@@ -35,17 +35,17 @@ class DimensionHDF5 : virtual public base::IDimension {
 protected:
 
     Group group;
-    size_t dim_id;
+    size_t dim_index;
 
 public:
 
-    DimensionHDF5(Group group, size_t id);
+    DimensionHDF5(Group group, size_t index);
 
 
     DimensionHDF5(const DimensionHDF5 &other);
 
 
-    size_t id() const { return dim_id; }
+    size_t index() const { return dim_index; }
 
 
     void swap(DimensionHDF5 &other);
@@ -73,7 +73,7 @@ class SampledDimensionHDF5 : virtual public base::ISampledDimension, public Dime
 
 public:
 
-    SampledDimensionHDF5(Group group, size_t id, double samplingInterval);
+    SampledDimensionHDF5(Group group, size_t index, double samplingInterval);
 
 
     SampledDimensionHDF5(const SampledDimensionHDF5 &other);
@@ -86,19 +86,19 @@ public:
 
 
     void label(const std::string &label);
-    
-    
+
+
     void label(none_t t);
-    
+
 
     boost::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
 
-    
+
     void unit(none_t t);
-    
+
 
     double samplingInterval() const;
 
@@ -113,7 +113,7 @@ public:
 
 
     void offset(const none_t t);
-        
+
 
     SampledDimensionHDF5& operator=(const SampledDimensionHDF5 &other);
 
@@ -130,7 +130,7 @@ class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF
 
 public:
 
-    SetDimensionHDF5(Group group, size_t id);
+    SetDimensionHDF5(Group group, size_t index);
 
 
     SetDimensionHDF5(const SetDimensionHDF5 &other);
@@ -163,7 +163,7 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(Group group, size_t id, std::vector<double> _ticks);
+    RangeDimensionHDF5(Group group, size_t index, std::vector<double> _ticks);
 
 
     RangeDimensionHDF5(const RangeDimensionHDF5 &other);

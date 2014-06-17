@@ -65,14 +65,14 @@ std::string dimensionTypeToStr(DimensionType dim) {
 
 // Implementation of Dimension
 
-DimensionHDF5::DimensionHDF5(Group group, size_t id)
-    : group(group), dim_id(id)
+DimensionHDF5::DimensionHDF5(Group group, size_t index)
+    : group(group), dim_index(index)
 {
 }
 
 
 DimensionHDF5::DimensionHDF5(const DimensionHDF5 &other)
-    : group(other.group), dim_id(other.dim_id)
+    : group(other.group), dim_index(other.dim_index)
 {
 }
 
@@ -85,7 +85,7 @@ void DimensionHDF5::setType() {
 void DimensionHDF5::swap(DimensionHDF5 &other) {
     using std::swap;
     swap(group, other.group);
-    swap(dim_id, other.dim_id);
+    swap(dim_index, other.dim_index);
 }
 
 
@@ -105,8 +105,8 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id, double _samplingInterval)
-    : DimensionHDF5(group, id)
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double _samplingInterval)
+    : DimensionHDF5(group, index)
 {
     setType();
     samplingInterval(_samplingInterval);
@@ -114,7 +114,7 @@ SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t id, double _sampl
 
 
 SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_id)
+    : DimensionHDF5(other.group, other.dim_index)
 {
     setType();
     samplingInterval(other.samplingInterval());
@@ -188,13 +188,13 @@ void SampledDimensionHDF5::unit(const none_t t) {
 
 double SampledDimensionHDF5::samplingInterval() const {
     double sampling_interval;
-    
+
     if(group.hasAttr("sampling_interval")) {
         group.getAttr("sampling_interval", sampling_interval);
         return sampling_interval;
     } else {
         throw MissingAttr("sampling_interval");
-    }    
+    }
 }
 
 
@@ -238,15 +238,15 @@ SampledDimensionHDF5::~SampledDimensionHDF5() {}
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
 
-SetDimensionHDF5::SetDimensionHDF5(Group group, size_t id)
-    : DimensionHDF5(group, id)
+SetDimensionHDF5::SetDimensionHDF5(Group group, size_t index)
+    : DimensionHDF5(group, index)
 {
     setType();
 }
 
 
 SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_id)
+    : DimensionHDF5(other.group, other.dim_index)
 {
     setType();
 }
@@ -288,8 +288,8 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id, vector<double> _ticks)
-    : DimensionHDF5(group, id)
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> _ticks)
+    : DimensionHDF5(group, index)
 {
     setType();
     ticks(_ticks);
@@ -297,7 +297,7 @@ RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t id, vector<double> _t
 
 
 RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_id)
+    : DimensionHDF5(other.group, other.dim_index)
 {
     setType();
     ticks(other.ticks());
