@@ -37,7 +37,7 @@ protected:
      * parameter "size_t" specifying the index of the entity to get.
      * The parameter "nT" should give the number of entities to get and
      * should be =>0 & <= the total number of existing entities.
-     * The parameter "filter" is defaulted to giving back all entities
+     * The parameter "filter" is defaulted to return all entities
      * of given type. To use your own filter pass a lambda that accepts
      * an entity of given type as parameter and returns a bool telling
      * whether to get it or not.
