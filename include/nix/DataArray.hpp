@@ -45,7 +45,7 @@ namespace nix {
  * taken by the comedi data-acquisition library (http://www.comedi.org)
  * and provide {@link polynomCoefficients} and an {@link expansionOrigin}.
  *
- * ### Crate a new data array with a 10 x 10 float matrix as data
+ * ### Create a new data array with a 10 x 10 float matrix as data
  *
  * A DataArray can only be created at an existing block. Do not use the
  * DataArrays constructors for this purpose.
@@ -383,10 +383,9 @@ public:
     //--------------------------------------------------
 
     /**
-     * @brief Create data for this data array.
+     * @brief Allocate file space for this data array.
      *
-     * The following example creates two dimensional data containing integers with the
-     * size of 10 x 100 and a rank of 2.
+     * The following example allocates a data space for a matrix of integers with 10 x 100 elements.
      *
      * ~~~
      * DataArray da = ...;
@@ -403,7 +402,7 @@ public:
     }
 
     /**
-     * @brief Check if the data array has some data.
+     * @brief Check if the data array contains data.
      *
      * @return True if the array contains data, false otherwise.
      */

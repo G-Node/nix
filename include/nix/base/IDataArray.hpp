@@ -140,7 +140,7 @@ public:
     /**
      * @brief Returns the number of dimensions stored in the DataArray.
      *
-     * This matches the dimensionality of the data stored in this property.
+     * This should match (but is not ensured) the dimensionality of the data stored in this data array.
      *
      * @return The number of dimensions.
      */
@@ -209,8 +209,8 @@ public:
     /**
      * @brief Create data for this data array.
      *
-     * The following example creates two dimensional data containing integers with the
-     * size of 10 x 100 and a rank of 2.
+     * The following example allocates a file space for a matrix of integers with
+     * 10 x 100 elements.
      *
      * ~~~
      * DataArray da = ...;
