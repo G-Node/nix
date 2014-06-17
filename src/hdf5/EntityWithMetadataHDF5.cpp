@@ -7,9 +7,11 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/util/filter.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 using namespace std;
+using namespace nix::util;
 
 namespace nix {
 namespace hdf5 {
@@ -28,7 +30,8 @@ EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const str
 
 
 void EntityWithMetadataHDF5::metadata(const std::string &id) {
-    if (!file().hasSection(id)) {
+    vector<Section> found = file().findSections(IdFilter<Section>(id));
+    if (found.size() == 0) {
         throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
     } else {
         group().setAttr("metadata", id);
