@@ -144,9 +144,8 @@ public:
     /**
      * @brief Gets the offset of the dimension.
      *
-     * The offset defines at which position the sampling was started. The unit
-     * of measure in which the offset must be provided id defined by the
-     * {@link unit} of the SampledDimension.
+     * The offset defines at which position the sampling was started. The offset is
+     * interpreted in the same unit as the sampling interval.
      *
      * By default the offset is 0.
      *
