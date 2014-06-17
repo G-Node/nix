@@ -222,7 +222,7 @@ void TestDataArray::testDimension()
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
     double samplingInterval = boost::math::constants::pi<double>();
-    
+
     for(size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
@@ -234,11 +234,11 @@ void TestDataArray::testDimension()
     dims.push_back(array2.appendSetDimension());
     dims[3] = array2.createRangeDimension(4, ticks);
 
-    CPPUNIT_ASSERT(array2.getDimension(dims[0].id()).dimensionType() == nix::DimensionType::Sample);
-    CPPUNIT_ASSERT(array2.getDimension(dims[1].id()).dimensionType() == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(array2.getDimension(dims[2].id()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[3].id()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[4].id()).dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
+    CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(array2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
 
     CPPUNIT_ASSERT(array2.dimensionCount() == 5);
 

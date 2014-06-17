@@ -28,7 +28,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestDimension);
 
-    CPPUNIT_TEST(testId);
+    CPPUNIT_TEST(testIndex);
     CPPUNIT_TEST(testSampledDimLabel);
     CPPUNIT_TEST(testSampledDimOffset);
     CPPUNIT_TEST(testSampledDimUnit);
@@ -52,7 +52,7 @@ public:
     void setUp();
     void tearDown();
 
-    void testId();
+    void testIndex();
 
     void testSampledDimLabel();
     void testSampledDimOffset();
