@@ -19,10 +19,10 @@
 namespace nix {
 
 /**
- * @brief A tag class that can use DataArray entities for positions and extents.
+ * @brief A tag class that can be used to tag multiple positions or regions in data.
  *
  * Besides the {@link nix::DataArray} the tag entities can be considered as the other
- * core entities of the data model. The concept of tags in the NIX model is rather complex.
+ * core entities of the data model.
  * They are meant to attach annotations directly to the data and to establish meaningful
  * links between different kinds of stored data.
  * Most importantly tags allow the definition of points or regions of interest in data
