@@ -23,12 +23,12 @@ namespace nix {
  * {@link nix::DataTag}
  *
  * A {@link Feature} entity contains a link to an existing {@link nix::DataArray} containing additional
- * data that belongs to the respective tag. {@link Feature} has a property {@link linkType} which describes
- * how its data is connected to the tag.
+ * data that belongs to the respective tag. The way how data and feature are connected is specified by the
+ * link type.
  *
  * ### Tagged
  *
- * This link type  indicated, that only a certain subset of the linked {@link nix::DataArray}
+ * This link type  indicates, that only a certain subset of the linked {@link nix::DataArray}
  * belongs to the {@link Feature}. This subset is defined by the position and extent of the
  * respective tag.
  *
