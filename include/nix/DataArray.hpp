@@ -20,25 +20,103 @@
 
 namespace nix {
 
+// TODO add documentation for undocumented methods.
 
+/**
+ * @brief A class that can store arbitrary n-dimensional data along with further
+ * information.
+ *
+ * The {@link DataArray} is the core entity of the NIX data model, its purpose is to
+ * store arbitrary n-dimensional data. In addition to the common fields id, name, type, and definition
+ * the DataArray stores sufficient information to understand the physical nature of the stored data.
+ *
+ * A guiding principle of the data model is provides enough information to create a
+ * plot of the stored data. In order to do so, the DataArray defines a property
+ * {@link dataType} which provides the physical type of the stored data (for example
+ * 16 bit integer or double precision IEEE floatingpoint number).
+ * The property {@link unit} specifies the SI unit of the values stored in the
+ * DataArray{} whereas the {@link label} defines what is given in this units.
+ * Together, both specify what corresponds to the the y-axis of a plot.
+ *
+ * In some cases it is much more efficient or convenient to store data not as
+ * floating point numbers but rather as (16 bit) integer values as, for example
+ * read from a data acquisition board.
+ * In order to convert such data to the correct values, we follow the approach
+ * taken by the comedi data-acquisition library (http://www.comedi.org)
+ * and provide {@link polynomCoefficients} and an {@link expansionOrigin}.
+ *
+ * ### Create a new data array with a 10 x 10 float matrix as data
+ *
+ * A DataArray can only be created at an existing block. Do not use the
+ * DataArrays constructors for this purpose.
+ *
+ * ~~~
+ * Block b = ...;
+ * DataArray da = b.crateDataArray("matrix_10_10", "data");
+ * da.createData(DataType::Float, {10, 10});
+ * ~~~
+ *
+ * ### Remove a data array from a file
+ *
+ * ~~~
+ * Block b = ...;
+ * bool deleted = da.deleteDataArray(some_id);
+ * ~~~
+ */
 class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized DataArray.
+     *
+     * Calling any method on an uninitialized data array will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a data array is initialized:
+     *
+     * ~~~
+     * DataArray e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     DataArray()
         : EntityWithSources()
     {}
 
+    /**
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like DataArray is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The data array to copy.
+     */
     DataArray(const DataArray &other)
         : EntityWithSources(other.impl())
     {
     }
 
+    /**
+     * @brief Constructor that creates a new data array from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     DataArray(const std::shared_ptr<base::IDataArray> &p_impl)
         : EntityWithSources(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new data array from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     DataArray(std::shared_ptr<base::IDataArray> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
@@ -49,27 +127,27 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get the label for the values stored in the DataArray.
+     * @brief Get the label for the values stored in the DataArray.
      *
-     * @return boost::optional<std::string> the label
+     * @return The label of the data array.
      */
     boost::optional<std::string> label() const {
         return backend()->label();
     }
 
     /**
-     * Set the label for the data stored.
+     * @brief Set the label for the data stored.
      *
-     * @param string label
+     * @param label     The label of the data array.
      */
     void label(const std::string &label) {
         backend()->label(label);
     }
 
     /**
-     * Deleter for the label attribute.
+     * @brief Deleter for the label attribute.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     void label(const none_t t)
     {
@@ -77,18 +155,18 @@ public:
     }
 
     /**
-     * Get the unit of the data stored in this dataArray.
+     * @brief Get the unit of the data stored in this data array.
      *
-     * @return string the unit.
+     * @return The unit of the data array.
      */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
     /**
-     * Deleter for the unit attribute.
+     * @brief Deleter for the unit attribute.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     void unit(const none_t t)
     {
@@ -96,9 +174,9 @@ public:
     }
 
     /**
-     * Set the unit for the values stored in this DataArray.
+     * @brief Set the unit for the values stored in this DataArray.
      *
-     * @param string the unit
+     * @param unit      The unit of the data array.
      */
     void unit(const std::string &unit) {
         if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
@@ -108,28 +186,32 @@ public:
     }
 
     /**
-     * Returns the expansion origin of the calibration polynom.
-     * This is set to 0.0 by default.
+     * @brief Returns the expansion origin of the calibration polynom.
      *
-     * @return double the expansion origin.
+     * The expansion origin is 0.0 by default.
+     *
+     * @return The expansion origin.
      */
     boost::optional<double> expansionOrigin() const {
         return backend()->expansionOrigin();
     }
 
     /**
-     * Set the expansion origin for the calibration.
+     * @brief Set the expansion origin for the calibration.
      *
-     * @param double the expansion origin.
+     * @param expansion_origin  The expansion origin for the calibration.
      */
     void expansionOrigin(double expansion_origin) {
         backend()->expansionOrigin(expansion_origin);
     }
 
     /**
-     * Deleter for the expansionOrigin attribute.
+     * @brief Deleter for the expansion origin.
      *
-     * @param boost::none_t.
+     * This will reset the expansion origin for the calibration to its
+     * default value which is given with 0.0.
+     *
+     * @param t         None
      */
     void expansionOrigin(const none_t t)
     {
@@ -137,28 +219,30 @@ public:
     }
 
     /**
-     * Set the polynom coefficients for the calibration. By default this is set
-     * to a two element vector of [0.0, 1.0] for a linear calibration with zero offset.
+     * @brief Set the polynom coefficients for the calibration.
      *
-     * @param vector<double> the coefficients
+     * By default this is set to a two element vector of [0.0, 1.0] for a linear calibration
+     * with zero offset.
+     *
+     * @param polynom_coefficients      The new polynom coefficients for the calibration.
      */
     void polynomCoefficients(std::vector<double> &polynom_coefficients) {
         backend()->polynomCoefficients(polynom_coefficients);
     }
 
     /**
-     * Returns the polynom coefficients.
+     * @brief Returns the polynom coefficients.
      *
-     * @return vector<double> the coefficients.
+     * @return The polynom coefficients for the calibration.
      */
     std::vector<double> polynomCoefficients() const {
         return backend()->polynomCoefficients();
     }
 
     /**
-     * Deleter for the polynomCoefficients attribute.
+     * @brief Deleter for the `polynomCoefficients` attribute.
      *
-     * @param boost::none_t.
+     * @param t         None
      */
     void polynomCoefficients(const none_t t)
     {
@@ -170,14 +254,14 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get dimensions associated with this data array.
+     * Get all dimensions associated with this data array.
      *
-     * The parameter "filter" is defaulted to giving back all dimensions.
-     * To use your own filter pass a lambda that accepts a "Dimension"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter sources by various
+     * criteria. By default a filter is used that accepts all sources.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object dimensions as a vector
+     * @param filter    A filter function ({@link nix::util::Filter::type})
+     *
+     * @return The filtered dimensions as a vector
      */
     std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
                                       = util::AcceptAll<Dimension>()) const
@@ -189,129 +273,139 @@ public:
     }
 
     /**
-     * Returns the number of dimensions stored in the DataArray.
-     * This must match the dimensionality of the data stored in this property.
+     * @brief Returns the number of dimensions stored in the DataArray.
      *
-     * @return size_t the count
+     * This matches the dimensionality of the data stored in this property.
+     *
+     * @return The number of dimensions.
      */
     size_t dimensionCount() const {
         return backend()->dimensionCount();
     }
 
     /**
-     * Returns the Dimension object for the passed dimension of the data.
+     * @brief Returns the Dimension object for the specified dimension of the data.
      *
-     * @return Dimension the dimension
+     * @param id        The index of the respective dimension.
+     *
+     * @return The dimension object.
      */
     Dimension getDimension(size_t id) const {
         return backend()->getDimension(id);
     }
 
     /**
-     * Append a new Set Dimension description to the list of stored dimensions.
+     * @brief Append a new SetDimension to the list of existing dimension descriptors.
      *
-     * @param nix::DimensionType
-     *
-     * @return the new Dimension
+     * @return The newly created SetDimension.
      */
     Dimension appendSetDimension() {
         return backend()->createSetDimension(backend()->dimensionCount() + 1);
     }
 
     /**
-     * Append a new Range Dimension description to the list of stored dimensions.
+     * @brief Append a new RangeDimension to the list of existing dimension descriptors.
      *
-     * @param nix::DimensionType
+     * @param ticks     The ticks of the RangeDimension to create.
      *
-     * @return the new Dimension
+     * @return The newly created RangeDimension
      */
     Dimension appendRangeDimension(std::vector<double> ticks) {
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
 
     /**
-     * Append a new Sampled Dimension description to the list of stored dimensions.
+     * @brief Append a new SampledDimension to the list of existing dimension descriptors.
      *
-     * @param nix::DimensionType
+     * @param samplingInterval         The sampling interval of the SetDimension to create.
      *
-     * @return the new Dimension
+     * @return The newly created SampledDimension.
      */
     Dimension appendSampledDimension(double samplingInterval) {
         return backend()->createSampledDimension(backend()->dimensionCount() + 1, samplingInterval);
     }
 
     /**
-     * Create a new Set Dimension with a specified id, respectively the dimension that
-     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     * @brief Create a new SetDimension at a specified dimension index.
      *
-     * @param size_t the dimension id.
+     * This adds a new dimension descriptor of the type {@link nix::SetDimension} that describes the dimension
+     * of the data at the specified index.
      *
-     * @return Dimension the created dimension descriptor
+     * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     *
+     * @return The created dimension descriptor.
      */
     Dimension createSetDimension(size_t id) {
         return backend()->createSetDimension(id);
     }
 
-
     /**
-     * Create a new Range Dimension with a specified id, respectively the dimension that
-     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     * @brief Create a new RangeDimension at a specified dimension index.
      *
-     * @param size_t the dimension id.
-     * @param vector<double> vector with ticks for dimension
+     * This adds a new dimension descriptor of the type {@link nix::RangeDimension} that describes the dimension
+     * of the data at the specified index.
      *
-     * @return Dimension the created dimension descriptor
+     * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param ticks     Vector with {@link nix::RangeDimension::ticks}.
+     *
+     * @return The created dimension descriptor.
      */
     Dimension createRangeDimension(size_t id, std::vector<double> ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
 
-
     /**
-     * Create a new Sampled Dimension with a specified id, respectively the dimension that
-     * is described with it. id must be larger than 0 and  less than dimensionCount()+1.
+     * @brief Create a new SampledDimension at a specified dimension index.
      *
-     * @param size_t the dimension id.
-     * @param double sampling interval
+     * This adds a new dimension descriptor of the type {@link nix::SampledDimension} that describes the dimension
+     * of the data at the specified index.
      *
-     * @return Dimension the created dimension descriptor
+     * @param id                The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
+     * @param samplingInterval  The sampling interval of the dimension.
+     *
+     * @return The created dimension descriptor.
      */
     Dimension createSampledDimension(size_t id, double samplingInterval) {
         return backend()->createSampledDimension(id, samplingInterval);
     }
 
-
     /**
-     * Deletes a dimension from the list of dimension descriptors.
+     * @brief Remove a dimension descriptor at a specified index.
+     *
+     * @param id        The index of the dimension. Must be a value > 0 and < `dimensionCount + 1`.
      */
     bool deleteDimension(size_t id) {
         return backend()->deleteDimension(id);
     }
 
     //--------------------------------------------------
-    // Other methods and functions
-    //--------------------------------------------------
-
-    /**
-     * Output operator
-     */
-    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent) {
-        out << "DataArray: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
-
-    double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
-
-    //--------------------------------------------------
     // Methods concerning data access.
     //--------------------------------------------------
 
+    /**
+     * @brief Allocate file space for this data array.
+     *
+     * The following example allocates a data space for a matrix of integers with 10 x 100 elements.
+     *
+     * ~~~
+     * DataArray da = ...;
+     * if (!da.hasData()) {
+     *     da.createData(DataType::Int32, {10, 100});
+     * }
+     * ~~~
+     *
+     * @param dtype     The data type that should be stored in this data array.
+     * @param size      The size of the data to store.
+     */
     void createData(DataType dtype, const NDSize &size) {
         backend()->createData(dtype, size);
     }
 
+    /**
+     * @brief Check if the data array contains data.
+     *
+     * @return True if the array contains data, false otherwise.
+     */
     bool hasData() const {
         return backend()->hasData();
     }
@@ -319,10 +413,13 @@ public:
     template<typename T> void createData(const T &value, const NDSize &size = {});
 
     template<typename T> void getData(T &value) const;
+
     template<typename T> void setData(const T &value);
 
     template<typename T> void getData(T &value, const NDSize &count, const NDSize &offset) const;
+
     template<typename T> void getData(T &value, const NDSize &offset) const;
+
     template<typename T> void setData(const T &value, const NDSize &offset);
 
     void getData(DataType dtype,
@@ -340,17 +437,48 @@ public:
         backend()->write(dtype, data, count, offset);
     }
 
+    /**
+     * @brief Get the extent of the data of the DataArray entity.
+     *
+     * @return The data extent.
+     */
     NDSize dataExtent() const {
         return backend()->dataExtent();
     }
 
+    /**
+     * @brief Set the data extent of the DataArray entity.
+     *
+     * @param extent    The extent of the data.
+     */
     void dataExtent(const NDSize &extent) {
         backend()->dataExtent(extent);
     }
 
+    /**
+     * @brief Get the data type of the data stored in the DataArray entity.
+     *
+     * @return The data type of the DataArray.
+     */
     DataType dataType(void) const {
         return backend()->dataType();
     }
+
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
+
+    /**
+     * @brief Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent) {
+        out << "DataArray: {name = " << ent.name();
+        out << ", type = " << ent.type();
+        out << ", id = " << ent.id() << "}";
+        return out;
+    }
+
+    double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
  };
 
@@ -385,7 +513,7 @@ void DataArray::setData(const T &value)
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    if(!backend()->hasData()) { 
+    if(!backend()->hasData()) {
         backend()->createData(dtype, shape);
     }
     backend()->dataExtent(shape);

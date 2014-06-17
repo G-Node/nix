@@ -61,17 +61,17 @@ struct SectionCont {
     Section entity;
     size_t depth;
 };
-    
 
-std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
-                                  size_t max_depth) const 
+
+std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
+                                           size_t max_depth) const
 {
     std::vector<Section>  results;
     std::list<SectionCont> todo;
 
     todo.push_back(SectionCont(*this));
 
-    while(todo.size() > 0) 
+    while(todo.size() > 0)
     {
         SectionCont current = todo.front();
         todo.pop_front();
@@ -93,9 +93,9 @@ std::vector<Section> Section::findSections(std::function<bool(Section)> filter,
 
     return results;
 }
-    
 
-std::vector<Section> Section::findRelated(std::function<bool(Section)> filter) const
+
+std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) const
 {
     std::vector<Section> results = findDownstream(filter);
     if(results.size() > 0) { //This checking of results can be removed if we decide not to include this in findSection

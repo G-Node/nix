@@ -16,45 +16,58 @@
 namespace nix {
 namespace base {
 
-// TODO what about TNode?
+/**
+ * @brief Base class for entities that can be associated with additional metadata.
+ *
+ * The data part of the NIX data model consists of five main elements which all inherit from
+ * {@link nix::base::EntityWithMetadata}: {@link nix::Block}, {@link nix::DataArray}, {@link nix::DataTag},
+ * {@link nix::SimpleTag}, and {@link nix::Source} that serve different purposes.
+ * Common to all those entities is an optional property {@link metadata} which  provides a link to a
+ * {@link nix::Section} entity and therefore makes it possible to annotate the entities with additional
+ * metadata.
+ */
 template <typename T>
 class EntityWithMetadata : virtual public IEntityWithMetadata, public NamedEntity<T> {
 
 public:
 
+    /**
+     * @brief Constructor that creates a null entity.
+     */
     EntityWithMetadata()
         : NamedEntity<T>()
     {
     }
 
-
+    /**
+     * @brief Constructor that creates a new entity from a shared pointer to
+     * an implementation instance.
+     */
     EntityWithMetadata(const std::shared_ptr<T> &p_impl)
         : NamedEntity<T>(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new entity from a
+     * shared pointer to an implementation instance.
+     */
     EntityWithMetadata(std::shared_ptr<T> &&ptr)
         : NamedEntity<T>(std::move(ptr))
     {
     }
 
-    /**
-     * Get metadata associated with this entity.
-     *
-     * @return The associated section, if no such section exists
-     *         an exception will be thrown.
-     */
     Section metadata() const {
         return NamedEntity<T>::backend()->metadata();
     }
 
     /**
-     * Associate the entity with some metadata. Calling this method will replace
-     * previously stored information.
-     * Note: This function does not delete the referenced Section!
+     * @brief Associate the entity with some metadata.
      *
-     * @param metadata    The section that should be associated
-     *                    with this entity.
+     * Calling this method will replace previously stored information.
+     *
+     * @param metadata The {@link nix::Section} that should be associated
+     *                 with this entity.
      */
     void metadata(const Section &metadata) {
         if(metadata == none){
@@ -65,30 +78,18 @@ public:
         }
     }
 
-    /**
-     * Associate the entity with some metadata. Calling this method will replace
-     * previously stored information.
-     * Note: This function does not delete the referenced Section!
-     *
-     * @param std::string       The id of the section that should be associated
-     *                          with this entity.
-     */
     void metadata(const std::string &id) {
         NamedEntity<T>::backend()->metadata(id);
     }
 
-    /**
-     * Remove associated metadata from the entity.
-     * The section will not be deleted.
-     *
-     * @param boost::none_t.
-     */
     void metadata(const none_t t)
     {
         NamedEntity<T>::backend()->metadata(t);
     }
 
-
+    /**
+     * Destructor
+     */
     virtual ~EntityWithMetadata() {}
 
 };

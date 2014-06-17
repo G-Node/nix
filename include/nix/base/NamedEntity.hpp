@@ -15,23 +15,45 @@
 namespace nix {
 namespace base {
 
-
+/**
+ * @brief Base class for entities with a {@link name}, {@link type} and a
+ * {@link definition}
+ *
+ * In addition to the properties defined by {@link nix::base::Entity} most entities of the
+ * NIX data model further provide a {@link name}, {@link type} and a {@link definition}.
+ * The {@link name} of an entity serves as a human readable identifier. It is not obliged
+ * to be unique. However it is strongly recommended to use unique name inside one specific
+ * {@link nix::Block}. The property {@link type} is used in order to allow the specification
+ * of additional semantic meaning for an entity and therefore can introduce
+ * domain-specificity into the quite generic data model. The {@link definition} is an optional
+ * property that allows the user to add a freely assignable textual definition to the entity.
+ */
 template<typename T>
 class NamedEntity : virtual public INamedEntity, public Entity<T> {
 
 public:
 
+    /**
+     * @brief Constructor that creates a null entity.
+     */
     NamedEntity()
         : Entity<T>()
     {
     }
 
-
+    /**
+     * @brief Constructor that creates a new entity from a shared pointer to
+     * an implementation instance.
+     */
     NamedEntity(const std::shared_ptr<T> &p_impl)
         : Entity<T>(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new entity from a
+     * shared pointer to an implementation instance.
+     */
     NamedEntity(std::shared_ptr<T> &&ptr)
         : Entity<T>(std::move(ptr))
     {
@@ -77,7 +99,9 @@ public:
         return Entity<T>::backend()->compare(other);
     }
 
-
+    /**
+     * @brief Destructor
+     */
     virtual ~NamedEntity() {}
 
 };

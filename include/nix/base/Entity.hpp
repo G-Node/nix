@@ -15,22 +15,44 @@
 namespace nix {
 namespace base {
 
+/**
+ * @brief A class serving as base class for most entities of
+ * the NIX data model.
+ *
+ * Most entities defined by the NIX data model share some common properties.
+ * Among those an unique identifier {@link id} with low collision probability.
+ * The {@link id} allows to identify individual entities even across large
+ * collection of data spread over multiple files.
+ * Further all entities provide a the properties {@link createdAt} and
+ * {@link updatedAt} containing information about the creation time and the
+ * last modification time.
+ */
 template<typename T>
 class Entity : virtual public IEntity, public ImplContainer<T> {
 
 public:
 
+    /**
+     * @brief Constructor that creates a null entity.
+     */
     Entity()
         : ImplContainer<T>()
     {
     }
 
-
+    /**
+     * @brief Constructor that creates a new entity from a shared pointer to
+     * an implementation instance.
+     */
     Entity(const std::shared_ptr<T> &p_impl)
         : ImplContainer<T>(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new entity from a
+     * shared pointer to an implementation instance.
+     */
     Entity(std::shared_ptr<T> &&ptr)
         : ImplContainer<T>(std::move(ptr))
     {
@@ -71,9 +93,10 @@ public:
         ImplContainer<T>::backend()->forceCreatedAt(t);
     }
 
-
+    /**
+     * @brief Destructor
+     */
     virtual ~Entity() {}
-
 
 };
 

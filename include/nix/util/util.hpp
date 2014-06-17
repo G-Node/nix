@@ -32,14 +32,14 @@ namespace nix {
 namespace util {
 
 /**
- * Remove blank spaces from the entire string
+ * @brief Remove blank spaces from the entire string
  *
  * @param str   The string to trim (will be modified in-place)
  */
 NIXAPI void deblankString(std::string &str);
 
 /**
- * Remove blank spaces from the entire string
+ * @brief Remove blank spaces from the entire string
  *
  * @param str   The string to trim
  *
@@ -48,7 +48,7 @@ NIXAPI void deblankString(std::string &str);
 NIXAPI std::string deblankString(const std::string &str);
 
 /**
- * Generates an ID-String.
+ * @brief Generates an ID-String.
  *
  * @param prefix    The prefix to append to the generated id.
  * @param length    The length of the ID.
@@ -58,8 +58,7 @@ NIXAPI std::string deblankString(const std::string &str);
 NIXAPI std::string createId(std::string prefix = "", int length = 16);
 
 /**
- * Convert a time value into a string representation.
- * @todo Maybe its better to use C++11 std::chrono::time_point instead of time_t
+ * @brief Convert a time value into a string representation.
  *
  * @param time    The time to convert.
  *
@@ -68,7 +67,7 @@ NIXAPI std::string createId(std::string prefix = "", int length = 16);
 NIXAPI std::string timeToStr(time_t time);
 
 /**
- * Convert a string representation of a date into a time value.
+ * @brief Convert a string representation of a date into a time value.
  *
  * @param time    The string representation of a date.
  *
@@ -77,29 +76,29 @@ NIXAPI std::string timeToStr(time_t time);
 NIXAPI time_t strToTime(const std::string &time);
 
 /**
- * Convert a time value into a string representation.
- * @todo Maybe its better to use C++11 std::chrono::time_point instead of time_t
+ * @brief Convert a time value into a string representation.
  *
  * @return The default time.
  */
 NIXAPI time_t getTime();
 
-/*
- * Sanitizer function that deblanks units and replaces mu and µ
+/**
+ * @brief Sanitizer function that deblanks units and replaces mu and µ
  * with the "u" replacement.
  *
- * @param unit the old unit
+ * @param unit The old unit.
  *
- * @return the sanitized unit
+ * @return The sanitized unit.
  */
 NIXAPI std::string unitSanitizer(const std::string &unit);
 
 /**
- * Converts minutes and hours to seconds.
+ * @brief Converts minutes and hours to seconds.
  *
- * @param unit the original unit (i.e. h for hour, or min for minutes)
- * @param value the original value
- * @return the value in converted to seconds
+ * @param unit  The original unit (i.e. h for hour, or min for minutes)
+ * @param value The original value
+ *
+ * @return The value in converted to seconds
 */
 template <typename T>
 NIXAPI T convertToSeconds(const std::string &unit, T value) {
@@ -119,11 +118,12 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
 }
 
 /**
- * Converts temperatures given in degrees Celsius of Fahren to Kelvin.
+ * @brief Converts temperatures given in degrees Celsius of Fahren to Kelvin.
  *
- * @param unit the original unit {"F", "°F", "C", "°C"}
- * @param value the original value
- * @return the temperature in Kelvin
+ * @param unit  The original unit {"F", "°F", "C", "°C"}
+ * @param value The original value
+ *
+ * @return The temperature in Kelvin
  */
 template<typename T>
 NIXAPI T convertToKelvin(const std::string &unit, T value) {
@@ -143,35 +143,40 @@ NIXAPI T convertToKelvin(const std::string &unit, T value) {
 }
 
 /**
- * Checks if the passed string represents a valid SI unit.
+ * @brief Checks if the passed string represents a valid SI unit.
  *
- * @param unit a string that is supposed to represent an SI unit.
- * @return bool true or false
+ * @param unit  A string that is supposed to represent an SI unit.
+ *
+ * @return True if a valid SI unit, false otherwise.
  */
 NIXAPI bool isSIUnit(const std::string &unit);
 
 /**
- * Checks if the passed string is a valid combination of SI units.
+ * @brief Checks if the passed string is a valid combination of SI units.
+ *
  * For example mV^2*Hz^-1. Method accepts only the * notation.
  *
- * @param unit a string that should be tested
- * @return bool
+ * @param unit  A string that should be tested
+ *
+ * @return True if a valid compound si unti, false otherwise.
  */
 NIXAPI bool isCompoundSIUnit(const std::string &unit);
 
 /**
- * Get the scaling between two SI units that are identified by the two strings.
+ * @brief Get the scaling between two SI units that are identified by the two strings.
  *
- * @param originUnit the original unit
- * @param destinationUnit the one into which a scaling should be done
+ * @param originUnit            The original unit
+ * @param destinationUnit       The one into which a scaling should be done
  *
  * @return A double with the appropriate scaling
- * @throw Runtime Exception when units cannot be converted into each other by mere scaling
+ *
+ * @throw std::runtime_error Exception when units cannot be converted into each other by mere scaling
  */
 NIXAPI double getSIScaling(const std::string &originUnit, const std::string &destinationUnit);
 
 /**
  * Splits an SI unit into prefix, unit and the power components.
+ *
  * @param fullUnit
  * @param prefix
  * @param unit
@@ -182,20 +187,19 @@ NIXAPI void splitUnit(const std::string &fullUnit, std::string &prefix, std::str
 /**
  * Splits a SI unit compound into its atomic parts.
  *
- * @param compoundUnit string representing an SI unit that consists of many atomic units
- * @param atomicUnits vector<string> that takes the atomic units
+ * @param compoundUnit  An SI unit that consists of many atomic units
+ * @param atomicUnits   A vector that takes the atomic units
  */
 NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
 
 /**
- * Convert a number (or anything else that is understood by 
- * "stringstream <<") into a string representation.
+ * @brief Convert a number into a string representation.
  *
  * @param number  The number to convert
  *
  * @return The string representation of number
  */
-template<typename T> 
+template<typename T>
 std::string numToStr(T number) {
     std::stringstream s;
     s << number;
@@ -209,36 +213,25 @@ std::string numToStr(T number) {
  *
  * @return The number that was represented by the string.
  */
-template<typename T> 
+template<typename T>
 T strToNum(const std::string &str) {
     std::stringstream s(str);
     T number;
     return s >> number ? number : 0;
 }
 
-/**
+/*
  * Check whether a given type is of type "boost::optional"
- * Usage: 
- * myBool = is_optional<decltype(myVar)>::value; 
- * myBool = is_optional<MY_TYPE>::value; 
- *
- * @param type   Template param: The type to check.
- *
- * @return bool (use '::value' to check result)
  */
 template<typename>
 struct is_optional : std::false_type {};
 template<typename T>
 struct is_optional<boost::optional<T>> : std::true_type {};
 
-/**
- * Optional de-referencing: 
- * De-reference boost optional type if such given, returned var 
+/*
+ * Optional de-referencing:
+ * De-reference boost optional type if such given, returned var
  * unchanged otherwise.
- *
- * @param mixed The variable to de-reference.
- *
- * @return mixed
  */
 template<typename T>
 T deRef(T var) {

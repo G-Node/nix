@@ -16,7 +16,7 @@ namespace nix {
 class DataArray;
 
 /**
- * Enumeration for link types.
+ * @brief Enumeration for link types.
  *
  *  TODO remove "untagged" from link type
  */
@@ -29,42 +29,45 @@ enum class LinkType : int {
 namespace base {
 
 /**
- * Class that represents a pandora feature entity
- * TODO implement methods for DataArray.
+ * @brief Interface for implementations of the Feature entity.
+ *
+ * See {@link nix::Feature} for a more detailed description.
  */
 class NIXAPI IFeature: virtual public base::IEntity {
 
 public:
 
     /**
-     * Setter for the link type.
+     * @brief Setter for the link type.
      *
      * @param type    The link type to set.
      */
     virtual void linkType(LinkType type) = 0;
 
     /**
-     * Getter for the link type.
+     * @brief Getter for the link type.
      *
      * @return The current link type of the feature.
      */
     virtual LinkType linkType() const = 0;
 
     /**
-     * Sets the data array associated with this feature.
+     * @brief Sets the data array associated with this feature.
      *
-     * @param data    The id of the data array to set.
+     * @param id        The id of the data array to set.
      */
-    virtual void data(const std::string &data_array_id) = 0;
+    virtual void data(const std::string &id) = 0;
 
     /**
-     * Gets the data array associated with this feature.
+     * @brief Gets the data array associated with this feature.
      *
      * @return The associated data array.
      */
     virtual DataArray data() const = 0;
 
-
+    /**
+     * @brief Destructor.
+     */
     virtual ~IFeature() {}
 
 };

@@ -18,42 +18,48 @@ class Section;
 namespace base {
 
 /**
- * Base class for entities that are associated with metadata such
- * as Block, Source etc.
+ * @brief Interface for classes that can be associated with additional
+ * metadata.
+ *
+ * See {@link nix::base::EntityWithMetadata} for a more detailed description.
  */
 class NIXAPI IEntityWithMetadata : virtual public INamedEntity {
 
 public:
 
     /**
-     * Get metadata associated with this entity.
+     * @brief Get metadata associated with this entity.
      *
-     * @return The associated section, if no such section exists
-     *         an exception will be thrown.
+     * @return The associated section, if no such section exists an
+     *         uninitialized {@link nix::Section} will be returned.
      */
     virtual Section metadata() const = 0;
 
     /**
-     * Associate the entity with some metadata. Calling this method will replace
-     * previously stored information.
-     * 
+     * @brief Associate the entity with some metadata.
      *
-     * @param std::string  the id of the metadata that should be associated
-     *                    with this entity.
+     * Calling this method will replace previously stored information.
+     *
+     * @param id        The id of the {@link nix::Section} that should be associated
+     *                  with this entity.
      */
     virtual void metadata(const std::string &id) = 0;
 
 
     /**
-     * Remove associated metadata from the entity.
-     * The section will not be deleted.
-     * Note: This function does not delete the referenced Section!
+     * @brief Remove associated metadata from the entity.
+     *
+     * This method just removes the association between the respective
+     * {@link nix::Section} but will not remove it from the file.
      * 
-     * @param boost::none_t.
+     * @param t         None
      */
     virtual void metadata(const none_t t) = 0;
 
 
+    /**
+     * Destructor
+     */
     virtual ~IEntityWithMetadata() {}
 
 };

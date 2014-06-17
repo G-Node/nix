@@ -23,13 +23,17 @@ class Source;
 namespace base {
 
 
-// TODO TNode
+/**
+ * @brief Interface for implementations of the Source entity.
+ *
+ * See {@link nix::Source} for a more detailed description.
+ */
 class NIXAPI ISource : virtual public IEntityWithMetadata {
 
 public:
 
     /**
-     * Checks if this source has a specific source as direct descendant.
+     * @brief Checks if this source has a specific source as direct descendant.
      *
      * @param id        The id of the source.
      *
@@ -39,7 +43,7 @@ public:
     virtual bool hasSource(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific child source that is a direct descendant.
+     * @brief Retrieves a specific child source that is a direct descendant.
      *
      * @param id        The id of the source.
      *
@@ -49,7 +53,7 @@ public:
     virtual Source getSource(const std::string &id) const = 0;
 
     /**
-     * Retrieves a specific source by index.
+     * @brief Retrieves a specific source by index.
      *
      * @param index     The index of the source.
      *
@@ -58,14 +62,14 @@ public:
     virtual Source getSource(size_t index) const = 0;
 
     /**
-     * Returns the number of sources that are direct descendants of this source.
+     * @brief Returns the number of sources that are direct descendants of this source.
      *
      * @return The number of direct child sources.
      */
     virtual size_t sourceCount() const = 0;
 
     /**
-     * Create a new root source.
+     * @brief Create a new root source.
      *
      * @param name      The name of the source to create.
      * @param type      The type of the source.
@@ -75,8 +79,8 @@ public:
     virtual Source createSource(const std::string &name, const std::string &type) = 0;
 
     /**
-     * Delete a root source and all its child sources from
-     * the source.
+     * @brief Delete a root source and all its child sources from
+     *        the source.
      *
      * @param id        The id of the source to remove.
      *
@@ -85,6 +89,9 @@ public:
     virtual bool deleteSource(const std::string &id) = 0;
 
 
+    /**
+     * @brief Destructor
+     */
     virtual ~ISource() {}
 
 };

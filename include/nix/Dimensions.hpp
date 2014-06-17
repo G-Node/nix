@@ -21,36 +21,90 @@ class RangeDimension;
 class SetDimension;
 
 /**
- * Instances of the Dimension subclasses are used to define the axes of a DataArray.
- * There are  three subclasses:
- *     - RangeDimension
- *     - SampledDimension
- *     - SetDimension
+ * @brief Instances of the Dimension subclasses are used to define the different dimensions of data in a DataArray.
  *
- * See detailed descriptions below.
+ * The real dimension descriptor are defined in three subclasses: RangeDimension, SampledDimension and  SetDimension
  */
 class NIXAPI Dimension : public virtual base::IDimension, public base::ImplContainer<base::IDimension> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized Dimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * Dimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     Dimension();
 
-
+    /**
+     * @brief Constructor that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     Dimension(const std::shared_ptr<base::IDimension> &p_impl);
 
-
+    /**
+     * @brief Constructor with move semantics that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     Dimension(std::shared_ptr<base::IDimension> &&ptr);
 
 
+    /**
+     * @brief Copy constructor
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     Dimension(const Dimension &other);
 
-
+    /**
+     * @brief Copy constructor that converts a SampledDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     Dimension(const SampledDimension &other);
 
-
+    /**
+     * @brief Copy constructor that converts a RangeDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     Dimension(const RangeDimension &other);
 
-
+    /**
+     * @brief Copy constructor that converts a SetDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     Dimension(const SetDimension &other);
 
 
@@ -63,138 +117,142 @@ public:
         return backend()->dimensionType();
     }
 
-
+    /**
+     * @brief Assignment operator that converts a SampledDimension to Dimension.
+     *
+     * @param other     The dimension to assign.
+     */
     Dimension& operator=(const SampledDimension &other);
 
-
+    /**
+     * @brief Assignment operator that converts a RangeDimension to Dimension.
+     *
+     * @param other     The dimension to assign.
+     */
     Dimension& operator=(const RangeDimension &other);
 
-
+    /**
+     * @brief Assignment operator that converts a SetDimension to Dimension.
+     *
+     * @param other     The dimension to assign.
+     */
     Dimension& operator=(const SetDimension &other);
 
 };
 
 
 /**
- * Instances of the SampledDimension Class are used to describe a dimension of a DataArray that
- * has been sampled in regular intervals. For example this can be a time axis.
+ * @brief Dimension descriptor for regularly sampled dimensions.
  *
- * SampledDimensions are characterized by the label of the dimension, the unit in which the sampling_interval
- * is given. If not otherwise stated the dimension starts with zero offset.
+ * Instances of the SampledDimension Class are used to describe a dimension of data in
+ * a DataArray that has been sampled in regular intervals. For example this can be a time axis.
+ *
+ * Sampled dimensions are characterized by the label for the dimension, the unit in which the
+ * sampling interval is given. If not specified otherwise the dimension starts with zero offset.
+ *
+ * ### Create a sampled dimension
+ *
+ * The following example will create a sampled dimension on a data array. The dimension
+ * has a sampling rate of 10kHz and represents the time axis of a recording.
+ *
+ * ~~~
+ * DataArray da = ...;
+ * SampledDimension sd = da.appendSampledDimension(0.1);
+ *
+ * sd.unit("ms");
+ * sd.label("time")
+ * sd.offset(10000)
+ * ~~~
  */
 class NIXAPI SampledDimension : public virtual base::ISampledDimension, public base::ImplContainer<base::ISampledDimension> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized SampledDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * SampledDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     SampledDimension();
 
-
+    /**
+     * @brief Constructor that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     SampledDimension(const std::shared_ptr<base::ISampledDimension> &p_impl);
 
-
+    /**
+     * @brief Constructor with move semantics that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     SampledDimension(std::shared_ptr<base::ISampledDimension> &&ptr);
 
-
+    /**
+     * @brief Copy constructor
+     *
+     * Copying of all NIX front facing objects like SampledDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     SampledDimension(const SampledDimension &other);
 
-    /**
-     * Returns the id of the dimension entity which at the same time is
-     * the order of the dimension. That is the dimension of the actual data that
-     * is defined by this SampledDimension.
-     *
-     * @return size_t, the id, i.e. the order.
-     */
     size_t id() const {
         return backend()->id();
     }
 
-    /**
-     * Returns the type of the dimension entity.
-     *
-     * @return DimensionType either Sample, Range, or Set.
-     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
-    /**
-     * Returns the label of the dimension.
-     *
-     * @return string the label.
-     */
     boost::optional<std::string> label() const {
         return backend()->label();
     }
 
-    /**
-     * Set the label of the dimension.
-     * -obligatory-
-     *
-     * @param label string
-     */
     void label(const std::string &label) {
         backend()->label(label);
-    }    
-    
-    /**
-     * Deleter for the label attribute.
-     *
-     * @param boost::none_t.
-     */
+    }
+
     void label(const none_t t)
     {
         backend()->label(t);
     }
 
-    /**
-     * Returns the unit in which sampling_interval and offset are given.
-     *
-     * @return string the unit
-     */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
-    /**
-     * Sets the unit in which sampling_interval and offset are given.
-     * -obligatory-
-     *
-     * @param unit, string
-     */
     void unit(const std::string &unit) {
-        //if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) { TODO support compuond SI units.
         if (!(util::isSIUnit(unit))) {
             throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
         }
         backend()->unit(unit);
     }
-    
-    /**
-     * Deleter for the label attribute.
-     *
-     * @param boost::none_t.
-     */
+
     void unit(const none_t t)
     {
         backend()->unit(t);
     }
-    
-    /**
-     * Returns the sampling interval in which the dimension has been sampled.
-     *
-     * @return double, the sampling interval
-     */
+
     double samplingInterval() const {
        return backend()->samplingInterval();
     }
 
-    /**
-     * Set the sampling interval in which the dimension has been sampled. Value must be
-     * larger than 0.0!
-     * -obligatory-
-     *
-     * @param interval double
-     */
     void samplingInterval(double interval) {
         if(interval <= 0.0) {
             throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
@@ -202,247 +260,225 @@ public:
         backend()->samplingInterval(interval);
     }
 
-    /**
-     * Returns the offset of this dimension. This property is optional. Thus,
-     * this return value may be empty.
-     *
-     * @return boost::optional<double> the offset
-     */
     boost::optional<double> offset() const {
         return backend()->offset();
     }
 
-    /**
-     * Set the offset of this dimension. The offset is interpreted using the same
-     * unit as the sampling interval.
-     * -optional-
-     *
-     * @param offset double
-     */
     void offset(double offset) {
         return backend()->offset(offset);
     }
 
-    /**
-     * Deleter for the offset of this dimension.
-     * -optional-
-     *
-     * @param boost::none_t
-     */
     void offset(const boost::none_t t) {
         backend()->offset(t);
     }
 
+    /**
+     * @brief Assignment operator.
+     *
+     * @param other     The dimension to assign.
+     */
     SampledDimension& operator=(const SampledDimension &other);
 
-
+    /**
+     * @brief Assignment operator that converts a Dimension to a SampledDimension.
+     *
+     * @param other     The dimension to assign.
+     */
     SampledDimension& operator=(const Dimension &other);
 
 };
 
 
 /**
- * Instances of the SetDimension Class are used to describe a dimension of a DataArray that
- * are sampled on a nominal scale or in categories. For example, the parallel channels of a
- * recording device can be defined with a SetDimension.
+ * @brief Dimension descriptor for a dimension that represents just a list or set of values.
  *
- * SetDimensions are characterized by a set of labels.
+ * The SetDimension is used in cases where data is given as a set or list. This can be just a collection of values but
+ * also a list of recorded signals or a stack of images. Optionally an array of labels, one for each index of this
+ * dimension, can be specified.
  */
 class NIXAPI SetDimension : virtual public base::ISetDimension, public base::ImplContainer<base::ISetDimension> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized SetDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * SetDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     SetDimension();
 
-
+    /**
+     * @brief Constructor that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     SetDimension(const std::shared_ptr<base::ISetDimension> &p_impl);
 
-
+    /**
+     * @brief Constructor with move semantics that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     SetDimension(std::shared_ptr<base::ISetDimension> &&ptr);
 
-
+    /**
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like SetDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     SetDimension(const SetDimension &other);
 
-
-    /**
-    * Returns the id of the dimension entity which at the same time is
-    * the order of the dimension. That is the dimension of the actual data that
-    * is defined by this SetDimension.
-    *
-    * @return size_t, the id, i.e. the order.
-    */
     size_t id() const {
         return backend()->id();
     }
 
-    /**
-     * Returns the type of the dimension entity.
-     *
-     * @return DimensionType either Sample, Range, or Set.
-     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
-    /**
-     * Returns the set of labels stored in this SetDimension.
-     *
-     * @return vector<string> the labels
-     */
     std::vector<std::string> labels() const {
         return backend()->labels();
     }
 
-    /**
-     * Sets the labels stored in this SetDimension.
-     * -obligatory-
-     *
-     * @param labels, vector<string>
-     */
     void labels(const std::vector<std::string> &labels) {
         backend()->labels(labels);
     }
 
-    /**
-     * Deleter for the labels of this dimension.
-     * -optional-
-     *
-     * @param boost::none_t
-     */
     void labels(const boost::none_t t) {
         backend()->labels(t);
     }
 
+    /**
+     * @brief Assignment operator.
+     *
+     * @param other     The dimension to assign.
+     */
     SetDimension& operator=(const SetDimension &other);
 
-
+    /**
+     * @brief Assignment operator that converts a Dimension to a SetDimension.
+     *
+     * @param other     The dimension to assign.
+     */
     SetDimension& operator=(const Dimension &other);
 
 };
 
 
 /**
- * Instances of the RangeDimension Class are used to describe a dimension of a DataArray that
- * are sampled in irregular intervals. For example, irregularly occurring events that have been
- * detected in a recorded signal.
+ * @brief Dimension descriptor for a dimension that is irregularly sampled.
  *
- * RangeDimensions are characterized by an array of tics that are given in a certain unit and
- * must be given in an ascending order. The dimension has also a label.
+ * The RangeDimension covers cases when indexes of a dimension are mapped to other values
+ * in a not regular fashion. A use-case for this would be for example irregularly sampled
+ * time-series or certain kinds of histograms. To achieve the mapping of the indexes an
+ * array of mapping values must be provided. Those values are stored in the dimensions {@link ticks}
+ * property. In analogy to the sampled dimension a {@link unit} and a {@link label} can be defined.
  */
 class NIXAPI RangeDimension : virtual public base::IRangeDimension, public base::ImplContainer<base::IRangeDimension> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized RangeDimension.
+     *
+     * Calling any method on an uninitialized dimension will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a dimension is initialized:
+     *
+     * ~~~
+     * RangeDimension e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     RangeDimension();
 
-
+    /**
+     * @brief Constructor that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     RangeDimension(const std::shared_ptr<base::IRangeDimension> &p_impl);
 
-
+    /**
+     * @brief Constructor with move semantics that creates a new dimension from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     RangeDimension(std::shared_ptr<base::IRangeDimension> &&ptr);
 
-
+    /**
+     * @brief Copy constructor
+     *
+     * Copying of all NIX front facing objects like RangeDimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
     RangeDimension(const RangeDimension &other);
 
-    /**
-     * Returns the id of the dimension entity which, at the same time, is
-     * the order of the dimension. That is the dimension of the actual data that
-     * is defined by this RangeDimension.
-     *
-     * @return size_t, the id, i.e. the order.
-     */
     size_t id() const {
         return backend()->id();
     }
 
-    /**
-     * Returns the type of the dimension entity.
-     *
-     * @return DimensionType either Sample, Range, or Set.
-     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
-    /**
-     * Returns the label stored in this dimension.
-     *
-     * @return string the label
-     */
      boost::optional<std::string> label() const {
         return backend()->label();
     }
 
-    /**
-     * Sets the label of the dimension.
-     * -obligatory-
-     *
-     * @param label string
-     */
     void label(const std::string &label) {
         backend()->label(label);
     }
-    
-    /**
-     * Deleter for the label attribute.
-     *
-     * @param boost::none_t.
-     */
+
     void label(const none_t t)
     {
         backend()->label(t);
     }
-    
-    /**
-     * Returns the unit of this RangeDimension.
-     *
-     * @return string the unit.
-     */
+
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
-    /**
-     * Sets the unit of this RangeDimension. So far, only SI units are
-     * permitted.
-     * -obligatory-
-     *
-     * @param unit string
-     */
     void unit(const std::string &unit) {
-        //if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         if (!(util::isSIUnit(unit))) {
             throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
         }
         backend()->unit(unit);
     }
-    
-    /**
-     * Deleter for the unit attribute.
-     *
-     * @param boost::none_t.
-     */
+
     void unit(const none_t t)
     {
         backend()->unit(t);
     }
-    
-    /**
-     * Retruns the set of ticks stored in this RangeDimension.
-     *
-     * @return vector<double> the ticks.
-     */
+
     std::vector<double> ticks() const {
         return backend()->ticks();
     }
 
-    /**
-     * Sets the ticks of the RangeDimension. Ticks must be ordered
-     * in ascending order.
-     * -obligatory-
-     *
-     * @param ticks vector<double>
-     */
     void ticks(const std::vector<double> &ticks) {
         if (!std::is_sorted(ticks.begin(), ticks.end())) {
             std::string caller = "Range::ticks()";
@@ -451,10 +487,18 @@ public:
         backend()->ticks(ticks);
     }
 
-
+    /**
+     * @brief Assignment operator.
+     *
+     * @param other     The dimension to assign.
+     */
     RangeDimension& operator=(const RangeDimension &other);
 
-
+    /**
+     * @brief Assignment operator that converts a Dimension to a RangeDimension.
+     *
+     * @param other     The dimension to assign.
+     */
     RangeDimension& operator=(const Dimension &other);
 
 };

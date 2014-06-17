@@ -18,27 +18,73 @@
 
 namespace nix {
 
-
+/**
+ * @brief A tag class that can be used to tag multiple positions or regions in data.
+ *
+ * Besides the {@link nix::DataArray} the tag entities can be considered as the other
+ * core entities of the data model.
+ * They are meant to attach annotations directly to the data and to establish meaningful
+ * links between different kinds of stored data.
+ * Most importantly tags allow the definition of points or regions of interest in data
+ * that is stored in other {@link nix::DataArray} entities. The data array entities the
+ * tag applies to are defined by its property {@link references}.
+ *
+ * Further the referenced data is defined by an origin vector called {@link positions}
+ * and an optional {@link extents} vector that defines its size.
+ * Therefore position and extent of a tag, together with the references field
+ * defines a group of points or regions of interest collected from a subset of all
+ * available {@link nix::DataArray} entities.
+ *
+ * Further tags have a field called {@link features} which makes it possible to associate
+ * other data with the tag.  Semantically a feature of a tag is some additional data that
+ * contains additional information about the points of hyperslabs defined by the tag.
+ * This could be for example data that represents a stimulus (e.g. an image or a
+ * signal) that was applied in a certain interval during the recording.
+ */
 class NIXAPI DataTag : virtual public base::IDataTag, public base::EntityWithSources<base::IDataTag> {
 
 public:
 
+    /**
+     *  @brief Constructor that creates an uninitialized DataTag.
+     *
+     * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a tag is initialized:
+     *
+     * ~~~
+     * DataTag e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     DataTag()
-: EntityWithSources()
-{}
+        : EntityWithSources()
+    {}
 
+    /**
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like DataTag is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The tag to copy.
+     */
     DataTag(const DataTag &other)
-    : EntityWithSources(other.impl())
+        : EntityWithSources(other.impl())
     {
     }
 
     DataTag(const std::shared_ptr<base::IDataTag> &p_impl)
-    : EntityWithSources(p_impl)
+        : EntityWithSources(p_impl)
     {
     }
 
     DataTag(std::shared_ptr<base::IDataTag> &&ptr)
-    : EntityWithSources(std::move(ptr))
+        : EntityWithSources(std::move(ptr))
     {
     }
 
@@ -46,29 +92,18 @@ public:
     // Positions and extents
     //--------------------------------------------------
 
-    /**
-     * Getter for the positions of a tag. The positions are strored in a DataArray.
-     *
-     *
-     * @return The positions DataArray.
-     */
     DataArray positions() const {
         return backend()->positions();
     }
 
-    /**
-     * Setter for the positions of a tag.
-     *
-     * @param id   string.
-     */
     void positions(const std::string &id) {
         backend()->positions(id);
     }
 
     /**
-     * Setter for the positions of a tag.
+     * @brief Setter for the positions of the tag.
      *
-     * @param position   DataArray.
+     * @param positions   The DataArray containing the positions of the tag.
      */
     void positions(const DataArray &positions) {
         if(positions == none) {
@@ -79,29 +114,18 @@ public:
         }
     }
 
-    /**
-     * Returns whether this DataArray contains positions.
-     *
-     * @return bool
-     */
     bool hasPositions() const {
         return backend()->hasPositions();
     }
 
-    /**
-     * Getter for the extents of the tag which are stored in a#
-     * DataArray
-     *
-     * @return The extents of the tag.
-     */
     DataArray extents() const {
         return backend()->extents();
     }
 
     /**
-     * Sets the extents DataArray of the tag.
+     * @brief Sets the extents DataArray of the tag.
      *
-     * @param extent      The extent vector.
+     * @param extents      The DataArray containing the extents of the tag.
      */
     void extents(const DataArray &extents) {
         if(extents == none) {
@@ -112,40 +136,18 @@ public:
         }
     }
 
-    /**
-     * Set the reference to the extents DataArray.
-     *
-     * @param the id.
-     */
     void extents(const std::string &id) {
         backend()->extents(id);
     }
 
-    /**
-     * Deleter for the reference to the extents DataArray.
-     * Note: This function does not delete the referenced DataArray!
-     *
-     * @param boost::none_t.
-     */
     void extents(const boost::none_t t) {
         backend()->extents(t);
     }
 
-    /**
-     * Getter for the units of the tag. The units are applied to all values for position
-     * and extent in order to calculate the right position vectors in referenced data arrays.
-     *
-     * @return All units of the tag as a vector.
-     */
     std::vector<std::string> units() const {
         return backend()->units();
     }
 
-    /**
-     * Setter for the units of a tag.
-     *
-     * @param units     All units as a vector.
-     */
     void units(std::vector<std::string> &units) {
         std::vector<std::string> sanitized;
         sanitized.reserve(units.size());
@@ -160,27 +162,20 @@ public:
         backend()->units(sanitized);
     }
 
-    /**
-     * Deleter for the units of a tag.
-     *
-     * @param boost::none_t.
-     */
     void units(const boost::none_t t) {
         backend()->units(t);
     }
 
     //--------------------------------------------------
     // Methods concerning references.
-    // TODO implement when done with the DataArray class.
     //--------------------------------------------------
 
     /**
-     * Checks if the specified DataArray is referenced in
-     * this DataTag.
+     * @brief Checks if the specified DataArray is referenced by the tag.
      *
-     * @param DataArray     the dataArray
+     * @param reference     The data array to check.
      *
-     * @return bool
+     * @return True if the data array is referenced, false otherwise.
      */
     bool hasReference(const DataArray &reference) const {
         if (reference == none) {
@@ -189,66 +184,30 @@ public:
         return backend()->hasReference(reference.id());
     }
 
-    /**
-     * Checks if a DataArray with the specified id is referenced in
-     * this DataTag.
-     *
-     * @param std::string the id
-     *
-     * @return bool
-     */
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
 
-    /**
-     * Returns the count of references.
-     *
-     * @return size_t the count
-     */
     size_t referenceCount() const {
         return backend()->referenceCount();
     }
 
-    /**
-     * Returns the specified DataArray.
-     *
-     * @param std::string the id
-     *
-     * @return DataArray object may be false if not found.
-     *
-     */
     DataArray getReference(const std::string &id) const {
         return backend()->getReference(id);
     }
 
-    /**
-     * Returns a certain reference that is specified by its index.
-     *
-     * @param size_t the index
-     *
-     * @return DataArray result may be false if not found
-     *
-     */
     DataArray getReference(size_t index) const {
         return backend()->getReference(index);
     }
 
-    /**
-     * Adds a reference to a DataArray to the list of References.
-     *
-     * @param std::string the id of a DataArray.
-     *
-     */
     void addReference(const std::string &id) {
         backend()->addReference(id);
     }
 
     /**
-     * Adds a reference to a DataArray to the list of References.
+     * @brief Adds a new DataArray to the list of referenced data.
      *
-     * @param DataArray the DataArray that should be referenced.
-     *
+     * @param reference The DataArray that should be referenced.
      */
     void addReference(const DataArray &reference) {
         if (reference == none) {
@@ -257,25 +216,19 @@ public:
         backend()->addReference(reference.id());
     }
 
-    /**
-     * Removes a certain DataArray from the list of References.
-     *
-     * @param  id      The id of the DataArray
-     *
-     * @return bool    whether the operation succeeded.
-     *
-     */
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
     }
 
     /**
-     * Removes a certain DataArray from the list of References.
+     * @brief Remove a DataArray from the list of referenced data.
      *
-     * @param reference   The DataArray reference
+     * This function only removes the association between the tag and the data array,
+     * but does not delete the data array itself.
      *
-     * @return bool         whether the operation succeeded.
+     * @param reference The DataArray to remove.
      *
+     * @return True if the data array was removed, false otherwise.
      */
     bool removeReference(const DataArray &reference) {
         if (reference == none) {
@@ -285,17 +238,16 @@ public:
     }
 
     /**
-     * Get referenced data arrays associated with this data tag.
+     * @brief Get all referenced data arrays associated with the tag.
      *
-     * The parameter "filter" is defaulted to giving back all arrays. To
-     * use your own filter pass a lambda that accepts a "DataArray"
-     * as parameter and returns a bool telling whether to get it or not.
+     * The parameter filter can be used to filter data arrays by various
+     * criteria. By default a filter is used that accepts all data arrays.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object referenced data arrays as a vector     
+     * @param filter       A filter function.
+     *
+     * @return A vector containing all filtered DataArray entities.
      */
-    std::vector<DataArray> references(util::AcceptAll<DataArray>::type filter
-                                      = util::AcceptAll<DataArray>()) const
+    std::vector<DataArray> references(util::Filter<DataArray>::type filter = util::AcceptAll<DataArray>()) const
     {
         auto f = [this] (size_t i) { return getReference(i); };
         return getEntities<DataArray>(f,
@@ -303,71 +255,24 @@ public:
                                       filter);
     }
 
-    /**
-     * Setter for all referenced DataArrays. Previously referenced
-     * DataArrays, that are not in the references vector will be
-     * removed.
-     *
-     * @param references    All referenced arrays.
-     */
     void references(const std::vector<DataArray> &references) {
         backend()->references(references);
     }
 
-    //TODO to be implemented later
-    /*
-    template<typename T, size_t dims>
-    void getReferencedData(std::vector<boost::multi_array<T, dims>> &data, size_t index) const{
-
-        if (referenceCount() == 0) {
-            throw std::runtime_error("DataTagHDF5::getReferencedData: There is no reference attached to this tag!");
-        }
-        if(!hasPositions()) {
-            throw std::runtime_error("DataTagHDF5::getReferencedData: There is no positions array attached to this tag!");
-        }
-
-        DataArray pa = positions();
-        boost::multi_array<double,1> posData, extData;
-        pa.getData(posData);
-
-        if(index >= posData.shape()[0]) {
-            throw std::runtime_error("DataTagHDF5::getReferencedData: index exeeds matrix dimensions in positions data!");
-        }
-
-        if(hasExtents()) {
-            DataArray ea = extents();
-            ea.getData(extData);
-        }
-
-        //TODO convert position and extent to respective units
-        //TODO get the data slice from the referenced DataArrays
-        std::vector<DataArray> refs = references();
-        for (size_t i = 0; i < refs.size();i++) {
-
-        }
-    }
-    */
     //--------------------------------------------------
     // Methods concerning features.
     //--------------------------------------------------
 
-    /**
-     * Checks if a specific feature exists on the tag.
-     *
-     * @param id        The id of a feature.
-     *
-     * @return True if the feature exists, false otherwise.
-     */
     bool hasFeature(const std::string &id) const {
         return backend()->hasFeature(id);
     }
 
     /**
-     * Checks if a specific feature exists on the tag.
+     * @brief Checks if a specific feature exists on the tag.
      *
-     * @param feature        The Feature.
+     * @param feature        The Feature to check.
      *
-     * @return bool                 True if the feature exists, false otherwise.
+     * @return True if the feature exists, false otherwise.
      */
     bool hasFeature(const Feature &feature) const {
         if (feature == none) {
@@ -376,52 +281,29 @@ public:
         return backend()->hasFeature(feature.id());
     }
 
-    /**
-     * Returns the number of features in this block.
-     *
-     * @return The number of features.
-     */
     size_t featureCount() const {
         return backend()->referenceCount();
     }
 
-    /**
-     * Retrieves a specific feature from the tag.
-     *
-     * @param id        The id of the feature.
-     *
-     * @return The feature with the specified id. If it doesn't exist
-     *         an exception will be thrown.
-     */
     Feature getFeature(const std::string &id) const {
         return backend()->getFeature(id);
     }
 
-    /**
-     * Retrieves a specific feature from the tag.
-     *
-     * @param index        The index of the feature.
-     *
-     * @return The feature with the specified index.
-     */
     Feature getFeature(size_t index) const {
         return backend()->getFeature(index);
     }
 
     /**
-     * Get all features of this data tag.
+     * @brief Get all Feature entities contained in the tag.
      *
-     * The parameter "filter" is defaulted to giving back all 
-     * features. To use your own filter pass a lambda 
-     * that accepts a "Feature" as parameter and returns a bool 
-     * telling whether to get it or not.
+     * The parameter filter can be used to filter features by various
+     * criteria. By default a filter is used that accepts all features.
      *
-     * @param object filter function of type {@link nix::util::Filter::type}
-     * @return object features as a vector     
+     * @param filter       A filter function.
+     *
+     * @return A vector containing all filtered Feature entities.
      */
-    std::vector<Feature> features(
-                                  util::AcceptAll<Feature>::type filter
-                                  = util::AcceptAll<Feature>()) const
+    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const
     {
         auto f = [this] (size_t i) { return getFeature(i); };
         return getEntities<Feature>(f,
@@ -430,10 +312,10 @@ public:
     }
 
     /**
-     * Create a new feature.
+     * @brief Create a new feature.
      *
-     * @param data      The data array of this feature.
-     * @param type      The link type of this feature.
+     * @param data      The data array that is part of the new feature.
+     * @param link_type The link type of this feature.
      *
      * @return The created feature object.
      */
@@ -441,35 +323,20 @@ public:
         return backend()->createFeature(data.id(), link_type);
     }
 
-    /**
-     * Create a new feature.
-     *
-     * @param data      The data array of this feature.
-     * @param type      The link type of this feature.
-     *
-     * @return The created feature object.
-     */
     Feature createFeature(const std::string &data_array_id, LinkType link_type) {
         return backend()->createFeature(data_array_id, link_type);
     }
 
-    /**
-     * Delete a feature from the tag.
-     *
-     * @param id        The id of the feature to delete.
-     *
-     * @return True if the feature was removed, false otherwise.
-     */
     bool deleteFeature(const std::string &id) {
         return backend()->deleteFeature(id);
     }
 
     /**
-     * Delete a feature from the tag.
+     * @brief Delete a feature from the tag.
      *
-     * @param feature        The feature to delete.
+     * @param feature   The feature to remove.
      *
-     * @return bool True if the feature was removed, false otherwise.
+     * @return True if the feature was removed, false otherwise.
      */
     bool deleteFeature(const Feature &feature) {
         if (feature == none) {
@@ -478,13 +345,20 @@ public:
         return backend()->deleteFeature(feature.id());
     }
 
+    //------------------------------------------------------
+    // Operators and other functions
+    //------------------------------------------------------
+
+    /**
+     * @brief Assign none operator.
+     */
     virtual DataTag &operator=(none_t) {
         nullify();
         return *this;
     }
 
     /**
-     * Output operator
+     * @brief Output operator
      */
     friend std::ostream& operator<<(std::ostream &out, const DataTag &ent) {
         out << "DataTag: {name = " << ent.name();

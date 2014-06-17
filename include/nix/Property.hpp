@@ -19,25 +19,73 @@
 
 namespace nix {
 
+/**
+ * @brief Class representing an odML property entity.
+ *
+ * In the odML model information is stored in the form of extended
+ * key-value pairs. A Property contains information that is valid for
+ * all Values stored in it. Its {@link dataType} provides information about
+ * the type of the stored Value entities (e.g. double or integer).
+ *
+ * The {@link unit} is the unit of the stored values. Similar
+ * to the {@link nix::Section} entity, mapping information can be provided
+ * using the {@link mapping} field.
+ */
 class NIXAPI Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
 
 public:
 
+    /**
+     * @brief Constructor that creates an uninitialized Property.
+     *
+     * Calling any method on an uninitialized property will throw a {@link nix::UninitializedEntity}
+     * exception. The following code illustrates how to check if a property is initialized:
+     *
+     * ~~~
+     * Property e = ...;
+     * if (e) {
+     *     // e is initialised
+     * } else {
+     *     // e is uninitialized
+     * }
+     * ~~~
+     */
     Property()
         : NamedEntity()
     {
     }
 
+    /**
+     * @brief Copy constructor.
+     *
+     * Copying of all NIX front facing objects like Property is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The property to copy.
+     */
     Property(const Property &other)
         : NamedEntity(other.impl())
     {
     }
 
+    /**
+     * @brief Constructor that creates a new Property from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     Property(const std::shared_ptr<base::IProperty> &p_impl)
         : NamedEntity(p_impl)
     {
     }
 
+    /**
+     * @brief Constructor with move semantics that creates a new Property from a shared pointer to
+     * an implementation instance.
+     *
+     * This constructor should only be used in the back-end.
+     */
     Property(std::shared_ptr<base::IProperty> &&ptr)
         : NamedEntity(std::move(ptr))
     {
@@ -48,57 +96,23 @@ public:
     // Attribute getter and setter
     //--------------------------------------------------
 
-    /**
-     * Set the mapping information for this Property. The mapping defines how
-     * this Property should be treated in a mapping procedure. The mapping is provided
-     * in form of an url pointing to the definition of a section into which this
-     * property should be mapped
-     * (e.g. http:// ... /preparation/preparation.xml#preparation:BathSolution
-     *
-     * @param mapping string the mapping information.
-     *
-     */
+
     void mapping(const std::string &mapping) {
         backend()->mapping(mapping);
     }
 
-    /**
-     * Getter for the mapping information stored in this Property.
-     * The result may be not initialized, check on true before
-     * dereferencing.
-     *
-     * @returns boost::optional<String> the mapping
-     */
     boost::optional<std::string> mapping() const {
         return backend()->mapping();
     }
-    
-    /**
-     * Deletes the mapping information.
-     *
-     * @param boost::none_t
-     */
+
     void mapping(const boost::none_t t) {
         backend()->mapping(t);
     }
 
-    /**
-     * Returns the dataType of the stored Values. Returned value may be
-     * not initialized if no value present, check on true before dereferencing.
-     *
-     * @param boost::optional<nix::DataType> the value DataType
-     *
-     */
     boost::optional<DataType> dataType() const {
         return backend()->dataType();
     }
 
-    /**
-     * Set the unit of the stored values. Note: all values
-     * have the same unit.
-     *
-     * @param std::string the unit
-     */
     void unit(const std::string &unit) {
         if (backend()->valueCount() > 0 && backend()->unit()) {
             throw std::runtime_error("Cannot change unit of a not-empty property!");
@@ -111,22 +125,10 @@ public:
         backend()->unit(clean_unit);
     }
 
-    /**
-     * Returns the unit. Return value may be uninitialized,
-     * check for true before dereferencing.
-     *
-     * @return boost::optional<String> the unit
-     *
-     */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
-    
-    /**
-     * Deletes the unit information.
-     *
-     * @param boost::none_t
-     */
+
     void unit(const boost::none_t t) {
         return backend()->unit(t);
     }
@@ -135,47 +137,22 @@ public:
     // Methods for Value access
     //--------------------------------------------------
 
-    /**
-     * Deletes all values of this Property.
-     *
-     */
     void deleteValues() {
         backend()->deleteValues();
     }
 
-    /**
-     * Returns the number of values stored in this Property.
-     *
-     * @return size_t the count
-     */
     size_t valueCount() const {
         return backend()->valueCount();
     }
 
-    /**
-     * Set the values of this Property. Replaces all existing Values.
-     *
-     * @param std::vector<Value> the new values.
-     */
     void values(const std::vector<Value> &values) {
         backend()->values(values);
     }
 
-    /**
-     * Returns the values stored in this Property. Returned vector may
-     * be empty.
-     *
-     * @return std::vector<Value> the values.
-     */
     std::vector<Value> values(void) const {
         return backend()->values();
     }
-    
-    /**
-     * Deletes the values stored in this Property.
-     *
-     * @param boost::none_t
-     */
+
     void values(const boost::none_t t) {
         backend()->values(t);
     }
@@ -184,13 +161,16 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
+    /**
+     * @brief Assignment operator for none.
+     */
     virtual Property &operator=(none_t) {
         nullify();
         return *this;
     }
 
     /**
-     * Output operator
+     * @brief Output operator
      */
     friend std::ostream& operator<<(std::ostream &out, const Property &ent) {
         out << "Property: {name = " << ent.name() << "}";
