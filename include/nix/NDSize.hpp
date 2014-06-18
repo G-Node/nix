@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PANDORA_PSIZE_H
-#define PANDORA_PSIZE_H
+#ifndef NIX_PSIZE_H
+#define NIX_PSIZE_H
 
 #include <cstdint>
 #include <stdexcept>
@@ -432,4 +432,4 @@ typedef NDSizeBase<long long int> NDSSize;
 
 } // namespace nix
 
-#endif // PANDORA_PSIZE_H
+#endif // NIX_PSIZE_H

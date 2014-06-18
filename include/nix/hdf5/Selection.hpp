@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PANDORA_SELECTION_H
-#define PANDORA_SELECTION_H
+#ifndef NIX_SELECTION_H
+#define NIX_SELECTION_H
 
 #include <nix/NDSize.hpp>
 #include <nix/Hydra.hpp>
@@ -72,4 +72,4 @@ Selection::Selection (const T &value)
 } // namespace hdf5
 } // namespace nix
 
-#endif //PANDORA_SELECTION_H
+#endif //NIX_SELECTION_H

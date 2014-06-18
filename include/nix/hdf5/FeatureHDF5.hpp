@@ -36,7 +36,7 @@ LinkType linkTypeFromString(const std::string &str);
 
 
 /**
- * Class that represents a pandora feature entity
+ * Class that represents a NIX feature entity
  */
 class FeatureHDF5 : virtual public base::IFeature, public EntityHDF5 {
 
