@@ -25,7 +25,7 @@
 #include <nix.hpp>
 
 namespace test {
-    
+
     /**
      * Convert an unknown type to bool - only handles string explicitely
      * and attempts cast to bool an all other types. Useful when type
@@ -41,7 +41,7 @@ namespace test {
     bool TtoBool<std::string>(std::string var);
 
     /**
-     * Check if the given info about an attribute's getter-setter pair 
+     * Check if the given info about an attribute's getter-setter pair
      * amounts to correct optional attribute behaviour;
      *
      * @param bool telling whether attribute getter returns boost::optional
@@ -53,7 +53,7 @@ namespace test {
     bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT);
 
     /**
-     * Check if the given info about an attribute's getter-setter pair 
+     * Check if the given info about an attribute's getter-setter pair
      * amounts to correct obligatory attribute behaviour;
      *
      * @param bool telling whether attribute getter returns boost::optional
@@ -88,7 +88,7 @@ namespace test {
         public: \
             enum { value = sizeof(func<T>(0)) == sizeof(char) }; \
         };
-    ACCEPTS(id) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
+    ACCEPTS(id) ACCEPTS(index) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
     ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
     ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions) 
     ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
@@ -112,14 +112,14 @@ private:
     CPPUNIT_TEST(testDataArrayLabel);
     CPPUNIT_TEST(testDataArrayUnit);
     CPPUNIT_TEST(testDataArrayExpansionOrigin);
-    CPPUNIT_TEST(testSetDimensionId);
+    CPPUNIT_TEST(testSetDimensionIndex);
     CPPUNIT_TEST(testSetDimensionLabels);
-    CPPUNIT_TEST(testSampledDimensionId);
+    CPPUNIT_TEST(testSampledDimensionIndex);
     CPPUNIT_TEST(testSampledDimensionLabel);
     CPPUNIT_TEST(testSampledDimensionOffset);
     CPPUNIT_TEST(testSampledDimensionSamplingInterval);
     CPPUNIT_TEST(testSampledDimensionUnit);
-    CPPUNIT_TEST(testRangeDimensionId);
+    CPPUNIT_TEST(testRangeDimensionIndex);
     CPPUNIT_TEST(testRangeDimensionLabel);
     CPPUNIT_TEST(testRangeDimensionTicks);
     CPPUNIT_TEST(testRangeDimensionUnit);
@@ -136,7 +136,7 @@ private:
     CPPUNIT_TEST(testSimpleTagUnits);
     CPPUNIT_TEST(testDataTagExtents);
     CPPUNIT_TEST(testDataTagPositions);
-    
+
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
@@ -156,9 +156,9 @@ private:
     bool isOptional;   // whether getter return value is boost::optional
     bool isSet;        // whether getter return value is set
     // bool acceptsNoneT; // whether setter accepts boost::none (declared in place)
-    
+
     std::string summary;
-    
+
 public:
 
     void setUp();
@@ -173,14 +173,14 @@ public:
     void testDataArrayLabel();
     void testDataArrayUnit();
     void testDataArrayExpansionOrigin();
-    void testSetDimensionId();
+    void testSetDimensionIndex();
     void testSetDimensionLabels();
-    void testSampledDimensionId();
+    void testSampledDimensionIndex();
     void testSampledDimensionLabel();
     void testSampledDimensionOffset();
     void testSampledDimensionSamplingInterval();
     void testSampledDimensionUnit();
-    void testRangeDimensionId();
+    void testRangeDimensionIndex();
     void testRangeDimensionLabel();
     void testRangeDimensionTicks();
     void testRangeDimensionUnit();
@@ -197,9 +197,9 @@ public:
     void testSimpleTagUnits();
     void testDataTagExtents();
     void testDataTagPositions();
-    
+
     void summarize(std::string name, bool isOptional, bool isSet, bool acceptsNoneT);
-    
+
     ~TestOptionalObligatory() {
         std::cout << summary;
     }

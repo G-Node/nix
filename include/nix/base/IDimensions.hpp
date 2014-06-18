@@ -42,12 +42,12 @@ public:
     /**
      * @brief The actual dimension that is described by the dimension descriptor.
      *
-     * The id of the dimension entity which at the same time is the order of the dimension.
-     * That is the dimension of the actual data that is defined by this descriptor.
+     * The index of the dimension entity representing the dimension of the actual
+     * data that is defined by this descriptor.
      *
      * @return The dimension index of the dimension.
      */
-    virtual size_t id() const = 0;
+    virtual size_t index() const = 0;
 
     /**
      * @brief The type of the dimension.
