@@ -50,4 +50,4 @@ The API documentation can be found [here](http://g-node.github.io/nix/)
 
 --
 
-[![Build Status](https://travis-ci.org/G-Node/nix.png?branch=master)](https://travis-ci.org/G-Node/pandora)
+[![Build Status](https://travis-ci.org/G-Node/nix.png?branch=master)](https://travis-ci.org/G-Node/nix)
