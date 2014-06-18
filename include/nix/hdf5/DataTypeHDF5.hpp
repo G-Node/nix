@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PANDORA_DATA_TYPE_H
-#define PANDORA_DATA_TYPE_H
+#ifndef NIX_DATA_TYPE_HDF5_H
+#define NIX_DATA_TYPE_HDF5_H
 
 #include <nix/DataType.hpp>
 #include <nix/hdf5/hdf5include.hpp>
@@ -27,4 +27,4 @@ NIXAPI DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t v
 } // namespace hdf5
 } // namespace nix
 
-#endif //PANDORA_DATA_TYPE_H
+#endif //NIX_DATA_TYPE_HDF5_H

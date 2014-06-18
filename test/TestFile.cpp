@@ -30,7 +30,7 @@ void TestFile::tearDown() {
 
 
 void TestFile::testFormat() {
-    CPPUNIT_ASSERT(file_open.format() == "pandora");
+    CPPUNIT_ASSERT(file_open.format() == "nix");
 }
 
 

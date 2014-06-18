@@ -22,7 +22,7 @@ namespace hdf5 {
 
 
 /**
- * Class that represents a pandora tag.
+ * Class that represents a NIX tag.
  */
 class SimpleTagHDF5 : virtual public base::ISimpleTag, public EntityWithSourcesHDF5 {
 

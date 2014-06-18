@@ -54,7 +54,7 @@ Dependencies
        If still getting errors (even after reboot): Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> General -> Character Set" is set to "Use Unicode Character set"
 
 4) **Nix**:
-   - Obtain sources from git (https://github.com/G-Node/pandora)
+   - Obtain sources from git (https://github.com/G-Node/nix)
    - Create build folder (e.g. nix/build)
    - Run CMake: `> cmake .. -G"Visual Studio 12 Win64"`
    - Build via CMake: `> cmake --build . --config Release`

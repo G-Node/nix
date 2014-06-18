@@ -23,7 +23,7 @@ namespace hdf5 {
 
 // Format definition
 #define FILE_VERSION std::string("1.0")
-#define FILE_FORMAT  std::string("pandora")
+#define FILE_FORMAT  std::string("nix")
 
 
 static unsigned int map_file_mode(FileMode mode) {
@@ -99,15 +99,15 @@ Block FileHDF5::getBlock(size_t index) const {
 
 Block FileHDF5::createBlock(const std::string &name, const string &type) {
     string id = util::createId("block");
-    
+
     while(data.hasObject(id)) {
         id = util::createId("block");
     }
-        
+
     Group group = data.openGroup(id, true);
     shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), group, id, type, name));
     Block b(ptr);
-    
+
     return b;
 }
 
@@ -148,7 +148,7 @@ Section FileHDF5::getSection(const std::string &id) const {
 
 
 Section FileHDF5::getSection(size_t index) const{
-    string id = metadata.objectName(index);    
+    string id = metadata.objectName(index);
     return getSection(id);
 }
 

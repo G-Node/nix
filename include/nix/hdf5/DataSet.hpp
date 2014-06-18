@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef PANDORA_DATASET_H
-#define PANDORA_DATASET_H
+#ifndef NIX_DATASET_H
+#define NIX_DATASET_H
 
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/Selection.hpp>
@@ -273,4 +273,4 @@ template<typename T> void DataSet::write(const T &value, const Selection &fileSe
 } // namespace hdf5
 } // namespace nix
 
-#endif // PANDORA_DATASET_H
+#endif // NIX_DATASET_H
