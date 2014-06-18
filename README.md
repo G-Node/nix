@@ -27,7 +27,7 @@ Build NIX under Ubuntu 14.04
 sudo apt-get install libboost-all-dev libhdf5-serial-dev libcppunit-dev cmake build-essential
 
 # clone NIX
-git clone https://github.com/stoewer/nix
+git clone https://github.com/G-Node/nix
 cd nix
 
 # make a build dir and build nix
