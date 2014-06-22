@@ -61,7 +61,7 @@ vector<string> SimpleTagHDF5::units() const {
 }
 
 
-void SimpleTagHDF5::units(vector<string> &units) {
+void SimpleTagHDF5::units(const vector<string> &units) {
     group().setData("units", units);
     forceUpdatedAt();
 }
