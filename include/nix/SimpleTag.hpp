@@ -112,7 +112,7 @@ public:
         return backend()->units();
     }
 
-    void units(std::vector<std::string> &units) {
+    void units(const std::vector<std::string> &units) {
         std::vector<std::string> sanitized;
         sanitized.reserve(units.size());
         std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {

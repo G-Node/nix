@@ -57,7 +57,7 @@ public:
     std::vector<std::string> units() const;
 
 
-    void units(std::vector<std::string> &units);
+    void units(const std::vector<std::string> &units);
 
 
     void units(const none_t t);
