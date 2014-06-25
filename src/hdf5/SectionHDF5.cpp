@@ -24,7 +24,7 @@ SectionHDF5::SectionHDF5(const SectionHDF5 &section)
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, 
+SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
                          const string &type, const string &name)
     : SectionHDF5(file, nullptr, group, id, type, name)
 {
@@ -38,7 +38,7 @@ SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &g
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id, 
+SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
                          const string &type, const string &name, time_t time)
     : SectionHDF5(file, nullptr, group, id, type, name, time)
 {
@@ -183,7 +183,9 @@ Section SectionHDF5::getSection(const string &id) const {
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        auto tmp = make_shared<SectionHDF5>(file(), group, id, type, name);
+
+        Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
+        auto tmp = make_shared<SectionHDF5>(file(), parent, group, id, type, name);
         return Section(tmp);
     } else {
         return Section();
