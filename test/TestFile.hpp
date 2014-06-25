@@ -27,6 +27,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestFile);
     CPPUNIT_TEST(testFormat);
+    CPPUNIT_TEST(testLocation);
     CPPUNIT_TEST(testVersion);
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testUpdatedAt);
@@ -44,6 +45,7 @@ public:
     void setUp();
     void tearDown();
     void testFormat();
+    void testLocation();
     void testVersion();
     void testCreatedAt();
     void testUpdatedAt();

@@ -106,6 +106,9 @@ public:
     std::string format() const;
 
 
+    std::string location() const;
+
+
     time_t createdAt() const;
 
 

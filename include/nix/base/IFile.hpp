@@ -178,6 +178,13 @@ public:
     virtual std::string format() const = 0;
 
     /**
+     * @brief Return the location / uri.
+     *
+     * @return uri string.
+     */
+    virtual std::string location() const = 0;
+
+    /**
      * @brief Get the creation date of the file.
      *
      * @return The creation date of the file.

@@ -268,6 +268,11 @@ public:
     }
 
 
+    std::string location() const {
+        return backend()->location();
+    }
+
+
     time_t createdAt() const {
         return backend()->createdAt();
     }
