@@ -45,7 +45,7 @@ protected:
      * should be automatically deduced.
      *
      * @param getEntity         Function of return type TENT.
-     * @param nT                Number of entities to get.
+     * @param n                 Number of entities to get.
      * @param filter            Filter function.
      *
      * @return A vector with all filtered entities.
@@ -53,17 +53,17 @@ protected:
     template<typename TENT, typename TFUNC>
     std::vector<TENT> getEntities(
         TFUNC const &getEntity,
-        size_t nT,
+        size_t n,
         std::function<bool(TENT)> filter) const
     {
         std::vector<TENT> entities;
         TENT candidate;
 
-        if (nT < 1) {
+        if (n < 1) {
             return entities;
         }
 
-        for (size_t i = 0; i < nT; i++) {
+        for (size_t i = 0; i < n; i++) {
             candidate = getEntity(i);
             if (candidate && filter(candidate)) {
                 entities.push_back(candidate);

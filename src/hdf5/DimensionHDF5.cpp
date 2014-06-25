@@ -105,11 +105,11 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double _samplingInterval)
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
     : DimensionHDF5(group, index)
 {
     setType();
-    samplingInterval(_samplingInterval);
+    this->samplingInterval(sampling_interval);
 }
 
 
@@ -288,11 +288,11 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> _ticks)
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
     : DimensionHDF5(group, index)
 {
     setType();
-    ticks(_ticks);
+    this->ticks(ticks);
 }
 
 

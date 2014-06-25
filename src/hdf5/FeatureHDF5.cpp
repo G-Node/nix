@@ -39,20 +39,20 @@ FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
 
 
 FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray _data, LinkType _link_type)
-    : FeatureHDF5(file, block, group, id, _data, _link_type, util::getTime())
+                                       const string &id, DataArray data, LinkType link_type)
+    : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
 FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray _data, LinkType _link_type, time_t time)
+                                       const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
-    linkType(_link_type);
+    linkType(link_type);
     // TODO: the line below currently throws an exception if the DataArray
     // is not in block - to consider if we prefer copying it to the block
-    data(_data.id()); 
+    this->data(data.id()); 
 }
 
 

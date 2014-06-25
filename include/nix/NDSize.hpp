@@ -40,18 +40,18 @@ public:
     }
 
 
-    explicit NDSizeBase(size_t _rank)
-        : rank(_rank), dims(nullptr)
+    explicit NDSizeBase(size_t rank)
+        : rank(rank), dims(nullptr)
     {
         allocate();
     }
 
 
-    explicit NDSizeBase(size_t _rank, T fillValue)
-        : rank(_rank), dims(nullptr)
+    explicit NDSizeBase(size_t rank, T fill_value)
+        : rank(rank), dims(nullptr)
     {
         allocate();
-        fill(fillValue);
+        fill(fill_value);
     }
 
     template<typename U>

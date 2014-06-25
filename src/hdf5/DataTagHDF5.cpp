@@ -28,8 +28,8 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
 
 
 DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
-                         const string &id, const std::string &type, const string &name, const DataArray _positions)
-    : DataTagHDF5(file, block, group, id, type, name, _positions, util::getTime())
+                         const string &id, const std::string &type, const string &name, const DataArray positions)
+    : DataTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 

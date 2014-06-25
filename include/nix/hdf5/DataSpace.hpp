@@ -21,7 +21,7 @@ namespace hdf5 {
 namespace DataSpace {
 
 H5::DataSpace NIXAPI create(const NDSize &dims, const NDSize &maxdims = {});
-H5::DataSpace NIXAPI create(const NDSize &dims, bool maxdimsUnlimited);
+H5::DataSpace NIXAPI create(const NDSize &dims, bool maxdims_unlimited);
 
 } //::nix::hdf5::DataSpace
 } //::nix::hdf5

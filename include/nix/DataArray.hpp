@@ -317,12 +317,12 @@ public:
     /**
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
      *
-     * @param samplingInterval         The sampling interval of the SetDimension to create.
+     * @param sampling_interval         The sampling interval of the SetDimension to create.
      *
      * @return The newly created SampledDimension.
      */
-    Dimension appendSampledDimension(double samplingInterval) {
-        return backend()->createSampledDimension(backend()->dimensionCount() + 1, samplingInterval);
+    Dimension appendSampledDimension(double sampling_interval) {
+        return backend()->createSampledDimension(backend()->dimensionCount() + 1, sampling_interval);
     }
 
     /**
@@ -361,12 +361,12 @@ public:
      * of the data at the specified index.
      *
      * @param id                The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
-     * @param samplingInterval  The sampling interval of the dimension.
+     * @param sampling_interval  The sampling interval of the dimension.
      *
      * @return The created dimension descriptor.
      */
-    Dimension createSampledDimension(size_t id, double samplingInterval) {
-        return backend()->createSampledDimension(id, samplingInterval);
+    Dimension createSampledDimension(size_t id, double sampling_interval) {
+        return backend()->createSampledDimension(id, sampling_interval);
     }
 
     /**

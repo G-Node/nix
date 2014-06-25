@@ -108,13 +108,13 @@ void PropertyHDF5::deleteValues() {
 
 // TODO should this be moved to Property.hpp/cpp
 /*
-bool PropertyHDF5::checkDataType(const H5::DataSet &dataset, H5T_class_t destType) const {
+bool PropertyHDF5::checkDataType(const H5::DataSet &dataset, H5T_class_t dest_type) const {
     H5::DataType type = dataset.getDataType();
     if (type.getClass() != H5T_COMPOUND) {
         return false;
     }
     H5::CompType ct(dataset);
-    if (ct.getMemberDataType(ct.getMemberIndex("value")).getClass() != destType) {
+    if (ct.getMemberDataType(ct.getMemberIndex("value")).getClass() != dest_type) {
         return false;
     }
     return true;

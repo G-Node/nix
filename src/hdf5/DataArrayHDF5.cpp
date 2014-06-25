@@ -278,8 +278,8 @@ Dimension DataArrayHDF5::createRangeDimension(size_t id, std::vector<double> tic
 }
 
 
-Dimension DataArrayHDF5::createSampledDimension(size_t id, double samplingInterval) {
-    return _createDimension<DimensionType::Sample>(id, samplingInterval);
+Dimension DataArrayHDF5::createSampledDimension(size_t id, double sampling_interval) {
+    return _createDimension<DimensionType::Sample>(id, sampling_interval);
 }
 
 

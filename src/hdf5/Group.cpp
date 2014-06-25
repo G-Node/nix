@@ -172,23 +172,23 @@ Group::~Group() {
     h5group.close();
 }
 
-void Group::readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, void *data) {
-    attr.read(memType, data);
+void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
+    attr.read(mem_type, data);
 }
 
- void Group::readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, std::string *data) {
+ void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
     StringWriter writer(size, data);
-    attr.read(memType, *writer);
+    attr.read(mem_type, *writer);
     writer.finish();
-    H5::DataSet::vlenReclaim(*writer, memType, attr.getSpace()); //recycle space?
+    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
 }
 
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const void *data) {
-    attr.write(memType, data);
+void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
+    attr.write(mem_type, data);
 }
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const std::string *data) {
+void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
     StringReader reader(size, data);
-    attr.write(memType, *reader);
+    attr.write(mem_type, *reader);
 }
 
 } // namespace hdf5

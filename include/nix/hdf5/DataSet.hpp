@@ -122,13 +122,13 @@ public:
 
     static NDSize guessChunking(NDSize dims, DataType dtype);
 
-    static NDSize guessChunking(NDSize dims, size_t elementSize);
+    static NDSize guessChunking(NDSize dims, size_t element_size);
 
     void setExtent(const NDSize &dims);
     Selection createSelection() const;
     NDSize size() const;
 
-    void vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace = nullptr) const;
+    void vlenReclaim(DataType mem_type, void *data, H5::DataSpace *dspace = nullptr) const;
 
     static H5::DataType fileTypeForValue(DataType dtype);
     static H5::DataType memTypeForValue(DataType dtype);

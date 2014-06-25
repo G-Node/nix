@@ -76,11 +76,11 @@ public:
     virtual ~Group();
 
 private:
-    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, void *data);
-    static void readAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, std::string *data);
+    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
+    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
 
-    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const void *data);
-    static void writeAttr(const H5::Attribute &attr, H5::DataType memType, const NDSize &size, const std::string *data);
+    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data);
+    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data);
 }; // group Group
 
 //template functions
@@ -125,9 +125,9 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     hydra.resize(dims);
 
     DataType dtype = hydra.element_data_type();
-    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    H5::DataType mem_type = data_type_to_h5_memtype(dtype);
 
-    readAttr(attr, memType, dims, hydra.data());
+    readAttr(attr, mem_type, dims, hydra.data());
 
     return true;
 }

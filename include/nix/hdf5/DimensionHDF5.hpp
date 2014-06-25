@@ -73,7 +73,7 @@ class SampledDimensionHDF5 : virtual public base::ISampledDimension, public Dime
 
 public:
 
-    SampledDimensionHDF5(Group group, size_t index, double samplingInterval);
+    SampledDimensionHDF5(Group group, size_t index, double sampling_interval);
 
 
     SampledDimensionHDF5(const SampledDimensionHDF5 &other);
@@ -163,7 +163,7 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(Group group, size_t index, std::vector<double> _ticks);
+    RangeDimensionHDF5(Group group, size_t index, std::vector<double> ticks);
 
 
     RangeDimensionHDF5(const RangeDimensionHDF5 &other);

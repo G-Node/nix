@@ -50,7 +50,7 @@ namespace test {
      *
      * @return bool
      */
-    bool isValidOptional(bool isOptional, bool isSet, bool acceptsNoneT);
+    bool isValidOptional(bool is_opt, bool is_set, bool accepts_none);
 
     /**
      * Check if the given info about an attribute's getter-setter pair
@@ -62,7 +62,7 @@ namespace test {
      *
      * @return bool
      */
-    bool isValidObligatory(bool isOptional, bool isSet, bool acceptsNoneT);
+    bool isValidObligatory(bool is_opt, bool is_set, bool accepts_none);
 
     // hacky way to allow testing for none_t-overloads of entity methods
     // usage: add 'ACCEPT(methodName)' anywhere to namespace 'test'
@@ -147,15 +147,15 @@ private:
     nix::SimpleTag simpleTag;
     nix::DataTag dataTag;
     nix::Source source;
-    nix::SetDimension setDim;
-    nix::SampledDimension sampledDim;
-    nix::RangeDimension rangeDim;
+    nix::SetDimension set_dim;
+    nix::SampledDimension sampled_dim;
+    nix::RangeDimension range_dim;
     nix::Feature feature;
     time_t startup_time;
 
-    bool isOptional;   // whether getter return value is boost::optional
-    bool isSet;        // whether getter return value is set
-    // bool acceptsNoneT; // whether setter accepts boost::none (declared in place)
+    bool is_opt;   // whether getter return value is boost::optional
+    bool is_set;   // whether getter return value is set
+    // bool accepts_none; // whether setter accepts boost::none (declared in place)
 
     std::string summary;
 
@@ -198,7 +198,7 @@ public:
     void testDataTagExtents();
     void testDataTagPositions();
 
-    void summarize(std::string name, bool isOptional, bool isSet, bool acceptsNoneT);
+    void summarize(std::string name, bool is_opt, bool is_set, bool accepts_none);
 
     ~TestOptionalObligatory() {
         std::cout << summary;
