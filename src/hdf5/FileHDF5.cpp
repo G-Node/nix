@@ -233,6 +233,11 @@ string FileHDF5::format() const {
 }
 
 
+string FileHDF5::location() const {
+    return h5file.getFileName();
+}
+
+
 void FileHDF5::close() {
 
     if (!isOpen())

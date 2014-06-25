@@ -34,6 +34,12 @@ void TestFile::testFormat() {
 }
 
 
+void TestFile::testLocation() {
+    CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
+    CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
+}
+
+
 void TestFile::testVersion() {
     CPPUNIT_ASSERT(file_open.version() == "1.0");
 }
