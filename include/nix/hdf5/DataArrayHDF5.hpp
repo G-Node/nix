@@ -108,7 +108,7 @@ public:
     Dimension createRangeDimension(size_t id, std::vector<double> ticks);
 
 
-    Dimension createSampledDimension(size_t id, double samplingInterval);
+    Dimension createSampledDimension(size_t id, double sampling_interval);
 
 
     template<DimensionType type, typename T = none_t>

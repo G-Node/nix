@@ -192,7 +192,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    virtual Dimension createSampledDimension(size_t id, double samplingInterval) = 0;
+    virtual Dimension createSampledDimension(size_t id, double sampling_interval) = 0;
 
     /**
      * @brief Remove a dimension descriptor at a specified index.

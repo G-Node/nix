@@ -34,10 +34,10 @@ H5::DataSpace create(const NDSize &dims, const NDSize &maxdims)
     return space;
 }
 
-H5::DataSpace create(const NDSize &dims, bool maxdimsUnlimited)
+H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited)
 {
 
-    if (maxdimsUnlimited) {
+    if (maxdims_unlimited) {
         NDSize maxdims(dims.size(), H5S_UNLIMITED);
         return create(dims, maxdims);
     } else {

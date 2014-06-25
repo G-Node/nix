@@ -53,8 +53,8 @@ DataSet DataSet::create(const H5::CommonFG &parent,
                         const NDSize &size,
                         const NDSize &maxsize,
                         const NDSize &chunks,
-                        bool maxSizeUnlimited,
-                        bool guessChunks)
+                        bool max_size_unlimited,
+                        bool guess_chunks)
 {
     H5::DataSpace space;
 
@@ -62,7 +62,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
         if (maxsize) {
             space = DataSpace::create(size, maxsize);
         } else {
-            space = DataSpace::create(size, maxSizeUnlimited);
+            space = DataSpace::create(size, max_size_unlimited);
         }
     }
 
@@ -71,7 +71,7 @@ DataSet DataSet::create(const H5::CommonFG &parent,
     if (chunks) {
         int rank = static_cast<int>(chunks.size());
         plcreate.setChunk(rank, chunks.data());
-    } else if (guessChunks) {
+    } else if (guess_chunks) {
         NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
         plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
     }
@@ -196,7 +196,7 @@ NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
+NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
 {
     // original source:
     //    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
@@ -215,7 +215,7 @@ NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
         product *= val;
     });
 
-    product *= elementSize;
+    product *= element_size;
 
     double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0L * 1024.0L)));
     if (target_size > CHUNK_MAX)
@@ -231,7 +231,7 @@ NDSize DataSet::guessChunking(NDSize dims, size_t elementSize)
             break;
         }
 
-        double cbytes = csize * elementSize;
+        double cbytes = csize * element_size;
         if ((cbytes < target_size || (std::abs(cbytes - target_size) / target_size) < 0.5)
                 && cbytes < CHUNK_MAX) {
             break;
@@ -270,9 +270,9 @@ NDSize DataSet::size() const
     return dims;
 }
 
-void DataSet::vlenReclaim(DataType memType, void *data, H5::DataSpace *dspace) const
+void DataSet::vlenReclaim(DataType mem_type, void *data, H5::DataSpace *dspace) const
 {
-    H5::DataType h5MemType = data_type_to_h5_memtype(memType);
+    H5::DataType h5MemType = data_type_to_h5_memtype(mem_type);
 
     if (dspace != nullptr) {
         H5::DataSet::vlenReclaim(data, h5MemType, *dspace);
@@ -335,20 +335,20 @@ struct FileValue<bool>  {
 //
 
 template<typename T>
-H5::DataType h5_type_for_value(bool forMemory)
+H5::DataType h5_type_for_value(bool for_memory)
 {
     typedef FileValue<T> file_value_t;
 
     H5::CompType h5type(sizeof(file_value_t));
 
     DataType dtype = to_data_type<T>::value;
-    if(forMemory) {
+    if(for_memory) {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_memtype(dtype));
     } else {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_filetype(dtype));
     }
 
-    if(forMemory) {
+    if(for_memory) {
         h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_memtype(DataType::Double));
     } else {
        h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_filetype(DataType::Double));
@@ -367,16 +367,16 @@ H5::DataType h5_type_for_value(bool forMemory)
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 //
-static H5::DataType h5_type_for_value_dtype(DataType dtype, bool forMemory)
+static H5::DataType h5_type_for_value_dtype(DataType dtype, bool for_memory)
 {
     switch(dtype) {
-    case DataType::Bool:   return h5_type_for_value<bool>(forMemory);
-    case DataType::Int32:  return h5_type_for_value<int32_t>(forMemory);
-    case DataType::UInt32: return h5_type_for_value<uint32_t>(forMemory);
-    case DataType::Int64:  return h5_type_for_value<int64_t>(forMemory);
-    case DataType::UInt64: return h5_type_for_value<uint64_t>(forMemory);
-    case DataType::Double: return h5_type_for_value<double>(forMemory);
-    case DataType::String: return h5_type_for_value<char *>(forMemory);
+    case DataType::Bool:   return h5_type_for_value<bool>(for_memory);
+    case DataType::Int32:  return h5_type_for_value<int32_t>(for_memory);
+    case DataType::UInt32: return h5_type_for_value<uint32_t>(for_memory);
+    case DataType::Int64:  return h5_type_for_value<int64_t>(for_memory);
+    case DataType::UInt64: return h5_type_for_value<uint64_t>(for_memory);
+    case DataType::Double: return h5_type_for_value<double>(for_memory);
+    case DataType::String: return h5_type_for_value<char *>(for_memory);
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return H5::DataType{};
 #endif

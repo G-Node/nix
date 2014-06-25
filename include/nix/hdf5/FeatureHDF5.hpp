@@ -51,11 +51,11 @@ public:
 
 
     FeatureHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id, DataArray _data, LinkType _link_type);
+                       const std::string &id, DataArray data, LinkType link_type);
 
 
     FeatureHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id, DataArray _data, LinkType _link_type, time_t time);
+                       const std::string &id, DataArray data, LinkType link_type, time_t time);
 
 
     void linkType(LinkType type);
