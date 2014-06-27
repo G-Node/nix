@@ -20,6 +20,9 @@
 namespace nix {
 
 class Dimension;
+class SetDimension;
+class RangeDimension;
+class SampledDimension;
 enum class DimensionType : int;
 
 
@@ -165,7 +168,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    virtual Dimension createSetDimension(size_t id) = 0;
+    virtual SetDimension createSetDimension(size_t id) = 0;
 
     /**
      * @brief Create a new RangeDimension at a specified dimension index.
@@ -178,7 +181,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    virtual Dimension createRangeDimension(size_t id, std::vector<double> ticks) = 0;
+    virtual RangeDimension createRangeDimension(size_t id, std::vector<double> ticks) = 0;
 
     /**
      * @brief Create a new SampledDimension at a specified dimension index.
@@ -192,7 +195,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    virtual Dimension createSampledDimension(size_t id, double sampling_interval) = 0;
+    virtual SampledDimension createSampledDimension(size_t id, double sampling_interval) = 0;
 
     /**
      * @brief Remove a dimension descriptor at a specified index.

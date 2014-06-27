@@ -102,17 +102,21 @@ public:
     Dimension getDimension(size_t id) const;
 
 
-    Dimension createSetDimension(size_t id);
+    SetDimension createSetDimension(size_t id);
 
 
-    Dimension createRangeDimension(size_t id, std::vector<double> ticks);
+    RangeDimension createRangeDimension(size_t id, std::vector<double> ticks);
 
 
-    Dimension createSampledDimension(size_t id, double sampling_interval);
+    SampledDimension createSampledDimension(size_t id, double sampling_interval);
 
 
-    template<DimensionType type, typename T = none_t>
-    Dimension _createDimension(size_t id, T var = none);
+    template<DimensionType dtype, typename T>
+    typename std::conditional<dtype == DimensionType::Range, RangeDimension, SampledDimension>::type
+    _createDimension(size_t id, T var);
+
+    template<DimensionType dtype>
+    SetDimension _createDimension(size_t id);
 
 
     bool deleteDimension(size_t id);

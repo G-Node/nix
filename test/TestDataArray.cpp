@@ -233,6 +233,11 @@ void TestDataArray::testDimension()
     dims.push_back(array2.appendSampledDimension(samplingInterval));
     dims.push_back(array2.appendSetDimension());
     dims[3] = array2.createRangeDimension(4, ticks);
+    
+    // have some explicit dimension types
+    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
+    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
+    nix::SetDimension dim_set = array1.appendSetDimension();
 
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
@@ -267,6 +272,9 @@ void TestDataArray::testDimension()
     array2.deleteDimension(1);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
+    array1.deleteDimension(1);
+    array1.deleteDimension(1);
+    array1.deleteDimension(1);
 
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);

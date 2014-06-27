@@ -299,7 +299,7 @@ public:
      *
      * @return The newly created SetDimension.
      */
-    Dimension appendSetDimension() {
+    SetDimension appendSetDimension() {
         return backend()->createSetDimension(backend()->dimensionCount() + 1);
     }
 
@@ -310,7 +310,7 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    Dimension appendRangeDimension(std::vector<double> ticks) {
+    RangeDimension appendRangeDimension(std::vector<double> ticks) {
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
 
@@ -321,7 +321,7 @@ public:
      *
      * @return The newly created SampledDimension.
      */
-    Dimension appendSampledDimension(double sampling_interval) {
+    SampledDimension appendSampledDimension(double sampling_interval) {
         return backend()->createSampledDimension(backend()->dimensionCount() + 1, sampling_interval);
     }
 
@@ -335,7 +335,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    Dimension createSetDimension(size_t id) {
+    SetDimension createSetDimension(size_t id) {
         return backend()->createSetDimension(id);
     }
 
@@ -350,7 +350,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    Dimension createRangeDimension(size_t id, std::vector<double> ticks) {
+    RangeDimension createRangeDimension(size_t id, std::vector<double> ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
 
@@ -365,7 +365,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    Dimension createSampledDimension(size_t id, double sampling_interval) {
+    SampledDimension createSampledDimension(size_t id, double sampling_interval) {
         return backend()->createSampledDimension(id, sampling_interval);
     }
 

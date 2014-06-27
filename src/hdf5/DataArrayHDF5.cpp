@@ -208,7 +208,8 @@ Dimension DataArrayHDF5::getDimension(size_t id) const {
 
 
 template<DimensionType dtype, typename T>
-Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
+typename std::conditional<dtype == DimensionType::Range, RangeDimension, SampledDimension>::type
+DataArrayHDF5::_createDimension(size_t id, T var) {
     size_t dim_count = dimensionCount();
 
     if (id > (dim_count + 1) || id <= 0) { // dim_count+1 since index starts at 1
@@ -222,17 +223,17 @@ Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
     }
 
     Group dim_group = dimension_group.openGroup(str_id, true);
-    Dimension dim;
 
+    typedef typename std::conditional<dtype == DimensionType::Range, 
+                                      RangeDimensionHDF5, 
+                                      SampledDimensionHDF5>::type 
+                                      dimTypeHDF5;
+    typedef typename std::conditional<dtype == DimensionType::Range, 
+                                      RangeDimension, 
+                                      SampledDimension>::type 
+                                      dimType;
+    dimType dim;
     if (dtype == DimensionType::Range || dtype == DimensionType::Sample) {
-        typedef typename std::conditional<dtype == DimensionType::Range, 
-                                          RangeDimensionHDF5, 
-                                          SampledDimensionHDF5>::type 
-                                          dimTypeHDF5;
-        typedef typename std::conditional<dtype == DimensionType::Range, 
-                                          RangeDimension, 
-                                          SampledDimension>::type 
-                                          dimType;
         auto tmp = make_shared<dimTypeHDF5>(dim_group, id, var);
         dim = dimType(tmp);
     } else {
@@ -243,8 +244,8 @@ Dimension DataArrayHDF5::_createDimension(size_t id, T var) {
 }
 
 
-template<>
-Dimension DataArrayHDF5::_createDimension<DimensionType::Set, none_t>(size_t id, none_t var) {
+template<DimensionType dtype>
+SetDimension DataArrayHDF5::_createDimension(size_t id) {
     size_t dim_count = dimensionCount();
 
     if (id > (dim_count + 1) || id <= 0) { // dim_count+1 since index starts at 1
@@ -258,27 +259,30 @@ Dimension DataArrayHDF5::_createDimension<DimensionType::Set, none_t>(size_t id,
     }
 
     Group dim_group = dimension_group.openGroup(str_id, true);
-    Dimension dim;
-
-    // no dim-type check needed since method only called if type=DimensionType::Set
-    auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
-    dim = SetDimension(tmp);
+    SetDimension dim;
+    
+    if (dtype == DimensionType::Set) {
+        auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
+        dim = SetDimension(tmp);
+    } else {
+        throw runtime_error("Invalid dimension type");
+    }
 
     return dim;
 }
 
 
-Dimension DataArrayHDF5::createSetDimension(size_t id) {
+SetDimension DataArrayHDF5::createSetDimension(size_t id) {
     return _createDimension<DimensionType::Set>(id);
 }
 
 
-Dimension DataArrayHDF5::createRangeDimension(size_t id, std::vector<double> ticks) {
+RangeDimension DataArrayHDF5::createRangeDimension(size_t id, std::vector<double> ticks) {
     return _createDimension<DimensionType::Range>(id, ticks);
 }
 
 
-Dimension DataArrayHDF5::createSampledDimension(size_t id, double sampling_interval) {
+SampledDimension DataArrayHDF5::createSampledDimension(size_t id, double sampling_interval) {
     return _createDimension<DimensionType::Sample>(id, sampling_interval);
 }
 
