@@ -25,8 +25,8 @@ void TestProperty::setUp()
 
     section = file.createSection("cool section", "metadata");
 
-    property = section.createProperty("prop", "sometype");
-    property_other = section.createProperty("other", "sometype");
+    property = section.createProperty("prop");
+    property_other = section.createProperty("other");
     property_null = nullptr;
 }
 
@@ -47,13 +47,6 @@ void TestProperty::testName() {
     string name = util::createId("", 32);
     property.name(name);
     CPPUNIT_ASSERT(property.name() == name);
-}
-
-
-void TestProperty::testType() {
-    string typ = "some_str";
-    property.type(typ);
-    CPPUNIT_ASSERT(property.type() == typ);
 }
 
 
@@ -78,7 +71,7 @@ void TestProperty::testMapping() {
 void TestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty", "str");
+    nix::Property p1 = section.createProperty("strProperty");
 
 
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
@@ -106,7 +99,7 @@ void TestProperty::testValues()
     p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
-    nix::Property p2 = section.createProperty("toDelete", "tmp");
+    nix::Property p2 = section.createProperty("toDelete");
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     strValues.clear();
@@ -120,8 +113,8 @@ void TestProperty::testValues()
 
 void TestProperty::testDataType() {
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty", "str");
-    nix::Property p2 = section.createProperty("doubleProperty", "dbl");
+    nix::Property p1 = section.createProperty("strProperty");
+    nix::Property p2 = section.createProperty("doubleProperty");
     CPPUNIT_ASSERT(!p1.dataType());
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
                                           nix::Value("schoener"),
@@ -143,7 +136,7 @@ void TestProperty::testDataType() {
 
 void TestProperty::testUnit(){
     nix::Section section = file.createSection("testSection", "test");
-    nix::Property p1 = section.createProperty("testProperty", "testType");
+    nix::Property p1 = section.createProperty("testProperty");
     nix::Value v(22.2);
     v.uncertainty = 1.2;
     std::vector<Value> values = {v};

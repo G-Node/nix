@@ -301,8 +301,8 @@ public:
      */
     std::vector<Property> inheritedProperties() const;
 
-    Property createProperty(const std::string &name, const std::string &type) {
-        return backend()->createProperty(name, type);
+    Property createProperty(const std::string &name) {
+        return backend()->createProperty(name);
     }
 
     bool deleteProperty(const std::string &id) {

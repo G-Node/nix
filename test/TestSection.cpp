@@ -215,20 +215,18 @@ void TestSection::testFindRelated(){
 
 void TestSection::testPropertyAccess() {
     vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
-    vector<string> types = { "type_a", "type_b", "type_c", "type_d", "type_e" };
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 
     vector<string> ids;
-    for (auto it = names.begin(), it2 = types.begin(); it != names.end(); ++it, ++it2) {
-        Property prop = section.createProperty(*it, *it2);
-        CPPUNIT_ASSERT(prop.name() == *it);
-        CPPUNIT_ASSERT(prop.type() == *it2);
-        CPPUNIT_ASSERT(section.hasPropertyWithName(*it));
+    for (auto name : names) {
+        Property prop = section.createProperty(name);
+        CPPUNIT_ASSERT(prop.name() == name);
+        CPPUNIT_ASSERT(section.hasPropertyWithName(name));
 
-        Property prop_copy = section.getPropertyByName(*it);
+        Property prop_copy = section.getPropertyByName(name);
 
         CPPUNIT_ASSERT(prop_copy.id() == prop.id());
 
@@ -238,7 +236,7 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());
 
-    section_other.createProperty("some_prop", "some_type");
+    section_other.createProperty("some_prop");
     section_other.link(section);
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
     CPPUNIT_ASSERT(section_other.inheritedProperties().size() == names.size() + 1);

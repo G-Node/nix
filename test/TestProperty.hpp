@@ -35,7 +35,6 @@ private:
     CPPUNIT_TEST_SUITE(TestProperty);
 
     CPPUNIT_TEST(testId);
-    CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testMapping);

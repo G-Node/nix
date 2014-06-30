@@ -245,7 +245,7 @@ public:
      *
      * @return The newly created property.
      */
-    virtual Property createProperty(const std::string &name, const std::string &type) = 0;
+    virtual Property createProperty(const std::string &name) = 0;
 
     /**
      * @brief Delete the Property identified by its id.

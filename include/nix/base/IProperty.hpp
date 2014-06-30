@@ -24,17 +24,49 @@ namespace base {
  *
  * See {@link nix::Property} for a more detailed description.
  */
-class NIXAPI IProperty : virtual public base::INamedEntity {
+class NIXAPI IProperty : virtual public base::IEntity {
 
 public:
 
-    // TODO implement include
-    /*
-    virtual void include(const std::string &include) = 0;
+    /**
+     * @brief Setter for the name of the property.
+     *
+     * @param name The name of the property.
+     */
+    virtual void name(const std::string &name) = 0;
 
+    /**
+     * @brief Getter for the name of the property.
+     *
+     * The {@link name} of an property serves as a human readable identifier. It is not obliged
+     * to be unique. However it is strongly recommended to use unique name inside one specific
+     * {@link nix::Section}.
+     *
+     * @return string The name of the property.
+     */
+    virtual std::string name() const = 0;
 
-    virtual std::string include() const = 0;
-    */
+    /**
+     * @brief Setter for the definition of the property.
+     *
+     * @param definition The definition of the property.
+     */
+    virtual void definition(const std::string &definition) = 0;
+
+    /**
+     * @brief Getter for the definition of the property.
+     *
+     * The {@link definition} is an optional property that allows the user to add
+     * a freely assignable textual definition to the property.
+     *
+     * @return The definition of the property.
+     */
+    virtual boost::optional<std::string> definition() const = 0;
+
+    /**
+     * @brief Deleter for the definition of the property.
+     */
+    virtual void definition(const none_t t) = 0;
 
     /**
      * @brief Set the mapping information for this Property.
@@ -119,6 +151,16 @@ public:
      * @brief Deletes all values from the property.
      */
     virtual void values(const boost::none_t t) = 0;
+
+    /**
+     * @brief Compare two properties.
+     *
+     * @param other The property to compare with.
+     *
+     * @return > 0 if the property is larger that other, 0 if both are
+     * equal, and < 0 otherwise.
+     */
+    virtual int compare(const IProperty &other) const = 0;
 
     /**
      * @brief Destructor

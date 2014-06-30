@@ -11,26 +11,80 @@
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
+using namespace boost;
 
 namespace nix {
 namespace hdf5 {
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
-    : NamedEntityHDF5(property.file(), property.group(), property.id(), property.type(), property.name())
+    : PropertyHDF5(property.file(), property.group(), property.id(), property.name())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &type, const string &name)
-    : PropertyHDF5(file, group, id, type, name, util::getTime())
+PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name)
+    : PropertyHDF5(file, group, id, name, util::getTime())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &type, const string &name, time_t time)
-    : NamedEntityHDF5(file, group, id, type, name, time)
+PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name, time_t time)
+    : EntityHDF5(file, group, id, time)
 {
+    this->name(name);
+}
+
+
+void PropertyHDF5::name(const string &name) {
+    if(name.empty()) {
+        throw EmptyString("name");
+    }
+    else {
+        group().setAttr("name", name);
+        forceUpdatedAt();
+    }
+}
+
+
+string PropertyHDF5::name() const {
+    string name;
+    if(group().hasAttr("name")) {
+        group().getAttr("name", name);
+        return name;
+    } else {
+        throw MissingAttr("name");
+    }
+}
+
+
+void PropertyHDF5::definition(const string &definition) {
+    if(definition.empty()) {
+        throw EmptyString("definition");
+    }
+    else {
+        group().setAttr("definition", definition);
+        forceUpdatedAt();
+    }
+}
+
+
+optional<string> PropertyHDF5::definition() const {
+    optional<string> ret;
+    string definition;
+    bool have_attr = group().getAttr("definition", definition);
+    if (have_attr) {
+        ret = definition;
+    }
+    return ret;
+}
+
+
+void PropertyHDF5::definition(const none_t t) {
+    if(group().hasAttr("definition")) {
+        group().removeAttr("definition");
+    }
+    forceUpdatedAt();
 }
 
 
@@ -106,22 +160,6 @@ void PropertyHDF5::deleteValues() {
 }
 
 
-// TODO should this be moved to Property.hpp/cpp
-/*
-bool PropertyHDF5::checkDataType(const H5::DataSet &dataset, H5T_class_t dest_type) const {
-    H5::DataType type = dataset.getDataType();
-    if (type.getClass() != H5T_COMPOUND) {
-        return false;
-    }
-    H5::CompType ct(dataset);
-    if (ct.getMemberDataType(ct.getMemberIndex("value")).getClass() != dest_type) {
-        return false;
-    }
-    return true;
-}
-*/
-
-
 size_t PropertyHDF5::valueCount() const {
     size_t count = 0;
     if (group().hasData("values")) {
@@ -172,6 +210,18 @@ void PropertyHDF5::values(const none_t t) {
         group().removeData("values");
     }
     forceUpdatedAt();
+}
+
+
+int PropertyHDF5::compare(const IProperty &other) const {
+    int cmp = 0;
+    if (!name().empty() && !other.name().empty()) {
+        cmp = (name()).compare(other.name());
+    }
+    if (cmp == 0) {
+        cmp = id().compare(other.id());
+    }
+    return cmp;
 }
 
 
