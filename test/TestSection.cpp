@@ -109,9 +109,9 @@ void TestSection::testSectionAccess() {
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Section child_section = section.createSection(*it, "metadata");
-        CPPUNIT_ASSERT(child_section.name() == *it);
+    for (auto name : names) {
+        Section child_section = section.createSection(name, "metadata");
+        CPPUNIT_ASSERT(child_section.name() == name);
 
         ids.push_back(child_section.id());
     }
@@ -119,12 +119,12 @@ void TestSection::testSectionAccess() {
     CPPUNIT_ASSERT(section.sectionCount() == names.size());
     CPPUNIT_ASSERT(section.sections().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Section child_section = section.getSection(*it);
-        CPPUNIT_ASSERT(section.hasSection(*it) == true);
-        CPPUNIT_ASSERT(child_section.id() == *it);
+    for (auto id : ids) {
+        Section child_section = section.getSection(id);
+        CPPUNIT_ASSERT(section.hasSection(id) == true);
+        CPPUNIT_ASSERT(child_section.id() == id);
 
-        section.deleteSection(*it);
+        section.deleteSection(id);
     }
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -241,12 +241,12 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
     CPPUNIT_ASSERT(section_other.inheritedProperties().size() == names.size() + 1);
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Property prop = section.getProperty(*it);
-        CPPUNIT_ASSERT(section.hasProperty(*it));
-        CPPUNIT_ASSERT(prop.id() == *it);
+    for (auto id : ids) {
+        Property prop = section.getProperty(id);
+        CPPUNIT_ASSERT(section.hasProperty(id));
+        CPPUNIT_ASSERT(prop.id() == id);
 
-        section.deleteProperty(*it);
+        section.deleteProperty(id);
     }
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
