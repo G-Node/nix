@@ -305,6 +305,20 @@ public:
         return backend()->createProperty(name);
     }
 
+    /**
+     * @brief Add a new Property with values to the Section.
+     *
+     * @param name      The name of the property.
+     * @param values    The values of the created property.
+     *
+     * @return The newly created property.
+     */
+    Property createProperty(const std::string &name, const std::vector<Value>& values) {
+        Property p = backend()->createProperty(name);
+        p.values(values);
+        return p;
+    }
+
     bool deleteProperty(const std::string &id) {
         return backend()->deleteProperty(id);
     }

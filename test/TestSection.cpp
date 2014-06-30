@@ -236,7 +236,7 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());
 
-    section_other.createProperty("some_prop");
+    section_other.createProperty("some_prop", {Value(10)});
     section_other.link(section);
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
     CPPUNIT_ASSERT(section_other.inheritedProperties().size() == names.size() + 1);
