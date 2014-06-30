@@ -241,7 +241,6 @@ public:
      * @brief Add a new Property to the Section.
      *
      * @param name      The name of the property.
-     * @param type      The type of the property.
      *
      * @return The newly created property.
      */
