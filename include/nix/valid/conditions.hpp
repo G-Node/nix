@@ -38,9 +38,9 @@ namespace valid {
      *
      * @returns {Function} The created condition check.
      */
-    template<typename TOBJ, typename TFUNC, typename TCHECK>
+    template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
-    must(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
+    must(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
@@ -79,9 +79,9 @@ namespace valid {
      *
      * @returns {Function} The created condition check.
      */
-    template<typename TOBJ, typename TFUNC, typename TCHECK>
+    template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
-    should(const TOBJ &parent, const TFUNC &get, const TCHECK &check, const std::string &msg) {
+    should(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
