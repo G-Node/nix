@@ -488,6 +488,18 @@ public:
         out << ", id = " << ent.id() << "}";
         return out;
     }
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    Result validate() {
+        return valid::validate(std::initializer_list<condition> {
+            must(*this, &Block::id, notEmpty(), "id is not set!"), 
+            must(*this, &Block::type, notEmpty(), "type is not set!"), 
+            must(*this, &Block::name, notEmpty(), "name is not set!")
+        });
+    }
+
 };
 
 }
