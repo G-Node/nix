@@ -226,7 +226,7 @@ public:
      *
      * @param polynom_coefficients      The new polynom coefficients for the calibration.
      */
-    void polynomCoefficients(std::vector<double> &polynom_coefficients) {
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients) {
         backend()->polynomCoefficients(polynom_coefficients);
     }
 

@@ -119,7 +119,7 @@ public:
      *
      * @param polynom_coefficients      The new polynom coefficients for the calibration.
      */
-    virtual void polynomCoefficients(std::vector<double> &polynom_coefficients) = 0;
+    virtual void polynomCoefficients(const std::vector<double> &polynom_coefficients) = 0;
 
     /**
      * @brief Returns the polynom coefficients.

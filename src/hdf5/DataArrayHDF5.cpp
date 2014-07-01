@@ -24,14 +24,14 @@ DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group,
                              const string &id, const string &type, const string &name)
     : DataArrayHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group, 
+DataArrayHDF5::DataArrayHDF5(const File &file, const Block &block, const Group &group,
                              const string &id, const string &type, const string &name, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
@@ -142,7 +142,7 @@ vector<double> DataArrayHDF5::polynomCoefficients()const{
 }
 
 
-void DataArrayHDF5::polynomCoefficients(vector<double> &coefficients) {
+void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
     DataSet ds;
     if (group().hasData("polynom_coefficients")) {
         ds = group().openData("polynom_coefficients");
@@ -224,13 +224,13 @@ DataArrayHDF5::_createDimension(size_t id, T var) {
 
     Group dim_group = dimension_group.openGroup(str_id, true);
 
-    typedef typename std::conditional<dtype == DimensionType::Range, 
-                                      RangeDimensionHDF5, 
-                                      SampledDimensionHDF5>::type 
+    typedef typename std::conditional<dtype == DimensionType::Range,
+                                      RangeDimensionHDF5,
+                                      SampledDimensionHDF5>::type
                                       dimTypeHDF5;
-    typedef typename std::conditional<dtype == DimensionType::Range, 
-                                      RangeDimension, 
-                                      SampledDimension>::type 
+    typedef typename std::conditional<dtype == DimensionType::Range,
+                                      RangeDimension,
+                                      SampledDimension>::type
                                       dimType;
     dimType dim;
     if (dtype == DimensionType::Range || dtype == DimensionType::Sample) {
@@ -260,7 +260,7 @@ SetDimension DataArrayHDF5::_createDimension(size_t id) {
 
     Group dim_group = dimension_group.openGroup(str_id, true);
     SetDimension dim;
-    
+
     if (dtype == DimensionType::Set) {
         auto tmp = make_shared<SetDimensionHDF5>(dim_group, id);
         dim = SetDimension(tmp);
