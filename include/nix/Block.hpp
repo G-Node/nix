@@ -24,6 +24,8 @@
 
 namespace nix {
 
+using namespace valid;
+
 /**
  * @brief Class for grouping further data entities.
  *
@@ -486,7 +488,6 @@ public:
         out << ", id = " << ent.id() << "}";
         return out;
     }
-
 };
 
 }
