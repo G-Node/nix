@@ -83,7 +83,7 @@ public:
     void expansionOrigin(const none_t t);
 
 
-    void polynomCoefficients(std::vector<double> &polynom_coefficients);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients);
 
 
     std::vector<double> polynomCoefficients() const;

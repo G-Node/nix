@@ -11,7 +11,7 @@
 
 #include <stdexcept>
 
-#include <nix/base/NamedEntity.hpp>
+#include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
 
@@ -31,7 +31,7 @@ namespace nix {
  * to the {@link nix::Section} entity, mapping information can be provided
  * using the {@link mapping} field.
  */
-class NIXAPI Property : virtual public base::IProperty, public base::NamedEntity<base::IProperty> {
+class NIXAPI Property : virtual public base::IProperty, public base::Entity<base::IProperty> {
 
 public:
 
@@ -51,7 +51,7 @@ public:
      * ~~~
      */
     Property()
-        : NamedEntity()
+        : Entity()
     {
     }
 
@@ -65,7 +65,7 @@ public:
      * @param other     The property to copy.
      */
     Property(const Property &other)
-        : NamedEntity(other.impl())
+        : Entity(other.impl())
     {
     }
 
@@ -76,7 +76,7 @@ public:
      * This constructor should only be used in the back-end.
      */
     Property(const std::shared_ptr<base::IProperty> &p_impl)
-        : NamedEntity(p_impl)
+        : Entity(p_impl)
     {
     }
 
@@ -87,7 +87,7 @@ public:
      * This constructor should only be used in the back-end.
      */
     Property(std::shared_ptr<base::IProperty> &&ptr)
-        : NamedEntity(std::move(ptr))
+        : Entity(std::move(ptr))
     {
     }
 
@@ -96,6 +96,27 @@ public:
     // Attribute getter and setter
     //--------------------------------------------------
 
+
+    void name(const std::string &name) {
+        backend()->name(name);
+    }
+
+    std::string name() const {
+        return backend()->name();
+    }
+
+    void definition(const std::string &definition) {
+        backend()->definition(definition);
+    }
+
+    boost::optional<std::string> definition() const {
+        return backend()->definition();
+    }
+
+    void definition(const none_t t)
+    {
+        backend()->definition(t);
+    }
 
     void mapping(const std::string &mapping) {
         backend()->mapping(mapping);
@@ -160,6 +181,10 @@ public:
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------
+
+    int compare(const IProperty &other) const {
+        return backend()->compare(other);
+    }
 
     /**
      * @brief Assignment operator for none.

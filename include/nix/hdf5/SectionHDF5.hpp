@@ -142,7 +142,7 @@ public:
     Property getPropertyByName(const std::string &name) const;
 
 
-    Property createProperty(const std::string &name, const std::string &type);
+    Property createProperty(const std::string &name);
 
 
     bool deleteProperty(const std::string &id);

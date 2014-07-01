@@ -19,7 +19,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class PropertyHDF5 : virtual public base::IProperty, public NamedEntityHDF5 {
+class PropertyHDF5 : virtual public base::IProperty, public EntityHDF5 {
 
 public:
 
@@ -27,18 +27,25 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(const File &file, const Group &group,const std::string &id, const std::string &type, const std::string &name);
+    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group,const std::string &id, const std::string &type, const std::string &name, time_t time);
+    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name, time_t time);
 
 
-    // TODO: include methods are not implemented!
-    void include(const std::string &include);
+    void name(const std::string &name);
 
 
-    // TODO: include methods are not implemented!
-    std::string include() const;
+    std::string name() const;
+
+
+    boost::optional<std::string> definition() const;
+
+
+    void definition(const std::string &definition);
+
+
+    void definition(const none_t t);
 
 
     void mapping(const std::string &mapping);
@@ -70,11 +77,17 @@ public:
 
     size_t valueCount() const;
 
+
     void values(const std::vector<Value> &values);
+
 
     std::vector<Value> values(void) const;
 
+
     void values(const boost::none_t t);
+
+
+    int compare(const IProperty &other) const;
 
 
     bool operator==(const PropertyHDF5 &other) const;
