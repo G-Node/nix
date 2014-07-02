@@ -19,6 +19,8 @@
 #include <nix/DataTag.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
+
 
 namespace nix {
 
