@@ -36,6 +36,7 @@ public:
     void setUp();
     void tearDown();
 
+    void testValidate();
     void testId();
     void testType();
     void testName();
@@ -51,6 +52,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestDataArray);
 
+    CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testName);
