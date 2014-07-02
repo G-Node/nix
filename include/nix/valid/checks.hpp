@@ -13,10 +13,86 @@ namespace nix {
 namespace valid {
 
     /**
+     * @brief Check if later given not greater than initally defined value.
+     * 
+     * One Check struct that checks whether the given value is not greater
+     * than the initially given other value, both of which have to be 
+     * convertible to double.
+     */
+    struct notGreater {
+        const double value;
+        
+        template<typename T>
+        notGreater(T value) : value(static_cast<double>(value)) {}
+        
+        template<typename T2>
+        bool operator()(const T2 &val) const {
+            return !(val > value);
+        }
+    };
+
+    /**
+     * @brief Check if later given greater than initally defined value.
+     * 
+     * One Check struct that checks whether the given value is greater than
+     * the initially given other value, both of which have to be 
+     * convertible to double.
+     */
+    struct isGreater {
+        const double value;
+        
+        template<typename T>
+        isGreater(T value) : value(static_cast<double>(value)) {}
+        
+        template<typename T2>
+        bool operator()(const T2 &val) const {
+            return val > value;
+        }
+    };
+
+    /**
+     * @brief Check if later given not smaller than initally defined value.
+     * 
+     * One Check struct that checks whether the given value is not smaller
+     * than the initially given other value, both of which have to be 
+     * convertible to double.
+     */
+    struct notSmaller {
+        const double value;
+        
+        template<typename T>
+        notSmaller(T value) : value(static_cast<double>(value)) {}
+        
+        template<typename T2>
+        bool operator()(const T2 &val) const {
+            return !(val < value);
+        }
+    };
+
+    /**
+     * @brief Check if later given smaller than initally defined value.
+     * 
+     * One Check struct that checks whether the given value is smaller than
+     * the initially given other value, both of which have to be 
+     * convertible to double.
+     */
+    struct isSmaller {
+        const double value;
+        
+        template<typename T>
+        isSmaller(T value) : value(static_cast<double>(value)) {}
+        
+        template<typename T2>
+        bool operator()(const T2 &val) const {
+            return val < value;
+        }
+    };
+
+    /**
      * @brief Check for un-equality of initally defined and later given value.
      * 
-     * One Check struct that checks whether the given value is equal to
-     * the initially given other value.
+     * One Check struct that checks whether the given value is not equal
+     * to the initially given other value.
      */
     template<typename T>
     struct notEqual {

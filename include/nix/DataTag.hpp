@@ -15,6 +15,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -376,7 +377,7 @@ public:
             valid::should(*this, &DataTag::extents, valid::notFalse(), "extents are not set!"),
             // valid::should(*this, &DataTag::features, valid::notEmpty(), "features are not set!"),
             // valid::should(*this, &DataTag::references, valid::notEmpty(), "references are not set!"),
-            valid::should(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
+            valid::must(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
             valid::should(*this, &DataTag::units, valid::notEmpty(), "positions are not set!")
         });
     }

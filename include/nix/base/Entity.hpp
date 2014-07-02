@@ -106,7 +106,8 @@ public:
     
     valid::Result validate() {
         return valid::validate(std::initializer_list<valid::condition> {
-            valid::must(*this, &Entity::id, valid::notEmpty(), "id is not set!")
+            valid::must(*this, &Entity::id, valid::notEmpty(), "id is not set!"),
+            valid::must(*this, &Entity::createdAt, valid::notFalse(), "date is not set!")
         });
     }
 

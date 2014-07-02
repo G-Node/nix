@@ -28,6 +28,10 @@ private:
 
     CPPUNIT_TEST_SUITE(TestDimension);
 
+    CPPUNIT_TEST(testValidate);
+    CPPUNIT_TEST(testSetValidate);
+    CPPUNIT_TEST(testSampleValidate);
+    CPPUNIT_TEST(testRangeValidate);
     CPPUNIT_TEST(testIndex);
     CPPUNIT_TEST(testSampledDimLabel);
     CPPUNIT_TEST(testSampledDimOffset);
@@ -52,6 +56,11 @@ public:
     void setUp();
     void tearDown();
 
+    void testValidate();
+    void testSetValidate();
+    void testSampleValidate();
+    void testRangeValidate();
+    
     void testIndex();
 
     void testSampledDimLabel();
