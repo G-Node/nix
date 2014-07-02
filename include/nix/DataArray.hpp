@@ -480,7 +480,7 @@ public:
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 
- };
+};
 
 template<typename T>
 void DataArray::createData(const T &value, const NDSize &size)

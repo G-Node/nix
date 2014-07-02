@@ -12,6 +12,8 @@
 #include <nix/base/IEntity.hpp>
 #include <nix/base/ImplContainer.hpp>
 
+#include <nix/valid/validate.hpp>
+
 namespace nix {
 namespace base {
 
@@ -97,6 +99,16 @@ public:
      * @brief Destructor
      */
     virtual ~Entity() {}
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &Entity::id, valid::notEmpty(), "id is not set!")
+        });
+    }
 
 };
 

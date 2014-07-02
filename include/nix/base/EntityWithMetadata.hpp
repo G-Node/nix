@@ -13,6 +13,8 @@
 #include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/Section.hpp>
 
+#include <nix/valid/validate.hpp>
+
 namespace nix {
 namespace base {
 
@@ -91,6 +93,19 @@ public:
      * Destructor
      */
     virtual ~EntityWithMetadata() {}
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        valid::Result result_base = NamedEntity<T>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &EntityWithMetadata::metadata, valid::notFalse(), "no metadata set!")
+        });
+        
+        return result.concat(result_base);
+    }
 
 };
 

@@ -32,6 +32,11 @@ void TestBlock::tearDown() {
 }
 
 
+void TestBlock::testValidate() {
+    cout << endl << block.validate();
+}
+
+
 void TestBlock::testId() {
     CPPUNIT_ASSERT(block.id().size() == 22);
 }

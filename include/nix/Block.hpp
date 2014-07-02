@@ -24,8 +24,6 @@
 
 namespace nix {
 
-using namespace valid;
-
 /**
  * @brief Class for grouping further data entities.
  *
@@ -492,12 +490,9 @@ public:
     //------------------------------------------------------
     // Validation
     //------------------------------------------------------
-    Result validate() {
-        return valid::validate(std::initializer_list<condition> {
-            must(*this, &Block::id, notEmpty(), "id is not set!"), 
-            must(*this, &Block::type, notEmpty(), "type is not set!"), 
-            must(*this, &Block::name, notEmpty(), "name is not set!")
-        });
+    
+    valid::Result validate() {
+        return base::EntityWithMetadata<base::IBlock>::validate();
     }
 
 };
