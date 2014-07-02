@@ -366,6 +366,20 @@ public:
         out << ", id = " << ent.id() << "}";
         return out;
     }
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &DataTag::extents, valid::notFalse(), "extents are not set!"),
+            // valid::should(*this, &DataTag::features, valid::notEmpty(), "features are not set!"),
+            // valid::should(*this, &DataTag::references, valid::notEmpty(), "references are not set!"),
+            valid::should(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
+            valid::should(*this, &DataTag::units, valid::notEmpty(), "positions are not set!")
+        });
+    }
 
 };
 
