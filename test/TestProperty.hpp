@@ -60,7 +60,7 @@ public:
     void setUp();
     void tearDown();
 
-    void testValidation();
+    void testValidate();
     void testId();
     void testType();
     void testName();

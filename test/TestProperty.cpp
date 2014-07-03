@@ -37,7 +37,7 @@ void TestProperty::tearDown()
 }
 
 
-void TestProperty::testValidation() {
+void TestProperty::testValidate() {
     std::cout << std::endl << property.validate();
 }
 
