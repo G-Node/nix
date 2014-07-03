@@ -44,6 +44,11 @@ void TestSimpleTag::tearDown() {
 }
 
 
+void TestSimpleTag::testValidate() {
+    std::cout << std::endl << tag.validate();
+}
+
+
 void TestSimpleTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 27);
 }
