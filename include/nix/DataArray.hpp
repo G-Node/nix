@@ -486,16 +486,19 @@ public:
     //------------------------------------------------------
     
     valid::Result validate() {
-        return valid::validate(std::initializer_list<valid::condition> {
+        valid::Result result_base = base::EntityWithSources<base::IDataArray>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
             valid::must(*this, &DataArray::dataType, valid::notEqual<DataType>(DataType::Nothing), "data type is not set!"),
             valid::should(*this, &DataArray::dataExtent, valid::notEmpty(), "data extent is not set!"),
             valid::should(*this, &DataArray::label, valid::notFalse(), "label is not set!"),
             valid::should(*this, &DataArray::unit, valid::notFalse(), "unit is not set!"),
             valid::should(*this, &DataArray::polynomCoefficients, valid::notEmpty(), "polynomial coefficients for calibration are not set!"),
             valid::should(*this, &DataArray::expansionOrigin, valid::notFalse(), "expansion origin for calibration is not set!"),
-            // valid::should(*this, &DataArray::dimensions, valid::notEmpty(), "dimensions are not set!"),
+            valid::should(*this, &DataArray::dimensionCount, valid::isGreater(0), "dimensions are not set!"),
             valid::should(*this, &DataArray::hasData, valid::notFalse(), "data is not set!")
         });
+        
+        return result.concat(result_base);
     }
 
 };

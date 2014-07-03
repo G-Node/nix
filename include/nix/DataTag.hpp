@@ -373,13 +373,16 @@ public:
     //------------------------------------------------------
     
     valid::Result validate() {
-        return valid::validate(std::initializer_list<valid::condition> {
+        valid::Result result_base = base::EntityWithSources<base::IDataTag>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
             valid::should(*this, &DataTag::extents, valid::notFalse(), "extents are not set!"),
-            // valid::should(*this, &DataTag::features, valid::notEmpty(), "features are not set!"),
-            // valid::should(*this, &DataTag::references, valid::notEmpty(), "references are not set!"),
+            valid::should(*this, &DataTag::featureCount, valid::isGreater(0), "features are not set!"),
+            valid::should(*this, &DataTag::referenceCount, valid::isGreater(0), "references are not set!"),
             valid::must(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
             valid::should(*this, &DataTag::units, valid::notEmpty(), "positions are not set!")
         });
+        
+        return result.concat(result_base);
     }
 
 };

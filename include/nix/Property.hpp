@@ -210,12 +210,15 @@ public:
     //------------------------------------------------------
     
     valid::Result validate() {
-        return valid::validate(std::initializer_list<valid::condition> {
+        valid::Result result_base = base::NamedEntity<base::IProperty>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
             valid::should(*this, &Property::mapping, valid::notFalse(), "mapping is not set!"),
             valid::should(*this, &Property::unit, valid::notFalse(), "unit is not set!"),
             valid::should(*this, &Property::values, valid::notEmpty(), "values are not set!")
             // TODO: dataType to be tested too?
         });
+        
+        return result.concat(result_base);
     }
 
 };

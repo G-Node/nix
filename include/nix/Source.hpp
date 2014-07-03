@@ -196,9 +196,12 @@ public:
     //------------------------------------------------------
     
     valid::Result validate() {
-        return valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &Source::sourceCount, valid::notFalse(), "sources are not set!")
+        valid::Result result_base = base::EntityWithMetadata<base::ISource>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &Source::sourceCount, valid::isGreater(0), "sources are not set!")
         });
+        
+        return result.concat(result_base);
     }
 
 };
