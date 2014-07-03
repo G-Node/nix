@@ -37,6 +37,12 @@ void TestProperty::tearDown()
 }
 
 
+void TestProperty::testValidation() {
+    std::cout << std::endl << property.validate();
+}
+
+
+
 void TestProperty::testId() {
     CPPUNIT_ASSERT(property.id().size() == 25);
 }

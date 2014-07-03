@@ -149,6 +149,7 @@ public:
             valid::must(*this, &Feature::linkType, valid::notSmaller(0), "linkType is not set!")
         });
     }
+    
 };
 
 

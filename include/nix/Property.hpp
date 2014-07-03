@@ -16,6 +16,7 @@
 #include <nix/Value.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -203,6 +204,19 @@ public:
     }
 
     virtual ~Property() {}
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &Property::mapping, valid::notFalse(), "mapping is not set!"),
+            valid::should(*this, &Property::unit, valid::notFalse(), "unit is not set!"),
+            valid::should(*this, &Property::values, valid::notEmpty(), "values are not set!")
+            // TODO: dataType to be tested too?
+        });
+    }
 
 };
 
