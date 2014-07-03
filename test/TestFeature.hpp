@@ -22,12 +22,14 @@
 #include <boost/math/constants/constants.hpp>
 
 #include <nix.hpp>
+#include <nix/valid/validate.hpp>
 
 class TestFeature: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestFeature);
 
+    CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testLinkType);
     CPPUNIT_TEST(testData);
@@ -44,6 +46,7 @@ public:
     void setUp();
     void tearDown();
 
+    void testValidate();
     void testId();
 
     void testLinkType();

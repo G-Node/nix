@@ -29,6 +29,13 @@ void TestFeature::tearDown() {
 }
 
 
+void TestFeature::testValidate() {
+    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+    
+    std::cout << std::endl << rp.validate();
+}
+
+
 void TestFeature::testId() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.id().size() == 24);

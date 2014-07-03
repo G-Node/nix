@@ -27,7 +27,7 @@ namespace valid {
         
         template<typename T2>
         bool operator()(const T2 &val) const {
-            return !(val > value);
+            return !(static_cast<double>(val) > value);
         }
     };
 
@@ -46,7 +46,7 @@ namespace valid {
         
         template<typename T2>
         bool operator()(const T2 &val) const {
-            return val > value;
+            return static_cast<double>(val) > value;
         }
     };
 
@@ -65,7 +65,7 @@ namespace valid {
         
         template<typename T2>
         bool operator()(const T2 &val) const {
-            return !(val < value);
+            return !(static_cast<double>(val) < value);
         }
     };
 
@@ -84,7 +84,7 @@ namespace valid {
         
         template<typename T2>
         bool operator()(const T2 &val) const {
-            return val < value;
+            return static_cast<double>(val) < value;
         }
     };
 
