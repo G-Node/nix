@@ -53,7 +53,7 @@ void TestDataTag::tearDown(){
 }
 
 
-void TestDataTag::testValidation() {
+void TestDataTag::testValidate() {
     std::cout << std::endl << tag.validate();
 }
 

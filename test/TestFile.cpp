@@ -29,7 +29,7 @@ void TestFile::tearDown() {
 }
 
 
-void TestFile::testValidation() {
+void TestFile::testValidate() {
     std::cout << std::endl << file_open.validate();
 }
 

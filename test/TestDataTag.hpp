@@ -37,7 +37,7 @@ private:
 
 
     CPPUNIT_TEST_SUITE(TestDataTag);
-    CPPUNIT_TEST(testValidation);
+    CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testType);
@@ -59,7 +59,7 @@ public:
 
     void setUp();
     void tearDown();
-    void testValidation();
+    void testValidate();
     void testId();
     void testName();
     void testType();
