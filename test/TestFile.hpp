@@ -26,6 +26,7 @@ class TestFile: public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestFile);
+    CPPUNIT_TEST(testValidation);
     CPPUNIT_TEST(testFormat);
     CPPUNIT_TEST(testLocation);
     CPPUNIT_TEST(testVersion);
@@ -44,6 +45,7 @@ public:
 
     void setUp();
     void tearDown();
+    void testValidation();
     void testFormat();
     void testLocation();
     void testVersion();

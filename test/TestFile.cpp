@@ -29,6 +29,11 @@ void TestFile::tearDown() {
 }
 
 
+void TestFile::testValidation() {
+    std::cout << std::endl << file_open.validate();
+}
+
+
 void TestFile::testFormat() {
     CPPUNIT_ASSERT(file_open.format() == "nix");
 }
