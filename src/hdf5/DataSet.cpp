@@ -248,6 +248,13 @@ NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
 
 void DataSet::setExtent(const NDSize &dims)
 {
+    H5::DataSpace space = h5dset.getSpace();
+    size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
+
+    if (rank != dims.size()) {
+        throw InvalidRankException("Cannot change the dimensionality via setExtent()");
+    }
+
     herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
     if (err < 0) {
         throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
