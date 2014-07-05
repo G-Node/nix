@@ -207,6 +207,7 @@ void TestDataSet::testBasic() {
         for(index j = 0; j != 6; ++j)
             CPPUNIT_ASSERT_EQUAL(E[i][j], F[i][j]);
 
+    CPPUNIT_ASSERT_THROW(ds.setExtent({4, 6, 8}), nix::InvalidRankException);
     //***
 
     DataSet ds2 = DataSet::create(h5group, "dsDouble2", A);
