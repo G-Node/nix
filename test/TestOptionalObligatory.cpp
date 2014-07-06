@@ -131,7 +131,7 @@ void TestOptionalObligatory::tearDown() {
 }
 
 void TestOptionalObligatory::testNamedEntityId() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::NamedEntity>, test::id>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::INamedEntity>, test::id>::value;
     // using SFINAE if-else block instead of normal one to avoid "unreachable code" warnings
     // equivalent: std::is_class<decltype(block.id())>::value ? accepts_none : util::is_optional<decltype(block.id());
     is_opt   = std::conditional<std::is_class<decltype(block.id())>::value,
@@ -144,7 +144,7 @@ void TestOptionalObligatory::testNamedEntityId() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 void TestOptionalObligatory::testNamedEntityType() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::NamedEntity>, test::type>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::INamedEntity>, test::type>::value;
     is_opt   = std::conditional<std::is_class<decltype(block.type())>::value,
                                 std::integral_constant<bool, accepts_none>,
                                 std::integral_constant<bool, util::is_optional<decltype(block.type())>::value>
@@ -155,7 +155,7 @@ void TestOptionalObligatory::testNamedEntityType() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 void TestOptionalObligatory::testNamedEntityName() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::NamedEntity>, test::name>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::INamedEntity>, test::name>::value;
     is_opt   = std::conditional<std::is_class<decltype(block.name())>::value,
                                 std::integral_constant<bool, accepts_none>,
                                 std::integral_constant<bool, util::is_optional<decltype(block.name())>::value>
@@ -166,7 +166,7 @@ void TestOptionalObligatory::testNamedEntityName() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 void TestOptionalObligatory::testNamedEntityDefinition() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::NamedEntity>, test::definition>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::NamedEntity<base::INamedEntity>, test::definition>::value;
     is_opt   = std::conditional<std::is_class<decltype(block.definition())>::value,
                                 std::integral_constant<bool, accepts_none>,
                                 std::integral_constant<bool, util::is_optional<decltype(block.definition())>::value>
@@ -177,7 +177,7 @@ void TestOptionalObligatory::testNamedEntityDefinition() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 void TestOptionalObligatory::testEntityWithMetadataMetadata() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::EntityWithMetadata<base::EntityWithMetadata>, test::metadata>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::EntityWithMetadata<base::IEntityWithMetadata>, test::metadata>::value;
     is_opt   = std::conditional<std::is_class<decltype(block.metadata())>::value,
                                     std::integral_constant<bool, accepts_none>,
                                     std::integral_constant<bool, util::is_optional<decltype(block.metadata())>::value>
@@ -188,7 +188,7 @@ void TestOptionalObligatory::testEntityWithMetadataMetadata() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 void TestOptionalObligatory::testEntityWithSourcesSources() {
-    static const bool accepts_none = test::accepts_noneT<nix::base::EntityWithSources<base::EntityWithSources>, test::sources>::value;
+    static const bool accepts_none = test::accepts_noneT<nix::base::EntityWithSources<base::IEntityWithSources>, test::sources>::value;
     is_opt   = std::conditional<std::is_class<decltype(block.sources())>::value,
                                     std::integral_constant<bool, accepts_none>,
                                     std::integral_constant<bool, util::is_optional<decltype(block.sources())>::value>
