@@ -10,6 +10,7 @@
 
 #include <nix/DataType.hpp>
 #include <stdexcept>
+#include <string>
 
 namespace nix {
 
