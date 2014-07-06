@@ -153,6 +153,42 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
 }
 
 
+template <typename T>
+NIXAPI T convertToSeconds(const std::string &unit, T value) {
+     T seconds;
+     if (unit == "min") {
+          seconds = value * 60;
+     } else if (unit == "h") {
+          std::string new_unit = "min";
+          seconds = convertToSeconds(new_unit, value * 60);
+     } else if (unit == "s") {
+         seconds = value;
+     } else {
+          std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
+          seconds = value;
+     }
+     return seconds;
+}
+
+
+template<typename T>
+NIXAPI T convertToKelvin(const std::string &unit, T value) {
+     T temperature;
+     if (unit == "°C" || unit == "C") {
+          temperature = value + 273.15;
+     } else if (unit == "°F" || unit == "F") {
+          double temp = (value - 32) * 5.0/9 + 273.15;
+          temperature = std::is_integral<T>::value ? std::round(temp) : temp;
+     } else if (unit == "°K" || unit == "K") {
+         temperature = value;
+     } else {
+          std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
+          temperature = value;
+     }
+     return temperature;
+}
+
+
 bool isSIUnit(const string &unit) {
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     return boost::regex_match(unit, opt_prefix_and_unit_and_power);
