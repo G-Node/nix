@@ -19,7 +19,7 @@ using namespace nix;
 namespace test {
     template<typename T>
     bool TtoBool(T var) {
-        return (bool)var;
+        return !!var;
     }
     template<>
     bool TtoBool<std::vector<std::string>>(std::vector<std::string> var) {
@@ -55,7 +55,7 @@ namespace test {
     }
     template<>
     bool TtoBool<std::string>(std::string var) {
-        return (bool)var.length();
+        return (var.length() > 0) ? true : false;;
     }
 
     bool isValidOptional(bool is_opt, bool is_set, bool accepts_none) {
