@@ -136,6 +136,9 @@ add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 if(NOT WIN32)
   set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
+if(WIN32)
+  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+endif()
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 foreach(test ${Tests_SOURCES})
@@ -153,7 +156,8 @@ include(CTest)
 
 install(TARGETS nix
         LIBRARY DESTINATION lib
-        FRAMEWORK DESTINATION "/Library/Frameworks")
+        FRAMEWORK DESTINATION "/Library/Frameworks"
+        RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION include)
 
 
