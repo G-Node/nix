@@ -60,9 +60,6 @@ public:
     boost::optional<DataType> dataType() const;
 
 
-    void dataType(const none_t t);
-
-
     void unit(const std::string &unit);
 
 
