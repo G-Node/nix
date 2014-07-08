@@ -282,7 +282,7 @@ public:
     }
 
     size_t featureCount() const {
-        return backend()->referenceCount();
+        return backend()->featureCount();
     }
 
     Feature getFeature(const std::string &id) const {
