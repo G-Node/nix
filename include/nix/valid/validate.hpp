@@ -10,6 +10,7 @@
 #ifndef NIX_VALIDATE_H
 #define NIX_VALIDATE_H
 
+#include <nix/Platform.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/conditions.hpp>
 #include <cstdarg>
