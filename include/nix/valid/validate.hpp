@@ -24,7 +24,7 @@ namespace valid {
   *
   * @returns object The validation results as {@Result} object
   */
-Result validate(std::initializer_list<condition> li);
+NIXAPI Result validate(std::initializer_list<condition> li);
 
 } // namespace valid
 } // namespace nix

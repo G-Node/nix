@@ -39,6 +39,7 @@ namespace valid {
      * @returns {Function} The created condition check.
      */
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
+	NIXAPI
     condition
     must(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {
@@ -80,6 +81,7 @@ namespace valid {
      * @returns {Function} The created condition check.
      */
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
+	NIXAPI
     condition
     should(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
         return [parent, get, check, msg] () -> Result {

@@ -18,7 +18,7 @@
 namespace nix {
 namespace valid {
 
-class Result {
+class NIXAPI Result {
 
     std::vector<Message> errors;
     std::vector<Message> warnings;
