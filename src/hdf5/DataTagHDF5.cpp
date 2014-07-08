@@ -135,7 +135,7 @@ vector<string> DataTagHDF5::units() const {
 }
 
 
-void DataTagHDF5::units(vector<string> &units) {
+void DataTagHDF5::units(const vector<string> &units) {
     group().setData("units", units);
     forceUpdatedAt();
 }
