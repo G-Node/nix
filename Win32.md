@@ -54,7 +54,9 @@ Dependencies
    - If you are building 64-bit: right click each item in the solution and select "Properties"->"Configuration Properties"->"Librarian" or "Linker"->"General"->"Output File" and change it by adding the prefix "$(SolutionDir)$(Platform)". E.g. "Release\cppunit.lib" should change to "$(SolutionDir)$(Platform)\Release\cppunit.lib". Do this for all items in solution.
    - Now try to build the solution at least once: ignore the errors you get, we just need a part to build which should work!
    - Add cppunit include dir to PATH, e.g.: "C:\Users\B\opt\cppunit\include"
+   
    The following point can most likely be ignore unless you can't get the necessary parts of cppunit to build:
+   
    - If you get errors about "Multibyte Character Set" being used, try the following measures: 
        Download and install "Multibyte MFC Library for Visual Studio 2013" from: https://www.microsoft.com/en-us/download/details.aspx?id=40770
        If still getting errors (even after reboot): Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> General -> Character Set" is set to "Use Unicode Character set"
@@ -63,12 +65,18 @@ Dependencies
    - Obtain sources from git (https://github.com/G-Node/nix)
    - Create build folder (e.g. nix/build)
    - Run CMake: `> cmake .. -G"Visual Studio 12 Win64"`
+   - Open "nix.sln" with Visual Studio, go to "Configuration Manager" and set config to "Release" and build the solution
+   
+   or
+   
    - Build via CMake: `> cmake --build . --config Release`
-   - If all went well exectue the tests: `> ctest .`
+   
+   
+   - If all went well exectue the tests: `> ctest .` and `Release\TestRunner.exe`
 
 **Troubleshooting**:
 
-   - If you get "'cl' is not recognized as internal or external command..." make sure vc++ bin dir is added to PATH
+   - If you get "'cl' is not recognized as internal or external command..." make sure VC++ bin dir is added to PATH
    - If you get include file(s) not found errors look for "vcvars*.bat" file, e.g. "vcvars32.bat" and execute it once
    - If you have problems compiling boost for BOOST_ROOT not being found or "access denied" errors, create a batch file with
        set BOOST_ROOT=C:\Users\B\opt\boost\
