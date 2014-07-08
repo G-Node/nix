@@ -29,6 +29,37 @@ void TestDimension::tearDown() {
 }
 
 
+void TestDimension::testValidate() {
+    Dimension d = data_array.appendSetDimension();
+    std::cout << std::endl << d.validate();
+}
+
+
+void TestDimension::testSetValidate() {
+    SetDimension d = data_array.appendSetDimension();
+    std::cout << std::endl << d.validate();
+}
+
+
+void TestDimension::testRangeValidate() {
+    std::vector<double> ticks;
+    for (size_t i = 0; i < 5; i++) {
+        ticks.push_back(i * boost::math::constants::pi<double>());
+    }
+    
+    RangeDimension d = data_array.appendRangeDimension(ticks);
+    std::cout << std::endl << d.validate();
+}
+
+
+void TestDimension::testSampleValidate() {
+    double samplingInterval = boost::math::constants::pi<double>();
+    
+    SampledDimension d = data_array.appendSampledDimension(samplingInterval);
+    std::cout << std::endl << d.validate();
+}
+
+
 void TestDimension::testIndex() {
     Dimension sd = data_array.appendSetDimension();
     CPPUNIT_ASSERT(data_array.dimensionCount() == 1 && sd.index() == 1);

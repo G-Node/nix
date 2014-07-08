@@ -15,6 +15,7 @@
 #include <nix/Section.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -325,6 +326,19 @@ public:
     virtual File &operator=(none_t) {
         nullify();
         return *this;
+    }
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &File::createdAt, valid::notFalse(), "date is not set!"),
+            valid::should(*this, &File::version, valid::notEmpty(), "version is not set!"),
+            valid::should(*this, &File::format, valid::notEmpty(), "format is not set!"),
+            valid::should(*this, &File::location, valid::notEmpty(), "location is not set!")
+        });
     }
 
 };

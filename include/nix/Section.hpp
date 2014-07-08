@@ -19,6 +19,7 @@
 #include <nix/Property.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -353,6 +354,23 @@ public:
      * @brief Output operator
      */
     friend std::ostream& operator<<(std::ostream &out, const Section &ent);
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        valid::Result result_base = base::NamedEntity<base::ISection>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &Section::link, valid::notFalse(), "link is not set!"),
+            valid::should(*this, &Section::repository, valid::notFalse(), "repository is not set!"),
+            valid::should(*this, &Section::mapping, valid::notFalse(), "mapping is not set!"),
+            valid::should(*this, &Section::sectionCount, valid::isGreater(0), "sections are not set!"),
+            valid::should(*this, &Section::propertyCount, valid::isGreater(0), "properties are not set!")
+        });
+        
+        return result.concat(result_base);
+    }
 
 
 private:

@@ -15,6 +15,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
+#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -365,6 +366,23 @@ public:
         out << ", type = " << ent.type();
         out << ", id = " << ent.id() << "}";
         return out;
+    }
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        valid::Result result_base = base::EntityWithSources<base::IDataTag>::validate();
+        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
+            valid::should(*this, &DataTag::extents, valid::notFalse(), "extents are not set!"),
+            valid::should(*this, &DataTag::featureCount, valid::isGreater(0), "features are not set!"),
+            valid::should(*this, &DataTag::referenceCount, valid::isGreater(0), "references are not set!"),
+            valid::must(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
+            valid::should(*this, &DataTag::units, valid::notEmpty(), "positions are not set!")
+        });
+        
+        return result.concat(result_base);
     }
 
 };

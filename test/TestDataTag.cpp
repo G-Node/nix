@@ -53,6 +53,11 @@ void TestDataTag::tearDown(){
 }
 
 
+void TestDataTag::testValidate() {
+    std::cout << std::endl << tag.validate();
+}
+
+
 void TestDataTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 25);
 }

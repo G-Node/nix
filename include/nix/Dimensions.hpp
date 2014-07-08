@@ -13,6 +13,8 @@
 #include <nix/base/IDimensions.hpp>
 #include <nix/Exception.hpp>
 
+#include <nix/valid/validate.hpp>
+
 namespace nix {
 
 
@@ -137,6 +139,16 @@ public:
      * @param other     The dimension to assign.
      */
     Dimension& operator=(const SetDimension &other);
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &Dimension::index, valid::notSmaller(1), "index is not set to valid value (> 0)!")
+        });
+    }
 
 };
 
@@ -285,6 +297,21 @@ public:
      * @param other     The dimension to assign.
      */
     SampledDimension& operator=(const Dimension &other);
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &SampledDimension::index, valid::notSmaller(1), "index is not set to valid value (size_t > 0)!"),
+            valid::should(*this, &SampledDimension::label, valid::notFalse(), "label is not set!"),
+            valid::should(*this, &SampledDimension::offset, valid::notFalse(), "offset is not set!"),
+            valid::should(*this, &SampledDimension::unit, valid::notFalse(), "unit is not set!"),
+            valid::must(*this, &SampledDimension::samplingInterval, valid::isGreater(0), "samplingInterval is not set to valid value (> 0)!"),
+            valid::must(*this, &SampledDimension::dimensionType, valid::isEqual<DimensionType>(DimensionType::Sample), "dimension type is not correct!")
+        });
+    }
 
 };
 
@@ -377,6 +404,18 @@ public:
      * @param other     The dimension to assign.
      */
     SetDimension& operator=(const Dimension &other);
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &SetDimension::index, valid::notSmaller(1), "index is not set to valid value (size_t > 0)!"),
+            valid::should(*this, &SetDimension::labels, valid::notEmpty(), "label is not set!"),
+            valid::must(*this, &SetDimension::dimensionType, valid::isEqual<DimensionType>(DimensionType::Set), "dimension type is not correct!")
+        });
+    }
 
 };
 
@@ -500,6 +539,20 @@ public:
      * @param other     The dimension to assign.
      */
     RangeDimension& operator=(const Dimension &other);
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return valid::validate(std::initializer_list<valid::condition> {
+            valid::must(*this, &RangeDimension::index, valid::notSmaller(1), "index is not set to valid value (size_t > 0)!"),
+            valid::should(*this, &RangeDimension::label, valid::notFalse(), "label is not set!"),
+            valid::should(*this, &RangeDimension::unit, valid::notFalse(), "unit is not set!"),
+            valid::must(*this, &RangeDimension::ticks, valid::notEmpty(), "ticks are not set!"),
+            valid::must(*this, &RangeDimension::dimensionType, valid::isEqual<DimensionType>(DimensionType::Range), "dimension type is not correct!")
+        });
+    }
 
 };
 

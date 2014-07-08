@@ -28,6 +28,12 @@ void TestSection::tearDown() {
     file.close();
 }
 
+
+void TestSection::testValidate() {
+    std::cout << std::endl << section.validate();
+}
+
+
 void TestSection::testId() {
     CPPUNIT_ASSERT(section.id().size() == 24);
 }

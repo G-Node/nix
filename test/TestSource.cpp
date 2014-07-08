@@ -32,6 +32,11 @@ void TestSource::tearDown() {
 }
 
 
+void TestSource::testValidate() {
+    std::cout << std::endl << source.validate();
+}
+
+
 void TestSource::testId() {
     CPPUNIT_ASSERT(source.id().size() == 23);
 }

@@ -27,6 +27,12 @@ void TestDataArray::tearDown()
     file.close();
 }
 
+
+void TestDataArray::testValidate() {
+    std::cout << std::endl << array1.validate();
+}
+
+
 void TestDataArray::testId() {
     CPPUNIT_ASSERT(array1.id().size() == 27);
 }

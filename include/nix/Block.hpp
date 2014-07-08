@@ -486,6 +486,14 @@ public:
         out << ", id = " << ent.id() << "}";
         return out;
     }
+    
+    //------------------------------------------------------
+    // Validation
+    //------------------------------------------------------
+    
+    valid::Result validate() {
+        return base::EntityWithMetadata<base::IBlock>::validate();
+    }
 
 };
 
