@@ -106,7 +106,7 @@ public:
      *
      * @param units     All units as a vector.
      */
-    virtual void units(std::vector<std::string> &units) = 0;
+    virtual void units(const std::vector<std::string> &units) = 0;
 
     /**
      * @brief Deleter for the units of a tag.

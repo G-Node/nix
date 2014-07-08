@@ -136,7 +136,7 @@ void TestDataTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteSimpleTag(dt.id());
+    block.deleteDataTag(dt.id());
 }
 
 //TODO Constraints on References are not tested yet.
