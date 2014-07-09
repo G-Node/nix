@@ -60,9 +60,6 @@ public:
     boost::optional<DataType> dataType() const;
 
 
-    void dataType(const none_t t);
-
-
     void unit(const std::string &unit);
 
 
@@ -105,7 +102,7 @@ private:
 };
 
 
-} // namespace hdf5
+} // namespace hdf5 
 } // namespace nix
 
 #endif // NIX_PROPERTY_HDF5_H
