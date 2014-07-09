@@ -79,9 +79,11 @@ Dependencies
    - If you get "'cl' is not recognized as internal or external command..." make sure VC++ bin dir is added to PATH
    - If you get include file(s) not found errors look for "vcvars*.bat" file, e.g. "vcvars32.bat" and execute it once
    - If you have problems compiling boost for BOOST_ROOT not being found or "access denied" errors, create a batch file with
+
      ```
      set BOOST_ROOT=C:\Users\B\opt\boost\
      C:\Users\B\opt\boost\b2 --toolset=msvc-12.0 threading=multi architecture=ia64 address-model=64 --prefix=C:\Users\B\opt\boost --libdir=<C:\Users\B\opt\boost\lib --include-dir=C:\Users\B\opt\boost\include -j4 --build-type=complete --with-date_time --with-regex install
      ```
+
      and execute it with "runas" command.
 
