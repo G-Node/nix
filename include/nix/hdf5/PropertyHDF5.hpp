@@ -102,7 +102,7 @@ private:
 };
 
 
-} // namespace hdf5
+} // namespace hdf5 
 } // namespace nix
 
 #endif // NIX_PROPERTY_HDF5_H
