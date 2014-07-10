@@ -93,56 +93,6 @@ NIXAPI time_t getTime();
 NIXAPI std::string unitSanitizer(const std::string &unit);
 
 /**
- * @brief Converts minutes and hours to seconds.
- *
- * @param unit  The original unit (i.e. h for hour, or min for minutes)
- * @param value The original value
- *
- * @return The value in converted to seconds
-*/
-template <typename T>
-NIXAPI T convertToSeconds(const std::string &unit, T value) {
-     T seconds;
-     if (unit == "min") {
-          seconds = value * 60;
-     } else if (unit == "h") {
-          std::string new_unit = "min";
-          seconds = convertToSeconds(new_unit, value * 60);
-     } else if (unit == "s" || unit == "sec") {
-         seconds = value;
-     } else {
-          std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
-          seconds = value;
-     }
-     return seconds;
-}
-
-/**
- * @brief Converts temperatures given in degrees Celsius of Fahren to Kelvin.
- *
- * @param unit  The original unit {"F", "°F", "C", "°C"}
- * @param value The original value
- *
- * @return The temperature in Kelvin
- */
-template<typename T>
-NIXAPI T convertToKelvin(const std::string &unit, T value) {
-     T temperature;
-     if (unit == "°C" || unit == "C") {
-          temperature = value + 273.15;
-     } else if (unit == "°F" || unit == "F") {
-          double temp = (value - 32) * 5.0/9 + 273.15;
-          temperature = std::is_integral<T>::value ? std::round(temp) : temp;
-     } else if (unit == "°K" || unit == "K") {
-         temperature = value;
-     } else {
-          std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
-          temperature = value;
-     }
-     return temperature;
-}
-
-/**
  * @brief Checks if the passed string represents a valid SI unit.
  *
  * @param unit  A string that is supposed to represent an SI unit.
@@ -203,6 +153,60 @@ NIXAPI void splitUnit(const std::string &fullUnit, std::string &prefix, std::str
  * @param atomicUnits   A vector that takes the atomic units
  */
 NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits);
+
+/**
+ * @brief Converts minutes and hours to seconds.
+ *
+ * @param unit  The original unit (i.e. h for hour, or min for minutes)
+ * @param value The original value
+ *
+ * @return The value in converted to seconds
+*/
+template <typename T>
+NIXAPI T convertToSeconds(const std::string &unit, T value) {
+    T seconds;
+    if (unit == "min") {
+        seconds = value * 60;
+    } else if (unit == "h") {
+        std::string new_unit = "min";
+        seconds = convertToSeconds(new_unit, value * 60);
+    } else if (unit == "s" || unit == "sec") {
+        seconds = value;
+    } else if (isScalable(unit, "s")) {
+        seconds = value * getSIScaling(unit, "s");
+    } else {
+        std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
+        seconds = value;
+    }
+    return seconds;
+}
+
+/**
+ * @brief Converts temperatures given in degrees Celsius of Fahren to Kelvin.
+ *
+ * @param unit  The original unit {"F", "°F", "C", "°C"}
+ * @param value The original value
+ *
+ * @return The temperature in Kelvin
+ */
+template<typename T>
+NIXAPI T convertToKelvin(const std::string &unit, T value) {
+   T temperature;
+   if (unit == "°C" || unit == "C") {
+       temperature = value + 273.15;
+   } else if (unit == "°F" || unit == "F") {
+       double temp = (value - 32) * 5.0/9 + 273.15;
+       temperature = std::is_integral<T>::value ? std::round(temp) : temp;
+   } else if (unit == "°K" || unit == "K") {
+       temperature = value;
+   } else if (isScalable(unit, "K")) {
+       temperature = value * getSIScaling(unit, "K");
+   } else {
+       std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
+       temperature = value;
+   }
+   return temperature;
+}
 
 /**
  * @brief Convert a number into a string representation.
