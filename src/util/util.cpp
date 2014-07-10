@@ -166,6 +166,16 @@ bool isCompoundSIUnit(const string &unit) {
 }
 
 
+bool isScalable(const string &unitA, const string &unitB) {
+    try {
+        getSIScaling(unitA, unitB);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+
 double getSIScaling(const string &originUnit, const string &destinationUnit) {
     double scaling = 1.0;
     if (isSIUnit(originUnit) && isSIUnit(destinationUnit)) {

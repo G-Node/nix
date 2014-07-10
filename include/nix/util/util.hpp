@@ -163,6 +163,18 @@ NIXAPI bool isSIUnit(const std::string &unit);
 NIXAPI bool isCompoundSIUnit(const std::string &unit);
 
 /**
+ * @brief Returns whether or not two units represent scalable versions
+ * of the same SI unit.
+ *
+ * @param unitA A string representing the first unit.
+ * 
+ * @param unitB A string representing the second unit.
+ *
+ * @return True if the units are scalable version of the same unit. 
+ **/
+NIXAPI bool isScalable(const std::string &unitA, const std::string &unitB);
+
+/**
  * @brief Get the scaling between two SI units that are identified by the two strings.
  *
  * @param originUnit            The original unit
