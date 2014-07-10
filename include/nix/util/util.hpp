@@ -108,7 +108,7 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
      } else if (unit == "h") {
           std::string new_unit = "min";
           seconds = convertToSeconds(new_unit, value * 60);
-     } else if (unit == "s") {
+     } else if (unit == "s" || unit == "sec") {
          seconds = value;
      } else {
           std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
