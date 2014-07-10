@@ -108,6 +108,8 @@ void TestUtil::testConvertToSeconds() {
     string unit_min = "min";
     string unit_h = "h";
     string unit_s = "s";
+    string unit_ms = "ms";
+    string unit_Ms = "Ms";
     double min_value = 25.5;
     double h_value = 12.25;
     double s_value = 100;
@@ -116,6 +118,8 @@ void TestUtil::testConvertToSeconds() {
     CPPUNIT_ASSERT(util::convertToSeconds(unit_h, h_value) == 44100.0);
     CPPUNIT_ASSERT(util::convertToSeconds(unit_min, m_value) == 1500);
     CPPUNIT_ASSERT(util::convertToSeconds(unit_s, s_value) == s_value);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_ms, s_value) == s_value/1000.);
+    CPPUNIT_ASSERT(util::convertToSeconds(unit_Ms, s_value) == s_value*1000000.);
 }
 
 void TestUtil::testConvertToKelvin() {
@@ -124,6 +128,8 @@ void TestUtil::testConvertToKelvin() {
     string unit_c = "°C";
     string unit_c2 = "C";
     string unit_k = "K";
+    string unit_mk = "mK";
+    string unit_Mk = "MK";
     string unit_k2 ="°K" ;
     double temperature = 100.0;
     CPPUNIT_ASSERT(util::convertToKelvin(unit_c, temperature) == 373.15);
@@ -132,7 +138,8 @@ void TestUtil::testConvertToKelvin() {
     CPPUNIT_ASSERT(round(util::convertToKelvin(unit_f2, temperature)) == 311.0);
     CPPUNIT_ASSERT(util::convertToKelvin(unit_k, temperature) == temperature);
     CPPUNIT_ASSERT(util::convertToKelvin(unit_k2, temperature) == temperature);
-
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_mk, temperature) == temperature/1000.);
+    CPPUNIT_ASSERT(util::convertToKelvin(unit_Mk, temperature) == temperature*1000000.);
     int temp_fi = 100;
     CPPUNIT_ASSERT(util::convertToKelvin(unit_f, temp_fi) == 311);
 }
