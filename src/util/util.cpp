@@ -166,33 +166,46 @@ bool isCompoundSIUnit(const string &unit) {
 }
 
 
+bool isScalable(const string &unitA, const string &unitB) {
+    if (!(isSIUnit(unitA) && isSIUnit(unitB))) {
+        return false;
+    }
+    string a_unit, a_prefix, a_power;
+    string b_unit, b_prefix, b_power;
+    splitUnit(unitA, a_prefix, a_unit, a_power);
+    splitUnit(unitB, b_prefix, b_unit, b_power);
+    if (!(a_unit == b_unit) || !(a_power == b_power) ) {
+        return false;
+    }
+    return true;
+}
+
+
 double getSIScaling(const string &originUnit, const string &destinationUnit) {
     double scaling = 1.0;
-    if (isSIUnit(originUnit) && isSIUnit(destinationUnit)) {
-        string org_unit, org_prefix, org_power;
-        string dest_unit, dest_prefix, dest_power;
-        splitUnit(originUnit, org_prefix, org_unit, org_power);
-        splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
+    if (!isScalable(originUnit, destinationUnit)) {
+        throw nix::InvalidUnit("Origin unit and destination unit are not scalable versions of the same SI unit!",
+                               "nix::util::getSIScaling");
+    }
+    
+    string org_unit, org_prefix, org_power;
+    string dest_unit, dest_prefix, dest_power;
+    splitUnit(originUnit, org_prefix, org_unit, org_power);
+    splitUnit(destinationUnit, dest_prefix, dest_unit, dest_power);
 
-        if (!(dest_unit == org_unit) || !(org_power == dest_power) ) {
-            throw nix::InvalidUnit("Origin unit and/or destination units cannot be scaled!", "nix::util::getSIScaling");
-        }
-        if ((org_prefix == dest_prefix) && (org_power == dest_power)) {
-            return scaling;
-        }
-        if (dest_prefix.empty() && !org_prefix.empty()) {
-            scaling = PREFIX_FACTORS.at(org_prefix);
-        } else if (org_prefix.empty() && !dest_prefix.empty()) {
-            scaling = 1.0 / PREFIX_FACTORS.at(dest_prefix);
-        } else if (!org_prefix.empty() && !dest_prefix.empty()) {
-            scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
-        }
-        if (!org_power.empty()) {
-            int power = std::stoi(org_power);
-            scaling = pow(scaling, power);
-        }
-    } else {
-        throw nix::InvalidUnit("Origin unit and/or destination unit are not valid!", "nix::util::getSIScaling");
+    if ((org_prefix == dest_prefix) && (org_power == dest_power)) {
+        return scaling;
+    }
+    if (dest_prefix.empty() && !org_prefix.empty()) {
+        scaling = PREFIX_FACTORS.at(org_prefix);
+    } else if (org_prefix.empty() && !dest_prefix.empty()) {
+        scaling = 1.0 / PREFIX_FACTORS.at(dest_prefix);
+    } else if (!org_prefix.empty() && !dest_prefix.empty()) {
+        scaling = PREFIX_FACTORS.at(org_prefix) / PREFIX_FACTORS.at(dest_prefix);
+    }
+    if (!org_power.empty()) {
+        int power = std::stoi(org_power);
+        scaling = pow(scaling, power);
     }
     return scaling;
 }
