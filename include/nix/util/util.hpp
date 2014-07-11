@@ -182,7 +182,7 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
 }
 
 /**
- * @brief Converts temperatures given in degrees Celsius of Fahren to Kelvin.
+ * @brief Converts temperatures given in degrees Celsius of Fahrenheit to Kelvin.
  *
  * @param unit  The original unit {"F", "°F", "C", "°C"}
  * @param value The original value
