@@ -132,10 +132,10 @@ private:
     std::string caller;
 };
 
-class InvalidRankException : public std::runtime_error {
+class InvalidRankException : public std::out_of_range {
 public:
     InvalidRankException(const std::string &message)
-        : std::runtime_error(message) { }
+        : std::out_of_range(message) { }
 };
 
 }
