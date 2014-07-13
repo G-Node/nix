@@ -13,6 +13,7 @@
 #include <boost/multi_array.hpp>
 #include <valarray>
 
+#include <nix/Exception.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/DataType.hpp>
 
@@ -20,12 +21,6 @@
 #define NIX_HYDRA_H
 
 namespace nix {
-
-class InvalidRankException : public std::runtime_error {
-public:
-    InvalidRankException(const std::string &message)
-        : std::runtime_error(message) { }
-};
 
 template<typename T>
 struct data_traits {

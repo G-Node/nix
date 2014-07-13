@@ -131,6 +131,13 @@ private:
     std::string what_msg;
     std::string caller;
 };
+
+class InvalidRankException : public std::runtime_error {
+public:
+    InvalidRankException(const std::string &message)
+        : std::runtime_error(message) { }
+};
+
 }
 
 #endif
