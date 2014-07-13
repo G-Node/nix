@@ -131,6 +131,13 @@ private:
     std::string what_msg;
     std::string caller;
 };
+
+class InvalidRank : public std::out_of_range {
+public:
+    InvalidRank(const std::string &message)
+        : std::out_of_range(message) { }
+};
+
 }
 
 #endif
