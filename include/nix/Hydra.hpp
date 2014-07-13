@@ -55,7 +55,7 @@ struct data_traits {
 
     static void resize(reference value, const NDSize &dims) {
         if (dims.size() != 0) {
-            throw InvalidRankException("Cannot resize scalar");
+            throw InvalidRank("Cannot resize scalar");
         }
     }
 
@@ -96,7 +96,7 @@ public:
 
     static void resize(reference value, const NDSize &dims) {
         if (dims.size() != 1 || dims[0] != N) {
-            throw InvalidRankException("Cannot resize native arrays");
+            throw InvalidRank("Cannot resize native arrays");
         }
         //NOOP
     }
@@ -136,7 +136,7 @@ public:
 
     static void resize(reference value, const NDSize &dims) {
         if (dims.size() != 2 || dims[0] != M || dims[1] != N) {
-            throw InvalidRankException("Cannot resize native arrays");
+            throw InvalidRank("Cannot resize native arrays");
         }
         //NOOP
     }
@@ -178,7 +178,7 @@ public:
     static void resize(reference value, const NDSize &dims) {
 
         if (dims.size() != 1) {
-            throw InvalidRankException("Cannot change rank of vector"); //FIXME
+            throw InvalidRank("Cannot change rank of vector"); //FIXME
         }
 
         if (dims[0] == value.size())
@@ -223,7 +223,7 @@ public:
     static void resize(reference value, const NDSize &dims) {
 
         if (dims.size() != 1) {
-            throw InvalidRankException("Cannot change rank of valarray");
+            throw InvalidRank("Cannot change rank of valarray");
         }
 
         if (dims[0] == value.size())
@@ -272,7 +272,7 @@ public:
 
     static void resize(reference value, const NDSize &dims) {
         if (dims.size() != N) {
-            throw InvalidRankException("Cannot change rank of multiarray");
+            throw InvalidRank("Cannot change rank of multiarray");
         }
 
         value.resize(dims);

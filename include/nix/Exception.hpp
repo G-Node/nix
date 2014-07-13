@@ -132,9 +132,9 @@ private:
     std::string caller;
 };
 
-class InvalidRankException : public std::out_of_range {
+class InvalidRank : public std::out_of_range {
 public:
-    InvalidRankException(const std::string &message)
+    InvalidRank(const std::string &message)
         : std::out_of_range(message) { }
 };
 

@@ -252,7 +252,7 @@ void DataSet::setExtent(const NDSize &dims)
     size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
 
     if (rank != dims.size()) {
-        throw InvalidRankException("Cannot change the dimensionality via setExtent()");
+        throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
     herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
