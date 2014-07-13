@@ -27,10 +27,10 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name);
+    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name, time_t time);
+    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name, time_t time);
 
 
     void name(const std::string &name);
@@ -96,8 +96,16 @@ public:
     virtual ~PropertyHDF5();
 
 private:
+    
+    DataSet entity_dataset;
 
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
+
+protected:
+    DataSet dataset() const {
+        return entity_dataset;
+    }
+
 
 };
 

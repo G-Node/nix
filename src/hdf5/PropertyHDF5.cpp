@@ -18,20 +18,21 @@ namespace hdf5 {
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
-    : PropertyHDF5(property.file(), property.group(), property.id(), property.name())
+    : PropertyHDF5(property.file(), property.group(), property.dataset(), property.id(), property.name())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name)
-    : PropertyHDF5(file, group, id, name, util::getTime())
+    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name)
+        : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name, time_t time)
+    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
+    this->entity_dataset = dataset;
     this->name(name);
 }
 
