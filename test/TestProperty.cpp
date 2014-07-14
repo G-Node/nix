@@ -22,9 +22,7 @@ void TestProperty::setUp()
 {
     startup_time = time(NULL);
     file = nix::File::open("test_property.h5", nix::FileMode::Overwrite);
-
     section = file.createSection("cool section", "metadata");
-
     property = section.createProperty("prop");
     property_other = section.createProperty("other");
     property_null = nullptr;
@@ -36,11 +34,11 @@ void TestProperty::tearDown()
     file.close();
 }
 
-
+/*
 void TestProperty::testValidate() {
     std::cout << std::endl << property.validate();
 }
-
+*/
 
 
 void TestProperty::testId() {

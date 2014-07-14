@@ -314,10 +314,10 @@ Property SectionHDF5::createProperty(const string &name) {
     while (property_group.hasData(new_id))
         new_id = util::createId("property");
 
+    // TODO !!! This is a quick hack and needs to be reconsidered
+    DataSet::create(property_group.h5Group(), new_id, DataType::Double, {1});
     DataSet dset = property_group.openData(new_id);
-
     auto tmp = make_shared<PropertyHDF5>(file(), property_group, dset, new_id, name);
-
     return Property(tmp);
 }
 

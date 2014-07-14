@@ -96,7 +96,9 @@ public:
     virtual ~PropertyHDF5();
 
 private:
-    
+
+    DataSet entity_dataset;
+
     DataSet entity_dataset;
 
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
@@ -110,7 +112,7 @@ protected:
 };
 
 
-} // namespace hdf5 
+} // namespace hdf5
 } // namespace nix
 
 #endif // NIX_PROPERTY_HDF5_H
