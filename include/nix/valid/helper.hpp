@@ -33,6 +33,7 @@ namespace valid {
      * a method called "id"
      * USAGE: hasID<TOBJ>::value
      */
+#ifndef _WIN32
     template <typename T>
     class hasID
     {
@@ -45,6 +46,19 @@ namespace valid {
     public:
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
+#else
+	template <typename T>
+	class hasID
+	{
+	public:
+		__if_exists(T::id) {
+			static const bool value = true;
+		}
+		__if_not_exists(T::id) {
+			static const bool value = false;
+		}
+	};
+#endif
 
     /**
      * Helper class with "get" method that will execute a given
