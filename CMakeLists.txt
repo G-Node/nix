@@ -136,11 +136,12 @@ if(BUILD_TESTING)
   file(GLOB Tests_SOURCES "test/Test*.cpp")
 
   add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+
   if(NOT WIN32)
+    #CppUnit uses auto_ptr which is deprecated, avoid getting warnings for that
     set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
   endif()
-
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
   foreach(test ${Tests_SOURCES})
     get_filename_component(TestFileName ${test} NAME_WE)
