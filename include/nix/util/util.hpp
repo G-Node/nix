@@ -163,7 +163,7 @@ NIXAPI void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::
  * @return The value in converted to seconds
 */
 template <typename T>
-NIXAPI T convertToSeconds(const std::string &unit, T value) {
+T convertToSeconds(const std::string &unit, T value) {
     T seconds;
     if (unit == "min") {
         seconds = value * 60;
@@ -190,7 +190,7 @@ NIXAPI T convertToSeconds(const std::string &unit, T value) {
  * @return The temperature in Kelvin
  */
 template<typename T>
-NIXAPI T convertToKelvin(const std::string &unit, T value) {
+T convertToKelvin(const std::string &unit, T value) {
    T temperature;
    if (unit == "°C" || unit == "C") {
        temperature = value + 273.15;
