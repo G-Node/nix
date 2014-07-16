@@ -123,30 +123,32 @@ endif()
 ########################################
 # Tests
 
-enable_testing()
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
-find_package(CppUnit)
-include_directories(${CPPUNIT_INCLUDE_DIR})
-
-file(GLOB Tests_SOURCES "test/Test*.cpp")
-
-add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-if(NOT WIN32)
-  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-endif()
-target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
-foreach(test ${Tests_SOURCES})
-  get_filename_component(TestFileName ${test} NAME_WE)
-  string(REPLACE "Test" "" TestName ${TestFileName})
-  message(STATUS " Test added: ${TestName}")
-  add_test(${TestName} TestRunner ${TestName})
-endforeach(test)
-
 include(CTest)
 
+if(BUILD_TESTING)
+  enable_testing()
+
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+  find_package(CppUnit)
+  include_directories(${CPPUNIT_INCLUDE_DIR})
+
+  file(GLOB Tests_SOURCES "test/Test*.cpp")
+
+  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+
+  foreach(test ${Tests_SOURCES})
+    get_filename_component(TestFileName ${test} NAME_WE)
+    string(REPLACE "Test" "" TestName ${TestFileName})
+    message(STATUS " Test added: ${TestName}")
+    add_test(${TestName} TestRunner ${TestName})
+  endforeach(test)
+endif()
 
 ########################################
 # Install
