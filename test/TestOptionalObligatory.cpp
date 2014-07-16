@@ -55,7 +55,7 @@ namespace test {
     }
     template<>
     bool TtoBool<std::string>(std::string var) {
-        return (var.length() > 0) ? true : false;;
+        return (var.length() > 0);
     }
 
     bool isValidOptional(bool is_opt, bool is_set, bool accepts_none) {
