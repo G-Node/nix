@@ -11,6 +11,8 @@
 
 #include <string>
 #include <functional>
+
+#include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>

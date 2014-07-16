@@ -10,6 +10,7 @@
 #ifndef NIX_VALIDATE_H
 #define NIX_VALIDATE_H
 
+#include <nix/Platform.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/conditions.hpp>
 #include <cstdarg>
@@ -24,7 +25,7 @@ namespace valid {
   *
   * @returns object The validation results as {@Result} object
   */
-Result validate(std::initializer_list<condition> li);
+NIXAPI Result validate(std::initializer_list<condition> li);
 
 } // namespace valid
 } // namespace nix

@@ -27,7 +27,7 @@ namespace base {
  * those.
  */
 template <typename T>
-class NIXAPI EntityWithSources : virtual public base::IEntityWithSources, public base::EntityWithMetadata<T> {
+class EntityWithSources : virtual public base::IEntityWithSources, public base::EntityWithMetadata<T> {
 
 public:
 

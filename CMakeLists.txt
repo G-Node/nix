@@ -26,8 +26,10 @@ if(NOT WIN32)
 
 endif()
 
-if(USE_NO_DEPRECATED_DECLARATIONS)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+if(NOT WIN32)
+  if(USE_NO_DEPRECATED_DECLARATIONS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+  endif()
 endif()
 
 #########################################
@@ -131,7 +133,9 @@ include_directories(${CPPUNIT_INCLUDE_DIR})
 file(GLOB Tests_SOURCES "test/Test*.cpp")
 
 add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+if(NOT WIN32)
+  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+endif()
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 foreach(test ${Tests_SOURCES})
@@ -149,7 +153,8 @@ include(CTest)
 
 install(TARGETS nix
         LIBRARY DESTINATION lib
-        FRAMEWORK DESTINATION "/Library/Frameworks")
+        FRAMEWORK DESTINATION "/Library/Frameworks"
+        RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION include)
 
 

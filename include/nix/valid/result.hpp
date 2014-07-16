@@ -9,6 +9,7 @@
 #ifndef NIX_RESULT_H
 #define NIX_RESULT_H
 
+#include <nix/Platform.hpp>
 #include <nix/None.hpp>
 #include <nix/valid/helper.hpp>
 
@@ -18,7 +19,7 @@
 namespace nix {
 namespace valid {
 
-class Result {
+class NIXAPI Result {
 
     std::vector<Message> errors;
     std::vector<Message> warnings;
