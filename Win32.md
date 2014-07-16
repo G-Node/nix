@@ -35,9 +35,9 @@ Dependencies
 2) **Boost**:
    - Obtain sources from: http://www.boost.org/users/download/
    - Boostrap with: `> bootstrap`
-   - Build needed libraries via (and install to PREFIX, change "architecture=ia64" to ="x86" for 32-bit build):
+   - Build needed libraries via (and install to PREFIX, change "address-model=64" to ="32" for 32-bit build):
      ```
-      > .\b2 --toolset=msvc-12.0 threading=multi architecture=ia64 address-model=64
+      > .\b2 --toolset=msvc-12.0 threading=multi architecture=x86 address-model=64
       --prefix=<PREFIX> --libdir=<PREFIX>\lib --include-dir=<PREFIX>\include
       -j4 --build-type=complete --with-date_time --with-regex install
 
