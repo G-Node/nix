@@ -83,8 +83,7 @@ Block FileHDF5::getBlock(const std::string &id) const {
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), group, id, type, name));
-        return Block(ptr);
+        return Block(make_shared<BlockHDF5>(file(), group, id, type, name));
     } else {
         return Block();
     }
@@ -105,10 +104,7 @@ Block FileHDF5::createBlock(const std::string &name, const string &type) {
     }
 
     Group group = data.openGroup(id, true);
-    shared_ptr<BlockHDF5> ptr(new BlockHDF5(file(), group, id, type, name));
-    Block b(ptr);
-
-    return b;
+    return Block(make_shared<BlockHDF5>(file(), group, id, type, name));
 }
 
 
@@ -139,8 +135,7 @@ Section FileHDF5::getSection(const std::string &id) const {
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), group, id, type, name));
-        return Section(ptr);
+        return Section(make_shared<SectionHDF5>(file(), group, id, type, name));
     } else {
         return Section();
     }
@@ -157,9 +152,7 @@ Section FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId("section");
     while(metadata.hasObject(id))
         id = util::createId("section");
-    shared_ptr<SectionHDF5> ptr(new SectionHDF5(file(), metadata.openGroup(id, true), id, type, name));
-    Section section(ptr);
-    return section;
+    return Section(make_shared<SectionHDF5>(file(), metadata.openGroup(id, true), id, type, name));
 }
 
 
