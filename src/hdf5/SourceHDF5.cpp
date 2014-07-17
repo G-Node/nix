@@ -47,8 +47,7 @@ Source SourceHDF5::getSource(const string &id) const {
         string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id, type, name);
-        return Source(tmp);
+        return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
     } else {
         return Source();
     }
@@ -75,9 +74,7 @@ Source SourceHDF5::createSource(const string &name, const string &type) {
     }
 
     Group grp = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), grp, id, type, name);
-
-    return Source(tmp);
+    return Source(make_shared<SourceHDF5>(file(), grp, id, type, name));
 }
 
 
