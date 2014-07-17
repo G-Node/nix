@@ -149,8 +149,8 @@ boost::optional<string> PropertyHDF5::unit() const {
 
 
 void PropertyHDF5::unit(const none_t t) {
-    if(group().hasAttr("unit")) {
-        group().removeAttr("unit");
+    if(dataset().hasAttr("unit")) {
+        dataset().removeAttr("unit");
     }
     forceUpdatedAt();
 }
