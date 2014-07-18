@@ -202,13 +202,14 @@ vector<Section> Section::findSideways(std::function<bool(Section)> filter, const
     if(p != nullptr) {
         results = p.findSections(filter,1);
         if(results.size() > 0) {
-            for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-                if(it->id() == caller_id) {
-                    results.erase(it, it+1);
-                    if (it == results.end())
-                        break;
-                }
-            }
+
+            results.erase(remove_if(results.begin(),
+                                    results.end(),
+                                    [&caller_id](const Section &section) {
+                                        return section.id() == caller_id;
+                                    }),
+                          results.end());
+
             return results;
         }
         return p.findSideways(filter, caller_id);
