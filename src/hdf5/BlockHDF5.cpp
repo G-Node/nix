@@ -59,8 +59,7 @@ Source BlockHDF5::getSource(const string &id) const {
         string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        auto tmp = make_shared<SourceHDF5>(file(), group, id, type, name);
-        return Source(tmp);
+        return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
     } else {
         return nix::Source();
     }
@@ -86,9 +85,7 @@ Source BlockHDF5::createSource(const string &name, const string &type) {
     }
 
     Group group = source_group.openGroup(id, true);
-    shared_ptr<SourceHDF5> tmp = make_shared<SourceHDF5>(file(), group, id, type, name);
-
-    return Source(tmp);
+    return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
 }
 
 
@@ -125,8 +122,7 @@ SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
             // NOTE: arrays might not exist & be empty, but let SimpleTag ctor called below handle that!
             refs.push_back(getDataArray(*it));
         }
-        auto tmp = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs);
-        return SimpleTag(tmp);
+        return SimpleTag(make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs));
     } else {
         return nix::SimpleTag();
     }
@@ -153,9 +149,7 @@ SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type,
     }
 
     Group group = simple_tag_group.openGroup(id, true);
-    auto tmp = make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, refs);
-
-    return SimpleTag(tmp);
+    return SimpleTag(make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, refs));
 }
 
 
