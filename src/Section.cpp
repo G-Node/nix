@@ -95,31 +95,34 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
     return results;
 }
 
+static inline auto erase_section_with_id(vector<Section> &sections, const string my_id)
+    -> decltype(sections.size())
+{
+    sections.erase(remove_if(sections.begin(),
+                             sections.end(),
+                             [&my_id](const Section &section) {
+                                 return my_id == section.id();
+                             }),
+                   sections.end());
+
+    return sections.size();
+}
 
 std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) const
 {
     std::vector<Section> results = findDownstream(filter);
-    if(results.size() > 0) { //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    }
-    if (results.size() == 0) {
+    const string &my_id = id();
+
+    //This checking of results can be removed if we decide not to include this in findSection
+    auto results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findUpstream(filter);
     }
-    if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    if (results.size() == 0) {
+    //This checking of results can be removed if we decide not to include this in findSection
+    results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findSideways(filter, id());
     }
     return results;
