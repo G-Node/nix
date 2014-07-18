@@ -8,6 +8,7 @@
 
 
 #include <list>
+#include <algorithm>
 
 #include <nix.hpp>
 
@@ -139,20 +140,14 @@ vector<Property> Section::inheritedProperties() const {
 
     const vector<Property> linked = link().properties();
 
-    for (auto &linked_prop : linked) {
-
-        bool not_own = true;
-        for (const auto &own_prop : own) {
-            if (linked_prop.name() == own_prop.name()) {
-                not_own = false;
-                break;
-            }
-        }
-
-        if (not_own) {
-            own.push_back(linked_prop);
-        }
-    }
+    copy_if (linked.begin(), linked.end(),
+             back_inserter(own),
+             [&own](const Property &linked_prop) {
+                 return find_if(own.begin(), own.end(),
+                                [&linked_prop](const Property &own_prop) {
+                                    return linked_prop.name() == own_prop.name();
+                                }) == own.end();
+             });
 
     return own;
 }
