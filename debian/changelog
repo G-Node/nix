@@ -1,3 +1,9 @@
+nix (0.9.2-2) trusty; urgency=medium
+
+  * Add pkg-config file to package libnix-dev 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Fri, 18 Jul 2014 11:23:40 +0200
+
 nix (0.9.2-1) trusty; urgency=medium
 
   * Alpha 1 release update 
