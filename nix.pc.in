@@ -7,4 +7,4 @@ Name: nix
 Description: IO-library for nix datafiles
 Version: ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 Libs: -L${CMAKE_INSTALL_PREFIX}/lib -lnix
-Cflags: -I${CMAKE_INSTALL_PREFIX}/include
+Cflags: -I${CMAKE_INSTALL_PREFIX}/include/nix
