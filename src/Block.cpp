@@ -16,14 +16,13 @@ namespace nix {
     std::vector<Source> Block::findSources(util::Filter<Source>::type filter,
                                            size_t max_depth) const 
     {
-        vector<Source> probes = sources();
+        const vector<Source> probes = sources();
         vector<Source> matches;
         vector<Source> result;
 
-        for (std::vector<Source>::iterator it = probes.begin(); it!=probes.end(); ++it)
-        {
-            matches = it->findSources(filter, max_depth);
-            result.insert( result.end(), matches.begin(), matches.end() );
+        for (auto &probe : probes) {
+            matches = probe.findSources(filter, max_depth);
+            result.insert (result.end(), matches.begin(), matches.end());
         }
 
         return result;

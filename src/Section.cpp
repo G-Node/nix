@@ -137,22 +137,21 @@ vector<Property> Section::inheritedProperties() const {
     if (link() == nullptr)
         return own;
 
-    vector<Property> linked = link().properties();
+    const vector<Property> linked = link().properties();
 
-    for (auto it_linked = linked.begin(); it_linked != linked.end(); ++it_linked) {
+    for (auto &linked_prop : linked) {
 
         bool not_own = true;
-        for (auto it_own = own.begin(); it_own != own.end(); ++it_own) {
-            if (it_linked->name() == it_own->name()) {
+        for (const auto &own_prop : own) {
+            if (linked_prop.name() == own_prop.name()) {
                 not_own = false;
                 break;
             }
         }
 
         if (not_own) {
-            own.push_back(*it_linked);
+            own.push_back(linked_prop);
         }
-
     }
 
     return own;
@@ -163,13 +162,11 @@ vector<Property> Section::inheritedProperties() const {
 // Operators and other functions
 //------------------------------------------------------
 size_t Section::tree_depth() const{
-  vector<Section> children = sections();
+  const vector<Section> children = sections();
   size_t depth = 0;
   if (children.size() > 0) {
-      for (vector<Section>::iterator it = children.begin(); it != children.end(); ++it) {
-          size_t temp = it->tree_depth();
-          if(temp > depth)
-              depth = temp;
+      for (auto &child : children) {
+          depth = max(depth, child.tree_depth());
       }
       depth += 1;
   }
