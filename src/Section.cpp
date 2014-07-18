@@ -8,6 +8,7 @@
 
 
 #include <list>
+#include <algorithm>
 
 #include <nix.hpp>
 
@@ -94,31 +95,34 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
     return results;
 }
 
+static inline auto erase_section_with_id(vector<Section> &sections, const string my_id)
+    -> decltype(sections.size())
+{
+    sections.erase(remove_if(sections.begin(),
+                             sections.end(),
+                             [&my_id](const Section &section) {
+                                 return my_id == section.id();
+                             }),
+                   sections.end());
+
+    return sections.size();
+}
 
 std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) const
 {
     std::vector<Section> results = findDownstream(filter);
-    if(results.size() > 0) { //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    }
-    if (results.size() == 0) {
+    const string &my_id = id();
+
+    //This checking of results can be removed if we decide not to include this in findSection
+    auto results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findUpstream(filter);
     }
-    if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    if (results.size() == 0) {
+    //This checking of results can be removed if we decide not to include this in findSection
+    results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findSideways(filter, id());
     }
     return results;
@@ -139,20 +143,14 @@ vector<Property> Section::inheritedProperties() const {
 
     const vector<Property> linked = link().properties();
 
-    for (auto &linked_prop : linked) {
-
-        bool not_own = true;
-        for (const auto &own_prop : own) {
-            if (linked_prop.name() == own_prop.name()) {
-                not_own = false;
-                break;
-            }
-        }
-
-        if (not_own) {
-            own.push_back(linked_prop);
-        }
-    }
+    copy_if (linked.begin(), linked.end(),
+             back_inserter(own),
+             [&own](const Property &linked_prop) {
+                 return find_if(own.begin(), own.end(),
+                                [&linked_prop](const Property &own_prop) {
+                                    return linked_prop.name() == own_prop.name();
+                                }) == own.end();
+             });
 
     return own;
 }
@@ -207,13 +205,14 @@ vector<Section> Section::findSideways(std::function<bool(Section)> filter, const
     if(p != nullptr) {
         results = p.findSections(filter,1);
         if(results.size() > 0) {
-            for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-                if(it->id() == caller_id) {
-                    results.erase(it, it+1);
-                    if (it == results.end())
-                        break;
-                }
-            }
+
+            results.erase(remove_if(results.begin(),
+                                    results.end(),
+                                    [&caller_id](const Section &section) {
+                                        return section.id() == caller_id;
+                                    }),
+                          results.end());
+
             return results;
         }
         return p.findSideways(filter, caller_id);
