@@ -19,7 +19,7 @@ namespace nix {
 
 class Section;
 class Property;
-
+class Value;
 
 namespace base {
 
@@ -241,10 +241,21 @@ public:
      * @brief Add a new Property to the Section.
      *
      * @param name      The name of the property.
+     * @param value     The Value to be stored. 
      *
      * @return The newly created property.
      */
-    virtual Property createProperty(const std::string &name) = 0;
+    virtual Property createProperty(const std::string &name, const Value &value) = 0;
+
+    /**
+     * @brief Add a new Property that contains multiple values to the Section.
+     *
+     * @param name      The name of the property.
+     * @param values    A vector of Values.
+     *
+     * @return The newly created property.
+     */
+    virtual Property createProperty(const std::string &name, const std::vector<Value> &values) = 0;
 
     /**
      * @brief Delete the Property identified by its id.

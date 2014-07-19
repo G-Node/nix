@@ -302,8 +302,8 @@ public:
      */
     std::vector<Property> inheritedProperties() const;
 
-    Property createProperty(const std::string &name) {
-        return backend()->createProperty(name);
+    Property createProperty(const std::string &name, const Value &value) {
+        return backend()->createProperty(name, value);
     }
 
     /**
@@ -314,9 +314,8 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const std::vector<Value>& values) {
-        Property p = backend()->createProperty(name);
-        p.values(values);
+    Property createProperty(const std::string &name, const std::vector<Value> &values) {
+        Property p = backend()->createProperty(name, values);
         return p;
     }
 
