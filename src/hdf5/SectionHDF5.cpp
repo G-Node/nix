@@ -238,7 +238,7 @@ size_t SectionHDF5::propertyCount() const {
 
 
 bool SectionHDF5::hasProperty(const string &id) const {
-    return property_group.hasGroup(id);
+    return property_group.hasObject(id);
 }
 
 
