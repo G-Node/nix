@@ -178,18 +178,14 @@ void PropertyHDF5::values(const std::vector<Value> &values)
     if (group().hasData("values")) {
         dataset = group().openData("values");
     } else {
-
         if (values.size() < 1) {
             return; //Nothing to do, since we also cannot guess the correct DataType
         }
-
         NDSize size = {1};
         DataType dtype = values[0].type();
         H5::DataType fileType = DataSet::fileTypeForValue(dtype);
-
         dataset = DataSet::create(group().h5Group(), "values", fileType, size);
     }
-
     dataset.write(values);
 }
 
