@@ -99,20 +99,18 @@ boost::optional<DataType> PropertyHDF5::dataType() const {
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    if(mapping.empty()) {
+    if (mapping.empty()) {
         throw EmptyString("mapping");
     }
-    else {
-        dataset().setAttr("mapping", mapping);
-        forceUpdatedAt();
-    }
+    dataset().setAttr("mapping", mapping);
+    forceUpdatedAt();
 }
 
 
 boost::optional<string> PropertyHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if(dataset().getAttr("mapping", mapping)) {
+    if (dataset().getAttr("mapping", mapping)) {
         ret = mapping;
     }
     return ret;
@@ -120,21 +118,19 @@ boost::optional<string> PropertyHDF5::mapping() const {
 
 
 void PropertyHDF5::mapping(const none_t t) {
-    if(dataset().hasAttr("mapping")) {
+    if (dataset().hasAttr("mapping")) {
         dataset().removeAttr("mapping");
+        forceUpdatedAt();
     }
-    forceUpdatedAt();
 }
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
     }
-    else {
-        dataset().setAttr("unit", unit);
-        forceUpdatedAt();
-    }
+    dataset().setAttr("unit", unit);
+    forceUpdatedAt();
 }
 
 
