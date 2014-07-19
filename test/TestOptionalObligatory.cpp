@@ -80,7 +80,8 @@ void TestOptionalObligatory::setUp() {
     block = file.createBlock("block_one", "dataset");
 
     // property---------------------------------------------------------
-    property = section.createProperty("prop");
+    dummy = Value(10);
+    property = section.createProperty("prop", dummy);
 
     // dataAray---------------------------------------------------------
     dataArray = block.createDataArray("dimensionTest", "test");
