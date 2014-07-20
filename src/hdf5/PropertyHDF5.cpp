@@ -169,20 +169,13 @@ size_t PropertyHDF5::valueCount() const {
 
 void PropertyHDF5::values(const std::vector<Value> &values)
 {
-    DataSet dataset;
-
-    if (group().hasData("values")) {
-        dataset = group().openData("values");
-    } else {
-        if (values.size() < 1) {
-            return; //Nothing to do, since we also cannot guess the correct DataType
-        }
-        NDSize size = {1};
-        DataType dtype = values[0].type();
-        H5::DataType fileType = DataSet::fileTypeForValue(dtype);
-        dataset = DataSet::create(group().h5Group(), "values", fileType, size);
+    if (values.size() < 1) {
+        return; //Nothing to do, since we also cannot guess the correct DataType
     }
-    dataset.write(values);
+    NDSize size = {1};
+    DataType dtype = values[0].type();
+    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
+    dataset().write(values);
 }
 
 std::vector<Value> PropertyHDF5::values(void) const
