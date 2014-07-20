@@ -305,7 +305,7 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
 }
 
 
-Property SectionHDF5::createProperty(const string &name, const Value & value) {
+Property SectionHDF5::createProperty(const string &name, const Value &value) {
     if (hasPropertyWithName(name))
         throw runtime_error("Try to create a property with existing name: " + name);
 
@@ -318,7 +318,10 @@ Property SectionHDF5::createProperty(const string &name, const Value & value) {
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, size);
     auto tmp = make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
-    return Property(tmp);
+    Property p(tmp);
+    vector<Value> val{value};
+    p.values(val);
+    return p;
 }
 
 
