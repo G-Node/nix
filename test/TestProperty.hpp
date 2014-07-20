@@ -54,7 +54,7 @@ private:
     nix::File file;
     nix::Section section;
     nix::Property property, property_other, property_null;
-
+    nix::Value int_dummy, str_dummy, double_dummy;
 public:
 
     void setUp();
