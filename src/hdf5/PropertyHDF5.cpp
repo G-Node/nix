@@ -91,9 +91,7 @@ void PropertyHDF5::definition(const none_t t) {
 
 boost::optional<DataType> PropertyHDF5::dataType() const {
     boost::optional<DataType> result;
-    if (this->valueCount() > 0) {
-        result = this->values()[0].type();
-    }
+    result = this->values()[0].type();
     return result;
 }
 
@@ -181,12 +179,7 @@ void PropertyHDF5::values(const std::vector<Value> &values)
 std::vector<Value> PropertyHDF5::values(void) const
 {
     std::vector<Value> values;
-    if (!group().hasData("values")) {
-        return values;
-    }
-
-    DataSet dataset = group().openData("values");
-    dataset.read(values);
+    dataset().read(values);
     return values;
 }
 
