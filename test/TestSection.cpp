@@ -225,10 +225,10 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
-
+    Value dummy(10);
     vector<string> ids;
     for (auto name : names) {
-        Property prop = section.createProperty(name);
+        Property prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
         CPPUNIT_ASSERT(section.hasPropertyWithName(name));
 
@@ -242,7 +242,7 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());
 
-    section_other.createProperty("some_prop", {Value(10)});
+    section_other.createProperty("some_prop", dummy);
     section_other.link(section);
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
     CPPUNIT_ASSERT(section_other.inheritedProperties().size() == names.size() + 1);
