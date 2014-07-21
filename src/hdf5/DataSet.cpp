@@ -443,24 +443,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
 
 void DataSet::read(std::vector<Value> &values) const
 {
-    //we first have to obtain the DataType from hdf5
-    hid_t ftype = H5Dget_type(h5dset.getId());
-    H5T_class_t ftclass = H5Tget_class(ftype);
-    assert(ftclass == H5T_COMPOUND);
-
-    int nmems = H5Tget_nmembers(ftype);
-    assert(nmems == 6);
-    hid_t vtype = H5Tget_member_type(ftype, 0);
-
-    H5T_class_t vclass = H5Tget_class(vtype);
-    size_t vsize = H5Tget_size(vtype);
-    H5T_sign_t vsign = H5Tget_sign(vtype);
-
-    DataType dtype = nix::hdf5::data_type_from_h5(vclass, vsize, vsign);
-
-    H5Tclose(vtype);
-    H5Tclose(ftype);
-
+    DataType dtype = dataType();
     NDSize shape = size();
 
     if (shape.size() < 1 || shape[0] < 1) {
