@@ -294,10 +294,26 @@ DataType DataSet::dataType(void) const
 {
     hid_t ftype = H5Dget_type(h5dset.getId());
     H5T_class_t ftclass = H5Tget_class(ftype);
-    //if is a compound type, we should catched that here
 
-    size_t size = H5Tget_size(ftype);
-    H5T_sign_t sign = H5Tget_sign(ftype);
+    size_t     size;
+    H5T_sign_t sign;
+
+    if (ftclass == H5T_COMPOUND) {
+        //if it is a compound data type then it must be a
+        //a property dataset, we can handle that
+        int nmems = H5Tget_nmembers(ftype);
+        assert(nmems == 6);
+        hid_t vtype = H5Tget_member_type(ftype, 0);
+
+        ftclass = H5Tget_class(vtype);
+        size = H5Tget_size(vtype);
+        sign = H5Tget_sign(vtype);
+
+        H5Tclose(vtype);
+    } else {
+        size = H5Tget_size(ftype);
+        sign = H5Tget_sign(ftype);
+    }
 
     DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
     H5Tclose(ftype);
