@@ -226,14 +226,15 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 
-    //Property p = section_other.createProperty("empty_prop", DataType::Double);
-    //CPPUNIT_ASSERT(section.propertyCount() == 1);
-    //CPPUNIT_ASSERT(section.getProperty("empty_prop").dataType() == nix::DataType::Double);
-    //section.deleteProperty(p.id());
-    //CPPUNIT_ASSERT(section.propertyCount() == 0);
+    Property p = section.createProperty("empty_prop", DataType::Double);
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    Property prop = section.getPropertyByName("empty_prop");
+    CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
+    section.deleteProperty(p.id());
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
 
     Value dummy(10);
-    Property prop = section.createProperty("single value", dummy);
+    prop = section.createProperty("single value", dummy);
     CPPUNIT_ASSERT(section.hasPropertyWithName("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     section.deleteProperty(prop.id());
