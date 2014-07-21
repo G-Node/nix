@@ -184,7 +184,7 @@ NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
 /**
  * Infer the chunk size from the supplied size information
  *
- * @param dims          Size information to base the guessing on
+ * @param chunks        Size information to base the guessing on
  * @param elementSize   The size of a single element in bytes
  *
  * This function is a port of the guess_chunk() function from h5py
@@ -196,18 +196,17 @@ NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
+NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 {
     // original source:
     //    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
 
-    if(dims.size() == 0) {
+    if(chunks.size() == 0) {
         throw 1;
     }
 
-    NDSize chunks(dims);
     double product = 1;
-    std::for_each(dims.begin(), dims.end(), [&](hsize_t &val) {
+    std::for_each(chunks.begin(), chunks.end(), [&](hsize_t &val) {
         //todo: check for +infinity
         if (val == 0)
             val = 1024;
@@ -217,7 +216,7 @@ NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
 
     product *= element_size;
 
-    double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0L * 1024.0L)));
+    double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0 * 1024.0)));
     if (target_size > CHUNK_MAX)
         target_size = CHUNK_MAX;
     else if (target_size < CHUNK_MIN)
