@@ -97,13 +97,13 @@ public:
 
 private:
 
+    DataSet entity_dataset;
+
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
-protected:
     DataSet dataset() const {
         return entity_dataset;
     }
-
 
 };
 
