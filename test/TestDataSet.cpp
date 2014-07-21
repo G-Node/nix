@@ -157,7 +157,10 @@ void TestDataSet::testDataType() {
 void TestDataSet::testBasic() {
     NDSize dims = {4, 6};
 
-    DataSet ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
+    DataSet ds = DataSet::create(h5group, "dsZero", DataType::Double, {0, 0});
+    CPPUNIT_ASSERT_EQUAL(ds.size(), (NDSize{0, 0}));
+
+    ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
