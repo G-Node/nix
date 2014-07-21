@@ -225,10 +225,23 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
+
+    //Property p = section_other.createProperty("empty_prop", DataType::Double);
+    //CPPUNIT_ASSERT(section.propertyCount() == 1);
+    //CPPUNIT_ASSERT(section.getProperty("empty_prop").dataType() == nix::DataType::Double);
+    //section.deleteProperty(p.id());
+    //CPPUNIT_ASSERT(section.propertyCount() == 0);
+
     Value dummy(10);
+    Property prop = section.createProperty("single value", dummy);
+    CPPUNIT_ASSERT(section.hasPropertyWithName("single value"));
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    section.deleteProperty(prop.id());
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+
     vector<string> ids;
     for (auto name : names) {
-        Property prop = section.createProperty(name, dummy);
+        prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
         CPPUNIT_ASSERT(section.hasPropertyWithName(name));
 
@@ -241,7 +254,6 @@ void TestSection::testPropertyAccess() {
 
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());
-
     section_other.createProperty("some_prop", dummy);
     section_other.link(section);
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
@@ -258,6 +270,14 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
+
+    vector<Value> values;
+    values.push_back(Value(10));
+    values.push_back(Value(100));
+    section.createProperty("another test", values);
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    prop = section.getPropertyByName("another test");
+    CPPUNIT_ASSERT(prop.valueCount() == 2);
 }
 
 

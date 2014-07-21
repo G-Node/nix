@@ -14,6 +14,7 @@
 
 #include <nix/base/IEntity.hpp>
 #include <nix/base/INamedEntity.hpp>
+#include <nix/DataType.hpp>
 
 namespace nix {
 
@@ -238,10 +239,20 @@ public:
     virtual Property getPropertyByName(const std::string &name) const = 0;
 
     /**
+     * @brief Add a new Property that does not have any Values to this Section.
+     *
+     * @param name     The name of the property.
+     * @param dtype    The DataType of the property.
+     *
+     * @return The newly created property
+     */
+    virtual Property createProperty(const std::string &name, const DataType &dtype) = 0;
+
+    /**
      * @brief Add a new Property to the Section.
      *
      * @param name      The name of the property.
-     * @param value     The Value to be stored. 
+     * @param value     The Value to be stored.
      *
      * @return The newly created property.
      */

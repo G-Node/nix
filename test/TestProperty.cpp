@@ -103,7 +103,7 @@ void TestProperty::testValues()
     nix::Property p2 = section.createProperty("toDelete", str_dummy);
     CPPUNIT_ASSERT(p2.valueCount() == 1);
     CPPUNIT_ASSERT_EQUAL(p2.values()[0], str_dummy);
-    
+
     /* TODO !!!
     nix::Property p2 = section.createProperty("toDelete", strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
@@ -129,7 +129,7 @@ void TestProperty::testDataType() {
                                              nix::Value(-99.99) };
     nix::Property p1 = section.createProperty("strProperty", strValues);
     nix::Property p2 = section.createProperty("doubleProperty", doubleValues);
-    
+
     CPPUNIT_ASSERT(p1.dataType() == DataType::String);
     CPPUNIT_ASSERT(p2.dataType() == DataType::Double);
 
@@ -146,7 +146,7 @@ void TestProperty::testUnit(){
     std::string inv_unit = "invalid unit";
     std::string valid_unit = "mV*cm^-2";
     std::string second_unit = "mV";
-    
+
     CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnit);
     CPPUNIT_ASSERT(!p1.unit());
 

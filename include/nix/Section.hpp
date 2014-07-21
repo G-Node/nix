@@ -17,7 +17,7 @@
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
-
+#include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
 #include <nix/valid/validate.hpp>
 
@@ -301,6 +301,10 @@ public:
      * @return All inherited properties as a vector.
      */
     std::vector<Property> inheritedProperties() const;
+
+    Property createProperty(const std::string &name, const DataType &dtype) {
+        return backend()->createProperty(name, dtype);
+    }
 
     Property createProperty(const std::string &name, const Value &value) {
         return backend()->createProperty(name, value);

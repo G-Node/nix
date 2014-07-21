@@ -231,7 +231,6 @@ bool SectionHDF5::deleteSection(const string &id) {
 //--------------------------------------------------
 
 
-
 size_t SectionHDF5::propertyCount() const {
     return property_group.objectCount();
 }
@@ -305,20 +304,21 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
 }
 
 
-Property SectionHDF5::createProperty(const string &name, const Value &value) {
+Property SectionHDF5::createProperty(const string &name, const DataType &dtype) {
     if (hasPropertyWithName(name))
         throw runtime_error("Try to create a property with existing name: " + name);
-
     string new_id = util::createId("property");
     while (property_group.hasData(new_id))
         new_id = util::createId("property");
-
-    NDSize size = {1};
-    DataType dtype = value.type();
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
-    DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, size);
+    DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {1});
     auto tmp = make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
-    Property p(tmp);
+    return Property(tmp);
+}
+
+
+Property SectionHDF5::createProperty(const string &name, const Value &value) {
+    Property p = createProperty(name, value.type());
     vector<Value> val{value};
     p.values(val);
     return p;
