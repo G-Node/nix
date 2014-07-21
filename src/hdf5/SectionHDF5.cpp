@@ -311,7 +311,7 @@ Property SectionHDF5::createProperty(const string &name, const DataType &dtype) 
     while (property_group.hasData(new_id))
         new_id = util::createId("property");
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
-    DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {1});
+    DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {0});
     auto tmp = make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
     return Property(tmp);
 }
