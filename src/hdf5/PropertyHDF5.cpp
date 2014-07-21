@@ -154,10 +154,8 @@ void PropertyHDF5::deleteValues() {
 
 
 size_t PropertyHDF5::valueCount() const {
-    size_t count = 0;
     NDSize size = dataset().size();
     return size[0];
-    return count;
 }
 
 void PropertyHDF5::values(const std::vector<Value> &values)
