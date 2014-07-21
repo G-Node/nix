@@ -10,6 +10,7 @@
 #include "TestDataSet.hpp"
 
 #include <nix/hdf5/Selection.hpp>
+#include <nix/DataType.hpp>
 
 using namespace nix; //quick fix for now
 using namespace nix::hdf5;
@@ -283,6 +284,9 @@ void test_val_generic(H5::Group &h5group, const T &test_value, std::string name)
     H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
 
     nix::hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, name, fileType, size);
+
+    nix::DataType dt = nix::to_data_type<T>::value;
+    CPPUNIT_ASSERT_EQUAL(ds.dataType(), dt);
 
     ds.write(values);
     std::vector<nix::Value> checkValues;
