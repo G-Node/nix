@@ -98,7 +98,7 @@ public:
      *
      * @return The data type.
      */
-    virtual boost::optional<DataType> dataType() const = 0;
+    virtual DataType dataType() const = 0;
 
     /**
      * @brief Set the unit for all stored values.

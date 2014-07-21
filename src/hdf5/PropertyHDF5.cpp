@@ -89,10 +89,8 @@ void PropertyHDF5::definition(const none_t t) {
 }
 
 
-boost::optional<DataType> PropertyHDF5::dataType() const {
-    boost::optional<DataType> result;
-    result = this->dataset().dataType();
-    return result;
+DataType PropertyHDF5::dataType() const {
+    return this->dataset().dataType();
 }
 
 

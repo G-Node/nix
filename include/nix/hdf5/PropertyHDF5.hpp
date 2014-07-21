@@ -57,7 +57,7 @@ public:
     void mapping(const none_t t);
 
 
-    boost::optional<DataType> dataType() const;
+    DataType dataType() const;
 
 
     void unit(const std::string &unit);
