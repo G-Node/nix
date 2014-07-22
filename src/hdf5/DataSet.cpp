@@ -201,8 +201,8 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     // original source:
     //    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
 
-    if(chunks.size() == 0) {
-        throw 1;
+    if (chunks.size() == 0) {
+        throw InvalidRank("Cannot guess chunks for 0-dimensional data");
     }
 
     double product = 1;
