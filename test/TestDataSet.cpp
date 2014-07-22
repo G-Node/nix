@@ -119,6 +119,9 @@ void TestDataSet::testNDSize() {
 
 void TestDataSet::testChunkGuessing() {
 
+    CPPUNIT_ASSERT_THROW(DataSet::guessChunking(NDSize{}, DataType::Double),
+                         InvalidRank);
+
     NDSize dims = {1024, 1024};
 
     NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
