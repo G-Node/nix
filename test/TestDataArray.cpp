@@ -81,7 +81,6 @@ void TestDataArray::testData()
             for(index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
 
-    CPPUNIT_ASSERT_EQUAL(array1.hasData(), true);
     CPPUNIT_ASSERT_EQUAL(array1.dataType(), nix::DataType::Double);
     CPPUNIT_ASSERT_EQUAL(array1.dataExtent(), (nix::NDSize{0, 0, 0}));
     CPPUNIT_ASSERT(array1.getDimension(1) == false);
@@ -112,7 +111,6 @@ void TestDataArray::testData()
         for(index j = 0; j != 5; ++j)
             C[i][j] = 42.0;
 
-    CPPUNIT_ASSERT_EQUAL(array2.hasData(), true);
     CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{20, 20}));
 
     array2.setData(C, {0,0});
@@ -153,7 +151,6 @@ void TestDataArray::testData()
 
     CPPUNIT_ASSERT(da3.dataExtent() == nix::NDSize{5});
     CPPUNIT_ASSERT(da3.getDimension(1) == false);
-    CPPUNIT_ASSERT_EQUAL(da3.hasData(), true);
 
     std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0};
     da3.setData(nix::DataType::Double, dv.data(), {5}, {0});

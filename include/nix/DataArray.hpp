@@ -383,15 +383,6 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    /**
-     * @brief Check if the data array contains data.
-     *
-     * @return True if the array contains data, false otherwise.
-     */
-    bool hasData() const {
-        return backend()->hasData();
-    }
-
     template<typename T> void getData(T &value) const;
 
     template<typename T> void setData(const T &value);
@@ -474,7 +465,6 @@ public:
             valid::should(*this, &DataArray::polynomCoefficients, valid::notEmpty(), "polynomial coefficients for calibration are not set!"),
             valid::should(*this, &DataArray::expansionOrigin, valid::notFalse(), "expansion origin for calibration is not set!"),
             valid::should(*this, &DataArray::dimensionCount, valid::isGreater(0), "dimensions are not set!"),
-            valid::should(*this, &DataArray::hasData, valid::notFalse(), "data is not set!")
         });
         
         return result.concat(result_base);
