@@ -181,6 +181,44 @@ bool isScalable(const string &unitA, const string &unitB) {
 }
 
 
+bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
+    bool scalable = true;
+    
+    if(unitsA.size() != unitsB.size()) {
+        return false;
+    }
+    
+    auto itA = unitsA.begin();
+    auto itB = unitsB.begin();
+    while(scalable && itA != unitsA.end()) {
+        scalable = isScalable(*itA, *itB);
+        ++itA; 
+        ++itB;
+    }
+    
+    return scalable;
+}
+
+
+bool isSetAtSamePos(const vector<string> &unitsA, const vector<string> &unitsB) {
+    bool set_same = true;
+    
+    if(unitsA.size() != unitsB.size()) {
+        return false;
+    }
+    
+    auto itA = unitsA.begin();
+    auto itB = unitsB.begin();
+    while(set_same && itA != unitsA.end()) {
+        set_same = (*itA).empty() == (*itB).empty();
+        ++itA; 
+        ++itB;
+    }
+    
+    return set_same;
+}
+
+
 double getSIScaling(const string &originUnit, const string &destinationUnit) {
     double scaling = 1.0;
     if (!isScalable(originUnit, destinationUnit)) {
