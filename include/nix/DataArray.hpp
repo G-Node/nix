@@ -17,7 +17,6 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -255,22 +254,32 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get all dimensions associated with this data array.
+     * @brief Get all dimensions associated with this data array.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter is used that accepts all sources.
+     * criteria.
      *
      * @param filter    A filter function ({@link nix::util::Filter::type})
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
-                                      = util::AcceptAll<Dimension>()) const
+    std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter) const
     {
         auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
         return getEntities<Dimension>(f,
                                       dimensionCount(),
                                       filter);
+    }
+    /**
+     * @brief Get all dimensions associated with this data array.
+     *
+     * Always uses filter that accepts all sources.
+     *
+     * @return The filtered dimensions as a vector
+     */
+    std::vector<Dimension> dimensions() const
+    {
+        return dimensions(util::AcceptAll<Dimension>());
     }
 
     /**
@@ -450,25 +459,6 @@ public:
     }
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithSources<base::IDataArray>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::must(*this, &DataArray::dataType, valid::notEqual<DataType>(DataType::Nothing), "data type is not set!"),
-            valid::should(*this, &DataArray::dataExtent, valid::notEmpty(), "data extent is not set!"),
-            valid::should(*this, &DataArray::label, valid::notFalse(), "label is not set!"),
-            valid::should(*this, &DataArray::unit, valid::notFalse(), "unit is not set!"),
-            valid::should(*this, &DataArray::polynomCoefficients, valid::notEmpty(), "polynomial coefficients for calibration are not set!"),
-            valid::should(*this, &DataArray::expansionOrigin, valid::notFalse(), "expansion origin for calibration is not set!"),
-            valid::should(*this, &DataArray::dimensionCount, valid::isGreater(0), "dimensions are not set!"),
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 

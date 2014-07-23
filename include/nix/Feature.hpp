@@ -14,7 +14,6 @@
 #include <nix/DataArray.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -138,20 +137,6 @@ public:
      * @brief Destructor.
      */
     virtual ~Feature() {}
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::Entity<base::IFeature>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::must(*this, &Feature::data, valid::notFalse(), "data is not set!"),
-            valid::must(*this, &Feature::linkType, valid::notSmaller(0), "linkType is not set!")
-        });
-        
-        return result.concat(result_base);
-    }
     
 };
 

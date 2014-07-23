@@ -10,9 +10,12 @@
 
 #include "TestSource.hpp"
 
+#include <nix/valid/validate.hpp>
+
 
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestSource::setUp() {
@@ -33,7 +36,9 @@ void TestSource::tearDown() {
 
 
 void TestSource::testValidate() {
-    std::cout << std::endl << source.validate();
+    valid::Result result = validate(source);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

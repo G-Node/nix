@@ -12,6 +12,11 @@
 
 #include "TestDataArray.hpp"
 
+#include <nix/valid/validate.hpp>
+
+using namespace nix;
+using namespace valid;
+
 void TestDataArray::setUp()
 {
     startup_time = time(NULL);
@@ -35,7 +40,10 @@ void TestDataArray::tearDown()
 
 
 void TestDataArray::testValidate() {
-    std::cout << std::endl << array1.validate();
+    // dims are not equal data dims: 1 warning
+    valid::Result result = validate(array1);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 1);
 }
 
 
@@ -272,9 +280,6 @@ void TestDataArray::testDimension()
     array2.deleteDimension(1);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
-    array1.deleteDimension(1);
-    array1.deleteDimension(1);
-    array1.deleteDimension(1);
 
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);

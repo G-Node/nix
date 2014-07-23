@@ -191,7 +191,6 @@ SetDimension& SetDimension::operator=(const Dimension &other) {
     return *this;
 }
 
-
 //-------------------------------------------------------
 // Implementation of RangeDimension
 //-------------------------------------------------------

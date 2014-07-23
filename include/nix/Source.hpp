@@ -18,7 +18,6 @@
 #include <nix/base/ISource.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -190,19 +189,6 @@ public:
      * @brief Output operator
      */
     friend std::ostream& operator<<(std::ostream &out, const Source &ent);
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithMetadata<base::ISource>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &Source::sourceCount, valid::isGreater(0), "sources are not set!")
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 

@@ -17,33 +17,44 @@
 #include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/checks.hpp>
+#include <nix/valid/validator.hpp>
 
 namespace nix {
 namespace valid {
 
     /**
+     * @brief return type of conditions {@link should} & {@link must}
+     * 
      * Actual condition type, return type of conditions functionals
      */
     typedef std::function<Result(void)> condition;
 
     /**
+     * @brief creates condition throwing error if check fails
+     * 
      * Creates a condition check that produces an error with the given
      * message if the given function call's return value does not pass
      * the test.
+     * NOTE: the list of sub conditions is being executed in the given order
+     * if and only if this conditions' check passes. The results are merged
+     * and returned together.
      * Also catches any errors occuring on execution of the given
      * function call.
      *
-     * @param pointer-to-object Parent object
-     * @param pointer-to-member Getter method in parent object
+     * @param parent     Parent object
+     * @param get        Getter method in parent object (pointer-to-member)
      * @param check      The test itself (e.g. notFalse or notEmpty)
-     * @param string     The message to produce if the test fails.
+     * @param msg        The message to produce if the test fails.
+     * @param subs       Init list of sub conditions to be executed only
+     *                   if this check succeeds.
      *
-     * @returns {Function} The created condition check.
+     * @returns The created, callable condition of type condition
      */
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
-    must(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
-        return [parent, get, check, msg] () -> Result {
+    must(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
+         const std::string &msg, const std::initializer_list<condition> &subs = {}) {
+        return [parent, get, check, msg, subs] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
@@ -63,28 +74,41 @@ namespace valid {
                 return Result(Message(id, msg), none); // failed || error
             }
 
-            return Result(); // passed
+            // passed
+            Result result = Result();
+            for(auto &sub : subs) {
+                result = result.concat( sub() );
+            }
+            return result;
         };
     }
 
     /**
+     * @brief creates condition throwing warning if check fails
+     * 
      * Creates a condition check that produces a warning with the given
      * message if the given function call's return value does not pass
      * the test.
+     * NOTE: the list of sub conditions is being executed in the given order
+     * if and only if this conditions' check passes. The results are merged
+     * and returned together.
      * Also catches any errors occuring on execution of the given
      * function call.
      *
-     * @param pointer-to-object Parent object
-     * @param pointer-to-member Getter method in parent object
+     * @param parent     Parent object
+     * @param get        Getter method in parent object (pointer-to-member)
      * @param check      The test itself (e.g. notFalse or notEmpty)
-     * @param string     The message to produce if the test fails.
+     * @param msg        The message to produce if the test fails.
+     * @param subs       Init list of sub conditions to be executed only
+     *                   if this check succeeds.
      *
-     * @returns {Function} The created condition check.
+     * @returns The created, callable condition of type condition
      */
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
-    should(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check, const std::string &msg) {
-        return [parent, get, check, msg] () -> Result {
+    should(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
+           const std::string &msg, const std::initializer_list<condition> &subs = {}) {
+        return [parent, get, check, msg, subs] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
@@ -104,7 +128,66 @@ namespace valid {
                 return Result(none, Message(id, msg));
             }
 
-            return Result(); // passed
+            // passed
+            Result result = Result();
+            for(auto &sub : subs) {
+                result = result.concat( sub() );
+            }
+            return result;
+        };
+    }
+
+    /**
+     * @brief creates condition not throwing any message even if check fails
+     * 
+     * Creates a condition check that produces no message even if the
+     * given function call's return value does not pass the test.
+     * It is meant to be used to execute sub-conditions only if test passes
+     * without this condition causing errors/warnings if it fails.
+     * NOTE: the list of sub conditions is being executed in the given order
+     * if and only if this conditions' check passes. The results are merged
+     * and returned together.
+     * Also catches any errors occuring on execution of the given
+     * function calls.
+     *
+     * @param parent     Parent object
+     * @param get        Getter method in parent object (pointer-to-member)
+     * @param check      The test itself (e.g. notFalse or notEmpty)
+     * @param subs       Init list of sub conditions to be executed only
+     *                   if this check succeeds.
+     *
+     * @returns The created, callable condition of type condition
+     */
+    template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
+    condition
+    could(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
+          const std::initializer_list<condition> &subs = {}) {
+        return [parent, get, check, subs] () -> Result {
+            bool errOccured = false;
+            typedef decltype((parent.*get)()) return_type;
+            return_type val;
+            std::string id = nix::util::numToStr(
+                                ID<hasID<TOBJ>::value>().get(parent)
+                             );
+
+            // execute getter call & check for error
+            try {
+                val = (parent.*get)();
+            } catch (std::exception e) {
+                errOccured = true;
+            }
+
+            // compare value & check for validity
+            if(errOccured || !check(val)) { // failed || error
+                return Result();
+            }
+
+            // passed
+            Result result = Result();
+            for(auto &sub : subs) {
+                result = result.concat( sub() );
+            }
+            return result;
         };
     }
 

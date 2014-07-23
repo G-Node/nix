@@ -15,7 +15,6 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -242,18 +241,29 @@ public:
      * @brief Get all referenced data arrays associated with the tag.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts all data arrays.
+     * criteria.
      *
      * @param filter       A filter function.
      *
      * @return A vector containing all filtered DataArray entities.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter = util::AcceptAll<DataArray>()) const
+    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const
     {
         auto f = [this] (size_t i) { return getReference(i); };
         return getEntities<DataArray>(f,
                                       referenceCount(),
                                       filter);
+    }
+    /**
+     * @brief Get all referenced data arrays associated with the tag.
+     *
+     * Always uses filter that accepts all sources.
+     *
+     * @return A vector containing all filtered DataArray entities.
+     */
+    std::vector<DataArray> references() const
+    {
+        return references(util::AcceptAll<DataArray>());
     }
 
     void references(const std::vector<DataArray> &references) {
@@ -368,23 +378,6 @@ public:
         return out;
     }
     
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithSources<base::IDataTag>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &DataTag::extents, valid::notFalse(), "extents are not set!"),
-            valid::should(*this, &DataTag::featureCount, valid::isGreater(0), "features are not set!"),
-            valid::should(*this, &DataTag::referenceCount, valid::isGreater(0), "references are not set!"),
-            valid::must(*this, &DataTag::positions, valid::notFalse(), "positions are not set!"),
-            valid::should(*this, &DataTag::units, valid::notEmpty(), "positions are not set!")
-        });
-        
-        return result.concat(result_base);
-    }
-
 };
 
 

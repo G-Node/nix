@@ -19,7 +19,6 @@
 #include <nix/DataTag.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 
 namespace nix {
@@ -488,14 +487,6 @@ public:
         out << ", type = " << ent.type();
         out << ", id = " << ent.id() << "}";
         return out;
-    }
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        return base::EntityWithMetadata<base::IBlock>::validate();
     }
 
 };

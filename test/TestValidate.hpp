@@ -21,11 +21,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
-#include <nix/valid/validate.hpp>
-
-using namespace nix;
-
 class TestValidate : public CPPUNIT_NS::TestFixture {
 
 private:
@@ -35,11 +30,7 @@ private:
     CPPUNIT_TEST(test);
 
     CPPUNIT_TEST_SUITE_END ();
-    
-    File file;
-    Section section;
-    Block block1;
-    Block block2;
+
     time_t startup_time;
 
 public:

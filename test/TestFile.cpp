@@ -11,8 +11,11 @@
 #include "TestFile.hpp"
 #include <nix/util/util.hpp>
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestFile::setUp() {
@@ -30,7 +33,9 @@ void TestFile::tearDown() {
 
 
 void TestFile::testValidate() {
-    std::cout << std::endl << file_open.validate();
+    valid::Result result = validate(file_open);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
 }
 
 

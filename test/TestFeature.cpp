@@ -3,8 +3,11 @@
 #include <nix/util/util.hpp>
 #include "TestFeature.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestFeature::setUp() {
@@ -36,7 +39,9 @@ void TestFeature::tearDown() {
 void TestFeature::testValidate() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     
-    std::cout << std::endl << rp.validate();
+    valid::Result result = validate(rp);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

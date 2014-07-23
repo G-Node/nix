@@ -18,7 +18,6 @@
 #include <nix/Feature.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -231,18 +230,30 @@ public:
      * @brief Get referenced data arrays associated with this simple tag.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts all data arrays.
+     * criteria.
      *
      * @param filter    A filter function.
      *
      * @return A vector containing the matching data arrays.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter = util::AcceptAll<DataArray>()) const
+    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const
     {
         auto f = [this] (size_t i) { return getReference(i); };
         return getEntities<DataArray>(f,
                                       referenceCount(),
                                       filter);
+    }
+    /**
+     * @brief Get all referenced data arrays associated with this simple 
+     * tag.
+     *
+     * Always uses filter that accepts all sources.
+     *
+     * @return The filtered dimensions as a vector
+     */
+    std::vector<DataArray> references() const
+    {
+        return references(util::AcceptAll<DataArray>());
     }
 
     void references(const std::vector<DataArray> &references) {
@@ -358,23 +369,6 @@ public:
         out << ", type = " << ent.type();
         out << ", id = " << ent.id() << "}";
         return out;
-    }
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithSources<base::ISimpleTag>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &SimpleTag::extent, valid::notEmpty(), "extent is not set!"),
-            valid::should(*this, &SimpleTag::position, valid::notEmpty(), "position is not set!"),
-            valid::should(*this, &SimpleTag::units, valid::notEmpty(), "units are not set!"),
-            valid::must(*this, &SimpleTag::referenceCount, valid::isGreater(0), "references are not set!"),            
-            valid::should(*this, &SimpleTag::featureCount, valid::isGreater(0), "features are not set!")
-        });
-        
-        return result.concat(result_base);
     }
     
 };
