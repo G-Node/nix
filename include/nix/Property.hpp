@@ -131,7 +131,7 @@ public:
         backend()->mapping(t);
     }
 
-    boost::optional<DataType> dataType() const {
+    DataType dataType() const {
         return backend()->dataType();
     }
 

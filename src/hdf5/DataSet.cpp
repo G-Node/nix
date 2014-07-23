@@ -93,7 +93,6 @@ void DataSet::read(DataType dtype, const NDSize &size, void *data) const
         H5::DataSet::vlenReclaim(*writer, memType, space);
     } else {
         h5dset.read(data, memType);
-
     }
 }
 
@@ -126,9 +125,7 @@ void DataSet::read(DataType        dtype,
         H5::DataSet::vlenReclaim(*writer, memType, memSel.h5space());
     } else {
         h5dset.read(data, memType, memSel.h5space(), fileSel.h5space());
-
     }
-
 }
 
 void DataSet::write(DataType         dtype,
@@ -146,6 +143,39 @@ void DataSet::write(DataType         dtype,
     }
 }
 
+
+bool DataSet::hasAttr(const std::string &name) const {
+    return H5Aexists(h5dset.getId(), name.c_str());
+}
+
+
+void DataSet::removeAttr(const std::string &name) const {
+    h5dset.removeAttr(name);
+}
+
+
+void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
+    attr.read(mem_type, data);
+}
+
+
+void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
+    StringWriter writer(size, data);
+    attr.read(mem_type, *writer);
+    writer.finish();
+    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
+}
+
+
+void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
+    attr.write(mem_type, data);
+}
+
+
+void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
+    StringReader reader(size, data);
+    attr.write(mem_type, *reader);
+}
 
 
 double psize_product(const NDSize &dims)

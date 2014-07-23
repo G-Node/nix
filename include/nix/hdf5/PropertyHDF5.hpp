@@ -27,10 +27,10 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name);
+    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group, const std::string &id, const std::string &name, time_t time);
+    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name, time_t time);
 
 
     void name(const std::string &name);
@@ -57,7 +57,7 @@ public:
     void mapping(const none_t t);
 
 
-    boost::optional<DataType> dataType() const;
+    DataType dataType() const;
 
 
     void unit(const std::string &unit);
@@ -97,12 +97,18 @@ public:
 
 private:
 
+    DataSet entity_dataset;
+
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
+
+    DataSet dataset() const {
+        return entity_dataset;
+    }
 
 };
 
 
-} // namespace hdf5 
+} // namespace hdf5
 } // namespace nix
 
 #endif // NIX_PROPERTY_HDF5_H

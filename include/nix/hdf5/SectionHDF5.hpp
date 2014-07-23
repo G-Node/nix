@@ -14,6 +14,7 @@
 
 #include <nix.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
+#include <nix/DataType.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -142,7 +143,13 @@ public:
     Property getPropertyByName(const std::string &name) const;
 
 
-    Property createProperty(const std::string &name);
+    Property createProperty(const std::string &name, const DataType &dtype);
+
+
+    Property createProperty(const std::string &name, const Value &value);
+
+
+    Property createProperty(const std::string &name, const std::vector<Value> &values);
 
 
     bool deleteProperty(const std::string &id);

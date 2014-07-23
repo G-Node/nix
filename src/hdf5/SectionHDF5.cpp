@@ -231,23 +231,22 @@ bool SectionHDF5::deleteSection(const string &id) {
 //--------------------------------------------------
 
 
-
 size_t SectionHDF5::propertyCount() const {
     return property_group.objectCount();
 }
 
 
 bool SectionHDF5::hasProperty(const string &id) const {
-    return property_group.hasGroup(id);
+    return property_group.hasObject(id);
 }
 
 
 Property SectionHDF5::getProperty(const string &id) const {
-    if (property_group.hasGroup(id)) {
-        Group group = property_group.openGroup(id, false);
+    if (property_group.hasData(id)) {
+        DataSet dset = property_group.openData(id);
         string name;
-        group.getAttr("name", name);
-        auto tmp = make_shared<PropertyHDF5>(file(), group, id, name);
+        dset.getAttr("name", name);
+        auto tmp = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);
         return Property(tmp);
     } else {
         return Property();
@@ -267,17 +266,16 @@ bool SectionHDF5::hasPropertyWithName(const string &name) const {
 
     for (size_t i = 0; i < propertyCount(); i++) {
         string id = property_group.objectName(i);
-        Group grp = property_group.openGroup(id);
+        DataSet dset = property_group.openData(id);
 
         string other_name;
-        grp.getAttr("name", other_name);
+        dset.getAttr("name", other_name);
 
         if (other_name == name) {
             found = true;
             break;
         }
     }
-
     return found;
 }
 
@@ -287,15 +285,15 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
 
     for (size_t i = 0; i < propertyCount(); i++) {
         string id = property_group.objectName(i);
-        Group grp = property_group.openGroup(id);
+        DataSet dset = property_group.openData(id);
 
         string other_name;
-        grp.getAttr("name", other_name);
+        dset.getAttr("name", other_name);
 
         if (other_name == name) {
             string type;
-            grp.getAttr("type", type);
-            auto tmp = make_shared<PropertyHDF5>(file(), grp, id, name);
+            dset.getAttr("type", type);
+            auto tmp = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);
             prop = Property(tmp);
             break;
         }
@@ -306,26 +304,40 @@ Property SectionHDF5::getPropertyByName(const string &name) const {
 }
 
 
-Property SectionHDF5::createProperty(const string &name) {
+Property SectionHDF5::createProperty(const string &name, const DataType &dtype) {
     if (hasPropertyWithName(name))
         throw runtime_error("Try to create a property with existing name: " + name);
-
     string new_id = util::createId("property");
-
-    while (property_group.hasObject(new_id))
+    while (property_group.hasData(new_id))
         new_id = util::createId("property");
-
-    Group grp = property_group.openGroup(new_id, true);
-
-    auto tmp = make_shared<PropertyHDF5>(file(), grp, new_id, name);
-
+    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
+    DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {0});
+    auto tmp = make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
     return Property(tmp);
 }
 
 
+Property SectionHDF5::createProperty(const string &name, const Value &value) {
+    Property p = createProperty(name, value.type());
+    vector<Value> val{value};
+    p.values(val);
+    return p;
+}
+
+
+Property SectionHDF5::createProperty(const string &name, const vector<Value> &values) {
+    if (values.size() < 1) {
+        throw runtime_error("Trying to create a property without a value!");
+    }
+    Property p = createProperty(name, values[0]);
+    p.values(values);
+    return p;
+}
+
+
 bool SectionHDF5::deleteProperty(const string &id) {
-    if (property_group.hasObject(id)) {
-        property_group.removeGroup(id);
+    if (property_group.hasData(id)) {
+        property_group.removeData(id);
         return true;
     } else {
         return false;

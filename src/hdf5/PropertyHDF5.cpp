@@ -18,20 +18,21 @@ namespace hdf5 {
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
-    : PropertyHDF5(property.file(), property.group(), property.id(), property.name())
+    : PropertyHDF5(property.file(), property.group(), property.dataset(), property.id(), property.name())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name)
-    : PropertyHDF5(file, group, id, name, util::getTime())
+    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name)
+        : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
-PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const string &id, const string &name, time_t time)
+    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
+    this->entity_dataset = dataset;
     this->name(name);
 }
 
@@ -41,7 +42,7 @@ void PropertyHDF5::name(const string &name) {
         throw EmptyString("name");
     }
     else {
-        group().setAttr("name", name);
+        dataset().setAttr("name", name);
         forceUpdatedAt();
     }
 }
@@ -49,8 +50,8 @@ void PropertyHDF5::name(const string &name) {
 
 string PropertyHDF5::name() const {
     string name;
-    if(group().hasAttr("name")) {
-        group().getAttr("name", name);
+    if(dataset().hasAttr("name")) {
+        dataset().getAttr("name", name);
         return name;
     } else {
         throw MissingAttr("name");
@@ -63,7 +64,7 @@ void PropertyHDF5::definition(const string &definition) {
         throw EmptyString("definition");
     }
     else {
-        group().setAttr("definition", definition);
+        dataset().setAttr("definition", definition);
         forceUpdatedAt();
     }
 }
@@ -72,7 +73,7 @@ void PropertyHDF5::definition(const string &definition) {
 optional<string> PropertyHDF5::definition() const {
     optional<string> ret;
     string definition;
-    bool have_attr = group().getAttr("definition", definition);
+    bool have_attr = dataset().getAttr("definition", definition);
     if (have_attr) {
         ret = definition;
     }
@@ -81,37 +82,31 @@ optional<string> PropertyHDF5::definition() const {
 
 
 void PropertyHDF5::definition(const none_t t) {
-    if(group().hasAttr("definition")) {
-        group().removeAttr("definition");
+    if(dataset().hasAttr("definition")) {
+        dataset().removeAttr("definition");
     }
     forceUpdatedAt();
 }
 
 
-boost::optional<DataType> PropertyHDF5::dataType() const {
-    boost::optional<DataType> result;
-    if (this->valueCount() > 0) {
-        result = this->values()[0].type();
-    }
-    return result;
+DataType PropertyHDF5::dataType() const {
+    return this->dataset().dataType();
 }
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    if(mapping.empty()) {
+    if (mapping.empty()) {
         throw EmptyString("mapping");
     }
-    else {
-        group().setAttr("mapping", mapping);
-        forceUpdatedAt();
-    }
+    dataset().setAttr("mapping", mapping);
+    forceUpdatedAt();
 }
 
 
 boost::optional<string> PropertyHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if(group().getAttr("mapping", mapping)) {
+    if (dataset().getAttr("mapping", mapping)) {
         ret = mapping;
     }
     return ret;
@@ -119,28 +114,26 @@ boost::optional<string> PropertyHDF5::mapping() const {
 
 
 void PropertyHDF5::mapping(const none_t t) {
-    if(group().hasAttr("mapping")) {
-        group().removeAttr("mapping");
+    if (dataset().hasAttr("mapping")) {
+        dataset().removeAttr("mapping");
+        forceUpdatedAt();
     }
-    forceUpdatedAt();
 }
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
     }
-    else {
-        group().setAttr("unit", unit);
-        forceUpdatedAt();
-    }
+    dataset().setAttr("unit", unit);
+    forceUpdatedAt();
 }
 
 
 boost::optional<string> PropertyHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    if(group().getAttr("unit", unit)) {
+    if(dataset().getAttr("unit", unit)) {
         ret = unit;
     }
     return ret;
@@ -148,59 +141,37 @@ boost::optional<string> PropertyHDF5::unit() const {
 
 
 void PropertyHDF5::unit(const none_t t) {
-    if(group().hasAttr("unit")) {
-        group().removeAttr("unit");
+    if(dataset().hasAttr("unit")) {
+        dataset().removeAttr("unit");
     }
     forceUpdatedAt();
 }
 
 
 void PropertyHDF5::deleteValues() {
-    group().removeData("values");
+    dataset().setExtent({0});
 }
 
 
 size_t PropertyHDF5::valueCount() const {
-    size_t count = 0;
-    if (group().hasData("values")) {
-        DataSet dataset = group().openData("values");
-        NDSize size = dataset.size();
-        return size[0];
-    }
-    return count;
+    NDSize size = dataset().size();
+    return size[0];
 }
 
 void PropertyHDF5::values(const std::vector<Value> &values)
 {
-    DataSet dataset;
-
-    if (group().hasData("values")) {
-        dataset = group().openData("values");
-    } else {
-
-        if (values.size() < 1) {
-            return; //Nothing to do, since we also cannot guess the correct DataType
-        }
-
-        NDSize size = {1};
-        DataType dtype = values[0].type();
-        H5::DataType fileType = DataSet::fileTypeForValue(dtype);
-
-        dataset = DataSet::create(group().h5Group(), "values", fileType, size);
+    if (values.size() < 1) {
+        return; //Nothing to do, since we also cannot guess the correct DataType
     }
-
-    dataset.write(values);
+    DataType dtype = values[0].type();
+    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
+    dataset().write(values);
 }
 
 std::vector<Value> PropertyHDF5::values(void) const
 {
     std::vector<Value> values;
-    if (!group().hasData("values")) {
-        return values;
-    }
-
-    DataSet dataset = group().openData("values");
-    dataset.read(values);
+    dataset().read(values);
     return values;
 }
 
