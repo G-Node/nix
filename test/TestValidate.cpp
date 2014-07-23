@@ -45,18 +45,20 @@ void TestValidate::test() {
     // NOTE: we can't test nix specific checks since nix & validation
     // structs cannot be included together
     valid::Result myResult = validator({
-        could(vect, &std::vector<std::string>::empty, notFalse(), {
-            must(vect, &std::vector<std::string>::size, notSmaller(2), "some msg") }),
-        must(vect, &std::vector<std::string>::size, notSmaller(2), "some msg"),
-        must(vect, &std::vector<std::string>::size, isSmaller(2), "some msg"),
-        should(vect, &std::vector<std::string>::size, notGreater(2), "some msg"),
-        should(vect, &std::vector<std::string>::size, isGreater(0), "some msg"),
-        must(vect, &std::vector<std::string>::size, notEqual<size_t>(0), "some msg"),
-        should(vect, &std::vector<std::string>::size, isEqual<size_t>(2), "some msg"),
-        must(vect2, &std::vector<std::string>::size, isFalse(), "some msg"),
-        must(foobar, &fooC::getFoo, notEmpty(), "some msg"),
-        should(foobar, &fooC::getBar, isEmpty(), "some msg")    
+        could(vect, &std::vector<std::string>::empty, isFalse(), {
+            must(vect, &std::vector<std::string>::size, notSmaller(2), "notSmaller(2)") }),
+        must(vect, &std::vector<std::string>::size, notSmaller(2), "notSmaller(2)"),
+        must(vect2, &std::vector<std::string>::size, isSmaller(2), "isSmaller(2)"),
+        should(vect, &std::vector<std::string>::size, notGreater(2), "notGreater(2)"),
+        should(vect, &std::vector<std::string>::size, isGreater(0), "isGreater(0)"),
+        must(vect, &std::vector<std::string>::size, notEqual<size_t>(0), "notEqual<size_t>(0)"),
+        should(vect, &std::vector<std::string>::size, isEqual<size_t>(2), "isEqual<size_t>(2)"),
+        must(vect2, &std::vector<std::string>::size, isFalse(), "isFalse()"),
+        must(foobar, &fooC::getFoo, notEmpty(), "notEmpty()"),
+        should(foobar, &fooC::getBar, isEmpty(), "isEmpty()")    
     });
+    // uncomment this to have debug info
+    // std::cout << myResult;
 
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
