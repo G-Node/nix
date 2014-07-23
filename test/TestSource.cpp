@@ -36,7 +36,9 @@ void TestSource::tearDown() {
 
 
 void TestSource::testValidate() {
-    std::cout << std::endl << validate(source);
+    valid::Result result = validate(source);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

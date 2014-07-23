@@ -33,7 +33,9 @@ void TestFile::tearDown() {
 
 
 void TestFile::testValidate() {
-    std::cout << std::endl << validate(file_open);
+    valid::Result result = validate(file_open);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
 }
 
 

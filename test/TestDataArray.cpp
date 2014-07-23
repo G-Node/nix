@@ -40,7 +40,10 @@ void TestDataArray::tearDown()
 
 
 void TestDataArray::testValidate() {
-    std::cout << std::endl << validate(array1);
+    // dims are not equal data dims: 1 warning
+    valid::Result result = validate(array1);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 1);
 }
 
 
@@ -277,9 +280,6 @@ void TestDataArray::testDimension()
     array2.deleteDimension(1);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
-    array1.deleteDimension(1);
-    array1.deleteDimension(1);
-    array1.deleteDimension(1);
 
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);

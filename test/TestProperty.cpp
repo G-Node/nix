@@ -41,7 +41,10 @@ void TestProperty::tearDown()
 
 
 void TestProperty::testValidate() {
-    std::cout << std::endl << validate(property);
+    // values are set but unit is missing: 1 warning
+    valid::Result result = validate(property);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 1);
 }
 
 

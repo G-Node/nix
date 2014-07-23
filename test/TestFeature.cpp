@@ -39,7 +39,9 @@ void TestFeature::tearDown() {
 void TestFeature::testValidate() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     
-    std::cout << std::endl << validate(rp);
+    valid::Result result = validate(rp);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

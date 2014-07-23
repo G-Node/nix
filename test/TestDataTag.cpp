@@ -26,21 +26,21 @@ void TestDataTag::setUp() {
     block = file.createBlock("block", "dataset");
 
     positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, {0});
+                                      DataType::Double, {0, 0});
     extents = block.createDataArray("extents_DataArray", "dataArray",
-                                    DataType::Double, {0});
+                                    DataType::Double, {0, 0});
 
-    typedef boost::multi_array<double, 1> array_type;
+    typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
-    array_type A(boost::extents[5]);
+    array_type A(boost::extents[5][5]);
     for(index i = 0; i < 5; ++i){
-        A[i] = 100.0*i;
+        A[i][i] = 100.0*i;
     }
     positions.setData(A);
 
-    array_type B(boost::extents[5]);
+    array_type B(boost::extents[5][5]);
     for(index i = 0; i < 5; ++i){
-        B[i] = 100.0*i;
+        B[i][i] = 100.0*i;
     }
     extents.setData(B);
 
@@ -60,7 +60,9 @@ void TestDataTag::tearDown(){
 
 
 void TestDataTag::testValidate() {
-    std::cout << std::endl << validate(tag);
+    valid::Result result = validate(tag);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
@@ -202,11 +204,11 @@ void TestDataTag::testReferences(){
 void TestDataTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
 
-    typedef boost::multi_array<double, 1> array_type;
+    typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
-    array_type A(boost::extents[5]);
+    array_type A(boost::extents[5][5]);
     for(index i = 0; i < 5; ++i){
-        A[i] = 100.0*i;
+        A[i][i] = 100.0*i;
     }
     positions.setData(A);
     extents.setData(A);
@@ -228,11 +230,11 @@ void TestDataTag::testPositions() {
 
 
 void TestDataTag::testPositionExtents() {
-    typedef boost::multi_array<double, 1> array_type;
+    typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
-    array_type A(boost::extents[10]);
+    array_type A(boost::extents[10][10]);
     for(index i = 0; i < 10; ++i){
-        A[i] = 100.0*i;
+        A[i][i] = 100.0*i;
     }
     positions.setData(A);
 

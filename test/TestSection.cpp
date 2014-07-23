@@ -33,7 +33,9 @@ void TestSection::tearDown() {
 
 
 void TestSection::testValidate() {
-    std::cout << std::endl << validate(section);
+    valid::Result result = validate(section);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

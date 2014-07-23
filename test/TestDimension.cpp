@@ -37,13 +37,19 @@ void TestDimension::tearDown() {
 
 void TestDimension::testValidate() {
     Dimension d = data_array.appendSetDimension();
-    std::cout << std::endl << validate(d);
+    
+    valid::Result result = validate(d);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void TestDimension::testSetValidate() {
     SetDimension d = data_array.appendSetDimension();
-    std::cout << std::endl << validate(d);
+    
+    valid::Result result = validate(d);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
@@ -54,7 +60,10 @@ void TestDimension::testRangeValidate() {
     }
     
     RangeDimension d = data_array.appendRangeDimension(ticks);
-    std::cout << std::endl << validate(d);
+    
+    valid::Result result = validate(d);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
@@ -62,7 +71,10 @@ void TestDimension::testSampleValidate() {
     double samplingInterval = boost::math::constants::pi<double>();
     
     SampledDimension d = data_array.appendSampledDimension(samplingInterval);
-    std::cout << std::endl << validate(d);
+    
+    valid::Result result = validate(d);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

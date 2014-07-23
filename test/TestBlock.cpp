@@ -36,7 +36,9 @@ void TestBlock::tearDown() {
 
 
 void TestBlock::testValidate() {
-    cout << endl << validate(block);
+    valid::Result result = validate(block);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

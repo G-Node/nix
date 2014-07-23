@@ -49,7 +49,9 @@ void TestSimpleTag::tearDown() {
 
 
 void TestSimpleTag::testValidate() {
-    std::cout << std::endl << validate(tag);
+    valid::Result result = validate(tag);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 

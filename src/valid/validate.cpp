@@ -105,7 +105,8 @@ Result validate(const DataArray &data_array) {
             could(data_array, &DataArray::dimensions, notEmpty(), {
                 must(data_array, &DataArray::dimensions, dimTicksMatchData(data_array), "in some of the Range dimensions the number of ticks differs from the number of data entries along the corresponding data dimension!"),
                 must(data_array, &DataArray::dimensions, dimLabelsMatchData(data_array), "in some of the Set dimensions the number of labels differs from the number of data entries along the corresponding data dimension!") }) }),
-        must(data_array, &DataArray::unit, isValidUnit(), "Unit is not SI or composite of SI units."),
+        could(data_array, &DataArray::unit, notFalse(), {
+            must(data_array, &DataArray::unit, isValidUnit(), "Unit is not SI or composite of SI units.") }),
         could(data_array, &DataArray::polynomCoefficients, notEmpty(), {
             should(data_array, &DataArray::expansionOrigin, notFalse(), "polynomial coefficients for calibration are set, but expansion origin is missing!") }),
         could(data_array, &DataArray::expansionOrigin, notFalse(), {
@@ -142,7 +143,8 @@ Result validate(const Property &property) {
         must(property, &Property::name, notEmpty(), "name is not set!"),
         could(property, &Property::valueCount, notFalse(), {
             should(property, &Property::unit, notFalse(), "values are set, but unit is missing!") }),
-        must(property, &Property::unit, isValidUnit(), "Unit is not SI or composite of SI units.")
+        could(property, &Property::unit, notFalse(), {
+            must(property, &Property::unit, isValidUnit(), "Unit is not SI or composite of SI units.") })
         // TODO: dataType to be tested too?
     });
 
@@ -157,7 +159,7 @@ Result validate(const DataTag &data_tag) {
         could(data_tag, &DataTag::positions, notFalse(), {
             must(data_tag, &DataTag::positions, dimEquals(2), "dimensionality of positions DataArray must be two!") }),
         could(data_tag, &DataTag::extents, notFalse(), {
-            must(data_tag, &DataTag::extents, dimEquals(2), "dimensionality of positions DataArray must be two!") }),
+            must(data_tag, &DataTag::extents, dimEquals(2), "dimensionality of extents DataArray must be two!") }),
         // check units for validity
         could(data_tag, &DataTag::units, notEmpty(), {
             must(data_tag, &DataTag::units, isValidUnit(), "Some of the units in tag are invalid: not an atomic SI. Note: So far composite SI units are not supported!") }),
