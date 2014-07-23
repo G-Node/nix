@@ -13,8 +13,6 @@
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/Source.hpp>
 
-#include <nix/valid/validate.hpp>
-
 namespace nix {
 namespace base {
 
@@ -143,19 +141,6 @@ public:
      * Destructor
      */
     virtual ~EntityWithSources() {}
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = EntityWithMetadata<T>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &EntityWithSources::sourceCount, valid::isGreater(0), "no sources set!")
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 
