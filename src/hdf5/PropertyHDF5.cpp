@@ -161,7 +161,8 @@ size_t PropertyHDF5::valueCount() const {
 void PropertyHDF5::values(const std::vector<Value> &values)
 {
     if (values.size() < 1) {
-        return; //Nothing to do, since we also cannot guess the correct DataType
+        deleteValues();
+        return;
     }
     DataType dtype = values[0].type();
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
