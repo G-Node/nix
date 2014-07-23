@@ -319,8 +319,7 @@ public:
      * @return The newly created property.
      */
     Property createProperty(const std::string &name, const std::vector<Value> &values) {
-        Property p = backend()->createProperty(name, values);
-        return p;
+        return backend()->createProperty(name, values);
     }
 
     bool deleteProperty(const std::string &id) {
