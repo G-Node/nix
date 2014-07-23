@@ -104,9 +104,6 @@ void TestProperty::testValues()
     CPPUNIT_ASSERT(p2.valueCount() == 1);
     CPPUNIT_ASSERT_EQUAL(p2.values()[0], str_dummy);
 
-    /* TODO !!!
-    nix::Property p2 = section.createProperty("toDelete", strValues);
-    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     strValues.clear();
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
@@ -115,7 +112,6 @@ void TestProperty::testValues()
     p2.values(strValues);
     p2.values(none);
     CPPUNIT_ASSERT(p2.values().empty() == true);
-    */
 }
 
 
