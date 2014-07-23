@@ -11,8 +11,11 @@
 #include <nix/util/util.hpp>
 #include "TestBlock.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestBlock::setUp() {
@@ -33,7 +36,7 @@ void TestBlock::tearDown() {
 
 
 void TestBlock::testValidate() {
-    cout << endl << block.validate();
+    cout << endl << validate(block);
 }
 
 

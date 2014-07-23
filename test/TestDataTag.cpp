@@ -13,8 +13,11 @@
 #include <sstream>
 #include <ctime>
 
+#include <nix/valid/validate.hpp>
+
 using namespace nix;
 using namespace nix::hdf5;
+using namespace valid;
 
 
 void TestDataTag::setUp() {
@@ -57,7 +60,7 @@ void TestDataTag::tearDown(){
 
 
 void TestDataTag::testValidate() {
-    std::cout << std::endl << tag.validate();
+    std::cout << std::endl << validate(tag);
 }
 
 

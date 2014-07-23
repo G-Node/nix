@@ -12,8 +12,11 @@
 #include "TestDimension.hpp"
 #include <nix/util/util.hpp>
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestDimension::setUp() {
@@ -34,13 +37,13 @@ void TestDimension::tearDown() {
 
 void TestDimension::testValidate() {
     Dimension d = data_array.appendSetDimension();
-    std::cout << std::endl << d.validate();
+    std::cout << std::endl << validate(d);
 }
 
 
 void TestDimension::testSetValidate() {
     SetDimension d = data_array.appendSetDimension();
-    std::cout << std::endl << d.validate();
+    std::cout << std::endl << validate(d);
 }
 
 
@@ -51,7 +54,7 @@ void TestDimension::testRangeValidate() {
     }
     
     RangeDimension d = data_array.appendRangeDimension(ticks);
-    std::cout << std::endl << d.validate();
+    std::cout << std::endl << validate(d);
 }
 
 
@@ -59,7 +62,7 @@ void TestDimension::testSampleValidate() {
     double samplingInterval = boost::math::constants::pi<double>();
     
     SampledDimension d = data_array.appendSampledDimension(samplingInterval);
-    std::cout << std::endl << d.validate();
+    std::cout << std::endl << validate(d);
 }
 
 

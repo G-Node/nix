@@ -12,6 +12,11 @@
 
 #include "TestDataArray.hpp"
 
+#include <nix/valid/validate.hpp>
+
+using namespace nix;
+using namespace valid;
+
 void TestDataArray::setUp()
 {
     startup_time = time(NULL);
@@ -35,7 +40,7 @@ void TestDataArray::tearDown()
 
 
 void TestDataArray::testValidate() {
-    std::cout << std::endl << array1.validate();
+    std::cout << std::endl << validate(array1);
 }
 
 

@@ -11,8 +11,11 @@
 #include <nix/util/util.hpp>
 #include "TestSection.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestSection::setUp() {
@@ -30,7 +33,7 @@ void TestSection::tearDown() {
 
 
 void TestSection::testValidate() {
-    std::cout << std::endl << section.validate();
+    std::cout << std::endl << validate(section);
 }
 
 

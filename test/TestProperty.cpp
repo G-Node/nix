@@ -14,8 +14,11 @@
 #include <nix/util/util.hpp>
 #include "TestProperty.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestProperty::setUp()
@@ -38,7 +41,7 @@ void TestProperty::tearDown()
 
 
 void TestProperty::testValidate() {
-    std::cout << std::endl << property.validate();
+    std::cout << std::endl << validate(property);
 }
 
 
