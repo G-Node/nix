@@ -69,6 +69,8 @@ public:
     void removeGroup(const std::string &name);
     void renameGroup(const std::string &old_name, const std::string &new_name);
 
+    bool createLink(const Group &target, const Group &link_base, const std::string link_name);
+
     bool operator==(const Group &group) const;
     bool operator!=(const Group &group) const;
 
