@@ -19,7 +19,10 @@ using namespace nix;
 void TestDimension::setUp() {
     file = File::open("test_dimension.h5", FileMode::Overwrite);
     block = file.createBlock("dimensionTest","test");
-    data_array = block.createDataArray("dimensionTest", "Test");
+    data_array = block.createDataArray("dimensionTest",
+                                       "Test",
+                                       DataType::Double,
+                                       {0});
 }
 
 

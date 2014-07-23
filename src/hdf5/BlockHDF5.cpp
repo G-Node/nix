@@ -198,7 +198,10 @@ size_t BlockHDF5::dataArrayCount() const {
 }
 
 
-DataArray BlockHDF5::createDataArray(const std::string &name, const std::string &type) {
+DataArray BlockHDF5::createDataArray(const std::string &name,
+                                     const std::string &type,
+                                     nix::DataType      data_type,
+                                     const NDSize      &shape) {
     string id = util::createId("data_array");
 
     while (hasDataArray(id)) {
@@ -207,6 +210,9 @@ DataArray BlockHDF5::createDataArray(const std::string &name, const std::string 
 
     Group group = data_array_group.openGroup(id, true);
     auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
+
+    //now create the actual H5::DataSet
+    tmp->createData(data_type, shape);
 
     return DataArray(tmp);
 }

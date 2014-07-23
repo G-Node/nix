@@ -119,9 +119,12 @@ void TestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        DataArray data_array = block.createDataArray(*it, "channel");
-        CPPUNIT_ASSERT(data_array.name() == *it);
+    for (const auto &name : names) {
+        DataArray data_array = block.createDataArray(name,
+                                                     "channel",
+                                                     DataType::Double,
+                                                     {0});
+        CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
 
         ids.push_back(data_array.id());
@@ -160,10 +163,13 @@ void TestBlock::testSimpleTagAccess() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name,
+                                             "reference",
+                                             DataType::Double,
+                                             {0}));
     }
-                                 
+
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
     CPPUNIT_ASSERT(block.simpleTags().size() == 0);
     CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
@@ -197,7 +203,10 @@ void TestBlock::testDataTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
-    DataArray positions = block.createDataArray("array_one", "testdata");
+    DataArray positions = block.createDataArray("array_one",
+                                                "testdata",
+                                                DataType::Double,
+                                                {3, 4, 2});
     boost::multi_array<double, 3> A(boost::extents[3][4][2]);
     int values = 0;
     for(index i = 0; i != 3; ++i)
@@ -205,7 +214,7 @@ void TestBlock::testDataTagAccess() {
             for(index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
 
-    positions.createData(A, {3, 4, 2});
+    positions.setData(A);
 
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);

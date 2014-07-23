@@ -83,19 +83,24 @@ void TestOptionalObligatory::setUp() {
     property = section.createProperty("prop");
 
     // dataAray---------------------------------------------------------
-    dataArray = block.createDataArray("dimensionTest", "test");
+    dataArray = block.createDataArray("dimensionTest", "test",
+                                      DataType::Double, {0});
 
     // simpleTag--------------------------------------------------------
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
     simpleTag = block.createSimpleTag("featureTest", "Test", refs);
 
     // dataTag----------------------------------------------------------
-    positions = block.createDataArray("positions_DataArray", "dataArray");
+    positions = block.createDataArray("positions_DataArray",
+                                      "dataArray",
+                                      DataType::Double,
+                                      {0});
     typedef boost::multi_array<double, 1> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[5]);

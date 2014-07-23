@@ -22,8 +22,11 @@ void TestDataTag::setUp() {
     file = File::open("test_dataTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
 
-    positions = block.createDataArray("positions_DataArray", "dataArray");
-    extents = block.createDataArray("extents_DataArray", "dataArray");
+    positions = block.createDataArray("positions_DataArray", "dataArray",
+                                      DataType::Double, {0});
+    extents = block.createDataArray("extents_DataArray", "dataArray",
+                                    DataType::Double, {0});
+
     typedef boost::multi_array<double, 1> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[5]);
@@ -147,8 +150,14 @@ void TestDataTag::testUnits() {
 //TODO Constraints on References are not tested yet.
 
 void TestDataTag::testReferences(){
-    DataArray da_1 = block.createDataArray("TestReference 1", "Reference");
-    DataArray da_2 = block.createDataArray("TestReference 2", "Reference");
+    DataArray da_1 = block.createDataArray("TestReference 1",
+                                           "Reference",
+                                           DataType::Double,
+                                           {0});
+    DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
+                                           DataType::Double,
+                                           {0});
+
     DataTag dt = block.createDataTag("TestDataTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), nix::OutOfBounds);
