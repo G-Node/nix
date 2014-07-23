@@ -96,7 +96,10 @@ public:
     size_t dataArrayCount() const;
 
 
-    DataArray createDataArray(const std::string &name, const std::string &type);
+    DataArray createDataArray(const std::string &name,
+                              const std::string &type,
+                              nix::DataType      data_type,
+                              const NDSize      &shape) override;
 
 
     bool deleteDataArray(const std::string &id);

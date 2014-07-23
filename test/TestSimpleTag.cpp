@@ -25,8 +25,9 @@ void TestSimpleTag::setUp() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     tag = block.createSimpleTag("tag_one", "test_tag", refs);
@@ -86,8 +87,9 @@ void TestSimpleTag::testCreateRemove() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     for (int i = 0; i < 5; i++) {
@@ -120,13 +122,16 @@ void TestSimpleTag::testCreateRemove() {
 //TODO Constraints on References are not tested yet.
 
 void TestSimpleTag::testReferences() {
-    DataArray da_1 = block.createDataArray("TestReference 1","Reference");
-    DataArray da_2 = block.createDataArray("TestReference 2","Reference");
+    DataArray da_1 = block.createDataArray("TestReference 1","Reference",
+                                           DataType::Double, {0});
+    DataArray da_2 = block.createDataArray("TestReference 2","Reference",
+                                           DataType::Double, {0});
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
@@ -175,8 +180,9 @@ void TestSimpleTag::testExtent() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto & name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
@@ -203,8 +209,9 @@ void TestSimpleTag::testPosition() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto &name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
@@ -280,8 +287,9 @@ void TestSimpleTag::testUnits() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
+    for (const auto & name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, {0}));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);

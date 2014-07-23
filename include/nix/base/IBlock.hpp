@@ -10,6 +10,7 @@
 #define NIX_I_BLOCK_H
 
 #include <nix/base/IEntityWithMetadata.hpp>
+#include <nix/NDSize.hpp>
 
 #include <string>
 #include <vector>
@@ -141,7 +142,10 @@ public:
      *
      * @return The newly created data array.
      */
-    virtual DataArray createDataArray(const std::string &name, const std::string &type) = 0;
+    virtual DataArray createDataArray(const std::string &name,
+                                      const std::string &type,
+                                      nix::DataType      data_type,
+                                      const NDSize      &shape) = 0;
 
     /**
      * @brief Deletes a data array from this block.

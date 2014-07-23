@@ -282,8 +282,11 @@ public:
         return backend()->dataArrayCount();
     }
 
-    DataArray createDataArray(const std::string &name, const std::string &type) {
-        return backend()->createDataArray(name, type);
+    DataArray createDataArray(const std::string &name,
+                              const std::string &type,
+                              nix::DataType      data_type,
+                              const NDSize      &shape) {
+        return backend()->createDataArray(name, type, data_type, shape);
     }
 
     bool deleteDataArray(const std::string &id) {

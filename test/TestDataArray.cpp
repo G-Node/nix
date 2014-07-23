@@ -18,8 +18,14 @@ void TestDataArray::setUp()
     file = nix::File::open("test_DataArray.h5", nix::FileMode::Overwrite);
 
     block = file.createBlock("block_one", "dataset");
-    array1 = block.createDataArray("array_one", "testdata");
-    array2 = block.createDataArray("random", "double");
+    array1 = block.createDataArray("array_one",
+                                   "testdata",
+                                   nix::DataType::Double,
+                                   {0, 0, 0});
+    array2 = block.createDataArray("random",
+                                   "double",
+                                   nix::DataType::Double,
+                                   {20, 20});
 }
 
 void TestDataArray::tearDown()
@@ -75,17 +81,12 @@ void TestDataArray::testData()
             for(index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
 
-    CPPUNIT_ASSERT_EQUAL(array1.hasData(), false);
-    CPPUNIT_ASSERT_EQUAL(array1.dataType(), nix::DataType::Nothing);
-    CPPUNIT_ASSERT(array1.dataExtent() == nix::NDSize{});
-    CPPUNIT_ASSERT(array1.getDimension(1) == false);
-    array1.createData(A, {3, 4, 2});
     CPPUNIT_ASSERT_EQUAL(array1.hasData(), true);
+    CPPUNIT_ASSERT_EQUAL(array1.dataType(), nix::DataType::Double);
+    CPPUNIT_ASSERT_EQUAL(array1.dataExtent(), (nix::NDSize{0, 0, 0}));
+    CPPUNIT_ASSERT(array1.getDimension(1) == false);
+
     array1.setData(A);
-    
-    //test the getDataType() function
-    nix::DataType dtype = array1.dataType();
-    CPPUNIT_ASSERT_EQUAL(dtype, nix::DataType::Double);
 
     array_type B(boost::extents[1][1][1]);
     array1.getData(B);
@@ -111,9 +112,6 @@ void TestDataArray::testData()
         for(index j = 0; j != 5; ++j)
             C[i][j] = 42.0;
 
-
-    CPPUNIT_ASSERT_EQUAL(array2.hasData(), false);
-    array2.createData(C, {20, 20});
     CPPUNIT_ASSERT_EQUAL(array2.hasData(), true);
     CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{20, 20}));
 
@@ -148,14 +146,13 @@ void TestDataArray::testData()
                 std::numeric_limits<double>::epsilon());
 
 
-    nix::DataArray da3 = block.createDataArray("direct-vector", "double");
+    nix::DataArray da3 = block.createDataArray("direct-vector",
+                                               "double",
+                                               nix::DataType::Double,
+                                               {5});
 
-    CPPUNIT_ASSERT_EQUAL(da3.hasData(), false);
-    CPPUNIT_ASSERT_EQUAL(da3.dataType(), nix::DataType::Nothing);
-    CPPUNIT_ASSERT(da3.dataExtent() == nix::NDSize{});
+    CPPUNIT_ASSERT(da3.dataExtent() == nix::NDSize{5});
     CPPUNIT_ASSERT(da3.getDimension(1) == false);
-
-    da3.createData(nix::DataType::Double, {5});
     CPPUNIT_ASSERT_EQUAL(da3.hasData(), true);
 
     std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0};
