@@ -55,7 +55,7 @@ struct SourceCont {
 
 
 std::vector<Source> Source::findSources(util::Filter<Source>::type filter,
-                                        size_t max_depth) const 
+                                        size_t max_depth) const
 {
     std::vector<Source>  results;
     std::list<SourceCont> todo;
