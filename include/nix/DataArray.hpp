@@ -384,25 +384,6 @@ public:
     //--------------------------------------------------
 
     /**
-     * @brief Allocate file space for this data array.
-     *
-     * The following example allocates a data space for a matrix of integers with 10 x 100 elements.
-     *
-     * ~~~
-     * DataArray da = ...;
-     * if (!da.hasData()) {
-     *     da.createData(DataType::Int32, {10, 100});
-     * }
-     * ~~~
-     *
-     * @param dtype     The data type that should be stored in this data array.
-     * @param size      The size of the data to store.
-     */
-    void createData(DataType dtype, const NDSize &size) {
-        backend()->createData(dtype, size);
-    }
-
-    /**
      * @brief Check if the data array contains data.
      *
      * @return True if the array contains data, false otherwise.
@@ -410,8 +391,6 @@ public:
     bool hasData() const {
         return backend()->hasData();
     }
-
-    template<typename T> void createData(const T &value, const NDSize &size = {});
 
     template<typename T> void getData(T &value) const;
 
@@ -502,15 +481,6 @@ public:
     }
 
 };
-
-template<typename T>
-void DataArray::createData(const T &value, const NDSize &size)
-{
-    const Hydra<const T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    createData(dtype, size.size() ? size : hydra.shape());
-}
 
 template<typename T>
 void DataArray::getData(T &value) const
