@@ -229,6 +229,7 @@ void TestSection::testPropertyAccess() {
     Property p = section.createProperty("empty_prop", DataType::Double);
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     Property prop = section.getPropertyByName("empty_prop");
+    CPPUNIT_ASSERT(prop.valueCount() == 0);
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
     section.deleteProperty(p.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
