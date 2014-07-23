@@ -55,7 +55,7 @@ void TestValidate::test() {
         should(vect, &std::vector<std::string>::size, isEqual<size_t>(2), "some msg"),
         must(vect2, &std::vector<std::string>::size, isFalse(), "some msg"),
         must(foobar, &fooC::getFoo, notEmpty(), "some msg"),
-        should(foobar, &fooC::getBar, isEmpty(), "some msg") })    
+        should(foobar, &fooC::getBar, isEmpty(), "some msg")    
     });
 
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
