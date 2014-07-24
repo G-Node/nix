@@ -20,10 +20,14 @@ namespace nix {
 /**
  * @brief Enumeration that provides constants for different dimension types.
  */
-enum class DimensionType : int {
+enum class DimensionType : unsigned int {
     Sample, Set, Range
 };
 
+/**
+ * @brief Output operator for DimensionType
+ */
+NIXAPI std::ostream& operator<<(std::ostream &out, const DimensionType &dtype);
 
 namespace base {
 

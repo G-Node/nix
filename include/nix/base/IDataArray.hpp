@@ -23,7 +23,7 @@ class Dimension;
 class SetDimension;
 class RangeDimension;
 class SampledDimension;
-enum class DimensionType : int;
+enum class DimensionType : unsigned int;
 
 
 namespace base {
