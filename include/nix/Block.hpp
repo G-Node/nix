@@ -298,6 +298,35 @@ public:
         return backend()->createDataArray(name, type, data_type, shape);
     }
 
+    /**
+    * @brief Create a new data array associated with this block.
+    *
+    * @param name      The name of the data array to create.
+    * @param type      The type of the data array.
+    * @param data      Data to create array with.
+    *
+    * Create a data array with shape and type inferred from data. After
+    * successful creation, the contents of data will be written to the
+    * data array.
+    *
+    * @return The newly created data array.
+    */
+    template<typename T>
+    DataArray createDataArray(const std::string &name,
+                              const std::string &type,
+                              const T &data) {
+         const Hydra<const T> hydra(data);
+         DataType dtype = hydra.element_data_type();
+
+         const NDSize shape = hydra.shape();
+         DataArray da = createDataArray(name, type, dtype, shape);
+
+         const NDSize offset(shape.size(), 0);
+         da.setData(data, offset);
+
+         return da;
+    }
+
     bool deleteDataArray(const std::string &id) {
         return backend()->deleteDataArray(id);
     }

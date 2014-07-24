@@ -111,6 +111,24 @@ void TestDataArray::testData()
 
     CPPUNIT_ASSERT_EQUAL(errors, 0);
 
+    DataArray direct = block.createDataArray("da_direct", "double", A);
+    array_type Adirect(boost::extents[3][4][2]);
+    direct.getData(Adirect);
+
+    errors = 0;
+    verify = 0;
+    for(index i = 0; i != 3; ++i) {
+        for(index j = 0; j != 4; ++j) {
+            for(index k = 0; k != 2; ++k) {
+                int v = verify++;
+                errors += Adirect[i][j][k] != v;
+            }
+        }
+    }
+
+    CPPUNIT_ASSERT_EQUAL(0, errors);
+
+
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array_type::index index;
     array2D_type C(boost::extents[5][5]);
