@@ -8,11 +8,31 @@
 
 #include <nix/valid/helper.hpp>
 
+#include <nix.hpp>
+
 namespace nix {
 namespace valid {
 
-    // NOTE: we cant have _templated_ function definitions here, since
-    // the linker wouldnt find specific template realizations.
+std::vector<std::string> getDimensionsUnits(DataArray darray) {
+    std::vector<std::string> units;        
+    std::string dimStr = util::dimTypeToStr(DimensionType::Set);
+
+    for(auto &dim : darray.dimensions()) {
+        if(dim.dimensionType() == DimensionType::Range) {
+            auto d = dim.asRangeDimension();
+            units.push_back(d.unit() ? *(d.unit()) : std::string());
+        }
+        if(dim.dimensionType() == DimensionType::Sample) {
+            auto d = dim.asSampledDimension();
+            units.push_back(d.unit() ? *(d.unit()) : std::string());
+        }
+        if(dim.dimensionType() == DimensionType::Set) {
+            units.push_back(std::string(dimStr));
+        }
+    }
+
+    return units;
+}
 
 } // namespace valid
 } // namespace nix
