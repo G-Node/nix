@@ -281,6 +281,16 @@ public:
         return backend()->dataArrayCount();
     }
 
+    /**
+    * @brief Create a new data array associated with this block.
+    *
+    * @param name      The name of the data array to create.
+    * @param type      The type of the data array.
+    * @param data_type A nix::DataType indicating the format to store values.
+    * @param shape     A NDSize holding the extent of the array to create.
+    *
+    * @return The newly created data array.
+    */
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
                               nix::DataType      data_type,

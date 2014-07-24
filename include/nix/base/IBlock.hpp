@@ -134,14 +134,7 @@ public:
      */
     virtual size_t dataArrayCount() const = 0;
 
-    /**
-     * @brief Create a new data array associated with this block.
-     *
-     * @param name      The name of the data array to create.
-     * @param type      The type of the data array.
-     *
-     * @return The newly created data array.
-     */
+
     virtual DataArray createDataArray(const std::string &name,
                                       const std::string &type,
                                       nix::DataType      data_type,
