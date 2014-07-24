@@ -199,8 +199,16 @@ bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
     
     auto itA = unitsA.begin();
     auto itB = unitsB.begin();
+    string dimStr = dimTypeToStr(DimensionType::Set);
     while(scalable && itA != unitsA.end()) {
-        scalable = isScalable(*itA, *itB);
+        // automatically pass test if unit string is a dummy one from
+        // a SetDimension (which has no units) - test otherwise
+        if((*itA == dimStr) || (*itB == dimStr)) {
+            scalable = true;
+        }
+        else {
+            scalable = isScalable(*itA, *itB);
+        }
         ++itA; 
         ++itB;
     }
