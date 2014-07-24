@@ -36,6 +36,8 @@ void TestValidate::test() {
     public:
         std::string getFoo () const { return std::string("I'm not empty!"); };
         std::string getBar () const { return std::string(); };
+        std::vector<int> getSorted () const { return std::vector<int>({1, 2, 3}); };
+        std::vector<int> getUnsorted () const { return std::vector<int>({3, 1, 2}); };
     };
     
     std::vector<std::string> vect = {"foo", "bar"};
@@ -55,10 +57,11 @@ void TestValidate::test() {
         should(vect, &std::vector<std::string>::size, isEqual<size_t>(2), "isEqual<size_t>(2)"),
         must(vect2, &std::vector<std::string>::size, isFalse(), "isFalse()"),
         must(foobar, &fooC::getFoo, notEmpty(), "notEmpty()"),
-        should(foobar, &fooC::getBar, isEmpty(), "isEmpty()")
+        should(foobar, &fooC::getBar, isEmpty(), "isEmpty()"),
+        should(foobar, &fooC::getSorted, isSorted(), "isSorted()")
     });
-    // uncomment this to have debug info
-    // std::cout << myResult;
+    // have debug info
+    std::cout << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
     
@@ -75,11 +78,12 @@ void TestValidate::test() {
         should(vect, &std::vector<std::string>::size, isEqual<size_t>(0), "isEqual<size_t>(0)"),
         must(vect2, &std::vector<std::string>::size, notFalse(), "notFalse()"),
         must(foobar, &fooC::getFoo, isEmpty(), "notEmpty()"),
-        should(foobar, &fooC::getBar, notEmpty(), "isEmpty()")
+        should(foobar, &fooC::getBar, notEmpty(), "isEmpty()"),
+        should(foobar, &fooC::getUnsorted, isSorted(), "isSorted()")
     });
     // uncomment this to have debug info
     // std::cout << myResult;
-    CPPUNIT_ASSERT(myResult.getWarnings().size() == 4);
+    CPPUNIT_ASSERT(myResult.getWarnings().size() == 5);
     CPPUNIT_ASSERT(myResult.getErrors().size() == 6);
     
     // entity success cases---------------------------------------------
@@ -131,6 +135,7 @@ void TestValidate::test() {
     // create units
     std::vector<std::string> atomic_units = {"m", "cm", "mm"};
     std::vector<std::string> compound_units = {"mV*cm", "m*s", "s/cm"};
+    std::vector<std::string> invalid_units = {"foo"};
     // create data tag & simple tag
     nix::DataTag dtag = block.createDataTag("tag_one", "test_tag", positions);
     dtag.extents(extents);
@@ -167,7 +172,6 @@ void TestValidate::test() {
     dim_range2.unit(atomic_units[1]);
     dim_range3.unit(atomic_units[2]);
     
-    
     myResult = validator({
         could(dtag, &nix::DataTag::positions, dimEquals(2), {
             must(dtag, &nix::DataTag::extents, dimEquals(2), "dimEquals(2)") }),
@@ -191,8 +195,70 @@ void TestValidate::test() {
         must(  stag, &nix::SimpleTag::references, tagRefsHaveUnits(atomic_units),       "tagRefsHaveUnits(atomic_units); (stag)"),
         should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
     });
-    // uncomment this to have debug info
+    // have debug info
     std::cout << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
+    
+    // entity failure cases---------------------------------------------
+    // -----------------------------------------------------------------
+    // mess up labels & ticks
+    dim_set3.labels({"label_a", "label_b", "label_c"});
+    dim_set1.labels({"label_a", "label_b", "label_c", "label_d"});
+    dim_set2.labels({"label_a", "label_b"});
+    dim_range3.ticks({1, 2, 3});
+    dim_range1.ticks({1, 2, 3, 4});
+    dim_range2.ticks({1, 2});
+    // mess up positions & extents
+    array2D_type D(boost::extents[4][2]);
+    for(index i = 0; i < 4; ++i) {
+        for(index j = 0; j < 2; ++j) {
+            D[i][j] = 100.0*i;
+        }
+    }
+    extents.setData(D);
+    array2D_type E(boost::extents[5][2]);
+    for(index i = 0; i < 5; ++i) {
+        for(index j = 0; j < 2; ++j) {
+            E[i][j] = 100.0*i;
+        }
+    }
+    positions.setData(E);
+    // NOTE: no need to reset DataTag positions&extents, it uses references
+    // mess up position & extent
+    extent.push_back(42);
+    extent.push_back(42);
+    position.push_back(42);
+    stag.position(position);
+    stag.extent(extent);
+    // mess up all units_tmp units
+    tag_tmp units_tmp2(invalid_units);
+    
+    myResult = validator({
+        could(dtag, &nix::DataTag::positions, dimEquals(2), {
+            must(dtag, &nix::DataTag::extents, dimEquals(42), "dimEquals(42)") }),//
+        must(  dtag,   &nix::DataTag::extents, dimEquals(42), "dimEquals(42)"),//
+        should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
+        must(  array2, &nix::DataArray::dimensions, dimTicksMatchData(array2),  "dimTicksMatchData(array)"),//
+        should(stag, &nix::SimpleTag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),//
+        must(  dtag, &nix::DataTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
+        must(  stag, &nix::SimpleTag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (stag)"),
+        should(dtag, &nix::DataTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (dtag)"),
+        must(  stag, &nix::SimpleTag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (stag)"),
+        should(dtag, &nix::DataTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (dtag)"),
+        should(units_tmp2, &tag_tmp::unit,  isAtomicUnit(), "isAtomicUnit(); (units_tmp.unit)"),
+        should(units_tmp2, &tag_tmp::units, isAtomicUnit(), "isAtomicUnit(); (units_tmp.units)"),
+        must(units_tmp2, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
+        must(units_tmp2, &tag_tmp::units, isCompoundUnit(), "isCompoundUnit(); (units_tmp.units)"),
+        must(units_tmp2, &tag_tmp::unito, isCompoundUnit(), "isCompoundUnit(); (units_tmp.unito)"),
+        should(units_tmp2, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
+        must(  units_tmp2, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
+        should(units_tmp2, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
+        must(  stag, &nix::SimpleTag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (stag)"),
+        should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
+    });
+    // uncomment this to have debug info
+    // std::cout << myResult;
+    CPPUNIT_ASSERT(myResult.getWarnings().size() == 9);
+    CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
 }
