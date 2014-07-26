@@ -124,6 +124,8 @@ endif()
 # CLI
 
 file(GLOB NixCli_SOURCES "cli/*.cpp")
+file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
+include_directories("cli")
 
 add_executable(nixcli cli/Cli.cpp ${NixCli_SOURCES})
 if(NOT WIN32)
