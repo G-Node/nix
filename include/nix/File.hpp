@@ -260,7 +260,7 @@ public:
     // Methods for file attribute access.
     //--------------------------------------------------
 
-    std::string version() const {
+    std::vector<int> version() const {
         return backend()->version();
     }
 

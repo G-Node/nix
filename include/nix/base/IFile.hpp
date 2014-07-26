@@ -168,7 +168,7 @@ public:
      *
      * @return The format version of the NIX file.
      */
-    virtual std::string version() const = 0;
+    virtual std::vector<int> version() const = 0;
 
     /**
      * @brief Read the format hint from the file.

@@ -100,7 +100,7 @@ public:
     //--------------------------------------------------
 
 
-    std::string version() const;
+    std::vector<int> version() const;
 
 
     std::string format() const;
