@@ -51,7 +51,8 @@ void TestFile::testLocation() {
 
 
 void TestFile::testVersion() {
-    CPPUNIT_ASSERT(file_open.version() == "1.0");
+    vector<int> version{1, 0, 0};
+    CPPUNIT_ASSERT(file_open.version() == version);
 }
 
 
@@ -151,7 +152,6 @@ void TestFile::testOperators(){
 }
 
 void TestFile::testReopen() {
-
     //file_open is currently open
     Block b = file_open.createBlock("a", "a");
     b = none;
