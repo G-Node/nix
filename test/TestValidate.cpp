@@ -24,6 +24,33 @@ using namespace std;
 
 void TestValidate::setUp() {
     startup_time = time(NULL);
+    // create file & block
+    file = nix::File::open("test_validate.h5", nix::FileMode::Overwrite);
+    block = file.createBlock("block_one", "dataset");
+    // create data array
+    array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, {0, 0, 0});
+    array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, {0, 0, 0});
+    array_tmp = block.createDataArray("array_tmp", "testdata", nix::DataType::Double, {0});
+    // set references vector
+    refs = {array1, array2};
+    // create positions & extents arrays
+    positions = block.createDataArray("positions_DataArray", "dataArray", DataType::Double, {0, 0});
+    extents = block.createDataArray("extents_DataArray", "dataArray", DataType::Double, {0, 0});
+    // create units
+    atomic_units = {"m", "cm", "mm"};
+    compound_units = {"mV*cm", "m*s", "s/cm"};
+    invalid_units = {"foo"};
+    // create data tag & simple tag
+    dtag = block.createDataTag("tag_one", "test_tag", positions);
+    stag = block.createSimpleTag("tag_one", "test_tag", refs);
+    units_tmp = tag_tmp(compound_units);
+    // create dimensions
+    dim_set1 = array1.appendSetDimension();
+    dim_set2 = array1.appendSetDimension();
+    dim_set3 = array1.appendSetDimension();
+    dim_range1 = array2.appendRangeDimension({1, 2, 3});
+    dim_range2 = array2.appendRangeDimension({1, 2, 3, 4});
+    dim_range3 = array2.appendRangeDimension({1, 2});
 }
 
 void TestValidate::tearDown() {
@@ -88,13 +115,7 @@ void TestValidate::test() {
     
     // entity success cases---------------------------------------------
     // -----------------------------------------------------------------
-    // create file & block
-    nix::File file = nix::File::open("test_validate.h5", nix::FileMode::Overwrite);
-    nix::Block block = file.createBlock("block_one", "dataset");
-    // create data array
-    nix::DataArray array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, {0, 0, 0});
-    nix::DataArray array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, {0, 0, 0});
-    nix::DataArray array_tmp = block.createDataArray("array_tmp", "testdata", nix::DataType::Double, {0});
+    // fill array1 & array2
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[3][4][2]);
@@ -105,17 +126,12 @@ void TestValidate::test() {
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
-    // create references vector
-    std::vector<nix::DataArray> refs = {array1, array2};
-    // create position & extent vectors
-    std::vector<double> extent, position;
+    // fill extent & position
     for(index i = 0; i < 3; ++i) {
         extent.push_back(i);
         position.push_back(i);
     }
-    // create positions & extents arrays
-    nix::DataArray positions = block.createDataArray("positions_DataArray", "dataArray", DataType::Double, {0, 0});
-    nix::DataArray extents = block.createDataArray("extents_DataArray", "dataArray", DataType::Double, {0, 0});
+    // fill extents & positions
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array2D_type::index index;
     array2D_type B(boost::extents[5][3]);
@@ -132,42 +148,18 @@ void TestValidate::test() {
         }
     }
     extents.setData(C);
-    // create units
-    std::vector<std::string> atomic_units = {"m", "cm", "mm"};
-    std::vector<std::string> compound_units = {"mV*cm", "m*s", "s/cm"};
-    std::vector<std::string> invalid_units = {"foo"};
-    // create data tag & simple tag
-    nix::DataTag dtag = block.createDataTag("tag_one", "test_tag", positions);
+    // fill DataTag
     dtag.extents(extents);
     dtag.references(refs);
     dtag.units(atomic_units);
-    nix::SimpleTag stag = block.createSimpleTag("tag_one", "test_tag", refs);
+    // fill SimpleTag
     stag.extent(extent);
     stag.position(position);
     stag.units(atomic_units);
-    // create some tag like class with units- & unit-getter that allows compound units
-    struct tag_tmp {
-        const std::vector<std::string> &units_ref;
-        tag_tmp(std::vector<std::string> &units) : units_ref(units) {}
-        std::vector<std::string> units() const { return units_ref; }
-        std::string unit() const { return units_ref.front(); }
-        boost::optional<std::string> unito() const { 
-            boost::optional<std::string> ret = units_ref.front(); 
-            return ret; 
-        }
-    };
-    tag_tmp units_tmp = tag_tmp(compound_units);
-    // create set dimensions with correct number of labels
-    nix::SetDimension dim_set1 = array1.appendSetDimension();
-    nix::SetDimension dim_set2 = array1.appendSetDimension();
-    nix::SetDimension dim_set3 = array1.appendSetDimension();
+    // fill dimensions
     dim_set1.labels({"label_a", "label_b", "label_c"});
     dim_set2.labels({"label_a", "label_b", "label_c", "label_d"});
     dim_set3.labels({"label_a", "label_b"});
-    // create range dimensions with correct number of labels & correct unit
-    nix::RangeDimension dim_range1 = array2.appendRangeDimension({1, 2, 3});
-    nix::RangeDimension dim_range2 = array2.appendRangeDimension({1, 2, 3, 4});
-    nix::RangeDimension dim_range3 = array2.appendRangeDimension({1, 2});
     dim_range1.unit(atomic_units[0]);
     dim_range2.unit(atomic_units[1]);
     dim_range3.unit(atomic_units[2]);
