@@ -42,6 +42,7 @@ void TestValidate::setUp() {
     invalid_units = {"foo"};
     // create data tag & simple tag
     dtag = block.createDataTag("tag_one", "test_tag", positions);
+    dtag.extents(extents);
     stag = block.createSimpleTag("tag_one", "test_tag", refs);
     units_tmp = tag_tmp(compound_units);
     // create dimensions
@@ -54,6 +55,116 @@ void TestValidate::setUp() {
 }
 
 void TestValidate::tearDown() {
+    return;
+}
+
+void TestValidate::setValid() {
+    // fill array1 & array2
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type A(boost::extents[3][4][2]);
+    int values = 0;
+    for(index i = 0; i != 3; ++i)
+        for(index j = 0; j != 4; ++j)
+            for(index k = 0; k != 2; ++k)
+                A[i][j][k] = values++;
+    array1.setData(A);
+    array2.setData(A);
+    // fill extent & position
+    for(index i = 0; i < 3; ++i) {
+        extent.push_back(i);
+        position.push_back(i);
+    }
+    // fill extents & positions
+    typedef boost::multi_array<double, 2> array2D_type;
+    typedef array2D_type::index index;
+    array2D_type B(boost::extents[5][3]);
+    for(index i = 0; i < 5; ++i) {
+        for(index j = 0; j < 3; ++j) {
+            B[i][j] = 100.0*i;
+        }
+    }
+    positions.setData(B);
+    array2D_type C(boost::extents[5][3]);
+    for(index i = 0; i < 5; ++i) {
+        for(index j = 0; j < 3; ++j) {
+            C[i][j] = 100.0*i;
+        }
+    }
+    extents.setData(C);
+    // fill DataTag
+    dtag.references(refs);
+    dtag.units(atomic_units);
+    // fill SimpleTag
+    stag.extent(extent);
+    stag.position(position);
+    stag.units(atomic_units);
+    // fill dimensions
+    dim_set1.labels({"label_a", "label_b", "label_c"});
+    dim_set2.labels({"label_a", "label_b", "label_c", "label_d"});
+    dim_set3.labels({"label_a", "label_b"});
+    dim_range1.unit(atomic_units[0]);
+    dim_range2.unit(atomic_units[1]);
+    dim_range3.unit(atomic_units[2]);
+    // fill tag_tmp    
+    units_tmp = tag_tmp(compound_units);
+    
+    return;
+}
+
+void TestValidate::setInvalid() {
+    // fill array1 & array2
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type A(boost::extents[3][4][2]);
+    int values = 0;
+    for(index i = 0; i != 3; ++i)
+        for(index j = 0; j != 4; ++j)
+            for(index k = 0; k != 2; ++k)
+                A[i][j][k] = values++;
+    array1.setData(A);
+    array2.setData(A);
+    // fill extent & position
+    for(index i = 0; i < 6; ++i) {
+        extent.push_back(i);
+    }
+    for(index i = 0; i < 9; ++i) {
+        position.push_back(i);
+    }
+    // fill extents & positions
+    typedef boost::multi_array<double, 2> array2D_type;
+    typedef array2D_type::index index;
+    array2D_type B(boost::extents[4][2]);
+    for(index i = 0; i < 4; ++i) {
+        for(index j = 0; j < 2; ++j) {
+            B[i][j] = 100.0*i;
+        }
+    }
+    extents.setData(B);
+    array2D_type C(boost::extents[5][2]);
+    for(index i = 0; i < 5; ++i) {
+        for(index j = 0; j < 2; ++j) {
+            C[i][j] = 100.0*i;
+        }
+    }
+    positions.setData(C);
+    // fill DataTag
+    dtag.references(refs);
+    dtag.units(atomic_units);
+    // fill SimpleTag
+    stag.extent(extent);
+    stag.position(position);
+    stag.units(atomic_units);
+    // fill dimensions
+    dim_set3.labels({"label_a", "label_b", "label_c"});
+    dim_set1.labels({"label_a", "label_b", "label_c", "label_d"});
+    dim_set2.labels({"label_a", "label_b"});
+    dim_range3.ticks({1, 2, 3});
+    dim_range1.ticks({1, 2, 3, 4});
+    dim_range2.ticks({1, 2});
+    // fill tag_tmp    
+    units_tmp = tag_tmp(invalid_units);
+    
     return;
 }
 
@@ -115,55 +226,7 @@ void TestValidate::test() {
     
     // entity success cases---------------------------------------------
     // -----------------------------------------------------------------
-    // fill array1 & array2
-    typedef boost::multi_array<double, 3> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[3][4][2]);
-    int values = 0;
-    for(index i = 0; i != 3; ++i)
-        for(index j = 0; j != 4; ++j)
-            for(index k = 0; k != 2; ++k)
-                A[i][j][k] = values++;
-    array1.setData(A);
-    array2.setData(A);
-    // fill extent & position
-    for(index i = 0; i < 3; ++i) {
-        extent.push_back(i);
-        position.push_back(i);
-    }
-    // fill extents & positions
-    typedef boost::multi_array<double, 2> array2D_type;
-    typedef array2D_type::index index;
-    array2D_type B(boost::extents[5][3]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 3; ++j) {
-            B[i][j] = 100.0*i;
-        }
-    }
-    positions.setData(B);
-    array2D_type C(boost::extents[5][3]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 3; ++j) {
-            C[i][j] = 100.0*i;
-        }
-    }
-    extents.setData(C);
-    // fill DataTag
-    dtag.extents(extents);
-    dtag.references(refs);
-    dtag.units(atomic_units);
-    // fill SimpleTag
-    stag.extent(extent);
-    stag.position(position);
-    stag.units(atomic_units);
-    // fill dimensions
-    dim_set1.labels({"label_a", "label_b", "label_c"});
-    dim_set2.labels({"label_a", "label_b", "label_c", "label_d"});
-    dim_set3.labels({"label_a", "label_b"});
-    dim_range1.unit(atomic_units[0]);
-    dim_range2.unit(atomic_units[1]);
-    dim_range3.unit(atomic_units[2]);
-    
+    setValid();    
     myResult = validator({
         could(dtag, &nix::DataTag::positions, dimEquals(2), {
             must(dtag, &nix::DataTag::extents, dimEquals(2), "dimEquals(2)") }),
@@ -194,38 +257,7 @@ void TestValidate::test() {
     
     // entity failure cases---------------------------------------------
     // -----------------------------------------------------------------
-    // mess up labels & ticks
-    dim_set3.labels({"label_a", "label_b", "label_c"});
-    dim_set1.labels({"label_a", "label_b", "label_c", "label_d"});
-    dim_set2.labels({"label_a", "label_b"});
-    dim_range3.ticks({1, 2, 3});
-    dim_range1.ticks({1, 2, 3, 4});
-    dim_range2.ticks({1, 2});
-    // mess up positions & extents
-    array2D_type D(boost::extents[4][2]);
-    for(index i = 0; i < 4; ++i) {
-        for(index j = 0; j < 2; ++j) {
-            D[i][j] = 100.0*i;
-        }
-    }
-    extents.setData(D);
-    array2D_type E(boost::extents[5][2]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 2; ++j) {
-            E[i][j] = 100.0*i;
-        }
-    }
-    positions.setData(E);
-    // NOTE: no need to reset DataTag positions&extents, it uses references
-    // mess up position & extent
-    extent.push_back(42);
-    extent.push_back(42);
-    position.push_back(42);
-    stag.position(position);
-    stag.extent(extent);
-    // mess up all units_tmp units
-    tag_tmp units_tmp2(invalid_units);
-    
+    setInvalid();
     myResult = validator({
         could(dtag, &nix::DataTag::positions, dimEquals(2), {
             must(dtag, &nix::DataTag::extents, dimEquals(42), "dimEquals(42)") }),//
@@ -238,14 +270,14 @@ void TestValidate::test() {
         should(dtag, &nix::DataTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (dtag)"),
         must(  stag, &nix::SimpleTag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (stag)"),
         should(dtag, &nix::DataTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (dtag)"),
-        should(units_tmp2, &tag_tmp::unit,  isAtomicUnit(), "isAtomicUnit(); (units_tmp.unit)"),
-        should(units_tmp2, &tag_tmp::units, isAtomicUnit(), "isAtomicUnit(); (units_tmp.units)"),
-        must(units_tmp2, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
-        must(units_tmp2, &tag_tmp::units, isCompoundUnit(), "isCompoundUnit(); (units_tmp.units)"),
-        must(units_tmp2, &tag_tmp::unito, isCompoundUnit(), "isCompoundUnit(); (units_tmp.unito)"),
-        should(units_tmp2, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
-        must(  units_tmp2, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
-        should(units_tmp2, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
+        should(units_tmp, &tag_tmp::unit,  isAtomicUnit(), "isAtomicUnit(); (units_tmp.unit)"),
+        should(units_tmp, &tag_tmp::units, isAtomicUnit(), "isAtomicUnit(); (units_tmp.units)"),
+        must(units_tmp, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
+        must(units_tmp, &tag_tmp::units, isCompoundUnit(), "isCompoundUnit(); (units_tmp.units)"),
+        must(units_tmp, &tag_tmp::unito, isCompoundUnit(), "isCompoundUnit(); (units_tmp.unito)"),
+        should(units_tmp, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
+        must(  units_tmp, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
+        should(units_tmp, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
         must(  stag, &nix::SimpleTag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (stag)"),
         should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
     });

@@ -76,6 +76,9 @@ private:
     nix::RangeDimension dim_range2;
     nix::RangeDimension dim_range3;
 
+    void setValid();    
+    void setInvalid();
+    
 public:
 
     void setUp();
