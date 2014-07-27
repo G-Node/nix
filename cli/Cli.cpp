@@ -13,6 +13,7 @@
 #include <iterator>
 #include <algorithm>
 
+#include <boost/any.hpp>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
@@ -43,31 +44,52 @@ int main(int argc, char* argv[]) {
     std::stringstream out;
     po::variables_map vm; // will contain the parsed options
     po::command_line_parser parser(argc, argv); // parser to use
+    po::command_line_parser parser2(argc, argv); // parser to use
     po::options_description desc("Supported options");
     po::positional_options_description pdesc;
+    std::string name;
+    int i;
       
     try {
-        
-        // declare supported options
+        // create string list of all modules
+        std::stringstream mod_list;
+        mod_list << cli::MODULE_OPTION << ": ";
+        i = 0;
+        for(auto &mod : cli::modules) {
+            i++;
+            mod_list << "use 'module name --help'" << std::endl << "    " << i << ": ";
+            mod_list << mod.first << (cli::modules.size() != i ? ", " : "");
+        }
+        // declare generally supported options
         desc.add_options()
             (cli::HELP_OPTION, "produce help message")
-            (cli::MODULE_OPTION, po::value< std::string >(), cli::MODULE_OPTION)
+            (cli::MODULE_OPTION, po::value< std::string >(), mod_list.str().c_str())
             (cli::INPFILE_OPTION, po::value< std::vector<std::string> >(), cli::INPFILE_OPTION)
         ;
-        // declare supported "positional options"
+        // declare generally supported "positional options"
         pdesc.add(cli::MODULE_OPTION, 1)  // treat first positional option as "module"
         .add(cli::INPFILE_OPTION, -1); // treat every further positional option  as "input-file"s
-        // process the cmd line input once to get module name
+        
+        // parse input once to check for HELP_OPTION, mistaken as pos-option otherwise
         po::store(parser.options(desc)
+                  // WARNING: this should work, instead breaks everything (thanks boost!!)
+                  //.style(po::command_line_style::case_insensitive)
+                  .allow_unregistered()
+                  .run(), vm);
+        po::notify(vm);
+        
+        // parse input again (with pos-options) to get MODULE_OPTION & INPFILE_OPTIONs
+        po::store(parser2.options(desc)
                   .positional(pdesc)
                   .style(po::command_line_style::case_insensitive)
                   .allow_unregistered()
                   .run(), vm);
         po::notify(vm);
+        // get name
+        name = !vm.count(cli::MODULE_OPTION) ? "" :
+                         vm[cli::MODULE_OPTION].as<std::string>();
         
         // load & call module
-        std::string name = !vm.count(cli::MODULE_OPTION) ? "" :
-                            vm[cli::MODULE_OPTION].as<std::string>();
         auto it = cli::modules.find(name);
         if(it != cli::modules.end()) {
             (*it).second->load(desc);
@@ -78,10 +100,7 @@ int main(int argc, char* argv[]) {
         }
         else {
             out << std::endl << "unknown module" << std::endl << std::endl;
-            // handle help
-            //if (vm.count(cli::HELP_OPTION)) {
-                out << desc << std::endl;
-            //}
+            out << desc << std::endl;
         }
         
         // show output
@@ -89,7 +108,8 @@ int main(int argc, char* argv[]) {
     }
     catch(std::exception& e) {
         std::cerr << "error: " << e.what() << std::endl;
-        std::cout << std::endl << desc << std::endl;
+        std::cout << std::endl << "module " << name << std::endl;
+        std::cout << desc << std::endl;
         return 1;
     }
     catch(...) {

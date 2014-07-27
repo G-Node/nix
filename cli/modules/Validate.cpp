@@ -20,10 +20,16 @@ namespace module {
 const char* Validate::module_name = "validate";
 
 void Validate::load(po::options_description &desc) const {
+    // declare purpose
+    desc.add(po::options_description(std::string(module_name) + 
+                                     ": run validation on given input file\nSupported options"));
     // declare supported options
-    desc.add_options()
-        ("validate", "operation: run the validation on the given input file")
+    po::options_description opt;
+    opt.add_options()
+        ("no-warnings", "ignore any warnings")
+        ("no-errors", "ignore any errors")
     ;
+    desc.add(opt);
 }
 
 std::string Validate::call(const po::variables_map &vm, const po::options_description &desc) const {
@@ -31,6 +37,11 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
     std::stringstream out;
     nix::File tmp_file;
     
+    // --help
+    if (vm.count(HELP_OPTION)) {
+        out << desc << std::endl;
+        return out.str();
+    }
     // --input-file
     if (vm.count(INPFILE_OPTION)) {
         for(auto &file_path : vm[INPFILE_OPTION].as< std::vector<std::string> >()) {
@@ -54,10 +65,6 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
     }
     else {
         throw NoInputFile();
-    }
-    
-    if (vm.count(cli::HELP_OPTION)) {
-        out << desc << std::endl;
     }
     
     return out.str();
