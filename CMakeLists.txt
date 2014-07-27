@@ -50,7 +50,7 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.49.0 REQUIRED date_time regex program_options)
+find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
