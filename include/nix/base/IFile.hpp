@@ -165,6 +165,9 @@ public:
 
     /**
      * @brief Read the NIX format version from the file.
+     * 
+     * The version consist of three integers standing for the major, 
+     * minor and patch version of the nix format. 
      *
      * @return The format version of the NIX file.
      */
