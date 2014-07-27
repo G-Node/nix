@@ -226,7 +226,7 @@ void TestValidate::test() {
     
     // entity success cases---------------------------------------------
     // -----------------------------------------------------------------
-    setValid();    
+    setValid();
     myResult = validator({
         could(dtag, &nix::DataTag::positions, dimEquals(2), {
             must(dtag, &nix::DataTag::extents, dimEquals(2), "dimEquals(2)") }),
@@ -283,6 +283,8 @@ void TestValidate::test() {
     });
     // uncomment this to have debug info
     // std::cout << myResult;
+    // lets leave the file clean & valid
+    setValid();
     CPPUNIT_ASSERT(myResult.getWarnings().size() == 9);
     CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
 }
