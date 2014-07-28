@@ -43,8 +43,9 @@ std::unordered_map<std::string, std::shared_ptr<cli::module::IModule>> modules =
 int main(int argc, char* argv[]) {
     std::stringstream out;
     po::variables_map vm; // will contain the parsed options
-    po::command_line_parser parser(argc, argv); // parser to use
-    po::command_line_parser parser2(argc, argv); // parser to use
+    po::command_line_parser parser1(argc, argv);
+    po::command_line_parser parser2(argc, argv);
+    po::command_line_parser parser3(argc, argv);
     po::options_description desc("Supported options");
     po::positional_options_description pdesc;
     std::string name;
@@ -71,7 +72,7 @@ int main(int argc, char* argv[]) {
         .add(cli::INPFILE_OPTION, -1); // treat every further positional option  as "input-file"s
         
         // parse input once to check for HELP_OPTION, mistaken as pos-option otherwise
-        po::store(parser.options(desc)
+        po::store(parser1.options(desc)
                   // WARNING: this should work, instead breaks everything (thanks boost!!)
                   //.style(po::command_line_style::case_insensitive)
                   .allow_unregistered()
@@ -81,7 +82,7 @@ int main(int argc, char* argv[]) {
         // parse input again (with pos-options) to get MODULE_OPTION & INPFILE_OPTIONs
         po::store(parser2.options(desc)
                   .positional(pdesc)
-                  .style(po::command_line_style::case_insensitive)
+                  //.style(po::command_line_style::case_insensitive)
                   .allow_unregistered()
                   .run(), vm);
         po::notify(vm);
@@ -92,9 +93,9 @@ int main(int argc, char* argv[]) {
         // load & call module
         auto it = cli::modules.find(name);
         if(it != cli::modules.end()) {
-            (*it).second->load(desc);
+            (*it).second->load(desc);    
             // process the cmd line input
-            po::store(parser.options(desc).positional(pdesc).run(), vm);
+            po::store(parser3.options(desc).positional(pdesc).run(), vm);
             po::notify(vm);
             out << (*it).second->call(vm, desc);
         }

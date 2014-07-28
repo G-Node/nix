@@ -18,6 +18,9 @@ namespace po = boost::program_options;
 namespace cli {
 namespace module {
 
+const char *const NOWARN_OPTION = "no-warnings";
+const char *const NOERR_OPTION = "no-errors";
+    
 class Validate : virtual public IModule {
     
 public:
