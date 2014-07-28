@@ -22,7 +22,7 @@ namespace hdf5 {
 
 
 // Format definition
-#define FILE_VERSION std::string("1.0")
+#define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
 
 
@@ -212,10 +212,10 @@ void FileHDF5::forceCreatedAt(time_t t) {
 }
 
 
-string FileHDF5::version() const {
-    string t;
-    root.getAttr<std::string>("version", t);
-    return t;
+vector<int> FileHDF5::version() const {
+    vector<int> version;
+    root.getAttr("version",version);
+    return version;
 }
 
 
@@ -281,6 +281,7 @@ File FileHDF5::file() const {
 
 bool FileHDF5::checkHeader() const {
     bool check = true;
+    vector<int> version;
     string str;
     // check format
     if (root.hasAttr("format")) {
@@ -292,7 +293,7 @@ bool FileHDF5::checkHeader() const {
     }
     // check version
     if (root.hasAttr("version")) {
-        if (!root.getAttr("version", str) || str != FILE_VERSION) {
+        if (!root.getAttr("version", version) || version != FILE_VERSION) {
             check = false;
         }
     } else {

@@ -165,10 +165,13 @@ public:
 
     /**
      * @brief Read the NIX format version from the file.
+     * 
+     * The version consist of three integers standing for the major, 
+     * minor and patch version of the nix format. 
      *
      * @return The format version of the NIX file.
      */
-    virtual std::string version() const = 0;
+    virtual std::vector<int> version() const = 0;
 
     /**
      * @brief Read the format hint from the file.
