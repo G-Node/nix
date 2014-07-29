@@ -43,7 +43,7 @@ namespace nix {
  * the data linked via this {@link Feature} has to be accessed according
  * to the index in the respective position entry.
  */
-class NIXAPI Feature : virtual public base::IFeature, public base::Entity<base::IFeature> {
+class NIXAPI Feature : public base::Entity<base::IFeature> {
 
 public:
 
@@ -120,14 +120,7 @@ public:
      *
      * @param data    The data array to set.
      */
-    void data(const DataArray &data) {
-        if(data == none) {
-            throw std::runtime_error("Empty data entity (DataArray) given");
-        }
-        else {
-            backend()->data(data.id());
-        }
-    }
+    void data(const DataArray &data);
 
     DataArray data() const {
         return backend()->data();
