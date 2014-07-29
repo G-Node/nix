@@ -23,8 +23,7 @@
 namespace nix {
 
 
-
-class NIXAPI Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
+class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
 public:
 
@@ -97,13 +96,7 @@ public:
         backend()->link(id);
     }
 
-    void link(const Section &link) {
-        if (link == none) {
-            backend()->link(none);
-        } else {
-            backend()->link(link.id());
-        }
-    }
+    void link(const Section &link);
 
     Section link() const {
         return backend()->link();
@@ -152,12 +145,7 @@ public:
      *
      * @return True if the section is a child, false otherwise.
      */
-    bool hasSection(const Section &section) const {
-        if(section == none) {
-            throw std::runtime_error("Section::hasSection: Empty Section entity given!");
-        }
-        return backend()->hasSection(section.id());
-    }
+    bool hasSection(const Section &section) const;
 
     Section getSection(const std::string &id) const {
         return backend()->getSection(id);
@@ -177,13 +165,7 @@ public:
      *
      * @return A vector containing the matching child sections.
      */
-    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const
-    {
-        auto f = [this] (size_t i) { return getSection(i); };
-        return getEntities<Section>(f,
-                                    sectionCount(),
-                                    filter);
-    }
+    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
 
     /**
      * @brief Get all descendant sections of the section recursively.
@@ -226,12 +208,7 @@ public:
      *
      * @return bool successful or not
      */
-    bool deleteSection(const Section &section) {
-        if(section == none) {
-            throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
-        }
-        return backend()->deleteSection(section.id());
-    }
+    bool deleteSection(const Section &section);
 
     //--------------------------------------------------
     // Methods for property access
@@ -252,12 +229,7 @@ public:
      *
      * @return True if the property exists, false otherwise.
      */
-    bool hasProperty(const Property &property) const {
-        if(property == none) {
-            throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
-        }
-        return backend()->hasProperty(property.id());
-    }
+    bool hasProperty(const Property &property) const;
 
     Property getProperty(const std::string &id) const {
         return backend()->getProperty(id);
@@ -285,13 +257,7 @@ public:
      *
      * @return A vector containing the matching properties.
      */
-    std::vector<Property> properties(util::Filter<Property>::type filter = util::AcceptAll<Property>()) const
-    {
-        auto f = [this] (size_t i) { return getProperty(i); };
-        return getEntities<Property>(f,
-                                    propertyCount(),
-                                    filter);
-    }
+    std::vector<Property> properties(util::Filter<Property>::type filter=util::AcceptAll<Property>()) const;
 
     /**
      * Returns all Properties inherited from a linked section.
@@ -332,12 +298,7 @@ public:
      *
      * @return True if the property was deleted, false otherwise.
      */
-    bool deleteProperty(const Property &property) {
-        if(property == none) {
-            throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
-        }
-        return backend()->deleteProperty(property.id());
-    }
+    bool deleteProperty(const Property &property);
 
     //------------------------------------------------------
     // Operators and other functions

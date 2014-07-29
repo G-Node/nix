@@ -10,7 +10,7 @@
 #include <list>
 #include <algorithm>
 
-#include <nix.hpp>
+#include <nix/Section.hpp>
 
 using namespace std;
 using namespace nix;
@@ -45,11 +45,33 @@ Section::Section(shared_ptr<base::ISection> &&ptr)
 }
 
 
+void Section::link(const Section &link) {
+    if (link == none) {
+        backend()->link(none);
+    } else {
+        backend()->link(link.id());
+    }
+}
 
 //-----------------------------------------------------
 // Methods concerning child sections
 //-----------------------------------------------------
 
+
+bool Section::hasSection(const Section &section) const {
+    if(section == none) {
+        throw std::runtime_error("Section::hasSection: Empty Section entity given!");
+    }
+    return backend()->hasSection(section.id());
+}
+
+
+bool Section::deleteSection(const Section &section) {
+    if(section == none) {
+        throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
+    }
+    return backend()->deleteSection(section.id());
+}
 
 /*
  * Helper struct for {@link findSections}.
@@ -62,6 +84,14 @@ struct SectionCont {
     Section entity;
     size_t depth;
 };
+
+
+std::vector<Section> Section::sections(util::Filter<Section>::type filter) const {
+    auto f = [this] (size_t i) { return getSection(i); };
+    return getEntities<Section>(f,
+                                sectionCount(),
+                                filter);
+}
 
 
 std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
@@ -133,6 +163,26 @@ std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) co
 // Methods for property access
 //-----------------------------------------------------
 
+bool Section::hasProperty(const Property &property) const {
+    if(property == none) {
+        throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
+    }
+    return backend()->hasProperty(property.id());
+}
+
+std::vector<Property> Section::properties(util::Filter<Property>::type filter) const {
+    auto f = [this] (size_t i) { return getProperty(i); };
+    return getEntities<Property>(f,
+            propertyCount(),
+            filter);
+}
+
+bool Section::deleteProperty(const Property &property) {
+    if(property == none) {
+        throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
+    }
+    return backend()->deleteProperty(property.id());
+}
 
 vector<Property> Section::inheritedProperties() const {
 
@@ -159,6 +209,7 @@ vector<Property> Section::inheritedProperties() const {
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+
 size_t Section::tree_depth() const{
   const vector<Section> children = sections();
   size_t depth = 0;
