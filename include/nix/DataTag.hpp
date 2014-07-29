@@ -41,7 +41,7 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI DataTag : virtual public base::IDataTag, public base::EntityWithSources<base::IDataTag> {
+class NIXAPI DataTag : public base::EntityWithSources<base::IDataTag> {
 
 public:
 
@@ -105,14 +105,7 @@ public:
      *
      * @param positions   The DataArray containing the positions of the tag.
      */
-    void positions(const DataArray &positions) {
-        if(positions == none) {
-            throw std::runtime_error("Empty positions entity (DataArray) given");
-        }
-        else {
-            backend()->positions(positions.id());
-        }
-    }
+    void positions(const DataArray &positions);
 
     bool hasPositions() const {
         return backend()->hasPositions();
@@ -127,14 +120,7 @@ public:
      *
      * @param extents      The DataArray containing the extents of the tag.
      */
-    void extents(const DataArray &extents) {
-        if(extents == none) {
-            backend()->extents(none);
-        }
-        else {
-            backend()->extents(extents.id());
-        }
-    }
+    void extents(const DataArray &extents);
 
     void extents(const std::string &id) {
         backend()->extents(id);
@@ -148,19 +134,7 @@ public:
         return backend()->units();
     }
 
-    void units(const std::vector<std::string> &units) {
-        std::vector<std::string> sanitized;
-        sanitized.reserve(units.size());
-        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
-                std::string unit = util::unitSanitizer(x);
-                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
-                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
-                    throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
-                }
-                return unit;
-            });
-        backend()->units(sanitized);
-    }
+    void units(const std::vector<std::string> &units);
 
     void units(const boost::none_t t) {
         backend()->units(t);
@@ -177,12 +151,7 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasReference(const DataArray &reference) const {
-        if (reference == none) {
-            throw std::runtime_error("DataTag::hasReference: Empty DataArray entity given!");
-        }
-        return backend()->hasReference(reference.id());
-    }
+    bool hasReference(const DataArray &reference) const;
 
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
@@ -209,12 +178,7 @@ public:
      *
      * @param reference The DataArray that should be referenced.
      */
-    void addReference(const DataArray &reference) {
-        if (reference == none) {
-            throw std::runtime_error("DataTag::addReference: Empty DataArray entity given!");
-        }
-        backend()->addReference(reference.id());
-    }
+    void addReference(const DataArray &reference);
 
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
@@ -230,12 +194,7 @@ public:
      *
      * @return True if the data array was removed, false otherwise.
      */
-    bool removeReference(const DataArray &reference) {
-        if (reference == none) {
-            throw std::runtime_error("DataTag::removeReference: Empty DataArray reference given!");
-        }
-        return backend()->removeReference(reference.id());
-    }
+    bool removeReference(const DataArray &reference);
 
     /**
      * @brief Get all referenced data arrays associated with the tag.
@@ -247,13 +206,8 @@ public:
      *
      * @return A vector containing all filtered DataArray entities.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const
-    {
-        auto f = [this] (size_t i) { return getReference(i); };
-        return getEntities<DataArray>(f,
-                                      referenceCount(),
-                                      filter);
-    }
+    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const;
+
     /**
      * @brief Get all referenced data arrays associated with the tag.
      *
@@ -285,12 +239,7 @@ public:
      *
      * @return True if the feature exists, false otherwise.
      */
-    bool hasFeature(const Feature &feature) const {
-        if (feature == none) {
-            throw std::runtime_error("DataTag::hasFeature: Empty feature given!");
-        }
-        return backend()->hasFeature(feature.id());
-    }
+    bool hasFeature(const Feature &feature) const;
 
     size_t featureCount() const {
         return backend()->featureCount();
@@ -314,13 +263,7 @@ public:
      *
      * @return A vector containing all filtered Feature entities.
      */
-    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const
-    {
-        auto f = [this] (size_t i) { return getFeature(i); };
-        return getEntities<Feature>(f,
-                                    featureCount(),
-                                    filter);
-    }
+    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const;
 
     /**
      * @brief Create a new feature.
@@ -349,12 +292,7 @@ public:
      *
      * @return True if the feature was removed, false otherwise.
      */
-    bool deleteFeature(const Feature &feature) {
-        if (feature == none) {
-            throw std::runtime_error("DataTag::deleteFeature: Empty Feature entity given!");
-        }
-        return backend()->deleteFeature(feature.id());
-    }
+    bool deleteFeature(const Feature &feature);
 
     //------------------------------------------------------
     // Operators and other functions
@@ -371,13 +309,8 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const DataTag &ent) {
-        out << "DataTag: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
-    
+    friend std::ostream& operator<<(std::ostream &out, const DataTag &ent);
+
 };
 
 
