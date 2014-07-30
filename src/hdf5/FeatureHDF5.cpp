@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
@@ -52,7 +53,7 @@ FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &grou
     linkType(link_type);
     // TODO: the line below currently throws an exception if the DataArray
     // is not in block - to consider if we prefer copying it to the block
-    this->data(data.id()); 
+    this->data(data.id());
 }
 
 

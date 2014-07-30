@@ -84,7 +84,7 @@ public:
     void values(const boost::none_t t);
 
 
-    int compare(const IProperty &other) const;
+    int compare(std::shared_ptr<IProperty> other) const;
 
 
     bool operator==(const PropertyHDF5 &other) const;

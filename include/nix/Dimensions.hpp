@@ -11,7 +11,6 @@
 
 #include <nix/base/ImplContainer.hpp>
 #include <nix/base/IDimensions.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 
@@ -40,7 +39,7 @@ class Dimension;
  * sd.offset(10000)
  * ~~~
  */
-class NIXAPI SampledDimension : public virtual base::ISampledDimension, public base::ImplContainer<base::ISampledDimension> {
+class NIXAPI SampledDimension : public base::ImplContainer<base::ISampledDimension> {
 
 public:
 
@@ -104,8 +103,7 @@ public:
         backend()->label(label);
     }
 
-    void label(const none_t t)
-    {
+    void label(const none_t t) {
         backend()->label(t);
     }
 
@@ -113,15 +111,9 @@ public:
         return backend()->unit();
     }
 
-    void unit(const std::string &unit) {
-        if (!(util::isSIUnit(unit))) {
-            throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
-        }
-        backend()->unit(unit);
-    }
+    void unit(const std::string &unit);
 
-    void unit(const none_t t)
-    {
+    void unit(const none_t t) {
         backend()->unit(t);
     }
 
@@ -129,12 +121,7 @@ public:
        return backend()->samplingInterval();
     }
 
-    void samplingInterval(double interval) {
-        if(interval <= 0.0) {
-            throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
-        }
-        backend()->samplingInterval(interval);
-    }
+    void samplingInterval(double interval);
 
     boost::optional<double> offset() const {
         return backend()->offset();
@@ -172,7 +159,7 @@ public:
  * also a list of recorded signals or a stack of images. Optionally an array of labels, one for each index of this
  * dimension, can be specified.
  */
-class NIXAPI SetDimension : virtual public base::ISetDimension, public base::ImplContainer<base::ISetDimension> {
+class NIXAPI SetDimension : public base::ImplContainer<base::ISetDimension> {
 
 public:
 
@@ -266,7 +253,7 @@ public:
  * array of mapping values must be provided. Those values are stored in the dimensions {@link ticks}
  * property. In analogy to the sampled dimension a {@link unit} and a {@link label} can be defined.
  */
-class NIXAPI RangeDimension : virtual public base::IRangeDimension, public base::ImplContainer<base::IRangeDimension> {
+class NIXAPI RangeDimension : public base::ImplContainer<base::IRangeDimension> {
 
 public:
 
@@ -330,8 +317,7 @@ public:
         backend()->label(label);
     }
 
-    void label(const none_t t)
-    {
+    void label(const none_t t) {
         backend()->label(t);
     }
 
@@ -339,15 +325,9 @@ public:
         return backend()->unit();
     }
 
-    void unit(const std::string &unit) {
-        if (!(util::isSIUnit(unit))) {
-            throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
-        }
-        backend()->unit(unit);
-    }
+    void unit(const std::string &unit);
 
-    void unit(const none_t t)
-    {
+    void unit(const none_t t) {
         backend()->unit(t);
     }
 
@@ -355,13 +335,7 @@ public:
         return backend()->ticks();
     }
 
-    void ticks(const std::vector<double> &ticks) {
-        if (!std::is_sorted(ticks.begin(), ticks.end())) {
-            std::string caller = "Range::ticks()";
-            throw UnsortedTicks(caller);
-        }
-        backend()->ticks(ticks);
-    }
+    void ticks(const std::vector<double> &ticks);
 
     /**
      * @brief Assignment operator.
@@ -385,7 +359,7 @@ public:
  *
  * The real dimension descriptor are defined in three subclasses: RangeDimension, SampledDimension and  SetDimension
  */
-class NIXAPI Dimension : public virtual base::IDimension, public base::ImplContainer<base::IDimension> {
+class NIXAPI Dimension : public base::ImplContainer<base::IDimension> {
 
 public:
 
@@ -476,27 +450,12 @@ public:
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
-    
-    SetDimension asSetDimension() const {
-        if(dimensionType() != DimensionType::Set) {
-            throw IncompatibleDimensions("Dimension is not of type Set and thus cannot be cast to this type", "asSetDimension");
-        }
-        return SetDimension(std::dynamic_pointer_cast<base::ISetDimension>(impl()));
-    }
-    
-    SampledDimension asSampledDimension() const {
-        if(dimensionType() != DimensionType::Sample) {
-            throw IncompatibleDimensions("Dimension is not of type Sample and thus cannot be cast to this type", "asSampledDimension");
-        }
-        return SampledDimension(std::dynamic_pointer_cast<base::ISampledDimension>(impl()));
-    }
-    
-    RangeDimension asRangeDimension() const {
-        if(dimensionType() != DimensionType::Range) {
-            throw IncompatibleDimensions("Dimension is not of type Range and thus cannot be cast to this type", "asRangeDimension");
-        }
-        return RangeDimension(std::dynamic_pointer_cast<base::IRangeDimension>(impl()));
-    }
+
+    SetDimension asSetDimension() const;
+
+    SampledDimension asSampledDimension() const;
+
+    RangeDimension asRangeDimension() const;
 
     /**
      * @brief Assignment operator that converts a SampledDimension to Dimension.

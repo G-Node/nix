@@ -149,8 +149,7 @@ public:
      *
      * @param t         None
      */
-    void label(const none_t t)
-    {
+    void label(const none_t t) {
         backend()->label(t);
     }
 
@@ -168,8 +167,7 @@ public:
      *
      * @param t         None
      */
-    void unit(const none_t t)
-    {
+    void unit(const none_t t) {
         backend()->unit(t);
     }
 
@@ -208,8 +206,7 @@ public:
      *
      * @param t         None
      */
-    void expansionOrigin(const none_t t)
-    {
+    void expansionOrigin(const none_t t) {
         backend()->expansionOrigin(t);
     }
 
@@ -239,8 +236,7 @@ public:
      *
      * @param t         None
      */
-    void polynomCoefficients(const none_t t)
-    {
+    void polynomCoefficients(const none_t t) {
         backend()->polynomCoefficients(t);
     }
 
@@ -267,8 +263,7 @@ public:
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions() const
-    {
+    std::vector<Dimension> dimensions() const {
         return dimensions(util::AcceptAll<Dimension>());
     }
 
@@ -439,9 +434,10 @@ public:
     //--------------------------------------------------
 
     /**
-    * @brief Output operator
-    */
-    friend std::ostream & operator<<(std::ostream &out, const DataArray &ent);
+     * @brief Output operator
+     */
+    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 

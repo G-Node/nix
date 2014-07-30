@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
@@ -185,13 +186,13 @@ void PropertyHDF5::values(const none_t t) {
 }
 
 
-int PropertyHDF5::compare(const IProperty &other) const {
+int PropertyHDF5::compare(std::shared_ptr<IProperty> other) const {
     int cmp = 0;
-    if (!name().empty() && !other.name().empty()) {
-        cmp = (name()).compare(other.name());
+    if (!name().empty() && !other->name().empty()) {
+        cmp = (name()).compare(other->name());
     }
     if (cmp == 0) {
-        cmp = id().compare(other.id());
+        cmp = id().compare(other->id());
     }
     return cmp;
 }

@@ -59,9 +59,6 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    int compare(const IEntity &other) const;
-
-
     void swap(EntityHDF5 &other);
 
 

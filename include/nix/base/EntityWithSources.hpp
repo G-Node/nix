@@ -10,7 +10,6 @@
 #define NIX_ENTITY_WITH_SOURCES_H
 
 #include <nix/base/EntityWithMetadata.hpp>
-#include <nix/base/IEntityWithSources.hpp>
 #include <nix/Source.hpp>
 
 namespace nix {
@@ -25,7 +24,7 @@ namespace base {
  * those.
  */
 template <typename T>
-class EntityWithSources : virtual public base::IEntityWithSources, public base::EntityWithMetadata<T> {
+class EntityWithSources : public base::EntityWithMetadata<T> {
 
 public:
 

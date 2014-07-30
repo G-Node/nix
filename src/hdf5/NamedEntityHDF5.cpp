@@ -8,6 +8,7 @@
 
 #include <ctime>
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 using namespace std;
@@ -105,13 +106,13 @@ void NamedEntityHDF5::definition(const none_t t) {
 }
 
 
-int NamedEntityHDF5::compare(const INamedEntity &other) const {
+int NamedEntityHDF5::compare(std::shared_ptr<INamedEntity> other) const {
     int cmp = 0;
-    if (!name().empty() && !other.name().empty()) {
-        cmp = (name()).compare(other.name());
+    if (!name().empty() && !other->name().empty()) {
+        cmp = (name()).compare(other->name());
     }
     if (cmp == 0) {
-        cmp = id().compare(other.id());
+        cmp = id().compare(other->id());
     }
     return cmp;
 }

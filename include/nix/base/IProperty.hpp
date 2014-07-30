@@ -14,7 +14,6 @@
 
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 namespace base {
@@ -160,7 +159,7 @@ public:
      * @return > 0 if the property is larger that other, 0 if both are
      * equal, and < 0 otherwise.
      */
-    virtual int compare(const IProperty &other) const = 0;
+    virtual int compare(std::shared_ptr<IProperty> other) const = 0;
 
     /**
      * @brief Destructor

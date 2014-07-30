@@ -74,7 +74,7 @@ namespace nix {
  * cout << "The block was " << deleted ? "" : "not " << "deleted" << endl;
  * ~~~
  */
-class NIXAPI Block : virtual public base::IBlock, public base::EntityWithMetadata<base::IBlock> {
+class NIXAPI Block : public base::EntityWithMetadata<base::IBlock> {
 
 public:
 
@@ -139,20 +139,7 @@ public:
         return backend()->hasSource(id);
     }
 
-    /**
-     * @brief Checks if this block has a specific root source.
-     *
-     * @param source        The source to check
-     *
-     * @return True if a source with the given id exists at the root, false
-     *         otherwise.
-     */
-    bool hasSource(const Source &source) const {
-        if(source == none) {
-            throw std::runtime_error("Empty Source entity given");
-        }
-        return backend()->hasSource(source.id());
-    }
+    bool hasSource(const Source &source) const;
 
 
     Source getSource(const std::string &id) const {
@@ -177,13 +164,7 @@ public:
      *
      * @return A vector containing the matching root sources.
      */
-    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
-    {
-        auto f = [this] (size_t i) { return getSource(i); };
-        return getEntities<Source>(f,
-                                   sourceCount(),
-                                   filter);
-    }
+    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const;
 
     /**
      * @brief Get all sources in this block recursively.
@@ -212,21 +193,16 @@ public:
     }
 
     /**
-     * @brief Deletes a root source.
-     *
-     * This will also delete all child sources of this root source from the file.
-     * The deletion of a source can't be undone.
-     *
-     * @param source    The source to delete.
-     *
-     * @return True if the source was deleted, false otherwise.
-     */
-    bool deleteSource(const Source &source) {
-        if (source == none) {
-            throw std::runtime_error("Empty Source entity given");
-        }
-        return backend()->deleteSource(source.id());
-    }
+    * @brief Deletes a root source.
+    *
+    * This will also delete all child sources of this root source from the file.
+    * The deletion of a source can't be undone.
+    *
+    * @param source    The source to delete.
+    *
+    * @return True if the source was deleted, false otherwise.
+    */
+    bool deleteSource(const Source &source);
 
     //--------------------------------------------------
     // Methods concerning data arrays
@@ -237,18 +213,13 @@ public:
     }
 
     /**
-     * @brief Checks if a specific data array exists in this block.
-     *
-     * @param data_array        The data array to check.
-     *
-     * @return True if the data array exists, false otherwise.
-     */
-    bool hasDataArray(const DataArray &data_array) const {
-        if (data_array == none) {
-            throw std::runtime_error("Empty DataArray entity given!");
-        }
-        return backend()->hasDataArray(data_array.id());
-    }
+    * @brief Checks if a specific data array exists in this block.
+    *
+    * @param data_array        The data array to check.
+    *
+    * @return True if the data array exists, false otherwise.
+    */
+    bool hasDataArray(const DataArray &data_array) const;
 
     DataArray getDataArray(const std::string &id) const {
         return backend()->getDataArray(id);
@@ -269,13 +240,7 @@ public:
      * @return A vector that contains all filtered data arrays.
      */
     std::vector<DataArray> dataArrays(util::AcceptAll<DataArray>::type filter
-                                      = util::AcceptAll<DataArray>()) const
-    {
-        auto f = [this] (size_t i) { return getDataArray(i); };
-        return getEntities<DataArray>(f,
-                                      dataArrayCount(),
-                                      filter);
-    }
+                                      = util::AcceptAll<DataArray>()) const;
 
     size_t dataArrayCount() const {
         return backend()->dataArrayCount();
@@ -332,21 +297,16 @@ public:
     }
 
     /**
-     * @brief Deletes a data array from this block.
-     *
-     * This deletes a data array and all its dimensions from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param data_array        The data array to delete.
-     *
-     * @return True if the data array was deleted, false otherwise.
-     */
-    bool deleteDataArray(const DataArray &data_array) {
-        if (data_array == none) {
-            throw std::runtime_error("Empty DataArray entity given!");
-        }
-        return backend()->deleteDataArray(data_array.id());
-    }
+    * @brief Deletes a data array from this block.
+    *
+    * This deletes a data array and all its dimensions from the block and the file.
+    * The deletion can't be undone.
+    *
+    * @param data_array        The data array to delete.
+    *
+    * @return True if the data array was deleted, false otherwise.
+    */
+    bool deleteDataArray(const DataArray &data_array);
 
     //--------------------------------------------------
     // Methods concerning simple tags.
@@ -357,19 +317,13 @@ public:
     }
 
     /**
-     * @brief Checks if a specific simple tag exists in the block.
-     *
-     * @param simple_tag        The simple tag to check.
-     *
-     * @return True if the simple tag exists, false otherwise.
-     */
-    bool hasSimpleTag(const SimpleTag &simple_tag) const {
-        if(simple_tag == none) {
-            throw std::runtime_error("Empty SimpleTag entity given!");
-        }
-        return backend()->hasSimpleTag(simple_tag.id());
-    }
-
+    * @brief Checks if a specific simple tag exists in the block.
+    *
+    * @param simple_tag        The simple tag to check.
+    *
+    * @return True if the simple tag exists, false otherwise.
+    */
+    bool hasSimpleTag(const SimpleTag &simple_tag) const;
 
     SimpleTag getSimpleTag(const std::string &id) const {
         return backend()->getSimpleTag(id);
@@ -389,13 +343,8 @@ public:
      *
      * @return A vector that contains all filtered simple tags.
      */
-    std::vector<SimpleTag> simpleTags(util::Filter<SimpleTag>::type filter = util::AcceptAll<SimpleTag>()) const
-    {
-        auto f = [this] (size_t i) { return getSimpleTag(i); };
-        return getEntities<SimpleTag>(f,
-                                      simpleTagCount(),
-                                      filter);
-    }
+    std::vector<SimpleTag> simpleTags(util::Filter<SimpleTag>::type filter
+                                      = util::AcceptAll<SimpleTag>()) const;
 
     size_t simpleTagCount() const {
         return backend()->simpleTagCount();
@@ -411,21 +360,16 @@ public:
     }
 
     /**
-     * @brief Deletes a simple tag from the block.
-     *
-     * Deletes a simple tag with all its features from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param simple_tag        The tag to remove.
-     *
-     * @return True if the tag was removed, false otherwise.
-     */
-    bool deleteSimpleTag(const SimpleTag &simple_tag) {
-        if (simple_tag == none) {
-            throw std::runtime_error("Block::deleteSimpleTag: Empty SimpleTag entity given!");
-        }
-        return backend()->deleteSimpleTag(simple_tag.id());
-    }
+    * @brief Deletes a simple tag from the block.
+    *
+    * Deletes a simple tag with all its features from the block and the file.
+    * The deletion can't be undone.
+    *
+    * @param simple_tag        The tag to remove.
+    *
+    * @return True if the tag was removed, false otherwise.
+    */
+    bool deleteSimpleTag(const SimpleTag &simple_tag);
 
     //--------------------------------------------------
     // Methods concerning data tags.
@@ -436,18 +380,13 @@ public:
     }
 
     /**
-     * @brief Checks if a specific data tag exists in the block.
-     *
-     * @param data_tag          The data tag to check.
-     *
-     * @return True if the data tag exists, false otherwise.
-     */
-    bool hasDataTag(const DataTag &data_tag) const {
-        if (data_tag == none) {
-            throw std::runtime_error("Block::hasDataTag: Empty DataTag entitiy given!");
-        }
-        return backend()->hasDataTag(data_tag.id());
-    }
+    * @brief Checks if a specific data tag exists in the block.
+    *
+    * @param data_tag          The data tag to check.
+    *
+    * @return True if the data tag exists, false otherwise.
+    */
+    bool hasDataTag(const DataTag &data_tag) const;
 
     DataTag getDataTag(const std::string &id) const {
         return backend()->getDataTag(id);
@@ -468,13 +407,7 @@ public:
      * @return A vector that contains all filtered data tags.
      */
     std::vector<DataTag> dataTags(util::AcceptAll<DataTag>::type filter
-                                  = util::AcceptAll<DataTag>()) const
-    {
-        auto f = [this] (size_t i) { return getDataTag(i); };
-        return getEntities<DataTag>(f,
-                                    dataTagCount(),
-                                    filter);
-    }
+                                  = util::AcceptAll<DataTag>()) const;
 
     size_t dataTagCount() const {
         return backend()->dataTagCount();
@@ -490,21 +423,16 @@ public:
     }
 
     /**
-     * @brief Deletes a data tag from the block.
-     *
-     * Deletes a data tag and all its features from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param data_tag  The tag to remove.
-     *
-     * @return True if the tag was removed, false otherwise.
-     */
-    bool deleteDataTag(const DataTag &data_tag) {
-        if (data_tag == none) {
-            throw std::runtime_error("Block::deleteDataTag: Empty DataTag entitiy given!");
-        }
-        return backend()->deleteDataTag(data_tag.id());
-    }
+    * @brief Deletes a data tag from the block.
+    *
+    * Deletes a data tag and all its features from the block and the file.
+    * The deletion can't be undone.
+    *
+    * @param data_tag  The tag to remove.
+    *
+    * @return True if the tag was removed, false otherwise.
+    */
+    bool deleteDataTag(const DataTag &data_tag);
 
     //------------------------------------------------------
     // Operators and other functions
@@ -521,12 +449,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Block &ent) {
-        out << "Block: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
+    friend std::ostream & operator<<(std::ostream &out, const Block &ent);
 
 };
 

@@ -10,6 +10,7 @@
 
 #include "TestSource.hpp"
 
+#include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
 
