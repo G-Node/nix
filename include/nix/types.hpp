@@ -10,11 +10,22 @@
 #define NIX_TYPES_H
 
 namespace nix {
-    
-class Block; class DataArray; class DataTag; class Dimension;
-class RangeDimension; class SetDimension; class SampledDimension;
-class Feature; class File; class Property; class Section;
-class SimpleTag; class Source; class Value;
+
+// Can be used for forward declaration
+class Block;
+class DataArray;
+class DataTag;
+class Dimension;
+class RangeDimension;
+class SetDimension;
+class SampledDimension;
+class Feature;
+class File;
+class Property;
+class Section;
+class SimpleTag;
+class Source;
+class Value;
 
 }
 
