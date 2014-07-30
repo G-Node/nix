@@ -6,15 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <string>
 #include <cstdlib>
 #include <mutex>
-#include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
-#include <nix/util/util.hpp>
 
+#include <nix/Exception.hpp>
+#include <nix/util/util.hpp>
 
 using namespace std;
 

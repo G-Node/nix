@@ -13,7 +13,6 @@
 
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/ISimpleTag.hpp>
-#include <nix/Section.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
 
@@ -45,7 +44,7 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI SimpleTag : virtual public base::ISimpleTag, public base::EntityWithSources<base::ISimpleTag> {
+class NIXAPI SimpleTag : public base::EntityWithSources<base::ISimpleTag> {
 
 public:
 
@@ -113,19 +112,7 @@ public:
         return backend()->units();
     }
 
-    void units(const std::vector<std::string> &units) {
-        std::vector<std::string> sanitized;
-        sanitized.reserve(units.size());
-        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
-                std::string unit = util::unitSanitizer(x);
-                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
-                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
-                    throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
-                }
-                return unit;
-            });
-        backend()->units(sanitized);
-    }
+    void units(const std::vector<std::string> &units);
 
     void units(const boost::none_t t) {
         backend()->units(t);
@@ -170,12 +157,7 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasReference(const DataArray &reference) const {
-        if (reference == none) {
-            throw std::runtime_error("SimpleTag::hasReference: Emty DataArray entity given!");
-        }
-        return backend()->hasReference(reference.id());
-    }
+    bool hasReference(const DataArray &reference) const;
 
     size_t referenceCount() const {
         return backend()->referenceCount();
@@ -194,12 +176,7 @@ public:
      *
      * @param reference The DataArray to add.
      */
-    void addReference(const DataArray &reference) {
-        if (reference == none) {
-            throw std::runtime_error("SimpleTag::addReference: Empty DataArray entity given!");
-        }
-        backend()->addReference(reference.id());
-    }
+    void addReference(const DataArray &reference);
 
     void addReference(const std::string &id) {
         backend()->addReference(id);
@@ -215,12 +192,7 @@ public:
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeReference(const DataArray &reference) {
-        if(reference == none) {
-            throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
-        }
-        return backend()->removeReference(reference.id());
-    }
+    bool removeReference(const DataArray &reference);
 
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
@@ -236,15 +208,10 @@ public:
      *
      * @return A vector containing the matching data arrays.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const
-    {
-        auto f = [this] (size_t i) { return getReference(i); };
-        return getEntities<DataArray>(f,
-                                      referenceCount(),
-                                      filter);
-    }
+    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const;
+
     /**
-     * @brief Get all referenced data arrays associated with this simple 
+     * @brief Get all referenced data arrays associated with this simple
      * tag.
      *
      * Always uses filter that accepts all sources.
@@ -275,12 +242,7 @@ public:
      *
      * @return True if the feature exists, false otherwise.
      */
-    bool hasFeature(const Feature &feature) const {
-        if(feature == none) {
-            throw std::runtime_error("SimpleTag::hasFeature: Empty DataArray entity given!");
-        }
-        return backend()->hasFeature(feature.id());
-    }
+    bool hasFeature(const Feature &feature) const;
 
     size_t featureCount() const {
         return backend()->featureCount();
@@ -304,13 +266,7 @@ public:
      *
      * @return A vector containing the matching features.
      */
-    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const
-    {
-        auto f = [this] (size_t i) { return getFeature(i); };
-        return getEntities<Feature>(f,
-                                    featureCount(),
-                                    filter);
-    }
+    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const;
 
     /**
      * @brief Create a new feature.
@@ -320,12 +276,7 @@ public:
      *
      * @return The created feature object.
      */
-    Feature createFeature(const DataArray &data, LinkType link_type) {
-        if(data == none) {
-            throw std::runtime_error("SimpleTag::createFeature: Empty DataArray entity given!");
-        }
-        return backend()->createFeature(data.id(), link_type);
-    }
+    Feature createFeature(const DataArray &data, LinkType link_type);
 
     Feature createFeature(const std::string &data_array_id, LinkType link_type) {
         return backend()->createFeature(data_array_id, link_type);
@@ -342,12 +293,7 @@ public:
      *
      * @return True if the feature was removed, false otherwise.
      */
-    bool deleteFeature(const Feature &feature) {
-        if (feature == none) {
-            throw std::runtime_error("SimpleTag::deleteFeature: Empty Feature entity given!");
-        }
-        return backend()->deleteFeature(feature.id());
-    }
+    bool deleteFeature(const Feature &feature);
 
     //--------------------------------------------------
     // Other methods and functions
@@ -364,13 +310,8 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent) {
-        out << "SimpleTag: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
-    
+    friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent);
+
 };
 
 

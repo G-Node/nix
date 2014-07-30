@@ -12,6 +12,7 @@
 
 #include "TestDataArray.hpp"
 
+#include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
 using namespace nix;
@@ -259,7 +260,7 @@ void TestDataArray::testDimension()
     dims.push_back(array2.appendSampledDimension(samplingInterval));
     dims.push_back(array2.appendSetDimension());
     dims[3] = array2.createRangeDimension(4, ticks);
-    
+
     // have some explicit dimension types
     nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
     nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);

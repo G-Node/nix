@@ -9,7 +9,7 @@
 
 #include <nix/valid/validate.hpp>
 
-#include <nix.hpp>
+#include <nix/File.hpp>
 #include <nix/hdf5/FileHDF5.hpp>
 
 using namespace std;
@@ -23,6 +23,56 @@ File File::open(const std::string name, FileMode mode, Implementation impl) {
     } else {
         throw runtime_error("Unknown implementation!");
     }
+}
+
+
+bool File::hasBlock(const Block &block) const {
+    if (block == none) {
+        throw std::runtime_error("File::hasBlock: Empty Block entity given!");
+    }
+    return backend()->hasBlock(block.id());
+}
+
+
+bool File::deleteBlock(const Block &block) {
+    if (block == none) {
+        throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
+    }
+    return backend()->deleteBlock(block.id());
+}
+
+
+std::vector<Block> File::blocks(util::Filter<Block>::type filter) const
+{
+    auto f = [this] (size_t i) { return getBlock(i); };
+    return getEntities<Block>(f,
+                              blockCount(),
+                              filter);
+}
+
+
+bool File::hasSection(const Section &section) const {
+    if(section == none) {
+        throw std::runtime_error("File::hasSection: Empty Section entity given!");
+    }
+    return backend()->hasSection(section.id());
+}
+
+
+std::vector<Section> File::sections(util::Filter<Section>::type filter) const
+{
+    auto f = [this] (size_t i) { return getSection(i); };
+    return getEntities<Section>(f,
+                                sectionCount(),
+                                filter);
+}
+
+
+bool File::deleteSection(const Section &section) {
+    if(section == none) {
+        throw std::runtime_error("File::hasSection: Empty Section entity given!");
+    }
+    return deleteSection(section.id());
 }
 
 
@@ -46,7 +96,7 @@ valid::Result File::validate() const {
     // (the multi-getters use size_t-getter which in the end use H5Lget_name_by_idx
     // to get each file objects name - the count is determined by H5::Group::getNumObjs
     // so that in the end really all file objects are retrieved)
-    
+
     // Blocks
     auto blcks = blocks();
     for(auto &block : blcks) {
@@ -110,6 +160,14 @@ valid::Result File::validate() const {
     }
 
     return result;
+}
+
+
+void File::close() {
+    if (!isNone()) {
+        backend()->close();
+        nullify();
+    }
 }
 
 }

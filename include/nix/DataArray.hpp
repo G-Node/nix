@@ -149,8 +149,7 @@ public:
      *
      * @param t         None
      */
-    void label(const none_t t)
-    {
+    void label(const none_t t) {
         backend()->label(t);
     }
 
@@ -168,8 +167,7 @@ public:
      *
      * @param t         None
      */
-    void unit(const none_t t)
-    {
+    void unit(const none_t t) {
         backend()->unit(t);
     }
 
@@ -178,12 +176,7 @@ public:
      *
      * @param unit      The unit of the data array.
      */
-    void unit(const std::string &unit) {
-        if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
-            throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
-        }
-        backend()->unit(unit);
-    }
+    void unit(const std::string &unit);
 
     /**
      * @brief Returns the expansion origin of the calibration polynom.
@@ -213,8 +206,7 @@ public:
      *
      * @param t         None
      */
-    void expansionOrigin(const none_t t)
-    {
+    void expansionOrigin(const none_t t) {
         backend()->expansionOrigin(t);
     }
 
@@ -244,8 +236,7 @@ public:
      *
      * @param t         None
      */
-    void polynomCoefficients(const none_t t)
-    {
+    void polynomCoefficients(const none_t t) {
         backend()->polynomCoefficients(t);
     }
 
@@ -263,13 +254,8 @@ public:
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter) const
-    {
-        auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
-        return getEntities<Dimension>(f,
-                                      dimensionCount(),
-                                      filter);
-    }
+    std::vector<Dimension> dimensions(util::Filter<Dimension>::type filter) const;
+
     /**
      * @brief Get all dimensions associated with this data array.
      *
@@ -277,8 +263,7 @@ public:
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions() const
-    {
+    std::vector<Dimension> dimensions() const {
         return dimensions(util::AcceptAll<Dimension>());
     }
 
@@ -451,12 +436,8 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent) {
-        out << "DataArray: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
+    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
 

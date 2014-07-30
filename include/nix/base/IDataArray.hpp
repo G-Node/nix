@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-#include <nix/base/EntityWithSources.hpp>
+#include <nix/base/IEntityWithSources.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
 

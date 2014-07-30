@@ -10,7 +10,6 @@
 #define NIX_ENTITY_WITH_METADATA_H
 
 #include <nix/base/NamedEntity.hpp>
-#include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/Section.hpp>
 
 namespace nix {
@@ -27,7 +26,7 @@ namespace base {
  * metadata.
  */
 template <typename T>
-class EntityWithMetadata : virtual public IEntityWithMetadata, public NamedEntity<T> {
+class EntityWithMetadata : public NamedEntity<T> {
 
 public:
 

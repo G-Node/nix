@@ -191,5 +191,11 @@ void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const ND
     attr.write(mem_type, *reader);
 }
 
+bool Group::createLink(const Group &target, const Group &link_base, const std::string link_name) {
+    herr_t err = H5Lcreate_hard(target.h5group.getLocId(), ".",
+            link_base.h5group.getLocId(), link_name.c_str(), H5L_SAME_LOC, H5L_SAME_LOC);
+    return err == 0;
+}
+
 } // namespace hdf5
 } // namespace nix

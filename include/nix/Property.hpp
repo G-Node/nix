@@ -31,7 +31,7 @@ namespace nix {
  * to the {@link nix::Section} entity, mapping information can be provided
  * using the {@link mapping} field.
  */
-class NIXAPI Property : virtual public base::IProperty, public base::Entity<base::IProperty> {
+class NIXAPI Property : public base::Entity<base::IProperty> {
 
 public:
 
@@ -134,17 +134,7 @@ public:
         return backend()->dataType();
     }
 
-    void unit(const std::string &unit) {
-        if (backend()->valueCount() > 0 && backend()->unit()) {
-            throw std::runtime_error("Cannot change unit of a not-empty property!");
-        }
-
-        std::string clean_unit = util::deblankString(unit);
-        if (!(util::isSIUnit(clean_unit) || util::isCompoundSIUnit(clean_unit))) {
-            throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
-        }
-        backend()->unit(clean_unit);
-    }
+    void unit(const std::string &unit);
 
     boost::optional<std::string> unit() const {
         return backend()->unit();
@@ -182,8 +172,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    int compare(const IProperty &other) const {
-        return backend()->compare(other);
+    int compare(const Property &other) const {
+        return backend()->compare(other.impl());
     }
 
     /**
@@ -197,10 +187,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Property &ent) {
-        out << "Property: {name = " << ent.name() << "}";
-        return out;
-    }
+    friend std::ostream& operator<<(std::ostream &out, const Property &ent);
 
     virtual ~Property() {}
 

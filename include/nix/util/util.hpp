@@ -25,7 +25,6 @@
 #include <boost/none_t.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/Exception.hpp>
 
 
 namespace nix {

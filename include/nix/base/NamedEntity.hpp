@@ -29,7 +29,7 @@ namespace base {
  * property that allows the user to add a freely assignable textual definition to the entity.
  */
 template<typename T>
-class NamedEntity : virtual public INamedEntity, public Entity<T> {
+class NamedEntity : public Entity<T> {
 
 public:
 
@@ -77,7 +77,7 @@ public:
     std::string name() const {
         return Entity<T>::backend()->name();
     }
-    
+
 
     void definition(const std::string &definition) {
         Entity<T>::backend()->definition(definition);
@@ -95,15 +95,15 @@ public:
     }
 
 
-    int compare(const INamedEntity &other) const {
-        return Entity<T>::backend()->compare(other);
+    int compare(NamedEntity &other) const {
+        return Entity<T>::backend()->compare(other.imp());
     }
 
     /**
      * @brief Destructor
      */
     virtual ~NamedEntity() {}
-    
+
 };
 
 

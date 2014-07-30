@@ -21,7 +21,7 @@
 namespace nix {
 
 
-class NIXAPI File : public base::IFile, public base::ImplContainer<base::IFile> {
+class NIXAPI File : public base::ImplContainer<base::IFile> {
 
 public:
 
@@ -107,12 +107,7 @@ public:
      *
      * @return True if the block exists, false otherwise.
      */
-    bool hasBlock(const Block &block) const {
-        if (block == none) {
-            throw std::runtime_error("File::hasBlock: Empty Block entity given!");
-        }
-        return backend()->hasBlock(block.id());
-    }
+    bool hasBlock(const Block &block) const;
 
     Block getBlock(const std::string &id) const {
         return backend()->getBlock(id);
@@ -140,12 +135,7 @@ public:
      *
      * @return True if the block has been removed, false otherwise.
      */
-    bool deleteBlock(const Block &block) {
-        if (block == none) {
-            throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
-        }
-        return backend()->deleteBlock(block.id());
-    }
+    bool deleteBlock(const Block &block);
 
     /**
      * @brief Get all blocks within this file.
@@ -157,13 +147,7 @@ public:
      *
      * @return A vector of filtered Block entities.
      */
-    std::vector<Block> blocks(util::Filter<Block>::type filter = util::AcceptAll<Block>()) const
-    {
-        auto f = [this] (size_t i) { return getBlock(i); };
-        return getEntities<Block>(f,
-                                  blockCount(),
-                                  filter);
-    }
+    std::vector<Block> blocks(util::Filter<Block>::type filter = util::AcceptAll<Block>()) const;
 
     //--------------------------------------------------
     // Methods concerning sections
@@ -174,12 +158,7 @@ public:
     }
 
 
-    bool hasSection(const Section &section) const {
-        if(section == none) {
-            throw std::runtime_error("File::hasSection: Empty Section entity given!");
-        }
-        return backend()->hasSection(section.id());
-    }
+    bool hasSection(const Section &section) const;
 
 
     Section getSection(const std::string &id) const {
@@ -207,13 +186,7 @@ public:
      *
      * @return A vector of filtered Section entities.
      */
-    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const
-    {
-        auto f = [this] (size_t i) { return getSection(i); };
-        return getEntities<Section>(f,
-                                    sectionCount(),
-                                    filter);
-    }
+    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
 
     /**
      * @brief Get all sections in this file recursively.
@@ -249,12 +222,7 @@ public:
      *
      * @return True if the section was deleted, false otherwise.
      */
-    bool deleteSection(const Section &section) {
-        if(section == none) {
-            throw std::runtime_error("File::hasSection: Empty Section entity given!");
-        }
-        return deleteSection(section.id());
-    }
+    bool deleteSection(const Section &section);
 
     //--------------------------------------------------
     // Methods for file attribute access.
@@ -309,12 +277,7 @@ public:
     //------------------------------------------------------
 
 
-    void close() {
-        if (!isNone()) {
-            backend()->close();
-            nullify();
-        }
-    }
+    void close();
 
 
     bool isOpen() const {
@@ -328,13 +291,13 @@ public:
         nullify();
         return *this;
     }
-    
+
     //------------------------------------------------------
     // Validate
     //------------------------------------------------------
-    
+
     valid::Result validate() const;
-    
+
 };
 
 

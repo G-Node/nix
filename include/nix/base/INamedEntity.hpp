@@ -9,6 +9,8 @@
 #ifndef NIX_I_NAMEDENTITY_H
 #define NIX_I_NAMEDENTITY_H
 
+#include <memory>
+
 #include <nix/base/IEntity.hpp>
 #include <boost/optional.hpp>
 
@@ -60,7 +62,7 @@ public:
      * @return string The name of the entity.
      */
     virtual std::string name() const = 0;
-    
+
     /**
      * @brief Setter for the definition of the entity.
      *
@@ -77,7 +79,7 @@ public:
      * @return The definition of the entity.
      */
     virtual boost::optional<std::string> definition() const = 0;
-    
+
     /**
      * @brief Deleter for the definition of the entity.
      */
@@ -91,7 +93,7 @@ public:
      * @return > 0 if the entity is larger that other, 0 if both are
      * equal, and < 0 otherwise.
      */
-    virtual int compare(const INamedEntity &other) const = 0;
+    virtual int compare(std::shared_ptr<INamedEntity> other) const = 0;
 
     /**
      * @brief Destructor

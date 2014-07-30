@@ -6,8 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix.hpp>
+#include <nix/Feature.hpp>
 
 namespace nix {
+
+void Feature::data(const DataArray &data) {
+    if(data == none) {
+        throw std::runtime_error("Empty data entity (DataArray) given");
+    }
+    else {
+        backend()->data(data.id());
+    }
+}
 
 }
