@@ -8,10 +8,11 @@
 
 #include <nix/util/util.hpp>
 #include <nix/Dimensions.hpp>
+#include <nix/Exception.hpp>
 
 using namespace std;
-
-namespace nix {
+using namespace nix;
+using namespace nix::base;
 
 
 //-------------------------------------------------------
@@ -57,6 +58,30 @@ Dimension::Dimension(const RangeDimension &other)
 Dimension::Dimension(const SetDimension &other)
     : ImplContainer(dynamic_pointer_cast<IDimension>(other.impl()))
 {
+}
+
+
+SetDimension Dimension::asSetDimension() const {
+    if(dimensionType() != DimensionType::Set) {
+        throw IncompatibleDimensions("Dimension is not of type Set and thus cannot be cast to this type", "asSetDimension");
+    }
+    return SetDimension(std::dynamic_pointer_cast<base::ISetDimension>(impl()));
+}
+
+
+SampledDimension Dimension::asSampledDimension() const {
+    if(dimensionType() != DimensionType::Sample) {
+        throw IncompatibleDimensions("Dimension is not of type Sample and thus cannot be cast to this type", "asSampledDimension");
+    }
+    return SampledDimension(std::dynamic_pointer_cast<base::ISampledDimension>(impl()));
+}
+
+
+RangeDimension Dimension::asRangeDimension() const {
+    if(dimensionType() != DimensionType::Range) {
+        throw IncompatibleDimensions("Dimension is not of type Range and thus cannot be cast to this type", "asRangeDimension");
+    }
+    return RangeDimension(std::dynamic_pointer_cast<base::IRangeDimension>(impl()));
 }
 
 
@@ -118,6 +143,22 @@ SampledDimension::SampledDimension(std::shared_ptr<ISampledDimension> &&ptr)
 SampledDimension::SampledDimension(const SampledDimension &other)
     : ImplContainer(other)
 {
+}
+
+
+void SampledDimension::unit(const std::string &unit) {
+    if (!(util::isSIUnit(unit))) {
+        throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
+    }
+    backend()->unit(unit);
+}
+
+
+void SampledDimension::samplingInterval(double interval) {
+    if(interval <= 0.0) {
+        throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
+    }
+    backend()->samplingInterval(interval);
 }
 
 
@@ -219,6 +260,23 @@ RangeDimension::RangeDimension(const RangeDimension &other)
 }
 
 
+void RangeDimension::unit(const std::string &unit) {
+    if (!(util::isSIUnit(unit))) {
+        throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
+    }
+    backend()->unit(unit);
+}
+
+
+void RangeDimension::ticks(const std::vector<double> &ticks) {
+    if (!std::is_sorted(ticks.begin(), ticks.end())) {
+        std::string caller = "Range::ticks()";
+        throw UnsortedTicks(caller);
+    }
+    backend()->ticks(ticks);
+}
+
+
 RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
     shared_ptr<IRangeDimension> tmp(other.impl());
 
@@ -240,4 +298,6 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
     return *this;
 }
 
-} // namespace nix
+
+
+
