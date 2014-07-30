@@ -9,7 +9,6 @@
 #ifndef NIX_ENTITY_H
 #define NIX_ENTITY_H
 
-#include <nix/base/IEntity.hpp>
 #include <nix/base/ImplContainer.hpp>
 
 namespace nix {
@@ -28,7 +27,7 @@ namespace base {
  * last modification time.
  */
 template<typename T>
-class Entity : virtual public IEntity, public ImplContainer<T> {
+class Entity : public ImplContainer<T> {
 
 public:
 
