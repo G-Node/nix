@@ -79,11 +79,6 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
-int EntityHDF5::compare(const IEntity &other) const {
-    return id().compare(other.id());
-}
-
-
 void EntityHDF5::swap(EntityHDF5 &other) {
     using std::swap;
 

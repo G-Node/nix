@@ -59,7 +59,7 @@ public:
     void definition(const none_t t);
 
 
-    int compare(const INamedEntity &other) const;
+    int compare(std::shared_ptr<INamedEntity> other) const;
 
 
     ~NamedEntityHDF5();

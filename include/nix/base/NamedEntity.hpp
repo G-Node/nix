@@ -95,8 +95,8 @@ public:
     }
 
 
-    int compare(const INamedEntity &other) const {
-        return Entity<T>::backend()->compare(other);
+    int compare(NamedEntity &other) const {
+        return Entity<T>::backend()->compare(other.imp());
     }
 
     /**

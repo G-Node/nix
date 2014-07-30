@@ -172,8 +172,8 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    int compare(const base::IProperty &other) const {
-        return backend()->compare(other);
+    int compare(const Property &other) const {
+        return backend()->compare(other.impl());
     }
 
     /**
