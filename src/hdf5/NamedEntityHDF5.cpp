@@ -8,6 +8,7 @@
 
 #include <ctime>
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 using namespace std;

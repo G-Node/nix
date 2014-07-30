@@ -14,7 +14,6 @@
 
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 namespace base {

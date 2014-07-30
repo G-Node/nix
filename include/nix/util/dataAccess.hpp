@@ -14,9 +14,11 @@
 #ifndef NIX_DATAACCESS_H
 #define NIX_DATAACCESS_H
 
-#include <nix/util/util.hpp>
 #include <nix/NDArray.hpp>
-#include <nix.hpp>
+#include <nix/Dimensions.hpp>
+#include <nix/DataArray.hpp>
+#include <nix/DataTag.hpp>
+#include <nix/SimpleTag.hpp>
 
 namespace nix {
 namespace util {

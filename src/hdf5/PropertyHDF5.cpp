@@ -8,6 +8,7 @@
 
 #include <iostream>
 
+#include <nix/util/util.hpp>
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;

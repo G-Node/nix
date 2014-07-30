@@ -9,9 +9,12 @@
 #include <string>
 #include <cstdlib>
 #include <cmath>
-#include <boost/optional.hpp>
-#include <nix/util/dataAccess.hpp>
 #include <algorithm>
+
+#include <boost/optional.hpp>
+
+#include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
 
 using namespace std;
 

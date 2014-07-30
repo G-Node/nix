@@ -12,7 +12,6 @@
 #include <limits>
 #include <functional>
 
-#include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
