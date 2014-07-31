@@ -91,11 +91,22 @@ public:
     static File open(const std::string name, FileMode mode=FileMode::ReadWrite,
                      Implementation impl=Implementation::Hdf5);
 
+    /**
+     * @brief Get the number of blocks in in the file.
+     *
+     * @return The number of blocks.
+     */
     size_t blockCount() const {
         return backend()->blockCount();
     }
 
-
+    /**
+     * @brief Check if a block exists in the file.
+     *
+     * @param id    The ID of the block.
+     *
+     * @return True if the block exists, false otherwise.
+     */
     bool hasBlock(const std::string &id) const {
         return backend()->hasBlock(id);
     }
@@ -109,21 +120,47 @@ public:
      */
     bool hasBlock(const Block &block) const;
 
+    /**
+     * @brief Read an existing block from the file.
+     *
+     * @param id    The ID of the block.
+     *
+     * @return The block with the given id.
+     */
     Block getBlock(const std::string &id) const {
         return backend()->getBlock(id);
     }
 
-
+    /**
+     * @brief Read an existing with block from the file, addressed by index.
+     *
+     * @param index   The index of the block to read.
+     *
+     * @return The block at the given index.
+     */
     Block getBlock(size_t index) const {
         return backend()->getBlock(index);
     }
 
-
+    /**
+     * @brief Create an new block, that is immediately persisted in the file.
+     *
+     * @param name    The name of the block.
+     * @param type    The type of the block.
+     *
+     * @return The created block.
+     */
     Block createBlock(const std::string &name, const std::string &type) {
         return backend()->createBlock(name, type);
     }
 
-
+    /**
+     * @brief Deletes a block from the file.
+     *
+     * @param id    The id of the block to delete.
+     *
+     * @return True if the block has been removed, false otherwise.
+     */
     bool deleteBlock(const std::string &id) {
         return backend()->deleteBlock(id);
     }
@@ -153,24 +190,53 @@ public:
     // Methods concerning sections
     //--------------------------------------------------
 
+    /**
+     * @brief Check if a specific root section exists in the file.
+     *
+     * @param id      The ID of the section.
+     *
+     * @return True if the section exists, false otherwise.
+     */
     bool hasSection(const std::string &id) const {
         return backend()->hasSection(id);
     }
 
-
+    /**
+     * @brief Check if a specific root section exists in the file.
+     *
+     * @param section The section to check.
+     *
+     * @return True if the section exists, false otherwise.
+     */
     bool hasSection(const Section &section) const;
 
-
+    /**
+     * @brief Get a root section with the given id.
+     *
+     * @param id      The id of the section.
+     *
+     * @return The section with the specified id.
+     */
     Section getSection(const std::string &id) const {
         return backend()->getSection(id);
     }
 
-
+    /**
+     * @brief Get root section with a given index/position.
+     *
+     * @param index      The index of the section.
+     *
+     * @return The section with the specified index.
+     */
     Section getSection(size_t index) const {
         return backend()->getSection(index);
     }
 
-
+    /**
+     * @brief Returns the number of root sections stored in the File.
+     *
+     * @return size_t   The number of sections.
+     */
     size_t sectionCount() const {
         return backend()->sectionCount();
     }
@@ -205,12 +271,25 @@ public:
     std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
-
+    /**
+     * @brief Creates a new Section with a given name and type. Both must not be empty.
+     *
+     * @param name    The name of the section.
+     * @param type    The type of the section.
+     *
+     * @return The created Section.
+     */
     Section createSection(const std::string &name, const std::string &type) {
         return backend()->createSection(name, type);
     }
 
-
+    /**
+     * @brief Deletes the Section that is specified with the id.
+     *
+     * @param id        The id of the section to delete.
+     *
+     * @return True if the section was deleted, false otherwise.
+     */
     bool deleteSection(const std::string &id) {
         return backend()->deleteSection(id);
     }
@@ -228,46 +307,82 @@ public:
     // Methods for file attribute access.
     //--------------------------------------------------
 
+    /**
+     * @brief Read the NIX format version from the file.
+     *
+     * The version consist of three integers standing for the major,
+     * minor and patch version of the nix format.
+     *
+     * @return The format version of the NIX file.
+     */
     std::vector<int> version() const {
         return backend()->version();
     }
 
-
+    /**
+     * @brief Read the format hint from the file.
+     *
+     * @return The format hint.
+     */
     std::string format() const {
         return backend()->format();
     }
 
-
+    /**
+     * @brief Return the location / uri.
+     *
+     * @return The uri string.
+     */
     std::string location() const {
         return backend()->location();
     }
 
-
+    /**
+     * @brief Get the creation date of the file.
+     *
+     * @return The creation date of the file.
+     */
     time_t createdAt() const {
         return backend()->createdAt();
     }
 
-
+    /**
+     * @brief Get the date of the last update.
+     *
+     * @return The date of the last update.
+     */
     time_t updatedAt() const {
         return backend()->updatedAt();
     }
 
-
+    /**
+     * @brief Sets the time of the last update to the current time if
+     * the field is not set.
+     */
     void setUpdatedAt() {
         backend()->setUpdatedAt();
     }
 
-
+    /**
+     * @brief Sets the time of the last update to the current time.
+     */
     void forceUpdatedAt() {
         backend()->forceUpdatedAt();
     }
 
-
+    /**
+     * @brief Sets the creation time to the current time if the field is not set.
+     */
     void setCreatedAt() {
         backend()->setCreatedAt();
     }
 
-
+    /**
+     * @brief Sets the creation time to the provided value even if the
+     * attribute is set.
+     *
+     * @param time      The creation time to set.
+     */
     void forceCreatedAt(time_t t) {
         backend()->forceCreatedAt(t);
     }
@@ -276,10 +391,16 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-
+    /**
+     * @brief Close the file.
+     */
     void close();
 
-
+    /**
+     * @brief Check if the file is currently open.
+     *
+     * @return True if the file is open, false otherwise.
+     */
     bool isOpen() const {
         return !isNone() && backend()->isOpen();
     }
