@@ -9,7 +9,12 @@
 #ifndef CLI_H
 #define CLI_H
 
-#include <modules/Validate.hpp>
+#include <nix/base/Entity.hpp>
+#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
+#include <nix.hpp>
+
 #include <string>
 #include <utility>
 #include <unordered_map>

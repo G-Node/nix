@@ -17,11 +17,17 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
+#include <nix/base/Entity.hpp>
+#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
 #include <nix.hpp>
-#include <modules/IModule.hpp>
+
 #include <Cli.hpp>
-#include <modules/Validate.hpp>
 #include <Exception.hpp>
+#include <modules/IModule.hpp>
+#include <modules/Validate.hpp>
+#include <modules/Dump.hpp>
 
 namespace cli {
 
@@ -35,7 +41,8 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 
 // define all module types
 std::unordered_map<std::string, std::shared_ptr<cli::module::IModule>> modules = {
-    {std::string(cli::module::Validate::module_name), std::shared_ptr<cli::module::IModule>(new cli::module::Validate())}
+    {std::string(cli::module::Validate::module_name), std::shared_ptr<cli::module::IModule>(new cli::module::Validate())},
+    {std::string(cli::module::Dump::module_name), std::shared_ptr<cli::module::IModule>(new cli::module::Dump())}
 };
 
 } // namespace cli
