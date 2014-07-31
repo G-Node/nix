@@ -24,10 +24,14 @@
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
 
+#include <nix/Exception.hpp>
 #include <nix/Platform.hpp>
 
 
 namespace nix {
+    
+enum class DimensionType : unsigned int;
+
 namespace util {
 
 /**
@@ -246,6 +250,15 @@ std::string numToStr(T number) {
     s << number;
     return s.str();
 }
+
+/**
+ * @brief Convert a DimensionType into a string representation.
+ *
+ * @param number  The DimensionType to convert
+ *
+ * @return The string representation of the DimensionType
+ */
+NIXAPI std::string dimTypeToStr(const DimensionType &dtype);
 
 /**
  * @brief Convert string to number
