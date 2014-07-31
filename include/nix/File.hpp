@@ -381,7 +381,7 @@ public:
      * @brief Sets the creation time to the provided value even if the
      * attribute is set.
      *
-     * @param time      The creation time to set.
+     * @param t        The creation time to set.
      */
     void forceCreatedAt(time_t t) {
         backend()->forceCreatedAt(t);

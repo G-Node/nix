@@ -580,7 +580,7 @@ public:
      *
      * @param name      The name of the data tag to create.
      * @param type      The type of the tag.
-     * @param positions The positions of the tag.
+     * @param position  The position of the tag.
      *
      * @return The newly created tag.
      */

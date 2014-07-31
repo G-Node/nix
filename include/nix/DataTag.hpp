@@ -424,8 +424,8 @@ public:
      *
      * @return The created feature object.
      */
-    Feature createFeature(const std::string &data_array_id, LinkType link_type) {
-        return backend()->createFeature(data_array_id, link_type);
+    Feature createFeature(const std::string &id, LinkType link_type) {
+        return backend()->createFeature(id, link_type);
     }
 
     /**
