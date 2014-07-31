@@ -103,14 +103,29 @@ public:
     {
     }
 
+    /**
+     * @brief Setter for the link type.
+     *
+     * @param type    The link type to set.
+     */
     void linkType(LinkType type) {
         backend()->linkType(type);
     }
 
+    /**
+     * @brief Getter for the link type.
+     *
+     * @return The current link type of the feature.
+     */
     LinkType linkType() const {
         return backend()->linkType();
     }
 
+    /**
+     * @brief Sets the data array associated with this feature.
+     *
+     * @param id        The id of the data array to set.
+     */
     void data(const std::string &id) {
         backend()->data(id);
     }
@@ -122,6 +137,11 @@ public:
      */
     void data(const DataArray &data);
 
+    /**
+     * @brief Gets the data array associated with this feature.
+     *
+     * @return The associated data array.
+     */
     DataArray data() const {
         return backend()->data();
     }
@@ -130,7 +150,7 @@ public:
      * @brief Destructor.
      */
     virtual ~Feature() {}
-    
+
 };
 
 
