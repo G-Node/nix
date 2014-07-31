@@ -58,7 +58,7 @@ private:
     nix::Block block;
     nix::DataArray array1;
     nix::DataArray array2;
-    nix::DataArray array_tmp;
+    nix::DataArray array3;
     std::vector<nix::DataArray> refs = {array1, array2};
     std::vector<double> extent, position;
     nix::DataArray positions;
@@ -72,6 +72,9 @@ private:
     nix::SetDimension dim_set1;
     nix::SetDimension dim_set2;
     nix::SetDimension dim_set3;
+    nix::SampledDimension dim_sample1;
+    nix::SampledDimension dim_sample2;
+    nix::SampledDimension dim_sample3;
     nix::RangeDimension dim_range1;
     nix::RangeDimension dim_range2;
     nix::RangeDimension dim_range3;

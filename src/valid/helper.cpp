@@ -14,8 +14,7 @@ namespace nix {
 namespace valid {
 
 std::vector<std::string> getDimensionsUnits(DataArray darray) {
-    std::vector<std::string> units;        
-    std::string dimStr = util::dimTypeToStr(DimensionType::Set);
+    std::vector<std::string> units;
 
     for(auto &dim : darray.dimensions()) {
         if(dim.dimensionType() == DimensionType::Range) {
@@ -27,7 +26,7 @@ std::vector<std::string> getDimensionsUnits(DataArray darray) {
             units.push_back(d.unit() ? *(d.unit()) : std::string());
         }
         if(dim.dimensionType() == DimensionType::Set) {
-            units.push_back(std::string(dimStr));
+            units.push_back(std::string());
         }
     }
 

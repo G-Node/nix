@@ -30,9 +30,9 @@ void TestValidate::setUp() {
     // create data array
     array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, {0, 0, 0});
     array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, {0, 0, 0});
-    array_tmp = block.createDataArray("array_tmp", "testdata", nix::DataType::Double, {0});
+    array3 = block.createDataArray("array_three", "testdata", nix::DataType::Double, {0, 0, 0});
     // set references vector
-    refs = {array1, array2};
+    refs = {array2, array3};
     // create positions & extents arrays
     positions = block.createDataArray("positions_DataArray", "dataArray", DataType::Double, {0, 0});
     extents = block.createDataArray("extents_DataArray", "dataArray", DataType::Double, {0, 0});
@@ -52,6 +52,9 @@ void TestValidate::setUp() {
     dim_range1 = array2.appendRangeDimension({1, 2, 3});
     dim_range2 = array2.appendRangeDimension({1, 2, 3, 4});
     dim_range3 = array2.appendRangeDimension({1, 2});
+    dim_sample1 = array3.appendSampledDimension(42);
+    dim_sample2 = array3.appendSampledDimension(42);
+    dim_sample3 = array3.appendSampledDimension(42);
 }
 
 void TestValidate::tearDown() {
@@ -70,6 +73,7 @@ void TestValidate::setValid() {
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
+    array3.setData(A);
     // fill extent & position
     for(index i = 0; i < 3; ++i) {
         extent.push_back(i);
@@ -92,6 +96,8 @@ void TestValidate::setValid() {
         }
     }
     extents.setData(C);
+    // set references vector
+    refs = {array2, array3};
     // fill DataTag
     dtag.references(refs);
     dtag.units(atomic_units);
@@ -106,6 +112,9 @@ void TestValidate::setValid() {
     dim_range1.unit(atomic_units[0]);
     dim_range2.unit(atomic_units[1]);
     dim_range3.unit(atomic_units[2]);
+    dim_sample1.unit(atomic_units[0]);
+    dim_sample2.unit(atomic_units[1]);
+    dim_sample3.unit(atomic_units[2]);
     // fill tag_tmp    
     units_tmp = tag_tmp(compound_units);
     
@@ -124,6 +133,7 @@ void TestValidate::setInvalid() {
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
+    array3.setData(A);
     // fill extent & position
     for(index i = 0; i < 6; ++i) {
         extent.push_back(i);
@@ -148,6 +158,8 @@ void TestValidate::setInvalid() {
         }
     }
     positions.setData(C);
+    // set references vector
+    refs = {array1, array2};
     // fill DataTag
     dtag.references(refs);
     dtag.units(atomic_units);
@@ -162,6 +174,9 @@ void TestValidate::setInvalid() {
     dim_range3.ticks({1, 2, 3});
     dim_range1.ticks({1, 2, 3, 4});
     dim_range2.ticks({1, 2});
+    dim_sample3.unit(atomic_units[0]);
+    dim_sample1.unit(atomic_units[1]);
+    dim_sample2.unit(atomic_units[2]);
     // fill tag_tmp    
     units_tmp = tag_tmp(invalid_units);
     
@@ -251,7 +266,7 @@ void TestValidate::test() {
         should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
     });
     // have debug info
-    std::cout << std::endl << myResult;
+    std::cout << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
     
