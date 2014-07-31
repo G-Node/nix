@@ -24,6 +24,7 @@
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
 
+#include <nix/Exception.hpp>
 #include <nix/Platform.hpp>
 
 

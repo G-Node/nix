@@ -251,7 +251,7 @@ void TestValidate::test() {
         should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
     });
     // have debug info
-    std::cout << myResult;
+    std::cout << std::endl << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
     

@@ -168,6 +168,13 @@ bool isCompoundSIUnit(const string &unit) {
 }
 
 
+std::string dimTypeToStr(const nix::DimensionType &dtype) {
+    std::stringstream s;
+    s << dtype;
+    return s.str();
+}
+
+
 bool isScalable(const string &unitA, const string &unitB) {
     if (!(isSIUnit(unitA) && isSIUnit(unitB))) {
         return false;
