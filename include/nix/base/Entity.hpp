@@ -57,37 +57,66 @@ public:
     {
     }
 
-
+    /**
+     * @brief Getter for the id of the entity.
+     *
+     * The id is generated at creation time of an entity. It contains
+     * a randomly generated sequence of characters with low collision
+     * probability.
+     *
+     * @return The id of the entity.
+     */
     std::string id() const {
         return ImplContainer<T>::backend()->id();
     }
 
-
+    /**
+     * @brief Gets the time of the last update.
+     *
+     * @return Time of the last update.
+     */
     time_t updatedAt() const {
         return ImplContainer<T>::backend()->updatedAt();
     }
 
-
+    /**
+     * @brief Gets the creation time.
+     *
+     * @return The creation time of the entity.
+     */
     time_t createdAt() const {
         return ImplContainer<T>::backend()->createdAt();
     }
 
-
+    /**
+     * @brief Sets the time of the last update to the current time if
+     * the field is not set.
+     */
     void setUpdatedAt() {
         ImplContainer<T>::backend()->setUpdatedAt();
     }
 
-
+    /**
+     * @brief Sets the time of the last update to the current time.
+     */
     void forceUpdatedAt() {
         ImplContainer<T>::backend()->forceUpdatedAt();
     }
 
-
+    /**
+     * @brief Sets the creation time to the current time if the creation
+     * time is not set.
+     */
     void setCreatedAt() {
         ImplContainer<T>::backend()->setCreatedAt();
     }
 
-
+    /**
+     * @brief Sets the creation time to the provided value even if the
+     * field is already set.
+     *
+     * @param t The creation time to set.
+     */
     void forceCreatedAt(time_t t) {
         ImplContainer<T>::backend()->forceCreatedAt(t);
     }
