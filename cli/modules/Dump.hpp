@@ -45,12 +45,7 @@ class yamlstream {
      *
      * @return void
      */
-    void indent_if() {
-        // if endl
-        if(!strcmp(&*sstream.str().rbegin(), "\n")) {
-            (*this)[level];
-        }
-    }
+    void indent_if();
     
     /**
      * @brief apply indentation on sstream if last char is "\n"
@@ -59,12 +54,7 @@ class yamlstream {
      *
      * @return void
      */
-    void endl_if() {
-        // if _not_ endl
-        if(strcmp(&*sstream.str().rbegin(), "\n")) {
-            sstream << "\n";
-        }
-    }
+    void endl_if();
     
     /**
      * @brief return item_str if and only if level is not zero
@@ -74,9 +64,7 @@ class yamlstream {
      *
      * @return string item_str
      */
-    std::string item() {
-        return std::string(level ? item_str : "");
-    }
+    std::string item();
     
     /**
      * @brief start yaml sequence & increase indent level
@@ -86,11 +74,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream& operator++() {
-        sstream << sequ_start;
-        level++;
-        return *this;
-    };
+    yamlstream& operator++();
     
     /**
      * @brief start yaml sequence & increase indent level
@@ -100,11 +84,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream operator++(int) {
-        yamlstream tmp(*this);
-        operator++(); // prefix-increment this instance
-        return tmp;   // return value before increment
-    };
+    yamlstream operator++(int);
 
     /**
      * @brief end yaml sequence & decrease indent level
@@ -114,11 +94,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream operator--() {
-        endl_if();
-        level--;
-        return *this;
-    };
+    yamlstream operator--();
 
     /**
      * @brief end yaml sequence & decrease indent level
@@ -128,11 +104,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream operator--(int) {
-        yamlstream tmp(*this);
-        operator--(); // prefix-decrement this instance
-        return tmp;   // return value before increment
-    };
+    yamlstream operator--(int);
 
     /**
      * @brief put yaml indentation into stream
@@ -141,13 +113,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream& operator[](const int &n_indent) {
-        endl_if();
-        for(int i = 0; i < n_indent; i++) {
-            sstream << indent_str;
-        }
-        return *this;
-    };
+    yamlstream& operator[](const int &n_indent);
     
     /**
      * @brief convert unix epoch time to local time string
@@ -156,11 +122,7 @@ class yamlstream {
      *
      * @return string with the given time as local time
      */
-    std::string t(const time_t &tm) {
-        char* a = asctime(localtime(&tm));       // get time as char*
-        a[std::strlen(a)-1] = a[std::strlen(a)]; // remove "\n"
-        return std::string(a);
-    };    
+    std::string t(const time_t &tm);
     
 public:
     /**
@@ -177,15 +139,14 @@ public:
      *
      * @return string string content of the stream
      */
-    std::string str() {
-        return sstream.str();
-    };
+    std::string str();
 
     /**
      * @brief default output into stringstream
      *
      * Use the default stringstream output.
      *
+     * @param t parameter of any given type T
      * @return self
      */
     template<typename T>
@@ -194,6 +155,15 @@ public:
         sstream << t;
         return *this;
     };
+    
+    /**
+     * @brief vector output into stringstream
+     *
+     * Output vector elements in inline yaml sequence style.
+     *
+     * @param t vector of any given type T
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const std::vector<T> &t) {
         indent_if();
@@ -206,6 +176,15 @@ public:
         }
         return *this;
     };
+    
+    /**
+     * @brief NDSize output into stringstream
+     *
+     * Build vector of sizes and output them as vector.
+     *
+     * @param t NDSize class
+     * @return self
+     */
     yamlstream& operator<<(const nix::NDSize &t) {
         indent_if();
         std::vector<double> extent;
@@ -215,6 +194,16 @@ public:
         (*this) << extent;
         return *this;
     };
+    
+    /**
+     * @brief boost::optional output into stringstream
+     *
+     * De-referene boost::optional if and only if it is set and output
+     * content (or empty string if not set) to stream.
+     *
+     * @param t boost::optional
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const boost::optional<T> &t) {
         indent_if();
@@ -222,6 +211,15 @@ public:
         sstream << opt;
         return *this;
     };
+    
+    /**
+     * @brief pointer to stringstream output into stringstream
+     *
+     * Output via pointer to stringstream.
+     *
+     * @param ps pointer to stringstream
+     * @return self
+     */
 	yamlstream& operator<<(std::stringstream& (*ps)(std::stringstream&))
 	{
         indent_if();
@@ -229,6 +227,14 @@ public:
 		return *this;
 	};
     
+    /**
+     * @brief Entity output into stringstream
+     *
+     * Output base Entity to stringstream.
+     *
+     * @param entity nix base Entity
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const nix::base::Entity<T> &entity) {
         (*this)
@@ -239,6 +245,14 @@ public:
         return *this;
     };
 
+    /**
+     * @brief NamedEntity output into stringstream
+     *
+     * Output base NamedEntity to stringstream.
+     *
+     * @param entity nix base NamedEntity
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const nix::base::NamedEntity<T> &namedEntity) {
         (*this)
@@ -250,6 +264,14 @@ public:
         return *this;
     };
 
+    /**
+     * @brief EntityWithMetadata output into stringstream
+     *
+     * Output base EntityWithMetadata to stringstream.
+     *
+     * @param entity nix base EntityWithMetadata
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const nix::base::EntityWithMetadata<T> &entityWithMetadata) {
         (*this)
@@ -259,6 +281,14 @@ public:
         return *this;
     };
     
+    /**
+     * @brief EntityWithSources output into stringstream
+     *
+     * Output base EntityWithSources to stringstream.
+     *
+     * @param entity nix base EntityWithSources
+     * @return self
+     */
     template<typename T>
     yamlstream& operator<<(const nix::base::EntityWithSources<T> &entityWithSources) {
         (*this)
@@ -268,284 +298,126 @@ public:
         
         return *this;
     };
-    
-    yamlstream& operator<<(const nix::Property &property) {
-        if(!property) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "property " << property.id();
-        ++(*this)
-            << static_cast<nix::base::Entity<nix::base::IProperty>>(property)
-            << item() << "dataType" << scalar_start << property.dataType() << scalar_end
-            << item() << "definition" << scalar_start << property.definition() << scalar_end
-            << item() << "mapping" << scalar_start << property.mapping() << scalar_end
-            << item() << "name" << scalar_start << property.name() << scalar_end
-            << item() << "unit" << scalar_start << property.unit() << scalar_end
-            << item() << "valueCount" << scalar_start << property.valueCount() << scalar_end;
-            
-            // Values
-            auto values = property.values();
-            for(auto &value : values) {
-                // value is handled by its own ostream, thus do context here
-                *this << item() << "value" << scalar_start << value << scalar_end; 
-            }
-        --(*this);
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::Section &section) {
-        if(!section) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "section " << section.id();
-        ++(*this)
-            << static_cast<nix::base::NamedEntity<nix::base::ISection>>(section)
-            << item() << "propertyCount" << scalar_start << section.propertyCount() << scalar_end
-            << item() << "sectionCount" << scalar_start << section.sectionCount() << scalar_end
-            << item() << "mapping" << scalar_start << section.mapping() << scalar_end
-            << item() << "repository" << scalar_start << section.repository() << scalar_end
-            << item() << "link"; ++(*this) << section.link(); --(*this);
-            
-            // Properties
-            auto properties = section.properties();
-            for(auto &property : properties) {
-                *this << property;
-            }
-            // Sections
-            auto sections = section.sections();
-            for(auto &section : sections) {
-                *this << section;            
-            }
-        --(*this);
-        return *this;
-    };
 
-    yamlstream& operator<<(const nix::SetDimension &dim) {
-        if(!dim) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "dimension " << dim.index();
-        ++(*this)
-            << item() << "index" << scalar_start << dim.index() << scalar_end
-            << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
-            << item() << "labels" << scalar_start << dim.labels() << scalar_end;
-        --(*this);
-        return *this;
-    };
+    /**
+     * @brief Property output into stringstream
+     *
+     * Output Property to stringstream.
+     *
+     * @param entity nix Property
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Property &property);
+    
+    /**
+     * @brief Section output into stringstream
+     *
+     * Output Section to stringstream.
+     *
+     * @param entity nix Section
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Section &section);
 
-    yamlstream& operator<<(const nix::SampledDimension &dim) {
-        if(!dim) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "dimension " << dim.index();
-        ++(*this)
-            << item() << "index" << scalar_start << dim.index() << scalar_end
-            << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
-            << item() << "label" << scalar_start << dim.label() << scalar_end
-            << item() << "offset" << scalar_start << dim.offset() << scalar_end
-            << item() << "samplingInterval" << scalar_start << dim.samplingInterval() << scalar_end
-            << item() << "unit" << scalar_start << dim.unit() << scalar_end;
-        --(*this);
-        return *this;
-    };
+    /**
+     * @brief SetDimension output into stringstream
+     *
+     * Output SetDimension to stringstream.
+     *
+     * @param entity nix SetDimension
+     * @return self
+     */
+    yamlstream& operator<<(const nix::SetDimension &dim);
 
-    yamlstream& operator<<(const nix::RangeDimension &dim) {
-        if(!dim) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "dimension " << dim.index();
-        ++(*this)
-            << item() << "index" << scalar_start << dim.index() << scalar_end
-            << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
-            << item() << "label" << scalar_start << dim.label() << scalar_end
-            << item() << "ticks" << scalar_start << dim.ticks() << scalar_end
-            << item() << "unit" << scalar_start << dim.unit() << scalar_end;
-        --(*this);
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::Dimension &dim) {
-        if(!dim) {
-            return *this; // unset entity protection
-        }
-        
-        if(dim.dimensionType() == nix::DimensionType::Range) {
-            (*this) << dim.asRangeDimension();
-        }
-        if(dim.dimensionType() == nix::DimensionType::Set) {
-            (*this) << dim.asSetDimension();
-        }
-        if(dim.dimensionType() == nix::DimensionType::Sample) {
-            (*this) << dim.asSampledDimension();
-        }
-        
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::DataArray &data_array) {
-        if(!data_array) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "data_array " << data_array.id();
-        ++(*this)
-            << static_cast<nix::base::EntityWithSources<nix::base::IDataArray>>(data_array)
-            << item() << "dataType" << scalar_start << data_array.dataType() << scalar_end
-            << item() << "dataExtent" << scalar_start << data_array.dataExtent() << scalar_end
-            << item() << "expansionOrigin" << scalar_start << data_array.expansionOrigin() << scalar_end
-            << item() << "polynomCoefficients" << scalar_start << data_array.polynomCoefficients() << scalar_end
-            << item() << "label" << scalar_start << data_array.label() << scalar_end
-            << item() << "unit" << scalar_start << data_array.unit() << scalar_end
-            << item() << "dimensionCount" << scalar_start << data_array.dimensionCount() << scalar_end;
-            // Dimensions
-            auto dims = data_array.dimensions();
-            for(auto &dim : dims) {
-                *this << dim;
-            }
-        --(*this);
-        return *this;
-    };
+    /**
+     * @brief SampledDimension output into stringstream
+     *
+     * Output SampledDimension to stringstream.
+     *
+     * @param entity nix SampledDimension
+     * @return self
+     */
+    yamlstream& operator<<(const nix::SampledDimension &dim);
 
-    yamlstream& operator<<(const nix::Feature &feature) {
-        if(!feature) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "feature " << feature.id();
-        ++(*this)
-            << static_cast<nix::base::Entity<nix::base::IFeature>>(feature)
-            << item() << "linkType" << scalar_start << feature.linkType() << scalar_end;
-            ++(*this)
-                << item() << "data" << sequ_start << feature.data();
-            --(*this);
-        --(*this);
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::SimpleTag &simple_tag) {
-        if(!simple_tag) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "simple_tag " << simple_tag.id();
-        ++(*this)
-            << static_cast<nix::base::EntityWithSources<nix::base::ISimpleTag>>(simple_tag)
-            << item() << "units" << scalar_start << simple_tag.units() << scalar_end
-            << item() << "featureCount" << scalar_start << simple_tag.featureCount() << scalar_end
-            << item() << "referenceCount" << scalar_start << simple_tag.referenceCount() << scalar_end
-            << item() << "extent" << scalar_start << simple_tag.extent() << scalar_end
-            << item() << "position" << scalar_start << simple_tag.position() << scalar_end;
-            // References
-            auto refs = simple_tag.references();
-            for(auto &ref : refs) {
-                *this << ref;
-            }
-            // Features
-            auto features = simple_tag.features();
-            for(auto &feature : features) {
-                *this << feature;
-            }
-        --(*this);
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::DataTag &data_tag) {
-        if(!data_tag) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "data_tag " << data_tag.id();
-        ++(*this)
-            << static_cast<nix::base::EntityWithSources<nix::base::IDataTag>>(data_tag)
-            << item() << "units" << scalar_start << data_tag.units() << scalar_end
-            << item() << "featureCount" << scalar_start << data_tag.featureCount() << scalar_end
-            << item() << "referenceCount" << scalar_start << data_tag.referenceCount() << scalar_end
-            << item() << "extents"; ++(*this) << data_tag.extents(); --(*this)
-            << item() << "positions"; ++(*this) << data_tag.positions(); --(*this);
-            // References
-            auto refs = data_tag.references();
-            for(auto &ref : refs) {
-                *this << ref;
-            }
-            // Features
-            auto features = data_tag.features();
-            for(auto &feature : features) {
-                *this << feature;
-            }
-        --(*this);
-        return *this;
-    };
-    
-    yamlstream& operator<<(const nix::Block &block) {
-        if(!block) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "block " << block.id();
-        ++(*this)
-            << static_cast<nix::base::EntityWithMetadata<nix::base::IBlock>>(block)
-            << item() << "sourceCount" << scalar_start << block.sourceCount() << scalar_end
-            << item() << "simpleTagCount" << scalar_start << block.simpleTagCount() << scalar_end
-            << item() << "dataTagCount" << scalar_start << block.dataTagCount() << scalar_end
-            << item() << "dataArrayCount" << scalar_start << block.dataArrayCount() << scalar_end;
-            // DataArrays
-            auto data_arrays = block.dataArrays();
-            for(auto &data_array : data_arrays) {
-                *this << data_array;
-            }
-            // DataTags
-            auto data_tags = block.dataTags();
-            for(auto &data_tag : data_tags) {
-                *this << data_tag;
-            }
-            // SimpleTags
-            auto simple_tags = block.simpleTags();
-            for(auto &simple_tag : simple_tags) {
-                *this << simple_tag;
-            }
-            // Sections
-            auto sources = block.sources();
-            for(auto &source : sources) {
-                *this << source;            
-            }
-        --(*this);
-        return *this;
-    };
+    /**
+     * @brief RangeDimension output into stringstream
+     *
+     * Output RangeDimension to stringstream.
+     *
+     * @param entity nix RangeDimension
+     * @return self
+     */
+    yamlstream& operator<<(const nix::RangeDimension &dim);
 
-    yamlstream& operator<<(const nix::File &file) {
-        if(!file) {
-            return *this; // unset entity protection
-        }
-        
-        (*this)[level] << item() << "file " << file.location();
-        ++(*this)
-            << item() << "location" << scalar_start << file.location() << scalar_end
-            << item() << "createdAt" << scalar_start << t(file.createdAt()) << scalar_end
-            << item() << "updatedAt" << scalar_start << t(file.updatedAt()) << scalar_end
-            << item() << "format" << scalar_start << file.format() << scalar_end
-            << item() << "version" << scalar_start << file.version() << scalar_end
-            << item() << "isOpen" << scalar_start << file.isOpen() << scalar_end
-            << item() << "blockCount" << scalar_start << file.blockCount() << scalar_end
-            << item() << "sectionCount" << scalar_start << file.sectionCount() << scalar_end;
-            // Blocks
-            auto blocks = file.blocks();
-            for(auto &block : blocks) {
-                *this << block;
-            }
-            // Sections
-            auto sections = file.sections();
-            for(auto &section : sections) {
-                *this << section;            
-            }
-        --(*this);
-        
-        return *this;
-    };
+    /**
+     * @brief Dimension output into stringstream
+     *
+     * Output Dimension to stringstream.
+     *
+     * @param entity nix Dimension
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Dimension &dim);
+
+    /**
+     * @brief DataArray output into stringstream
+     *
+     * Output DataArray to stringstream.
+     *
+     * @param entity nix DataArray
+     * @return self
+     */
+    yamlstream& operator<<(const nix::DataArray &data_array);
+
+    /**
+     * @brief Feature output into stringstream
+     *
+     * Output Feature to stringstream.
+     *
+     * @param entity nix Feature
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Feature &feature);
+
+    /**
+     * @brief SimpleTag output into stringstream
+     *
+     * Output SimpleTag to stringstream.
+     *
+     * @param entity nix SimpleTag
+     * @return self
+     */
+    yamlstream& operator<<(const nix::SimpleTag &simple_tag);
+
+    /**
+     * @brief DataTag output into stringstream
+     *
+     * Output DataTag to stringstream.
+     *
+     * @param entity nix DataTag
+     * @return self
+     */
+    yamlstream& operator<<(const nix::DataTag &data_tag);
+
+    /**
+     * @brief Block output into stringstream
+     *
+     * Output Block to stringstream.
+     *
+     * @param entity nix Block
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Block &block);
+
+    /**
+     * @brief File output into stringstream
+     *
+     * Output File to stringstream.
+     *
+     * @param entity nix File
+     * @return self
+     */
+    yamlstream& operator<<(const nix::File &file);
     
 };
 

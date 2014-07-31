@@ -31,6 +31,345 @@ const char* yamlstream::scalar_start = ": ";
 const char* yamlstream::scalar_end = "\n";
 const char* yamlstream::item_str = "- ";
 
+void yamlstream::indent_if() {
+    // if endl
+    if(!strcmp(&*sstream.str().rbegin(), "\n")) {
+        (*this)[level];
+    }
+}
+
+void yamlstream::endl_if() {
+    // if _not_ endl
+    if(strcmp(&*sstream.str().rbegin(), "\n")) {
+        sstream << "\n";
+    }
+}
+
+std::string yamlstream::item() {
+    return std::string(level ? item_str : "");
+}
+
+yamlstream& yamlstream::operator++() {
+    sstream << sequ_start;
+    level++;
+    return *this;
+}
+
+yamlstream yamlstream::operator++(int) {
+    yamlstream tmp(*this);
+    operator++(); // prefix-increment this instance
+    return tmp;   // return value before increment
+}
+
+yamlstream yamlstream::operator--() {
+    endl_if();
+    level--;
+    return *this;
+}
+
+yamlstream yamlstream::operator--(int) {
+    yamlstream tmp(*this);
+    operator--(); // prefix-decrement this instance
+    return tmp;   // return value before increment
+}
+
+yamlstream& yamlstream::operator[](const int &n_indent) {
+    endl_if();
+    for(int i = 0; i < n_indent; i++) {
+        sstream << indent_str;
+    }
+    return *this;
+}
+
+std::string yamlstream::t(const time_t &tm) {
+    char* a = asctime(localtime(&tm));       // get time as char*
+    a[std::strlen(a)-1] = a[std::strlen(a)]; // remove "\n"
+    return std::string(a);
+}
+
+std::string yamlstream::str() {
+    return sstream.str();
+}
+
+yamlstream& yamlstream::operator<<(const nix::Property &property) {
+    if(!property) {
+        return *this; // unset entity protection
+    }
+        
+    (*this)[level] << item() << "property " << property.id();
+    ++(*this)
+        << static_cast<nix::base::Entity<nix::base::IProperty>>(property)
+        << item() << "dataType" << scalar_start << property.dataType() << scalar_end
+        << item() << "definition" << scalar_start << property.definition() << scalar_end
+        << item() << "mapping" << scalar_start << property.mapping() << scalar_end
+        << item() << "name" << scalar_start << property.name() << scalar_end
+        << item() << "unit" << scalar_start << property.unit() << scalar_end
+        << item() << "valueCount" << scalar_start << property.valueCount() << scalar_end;
+
+        // Values
+        auto values = property.values();
+        for(auto &value : values) {
+            // value is handled by its own ostream, thus do context here
+            *this << item() << "value" << scalar_start << value << scalar_end; 
+        }
+    --(*this);
+    return *this;
+};
+
+yamlstream& yamlstream::operator<<(const nix::Section &section) {
+    if(!section) {
+        return *this; // unset entity protection
+    }
+
+    (*this)[level] << item() << "section " << section.id();
+    ++(*this)
+        << static_cast<nix::base::NamedEntity<nix::base::ISection>>(section)
+        << item() << "propertyCount" << scalar_start << section.propertyCount() << scalar_end
+        << item() << "sectionCount" << scalar_start << section.sectionCount() << scalar_end
+        << item() << "mapping" << scalar_start << section.mapping() << scalar_end
+        << item() << "repository" << scalar_start << section.repository() << scalar_end
+        << item() << "link"; ++(*this) << section.link(); --(*this);
+
+        // Properties
+        auto properties = section.properties();
+        for(auto &property : properties) {
+            *this << property;
+        }
+        // Sections
+        auto sections = section.sections();
+        for(auto &section : sections) {
+            *this << section;            
+        }
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::SetDimension &dim) {
+    if(!dim) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "dimension " << dim.index();
+    ++(*this)
+        << item() << "index" << scalar_start << dim.index() << scalar_end
+        << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
+        << item() << "labels" << scalar_start << dim.labels() << scalar_end;
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::SampledDimension &dim) {
+    if(!dim) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "dimension " << dim.index();
+    ++(*this)
+        << item() << "index" << scalar_start << dim.index() << scalar_end
+        << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
+        << item() << "label" << scalar_start << dim.label() << scalar_end
+        << item() << "offset" << scalar_start << dim.offset() << scalar_end
+        << item() << "samplingInterval" << scalar_start << dim.samplingInterval() << scalar_end
+        << item() << "unit" << scalar_start << dim.unit() << scalar_end;
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::RangeDimension &dim) {
+    if(!dim) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "dimension " << dim.index();
+    ++(*this)
+        << item() << "index" << scalar_start << dim.index() << scalar_end
+        << item() << "dimensionType" << scalar_start << dim.dimensionType() << scalar_end
+        << item() << "label" << scalar_start << dim.label() << scalar_end
+        << item() << "ticks" << scalar_start << dim.ticks() << scalar_end
+        << item() << "unit" << scalar_start << dim.unit() << scalar_end;
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
+    if(!dim) {
+        return *this; // unset entity protection
+    }
+    
+    if(dim.dimensionType() == nix::DimensionType::Range) {
+        (*this) << dim.asRangeDimension();
+    }
+    if(dim.dimensionType() == nix::DimensionType::Set) {
+        (*this) << dim.asSetDimension();
+    }
+    if(dim.dimensionType() == nix::DimensionType::Sample) {
+        (*this) << dim.asSampledDimension();
+    }
+    
+    return *this;
+};
+
+yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
+    if(!data_array) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "data_array " << data_array.id();
+    ++(*this)
+        << static_cast<nix::base::EntityWithSources<nix::base::IDataArray>>(data_array)
+        << item() << "dataType" << scalar_start << data_array.dataType() << scalar_end
+        << item() << "dataExtent" << scalar_start << data_array.dataExtent() << scalar_end
+        << item() << "expansionOrigin" << scalar_start << data_array.expansionOrigin() << scalar_end
+        << item() << "polynomCoefficients" << scalar_start << data_array.polynomCoefficients() << scalar_end
+        << item() << "label" << scalar_start << data_array.label() << scalar_end
+        << item() << "unit" << scalar_start << data_array.unit() << scalar_end
+        << item() << "dimensionCount" << scalar_start << data_array.dimensionCount() << scalar_end;
+        // Dimensions
+        auto dims = data_array.dimensions();
+        for(auto &dim : dims) {
+            *this << dim;
+        }
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::Feature &feature) {
+    if(!feature) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "feature " << feature.id();
+    ++(*this)
+        << static_cast<nix::base::Entity<nix::base::IFeature>>(feature)
+        << item() << "linkType" << scalar_start << feature.linkType() << scalar_end;
+        ++(*this)
+            << item() << "data" << sequ_start << feature.data();
+        --(*this);
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::SimpleTag &simple_tag) {
+    if(!simple_tag) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "simple_tag " << simple_tag.id();
+    ++(*this)
+        << static_cast<nix::base::EntityWithSources<nix::base::ISimpleTag>>(simple_tag)
+        << item() << "units" << scalar_start << simple_tag.units() << scalar_end
+        << item() << "featureCount" << scalar_start << simple_tag.featureCount() << scalar_end
+        << item() << "referenceCount" << scalar_start << simple_tag.referenceCount() << scalar_end
+        << item() << "extent" << scalar_start << simple_tag.extent() << scalar_end
+        << item() << "position" << scalar_start << simple_tag.position() << scalar_end;
+        // References
+        auto refs = simple_tag.references();
+        for(auto &ref : refs) {
+            *this << ref;
+        }
+        // Features
+        auto features = simple_tag.features();
+        for(auto &feature : features) {
+            *this << feature;
+        }
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::DataTag &data_tag) {
+    if(!data_tag) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "data_tag " << data_tag.id();
+    ++(*this)
+        << static_cast<nix::base::EntityWithSources<nix::base::IDataTag>>(data_tag)
+        << item() << "units" << scalar_start << data_tag.units() << scalar_end
+        << item() << "featureCount" << scalar_start << data_tag.featureCount() << scalar_end
+        << item() << "referenceCount" << scalar_start << data_tag.referenceCount() << scalar_end
+        << item() << "extents"; ++(*this) << data_tag.extents(); --(*this)
+        << item() << "positions"; ++(*this) << data_tag.positions(); --(*this);
+        // References
+        auto refs = data_tag.references();
+        for(auto &ref : refs) {
+            *this << ref;
+        }
+        // Features
+        auto features = data_tag.features();
+        for(auto &feature : features) {
+            *this << feature;
+        }
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::Block &block) {
+    if(!block) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "block " << block.id();
+    ++(*this)
+        << static_cast<nix::base::EntityWithMetadata<nix::base::IBlock>>(block)
+        << item() << "sourceCount" << scalar_start << block.sourceCount() << scalar_end
+        << item() << "simpleTagCount" << scalar_start << block.simpleTagCount() << scalar_end
+        << item() << "dataTagCount" << scalar_start << block.dataTagCount() << scalar_end
+        << item() << "dataArrayCount" << scalar_start << block.dataArrayCount() << scalar_end;
+        // DataArrays
+        auto data_arrays = block.dataArrays();
+        for(auto &data_array : data_arrays) {
+            *this << data_array;
+        }
+        // DataTags
+        auto data_tags = block.dataTags();
+        for(auto &data_tag : data_tags) {
+            *this << data_tag;
+        }
+        // SimpleTags
+        auto simple_tags = block.simpleTags();
+        for(auto &simple_tag : simple_tags) {
+            *this << simple_tag;
+        }
+        // Sections
+        auto sources = block.sources();
+        for(auto &source : sources) {
+            *this << source;            
+        }
+    --(*this);
+    return *this;
+}
+
+yamlstream& yamlstream::operator<<(const nix::File &file) {
+    if(!file) {
+        return *this; // unset entity protection
+    }
+    
+    (*this)[level] << item() << "file " << file.location();
+    ++(*this)
+        << item() << "location" << scalar_start << file.location() << scalar_end
+        << item() << "createdAt" << scalar_start << t(file.createdAt()) << scalar_end
+        << item() << "updatedAt" << scalar_start << t(file.updatedAt()) << scalar_end
+        << item() << "format" << scalar_start << file.format() << scalar_end
+        << item() << "version" << scalar_start << file.version() << scalar_end
+        << item() << "isOpen" << scalar_start << file.isOpen() << scalar_end
+        << item() << "blockCount" << scalar_start << file.blockCount() << scalar_end
+        << item() << "sectionCount" << scalar_start << file.sectionCount() << scalar_end;
+        // Blocks
+        auto blocks = file.blocks();
+        for(auto &block : blocks) {
+            *this << block;
+        }
+        // Sections
+        auto sections = file.sections();
+        for(auto &section : sections) {
+            *this << section;            
+        }
+    --(*this);
+    
+    return *this;
+}
+
+
 void Dump::load(po::options_description &desc) const {
     // declare purpose
     desc.add(po::options_description(std::string(module_name) + 
