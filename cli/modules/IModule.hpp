@@ -14,6 +14,12 @@
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
+#include <nix/base/Entity.hpp>
+#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
+#include <nix.hpp>
+
 namespace cli {
 namespace module {
 
@@ -52,7 +58,7 @@ public:
      * @param vm boost::program_options::variables_map object
      * @return string with the module response for the user
      */
-    virtual std::string call(const po::variables_map &vm, const po::options_description &desc) const = 0;
+    virtual std::string call(const po::variables_map &vm, const po::options_description &desc) = 0;
     
 };
 

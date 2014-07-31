@@ -6,14 +6,15 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#ifndef CLI_VALIDATE_H
+#define CLI_VALIDATE_H
+
 #include <Cli.hpp>
 #include <modules/IModule.hpp>
+
 #include <iostream>
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
-
-#ifndef CLI_VALIDATE_H
-#define CLI_VALIDATE_H
 
 namespace cli {
 namespace module {
@@ -33,7 +34,7 @@ public:
 
     void load(po::options_description &desc) const;
 
-    std::string call(const po::variables_map &vm, const po::options_description &desc) const;
+    std::string call(const po::variables_map &vm, const po::options_description &desc);
 
 };
 

@@ -9,7 +9,6 @@
 #include <Cli.hpp>
 #include <modules/Validate.hpp>
 #include <Exception.hpp>
-#include <nix.hpp>
 #include <nix/None.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
@@ -33,7 +32,7 @@ void Validate::load(po::options_description &desc) const {
     desc.add(opt);
 }
 
-std::string Validate::call(const po::variables_map &vm, const po::options_description &desc) const {
+std::string Validate::call(const po::variables_map &vm, const po::options_description &desc) {
     std::vector<nix::File> files; // opened nix files
     std::stringstream out;
     nix::File tmp_file;
