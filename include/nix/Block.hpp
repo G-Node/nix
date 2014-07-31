@@ -135,21 +135,56 @@ public:
     // Methods concerning sources
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if this block has a specific root source.
+     *
+     * @param id        The id of the source.
+     *
+     * @return True if a source with the given id exists at the root, false
+     *         otherwise.
+     */
     bool hasSource(const std::string &id) const {
         return backend()->hasSource(id);
     }
 
+    /**
+     * @brief Checks if this block has a specific root source.
+     *
+     * @param source    The source to check.
+     *
+     * @return True if the source exists at the root, false
+     *         otherwise.
+     */
     bool hasSource(const Source &source) const;
 
-
+    /**
+     * @brief Retrieves a specific root source by its id.
+     *
+     * @param id        The id of the source.
+     *
+     * @return The source with the given id. If it doesn't exist an exception
+     *         will be thrown.
+     */
     Source getSource(const std::string &id) const {
         return backend()->getSource(id);
     }
 
+    /**
+     * @brief Retrieves a specific root source by index.
+     *
+     * @param index     The index of the source.
+     *
+     * @return The source at the specified index.
+     */
     Source getSource(size_t index) const {
         return backend()->getSource(index);
     }
 
+    /**
+     * @brief Returns the number of root sources in this block.
+     *
+     * @return The number of root sources.
+     */
     size_t sourceCount() const {
         return backend()->sourceCount();
     }
@@ -183,11 +218,28 @@ public:
     std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
-
+    /**
+     * @brief Create a new root source.
+     *
+     * @param name      The name of the source to create.
+     * @param type      The type of the source.
+     *
+     * @return The created source object.
+     */
     Source createSource(const std::string &name, const std::string &type) {
         return backend()->createSource(name, type);
     }
 
+    /**
+     * @brief Deletes a root source.
+     *
+     * This will also delete all child sources of this root source from the file.
+     * The deletion of a source can't be undone.
+     *
+     * @param id        The id of the source to delete.
+     *
+     * @return True if the source was deleted, false otherwise.
+     */
     bool deleteSource(const std::string &id) {
         return backend()->deleteSource(id);
     }
@@ -208,6 +260,13 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if a specific data array exists in this block.
+     *
+     * @param id        The id of a data array.
+     *
+     * @return True if the data array exists, false otherwise.
+     */
     bool hasDataArray(const std::string &id) const {
         return backend()->hasDataArray(id);
     }
@@ -221,10 +280,25 @@ public:
     */
     bool hasDataArray(const DataArray &data_array) const;
 
+    /**
+     * @brief Retrieves a specific data array from the block by id.
+     *
+     * @param id        The id of an existing data array.
+     *
+     * @return The data array with the specified id. If this
+     *         doesn't exist, an exception will be thrown.
+     */
     DataArray getDataArray(const std::string &id) const {
         return backend()->getDataArray(id);
     }
 
+    /**
+     * @brief Retrieves a data array by index.
+     *
+     * @param index     The index of the data array.
+     *
+     * @return The data array at the specified index.
+     */
     DataArray getDataArray(size_t index) const {
         return backend()->getDataArray(index);
     }
@@ -242,6 +316,11 @@ public:
     std::vector<DataArray> dataArrays(util::AcceptAll<DataArray>::type filter
                                       = util::AcceptAll<DataArray>()) const;
 
+    /**
+     * @brief Returns the number of all data arrays of the block.
+     *
+     * @return The number of data arrays of the block.
+     */
     size_t dataArrayCount() const {
         return backend()->dataArrayCount();
     }
@@ -292,6 +371,16 @@ public:
          return da;
     }
 
+    /**
+     * @brief Deletes a data array from this block.
+     *
+     * This deletes a data array and all its dimensions from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param id        The id of the data array to delete.
+     *
+     * @return True if the data array was deleted, false otherwise.
+     */
     bool deleteDataArray(const std::string &id) {
         return backend()->deleteDataArray(id);
     }
@@ -312,6 +401,13 @@ public:
     // Methods concerning simple tags.
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if a specific simple tag exists in the block.
+     *
+     * @param id        The id of a simple tag.
+     *
+     * @return True if the simple tag exists, false otherwise.
+     */
     bool hasSimpleTag(const std::string &id) const {
         return backend()->hasSimpleTag(id);
     }
@@ -325,10 +421,25 @@ public:
     */
     bool hasSimpleTag(const SimpleTag &simple_tag) const;
 
+    /**
+     * @brief Retrieves a specific simple tag from the block by its id.
+     *
+     * @param id        The id of the simple tag.
+     *
+     * @return The tag with the specified id. If this tag doesn't exist
+     *         an exception will be thrown.
+     */
     SimpleTag getSimpleTag(const std::string &id) const {
         return backend()->getSimpleTag(id);
     }
 
+    /**
+     * @brief Retrieves a specific simple tag by index.
+     *
+     * @param index     The index of the tag.
+     *
+     * @return The simple tag at the specified index.
+     */
     SimpleTag getSimpleTag(size_t index) const {
         return backend()->getSimpleTag(index);
     }
@@ -346,15 +457,39 @@ public:
     std::vector<SimpleTag> simpleTags(util::Filter<SimpleTag>::type filter
                                       = util::AcceptAll<SimpleTag>()) const;
 
+    /**
+     * @brief Returns the number of simple tags within this block.
+     *
+     * @return The number of simple tags.
+     */
     size_t simpleTagCount() const {
         return backend()->simpleTagCount();
     }
 
+    /**
+     * @brief Create a new simple tag associated with this block.
+     *
+     * @param name      The name of the simple tag to create.
+     * @param type      The type of the tag.
+     * @param refs      A Vector with referenced data array entities.
+     *
+     * @return The newly created tag.
+     */
     SimpleTag createSimpleTag(const std::string &name, const std::string &type,
                               const std::vector<DataArray> &refs) {
         return backend()->createSimpleTag(name, type, refs);
     }
 
+    /**
+     * @brief Deletes a simple tag from the block.
+     *
+     * Deletes a simple tag with all its features from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param id        The id of the tag to remove.
+     *
+     * @return True if the tag was removed, false otherwise.
+     */
     bool deleteSimpleTag(const std::string &id) {
         return backend()->deleteSimpleTag(id);
     }
@@ -375,6 +510,13 @@ public:
     // Methods concerning data tags.
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if a specific data tag exists in the block.
+     *
+     * @param id        The id of a data tag.
+     *
+     * @return True if the data tag exists, false otherwise.
+     */
     bool hasDataTag(const std::string &id) const {
         return backend()->hasDataTag(id);
     }
@@ -388,10 +530,25 @@ public:
     */
     bool hasDataTag(const DataTag &data_tag) const;
 
+    /**
+     * @brief Retrieves a specific data tag from the block by its id.
+     *
+     * @param id        The id of the data tag.
+     *
+     * @return The tag with the specified id. If this tag doesn't exist
+     *         an exception will be thrown.
+     */
     DataTag getDataTag(const std::string &id) const {
         return backend()->getDataTag(id);
     }
 
+    /**
+     * @brief Retrieves a specific data tag by index.
+     *
+     * @param index     The index of the tag.
+     *
+     * @return The data tag at the specified index.
+     */
     DataTag getDataTag(size_t index) const {
         return backend()->getDataTag(index);
     }
@@ -409,15 +566,39 @@ public:
     std::vector<DataTag> dataTags(util::AcceptAll<DataTag>::type filter
                                   = util::AcceptAll<DataTag>()) const;
 
+    /**
+     * @brief Returns the number of data tags associated with this block.
+     *
+     * @return The number of data tags.
+     */
     size_t dataTagCount() const {
         return backend()->dataTagCount();
     }
 
+    /**
+     * @brief Create a new data tag associated with this block.
+     *
+     * @param name      The name of the data tag to create.
+     * @param type      The type of the tag.
+     * @param position  The position of the tag.
+     *
+     * @return The newly created tag.
+     */
     DataTag createDataTag(const std::string &name, const std::string &type,
                           const DataArray position) {
         return backend()->createDataTag(name, type, position);
     }
 
+    /**
+     * @brief Deletes a data tag from the block.
+     *
+     * Deletes a data tag and all its features from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param id        The id of the tag to remove.
+     *
+     * @return True if the tag was removed, false otherwise.
+     */
     bool deleteDataTag(const std::string &id) {
         return backend()->deleteDataTag(id);
     }

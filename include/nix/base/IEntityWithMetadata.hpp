@@ -27,39 +27,15 @@ class NIXAPI IEntityWithMetadata : virtual public INamedEntity {
 
 public:
 
-    /**
-     * @brief Get metadata associated with this entity.
-     *
-     * @return The associated section, if no such section exists an
-     *         uninitialized {@link nix::Section} will be returned.
-     */
     virtual Section metadata() const = 0;
 
-    /**
-     * @brief Associate the entity with some metadata.
-     *
-     * Calling this method will replace previously stored information.
-     *
-     * @param id        The id of the {@link nix::Section} that should be associated
-     *                  with this entity.
-     */
+
     virtual void metadata(const std::string &id) = 0;
 
 
-    /**
-     * @brief Remove associated metadata from the entity.
-     *
-     * This method just removes the association between the respective
-     * {@link nix::Section} but will not remove it from the file.
-     * 
-     * @param t         None
-     */
     virtual void metadata(const none_t t) = 0;
 
 
-    /**
-     * Destructor
-     */
     virtual ~IEntityWithMetadata() {}
 
 };

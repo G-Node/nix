@@ -37,37 +37,18 @@ class NIXAPI IFeature: virtual public base::IEntity {
 
 public:
 
-    /**
-     * @brief Setter for the link type.
-     *
-     * @param type    The link type to set.
-     */
     virtual void linkType(LinkType type) = 0;
 
-    /**
-     * @brief Getter for the link type.
-     *
-     * @return The current link type of the feature.
-     */
+
     virtual LinkType linkType() const = 0;
 
-    /**
-     * @brief Sets the data array associated with this feature.
-     *
-     * @param id        The id of the data array to set.
-     */
+
     virtual void data(const std::string &id) = 0;
 
-    /**
-     * @brief Gets the data array associated with this feature.
-     *
-     * @return The associated data array.
-     */
+
     virtual DataArray data() const = 0;
 
-    /**
-     * @brief Destructor.
-     */
+
     virtual ~IFeature() {}
 
 };
