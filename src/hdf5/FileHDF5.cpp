@@ -88,7 +88,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
         block = make_shared<BlockHDF5>(file(), group, id, type, name);
     }
 
-    return static_pointer_cast<base::IBlock>(block);
+    return block;
 }
 
 
@@ -106,8 +106,7 @@ shared_ptr<base::IBlock> FileHDF5::createBlock(const std::string &name, const st
     }
 
     Group group = data.openGroup(id, true);
-    auto block = make_shared<BlockHDF5>(file(), group, id, type, name);
-    return static_pointer_cast<base::IBlock>(block);
+    return make_shared<BlockHDF5>(file(), group, id, type, name);
 }
 
 
@@ -143,7 +142,7 @@ shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
         sec = make_shared<SectionHDF5>(file(), group, id, type, name);
     }
 
-    return static_pointer_cast<base::ISection>(sec);
+    return sec;
 }
 
 
@@ -160,8 +159,7 @@ shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  st
         id = util::createId("section");
 
     Group group = metadata.openGroup(id, true);
-    auto sec = make_shared<SectionHDF5>(file(), group, id, type, name);
-    return static_pointer_cast<base::ISection>(sec);
+    return make_shared<SectionHDF5>(file(), group, id, type, name);
 }
 
 
@@ -283,8 +281,7 @@ bool FileHDF5::isOpen() const {
 
 
 shared_ptr<base::IFile> FileHDF5::file() const {
-    auto ptr = const_pointer_cast<FileHDF5>(shared_from_this());
-    return dynamic_pointer_cast<base::IFile>(ptr);
+    return  const_pointer_cast<FileHDF5>(shared_from_this());
 }
 
 

@@ -65,7 +65,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
         source = make_shared<SourceHDF5>(file(), group, id, type, name);
     }
 
-    return static_pointer_cast<ISource>(source);
+    return source;
 }
 
 
@@ -87,8 +87,7 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
     }
 
     Group group = source_group.openGroup(id, true);
-    auto source = make_shared<SourceHDF5>(file(), group, id, type, name);
-    return static_pointer_cast<ISource>(source);
+    return make_shared<SourceHDF5>(file(), group, id, type, name);
 }
 
 
@@ -133,7 +132,7 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
         tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs);
     }
 
-    return static_pointer_cast<ISimpleTag>(tag);
+    return tag;
 }
 
 
@@ -156,8 +155,7 @@ shared_ptr<ISimpleTag> BlockHDF5::createSimpleTag(const string &name, const stri
     }
 
     Group group = simple_tag_group.openGroup(id, true);
-    auto tag = make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, refs);
-    return static_pointer_cast<ISimpleTag>(tag);
+    return make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, refs);
 }
 
 
@@ -192,7 +190,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
         da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
     }
 
-    return static_pointer_cast<IDataArray>(da);
+    return da;
 }
 
 
@@ -222,7 +220,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     // now create the actual H5::DataSet
     da->createData(data_type, shape);
 
-    return static_pointer_cast<IDataArray>(da);
+    return da;
 }
 
 
@@ -248,9 +246,7 @@ shared_ptr<IDataTag> BlockHDF5::createDataTag(const std::string &name, const std
     }
 
     Group group = data_tag_group.openGroup(id);
-    auto tag = make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
-
-    return static_pointer_cast<IDataTag>(tag);
+    return make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
 }
 
 
@@ -274,7 +270,7 @@ shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
         tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
     }
 
-    return static_pointer_cast<IDataTag>(tag);
+    return tag;
 }
 
 
@@ -320,8 +316,7 @@ BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
 
 
 shared_ptr<IBlock> BlockHDF5::block() const {
-    shared_ptr<BlockHDF5> block = const_pointer_cast<BlockHDF5>(shared_from_this());
-    return static_pointer_cast<IBlock>(block);
+    return const_pointer_cast<BlockHDF5>(shared_from_this());
 }
 
 
