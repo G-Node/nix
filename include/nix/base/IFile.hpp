@@ -35,10 +35,6 @@ NIXAPI enum class Implementation {
 };
 
 
-class Block;
-class Section;
-
-
 namespace base {
 
 

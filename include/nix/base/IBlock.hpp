@@ -21,13 +21,6 @@
 #include <nix/NDSize.hpp>
 
 namespace nix {
-
-class Source;
-class DataArray;
-class SimpleTag;
-class DataTag;
-
-
 namespace base {
 
 /**
