@@ -121,7 +121,9 @@ Result validate(const SimpleTag &simple_tag) {
     Result result = validator({
         must(simple_tag, &SimpleTag::position, notEmpty(), "position is not set!"),
         could(simple_tag, &SimpleTag::references, notEmpty(), {
-            must(simple_tag, &SimpleTag::position, positionsMatchRefs(simple_tag.references()), "number of entries in position does not match number of dimensions in all referenced DataArrays!") }),
+            must(simple_tag, &SimpleTag::position, positionsMatchRefs(simple_tag.references()), 
+		 "number of entries in position does not match number of dimensions in all referenced DataArrays!") 
+	}),
         // check units for validity
         could(simple_tag, &SimpleTag::units, notEmpty(), {
             must(simple_tag, &SimpleTag::units, isValidUnit(), "Unit is invalid: not an atomic SI. Note: So far composite units are not supported!") }),

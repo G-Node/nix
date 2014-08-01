@@ -43,6 +43,7 @@ void TestValidate::setUp() {
     // create data tag & simple tag
     dtag = block.createDataTag("tag_one", "test_tag", positions);
     dtag.extents(extents);
+    dtag.references(refs);
     stag = block.createSimpleTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
     stag.references(refs);
     units_tmp = tag_tmp(compound_units);
@@ -97,10 +98,7 @@ void TestValidate::setValid() {
         }
     }
     extents.setData(C);
-    // set references vector
-    refs = {array2, array3};
     // fill DataTag
-    dtag.references(refs);
     dtag.units(atomic_units);
     // fill SimpleTag
     stag.extent(extent);
@@ -159,10 +157,7 @@ void TestValidate::setInvalid() {
         }
     }
     positions.setData(C);
-    // set references vector
-    refs = {array1, array2};
     // fill DataTag
-    dtag.references(refs);
     dtag.units(atomic_units);
     // fill SimpleTag
     stag.extent(extent);
