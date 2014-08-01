@@ -12,12 +12,12 @@
 #include <nix/hdf5/DataSet.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
-namespace nix {
-namespace hdf5 {
 
-
-DimensionType dimensionTypeFromStr(const string &str) {
+DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
     if (str == "set") {
         return DimensionType::Set;
     } else if (str == "range") {
@@ -30,7 +30,7 @@ DimensionType dimensionTypeFromStr(const string &str) {
 }
 
 
-std::string dimensionTypeToStr(DimensionType dim) {
+std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
 
     //The way this switch + string.empty() checking is
     // done here might seem a bit convoluted, but the
@@ -60,19 +60,36 @@ std::string dimensionTypeToStr(DimensionType dim) {
     }
 
     return dimType;
-
 }
+
+
+shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(Group group, size_t index) {
+    string type_name;
+    group.getAttr("dimension_type", type_name);
+
+    DimensionType type = dimensionTypeFromStr(type_name);
+    shared_ptr<IDimension> dim;
+
+    switch (type) {
+        case DimensionType::Set:
+            dim = make_shared<SetDimensionHDF5>(group, index);
+            break;
+        case DimensionType::Range:
+            dim = make_shared<RangeDimensionHDF5>(group, index);
+            break;
+        case DimensionType::Sample:
+            dim = make_shared<SampledDimensionHDF5>(group, index);
+            break;
+    }
+
+    return dim;
+}
+
 
 // Implementation of Dimension
 
 DimensionHDF5::DimensionHDF5(Group group, size_t index)
     : group(group), dim_index(index)
-{
-}
-
-
-DimensionHDF5::DimensionHDF5(const DimensionHDF5 &other)
-    : group(other.group), dim_index(other.dim_index)
 {
 }
 
@@ -105,19 +122,22 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index)
     : DimensionHDF5(group, index)
 {
     setType();
+}
+
+SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
+    : SampledDimensionHDF5(group, index)
+{
     this->samplingInterval(sampling_interval);
 }
 
 
 SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
+    : SampledDimensionHDF5(other.group, other.dim_index)
 {
-    setType();
-    samplingInterval(other.samplingInterval());
 }
 
 
@@ -246,9 +266,8 @@ SetDimensionHDF5::SetDimensionHDF5(Group group, size_t index)
 
 
 SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
+    : SetDimensionHDF5(other.group, other.dim_index)
 {
-    setType();
 }
 
 
@@ -288,19 +307,23 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index)
     : DimensionHDF5(group, index)
 {
     setType();
+}
+
+
+RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
+    : RangeDimensionHDF5(group, index)
+{
     this->ticks(ticks);
 }
 
 
 RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
+    : RangeDimensionHDF5(other.group, other.dim_index)
 {
-    setType();
-    ticks(other.ticks());
 }
 
 
@@ -393,8 +416,4 @@ void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix
 

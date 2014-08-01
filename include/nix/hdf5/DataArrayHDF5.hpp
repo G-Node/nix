@@ -16,7 +16,7 @@
 #include <memory>
 #include <boost/multi_array.hpp>
 
-#include <nix.hpp>
+#include <nix/base/IDataArray.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 
 namespace nix {
@@ -99,24 +99,16 @@ public:
     size_t dimensionCount() const;
 
 
-    Dimension getDimension(size_t id) const;
+    std::shared_ptr<base::IDimension> getDimension(size_t id) const;
 
 
-    SetDimension createSetDimension(size_t id);
+    std::shared_ptr<base::ISetDimension> createSetDimension(size_t id);
 
 
-    RangeDimension createRangeDimension(size_t id, std::vector<double> ticks);
+    std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, std::vector<double> ticks);
 
 
-    SampledDimension createSampledDimension(size_t id, double sampling_interval);
-
-
-    template<DimensionType dtype, typename T>
-    typename std::conditional<dtype == DimensionType::Range, RangeDimension, SampledDimension>::type
-    _createDimension(size_t id, T var);
-
-    template<DimensionType dtype>
-    SetDimension _createDimension(size_t id);
+    std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval);
 
 
     bool deleteDimension(size_t id);
@@ -141,15 +133,28 @@ public:
 
     virtual void createData(DataType dtype, const NDSize &size);
 
+
     bool hasData() const;
 
+
     void write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset);
+
+
     void read(DataType dtype, void *buffer, const NDSize &count, const NDSize &offset) const;
 
+
     NDSize dataExtent(void) const;
+
+
     void   dataExtent(const NDSize &extent);
 
+
     DataType dataType(void) const;
+
+private:
+
+    // small helper for handling dimension groups
+    Group createDimensionGroup(size_t index);
 };
 
 
