@@ -90,13 +90,15 @@ void TestOptionalObligatory::setUp() {
     // simpleTag--------------------------------------------------------
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
+
+    simpleTag = block.createSimpleTag("featureTest", "Test", {0.0, 2.0, 3.4});
     vector<DataArray> refs;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name, "reference",
                                              DataType::Double, {0}));
     }
-    simpleTag = block.createSimpleTag("featureTest", "Test", refs);
-
+    simpleTag.references(refs);
+    
     // dataTag----------------------------------------------------------
     positions = block.createDataArray("positions_DataArray",
                                       "dataArray",

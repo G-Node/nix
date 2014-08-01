@@ -94,7 +94,7 @@ public:
 
 
     virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type,
-                                      const std::vector<DataArray> &refs) = 0;
+                                      const std::vector<double> &position) = 0;
 
 
     virtual bool deleteSimpleTag(const std::string &id) = 0;

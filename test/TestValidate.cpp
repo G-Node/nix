@@ -43,7 +43,8 @@ void TestValidate::setUp() {
     // create data tag & simple tag
     dtag = block.createDataTag("tag_one", "test_tag", positions);
     dtag.extents(extents);
-    stag = block.createSimpleTag("tag_one", "test_tag", refs);
+    stag = block.createSimpleTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    stag.references(refs);
     units_tmp = tag_tmp(compound_units);
     // create dimensions
     dim_set1 = array1.appendSetDimension();
