@@ -351,8 +351,8 @@ public:
     }
 
     SimpleTag createSimpleTag(const std::string &name, const std::string &type,
-                              const std::vector<DataArray> &refs) {
-        return backend()->createSimpleTag(name, type, refs);
+                              const std::vector<double> &position) {
+        return backend()->createSimpleTag(name, type, position);
     }
 
     bool deleteSimpleTag(const std::string &id) {

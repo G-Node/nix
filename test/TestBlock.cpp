@@ -181,7 +181,8 @@ void TestBlock::testSimpleTagAccess() {
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        SimpleTag tag = block.createSimpleTag(*it, "segment", refs);
+        SimpleTag tag = block.createSimpleTag(*it, "segment", {0.0, 2.0, 3.4});
+	tag.references(refs);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());

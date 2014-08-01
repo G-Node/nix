@@ -27,14 +27,9 @@ void TestSimpleTag::setUp() {
 
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
-    }
 
-    tag = block.createSimpleTag("tag_one", "test_tag", refs);
-    tag_other = block.createSimpleTag("tag_two", "test_tag", refs);
+    tag = block.createSimpleTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    tag_other = block.createSimpleTag("tag_two", "test_tag", {0.0, 2.0, 3.4});
     tag_null = nullptr;
 
     section = file.createSection("foo_section", "metadata");
@@ -99,7 +94,8 @@ void TestSimpleTag::testCreateRemove() {
 
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        SimpleTag st1 = block.createSimpleTag(names[i], type, refs);
+        SimpleTag st1 = block.createSimpleTag(names[i], type, {0.0, 2.0, 3.4});
+	st1.references(refs);
         SimpleTag st2 = block.getSimpleTag(st1.id());
         ids.push_back(st1.id());
 
@@ -139,7 +135,8 @@ void TestSimpleTag::testReferences() {
                                              DataType::Double, {0}));
     }
 
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(refs);
 
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
@@ -190,7 +187,8 @@ void TestSimpleTag::testExtent() {
                                              DataType::Double, {0}));
     }
 
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(refs);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -219,7 +217,8 @@ void TestSimpleTag::testPosition() {
                                              DataType::Double, {0}));
     }
 
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(refs);
 
     std::vector<double> position = {1.0, 2.0, 3.0};
     std::vector<double> new_position = {2.0};
@@ -297,7 +296,8 @@ void TestSimpleTag::testUnits() {
                                              DataType::Double, {0}));
     }
 
-    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", refs);
+    SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(refs);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};

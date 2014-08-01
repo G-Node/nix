@@ -45,13 +45,13 @@ public:
      * Standard constructor
      */
     SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                  const std::string &type, const std::string &name, const std::vector<DataArray> &refs);
+                  const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
      * Standard constructor that preserves the creation time.
      */
     SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                  const std::string &type, const std::string &name, const std::vector<DataArray> &refs, const time_t time);
+                  const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 
     std::vector<std::string> units() const;
