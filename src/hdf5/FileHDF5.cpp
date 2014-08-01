@@ -17,8 +17,8 @@
 
 using namespace std;
 
-namespace nix {
-namespace hdf5 {
+using namespace nix;
+using namespace nix::hdf5;
 
 
 // Format definition
@@ -76,27 +76,29 @@ bool FileHDF5::hasBlock(const std::string &id) const {
 }
 
 
-Block FileHDF5::getBlock(const std::string &id) const {
+shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
+    shared_ptr<BlockHDF5> block;
+
     if(hasBlock(id)) {
         Group group = data.openGroup(id, false);
         std::string type;
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        return Block(make_shared<BlockHDF5>(file(), group, id, type, name));
-    } else {
-        return Block();
+        block = make_shared<BlockHDF5>(file(), group, id, type, name);
     }
+
+    return static_pointer_cast<base::IBlock>(block);
 }
 
 
-Block FileHDF5::getBlock(size_t index) const {
+shared_ptr<base::IBlock> FileHDF5::getBlock(size_t index) const {
     string id = data.objectName(index);
     return getBlock(id);
 }
 
 
-Block FileHDF5::createBlock(const std::string &name, const string &type) {
+shared_ptr<base::IBlock> FileHDF5::createBlock(const std::string &name, const string &type) {
     string id = util::createId("block");
 
     while(data.hasObject(id)) {
@@ -104,7 +106,8 @@ Block FileHDF5::createBlock(const std::string &name, const string &type) {
     }
 
     Group group = data.openGroup(id, true);
-    return Block(make_shared<BlockHDF5>(file(), group, id, type, name));
+    auto block = make_shared<BlockHDF5>(file(), group, id, type, name);
+    return static_pointer_cast<base::IBlock>(block);
 }
 
 
@@ -128,31 +131,37 @@ bool FileHDF5::hasSection(const std::string &id) const {
 }
 
 
-Section FileHDF5::getSection(const std::string &id) const {
+shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
+    shared_ptr<SectionHDF5> sec;
+
     if(hasSection(id)) {
         Group group = metadata.openGroup(id, false);
         std::string type;
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        return Section(make_shared<SectionHDF5>(file(), group, id, type, name));
-    } else {
-        return Section();
+        sec = make_shared<SectionHDF5>(file(), group, id, type, name);
     }
+
+    return static_pointer_cast<base::ISection>(sec);
 }
 
 
-Section FileHDF5::getSection(size_t index) const{
+shared_ptr<base::ISection> FileHDF5::getSection(size_t index) const{
     string id = metadata.objectName(index);
     return getSection(id);
 }
 
 
-Section FileHDF5::createSection(const string &name, const  string &type) {
+shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId("section");
+
     while(metadata.hasObject(id))
         id = util::createId("section");
-    return Section(make_shared<SectionHDF5>(file(), metadata.openGroup(id, true), id, type, name));
+
+    Group group = metadata.openGroup(id, true);
+    auto sec = make_shared<SectionHDF5>(file(), group, id, type, name);
+    return static_pointer_cast<base::ISection>(sec);
 }
 
 
@@ -273,9 +282,9 @@ bool FileHDF5::isOpen() const {
 }
 
 
-File FileHDF5::file() const {
-    shared_ptr<FileHDF5> ptr = const_pointer_cast<FileHDF5>(shared_from_this());
-    return File(ptr);
+shared_ptr<base::IFile> FileHDF5::file() const {
+    auto ptr = const_pointer_cast<FileHDF5>(shared_from_this());
+    return dynamic_pointer_cast<base::IFile>(ptr);
 }
 
 
@@ -340,6 +349,4 @@ FileHDF5::~FileHDF5() {
 }
 
 
-} // namespace hdf5
-} // namespace nix
 

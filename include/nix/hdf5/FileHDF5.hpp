@@ -12,9 +12,8 @@
 #include <string>
 #include <memory>
 
-#include <nix.hpp>
+#include <nix/base/IFile.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-
 #include <nix/hdf5/Group.hpp>
 
 namespace nix {
@@ -63,13 +62,13 @@ public:
     bool hasBlock(const std::string &id) const;
 
 
-    Block getBlock(const std::string &id) const;
+    std::shared_ptr<base::IBlock> getBlock(const std::string &id) const;
 
 
-    Block getBlock(size_t index) const;
+    std::shared_ptr<base::IBlock> getBlock(size_t index) const;
 
 
-    Block createBlock(const std::string &name, const std::string &type);
+    std::shared_ptr<base::IBlock> createBlock(const std::string &name, const std::string &type);
 
 
     bool deleteBlock(const std::string &id);
@@ -81,16 +80,16 @@ public:
     bool hasSection(const std::string &id) const;
 
 
-    Section getSection(const std::string &id) const;
+    std::shared_ptr<base::ISection> getSection(const std::string &id) const;
 
 
-    Section getSection(size_t index) const;
+    std::shared_ptr<base::ISection> getSection(size_t index) const;
 
 
     size_t sectionCount() const;
 
 
-    Section createSection(const std::string &name, const std::string &type);
+    std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
 
 
     bool deleteSection(const std::string &id);
@@ -146,7 +145,7 @@ public:
 
 private:
 
-    File file() const;
+    std::shared_ptr<base::IFile> file() const;
 
     // check for existence
     bool fileExists(const std::string &name) const;
