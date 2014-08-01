@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include <nix.hpp>
+#include <nix/base/IBlock.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 namespace nix {
@@ -66,16 +66,16 @@ public:
     bool hasSource(const std::string &id) const;
 
 
-    Source getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource> getSource(const std::string &id) const;
 
 
-    Source getSource(size_t index) const;
+    std::shared_ptr<base::ISource> getSource(size_t index) const;
 
 
     size_t sourceCount() const;
 
 
-    Source createSource(const std::string &name, const std::string &type);
+    std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
     bool deleteSource(const std::string &id);
@@ -87,19 +87,17 @@ public:
     bool hasDataArray(const std::string &id) const;
 
 
-    DataArray getDataArray(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
 
 
-    DataArray getDataArray(size_t index) const;
+    std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
 
 
     size_t dataArrayCount() const;
 
 
-    DataArray createDataArray(const std::string &name,
-                              const std::string &type,
-                              nix::DataType      data_type,
-                              const NDSize      &shape) override;
+    std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
+                                                      nix::DataType data_type, const NDSize &shape) override;
 
 
     bool deleteDataArray(const std::string &id);
@@ -111,17 +109,17 @@ public:
     bool hasSimpleTag(const std::string &id) const;
 
 
-    SimpleTag getSimpleTag(const std::string &id) const;
+    std::shared_ptr<base::ISimpleTag> getSimpleTag(const std::string &id) const;
 
 
-    SimpleTag getSimpleTag(size_t index) const;
+    std::shared_ptr<base::ISimpleTag> getSimpleTag(size_t index) const;
 
 
     size_t simpleTagCount() const;
 
 
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
-                              const std::vector<DataArray> &refs);
+    std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
+                                                      const std::vector<DataArray> &refs);
 
 
     bool deleteSimpleTag(const std::string &id);
@@ -133,17 +131,17 @@ public:
     bool hasDataTag(const std::string &id) const;
 
 
-    DataTag getDataTag(const std::string &id) const;
+    std::shared_ptr<base::IDataTag> getDataTag(const std::string &id) const;
 
 
-    DataTag getDataTag(size_t index) const;
+    std::shared_ptr<base::IDataTag> getDataTag(size_t index) const;
 
 
     size_t dataTagCount() const;
 
 
-    DataTag createDataTag(const std::string &name, const std::string &type, 
-                          const DataArray positions);
+    std::shared_ptr<base::IDataTag> createDataTag(const std::string &name, const std::string &type,
+                                                  const DataArray &positions);
 
 
     bool deleteDataTag(const std::string &id);
@@ -162,9 +160,8 @@ public:
 
     virtual ~BlockHDF5();
 
-private:
 
-    Block block() const;
+    std::shared_ptr<IBlock> block() const;
 
 };
 
