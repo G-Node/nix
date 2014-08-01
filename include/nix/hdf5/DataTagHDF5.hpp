@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 
-#include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 #include <nix/hdf5/ReferenceList.hpp>
 
@@ -42,7 +41,7 @@ public:
                 const std::string &id, const std::string &type, const std::string &name, const DataArray positions, time_t time);
 
 
-    DataArray positions() const;
+    std::shared_ptr<base::IDataArray> positions() const;
 
 
     void positions(const std::string &id);
@@ -51,7 +50,7 @@ public:
     bool hasPositions() const;
 
 
-    DataArray extents() const;
+    std::shared_ptr<base::IDataArray> extents() const;
 
 
     void extents(const DataArray &extents);
@@ -81,10 +80,10 @@ public:
     size_t referenceCount() const;
 
 
-    DataArray getReference(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
 
 
-    DataArray getReference(size_t index) const;
+    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
 
 
     void addReference(const std::string &id);
@@ -106,13 +105,13 @@ public:
     size_t featureCount() const;
 
 
-    Feature getFeature(const std::string &id) const;
+    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
 
 
-    Feature getFeature(size_t index) const;
+    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
 
 
-    Feature createFeature(const std::string &data_array_id, LinkType link_type);
+    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);
