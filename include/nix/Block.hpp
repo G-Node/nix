@@ -414,8 +414,8 @@ public:
     }
 
     DataTag createDataTag(const std::string &name, const std::string &type,
-                          const DataArray position) {
-        return backend()->createDataTag(name, type, position);
+                          const DataArray positions) {
+        return backend()->createDataTag(name, type, positions);
     }
 
     bool deleteDataTag(const std::string &id) {
