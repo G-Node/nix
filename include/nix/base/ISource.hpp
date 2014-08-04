@@ -10,16 +10,11 @@
 #define NIX_I_SOURCE_H
 
 #include <string>
-#include <vector>
+#include <memory>
 
 #include <nix/base/IEntityWithMetadata.hpp>
 
 namespace nix {
-
-
-class Source;
-
-
 namespace base {
 
 
@@ -35,16 +30,16 @@ public:
     virtual bool hasSource(const std::string &id) const = 0;
 
 
-    virtual Source getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISource> getSource(const std::string &id) const = 0;
 
 
-    virtual Source getSource(size_t index) const = 0;
+    virtual std::shared_ptr<ISource> getSource(size_t index) const = 0;
 
 
     virtual size_t sourceCount() const = 0;
 
 
-    virtual Source createSource(const std::string &name, const std::string &type) = 0;
+    virtual std::shared_ptr<ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 
     virtual bool deleteSource(const std::string &id) = 0;
