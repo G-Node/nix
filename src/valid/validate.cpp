@@ -119,7 +119,14 @@ Result validate(const DataArray &data_array) {
 Result validate(const SimpleTag &simple_tag) {
     Result result_base = validate(static_cast<base::EntityWithSources<base::ISimpleTag>>(simple_tag));
     Result result = validator({
-        must(simple_tag, &SimpleTag::referenceCount, isGreater(0), "references are not set!"),
+        must(simple_tag, &SimpleTag::position, notEmpty(), "position is not set!"),
+        could(simple_tag, &SimpleTag::references, notEmpty(), {
+            must(simple_tag, &SimpleTag::position, positionsMatchRefs(simple_tag.references()), 
+		 "number of entries in position does not match number of dimensions in all referenced DataArrays!"),
+	    could(simple_tag, &SimpleTag::extent, notEmpty(), {
+	        must(simple_tag, &SimpleTag::extent, extentsMatchRefs(simple_tag.references()),
+		 "number of entries in extent does not match number of dimensions in all referenced DataArrays!") })
+	}),
         // check units for validity
         could(simple_tag, &SimpleTag::units, notEmpty(), {
             must(simple_tag, &SimpleTag::units, isValidUnit(), "Unit is invalid: not an atomic SI. Note: So far composite units are not supported!") }),
@@ -127,11 +134,8 @@ Result validate(const SimpleTag &simple_tag) {
         must(simple_tag, &SimpleTag::references, tagUnitsMatchRefsUnits(simple_tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!"),
         // check positions & extents
         could(simple_tag, &SimpleTag::extent, notEmpty(), {
-            must(simple_tag, &SimpleTag::position, notEmpty(), "Extent is set but position is missing!"),
             must(simple_tag, &SimpleTag::position, extentsMatchPositions(simple_tag.extent()), "Number of entries in position and extent do not match!"),
-            must(simple_tag, &SimpleTag::extent, extentsMatchRefs(simple_tag.references()), "number of entries in extent does not match number of dimensions in all referenced DataArrays!") }),
-        could(simple_tag, &SimpleTag::position, notEmpty(), {
-            must(simple_tag, &SimpleTag::position, positionsMatchRefs(simple_tag.references()), "number of entries in position does not match number of dimensions in all referenced DataArrays!") })
+            must(simple_tag, &SimpleTag::extent, extentsMatchRefs(simple_tag.references()), "number of entries in extent does not match number of dimensions in all referenced DataArrays!") })
     });
 
     return result.concat(result_base);
