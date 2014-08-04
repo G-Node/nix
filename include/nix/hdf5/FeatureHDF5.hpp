@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-#include <nix.hpp>
+#include <nix/base/IFeature.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
 namespace nix {
@@ -67,7 +67,7 @@ public:
     void data(const std::string &data_array_id);
 
 
-    DataArray data() const;
+    std::shared_ptr<base::IDataArray> data() const;
 
 
     virtual ~FeatureHDF5();

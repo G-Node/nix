@@ -10,18 +10,18 @@
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
 
-
-string linkTypeToString(LinkType link_type) {
+string nix::hdf5::linkTypeToString(LinkType link_type) {
     static vector<string> type_names = {"tagged", "untagged", "indexed"};
     return type_names[static_cast<int>(link_type)];
 }
 
 
-LinkType linkTypeFromString(const string &str) {
+LinkType nix::hdf5::linkTypeFromString(const string &str) {
     if (str == "tagged")
         return LinkType::Tagged;
     else if (str == "untagged")
@@ -79,18 +79,21 @@ void FeatureHDF5::data(const std::string &data_array_id) {
 }
 
 
-DataArray FeatureHDF5::data() const {
+shared_ptr<IDataArray> FeatureHDF5::data() const {
+    shared_ptr<IDataArray> da;
+
     if(group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
         if(block.hasDataArray(dataId)) {
-            return block.getDataArray(dataId);
+            // TODO fix this when base entities are fixed
+            da = block.getDataArray(dataId).impl();
         } else {
             throw std::runtime_error("Data array not found by id in Block");
         }
-    } else {
-        throw MissingAttr("data");
     }
+
+    return da;
 }
 
 
@@ -106,7 +109,3 @@ LinkType FeatureHDF5::linkType() const {
 
 
 FeatureHDF5::~FeatureHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix
