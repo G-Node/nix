@@ -9,12 +9,9 @@
 #ifndef NIX_SECTION_HDF5_H
 #define NIX_SECTION_HDF5_H
 
-#include <string>
-#include <functional>
 
-#include <nix.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
-#include <nix/DataType.hpp>
+#include <nix/base/ISection.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -75,7 +72,7 @@ public:
     void link(const std::string &id);
 
 
-    Section link() const;
+    std::shared_ptr<base::ISection> link() const;
 
 
     void link(const none_t t);
@@ -95,7 +92,7 @@ public:
     //--------------------------------------------------
 
 
-    Section parent() const;
+    std::shared_ptr<base::ISection> parent() const;
 
 
     //--------------------------------------------------
@@ -109,13 +106,13 @@ public:
     bool hasSection(const std::string &id) const;
 
 
-    Section getSection(const std::string &id) const;
+    std::shared_ptr<base::ISection> getSection(const std::string &id) const;
 
 
-    Section getSection(size_t index) const;
+    std::shared_ptr<base::ISection> getSection(size_t index) const;
 
 
-    Section createSection(const std::string &name, const std::string &type);
+    std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
 
 
     bool deleteSection(const std::string &id);
@@ -131,25 +128,25 @@ public:
     bool hasProperty(const std::string &id) const;
 
 
-    Property getProperty(const std::string &id) const;
+    std::shared_ptr<base::IProperty> getProperty(const std::string &id) const;
 
 
-    Property getProperty(size_t index) const;
+    std::shared_ptr<base::IProperty> getProperty(size_t index) const;
 
 
     bool hasPropertyWithName(const std::string &name) const;
 
 
-    Property getPropertyByName(const std::string &name) const;
+    std::shared_ptr<base::IProperty> getPropertyByName(const std::string &name) const;
 
 
-    Property createProperty(const std::string &name, const DataType &dtype);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);
 
 
-    Property createProperty(const std::string &name, const Value &value);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Value &value);
 
 
-    Property createProperty(const std::string &name, const std::vector<Value> &values);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Value> &values);
 
 
     bool deleteProperty(const std::string &id);

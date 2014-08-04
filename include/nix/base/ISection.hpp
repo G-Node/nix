@@ -14,14 +14,11 @@
 
 #include <nix/base/IEntity.hpp>
 #include <nix/base/INamedEntity.hpp>
+#include <nix/base/IProperty.hpp>
 #include <nix/DataType.hpp>
+#include <nix/Value.hpp>
 
 namespace nix {
-
-class Section;
-class Property;
-class Value;
-
 namespace base {
 
 /**
@@ -49,7 +46,7 @@ public:
     virtual void link(const std::string &id) = 0;
 
 
-    virtual Section link() const = 0;
+    virtual std::shared_ptr<ISection> link() const = 0;
 
 
     virtual void link(const none_t t) = 0;
@@ -67,7 +64,7 @@ public:
     // Methods for parent access
     //--------------------------------------------------
 
-    virtual Section parent() const = 0;
+    virtual std::shared_ptr<ISection> parent() const = 0;
 
     //--------------------------------------------------
     // Methods for child section access
@@ -79,13 +76,13 @@ public:
     virtual bool hasSection(const std::string &id) const = 0;
 
 
-    virtual Section getSection(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISection> getSection(const std::string &id) const = 0;
 
 
-    virtual Section getSection(size_t index) const = 0;
+    virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
 
 
-    virtual Section createSection(const std::string &name, const std::string &type) = 0;
+    virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;
 
 
     virtual bool deleteSection(const std::string &id) = 0;
@@ -100,25 +97,25 @@ public:
     virtual bool hasProperty(const std::string &id) const = 0;
 
 
-    virtual Property getProperty(const std::string &id) const = 0;
+    virtual std::shared_ptr<IProperty> getProperty(const std::string &id) const = 0;
 
 
-    virtual Property getProperty(size_t index) const = 0;
+    virtual std::shared_ptr<IProperty> getProperty(size_t index) const = 0;
 
 
     virtual bool hasPropertyWithName(const std::string &name) const = 0;
 
 
-    virtual Property getPropertyByName(const std::string &name) const = 0;
+    virtual std::shared_ptr<IProperty> getPropertyByName(const std::string &name) const = 0;
 
 
-    virtual Property createProperty(const std::string &name, const DataType &dtype) = 0;
+    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const DataType &dtype) = 0;
 
 
-    virtual Property createProperty(const std::string &name, const Value &value) = 0;
+    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const Value &value) = 0;
 
 
-    virtual Property createProperty(const std::string &name, const std::vector<Value> &values) = 0;
+    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const std::vector<Value> &values) = 0;
 
 
     virtual bool deleteProperty(const std::string &id) = 0;
