@@ -34,11 +34,11 @@ SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &
 
 
 SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
-                             const string &type, const string &name, const std::vector<double> &_position, const time_t time)
+                             const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), references_list(group, "references")
 {
     feature_group = group.openGroup("features");
-    position(_position);
+    this->position(position);
 }
 
 
