@@ -13,14 +13,12 @@
 #include <vector>
 
 #include <nix/base/IEntityWithSources.hpp>
+#include <nix/base/IDataArray.hpp>
+#include <nix/base/IFeature.hpp>
 
 namespace nix {
 
 class DataArray;
-class Feature;
-
-enum class LinkType;
-
 
 namespace base {
 
@@ -69,10 +67,10 @@ public:
     virtual size_t referenceCount() const = 0;
 
 
-    virtual DataArray getReference(const std::string &id) const = 0;
+    virtual std::shared_ptr<IDataArray> getReference(const std::string &id) const = 0;
 
 
-    virtual DataArray getReference(size_t index) const = 0;
+    virtual std::shared_ptr<IDataArray> getReference(size_t index) const = 0;
 
 
     virtual void addReference(const std::string &id) = 0;
@@ -93,13 +91,13 @@ public:
     virtual size_t featureCount() const = 0;
 
 
-    virtual Feature getFeature(const std::string &id) const = 0;
+    virtual std::shared_ptr<IFeature> getFeature(const std::string &id) const = 0;
 
 
-    virtual Feature getFeature(size_t index) const = 0;
+    virtual std::shared_ptr<IFeature> getFeature(size_t index) const = 0;
 
 
-    virtual Feature createFeature(const std::string &data_array_id, LinkType link_type) = 0;
+    virtual std::shared_ptr<IFeature> createFeature(const std::string &data_array_id, LinkType link_type) = 0;
 
 
     virtual bool deleteFeature(const std::string &id) = 0;
