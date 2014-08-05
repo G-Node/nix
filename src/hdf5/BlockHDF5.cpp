@@ -231,7 +231,7 @@ bool BlockHDF5::deleteDataArray(const string &id) {
 // Methods related to DataTag
 
 DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &type, 
-                                 const DataArray positions) {
+                                 const DataArray &positions) {
     string id = util::createId("data_tag");
     while (hasDataTag(id)) {
         id = util::createId("data_tag");
