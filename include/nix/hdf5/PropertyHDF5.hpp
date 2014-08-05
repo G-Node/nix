@@ -11,8 +11,7 @@
 
 #include <string>
 
-#include <nix.hpp>
-#include <nix/hdf5/hdf5include.hpp>
+#include <nix/base/IProperty.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 namespace nix {
