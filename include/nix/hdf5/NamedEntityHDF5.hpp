@@ -12,12 +12,11 @@
 #include <string>
 #include <iostream>
 
-#include <nix.hpp>
+#include <nix/base/INamedEntity.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
-
 
 
 /**

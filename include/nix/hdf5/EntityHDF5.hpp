@@ -12,8 +12,11 @@
 #include <string>
 #include <iostream>
 
-#include <nix.hpp>
+#include <nix/File.hpp> // TODO remove
+
+#include <nix/base/IEntity.hpp>
 #include <nix/hdf5/Group.hpp>
+
 
 namespace nix {
 namespace hdf5 {
@@ -26,7 +29,7 @@ class EntityHDF5 : virtual public base::IEntity {
 
 private:
 
-    File          entity_file;
+    File  entity_file;
     Group         entity_group;
     std::string   entity_id;
 
