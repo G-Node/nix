@@ -27,13 +27,13 @@ public:
     /**
      * Standard constructor
      */
-    EntityWithMetadataHDF5(File file, Group group, const std::string &id,
+    EntityWithMetadataHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id,
                            const std::string &type, const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    EntityWithMetadataHDF5(File file, Group group, const std::string &id,
+    EntityWithMetadataHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id,
                            const std::string &type, const std::string &name, time_t time);
 
 

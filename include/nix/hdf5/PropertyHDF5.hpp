@@ -26,10 +26,12 @@ public:
     PropertyHDF5(const PropertyHDF5 &property);
 
 
-    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+                 const std::string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name, time_t time);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+                 const std::string &name, time_t time);
 
 
     void name(const std::string &name);

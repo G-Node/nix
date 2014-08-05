@@ -28,14 +28,14 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id,
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<DataArray> &refs)
     : SimpleTagHDF5(file, block, group, id, type, name, refs, util::getTime())
 {
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id,
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<DataArray> &refs, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), references_list(group, "references")
 {

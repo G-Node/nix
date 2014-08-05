@@ -8,6 +8,8 @@
 
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
+#include <nix/File.hpp>
+#include <nix/Section.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/hdf5/PropertyHDF5.hpp>
 
@@ -25,28 +27,28 @@ SectionHDF5::SectionHDF5(const SectionHDF5 &section)
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const string &id,
                          const string &type, const string &name)
     : SectionHDF5(file, nullptr, group, id, type, name)
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Section &parent, const Group &group,
                          const string &id, const string &type, const string &name)
     : SectionHDF5(file, parent, group, id, type, name, util::getTime())
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const string &id,
                          const string &type, const string &name, time_t time)
     : SectionHDF5(file, nullptr, group, id, type, name, time)
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Section &parent, const Group &group,
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {
@@ -87,13 +89,16 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const std::string &id) {
-    if(id.empty()) {
+    if(id.empty())
         throw EmptyString("mapping");
-    } else if (file().hasSection(id)) {
-        group().setAttr("link", id);
-    } else {
+
+    File tmp = file();
+    auto found = tmp.findSections(util::IdFilter<Section>(id));
+
+    if (found.empty())
         throw std::runtime_error("Section not found in file!");
-    }
+
+    group().setAttr("link", id);
 }
 
 
@@ -103,13 +108,13 @@ shared_ptr<ISection> SectionHDF5::link() const {
     string id;
     group().getAttr("link", id);
 
-    vector<Section> found;
-    if (id != "") {
-        found = file().findSections(util::IdFilter<Section>(id));
-    }
+    if (!id.empty()) {
+        File tmp = file();
+        auto found = tmp.findSections(util::IdFilter<Section>(id));
 
-    if (found.size() > 0) {
-        sec = found[0].impl(); // TODO fix this when base entities are fixed
+        if (found.size() > 0) {
+            sec = found[0].impl();
+        }
     }
 
     return sec;

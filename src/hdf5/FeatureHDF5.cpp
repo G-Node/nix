@@ -39,15 +39,15 @@ FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
 {}
 
 
-FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray data, LinkType link_type)
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+                         const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray data, LinkType link_type, time_t time)
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+                         const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
     linkType(link_type);

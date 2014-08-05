@@ -9,6 +9,7 @@
 #ifndef NIX_ENTITY_WITH_SOURCES_HDF5_H
 #define NIX_ENTITY_WITH_SOURCES_HDF5_H
 
+#include <nix/Block.hpp>
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/hdf5/ReferenceList.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
@@ -24,7 +25,7 @@ class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public Ent
 
 private:
 
-    Block entity_block;
+    Block entity_block;         // TODO turn type to shared_ptr<IBlock>
     ReferenceList sources_refs;
 
 public:
@@ -32,13 +33,13 @@ public:
     /**
      * Standard constructor.
      */
-    EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id,
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, Block block, Group group, const std::string &id,
                           const std::string &type, const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    EntityWithSourcesHDF5(File file, Block block, Group group, const std::string &id,
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, Block block, Group group, const std::string &id,
                           const std::string &type, const std::string &name, time_t time);
 
     size_t sourceCount() const;

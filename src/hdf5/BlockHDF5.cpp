@@ -19,7 +19,7 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-BlockHDF5::BlockHDF5(const BlockHDF5 &block)
+BlockHDF5::BlockHDF5(const BlockHDF5 &block) // TODO use block constructor here
     : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
       source_group(block.source_group), data_array_group(block.data_array_group),
       simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
@@ -27,13 +27,13 @@ BlockHDF5::BlockHDF5(const BlockHDF5 &block)
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name)
+BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name, time_t time)
+BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     source_group = group.openGroup("sources");

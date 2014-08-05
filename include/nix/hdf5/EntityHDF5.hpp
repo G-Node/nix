@@ -10,9 +10,9 @@
 #define NIX_ENTITY_HDF5_H
 
 #include <string>
-#include <iostream>
+#include <memory>
 
-#include <nix/File.hpp> // TODO remove
+#include <nix/base/IFile.hpp>
 
 #include <nix/base/IEntity.hpp>
 #include <nix/hdf5/Group.hpp>
@@ -29,16 +29,16 @@ class EntityHDF5 : virtual public base::IEntity {
 
 private:
 
-    File  entity_file;
+    std::shared_ptr<base::IFile>  entity_file;
     Group         entity_group;
     std::string   entity_id;
 
 public:
 
-    EntityHDF5(File file, Group group, const std::string &id);
+    EntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
 
 
-    EntityHDF5(File file, Group group, const std::string &id, time_t time);
+    EntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, time_t time);
 
 
     std::string id() const;
@@ -75,7 +75,7 @@ public:
 
 protected:
 
-    File file() const {
+    std::shared_ptr<base::IFile> file() const {
         return entity_file;
     }
 

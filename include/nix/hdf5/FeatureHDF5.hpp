@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include <nix/Block.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
@@ -42,7 +43,7 @@ class FeatureHDF5 : virtual public base::IFeature, public EntityHDF5 {
 
 private:
 
-    Block block;
+    Block block;        // TODO turn type to shared_ptr<IBlock>
 
 public:
 
@@ -50,12 +51,12 @@ public:
     FeatureHDF5(const FeatureHDF5 &feature);
 
 
-    FeatureHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id, DataArray data, LinkType link_type);
+    FeatureHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
+                const std::string &id, DataArray data, LinkType link_type);
 
 
-    FeatureHDF5(const File &file, const Block &block, const Group &group,
-                       const std::string &id, DataArray data, LinkType link_type, time_t time);
+    FeatureHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
+                const std::string &id, DataArray data, LinkType link_type, time_t time);
 
 
     void linkType(LinkType type);

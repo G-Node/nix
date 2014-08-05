@@ -42,13 +42,13 @@ public:
     /**
      * Standard constructor
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group,
+    DataArrayHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
                   const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    DataArrayHDF5(const File &file, const Block &block, const Group &group,
+    DataArrayHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
                   const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------

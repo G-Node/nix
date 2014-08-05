@@ -12,19 +12,22 @@
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 using namespace std;
-using namespace nix::base;
 using namespace boost;
-namespace nix {
-namespace hdf5 {
+
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, const string &_name)
+NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id, const string &_type,
+                                 const string &_name)
     : NamedEntityHDF5(file, group, id, _type, _name, util::getTime())
 {
 }
 
 
-NamedEntityHDF5::NamedEntityHDF5(File file, Group group, const string &id, const string &_type, const string &_name, time_t time)
+NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id, const string &_type,
+                                 const string &_name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
     type(_type);
@@ -119,7 +122,3 @@ int NamedEntityHDF5::compare(std::shared_ptr<INamedEntity> other) const {
 
 
 NamedEntityHDF5::~NamedEntityHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix

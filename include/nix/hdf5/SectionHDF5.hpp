@@ -12,6 +12,7 @@
 
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 #include <nix/base/ISection.hpp>
+#include <nix/Section.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -21,7 +22,7 @@ class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
 
 private:
 
-    Section parent_section;
+    Section parent_section;     // TODO make type to shared_ptr<ISection>
     Group property_group, section_group;
 
 public:
@@ -34,25 +35,25 @@ public:
     /**
      * Standard constructor
      */
-    SectionHDF5(const File &file, const Group &group, const std::string &id,
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id,
                 const std::string &type, const std::string &name);
 
     /**
      * Standard constructor with parent.
      */
-    SectionHDF5(const File &file, const Section &parent, const Group &group,
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Section &parent, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Constructor that preserves the creation time.
      */
-    SectionHDF5(const File &file, const Group &group, const std::string &id,
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id,
                 const std::string &type, const std::string &name, time_t time);
 
     /**
      * Constructor with parent that preserves the creation time.
      */
-    SectionHDF5(const File &file, const Section &parent, const Group &group,
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Section &parent, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 

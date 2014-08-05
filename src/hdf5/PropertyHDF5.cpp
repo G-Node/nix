@@ -14,8 +14,9 @@
 using namespace std;
 using namespace boost;
 
-namespace nix {
-namespace hdf5 {
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
@@ -24,13 +25,13 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 }
 
 
-    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id, const string &name)
         : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
-    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
     this->entity_dataset = dataset;
@@ -200,6 +201,3 @@ int PropertyHDF5::compare(std::shared_ptr<IProperty> other) const {
 
 PropertyHDF5::~PropertyHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix
