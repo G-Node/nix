@@ -24,6 +24,8 @@ class EntityWithMetadataHDF5 : virtual public base::IEntityWithMetadata, public 
 
 public:
 
+    // TODO need a ctor with file, group, id (see #316)
+
     /**
      * Standard constructor
      */

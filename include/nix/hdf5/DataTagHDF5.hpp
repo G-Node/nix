@@ -53,9 +53,6 @@ public:
     std::shared_ptr<base::IDataArray> extents() const;
 
 
-    void extents(const DataArray &extents);
-
-
     void extents(const std::string &extentsId);
 
 
@@ -91,7 +88,7 @@ public:
 
     bool removeReference(const std::string &id);
 
-
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     void references(const std::vector<DataArray> &references);
 
     //--------------------------------------------------
@@ -124,11 +121,8 @@ public:
 
     void swap(DataTagHDF5 &other);
 
-
+    // TODO do we really need swap and operator=?
     DataTagHDF5& operator=(const DataTagHDF5 &other);
-
-
-    friend std::ostream& operator<<(std::ostream &out, const DataTagHDF5 &ent);
 
 
     virtual ~DataTagHDF5();
@@ -136,6 +130,7 @@ public:
 private:
 
     bool checkDimensions(const DataArray &a, const DataArray &b) const;
+
 
     bool checkPositionsAndExtents() const;
 

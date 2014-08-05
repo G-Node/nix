@@ -45,6 +45,7 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
 
     if(source_group.hasGroup(id)) {
         Group group = source_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         group.getAttr("type", type);

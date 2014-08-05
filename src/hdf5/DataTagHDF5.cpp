@@ -6,6 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <algorithm>
+
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
@@ -17,7 +19,7 @@ using namespace nix;
 using namespace nix::base;
 using namespace nix::hdf5;
 
-
+// TODO unnecessary IO (see #316)
 DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
     : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type(), tag.name()),
       reference_list(tag.reference_list)
@@ -45,7 +47,7 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 }
 
 
-shared_ptr<IDataArray>  DataTagHDF5::positions() const {
+shared_ptr<IDataArray> DataTagHDF5::positions() const {
     string id;
 
     if(group().hasAttr("positions")) {
@@ -195,10 +197,7 @@ bool DataTagHDF5::removeReference(const std::string &id) {
 
 void DataTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
-
-    for (size_t i = 0; i < references.size(); i++) {
-        ids[i] = references[i].id();
-    }
+    transform(references.begin(), references.end(), ids.begin(), [](const DataArray &da) -> string { return da.id(); });
 
     reference_list.set(ids);
 }
@@ -222,6 +221,7 @@ shared_ptr<IFeature>  DataTagHDF5::getFeature(const std::string &id) const {
 
     if (feature_group.hasGroup(id)) {
         Group group = feature_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string link_type;
         group.getAttr("link_type", link_type);
         LinkType linkType = linkTypeFromString(link_type);
@@ -248,9 +248,7 @@ shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &data_array_i
 
     Group group = feature_group.openGroup(id, true);
     DataArray data = block()->getDataArray(data_array_id);
-    auto feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
-
-    return feature;
+    return make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
 }
 
 
@@ -283,14 +281,6 @@ DataTagHDF5& DataTagHDF5::operator=(const DataTagHDF5 &other) {
         swap(tmp);
     }
     return *this;
-}
-
-
-ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
-    out << "DataTag: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
 }
 
 

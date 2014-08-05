@@ -11,7 +11,6 @@
 
 #include <string>
 #include <vector>
-#include <functional>
 
 #include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
@@ -87,7 +86,7 @@ public:
 
     virtual size_t simpleTagCount() const = 0;
 
-
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
                                                               const std::vector<DataArray> &refs) = 0;
 
@@ -109,7 +108,7 @@ public:
 
     virtual size_t dataTagCount() const = 0;
 
-
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual std::shared_ptr<base::IDataTag> createDataTag(const std::string &name, const std::string &type,
                                                           const DataArray &positions) = 0;
 

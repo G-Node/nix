@@ -187,6 +187,7 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
 
     if (section_group.hasGroup(id)) {
         Group group = section_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         std::string type;
         std::string name;
         group.getAttr("type", type);
@@ -250,6 +251,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 
     if (property_group.hasData(id)) {
         DataSet dset = property_group.openData(id);
+        // TODO unnecessary IO (see #316)
         string name;
         dset.getAttr("name", name);
         prop = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);

@@ -61,7 +61,7 @@ public:
 
     void forceCreatedAt(time_t t);
 
-
+    // TODO do we really need swap?
     void swap(EntityHDF5 &other);
 
 

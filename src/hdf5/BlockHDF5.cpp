@@ -19,8 +19,8 @@ using namespace nix;
 using namespace nix::hdf5;
 using namespace nix::base;
 
-
-BlockHDF5::BlockHDF5(const BlockHDF5 &block) // TODO use block constructor here
+// TODO unnecessary IO (see #316)
+BlockHDF5::BlockHDF5(const BlockHDF5 &block)
     : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
       source_group(block.source_group), data_array_group(block.data_array_group),
       simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
@@ -59,6 +59,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
 
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         group.getAttr("type", type);
@@ -116,9 +117,7 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
 
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
-        // TODO reading the references, name and type is total and absolute nonsense, there must
-        //      be a ctor that works without references, type and name. The same applies also to
-        //      other getters.
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         tag_group.getAttr("type", type);
@@ -127,7 +126,6 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
         tag_group.getData("references", ref_ids);
         vector<DataArray> refs;
         for(auto it = ref_ids.begin(); it != ref_ids.end(); ++it) {
-            // NOTE: arrays might not exist & be empty, but let SimpleTag ctor called below handle that!
             refs.push_back(DataArray(getDataArray(*it)));
         }
         tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs);
@@ -184,6 +182,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
 
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         std::string type;
         std::string name;
         group.getAttr("type", type);
@@ -261,6 +260,7 @@ shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
 
     if (hasDataTag(id)) {
         Group tag_group = data_tag_group.openGroup(id);
+        // TODO unnecessary IO (see #316)
         std::string positions_id;
         tag_group.getAttr("positions", positions_id);
         DataArray positions = getDataArray(positions_id);

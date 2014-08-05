@@ -26,17 +26,19 @@ class NamedEntityHDF5 : virtual public base::INamedEntity, public EntityHDF5 {
 
 public:
 
+    // TODO need a ctor with file, group, id (see #316)
+
     /**
      * Standard constructor
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &_type,
-                    const std::string &_name);
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+                    const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &_type,
-                    const std::string &_name, time_t time);
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+                    const std::string &name, time_t time);
 
 
     void type(const std::string &type);

@@ -25,13 +25,15 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id, const string &name)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+                               const string &name)
         : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+                               const string &name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
     this->entity_dataset = dataset;
@@ -42,8 +44,7 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 void PropertyHDF5::name(const string &name) {
     if(name.empty()) {
         throw EmptyString("name");
-    }
-    else {
+    } else {
         dataset().setAttr("name", name);
         forceUpdatedAt();
     }
@@ -64,8 +65,7 @@ string PropertyHDF5::name() const {
 void PropertyHDF5::definition(const string &definition) {
     if(definition.empty()) {
         throw EmptyString("definition");
-    }
-    else {
+    } else {
         dataset().setAttr("definition", definition);
         forceUpdatedAt();
     }
@@ -160,6 +160,7 @@ size_t PropertyHDF5::valueCount() const {
     return size[0];
 }
 
+
 void PropertyHDF5::values(const std::vector<Value> &values)
 {
     if (values.size() < 1) {
@@ -170,6 +171,7 @@ void PropertyHDF5::values(const std::vector<Value> &values)
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     dataset().write(values);
 }
+
 
 std::vector<Value> PropertyHDF5::values(void) const
 {

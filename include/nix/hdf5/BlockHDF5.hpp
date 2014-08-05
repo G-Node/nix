@@ -150,11 +150,10 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
+    // TODO do we really need swap and operator=?
     void swap(BlockHDF5 &other);
 
-    /**
-     * Assignment operator
-     */
+
     BlockHDF5& operator=(const BlockHDF5 &other);
 
 

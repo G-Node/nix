@@ -78,7 +78,7 @@ public:
 
     virtual bool removeReference(const std::string &id) = 0;
 
-
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual void references(const std::vector<DataArray> &references) = 0;
 
     //--------------------------------------------------

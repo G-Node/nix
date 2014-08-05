@@ -137,7 +137,7 @@ public:
 
     bool operator!=(const FileHDF5 &other) const;
 
-
+    // TODO do we really need operator=?
     FileHDF5& operator=(const FileHDF5 &other);
 
 

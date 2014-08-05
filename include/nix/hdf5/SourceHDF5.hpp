@@ -32,6 +32,8 @@ public:
      */
     SourceHDF5(const SourceHDF5 &source);
 
+    // TODO need ctor with file, group, id (see #316)
+
     /**
      * Default constructor.
      */
@@ -70,7 +72,7 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-
+    // TODO do we really need swap and operator=?
     void swap(SourceHDF5 &other);
 
 

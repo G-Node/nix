@@ -13,7 +13,6 @@
 #ifndef NIX_DATA_ARRAY_HDF5_H
 #define NIX_DATA_ARRAY_HDF5_H
 
-#include <memory>
 #include <boost/multi_array.hpp>
 
 #include <nix/base/IDataArray.hpp>
@@ -117,7 +116,7 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-
+    // TODO do we really need swap and operator=?
     void swap(DataArrayHDF5 &other);
 
 

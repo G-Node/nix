@@ -17,7 +17,7 @@ using namespace nix;
 using namespace nix::base;
 using namespace nix::hdf5;
 
-
+// TODO unnecessary IO (see #316)
 DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
     : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id(), data_array.type(), data_array.name()),
       dimension_group(data_array.dimension_group)
@@ -344,8 +344,6 @@ void DataArrayHDF5::dataExtent(const NDSize &extent)
 DataType DataArrayHDF5::dataType(void) const
 {
     if (!group().hasData("data")) {
-        //we could also throw an exception but I think returning
-        //Nothing here is better (ck) - agreed (bm)
         return DataType::Nothing;
     }
 

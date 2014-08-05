@@ -62,7 +62,5 @@ void EntityWithMetadataHDF5::metadata(const none_t t) {
 }
 
 
-EntityWithMetadataHDF5::~EntityWithMetadataHDF5() {
-
-}
+EntityWithMetadataHDF5::~EntityWithMetadataHDF5() {}
 

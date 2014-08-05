@@ -25,6 +25,7 @@ public:
 
     PropertyHDF5(const PropertyHDF5 &property);
 
+    // TODO need a ctor with file, group, dataset, id (see #316)
 
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name);

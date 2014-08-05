@@ -41,7 +41,8 @@ public:
 
     virtual bool removeSource(const std::string &id) = 0;
 
-    // TODO this may move to the front-end
+    // TODO evaluate if Source can be replaced by shared_ptr<ISource>
+    //      or if this could be moved to the front-end
     virtual void sources(const std::vector<Source> &sources) = 0;
 
 

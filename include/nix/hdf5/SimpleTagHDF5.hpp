@@ -38,6 +38,8 @@ public:
      */
     SimpleTagHDF5(const SimpleTagHDF5 &tag);
 
+    // TODO need ctor with file, block, group, id (see #316)
+
     /**
      * Standard constructor
      */

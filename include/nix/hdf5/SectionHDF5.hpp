@@ -32,6 +32,9 @@ public:
      */
     SectionHDF5(const SectionHDF5 &section);
 
+    // TODO need ctor with file, group, id (see #316)
+    // TODO need ctor with file, parent, group, id (see #316)
+
     /**
      * Standard constructor
      */
