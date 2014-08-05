@@ -33,11 +33,11 @@ public:
     DataTagHDF5(const DataTagHDF5 &tag);
 
 
-    DataTagHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
+    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray positions);
 
 
-    DataTagHDF5(std::shared_ptr<base::IFile> file, const Block &block, const Group &group,
+    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray positions, time_t time);
 
 

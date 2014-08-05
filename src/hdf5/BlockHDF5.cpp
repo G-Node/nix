@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/Block.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
@@ -127,7 +128,7 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
         vector<DataArray> refs;
         for(auto it = ref_ids.begin(); it != ref_ids.end(); ++it) {
             // NOTE: arrays might not exist & be empty, but let SimpleTag ctor called below handle that!
-            refs.push_back(getDataArray(*it));
+            refs.push_back(DataArray(getDataArray(*it)));
         }
         tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, refs);
     }

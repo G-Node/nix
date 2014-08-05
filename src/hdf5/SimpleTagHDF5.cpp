@@ -28,14 +28,14 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group, const string &id,
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<DataArray> &refs)
     : SimpleTagHDF5(file, block, group, id, type, name, refs, util::getTime())
 {
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group, const string &id,
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<DataArray> &refs, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), references_list(group, "references")
 {
@@ -138,9 +138,7 @@ shared_ptr<IDataArray> SimpleTagHDF5::getReference(const std::string &id) const 
     shared_ptr<IDataArray> da;
 
     if (hasReference(id)) {
-        // block will return empty object if entity not found
-        // TODO fix this when base entities are fixed
-        da = block().getDataArray(id).impl();
+        da = block()->getDataArray(id);
     }
 
     return da;
@@ -164,9 +162,9 @@ shared_ptr<IDataArray> SimpleTagHDF5::getReference(size_t index) const {
 
 
 void SimpleTagHDF5::addReference(const std::string &id) {
-    if (!block().hasDataArray(id)) {
+    if (!block()->hasDataArray(id)) {
         throw runtime_error("Unable to find data array with reference_id " +
-                            id + " on block " + block().id());
+                            id + " on block " + block()->id());
     }
 
     references_list.add(id);
@@ -210,7 +208,7 @@ shared_ptr<IFeature> SimpleTagHDF5::getFeature(const std::string &id) const {
         LinkType linkType = linkTypeFromString(link_type);
         string dataId;
         group.getAttr("data", dataId);
-        DataArray data = block().getDataArray(dataId);
+        DataArray data = block()->getDataArray(dataId);
         feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
     }
 
@@ -235,7 +233,7 @@ shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);
-    DataArray data = block().getDataArray(data_array_id);
+    DataArray data = block()->getDataArray(data_array_id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 

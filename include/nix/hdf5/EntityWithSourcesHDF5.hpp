@@ -9,7 +9,7 @@
 #ifndef NIX_ENTITY_WITH_SOURCES_HDF5_H
 #define NIX_ENTITY_WITH_SOURCES_HDF5_H
 
-#include <nix/Block.hpp>
+#include <nix/base/IBlock.hpp>
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/hdf5/ReferenceList.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
@@ -25,7 +25,7 @@ class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public Ent
 
 private:
 
-    Block entity_block;         // TODO turn type to shared_ptr<IBlock>
+    std::shared_ptr<base::IBlock> entity_block;
     ReferenceList sources_refs;
 
 public:
@@ -33,14 +33,14 @@ public:
     /**
      * Standard constructor.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, Block block, Group group, const std::string &id,
-                          const std::string &type, const std::string &name);
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
+                          const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, Block block, Group group, const std::string &id,
-                          const std::string &type, const std::string &name, time_t time);
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
+                          const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     size_t sourceCount() const;
 
@@ -73,7 +73,7 @@ public:
 
 protected:
 
-    Block block() const {
+    std::shared_ptr<base::IBlock> block() const {
         return entity_block;
     }
 

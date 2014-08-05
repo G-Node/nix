@@ -27,14 +27,14 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
 }
 
 
-DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, const std::string &type, const string &name, const DataArray positions)
     : DataTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const std::string &id, const std::string &type, const string &name, const DataArray _positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), reference_list(group, "references")
 {
@@ -54,8 +54,8 @@ shared_ptr<IDataArray>  DataTagHDF5::positions() const {
         throw MissingAttr("positions");
     }
 
-    if(block().hasDataArray(id)) {
-        return block().getDataArray(id).impl(); // TODO fix this when base entities are fixed
+    if(block()->hasDataArray(id)) {
+        return block()->getDataArray(id);
     } else {
         throw runtime_error("DataArray with positions not found in Block!");
     }
@@ -63,23 +63,21 @@ shared_ptr<IDataArray>  DataTagHDF5::positions() const {
 
 
 void DataTagHDF5::positions(const string &id) {
-    if(id.empty()) {
+    if(id.empty())
         throw EmptyString("positions DataArray id");
+
+    if(!block()->hasDataArray(id))
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+
+    if(extents()) {
+        auto pos = block()->getDataArray(id);
+
+        if(!checkDimensions(extents(), pos))
+            throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
     }
-    else {
-        if(!block().hasDataArray(id)) {
-            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-        } else {
-            if(extents()) {
-                DataArray pos = block().getDataArray(id);
-                DataArray ext = extents();
-                if(!checkDimensions(ext, pos))
-                    throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
-            }
-            group().setAttr("positions", id);
-            forceUpdatedAt();
-        }
-    }
+
+    group().setAttr("positions", id);
+    forceUpdatedAt();
 }
 
 
@@ -94,30 +92,26 @@ shared_ptr<IDataArray>  DataTagHDF5::extents() const {
     std::string extId;
     group().getAttr("extents", extId);
 
-    // block will return empty object if entity not found
-    return block().getDataArray(extId).impl(); // TODO fix this when base entities are fixed
+    return block()->getDataArray(extId);
 }
 
 
 void DataTagHDF5::extents(const string &extentsId) {
-    if(extentsId.empty()) {
+    if(extentsId.empty())
         throw EmptyString("extentsId");
+
+    if(!block()->hasDataArray(extentsId))
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+
+    if(hasPositions()) {
+        auto ext = block()->getDataArray(extentsId);
+
+        if(!checkDimensions(ext, positions()))
+            throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     }
-    else {
-        if(!block().hasDataArray(extentsId)) {
-            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-        }
-        else {
-            if(hasPositions()) {
-                DataArray ext = block().getDataArray(extentsId);
-                DataArray pos = positions();
-                if(!checkDimensions(ext, pos))
-                    throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-            }
-            group().setAttr("extents", extentsId);
-            forceUpdatedAt();
-        }
-    }
+
+    group().setAttr("extents", extentsId);
+    forceUpdatedAt();
 }
 
 void DataTagHDF5::extents(const none_t t) {
@@ -166,7 +160,7 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(const std::string &id) const {
     shared_ptr<IDataArray> da;
 
     if (hasReference(id)) {
-        da = block().getDataArray(id).impl(); // TODO fix this when base entities are fixed
+        da = block()->getDataArray(id);
     }
 
     return da;
@@ -176,15 +170,14 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
     std::vector<std::string> refs = reference_list.get();
     std::string id;
 
-    // get reference id
     if(index < refs.size()) {
         id = refs[index];
     } else {
         throw OutOfBounds("No data array at given index", index);
     }
-    // get referenced array
-    if(hasReference(id) && block().hasDataArray(id)) {
-        return block().getDataArray(id).impl();  // TODO fix this when base entities are fixed
+
+    if(hasReference(id) && block()->hasDataArray(id)) {
+        return block()->getDataArray(id);
     } else {
         throw runtime_error("No data array id: " + id);
     }
@@ -234,7 +227,7 @@ shared_ptr<IFeature>  DataTagHDF5::getFeature(const std::string &id) const {
         LinkType linkType = linkTypeFromString(link_type);
         string dataId;
         group.getAttr("data", dataId);
-        DataArray data = block().getDataArray(dataId);
+        DataArray data = block()->getDataArray(dataId);
         feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
     }
 
@@ -254,7 +247,7 @@ shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &data_array_i
         id = util::createId("feature");
 
     Group group = feature_group.openGroup(id, true);
-    DataArray data = block().getDataArray(data_array_id);
+    DataArray data = block()->getDataArray(data_array_id);
     auto feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
 
     return feature;

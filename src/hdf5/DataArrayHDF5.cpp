@@ -25,14 +25,14 @@ DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
 }
 
 
-DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                              const string &id, const string &type, const string &name)
     : DataArrayHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                              const string &id, const string &type, const string &name, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
