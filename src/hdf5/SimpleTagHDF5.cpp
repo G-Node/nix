@@ -31,7 +31,7 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id)
     : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
 {
-    feature_group = group.openGroup("features");
+    feature_group = group.openGroup("features", false);
 }
 
 
