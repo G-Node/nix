@@ -9,11 +9,10 @@
 #ifndef NIX_I_FEATURE_H
 #define NIX_I_FEATURE_H
 
-#include <nix/base/IEntity.hpp>
+
+#include <nix/base/IDataArray.hpp>
 
 namespace nix {
-
-class DataArray;
 
 /**
  * @brief Enumeration for link types.
@@ -46,7 +45,7 @@ public:
     virtual void data(const std::string &id) = 0;
 
 
-    virtual DataArray data() const = 0;
+    virtual std::shared_ptr<IDataArray> data() const = 0;
 
 
     virtual ~IFeature() {}

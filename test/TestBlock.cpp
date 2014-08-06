@@ -225,7 +225,7 @@ void TestBlock::testDataTagAccess() {
     CPPUNIT_ASSERT(block.dataTagCount() == 0);
     CPPUNIT_ASSERT(block.dataTags().size() == 0);
     CPPUNIT_ASSERT(block.getDataTag("invalid_id") == false);
-    
+
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         DataTag tag = block.createDataTag(*it, "segment", positions);
@@ -233,6 +233,7 @@ void TestBlock::testDataTagAccess() {
 
         ids.push_back(tag.id());
     }
+
 
     CPPUNIT_ASSERT(block.dataTagCount() == names.size());
     CPPUNIT_ASSERT(block.dataTags().size() == names.size());

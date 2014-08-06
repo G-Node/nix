@@ -13,7 +13,7 @@
 #include <iostream>
 #include <ctime>
 
-#include <nix.hpp>
+#include <nix/base/IDimensions.hpp>
 #include <nix/hdf5/Group.hpp>
 
 
@@ -27,9 +27,9 @@ DimensionType dimensionTypeFromStr(const std::string &str);
 std::string dimensionTypeToStr(DimensionType dim);
 
 
-/**
- * TODO documentation
- */
+std::shared_ptr<base::IDimension> openDimensionHDF5(Group group, size_t index);
+
+
 class DimensionHDF5 : virtual public base::IDimension {
 
 protected:
@@ -40,9 +40,6 @@ protected:
 public:
 
     DimensionHDF5(Group group, size_t index);
-
-
-    DimensionHDF5(const DimensionHDF5 &other);
 
 
     size_t index() const { return dim_index; }
@@ -61,17 +58,17 @@ public:
 
 protected:
 
-    void setType(); // TODO check if this is needed?
+    void setType();
 
 };
 
 
-/**
- * TODO documentation
- */
 class SampledDimensionHDF5 : virtual public base::ISampledDimension, public DimensionHDF5 {
 
 public:
+
+    SampledDimensionHDF5(Group group, size_t index);
+
 
     SampledDimensionHDF5(Group group, size_t index, double sampling_interval);
 
@@ -123,9 +120,6 @@ public:
 };
 
 
-/**
- * TODO documentation
- */
 class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF5 {
 
 public:
@@ -156,12 +150,12 @@ public:
 };
 
 
-/**
- * TODO documentation
- */
 class RangeDimensionHDF5 : virtual public base::IRangeDimension, public DimensionHDF5 {
 
 public:
+
+    RangeDimensionHDF5(Group group, size_t index);
+
 
     RangeDimensionHDF5(Group group, size_t index, std::vector<double> ticks);
 

@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 
-#include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 #include <nix/hdf5/ReferenceList.hpp>
 
@@ -34,15 +33,15 @@ public:
     DataTagHDF5(const DataTagHDF5 &tag);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group,
+    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions);
 
 
-    DataTagHDF5(const File &file, const Block &block, const Group &group,
+    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions, time_t time);
 
 
-    DataArray positions() const;
+    std::shared_ptr<base::IDataArray> positions() const;
 
 
     void positions(const std::string &id);
@@ -51,10 +50,7 @@ public:
     bool hasPositions() const;
 
 
-    DataArray extents() const;
-
-
-    void extents(const DataArray &extents);
+    std::shared_ptr<base::IDataArray> extents() const;
 
 
     void extents(const std::string &extentsId);
@@ -81,10 +77,10 @@ public:
     size_t referenceCount() const;
 
 
-    DataArray getReference(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
 
 
-    DataArray getReference(size_t index) const;
+    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
 
 
     void addReference(const std::string &id);
@@ -92,7 +88,7 @@ public:
 
     bool removeReference(const std::string &id);
 
-
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     void references(const std::vector<DataArray> &references);
 
     //--------------------------------------------------
@@ -106,13 +102,13 @@ public:
     size_t featureCount() const;
 
 
-    Feature getFeature(const std::string &id) const;
+    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
 
 
-    Feature getFeature(size_t index) const;
+    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
 
 
-    Feature createFeature(const std::string &data_array_id, LinkType link_type);
+    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);
@@ -125,11 +121,8 @@ public:
 
     void swap(DataTagHDF5 &other);
 
-
+    // TODO do we really need swap and operator=?
     DataTagHDF5& operator=(const DataTagHDF5 &other);
-
-
-    friend std::ostream& operator<<(std::ostream &out, const DataTagHDF5 &ent);
 
 
     virtual ~DataTagHDF5();
@@ -137,6 +130,7 @@ public:
 private:
 
     bool checkDimensions(const DataArray &a, const DataArray &b) const;
+
 
     bool checkPositionsAndExtents() const;
 

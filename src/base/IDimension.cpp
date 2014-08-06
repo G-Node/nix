@@ -14,13 +14,13 @@
 namespace nix {
 
 std::ostream& operator<<(std::ostream &out, const DimensionType &dtype) {
-    if(dtype == DimensionType::Sample) {
+    if (dtype == DimensionType::Sample) {
         out << "Sample";
     }
-    if(dtype == DimensionType::Set) {
+    if (dtype == DimensionType::Set) {
         out << "Set";
     }
-    if(dtype == DimensionType::Range) {
+    if (dtype == DimensionType::Range) {
         out << "Range";
     }
     

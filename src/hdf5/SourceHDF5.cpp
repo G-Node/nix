@@ -10,9 +10,9 @@
 #include <nix/hdf5/SourceHDF5.hpp>
 
 using namespace std;
-
-namespace nix {
-namespace hdf5 {
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
 
 SourceHDF5::SourceHDF5(const SourceHDF5 &source)
@@ -22,13 +22,13 @@ SourceHDF5::SourceHDF5(const SourceHDF5 &source)
 }
 
 
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name)
+SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name)
     : SourceHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name, time_t time)
+SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     source_group = group.openGroup("sources");
@@ -40,21 +40,24 @@ bool SourceHDF5::hasSource(const string &id) const {
 }
 
 
-Source SourceHDF5::getSource(const string &id) const {
-    if(source_group.hasGroup(id)) {
+shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
+    shared_ptr<ISource> source;
+
+    if (source_group.hasGroup(id)) {
         Group group = source_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
-    } else {
-        return Source();
+        source = make_shared<SourceHDF5>(file(), group, id, type, name);
     }
+
+    return source;
 }
 
 
-Source SourceHDF5::getSource(size_t index) const {
+shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
     // all checks done by "getSource(const string &id)"
     return getSource(id);
@@ -66,15 +69,14 @@ size_t SourceHDF5::sourceCount() const {
 }
 
 
-Source SourceHDF5::createSource(const string &name, const string &type) {
+shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
-
-    while(source_group.hasObject(id)) {
+    while (source_group.hasObject(id)) {
         id = util::createId("source");
     }
 
     Group grp = source_group.openGroup(id, true);
-    return Source(make_shared<SourceHDF5>(file(), grp, id, type, name));
+    return make_shared<SourceHDF5>(file(), grp, id, type, name);
 }
 
 
@@ -107,6 +109,3 @@ SourceHDF5& SourceHDF5::operator=(const SourceHDF5 &other) {
 
 SourceHDF5::~SourceHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix

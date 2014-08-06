@@ -47,7 +47,7 @@ void Group::removeAttr(const std::string &name) const {
 
 bool Group::hasObject(const std::string &name) const {
     // empty string should return false, not exception (which H5Lexists would)
-    if(name.empty()) {
+    if (name.empty()) {
         return false;
     }
     htri_t res = H5Lexists(h5group.getLocId(), name.c_str(), H5P_DEFAULT);
@@ -71,7 +71,7 @@ std::string Group::objectName(size_t index) const {
                                                   NULL, 
                                                   0, 
                                                   H5P_DEFAULT);
-    if(name_len > 0) {
+    if (name_len > 0) {
         char* name = new char[name_len+1];
         name_len = H5Lget_name_by_idx(h5group.getLocId(), 
                                       ".", 

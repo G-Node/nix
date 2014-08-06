@@ -7,21 +7,22 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
 
-
-string linkTypeToString(LinkType link_type) {
+string nix::hdf5::linkTypeToString(LinkType link_type) {
     static vector<string> type_names = {"tagged", "untagged", "indexed"};
     return type_names[static_cast<int>(link_type)];
 }
 
 
-LinkType linkTypeFromString(const string &str) {
+LinkType nix::hdf5::linkTypeFromString(const string &str) {
     if (str == "tagged")
         return LinkType::Tagged;
     else if (str == "untagged")
@@ -39,15 +40,15 @@ FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
 {}
 
 
-FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray data, LinkType link_type)
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+                         const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(const File &file, const Block &block, const Group &group,
-                                       const string &id, DataArray data, LinkType link_type, time_t time)
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+                         const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
     linkType(link_type);
@@ -65,11 +66,11 @@ void FeatureHDF5::linkType(LinkType link_type) {
 
 
 void FeatureHDF5::data(const std::string &data_array_id) {
-    if(data_array_id.empty()) {
+    if (data_array_id.empty()) {
         throw EmptyString("data DataArray id");
     }
     else {
-        if(!block.hasDataArray(data_array_id)) {
+        if (!block->hasDataArray(data_array_id)) {
             throw runtime_error("FeatureHDF5::data: cannot set Feature data because referenced DataArray does not exist!");
         } else {
             group().setAttr("data", data_array_id);
@@ -79,23 +80,25 @@ void FeatureHDF5::data(const std::string &data_array_id) {
 }
 
 
-DataArray FeatureHDF5::data() const {
-    if(group().hasAttr("data")) {
+shared_ptr<IDataArray> FeatureHDF5::data() const {
+    shared_ptr<IDataArray> da;
+
+    if (group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
-        if(block.hasDataArray(dataId)) {
-            return block.getDataArray(dataId);
+        if (block->hasDataArray(dataId)) {
+            da = block->getDataArray(dataId);
         } else {
             throw std::runtime_error("Data array not found by id in Block");
         }
-    } else {
-        throw MissingAttr("data");
     }
+
+    return da;
 }
 
 
 LinkType FeatureHDF5::linkType() const {
-    if(group().hasAttr("link_type")) {
+    if (group().hasAttr("link_type")) {
         string link_type;
         group().getAttr("link_type", link_type);
         return linkTypeFromString(link_type);
@@ -106,7 +109,3 @@ LinkType FeatureHDF5::linkType() const {
 
 
 FeatureHDF5::~FeatureHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix

@@ -11,8 +11,7 @@
 
 #include <string>
 
-#include <nix.hpp>
-#include <nix/hdf5/hdf5include.hpp>
+#include <nix/base/IProperty.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 namespace nix {
@@ -26,11 +25,14 @@ public:
 
     PropertyHDF5(const PropertyHDF5 &property);
 
+    // TODO need a ctor with file, group, dataset, id (see #316)
 
-    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+                 const std::string &name);
 
 
-    PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const std::string &id, const std::string &name, time_t time);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+                 const std::string &name, time_t time);
 
 
     void name(const std::string &name);

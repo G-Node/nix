@@ -9,11 +9,7 @@
 #ifndef NIX_SOURCE_HDF5_H
 #define NIX_SOURCE_HDF5_H
 
-
-#include <string>
-#include <functional>
-
-#include <nix.hpp>
+#include <nix/base/ISource.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 namespace nix {
@@ -36,15 +32,19 @@ public:
      */
     SourceHDF5(const SourceHDF5 &source);
 
+    // TODO need ctor with file, group, id (see #316)
+
     /**
      * Default constructor.
      */
-    SourceHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name);
+    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+               const std::string &name);
 
     /**
      * Default constructor that preserves the creation time.
      */
-    SourceHDF5(File file, Group group, const std::string &id, const std::string &type, const std::string &name, time_t time);
+    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+               const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Methods concerning child sources
@@ -54,16 +54,16 @@ public:
     bool hasSource(const std::string &id) const;
 
 
-    Source getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource>  getSource(const std::string &id) const;
 
 
-    Source getSource(size_t index) const;
+    std::shared_ptr<base::ISource> getSource(size_t index) const;
 
 
     size_t sourceCount() const;
 
 
-    Source createSource(const std::string &name, const std::string &type);
+    std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
     bool deleteSource(const std::string &id);
@@ -72,14 +72,11 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-
+    // TODO do we really need swap and operator=?
     void swap(SourceHDF5 &other);
 
 
     SourceHDF5& operator=(const SourceHDF5 &other);
-
-
-    friend std::ostream& operator<<(std::ostream &out, const SourceHDF5 &ent);
 
 
     virtual ~SourceHDF5();

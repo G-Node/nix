@@ -62,7 +62,7 @@ Dimension::Dimension(const SetDimension &other)
 
 
 SetDimension Dimension::asSetDimension() const {
-    if(dimensionType() != DimensionType::Set) {
+    if (dimensionType() != DimensionType::Set) {
         throw IncompatibleDimensions("Dimension is not of type Set and thus cannot be cast to this type", "asSetDimension");
     }
     return SetDimension(std::dynamic_pointer_cast<base::ISetDimension>(impl()));
@@ -70,7 +70,7 @@ SetDimension Dimension::asSetDimension() const {
 
 
 SampledDimension Dimension::asSampledDimension() const {
-    if(dimensionType() != DimensionType::Sample) {
+    if (dimensionType() != DimensionType::Sample) {
         throw IncompatibleDimensions("Dimension is not of type Sample and thus cannot be cast to this type", "asSampledDimension");
     }
     return SampledDimension(std::dynamic_pointer_cast<base::ISampledDimension>(impl()));
@@ -78,7 +78,7 @@ SampledDimension Dimension::asSampledDimension() const {
 
 
 RangeDimension Dimension::asRangeDimension() const {
-    if(dimensionType() != DimensionType::Range) {
+    if (dimensionType() != DimensionType::Range) {
         throw IncompatibleDimensions("Dimension is not of type Range and thus cannot be cast to this type", "asRangeDimension");
     }
     return RangeDimension(std::dynamic_pointer_cast<base::IRangeDimension>(impl()));
@@ -155,7 +155,7 @@ void SampledDimension::unit(const std::string &unit) {
 
 
 void SampledDimension::samplingInterval(double interval) {
-    if(interval <= 0.0) {
+    if (interval <= 0.0) {
         throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
     }
     backend()->samplingInterval(interval);

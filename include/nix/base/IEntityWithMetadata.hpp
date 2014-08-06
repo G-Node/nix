@@ -10,11 +10,9 @@
 #define NIX_I_ENTITY_WITH_METADATA_H
 
 #include <nix/base/INamedEntity.hpp>
+#include <nix/base/ISection.hpp>
 
 namespace nix {
-
-class Section;
-
 namespace base {
 
 /**
@@ -27,7 +25,7 @@ class NIXAPI IEntityWithMetadata : virtual public INamedEntity {
 
 public:
 
-    virtual Section metadata() const = 0;
+    virtual std::shared_ptr<ISection> metadata() const = 0;
 
 
     virtual void metadata(const std::string &id) = 0;

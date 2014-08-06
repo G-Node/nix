@@ -9,21 +9,17 @@
 #ifndef NIX_I_BLOCK_H
 #define NIX_I_BLOCK_H
 
-#include <nix/base/IEntityWithMetadata.hpp>
-#include <nix/NDSize.hpp>
-
 #include <string>
 #include <vector>
-#include <functional>
+
+#include <nix/base/IEntityWithMetadata.hpp>
+#include <nix/base/ISource.hpp>
+#include <nix/base/IDataArray.hpp>
+#include <nix/base/ISimpleTag.hpp>
+#include <nix/base/IDataTag.hpp>
+#include <nix/NDSize.hpp>
 
 namespace nix {
-
-class Source;
-class DataArray;
-class SimpleTag;
-class DataTag;
-
-
 namespace base {
 
 /**
@@ -39,16 +35,16 @@ public:
     virtual bool hasSource(const std::string &id) const = 0;
 
 
-    virtual Source getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::ISource> getSource(const std::string &id) const = 0;
 
 
-    virtual Source getSource(size_t index) const = 0;
+    virtual std::shared_ptr<base::ISource> getSource(size_t index) const = 0;
 
 
     virtual size_t sourceCount() const = 0;
 
 
-    virtual Source createSource(const std::string &name, const std::string &type) = 0;
+    virtual std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 
     virtual bool deleteSource(const std::string &id) = 0;
@@ -60,19 +56,17 @@ public:
     virtual bool hasDataArray(const std::string &id) const = 0;
 
 
-    virtual DataArray getDataArray(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const = 0;
 
 
-    virtual DataArray getDataArray(size_t index) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
 
 
     virtual size_t dataArrayCount() const = 0;
 
 
-    virtual DataArray createDataArray(const std::string &name,
-                                      const std::string &type,
-                                      nix::DataType      data_type,
-                                      const NDSize      &shape) = 0;
+    virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
+                                                              nix::DataType data_type, const NDSize &shape) = 0;
 
 
     virtual bool deleteDataArray(const std::string &id) = 0;
@@ -84,17 +78,17 @@ public:
     virtual bool hasSimpleTag(const std::string &id) const = 0;
 
 
-    virtual SimpleTag getSimpleTag(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::ISimpleTag> getSimpleTag(const std::string &id) const = 0;
 
 
-    virtual SimpleTag getSimpleTag(size_t index) const = 0;
+    virtual std::shared_ptr<base::ISimpleTag> getSimpleTag(size_t index) const = 0;
 
 
     virtual size_t simpleTagCount() const = 0;
 
 
-    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type,
-                                      const std::vector<double> &position) = 0;
+    virtual std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
+                                                              const std::vector<double> &position) = 0;
 
 
     virtual bool deleteSimpleTag(const std::string &id) = 0;
@@ -106,17 +100,18 @@ public:
     virtual bool hasDataTag(const std::string &id) const = 0;
 
 
-    virtual DataTag getDataTag(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IDataTag> getDataTag(const std::string &id) const = 0;
 
 
-    virtual DataTag getDataTag(size_t index) const = 0;
+    virtual std::shared_ptr<base::IDataTag> getDataTag(size_t index) const = 0;
 
 
     virtual size_t dataTagCount() const = 0;
 
 
-    virtual DataTag createDataTag(const std::string &name, const std::string &type,
-                                  const DataArray &positions) = 0;
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+    virtual std::shared_ptr<base::IDataTag> createDataTag(const std::string &name, const std::string &type,
+                                                          const DataArray &positions) = 0;
 
 
     virtual bool deleteDataTag(const std::string &id) = 0;

@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/Block.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
@@ -14,10 +15,11 @@
 #include <nix/hdf5/DataTagHDF5.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
-namespace nix {
-namespace hdf5 {
-
+// TODO unnecessary IO (see #316)
 BlockHDF5::BlockHDF5(const BlockHDF5 &block)
     : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
       source_group(block.source_group), data_array_group(block.data_array_group),
@@ -26,13 +28,13 @@ BlockHDF5::BlockHDF5(const BlockHDF5 &block)
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name)
+BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-BlockHDF5::BlockHDF5(File file, Group group, const string &id, const string &type, const string &name, time_t time)
+BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     source_group = group.openGroup("sources");
@@ -52,21 +54,24 @@ bool BlockHDF5::hasSource(const string &id) const {
 }
 
 
-Source BlockHDF5::getSource(const string &id) const {
+shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
+    shared_ptr<SourceHDF5> source;
+
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
-    } else {
-        return nix::Source();
+        source = make_shared<SourceHDF5>(file(), group, id, type, name);
     }
+
+    return source;
 }
 
 
-Source BlockHDF5::getSource(size_t index) const {
+shared_ptr<ISource> BlockHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
     return getSource(id);
 }
@@ -77,15 +82,14 @@ size_t BlockHDF5::sourceCount() const {
 }
 
 
-Source BlockHDF5::createSource(const string &name, const string &type) {
+shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
-
-    while(source_group.hasObject(id)) {
+    while (source_group.hasObject(id)) {
         id = util::createId("source");
     }
 
     Group group = source_group.openGroup(id, true);
-    return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
+    return make_shared<SourceHDF5>(file(), group, id, type, name);
 }
 
 
@@ -108,26 +112,27 @@ bool BlockHDF5::hasSimpleTag(const string &id) const {
 }
 
 
-SimpleTag BlockHDF5::getSimpleTag(const string &id) const {
+shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
+    shared_ptr<SimpleTagHDF5> tag;
+
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
-	
+        // TODO unnecessary IO (see #316)
         string type;
         string name;
         tag_group.getAttr("type", type);
         tag_group.getAttr("name", name);
-	
-	vector<double> position;
-	tag_group.getData("position", position);
-	
-        return SimpleTag(make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, position));
-    } else {
-        return nix::SimpleTag();
+        vector<double> position;
+        tag_group.getData("position", position);
+
+        tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id, type, name, position);
     }
+
+    return tag;
 }
 
 
-SimpleTag BlockHDF5::getSimpleTag(size_t index) const {
+shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(size_t index) const {
     string id = simple_tag_group.objectName(index);
     return getSimpleTag(id);
 }
@@ -138,16 +143,15 @@ size_t BlockHDF5::simpleTagCount() const {
 }
 
 
-SimpleTag BlockHDF5::createSimpleTag(const string &name, const string &type, 
-                                     const std::vector<double> &position) {
+shared_ptr<ISimpleTag> BlockHDF5::createSimpleTag(const string &name, const string &type,
+                                                  const std::vector<double> &position) {
     string id = util::createId("simple_tag");
-
-    while(hasSimpleTag(id)) {
+    while (hasSimpleTag(id)) {
         id = util::createId("simple_tag");
     }
 
     Group group = simple_tag_group.openGroup(id, true);
-    return SimpleTag(make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, position));
+    return make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, position);
 }
 
 
@@ -170,22 +174,24 @@ bool BlockHDF5::hasDataArray(const string &id) const {
 }
 
 
-DataArray BlockHDF5::getDataArray(const string &id) const {
+shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
+    shared_ptr<DataArrayHDF5> da;
+
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         std::string type;
         std::string name;
         group.getAttr("type", type);
         group.getAttr("name", name);
-        auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
-        return DataArray(tmp);
-    } else {
-        return nix::DataArray();
+        da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
     }
+
+    return da;
 }
 
 
-DataArray BlockHDF5::getDataArray(size_t index) const {
+shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
     string id = data_array_group.objectName(index);
     return getDataArray(id);
 }
@@ -196,23 +202,22 @@ size_t BlockHDF5::dataArrayCount() const {
 }
 
 
-DataArray BlockHDF5::createDataArray(const std::string &name,
+shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                      const std::string &type,
                                      nix::DataType      data_type,
                                      const NDSize      &shape) {
     string id = util::createId("data_array");
-
     while (hasDataArray(id)) {
         id = util::createId("data_array");
     }
 
     Group group = data_array_group.openGroup(id, true);
-    auto tmp = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
+    auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
-    //now create the actual H5::DataSet
-    tmp->createData(data_type, shape);
+    // now create the actual H5::DataSet
+    da->createData(data_type, shape);
 
-    return DataArray(tmp);
+    return da;
 }
 
 
@@ -230,17 +235,15 @@ bool BlockHDF5::deleteDataArray(const string &id) {
 
 // Methods related to DataTag
 
-DataTag BlockHDF5::createDataTag(const std::string &name, const std::string &type, 
-                                 const DataArray &positions) {
+shared_ptr<IDataTag> BlockHDF5::createDataTag(const std::string &name, const std::string &type,
+                                              const DataArray &positions) {
     string id = util::createId("data_tag");
     while (hasDataTag(id)) {
         id = util::createId("data_tag");
     }
 
     Group group = data_tag_group.openGroup(id);
-    auto tmp = make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
-
-    return DataTag(tmp);
+    return make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
 }
 
 
@@ -249,9 +252,12 @@ bool BlockHDF5::hasDataTag(const std::string &id) const {
 }
 
 
-DataTag BlockHDF5::getDataTag(const std::string &id) const {
+shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
+    shared_ptr<DataTagHDF5> tag;
+
     if (hasDataTag(id)) {
         Group tag_group = data_tag_group.openGroup(id);
+        // TODO unnecessary IO (see #316)
         std::string positions_id;
         tag_group.getAttr("positions", positions_id);
         DataArray positions = getDataArray(positions_id);
@@ -259,15 +265,14 @@ DataTag BlockHDF5::getDataTag(const std::string &id) const {
         std::string name;
         tag_group.getAttr("type", type);
         tag_group.getAttr("name", name);
-        auto tmp = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
-        return DataTag(tmp);
-    } else {
-        return nix::DataTag();
+        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
     }
+
+    return tag;
 }
 
 
-DataTag BlockHDF5::getDataTag(size_t index) const {
+shared_ptr<IDataTag> BlockHDF5::getDataTag(size_t index) const {
     string id = data_tag_group.objectName(index);
     return getDataTag(id);
 }
@@ -308,14 +313,10 @@ BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
 }
 
 
-Block BlockHDF5::block() const {
-    shared_ptr<BlockHDF5> tmp = const_pointer_cast<BlockHDF5>(shared_from_this());
-    return Block(tmp);
+shared_ptr<IBlock> BlockHDF5::block() const {
+    return const_pointer_cast<BlockHDF5>(shared_from_this());
 }
 
 
 BlockHDF5::~BlockHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix

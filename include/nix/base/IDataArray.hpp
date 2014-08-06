@@ -14,18 +14,11 @@
 #include <memory>
 
 #include <nix/base/IEntityWithSources.hpp>
+#include <nix/base/IDimensions.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
 
 namespace nix {
-
-class Dimension;
-class SetDimension;
-class RangeDimension;
-class SampledDimension;
-enum class DimensionType : unsigned int;
-
-
 namespace base {
 
 /**
@@ -87,16 +80,16 @@ public:
     virtual size_t dimensionCount() const = 0;
 
 
-    virtual Dimension getDimension(size_t id) const = 0;
+    virtual std::shared_ptr<base::IDimension> getDimension(size_t id) const = 0;
 
 
-    virtual SetDimension createSetDimension(size_t id) = 0;
+    virtual std::shared_ptr<base::ISetDimension> createSetDimension(size_t id) = 0;
 
 
-    virtual RangeDimension createRangeDimension(size_t id, std::vector<double> ticks) = 0;
+    virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, std::vector<double> ticks) = 0;
 
 
-    virtual SampledDimension createSampledDimension(size_t id, double sampling_interval) = 0;
+    virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval) = 0;
 
 
     virtual bool deleteDimension(size_t id) = 0;

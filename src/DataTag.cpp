@@ -13,7 +13,7 @@ namespace nix {
 
 
 void DataTag::positions(const DataArray &positions) {
-    if(positions == none) {
+    if (positions == none) {
         throw std::runtime_error("Empty positions entity (DataArray) given");
     }
     else {
@@ -23,7 +23,7 @@ void DataTag::positions(const DataArray &positions) {
 
 
 void DataTag::extents(const DataArray &extents) {
-    if(extents == none) {
+    if (extents == none) {
         backend()->extents(none);
     }
     else {

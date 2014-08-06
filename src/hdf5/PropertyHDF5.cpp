@@ -14,8 +14,9 @@
 using namespace std;
 using namespace boost;
 
-namespace nix {
-namespace hdf5 {
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
 
 PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
@@ -24,13 +25,15 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 }
 
 
-    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+                               const string &name)
         : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
-    PropertyHDF5::PropertyHDF5(const File &file, const Group &group, const DataSet &dataset, const string &id, const string &name, time_t time)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+                               const string &name, time_t time)
     : EntityHDF5(file, group, id, time)
 {
     this->entity_dataset = dataset;
@@ -39,10 +42,9 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 
 
 void PropertyHDF5::name(const string &name) {
-    if(name.empty()) {
+    if (name.empty()) {
         throw EmptyString("name");
-    }
-    else {
+    } else {
         dataset().setAttr("name", name);
         forceUpdatedAt();
     }
@@ -51,7 +53,7 @@ void PropertyHDF5::name(const string &name) {
 
 string PropertyHDF5::name() const {
     string name;
-    if(dataset().hasAttr("name")) {
+    if (dataset().hasAttr("name")) {
         dataset().getAttr("name", name);
         return name;
     } else {
@@ -61,10 +63,9 @@ string PropertyHDF5::name() const {
 
 
 void PropertyHDF5::definition(const string &definition) {
-    if(definition.empty()) {
+    if (definition.empty()) {
         throw EmptyString("definition");
-    }
-    else {
+    } else {
         dataset().setAttr("definition", definition);
         forceUpdatedAt();
     }
@@ -83,7 +84,7 @@ optional<string> PropertyHDF5::definition() const {
 
 
 void PropertyHDF5::definition(const none_t t) {
-    if(dataset().hasAttr("definition")) {
+    if (dataset().hasAttr("definition")) {
         dataset().removeAttr("definition");
     }
     forceUpdatedAt();
@@ -134,7 +135,7 @@ void PropertyHDF5::unit(const string &unit) {
 boost::optional<string> PropertyHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    if(dataset().getAttr("unit", unit)) {
+    if (dataset().getAttr("unit", unit)) {
         ret = unit;
     }
     return ret;
@@ -142,7 +143,7 @@ boost::optional<string> PropertyHDF5::unit() const {
 
 
 void PropertyHDF5::unit(const none_t t) {
-    if(dataset().hasAttr("unit")) {
+    if (dataset().hasAttr("unit")) {
         dataset().removeAttr("unit");
     }
     forceUpdatedAt();
@@ -159,6 +160,7 @@ size_t PropertyHDF5::valueCount() const {
     return size[0];
 }
 
+
 void PropertyHDF5::values(const std::vector<Value> &values)
 {
     if (values.size() < 1) {
@@ -170,6 +172,7 @@ void PropertyHDF5::values(const std::vector<Value> &values)
     dataset().write(values);
 }
 
+
 std::vector<Value> PropertyHDF5::values(void) const
 {
     std::vector<Value> values;
@@ -179,7 +182,7 @@ std::vector<Value> PropertyHDF5::values(void) const
 
 
 void PropertyHDF5::values(const none_t t) {
-    if(group().hasData("values")) {
+    if (group().hasData("values")) {
         group().removeData("values");
     }
     forceUpdatedAt();
@@ -200,6 +203,3 @@ int PropertyHDF5::compare(std::shared_ptr<IProperty> other) const {
 
 PropertyHDF5::~PropertyHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix

@@ -11,7 +11,7 @@
 namespace nix {
 
 void Feature::data(const DataArray &data) {
-    if(data == none) {
+    if (data == none) {
         throw std::runtime_error("Empty data entity (DataArray) given");
     }
     else {

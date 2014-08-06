@@ -10,12 +10,9 @@
 #ifndef NIX_SIMPLE_TAG_HDF5_H
 #define NIX_SIMPLE_TAG_HDF5_H
 
-#include <string>
-#include <vector>
-
-#include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 #include <nix/hdf5/ReferenceList.hpp>
+#include <nix/base/ISimpleTag.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -41,16 +38,18 @@ public:
      */
     SimpleTagHDF5(const SimpleTagHDF5 &tag);
 
+    // TODO need ctor with file, block, group, id (see #316)
+
     /**
      * Standard constructor
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
+    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
      * Standard constructor that preserves the creation time.
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
+    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 
@@ -91,10 +90,10 @@ public:
     size_t referenceCount() const;
 
 
-    DataArray getReference(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
 
 
-    DataArray getReference(size_t index) const;
+    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
 
 
     void addReference(const std::string &id);
@@ -115,13 +114,13 @@ public:
     size_t featureCount() const;
 
 
-    Feature getFeature(const std::string &id) const;
+    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
 
 
-    Feature getFeature(size_t index) const;
+    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
 
 
-    Feature createFeature(const std::string &data_array_id, LinkType link_type);
+    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);
@@ -137,11 +136,6 @@ public:
      * Assignment operator
      */
     SimpleTagHDF5& operator=(const SimpleTagHDF5 &other);
-
-    /**
-     * Output operator
-     */
-    friend std::ostream& operator<<(std::ostream &out, const SimpleTagHDF5 &ent);
 
     /**
      * Destructor.

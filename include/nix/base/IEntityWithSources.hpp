@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#include <nix/base/ISource.hpp>
 #include <nix/base/IEntityWithMetadata.hpp>
 
 namespace nix {
@@ -40,14 +41,15 @@ public:
 
     virtual bool removeSource(const std::string &id) = 0;
 
-
+    // TODO evaluate if Source can be replaced by shared_ptr<ISource>
+    //      or if this could be moved to the front-end
     virtual void sources(const std::vector<Source> &sources) = 0;
 
 
-    virtual Source getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISource> getSource(const std::string &id) const = 0;
 
 
-    virtual Source getSource(const size_t index) const = 0;
+    virtual std::shared_ptr<ISource> getSource(const size_t index) const = 0;
 
 
     virtual ~IEntityWithSources() {}

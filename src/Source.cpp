@@ -42,7 +42,7 @@ Source::Source(std::shared_ptr<base::ISource> &&ptr)
 
 
 bool Source::hasSource(const Source &source) const {
-    if(source == none) {
+    if (source == none) {
         throw std::runtime_error("Source::hasSource: emtpy Source entity given!");
     }
     return backend()->hasSource(source.id());
@@ -80,7 +80,7 @@ std::vector<Source> Source::findSources(util::Filter<Source>::type filter,
 
     todo.push({*this, 0});
 
-    while(todo.size() > 0)
+    while (todo.size() > 0)
     {
         SourceCont current = todo.front();
         todo.pop();

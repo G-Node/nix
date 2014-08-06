@@ -6,35 +6,38 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <algorithm>
+
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
-
-
+// TODO unnecessary IO (see #316)
 DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
     : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type(), tag.name()),
       reference_list(tag.reference_list)
 {
     feature_group = tag.feature_group;
-    positions(tag.positions().id());
+    positions(tag.positions()->id());
 }
 
 
-DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group, 
+DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, const std::string &type, const string &name, const DataArray &positions)
     : DataTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &group,
+DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), reference_list(group, "references")
 {
@@ -45,17 +48,17 @@ DataTagHDF5::DataTagHDF5(const File &file, const Block &block, const Group &grou
 }
 
 
-DataArray DataTagHDF5::positions() const {
+shared_ptr<IDataArray> DataTagHDF5::positions() const {
     string id;
 
-    if(group().hasAttr("positions")) {
+    if (group().hasAttr("positions")) {
         group().getAttr("positions", id);
     } else {
         throw MissingAttr("positions");
     }
 
-    if(block().hasDataArray(id)) {
-        return block().getDataArray(id);
+    if (block()->hasDataArray(id)) {
+        return block()->getDataArray(id);
     } else {
         throw runtime_error("DataArray with positions not found in Block!");
     }
@@ -63,23 +66,21 @@ DataArray DataTagHDF5::positions() const {
 
 
 void DataTagHDF5::positions(const string &id) {
-    if(id.empty()) {
+    if (id.empty())
         throw EmptyString("positions DataArray id");
+
+    if (!block()->hasDataArray(id))
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+
+    if (extents()) {
+        auto pos = block()->getDataArray(id);
+
+        if (!checkDimensions(extents(), pos))
+            throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
     }
-    else {
-        if(!block().hasDataArray(id)) {
-            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-        } else {
-            if(extents()) {
-                DataArray pos = block().getDataArray(id);
-                DataArray ext = extents();
-                if(!checkDimensions(ext, pos))
-                    throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
-            }
-            group().setAttr("positions", id);
-            forceUpdatedAt();
-        }
-    }
+
+    group().setAttr("positions", id);
+    forceUpdatedAt();
 }
 
 
@@ -90,38 +91,34 @@ bool DataTagHDF5::hasPositions() const {
 }
 
 
-DataArray DataTagHDF5::extents() const {
+shared_ptr<IDataArray>  DataTagHDF5::extents() const {
     std::string extId;
     group().getAttr("extents", extId);
 
-    // block will return empty object if entity not found
-    return block().getDataArray(extId);
+    return block()->getDataArray(extId);
 }
 
 
 void DataTagHDF5::extents(const string &extentsId) {
-    if(extentsId.empty()) {
+    if (extentsId.empty())
         throw EmptyString("extentsId");
+
+    if (!block()->hasDataArray(extentsId))
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+
+    if (hasPositions()) {
+        auto ext = block()->getDataArray(extentsId);
+
+        if (!checkDimensions(ext, positions()))
+            throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     }
-    else {
-        if(!block().hasDataArray(extentsId)) {
-            throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-        }
-        else {
-            if(hasPositions()) {
-                DataArray ext = block().getDataArray(extentsId);
-                DataArray pos = positions();
-                if(!checkDimensions(ext, pos))
-                    throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-            }
-            group().setAttr("extents", extentsId);
-            forceUpdatedAt();
-        }
-    }
+
+    group().setAttr("extents", extentsId);
+    forceUpdatedAt();
 }
 
 void DataTagHDF5::extents(const none_t t) {
-    if(group().hasAttr("extents")) {
+    if (group().hasAttr("extents")) {
         group().removeAttr("extents");
     }
     forceUpdatedAt();
@@ -142,15 +139,15 @@ void DataTagHDF5::units(const vector<string> &units) {
 
 
 void DataTagHDF5::units(const none_t t) {
-    if(group().hasData("units")) {
+    if (group().hasData("units")) {
         group().removeData("units");
     }
     forceUpdatedAt();
 }
+
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------
-
 
 bool DataTagHDF5::hasReference(const std::string &id) const {
     return reference_list.has(id);
@@ -162,28 +159,28 @@ size_t DataTagHDF5::referenceCount() const {
 }
 
 
-DataArray DataTagHDF5::getReference(const std::string &id) const {
+shared_ptr<IDataArray>  DataTagHDF5::getReference(const std::string &id) const {
+    shared_ptr<IDataArray> da;
+
     if (hasReference(id)) {
-        // block will return empty object if entity not found
-        return block().getDataArray(id);
-    } else {
-        return DataArray();
+        da = block()->getDataArray(id);
     }
+
+    return da;
 }
 
-DataArray DataTagHDF5::getReference(size_t index) const {
+shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
     std::vector<std::string> refs = reference_list.get();
     std::string id;
 
-    // get reference id
-    if(index < refs.size()) {
+    if (index < refs.size()) {
         id = refs[index];
     } else {
         throw OutOfBounds("No data array at given index", index);
     }
-    // get referenced array
-    if(hasReference(id) && block().hasDataArray(id)) {
-        return block().getDataArray(id);
+
+    if (hasReference(id) && block()->hasDataArray(id)) {
+        return block()->getDataArray(id);
     } else {
         throw runtime_error("No data array id: " + id);
     }
@@ -201,10 +198,7 @@ bool DataTagHDF5::removeReference(const std::string &id) {
 
 void DataTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
-
-    for (size_t i = 0; i < references.size(); i++) {
-        ids[i] = references[i].id();
-    }
+    transform(references.begin(), references.end(), ids.begin(), [](const DataArray &da) -> string { return da.id(); });
 
     reference_list.set(ids);
 }
@@ -223,39 +217,39 @@ size_t DataTagHDF5::featureCount() const {
 }
 
 
-Feature DataTagHDF5::getFeature(const std::string &id) const {
-    if (feature_group.hasGroup(id)) { 
+shared_ptr<IFeature>  DataTagHDF5::getFeature(const std::string &id) const {
+    shared_ptr<FeatureHDF5> feature;
+
+    if (feature_group.hasGroup(id)) {
         Group group = feature_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string link_type;
         group.getAttr("link_type", link_type);
         LinkType linkType = linkTypeFromString(link_type);
         string dataId;
         group.getAttr("data", dataId);
-        DataArray data = block().getDataArray(dataId);
-        auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
-        return Feature(tmp);
-    } else {
-        return Feature();
+        DataArray data = block()->getDataArray(dataId);
+        feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
     }
+
+    return feature;
 }
 
 
-Feature DataTagHDF5::getFeature(size_t index) const {
+shared_ptr<IFeature>  DataTagHDF5::getFeature(size_t index) const {
     string id = feature_group.objectName(index);
     return getFeature(id);
 }
 
 
-Feature DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
+shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
     string id = util::createId("feature");
-    while(feature_group.hasObject(id))
+    while (feature_group.hasObject(id))
         id = util::createId("feature");
 
     Group group = feature_group.openGroup(id, true);
-    DataArray data = block().getDataArray(data_array_id);
-    auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
-
-    return Feature(tmp);
+    DataArray data = block()->getDataArray(data_array_id);
+    return make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
 }
 
 
@@ -291,14 +285,6 @@ DataTagHDF5& DataTagHDF5::operator=(const DataTagHDF5 &other) {
 }
 
 
-ostream& operator<<(ostream &out, const DataTagHDF5 &ent) {
-    out << "DataTag: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
-}
-
-
 bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
     return a.dataExtent() == b.dataExtent();
 }
@@ -307,7 +293,7 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
 bool DataTagHDF5::checkPositionsAndExtents() const {
     bool valid = true;
 
-    if(hasPositions() && extents()) {
+    if (hasPositions() && extents()) {
         DataArray pos = positions();
         DataArray ext = extents();
         boost::multi_array<double,1> posData, extData;
@@ -322,5 +308,3 @@ bool DataTagHDF5::checkPositionsAndExtents() const {
 
 DataTagHDF5::~DataTagHDF5() {}
 
-} // namespace hdf5
-} // namespace nix

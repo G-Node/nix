@@ -13,13 +13,12 @@
 #include <string>
 
 #include <nix/base/IEntityWithSources.hpp>
-#include <nix/Feature.hpp>
+#include <nix/base/IDataArray.hpp>
+#include <nix/base/IFeature.hpp>
 
 namespace nix {
 
-class Feature;
 class DataArray;
-
 
 namespace base {
 
@@ -36,7 +35,7 @@ public:
     // Element getters and setters
     //--------------------------------------------------
 
-    virtual DataArray positions() const = 0;
+    virtual std::shared_ptr<base::IDataArray> positions() const = 0;
 
 
     virtual void positions(const std::string &id) = 0;
@@ -45,7 +44,7 @@ public:
     virtual bool hasPositions() const = 0;
 
 
-    virtual DataArray extents() const = 0;
+    virtual std::shared_ptr<base::IDataArray> extents() const = 0;
 
 
     virtual void extents(const std::string &id) = 0;
@@ -74,10 +73,10 @@ public:
     virtual size_t referenceCount() const = 0;
 
 
-    virtual DataArray getReference(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getReference(const std::string &id) const = 0;
 
 
-    virtual DataArray getReference(size_t index) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getReference(size_t index) const = 0;
 
 
     virtual void addReference(const std::string &id) = 0;
@@ -99,13 +98,13 @@ public:
     virtual size_t featureCount() const = 0;
 
 
-    virtual Feature getFeature(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IFeature> getFeature(const std::string &id) const = 0;
 
 
-    virtual Feature getFeature(size_t index) const = 0;
+    virtual std::shared_ptr<base::IFeature> getFeature(size_t index) const = 0;
 
 
-    virtual Feature createFeature(const std::string &id, LinkType link_type) = 0;
+    virtual std::shared_ptr<base::IFeature> createFeature(const std::string &id, LinkType link_type) = 0;
 
 
     virtual bool deleteFeature(const std::string &id) = 0;

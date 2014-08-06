@@ -253,7 +253,7 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
         target_size = CHUNK_MIN;
 
     size_t i = 0;
-    while(true) {
+    while (true) {
 
         double csize = static_cast<double>(chunks.nelms());
         if (csize == 1.0) {
@@ -394,13 +394,13 @@ H5::DataType h5_type_for_value(bool for_memory)
     H5::CompType h5type(sizeof(file_value_t));
 
     DataType dtype = to_data_type<T>::value;
-    if(for_memory) {
+    if (for_memory) {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_memtype(dtype));
     } else {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_filetype(dtype));
     }
 
-    if(for_memory) {
+    if (for_memory) {
         h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_memtype(DataType::Double));
     } else {
        h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_filetype(DataType::Double));

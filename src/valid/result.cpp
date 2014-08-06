@@ -43,16 +43,16 @@ Result::Result(none_t t, none_t u)
     : Result(std::vector<Message>(), std::vector<Message>()) {}
 
 void Result::setPrefixes(std::vector<Message> &errs, std::vector<Message> &warns) const {
-    for(auto &err : errs) {
+    for (auto &err : errs) {
         err.msg.insert(0, prefixErr);
     }
-    for(auto &warn : warns) {
+    for (auto &warn : warns) {
         warn.msg.insert(0, prefixWarn);
     }
 }
 
 void Result::setIdPrefixes(std::vector<Message> &errs, std::vector<Message> &warns) const {
-    for(auto &err : errs) {
+    for (auto &err : errs) {
         // copy prefix in string
         std::string prefixIDcpy = std::string(prefixID);
         // replace placeholder with id
@@ -62,7 +62,7 @@ void Result::setIdPrefixes(std::vector<Message> &errs, std::vector<Message> &war
         // insert id prefix in msg string
         err.msg.insert(0, prefixIDcpy);
     }
-    for(auto &warn : warns) {
+    for (auto &warn : warns) {
         // copy prefix in string
         std::string prefixIDcpy = std::string(prefixID);
         // replace placeholder with id

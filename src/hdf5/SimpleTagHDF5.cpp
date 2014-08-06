@@ -8,15 +8,18 @@
 
 
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/SimpleTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/hdf5/DataSet.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
 
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
     : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type(), tag.name()),
@@ -26,14 +29,14 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position)
     : SimpleTagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
-SimpleTagHDF5::SimpleTagHDF5(const File &file, const Block &block, const Group &group, const string &id, 
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), references_list(group, "references")
 {
@@ -56,7 +59,7 @@ void SimpleTagHDF5::units(const vector<string> &units) {
 
 
 void SimpleTagHDF5::units(const none_t t) {
-    if(group().hasData("units")) {
+    if (group().hasData("units")) {
         group().removeData("units");
     }
     forceUpdatedAt();
@@ -66,7 +69,7 @@ void SimpleTagHDF5::units(const none_t t) {
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
 
-    if(group().hasData("position")) {
+    if (group().hasData("position")) {
         group().getData("position", position);
     }
 
@@ -80,7 +83,7 @@ void SimpleTagHDF5::position(const vector<double> &position) {
 
 
 void SimpleTagHDF5::position(const none_t t) {
-    if(group().hasData("position")) {
+    if (group().hasData("position")) {
         group().removeData("position");
     }
     forceUpdatedAt();
@@ -100,7 +103,7 @@ void SimpleTagHDF5::extent(const vector<double> &extent) {
 
 
 void SimpleTagHDF5::extent(const none_t t) {
-    if(group().hasData("extent")) {
+    if (group().hasData("extent")) {
         group().removeData("extent");
     }
     forceUpdatedAt();
@@ -120,40 +123,37 @@ size_t SimpleTagHDF5::referenceCount() const {
 }
 
 
-DataArray SimpleTagHDF5::getReference(const std::string &id) const {
+shared_ptr<IDataArray> SimpleTagHDF5::getReference(const std::string &id) const {
+    shared_ptr<IDataArray> da;
+
     if (hasReference(id)) {
-        // block will return empty object if entity not found
-        return block().getDataArray(id);
-    } else {
-        return DataArray();
+        da = block()->getDataArray(id);
     }
+
+    return da;
 }
 
 
-DataArray SimpleTagHDF5::getReference(size_t index) const {
-    std::vector<std::string> refs = references_list.get();
-    std::string id;
+shared_ptr<IDataArray> SimpleTagHDF5::getReference(size_t index) const {
+    shared_ptr<IDataArray> da;
 
-    // get reference id
-    if(index < refs.size()) {
-        id = refs[index];
+    std::vector<std::string> refs = references_list.get();
+
+    if (index < refs.size()) {
+        string id = refs[index];
+        da = getReference(id);
     } else {
         throw OutOfBounds("No data array at given index", index);
     }
-    // get referenced array
-    if(hasReference(id)) {
-        // block will return empty object if DataArray not found
-        return block().getDataArray(id);
-    } else {
-        return DataArray();
-    }
+
+    return da;
 }
 
 
 void SimpleTagHDF5::addReference(const std::string &id) {
-    if (!block().hasDataArray(id)) {
+    if (!block()->hasDataArray(id)) {
         throw runtime_error("Unable to find data array with reference_id " +
-                            id + " on block " + block().id());
+                            id + " on block " + block()->id());
     }
 
     references_list.add(id);
@@ -164,7 +164,7 @@ bool SimpleTagHDF5::removeReference(const std::string &id) {
     return references_list.remove(id);
 }
 
-
+// TODO fix this when base entities are fixed
 void SimpleTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
 
@@ -187,44 +187,44 @@ size_t SimpleTagHDF5::featureCount() const {
 }
 
 
-Feature SimpleTagHDF5::getFeature(const std::string &id) const {
-    if(hasFeature(id)) {
+shared_ptr<IFeature> SimpleTagHDF5::getFeature(const std::string &id) const {
+    shared_ptr<IFeature> feature;
+
+    if (hasFeature(id)) {
         Group group = feature_group.openGroup(id, false);
+        // TODO unnecessary IO (see #316)
         string link_type;
         group.getAttr("link_type", link_type);
         LinkType linkType = linkTypeFromString(link_type);
         string dataId;
         group.getAttr("data", dataId);
-        DataArray data = block().getDataArray(dataId);
-        auto tmp = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
-        return Feature(tmp);
-    } else {
-        return Feature();
+        DataArray data = block()->getDataArray(dataId);
+        feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
     }
+
+    return feature;
 }
 
 
-Feature SimpleTagHDF5::getFeature(size_t index) const {
+shared_ptr<IFeature> SimpleTagHDF5::getFeature(size_t index) const {
     string id = feature_group.objectName(index);
 
     return getFeature(id);
 }
 
 
-Feature SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
-    if(link_type == LinkType::Indexed) {
+shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
+    if (link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
     }
 
     string rep_id = util::createId("feature");
-    while(feature_group.hasObject(rep_id))
+    while (feature_group.hasObject(rep_id))
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);
-    DataArray data = block().getDataArray(data_array_id);
-    auto tmp = make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
-
-    return Feature(tmp);
+    DataArray data = block()->getDataArray(data_array_id);
+    return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
 
@@ -258,19 +258,7 @@ SimpleTagHDF5& SimpleTagHDF5::operator=(const SimpleTagHDF5 &other) {
 }
 
 
-ostream& operator<<(ostream &out, const SimpleTagHDF5 &ent) {
-    out << "SimpleTag: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
-}
-
-
 SimpleTagHDF5::~SimpleTagHDF5()
 {
-    // TODO Auto-generated destructor stub
 }
 
-
-} // namespace hdf5
-} // namespace nix
