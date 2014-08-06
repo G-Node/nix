@@ -34,7 +34,7 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const strin
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, const Group &group,
                          const string &id, const string &type, const string &name)
     : SectionHDF5(file, parent, group, id, type, name, util::getTime())
 {
@@ -48,7 +48,7 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const strin
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, const Group &group,
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {
@@ -162,8 +162,7 @@ void SectionHDF5::mapping(const none_t t) {
 
 
 shared_ptr<ISection> SectionHDF5::parent() const {
-    // TODO fix this when base entities are fixed
-    return parent_section.impl();
+    return parent_section;
 }
 
 
@@ -193,8 +192,8 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
         group.getAttr("type", type);
         group.getAttr("name", name);
 
-        Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
-        sec = make_shared<SectionHDF5>(file(), parent, group, id, type, name);
+        auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+        sec = make_shared<SectionHDF5>(file(), p, group, id, type, name);
     }
 
     return sec;
@@ -214,10 +213,9 @@ shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string
         new_id = util::createId("section");
     }
 
-    Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
-
+    auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
     Group grp = section_group.openGroup(new_id, true);
-    return make_shared<SectionHDF5>(file(), parent, grp, new_id, type, name);
+    return make_shared<SectionHDF5>(file(), p, grp, new_id, type, name);
 }
 
 

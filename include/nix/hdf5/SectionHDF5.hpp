@@ -22,7 +22,7 @@ class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
 
 private:
 
-    Section parent_section;     // TODO make type to shared_ptr<ISection>
+    std::shared_ptr<base::ISection> parent_section;
     Group property_group, section_group;
 
 public:
@@ -44,7 +44,7 @@ public:
     /**
      * Standard constructor with parent.
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Section &parent, const Group &group,
+    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name);
 
     /**
@@ -56,7 +56,7 @@ public:
     /**
      * Constructor with parent that preserves the creation time.
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Section &parent, const Group &group,
+    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 
