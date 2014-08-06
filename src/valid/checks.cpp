@@ -24,7 +24,7 @@ bool tagRefsHaveUnits::operator()(const std::vector<DataArray> &references) cons
     bool match = true;
     std::vector<std::string> dims_units;
     
-    for(auto &ref : references) {
+    for (auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
         if (!util::isScalable(units, dims_units)) {
             match = false;
@@ -39,7 +39,7 @@ bool tagUnitsMatchRefsUnits::operator()(const std::vector<DataArray> &references
     bool match = true;
     std::vector<std::string> dims_units;
     
-    for(auto &ref : references) {
+    for (auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
         if (!util::isScalable(units, dims_units)) {
             match = false;

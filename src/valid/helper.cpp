@@ -16,7 +16,7 @@ namespace valid {
 std::vector<std::string> getDimensionsUnits(DataArray darray) {
     std::vector<std::string> units;
 
-    for(auto &dim : darray.dimensions()) {
+    for (auto &dim : darray.dimensions()) {
         if (dim.dimensionType() == DimensionType::Range) {
             auto d = dim.asRangeDimension();
             units.push_back(d.unit() ? *(d.unit()) : std::string());

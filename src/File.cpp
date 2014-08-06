@@ -99,15 +99,15 @@ valid::Result File::validate() const {
 
     // Blocks
     auto blcks = blocks();
-    for(auto &block : blcks) {
+    for (auto &block : blcks) {
         result.concat(valid::validate(block));
         // DataArrays
         auto data_arrays = block.dataArrays();
-        for(auto &data_array : data_arrays) {
+        for (auto &data_array : data_arrays) {
             result.concat(valid::validate(data_array));
             // Dimensions
             auto dims = data_array.dimensions();
-            for(auto &dim : dims) {
+            for (auto &dim : dims) {
                 if (dim.dimensionType() == DimensionType::Range) {
                     auto d = dim.asRangeDimension();
                     result.concat(valid::validate(d));
@@ -124,37 +124,37 @@ valid::Result File::validate() const {
         }
         // DataTags
         auto data_tags = block.dataTags();
-        for(auto &data_tag : data_tags) {
+        for (auto &data_tag : data_tags) {
             result.concat(valid::validate(data_tag));
             // Features
             auto features = data_tag.features();
-            for(auto &feature : features) {
+            for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }
         }
         // SimpleTags
         auto simple_tags = block.simpleTags();
-        for(auto &simple_tag : simple_tags) {
+        for (auto &simple_tag : simple_tags) {
             result.concat(valid::validate(simple_tag));
             // Features
             auto features = simple_tag.features();
-            for(auto &feature : features) {
+            for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }
         }
         // Sources
         auto sources = block.findSources();
-        for(auto &source : sources) {
+        for (auto &source : sources) {
             result.concat(valid::validate(source));
         }
     }
     // Sections
     auto sections = findSections();
-    for(auto &section : sections) {
+    for (auto &section : sections) {
         result.concat(valid::validate(section));
         // Properties
         auto props = section.properties();
-        for(auto &prop : props) {
+        for (auto &prop : props) {
             result.concat(valid::validate(prop));
         }
     }
