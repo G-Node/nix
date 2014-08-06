@@ -72,19 +72,19 @@ include_directories(include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
-add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
-target_link_libraries(nix ${LINK_LIBS})
-set_target_properties(nix PROPERTIES
+add_library(nixlib SHARED ${nix_INCLUDES} ${nix_SOURCES})
+target_link_libraries(nixlib ${LINK_LIBS})
+set_target_properties(nixlib PROPERTIES
 		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 		      SOVERSION ${VERSION_ABI})
 
 if(WIN32)
-  set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
+  set_target_properties(nixlib PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  ADD_CUSTOM_COMMAND(TARGET nixlib POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
 	                         "$<TARGET_FILE_DIR:nix>"
 	                 COMMENT "Copying HDF5 C DLL")
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
+  ADD_CUSTOM_COMMAND(TARGET nixlib POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
 	                         "$<TARGET_FILE_DIR:nix>"
 	                 COMMENT "Copying HDF5 CXX DLL")
@@ -92,7 +92,7 @@ endif()
 
 
 if(NIX_FRAMEWORK)
-  set_target_properties(nix PROPERTIES
+  set_target_properties(nixlib PROPERTIES
                         FRAMEWORK FALSE
                         FRAMEWORK_VERSION 1.0
                         PUBLIC_HEADER "${nix_INCLUDES}")
@@ -104,7 +104,7 @@ endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   add_executable(playground EXCLUDE_FROM_ALL main.cpp)
-  target_link_libraries(playground nix)
+  target_link_libraries(playground nixlib)
 endif()
 
 
@@ -115,7 +115,7 @@ if(CLANG_CHECK)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
 
   add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
-                    DEPENDS nix
+                    DEPENDS nixlib
 		    SOURCES ${nix_SOURCES})
 endif()
 
@@ -127,11 +127,11 @@ file(GLOB NixCli_SOURCES "cli/*.cpp")
 file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
 include_directories("cli")
 
-add_executable(nixcli cli/Cli.cpp ${NixCli_SOURCES})
+add_executable(nix cli/Cli.cpp ${NixCli_SOURCES})
 if(NOT WIN32)
-  set_target_properties(nixcli PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  set_target_properties(nix PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
-target_link_libraries(nixcli nix)
+target_link_libraries(nix nixlib)
 message(STATUS "CLI executable added")
 
 ########################################
@@ -150,7 +150,7 @@ add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 if(NOT WIN32)
   set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
-target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nixlib)
 
 foreach(test ${Tests_SOURCES})
   get_filename_component(TestFileName ${test} NAME_WE)
@@ -165,7 +165,7 @@ include(CTest)
 ########################################
 # Install
 
-install(TARGETS nix
+install(TARGETS nixlib
         LIBRARY DESTINATION lib
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
