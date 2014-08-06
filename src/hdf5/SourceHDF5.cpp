@@ -71,7 +71,7 @@ size_t SourceHDF5::sourceCount() const {
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
-    while(source_group.hasObject(id)) {
+    while (source_group.hasObject(id)) {
         id = util::createId("source");
     }
 

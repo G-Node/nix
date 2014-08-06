@@ -102,7 +102,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(size_t index) const {
 shared_ptr<base::IBlock> FileHDF5::createBlock(const std::string &name, const string &type) {
     string id = util::createId("block");
 
-    while(data.hasObject(id)) {
+    while (data.hasObject(id)) {
         id = util::createId("block");
     }
 
@@ -157,7 +157,7 @@ shared_ptr<base::ISection> FileHDF5::getSection(size_t index) const{
 shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId("section");
 
-    while(metadata.hasObject(id))
+    while (metadata.hasObject(id))
         id = util::createId("section");
 
     Group group = metadata.openGroup(id, true);

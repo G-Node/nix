@@ -253,7 +253,7 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
         target_size = CHUNK_MIN;
 
     size_t i = 0;
-    while(true) {
+    while (true) {
 
         double csize = static_cast<double>(chunks.nelms());
         if (csize == 1.0) {

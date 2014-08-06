@@ -80,7 +80,7 @@ std::vector<Source> Source::findSources(util::Filter<Source>::type filter,
 
     todo.push({*this, 0});
 
-    while(todo.size() > 0)
+    while (todo.size() > 0)
     {
         SourceCont current = todo.front();
         todo.pop();

@@ -64,7 +64,7 @@ bool extentsMatchRefs::operator()(const DataArray &extents) const {
     bool mismatch = false;
     auto extExtent = extents.dataExtent();
     auto it = refs.begin();
-    while(!mismatch && (it != refs.end())) {
+    while (!mismatch && (it != refs.end())) {
         auto arrayExtent = (*it).dataExtent();
         mismatch = extExtent[1] != arrayExtent.size();
         ++it;
@@ -76,7 +76,7 @@ bool extentsMatchRefs::operator()(const std::vector<double> &extents) const {
     bool mismatch = false;
     auto extSize = extents.size();
     auto it = refs.begin();
-    while(!mismatch && (it != refs.end())) {
+    while (!mismatch && (it != refs.end())) {
         auto arrayExtent = (*it).dataExtent();
         mismatch = extSize != arrayExtent.size();
         ++it;
@@ -99,7 +99,7 @@ bool positionsMatchRefs::operator()(const std::vector<double> &positions) const 
 bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
     bool mismatch = false;
     auto it = dims.begin();
-    while(!mismatch && it != dims.end()) {
+    while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Range) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asRangeDimension();
@@ -114,7 +114,7 @@ bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
 bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
     bool mismatch = false;
     auto it = dims.begin();
-    while(!mismatch && it != dims.end()) {
+    while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Set) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asSetDimension();

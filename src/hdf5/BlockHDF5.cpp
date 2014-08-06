@@ -84,7 +84,7 @@ size_t BlockHDF5::sourceCount() const {
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
-    while(source_group.hasObject(id)) {
+    while (source_group.hasObject(id)) {
         id = util::createId("source");
     }
 
@@ -146,7 +146,7 @@ size_t BlockHDF5::simpleTagCount() const {
 shared_ptr<ISimpleTag> BlockHDF5::createSimpleTag(const string &name, const string &type,
                                                   const std::vector<double> &position) {
     string id = util::createId("simple_tag");
-    while(hasSimpleTag(id)) {
+    while (hasSimpleTag(id)) {
         id = util::createId("simple_tag");
     }
 

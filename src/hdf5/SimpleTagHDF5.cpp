@@ -219,7 +219,7 @@ shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_
     }
 
     string rep_id = util::createId("feature");
-    while(feature_group.hasObject(rep_id))
+    while (feature_group.hasObject(rep_id))
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);

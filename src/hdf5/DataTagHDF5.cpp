@@ -244,7 +244,7 @@ shared_ptr<IFeature>  DataTagHDF5::getFeature(size_t index) const {
 
 shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
     string id = util::createId("feature");
-    while(feature_group.hasObject(id))
+    while (feature_group.hasObject(id))
         id = util::createId("feature");
 
     Group group = feature_group.openGroup(id, true);

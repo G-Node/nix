@@ -102,7 +102,7 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
 
     todo.push_back(SectionCont(*this));
 
-    while(todo.size() > 0)
+    while (todo.size() > 0)
     {
         SectionCont current = todo.front();
         todo.pop_front();
