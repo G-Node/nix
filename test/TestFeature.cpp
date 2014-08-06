@@ -14,19 +14,10 @@ void TestFeature::setUp() {
     file = File::open("test_feature.h5", FileMode::Overwrite);
     block = file.createBlock("featureTest","test");
 
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name,
-                                             "reference",
-                                             DataType::Double,
-                                             {0}));
-    }
-
     data_array = block.createDataArray("featureTest", "Test",
                                        DataType::Double, {0});
-    tag = block.createSimpleTag("featureTest", "Test", refs);
+    
+    tag = block.createSimpleTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
 
 

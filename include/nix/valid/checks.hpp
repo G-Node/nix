@@ -212,7 +212,7 @@ namespace valid {
      * isAtomicUnit}, {@link isCompoundUnit}. Not viable on its own!
      */
     struct isUnit {
-        typedef std::function<bool(std::string)> TFUNC;
+        typedef std::function<bool(std::string)> TPRED;
         
         virtual bool operator()(const std::string &u) const = 0;
         
@@ -221,9 +221,9 @@ namespace valid {
             return u && (*this)(*u);
         }
                 
-        bool operator()(const std::vector<std::string> &u, TFUNC obj) const {
-            // if test fails we have invalid unit & find_if_not will return it != end
-            return std::find_if_not(u.begin(), u.end(), obj) != u.end();
+        bool operator()(const std::vector<std::string> &u, TPRED obj) const {
+            // if test succeeds find_if_not will not find anything & return it == end
+            return std::find_if_not(u.begin(), u.end(), obj) == u.end();
         }
     };
 
@@ -343,12 +343,14 @@ namespace valid {
      * DataArrays' dimensions all have units defined where the tag has.
      * (where the tag has means at the same index in the tag's units
      * vector as the dimension index in the referenced DataArray)
-     * Therefore it takes all dimensions of all given references
-     * and checks whether the dimension has a unit set if the tag has.
-     * The test counts as passed if all dimensions have units set where
-     * the tag has and have no units set where the tag has not. It
-     * counts as failed immediately if number of dimensions differs from
-     * number of units in given unit vector.
+     * Therefore it takes all non-SetDimension dimensions of all given
+     * references and checks whether the dimension has a unit set if the
+     * tag has. If a dimension is a SetDimension the test counts as
+     * passed. Thus in the end the test counts as passed if all non-
+     * SetDimension dimensions have units set where the tag has and
+     * have no units set where the tag has not. It counts as failed
+     * immediately if number of dimensions differs from number of units
+     * in given unit vector.
      */
     struct tagRefsHaveUnits {
         const std::vector<std::string> &units;
@@ -363,10 +365,12 @@ namespace valid {
      * 
      * One Check struct that checks whether the given units (vector of
      * strings) match the given referenced DataArrays' (vector of
-     * DataArray references) units. Therefore it takes all dimensions of
-     * all given references and checks whether the dimension has a unit
-     * convertible to the unit with the same index in the given units
-     * vector. The test counts as passed if all dimensions have units
+     * DataArray references) units. Therefore it takes all non-
+     * SetDimension dimensions of all given references and checks
+     * whether the dimension has a unit convertible to the unit with the
+     * same index in the given units vector. If a dimension is a
+     * SetDimension the test counts as passed. Thus in the end the test
+     * counts as passed if all non-SetDimension dimensions have units
      * set that are convertible where the units vector has a unit set
      * and all dims have no unit set where the units vector has not.
      * The test counts as failed immediately if the number of dimensions
@@ -403,8 +407,8 @@ namespace valid {
      * 
      * One Check struct that checks whether the given number of
      * extents (if DataArray: size along 2nd dimensions of extents
-     * DataArray; if vector: size of vector) matches the given number of
-     * dimensions in each of the given referenced DataArrays.
+     * DataArray; if vector: size of vector) matches the data's
+     * dimensionality in each of the given referenced DataArrays.
      */
     struct extentsMatchRefs {
         const std::vector<DataArray> &refs;
@@ -420,8 +424,8 @@ namespace valid {
      * 
      * One Check struct that checks whether the given number of
      * positions (if DataArray: size along 2nd dimensions of positions
-     * DataArray; if vector: size of vector) matches the given number of
-     * dimensions in each of the given referenced DataArrays.
+     * DataArray; if vector: size of vector) matches the data's
+     * dimensionality in each of the given referenced DataArrays.
      * Note: this is just an alias for extentsMatchRefs wich does the
      * same thing.
      */

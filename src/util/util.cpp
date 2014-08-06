@@ -6,14 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <string>
 #include <cstdlib>
 #include <mutex>
+#include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
-
-#include <nix/Exception.hpp>
 #include <nix/util/util.hpp>
+
+#include <nix/base/IDimensions.hpp>
+
 
 using namespace std;
 
@@ -162,6 +165,13 @@ bool isCompoundSIUnit(const string &unit) {
     string atomic_unit = PREFIXES + "?" + UNITS + POWER + "?";
     boost::regex compound_unit("(" + atomic_unit + "(\\*|/))+"+ atomic_unit);
     return boost::regex_match(unit, compound_unit);
+}
+
+
+std::string dimTypeToStr(const nix::DimensionType &dtype) {
+    std::stringstream s;
+    s << dtype;
+    return s.str();
 }
 
 

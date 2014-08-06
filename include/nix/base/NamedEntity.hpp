@@ -141,7 +141,7 @@ public:
      * equal, and < 0 otherwise.
      */
     int compare(NamedEntity &other) const {
-        return Entity<T>::backend()->compare(other.imp());
+        return Entity<T>::backend()->compare(other.impl());
     }
 
     /**

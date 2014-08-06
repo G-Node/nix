@@ -31,14 +31,14 @@ DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
 
 
 DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
-                         const string &id, const std::string &type, const string &name, const DataArray positions)
+                         const string &id, const std::string &type, const string &name, const DataArray &positions)
     : DataTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
 DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
-                         const std::string &id, const std::string &type, const string &name, const DataArray positions, time_t time)
+                         const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), reference_list(group, "references")
 {
     feature_group = this->group().openGroup("features");
@@ -144,10 +144,10 @@ void DataTagHDF5::units(const none_t t) {
     }
     forceUpdatedAt();
 }
+
 //--------------------------------------------------
 // Methods concerning references.
 //--------------------------------------------------
-
 
 bool DataTagHDF5::hasReference(const std::string &id) const {
     return reference_list.has(id);

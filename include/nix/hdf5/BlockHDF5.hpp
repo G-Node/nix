@@ -119,7 +119,7 @@ public:
 
 
     std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
-                                                      const std::vector<DataArray> &refs);
+                                                      const std::vector<double> &position);
 
 
     bool deleteSimpleTag(const std::string &id);

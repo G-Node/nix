@@ -51,14 +51,16 @@ void TestDataAccess::setUp() {
     vector<double> position {0.0, 2.0, 3.4};
     vector<double> extent {0.0, 6.0, 2.3};
     vector<string> units {"none", "ms", "ms"};
-    position_tag = block.createSimpleTag("position tag", "event", refs);
-    position_tag.position(position);
+    
+    position_tag = block.createSimpleTag("position tag", "event", position);
+    position_tag.references(refs);
     position_tag.units(units);
 
-    segment_tag = block.createSimpleTag("region tag", "segment", refs);
-    segment_tag.position(position);
+    segment_tag = block.createSimpleTag("region tag", "segment", position);
+    segment_tag.references(refs);
     segment_tag.extent(extent);
     segment_tag.units(units);
+    
     //setup dataTag
     typedef boost::multi_array<double, 2> position_type;
     position_type event_positions(boost::extents[2][3]);

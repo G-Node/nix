@@ -30,25 +30,18 @@ SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
 
 
 SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<DataArray> &refs)
-    : SimpleTagHDF5(file, block, group, id, type, name, refs, util::getTime())
+                             const string &type, const string &name, const std::vector<double> &position)
+    : SimpleTagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
 SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<DataArray> &refs, const time_t time)
+                             const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), references_list(group, "references")
 {
     feature_group = group.openGroup("features");
-
-    for(auto da : refs) {
-        if(da) {
-            addReference(da.id());
-        } else {
-            throw std::runtime_error("SimpleTag requires at least one valid referenced DataArray to be constructed!");
-        }
-    }
+    this->position(position);
 }
 
 
