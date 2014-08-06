@@ -143,7 +143,7 @@ public:
 
 
     DataTag createDataTag(const std::string &name, const std::string &type, 
-                          const DataArray positions);
+                          const DataArray &positions);
 
 
     bool deleteDataTag(const std::string &id);

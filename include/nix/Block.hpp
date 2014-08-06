@@ -585,7 +585,7 @@ public:
      * @return The newly created tag.
      */
     DataTag createDataTag(const std::string &name, const std::string &type,
-                          const DataArray positions) {
+                          const DataArray &positions) {
         return backend()->createDataTag(name, type, positions);
     }
 

@@ -116,7 +116,7 @@ public:
 
 
     virtual DataTag createDataTag(const std::string &name, const std::string &type,
-                                  const DataArray positions) = 0;
+                                  const DataArray &positions) = 0;
 
 
     virtual bool deleteDataTag(const std::string &id) = 0;
