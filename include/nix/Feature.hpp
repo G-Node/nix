@@ -153,6 +153,27 @@ public:
 
 };
 
+/**
+ * @brief Convert a link type into string representation.
+ *
+ * @param ltype         The link type.
+ *
+ * @return A human readable name for the given type.
+ */
+NIXAPI std::string link_type_to_string(LinkType ltype);
+
+/**
+ * @brief Output operator for link type.
+ *
+ * Prints a human readable string representation of the
+ * link type to an output stream.
+ *
+ * @param out           The output stream.
+ * @param ltype         The link type to print.
+ *
+ * @return The output stream.
+ */
+NIXAPI std::ostream& operator<<(std::ostream &out, const LinkType ltype);
 
 } // namespace nix
 

@@ -99,6 +99,7 @@ void TestValidate::setValid() {
     }
     extents.setData(C);
     // fill DataTag
+    refs = {array2, array3};
     dtag.units(atomic_units);
     // fill SimpleTag
     stag.extent(extent);
@@ -158,6 +159,7 @@ void TestValidate::setInvalid() {
     }
     positions.setData(C);
     // fill DataTag
+    refs = {array1, array2};
     dtag.units(atomic_units);
     // fill SimpleTag
     stag.extent(extent);
