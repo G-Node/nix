@@ -128,7 +128,7 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
 static inline auto erase_section_with_id(vector<Section> &sections, const string my_id)
     -> decltype(sections.size())
 {
-    sections.erase(remove_if (sections.begin(),
+    sections.erase(remove_if(sections.begin(),
                              sections.end(),
                              [&my_id](const Section &section) {
                                  return my_id == section.id();
@@ -257,7 +257,7 @@ vector<Section> Section::findSideways(std::function<bool(Section)> filter, const
         results = p.findSections(filter,1);
         if (results.size() > 0) {
 
-            results.erase(remove_if (results.begin(),
+            results.erase(remove_if(results.begin(),
                                     results.end(),
                                     [&caller_id](const Section &section) {
                                         return section.id() == caller_id;

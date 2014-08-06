@@ -77,7 +77,7 @@ time_t getTime() {
 void deblankString(std::string &str) {
     typedef std::string::value_type char_type;
 
-    str.erase(std::remove_if (str.begin(),
+    str.erase(std::remove_if(str.begin(),
                              str.end(),
                              [](char_type c) { return std::isblank(c); }),
               str.end());
