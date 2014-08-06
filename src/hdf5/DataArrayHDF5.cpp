@@ -57,7 +57,7 @@ boost::optional<std::string> DataArrayHDF5::label() const {
 
 
 void DataArrayHDF5::label(const string &label) {
-    if(label.empty()) {
+    if (label.empty()) {
         throw EmptyString("label");
     }
     else {
@@ -68,7 +68,7 @@ void DataArrayHDF5::label(const string &label) {
 
 
 void DataArrayHDF5::label(const none_t t) {
-    if(group().hasAttr("label")) {
+    if (group().hasAttr("label")) {
         group().removeAttr("label");
     }
     forceUpdatedAt();
@@ -87,7 +87,7 @@ boost::optional<std::string> DataArrayHDF5::unit() const {
 
 
 void DataArrayHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
     }
     else {
@@ -98,7 +98,7 @@ void DataArrayHDF5::unit(const string &unit) {
 
 
 void DataArrayHDF5::unit(const none_t t) {
-    if(group().hasAttr("unit")) {
+    if (group().hasAttr("unit")) {
         group().removeAttr("unit");
     }
     forceUpdatedAt();
@@ -124,7 +124,7 @@ void DataArrayHDF5::expansionOrigin(double expansion_origin) {
 
 
 void DataArrayHDF5::expansionOrigin(const none_t t) {
-    if(group().hasAttr("expansion_origin")) {
+    if (group().hasAttr("expansion_origin")) {
         group().removeAttr("expansion_origin");
     }
     forceUpdatedAt();
@@ -157,7 +157,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
 
 
 void DataArrayHDF5::polynomCoefficients(const none_t t) {
-    if(group().hasAttr("polynom_coefficients")) {
+    if (group().hasAttr("polynom_coefficients")) {
         group().removeAttr("polynom_coefficients");
     }
     forceUpdatedAt();

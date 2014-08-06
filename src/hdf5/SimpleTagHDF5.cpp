@@ -59,7 +59,7 @@ void SimpleTagHDF5::units(const vector<string> &units) {
 
 
 void SimpleTagHDF5::units(const none_t t) {
-    if(group().hasData("units")) {
+    if (group().hasData("units")) {
         group().removeData("units");
     }
     forceUpdatedAt();
@@ -69,7 +69,7 @@ void SimpleTagHDF5::units(const none_t t) {
 vector<double> SimpleTagHDF5::position() const {
     vector<double> position;
 
-    if(group().hasData("position")) {
+    if (group().hasData("position")) {
         group().getData("position", position);
     }
 
@@ -83,7 +83,7 @@ void SimpleTagHDF5::position(const vector<double> &position) {
 
 
 void SimpleTagHDF5::position(const none_t t) {
-    if(group().hasData("position")) {
+    if (group().hasData("position")) {
         group().removeData("position");
     }
     forceUpdatedAt();
@@ -103,7 +103,7 @@ void SimpleTagHDF5::extent(const vector<double> &extent) {
 
 
 void SimpleTagHDF5::extent(const none_t t) {
-    if(group().hasData("extent")) {
+    if (group().hasData("extent")) {
         group().removeData("extent");
     }
     forceUpdatedAt();
@@ -139,7 +139,7 @@ shared_ptr<IDataArray> SimpleTagHDF5::getReference(size_t index) const {
 
     std::vector<std::string> refs = references_list.get();
 
-    if(index < refs.size()) {
+    if (index < refs.size()) {
         string id = refs[index];
         da = getReference(id);
     } else {
@@ -190,7 +190,7 @@ size_t SimpleTagHDF5::featureCount() const {
 shared_ptr<IFeature> SimpleTagHDF5::getFeature(const std::string &id) const {
     shared_ptr<IFeature> feature;
 
-    if(hasFeature(id)) {
+    if (hasFeature(id)) {
         Group group = feature_group.openGroup(id, false);
         // TODO unnecessary IO (see #316)
         string link_type;
@@ -214,7 +214,7 @@ shared_ptr<IFeature> SimpleTagHDF5::getFeature(size_t index) const {
 
 
 shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
-    if(link_type == LinkType::Indexed) {
+    if (link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
     }
 

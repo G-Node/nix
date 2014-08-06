@@ -52,7 +52,7 @@ std::vector<Block> File::blocks(util::Filter<Block>::type filter) const
 
 
 bool File::hasSection(const Section &section) const {
-    if(section == none) {
+    if (section == none) {
         throw std::runtime_error("File::hasSection: Empty Section entity given!");
     }
     return backend()->hasSection(section.id());
@@ -69,7 +69,7 @@ std::vector<Section> File::sections(util::Filter<Section>::type filter) const
 
 
 bool File::deleteSection(const Section &section) {
-    if(section == none) {
+    if (section == none) {
         throw std::runtime_error("File::hasSection: Empty Section entity given!");
     }
     return deleteSection(section.id());
@@ -108,15 +108,15 @@ valid::Result File::validate() const {
             // Dimensions
             auto dims = data_array.dimensions();
             for(auto &dim : dims) {
-                if(dim.dimensionType() == DimensionType::Range) {
+                if (dim.dimensionType() == DimensionType::Range) {
                     auto d = dim.asRangeDimension();
                     result.concat(valid::validate(d));
                 }
-                if(dim.dimensionType() == DimensionType::Set) {
+                if (dim.dimensionType() == DimensionType::Set) {
                     auto d = dim.asSetDimension();
                     result.concat(valid::validate(d));
                 }
-                if(dim.dimensionType() == DimensionType::Sample) {
+                if (dim.dimensionType() == DimensionType::Sample) {
                     auto d = dim.asSampledDimension();
                     result.concat(valid::validate(d));
                 }

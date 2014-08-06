@@ -77,7 +77,7 @@ time_t getTime() {
 void deblankString(std::string &str) {
     typedef std::string::value_type char_type;
 
-    str.erase(std::remove_if(str.begin(),
+    str.erase(std::remove_if (str.begin(),
                              str.end(),
                              [](char_type c) { return std::isblank(c); }),
               str.end());
@@ -193,7 +193,7 @@ bool isScalable(const string &unitA, const string &unitB) {
 bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
     bool scalable = true;
     
-    if(unitsA.size() != unitsB.size()) {
+    if (unitsA.size() != unitsB.size()) {
         return false;
     }
     
@@ -212,7 +212,7 @@ bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
 bool isSetAtSamePos(const vector<string> &unitsA, const vector<string> &unitsB) {
     bool set_same = true;
     
-    if(unitsA.size() != unitsB.size()) {
+    if (unitsA.size() != unitsB.size()) {
         return false;
     }
     

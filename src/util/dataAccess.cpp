@@ -157,7 +157,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
     if (position_size[1] > dimension_count) {
         throw nix::IncompatibleDimensions("Number of dimensions in positions do not match dimensionality of data","util::getOffsetAndCount");
     }
-    if(extents && extent_size[1] > dimension_count) {
+    if (extents && extent_size[1] > dimension_count) {
         throw nix::IncompatibleDimensions("Number of dimensions in extents do not match dimensionality of data","util::getOffsetAndCount");
     }
 
@@ -179,7 +179,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
     }
 
-    if(extents) {
+    if (extents) {
         NDArray extent(extents.dataType(), temp_count);
         extents.getData(extent, temp_count, temp_offset);
         for (size_t i = 0; i < offset.num_elements(); ++i) {

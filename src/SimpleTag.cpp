@@ -45,7 +45,7 @@ void SimpleTag::addReference(const DataArray &reference) {
 
 
 bool SimpleTag::removeReference(const DataArray &reference) {
-    if(reference == none) {
+    if (reference == none) {
         throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
     }
     return backend()->removeReference(reference.id());
@@ -60,7 +60,7 @@ std::vector<DataArray> SimpleTag::references(util::Filter<DataArray>::type filte
 }
 
 bool SimpleTag::hasFeature(const Feature &feature) const {
-    if(feature == none) {
+    if (feature == none) {
         throw std::runtime_error("SimpleTag::hasFeature: Empty DataArray entity given!");
     }
     return backend()->hasFeature(feature.id());
@@ -76,7 +76,7 @@ std::vector<Feature> SimpleTag::features(util::Filter<Feature>::type filter) con
 
 
 Feature SimpleTag::createFeature(const DataArray &data, LinkType link_type) {
-    if(data == none) {
+    if (data == none) {
         throw std::runtime_error("SimpleTag::createFeature: Empty DataArray entity given!");
     }
     return backend()->createFeature(data.id(), link_type);

@@ -60,7 +60,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     setCreatedAt();
     setUpdatedAt();
 
-    if(!checkHeader()) {
+    if (!checkHeader()) {
         throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
@@ -79,7 +79,7 @@ bool FileHDF5::hasBlock(const std::string &id) const {
 shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
     shared_ptr<BlockHDF5> block;
 
-    if(hasBlock(id)) {
+    if (hasBlock(id)) {
         Group group = data.openGroup(id, false);
         // TODO unnecessary IO (see #316)
         std::string type;
@@ -134,7 +134,7 @@ bool FileHDF5::hasSection(const std::string &id) const {
 shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
     shared_ptr<SectionHDF5> sec;
 
-    if(hasSection(id)) {
+    if (hasSection(id)) {
         Group group = metadata.openGroup(id, false);
         // TODO unnecessary IO (see #316)
         std::string type;

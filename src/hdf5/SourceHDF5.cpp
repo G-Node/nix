@@ -43,7 +43,7 @@ bool SourceHDF5::hasSource(const string &id) const {
 shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
     shared_ptr<ISource> source;
 
-    if(source_group.hasGroup(id)) {
+    if (source_group.hasGroup(id)) {
         Group group = source_group.openGroup(id, false);
         // TODO unnecessary IO (see #316)
         string type;

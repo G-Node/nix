@@ -61,7 +61,7 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, co
 //--------------------------------------------------
 
 void SectionHDF5::repository(const string &repository) {
-    if(repository.empty()) {
+    if (repository.empty()) {
         throw EmptyString("repository");
     } else {
         group().setAttr("repository", repository);
@@ -73,7 +73,7 @@ void SectionHDF5::repository(const string &repository) {
 boost::optional<string> SectionHDF5::repository() const {
     boost::optional<string> ret;
     string repository;
-    if(group().getAttr("repository", repository)) {
+    if (group().getAttr("repository", repository)) {
         ret = repository;
     }
     return ret;
@@ -81,7 +81,7 @@ boost::optional<string> SectionHDF5::repository() const {
 
 
 void SectionHDF5::repository(const none_t t) {
-    if(group().hasAttr("repository")) {
+    if (group().hasAttr("repository")) {
         group().removeAttr("repository");
     }
     forceUpdatedAt();
@@ -89,7 +89,7 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const std::string &id) {
-    if(id.empty())
+    if (id.empty())
         throw EmptyString("mapping");
 
     File tmp = file();
@@ -122,7 +122,7 @@ shared_ptr<ISection> SectionHDF5::link() const {
 
 
 void SectionHDF5::link(const none_t t) {
-    if(group().hasAttr("link")) {
+    if (group().hasAttr("link")) {
         group().removeAttr("link");
     }
     forceUpdatedAt();
@@ -130,7 +130,7 @@ void SectionHDF5::link(const none_t t) {
 
 
 void SectionHDF5::mapping(const string &mapping) {
-    if(mapping.empty()) {
+    if (mapping.empty()) {
         throw EmptyString("mapping");
     } else {
         group().setAttr("mapping", mapping);
@@ -142,7 +142,7 @@ void SectionHDF5::mapping(const string &mapping) {
 boost::optional<string> SectionHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if(group().getAttr("mapping", mapping)) {
+    if (group().getAttr("mapping", mapping)) {
         ret = mapping;
     }
     return ret;
@@ -150,7 +150,7 @@ boost::optional<string> SectionHDF5::mapping() const {
 
 
 void SectionHDF5::mapping(const none_t t) {
-    if(group().hasAttr("mapping")) {
+    if (group().hasAttr("mapping")) {
         group().removeAttr("mapping");
     }
     forceUpdatedAt();

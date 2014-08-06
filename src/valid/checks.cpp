@@ -26,7 +26,7 @@ bool tagRefsHaveUnits::operator()(const std::vector<DataArray> &references) cons
     
     for(auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
-        if(!util::isScalable(units, dims_units)) {
+        if (!util::isScalable(units, dims_units)) {
             match = false;
             break;
         }
@@ -41,7 +41,7 @@ bool tagUnitsMatchRefsUnits::operator()(const std::vector<DataArray> &references
     
     for(auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
-        if(!util::isScalable(units, dims_units)) {
+        if (!util::isScalable(units, dims_units)) {
             match = false;
             break;
         }
@@ -100,7 +100,7 @@ bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
     bool mismatch = false;
     auto it = dims.begin();
     while(!mismatch && it != dims.end()) {
-        if((*it).dimensionType() == DimensionType::Range) {
+        if ((*it).dimensionType() == DimensionType::Range) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asRangeDimension();
             mismatch = dim.ticks().size() == data.dataExtent()[dimIndex];
@@ -115,7 +115,7 @@ bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
     bool mismatch = false;
     auto it = dims.begin();
     while(!mismatch && it != dims.end()) {
-        if((*it).dimensionType() == DimensionType::Set) {
+        if ((*it).dimensionType() == DimensionType::Set) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asSetDimension();
             mismatch = dim.labels().size() == data.dataExtent()[dimIndex];

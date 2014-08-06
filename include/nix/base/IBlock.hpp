@@ -86,7 +86,7 @@ public:
 
     virtual size_t simpleTagCount() const = 0;
 
-    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+
     virtual std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
                                                               const std::vector<double> &position) = 0;
 

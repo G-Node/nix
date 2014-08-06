@@ -49,7 +49,7 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &id) const {
 
     Block tmp(entity_block);
     auto found = tmp.findSources(util::IdFilter<Source>(id));
-    if(!found.empty())
+    if (!found.empty())
         source = found.back().impl();
 
     return source;
@@ -61,7 +61,7 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) const {
     std::vector<std::string> refs = sources_refs.get();
 
     // get reference id
-    if(index < refs.size()) {
+    if (index < refs.size()) {
         string id = refs[index];
         source = getSource(id);
     } else {

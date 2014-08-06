@@ -42,7 +42,7 @@ PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
 
 
 void PropertyHDF5::name(const string &name) {
-    if(name.empty()) {
+    if (name.empty()) {
         throw EmptyString("name");
     } else {
         dataset().setAttr("name", name);
@@ -53,7 +53,7 @@ void PropertyHDF5::name(const string &name) {
 
 string PropertyHDF5::name() const {
     string name;
-    if(dataset().hasAttr("name")) {
+    if (dataset().hasAttr("name")) {
         dataset().getAttr("name", name);
         return name;
     } else {
@@ -63,7 +63,7 @@ string PropertyHDF5::name() const {
 
 
 void PropertyHDF5::definition(const string &definition) {
-    if(definition.empty()) {
+    if (definition.empty()) {
         throw EmptyString("definition");
     } else {
         dataset().setAttr("definition", definition);
@@ -84,7 +84,7 @@ optional<string> PropertyHDF5::definition() const {
 
 
 void PropertyHDF5::definition(const none_t t) {
-    if(dataset().hasAttr("definition")) {
+    if (dataset().hasAttr("definition")) {
         dataset().removeAttr("definition");
     }
     forceUpdatedAt();
@@ -135,7 +135,7 @@ void PropertyHDF5::unit(const string &unit) {
 boost::optional<string> PropertyHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    if(dataset().getAttr("unit", unit)) {
+    if (dataset().getAttr("unit", unit)) {
         ret = unit;
     }
     return ret;
@@ -143,7 +143,7 @@ boost::optional<string> PropertyHDF5::unit() const {
 
 
 void PropertyHDF5::unit(const none_t t) {
-    if(dataset().hasAttr("unit")) {
+    if (dataset().hasAttr("unit")) {
         dataset().removeAttr("unit");
     }
     forceUpdatedAt();
@@ -182,7 +182,7 @@ std::vector<Value> PropertyHDF5::values(void) const
 
 
 void PropertyHDF5::values(const none_t t) {
-    if(group().hasData("values")) {
+    if (group().hasData("values")) {
         group().removeData("values");
     }
     forceUpdatedAt();

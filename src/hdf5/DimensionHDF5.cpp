@@ -158,7 +158,7 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    if(label.empty()) {
+    if (label.empty()) {
         throw EmptyString("label");
     }
     else {
@@ -169,7 +169,7 @@ void SampledDimensionHDF5::label(const string &label) {
 
 
 void SampledDimensionHDF5::label(const none_t t) {
-    if(group.hasAttr("label")) {
+    if (group.hasAttr("label")) {
         group.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -188,7 +188,7 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
     }
     else {
@@ -199,7 +199,7 @@ void SampledDimensionHDF5::unit(const string &unit) {
 
 
 void SampledDimensionHDF5::unit(const none_t t) {
-    if(group.hasAttr("unit")) {
+    if (group.hasAttr("unit")) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -209,7 +209,7 @@ void SampledDimensionHDF5::unit(const none_t t) {
 double SampledDimensionHDF5::samplingInterval() const {
     double sampling_interval;
 
-    if(group.hasAttr("sampling_interval")) {
+    if (group.hasAttr("sampling_interval")) {
         group.getAttr("sampling_interval", sampling_interval);
         return sampling_interval;
     } else {
@@ -226,7 +226,7 @@ void SampledDimensionHDF5::samplingInterval(double sampling_interval) {
 boost::optional<double> SampledDimensionHDF5::offset() const {
     boost::optional<double> ret;
     double offset = 0;
-    if(group.getAttr("offset", offset)) {
+    if (group.getAttr("offset", offset)) {
         ret = offset;
     }
     return ret;
@@ -239,7 +239,7 @@ void SampledDimensionHDF5::offset(double offset) {
 
 
 void SampledDimensionHDF5::offset(const none_t t) {
-    if(group.hasAttr("offset")) {
+    if (group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
 }
@@ -289,7 +289,7 @@ void SetDimensionHDF5::labels(const vector<string> &labels) {
 }
 
 void SetDimensionHDF5::labels(const none_t t) {
-    if(group.hasAttr("offset")) {
+    if (group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
 }
@@ -344,7 +344,7 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    if(label.empty()) {
+    if (label.empty()) {
         throw EmptyString("label");
     }
     else {
@@ -355,7 +355,7 @@ void RangeDimensionHDF5::label(const string &label) {
 
 
 void RangeDimensionHDF5::label(const none_t t) {
-    if(group.hasAttr("label")) {
+    if (group.hasAttr("label")) {
         group.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -374,7 +374,7 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
     }
     else {
@@ -385,7 +385,7 @@ void RangeDimensionHDF5::unit(const string &unit) {
 
 
 void RangeDimensionHDF5::unit(const none_t t) {
-    if(group.hasAttr("unit")) {
+    if (group.hasAttr("unit")) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -402,7 +402,7 @@ RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &othe
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
 
-    if(group.hasData("ticks")) {
+    if (group.hasData("ticks")) {
         group.getData("ticks", ticks);
         return ticks;
     } else {

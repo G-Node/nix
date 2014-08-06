@@ -36,7 +36,7 @@ NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const
 
 
 void NamedEntityHDF5::type(const string &type) {
-    if(type.empty()) {
+    if (type.empty()) {
         throw EmptyString("type");
     } else {
         group().setAttr("type", type);
@@ -47,7 +47,7 @@ void NamedEntityHDF5::type(const string &type) {
 
 string NamedEntityHDF5::type() const {
     string type;
-    if(group().hasAttr("type")) {
+    if (group().hasAttr("type")) {
         group().getAttr("type", type);
         return type;
     } else {
@@ -57,7 +57,7 @@ string NamedEntityHDF5::type() const {
 
 
 void NamedEntityHDF5::name(const string &name) {
-    if(name.empty()) {
+    if (name.empty()) {
         throw EmptyString("name");
     } else {
         group().setAttr("name", name);
@@ -68,7 +68,7 @@ void NamedEntityHDF5::name(const string &name) {
 
 string NamedEntityHDF5::name() const {
     string name;
-    if(group().hasAttr("name")) {
+    if (group().hasAttr("name")) {
         group().getAttr("name", name);
         return name;
     } else {
@@ -78,7 +78,7 @@ string NamedEntityHDF5::name() const {
 
 
 void NamedEntityHDF5::definition(const string &definition) {
-    if(definition.empty()) {
+    if (definition.empty()) {
         throw EmptyString("definition");
     } else {
         group().setAttr("definition", definition);
@@ -99,7 +99,7 @@ optional<string> NamedEntityHDF5::definition() const {
 
 
 void NamedEntityHDF5::definition(const none_t t) {
-    if(group().hasAttr("definition")) {
+    if (group().hasAttr("definition")) {
         group().removeAttr("definition");
     }
     forceUpdatedAt();

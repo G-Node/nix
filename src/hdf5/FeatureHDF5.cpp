@@ -66,11 +66,11 @@ void FeatureHDF5::linkType(LinkType link_type) {
 
 
 void FeatureHDF5::data(const std::string &data_array_id) {
-    if(data_array_id.empty()) {
+    if (data_array_id.empty()) {
         throw EmptyString("data DataArray id");
     }
     else {
-        if(!block->hasDataArray(data_array_id)) {
+        if (!block->hasDataArray(data_array_id)) {
             throw runtime_error("FeatureHDF5::data: cannot set Feature data because referenced DataArray does not exist!");
         } else {
             group().setAttr("data", data_array_id);
@@ -83,10 +83,10 @@ void FeatureHDF5::data(const std::string &data_array_id) {
 shared_ptr<IDataArray> FeatureHDF5::data() const {
     shared_ptr<IDataArray> da;
 
-    if(group().hasAttr("data")) {
+    if (group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
-        if(block->hasDataArray(dataId)) {
+        if (block->hasDataArray(dataId)) {
             da = block->getDataArray(dataId);
         } else {
             throw std::runtime_error("Data array not found by id in Block");
@@ -98,7 +98,7 @@ shared_ptr<IDataArray> FeatureHDF5::data() const {
 
 
 LinkType FeatureHDF5::linkType() const {
-    if(group().hasAttr("link_type")) {
+    if (group().hasAttr("link_type")) {
         string link_type;
         group().getAttr("link_type", link_type);
         return linkTypeFromString(link_type);

@@ -17,15 +17,15 @@ std::vector<std::string> getDimensionsUnits(DataArray darray) {
     std::vector<std::string> units;
 
     for(auto &dim : darray.dimensions()) {
-        if(dim.dimensionType() == DimensionType::Range) {
+        if (dim.dimensionType() == DimensionType::Range) {
             auto d = dim.asRangeDimension();
             units.push_back(d.unit() ? *(d.unit()) : std::string());
         }
-        if(dim.dimensionType() == DimensionType::Sample) {
+        if (dim.dimensionType() == DimensionType::Sample) {
             auto d = dim.asSampledDimension();
             units.push_back(d.unit() ? *(d.unit()) : std::string());
         }
-        if(dim.dimensionType() == DimensionType::Set) {
+        if (dim.dimensionType() == DimensionType::Set) {
             units.push_back(std::string());
         }
     }

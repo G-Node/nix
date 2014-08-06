@@ -56,7 +56,7 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
 
 
 void EntityWithMetadataHDF5::metadata(const none_t t) {
-    if(group().hasAttr("metadata")) {
+    if (group().hasAttr("metadata")) {
         group().removeAttr("metadata");
     }
 }

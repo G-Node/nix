@@ -51,13 +51,13 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 shared_ptr<IDataArray> DataTagHDF5::positions() const {
     string id;
 
-    if(group().hasAttr("positions")) {
+    if (group().hasAttr("positions")) {
         group().getAttr("positions", id);
     } else {
         throw MissingAttr("positions");
     }
 
-    if(block()->hasDataArray(id)) {
+    if (block()->hasDataArray(id)) {
         return block()->getDataArray(id);
     } else {
         throw runtime_error("DataArray with positions not found in Block!");
@@ -66,16 +66,16 @@ shared_ptr<IDataArray> DataTagHDF5::positions() const {
 
 
 void DataTagHDF5::positions(const string &id) {
-    if(id.empty())
+    if (id.empty())
         throw EmptyString("positions DataArray id");
 
-    if(!block()->hasDataArray(id))
+    if (!block()->hasDataArray(id))
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
 
-    if(extents()) {
+    if (extents()) {
         auto pos = block()->getDataArray(id);
 
-        if(!checkDimensions(extents(), pos))
+        if (!checkDimensions(extents(), pos))
             throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
     }
 
@@ -100,16 +100,16 @@ shared_ptr<IDataArray>  DataTagHDF5::extents() const {
 
 
 void DataTagHDF5::extents(const string &extentsId) {
-    if(extentsId.empty())
+    if (extentsId.empty())
         throw EmptyString("extentsId");
 
-    if(!block()->hasDataArray(extentsId))
+    if (!block()->hasDataArray(extentsId))
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
 
-    if(hasPositions()) {
+    if (hasPositions()) {
         auto ext = block()->getDataArray(extentsId);
 
-        if(!checkDimensions(ext, positions()))
+        if (!checkDimensions(ext, positions()))
             throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     }
 
@@ -118,7 +118,7 @@ void DataTagHDF5::extents(const string &extentsId) {
 }
 
 void DataTagHDF5::extents(const none_t t) {
-    if(group().hasAttr("extents")) {
+    if (group().hasAttr("extents")) {
         group().removeAttr("extents");
     }
     forceUpdatedAt();
@@ -139,7 +139,7 @@ void DataTagHDF5::units(const vector<string> &units) {
 
 
 void DataTagHDF5::units(const none_t t) {
-    if(group().hasData("units")) {
+    if (group().hasData("units")) {
         group().removeData("units");
     }
     forceUpdatedAt();
@@ -173,13 +173,13 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
     std::vector<std::string> refs = reference_list.get();
     std::string id;
 
-    if(index < refs.size()) {
+    if (index < refs.size()) {
         id = refs[index];
     } else {
         throw OutOfBounds("No data array at given index", index);
     }
 
-    if(hasReference(id) && block()->hasDataArray(id)) {
+    if (hasReference(id) && block()->hasDataArray(id)) {
         return block()->getDataArray(id);
     } else {
         throw runtime_error("No data array id: " + id);
@@ -293,7 +293,7 @@ bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
 bool DataTagHDF5::checkPositionsAndExtents() const {
     bool valid = true;
 
-    if(hasPositions() && extents()) {
+    if (hasPositions() && extents()) {
         DataArray pos = positions();
         DataArray ext = extents();
         boost::multi_array<double,1> posData, extData;

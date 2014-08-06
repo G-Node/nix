@@ -69,7 +69,7 @@ bool Block::deleteDataArray(const DataArray &data_array) {
 }
 
 bool Block::hasSimpleTag(const SimpleTag &simple_tag) const {
-    if(simple_tag == none) {
+    if (simple_tag == none) {
         throw std::runtime_error("Empty SimpleTag entity given!");
     }
     return backend()->hasSimpleTag(simple_tag.id());
