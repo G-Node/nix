@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
@@ -39,14 +40,14 @@ FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
 {}
 
 
-FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, const Block &block, const Group &group,
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
@@ -69,7 +70,7 @@ void FeatureHDF5::data(const std::string &data_array_id) {
         throw EmptyString("data DataArray id");
     }
     else {
-        if(!block.hasDataArray(data_array_id)) {
+        if(!block->hasDataArray(data_array_id)) {
             throw runtime_error("FeatureHDF5::data: cannot set Feature data because referenced DataArray does not exist!");
         } else {
             group().setAttr("data", data_array_id);
@@ -85,9 +86,8 @@ shared_ptr<IDataArray> FeatureHDF5::data() const {
     if(group().hasAttr("data")) {
         string dataId;
         group().getAttr("data", dataId);
-        if(block.hasDataArray(dataId)) {
-            // TODO fix this when base entities are fixed
-            da = block.getDataArray(dataId).impl();
+        if(block->hasDataArray(dataId)) {
+            da = block->getDataArray(dataId);
         } else {
             throw std::runtime_error("Data array not found by id in Block");
         }

@@ -10,6 +10,7 @@
 
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
@@ -37,13 +38,13 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 
 
 DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
-                         const std::string &id, const std::string &type, const string &name, const DataArray _positions, time_t time)
+                         const std::string &id, const std::string &type, const string &name, const DataArray positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), reference_list(group, "references")
 {
     feature_group = this->group().openGroup("features");
     // TODO: the line below currently throws an exception if positions is
     // not in block - to consider if we prefer copying it to the block
-    positions(_positions.id());
+    this->positions(positions.id());
 }
 
 

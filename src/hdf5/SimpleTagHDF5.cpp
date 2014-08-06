@@ -8,6 +8,7 @@
 
 
 #include <nix/util/util.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/SimpleTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
@@ -41,17 +42,12 @@ SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, c
 {
     feature_group = group.openGroup("features");
 
-    bool valid = false;
-    for(auto it = refs.begin(); it != refs.end(); ++it) {
-        // NOTE: arrays might be empty - we drop them & but require one valid!
-        //       arrays not found in block => addReference: o_O => ERROR
-        if(*it) {
-            addReference((*it).id());
-            valid = true;
+    for(auto da : refs) {
+        if(da) {
+            addReference(da.id());
+        } else {
+            throw std::runtime_error("SimpleTag requires at least one valid referenced DataArray to be constructed!");
         }
-    }
-    if(!valid) {
-        throw std::runtime_error("SimpleTag requires at least one valid referenced DataArray to be constructed!");
     }
 }
 
