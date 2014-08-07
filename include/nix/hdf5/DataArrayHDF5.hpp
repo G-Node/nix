@@ -34,18 +34,19 @@ private:
 public:
 
     /**
-     * Copy constructor
+     * Standard constructor for existing DataArrays
      */
-    DataArrayHDF5(const DataArrayHDF5 &tag);
-
+    DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+                  const std::string &id);
+                  
     /**
-     * Standard constructor
+     * Standard constructor for new DataArrays
      */
     DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                   const std::string &id, const std::string &type, const std::string &name);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor for new DataArrays that preserves the creation time.
      */
     DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                   const std::string &id, const std::string &type, const std::string &name, time_t time);
@@ -115,12 +116,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    // TODO do we really need swap and operator=?
-    void swap(DataArrayHDF5 &other);
-
-
-    DataArrayHDF5& operator=(const DataArrayHDF5 &other);
 
 
     virtual ~DataArrayHDF5();
