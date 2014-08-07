@@ -117,14 +117,7 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
 
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
-<<<<<<< HEAD
 	tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id);
-=======
-	
-        return SimpleTag(make_shared<SimpleTagHDF5>(file(), block(), tag_group, id));
-    } else {
-        return nix::SimpleTag();
->>>>>>> fixed the getSimpleTag method to use proper constructor
     }
 
     return tag;
