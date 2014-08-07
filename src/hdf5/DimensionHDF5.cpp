@@ -99,13 +99,6 @@ void DimensionHDF5::setType() {
 }
 
 
-void DimensionHDF5::swap(DimensionHDF5 &other) {
-    using std::swap;
-    swap(group, other.group);
-    swap(dim_index, other.dim_index);
-}
-
-
 bool DimensionHDF5::operator==(const DimensionHDF5 &other) const {
     return group == other.group;
 }
@@ -132,12 +125,6 @@ SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sam
     : SampledDimensionHDF5(group, index)
 {
     this->samplingInterval(sampling_interval);
-}
-
-
-SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
-    : SampledDimensionHDF5(other.group, other.dim_index)
-{
 }
 
 
@@ -245,13 +232,6 @@ void SampledDimensionHDF5::offset(const none_t t) {
 }
 
 
-SampledDimensionHDF5& SampledDimensionHDF5::operator=(const SampledDimensionHDF5 &other) {
-    SampledDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
-}
-
-
 SampledDimensionHDF5::~SampledDimensionHDF5() {}
 
 //--------------------------------------------------------------
@@ -262,12 +242,6 @@ SetDimensionHDF5::SetDimensionHDF5(Group group, size_t index)
     : DimensionHDF5(group, index)
 {
     setType();
-}
-
-
-SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
-    : SetDimensionHDF5(other.group, other.dim_index)
-{
 }
 
 
@@ -294,13 +268,6 @@ void SetDimensionHDF5::labels(const none_t t) {
     }
 }
 
-SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {
-    SetDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
-}
-
-
 SetDimensionHDF5::~SetDimensionHDF5() {}
 
 //--------------------------------------------------------------
@@ -318,12 +285,6 @@ RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double>
     : RangeDimensionHDF5(group, index)
 {
     this->ticks(ticks);
-}
-
-
-RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
-    : RangeDimensionHDF5(other.group, other.dim_index)
-{
 }
 
 
@@ -389,13 +350,6 @@ void RangeDimensionHDF5::unit(const none_t t) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
-}
-
-
-RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &other) {
-    RangeDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
 }
 
 
