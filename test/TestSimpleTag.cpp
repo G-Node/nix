@@ -95,7 +95,7 @@ void TestSimpleTag::testCreateRemove() {
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
         SimpleTag st1 = block.createSimpleTag(names[i], type, {0.0, 2.0, 3.4});
-	st1.references(refs);
+        st1.references(refs);
         SimpleTag st2 = block.getSimpleTag(st1.id());
         ids.push_back(st1.id());
 
