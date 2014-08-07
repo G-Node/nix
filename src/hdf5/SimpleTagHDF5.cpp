@@ -21,7 +21,6 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
     : SimpleTagHDF5(tag.file(), tag.block(), tag.group(), tag.id())
 {
