@@ -21,12 +21,6 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
-    : SimpleTagHDF5(tag.file(), tag.block(), tag.group(), tag.id())
-{
-}
-
-
 SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id)
     : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
 {
@@ -243,24 +237,6 @@ bool SimpleTagHDF5::deleteFeature(const string &id) {
 }
 
 // Other methods and functions
-
-
-void SimpleTagHDF5::swap(SimpleTagHDF5 &other) {
-    using std::swap;
-
-    EntityWithSourcesHDF5::swap(other);
-    swap(feature_group, other.feature_group);
-    swap(references_list, other.references_list);
-}
-
-
-SimpleTagHDF5& SimpleTagHDF5::operator=(const SimpleTagHDF5 &other) {
-    if (*this != other) {
-        SimpleTagHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
-}
 
 
 SimpleTagHDF5::~SimpleTagHDF5()
