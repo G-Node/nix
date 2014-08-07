@@ -35,11 +35,8 @@ public:
      *
      * @param file      The file which contains this block.
      * @param group     The group that represents the block inside the file.
-     * @param id        The id of this block.
-     * @param type      The type of this block.
-     * @param name      The name of this block.
      */
-    BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
+    BlockHDF5(std::shared_ptr<base::IFile> file, Group group);
 
     /**
      * Standard constructor for a new Block.
@@ -60,6 +57,7 @@ public:
      * @param id        The id of this block.
      * @param type      The type of this block.
      * @param name      The name of this block.
+     * @param name      The creation time of this block.
      */
     BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 

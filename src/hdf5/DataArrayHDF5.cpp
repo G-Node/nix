@@ -18,9 +18,8 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-DataArrayHDF5::DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
-                             const std::string &id)
-    : EntityWithSourcesHDF5(file, block, group, id)
+DataArrayHDF5::DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group)
+    : EntityWithSourcesHDF5(file, block, group)
 {
     dimension_group = this->group().openGroup("dimensions", false);
 }

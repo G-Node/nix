@@ -19,6 +19,8 @@ namespace hdf5 {
 
 
 class PropertyHDF5 : virtual public base::IProperty, public EntityHDF5 {
+    
+    std::string entity_id;
 
 public:
 
@@ -39,6 +41,9 @@ public:
      */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name, time_t time);
+
+
+    std::string id() const;
 
 
     void name(const std::string &name);

@@ -20,8 +20,8 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id)
-    : EntityWithMetadataHDF5(file, group, id)
+BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
+    : EntityWithMetadataHDF5(file, group)
 {
     source_group = group.openGroup("sources", false);
     data_array_group = group.openGroup("data_arrays", false);
@@ -60,7 +60,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
 
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
-        source = make_shared<SourceHDF5>(file(), group, id);
+        source = make_shared<SourceHDF5>(file(), group);
     }
 
     return source;
@@ -113,7 +113,7 @@ shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
 
     if (hasSimpleTag(id)) {
         Group tag_group = simple_tag_group.openGroup(id, false);
-        tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group, id);
+        tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group);
     }
 
     return tag;
@@ -167,7 +167,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
 
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
-        da = make_shared<DataArrayHDF5>(file(), block(), group, id);
+        da = make_shared<DataArrayHDF5>(file(), block(), group);
     }
 
     return da;
@@ -240,7 +240,7 @@ shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
 
     if (hasDataTag(id)) {
         Group tag_group = data_tag_group.openGroup(id);
-        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id);
+        tag = make_shared<DataTagHDF5>(file(), block(), tag_group);
     }
 
     return tag;

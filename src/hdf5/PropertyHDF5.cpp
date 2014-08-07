@@ -21,7 +21,7 @@ using namespace nix::base;
 
 
     PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id)
-    : EntityHDF5(file, group, id)
+    : EntityHDF5(file, group), entity_id(id)
 {
     this->entity_dataset = dataset;
 }
@@ -29,19 +29,22 @@ using namespace nix::base;
 
     PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
                                const string &name)
-        : PropertyHDF5(file, group, dataset, id, name, util::getTime())
+    : PropertyHDF5(file, group, dataset, id, name, util::getTime())
 {
 }
 
 
     PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
                                const string &name, time_t time)
-    : EntityHDF5(file, group, id, time)
+    : EntityHDF5(file, group, id, time), entity_id(id)
 {
     this->entity_dataset = dataset;
     this->name(name);
 }
 
+std::string PropertyHDF5::id() const {
+    return entity_id;
+}
 
 void PropertyHDF5::name(const string &name) {
     if (name.empty()) {

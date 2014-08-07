@@ -269,6 +269,7 @@ void TestSection::testPropertyAccess() {
     for (auto id : ids) {
         Property prop = section.getProperty(id);
         CPPUNIT_ASSERT(section.hasProperty(id));
+std::cout << "\nid:" << id << ", " << prop.id();
         CPPUNIT_ASSERT(prop.id() == id);
 
         section.deleteProperty(id);

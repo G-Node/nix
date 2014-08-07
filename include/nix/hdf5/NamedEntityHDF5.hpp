@@ -29,7 +29,7 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group);
 
     /**
      * Standard constructor for new entity
