@@ -57,17 +57,17 @@ namespace valid {
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
 #else
-	template<typename T>
-	class hasID
-	{
-	public:
-		__if_exists(T::id) {
-			static const bool value = true;
-		}
-		__if_not_exists(T::id) {
-			static const bool value = false;
-		}
-	};
+    template<typename T>
+    class hasID
+    {
+    public:
+        __if_exists(T::id) {
+            static const bool value = true;
+        }
+        __if_not_exists(T::id) {
+            static const bool value = false;
+        }
+    };
 #endif
 
     /**
@@ -91,17 +91,17 @@ namespace valid {
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
 #else
-	template<typename T>
-	class hasEmpty
-	{
-	public:
-		__if_exists(T::empty) {
-			static const bool value = true;
-		}
-		__if_not_exists(T::empty) {
-			static const bool value = false;
-		}
-	};
+    template<typename T>
+    class hasEmpty
+    {
+    public:
+        __if_exists(T::empty) {
+            static const bool value = true;
+        }
+        __if_not_exists(T::empty) {
+            static const bool value = false;
+        }
+    };
 #endif
 
     /**
