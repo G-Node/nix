@@ -28,11 +28,9 @@ public:
 
 
     /**
-     * Copyconstructor.
+     * Standard constructor for existing Source
      */
-    SourceHDF5(const SourceHDF5 &source);
-
-    // TODO need ctor with file, group, id (see #316)
+    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
 
     /**
      * Default constructor.
@@ -71,12 +69,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    // TODO do we really need swap and operator=?
-    void swap(SourceHDF5 &other);
-
-
-    SourceHDF5& operator=(const SourceHDF5 &other);
 
 
     virtual ~SourceHDF5();
