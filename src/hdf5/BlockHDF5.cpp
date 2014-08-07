@@ -60,12 +60,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
 
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        string type;
-        string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        source = make_shared<SourceHDF5>(file(), group, id, type, name);
+        source = make_shared<SourceHDF5>(file(), group, id);
     }
 
     return source;
@@ -172,12 +167,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
 
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
+        da = make_shared<DataArrayHDF5>(file(), block(), group, id);
     }
 
     return da;
@@ -250,15 +240,7 @@ shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
 
     if (hasDataTag(id)) {
         Group tag_group = data_tag_group.openGroup(id);
-        // TODO unnecessary IO (see #316)
-        std::string positions_id;
-        tag_group.getAttr("positions", positions_id);
-        DataArray positions = getDataArray(positions_id);
-        std::string type;
-        std::string name;
-        tag_group.getAttr("type", type);
-        tag_group.getAttr("name", name);
-        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
+        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id);
     }
 
     return tag;
