@@ -76,12 +76,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
 
     if (hasBlock(id)) {
         Group group = data.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        block = make_shared<BlockHDF5>(file(), group, id, type, name);
+        block = make_shared<BlockHDF5>(file(), group, id);
     }
 
     return block;
@@ -131,12 +126,7 @@ shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
 
     if (hasSection(id)) {
         Group group = metadata.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        sec = make_shared<SectionHDF5>(file(), group, id, type, name);
+        sec = make_shared<SectionHDF5>(file(), group, id);
     }
 
     return sec;
