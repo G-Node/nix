@@ -19,15 +19,16 @@ using namespace nix;
 using namespace nix::hdf5;
 using namespace nix::base;
 
-// TODO unnecessary IO (see #316)
-BlockHDF5::BlockHDF5(const BlockHDF5 &block)
-    : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
-      source_group(block.source_group), data_array_group(block.data_array_group),
-      simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
+
+BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id)
+    : EntityWithMetadataHDF5(file, group, id)
 {
+    source_group = group.openGroup("sources", false);
+    data_array_group = group.openGroup("data_arrays", false);
+    simple_tag_group = group.openGroup("simple_tags", false);
+    data_tag_group = group.openGroup("data_tags", false);
 }
-
-
+    
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
@@ -37,10 +38,10 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources");
-    data_array_group = group.openGroup("data_arrays");
-    simple_tag_group = group.openGroup("simple_tags");
-    data_tag_group = group.openGroup("data_tags");
+    source_group = group.openGroup("sources", true);
+    data_array_group = group.openGroup("data_arrays", true);
+    simple_tag_group = group.openGroup("simple_tags", true);
+    data_tag_group = group.openGroup("data_tags", true);
 }
 
 
@@ -282,26 +283,6 @@ bool BlockHDF5::deleteDataTag(const std::string &id) {
         deleted = true;
     }
     return deleted;
-}
-
-
-void BlockHDF5::swap(BlockHDF5 &other) {
-    using std::swap;
-
-    EntityHDF5::swap(other);
-    swap(source_group, other.source_group);
-    swap(data_array_group, other.data_array_group);
-    swap(simple_tag_group, other.simple_tag_group);
-    swap(data_tag_group, other.data_tag_group);
-}
-
-
-BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
-    if (*this != other) {
-        BlockHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
 }
 
 

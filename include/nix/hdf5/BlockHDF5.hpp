@@ -31,14 +31,18 @@ private:
 public:
 
     /**
-     * Copy constructor.
+     * Standard constructor for an existing Block.
      *
-     * @param block     The block to create the new copy from.
+     * @param file      The file which contains this block.
+     * @param group     The group that represents the block inside the file.
+     * @param id        The id of this block.
+     * @param type      The type of this block.
+     * @param name      The name of this block.
      */
-    BlockHDF5(const BlockHDF5 &block);
+    BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
 
     /**
-     * Standard constructor for a Block.
+     * Standard constructor for a new Block.
      *
      * @param file      The file which contains this block.
      * @param group     The group that represents the block inside the file.
@@ -49,7 +53,7 @@ public:
     BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type, const std::string &name);
 
     /**
-     * Standard constructor for a Block.
+     * Standard constructor for a new Block.
      *
      * @param file      The file which contains this block.
      * @param group     The group that represents the block inside the file.
@@ -149,12 +153,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    // TODO do we really need swap and operator=?
-    void swap(BlockHDF5 &other);
-
-
-    BlockHDF5& operator=(const BlockHDF5 &other);
 
 
     virtual ~BlockHDF5();
