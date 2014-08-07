@@ -66,11 +66,6 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
 }
 
 
-FileHDF5::FileHDF5(const FileHDF5 &file)
-    : h5file(file.h5file), root(file.root), metadata(file.metadata), data(file.data)
-{}
-
-
 bool FileHDF5::hasBlock(const std::string &id) const {
     return data.hasGroup(id);
 }
@@ -329,17 +324,6 @@ bool FileHDF5::operator==(const FileHDF5 &other) const {
 
 bool FileHDF5::operator!=(const FileHDF5 &other) const {
     return h5file.getFileName() != other.h5file.getFileName();
-}
-
-
-FileHDF5& FileHDF5::operator=(const FileHDF5 &other) {
-    if (*this != other) {
-        this->h5file = other.h5file;
-        this->root = other.root;
-        this->metadata = other.metadata;
-        this->data = other.data;
-    }
-    return *this;
 }
 
 
