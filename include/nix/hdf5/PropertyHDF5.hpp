@@ -24,18 +24,18 @@ public:
 
 
     /**
-     * Standard constructor for existing Tag
+     * Standard constructor for existing Property
      */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id);
 
     /**
-     * Standard constructor for new Tag
+     * Standard constructor for new Property
      */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name);
 
     /**
-     * Constructor for new Tag with time
+     * Constructor for new Property with time
      */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name, time_t time);
