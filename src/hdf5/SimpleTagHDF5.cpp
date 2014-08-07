@@ -191,14 +191,7 @@ shared_ptr<IFeature> SimpleTagHDF5::getFeature(const std::string &id) const {
 
     if (hasFeature(id)) {
         Group group = feature_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        string link_type;
-        group.getAttr("link_type", link_type);
-        LinkType linkType = linkTypeFromString(link_type);
-        string dataId;
-        group.getAttr("data", dataId);
-        DataArray data = block()->getDataArray(dataId);
-        feature = make_shared<FeatureHDF5>(file(), block(), group, id, data, linkType);
+        feature = make_shared<FeatureHDF5>(file(), block(), group, id);
     }
 
     return feature;
