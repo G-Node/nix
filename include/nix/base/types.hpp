@@ -9,6 +9,10 @@
 #ifndef NIX_BASE_TYPES_H
 #define NIX_BASE_TYPES_H
 
+#include <nix/base/Entity.hpp>
+#include <nix/base/NamedEntity.hpp>
+#include <nix/base/EntityWithMetadata.hpp>
+#include <nix/base/EntityWithSources.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/base/ISection.hpp>
