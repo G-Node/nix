@@ -26,6 +26,12 @@ NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const
 }
 
 
+NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id)
+    : EntityHDF5(file, group, id)
+{
+}
+
+
 NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id, const string &type,
                                  const string &name, time_t time)
     : EntityHDF5(file, group, id, time)

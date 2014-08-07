@@ -33,13 +33,18 @@ public:
     // TODO need a ctor with file, block, group, id (see #316)
 
     /**
-     * Standard constructor.
+     * Standard constructor for existing entity.
+     */
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group, const std::string &id);
+    
+    /**
+     * Standard constructor for new entity.
      */
     EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
                           const std::string &id, const std::string &type, const std::string &name);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor for new entity that preserves the creation time.
      */
     EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
                           const std::string &id, const std::string &type, const std::string &name, time_t time);
