@@ -18,7 +18,7 @@ using namespace nix::base;
 SourceHDF5::SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id)
     : EntityWithMetadataHDF5(file, group, id)
 {
-    source_group = group.openGroup("sources");
+    source_group = group.openGroup("sources", false);
 }
     
     
@@ -31,7 +31,7 @@ SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &i
 SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources");
+    source_group = group.openGroup("sources", true);
 }
 
 

@@ -25,7 +25,7 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
                          const std::string &id)
     : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
 {
-    feature_group = this->group().openGroup("features");
+    feature_group = this->group().openGroup("features", false);
 }
 
 
@@ -40,7 +40,7 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
                          const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time), reference_list(group, "references")
 {
-    feature_group = this->group().openGroup("features");
+    feature_group = this->group().openGroup("features", true);
     // TODO: the line below currently throws an exception if positions is
     // not in block - to consider if we prefer copying it to the block
     this->positions(positions.id());

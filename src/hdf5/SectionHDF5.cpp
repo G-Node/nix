@@ -29,8 +29,8 @@ SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base
             const std::string &id)
     : NamedEntityHDF5(file, group, id), parent_section(parent)
 {
-    property_group = this->group().openGroup("properties");
-    section_group = this->group().openGroup("sections");
+    property_group = this->group().openGroup("properties", false);
+    section_group = this->group().openGroup("sections", false);
 }
 
 
@@ -59,8 +59,8 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, co
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {
-    property_group = this->group().openGroup("properties");
-    section_group = this->group().openGroup("sections");
+    property_group = this->group().openGroup("properties", true);
+    section_group = this->group().openGroup("sections", true);
 }
 
 //--------------------------------------------------
