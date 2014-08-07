@@ -19,11 +19,18 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-SectionHDF5::SectionHDF5(const SectionHDF5 &section)
-    : NamedEntityHDF5(section.file(), section.group(), section.id(), section.type(), section.name())
+SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id)
+    : SectionHDF5(file, nullptr, group, id)
 {
-    property_group = section.property_group;
-    section_group = section.section_group;
+}
+    
+
+SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group, 
+            const std::string &id)
+    : NamedEntityHDF5(file, group, id), parent_section(parent)
+{
+    property_group = this->group().openGroup("properties");
+    section_group = this->group().openGroup("sections");
 }
 
 
@@ -186,14 +193,9 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
 
     if (section_group.hasGroup(id)) {
         Group group = section_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
 
         auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-        sec = make_shared<SectionHDF5>(file(), p, group, id, type, name);
+        sec = make_shared<SectionHDF5>(file(), p, group, id);
     }
 
     return sec;
