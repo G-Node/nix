@@ -19,9 +19,11 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-PropertyHDF5::PropertyHDF5(const PropertyHDF5 &property)
-    : PropertyHDF5(property.file(), property.group(), property.dataset(), property.id(), property.name())
+
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id)
+    : EntityHDF5(file, group, id)
 {
+    this->entity_dataset = dataset;
 }
 
 
