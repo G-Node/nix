@@ -251,10 +251,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 
     if (property_group.hasData(id)) {
         DataSet dset = property_group.openData(id);
-        // TODO unnecessary IO (see #316)
-        string name;
-        dset.getAttr("name", name);
-        prop = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);
+        prop = make_shared<PropertyHDF5>(file(), property_group, dset, id);
     }
 
     return prop;
