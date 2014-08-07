@@ -28,21 +28,24 @@ private:
 public:
 
     /**
-     * Copy constructor
+     * Standard constructor for existing entity
      */
-    SectionHDF5(const SectionHDF5 &section);
-
-    // TODO need ctor with file, group, id (see #316)
-    // TODO need ctor with file, parent, group, id (see #316)
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id);
+    
+    /**
+     * Standard constructor for existing entity
+     */
+    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group, 
+                const std::string &id);
 
     /**
-     * Standard constructor
+     * Standard constructor for new entity
      */
     SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id,
                 const std::string &type, const std::string &name);
 
     /**
-     * Standard constructor with parent.
+     * Standard constructor for new entity with parent.
      */
     SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name);

@@ -17,14 +17,15 @@ using namespace nix;
 using namespace nix::base;
 using namespace nix::hdf5;
 
-// TODO unnecessary IO (see #316)
-DataArrayHDF5::DataArrayHDF5(const DataArrayHDF5 &data_array)
-    : EntityWithSourcesHDF5(data_array.file(), data_array.block(), data_array.group(), data_array.id(), data_array.type(), data_array.name()),
-      dimension_group(data_array.dimension_group)
+
+DataArrayHDF5::DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+                             const std::string &id)
+    : EntityWithSourcesHDF5(file, block, group, id)
 {
+    dimension_group = this->group().openGroup("dimensions", false);
 }
-
-
+                  
+                  
 DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                              const string &id, const string &type, const string &name)
     : DataArrayHDF5(file, block, group, id, type, name, util::getTime())
@@ -242,24 +243,6 @@ bool DataArrayHDF5::deleteDimension(size_t index) {
 //--------------------------------------------------
 // Other methods and functions
 //--------------------------------------------------
-
-
-void DataArrayHDF5::swap(DataArrayHDF5 &other) {
-    using std::swap;
-
-    EntityWithSourcesHDF5::swap(other);
-    swap(dimension_group, other.dimension_group);
-}
-
-
-DataArrayHDF5& DataArrayHDF5::operator=(const DataArrayHDF5 &other) {
-    if (*this != other) {
-        DataArrayHDF5 tmp(other);
-        swap(tmp);
-    }
-
-    return *this;
-}
 
 
 DataArrayHDF5::~DataArrayHDF5() {}

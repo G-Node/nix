@@ -19,15 +19,16 @@ using namespace nix;
 using namespace nix::hdf5;
 using namespace nix::base;
 
-// TODO unnecessary IO (see #316)
-BlockHDF5::BlockHDF5(const BlockHDF5 &block)
-    : EntityWithMetadataHDF5(block.file(), block.group(), block.id(), block.type(), block.name()),
-      source_group(block.source_group), data_array_group(block.data_array_group),
-      simple_tag_group(block.simple_tag_group), data_tag_group(block.data_tag_group)
+
+BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id)
+    : EntityWithMetadataHDF5(file, group, id)
 {
+    source_group = group.openGroup("sources", false);
+    data_array_group = group.openGroup("data_arrays", false);
+    simple_tag_group = group.openGroup("simple_tags", false);
+    data_tag_group = group.openGroup("data_tags", false);
 }
-
-
+    
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
@@ -37,10 +38,10 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources");
-    data_array_group = group.openGroup("data_arrays");
-    simple_tag_group = group.openGroup("simple_tags");
-    data_tag_group = group.openGroup("data_tags");
+    source_group = group.openGroup("sources", true);
+    data_array_group = group.openGroup("data_arrays", true);
+    simple_tag_group = group.openGroup("simple_tags", true);
+    data_tag_group = group.openGroup("data_tags", true);
 }
 
 
@@ -59,12 +60,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
 
     if (hasSource(id)) {
         Group group = source_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        string type;
-        string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        source = make_shared<SourceHDF5>(file(), group, id, type, name);
+        source = make_shared<SourceHDF5>(file(), group, id);
     }
 
     return source;
@@ -171,12 +167,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
 
     if (hasDataArray(id)) {
         Group group = data_array_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
+        da = make_shared<DataArrayHDF5>(file(), block(), group, id);
     }
 
     return da;
@@ -249,15 +240,7 @@ shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
 
     if (hasDataTag(id)) {
         Group tag_group = data_tag_group.openGroup(id);
-        // TODO unnecessary IO (see #316)
-        std::string positions_id;
-        tag_group.getAttr("positions", positions_id);
-        DataArray positions = getDataArray(positions_id);
-        std::string type;
-        std::string name;
-        tag_group.getAttr("type", type);
-        tag_group.getAttr("name", name);
-        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id, type, name, positions);
+        tag = make_shared<DataTagHDF5>(file(), block(), tag_group, id);
     }
 
     return tag;
@@ -282,26 +265,6 @@ bool BlockHDF5::deleteDataTag(const std::string &id) {
         deleted = true;
     }
     return deleted;
-}
-
-
-void BlockHDF5::swap(BlockHDF5 &other) {
-    using std::swap;
-
-    EntityHDF5::swap(other);
-    swap(source_group, other.source_group);
-    swap(data_array_group, other.data_array_group);
-    swap(simple_tag_group, other.simple_tag_group);
-    swap(data_tag_group, other.data_tag_group);
-}
-
-
-BlockHDF5& BlockHDF5::operator=(const BlockHDF5 &other) {
-    if (*this != other) {
-        BlockHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
 }
 
 

@@ -45,9 +45,6 @@ public:
     size_t index() const { return dim_index; }
 
 
-    void swap(DimensionHDF5 &other);
-
-
     bool operator==(const DimensionHDF5 &other) const;
 
 
@@ -71,9 +68,6 @@ public:
 
 
     SampledDimensionHDF5(Group group, size_t index, double sampling_interval);
-
-
-    SampledDimensionHDF5(const SampledDimensionHDF5 &other);
 
 
     DimensionType dimensionType() const;
@@ -112,9 +106,6 @@ public:
     void offset(const none_t t);
 
 
-    SampledDimensionHDF5& operator=(const SampledDimensionHDF5 &other);
-
-
     virtual ~SampledDimensionHDF5();
 
 };
@@ -127,9 +118,6 @@ public:
     SetDimensionHDF5(Group group, size_t index);
 
 
-    SetDimensionHDF5(const SetDimensionHDF5 &other);
-
-
     DimensionType dimensionType() const;
 
 
@@ -140,9 +128,6 @@ public:
 
 
     void labels(const none_t t);
-
-
-    SetDimensionHDF5& operator=(const SetDimensionHDF5 &other);
 
 
     virtual ~SetDimensionHDF5();
@@ -158,9 +143,6 @@ public:
 
 
     RangeDimensionHDF5(Group group, size_t index, std::vector<double> ticks);
-
-
-    RangeDimensionHDF5(const RangeDimensionHDF5 &other);
 
 
     DimensionType dimensionType() const;
@@ -188,9 +170,6 @@ public:
 
 
     void ticks(const std::vector<double> &ticks);
-
-
-    RangeDimensionHDF5& operator=(const RangeDimensionHDF5 &other);
 
 
     virtual ~RangeDimensionHDF5();

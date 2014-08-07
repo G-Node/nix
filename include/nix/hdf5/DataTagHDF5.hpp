@@ -30,13 +30,23 @@ private:
 
 public:
 
-    DataTagHDF5(const DataTagHDF5 &tag);
 
-
+    /**
+     * Standard constructor for new DataTag
+     */
+    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+                const std::string &id);
+                
+    /**
+     * Standard constructor for new DataTag
+     */
     DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions);
 
 
+    /**
+     * Standard constructor for new DataTag with time
+     */
     DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions, time_t time);
 
@@ -117,12 +127,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-
-    void swap(DataTagHDF5 &other);
-
-    // TODO do we really need swap and operator=?
-    DataTagHDF5& operator=(const DataTagHDF5 &other);
 
 
     virtual ~DataTagHDF5();

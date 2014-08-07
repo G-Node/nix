@@ -34,11 +34,11 @@ LinkType nix::hdf5::linkTypeFromString(const string &str) {
 }
 
 
-FeatureHDF5::FeatureHDF5(const FeatureHDF5 &feature)
-    : EntityHDF5(feature.file(), feature.group(), feature.id()),
-      block(feature.block)
-{}
-
+FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+                         const string &id)
+    : EntityHDF5(file, group, id), block(block)
+{
+}
 
 FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, DataArray data, LinkType link_type)

@@ -15,13 +15,13 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-SourceHDF5::SourceHDF5(const SourceHDF5 &source)
-    : EntityWithMetadataHDF5(source.file(), source.group(), source.id(), source.type(), source.name())
+SourceHDF5::SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id)
+    : EntityWithMetadataHDF5(file, group, id)
 {
-    source_group = source.source_group;
+    source_group = group.openGroup("sources", false);
 }
-
-
+    
+    
 SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name)
     : SourceHDF5(file, group, id, type, name, util::getTime())
 {
@@ -31,7 +31,7 @@ SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &i
 SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources");
+    source_group = group.openGroup("sources", true);
 }
 
 
@@ -45,12 +45,7 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
 
     if (source_group.hasGroup(id)) {
         Group group = source_group.openGroup(id, false);
-        // TODO unnecessary IO (see #316)
-        string type;
-        string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        source = make_shared<SourceHDF5>(file(), group, id, type, name);
+        source = make_shared<SourceHDF5>(file(), group, id);
     }
 
     return source;
@@ -87,23 +82,6 @@ bool SourceHDF5::deleteSource(const string &id) {
     } else {
         return false;
     }
-}
-
-
-void SourceHDF5::swap(SourceHDF5 &other) {
-    using std::swap;
-
-    EntityWithMetadataHDF5::swap(other);
-    swap(source_group, other.source_group);
-}
-
-
-SourceHDF5& SourceHDF5::operator=(const SourceHDF5 &other) {
-    if (*this != other) {
-        SourceHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
 }
 
 

@@ -47,14 +47,21 @@ private:
 
 public:
 
+    /**
+     * Standard constructor for existing Feature
+     */
+    FeatureHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, 
+                const std::string &id);
 
-    FeatureHDF5(const FeatureHDF5 &feature);
-
-
+    /**
+     * Standard constructor for new Feature
+     */
     FeatureHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, DataArray data, LinkType link_type);
 
-
+    /**
+     * Standard constructor for new Feature with time
+     */
     FeatureHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, DataArray data, LinkType link_type, time_t time);
 

@@ -23,14 +23,20 @@ class PropertyHDF5 : virtual public base::IProperty, public EntityHDF5 {
 public:
 
 
-    PropertyHDF5(const PropertyHDF5 &property);
+    /**
+     * Standard constructor for existing Property
+     */
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id);
 
-    // TODO need a ctor with file, group, dataset, id (see #316)
-
+    /**
+     * Standard constructor for new Property
+     */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name);
 
-
+    /**
+     * Constructor for new Property with time
+     */
     PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
                  const std::string &name, time_t time);
 

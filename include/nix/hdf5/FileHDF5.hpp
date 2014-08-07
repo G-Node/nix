@@ -44,13 +44,6 @@ public:
      */
     FileHDF5(const std::string &name, const FileMode mode = FileMode::ReadWrite);
 
-    /**
-     * Copy constructor.
-     *
-     * @param other   The file to copy.
-     */
-    FileHDF5(const FileHDF5 &other);
-
     //--------------------------------------------------
     // Methods concerning blocks
     //--------------------------------------------------
@@ -136,9 +129,6 @@ public:
 
 
     bool operator!=(const FileHDF5 &other) const;
-
-    // TODO do we really need operator=?
-    FileHDF5& operator=(const FileHDF5 &other);
 
 
     virtual ~FileHDF5();

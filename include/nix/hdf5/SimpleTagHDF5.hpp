@@ -34,13 +34,6 @@ private:
 public:
 
     /**
-     * Copy constructor
-     */
-    SimpleTagHDF5(const SimpleTagHDF5 &tag);
-
-    // TODO need ctor with file, block, group, id (see #316)
-
-    /**
      * Standard constructor for existing Tag
      */
     SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id);
@@ -134,13 +127,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    void swap(SimpleTagHDF5 &other);
-
-    /**
-     * Assignment operator
-     */
-    SimpleTagHDF5& operator=(const SimpleTagHDF5 &other);
 
     /**
      * Destructor.
