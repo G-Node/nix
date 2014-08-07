@@ -18,10 +18,15 @@ using namespace nix;
 using namespace nix::base;
 using namespace nix::hdf5;
 
-
 NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id, const string &type,
                                  const string &name)
     : NamedEntityHDF5(file, group, id, type, name, util::getTime())
+{
+}
+
+
+NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const string &id)
+    : EntityHDF5(file, group, id)
 {
 }
 

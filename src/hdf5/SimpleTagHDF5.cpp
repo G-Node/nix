@@ -21,11 +21,17 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
+
 SimpleTagHDF5::SimpleTagHDF5(const SimpleTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type(), tag.name()),
-      references_list(tag.group(), "references")
+    : SimpleTagHDF5(tag.file(), tag.block(), tag.group(), tag.id())
 {
-    feature_group = tag.feature_group;
+}
+
+
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id)
+    : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
+{
+    feature_group = group.openGroup("features");
 }
 
 

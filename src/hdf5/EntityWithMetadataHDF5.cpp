@@ -23,6 +23,12 @@ EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group gro
 }
 
 
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group, const string &id)
+    : NamedEntityHDF5(file, group, id)
+{
+}
+
+
 EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time)
 {

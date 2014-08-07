@@ -41,13 +41,18 @@ public:
     // TODO need ctor with file, block, group, id (see #316)
 
     /**
-     * Standard constructor
+     * Standard constructor for existing Tag
+     */
+    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id);
+
+    /**
+     * Standard constructor for new Tag
      */
     SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor for new Tag that preserves the creation time.
      */
     SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
