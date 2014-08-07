@@ -20,13 +20,12 @@ using namespace nix;
 using namespace nix::base;
 using namespace nix::hdf5;
 
-// TODO unnecessary IO (see #316)
-DataTagHDF5::DataTagHDF5(const DataTagHDF5 &tag)
-    : EntityWithSourcesHDF5(tag.file(), tag.block(), tag.group(), tag.id(), tag.type(), tag.name()),
-      reference_list(tag.reference_list)
+
+DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+                         const std::string &id)
+    : EntityWithSourcesHDF5(file, block, group, id), reference_list(group, "references")
 {
-    feature_group = tag.feature_group;
-    positions(tag.positions()->id());
+    feature_group = this->group().openGroup("features");
 }
 
 
@@ -265,24 +264,6 @@ bool DataTagHDF5::deleteFeature(const string &id) {
 //--------------------------------------------------
 // Other methods and functions
 //--------------------------------------------------
-
-
-void DataTagHDF5::swap(DataTagHDF5 &other) {
-    using std::swap;
-
-    EntityWithSourcesHDF5::swap(other);
-    swap(feature_group, other.feature_group);
-    swap(reference_list, other.reference_list);
-}
-
-
-DataTagHDF5& DataTagHDF5::operator=(const DataTagHDF5 &other) {
-    if (*this != other) {
-        DataTagHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
-}
 
 
 bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
