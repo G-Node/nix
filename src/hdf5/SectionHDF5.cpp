@@ -96,31 +96,30 @@ void SectionHDF5::repository(const none_t t) {
 
 void SectionHDF5::link(const std::string &id) {
     if (id.empty())
-        throw EmptyString("mapping");
+        throw EmptyString("link");
 
+    if (group().hasGroup("link"))
+        link(none);
+        
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
-
     if (found.empty())
         throw std::runtime_error("Section not found in file!");
+    
+    auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
-    group().setAttr("link", id);
+    group().createLink(target->group(), "link");
 }
 
 
 shared_ptr<ISection> SectionHDF5::link() const {
     shared_ptr<ISection> sec;
 
-    string id;
-    group().getAttr("link", id);
+    if (group().hasGroup("link")) {
+        Group other_group = group().openGroup("link", false);
 
-    if (!id.empty()) {
-        File tmp = file();
-        auto found = tmp.findSections(util::IdFilter<Section>(id));
-
-        if (found.size() > 0) {
-            sec = found[0].impl();
-        }
+        auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+        sec = make_shared<SectionHDF5>(file(), p, other_group);
     }
 
     return sec;
@@ -128,8 +127,8 @@ shared_ptr<ISection> SectionHDF5::link() const {
 
 
 void SectionHDF5::link(const none_t t) {
-    if (group().hasAttr("link")) {
-        group().removeAttr("link");
+    if (group().hasGroup("link")) {
+        group().removeGroup("link");
     }
     forceUpdatedAt();
 }
