@@ -20,7 +20,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class PropertyHDF5 : virtual public base::IProperty, public base::IEntity {
+class PropertyHDF5 : virtual public base::IProperty {
     
     std::shared_ptr<base::IFile>  entity_file;
     DataSet                       entity_dataset;
