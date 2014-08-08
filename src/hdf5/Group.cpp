@@ -63,30 +63,30 @@ size_t Group::objectCount() const {
 std::string Group::objectName(size_t index) const {
     std::string str_name;
     // check whether name is found by index
-    ssize_t name_len = H5Lget_name_by_idx(h5group.getLocId(), 
-                                                  ".", 
-                                                  H5_INDEX_NAME, 
-                                                  H5_ITER_NATIVE, 
-                                                  (hsize_t) index, 
-                                                  NULL, 
-                                                  0, 
+    ssize_t name_len = H5Lget_name_by_idx(h5group.getLocId(),
+                                                  ".",
+                                                  H5_INDEX_NAME,
+                                                  H5_ITER_NATIVE,
+                                                  (hsize_t) index,
+                                                  NULL,
+                                                  0,
                                                   H5P_DEFAULT);
     if (name_len > 0) {
         char* name = new char[name_len+1];
-        name_len = H5Lget_name_by_idx(h5group.getLocId(), 
-                                      ".", 
-                                      H5_INDEX_NAME, 
-                                      H5_ITER_NATIVE, 
-                                      (hsize_t) index, 
-                                      name, 
-                                      name_len+1, 
+        name_len = H5Lget_name_by_idx(h5group.getLocId(),
+                                      ".",
+                                      H5_INDEX_NAME,
+                                      H5_ITER_NATIVE,
+                                      (hsize_t) index,
+                                      name,
+                                      name_len+1,
                                       H5P_DEFAULT);
         str_name = name;
         delete [] name;
     } else {
         str_name = "";
     }
-    
+
     return str_name;
 }
 
@@ -168,33 +168,111 @@ H5::Group Group::h5Group() const {
 }
 
 
-Group::~Group() {
-    h5group.close();
+Group Group::createLink(const Group &target, const std::string &link_name) {
+    herr_t error = H5Lcreate_hard(target.h5group.getLocId(), ".", h5group.getLocId(), link_name.c_str(),
+                                  H5L_SAME_LOC, H5L_SAME_LOC);
+    if (error)
+        throw std::runtime_error("Unable to create link " + link_name);
+
+    return openGroup(link_name, false);
 }
+
+// TODO implement some kind of roll-back in order to avoid half renamed links.
+bool Group::renameAllLinks(const std::string &old_name, const std::string &new_name) {
+    bool renamed = false;
+
+    if (hasGroup(old_name)) {
+        std::vector<std::string> links;
+
+        Group  group     = openGroup(old_name, false);
+        size_t size      = 128;
+        char *name_read  = new char[size];
+
+        size_t size_read = H5Iget_name(group.h5group.getId(), name_read, size);
+        while (size_read > 0) {
+
+            if (size_read < size) {
+                H5Ldelete(h5group.getId(), name_read, H5L_SAME_LOC);
+                links.push_back(name_read);
+            } else {
+                delete[] name_read;
+                size = size * 2;
+                name_read = new char[size];
+            }
+
+            size_read = H5Iget_name(group.h5group.getId(), name_read, size);
+        }
+
+        for (std::string curr_name: links) {
+            size_t pos = curr_name.find_last_of('/') + 1;
+
+            if (curr_name.substr(pos) == old_name) {
+                curr_name.replace(curr_name.begin() + pos, curr_name.end(), new_name.begin(), new_name.end());
+            }
+
+            herr_t error = H5Lcreate_hard(group.h5group.getLocId(), ".", h5group.getLocId(), curr_name.c_str(),
+                                          H5L_SAME_LOC, H5L_SAME_LOC);
+        }
+    }
+
+    return renamed;
+}
+
+// TODO implement some kind of roll-back in order to avoid half removed links.
+bool Group::removeAllLinks(const std::string &name) {
+    bool removed = false;
+
+    if (hasGroup(name)) {
+        Group  group      = openGroup(name, false);
+        size_t size       = 128;
+        char *name_read   = new char[size];
+
+        size_t size_read  = H5Iget_name(group.h5group.getId(), name_read, size);
+        while (size_read > 0) {
+            if (size_read < size) {
+                H5Ldelete(h5group.getId(), name_read, H5L_SAME_LOC);
+            } else {
+                delete[] name_read;
+                size = size * 2;
+                name_read = new char[size];
+            }
+            size_read = H5Iget_name(group.h5group.getId(), name_read, size);
+        }
+
+        delete[] name_read;
+        removed = true;
+    }
+
+    return removed;
+}
+
 
 void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
     attr.read(mem_type, data);
 }
 
- void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
+
+void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
     StringWriter writer(size, data);
     attr.read(mem_type, *writer);
     writer.finish();
     H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
 }
 
+
 void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
     attr.write(mem_type, data);
 }
+
+
 void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
     StringReader reader(size, data);
     attr.write(mem_type, *reader);
 }
 
-bool Group::createLink(const Group &target, const Group &link_base, const std::string link_name) {
-    herr_t err = H5Lcreate_hard(target.h5group.getLocId(), ".",
-            link_base.h5group.getLocId(), link_name.c_str(), H5L_SAME_LOC, H5L_SAME_LOC);
-    return err == 0;
+
+Group::~Group() {
+    h5group.close();
 }
 
 } // namespace hdf5

@@ -69,7 +69,38 @@ public:
     void removeGroup(const std::string &name);
     void renameGroup(const std::string &old_name, const std::string &new_name);
 
-    bool createLink(const Group &target, const Group &link_base, const std::string link_name);
+    /**
+     * @brief Create a new hard link with the given name inside this group,
+     *        that points to the target group.
+     *
+     * @param target    The target of the link to create.
+     * @param linkname  The name of the link to create.
+     *
+     * @return The linked group.
+     */
+    Group createLink(const Group &target, const std::string &link_name);
+
+    /**
+     * @brief Renames all links of the object defined by the old name.
+     *
+     * This method will only change the links where the last part of the path
+     * is the old name.
+     *
+     * @param old_name  The old name of the object
+     * @param new_name  The new name of the object
+     *
+     * @return True if all links where changed successfully.
+     */
+    bool renameAllLinks(const std::string &old_name, const std::string &new_name);
+
+    /**
+     * @brief Removes all links to the object defined by the given name.
+     *
+     * @param name      The name of the object to remove.
+     *
+     * @return  True if all links were deleted.
+     */
+    bool removeAllLinks(const std::string &name);
 
     bool operator==(const Group &group) const;
     bool operator!=(const Group &group) const;
