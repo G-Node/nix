@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
     po::options_description desc("Supported options");
     po::positional_options_description pdesc;
     std::string name;
-    int i;
+    size_t i;
       
     try {
         // create string list of all modules

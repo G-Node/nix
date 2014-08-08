@@ -60,7 +60,6 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
         }
         int i = 0;
         for(auto &nix_file : files) {
-            std::cout << ++i << " (of " << files.size() << ")" << (i != files.size() ? ", " : "");
             out << "validating file " << nix_file.location() << std::endl;
             nix::valid::Result res = nix_file.validate();
             if(vm.count(NOWARN_OPTION)) {
