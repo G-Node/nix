@@ -20,12 +20,11 @@ using namespace nix::base;
 
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset, const string &id)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset)
     : entity_file(file)
 {
     this->entity_dataset = dataset;
     
-    dataset.setAttr("entity_id", id);
     setUpdatedAt();
     forceCreatedAt(util::getTime());
 }

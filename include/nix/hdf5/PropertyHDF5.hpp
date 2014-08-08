@@ -31,7 +31,7 @@ public:
     /**
      * Standard constructor for existing Property
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset);
 
     /**
      * Standard constructor for new Property

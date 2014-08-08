@@ -250,7 +250,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 
     if (property_group.hasData(id)) {
         DataSet dset = property_group.openData(id);
-        prop = make_shared<PropertyHDF5>(file(), dset, id);
+        prop = make_shared<PropertyHDF5>(file(), dset);
     }
 
     return prop;
@@ -295,7 +295,7 @@ shared_ptr<IProperty> SectionHDF5::getPropertyByName(const string &name) const {
         dset.getAttr("name", other_name);
 
         if (other_name == name) {
-            prop = make_shared<PropertyHDF5>(file(), dset, id, name);
+            prop = make_shared<PropertyHDF5>(file(), dset);
         }
     }
 
