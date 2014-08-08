@@ -69,6 +69,9 @@ public:
 
     bool operator!=(const EntityHDF5 &other) const;
 
+    Group group() const {
+        return entity_group;
+    }
 
     virtual ~EntityHDF5();
 
@@ -76,10 +79,6 @@ protected:
 
     std::shared_ptr<base::IFile> file() const {
         return entity_file;
-    }
-
-    Group group() const {
-        return entity_group;
     }
 
 };

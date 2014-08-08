@@ -96,15 +96,16 @@ void SectionHDF5::repository(const none_t t) {
 
 void SectionHDF5::link(const std::string &id) {
     if (id.empty())
-        throw EmptyString("mapping");
+        throw EmptyString("link");
 
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
-
     if (found.empty())
         throw std::runtime_error("Section not found in file!");
+    
+    auto target = *dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
-    group().setAttr("link", id);
+    group().createLink(target.group(), id);
 }
 
 
