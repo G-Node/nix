@@ -58,7 +58,6 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
             // save it!
             files.push_back(tmp_file); // ReadOnly, ReadWrite, Overwrite
         }
-        int i = 0;
         for(auto &nix_file : files) {
             out << "validating file " << nix_file.location() << std::endl;
             nix::valid::Result res = nix_file.validate();
