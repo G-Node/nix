@@ -250,7 +250,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 
     if (property_group.hasData(id)) {
         DataSet dset = property_group.openData(id);
-        prop = make_shared<PropertyHDF5>(file(), property_group, dset, id);
+        prop = make_shared<PropertyHDF5>(file(), dset, id);
     }
 
     return prop;
@@ -295,7 +295,7 @@ shared_ptr<IProperty> SectionHDF5::getPropertyByName(const string &name) const {
         dset.getAttr("name", other_name);
 
         if (other_name == name) {
-            prop = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);
+            prop = make_shared<PropertyHDF5>(file(), dset, id, name);
         }
     }
 
@@ -314,7 +314,7 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {0});
 
-    return make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
+    return make_shared<PropertyHDF5>(file(), dataset, new_id, name);
 }
 
 

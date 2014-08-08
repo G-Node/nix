@@ -30,7 +30,7 @@ class EntityHDF5 : virtual public base::IEntity {
 private:
 
     std::shared_ptr<base::IFile>  entity_file;
-    Group         entity_group;
+    Group                         entity_group;
 
 public:
 

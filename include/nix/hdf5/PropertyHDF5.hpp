@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <nix/base/IFile.hpp>
+#include <nix/base/IEntity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
@@ -18,9 +20,10 @@ namespace nix {
 namespace hdf5 {
 
 
-class PropertyHDF5 : virtual public base::IProperty, public EntityHDF5 {
+class PropertyHDF5 : virtual public base::IProperty, public base::IEntity {
     
-    std::string entity_id;
+    std::shared_ptr<base::IFile>  entity_file;
+    DataSet                       entity_dataset;
 
 public:
 
@@ -28,22 +31,40 @@ public:
     /**
      * Standard constructor for existing Property
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id);
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id);
 
     /**
      * Standard constructor for new Property
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id,
                  const std::string &name);
 
     /**
      * Constructor for new Property with time
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const Group &group, const DataSet &dataset, const std::string &id,
+    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id,
                  const std::string &name, time_t time);
 
 
     std::string id() const;
+
+
+    time_t updatedAt() const;
+
+
+    time_t createdAt() const;
+
+
+    void setUpdatedAt();
+
+
+    void forceUpdatedAt();
+
+
+    void setCreatedAt();
+
+
+    void forceCreatedAt(time_t t);
 
 
     void name(const std::string &name);
@@ -109,8 +130,6 @@ public:
     virtual ~PropertyHDF5();
 
 private:
-
-    DataSet entity_dataset;
 
     bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
