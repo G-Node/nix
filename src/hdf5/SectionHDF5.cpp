@@ -106,9 +106,9 @@ void SectionHDF5::link(const std::string &id) {
     if (found.empty())
         throw std::runtime_error("Section not found in file!");
     
-    auto target = *dynamic_pointer_cast<SectionHDF5>(found.front().impl());
+    auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
-    group().createLink(target.group(), "link");
+    group().createLink(target->group(), "link");
 }
 
 
