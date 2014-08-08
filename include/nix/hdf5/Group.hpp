@@ -22,7 +22,6 @@
 namespace nix {
 namespace hdf5 {
 
-
 /**
  * TODO documentation
  */

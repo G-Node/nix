@@ -203,6 +203,7 @@ bool Group::renameAllLinks(const std::string &old_name, const std::string &new_n
             size_read = H5Iget_name(group.h5group.getId(), name_read, size);
         }
 
+        renamed = links.size() > 0;
         for (std::string curr_name: links) {
             size_t pos = curr_name.find_last_of('/') + 1;
 
@@ -212,6 +213,8 @@ bool Group::renameAllLinks(const std::string &old_name, const std::string &new_n
 
             herr_t error = H5Lcreate_hard(group.h5group.getLocId(), ".", h5group.getLocId(), curr_name.c_str(),
                                           H5L_SAME_LOC, H5L_SAME_LOC);
+
+            renamed = renamed && (error >= 0);
         }
     }
 

@@ -154,7 +154,7 @@ public:
         indent_if();
         sstream << t;
         return *this;
-    };
+    }
     
     /**
      * @brief vector output into stringstream
@@ -175,7 +175,7 @@ public:
             sstream << "}";
         }
         return *this;
-    };
+    }
     
     /**
      * @brief NDSize output into stringstream
@@ -193,7 +193,7 @@ public:
         }
         (*this) << extent;
         return *this;
-    };
+    }
     
     /**
      * @brief boost::optional output into stringstream
@@ -210,7 +210,7 @@ public:
         auto opt = nix::util::deRef(t);
         sstream << opt;
         return *this;
-    };
+    }
     
     /**
      * @brief pointer to stringstream output into stringstream
@@ -225,7 +225,7 @@ public:
         indent_if();
 		sstream << ps;
 		return *this;
-	};
+	}
     
     /**
      * @brief Entity output into stringstream
@@ -243,7 +243,7 @@ public:
         << item() << "updatedAt" << scalar_start << t(entity.updatedAt()) << scalar_end;
         
         return *this;
-    };
+    }
 
     /**
      * @brief NamedEntity output into stringstream
@@ -262,7 +262,7 @@ public:
         << item() << "definition" << scalar_start << namedEntity.definition() << scalar_end;
         
         return *this;
-    };
+    }
 
     /**
      * @brief EntityWithMetadata output into stringstream
@@ -279,7 +279,7 @@ public:
         << item() << "metadata"; ++(*this) << entityWithMetadata.metadata(); --(*this);
         
         return *this;
-    };
+    }
     
     /**
      * @brief EntityWithSources output into stringstream
@@ -297,7 +297,7 @@ public:
         // NOTE: dont output sources as those are handled by derived frontend entity
         
         return *this;
-    };
+    }
 
     /**
      * @brief Property output into stringstream
