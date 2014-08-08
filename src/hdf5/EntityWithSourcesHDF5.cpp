@@ -19,9 +19,8 @@ using namespace nix;
 using namespace nix::hdf5;
 using namespace nix::base;
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5
-                       (shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id)
-    : EntityWithMetadataHDF5(file, group, id), entity_block(block), sources_refs(group, "sources")
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
+    : EntityWithMetadataHDF5(file, group), entity_block(block), sources_refs(group, "sources")
 {
 }
 

@@ -36,7 +36,7 @@ public:
     /**
      * Standard constructor for existing Tag
      */
-    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id);
+    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
 
     /**
      * Standard constructor for new Tag

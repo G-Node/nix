@@ -19,15 +19,14 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id)
-    : SectionHDF5(file, nullptr, group, id)
+SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group)
+    : SectionHDF5(file, nullptr, group)
 {
 }
     
 
-SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group, 
-            const std::string &id)
-    : NamedEntityHDF5(file, group, id), parent_section(parent)
+SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group)
+    : NamedEntityHDF5(file, group), parent_section(parent)
 {
     property_group = this->group().openGroup("properties", false);
     section_group = this->group().openGroup("sections", false);
@@ -195,7 +194,7 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
         Group group = section_group.openGroup(id, false);
 
         auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-        sec = make_shared<SectionHDF5>(file(), p, group, id);
+        sec = make_shared<SectionHDF5>(file(), p, group);
     }
 
     return sec;
@@ -251,7 +250,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 
     if (property_group.hasData(id)) {
         DataSet dset = property_group.openData(id);
-        prop = make_shared<PropertyHDF5>(file(), property_group, dset, id);
+        prop = make_shared<PropertyHDF5>(file(), dset);
     }
 
     return prop;
@@ -296,7 +295,7 @@ shared_ptr<IProperty> SectionHDF5::getPropertyByName(const string &name) const {
         dset.getAttr("name", other_name);
 
         if (other_name == name) {
-            prop = make_shared<PropertyHDF5>(file(), property_group, dset, id, name);
+            prop = make_shared<PropertyHDF5>(file(), dset);
         }
     }
 
@@ -315,7 +314,7 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     DataSet dataset = DataSet::create(property_group.h5Group(), new_id, fileType, {0});
 
-    return make_shared<PropertyHDF5>(file(), property_group, dataset, new_id, name);
+    return make_shared<PropertyHDF5>(file(), dataset, new_id, name);
 }
 
 

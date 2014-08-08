@@ -30,7 +30,7 @@ public:
     /**
      * Standard constructor for existing Source
      */
-    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
+    SourceHDF5(std::shared_ptr<base::IFile> file, Group group);
 
     /**
      * Default constructor.

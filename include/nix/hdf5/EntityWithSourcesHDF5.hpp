@@ -35,7 +35,7 @@ public:
     /**
      * Standard constructor for existing entity.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group, const std::string &id);
+    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group);
     
     /**
      * Standard constructor for new entity.

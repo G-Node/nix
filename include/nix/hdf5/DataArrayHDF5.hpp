@@ -36,8 +36,7 @@ public:
     /**
      * Standard constructor for existing DataArrays
      */
-    DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
-                  const std::string &id);
+    DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
                   
     /**
      * Standard constructor for new DataArrays

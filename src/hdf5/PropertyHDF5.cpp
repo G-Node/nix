@@ -20,26 +20,88 @@ using namespace nix::base;
 
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id)
-    : EntityHDF5(file, group, id)
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset)
+    : entity_file(file)
 {
     this->entity_dataset = dataset;
+    
+    setUpdatedAt();
+    forceCreatedAt(util::getTime());
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset, const string &id,
                                const string &name)
-        : PropertyHDF5(file, group, dataset, id, name, util::getTime())
+    : PropertyHDF5(file, dataset, id, name, util::getTime())
 {
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const Group &group, const DataSet &dataset, const string &id,
+    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset, const string &id,
                                const string &name, time_t time)
-    : EntityHDF5(file, group, id, time)
+    : entity_file(file)
 {
     this->entity_dataset = dataset;
     this->name(name);
+    
+    dataset.setAttr("entity_id", id);
+    setUpdatedAt();
+    forceCreatedAt(time);
+}
+
+
+string PropertyHDF5::id() const {
+    string t;
+    
+    if (dataset().hasAttr("entity_id")) {
+        dataset().getAttr("entity_id", t);
+    }
+    else {
+        throw runtime_error("Entity has no id!");
+    }
+    
+    return t;
+}
+
+
+time_t PropertyHDF5::updatedAt() const {
+    string t;
+    dataset().getAttr("updated_at", t);
+    return util::strToTime(t);
+}
+
+
+void PropertyHDF5::setUpdatedAt() {
+    if (!dataset().hasAttr("updated_at")) {
+        time_t t = util::getTime();
+        dataset().setAttr("updated_at", util::timeToStr(t));
+    }
+}
+
+
+void PropertyHDF5::forceUpdatedAt() {
+    time_t t = util::getTime();
+    dataset().setAttr("updated_at", util::timeToStr(t));
+}
+
+
+time_t PropertyHDF5::createdAt() const {
+    string t;
+    dataset().getAttr("created_at", t);
+    return util::strToTime(t);
+}
+
+
+void PropertyHDF5::setCreatedAt() {
+    if (!dataset().hasAttr("created_at")) {
+        time_t t = util::getTime();
+        dataset().setAttr("created_at", util::timeToStr(t));
+    }
+}
+
+
+void PropertyHDF5::forceCreatedAt(time_t t) {
+    dataset().setAttr("created_at", util::timeToStr(t));
 }
 
 
@@ -184,10 +246,8 @@ std::vector<Value> PropertyHDF5::values(void) const
 
 
 void PropertyHDF5::values(const none_t t) {
-    if (group().hasData("values")) {
-        group().removeData("values");
-    }
-    forceUpdatedAt();
+    // TODO: rethink if we want two methods for same thing
+    deleteValues();
 }
 
 

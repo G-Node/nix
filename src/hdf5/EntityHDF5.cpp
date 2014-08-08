@@ -17,8 +17,8 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group, const string &id)
-    : entity_file(file), entity_group(group), entity_id(id)
+EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group)
+    : entity_file(file), entity_group(group)
 {
     setUpdatedAt();
     setCreatedAt();
@@ -26,15 +26,25 @@ EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group, const string &id)
 
 
 EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group, const string &id, time_t time)
-    : entity_file(file), entity_group(group), entity_id(id)
+    : entity_file(file), entity_group(group)
 {
+    group.setAttr("entity_id", id);
     setUpdatedAt();
     forceCreatedAt(time);
 }
 
 
 string EntityHDF5::id() const {
-    return entity_id;
+    string t;
+    
+    if (group().hasAttr("entity_id")) {
+        group().getAttr("entity_id", t);
+    }
+    else {
+        throw runtime_error("Entity has no id!");
+    }
+    
+    return t;
 }
 
 
@@ -84,7 +94,6 @@ void EntityHDF5::swap(EntityHDF5 &other) {
 
     swap(entity_file, other.entity_file);
     swap(entity_group, other.entity_group);
-    swap(entity_id, other.entity_id);
 }
 
 

@@ -30,13 +30,12 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id);
+    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group);
     
     /**
      * Standard constructor for existing entity
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group, 
-                const std::string &id);
+    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group);
 
     /**
      * Standard constructor for new entity

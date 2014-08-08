@@ -17,14 +17,14 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
-    : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group)
+    : NamedEntityHDF5(file, group)
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group, const string &id)
-    : NamedEntityHDF5(file, group, id)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
+    : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
 {
 }
 

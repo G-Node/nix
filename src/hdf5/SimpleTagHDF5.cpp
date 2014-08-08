@@ -21,8 +21,8 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id)
-    : EntityWithSourcesHDF5(file, block, group, id), references_list(group, "references")
+SimpleTagHDF5::SimpleTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
+    : EntityWithSourcesHDF5(file, block, group), references_list(group, "references")
 {
     feature_group = group.openGroup("features", false);
 }
@@ -191,7 +191,7 @@ shared_ptr<IFeature> SimpleTagHDF5::getFeature(const std::string &id) const {
 
     if (hasFeature(id)) {
         Group group = feature_group.openGroup(id, false);
-        feature = make_shared<FeatureHDF5>(file(), block(), group, id);
+        feature = make_shared<FeatureHDF5>(file(), block(), group);
     }
 
     return feature;

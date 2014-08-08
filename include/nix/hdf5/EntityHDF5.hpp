@@ -30,12 +30,11 @@ class EntityHDF5 : virtual public base::IEntity {
 private:
 
     std::shared_ptr<base::IFile>  entity_file;
-    Group         entity_group;
-    std::string   entity_id;
+    Group                         entity_group;
 
 public:
 
-    EntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id);
+    EntityHDF5(std::shared_ptr<base::IFile> file, Group group);
 
 
     EntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, time_t time);
