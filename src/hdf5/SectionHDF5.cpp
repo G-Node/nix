@@ -118,7 +118,7 @@ shared_ptr<ISection> SectionHDF5::link() const {
     if (group().hasGroup("link")) {
         Group       other_group = group().openGroup("link", false);
         std::string other_id;
-        other_group.getAttr("link", other_id);
+        other_group.getAttr("entity_id", other_id);
         
         auto found = File(file()).findSections(util::IdFilter<Section>(other_id));
         if (found.size() > 0) {

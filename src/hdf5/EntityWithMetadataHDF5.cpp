@@ -62,7 +62,7 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
     if (group().hasGroup("metadata")) {
         Group       other_group = group().openGroup("metadata", false);
         std::string other_id;
-        other_group.getAttr("metadata", other_id);
+        other_group.getAttr("entity_id", other_id);
         
         auto found = File(file()).findSections(util::IdFilter<Section>(other_id));
         if (found.size() > 0) {
