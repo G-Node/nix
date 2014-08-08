@@ -6,9 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <memory>
+
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/File.hpp>
+#include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 using namespace std;
@@ -36,35 +39,47 @@ EntityWithMetadataHDF5::EntityWithMetadataHDF5(shared_ptr<IFile> file, Group gro
 
 
 void EntityWithMetadataHDF5::metadata(const std::string &id) {
+    if (id.empty())
+        throw EmptyString("metadata");
+
+    if (group().hasGroup("metadata"))
+        metadata(none);
+        
     File tmp = file();
-    auto  found = tmp.findSections(util::IdFilter<Section>(id));
-    if (found.empty()) {
-        throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
-    } else {
-        group().setAttr("metadata", id);
-        forceUpdatedAt();
-    }
+    auto found = tmp.findSections(util::IdFilter<Section>(id));
+    if (found.empty())
+        throw std::runtime_error("EntityWithMetadataHDF5::metadata: Section not found in file!");
+    
+    auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
+
+    group().createLink(target->group(), "metadata");
 }
 
 
 shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
-    shared_ptr<ISection> section;
+    shared_ptr<ISection> sec;
 
-    if (group().hasAttr("metadata")) {
-        std::string sectionId;
-        group().getAttr("metadata", sectionId);
-        section = file()->getSection(sectionId);
+    if (group().hasGroup("metadata")) {
+        Group       other_group = group().openGroup("metadata", false);
+        std::string other_id;
+        other_group.getAttr("metadata", other_id);
+        
+        auto found = File(file()).findSections(util::IdFilter<Section>(other_id));
+        if (found.size() > 0) {
+            sec = found.front().impl();
+        }
     }
 
-    return section;
+    return sec;
 }
 
 
 
 void EntityWithMetadataHDF5::metadata(const none_t t) {
-    if (group().hasAttr("metadata")) {
-        group().removeAttr("metadata");
+    if (group().hasGroup("metadata")) {
+        group().removeGroup("metadata");
     }
+    forceUpdatedAt();
 }
 
 
