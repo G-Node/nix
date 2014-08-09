@@ -245,7 +245,6 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     });
 
     product *= element_size;
-
     double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0 * 1024.0)));
     if (target_size > CHUNK_MAX)
         target_size = CHUNK_MAX;
@@ -254,7 +253,6 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 
     size_t i = 0;
     while(true) {
-
         double csize = static_cast<double>(chunks.nelms());
         if (csize == 1.0) {
             break;
@@ -268,10 +266,12 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 
         //not done yet, one more iteration
         size_t idx = i % chunks.size();
-        chunks[idx] = chunks[idx] >> 1; //divide by two
+        if (chunks[idx] > 1) {
+            chunks[idx] = chunks[idx] >> 1; //divide by two
+        }
         i++;
     }
-
+   
     return chunks;
 }
 
