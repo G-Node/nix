@@ -90,8 +90,7 @@ bool SimpleTag::deleteFeature(const Feature &feature) {
     return backend()->deleteFeature(feature.id());
 }
 
-
-std::ostream& operator<<(std::ostream &out, const SimpleTag &ent) {
+std::ostream &nix::operator<<(std::ostream &out, const SimpleTag &ent) {
     out << "SimpleTag: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
