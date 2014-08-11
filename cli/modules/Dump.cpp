@@ -114,7 +114,7 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
         }
     --(*this);
     return *this;
-};
+}
 
 yamlstream& yamlstream::operator<<(const nix::Section &section) {
     if(!section) {
@@ -207,7 +207,7 @@ yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
     }
     
     return *this;
-};
+}
 
 yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
     if(!data_array) {
