@@ -212,7 +212,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Source &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Source &ent);
 
 };
 

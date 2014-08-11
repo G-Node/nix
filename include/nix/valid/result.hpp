@@ -232,7 +232,7 @@ public:
      *
      * @return std::ostream& reference
      */
-    friend std::ostream& operator<<(std::ostream &out, const Result &res) {
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Result &res) {
         // make temp copies to set prefixes on
         std::vector<Message> tmp_errors = res.getErrors();
         std::vector<Message> tmp_warnings = res.getWarnings();

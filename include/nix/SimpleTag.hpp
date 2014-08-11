@@ -454,7 +454,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent);
 
 };
 

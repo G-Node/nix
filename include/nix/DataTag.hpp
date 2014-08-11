@@ -463,7 +463,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const DataTag &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataTag &ent);
 
 };
 
