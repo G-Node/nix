@@ -196,7 +196,7 @@ bool DataTagHDF5::removeReference(const std::string &id) {
 
 void DataTagHDF5::references(const std::vector<DataArray> &references) {
     vector<string> ids(references.size());
-    transform(references.begin(), references.end(), ids.begin(), [](const DataArray &da) -> string { return da.id(); });
+    transform(references.begin(), references.end(), ids.begin(), util::toId<DataArray>());
 
     reference_list.set(ids);
 }

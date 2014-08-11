@@ -90,16 +90,8 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
 
 
 bool BlockHDF5::deleteSource(const string &id) {
-    // Sources can be linked so remove links first
-    bool removed = source_group.removeAllLinks(id);    
-    bool deleted = false;
-
-    if (hasSource(id)) {
-        source_group.removeGroup(id);
-        deleted = true;
-    }
-
-    return deleted && removed;
+    // removeAllLinks checks if group exists & removes all links (incl. original entity)
+    return source_group.removeAllLinks(id);
 }
 
 
