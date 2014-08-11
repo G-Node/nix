@@ -116,11 +116,10 @@ shared_ptr<ISection> SectionHDF5::link() const {
     shared_ptr<ISection> sec;
 
     if (group().hasGroup("link")) {
-        Group       other_group = group().openGroup("link", false);
-        std::string other_id;
-        other_group.getAttr("entity_id", other_id);
-        
-        auto found = File(file()).findSections(util::IdFilter<Section>(other_id));
+        Group other_group = group().openGroup("link", false);
+        auto sec_tmp = make_shared<SectionHDF5>(file(), other_group);
+        // re-get above section "sec_tmp": parent missing, findSections will set it!
+        auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
         if (found.size() > 0) {
             sec = found.front().impl();
         }
