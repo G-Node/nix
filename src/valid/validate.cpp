@@ -31,7 +31,7 @@ namespace valid {
   * @returns The validation results as {@link Result} object
   */
 template<typename T>
-Result validate(const base::Entity<T> &entity) {
+Result validate_entity(const base::Entity<T> &entity) {
     return validator({
         must(entity, &base::Entity<T>::id, notEmpty(), "id is not set!"),
         must(entity, &base::Entity<T>::createdAt, notFalse(), "date is not set!")
@@ -49,8 +49,8 @@ Result validate(const base::Entity<T> &entity) {
   * @returns The validation results as {@link Result} object
   */
 template<typename T>
-Result validate(const base::NamedEntity<T> &named_entity) {
-    Result result_base = validate<T>(static_cast<base::Entity<T>>(named_entity));
+Result validate_named_entity(const base::NamedEntity<T> &named_entity) {
+    Result result_base = validate_entity<T>(named_entity);
     Result result = validator({
         must(named_entity, &base::NamedEntity<T>::name, notEmpty(), "no name set!"),
         must(named_entity, &base::NamedEntity<T>::type, notEmpty(), "no type set!")
@@ -70,8 +70,8 @@ Result validate(const base::NamedEntity<T> &named_entity) {
   * @returns The validation results as {@link Result} object
   */
 template<typename T>
-Result validate(const base::EntityWithMetadata<T> &entity_with_metadata) {
-    return validate<T>(static_cast<base::NamedEntity<T>>(entity_with_metadata));
+Result validate_entity_with_metadata(const base::EntityWithMetadata<T> &entity_with_metadata) {
+    return validate_named_entity<T>(entity_with_metadata);
 }
 
 /**
@@ -85,8 +85,8 @@ Result validate(const base::EntityWithMetadata<T> &entity_with_metadata) {
   * @returns The validation results as {@link Result} object
   */
 template<typename T>
-Result validate(const base::EntityWithSources<T> &entity_with_sources) {
-    return validate<T>(static_cast<base::EntityWithMetadata<T>>(entity_with_sources));
+Result validate_entity_with_sources(const base::EntityWithSources<T> &entity_with_sources) {
+    return validate_entity_with_metadata<T>(entity_with_sources);
 }
 
 // ---------------------------------------------------------------------
@@ -94,11 +94,11 @@ Result validate(const base::EntityWithSources<T> &entity_with_sources) {
 // ---------------------------------------------------------------------
 
 Result validate(const Block &block) {
-    return validate(static_cast<base::EntityWithMetadata<base::IBlock>>(block));
+    return validate_entity_with_metadata(block);
 }
 
 Result validate(const DataArray &data_array) {
-    Result result_base = validate(static_cast<base::EntityWithSources<base::IDataArray>>(data_array));
+    Result result_base = validate_entity_with_sources(data_array);
     Result result = validator({
         must(data_array, &DataArray::dataType, notEqual<DataType>(DataType::Nothing), "data type is not set!"),
         should(data_array, &DataArray::dimensionCount, isEqual<size_t>(data_array.dataExtent().size()), "data dimensionality does not match number of defined dimensions!", {
@@ -117,16 +117,16 @@ Result validate(const DataArray &data_array) {
 }
 
 Result validate(const SimpleTag &simple_tag) {
-    Result result_base = validate(static_cast<base::EntityWithSources<base::ISimpleTag>>(simple_tag));
+    Result result_base = validate_entity_with_sources(simple_tag);
     Result result = validator({
         must(simple_tag, &SimpleTag::position, notEmpty(), "position is not set!"),
         could(simple_tag, &SimpleTag::references, notEmpty(), {
             must(simple_tag, &SimpleTag::position, positionsMatchRefs(simple_tag.references()), 
                 "number of entries in position does not match number of dimensions in all referenced DataArrays!"),
-        could(simple_tag, &SimpleTag::extent, notEmpty(), {
-            must(simple_tag, &SimpleTag::extent, extentsMatchRefs(simple_tag.references()),
-                "number of entries in extent does not match number of dimensions in all referenced DataArrays!") })
-    }),
+            could(simple_tag, &SimpleTag::extent, notEmpty(), {
+                must(simple_tag, &SimpleTag::extent, extentsMatchRefs(simple_tag.references()),
+                    "number of entries in extent does not match number of dimensions in all referenced DataArrays!") })
+        }),
         // check units for validity
         could(simple_tag, &SimpleTag::units, notEmpty(), {
             must(simple_tag, &SimpleTag::units, isValidUnit(), "Unit is invalid: not an atomic SI. Note: So far composite units are not supported!") }),
@@ -142,7 +142,7 @@ Result validate(const SimpleTag &simple_tag) {
 }
 
 Result validate(const Property &property) {
-    Result result_base = validate(static_cast<base::Entity<base::IProperty>>(property));
+    Result result_base = validate_entity(property);
     Result result = validator({
         must(property, &Property::name, notEmpty(), "name is not set!"),
         could(property, &Property::valueCount, notFalse(), {
@@ -156,7 +156,7 @@ Result validate(const Property &property) {
 }
 
 Result validate(const DataTag &data_tag) {
-    Result result_base = validate(static_cast<base::EntityWithSources<base::IDataTag>>(data_tag));
+    Result result_base = validate_entity_with_sources(data_tag);
     Result result = validator({
         must(data_tag, &DataTag::positions, notFalse(), "positions are not set!"),
         // since extents & positions DataArray stores a vector of position / extent vectors it has to be 2-dim
@@ -218,7 +218,7 @@ Result validate(const SetDimension &set_dim) {
 }
 
 Result validate(const Feature &feature) {
-    Result result_base = validate(static_cast<base::Entity<base::IFeature>>(feature));
+    Result result_base = validate_entity(feature);
     Result result = validator({
         must(feature, &Feature::data, notFalse(), "data is not set!"),
         must(feature, &Feature::linkType, notSmaller(0), "linkType is not set!")
@@ -228,11 +228,11 @@ Result validate(const Feature &feature) {
 }
 
 Result validate(const Section &section) {
-    return validate(static_cast<base::NamedEntity<base::ISection>>(section));
+    return validate_named_entity(section);
 }
 
 Result validate(const Source &source) {
-    return validate(static_cast<base::EntityWithMetadata<base::ISource>>(source));
+    return validate_entity_with_metadata(source);
 }
 
 Result validate(const File &file) {
