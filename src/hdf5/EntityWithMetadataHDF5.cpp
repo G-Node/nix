@@ -73,7 +73,6 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
 }
 
 
-
 void EntityWithMetadataHDF5::metadata(const none_t t) {
     if (group().hasGroup("metadata")) {
         group().removeGroup("metadata");
