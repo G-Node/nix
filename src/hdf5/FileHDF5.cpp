@@ -151,16 +151,8 @@ shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  st
 
 
 bool FileHDF5::deleteSection(const std::string &id) {
-    // Sections can be linked so remove links first
-    bool removed = metadata.removeAllLinks(id);
-    bool deleted = false;
-    
-    if (metadata.hasGroup(id)) {        
-        metadata.removeGroup(id);
-        deleted = true;
-    } 
-    
-    return deleted && removed;
+    // removeAllLinks checks if group exists & removes all links (incl. original entity)
+    return metadata.removeAllLinks(id);
 }
 
 
