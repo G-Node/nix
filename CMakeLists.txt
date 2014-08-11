@@ -82,11 +82,11 @@ if(WIN32)
   set_target_properties(nixlib PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
   ADD_CUSTOM_COMMAND(TARGET nixlib POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
+	                         "$<TARGET_FILE_DIR:nixlib>"
 	                 COMMENT "Copying HDF5 C DLL")
   ADD_CUSTOM_COMMAND(TARGET nixlib POST_BUILD
 	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
+	                         "$<TARGET_FILE_DIR:nixlib>"
 	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
@@ -127,11 +127,11 @@ file(GLOB NixCli_SOURCES "cli/*.cpp")
 file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
 include_directories("cli")
 
-add_executable(nix cli/Cli.cpp ${NixCli_SOURCES})
+add_executable(nixcli cli/Cli.cpp ${NixCli_SOURCES})
 if(NOT WIN32)
-  set_target_properties(nix PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  set_target_properties(nixcli PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
-target_link_libraries(nix nixlib)
+target_link_libraries(nixcli nixlib)
 message(STATUS "CLI executable added")
 
 ########################################
