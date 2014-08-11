@@ -59,7 +59,7 @@ private:
     nix::DataArray array1;
     nix::DataArray array2;
     nix::DataArray array3;
-    std::vector<nix::DataArray> refs = {array1, array2};
+    std::vector<nix::DataArray> refs;
     std::vector<double> extent, position;
     nix::DataArray positions;
     nix::DataArray extents;

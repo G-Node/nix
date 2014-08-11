@@ -88,8 +88,7 @@ void TestSimpleTag::testCreateRemove() {
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
     for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
+        refs.push_back(block.createDataArray(name, "reference", DataType::Double, nix::NDSize({ 0 })));
     }
 
     for (int i = 0; i < 5; i++) {
@@ -124,15 +123,15 @@ void TestSimpleTag::testCreateRemove() {
 
 void TestSimpleTag::testReferences() {
     DataArray da_1 = block.createDataArray("TestReference 1","Reference",
-                                           DataType::Double, {0});
+                                           DataType::Double, nix::NDSize({ 0 }));
     DataArray da_2 = block.createDataArray("TestReference 2","Reference",
-                                           DataType::Double, {0});
+                                           DataType::Double, nix::NDSize({ 0 }));
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
+                                             DataType::Double, nix::NDSize({ 0 })));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
@@ -184,7 +183,7 @@ void TestSimpleTag::testExtent() {
     vector<DataArray> refs;
     for (const auto & name : array_names) {
         refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
+                                             DataType::Double, nix::NDSize({ 0 })));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
@@ -214,7 +213,7 @@ void TestSimpleTag::testPosition() {
     vector<DataArray> refs;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
+                                             DataType::Double, nix::NDSize({ 0 })));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});
@@ -293,7 +292,7 @@ void TestSimpleTag::testUnits() {
     vector<DataArray> refs;
     for (const auto & name : array_names) {
         refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, {0}));
+                                             DataType::Double, nix::NDSize({ 0 })));
     }
 
     SimpleTag st = block.createSimpleTag("TestSimpleTag1", "Tag", {0.0, 2.0, 3.4});

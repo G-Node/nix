@@ -17,7 +17,7 @@ void TestDataAccess::setUp() {
     data_array = block.createDataArray("dimensionTest",
                                        "test",
                                        DataType::Double,
-                                       {0, 0, 0});
+                                       NDSize({0, 0, 0}));
     double samplingInterval = 1.0;
     vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
     string unit = "ms";
@@ -84,10 +84,8 @@ void TestDataAccess::setUp() {
     std::vector<std::string> event_labels = {"event 1", "event 2"};
     std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};
 
-    DataArray event_array = block.createDataArray("positions",
-                                                  "test",
-                                                  DataType::Double,
-                                                  {0, 0});
+    DataArray event_array = block.createDataArray("positions", "test",
+                                                  DataType::Double, NDSize({ 0, 0 }));
     event_array.setData(event_positions);
     SetDimension event_set_dim;
     event_set_dim = event_array.appendSetDimension();
@@ -95,10 +93,8 @@ void TestDataAccess::setUp() {
     event_set_dim = event_array.appendSetDimension();
     event_set_dim.labels(dim_labels);
 
-    DataArray extent_array = block.createDataArray("extents",
-                                                   "test",
-                                                   DataType::Double,
-                                                   {0, 0});
+    DataArray extent_array = block.createDataArray("extents", "test",
+                                                   DataType::Double, NDSize({ 0, 0 }));
     extent_array.setData(event_extents);
     SetDimension extent_set_dim;
     extent_set_dim = extent_array.appendSetDimension();

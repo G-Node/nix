@@ -27,11 +27,11 @@ void TestDataArray::setUp()
     array1 = block.createDataArray("array_one",
                                    "testdata",
                                    nix::DataType::Double,
-                                   {0, 0, 0});
+                                   nix::NDSize({ 0, 0, 0 }));
     array2 = block.createDataArray("random",
                                    "double",
                                    nix::DataType::Double,
-                                   {20, 20});
+                                   nix::NDSize({ 20, 20 }));
 }
 
 void TestDataArray::tearDown()
@@ -91,7 +91,7 @@ void TestDataArray::testData()
                 A[i][j][k] = values++;
 
     CPPUNIT_ASSERT_EQUAL(array1.dataType(), nix::DataType::Double);
-    CPPUNIT_ASSERT_EQUAL(array1.dataExtent(), (nix::NDSize{0, 0, 0}));
+    CPPUNIT_ASSERT_EQUAL(array1.dataExtent(), nix::NDSize({0, 0, 0}));
     CPPUNIT_ASSERT(array1.getDimension(1) == false);
 
     array1.setData(A);
@@ -138,11 +138,11 @@ void TestDataArray::testData()
         for(index j = 0; j != 5; ++j)
             C[i][j] = 42.0;
 
-    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{20, 20}));
+    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), nix::NDSize({20, 20}));
 
-    array2.setData(C, {0,0});
-    array2.dataExtent({40, 40});
-    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), (nix::NDSize{40, 40}));
+    array2.setData(C, nix::NDSize({0, 0}));
+    array2.dataExtent(nix::NDSize({40, 40}));
+    CPPUNIT_ASSERT_EQUAL(array2.dataExtent(), nix::NDSize({40, 40}));
 
     array2D_type D(boost::extents[5][5]);
     for(index i = 0; i != 5; ++i)
@@ -150,10 +150,10 @@ void TestDataArray::testData()
             D[i][j] = 42.0;
 
 
-    array2.setData(D, {20, 20});
+        array2.setData(D, nix::NDSize({ 20, 20 }));
 
     array2D_type E(boost::extents[1][1]);
-    array2.getData(E, {5,5}, {20, 20});
+    array2.getData(E, nix::NDSize({ 5, 5 }), nix::NDSize({ 20, 20 }));
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
@@ -163,7 +163,7 @@ void TestDataArray::testData()
 
     array2D_type F(boost::extents[5][5]);
 
-    array2.getData(F, {20, 20});
+    array2.getData(F, nix::NDSize({ 20, 20 }));
 
     for(index i = 0; i != 5; ++i)
         for(index j = 0; j != 5; ++j)
@@ -174,17 +174,17 @@ void TestDataArray::testData()
     nix::DataArray da3 = block.createDataArray("direct-vector",
                                                "double",
                                                nix::DataType::Double,
-                                               {5});
+                                               nix::NDSize({5}));
 
     CPPUNIT_ASSERT(da3.dataExtent() == nix::NDSize{5});
     CPPUNIT_ASSERT(da3.getDimension(1) == false);
 
     std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0};
-    da3.setData(nix::DataType::Double, dv.data(), {5}, {0});
+    da3.setData(nix::DataType::Double, dv.data(), nix::NDSize({ 5 }), nix::NDSize({ 0 }));
 
     std::vector<double> dvin;
     dvin.resize(5);
-    da3.getData(nix::DataType::Double, dvin.data(), {5}, {0});
+    da3.getData(nix::DataType::Double, dvin.data(), nix::NDSize({ 5 }), nix::NDSize({ 0 }));
 
     for(size_t i = 0; i < dvin.size(); i++) {
         CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[i], dvin[i],

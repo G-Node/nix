@@ -36,7 +36,7 @@ void TestDataSet::setUp() {
 
 void TestDataSet::testNDSize() {
     NDSize invalidSize = {};
-    NDSize a = {23, 42, 1982};
+    NDSize a({23, 42, 1982});
 
     CPPUNIT_ASSERT(!invalidSize); // testing operator bool()
     CPPUNIT_ASSERT(a ? true : false);
@@ -74,7 +74,7 @@ void TestDataSet::testNDSize() {
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), a[2]);
 
 
-    NDSize b = {19, 1940, 18};
+    NDSize b({19, 1940, 18});
 
     NDSize c = a + b;
 
@@ -88,7 +88,7 @@ void TestDataSet::testNDSize() {
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(42),   d[1]);
     CPPUNIT_ASSERT_EQUAL(static_cast<value_type>(1982), d[2]);
 
-    NDSize f = {1, 2, 3, 4};
+    NDSize f({1, 2, 3, 4});
     CPPUNIT_ASSERT_THROW(a + f, std::out_of_range);
 
     NDSize g(f.size(), 0);
@@ -111,7 +111,7 @@ void TestDataSet::testNDSize() {
     size_t dp = j.dot(h);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(999), dp);
 
-    NDSize s = {3, 4};
+    NDSize s({3, 4});
     dp = s.dot(s);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(25), dp);
 
@@ -122,7 +122,7 @@ void TestDataSet::testChunkGuessing() {
     CPPUNIT_ASSERT_THROW(DataSet::guessChunking(NDSize{}, DataType::Double),
                          InvalidRank);
 
-    NDSize dims = {1024, 1024};
+    NDSize dims({1024, 1024});
 
     NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
@@ -149,7 +149,7 @@ void TestDataSet::testDataType() {
         {"string", nix::DataType::String}
     };
 
-    const NDSize dims = {5, 5};
+    const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
         DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims);
@@ -159,9 +159,9 @@ void TestDataSet::testDataType() {
 }
 
 void TestDataSet::testBasic() {
-    NDSize dims = {4, 6};
+    NDSize dims({4, 6});
 
-    DataSet ds = DataSet::create(h5group, "dsZero", DataType::Double, {0, 0});
+    DataSet ds = DataSet::create(h5group, "dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
     CPPUNIT_ASSERT_EQUAL(ds.size(), (NDSize{0, 0}));
 
     ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
@@ -203,7 +203,7 @@ void TestDataSet::testBasic() {
         for(index j = 0; j != 12; ++j)
              CPPUNIT_ASSERT_EQUAL(C[i][j], E[i][j]);
 
-    NDSize newSize = {4, 6};
+    NDSize newSize({4, 6});
     ds.setExtent(newSize);
     NDSize newDSSize = ds.size();
     CPPUNIT_ASSERT_EQUAL(newSize, newDSSize);
@@ -214,7 +214,7 @@ void TestDataSet::testBasic() {
         for(index j = 0; j != 6; ++j)
             CPPUNIT_ASSERT_EQUAL(E[i][j], F[i][j]);
 
-    CPPUNIT_ASSERT_THROW(ds.setExtent({4, 6, 8}), nix::InvalidRank);
+    CPPUNIT_ASSERT_THROW(ds.setExtent(nix::NDSize({ 4, 6, 8 })), nix::InvalidRank);
     //***
 
     DataSet ds2 = DataSet::create(h5group, "dsDouble2", A);
@@ -231,7 +231,7 @@ void TestDataSet::testBasic() {
 
 
 void TestDataSet::testSelection() {
-    NDSize dims = {15, 15};
+    NDSize dims({15, 15});
 
     DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims);
 
@@ -326,7 +326,7 @@ void TestDataSet::testNDArrayIO()
     int values = 0;
     for(size_t i = 0; i != 5; ++i)
         for(size_t j = 0; j != 5; ++j)
-            A.set<double>({i,j}, values++);
+            A.set<double>(nix::NDSize({ i, j }), values++);
 
     DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", A);
     ds.write(A);
@@ -336,18 +336,18 @@ void TestDataSet::testNDArrayIO()
 
     for(size_t i = 0; i != 5; ++i)
         for(size_t j = 0; j != 5; ++j)
-            CPPUNIT_ASSERT_DOUBLES_EQUAL(A.get<double>({i,j}),
-                                         Atest.get<double>({i,j}),
+            CPPUNIT_ASSERT_DOUBLES_EQUAL(A.get<double>(nix::NDSize({ i, j })),
+                                         Atest.get<double>(nix::NDSize({ i, j })),
                                          std::numeric_limits<double>::epsilon());
 
      //**
-    dims = {3, 4, 5};
+    dims = nix::NDSize({ 3, 4, 5 });
     NDArray B(nix::DataType::Double, dims);
     values = 0;
     for(size_t i = 0; i != dims[0]; ++i)
         for(size_t j = 0; j != dims[1]; ++j)
             for(size_t k = 0; k != dims[2]; ++k)
-                B.set<double>({i,j,k}, values++);
+                B.set<double>(nix::NDSize({ i, j, k }), values++);
 
     ds = nix::hdf5::DataSet::create(h5group, "NDArray3x4x5", B);
     ds.write(B);
@@ -358,8 +358,8 @@ void TestDataSet::testNDArrayIO()
     for(size_t i = 0; i != dims[0]; ++i)
         for(size_t j = 0; j != dims[1]; ++j)
             for(size_t k = 0; k != dims[2]; ++k)
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(B.get<double>({i,j,k}),
-                                             Btest.get<double>({i,j,k}),
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(B.get<double>(nix::NDSize({ i, j, k })),
+                                             Btest.get<double>(nix::NDSize({ i, j, k })),
                                              std::numeric_limits<double>::epsilon());
 
 }
