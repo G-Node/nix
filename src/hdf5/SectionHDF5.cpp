@@ -104,7 +104,7 @@ void SectionHDF5::link(const std::string &id) {
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
     if (found.empty())
-        throw std::runtime_error("Section not found in file!");
+        throw std::runtime_error("SectionHDF5::link: Section not found in file!");
     
     auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
@@ -117,9 +117,12 @@ shared_ptr<ISection> SectionHDF5::link() const {
 
     if (group().hasGroup("link")) {
         Group other_group = group().openGroup("link", false);
-
-        auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-        sec = make_shared<SectionHDF5>(file(), p, other_group);
+        auto sec_tmp = make_shared<SectionHDF5>(file(), other_group);
+        // re-get above section "sec_tmp": parent missing, findSections will set it!
+        auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
+        if (found.size() > 0) {
+            sec = found.front().impl();
+        }
     }
 
     return sec;

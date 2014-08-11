@@ -9,6 +9,7 @@
 #ifndef NIX_SECTION_HDF5_H
 #define NIX_SECTION_HDF5_H
 
+#include <memory>
 
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 #include <nix/base/ISection.hpp>
@@ -22,6 +23,7 @@ class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
 
 private:
 
+    // TODO: consider writing parent_section as soft link into file
     std::shared_ptr<base::ISection> parent_section;
     Group property_group, section_group;
 
