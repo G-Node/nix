@@ -153,6 +153,12 @@ void TestSource::testFindSource() {
 
     CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
     CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 8);
+    
+    source.deleteSource(l1n1.id());
+    source.deleteSource(l1n2.id());
+    source.deleteSource(l1n3.id());
+
+    CPPUNIT_ASSERT(source.findSources().size() == 1);
 }
 
 
