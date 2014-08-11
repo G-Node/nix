@@ -251,9 +251,16 @@ void TestDataTag::testMetadataAccess() {
     CPPUNIT_ASSERT(tag.metadata());
     // TODO This test fails due to operator== of Section
     // CPPUNIT_ASSERT(tag.metadata() == section);
-
+    
+    // test none-unsetter
     tag.metadata(none);
     CPPUNIT_ASSERT(!tag.metadata());
+    // test deleter removing link too
+    tag.metadata(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!tag.metadata());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 

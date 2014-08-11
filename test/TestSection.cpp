@@ -97,8 +97,15 @@ void TestSection::testLink() {
     CPPUNIT_ASSERT(section.link());
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
 
-    section.link(boost::none);
+    // test none-unsetter
+    section.link(none);
     CPPUNIT_ASSERT(!section.link());
+    // test deleter removing link too
+    section.link(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!section.link());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 

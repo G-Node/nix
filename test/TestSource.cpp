@@ -79,8 +79,15 @@ void TestSource::testMetadataAccess() {
     source.metadata(section);
     CPPUNIT_ASSERT(source.metadata());
 
+    // test none-unsetter
     source.metadata(none);
     CPPUNIT_ASSERT(!source.metadata());
+    // test deleter removing link too
+    source.metadata(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!source.metadata());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 
