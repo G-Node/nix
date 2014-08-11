@@ -104,7 +104,7 @@ optional<string> NamedEntityHDF5::definition() const {
 }
 
 
-void NamedEntityHDF5::definition(const none_t t) {
+void NamedEntityHDF5::definition(const nix::none_t t) {
     if (group().hasAttr("definition")) {
         group().removeAttr("definition");
     }
