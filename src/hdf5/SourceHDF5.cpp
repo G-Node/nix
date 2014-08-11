@@ -8,6 +8,7 @@
 
 #include <nix/util/util.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
+#include <nix/Source.hpp>
 
 using namespace std;
 using namespace nix;
@@ -76,12 +77,18 @@ shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &t
 
 
 bool SourceHDF5::deleteSource(const string &id) {
-    if (source_group.hasGroup(id)) {
-        source_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    // call deleteSource on sources to trigger recursive call to all sub-sources
+    if (hasSource(id)) {
+        // get instance of source about to get deleted
+        Source source = getSource(id);
+        // loop through all child sources and call deleteSource on them
+        for(auto &child : source.sources()) {
+            child.deleteSource(child.id());
+        }
+        source_group.removeAllLinks(id);
     }
+    
+    return hasSource(id);
 }
 
 

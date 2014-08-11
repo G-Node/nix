@@ -223,12 +223,18 @@ shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string
 
 
 bool SectionHDF5::deleteSection(const string &id) {
-    if (section_group.hasGroup(id)) {
-        section_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    // call deleteSection on sources to trigger recursive call to all sub-sections
+    if (hasSection(id)) {
+        // get instance of section about to get deleted
+        Section section = getSection(id);
+        // loop through all child sections and call deleteSection on them
+        for(auto &child : section.sections()) {
+            child.deleteSection(child.id());
+        }
+        section_group.removeAllLinks(id);
     }
+    
+    return hasSection(id);
 }
 
 

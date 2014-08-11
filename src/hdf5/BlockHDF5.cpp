@@ -90,8 +90,18 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
 
 
 bool BlockHDF5::deleteSource(const string &id) {
-    // removeAllLinks checks if group exists & removes all links (incl. original entity)
-    return source_group.removeAllLinks(id);
+    // call deleteSource on sources to trigger recursive call to all sub-sources
+    if (hasSource(id)) {
+        // get instance of source about to get deleted
+        Source source = getSource(id);
+        // loop through all child sources and call deleteSource on them
+        for(auto &child : source.sources()) {
+            child.deleteSource(child.id());
+        }
+        source_group.removeAllLinks(id);
+    }
+    
+    return hasSource(id);
 }
 
 

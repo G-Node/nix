@@ -227,7 +227,10 @@ void TestSection::testFindRelated(){
 
     related = l3n2.findRelated(util::TypeFilter<Section>(t3));
     CPPUNIT_ASSERT(related.size() == 0);
+
     section.deleteSection(l1n1.id());
+    
+    CPPUNIT_ASSERT(section.findSections().size() == 1);
 }
 
 
