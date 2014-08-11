@@ -147,7 +147,7 @@ optional<string> PropertyHDF5::definition() const {
 }
 
 
-void PropertyHDF5::definition(const none_t t) {
+void PropertyHDF5::definition(const nix::none_t t) {
     if (dataset().hasAttr("definition")) {
         dataset().removeAttr("definition");
     }
@@ -179,7 +179,7 @@ boost::optional<string> PropertyHDF5::mapping() const {
 }
 
 
-void PropertyHDF5::mapping(const none_t t) {
+void PropertyHDF5::mapping(const nix::none_t t) {
     if (dataset().hasAttr("mapping")) {
         dataset().removeAttr("mapping");
         forceUpdatedAt();
@@ -206,7 +206,7 @@ boost::optional<string> PropertyHDF5::unit() const {
 }
 
 
-void PropertyHDF5::unit(const none_t t) {
+void PropertyHDF5::unit(const nix::none_t t) {
     if (dataset().hasAttr("unit")) {
         dataset().removeAttr("unit");
     }
@@ -245,7 +245,7 @@ std::vector<Value> PropertyHDF5::values(void) const
 }
 
 
-void PropertyHDF5::values(const none_t t) {
+void PropertyHDF5::values(const nix::none_t t) {
     // TODO: rethink if we want two methods for same thing
     deleteValues();
 }
