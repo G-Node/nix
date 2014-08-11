@@ -28,14 +28,14 @@ void TestValidate::setUp() {
     file = nix::File::open("test_validate.h5", nix::FileMode::Overwrite);
     block = file.createBlock("block_one", "dataset");
     // create data array
-    array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, {0, 0, 0});
-    array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, {0, 0, 0});
-    array3 = block.createDataArray("array_three", "testdata", nix::DataType::Double, {0, 0, 0});
+    array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
+    array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
+    array3 = block.createDataArray("array_three", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     // set references vector
     refs = {array2, array3};
     // create positions & extents arrays
-    positions = block.createDataArray("positions_DataArray", "dataArray", DataType::Double, {0, 0});
-    extents = block.createDataArray("extents_DataArray", "dataArray", DataType::Double, {0, 0});
+    positions = block.createDataArray("positions_DataArray", "dataArray", DataType::Double, nix::NDSize({ 0, 0 }));
+    extents = block.createDataArray("extents_DataArray", "dataArray", DataType::Double, nix::NDSize({ 0, 0 }));
     // create units
     atomic_units = {"m", "cm", "mm"};
     compound_units = {"mV*cm", "m*s", "s/cm"};

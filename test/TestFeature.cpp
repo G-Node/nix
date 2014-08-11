@@ -15,7 +15,7 @@ void TestFeature::setUp() {
     block = file.createBlock("featureTest","test");
 
     data_array = block.createDataArray("featureTest", "Test",
-                                       DataType::Double, {0});
+                                       DataType::Double, nix::NDSize({ 0 }));
     
     tag = block.createSimpleTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
@@ -62,7 +62,7 @@ void TestFeature::testLinkType(){
 void TestFeature::testData() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
-                                           DataType::Double, {0});
+                                           DataType::Double, nix::NDSize({ 0 }));
     CPPUNIT_ASSERT(rp.data().id() == data_array.id());
     rp.data(da_2);
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());

@@ -491,7 +491,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Section &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Section &ent);
 
 private:
 

@@ -283,7 +283,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Property &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Property &ent);
 
     /**
      * @brief Destructor

@@ -128,7 +128,7 @@ void TestBlock::testDataArrayAccess() {
         DataArray data_array = block.createDataArray(name,
                                                      "channel",
                                                      DataType::Double,
-                                                     {0});
+                                                     nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
 
@@ -172,7 +172,7 @@ void TestBlock::testSimpleTagAccess() {
         refs.push_back(block.createDataArray(name,
                                              "reference",
                                              DataType::Double,
-                                             {0}));
+                                             nix::NDSize({ 0 })));
     }
 
     CPPUNIT_ASSERT(block.simpleTagCount() == 0);
@@ -212,7 +212,7 @@ void TestBlock::testDataTagAccess() {
     DataArray positions = block.createDataArray("array_one",
                                                 "testdata",
                                                 DataType::Double,
-                                                {3, 4, 2});
+                                                nix::NDSize({ 3, 4, 2 }));
     boost::multi_array<double, 3> A(boost::extents[3][4][2]);
     int values = 0;
     for(index i = 0; i != 3; ++i)

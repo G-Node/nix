@@ -26,9 +26,9 @@ void TestDataTag::setUp() {
     block = file.createBlock("block", "dataset");
 
     positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, {0, 0});
+                                      DataType::Double, NDSize({ 0, 0 }));
     extents = block.createDataArray("extents_DataArray", "dataArray",
-                                    DataType::Double, {0, 0});
+                                    DataType::Double, NDSize({ 0, 0 }));
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -92,7 +92,7 @@ void TestDataTag::testDefinition() {
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
     tag.definition(none);
-    CPPUNIT_ASSERT(tag.definition() == nix::none);
+    CPPUNIT_ASSERT(tag.definition() == none);
 }
 
 
@@ -140,7 +140,7 @@ void TestDataTag::testUnits() {
 
     dt.units(none);
     CPPUNIT_ASSERT(dt.units().size() == 0);
-    CPPUNIT_ASSERT_THROW(dt.units(invalid_units), nix::InvalidUnit);
+    CPPUNIT_ASSERT_THROW(dt.units(invalid_units), InvalidUnit);
     CPPUNIT_ASSERT(dt.units().size() == 0);
 
     dt.units(insane_units);
@@ -158,14 +158,14 @@ void TestDataTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
                                            "Reference",
                                            DataType::Double,
-                                           {0});
+                                           NDSize({ 0 }));
     DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
                                            DataType::Double,
-                                           {0});
+                                           NDSize({ 0 }));
 
     DataTag dt = block.createDataTag("TestDataTag1", "Tag", positions);
 
-    CPPUNIT_ASSERT_THROW(dt.getReference(42), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestDataTag::testReference: Counts do not match!";
