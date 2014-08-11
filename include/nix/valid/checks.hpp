@@ -328,7 +328,7 @@ namespace valid {
      * NDSize class via the "dataExtent" method and checking its' size
      * via "size" the method.
      */
-    struct dimEquals {
+    struct NIXAPI dimEquals {
         const size_t &value;
         
         dimEquals(const size_t &value) : value(value) {}
@@ -352,7 +352,7 @@ namespace valid {
      * immediately if number of dimensions differs from number of units
      * in given unit vector.
      */
-    struct tagRefsHaveUnits {
+    struct NIXAPI tagRefsHaveUnits {
         const std::vector<std::string> &units;
         
         tagRefsHaveUnits(const std::vector<std::string> &units) : units(units) {}
@@ -376,7 +376,7 @@ namespace valid {
      * The test counts as failed immediately if the number of dimensions
      * in a DataArray differs the number of units in the units vector.
      */
-    struct tagUnitsMatchRefsUnits {
+    struct NIXAPI tagUnitsMatchRefsUnits {
         const std::vector<std::string> &units;
         
         tagUnitsMatchRefsUnits(const std::vector<std::string> &units) : units(units) {}
@@ -391,7 +391,7 @@ namespace valid {
      * positions matches the given number of extents. It is irrelevant
      * which gets passed at construction time and which via operator().
      */
-    struct extentsMatchPositions {
+    struct NIXAPI extentsMatchPositions {
         const boost::any extents;
         
         extentsMatchPositions(const DataArray &extents) : extents(extents) {}
@@ -410,7 +410,7 @@ namespace valid {
      * DataArray; if vector: size of vector) matches the data's
      * dimensionality in each of the given referenced DataArrays.
      */
-    struct extentsMatchRefs {
+    struct NIXAPI extentsMatchRefs {
         const std::vector<DataArray> &refs;
         
         extentsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
@@ -429,7 +429,7 @@ namespace valid {
      * Note: this is just an alias for extentsMatchRefs wich does the
      * same thing.
      */
-    struct positionsMatchRefs {
+    struct NIXAPI positionsMatchRefs {
         const std::vector<DataArray> &refs;
 
         positionsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
@@ -446,7 +446,7 @@ namespace valid {
      * the given DataArray's data: number of ticks == number of entries
      * along the corresponding dimension in the data.
      */
-    struct dimTicksMatchData {
+    struct NIXAPI dimTicksMatchData {
         const DataArray &data;
 
         dimTicksMatchData(const DataArray &data) : data(data) {}
@@ -462,7 +462,7 @@ namespace valid {
      * the given DataArray's data: number of labels == number of entries
      * along the corresponding dimension in the data.
      */
-    struct dimLabelsMatchData {
+    struct NIXAPI dimLabelsMatchData {
         const DataArray &data;
 
         dimLabelsMatchData(const DataArray &data) : data(data) {}
