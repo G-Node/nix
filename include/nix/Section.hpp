@@ -11,6 +11,7 @@
 
 #include <limits>
 #include <functional>
+#include <string>
 
 #include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
