@@ -29,7 +29,7 @@ private:
     static const NDSize MAX_SIZE_1D;
 
     Group feature_group;
-    ReferenceList references_list;
+    Group refs_group;
 
 public:
 

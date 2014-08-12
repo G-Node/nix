@@ -103,7 +103,7 @@ void EntityWithSourcesHDF5::sources(const std::vector<Source> &srcs_new) {
         addSource(id);
     }
     // remove sources
-    for (auto id : ids_add) {
+    for (auto id : ids_rem) {
         removeSource(id);
     }
 }
