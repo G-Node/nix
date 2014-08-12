@@ -105,12 +105,8 @@ bool EntityWithSourcesHDF5::removeSource(const string &id) {
 }
 
 
-void EntityWithSourcesHDF5::swap(EntityWithSourcesHDF5 &other) {
-    using std::swap;
-
-    EntityWithMetadataHDF5::swap(other);
-    swap(entity_block, other.entity_block);
-    swap(sources_refs, other.sources_refs);
+std::shared_ptr<base::IBlock> EntityWithSourcesHDF5::block() const {
+    return entity_block;
 }
 
 

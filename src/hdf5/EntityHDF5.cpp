@@ -89,11 +89,13 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
-void EntityHDF5::swap(EntityHDF5 &other) {
-    using std::swap;
+Group EntityHDF5::group() const {
+    return entity_group;
+}
 
-    swap(entity_file, other.entity_file);
-    swap(entity_group, other.entity_group);
+
+std::shared_ptr<base::IFile> EntityHDF5::file() const {
+    return entity_file;
 }
 
 
