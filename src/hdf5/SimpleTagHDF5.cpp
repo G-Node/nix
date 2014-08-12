@@ -184,11 +184,11 @@ void SimpleTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
     std::vector<std::string> ids_add;
     std::vector<std::string> ids_rem;
-    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(), 
+    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(),
                         std::inserter(ids_add, ids_add.begin()));
-    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(), 
+    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(),
                         std::inserter(ids_rem, ids_rem.begin()));
-    
+
     // check if all new references exist & add sources
     for (auto id : ids_add) {
         if(!block()->hasDataArray(id)) 

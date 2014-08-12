@@ -171,7 +171,7 @@ void TestSimpleTag::testReferences() {
     // delete data arrays
     std::vector<std::string> ids;
     block.deleteDataArray(da_1.id());
-    block.deleteDataArray(da_1.id());
+    block.deleteDataArray(da_2.id());
     for (auto it = refs.begin(); it != refs.end(); it++) {
         ids.push_back((*it).id());
         block.deleteDataArray((*it).id());

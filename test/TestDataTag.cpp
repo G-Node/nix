@@ -195,8 +195,15 @@ void TestDataTag::testReferences(){
     dt.removeReference(da_2.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
 
+
+    // delete data arrays
+    std::vector<std::string> ids = {da_1.id(), da_2.id()};
     block.deleteDataArray(da_1.id());
-    block.deleteDataArray(da_1.id());
+    block.deleteDataArray(da_2.id());
+    // check if references are gone too!
+    CPPUNIT_ASSERT(dt.referenceCount() == 0);
+    CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
+    CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
     block.deleteDataTag(dt.id());
 }
 
