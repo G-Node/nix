@@ -168,10 +168,18 @@ void TestSimpleTag::testReferences() {
     st.removeReference(da_2.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), st.referenceCount() == 5);
 
+    // delete data arrays
+    std::vector<std::string> ids;
     block.deleteDataArray(da_1.id());
     block.deleteDataArray(da_1.id());
     for (auto it = refs.begin(); it != refs.end(); it++) {
+        ids.push_back((*it).id());
         block.deleteDataArray((*it).id());
+    }
+    // check if references are gone too!
+    CPPUNIT_ASSERT(st.referenceCount() == 0);
+    for (auto ref_id : ids) {
+        CPPUNIT_ASSERT(!st.hasReference(ref_id));
     }
     block.deleteSimpleTag(st.id());
 }

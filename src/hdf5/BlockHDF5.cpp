@@ -212,8 +212,7 @@ bool BlockHDF5::deleteDataArray(const string &id) {
     bool deleted = false;
 
     if (hasDataArray(id)) {
-        data_array_group.removeGroup(id);
-        deleted = true;
+        data_array_group.removeAllLinks(id);
     }
 
     return deleted;

@@ -109,7 +109,6 @@ void TestDataAccess::setUp() {
 
 
 void TestDataAccess::tearDown() {
-    file.deleteBlock(block.id());
     file.close();
 }
 
