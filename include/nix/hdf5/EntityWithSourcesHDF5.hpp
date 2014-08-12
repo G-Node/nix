@@ -30,8 +30,6 @@ private:
 
 public:
 
-    // TODO need a ctor with file, block, group, id (see #316)
-
     /**
      * Standard constructor for existing entity.
      */
@@ -69,18 +67,13 @@ public:
 
     std::shared_ptr<base::ISource> getSource(const size_t index) const;
 
-    // TODO do we really need swap?
-    void swap(EntityWithSourcesHDF5 &other);
-
     /**
      * Destructor.
      */
     virtual ~EntityWithSourcesHDF5();
 
 
-    std::shared_ptr<base::IBlock> block() const {
-        return entity_block;
-    }
+    std::shared_ptr<base::IBlock> block() const;
 
 };
 

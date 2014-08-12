@@ -60,26 +60,21 @@ public:
 
     void forceCreatedAt(time_t t);
 
-    // TODO do we really need swap?
-    void swap(EntityHDF5 &other);
-
 
     bool operator==(const EntityHDF5 &other) const;
 
 
     bool operator!=(const EntityHDF5 &other) const;
 
-    Group group() const {
-        return entity_group;
-    }
+
+    Group group() const;
+
 
     virtual ~EntityHDF5();
 
 protected:
 
-    std::shared_ptr<base::IFile> file() const {
-        return entity_file;
-    }
+    std::shared_ptr<base::IFile> file() const;
 
 };
 

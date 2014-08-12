@@ -95,7 +95,8 @@ DimensionHDF5::DimensionHDF5(Group group, size_t index)
 
 
 void DimensionHDF5::setType() {
-    group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
+    if (!group.hasAttr("dimension_type"))
+        group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
 }
 
 
@@ -118,12 +119,12 @@ DimensionHDF5::~DimensionHDF5() {}
 SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index)
     : DimensionHDF5(group, index)
 {
-    setType();
 }
 
 SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
     : SampledDimensionHDF5(group, index)
 {
+    setType();
     this->samplingInterval(sampling_interval);
 }
 
@@ -147,8 +148,7 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 void SampledDimensionHDF5::label(const string &label) {
     if (label.empty()) {
         throw EmptyString("label");
-    }
-    else {
+    } else {
         group.setAttr("label", label);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -177,8 +177,7 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 void SampledDimensionHDF5::unit(const string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
-    }
-    else {
+    } else {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -277,13 +276,13 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index)
     : DimensionHDF5(group, index)
 {
-    setType();
 }
 
 
 RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
     : RangeDimensionHDF5(group, index)
 {
+    setType();
     this->ticks(ticks);
 }
 
@@ -307,8 +306,7 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 void RangeDimensionHDF5::label(const string &label) {
     if (label.empty()) {
         throw EmptyString("label");
-    }
-    else {
+    } else {
         group.setAttr("label", label);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -337,8 +335,7 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 void RangeDimensionHDF5::unit(const string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
-    }
-    else {
+    } else {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
