@@ -61,6 +61,11 @@ size_t Group::objectCount() const {
 
 
 std::string Group::objectName(size_t index) const {
+    // check if index valid
+    if(index > objectCount()) {
+        throw OutOfBounds("No data array at given index", index);
+    }
+    
     std::string str_name;
     // check whether name is found by index
     ssize_t name_len = H5Lget_name_by_idx(h5group.getLocId(),
