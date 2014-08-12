@@ -38,13 +38,6 @@ std::vector<Dimension> DataArray::dimensions(util::Filter<Dimension>::type filte
                                   filter);
 }
 
-std::ostream &operator<<(std::ostream &out, const DataArray &ent) {
-    out << "DataArray: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
-}
-
 
 std::ostream& nix::operator<<(std::ostream &out, const DataArray &ent) {
     out << "DataArray: {name = " << ent.name();
