@@ -157,7 +157,7 @@ bool FileHDF5::deleteSection(const std::string &id) {
         Section section = getSection(id);
         // loop through all child sections and call deleteSection on them
         for(auto &child : section.sections()) {
-            child.deleteSection(child.id());
+            section.deleteSection(child.id());
         }
         metadata.removeAllLinks(id);
     }

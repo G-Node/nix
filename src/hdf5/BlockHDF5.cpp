@@ -96,7 +96,7 @@ bool BlockHDF5::deleteSource(const string &id) {
         Source source = getSource(id);
         // loop through all child sources and call deleteSource on them
         for(auto &child : source.sources()) {
-            child.deleteSource(child.id());
+            source.deleteSource(child.id());
         }
         source_group.removeAllLinks(id);
     }
