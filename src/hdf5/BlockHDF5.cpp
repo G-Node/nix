@@ -90,14 +90,18 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
 
 
 bool BlockHDF5::deleteSource(const string &id) {
-    bool deleted = false;
-
+    // call deleteSource on sources to trigger recursive call to all sub-sources
     if (hasSource(id)) {
-        source_group.removeGroup(id);
-        deleted = true;
+        // get instance of source about to get deleted
+        Source source = getSource(id);
+        // loop through all child sources and call deleteSource on them
+        for(auto &child : source.sources()) {
+            source.deleteSource(child.id());
+        }
+        source_group.removeAllLinks(id);
     }
-
-    return deleted;
+    
+    return hasSource(id);
 }
 
 
@@ -208,8 +212,7 @@ bool BlockHDF5::deleteDataArray(const string &id) {
     bool deleted = false;
 
     if (hasDataArray(id)) {
-        data_array_group.removeGroup(id);
-        deleted = true;
+        data_array_group.removeAllLinks(id);
     }
 
     return deleted;

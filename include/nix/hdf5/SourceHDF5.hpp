@@ -52,7 +52,7 @@ public:
     bool hasSource(const std::string &id) const;
 
 
-    std::shared_ptr<base::ISource>  getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource> getSource(const std::string &id) const;
 
 
     std::shared_ptr<base::ISource> getSource(size_t index) const;

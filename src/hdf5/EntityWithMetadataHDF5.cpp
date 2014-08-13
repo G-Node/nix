@@ -62,7 +62,8 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
     if (group().hasGroup("metadata")) {
         Group other_group = group().openGroup("metadata", false);
         auto sec_tmp = make_shared<EntityWithMetadataHDF5>(file(), other_group);
-        // re-get above section "sec_tmp": parent missing, findSections will set it!
+        // re-get above section "sec_tmp": we just got it to have id, parent is missing, 
+        // findSections will return it with parent!
         auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
         if (found.size() > 0) {
             sec = found.front().impl();
@@ -71,7 +72,6 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
 
     return sec;
 }
-
 
 
 void EntityWithMetadataHDF5::metadata(const none_t t) {

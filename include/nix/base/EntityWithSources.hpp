@@ -127,7 +127,7 @@ public:
      *
      * All previously existing associations will be overwritten.
      *
-     * @param sources     A vector with all sources.
+     * @param sources A vector with all sources.
      */
     virtual void sources(const std::vector<Source> &sources) {
         EntityWithMetadata<T>::backend()->sources(sources);

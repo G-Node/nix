@@ -11,7 +11,7 @@
 
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IEntityWithSources.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
+#include <nix/hdf5/SourceHDF5.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 namespace nix {
@@ -26,7 +26,7 @@ class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public Ent
 private:
 
     std::shared_ptr<base::IBlock> entity_block;
-    ReferenceList sources_refs;
+    Group sources_refs;
 
 public:
 
@@ -52,14 +52,19 @@ public:
 
     bool hasSource(const std::string &id) const;
 
+    /**
+      * @brief Set all sources associations for this entity.
+      *
+      * All previously existing associations will be overwritten.
+      *
+      * @param sources     A vector with all sources.
+      */
+    void sources(const std::vector<Source> &sources);
 
     void addSource(const std::string &id);
 
 
     bool removeSource(const std::string &id);
-
-
-    void sources(const std::vector<Source> &s);
 
 
     std::shared_ptr<base::ISource> getSource(const std::string &id) const;

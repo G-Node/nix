@@ -157,15 +157,6 @@ public:
     }
 
     /**
-     * @brief Deleter for the position of a tag.
-     *
-     * @param t         None
-     */
-    void position(const boost::none_t t) {
-        backend()->position(t);
-    }
-
-    /**
      * @brief Gets the extent of a tag.
      *
      * Given a specified position vector, the extent vector defined the size

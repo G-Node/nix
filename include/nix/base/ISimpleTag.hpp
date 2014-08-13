@@ -46,9 +46,6 @@ public:
     virtual void position(const std::vector<double> &position) = 0;
 
 
-    virtual void position(const boost::none_t t) = 0;
-
-
     virtual std::vector<double> extent() const = 0;
 
 

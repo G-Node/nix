@@ -33,9 +33,16 @@ void TestEntityWithMetadata::testMetadataAccess() {
 
     block.metadata(section);
     CPPUNIT_ASSERT(block.metadata());
-
-    block.metadata(boost::none);
+    
+    // test none-unsetter
+    block.metadata(none);
     CPPUNIT_ASSERT(!block.metadata());
+    // test deleter removing link too
+    block.metadata(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!block.metadata());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 

@@ -20,7 +20,7 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 EntityWithSourcesHDF5::EntityWithSourcesHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
-    : EntityWithMetadataHDF5(file, group), entity_block(block), sources_refs(group, "sources")
+    : EntityWithMetadataHDF5(file, group), entity_block(block), sources_refs(group.openGroup("sources"))
 {
 }
 
@@ -34,18 +34,18 @@ EntityWithSourcesHDF5::EntityWithSourcesHDF5(shared_ptr<IFile> file, shared_ptr<
 
 EntityWithSourcesHDF5::EntityWithSourcesHDF5 (shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
                                               const string &type, const string &name, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block), sources_refs(group, "sources")
+    : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block), sources_refs(group.openGroup("sources"))
 {
 }
 
 
 size_t EntityWithSourcesHDF5::sourceCount() const {
-    return sources_refs.count();
+    return sources_refs.objectCount();
 }
 
 
 bool EntityWithSourcesHDF5::hasSource(const string &id) const {
-    return sources_refs.has(id);
+    return sources_refs.hasGroup(id);
 }
 
 
@@ -63,45 +63,65 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &id) const {
 shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) const {
     shared_ptr<ISource> source;
 
-    std::vector<std::string> refs = sources_refs.get();
-
     // get reference id
-    if (index < refs.size()) {
-        string id = refs[index];
-        source = getSource(id);
-    } else {
-        throw OutOfBounds("No data array at given index", index);
-    }
+    std::string id = sources_refs.objectName(index);
+    source = getSource(id);
 
     return source;
 }
 
+void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
+    // extract vectors of ids from vectors of new & old sources
+    std::vector<std::string> ids_new(sources.size());
+    transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
+    std::vector<Source> sources_old(sourceCount());
+    for (size_t i = 0; i < sources_old.size(); i++) sources_old[i] = getSource(i);
+    std::vector<std::string> ids_old(sources_old.size());
+    transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
+    // sort them
+    std::sort(ids_new.begin(), ids_new.end());
+    std::sort(ids_new.begin(), ids_new.end());
+    // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
+    std::vector<std::string> ids_add;
+    std::vector<std::string> ids_rem;
+    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(), 
+                        std::inserter(ids_add, ids_add.begin()));
+    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(), 
+                        std::inserter(ids_rem, ids_rem.begin()));
+    
+    // check if all new sources exist
+    Block tmp(entity_block);
+    auto found = tmp.findSources(util::IdsFilter<Source>(ids_add));
+    if (ids_add.size() != found.size())
+        throw std::runtime_error("One or more sources do not exist in this block!");
+    // add sources
+    for (auto id : ids_add) {
+        addSource(id);
+    }
+    // remove sources
+    for (auto id : ids_rem) {
+        removeSource(id);
+    }
+}
+    
 void EntityWithSourcesHDF5::addSource(const string &id) {
+    if (id.empty())
+        throw EmptyString("addSource");
+        
     Block tmp(entity_block);
     auto found = tmp.findSources(util::IdFilter<Source>(id));
-
     if (found.empty())
-        throw std::runtime_error("Given source does not exist in this block!");
+        throw std::runtime_error("EntityWithSourcesHDF5::addSource: Given source does not exist in this block!");
 
-    sources_refs.add(id);
-}
+    auto target = dynamic_pointer_cast<SourceHDF5>(found.front().impl());
 
-
-void EntityWithSourcesHDF5::sources(const vector<Source> &sources) {
-    vector<string> ids(sources.size());
-    transform(sources.begin(), sources.end(), ids.begin(), [](const Source &src) -> string { return src.id(); });
-
-    Block tmp(entity_block);
-    auto found = tmp.findSources( util::IdsFilter<Source>(ids));
-    if (sources.size() != found.size())
-        throw std::runtime_error("One or more sources do not exist in this block!");
-
-    sources_refs.set(ids);
+    sources_refs.createLink(target->group(), id);
 }
 
 
 bool EntityWithSourcesHDF5::removeSource(const string &id) {
-    return sources_refs.remove(id);
+    sources_refs.removeGroup(id);
+    return !hasSource(id);
 }
 
 

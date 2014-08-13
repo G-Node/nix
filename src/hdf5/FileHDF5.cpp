@@ -151,12 +151,18 @@ shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  st
 
 
 bool FileHDF5::deleteSection(const std::string &id) {
-    if (metadata.hasGroup(id)) {
-        metadata.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    // call deleteSection on sources to trigger recursive call to all sub-sections
+    if (hasSection(id)) {
+        // get instance of section about to get deleted
+        Section section = getSection(id);
+        // loop through all child sections and call deleteSection on them
+        for(auto &child : section.sections()) {
+            section.deleteSection(child.id());
+        }
+        metadata.removeAllLinks(id);
     }
+    
+    return hasSection(id);
 }
 
 

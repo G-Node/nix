@@ -86,6 +86,16 @@ NIXAPI time_t strToTime(const std::string &time);
 NIXAPI time_t getTime();
 
 /**
+ * @brief Extract id from given entity. Does not work for dimensions
+ *
+ * @return The entity id.
+ */
+template<typename T>
+std::string toId(const T &entity) {
+    return entity.id();
+}
+
+/**
  * @brief Sanitizer function that deblanks units and replaces mu and µ
  * with the "u" replacement.
  *

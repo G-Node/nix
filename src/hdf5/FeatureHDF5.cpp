@@ -8,6 +8,8 @@
 
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
+#include <nix/DataArray.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
@@ -64,33 +66,36 @@ void FeatureHDF5::linkType(LinkType link_type) {
 }
 
 
-void FeatureHDF5::data(const std::string &data_array_id) {
-    if (data_array_id.empty()) {
-        throw EmptyString("data DataArray id");
-    }
-    else {
-        if (!block->hasDataArray(data_array_id)) {
-            throw runtime_error("FeatureHDF5::data: cannot set Feature data because referenced DataArray does not exist!");
-        } else {
-            group().setAttr("data", data_array_id);
-            forceUpdatedAt();
-        }
-    }
+void FeatureHDF5::data(const std::string &id) {
+    if (id.empty())
+        throw EmptyString("data(id)");
+    if (!block->hasDataArray(id))
+        throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
+    if (group().hasGroup("data"))
+        group().removeGroup("data");
+    
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block->getDataArray(id));
+
+    group().createLink(target->group(), "data");
+    forceUpdatedAt();
 }
 
 
 shared_ptr<IDataArray> FeatureHDF5::data() const {
     shared_ptr<IDataArray> da;
+    bool error = false;
 
-    if (group().hasAttr("data")) {
-        string dataId;
-        group().getAttr("data", dataId);
-        if (block->hasDataArray(dataId)) {
-            da = block->getDataArray(dataId);
-        } else {
-            throw std::runtime_error("Data array not found by id in Block");
-        }
+    if (group().hasGroup("data")) {
+        Group other_group = group().openGroup("data", false);
+        da = make_shared<DataArrayHDF5>(file(), block, other_group);
+        if (!block->hasDataArray(da->id())) error = true;
     }
+    else error = true;
+    
+    // NOTE: we check that link exists in both places, here & in entity
+    // if error = true it was missing in one of the two
+    if (error) 
+        throw std::runtime_error("FeatureHDF5::data: DataArray not found!");
 
     return da;
 }

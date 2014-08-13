@@ -15,7 +15,6 @@
 #include <vector>
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -26,7 +25,7 @@ class DataTagHDF5 : virtual public base::IDataTag, public EntityWithSourcesHDF5 
 private:
 
     Group feature_group;
-    ReferenceList reference_list;
+    Group refs_group;
 
 public:
 

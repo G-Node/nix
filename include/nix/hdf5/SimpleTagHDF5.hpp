@@ -11,7 +11,6 @@
 #define NIX_SIMPLE_TAG_HDF5_H
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
 #include <nix/base/ISimpleTag.hpp>
 
 namespace nix {
@@ -29,7 +28,7 @@ private:
     static const NDSize MAX_SIZE_1D;
 
     Group feature_group;
-    ReferenceList references_list;
+    Group refs_group;
 
 public:
 
@@ -64,9 +63,6 @@ public:
 
 
     void position(const std::vector<double> &position);
-
-
-    void position(const none_t t);
 
 
     std::vector<double> extent() const;
