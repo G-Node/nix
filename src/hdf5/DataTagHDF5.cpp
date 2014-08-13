@@ -92,34 +92,43 @@ bool DataTagHDF5::hasPositions() const {
 
 
 shared_ptr<IDataArray>  DataTagHDF5::extents() const {
-    std::string extId;
-    group().getAttr("extents", extId);
+    shared_ptr<IDataArray> da;
+    bool error = false;
 
-    return block()->getDataArray(extId);
+    if (group().hasGroup("extents")) {
+        Group other_group = group().openGroup("extents", false);
+        da = make_shared<DataArrayHDF5>(file(), block(), other_group);
+        if (!block()->hasDataArray(da->id())) error = true;
+    }
+    
+    // NOTE: we check that link exists in parent entity: if error, it was missing there
+    if (error) 
+        throw std::runtime_error("DataTagHDF5::extents: DataArray not found!");
+
+    return da;
 }
 
 
-void DataTagHDF5::extents(const string &extentsId) {
-    if (extentsId.empty())
-        throw EmptyString("extentsId");
+void DataTagHDF5::extents(const string &data_array_id) {
+    if (data_array_id.empty())
+        throw EmptyString("extents(id)");
+    if (!block()->hasDataArray(data_array_id))
+        throw std::runtime_error("DataTagHDF5::extents: DataArray not found in block!");
+    if (group().hasGroup("extents"))
+        group().removeGroup("extents");
 
-    if (!block()->hasDataArray(extentsId))
-        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
+    auto da = block()->getDataArray(data_array_id);
+    if (!checkDimensions(da, positions()))
+        throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(da);
 
-    if (hasPositions()) {
-        auto ext = block()->getDataArray(extentsId);
-
-        if (!checkDimensions(ext, positions()))
-            throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-    }
-
-    group().setAttr("extents", extentsId);
+    group().createLink(target->group(), "extents");
     forceUpdatedAt();
 }
 
 void DataTagHDF5::extents(const none_t t) {
-    if (group().hasAttr("extents")) {
-        group().removeAttr("extents");
+    if (group().hasGroup("extents")) {
+        group().removeGroup("extents");
     }
     forceUpdatedAt();
 }

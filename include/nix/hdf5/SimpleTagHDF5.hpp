@@ -11,7 +11,6 @@
 #define NIX_SIMPLE_TAG_HDF5_H
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
 #include <nix/base/ISimpleTag.hpp>
 
 namespace nix {

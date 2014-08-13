@@ -251,8 +251,22 @@ void TestDataTag::testPositions() {
 
 
 void TestDataTag::testPositionExtents() {
+    tag.extents(extents);
+    CPPUNIT_ASSERT(tag.extents().id() == extents.id());
+    block.deleteDataArray(extents.id());
+    // make sure that link is gone with data array
+    CPPUNIT_ASSERT(!tag.extents());
+    // re-create extents
+    extents = block.createDataArray("extents_DataArray", "dataArray",
+                                    DataType::Double, {0, 0});
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
+    array_type B(boost::extents[5][5]);
+    for(index i = 0; i < 5; ++i){
+        B[i][i] = 100.0*i;
+    }
+    extents.setData(B);
+
     array_type A(boost::extents[10][10]);
     for(index i = 0; i < 10; ++i){
         A[i][i] = 100.0*i;

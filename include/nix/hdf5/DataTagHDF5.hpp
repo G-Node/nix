@@ -15,7 +15,6 @@
 #include <vector>
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
 
 namespace nix {
 namespace hdf5 {
