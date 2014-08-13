@@ -49,11 +49,11 @@ NIXAPI Result validate(const DataArray &data_array);
   * Function taking a Tag entity and returning {@link Result}
   * object
   *
-  * @param simple_tag Tag entity
+  * @param tag Tag entity
   *
   * @returns The validation results as {@link Result} object
   */
-NIXAPI Result validate(const Tag &simple_tag);
+NIXAPI Result validate(const Tag &tag);
 
 /**
   * @brief Property entity validator

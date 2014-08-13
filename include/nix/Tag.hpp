@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_SIMPLE_TAG_H
-#define NIX_SIMPLE_TAG_H
+#ifndef NIX_TAG_H
+#define NIX_TAG_H
 
 #include <algorithm>
 
@@ -284,7 +284,7 @@ public:
     }
 
     /**
-     * @brief Get referenced data arrays associated with this simple tag.
+     * @brief Get referenced data arrays associated with this tag.
      *
      * The parameter filter can be used to filter data arrays by various
      * criteria.
@@ -296,8 +296,7 @@ public:
     std::vector<DataArray> references(util::Filter<DataArray>::type filter) const;
 
     /**
-     * @brief Get all referenced data arrays associated with this simple
-     * tag.
+     * @brief Get all referenced data arrays associated with this tag.
      *
      * Always uses filter that accepts all sources.
      *
@@ -452,4 +451,4 @@ public:
 
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_H
+#endif // NIX_TAG_H

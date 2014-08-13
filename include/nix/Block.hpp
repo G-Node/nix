@@ -398,33 +398,33 @@ public:
     bool deleteDataArray(const DataArray &data_array);
 
     //--------------------------------------------------
-    // Methods concerning simple tags.
+    // Methods concerning tags.
     //--------------------------------------------------
 
     /**
-     * @brief Checks if a specific simple tag exists in the block.
+     * @brief Checks if a specific tag exists in the block.
      *
-     * @param id        The id of a simple tag.
+     * @param id        The id of a tag.
      *
-     * @return True if the simple tag exists, false otherwise.
+     * @return True if the tag exists, false otherwise.
      */
     bool hasTag(const std::string &id) const {
         return backend()->hasTag(id);
     }
 
     /**
-    * @brief Checks if a specific simple tag exists in the block.
+    * @brief Checks if a specific tag exists in the block.
     *
-    * @param simple_tag        The simple tag to check.
+    * @param tag        The tag to check.
     *
-    * @return True if the simple tag exists, false otherwise.
+    * @return True if the tag exists, false otherwise.
     */
-    bool hasTag(const Tag &simple_tag) const;
+    bool hasTag(const Tag &tag) const;
 
     /**
-     * @brief Retrieves a specific simple tag from the block by its id.
+     * @brief Retrieves a specific tag from the block by its id.
      *
-     * @param id        The id of the simple tag.
+     * @param id        The id of the tag.
      *
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
@@ -434,42 +434,42 @@ public:
     }
 
     /**
-     * @brief Retrieves a specific simple tag by index.
+     * @brief Retrieves a specific tag by index.
      *
      * @param index     The index of the tag.
      *
-     * @return The simple tag at the specified index.
+     * @return The tag at the specified index.
      */
     Tag getTag(size_t index) const {
         return backend()->getTag(index);
     }
 
     /**
-     * @brief Get simple tags within this block.
+     * @brief Get tags within this block.
      *
-     * The parameter filter can be used to filter simple tags by various
+     * The parameter filter can be used to filter tags by various
      * criteria. By default a filter is used that accepts all tags.
      *
      * @param filter    A filter function.
      *
-     * @return A vector that contains all filtered simple tags.
+     * @return A vector that contains all filtered tags.
      */
-    std::vector<Tag> simpleTags(util::Filter<Tag>::type filter
-                                      = util::AcceptAll<Tag>()) const;
+    std::vector<Tag> tags(util::Filter<Tag>::type filter
+                          = util::AcceptAll<Tag>()) const;
 
     /**
-     * @brief Returns the number of simple tags within this block.
+     * @brief Returns the number of tags within this block.
      *
-     * @return The number of simple tags.
+     * @return The number of tags.
      */
-    size_t simpleTagCount() const {
-        return backend()->simpleTagCount();
+    size_t tagCount() const {
+        return backend()->tagCount();
     }
 
     /**
-     * @brief Create a new simple tag associated with this block.
+     * @brief Create a new tag associated with this block.
      *
-     * @param name      The name of the simple tag to create.
+     * @param name      The name of the tag to create.
      * @param type      The type of the tag.
      * @param refs      A Vector with referenced data array entities.
      *
@@ -481,9 +481,9 @@ public:
     }
 
     /**
-     * @brief Deletes a simple tag from the block.
+     * @brief Deletes a tag from the block.
      *
-     * Deletes a simple tag with all its features from the block and the file.
+     * Deletes a tag with all its features from the block and the file.
      * The deletion can't be undone.
      *
      * @param id        The id of the tag to remove.
@@ -495,16 +495,16 @@ public:
     }
 
     /**
-    * @brief Deletes a simple tag from the block.
+    * @brief Deletes a tag from the block.
     *
-    * Deletes a simple tag with all its features from the block and the file.
+    * Deletes a tag with all its features from the block and the file.
     * The deletion can't be undone.
     *
-    * @param simple_tag        The tag to remove.
+    * @param tag        The tag to remove.
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteTag(const Tag &simple_tag);
+    bool deleteTag(const Tag &tag);
 
     //--------------------------------------------------
     // Methods concerning data tags.

@@ -7,8 +7,8 @@
 // LICENSE file in the root of the Project.
 
 
-#ifndef NIX_SIMPLE_TAG_HDF5_H
-#define NIX_SIMPLE_TAG_HDF5_H
+#ifndef NIX_TAG_HDF5_H
+#define NIX_TAG_HDF5_H
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 #include <nix/base/ITag.hpp>
@@ -135,4 +135,4 @@ public:
 } // namespace hdf5
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_HDF5_H
+#endif // NIX_TAG_HDF5_H

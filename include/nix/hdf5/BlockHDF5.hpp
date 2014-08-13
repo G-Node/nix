@@ -26,7 +26,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    Group source_group, data_array_group, simple_tag_group, data_tag_group;
+    Group source_group, data_array_group, tag_group, data_tag_group;
 
 public:
 
@@ -105,7 +105,7 @@ public:
     bool deleteDataArray(const std::string &id);
 
     //--------------------------------------------------
-    // Methods concerning simple tags.
+    // Methods concerning tags.
     //--------------------------------------------------
 
     bool hasTag(const std::string &id) const;
@@ -117,7 +117,7 @@ public:
     std::shared_ptr<base::ITag> getTag(size_t index) const;
 
 
-    size_t simpleTagCount() const;
+    size_t tagCount() const;
 
 
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,

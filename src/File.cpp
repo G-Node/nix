@@ -133,11 +133,11 @@ valid::Result File::validate() const {
             }
         }
         // Tags
-        auto simple_tags = block.simpleTags();
-        for (auto &simple_tag : simple_tags) {
-            result.concat(valid::validate(simple_tag));
+        auto tags = block.tags();
+        for (auto &tag : tags) {
+            result.concat(valid::validate(tag));
             // Features
-            auto features = simple_tag.features();
+            auto features = tag.features();
             for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }

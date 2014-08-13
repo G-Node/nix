@@ -81,7 +81,7 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Ra
  * @brief Returns the offsets and element counts associated with position and extent of a Tag and
  *        the referenced DataArray.
  *
- * @param tag           The simple tag.
+ * @param tag           The tag.
  * @param array         A referenced data array.
  * @param[out] offsets  The resulting offset.
  * @param[out] counts   The number of elements to read from data

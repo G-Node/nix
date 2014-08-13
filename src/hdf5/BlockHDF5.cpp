@@ -25,7 +25,7 @@ BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
 {
     source_group = group.openGroup("sources", false);
     data_array_group = group.openGroup("data_arrays", false);
-    simple_tag_group = group.openGroup("simple_tags", false);
+    tag_group = group.openGroup("tags", false);
     data_tag_group = group.openGroup("data_tags", false);
 }
     
@@ -40,7 +40,7 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 {
     source_group = group.openGroup("sources", true);
     data_array_group = group.openGroup("data_arrays", true);
-    simple_tag_group = group.openGroup("simple_tags", true);
+    tag_group = group.openGroup("tags", true);
     data_tag_group = group.openGroup("data_tags", true);
 }
 
@@ -108,7 +108,7 @@ bool BlockHDF5::deleteSource(const string &id) {
 // Tag methods
 
 bool BlockHDF5::hasTag(const string &id) const {
-    return simple_tag_group.hasObject(id);
+    return tag_group.hasObject(id);
 }
 
 
@@ -116,7 +116,7 @@ shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
     shared_ptr<TagHDF5> tag;
 
     if (hasTag(id)) {
-        Group tag_group = simple_tag_group.openGroup(id, false);
+        Group tag_group = tag_group.openGroup(id, false);
         tag = make_shared<TagHDF5>(file(), block(), tag_group);
     }
 
@@ -125,24 +125,24 @@ shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
 
 
 shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
-    string id = simple_tag_group.objectName(index);
+    string id = tag_group.objectName(index);
     return getTag(id);
 }
 
 
-size_t BlockHDF5::simpleTagCount() const {
-    return simple_tag_group.objectCount();
+size_t BlockHDF5::tagCount() const {
+    return tag_group.objectCount();
 }
 
 
 shared_ptr<ITag> BlockHDF5::createTag(const string &name, const string &type,
                                                   const std::vector<double> &position) {
-    string id = util::createId("simple_tag");
+    string id = util::createId("tag");
     while (hasTag(id)) {
-        id = util::createId("simple_tag");
+        id = util::createId("tag");
     }
 
-    Group group = simple_tag_group.openGroup(id, true);
+    Group group = tag_group.openGroup(id, true);
     return make_shared<TagHDF5>(file(), block(), group, id, type, name, position);
 }
 
@@ -151,7 +151,7 @@ bool BlockHDF5::deleteTag(const string &id) {
     bool deleted = false;
 
     if (hasTag(id)) {
-        simple_tag_group.removeGroup(id);
+        tag_group.removeGroup(id);
         deleted = true;
     }
 

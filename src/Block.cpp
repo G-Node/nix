@@ -68,25 +68,25 @@ bool Block::deleteDataArray(const DataArray &data_array) {
     return backend()->deleteDataArray(data_array.id());
 }
 
-bool Block::hasTag(const Tag &simple_tag) const {
-    if (simple_tag == none) {
+bool Block::hasTag(const Tag &tag) const {
+    if (tag == none) {
         throw std::runtime_error("Empty Tag entity given!");
     }
-    return backend()->hasTag(simple_tag.id());
+    return backend()->hasTag(tag.id());
 }
 
-std::vector<Tag> Block::simpleTags(util::Filter<Tag>::type filter) const {
+std::vector<Tag> Block::tags(util::Filter<Tag>::type filter) const {
     auto f = [this] (size_t i) { return getTag(i); };
     return getEntities<Tag>(f,
-                                  simpleTagCount(),
-                                  filter);
+                            tagCount(),
+                            filter);
 }
 
-bool Block::deleteTag(const Tag &simple_tag) {
-    if (simple_tag == none) {
+bool Block::deleteTag(const Tag &tag) {
+    if (tag == none) {
         throw std::runtime_error("Block::deleteTag: Empty Tag entity given!");
     }
-    return backend()->deleteTag(simple_tag.id());
+    return backend()->deleteTag(tag.id());
 }
 
 bool Block::hasMultiTag(const MultiTag &data_tag) const {

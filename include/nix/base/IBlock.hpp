@@ -72,7 +72,7 @@ public:
     virtual bool deleteDataArray(const std::string &id) = 0;
 
     //--------------------------------------------------
-    // Methods concerning simple tags.
+    // Methods concerning tags.
     //--------------------------------------------------
 
     virtual bool hasTag(const std::string &id) const = 0;
@@ -84,7 +84,7 @@ public:
     virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
 
 
-    virtual size_t simpleTagCount() const = 0;
+    virtual size_t tagCount() const = 0;
 
 
     virtual std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,

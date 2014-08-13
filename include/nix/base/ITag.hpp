@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_SIMPLE_TAG_H
-#define NIX_I_SIMPLE_TAG_H
+#ifndef NIX_I_TAG_H
+#define NIX_I_TAG_H
 
 #include <string>
 #include <vector>
@@ -108,4 +108,4 @@ public:
 } // namespace base
 } // namespace nix
 
-#endif // NIX_I_SIMPLE_TAG_H
+#endif // NIX_I_TAG_H
