@@ -99,7 +99,8 @@ shared_ptr<IDataArray>  DataTagHDF5::extents() const {
     if (group().hasGroup("extents")) {
         Group other_group = group().openGroup("extents", false);
         da = make_shared<DataArrayHDF5>(file(), block(), other_group);
-        if (!block()->hasDataArray(da->id())) error = true;
+        if (!block()->hasDataArray(da->id())) 
+            error = true;
     }
     
     // NOTE: we check that link exists in parent entity: if error, it was missing there
