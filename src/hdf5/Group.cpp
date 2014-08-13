@@ -89,7 +89,7 @@ std::string Group::objectName(size_t index) const {
         str_name = name;
         delete [] name;
     } else {
-        str_name = "";
+        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");    
     }
 
     return str_name;

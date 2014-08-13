@@ -133,11 +133,7 @@ shared_ptr<IDataArray> SimpleTagHDF5::getReference(size_t index) const {
 
     // get reference id
     std::string id = refs_group.objectName(index);
-    if (!id.empty()) {
-        da = getReference(id);
-    } else {
-        throw OutOfBounds("No data array at given index", index);
-    }
+    da = getReference(id);
 
     return da;
 }
@@ -224,7 +220,7 @@ shared_ptr<IFeature> SimpleTagHDF5::getFeature(size_t index) const {
 }
 
 
-shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
+shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &id, LinkType link_type) {
     if (link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for SimpleTag entities and can only be used for DataTag entities.");
     }
@@ -234,7 +230,7 @@ shared_ptr<IFeature> SimpleTagHDF5::createFeature(const std::string &data_array_
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(data_array_id);
+    DataArray data = block()->getDataArray(id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 

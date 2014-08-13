@@ -66,15 +66,15 @@ void FeatureHDF5::linkType(LinkType link_type) {
 }
 
 
-void FeatureHDF5::data(const std::string &data_array_id) {
-    if (data_array_id.empty())
+void FeatureHDF5::data(const std::string &id) {
+    if (id.empty())
         throw EmptyString("data(id)");
-    if (!block->hasDataArray(data_array_id))
+    if (!block->hasDataArray(id))
         throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
     if (group().hasGroup("data"))
         group().removeGroup("data");
     
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block->getDataArray(data_array_id));
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block->getDataArray(id));
 
     group().createLink(target->group(), "data");
     forceUpdatedAt();

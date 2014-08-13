@@ -123,6 +123,17 @@ public:
     }
 
     /**
+     * @brief Set all sources associations for this entity.
+     *
+     * All previously existing associations will be overwritten.
+     *
+     * @param sources A vector with all sources.
+     */
+    virtual void sources(const std::vector<Source> &sources) {
+        EntityWithMetadata<T>::backend()->sources(sources);
+    }
+
+    /**
      * @brief Associate a new source with the entity.
      *
      * If a source with the given id already is associated with the

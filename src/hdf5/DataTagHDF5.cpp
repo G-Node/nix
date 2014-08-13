@@ -56,7 +56,8 @@ shared_ptr<IDataArray> DataTagHDF5::positions() const {
     if (group().hasGroup("positions")) {
         Group other_group = group().openGroup("positions", false);
         da = make_shared<DataArrayHDF5>(file(), block(), other_group);
-        if (!block()->hasDataArray(da->id())) error = true;
+        if (!block()->hasDataArray(da->id())) 
+            error = true;
     }
     else error = true;
     
@@ -69,15 +70,15 @@ shared_ptr<IDataArray> DataTagHDF5::positions() const {
 }
 
 
-void DataTagHDF5::positions(const string &data_array_id) {
-    if (data_array_id.empty())
+void DataTagHDF5::positions(const string &id) {
+    if (id.empty())
         throw EmptyString("positions(id)");
-    if (!block()->hasDataArray(data_array_id))
+    if (!block()->hasDataArray(id))
         throw std::runtime_error("DataTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
         group().removeGroup("positions");
     
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(data_array_id));
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
 
     group().createLink(target->group(), "positions");
     forceUpdatedAt();
@@ -109,15 +110,15 @@ shared_ptr<IDataArray>  DataTagHDF5::extents() const {
 }
 
 
-void DataTagHDF5::extents(const string &data_array_id) {
-    if (data_array_id.empty())
+void DataTagHDF5::extents(const string &id) {
+    if (id.empty())
         throw EmptyString("extents(id)");
-    if (!block()->hasDataArray(data_array_id))
+    if (!block()->hasDataArray(id))
         throw std::runtime_error("DataTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))
         group().removeGroup("extents");
 
-    auto da = block()->getDataArray(data_array_id);
+    auto da = block()->getDataArray(id);
     if (!checkDimensions(da, positions()))
         throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     auto target = dynamic_pointer_cast<DataArrayHDF5>(da);
@@ -184,11 +185,7 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
 
     // get reference id
     std::string id = refs_group.objectName(index);
-    if (!id.empty()) {
-        da = getReference(id);
-    } else {
-        throw OutOfBounds("No data array at given index", index);
-    }
+    da = getReference(id);
 
     return da;
 }
@@ -275,14 +272,14 @@ shared_ptr<IFeature>  DataTagHDF5::getFeature(size_t index) const {
 }
 
 
-shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &data_array_id, LinkType link_type) {
-    string id = util::createId("feature");
-    while (feature_group.hasObject(id))
-        id = util::createId("feature");
+shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &id, LinkType link_type) {
+    string rep_id = util::createId("feature");
+    while (feature_group.hasObject(rep_id))
+        rep_id = util::createId("feature");
 
-    Group group = feature_group.openGroup(id, true);
-    DataArray data = block()->getDataArray(data_array_id);
-    return make_shared<FeatureHDF5>(file(), block(), group, id, data, link_type);
+    Group group = feature_group.openGroup(rep_id, true);
+    DataArray data = block()->getDataArray(id);
+    return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
 

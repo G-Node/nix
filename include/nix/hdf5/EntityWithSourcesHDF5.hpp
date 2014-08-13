@@ -59,7 +59,7 @@ public:
       *
       * @param sources     A vector with all sources.
       */
-    void sources(const std::vector<Source> &srcs_new);
+    void sources(const std::vector<Source> &sources);
 
     void addSource(const std::string &id);
 
