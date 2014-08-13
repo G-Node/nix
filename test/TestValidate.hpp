@@ -66,8 +66,8 @@ private:
     std::vector<std::string> atomic_units;
     std::vector<std::string> compound_units;
     std::vector<std::string> invalid_units;
-    nix::DataTag dtag;
-    nix::SimpleTag stag;
+    nix::MultiTag dtag;
+    nix::Tag tag;
     tag_tmp units_tmp;
     nix::SetDimension dim_set1;
     nix::SetDimension dim_set2;

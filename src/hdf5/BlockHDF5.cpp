@@ -116,8 +116,8 @@ shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
     shared_ptr<TagHDF5> tag;
 
     if (hasTag(id)) {
-        Group tag_group = tag_group.openGroup(id, false);
-        tag = make_shared<TagHDF5>(file(), block(), tag_group);
+        Group t_group = tag_group.openGroup(id, false);
+        tag = make_shared<TagHDF5>(file(), block(), t_group);
     }
 
     return tag;

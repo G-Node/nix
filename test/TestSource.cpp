@@ -29,7 +29,7 @@ void TestSource::setUp() {
     source_other = block.createSource("source_two", "channel");
     source_null  = nullptr;
 
-    // create a DataArray & a DataTag
+    // create a DataArray & a MultiTag
     darray = block.createDataArray("DataArray", "dataArray",
                                    DataType::Double, {0, 0});
     typedef boost::multi_array<double, 2> array_type;
@@ -39,7 +39,7 @@ void TestSource::setUp() {
         A[i][i] = 100.0*i;
     }
     darray.setData(A);
-    dtag = block.createDataTag("tag_one", "test_tag", darray);
+    dtag = block.createMultiTag("tag_one", "test_tag", darray);
 }
 
 

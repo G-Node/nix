@@ -17,7 +17,7 @@ void TestFeature::setUp() {
     data_array = block.createDataArray("featureTest", "Test",
                                        DataType::Double, nix::NDSize({ 0 }));
     
-    tag = block.createSimpleTag("featureTest", "Test", {0.0, 2.0, 3.4});
+    tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
 
 

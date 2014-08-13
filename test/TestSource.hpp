@@ -48,7 +48,7 @@ private:
     nix::Section section;
     nix::Source source, source_other, source_null;
     nix::DataArray darray;
-    nix::DataTag dtag;
+    nix::MultiTag dtag;
     time_t startup_time;
 
 public:

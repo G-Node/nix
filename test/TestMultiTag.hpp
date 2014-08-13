@@ -25,18 +25,18 @@
 #include <nix/util/util.hpp>
 
 
-class TestDataTag: public CPPUNIT_NS::TestFixture {
+class TestMultiTag: public CPPUNIT_NS::TestFixture {
 private:
 
     nix::File file;
     nix::Block block;
     nix::DataArray positions, extents;
-    nix::DataTag tag, tag_other, tag_null;
+    nix::MultiTag tag, tag_other, tag_null;
     nix::Section section;
     time_t startup_time;
 
 
-    CPPUNIT_TEST_SUITE(TestDataTag);
+    CPPUNIT_TEST_SUITE(TestMultiTag);
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testName);

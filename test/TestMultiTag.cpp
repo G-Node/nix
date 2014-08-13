@@ -20,7 +20,7 @@ using namespace nix::hdf5;
 using namespace valid;
 
 
-void TestDataTag::setUp() {
+void TestMultiTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_dataTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
@@ -44,34 +44,34 @@ void TestDataTag::setUp() {
     }
     extents.setData(B);
 
-    tag = block.createDataTag("tag_one", "test_tag", positions);
-    tag_other = block.createDataTag("tag_two", "test_tag", positions);
+    tag = block.createMultiTag("tag_one", "test_tag", positions);
+    tag_other = block.createMultiTag("tag_two", "test_tag", positions);
     tag_null = nullptr;
 
     section = file.createSection("foo_section", "metadata");
 }
 
 
-void TestDataTag::tearDown(){
+void TestMultiTag::tearDown(){
     file.deleteBlock(block.id());
     file.deleteSection(section.id());
     file.close();
 }
 
 
-void TestDataTag::testValidate() {
+void TestMultiTag::testValidate() {
     valid::Result result = validate(tag);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestDataTag::testId() {
+void TestMultiTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 25);
 }
 
 
-void TestDataTag::testName() {
+void TestMultiTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
     std::string name = util::createId("", 32);
     tag.name(name);
@@ -79,7 +79,7 @@ void TestDataTag::testName() {
 }
 
 
-void TestDataTag::testType() {
+void TestMultiTag::testType() {
     CPPUNIT_ASSERT(tag.type() == "test_tag");
     std::string type = util::createId("", 32);
     tag.type(type);
@@ -87,7 +87,7 @@ void TestDataTag::testType() {
 }
 
 
-void TestDataTag::testDefinition() {
+void TestMultiTag::testDefinition() {
     std::string def = util::createId("", 128);
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
@@ -96,14 +96,14 @@ void TestDataTag::testDefinition() {
 }
 
 
-void TestDataTag::testCreateRemove() {
+void TestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
     size_t count = block.dataTagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        DataTag dt1 = block.createDataTag(names[i], type, positions);
-        DataTag dt2 = block.getDataTag(dt1.id());
+        MultiTag dt1 = block.createMultiTag(names[i], type, positions);
+        MultiTag dt2 = block.getMultiTag(dt1.id());
         ids.push_back(dt1.id());
 
         std::stringstream errmsg;
@@ -112,11 +112,11 @@ void TestDataTag::testCreateRemove() {
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), dt1.id().compare(dt2.id()) == 0);
     }
     std::stringstream errmsg2;
-    errmsg2 << "Error creating DataTags. Counts do not match!";
+    errmsg2 << "Error creating MultiTags. Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.dataTagCount() == (count+5));
 
     for (size_t i = 0; i < ids.size(); i++) {
-        block.deleteDataTag(ids[i]);
+        block.deleteMultiTag(ids[i]);
     }
 
     std::stringstream errmsg1;
@@ -124,8 +124,8 @@ void TestDataTag::testCreateRemove() {
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.dataTagCount() == count);
 }
 
-void TestDataTag::testUnits() {
-    DataTag dt = block.createDataTag("TestDataTag1", "Tag", positions);
+void TestMultiTag::testUnits() {
+    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -149,12 +149,12 @@ void TestDataTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteDataTag(dt.id());
+    block.deleteMultiTag(dt.id());
 }
 
 //TODO Constraints on References are not tested yet.
 
-void TestDataTag::testReferences(){
+void TestMultiTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
                                            "Reference",
                                            DataType::Double,
@@ -163,12 +163,12 @@ void TestDataTag::testReferences(){
                                            DataType::Double,
                                            NDSize({ 0 }));
 
-    DataTag dt = block.createDataTag("TestDataTag1", "Tag", positions);
+    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
 
     std::stringstream counterrmsg;
-    counterrmsg << "TestDataTag::testReference: Counts do not match!";
+    counterrmsg << "TestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
 
     dt.addReference(da_1);
@@ -177,19 +177,19 @@ void TestDataTag::testReferences(){
 
     DataArray ref1 = dt.getReference(da_1.id());
     std::stringstream retrieveerrmsg;
-    retrieveerrmsg << "TestDataTag::testReference: Retrieval did not work!";
+    retrieveerrmsg << "TestMultiTag::testReference: Retrieval did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
 
     std::vector<DataArray> arrays = dt.references();
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);
 
     std::stringstream hasReferrmsg;
-    hasReferrmsg << "TestDataTag::testReference: hadReference did not work!";
+    hasReferrmsg << "TestMultiTag::testReference: hadReference did not work!";
     CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1.id()));
     CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_2.id()));
 
     std::stringstream delReferrmsg;
-    delReferrmsg << "TestDataTag::testReference: removeReference did not work!";
+    delReferrmsg << "TestMultiTag::testReference: removeReference did not work!";
     dt.removeReference(da_1.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
     dt.removeReference(da_2.id());
@@ -204,11 +204,11 @@ void TestDataTag::testReferences(){
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
-    block.deleteDataTag(dt.id());
+    block.deleteMultiTag(dt.id());
 }
 
 
-void TestDataTag::testExtents(){
+void TestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
 
     typedef boost::multi_array<double, 2> array_type;
@@ -228,7 +228,7 @@ void TestDataTag::testExtents(){
 }
 
 
-void TestDataTag::testPositions() {
+void TestMultiTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"), std::runtime_error);
 
     tag.positions(positions);
@@ -250,7 +250,7 @@ void TestDataTag::testPositions() {
 }
 
 
-void TestDataTag::testPositionExtents() {
+void TestMultiTag::testPositionExtents() {
     tag.extents(extents);
     CPPUNIT_ASSERT(tag.extents().id() == extents.id());
     block.deleteDataArray(extents.id());
@@ -280,7 +280,7 @@ void TestDataTag::testPositionExtents() {
 }
 
 
-void TestDataTag::testMetadataAccess() {
+void TestMultiTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
@@ -299,7 +299,7 @@ void TestDataTag::testMetadataAccess() {
 }
 
 
-void TestDataTag::testSourceAccess(){
+void TestMultiTag::testSourceAccess(){
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
     CPPUNIT_ASSERT(tag.sources().size() == 0);
@@ -328,7 +328,7 @@ void TestDataTag::testSourceAccess(){
     CPPUNIT_ASSERT(tag.sources().size() == 0);
 }
 
-void TestDataTag::testOperators() {
+void TestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
 
@@ -347,7 +347,7 @@ void TestDataTag::testOperators() {
 }
 
 
-void TestDataTag::testCreatedAt() {
+void TestMultiTag::testCreatedAt() {
     CPPUNIT_ASSERT(tag.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     tag.forceCreatedAt(past_time);
@@ -355,6 +355,6 @@ void TestDataTag::testCreatedAt() {
 }
 
 
-void TestDataTag::testUpdatedAt() {
+void TestMultiTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
