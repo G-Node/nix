@@ -63,7 +63,7 @@ size_t Group::objectCount() const {
 std::string Group::objectName(size_t index) const {
     // check if index valid
     if(index > objectCount()) {
-        throw OutOfBounds("No data array at given index", index);
+        throw OutOfBounds("No object at given index", index);
     }
     
     std::string str_name;

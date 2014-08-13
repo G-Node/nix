@@ -234,7 +234,7 @@ void DataTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // check if all new references exist & add sources
     for (auto id : ids_add) {
         if(!block()->hasDataArray(id)) 
-            throw std::runtime_error("One or more sources do not exist in this block!");
+            throw std::runtime_error("One or more data arrays do not exist in this block!");
         addReference(id);
     }
     // remove references
