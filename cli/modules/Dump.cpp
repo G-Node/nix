@@ -312,7 +312,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
     ++(*this)
         << static_cast<nix::base::EntityWithMetadata<nix::base::IBlock>>(block)
         << item() << "sourceCount" << scalar_start << block.sourceCount() << scalar_end
-        << item() << "simpleTagCount" << scalar_start << block.tagCount() << scalar_end
+        << item() << "tagCount" << scalar_start << block.tagCount() << scalar_end
         << item() << "multiTagCount" << scalar_start << block.multiTagCount() << scalar_end
         << item() << "dataArrayCount" << scalar_start << block.dataArrayCount() << scalar_end;
         // DataArrays
