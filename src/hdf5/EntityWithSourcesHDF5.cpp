@@ -77,11 +77,11 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) const {
 void EntityWithSourcesHDF5::sources(const std::vector<Source> &srcs_new) {
     // extract vectors of ids from vectors of new & old sources
     std::vector<std::string> ids_new(srcs_new.size());
-    transform(srcs_new.begin(), srcs_new.end(), ids_new.begin(), util::toId<Source>());
+    transform(srcs_new.begin(), srcs_new.end(), ids_new.begin(), util::toId<Source>);
     std::vector<Source> srcs_old(sourceCount());
     for (size_t i = 0; i < srcs_old.size(); i++) srcs_old[i] = getSource(i);
     std::vector<std::string> ids_old(srcs_old.size());
-    transform(srcs_old.begin(), srcs_old.end(), ids_old.begin(), util::toId<Source>());
+    transform(srcs_old.begin(), srcs_old.end(), ids_old.begin(), util::toId<Source>);
     // sort them
     std::sort(ids_new.begin(), ids_new.end());
     std::sort(ids_new.begin(), ids_new.end());

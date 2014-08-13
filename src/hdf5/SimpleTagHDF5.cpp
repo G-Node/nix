@@ -165,11 +165,11 @@ bool SimpleTagHDF5::removeReference(const std::string &id) {
 void SimpleTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // extract vectors of ids from vectors of new & old references
     std::vector<std::string> ids_new(refs_new.size());
-    transform(refs_new.begin(), refs_new.end(), ids_new.begin(), util::toId<DataArray>());
+    transform(refs_new.begin(), refs_new.end(), ids_new.begin(), util::toId<DataArray>);
     std::vector<DataArray> refs_old(referenceCount());
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
     std::vector<std::string> ids_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), ids_old.begin(), util::toId<DataArray>());
+    transform(refs_old.begin(), refs_old.end(), ids_old.begin(), util::toId<DataArray>);
     // sort them
     std::sort(ids_new.begin(), ids_new.end());
     std::sort(ids_new.begin(), ids_new.end());

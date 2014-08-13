@@ -91,8 +91,8 @@ NIXAPI time_t getTime();
  * @return The entity id.
  */
 template<typename T>
-NIXAPI std::function<std::string(const T&)> toId() {
-    return [](const T &entity) { return entity.id(); };
+std::string toId(const T &entity) {
+    return entity.id();
 }
 
 /**
