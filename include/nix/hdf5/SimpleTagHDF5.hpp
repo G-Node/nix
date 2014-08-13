@@ -66,9 +66,6 @@ public:
     void position(const std::vector<double> &position);
 
 
-    void position(const none_t t);
-
-
     std::vector<double> extent() const;
 
 

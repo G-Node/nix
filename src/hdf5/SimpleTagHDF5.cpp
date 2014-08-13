@@ -83,14 +83,6 @@ void SimpleTagHDF5::position(const vector<double> &position) {
 }
 
 
-void SimpleTagHDF5::position(const none_t t) {
-    if (group().hasData("position")) {
-        group().removeData("position");
-    }
-    forceUpdatedAt();
-}
-
-
 vector<double> SimpleTagHDF5::extent() const {
     vector<double> extent;
     group().getData("extent", extent);
