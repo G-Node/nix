@@ -122,7 +122,7 @@ valid::Result File::validate() const {
                 }
             }
         }
-        // DataTags
+        // MultiTags
         auto data_tags = block.dataTags();
         for (auto &data_tag : data_tags) {
             result.concat(valid::validate(data_tag));
@@ -132,7 +132,7 @@ valid::Result File::validate() const {
                 result.concat(valid::validate(feature));
             }
         }
-        // SimpleTags
+        // Tags
         auto simple_tags = block.simpleTags();
         for (auto &simple_tag : simple_tags) {
             result.concat(valid::validate(simple_tag));

@@ -12,7 +12,7 @@
 namespace nix {
 
 
-void DataTag::positions(const DataArray &positions) {
+void MultiTag::positions(const DataArray &positions) {
     if (positions == none) {
         throw std::runtime_error("Empty positions entity (DataArray) given");
     }
@@ -22,7 +22,7 @@ void DataTag::positions(const DataArray &positions) {
 }
 
 
-void DataTag::extents(const DataArray &extents) {
+void MultiTag::extents(const DataArray &extents) {
     if (extents == none) {
         backend()->extents(none);
     }
@@ -32,14 +32,14 @@ void DataTag::extents(const DataArray &extents) {
 }
 
 
-void DataTag::units(const std::vector<std::string> &units) {
+void MultiTag::units(const std::vector<std::string> &units) {
     std::vector<std::string> sanitized;
     sanitized.reserve(units.size());
     std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
         std::string unit = util::unitSanitizer(x);
         if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
             std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
-            throw InvalidUnit(msg, "DataTag::units(vector<string> &units)");
+            throw InvalidUnit(msg, "MultiTag::units(vector<string> &units)");
         }
         return unit;
     });
@@ -47,31 +47,31 @@ void DataTag::units(const std::vector<std::string> &units) {
 }
 
 
-bool DataTag::hasReference(const DataArray &reference) const {
+bool MultiTag::hasReference(const DataArray &reference) const {
     if (reference == none) {
-        throw std::runtime_error("DataTag::hasReference: Empty DataArray entity given!");
+        throw std::runtime_error("MultiTag::hasReference: Empty DataArray entity given!");
     }
     return backend()->hasReference(reference.id());
 }
 
 
-void DataTag::addReference(const DataArray &reference) {
+void MultiTag::addReference(const DataArray &reference) {
     if (reference == none) {
-        throw std::runtime_error("DataTag::addReference: Empty DataArray entity given!");
+        throw std::runtime_error("MultiTag::addReference: Empty DataArray entity given!");
     }
     backend()->addReference(reference.id());
 }
 
 
-bool DataTag::removeReference(const DataArray &reference) {
+bool MultiTag::removeReference(const DataArray &reference) {
     if (reference == none) {
-        throw std::runtime_error("DataTag::removeReference: Empty DataArray reference given!");
+        throw std::runtime_error("MultiTag::removeReference: Empty DataArray reference given!");
     }
     return backend()->removeReference(reference.id());
 }
 
 
-std::vector<DataArray> DataTag::references(util::Filter<DataArray>::type filter) const
+std::vector<DataArray> MultiTag::references(util::Filter<DataArray>::type filter) const
 {
     auto f = [this] (size_t i) { return getReference(i); };
     return getEntities<DataArray>(f,
@@ -80,15 +80,15 @@ std::vector<DataArray> DataTag::references(util::Filter<DataArray>::type filter)
 }
 
 
-bool DataTag::hasFeature(const Feature &feature) const {
+bool MultiTag::hasFeature(const Feature &feature) const {
     if (feature == none) {
-        throw std::runtime_error("DataTag::hasFeature: Empty feature given!");
+        throw std::runtime_error("MultiTag::hasFeature: Empty feature given!");
     }
     return backend()->hasFeature(feature.id());
 }
 
 
-std::vector<Feature> DataTag::features(util::Filter<Feature>::type filter) const
+std::vector<Feature> MultiTag::features(util::Filter<Feature>::type filter) const
 {
     auto f = [this] (size_t i) { return getFeature(i); };
     return getEntities<Feature>(f,
@@ -97,16 +97,16 @@ std::vector<Feature> DataTag::features(util::Filter<Feature>::type filter) const
 }
 
 
-bool DataTag::deleteFeature(const Feature &feature) {
+bool MultiTag::deleteFeature(const Feature &feature) {
     if (feature == none) {
-        throw std::runtime_error("DataTag::deleteFeature: Empty Feature entity given!");
+        throw std::runtime_error("MultiTag::deleteFeature: Empty Feature entity given!");
     }
     return backend()->deleteFeature(feature.id());
 }
 
 
-std::ostream& operator<<(std::ostream &out, const DataTag &ent) {
-    out << "DataTag: {name = " << ent.name();
+std::ostream& operator<<(std::ostream &out, const MultiTag &ent) {
+    out << "MultiTag: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
     return out;

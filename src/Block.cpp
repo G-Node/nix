@@ -68,46 +68,46 @@ bool Block::deleteDataArray(const DataArray &data_array) {
     return backend()->deleteDataArray(data_array.id());
 }
 
-bool Block::hasSimpleTag(const SimpleTag &simple_tag) const {
+bool Block::hasTag(const Tag &simple_tag) const {
     if (simple_tag == none) {
-        throw std::runtime_error("Empty SimpleTag entity given!");
+        throw std::runtime_error("Empty Tag entity given!");
     }
-    return backend()->hasSimpleTag(simple_tag.id());
+    return backend()->hasTag(simple_tag.id());
 }
 
-std::vector<SimpleTag> Block::simpleTags(util::Filter<SimpleTag>::type filter) const {
-    auto f = [this] (size_t i) { return getSimpleTag(i); };
-    return getEntities<SimpleTag>(f,
+std::vector<Tag> Block::simpleTags(util::Filter<Tag>::type filter) const {
+    auto f = [this] (size_t i) { return getTag(i); };
+    return getEntities<Tag>(f,
                                   simpleTagCount(),
                                   filter);
 }
 
-bool Block::deleteSimpleTag(const SimpleTag &simple_tag) {
+bool Block::deleteTag(const Tag &simple_tag) {
     if (simple_tag == none) {
-        throw std::runtime_error("Block::deleteSimpleTag: Empty SimpleTag entity given!");
+        throw std::runtime_error("Block::deleteTag: Empty Tag entity given!");
     }
-    return backend()->deleteSimpleTag(simple_tag.id());
+    return backend()->deleteTag(simple_tag.id());
 }
 
-bool Block::hasDataTag(const DataTag &data_tag) const {
+bool Block::hasMultiTag(const MultiTag &data_tag) const {
     if (data_tag == none) {
-        throw std::runtime_error("Block::hasDataTag: Empty DataTag entitiy given!");
+        throw std::runtime_error("Block::hasMultiTag: Empty MultiTag entitiy given!");
     }
-    return backend()->hasDataTag(data_tag.id());
+    return backend()->hasMultiTag(data_tag.id());
 }
 
-std::vector<DataTag> Block::dataTags(util::AcceptAll<DataTag>::type filter) const {
-    auto f = [this] (size_t i) { return getDataTag(i); };
-    return getEntities<DataTag>(f,
+std::vector<MultiTag> Block::dataTags(util::AcceptAll<MultiTag>::type filter) const {
+    auto f = [this] (size_t i) { return getMultiTag(i); };
+    return getEntities<MultiTag>(f,
                                 dataTagCount(),
                                 filter);
 }
 
-bool Block::deleteDataTag(const DataTag &data_tag) {
+bool Block::deleteMultiTag(const MultiTag &data_tag) {
     if (data_tag == none) {
-        throw std::runtime_error("Block::deleteDataTag: Empty DataTag entitiy given!");
+        throw std::runtime_error("Block::deleteMultiTag: Empty MultiTag entitiy given!");
     }
-    return backend()->deleteDataTag(data_tag.id());
+    return backend()->deleteMultiTag(data_tag.id());
 }
 
 std::ostream &operator<<(std::ostream &out, const Block &ent) {
