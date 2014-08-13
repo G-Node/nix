@@ -232,7 +232,21 @@ void TestDataTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"), std::runtime_error);
 
     tag.positions(positions);
-    CPPUNIT_ASSERT(tag.positions() == true);
+    CPPUNIT_ASSERT(tag.positions().id() == positions.id());
+    block.deleteDataArray(positions.id());
+    // make sure link is gone with data array
+    CPPUNIT_ASSERT_THROW(tag.positions(), std::runtime_error);
+    
+    // re-create positions
+    positions = block.createDataArray("positions_DataArray", "dataArray",
+                                      DataType::Double, {0, 0});
+    typedef boost::multi_array<double, 2> array_type;
+    typedef array_type::index index;
+    array_type A(boost::extents[5][5]);
+    for(index i = 0; i < 5; ++i){
+        A[i][i] = 100.0*i;
+    }
+    positions.setData(A);
 }
 
 

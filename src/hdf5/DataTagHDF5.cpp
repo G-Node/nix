@@ -50,45 +50,44 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 
 
 shared_ptr<IDataArray> DataTagHDF5::positions() const {
-    string id;
+    shared_ptr<IDataArray> da;
+    bool error = false;
 
-    if (group().hasAttr("positions")) {
-        group().getAttr("positions", id);
-    } else {
-        throw MissingAttr("positions");
+    if (group().hasGroup("positions")) {
+        Group other_group = group().openGroup("positions", false);
+        da = make_shared<DataArrayHDF5>(file(), block(), other_group);
+        if (!block()->hasDataArray(da->id())) error = true;
     }
+    else error = true;
+    
+    // NOTE: we check that link exists in both places, here & in entity
+    // if error = true it was missing in one of the two
+    if (error) 
+        throw std::runtime_error("DataTagHDF5::positions: DataArray not found!");
 
-    if (block()->hasDataArray(id)) {
-        return block()->getDataArray(id);
-    } else {
-        throw runtime_error("DataArray with positions not found in Block!");
-    }
+    return da;
 }
 
 
-void DataTagHDF5::positions(const string &id) {
-    if (id.empty())
-        throw EmptyString("positions DataArray id");
+void DataTagHDF5::positions(const string &data_array_id) {
+    if (data_array_id.empty())
+        throw EmptyString("positions(id)");
+    if (!block()->hasDataArray(data_array_id))
+        throw std::runtime_error("DataTagHDF5::positions: DataArray not found in block!");
+    if (group().hasGroup("positions"))
+        group().removeGroup("positions");
+    
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(data_array_id));
 
-    if (!block()->hasDataArray(id))
-        throw runtime_error("DataTagHDF5::extents: cannot set Extent because referenced DataArray does not exist!");
-
-    if (extents()) {
-        auto pos = block()->getDataArray(id);
-
-        if (!checkDimensions(extents(), pos))
-            throw runtime_error("DataTagHDF5::positions: cannot set Positions because dimensionality of extent and position data do not match!");
-    }
-
-    group().setAttr("positions", id);
+    group().createLink(target->group(), "positions");
     forceUpdatedAt();
 }
 
 
 bool DataTagHDF5::hasPositions() const {
-    std::string posId;
-    group().getAttr("positions", posId);
-    return (posId.length() > 0);
+    // NOTE: other than in positions getter here we do not check that the 
+    // positions DataArray also exists in block - we just say it does here
+    return group().hasGroup("positions");
 }
 
 
