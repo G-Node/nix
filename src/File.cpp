@@ -123,11 +123,11 @@ valid::Result File::validate() const {
             }
         }
         // MultiTags
-        auto data_tags = block.dataTags();
-        for (auto &data_tag : data_tags) {
-            result.concat(valid::validate(data_tag));
+        auto multi_tags = block.multiTags();
+        for (auto &multi_tag : multi_tags) {
+            result.concat(valid::validate(multi_tag));
             // Features
-            auto features = data_tag.features();
+            auto features = multi_tag.features();
             for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }

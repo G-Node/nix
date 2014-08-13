@@ -22,7 +22,7 @@ using namespace valid;
 
 void TestMultiTag::setUp() {
     startup_time = time(NULL);
-    file = File::open("test_dataTag.h5", FileMode::Overwrite);
+    file = File::open("test_multiTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
 
     positions = block.createDataArray("positions_DataArray", "dataArray",
@@ -67,7 +67,7 @@ void TestMultiTag::testValidate() {
 
 
 void TestMultiTag::testId() {
-    CPPUNIT_ASSERT(tag.id().size() == 25);
+    CPPUNIT_ASSERT(tag.id().size() == 26);
 }
 
 
@@ -98,7 +98,7 @@ void TestMultiTag::testDefinition() {
 
 void TestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
-    size_t count = block.dataTagCount();
+    size_t count = block.multiTagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
@@ -107,21 +107,21 @@ void TestMultiTag::testCreateRemove() {
         ids.push_back(dt1.id());
 
         std::stringstream errmsg;
-        errmsg << "Error while accessing dataTag: dt1.id() = " << dt1.id()
+        errmsg << "Error while accessing multiTag: dt1.id() = " << dt1.id()
                << " / dt2.id() = " << dt2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), dt1.id().compare(dt2.id()) == 0);
     }
     std::stringstream errmsg2;
     errmsg2 << "Error creating MultiTags. Counts do not match!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.dataTagCount() == (count+5));
+    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.multiTagCount() == (count+5));
 
     for (size_t i = 0; i < ids.size(); i++) {
         block.deleteMultiTag(ids[i]);
     }
 
     std::stringstream errmsg1;
-    errmsg1 << "Error while removing dataTags!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.dataTagCount() == count);
+    errmsg1 << "Error while removing multiTags!";
+    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
 }
 
 void TestMultiTag::testUnits() {

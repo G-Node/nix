@@ -145,7 +145,7 @@ private:
     nix::Property property;
     nix::DataArray dataArray, positions;
     nix::Tag tag;
-    nix::MultiTag dataTag;
+    nix::MultiTag multiTag;
     nix::Source source;
     nix::SetDimension set_dim;
     nix::SampledDimension sampled_dim;

@@ -26,7 +26,7 @@ BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
     source_group = group.openGroup("sources", false);
     data_array_group = group.openGroup("data_arrays", false);
     tag_group = group.openGroup("tags", false);
-    data_tag_group = group.openGroup("data_tags", false);
+    multi_tag_group = group.openGroup("multi_tags", false);
 }
     
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
@@ -41,7 +41,7 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
     source_group = group.openGroup("sources", true);
     data_array_group = group.openGroup("data_arrays", true);
     tag_group = group.openGroup("tags", true);
-    data_tag_group = group.openGroup("data_tags", true);
+    multi_tag_group = group.openGroup("multi_tags", true);
 }
 
 
@@ -223,18 +223,18 @@ bool BlockHDF5::deleteDataArray(const string &id) {
 
 shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const std::string &type,
                                               const DataArray &positions) {
-    string id = util::createId("data_tag");
+    string id = util::createId("multi_tag");
     while (hasMultiTag(id)) {
-        id = util::createId("data_tag");
+        id = util::createId("multi_tag");
     }
 
-    Group group = data_tag_group.openGroup(id);
+    Group group = multi_tag_group.openGroup(id);
     return make_shared<MultiTagHDF5>(file(), block(), group, id, type, name, positions);
 }
 
 
 bool BlockHDF5::hasMultiTag(const std::string &id) const {
-    return data_tag_group.hasObject(id);
+    return multi_tag_group.hasObject(id);
 }
 
 
@@ -242,7 +242,7 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const std::string &id) const {
     shared_ptr<MultiTagHDF5> tag;
 
     if (hasMultiTag(id)) {
-        Group tag_group = data_tag_group.openGroup(id);
+        Group tag_group = multi_tag_group.openGroup(id);
         tag = make_shared<MultiTagHDF5>(file(), block(), tag_group);
     }
 
@@ -251,20 +251,20 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const std::string &id) const {
 
 
 shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
-    string id = data_tag_group.objectName(index);
+    string id = multi_tag_group.objectName(index);
     return getMultiTag(id);
 }
 
 
-size_t BlockHDF5::dataTagCount() const{
-    return data_tag_group.objectCount();
+size_t BlockHDF5::multiTagCount() const{
+    return multi_tag_group.objectCount();
 }
 
 
 bool BlockHDF5::deleteMultiTag(const std::string &id) {
     bool deleted = false;
     if (hasMultiTag(id)) {
-        data_tag_group.removeGroup(id);
+        multi_tag_group.removeGroup(id);
         deleted = true;
     }
     return deleted;

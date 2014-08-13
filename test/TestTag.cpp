@@ -22,7 +22,7 @@ using namespace std;
 
 void TestTag::setUp() {
     startup_time = time(NULL);
-    file = File::open("test_dataTag.h5", FileMode::Overwrite);
+    file = File::open("test_multiTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
 
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",

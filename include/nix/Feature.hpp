@@ -39,7 +39,7 @@ namespace nix {
  *
  * ### Indexed
  *
- * This value is only valid for data tags where it indicates that
+ * This value is only valid for multi tags where it indicates that
  * the data linked via this {@link Feature} has to be accessed according
  * to the index in the respective position entry.
  */

@@ -94,7 +94,7 @@ public:
     virtual bool deleteTag(const std::string &id) = 0;
 
     //--------------------------------------------------
-    // Methods concerning data tags.
+    // Methods concerning multi tags.
     //--------------------------------------------------
 
     virtual bool hasMultiTag(const std::string &id) const = 0;
@@ -106,7 +106,7 @@ public:
     virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
 
 
-    virtual size_t dataTagCount() const = 0;
+    virtual size_t multiTagCount() const = 0;
 
 
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>

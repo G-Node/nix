@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_DATA_TAG_H
-#define NIX_DATA_TAG_H
+#ifndef NIX_MULTI_TAG_H
+#define NIX_MULTI_TAG_H
 
 #include <algorithm>
 
@@ -95,7 +95,7 @@ public:
     /**
      * @brief Getter for the positions of a tag.
      *
-     * The positions of a data tag are defined in a DataArray. This array has to define a set of
+     * The positions of a multi tag are defined in a DataArray. This array has to define a set of
      * origin vectors, each defining a point inside the referenced data or the beginning of a
      * region of interest.
      *
@@ -133,7 +133,7 @@ public:
     /**
      * @brief Getter for the extents of a tag.
      *
-     * The extents of a data tag are defined in an associated DataArray. This array has to define a set of
+     * The extents of a multi tag are defined in an associated DataArray. This array has to define a set of
      * extent vectors, each defining the size of the corresponding region of interest.
      *
      * @return The DataArray defining the extents of the tag.
@@ -470,4 +470,4 @@ public:
 
 } // namespace nix
 
-#endif // NIX_DATA_TAG_H
+#endif // NIX_MULTI_TAG_H

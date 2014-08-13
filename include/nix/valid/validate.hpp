@@ -72,11 +72,11 @@ NIXAPI Result validate(const Property &property);
   * 
   * Function taking a MultiTag entity and returning {@link Result} object
   *
-  * @param data_tag MultiTag entity
+  * @param multi_tag MultiTag entity
   *
   * @returns The validation results as {@link Result} object
   */
-NIXAPI Result validate(const MultiTag &data_tag);
+NIXAPI Result validate(const MultiTag &multi_tag);
 
 /**
   * @brief Dimension entity validator

@@ -8,8 +8,8 @@
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
 
-#ifndef NIX_DATA_TAG_HDF5_H
-#define NIX_DATA_TAG_HDF5_H
+#ifndef NIX_MULTI_TAG_HDF5_H
+#define NIX_MULTI_TAG_HDF5_H
 
 #include <string>
 #include <vector>
@@ -142,4 +142,4 @@ private:
 } // namespace hdf5
 } // namespace nix
 
-#endif // NIX_DATA_TAG_HDF5_H
+#endif // NIX_MULTI_TAG_HDF5_H

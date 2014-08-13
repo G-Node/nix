@@ -89,25 +89,25 @@ bool Block::deleteTag(const Tag &tag) {
     return backend()->deleteTag(tag.id());
 }
 
-bool Block::hasMultiTag(const MultiTag &data_tag) const {
-    if (data_tag == none) {
+bool Block::hasMultiTag(const MultiTag &multi_tag) const {
+    if (multi_tag == none) {
         throw std::runtime_error("Block::hasMultiTag: Empty MultiTag entitiy given!");
     }
-    return backend()->hasMultiTag(data_tag.id());
+    return backend()->hasMultiTag(multi_tag.id());
 }
 
-std::vector<MultiTag> Block::dataTags(util::AcceptAll<MultiTag>::type filter) const {
+std::vector<MultiTag> Block::multiTags(util::AcceptAll<MultiTag>::type filter) const {
     auto f = [this] (size_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f,
-                                dataTagCount(),
+                                multiTagCount(),
                                 filter);
 }
 
-bool Block::deleteMultiTag(const MultiTag &data_tag) {
-    if (data_tag == none) {
+bool Block::deleteMultiTag(const MultiTag &multi_tag) {
+    if (multi_tag == none) {
         throw std::runtime_error("Block::deleteMultiTag: Empty MultiTag entitiy given!");
     }
-    return backend()->deleteMultiTag(data_tag.id());
+    return backend()->deleteMultiTag(multi_tag.id());
 }
 
 std::ostream &operator<<(std::ostream &out, const Block &ent) {

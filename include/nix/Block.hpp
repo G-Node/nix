@@ -507,33 +507,33 @@ public:
     bool deleteTag(const Tag &tag);
 
     //--------------------------------------------------
-    // Methods concerning data tags.
+    // Methods concerning multi tags.
     //--------------------------------------------------
 
     /**
-     * @brief Checks if a specific data tag exists in the block.
+     * @brief Checks if a specific multi tag exists in the block.
      *
-     * @param id        The id of a data tag.
+     * @param id        The id of a multi tag.
      *
-     * @return True if the data tag exists, false otherwise.
+     * @return True if the multi tag exists, false otherwise.
      */
     bool hasMultiTag(const std::string &id) const {
         return backend()->hasMultiTag(id);
     }
 
     /**
-    * @brief Checks if a specific data tag exists in the block.
+    * @brief Checks if a specific multi tag exists in the block.
     *
-    * @param data_tag          The data tag to check.
+    * @param multi_tag          The multi tag to check.
     *
-    * @return True if the data tag exists, false otherwise.
+    * @return True if the multi tag exists, false otherwise.
     */
-    bool hasMultiTag(const MultiTag &data_tag) const;
+    bool hasMultiTag(const MultiTag &multi_tag) const;
 
     /**
-     * @brief Retrieves a specific data tag from the block by its id.
+     * @brief Retrieves a specific multi tag from the block by its id.
      *
-     * @param id        The id of the data tag.
+     * @param id        The id of the multi tag.
      *
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
@@ -543,42 +543,42 @@ public:
     }
 
     /**
-     * @brief Retrieves a specific data tag by index.
+     * @brief Retrieves a specific multi tag by index.
      *
      * @param index     The index of the tag.
      *
-     * @return The data tag at the specified index.
+     * @return The multi tag at the specified index.
      */
     MultiTag getMultiTag(size_t index) const {
         return backend()->getMultiTag(index);
     }
 
     /**
-     * @brief Get data tags within this block.
+     * @brief Get multi tags within this block.
      *
-     * The parameter filter can be used to filter data tags by various
+     * The parameter filter can be used to filter multi tags by various
      * criteria. By default a filter is used that accepts all tags.
      *
      * @param filter    A filter function.
      *
-     * @return A vector that contains all filtered data tags.
+     * @return A vector that contains all filtered multi tags.
      */
-    std::vector<MultiTag> dataTags(util::AcceptAll<MultiTag>::type filter
+    std::vector<MultiTag> multiTags(util::AcceptAll<MultiTag>::type filter
                                   = util::AcceptAll<MultiTag>()) const;
 
     /**
-     * @brief Returns the number of data tags associated with this block.
+     * @brief Returns the number of multi tags associated with this block.
      *
-     * @return The number of data tags.
+     * @return The number of multi tags.
      */
-    size_t dataTagCount() const {
-        return backend()->dataTagCount();
+    size_t multiTagCount() const {
+        return backend()->multiTagCount();
     }
 
     /**
-     * @brief Create a new data tag associated with this block.
+     * @brief Create a new multi tag associated with this block.
      *
-     * @param name      The name of the data tag to create.
+     * @param name      The name of the multi tag to create.
      * @param type      The type of the tag.
      * @param position  The position of the tag.
      *
@@ -590,9 +590,9 @@ public:
     }
 
     /**
-     * @brief Deletes a data tag from the block.
+     * @brief Deletes a multi tag from the block.
      *
-     * Deletes a data tag and all its features from the block and the file.
+     * Deletes a multi tag and all its features from the block and the file.
      * The deletion can't be undone.
      *
      * @param id        The id of the tag to remove.
@@ -604,16 +604,16 @@ public:
     }
 
     /**
-    * @brief Deletes a data tag from the block.
+    * @brief Deletes a multi tag from the block.
     *
-    * Deletes a data tag and all its features from the block and the file.
+    * Deletes a multi tag and all its features from the block and the file.
     * The deletion can't be undone.
     *
-    * @param data_tag  The tag to remove.
+    * @param multi_tag  The tag to remove.
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteMultiTag(const MultiTag &data_tag);
+    bool deleteMultiTag(const MultiTag &multi_tag);
 
     //------------------------------------------------------
     // Operators and other functions

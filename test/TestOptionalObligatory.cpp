@@ -97,7 +97,7 @@ void TestOptionalObligatory::setUp() {
     }
     tag.references(refs);
     
-    // dataTag----------------------------------------------------------
+    // multiTag----------------------------------------------------------
     positions = block.createDataArray("positions_DataArray", "dataArray",
                                       DataType::Double, nix::NDSize({ 0 }));
     typedef boost::multi_array<double, 1> array_type;
@@ -107,7 +107,7 @@ void TestOptionalObligatory::setUp() {
         A[i] = 100.0*i;
     }
     positions.setData(A);
-    dataTag = block.createMultiTag("tag_one", "test_tag", positions);
+    multiTag = block.createMultiTag("tag_one", "test_tag", positions);
 
     // source-----------------------------------------------------------
     source = block.createSource("source_one", "channel");
@@ -510,11 +510,11 @@ void TestOptionalObligatory::testTagUnits() {
 
 void TestOptionalObligatory::testMultiTagExtents() {
     static const bool accepts_none = test::accepts_noneT<nix::MultiTag, test::extents>::value;
-    is_opt   = std::conditional<std::is_class<decltype(dataTag.extents())>::value,
+    is_opt   = std::conditional<std::is_class<decltype(multiTag.extents())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(dataTag.extents())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(multiTag.extents())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(dataTag.extents()));
+    is_set   = test::TtoBool(util::deRef(multiTag.extents()));
     summarize("MultiTag::extents", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
@@ -522,11 +522,11 @@ void TestOptionalObligatory::testMultiTagExtents() {
 
 void TestOptionalObligatory::testMultiTagPositions() {
     static const bool accepts_none = test::accepts_noneT<nix::MultiTag, test::positions>::value;
-    is_opt   = std::conditional<std::is_class<decltype(dataTag.positions())>::value,
+    is_opt   = std::conditional<std::is_class<decltype(multiTag.positions())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(dataTag.positions())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(multiTag.positions())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(dataTag.positions()));
+    is_set   = test::TtoBool(util::deRef(multiTag.positions()));
     summarize("MultiTag::positions", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));

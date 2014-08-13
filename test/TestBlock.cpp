@@ -229,8 +229,8 @@ void TestBlock::testMultiTagAccess() {
 
     positions.setData(A);
 
-    CPPUNIT_ASSERT(block.dataTagCount() == 0);
-    CPPUNIT_ASSERT(block.dataTags().size() == 0);
+    CPPUNIT_ASSERT(block.multiTagCount() == 0);
+    CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
 
     vector<string> ids;
@@ -242,8 +242,8 @@ void TestBlock::testMultiTagAccess() {
     }
 
 
-    CPPUNIT_ASSERT(block.dataTagCount() == names.size());
-    CPPUNIT_ASSERT(block.dataTags().size() == names.size());
+    CPPUNIT_ASSERT(block.multiTagCount() == names.size());
+    CPPUNIT_ASSERT(block.multiTags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         MultiTag tag = block.getMultiTag(*it);
@@ -253,8 +253,8 @@ void TestBlock::testMultiTagAccess() {
         block.deleteMultiTag(*it);
     }
 
-    CPPUNIT_ASSERT(block.dataTagCount() == 0);
-    CPPUNIT_ASSERT(block.dataTags().size() == 0);
+    CPPUNIT_ASSERT(block.multiTagCount() == 0);
+    CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
 }
 

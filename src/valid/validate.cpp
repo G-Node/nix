@@ -155,27 +155,27 @@ Result validate(const Property &property) {
     return result.concat(result_base);
 }
 
-Result validate(const MultiTag &data_tag) {
-    Result result_base = validate_entity_with_sources(data_tag);
+Result validate(const MultiTag &multi_tag) {
+    Result result_base = validate_entity_with_sources(multi_tag);
     Result result = validator({
-        must(data_tag, &MultiTag::positions, notFalse(), "positions are not set!"),
+        must(multi_tag, &MultiTag::positions, notFalse(), "positions are not set!"),
         // since extents & positions DataArray stores a vector of position / extent vectors it has to be 2-dim
-        could(data_tag, &MultiTag::positions, notFalse(), {
-            must(data_tag, &MultiTag::positions, dimEquals(2), "dimensionality of positions DataArray must be two!") }),
-        could(data_tag, &MultiTag::extents, notFalse(), {
-            must(data_tag, &MultiTag::extents, dimEquals(2), "dimensionality of extents DataArray must be two!") }),
+        could(multi_tag, &MultiTag::positions, notFalse(), {
+            must(multi_tag, &MultiTag::positions, dimEquals(2), "dimensionality of positions DataArray must be two!") }),
+        could(multi_tag, &MultiTag::extents, notFalse(), {
+            must(multi_tag, &MultiTag::extents, dimEquals(2), "dimensionality of extents DataArray must be two!") }),
         // check units for validity
-        could(data_tag, &MultiTag::units, notEmpty(), {
-            must(data_tag, &MultiTag::units, isValidUnit(), "Some of the units in tag are invalid: not an atomic SI. Note: So far composite SI units are not supported!") }),
-        must(data_tag, &MultiTag::references, tagRefsHaveUnits(data_tag.units()), "Some of the referenced DataArrays' dimensions don't have units where the tag has. Make sure that all references have the same number of dimensions as the tag has units and that each dimension has a unit set."),
-        must(data_tag, &MultiTag::references, tagUnitsMatchRefsUnits(data_tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!"),
+        could(multi_tag, &MultiTag::units, notEmpty(), {
+            must(multi_tag, &MultiTag::units, isValidUnit(), "Some of the units in tag are invalid: not an atomic SI. Note: So far composite SI units are not supported!") }),
+        must(multi_tag, &MultiTag::references, tagRefsHaveUnits(multi_tag.units()), "Some of the referenced DataArrays' dimensions don't have units where the tag has. Make sure that all references have the same number of dimensions as the tag has units and that each dimension has a unit set."),
+        must(multi_tag, &MultiTag::references, tagUnitsMatchRefsUnits(multi_tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!"),
         // check positions & extents
-        could(data_tag, &MultiTag::extents, notFalse(), {
-            must(data_tag, &MultiTag::positions, extentsMatchPositions(data_tag.extents()), "Number of entries in positions and extents do not match!") }),
-        could(data_tag, &MultiTag::references, notEmpty(), {
-            could(data_tag, &MultiTag::extents, notFalse(), {
-                must(data_tag, &MultiTag::extents, extentsMatchRefs(data_tag.references()), "number of entries (in 2nd dim) in extents does not match number of dimensions in all referenced DataArrays!") }),
-            must(data_tag, &MultiTag::positions, positionsMatchRefs(data_tag.references()), "number of entries (in 2nd dim) in positions does not match number of dimensions in all referenced DataArrays!") })
+        could(multi_tag, &MultiTag::extents, notFalse(), {
+            must(multi_tag, &MultiTag::positions, extentsMatchPositions(multi_tag.extents()), "Number of entries in positions and extents do not match!") }),
+        could(multi_tag, &MultiTag::references, notEmpty(), {
+            could(multi_tag, &MultiTag::extents, notFalse(), {
+                must(multi_tag, &MultiTag::extents, extentsMatchRefs(multi_tag.references()), "number of entries (in 2nd dim) in extents does not match number of dimensions in all referenced DataArrays!") }),
+            must(multi_tag, &MultiTag::positions, positionsMatchRefs(multi_tag.references()), "number of entries (in 2nd dim) in positions does not match number of dimensions in all referenced DataArrays!") })
     });
 
     return result.concat(result_base);

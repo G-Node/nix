@@ -94,7 +94,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
- * @param tag                   The data tag.
+ * @param tag                   The multi tag.
  * @param position_index        The index of the position.
  * @param reference_index       The index of the reference from which data should be returned.
  *
@@ -105,7 +105,7 @@ NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t r
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
- * @param tag                   The data tag.
+ * @param tag                   The multi tag.
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by the position.
