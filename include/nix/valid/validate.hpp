@@ -44,16 +44,16 @@ NIXAPI Result validate(const Block &block);
 NIXAPI Result validate(const DataArray &data_array);
 
 /**
-  * @brief SimpleTag entity validator
+  * @brief Tag entity validator
   * 
-  * Function taking a SimpleTag entity and returning {@link Result}
+  * Function taking a Tag entity and returning {@link Result}
   * object
   *
-  * @param simple_tag SimpleTag entity
+  * @param simple_tag Tag entity
   *
   * @returns The validation results as {@link Result} object
   */
-NIXAPI Result validate(const SimpleTag &simple_tag);
+NIXAPI Result validate(const Tag &simple_tag);
 
 /**
   * @brief Property entity validator
@@ -68,15 +68,15 @@ NIXAPI Result validate(const SimpleTag &simple_tag);
 NIXAPI Result validate(const Property &property);
 
 /**
-  * @brief DataTag entity validator
+  * @brief MultiTag entity validator
   * 
-  * Function taking a DataTag entity and returning {@link Result} object
+  * Function taking a MultiTag entity and returning {@link Result} object
   *
-  * @param data_tag DataTag entity
+  * @param data_tag MultiTag entity
   *
   * @returns The validation results as {@link Result} object
   */
-NIXAPI Result validate(const DataTag &data_tag);
+NIXAPI Result validate(const MultiTag &data_tag);
 
 /**
   * @brief Dimension entity validator

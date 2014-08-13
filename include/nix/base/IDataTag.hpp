@@ -23,11 +23,11 @@ class DataArray;
 namespace base {
 
 /**
- * @brief Interface for implementations of the DataTag entity.
+ * @brief Interface for implementations of the MultiTag entity.
  *
- * See {@link nix::DataTag} for a more detailed description.
+ * See {@link nix::MultiTag} for a more detailed description.
  */
-class NIXAPI IDataTag : virtual public base::IEntityWithSources {
+class NIXAPI IMultiTag : virtual public base::IEntityWithSources {
 
 public:
 
@@ -112,7 +112,7 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~IDataTag() {}
+    virtual ~IMultiTag() {}
 
 };
 

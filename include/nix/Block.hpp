@@ -28,8 +28,8 @@ namespace nix {
  *
  * The Block entity is a top-level, summarizing element that allows to
  * group the other data entities belonging for example to the same recording session.
- * All data entities such as {@link nix::Source}, {@link nix::DataArray}, {@link nix::SimpleTag} and
- * {@link nix::DataTag} have to be associated with one Block.
+ * All data entities such as {@link nix::Source}, {@link nix::DataArray}, {@link nix::Tag} and
+ * {@link nix::MultiTag} have to be associated with one Block.
  *
  * ### Create a new Block
  * A block can only be created on an existing file object. Do not use the blocks constructors for this
@@ -42,7 +42,7 @@ namespace nix {
  *
  * ### Working with blocks
  * After a block was created it can be used to create further entities. See the documentation of
- * {@link nix::Source}, {@link nix::DataArray}, {@link nix::SimpleTag} and {@link nix::DataTag}
+ * {@link nix::Source}, {@link nix::DataArray}, {@link nix::Tag} and {@link nix::MultiTag}
  * for more information.
  * The next example shows how some properties of a block can be accessed.
  *
@@ -408,8 +408,8 @@ public:
      *
      * @return True if the simple tag exists, false otherwise.
      */
-    bool hasSimpleTag(const std::string &id) const {
-        return backend()->hasSimpleTag(id);
+    bool hasTag(const std::string &id) const {
+        return backend()->hasTag(id);
     }
 
     /**
@@ -419,7 +419,7 @@ public:
     *
     * @return True if the simple tag exists, false otherwise.
     */
-    bool hasSimpleTag(const SimpleTag &simple_tag) const;
+    bool hasTag(const Tag &simple_tag) const;
 
     /**
      * @brief Retrieves a specific simple tag from the block by its id.
@@ -429,8 +429,8 @@ public:
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    SimpleTag getSimpleTag(const std::string &id) const {
-        return backend()->getSimpleTag(id);
+    Tag getTag(const std::string &id) const {
+        return backend()->getTag(id);
     }
 
     /**
@@ -440,8 +440,8 @@ public:
      *
      * @return The simple tag at the specified index.
      */
-    SimpleTag getSimpleTag(size_t index) const {
-        return backend()->getSimpleTag(index);
+    Tag getTag(size_t index) const {
+        return backend()->getTag(index);
     }
 
     /**
@@ -454,8 +454,8 @@ public:
      *
      * @return A vector that contains all filtered simple tags.
      */
-    std::vector<SimpleTag> simpleTags(util::Filter<SimpleTag>::type filter
-                                      = util::AcceptAll<SimpleTag>()) const;
+    std::vector<Tag> simpleTags(util::Filter<Tag>::type filter
+                                      = util::AcceptAll<Tag>()) const;
 
     /**
      * @brief Returns the number of simple tags within this block.
@@ -475,9 +475,9 @@ public:
      *
      * @return The newly created tag.
      */
-    SimpleTag createSimpleTag(const std::string &name, const std::string &type,
+    Tag createTag(const std::string &name, const std::string &type,
                               const std::vector<double> &position) {
-        return backend()->createSimpleTag(name, type, position);
+        return backend()->createTag(name, type, position);
     }
 
     /**
@@ -490,8 +490,8 @@ public:
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool deleteSimpleTag(const std::string &id) {
-        return backend()->deleteSimpleTag(id);
+    bool deleteTag(const std::string &id) {
+        return backend()->deleteTag(id);
     }
 
     /**
@@ -504,7 +504,7 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteSimpleTag(const SimpleTag &simple_tag);
+    bool deleteTag(const Tag &simple_tag);
 
     //--------------------------------------------------
     // Methods concerning data tags.
@@ -517,8 +517,8 @@ public:
      *
      * @return True if the data tag exists, false otherwise.
      */
-    bool hasDataTag(const std::string &id) const {
-        return backend()->hasDataTag(id);
+    bool hasMultiTag(const std::string &id) const {
+        return backend()->hasMultiTag(id);
     }
 
     /**
@@ -528,7 +528,7 @@ public:
     *
     * @return True if the data tag exists, false otherwise.
     */
-    bool hasDataTag(const DataTag &data_tag) const;
+    bool hasMultiTag(const MultiTag &data_tag) const;
 
     /**
      * @brief Retrieves a specific data tag from the block by its id.
@@ -538,8 +538,8 @@ public:
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    DataTag getDataTag(const std::string &id) const {
-        return backend()->getDataTag(id);
+    MultiTag getMultiTag(const std::string &id) const {
+        return backend()->getMultiTag(id);
     }
 
     /**
@@ -549,8 +549,8 @@ public:
      *
      * @return The data tag at the specified index.
      */
-    DataTag getDataTag(size_t index) const {
-        return backend()->getDataTag(index);
+    MultiTag getMultiTag(size_t index) const {
+        return backend()->getMultiTag(index);
     }
 
     /**
@@ -563,8 +563,8 @@ public:
      *
      * @return A vector that contains all filtered data tags.
      */
-    std::vector<DataTag> dataTags(util::AcceptAll<DataTag>::type filter
-                                  = util::AcceptAll<DataTag>()) const;
+    std::vector<MultiTag> dataTags(util::AcceptAll<MultiTag>::type filter
+                                  = util::AcceptAll<MultiTag>()) const;
 
     /**
      * @brief Returns the number of data tags associated with this block.
@@ -584,9 +584,9 @@ public:
      *
      * @return The newly created tag.
      */
-    DataTag createDataTag(const std::string &name, const std::string &type,
+    MultiTag createMultiTag(const std::string &name, const std::string &type,
                           const DataArray &positions) {
-        return backend()->createDataTag(name, type, positions);
+        return backend()->createMultiTag(name, type, positions);
     }
 
     /**
@@ -599,8 +599,8 @@ public:
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool deleteDataTag(const std::string &id) {
-        return backend()->deleteDataTag(id);
+    bool deleteMultiTag(const std::string &id) {
+        return backend()->deleteMultiTag(id);
     }
 
     /**
@@ -613,7 +613,7 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteDataTag(const DataTag &data_tag);
+    bool deleteMultiTag(const MultiTag &data_tag);
 
     //------------------------------------------------------
     // Operators and other functions

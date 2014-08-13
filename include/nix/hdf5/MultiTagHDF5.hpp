@@ -20,7 +20,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class DataTagHDF5 : virtual public base::IDataTag, public EntityWithSourcesHDF5 {
+class MultiTagHDF5 : virtual public base::IMultiTag, public EntityWithSourcesHDF5 {
 
 private:
 
@@ -31,21 +31,21 @@ public:
 
 
     /**
-     * Standard constructor for new DataTag
+     * Standard constructor for new MultiTag
      */
-    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
                 
     /**
-     * Standard constructor for new DataTag
+     * Standard constructor for new MultiTag
      */
-    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions);
 
 
     /**
-     * Standard constructor for new DataTag with time
+     * Standard constructor for new MultiTag with time
      */
-    DataTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions, time_t time);
 
 
@@ -127,7 +127,7 @@ public:
     //--------------------------------------------------
 
 
-    virtual ~DataTagHDF5();
+    virtual ~MultiTagHDF5();
 
 private:
 
