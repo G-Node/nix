@@ -21,7 +21,7 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 #include <nix.hpp>
-#include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 #include <nix/util/util.hpp>
 
 

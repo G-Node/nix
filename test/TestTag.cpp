@@ -8,7 +8,7 @@
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "TestSimpleTag.hpp"
+#include "TestTag.hpp"
 #include <nix/Exception.hpp>
 #include <sstream>
 #include <ctime>

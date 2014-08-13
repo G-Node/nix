@@ -22,7 +22,7 @@
 #include <boost/math/constants/constants.hpp>
 
 #include <nix.hpp>
-#include <nix/hdf5/SimpleTagHDF5.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
 #include <nix/util/util.hpp>
 
 

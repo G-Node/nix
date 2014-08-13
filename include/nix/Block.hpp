@@ -15,8 +15,8 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/Source.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/SimpleTag.hpp>
-#include <nix/DataTag.hpp>
+#include <nix/MultiTag.hpp>
+#include <nix/Tag.hpp>
 
 #include <nix/Platform.hpp>
 

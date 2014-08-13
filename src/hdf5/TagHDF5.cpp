@@ -10,7 +10,7 @@
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/SimpleTagHDF5.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/hdf5/DataSet.hpp>
 #include <nix/Exception.hpp>

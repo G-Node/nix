@@ -12,7 +12,7 @@
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
 

@@ -17,8 +17,8 @@
 #include <nix/NDArray.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/DataTag.hpp>
-#include <nix/SimpleTag.hpp>
+#include <nix/MultiTag.hpp>
+#include <nix/Tag.hpp>
 
 namespace nix {
 namespace util {

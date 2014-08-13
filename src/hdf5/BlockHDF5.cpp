@@ -11,8 +11,8 @@
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/SimpleTagHDF5.hpp>
-#include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 
 using namespace std;
 using namespace nix;
