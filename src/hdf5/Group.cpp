@@ -65,7 +65,7 @@ std::string Group::objectName(size_t index) const {
     if(index > objectCount()) {
         throw OutOfBounds("No object at given index", index);
     }
-    
+
     std::string str_name;
     // check whether name is found by index
     ssize_t name_len = H5Lget_name_by_idx(h5group.getLocId(),
@@ -89,7 +89,7 @@ std::string Group::objectName(size_t index) const {
         str_name = name;
         delete [] name;
     } else {
-        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");    
+        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");
     }
 
     return str_name;
@@ -155,6 +155,18 @@ void Group::renameGroup(const std::string &old_name, const std::string &new_name
     if (hasGroup(old_name)) {
         h5group.move(old_name, new_name);
     }
+}
+
+
+boost::optional<Group> Group::getGroupIfExists(const std::string &name, bool create) {
+    boost::optional<Group> opt_group;
+
+    if (hasGroup(name)) {
+        opt_group = boost::optional<Group>(openGroup(name));
+    } else if (create) {
+        opt_group = boost::optional<Group>(openGroup(name, true));
+    }
+    return opt_group;
 }
 
 

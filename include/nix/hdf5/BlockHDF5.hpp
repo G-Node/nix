@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <string>
+#include <boost/optional.hpp>
 
 #include <nix/base/IBlock.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
@@ -26,7 +27,10 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    Group source_group, data_array_group, tag_group, multi_tag_group;
+    mutable boost::optional<Group> source_group_opt;
+    Group data_array_group, tag_group, multi_tag_group;
+
+    boost::optional<Group> source_group(bool create = false) const;
 
 public:
 
