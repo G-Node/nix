@@ -144,7 +144,7 @@ public:
      *
      * @return A vector containing the matching child sources.
      */
-    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const;
+    std::vector<Source> sources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>()) const;
 
     /**
      * @brief Get all descendant sources of the source recursively.
@@ -160,7 +160,7 @@ public:
      *
      * @return A vector containing the matching descendant sources.
      */
-    std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
+    std::vector<Source> findSources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**

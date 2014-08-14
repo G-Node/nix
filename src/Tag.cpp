@@ -52,7 +52,7 @@ bool Tag::removeReference(const DataArray &reference) {
 }
 
 
-std::vector<DataArray> Tag::references(util::Filter<DataArray>::type filter) const {
+std::vector<DataArray> Tag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
     return getEntities<DataArray>(f,
                                   referenceCount(),
@@ -67,7 +67,7 @@ bool Tag::hasFeature(const Feature &feature) const {
 }
 
 
-std::vector<Feature> Tag::features(util::Filter<Feature>::type filter) const {
+std::vector<Feature> Tag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
     return getEntities<Feature>(f,
                                 featureCount(),

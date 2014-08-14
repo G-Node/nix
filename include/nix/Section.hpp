@@ -263,7 +263,7 @@ public:
      *
      * @return A vector containing the matching child sections.
      */
-    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
+    std::vector<Section> sections(const util::Filter<Section>::type &filter = util::AcceptAll<Section>()) const;
 
     /**
      * @brief Get all descendant sections of the section recursively.
@@ -279,7 +279,7 @@ public:
      *
      * @return A vector containing the matching descendant sections.
      */
-    std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
+    std::vector<Section> findSections(const util::Filter<Section>::type &filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
@@ -289,7 +289,7 @@ public:
      *
      * @return A vector containing all filtered related sections.
      */
-    std::vector<Section> findRelated(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
+    std::vector<Section> findRelated(const util::Filter<Section>::type &filter = util::AcceptAll<Section>()) const;
 
     /**
      *  @brief Adds a new child section.
@@ -410,7 +410,7 @@ public:
      *
      * @return A vector containing the matching properties.
      */
-    std::vector<Property> properties(util::Filter<Property>::type filter=util::AcceptAll<Property>()) const;
+    std::vector<Property> properties(const util::Filter<Property>::type &filter=util::AcceptAll<Property>()) const;
 
     /**
      * Returns all Properties inherited from a linked section.
@@ -495,11 +495,11 @@ public:
 
 private:
 
-    std::vector<Section> findDownstream(std::function<bool(Section)> filter) const;
+    std::vector<Section> findDownstream(const std::function<bool(Section)> &filter) const;
 
-    std::vector<Section> findUpstream(std::function<bool(Section)> filter) const;
+    std::vector<Section> findUpstream(const std::function<bool(Section)> &filter) const;
 
-    std::vector<Section> findSideways(std::function<bool(Section)> filter, const std::string &caller_id) const;
+    std::vector<Section> findSideways(const std::function<bool(Section)> &filter, const std::string &caller_id) const;
 
     size_t tree_depth() const;
 };

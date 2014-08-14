@@ -31,7 +31,7 @@ void DataArray::unit(const std::string &unit) {
 }
 
 
-std::vector<Dimension> DataArray::dimensions(util::Filter<Dimension>::type filter) const {
+std::vector<Dimension> DataArray::dimensions(const util::Filter<Dimension>::type &filter) const {
     auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
     return getEntities<Dimension>(f,
                                   dimensionCount(),

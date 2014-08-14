@@ -254,7 +254,7 @@ public:
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions(util::Filter<Dimension>::type filter) const;
+    std::vector<Dimension> dimensions(const util::Filter<Dimension>::type &filter) const;
 
     /**
      * @brief Get all dimensions associated with this data array.
@@ -305,7 +305,7 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(std::vector<double> ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
 
@@ -345,7 +345,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    RangeDimension createRangeDimension(size_t id, std::vector<double> ticks) {
+    RangeDimension createRangeDimension(size_t id, std::vector<double> &ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
 

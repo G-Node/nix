@@ -12,7 +12,7 @@ using namespace std;
 
 namespace nix {
 
-std::vector<Source> Block::findSources(util::Filter<Source>::type filter,
+std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
         size_t max_depth) const {
     const vector<Source> probes = sources();
     vector<Source> matches;
@@ -33,7 +33,7 @@ bool Block::hasSource(const Source &source) const {
     return backend()->hasSource(source.id());
 }
 
-std::vector<Source> Block::sources(util::Filter<Source>::type filter) const {
+std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) const {
     auto f = [this](size_t i) { return getSource(i); };
     return getEntities<Source>(f,
             sourceCount(),
@@ -54,7 +54,7 @@ bool Block::hasDataArray(const DataArray &data_array) const {
     return backend()->hasDataArray(data_array.id());
 }
 
-std::vector<DataArray> Block::dataArrays(util::AcceptAll<DataArray>::type filter) const {
+std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getDataArray(i); };
     return getEntities<DataArray>(f,
                                   dataArrayCount(),
@@ -75,7 +75,7 @@ bool Block::hasTag(const Tag &tag) const {
     return backend()->hasTag(tag.id());
 }
 
-std::vector<Tag> Block::tags(util::Filter<Tag>::type filter) const {
+std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
     auto f = [this] (size_t i) { return getTag(i); };
     return getEntities<Tag>(f,
                             tagCount(),
@@ -96,7 +96,7 @@ bool Block::hasMultiTag(const MultiTag &multi_tag) const {
     return backend()->hasMultiTag(multi_tag.id());
 }
 
-std::vector<MultiTag> Block::multiTags(util::AcceptAll<MultiTag>::type filter) const {
+std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &filter) const {
     auto f = [this] (size_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f,
                                 multiTagCount(),

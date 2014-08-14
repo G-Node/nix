@@ -17,7 +17,7 @@ using namespace std;
 namespace nix {
 
 
-File File::open(const std::string name, FileMode mode, Implementation impl) {
+File File::open(const std::string &name, FileMode mode, Implementation impl) {
     if (impl == Implementation::Hdf5) {
         return File(std::make_shared<hdf5::FileHDF5>(name, mode));
     } else {
@@ -42,7 +42,7 @@ bool File::deleteBlock(const Block &block) {
 }
 
 
-std::vector<Block> File::blocks(util::Filter<Block>::type filter) const
+std::vector<Block> File::blocks(const util::Filter<Block>::type &filter) const
 {
     auto f = [this] (size_t i) { return getBlock(i); };
     return getEntities<Block>(f,
@@ -59,7 +59,7 @@ bool File::hasSection(const Section &section) const {
 }
 
 
-std::vector<Section> File::sections(util::Filter<Section>::type filter) const
+std::vector<Section> File::sections(const util::Filter<Section>::type &filter) const
 {
     auto f = [this] (size_t i) { return getSection(i); };
     return getEntities<Section>(f,
@@ -76,7 +76,7 @@ bool File::deleteSection(const Section &section) {
 }
 
 
-vector<Section> File::findSections(util::Filter<Section>::type filter, size_t max_depth) const {
+vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
 
     vector<Section> results;
 

@@ -199,7 +199,7 @@ public:
      *
      * @return A vector containing the matching root sources.
      */
-    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const;
+    std::vector<Source> sources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>()) const;
 
     /**
      * @brief Get all sources in this block recursively.
@@ -215,7 +215,7 @@ public:
      *
      * @return A vector containing the matching sources.
      */
-    std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
+    std::vector<Source> findSources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
@@ -313,7 +313,7 @@ public:
      *
      * @return A vector that contains all filtered data arrays.
      */
-    std::vector<DataArray> dataArrays(util::AcceptAll<DataArray>::type filter
+    std::vector<DataArray> dataArrays(const util::AcceptAll<DataArray>::type &filter
                                       = util::AcceptAll<DataArray>()) const;
 
     /**
@@ -454,7 +454,7 @@ public:
      *
      * @return A vector that contains all filtered tags.
      */
-    std::vector<Tag> tags(util::Filter<Tag>::type filter
+    std::vector<Tag> tags(const util::Filter<Tag>::type &filter
                           = util::AcceptAll<Tag>()) const;
 
     /**
@@ -563,7 +563,7 @@ public:
      *
      * @return A vector that contains all filtered multi tags.
      */
-    std::vector<MultiTag> multiTags(util::AcceptAll<MultiTag>::type filter
+    std::vector<MultiTag> multiTags(const util::AcceptAll<MultiTag>::type &filter
                                   = util::AcceptAll<MultiTag>()) const;
 
     /**
