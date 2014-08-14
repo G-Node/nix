@@ -31,7 +31,6 @@ class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
 
-
     virtual bool hasSource(const std::string &id) const = 0;
 
 

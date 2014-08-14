@@ -67,6 +67,7 @@ public:
     Group openGroup(const std::string &name, bool create = true) const;
     void removeGroup(const std::string &name);
     void renameGroup(const std::string &old_name, const std::string &new_name);
+    boost::optional<Group> getGroupIfExists(const std::string &name, bool create = false);
 
     /**
      * @brief Create a new hard link with the given name inside this group,

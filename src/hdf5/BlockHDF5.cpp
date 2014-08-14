@@ -23,12 +23,11 @@ using namespace nix::base;
 BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
     : EntityWithMetadataHDF5(file, group)
 {
-    source_group = group.openGroup("sources", false);
     data_array_group = group.openGroup("data_arrays", false);
     tag_group = group.openGroup("tags", false);
     multi_tag_group = group.openGroup("multi_tags", false);
 }
-    
+
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
@@ -38,7 +37,6 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources", true);
     data_array_group = group.openGroup("data_arrays", true);
     tag_group = group.openGroup("tags", true);
     multi_tag_group = group.openGroup("multi_tags", true);
@@ -50,8 +48,13 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 //--------------------------------------------------
 
 
+boost::optional<Group> BlockHDF5::source_group(bool create) const {
+    return source_group_opt ? source_group_opt : (source_group_opt = group().getGroupIfExists("sources", create));
+}
+
+
 bool BlockHDF5::hasSource(const string &id) const {
-    return source_group.hasGroup(id);
+    return source_group() ? source_group()->hasGroup(id) : false;
 }
 
 
@@ -59,7 +62,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
     shared_ptr<SourceHDF5> source;
 
     if (hasSource(id)) {
-        Group group = source_group.openGroup(id, false);
+        Group group = source_group()->openGroup(id, false);
         source = make_shared<SourceHDF5>(file(), group);
     }
 
@@ -68,23 +71,25 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &id) const {
 
 
 shared_ptr<ISource> BlockHDF5::getSource(size_t index) const {
-    string id = source_group.objectName(index);
+    string id = source_group() ? source_group()->objectName(index) : "NONEXIST";
     return getSource(id);
 }
 
 
 size_t BlockHDF5::sourceCount() const {
-    return source_group.objectCount();
+    return source_group() ? source_group()->objectCount() : size_t(0);
 }
 
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
+    boost::optional<Group> sources = source_group(true);
+
     string id = util::createId("source");
-    while (source_group.hasObject(id)) {
+    while (sources->hasObject(id)) {
         id = util::createId("source");
     }
 
-    Group group = source_group.openGroup(id, true);
+    Group group = sources->openGroup(id, true);
     return make_shared<SourceHDF5>(file(), group, id, type, name);
 }
 
@@ -98,9 +103,9 @@ bool BlockHDF5::deleteSource(const string &id) {
         for(auto &child : source.sources()) {
             source.deleteSource(child.id());
         }
-        source_group.removeAllLinks(id);
+        source_group()->removeAllLinks(id);
     }
-    
+
     return hasSource(id);
 }
 
