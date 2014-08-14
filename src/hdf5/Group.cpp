@@ -12,6 +12,18 @@
 namespace nix {
 namespace hdf5 {
 
+optGroup::optGroup(const Group &parent, const std::string &g_name)
+    : parent(parent), g_name(g_name)
+{}
+
+boost::optional<Group> optGroup::operator() (bool create) const {
+    if (parent.hasGroup(g_name)) {
+        g = boost::optional<Group>(parent.openGroup(g_name));
+    } else if (create) {
+        g = boost::optional<Group>(parent.openGroup(g_name, true));
+    }
+    return g;
+}
 
 Group::Group()
     : h5group()
@@ -145,6 +157,11 @@ Group Group::openGroup(const std::string &name, bool create) const {
 }
 
 
+optGroup Group::openOptGroup(const std::string &name) {
+    return optGroup(*this, name);
+}
+
+
 void Group::removeGroup(const std::string &name) {
     if (hasGroup(name))
         h5group.unlink(name);
@@ -155,18 +172,6 @@ void Group::renameGroup(const std::string &old_name, const std::string &new_name
     if (hasGroup(old_name)) {
         h5group.move(old_name, new_name);
     }
-}
-
-
-boost::optional<Group> Group::getGroupIfExists(const std::string &name, bool create) {
-    boost::optional<Group> opt_group;
-
-    if (hasGroup(name)) {
-        opt_group = boost::optional<Group>(openGroup(name));
-    } else if (create) {
-        opt_group = boost::optional<Group>(openGroup(name, true));
-    }
-    return opt_group;
 }
 
 

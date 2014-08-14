@@ -27,10 +27,9 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    mutable boost::optional<Group> source_group_opt;
     Group data_array_group, tag_group, multi_tag_group;
 
-    boost::optional<Group> source_group(bool create = false) const;
+    optGroup source_group;
 
 public:
 
