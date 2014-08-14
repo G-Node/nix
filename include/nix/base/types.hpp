@@ -18,8 +18,8 @@
 #include <nix/base/ISection.hpp>
 #include <nix/base/ISource.hpp>
 #include <nix/base/IBlock.hpp>
-#include <nix/base/ISimpleTag.hpp>
-#include <nix/base/IDataTag.hpp>
+#include <nix/base/ITag.hpp>
+#include <nix/base/IMultiTag.hpp>
 #include <nix/base/IDataArray.hpp>
 
 namespace nix {
@@ -30,8 +30,8 @@ template class Entity<base::IFeature>;
 template class NamedEntity<base::ISection>;
 template class EntityWithMetadata<base::ISource>;
 template class EntityWithMetadata<base::IBlock>;
-template class EntityWithSources<base::ISimpleTag>;
-template class EntityWithSources<base::IDataTag>;
+template class EntityWithSources<base::ITag>;
+template class EntityWithSources<base::IMultiTag>;
 template class EntityWithSources<base::IDataArray>;
 
 }

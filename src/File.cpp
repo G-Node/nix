@@ -122,22 +122,22 @@ valid::Result File::validate() const {
                 }
             }
         }
-        // DataTags
-        auto data_tags = block.dataTags();
-        for (auto &data_tag : data_tags) {
-            result.concat(valid::validate(data_tag));
+        // MultiTags
+        auto multi_tags = block.multiTags();
+        for (auto &multi_tag : multi_tags) {
+            result.concat(valid::validate(multi_tag));
             // Features
-            auto features = data_tag.features();
+            auto features = multi_tag.features();
             for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }
         }
-        // SimpleTags
-        auto simple_tags = block.simpleTags();
-        for (auto &simple_tag : simple_tags) {
-            result.concat(valid::validate(simple_tag));
+        // Tags
+        auto tags = block.tags();
+        for (auto &tag : tags) {
+            result.concat(valid::validate(tag));
             // Features
-            auto features = simple_tag.features();
+            auto features = tag.features();
             for (auto &feature : features) {
                 result.concat(valid::validate(feature));
             }

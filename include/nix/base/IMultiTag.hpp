@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_DATA_TAG_H
-#define NIX_I_DATA_TAG_H
+#ifndef NIX_I_MULTI_TAG_H
+#define NIX_I_MULTI_TAG_H
 
 #include <vector>
 #include <string>
@@ -23,11 +23,11 @@ class DataArray;
 namespace base {
 
 /**
- * @brief Interface for implementations of the DataTag entity.
+ * @brief Interface for implementations of the MultiTag entity.
  *
- * See {@link nix::DataTag} for a more detailed description.
+ * See {@link nix::MultiTag} for a more detailed description.
  */
-class NIXAPI IDataTag : virtual public base::IEntityWithSources {
+class NIXAPI IMultiTag : virtual public base::IEntityWithSources {
 
 public:
 
@@ -112,11 +112,11 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~IDataTag() {}
+    virtual ~IMultiTag() {}
 
 };
 
 } // namespace base
 } // namespace nix
 
-#endif // NIX_I_DATA_TAG_H
+#endif // NIX_I_MULTI_TAG_H

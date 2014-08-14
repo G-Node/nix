@@ -26,7 +26,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    Group source_group, data_array_group, simple_tag_group, data_tag_group;
+    Group source_group, data_array_group, tag_group, multi_tag_group;
 
 public:
 
@@ -105,48 +105,48 @@ public:
     bool deleteDataArray(const std::string &id);
 
     //--------------------------------------------------
-    // Methods concerning simple tags.
+    // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasSimpleTag(const std::string &id) const;
+    bool hasTag(const std::string &id) const;
 
 
-    std::shared_ptr<base::ISimpleTag> getSimpleTag(const std::string &id) const;
+    std::shared_ptr<base::ITag> getTag(const std::string &id) const;
 
 
-    std::shared_ptr<base::ISimpleTag> getSimpleTag(size_t index) const;
+    std::shared_ptr<base::ITag> getTag(size_t index) const;
 
 
-    size_t simpleTagCount() const;
+    size_t tagCount() const;
 
 
-    std::shared_ptr<base::ISimpleTag> createSimpleTag(const std::string &name, const std::string &type,
+    std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
                                                       const std::vector<double> &position);
 
 
-    bool deleteSimpleTag(const std::string &id);
+    bool deleteTag(const std::string &id);
 
     //--------------------------------------------------
-    // Methods concerning data tags.
+    // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasDataTag(const std::string &id) const;
+    bool hasMultiTag(const std::string &id) const;
 
 
-    std::shared_ptr<base::IDataTag> getDataTag(const std::string &id) const;
+    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const;
 
 
-    std::shared_ptr<base::IDataTag> getDataTag(size_t index) const;
+    std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const;
 
 
-    size_t dataTagCount() const;
+    size_t multiTagCount() const;
 
 
-    std::shared_ptr<base::IDataTag> createDataTag(const std::string &name, const std::string &type,
+    std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                   const DataArray &positions);
 
 
-    bool deleteDataTag(const std::string &id);
+    bool deleteMultiTag(const std::string &id);
 
     //--------------------------------------------------
     // Other methods and functions

@@ -40,12 +40,12 @@ void TestValidate::setUp() {
     atomic_units = {"m", "cm", "mm"};
     compound_units = {"mV*cm", "m*s", "s/cm"};
     invalid_units = {"foo"};
-    // create data tag & simple tag
-    dtag = block.createDataTag("tag_one", "test_tag", positions);
-    dtag.extents(extents);
-    dtag.references(refs);
-    stag = block.createSimpleTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
-    stag.references(refs);
+    // create multi tag & tag
+    mtag = block.createMultiTag("tag_one", "test_tag", positions);
+    mtag.extents(extents);
+    mtag.references(refs);
+    tag = block.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    tag.references(refs);
     units_tmp = tag_tmp(compound_units);
     // create dimensions
     dim_set1 = array1.appendSetDimension();
@@ -98,13 +98,13 @@ void TestValidate::setValid() {
         }
     }
     extents.setData(C);
-    // fill DataTag
+    // fill MultiTag
     refs = {array2, array3};
-    dtag.units(atomic_units);
-    // fill SimpleTag
-    stag.extent(extent);
-    stag.position(position);
-    stag.units(atomic_units);
+    mtag.units(atomic_units);
+    // fill Tag
+    tag.extent(extent);
+    tag.position(position);
+    tag.units(atomic_units);
     // fill dimensions
     dim_set1.labels({"label_a", "label_b", "label_c"});
     dim_set2.labels({"label_a", "label_b", "label_c", "label_d"});
@@ -158,13 +158,13 @@ void TestValidate::setInvalid() {
         }
     }
     positions.setData(C);
-    // fill DataTag
+    // fill MultiTag
     refs = {array1, array2};
-    dtag.units(atomic_units);
-    // fill SimpleTag
-    stag.extent(extent);
-    stag.position(position);
-    stag.units(atomic_units);
+    mtag.units(atomic_units);
+    // fill Tag
+    tag.extent(extent);
+    tag.position(position);
+    tag.units(atomic_units);
     // fill dimensions
     dim_set3.labels({"label_a", "label_b", "label_c"});
     dim_set1.labels({"label_a", "label_b", "label_c", "label_d"});
@@ -241,27 +241,27 @@ void TestValidate::test() {
     // -----------------------------------------------------------------
     setValid();
     myResult = validator({
-        could(dtag, &nix::DataTag::positions, dimEquals(2), {
-            must(dtag, &nix::DataTag::extents, dimEquals(2), "dimEquals(2)") }),
-        must(  dtag,   &nix::DataTag::extents, dimEquals(2), "dimEquals(2)"),
+        could(mtag, &nix::MultiTag::positions, dimEquals(2), {
+            must(mtag, &nix::MultiTag::extents, dimEquals(2), "dimEquals(2)") }),
+        must(  mtag,   &nix::MultiTag::extents, dimEquals(2), "dimEquals(2)"),
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
         must(  array2, &nix::DataArray::dimensions, dimTicksMatchData(array2),  "dimTicksMatchData(array)"),
-        should(stag, &nix::SimpleTag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),
-        must(  dtag, &nix::DataTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
-        must(  stag, &nix::SimpleTag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (stag)"),
-        should(dtag, &nix::DataTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (dtag)"),
-        must(  stag, &nix::SimpleTag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (stag)"),
-        should(dtag, &nix::DataTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (dtag)"),
+        should(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),
+        must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
+        must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
+        should(mtag, &nix::MultiTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (mtag)"),
+        must(  tag, &nix::Tag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (tag)"),
+        should(mtag, &nix::MultiTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (mtag)"),
         should(dim_range1, &nix::RangeDimension::unit, isAtomicUnit(), "isAtomicUnit(); (dim_range1)"),
-        should(stag,       &nix::SimpleTag::units,     isAtomicUnit(), "isAtomicUnit(); (stag)"),
+        should(tag,       &nix::Tag::units,     isAtomicUnit(), "isAtomicUnit(); (tag)"),
         must(units_tmp, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
         must(units_tmp, &tag_tmp::units, isCompoundUnit(), "isCompoundUnit(); (units_tmp.units)"),
         must(units_tmp, &tag_tmp::unito, isCompoundUnit(), "isCompoundUnit(); (units_tmp.unito)"),
         should(units_tmp, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
         must(  units_tmp, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
         should(units_tmp, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
-        must(  stag, &nix::SimpleTag::references, tagRefsHaveUnits(atomic_units),       "tagRefsHaveUnits(atomic_units); (stag)"),
-        should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
+        must(  tag, &nix::Tag::references, tagRefsHaveUnits(atomic_units),       "tagRefsHaveUnits(atomic_units); (tag)"),
+        should(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
     // have debug info
     std::cout << myResult;
@@ -272,17 +272,17 @@ void TestValidate::test() {
     // -----------------------------------------------------------------
     setInvalid();
     myResult = validator({
-        could(dtag, &nix::DataTag::positions, dimEquals(2), {
-            must(dtag, &nix::DataTag::extents, dimEquals(42), "dimEquals(42)") }),//
-        must(  dtag,   &nix::DataTag::extents, dimEquals(42), "dimEquals(42)"),//
+        could(mtag, &nix::MultiTag::positions, dimEquals(2), {
+            must(mtag, &nix::MultiTag::extents, dimEquals(42), "dimEquals(42)") }),//
+        must(  mtag,   &nix::MultiTag::extents, dimEquals(42), "dimEquals(42)"),//
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
         must(  array2, &nix::DataArray::dimensions, dimTicksMatchData(array2),  "dimTicksMatchData(array)"),//
-        should(stag, &nix::SimpleTag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),//
-        must(  dtag, &nix::DataTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
-        must(  stag, &nix::SimpleTag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (stag)"),
-        should(dtag, &nix::DataTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (dtag)"),
-        must(  stag, &nix::SimpleTag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (stag)"),
-        should(dtag, &nix::DataTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (dtag)"),
+        should(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),//
+        must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
+        must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
+        should(mtag, &nix::MultiTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (mtag)"),
+        must(  tag, &nix::Tag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (tag)"),
+        should(mtag, &nix::MultiTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (mtag)"),
         should(units_tmp, &tag_tmp::unit,  isAtomicUnit(), "isAtomicUnit(); (units_tmp.unit)"),
         should(units_tmp, &tag_tmp::units, isAtomicUnit(), "isAtomicUnit(); (units_tmp.units)"),
         must(units_tmp, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
@@ -291,8 +291,8 @@ void TestValidate::test() {
         should(units_tmp, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
         must(  units_tmp, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
         should(units_tmp, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
-        must(  stag, &nix::SimpleTag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (stag)"),
-        should(stag, &nix::SimpleTag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (stag)")
+        must(  tag, &nix::Tag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (tag)"),
+        should(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
     // uncomment this to have debug info
     // std::cout << myResult;

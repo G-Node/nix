@@ -28,8 +28,8 @@
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
-#include "TestDataTag.hpp"
-#include "TestSimpleTag.hpp"
+#include "TestMultiTag.hpp"
+#include "TestTag.hpp"
 #include "TestValue.hpp"
 #include "TestProperty.hpp"
 #include "TestNDArray.hpp"
@@ -53,8 +53,8 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccess);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataTag);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestSimpleTag);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTag);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);

@@ -7,11 +7,11 @@
 // LICENSE file in the root of the Project.
 
 
-#ifndef NIX_SIMPLE_TAG_HDF5_H
-#define NIX_SIMPLE_TAG_HDF5_H
+#ifndef NIX_TAG_HDF5_H
+#define NIX_TAG_HDF5_H
 
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/base/ISimpleTag.hpp>
+#include <nix/base/ITag.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -20,7 +20,7 @@ namespace hdf5 {
 /**
  * Class that represents a NIX tag.
  */
-class SimpleTagHDF5 : virtual public base::ISimpleTag, public EntityWithSourcesHDF5 {
+class TagHDF5 : virtual public base::ITag, public EntityWithSourcesHDF5 {
 
 private:
 
@@ -35,18 +35,18 @@ public:
     /**
      * Standard constructor for existing Tag
      */
-    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
 
     /**
      * Standard constructor for new Tag
      */
-    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
      * Standard constructor for new Tag that preserves the creation time.
      */
-    SimpleTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 
@@ -127,7 +127,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~SimpleTagHDF5();
+    virtual ~TagHDF5();
 
 };
 
@@ -135,4 +135,4 @@ public:
 } // namespace hdf5
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_HDF5_H
+#endif // NIX_TAG_HDF5_H

@@ -19,8 +19,8 @@ namespace base {
  * @brief Base class for entities that can be associated with additional metadata.
  *
  * The data part of the NIX data model consists of five main elements which all inherit from
- * {@link nix::base::EntityWithMetadata}: {@link nix::Block}, {@link nix::DataArray}, {@link nix::DataTag},
- * {@link nix::SimpleTag}, and {@link nix::Source} that serve different purposes.
+ * {@link nix::base::EntityWithMetadata}: {@link nix::Block}, {@link nix::DataArray}, {@link nix::MultiTag},
+ * {@link nix::Tag}, and {@link nix::Source} that serve different purposes.
  * Common to all those entities is an optional property {@link metadata} which  provides a link to a
  * {@link nix::Section} entity and therefore makes it possible to annotate the entities with additional
  * metadata.

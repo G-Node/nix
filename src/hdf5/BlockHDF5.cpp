@@ -11,8 +11,8 @@
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/SimpleTagHDF5.hpp>
-#include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 
 using namespace std;
 using namespace nix;
@@ -25,8 +25,8 @@ BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
 {
     source_group = group.openGroup("sources", false);
     data_array_group = group.openGroup("data_arrays", false);
-    simple_tag_group = group.openGroup("simple_tags", false);
-    data_tag_group = group.openGroup("data_tags", false);
+    tag_group = group.openGroup("tags", false);
+    multi_tag_group = group.openGroup("multi_tags", false);
 }
     
 BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
@@ -40,8 +40,8 @@ BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, cons
 {
     source_group = group.openGroup("sources", true);
     data_array_group = group.openGroup("data_arrays", true);
-    simple_tag_group = group.openGroup("simple_tags", true);
-    data_tag_group = group.openGroup("data_tags", true);
+    tag_group = group.openGroup("tags", true);
+    multi_tag_group = group.openGroup("multi_tags", true);
 }
 
 
@@ -105,53 +105,53 @@ bool BlockHDF5::deleteSource(const string &id) {
 }
 
 
-// SimpleTag methods
+// Tag methods
 
-bool BlockHDF5::hasSimpleTag(const string &id) const {
-    return simple_tag_group.hasObject(id);
+bool BlockHDF5::hasTag(const string &id) const {
+    return tag_group.hasObject(id);
 }
 
 
-shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(const string &id) const {
-    shared_ptr<SimpleTagHDF5> tag;
+shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
+    shared_ptr<TagHDF5> tag;
 
-    if (hasSimpleTag(id)) {
-        Group tag_group = simple_tag_group.openGroup(id, false);
-        tag = make_shared<SimpleTagHDF5>(file(), block(), tag_group);
+    if (hasTag(id)) {
+        Group t_group = tag_group.openGroup(id, false);
+        tag = make_shared<TagHDF5>(file(), block(), t_group);
     }
 
     return tag;
 }
 
 
-shared_ptr<ISimpleTag> BlockHDF5::getSimpleTag(size_t index) const {
-    string id = simple_tag_group.objectName(index);
-    return getSimpleTag(id);
+shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
+    string id = tag_group.objectName(index);
+    return getTag(id);
 }
 
 
-size_t BlockHDF5::simpleTagCount() const {
-    return simple_tag_group.objectCount();
+size_t BlockHDF5::tagCount() const {
+    return tag_group.objectCount();
 }
 
 
-shared_ptr<ISimpleTag> BlockHDF5::createSimpleTag(const string &name, const string &type,
+shared_ptr<ITag> BlockHDF5::createTag(const string &name, const string &type,
                                                   const std::vector<double> &position) {
-    string id = util::createId("simple_tag");
-    while (hasSimpleTag(id)) {
-        id = util::createId("simple_tag");
+    string id = util::createId("tag");
+    while (hasTag(id)) {
+        id = util::createId("tag");
     }
 
-    Group group = simple_tag_group.openGroup(id, true);
-    return make_shared<SimpleTagHDF5>(file(), block(), group, id, type, name, position);
+    Group group = tag_group.openGroup(id, true);
+    return make_shared<TagHDF5>(file(), block(), group, id, type, name, position);
 }
 
 
-bool BlockHDF5::deleteSimpleTag(const string &id) {
+bool BlockHDF5::deleteTag(const string &id) {
     bool deleted = false;
 
-    if (hasSimpleTag(id)) {
-        simple_tag_group.removeGroup(id);
+    if (hasTag(id)) {
+        tag_group.removeGroup(id);
         deleted = true;
     }
 
@@ -219,52 +219,52 @@ bool BlockHDF5::deleteDataArray(const string &id) {
 }
 
 
-// Methods related to DataTag
+// Methods related to MultiTag
 
-shared_ptr<IDataTag> BlockHDF5::createDataTag(const std::string &name, const std::string &type,
+shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const std::string &type,
                                               const DataArray &positions) {
-    string id = util::createId("data_tag");
-    while (hasDataTag(id)) {
-        id = util::createId("data_tag");
+    string id = util::createId("multi_tag");
+    while (hasMultiTag(id)) {
+        id = util::createId("multi_tag");
     }
 
-    Group group = data_tag_group.openGroup(id);
-    return make_shared<DataTagHDF5>(file(), block(), group, id, type, name, positions);
+    Group group = multi_tag_group.openGroup(id);
+    return make_shared<MultiTagHDF5>(file(), block(), group, id, type, name, positions);
 }
 
 
-bool BlockHDF5::hasDataTag(const std::string &id) const {
-    return data_tag_group.hasObject(id);
+bool BlockHDF5::hasMultiTag(const std::string &id) const {
+    return multi_tag_group.hasObject(id);
 }
 
 
-shared_ptr<IDataTag> BlockHDF5::getDataTag(const std::string &id) const {
-    shared_ptr<DataTagHDF5> tag;
+shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const std::string &id) const {
+    shared_ptr<MultiTagHDF5> tag;
 
-    if (hasDataTag(id)) {
-        Group tag_group = data_tag_group.openGroup(id);
-        tag = make_shared<DataTagHDF5>(file(), block(), tag_group);
+    if (hasMultiTag(id)) {
+        Group tag_group = multi_tag_group.openGroup(id);
+        tag = make_shared<MultiTagHDF5>(file(), block(), tag_group);
     }
 
     return tag;
 }
 
 
-shared_ptr<IDataTag> BlockHDF5::getDataTag(size_t index) const {
-    string id = data_tag_group.objectName(index);
-    return getDataTag(id);
+shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
+    string id = multi_tag_group.objectName(index);
+    return getMultiTag(id);
 }
 
 
-size_t BlockHDF5::dataTagCount() const{
-    return data_tag_group.objectCount();
+size_t BlockHDF5::multiTagCount() const{
+    return multi_tag_group.objectCount();
 }
 
 
-bool BlockHDF5::deleteDataTag(const std::string &id) {
+bool BlockHDF5::deleteMultiTag(const std::string &id) {
     bool deleted = false;
-    if (hasDataTag(id)) {
-        data_tag_group.removeGroup(id);
+    if (hasMultiTag(id)) {
+        multi_tag_group.removeGroup(id);
         deleted = true;
     }
     return deleted;

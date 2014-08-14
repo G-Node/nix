@@ -12,7 +12,7 @@
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/DataTagHDF5.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
 
@@ -22,7 +22,7 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
     : EntityWithSourcesHDF5(file, block, group)
 {
     feature_group = group.openGroup("features", false);
@@ -30,14 +30,14 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 }
 
 
-DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const string &id, const std::string &type, const string &name, const DataArray &positions)
-    : DataTagHDF5(file, block, group, id, type, name, positions, util::getTime())
+    : MultiTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
                          const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
@@ -49,7 +49,7 @@ DataTagHDF5::DataTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const
 }
 
 
-shared_ptr<IDataArray> DataTagHDF5::positions() const {
+shared_ptr<IDataArray> MultiTagHDF5::positions() const {
     shared_ptr<IDataArray> da;
     bool error = false;
 
@@ -64,17 +64,17 @@ shared_ptr<IDataArray> DataTagHDF5::positions() const {
     // NOTE: we check that link exists in both places, here & in entity
     // if error = true it was missing in one of the two
     if (error) 
-        throw std::runtime_error("DataTagHDF5::positions: DataArray not found!");
+        throw std::runtime_error("MultiTagHDF5::positions: DataArray not found!");
 
     return da;
 }
 
 
-void DataTagHDF5::positions(const string &id) {
+void MultiTagHDF5::positions(const string &id) {
     if (id.empty())
         throw EmptyString("positions(id)");
     if (!block()->hasDataArray(id))
-        throw std::runtime_error("DataTagHDF5::positions: DataArray not found in block!");
+        throw std::runtime_error("MultiTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
         group().removeGroup("positions");
     
@@ -85,14 +85,14 @@ void DataTagHDF5::positions(const string &id) {
 }
 
 
-bool DataTagHDF5::hasPositions() const {
+bool MultiTagHDF5::hasPositions() const {
     // NOTE: other than in positions getter here we do not check that the 
     // positions DataArray also exists in block - we just say it does here
     return group().hasGroup("positions");
 }
 
 
-shared_ptr<IDataArray>  DataTagHDF5::extents() const {
+shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
     shared_ptr<IDataArray> da;
     bool error = false;
 
@@ -105,30 +105,30 @@ shared_ptr<IDataArray>  DataTagHDF5::extents() const {
     
     // NOTE: we check that link exists in parent entity: if error, it was missing there
     if (error) 
-        throw std::runtime_error("DataTagHDF5::extents: DataArray not found!");
+        throw std::runtime_error("MultiTagHDF5::extents: DataArray not found!");
 
     return da;
 }
 
 
-void DataTagHDF5::extents(const string &id) {
+void MultiTagHDF5::extents(const string &id) {
     if (id.empty())
         throw EmptyString("extents(id)");
     if (!block()->hasDataArray(id))
-        throw std::runtime_error("DataTagHDF5::extents: DataArray not found in block!");
+        throw std::runtime_error("MultiTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))
         group().removeGroup("extents");
 
     auto da = block()->getDataArray(id);
     if (!checkDimensions(da, positions()))
-        throw runtime_error("DataTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+        throw runtime_error("MultiTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     auto target = dynamic_pointer_cast<DataArrayHDF5>(da);
 
     group().createLink(target->group(), "extents");
     forceUpdatedAt();
 }
 
-void DataTagHDF5::extents(const none_t t) {
+void MultiTagHDF5::extents(const none_t t) {
     if (group().hasGroup("extents")) {
         group().removeGroup("extents");
     }
@@ -136,20 +136,20 @@ void DataTagHDF5::extents(const none_t t) {
 }
 
 
-vector<string> DataTagHDF5::units() const {
+vector<string> MultiTagHDF5::units() const {
     vector<string> units;
     group().getData("units", units);
     return units;
 }
 
 
-void DataTagHDF5::units(const vector<string> &units) {
+void MultiTagHDF5::units(const vector<string> &units) {
     group().setData("units", units);
     forceUpdatedAt();
 }
 
 
-void DataTagHDF5::units(const none_t t) {
+void MultiTagHDF5::units(const none_t t) {
     if (group().hasData("units")) {
         group().removeData("units");
     }
@@ -160,17 +160,17 @@ void DataTagHDF5::units(const none_t t) {
 // Methods concerning references.
 //--------------------------------------------------
 
-bool DataTagHDF5::hasReference(const std::string &id) const {
+bool MultiTagHDF5::hasReference(const std::string &id) const {
     return refs_group.hasGroup(id);
 }
 
 
-size_t DataTagHDF5::referenceCount() const {
+size_t MultiTagHDF5::referenceCount() const {
     return refs_group.objectCount();
 }
 
 
-shared_ptr<IDataArray>  DataTagHDF5::getReference(const std::string &id) const {
+shared_ptr<IDataArray>  MultiTagHDF5::getReference(const std::string &id) const {
     shared_ptr<IDataArray> da;
 
     if (refs_group.hasGroup(id)) {
@@ -181,7 +181,7 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(const std::string &id) const {
     return da;
 }
 
-shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
+shared_ptr<IDataArray>  MultiTagHDF5::getReference(size_t index) const {
     shared_ptr<IDataArray> da;
 
     // get reference id
@@ -191,12 +191,12 @@ shared_ptr<IDataArray>  DataTagHDF5::getReference(size_t index) const {
     return da;
 }
 
-void DataTagHDF5::addReference(const std::string &id) {
+void MultiTagHDF5::addReference(const std::string &id) {
     if (id.empty())
         throw EmptyString("addReference");
 
     if (!block()->hasDataArray(id))
-        throw std::runtime_error("DataTagHDF5::addReference: DataArray not found in block!");
+        throw std::runtime_error("MultiTagHDF5::addReference: DataArray not found in block!");
     
     auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
 
@@ -204,13 +204,13 @@ void DataTagHDF5::addReference(const std::string &id) {
 }
 
 
-bool DataTagHDF5::removeReference(const std::string &id) {
+bool MultiTagHDF5::removeReference(const std::string &id) {
     refs_group.removeGroup(id);
     return refs_group.hasGroup(id);
 }
 
 
-void DataTagHDF5::references(const std::vector<DataArray> &refs_new) {
+void MultiTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // extract vectors of ids from vectors of new & old references
     std::vector<std::string> ids_new(refs_new.size());
     transform(refs_new.begin(), refs_new.end(), ids_new.begin(), util::toId<DataArray>);
@@ -245,17 +245,17 @@ void DataTagHDF5::references(const std::vector<DataArray> &refs_new) {
 // Methods concerning features.
 //--------------------------------------------------
 
-bool DataTagHDF5::hasFeature(const string &id) const {
+bool MultiTagHDF5::hasFeature(const string &id) const {
     return feature_group.hasGroup(id);
 }
 
 
-size_t DataTagHDF5::featureCount() const {
+size_t MultiTagHDF5::featureCount() const {
     return feature_group.objectCount();
 }
 
 
-shared_ptr<IFeature>  DataTagHDF5::getFeature(const std::string &id) const {
+shared_ptr<IFeature>  MultiTagHDF5::getFeature(const std::string &id) const {
     shared_ptr<FeatureHDF5> feature;
 
     if (feature_group.hasGroup(id)) {
@@ -267,13 +267,13 @@ shared_ptr<IFeature>  DataTagHDF5::getFeature(const std::string &id) const {
 }
 
 
-shared_ptr<IFeature>  DataTagHDF5::getFeature(size_t index) const {
+shared_ptr<IFeature>  MultiTagHDF5::getFeature(size_t index) const {
     string id = feature_group.objectName(index);
     return getFeature(id);
 }
 
 
-shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &id, LinkType link_type) {
+shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &id, LinkType link_type) {
     string rep_id = util::createId("feature");
     while (feature_group.hasObject(rep_id))
         rep_id = util::createId("feature");
@@ -284,7 +284,7 @@ shared_ptr<IFeature>  DataTagHDF5::createFeature(const std::string &id, LinkType
 }
 
 
-bool DataTagHDF5::deleteFeature(const string &id) {
+bool MultiTagHDF5::deleteFeature(const string &id) {
     if (feature_group.hasGroup(id)) {
         feature_group.removeGroup(id);
         return true;
@@ -298,12 +298,12 @@ bool DataTagHDF5::deleteFeature(const string &id) {
 //--------------------------------------------------
 
 
-bool DataTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
+bool MultiTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
     return a.dataExtent() == b.dataExtent();
 }
 
 
-bool DataTagHDF5::checkPositionsAndExtents() const {
+bool MultiTagHDF5::checkPositionsAndExtents() const {
     bool valid = true;
 
     if (hasPositions() && extents()) {
@@ -319,5 +319,5 @@ bool DataTagHDF5::checkPositionsAndExtents() const {
 }
 
 
-DataTagHDF5::~DataTagHDF5() {}
+MultiTagHDF5::~MultiTagHDF5() {}
 

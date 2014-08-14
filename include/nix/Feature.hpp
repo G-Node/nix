@@ -19,8 +19,8 @@ namespace nix {
 
 
 /**
- * @brief {@link Feature} entities are used to attach further data to a {@link nix::SimpleTag} or
- * {@link nix::DataTag}
+ * @brief {@link Feature} entities are used to attach further data to a {@link nix::Tag} or
+ * {@link nix::MultiTag}
  *
  * A {@link Feature} entity contains a link to an existing {@link nix::DataArray} containing additional
  * data that belongs to the respective tag. The way how data and feature are connected is specified by the
@@ -39,7 +39,7 @@ namespace nix {
  *
  * ### Indexed
  *
- * This value is only valid for data tags where it indicates that
+ * This value is only valid for multi tags where it indicates that
  * the data linked via this {@link Feature} has to be accessed according
  * to the index in the respective position entry.
  */

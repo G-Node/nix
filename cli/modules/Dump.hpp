@@ -380,24 +380,24 @@ public:
     yamlstream& operator<<(const nix::Feature &feature);
 
     /**
-     * @brief SimpleTag output into stringstream
+     * @brief Tag output into stringstream
      *
-     * Output SimpleTag to stringstream.
+     * Output Tag to stringstream.
      *
-     * @param entity nix SimpleTag
+     * @param entity nix Tag
      * @return self
      */
-    yamlstream& operator<<(const nix::SimpleTag &simple_tag);
+    yamlstream& operator<<(const nix::Tag &tag);
 
     /**
-     * @brief DataTag output into stringstream
+     * @brief MultiTag output into stringstream
      *
-     * Output DataTag to stringstream.
+     * Output MultiTag to stringstream.
      *
-     * @param entity nix DataTag
+     * @param entity nix MultiTag
      * @return self
      */
-    yamlstream& operator<<(const nix::DataTag &data_tag);
+    yamlstream& operator<<(const nix::MultiTag &multi_tag);
 
     /**
      * @brief Block output into stringstream

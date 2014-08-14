@@ -86,18 +86,18 @@ void TestOptionalObligatory::setUp() {
     // dataAray---------------------------------------------------------
     dataArray = block.createDataArray("dimensionTest", "test", DataType::Double, nix::NDSize({ 0 }));
 
-    // simpleTag--------------------------------------------------------
+    // tag--------------------------------------------------------
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
 
-    simpleTag = block.createSimpleTag("featureTest", "Test", {0.0, 2.0, 3.4});
+    tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
     vector<DataArray> refs;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name, "reference", DataType::Double, nix::NDSize({ 0 })));
     }
-    simpleTag.references(refs);
+    tag.references(refs);
     
-    // dataTag----------------------------------------------------------
+    // multiTag----------------------------------------------------------
     positions = block.createDataArray("positions_DataArray", "dataArray",
                                       DataType::Double, nix::NDSize({ 0 }));
     typedef boost::multi_array<double, 1> array_type;
@@ -107,7 +107,7 @@ void TestOptionalObligatory::setUp() {
         A[i] = 100.0*i;
     }
     positions.setData(A);
-    dataTag = block.createDataTag("tag_one", "test_tag", positions);
+    multiTag = block.createMultiTag("tag_one", "test_tag", positions);
 
     // source-----------------------------------------------------------
     source = block.createSource("source_one", "channel");
@@ -127,7 +127,7 @@ void TestOptionalObligatory::setUp() {
     range_dim = dataArray.appendRangeDimension(ticks);
 
     // feature
-    feature = simpleTag.createFeature(dataArray, nix::LinkType::Tagged);
+    feature = tag.createFeature(dataArray, nix::LinkType::Tagged);
 }
 
 void TestOptionalObligatory::tearDown() {
@@ -472,62 +472,62 @@ void TestOptionalObligatory::testSectionRepository() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testSimpleTagExtent() {
-    static const bool accepts_none = test::accepts_noneT<nix::SimpleTag, test::extent>::value;
-    is_opt   = std::conditional<std::is_class<decltype(simpleTag.extent())>::value,
+void TestOptionalObligatory::testTagExtent() {
+    static const bool accepts_none = test::accepts_noneT<nix::Tag, test::extent>::value;
+    is_opt   = std::conditional<std::is_class<decltype(tag.extent())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(simpleTag.extent())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(tag.extent())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(simpleTag.extent()));
-    summarize("SimpleTag::extent", is_opt, is_set, accepts_none);
+    is_set   = test::TtoBool(util::deRef(tag.extent()));
+    summarize("Tag::extent", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testSimpleTagPosition() {
-    static const bool accepts_none = test::accepts_noneT<nix::SimpleTag, test::position>::value;
-    is_opt   = std::conditional<std::is_class<decltype(simpleTag.position())>::value,
+void TestOptionalObligatory::testTagPosition() {
+    static const bool accepts_none = test::accepts_noneT<nix::Tag, test::position>::value;
+    is_opt   = std::conditional<std::is_class<decltype(tag.position())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(simpleTag.position())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(tag.position())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(simpleTag.position()));
-    summarize("SimpleTag::position", is_opt, is_set, accepts_none);
+    is_set   = test::TtoBool(util::deRef(tag.position()));
+    summarize("Tag::position", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testSimpleTagUnits() {
-    static const bool accepts_none = test::accepts_noneT<nix::SimpleTag, test::units>::value;
-    is_opt   = std::conditional<std::is_class<decltype(simpleTag.units())>::value,
+void TestOptionalObligatory::testTagUnits() {
+    static const bool accepts_none = test::accepts_noneT<nix::Tag, test::units>::value;
+    is_opt   = std::conditional<std::is_class<decltype(tag.units())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(simpleTag.units())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(tag.units())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(simpleTag.units()));
-    summarize("SimpleTag::units", is_opt, is_set, accepts_none);
+    is_set   = test::TtoBool(util::deRef(tag.units()));
+    summarize("Tag::units", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testDataTagExtents() {
-    static const bool accepts_none = test::accepts_noneT<nix::DataTag, test::extents>::value;
-    is_opt   = std::conditional<std::is_class<decltype(dataTag.extents())>::value,
+void TestOptionalObligatory::testMultiTagExtents() {
+    static const bool accepts_none = test::accepts_noneT<nix::MultiTag, test::extents>::value;
+    is_opt   = std::conditional<std::is_class<decltype(multiTag.extents())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(dataTag.extents())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(multiTag.extents())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(dataTag.extents()));
-    summarize("DataTag::extents", is_opt, is_set, accepts_none);
+    is_set   = test::TtoBool(util::deRef(multiTag.extents()));
+    summarize("MultiTag::extents", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testDataTagPositions() {
-    static const bool accepts_none = test::accepts_noneT<nix::DataTag, test::positions>::value;
-    is_opt   = std::conditional<std::is_class<decltype(dataTag.positions())>::value,
+void TestOptionalObligatory::testMultiTagPositions() {
+    static const bool accepts_none = test::accepts_noneT<nix::MultiTag, test::positions>::value;
+    is_opt   = std::conditional<std::is_class<decltype(multiTag.positions())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(dataTag.positions())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(multiTag.positions())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(dataTag.positions()));
-    summarize("DataTag::positions", is_opt, is_set, accepts_none);
+    is_set   = test::TtoBool(util::deRef(multiTag.positions()));
+    summarize("MultiTag::positions", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }

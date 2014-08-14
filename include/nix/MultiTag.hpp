@@ -6,12 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_DATA_TAG_H
-#define NIX_DATA_TAG_H
+#ifndef NIX_MULTI_TAG_H
+#define NIX_MULTI_TAG_H
 
 #include <algorithm>
 
-#include <nix/base/IDataTag.hpp>
+#include <nix/base/IMultiTag.hpp>
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
@@ -41,18 +41,18 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI DataTag : public base::EntityWithSources<base::IDataTag> {
+class NIXAPI MultiTag : public base::EntityWithSources<base::IMultiTag> {
 
 public:
 
     /**
-     *  @brief Constructor that creates an uninitialized DataTag.
+     *  @brief Constructor that creates an uninitialized MultiTag.
      *
      * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
      * exception. The following code illustrates how to check if a tag is initialized:
      *
      * ~~~
-     * DataTag e = ...;
+     * MultiTag e = ...;
      * if (e) {
      *     // e is initialised
      * } else {
@@ -60,30 +60,30 @@ public:
      * }
      * ~~~
      */
-    DataTag()
+    MultiTag()
         : EntityWithSources()
     {}
 
     /**
      * @brief Copy constructor.
      *
-     * Copying of all NIX front facing objects like DataTag is a rather cheap operation.
+     * Copying of all NIX front facing objects like MultiTag is a rather cheap operation.
      * Semantically this is equivalent to the creation of another reference to the original
      * object.
      *
      * @param other     The tag to copy.
      */
-    DataTag(const DataTag &other)
+    MultiTag(const MultiTag &other)
         : EntityWithSources(other.impl())
     {
     }
 
-    DataTag(const std::shared_ptr<base::IDataTag> &p_impl)
+    MultiTag(const std::shared_ptr<base::IMultiTag> &p_impl)
         : EntityWithSources(p_impl)
     {
     }
 
-    DataTag(std::shared_ptr<base::IDataTag> &&ptr)
+    MultiTag(std::shared_ptr<base::IMultiTag> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }
@@ -95,7 +95,7 @@ public:
     /**
      * @brief Getter for the positions of a tag.
      *
-     * The positions of a data tag are defined in a DataArray. This array has to define a set of
+     * The positions of a multi tag are defined in a DataArray. This array has to define a set of
      * origin vectors, each defining a point inside the referenced data or the beginning of a
      * region of interest.
      *
@@ -133,7 +133,7 @@ public:
     /**
      * @brief Getter for the extents of a tag.
      *
-     * The extents of a data tag are defined in an associated DataArray. This array has to define a set of
+     * The extents of a multi tag are defined in an associated DataArray. This array has to define a set of
      * extent vectors, each defining the size of the corresponding region of interest.
      *
      * @return The DataArray defining the extents of the tag.
@@ -455,7 +455,7 @@ public:
     /**
      * @brief Assign none operator.
      */
-    virtual DataTag &operator=(none_t) {
+    virtual MultiTag &operator=(none_t) {
         nullify();
         return *this;
     }
@@ -463,11 +463,11 @@ public:
     /**
      * @brief Output operator
      */
-    NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataTag &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const MultiTag &ent);
 
 };
 
 
 } // namespace nix
 
-#endif // NIX_DATA_TAG_H
+#endif // NIX_MULTI_TAG_H

@@ -6,8 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_I_SIMPLE_TAG_H
-#define NIX_I_SIMPLE_TAG_H
+#ifndef NIX_I_TAG_H
+#define NIX_I_TAG_H
 
 #include <string>
 #include <vector>
@@ -23,11 +23,11 @@ class DataArray;
 namespace base {
 
 /**
- * @brief Interface for implementations of the SimpleTag entity.
+ * @brief Interface for implementations of the Tag entity.
  *
- * See {@link nix::SimpleTag} for a more detailed description.
+ * See {@link nix::Tag} for a more detailed description.
  */
-class NIXAPI ISimpleTag : virtual public base::IEntityWithSources {
+class NIXAPI ITag : virtual public base::IEntityWithSources {
 
 public:
 
@@ -100,7 +100,7 @@ public:
     virtual bool deleteFeature(const std::string &id) = 0;
 
 
-    virtual ~ISimpleTag() {}
+    virtual ~ITag() {}
 
 };
 
@@ -108,4 +108,4 @@ public:
 } // namespace base
 } // namespace nix
 
-#endif // NIX_I_SIMPLE_TAG_H
+#endif // NIX_I_TAG_H

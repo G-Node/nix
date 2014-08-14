@@ -39,7 +39,7 @@ private:
     nix::File file;
     nix::DataArray data_array;
     nix::Block block;
-    nix::SimpleTag tag;
+    nix::Tag tag;
 
 public:
 

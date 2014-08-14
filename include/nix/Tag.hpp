@@ -6,13 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_SIMPLE_TAG_H
-#define NIX_SIMPLE_TAG_H
+#ifndef NIX_TAG_H
+#define NIX_TAG_H
 
 #include <algorithm>
 
 #include <nix/base/EntityWithSources.hpp>
-#include <nix/base/ISimpleTag.hpp>
+#include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
 
@@ -44,18 +44,18 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI SimpleTag : public base::EntityWithSources<base::ISimpleTag> {
+class NIXAPI Tag : public base::EntityWithSources<base::ITag> {
 
 public:
 
     /**
-     * @brief Constructor that creates an uninitialized SimpleTag.
+     * @brief Constructor that creates an uninitialized Tag.
      *
      * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
      * exception. The following code illustrates how to check if a tag is initialized:
      *
      * ~~~
-     * SimpleTag e = ...;
+     * Tag e = ...;
      * if (e) {
      *     // e is initialised
      * } else {
@@ -63,7 +63,7 @@ public:
      * }
      * ~~~
      */
-    SimpleTag()
+    Tag()
         : EntityWithSources()
     {
     }
@@ -71,13 +71,13 @@ public:
     /**
      * @brief Copy constructor.
      *
-     * Copying of all NIX front facing objects like SimpleTag is a rather cheap operation.
+     * Copying of all NIX front facing objects like Tag is a rather cheap operation.
      * Semantically this is equivalent to the creation of another reference to the original
      * object.
      *
      * @param other     The tag to copy.
      */
-    SimpleTag(const SimpleTag &other)
+    Tag(const Tag &other)
         : EntityWithSources(other.impl())
     {
     }
@@ -88,7 +88,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SimpleTag(const std::shared_ptr<base::ISimpleTag> &p_impl)
+    Tag(const std::shared_ptr<base::ITag> &p_impl)
         : EntityWithSources(p_impl)
     {
     }
@@ -99,7 +99,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SimpleTag(std::shared_ptr<base::ISimpleTag> &&ptr)
+    Tag(std::shared_ptr<base::ITag> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }
@@ -284,7 +284,7 @@ public:
     }
 
     /**
-     * @brief Get referenced data arrays associated with this simple tag.
+     * @brief Get referenced data arrays associated with this tag.
      *
      * The parameter filter can be used to filter data arrays by various
      * criteria.
@@ -296,8 +296,7 @@ public:
     std::vector<DataArray> references(util::Filter<DataArray>::type filter) const;
 
     /**
-     * @brief Get all referenced data arrays associated with this simple
-     * tag.
+     * @brief Get all referenced data arrays associated with this tag.
      *
      * Always uses filter that accepts all sources.
      *
@@ -437,7 +436,7 @@ public:
     /**
      * @brief Assignment operator to none.
      */
-    virtual SimpleTag &operator=(none_t) {
+    virtual Tag &operator=(none_t) {
         nullify();
         return *this;
     }
@@ -445,11 +444,11 @@ public:
     /**
      * @brief Output operator
      */
-    NIXAPI friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Tag &ent);
 
 };
 
 
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_H
+#endif // NIX_TAG_H

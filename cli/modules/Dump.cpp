@@ -249,26 +249,26 @@ yamlstream& yamlstream::operator<<(const nix::Feature &feature) {
     return *this;
 }
 
-yamlstream& yamlstream::operator<<(const nix::SimpleTag &simple_tag) {
-    if(!simple_tag) {
+yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
+    if(!tag) {
         return *this; // unset entity protection
     }
     
-    (*this)[level] << item() << "simple_tag " << simple_tag.id();
+    (*this)[level] << item() << "tag " << tag.id();
     ++(*this)
-        << static_cast<nix::base::EntityWithSources<nix::base::ISimpleTag>>(simple_tag)
-        << item() << "units" << scalar_start << simple_tag.units() << scalar_end
-        << item() << "featureCount" << scalar_start << simple_tag.featureCount() << scalar_end
-        << item() << "referenceCount" << scalar_start << simple_tag.referenceCount() << scalar_end
-        << item() << "extent" << scalar_start << simple_tag.extent() << scalar_end
-        << item() << "position" << scalar_start << simple_tag.position() << scalar_end;
+        << static_cast<nix::base::EntityWithSources<nix::base::ITag>>(tag)
+        << item() << "units" << scalar_start << tag.units() << scalar_end
+        << item() << "featureCount" << scalar_start << tag.featureCount() << scalar_end
+        << item() << "referenceCount" << scalar_start << tag.referenceCount() << scalar_end
+        << item() << "extent" << scalar_start << tag.extent() << scalar_end
+        << item() << "position" << scalar_start << tag.position() << scalar_end;
         // References
-        auto refs = simple_tag.references();
+        auto refs = tag.references();
         for(auto &ref : refs) {
             *this << ref;
         }
         // Features
-        auto features = simple_tag.features();
+        auto features = tag.features();
         for(auto &feature : features) {
             *this << feature;
         }
@@ -276,26 +276,26 @@ yamlstream& yamlstream::operator<<(const nix::SimpleTag &simple_tag) {
     return *this;
 }
 
-yamlstream& yamlstream::operator<<(const nix::DataTag &data_tag) {
-    if(!data_tag) {
+yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
+    if(!multi_tag) {
         return *this; // unset entity protection
     }
     
-    (*this)[level] << item() << "data_tag " << data_tag.id();
+    (*this)[level] << item() << "multi_tag " << multi_tag.id();
     ++(*this)
-        << static_cast<nix::base::EntityWithSources<nix::base::IDataTag>>(data_tag)
-        << item() << "units" << scalar_start << data_tag.units() << scalar_end
-        << item() << "featureCount" << scalar_start << data_tag.featureCount() << scalar_end
-        << item() << "referenceCount" << scalar_start << data_tag.referenceCount() << scalar_end
-        << item() << "extents"; ++(*this) << data_tag.extents(); --(*this)
-        << item() << "positions"; ++(*this) << data_tag.positions(); --(*this);
+        << static_cast<nix::base::EntityWithSources<nix::base::IMultiTag>>(multi_tag)
+        << item() << "units" << scalar_start << multi_tag.units() << scalar_end
+        << item() << "featureCount" << scalar_start << multi_tag.featureCount() << scalar_end
+        << item() << "referenceCount" << scalar_start << multi_tag.referenceCount() << scalar_end
+        << item() << "extents"; ++(*this) << multi_tag.extents(); --(*this)
+        << item() << "positions"; ++(*this) << multi_tag.positions(); --(*this);
         // References
-        auto refs = data_tag.references();
+        auto refs = multi_tag.references();
         for(auto &ref : refs) {
             *this << ref;
         }
         // Features
-        auto features = data_tag.features();
+        auto features = multi_tag.features();
         for(auto &feature : features) {
             *this << feature;
         }
@@ -312,23 +312,23 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
     ++(*this)
         << static_cast<nix::base::EntityWithMetadata<nix::base::IBlock>>(block)
         << item() << "sourceCount" << scalar_start << block.sourceCount() << scalar_end
-        << item() << "simpleTagCount" << scalar_start << block.simpleTagCount() << scalar_end
-        << item() << "dataTagCount" << scalar_start << block.dataTagCount() << scalar_end
+        << item() << "tagCount" << scalar_start << block.tagCount() << scalar_end
+        << item() << "multiTagCount" << scalar_start << block.multiTagCount() << scalar_end
         << item() << "dataArrayCount" << scalar_start << block.dataArrayCount() << scalar_end;
         // DataArrays
         auto data_arrays = block.dataArrays();
         for(auto &data_array : data_arrays) {
             *this << data_array;
         }
-        // DataTags
-        auto data_tags = block.dataTags();
-        for(auto &data_tag : data_tags) {
-            *this << data_tag;
+        // MultiTags
+        auto multi_tags = block.multiTags();
+        for(auto &multi_tag : multi_tags) {
+            *this << multi_tag;
         }
-        // SimpleTags
-        auto simple_tags = block.simpleTags();
-        for(auto &simple_tag : simple_tags) {
-            *this << simple_tag;
+        // Tags
+        auto tags = block.tags();
+        for(auto &tag : tags) {
+            *this << tag;
         }
         // Sections
         auto sources = block.sources();
@@ -439,19 +439,19 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                         }
                     }
                 }
-                // DataTags
-                auto data_tags = block.dataTags();
-                for(auto &data_tag : data_tags) {
+                // MultiTags
+                auto multi_tags = block.multiTags();
+                for(auto &multi_tag : multi_tags) {
                     // Features
-                    auto features = data_tag.features();
+                    auto features = multi_tag.features();
                     for(auto &feature : features) {
                     }
                 }
-                // SimpleTags
-                auto simple_tags = block.simpleTags();
-                for(auto &simple_tag : simple_tags) {
+                // Tags
+                auto tags = block.tags();
+                for(auto &tag : tags) {
                     // Features
-                    auto features = simple_tag.features();
+                    auto features = tag.features();
                     for(auto &feature : features) {
                     }
                 }

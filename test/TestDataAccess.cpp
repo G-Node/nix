@@ -52,16 +52,16 @@ void TestDataAccess::setUp() {
     vector<double> extent {0.0, 6.0, 2.3};
     vector<string> units {"none", "ms", "ms"};
     
-    position_tag = block.createSimpleTag("position tag", "event", position);
+    position_tag = block.createTag("position tag", "event", position);
     position_tag.references(refs);
     position_tag.units(units);
 
-    segment_tag = block.createSimpleTag("region tag", "segment", position);
+    segment_tag = block.createTag("region tag", "segment", position);
     segment_tag.references(refs);
     segment_tag.extent(extent);
     segment_tag.units(units);
     
-    //setup dataTag
+    //setup multiTag
     typedef boost::multi_array<double, 2> position_type;
     position_type event_positions(boost::extents[2][3]);
     position_type event_extents(boost::extents[2][3]);
@@ -102,9 +102,9 @@ void TestDataAccess::setUp() {
     extent_set_dim = extent_array.appendSetDimension();
     extent_set_dim.labels(dim_labels);
 
-    data_tag = block.createDataTag("data_tag", "events", event_array);
-    data_tag.extents(extent_array);
-    data_tag.addReference(data_array);
+    multi_tag = block.createMultiTag("multi_tag", "events", event_array);
+    multi_tag.extents(extent_array);
+    multi_tag.addReference(data_array);
 }
 
 
@@ -168,16 +168,16 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
 
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(data_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(data_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
 
-    util::getOffsetAndCount(data_tag, data_array, 0, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
 
-    util::getOffsetAndCount(data_tag, data_array, 1, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
@@ -187,27 +187,27 @@ void TestDataAccess::testOffsetAndCount() {
 
 void TestDataAccess::testPositionInData() {
     NDSize offsets, counts;
-    util::getOffsetAndCount(data_tag, data_array, 0, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
     CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
     CPPUNIT_ASSERT(util::positionAndExtentInData(data_array, offsets, counts));
 
-    util::getOffsetAndCount(data_tag, data_array, 1, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
 
 void TestDataAccess::testRetrieveData() {
-    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, -1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 0, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, -1, 0), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 10, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, -1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 10, 0), nix::OutOfBounds);
 
-    NDArray data = util::retrieveData(data_tag, 0, 0);
+    NDArray data = util::retrieveData(multi_tag, 0, 0);
     NDSize data_size = data.size();
     CPPUNIT_ASSERT(data.rank() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 
-    CPPUNIT_ASSERT_THROW(util::retrieveData(data_tag, 1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 1, 0), nix::OutOfBounds);
 
     data = util::retrieveData(position_tag, 0);
     data_size = data.size();
@@ -220,11 +220,11 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 }
 
-void TestDataAccess::testDataTagUnitSupport() {
+void TestDataAccess::testMultiTagUnitSupport() {
     vector<string> valid_units{"none","ms","s"};
     vector<string> invalid_units{"mV", "Ohm", "muV"};
 
-    DataTag testTag = block.createDataTag("test", "testTag", data_tag.positions());
+    MultiTag testTag = block.createMultiTag("test", "testTag", multi_tag.positions());
     testTag.units(valid_units);
     testTag.addReference(data_array);
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));

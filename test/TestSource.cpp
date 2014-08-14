@@ -29,7 +29,7 @@ void TestSource::setUp() {
     source_other = block.createSource("source_two", "channel");
     source_null  = nullptr;
 
-    // create a DataArray & a DataTag
+    // create a DataArray & a MultiTag
     darray = block.createDataArray("DataArray", "dataArray",
                                    DataType::Double, {0, 0});
     typedef boost::multi_array<double, 2> array_type;
@@ -39,7 +39,7 @@ void TestSource::setUp() {
         A[i][i] = 100.0*i;
     }
     darray.setData(A);
-    dtag = block.createDataTag("tag_one", "test_tag", darray);
+    mtag = block.createMultiTag("tag_one", "test_tag", darray);
 }
 
 
@@ -153,7 +153,7 @@ void TestSource::testFindSource() {
      *           |
      *           ------l2n6---l3n5
      *                  |      |
-     * dtag-------------|      |
+     * mtag-------------|      |
      *                         |
      * darray-------------------
      */
@@ -171,13 +171,13 @@ void TestSource::testFindSource() {
     Source l3n3 = l2n3.createSource("l3n3", "typ2");
     Source l3n4 = l2n5.createSource("l3n4", "typ2");
     Source l3n5 = l2n5.createSource("l3n5", "typ2");
-    dtag.addSource(l2n6.id());
+    mtag.addSource(l2n6.id());
     darray.addSource(l3n5.id());
     
     // test if sources are in place
-    CPPUNIT_ASSERT(dtag.hasSource(l2n6));
+    CPPUNIT_ASSERT(mtag.hasSource(l2n6));
     CPPUNIT_ASSERT(darray.hasSource(l3n5));
-    CPPUNIT_ASSERT(dtag.sources().size() == 1);
+    CPPUNIT_ASSERT(mtag.sources().size() == 1);
     CPPUNIT_ASSERT(darray.sources().size() == 1);
 
     // test depth limit
@@ -203,7 +203,7 @@ void TestSource::testFindSource() {
      *           |
      *           ------l2n6---l3n5
      *                  |      |
-     * dtag-------------|      |
+     * mtag-------------|      |
      *                         |
      * darray-------------------
      */
@@ -217,7 +217,7 @@ void TestSource::testFindSource() {
      *           |
      *           ------l2n6---l3n5
      *                  |      |
-     * dtag-------------|      |
+     * mtag-------------|      |
      *                         |
      * darray-------------------
      */
@@ -226,14 +226,14 @@ void TestSource::testFindSource() {
     /* chop the tree down to:
      * 
      * source
-     * dtag
+     * mtag
      * darray
      */
     source.deleteSource(l1n3.id());
     CPPUNIT_ASSERT(source.findSources().size() == 1);
-    CPPUNIT_ASSERT(!dtag.hasSource(l2n6));
+    CPPUNIT_ASSERT(!mtag.hasSource(l2n6));
     CPPUNIT_ASSERT(!darray.hasSource(l3n5));
-    CPPUNIT_ASSERT(dtag.sources().size() == 0);
+    CPPUNIT_ASSERT(mtag.sources().size() == 0);
     CPPUNIT_ASSERT(darray.sources().size() == 0);
 }
 
