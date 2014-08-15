@@ -13,14 +13,16 @@
 
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSet.hpp>
-
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/DataSpace.hpp>
-
 #include <nix/Platform.hpp>
+
+#include <boost/optional.hpp>
 
 namespace nix {
 namespace hdf5 {
+
+struct optGroup;
 
 /**
  * TODO documentation
@@ -64,10 +66,33 @@ public:
     bool getData(const std::string &name, T &value) const;
 
     bool hasGroup(const std::string &name) const;
+
+    /**
+     * @brief Open and eventually create a group with the given name
+     *        inside this group. If creation is not allowed (bool
+     *        param is "false") and the group does not exist an error
+     *        is thrown.
+     *
+     * @param name    The name of the group to create.
+     * @param create  Whether to create the group if it does not yet exist
+     *
+     * @return The opened group.
+     */
     Group openGroup(const std::string &name, bool create = true) const;
+
+    /**
+     * @brief Create an {@link optGroup} functor that can be used to
+     *        open and eventually create an optional group inside this
+     *        group.
+     *
+     * @param name    The name of the group to create.
+     *
+     * @return The opened group.
+     */
+    optGroup openOptGroup(const std::string &name);
+
     void removeGroup(const std::string &name);
     void renameGroup(const std::string &old_name, const std::string &new_name);
-    boost::optional<Group> getGroupIfExists(const std::string &name, bool create = false);
 
     /**
      * @brief Create a new hard link with the given name inside this group,
@@ -201,6 +226,40 @@ bool Group::getData(const std::string &name, T &value) const
 
     return true;
 }
+
+
+/**
+ * Helper struct that works as a functor like {@link Group::openGroup}:
+ * 
+ * Open and eventually create a group with the given name inside
+ * this group. If creation is not allowed (bool param is "false") and
+ * the group does not exist an error is thrown. If creation is not
+ * allowed (bool param is "false") and the group does not exist an
+ * unset optional is returned.
+ */
+struct NIXAPI optGroup {
+    mutable boost::optional<Group> g;
+    Group parent;
+    std::string g_name;
+    
+public:
+    optGroup(const Group &parent, const std::string &g_name);
+
+    optGroup(){};
+
+    /**
+     * @brief Open and eventually create a group with the given name
+     *        inside this group. If creation is not allowed (bool
+     *        param is "false") and the group does not exist an unset
+     *        optional is returned.
+     *
+     * @param create  Whether to create the group if it does not yet exist
+     *
+     * @return An optional with the opened group or unset.
+     */
+    boost::optional<Group> operator() (bool create = true) const;
+};
+
 
 } // namespace hdf5
 } // namespace nix
