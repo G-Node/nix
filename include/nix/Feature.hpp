@@ -19,8 +19,8 @@ namespace nix {
 
 
 /**
- * @brief {@link Feature} entities are used to attach further data to a {@link nix::SimpleTag} or
- * {@link nix::DataTag}
+ * @brief {@link Feature} entities are used to attach further data to a {@link nix::Tag} or
+ * {@link nix::MultiTag}
  *
  * A {@link Feature} entity contains a link to an existing {@link nix::DataArray} containing additional
  * data that belongs to the respective tag. The way how data and feature are connected is specified by the
@@ -39,7 +39,7 @@ namespace nix {
  *
  * ### Indexed
  *
- * This value is only valid for data tags where it indicates that
+ * This value is only valid for multi tags where it indicates that
  * the data linked via this {@link Feature} has to be accessed according
  * to the index in the respective position entry.
  */
@@ -103,14 +103,29 @@ public:
     {
     }
 
+    /**
+     * @brief Setter for the link type.
+     *
+     * @param type    The link type to set.
+     */
     void linkType(LinkType type) {
         backend()->linkType(type);
     }
 
+    /**
+     * @brief Getter for the link type.
+     *
+     * @return The current link type of the feature.
+     */
     LinkType linkType() const {
         return backend()->linkType();
     }
 
+    /**
+     * @brief Sets the data array associated with this feature.
+     *
+     * @param id        The id of the data array to set.
+     */
     void data(const std::string &id) {
         backend()->data(id);
     }
@@ -122,6 +137,11 @@ public:
      */
     void data(const DataArray &data);
 
+    /**
+     * @brief Gets the data array associated with this feature.
+     *
+     * @return The associated data array.
+     */
     DataArray data() const {
         return backend()->data();
     }
@@ -130,9 +150,30 @@ public:
      * @brief Destructor.
      */
     virtual ~Feature() {}
-    
+
 };
 
+/**
+ * @brief Convert a link type into string representation.
+ *
+ * @param ltype         The link type.
+ *
+ * @return A human readable name for the given type.
+ */
+NIXAPI std::string link_type_to_string(LinkType ltype);
+
+/**
+ * @brief Output operator for link type.
+ *
+ * Prints a human readable string representation of the
+ * link type to an output stream.
+ *
+ * @param out           The output stream.
+ * @param ltype         The link type to print.
+ *
+ * @return The output stream.
+ */
+NIXAPI std::ostream& operator<<(std::ostream &out, const LinkType ltype);
 
 } // namespace nix
 

@@ -212,7 +212,7 @@ namespace valid {
      * isAtomicUnit}, {@link isCompoundUnit}. Not viable on its own!
      */
     struct isUnit {
-        typedef std::function<bool(std::string)> TFUNC;
+        typedef std::function<bool(std::string)> TPRED;
         
         virtual bool operator()(const std::string &u) const = 0;
         
@@ -221,9 +221,9 @@ namespace valid {
             return u && (*this)(*u);
         }
                 
-        bool operator()(const std::vector<std::string> &u, TFUNC obj) const {
-            // if test fails we have invalid unit & find_if_not will return it != end
-            return std::find_if_not(u.begin(), u.end(), obj) != u.end();
+        bool operator()(const std::vector<std::string> &u, TPRED obj) const {
+            // if test succeeds find_if_not will not find anything & return it == end
+            return std::find_if_not(u.begin(), u.end(), obj) == u.end();
         }
     };
 
@@ -328,7 +328,7 @@ namespace valid {
      * NDSize class via the "dataExtent" method and checking its' size
      * via "size" the method.
      */
-    struct dimEquals {
+    struct NIXAPI dimEquals {
         const size_t &value;
         
         dimEquals(const size_t &value) : value(value) {}
@@ -343,14 +343,16 @@ namespace valid {
      * DataArrays' dimensions all have units defined where the tag has.
      * (where the tag has means at the same index in the tag's units
      * vector as the dimension index in the referenced DataArray)
-     * Therefore it takes all dimensions of all given references
-     * and checks whether the dimension has a unit set if the tag has.
-     * The test counts as passed if all dimensions have units set where
-     * the tag has and have no units set where the tag has not. It
-     * counts as failed immediately if number of dimensions differs from
-     * number of units in given unit vector.
+     * Therefore it takes all non-SetDimension dimensions of all given
+     * references and checks whether the dimension has a unit set if the
+     * tag has. If a dimension is a SetDimension the test counts as
+     * passed. Thus in the end the test counts as passed if all non-
+     * SetDimension dimensions have units set where the tag has and
+     * have no units set where the tag has not. It counts as failed
+     * immediately if number of dimensions differs from number of units
+     * in given unit vector.
      */
-    struct tagRefsHaveUnits {
+    struct NIXAPI tagRefsHaveUnits {
         const std::vector<std::string> &units;
         
         tagRefsHaveUnits(const std::vector<std::string> &units) : units(units) {}
@@ -363,16 +365,18 @@ namespace valid {
      * 
      * One Check struct that checks whether the given units (vector of
      * strings) match the given referenced DataArrays' (vector of
-     * DataArray references) units. Therefore it takes all dimensions of
-     * all given references and checks whether the dimension has a unit
-     * convertible to the unit with the same index in the given units
-     * vector. The test counts as passed if all dimensions have units
+     * DataArray references) units. Therefore it takes all non-
+     * SetDimension dimensions of all given references and checks
+     * whether the dimension has a unit convertible to the unit with the
+     * same index in the given units vector. If a dimension is a
+     * SetDimension the test counts as passed. Thus in the end the test
+     * counts as passed if all non-SetDimension dimensions have units
      * set that are convertible where the units vector has a unit set
      * and all dims have no unit set where the units vector has not.
      * The test counts as failed immediately if the number of dimensions
      * in a DataArray differs the number of units in the units vector.
      */
-    struct tagUnitsMatchRefsUnits {
+    struct NIXAPI tagUnitsMatchRefsUnits {
         const std::vector<std::string> &units;
         
         tagUnitsMatchRefsUnits(const std::vector<std::string> &units) : units(units) {}
@@ -387,7 +391,7 @@ namespace valid {
      * positions matches the given number of extents. It is irrelevant
      * which gets passed at construction time and which via operator().
      */
-    struct extentsMatchPositions {
+    struct NIXAPI extentsMatchPositions {
         const boost::any extents;
         
         extentsMatchPositions(const DataArray &extents) : extents(extents) {}
@@ -403,10 +407,10 @@ namespace valid {
      * 
      * One Check struct that checks whether the given number of
      * extents (if DataArray: size along 2nd dimensions of extents
-     * DataArray; if vector: size of vector) matches the given number of
-     * dimensions in each of the given referenced DataArrays.
+     * DataArray; if vector: size of vector) matches the data's
+     * dimensionality in each of the given referenced DataArrays.
      */
-    struct extentsMatchRefs {
+    struct NIXAPI extentsMatchRefs {
         const std::vector<DataArray> &refs;
         
         extentsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
@@ -420,12 +424,12 @@ namespace valid {
      * 
      * One Check struct that checks whether the given number of
      * positions (if DataArray: size along 2nd dimensions of positions
-     * DataArray; if vector: size of vector) matches the given number of
-     * dimensions in each of the given referenced DataArrays.
+     * DataArray; if vector: size of vector) matches the data's
+     * dimensionality in each of the given referenced DataArrays.
      * Note: this is just an alias for extentsMatchRefs wich does the
      * same thing.
      */
-    struct positionsMatchRefs {
+    struct NIXAPI positionsMatchRefs {
         const std::vector<DataArray> &refs;
 
         positionsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
@@ -442,7 +446,7 @@ namespace valid {
      * the given DataArray's data: number of ticks == number of entries
      * along the corresponding dimension in the data.
      */
-    struct dimTicksMatchData {
+    struct NIXAPI dimTicksMatchData {
         const DataArray &data;
 
         dimTicksMatchData(const DataArray &data) : data(data) {}
@@ -458,7 +462,7 @@ namespace valid {
      * the given DataArray's data: number of labels == number of entries
      * along the corresponding dimension in the data.
      */
-    struct dimLabelsMatchData {
+    struct NIXAPI dimLabelsMatchData {
         const DataArray &data;
 
         dimLabelsMatchData(const DataArray &data) : data(data) {}

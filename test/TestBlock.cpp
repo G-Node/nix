@@ -75,9 +75,16 @@ void TestBlock::testMetadataAccess() {
 
     block.metadata(section);
     CPPUNIT_ASSERT(block.metadata());
-
+    
+    // test none-unsetter
     block.metadata(none);
     CPPUNIT_ASSERT(!block.metadata());
+    // test deleter removing link too
+    block.metadata(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!block.metadata());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 
@@ -128,7 +135,7 @@ void TestBlock::testDataArrayAccess() {
         DataArray data_array = block.createDataArray(name,
                                                      "channel",
                                                      DataType::Double,
-                                                     {0});
+                                                     nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
 
@@ -163,7 +170,7 @@ void TestBlock::testDataArrayAccess() {
 }
 
 
-void TestBlock::testSimpleTagAccess() {
+void TestBlock::testTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
@@ -172,46 +179,47 @@ void TestBlock::testSimpleTagAccess() {
         refs.push_back(block.createDataArray(name,
                                              "reference",
                                              DataType::Double,
-                                             {0}));
+                                             nix::NDSize({ 0 })));
     }
 
-    CPPUNIT_ASSERT(block.simpleTagCount() == 0);
-    CPPUNIT_ASSERT(block.simpleTags().size() == 0);
-    CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
+    CPPUNIT_ASSERT(block.tagCount() == 0);
+    CPPUNIT_ASSERT(block.tags().size() == 0);
+    CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        SimpleTag tag = block.createSimpleTag(*it, "segment", refs);
+        Tag tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
+        tag.references(refs);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());
     }
 
-    CPPUNIT_ASSERT(block.simpleTagCount() == names.size());
-    CPPUNIT_ASSERT(block.simpleTags().size() == names.size());
+    CPPUNIT_ASSERT(block.tagCount() == names.size());
+    CPPUNIT_ASSERT(block.tags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); ++it) {
-        SimpleTag tag = block.getSimpleTag(*it);
-        CPPUNIT_ASSERT(block.hasSimpleTag(*it) == true);
+        Tag tag = block.getTag(*it);
+        CPPUNIT_ASSERT(block.hasTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
-        block.deleteSimpleTag(*it);
+        block.deleteTag(*it);
     }
 
-    CPPUNIT_ASSERT(block.simpleTagCount() == 0);
-    CPPUNIT_ASSERT(block.simpleTags().size() == 0);
-    CPPUNIT_ASSERT(block.getSimpleTag("invalid_id") == false);
+    CPPUNIT_ASSERT(block.tagCount() == 0);
+    CPPUNIT_ASSERT(block.tags().size() == 0);
+    CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
 }
 
 
-void TestBlock::testDataTagAccess() {
+void TestBlock::testMultiTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
     DataArray positions = block.createDataArray("array_one",
                                                 "testdata",
                                                 DataType::Double,
-                                                {3, 4, 2});
+                                                nix::NDSize({ 3, 4, 2 }));
     boost::multi_array<double, 3> A(boost::extents[3][4][2]);
     int values = 0;
     for(index i = 0; i != 3; ++i)
@@ -221,32 +229,33 @@ void TestBlock::testDataTagAccess() {
 
     positions.setData(A);
 
-    CPPUNIT_ASSERT(block.dataTagCount() == 0);
-    CPPUNIT_ASSERT(block.dataTags().size() == 0);
-    CPPUNIT_ASSERT(block.getDataTag("invalid_id") == false);
-    
+    CPPUNIT_ASSERT(block.multiTagCount() == 0);
+    CPPUNIT_ASSERT(block.multiTags().size() == 0);
+    CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
+
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        DataTag tag = block.createDataTag(*it, "segment", positions);
+        MultiTag tag = block.createMultiTag(*it, "segment", positions);
         CPPUNIT_ASSERT(tag.name() == *it);
 
         ids.push_back(tag.id());
     }
 
-    CPPUNIT_ASSERT(block.dataTagCount() == names.size());
-    CPPUNIT_ASSERT(block.dataTags().size() == names.size());
+
+    CPPUNIT_ASSERT(block.multiTagCount() == names.size());
+    CPPUNIT_ASSERT(block.multiTags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        DataTag tag = block.getDataTag(*it);
-        CPPUNIT_ASSERT(block.hasDataTag(*it) == true);
+        MultiTag tag = block.getMultiTag(*it);
+        CPPUNIT_ASSERT(block.hasMultiTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
-        block.deleteDataTag(*it);
+        block.deleteMultiTag(*it);
     }
 
-    CPPUNIT_ASSERT(block.dataTagCount() == 0);
-    CPPUNIT_ASSERT(block.dataTags().size() == 0);
-    CPPUNIT_ASSERT(block.getDataTag("invalid_id") == false);
+    CPPUNIT_ASSERT(block.multiTagCount() == 0);
+    CPPUNIT_ASSERT(block.multiTags().size() == 0);
+    CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
 }
 
 

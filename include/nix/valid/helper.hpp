@@ -13,6 +13,9 @@
 #include <vector>
 #include <nix/base/IDimensions.hpp>
 #include <nix/Platform.hpp>
+#include <nix/util/util.hpp>
+
+#include <nix/types.hpp>
 
 namespace nix {
 namespace valid {
@@ -54,17 +57,17 @@ namespace valid {
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
 #else
-	template<typename T>
-	class hasID
-	{
-	public:
-		__if_exists(T::id) {
-			static const bool value = true;
-		}
-		__if_not_exists(T::id) {
-			static const bool value = false;
-		}
-	};
+    template<typename T>
+    class hasID
+    {
+    public:
+        __if_exists(T::id) {
+            static const bool value = true;
+        }
+        __if_not_exists(T::id) {
+            static const bool value = false;
+        }
+    };
 #endif
 
     /**
@@ -88,17 +91,17 @@ namespace valid {
         enum { value = sizeof(test<T>(0)) == sizeof(char) };
     };
 #else
-	template<typename T>
-	class hasEmpty
-	{
-	public:
-		__if_exists(T::empty) {
-			static const bool value = true;
-		}
-		__if_not_exists(T::empty) {
-			static const bool value = false;
-		}
-	};
+    template<typename T>
+    class hasEmpty
+    {
+    public:
+        __if_exists(T::empty) {
+            static const bool value = true;
+        }
+        __if_not_exists(T::empty) {
+            static const bool value = false;
+        }
+    };
 #endif
 
     /**
@@ -131,31 +134,12 @@ namespace valid {
      * 
      * Helper function that gets all the units from all the dimensions
      * of the given DataArray and returns them as vector of strings.
-     * For all units not set (since boost::optional) and for all dims
-     * that have no unit (since SetDimension) it inserts an empty string
-     * so that the number of returned units matches the number of
-     * dimensions and indices correspond.
+     * For all units not set (since boost::optional) it inserts an empty 
+     * string andfor all dims that have no unit (since SetDimension) it
+     * inserts the string "SetDimension". Thus the number of returned
+     * units matches the number of dimensions and indices.
      */
-    template<typename T>
-    std::vector<std::string> getDimensionsUnits(T darray) {
-        std::vector<std::string> units;
-        
-        for(auto &dim : darray.dimensions()) {
-            if(dim.dimensionType() != DimensionType::Range) {
-                auto d = dim.asRangeDimension();
-                units.push_back(d.unit() ? *d.unit() : std::string());
-            }
-            if(dim.dimensionType() == DimensionType::Sample) {
-                auto d = dim.asRangeDimension();
-                units.push_back(d.unit() ? *d.unit() : std::string());
-            }
-            if(dim.dimensionType() == DimensionType::Set) {
-                units.push_back(std::string());
-            }
-        }
-        
-        return units;
-    }
+    std::vector<std::string> getDimensionsUnits(DataArray darray);
 
 } // namespace valid
 } // namespace nix

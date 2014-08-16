@@ -24,10 +24,14 @@
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
 
+#include <nix/Exception.hpp>
 #include <nix/Platform.hpp>
 
 
 namespace nix {
+    
+enum class DimensionType : unsigned int;
+
 namespace util {
 
 /**
@@ -80,6 +84,16 @@ NIXAPI time_t strToTime(const std::string &time);
  * @return The default time.
  */
 NIXAPI time_t getTime();
+
+/**
+ * @brief Extract id from given entity. Does not work for dimensions
+ *
+ * @return The entity id.
+ */
+template<typename T>
+std::string toId(const T &entity) {
+    return entity.id();
+}
 
 /**
  * @brief Sanitizer function that deblanks units and replaces mu and µ
@@ -246,6 +260,15 @@ std::string numToStr(T number) {
     s << number;
     return s.str();
 }
+
+/**
+ * @brief Convert a DimensionType into a string representation.
+ *
+ * @param number  The DimensionType to convert
+ *
+ * @return The string representation of the DimensionType
+ */
+NIXAPI std::string dimTypeToStr(const DimensionType &dtype);
 
 /**
  * @brief Convert string to number

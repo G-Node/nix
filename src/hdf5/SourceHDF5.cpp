@@ -8,30 +8,31 @@
 
 #include <nix/util/util.hpp>
 #include <nix/hdf5/SourceHDF5.hpp>
+#include <nix/Source.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
-namespace nix {
-namespace hdf5 {
 
-
-SourceHDF5::SourceHDF5(const SourceHDF5 &source)
-    : EntityWithMetadataHDF5(source.file(), source.group(), source.id(), source.type(), source.name())
+SourceHDF5::SourceHDF5(std::shared_ptr<base::IFile> file, Group group)
+    : EntityWithMetadataHDF5(file, group)
 {
-    source_group = source.source_group;
+    source_group = group.openGroup("sources", false);
 }
-
-
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name)
+    
+    
+SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name)
     : SourceHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-SourceHDF5::SourceHDF5(File file, Group group, const std::string &id, const string &type, const string &name, time_t time)
+SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources");
+    source_group = group.openGroup("sources", true);
 }
 
 
@@ -40,21 +41,19 @@ bool SourceHDF5::hasSource(const string &id) const {
 }
 
 
-Source SourceHDF5::getSource(const string &id) const {
-    if(source_group.hasGroup(id)) {
+shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
+    shared_ptr<ISource> source;
+
+    if (source_group.hasGroup(id)) {
         Group group = source_group.openGroup(id, false);
-        string type;
-        string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
-        return Source(make_shared<SourceHDF5>(file(), group, id, type, name));
-    } else {
-        return Source();
+        source = make_shared<SourceHDF5>(file(), group);
     }
+
+    return source;
 }
 
 
-Source SourceHDF5::getSource(size_t index) const {
+shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
     string id = source_group.objectName(index);
     // all checks done by "getSource(const string &id)"
     return getSource(id);
@@ -66,47 +65,32 @@ size_t SourceHDF5::sourceCount() const {
 }
 
 
-Source SourceHDF5::createSource(const string &name, const string &type) {
+shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId("source");
-
-    while(source_group.hasObject(id)) {
+    while (source_group.hasObject(id)) {
         id = util::createId("source");
     }
 
     Group grp = source_group.openGroup(id, true);
-    return Source(make_shared<SourceHDF5>(file(), grp, id, type, name));
+    return make_shared<SourceHDF5>(file(), grp, id, type, name);
 }
 
 
 bool SourceHDF5::deleteSource(const string &id) {
-    if (source_group.hasGroup(id)) {
-        source_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    // call deleteSource on sources to trigger recursive call to all sub-sources
+    if (hasSource(id)) {
+        // get instance of source about to get deleted
+        Source source = getSource(id);
+        // loop through all child sources and call deleteSource on them
+        for(auto &child : source.sources()) {
+            source.deleteSource(child.id());
+        }
+        source_group.removeAllLinks(id);
     }
-}
 
-
-void SourceHDF5::swap(SourceHDF5 &other) {
-    using std::swap;
-
-    EntityWithMetadataHDF5::swap(other);
-    swap(source_group, other.source_group);
-}
-
-
-SourceHDF5& SourceHDF5::operator=(const SourceHDF5 &other) {
-    if (*this != other) {
-        SourceHDF5 tmp(other);
-        swap(tmp);
-    }
-    return *this;
+    return hasSource(id);
 }
 
 
 SourceHDF5::~SourceHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix

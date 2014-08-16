@@ -13,6 +13,7 @@
 #include <functional>
 #include <vector>
 #include <unordered_set>
+#include <string>
 
 namespace nix {
 namespace util {

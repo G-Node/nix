@@ -12,12 +12,11 @@
 #include <string>
 #include <iostream>
 
-#include <nix.hpp>
+#include <nix/base/INamedEntity.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
-
 
 
 /**
@@ -28,14 +27,21 @@ class NamedEntityHDF5 : virtual public base::INamedEntity, public EntityHDF5 {
 public:
 
     /**
-     * Standard constructor
+     * Standard constructor for existing entity
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id, const std::string &_type, const std::string &_name);
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor for new entity
      */
-    NamedEntityHDF5(File file, Group group, const std::string &id, const std::string &_type, const std::string &_name, time_t time);
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+                    const std::string &name);
+
+    /**
+     * Standard constructor for new entity that preserves the creation time.
+     */
+    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+                    const std::string &name, time_t time);
 
 
     void type(const std::string &type);

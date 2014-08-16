@@ -13,7 +13,7 @@
 #include <iostream>
 #include <ctime>
 
-#include <nix.hpp>
+#include <nix/base/IDimensions.hpp>
 #include <nix/hdf5/Group.hpp>
 
 
@@ -27,9 +27,9 @@ DimensionType dimensionTypeFromStr(const std::string &str);
 std::string dimensionTypeToStr(DimensionType dim);
 
 
-/**
- * TODO documentation
- */
+std::shared_ptr<base::IDimension> openDimensionHDF5(Group group, size_t index);
+
+
 class DimensionHDF5 : virtual public base::IDimension {
 
 protected:
@@ -42,13 +42,7 @@ public:
     DimensionHDF5(Group group, size_t index);
 
 
-    DimensionHDF5(const DimensionHDF5 &other);
-
-
     size_t index() const { return dim_index; }
-
-
-    void swap(DimensionHDF5 &other);
 
 
     bool operator==(const DimensionHDF5 &other) const;
@@ -61,22 +55,19 @@ public:
 
 protected:
 
-    void setType(); // TODO check if this is needed?
+    void setType();
 
 };
 
 
-/**
- * TODO documentation
- */
 class SampledDimensionHDF5 : virtual public base::ISampledDimension, public DimensionHDF5 {
 
 public:
 
+    SampledDimensionHDF5(Group group, size_t index);
+
+
     SampledDimensionHDF5(Group group, size_t index, double sampling_interval);
-
-
-    SampledDimensionHDF5(const SampledDimensionHDF5 &other);
 
 
     DimensionType dimensionType() const;
@@ -115,25 +106,16 @@ public:
     void offset(const none_t t);
 
 
-    SampledDimensionHDF5& operator=(const SampledDimensionHDF5 &other);
-
-
     virtual ~SampledDimensionHDF5();
 
 };
 
 
-/**
- * TODO documentation
- */
 class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF5 {
 
 public:
 
     SetDimensionHDF5(Group group, size_t index);
-
-
-    SetDimensionHDF5(const SetDimensionHDF5 &other);
 
 
     DimensionType dimensionType() const;
@@ -148,25 +130,19 @@ public:
     void labels(const none_t t);
 
 
-    SetDimensionHDF5& operator=(const SetDimensionHDF5 &other);
-
-
     virtual ~SetDimensionHDF5();
 
 };
 
 
-/**
- * TODO documentation
- */
 class RangeDimensionHDF5 : virtual public base::IRangeDimension, public DimensionHDF5 {
 
 public:
 
+    RangeDimensionHDF5(Group group, size_t index);
+
+
     RangeDimensionHDF5(Group group, size_t index, std::vector<double> ticks);
-
-
-    RangeDimensionHDF5(const RangeDimensionHDF5 &other);
 
 
     DimensionType dimensionType() const;
@@ -194,9 +170,6 @@ public:
 
 
     void ticks(const std::vector<double> &ticks);
-
-
-    RangeDimensionHDF5& operator=(const RangeDimensionHDF5 &other);
 
 
     virtual ~RangeDimensionHDF5();

@@ -59,7 +59,7 @@ void Section::link(const Section &link) {
 
 
 bool Section::hasSection(const Section &section) const {
-    if(section == none) {
+    if (section == none) {
         throw std::runtime_error("Section::hasSection: Empty Section entity given!");
     }
     return backend()->hasSection(section.id());
@@ -67,7 +67,7 @@ bool Section::hasSection(const Section &section) const {
 
 
 bool Section::deleteSection(const Section &section) {
-    if(section == none) {
+    if (section == none) {
         throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
     }
     return backend()->deleteSection(section.id());
@@ -102,7 +102,7 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
 
     todo.push_back(SectionCont(*this));
 
-    while(todo.size() > 0)
+    while (todo.size() > 0)
     {
         SectionCont current = todo.front();
         todo.pop_front();
@@ -164,7 +164,7 @@ std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) co
 //-----------------------------------------------------
 
 bool Section::hasProperty(const Property &property) const {
-    if(property == none) {
+    if (property == none) {
         throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
     }
     return backend()->hasProperty(property.id());
@@ -178,7 +178,7 @@ std::vector<Property> Section::properties(util::Filter<Property>::type filter) c
 }
 
 bool Section::deleteProperty(const Property &property) {
-    if(property == none) {
+    if (property == none) {
         throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
     }
     return backend()->deleteProperty(property.id());
@@ -196,7 +196,7 @@ vector<Property> Section::inheritedProperties() const {
     copy_if (linked.begin(), linked.end(),
              back_inserter(own),
              [&own](const Property &linked_prop) {
-                 return find_if(own.begin(), own.end(),
+                 return find_if (own.begin(), own.end(),
                                 [&linked_prop](const Property &own_prop) {
                                     return linked_prop.name() == own_prop.name();
                                 }) == own.end();
@@ -239,9 +239,9 @@ vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const
     vector<Section> results;
     Section p = parent();
 
-    if(p != nullptr) {
+    if (p != nullptr) {
         results = p.findSections(filter,1);
-        if(results.size() > 0) {
+        if (results.size() > 0) {
             return results;
         }
         return p.findUpstream(filter);
@@ -253,9 +253,9 @@ vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const
 vector<Section> Section::findSideways(std::function<bool(Section)> filter, const string &caller_id) const{
     vector<Section> results;
     Section p = parent();
-    if(p != nullptr) {
+    if (p != nullptr) {
         results = p.findSections(filter,1);
-        if(results.size() > 0) {
+        if (results.size() > 0) {
 
             results.erase(remove_if(results.begin(),
                                     results.end(),

@@ -6,14 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <string>
 #include <cstdlib>
 #include <mutex>
+#include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
-
-#include <nix/Exception.hpp>
 #include <nix/util/util.hpp>
+
+#include <nix/base/IDimensions.hpp>
+
 
 using namespace std;
 
@@ -165,6 +168,13 @@ bool isCompoundSIUnit(const string &unit) {
 }
 
 
+std::string dimTypeToStr(const nix::DimensionType &dtype) {
+    std::stringstream s;
+    s << dtype;
+    return s.str();
+}
+
+
 bool isScalable(const string &unitA, const string &unitB) {
     if (!(isSIUnit(unitA) && isSIUnit(unitB))) {
         return false;
@@ -183,13 +193,13 @@ bool isScalable(const string &unitA, const string &unitB) {
 bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
     bool scalable = true;
     
-    if(unitsA.size() != unitsB.size()) {
+    if (unitsA.size() != unitsB.size()) {
         return false;
     }
     
     auto itA = unitsA.begin();
     auto itB = unitsB.begin();
-    while(scalable && itA != unitsA.end()) {
+    while (scalable && itA != unitsA.end()) {
         scalable = isScalable(*itA, *itB);
         ++itA; 
         ++itB;
@@ -202,13 +212,13 @@ bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
 bool isSetAtSamePos(const vector<string> &unitsA, const vector<string> &unitsB) {
     bool set_same = true;
     
-    if(unitsA.size() != unitsB.size()) {
+    if (unitsA.size() != unitsB.size()) {
         return false;
     }
     
     auto itA = unitsA.begin();
     auto itB = unitsB.begin();
-    while(set_same && itA != unitsA.end()) {
+    while (set_same && itA != unitsA.end()) {
         set_same = (*itA).empty() == (*itB).empty();
         ++itA; 
         ++itB;

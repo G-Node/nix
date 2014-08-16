@@ -87,50 +87,137 @@ public:
      */
     SampledDimension(const SampledDimension &other);
 
+    /**
+     * @brief The actual dimension that is described by the dimension descriptor.
+     *
+     * The index of the dimension entity representing the dimension of the actual
+     * data that is defined by this descriptor.
+     *
+     * @return The dimension index of the dimension.
+     */
     size_t index() const {
         return backend()->index();
     }
 
+    /**
+     * @brief The type of the dimension.
+     *
+     * This field indicates whether the dimension is a SampledDimension, SetDimension or
+     * RangeDimension.
+     *
+     * @return The dimension type.
+     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
+    /**
+     * @brief Getter for the label of the dimension.
+     *
+     * The label of a SampledDimension corresponds to the axis label
+     * in a plot of the respective dimension.
+     *
+     * @return The label of the dimension.
+     */
     boost::optional<std::string> label() const {
         return backend()->label();
     }
 
+    /**
+     * @brief Sets the label of the dimension.
+     *
+     * @param label     The label of the dimension.
+     */
     void label(const std::string &label) {
         backend()->label(label);
     }
 
+    /**
+     * @brief Removes the label from a dimension.
+     *
+     * @param t         None
+     */
     void label(const none_t t) {
         backend()->label(t);
     }
 
+    /**
+     * @brief Gets the unit of a dimension.
+     *
+     * The unit describes which SI unit applies to this dimension
+     * and to its sampling interval.
+     *
+     * @return The unit of the dimension.
+     */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
+    /**
+     * @brief Sets the unit of a dimension.
+     *
+     * @param unit      The unit to set.
+     */
     void unit(const std::string &unit);
 
+    /**
+     * @brief Removes the unit from a dimension.
+     *
+     * @param t         None
+     */
     void unit(const none_t t) {
         backend()->unit(t);
     }
 
+    /**
+     * @brief Gets the sampling interval of the dimension.
+     *
+     * The unit of measure in which the sampling interval must be provided
+     * is defined by the {@link unit} of the SampledDimension.
+     *
+     * @return The sampling interval.
+     */
     double samplingInterval() const {
        return backend()->samplingInterval();
     }
 
+    /**
+     * @brief Sets the sampling interval of the dimension.
+     *
+     * @param interval  The sampling interval to set.
+     */
     void samplingInterval(double interval);
 
+    /**
+     * @brief Gets the offset of the dimension.
+     *
+     * The offset defines at which position the sampling was started. The offset is
+     * interpreted in the same unit as the sampling interval.
+     *
+     * By default the offset is 0.
+     *
+     * @returns The offset of the SampledDimension.
+     */
     boost::optional<double> offset() const {
         return backend()->offset();
     }
 
+    /**
+     * @brief Sets the offset of the dimension.
+     *
+     * @param offset    The offset of the dimension.
+     */
     void offset(double offset) {
         return backend()->offset(offset);
     }
 
+    /**
+     * @brief Removes the offset from the dimension.
+     *
+     * This resets the offset to the default which is 0.
+     *
+     * @param t         None
+     */
     void offset(const boost::none_t t) {
         backend()->offset(t);
     }
@@ -207,22 +294,56 @@ public:
      */
     SetDimension(const SetDimension &other);
 
+    /**
+     * @brief The actual dimension that is described by the dimension descriptor.
+     *
+     * The index of the dimension entity representing the dimension of the actual
+     * data that is defined by this descriptor.
+     *
+     * @return The dimension index of the dimension.
+     */
     size_t index() const {
         return backend()->index();
     }
 
+    /**
+     * @brief The type of the dimension.
+     *
+     * This field indicates whether the dimension is a SampledDimension, SetDimension or
+     * RangeDimension.
+     *
+     * @return The dimension type.
+     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
+    /**
+     * @brief Get the labels of the range dimension.
+     *
+     * The labels serve as names for each index of the data at the respective
+     * dimension.
+     *
+     * @return The labels of the dimension as a vector of strings.
+     */
     std::vector<std::string> labels() const {
         return backend()->labels();
     }
 
+    /**
+     * @brief Set the labels for the dimension.
+     *
+     * @param labels    A vector containing all new labels.
+     */
     void labels(const std::vector<std::string> &labels) {
         backend()->labels(labels);
     }
 
+    /**
+     * @brief Remove the labels from the dimension.
+     *
+     * @param t         None
+     */
     void labels(const boost::none_t t) {
         backend()->labels(t);
     }
@@ -301,40 +422,110 @@ public:
      */
     RangeDimension(const RangeDimension &other);
 
+    /**
+     * @brief The actual dimension that is described by the dimension descriptor.
+     *
+     * The index of the dimension entity representing the dimension of the actual
+     * data that is defined by this descriptor.
+     *
+     * @return The dimension index of the dimension.
+     */
     size_t index() const {
         return backend()->index();
     }
 
+    /**
+     * @brief The type of the dimension.
+     *
+     * This field indicates whether the dimension is a SampledDimension, SetDimension or
+     * RangeDimension.
+     *
+     * @return The dimension type.
+     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }
 
+    /**
+     * @brief Getter for the label of the dimension.
+     *
+     * The label of a RangeDimension corresponds to the axis label
+     * in a plot of the respective dimension.
+     *
+     * @return The label of the dimension.
+     */
     boost::optional<std::string> label() const {
         return backend()->label();
     }
 
+    /**
+     * @brief Sets the label of the dimension.
+     *
+     * @param label     The label of the dimension.
+     */
     void label(const std::string &label) {
         backend()->label(label);
     }
 
+    /**
+     * @brief Remove the label of the dimension.
+     *
+     * @param t         None
+     */
     void label(const none_t t) {
         backend()->label(t);
     }
 
+    /**
+     * @brief Gets the unit of a dimension.
+     *
+     * The unit describes which SI unit applies to this dimension
+     * and to its sampling interval.
+     *
+     * @return The unit of the dimension.
+     */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
+    /**
+     * @brief Sets the unit of a dimension.
+     *
+     * @param unit      The unit to set.
+     */
     void unit(const std::string &unit);
 
+    /**
+     * @brief Removes the unit from a dimension.
+     *
+     * @param t         None
+     */
     void unit(const none_t t) {
         backend()->unit(t);
     }
 
+    /**
+     * @brief Get the ticks of the dimension.
+     *
+     * The ticks map the index of the data at the respective dimension to other
+     * values. This can be used to store data that is sampled at irregular
+     * intervals.
+     *
+     * Ticks must be ordered in ascending order.
+     *
+     * @return A vector with all ticks for the dimension.
+     */
     std::vector<double> ticks() const {
         return backend()->ticks();
     }
 
+    /**
+     * @brief Set the ticks vector for the dimension.
+     *
+     * Ticks must be ordered in ascending order.
+     *
+     * @param ticks     The new ticks for the dimension provided as a vector.
+     */
     void ticks(const std::vector<double> &ticks);
 
     /**
@@ -441,12 +632,26 @@ public:
      */
     Dimension(const SetDimension &other);
 
-
+    /**
+     * @brief The actual dimension that is described by the dimension descriptor.
+     *
+     * The index of the dimension entity representing the dimension of the actual
+     * data that is defined by this descriptor.
+     *
+     * @return The dimension index of the dimension.
+     */
     size_t index() const {
         return backend()->index();
     }
 
-
+    /**
+     * @brief The type of the dimension.
+     *
+     * This field indicates whether the dimension is a SampledDimension, SetDimension or
+     * RangeDimension.
+     *
+     * @return The dimension type.
+     */
     DimensionType dimensionType() const {
         return backend()->dimensionType();
     }

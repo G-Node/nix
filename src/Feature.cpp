@@ -11,12 +11,32 @@
 namespace nix {
 
 void Feature::data(const DataArray &data) {
-    if(data == none) {
+    if (data == none) {
         throw std::runtime_error("Empty data entity (DataArray) given");
     }
     else {
         backend()->data(data.id());
     }
+}
+
+std::string link_type_to_string(LinkType ltype) {
+
+    std::string str;
+
+    switch(ltype) {
+
+    case LinkType::Tagged:    str = "Tagged";    break;
+    case LinkType::Untagged:  str = "Untagged";  break;
+    case LinkType::Indexed:   str = "Indexed";   break;
+    
+    }
+
+    return str;
+}
+
+std::ostream &operator<<(std::ostream &out, const LinkType ltype) {
+    out << "LinkType::" << link_type_to_string(ltype);
+    return out;
 }
 
 }

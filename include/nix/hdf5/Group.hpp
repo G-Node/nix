@@ -13,15 +13,16 @@
 
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSet.hpp>
-
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/DataSpace.hpp>
-
 #include <nix/Platform.hpp>
+
+#include <boost/optional.hpp>
 
 namespace nix {
 namespace hdf5 {
 
+struct optGroup;
 
 /**
  * TODO documentation
@@ -65,11 +66,66 @@ public:
     bool getData(const std::string &name, T &value) const;
 
     bool hasGroup(const std::string &name) const;
+
+    /**
+     * @brief Open and eventually create a group with the given name
+     *        inside this group. If creation is not allowed (bool
+     *        param is "false") and the group does not exist an error
+     *        is thrown.
+     *
+     * @param name    The name of the group to create.
+     * @param create  Whether to create the group if it does not yet exist
+     *
+     * @return The opened group.
+     */
     Group openGroup(const std::string &name, bool create = true) const;
+
+    /**
+     * @brief Create an {@link optGroup} functor that can be used to
+     *        open and eventually create an optional group inside this
+     *        group.
+     *
+     * @param name    The name of the group to create.
+     *
+     * @return The opened group.
+     */
+    optGroup openOptGroup(const std::string &name);
+
     void removeGroup(const std::string &name);
     void renameGroup(const std::string &old_name, const std::string &new_name);
 
-    bool createLink(const Group &target, const Group &link_base, const std::string link_name);
+    /**
+     * @brief Create a new hard link with the given name inside this group,
+     *        that points to the target group.
+     *
+     * @param target    The target of the link to create.
+     * @param linkname  The name of the link to create.
+     *
+     * @return The linked group.
+     */
+    Group createLink(const Group &target, const std::string &link_name);
+
+    /**
+     * @brief Renames all links of the object defined by the old name.
+     *
+     * This method will only change the links where the last part of the path
+     * is the old name.
+     *
+     * @param old_name  The old name of the object
+     * @param new_name  The new name of the object
+     *
+     * @return True if all links where changed successfully.
+     */
+    bool renameAllLinks(const std::string &old_name, const std::string &new_name);
+
+    /**
+     * @brief Removes all links to the object defined by the given name.
+     *
+     * @param name      The name of the object to remove.
+     *
+     * @return  True if all links were deleted.
+     */
+    bool removeAllLinks(const std::string &name);
 
     bool operator==(const Group &group) const;
     bool operator!=(const Group &group) const;
@@ -170,6 +226,40 @@ bool Group::getData(const std::string &name, T &value) const
 
     return true;
 }
+
+
+/**
+ * Helper struct that works as a functor like {@link Group::openGroup}:
+ * 
+ * Open and eventually create a group with the given name inside
+ * this group. If creation is not allowed (bool param is "false") and
+ * the group does not exist an error is thrown. If creation is not
+ * allowed (bool param is "false") and the group does not exist an
+ * unset optional is returned.
+ */
+struct NIXAPI optGroup {
+    mutable boost::optional<Group> g;
+    Group parent;
+    std::string g_name;
+    
+public:
+    optGroup(const Group &parent, const std::string &g_name);
+
+    optGroup(){};
+
+    /**
+     * @brief Open and eventually create a group with the given name
+     *        inside this group. If creation is not allowed (bool
+     *        param is "false") and the group does not exist an unset
+     *        optional is returned.
+     *
+     * @param create  Whether to create the group if it does not yet exist
+     *
+     * @return An optional with the opened group or unset.
+     */
+    boost::optional<Group> operator() (bool create = true) const;
+};
+
 
 } // namespace hdf5
 } // namespace nix

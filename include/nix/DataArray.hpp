@@ -436,7 +436,7 @@ public:
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
 
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;

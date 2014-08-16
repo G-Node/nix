@@ -12,29 +12,39 @@
 #include <nix/hdf5/EntityHDF5.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
 
-
-EntityHDF5::EntityHDF5(File file, Group group, const string &id)
-    : entity_file(file), entity_group(group), entity_id(id)
+EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group)
+    : entity_file(file), entity_group(group)
 {
     setUpdatedAt();
     setCreatedAt();
 }
 
 
-EntityHDF5::EntityHDF5(File file, Group group, const string &id, time_t time)
-    : entity_file(file), entity_group(group), entity_id(id)
+EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group, const string &id, time_t time)
+    : entity_file(file), entity_group(group)
 {
+    group.setAttr("entity_id", id);
     setUpdatedAt();
     forceCreatedAt(time);
 }
 
 
 string EntityHDF5::id() const {
-    return entity_id;
+    string t;
+    
+    if (group().hasAttr("entity_id")) {
+        group().getAttr("entity_id", t);
+    }
+    else {
+        throw runtime_error("Entity has no id!");
+    }
+    
+    return t;
 }
 
 
@@ -79,12 +89,13 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
-void EntityHDF5::swap(EntityHDF5 &other) {
-    using std::swap;
+Group EntityHDF5::group() const {
+    return entity_group;
+}
 
-    swap(entity_file, other.entity_file);
-    swap(entity_group, other.entity_group);
-    swap(entity_id, other.entity_id);
+
+std::shared_ptr<base::IFile> EntityHDF5::file() const {
+    return entity_file;
 }
 
 
@@ -100,6 +111,3 @@ bool EntityHDF5::operator!=(const EntityHDF5 &other) const {
 
 EntityHDF5::~EntityHDF5() {}
 
-
-} // namespace hdf5
-} // namespace nix

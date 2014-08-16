@@ -33,13 +33,13 @@ private:
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
-    CPPUNIT_TEST(testDataTagUnitSupport);
+    CPPUNIT_TEST(testMultiTagUnitSupport);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
     nix::DataArray data_array;
-    nix::SimpleTag position_tag, segment_tag;
-    nix::DataTag data_tag;
+    nix::Tag position_tag, segment_tag;
+    nix::MultiTag multi_tag;
     nix::Block block;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim;
@@ -54,6 +54,6 @@ public:
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
-    void testDataTagUnitSupport();
+    void testMultiTagUnitSupport();
 };
 

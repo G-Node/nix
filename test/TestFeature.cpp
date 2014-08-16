@@ -14,19 +14,10 @@ void TestFeature::setUp() {
     file = File::open("test_feature.h5", FileMode::Overwrite);
     block = file.createBlock("featureTest","test");
 
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name,
-                                             "reference",
-                                             DataType::Double,
-                                             {0}));
-    }
-
     data_array = block.createDataArray("featureTest", "Test",
-                                       DataType::Double, {0});
-    tag = block.createSimpleTag("featureTest", "Test", refs);
+                                       DataType::Double, nix::NDSize({ 0 }));
+    
+    tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
 
 
@@ -71,10 +62,12 @@ void TestFeature::testLinkType(){
 void TestFeature::testData() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
-                                           DataType::Double, {0});
+                                           DataType::Double, nix::NDSize({ 0 }));
     CPPUNIT_ASSERT(rp.data().id() == data_array.id());
     rp.data(da_2);
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     block.deleteDataArray(da_2.id());
+    // make sure link is gone with deleted data array
+    CPPUNIT_ASSERT_THROW(rp.data(), std::runtime_error);
     tag.deleteFeature(rp.id());
 }

@@ -15,7 +15,7 @@ using namespace nix;
 double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
     double value = 0.0;
     double term = 1.0;
-    for(size_t i = 0; i < coefficients.size(); i++) {
+    for (size_t i = 0; i < coefficients.size(); i++) {
         value += coefficients[i] * term;
         term *= input - origin;
     }
@@ -36,13 +36,6 @@ std::vector<Dimension> DataArray::dimensions(util::Filter<Dimension>::type filte
     return getEntities<Dimension>(f,
                                   dimensionCount(),
                                   filter);
-}
-
-std::ostream &operator<<(std::ostream &out, const DataArray &ent) {
-    out << "DataArray: {name = " << ent.name();
-    out << ", type = " << ent.type();
-    out << ", id = " << ent.id() << "}";
-    return out;
 }
 
 
