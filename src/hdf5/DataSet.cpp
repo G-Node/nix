@@ -205,7 +205,6 @@ double psize_product(const NDSize &dims)
  */
 NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
 {
-
     const size_t type_size = data_type_to_size(dtype);
     NDSize chunks = guessChunking(dims, type_size);
     return chunks;
@@ -271,7 +270,6 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
         }
         i++;
     }
-   
     return chunks;
 }
 
