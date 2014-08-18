@@ -281,7 +281,7 @@ void TestSection::testPropertyAccess() {
 
     Value dummy(10);
     prop = section.createProperty("single value", dummy);
-    CPPUNIT_ASSERT(section.hasPropertyWithName("single value"));
+    CPPUNIT_ASSERT(section.hasPropertyByName("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     section.deleteProperty(prop.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -290,7 +290,7 @@ void TestSection::testPropertyAccess() {
     for (auto name : names) {
         prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
-        CPPUNIT_ASSERT(section.hasPropertyWithName(name));
+        CPPUNIT_ASSERT(section.hasPropertyByName(name));
 
         Property prop_copy = section.getPropertyByName(name);
 
@@ -298,6 +298,8 @@ void TestSection::testPropertyAccess() {
 
         ids.push_back(prop.id());
     }
+    CPPUNIT_ASSERT_THROW(section.createProperty(names[0], dummy),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());

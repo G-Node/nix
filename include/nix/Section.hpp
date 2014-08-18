@@ -385,8 +385,8 @@ public:
      *
      * @return True if a property with the given name exists false otherwise.
      */
-    bool hasPropertyWithName(const std::string &name) const {
-        return backend()->hasPropertyWithName(name);
+    bool hasPropertyByName(const std::string &name) const {
+        return backend()->hasPropertyByName(name);
     }
 
     /**

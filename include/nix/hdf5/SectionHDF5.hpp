@@ -136,13 +136,13 @@ public:
     bool hasProperty(const std::string &id) const;
 
 
+    bool hasPropertyByName(const std::string &name) const;
+
+
     std::shared_ptr<base::IProperty> getProperty(const std::string &id) const;
 
 
     std::shared_ptr<base::IProperty> getProperty(size_t index) const;
-
-
-    bool hasPropertyWithName(const std::string &name) const;
 
 
     std::shared_ptr<base::IProperty> getPropertyByName(const std::string &name) const;

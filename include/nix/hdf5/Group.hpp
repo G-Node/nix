@@ -97,14 +97,26 @@ public:
     /**
      * @brief Look for the first sub-group in the group with the given
      * attribute that is set to the given string value and return it
-     * if found. Return empty group if not found.
+     * if found. Return empty optional if not found.
      *
      * @param attribute The name of the attribute to search.
      * @param value     The value of the attribute to search.
      *
-     * @return The name of the first object found.
+     * @return The name of the first group object found.
      */
     boost::optional<Group> findGroupByAttribute(const std::string &attribute, const std::string &value) const;
+
+    /**
+     * @brief Look for the first sub-data in the group with the given
+     * attribute that is set to the given string value and return it
+     * if found. Return empty optional if not found.
+     *
+     * @param attribute The name of the attribute to search.
+     * @param value     The value of the attribute to search.
+     *
+     * @return The name of the first dataset object found.
+     */
+    boost::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
      * @brief Create a new hard link with the given name inside this group,
