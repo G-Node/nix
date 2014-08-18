@@ -88,11 +88,15 @@ public:
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
+    bool hasDataArrayByName(const std::string &name) const;
 
     bool hasDataArray(const std::string &id) const;
 
 
     std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
+
+    
+    std::shared_ptr<base::IDataArray> getDataArrayByName(const std::string &name) const;
 
 
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;

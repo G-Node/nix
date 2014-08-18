@@ -14,6 +14,8 @@
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/MultiTagHDF5.hpp>
 
+#include <boost/range/irange.hpp>
+
 using namespace std;
 using namespace nix;
 using namespace nix::hdf5;
@@ -168,26 +170,43 @@ bool BlockHDF5::deleteTag(const string &id) {
 
 // Methods related to DataArray
 
+bool BlockHDF5::hasDataArrayByName(const string &name) const {
+    // let getDataArrayByName try to look up object by name    
+    return getDataArrayByName(name) != nullptr;
+}
+
 bool BlockHDF5::hasDataArray(const string &id) const {
-    return data_array_group.hasObject(id);
+    // let getDataArray try to look up object by id    
+    return getDataArray(id) != nullptr;
+}
+
+
+shared_ptr<IDataArray> BlockHDF5::getDataArrayByName(const string &name) const {
+    shared_ptr<DataArrayHDF5> da;
+    
+    if (data_array_group.hasObject(name)) {
+        Group group = data_array_group.openGroup(name, false);
+        da = make_shared<DataArrayHDF5>(file(), block(), group);
+    }
+    
+    return da;
 }
 
 
 shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
     shared_ptr<DataArrayHDF5> da;
 
-    if (hasDataArray(id)) {
-        Group group = data_array_group.openGroup(id, false);
-        da = make_shared<DataArrayHDF5>(file(), block(), group);
-    }
+    boost::optional<Group> group = data_array_group.findGroupByAttribute("entity_id", id);
+    if (group)
+        da = make_shared<DataArrayHDF5>(file(), block(), *group);
 
     return da;
 }
 
 
 shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
-    string id = data_array_group.objectName(index);
-    return getDataArray(id);
+    string name = data_array_group.objectName(index);
+    return getDataArrayByName(name);
 }
 
 
@@ -200,12 +219,12 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                      const std::string &type,
                                      nix::DataType      data_type,
                                      const NDSize      &shape) {
-    string id = util::createId("data_array");
-    while (hasDataArray(id)) {
-        id = util::createId("data_array");
+    if (hasDataArray(name)) {
+        throw DuplicateName("createDataArray");
     }
+    string id = util::createId("data_array");
 
-    Group group = data_array_group.openGroup(id, true);
+    Group group = data_array_group.openGroup(name, true);
     auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
     // now create the actual H5::DataSet
@@ -219,7 +238,8 @@ bool BlockHDF5::deleteDataArray(const string &id) {
     bool deleted = false;
 
     if (hasDataArray(id)) {
-        data_array_group.removeAllLinks(id);
+        // we get first "entity" link by name, but delete all others whatever their name with it
+        deleted = data_array_group.removeAllLinks(getDataArray(id)->name());
     }
 
     return deleted;
