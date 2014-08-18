@@ -67,9 +67,6 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    void name(const std::string &name);
-
-
     std::string name() const;
 
 

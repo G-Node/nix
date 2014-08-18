@@ -27,9 +27,6 @@ class NIXAPI IProperty : virtual public base::IEntity {
 
 public:
 
-    virtual void name(const std::string &name) = 0;
-
-
     virtual std::string name() const = 0;
 
 

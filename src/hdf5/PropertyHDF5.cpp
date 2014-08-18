@@ -42,7 +42,13 @@ using namespace nix::base;
     : entity_file(file)
 {
     this->entity_dataset = dataset;
-    this->name(name);
+    // set name
+    if (name.empty()) {
+        throw EmptyString("name");
+    } else {
+        dataset.setAttr("name", name);
+        forceUpdatedAt();
+    }
     
     dataset.setAttr("entity_id", id);
     setUpdatedAt();
@@ -102,16 +108,6 @@ void PropertyHDF5::setCreatedAt() {
 
 void PropertyHDF5::forceCreatedAt(time_t t) {
     dataset().setAttr("created_at", util::timeToStr(t));
-}
-
-
-void PropertyHDF5::name(const string &name) {
-    if (name.empty()) {
-        throw EmptyString("name");
-    } else {
-        dataset().setAttr("name", name);
-        forceUpdatedAt();
-    }
 }
 
 

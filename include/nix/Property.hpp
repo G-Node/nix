@@ -97,15 +97,6 @@ public:
     //--------------------------------------------------
 
     /**
-     * @brief Setter for the name of the property.
-     *
-     * @param name The name of the property.
-     */
-    void name(const std::string &name) {
-        backend()->name(name);
-    }
-
-    /**
      * @brief Getter for the name of the property.
      *
      * The {@link name} of an property serves as a human readable identifier. It is not obliged
