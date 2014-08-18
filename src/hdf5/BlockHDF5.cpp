@@ -219,7 +219,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                      const std::string &type,
                                      nix::DataType      data_type,
                                      const NDSize      &shape) {
-    if (hasDataArray(name)) {
+    if (hasDataArrayByName(name)) {
         throw DuplicateName("createDataArray");
     }
     string id = util::createId("data_array");

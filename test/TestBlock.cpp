@@ -12,6 +12,7 @@
 #include "TestBlock.hpp"
 
 #include <nix/valid/validate.hpp>
+#include <nix/Exception.hpp>
 
 using namespace std;
 using namespace nix;
@@ -141,6 +142,8 @@ void TestBlock::testDataArrayAccess() {
 
         ids.push_back(data_array.id());
     }
+    CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
