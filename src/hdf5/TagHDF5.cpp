@@ -225,7 +225,7 @@ shared_ptr<IFeature> TagHDF5::getFeature(size_t index) const {
 }
 
 
-shared_ptr<IFeature> TagHDF5::createFeature(const std::string &name, LinkType link_type) {
+shared_ptr<IFeature> TagHDF5::createFeature(const std::string &id, LinkType link_type) {
     if (link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for Tag entities and can only be used for MultiTag entities.");
     }
@@ -235,7 +235,7 @@ shared_ptr<IFeature> TagHDF5::createFeature(const std::string &name, LinkType li
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(name);
+    DataArray data = block()->getDataArray(id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 

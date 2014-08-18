@@ -276,13 +276,13 @@ shared_ptr<IFeature>  MultiTagHDF5::getFeature(size_t index) const {
 }
 
 
-shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &name, LinkType link_type) {
+shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &id, LinkType link_type) {
     string rep_id = util::createId("feature");
     while (feature_group.hasObject(rep_id))
         rep_id = util::createId("feature");
 
     Group group = feature_group.openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(name);
+    DataArray data = block()->getDataArray(id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
