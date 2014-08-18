@@ -19,7 +19,7 @@ using namespace nix::base;
 SourceHDF5::SourceHDF5(std::shared_ptr<base::IFile> file, Group group)
     : EntityWithMetadataHDF5(file, group)
 {
-    source_group = group.openGroup("sources", false);
+    source_group = group.openOptGroup("sources");
 }
     
     
@@ -32,21 +32,47 @@ SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &i
 SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openGroup("sources", true);
+    source_group = group.openOptGroup("sources");
 }
 
 
 bool SourceHDF5::hasSource(const string &id) const {
-    return source_group.hasGroup(id);
+    boost::optional<Group> g = source_group(false);
+    // let getSource try to look up object by id
+    return g ? (getSource(id) != nullptr) : false;
+}
+
+
+bool SourceHDF5::hasSourceByName(const string &name) const {
+    boost::optional<Group> g = source_group(false);
+    // let getTag try to look up object by id
+    return g ? (getSourceByName(name) != nullptr) : false;
+}
+
+
+shared_ptr<ISource> SourceHDF5::getSourceByName(const string &name) const {
+    shared_ptr<SourceHDF5> source;
+    boost::optional<Group> g = source_group(false);
+
+    if(g) {
+        if (g->hasObject(name)) {
+            Group group = g->openGroup(name, false);
+            source = make_shared<SourceHDF5>(file(), group);
+        }
+    }
+
+    return source;
 }
 
 
 shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
-    shared_ptr<ISource> source;
+    shared_ptr<SourceHDF5> source;
+    boost::optional<Group> g = source_group(false);
 
-    if (source_group.hasGroup(id)) {
-        Group group = source_group.openGroup(id, false);
-        source = make_shared<SourceHDF5>(file(), group);
+    if(g) {
+        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        if (group)
+            source = make_shared<SourceHDF5>(file(), *group);
     }
 
     return source;
@@ -54,41 +80,50 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
 
 
 shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
-    string id = source_group.objectName(index);
-    // all checks done by "getSource(const string &id)"
-    return getSource(id);
+    boost::optional<Group> g = source_group(false);
+    string name = g ? (*g).objectName(index) : "";
+    return getSourceByName(name);
 }
 
 
 size_t SourceHDF5::sourceCount() const {
-    return source_group.objectCount();
+    boost::optional<Group> g = source_group(false);
+    return g ? (*g).objectCount() : size_t(0);
 }
 
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
-    string id = util::createId("source");
-    while (source_group.hasObject(id)) {
-        id = util::createId("source");
+    if (hasSourceByName(name)) {
+        throw DuplicateName("createSource");
     }
+    boost::optional<Group> g = source_group(true);
 
-    Group grp = source_group.openGroup(id, true);
-    return make_shared<SourceHDF5>(file(), grp, id, type, name);
+    string id = util::createId("source");
+
+    Group group = g->openGroup(name, true);
+    return make_shared<SourceHDF5>(file(), group, id, type, name);
 }
 
 
 bool SourceHDF5::deleteSource(const string &id) {
-    // call deleteSource on sources to trigger recursive call to all sub-sources
-    if (hasSource(id)) {
-        // get instance of source about to get deleted
-        Source source = getSource(id);
-        // loop through all child sources and call deleteSource on them
-        for(auto &child : source.sources()) {
-            source.deleteSource(child.id());
+    boost::optional<Group> g = source_group(false);
+    bool deleted = false;
+    
+    if(g) {
+        // call deleteSource on sources to trigger recursive call to all sub-sources
+        if (hasSource(id)) {
+            // get instance of source about to get deleted
+            Source source = getSource(id);
+            // loop through all child sources and call deleteSource on them
+            for(auto &child : source.sources()) {
+                source.deleteSource(child.id());
+            }
+            // if hasSource is true then source_group always exists
+            deleted = g->removeAllLinks(source.name());
         }
-        source_group.removeAllLinks(id);
     }
 
-    return hasSource(id);
+    return deleted;
 }
 
 

@@ -9,6 +9,10 @@
 #ifndef NIX_SOURCE_HDF5_H
 #define NIX_SOURCE_HDF5_H
 
+#include <vector>
+#include <string>
+#include <boost/optional.hpp>
+
 #include <nix/base/ISource.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
@@ -22,7 +26,7 @@ class SourceHDF5 : virtual public base::ISource, public EntityWithMetadataHDF5  
 
 private:
 
-    Group source_group;
+    optGroup source_group;
 
 public:
 
@@ -51,11 +55,17 @@ public:
 
     bool hasSource(const std::string &id) const;
 
+    
+    bool hasSourceByName(const std::string &name) const;
+
 
     std::shared_ptr<base::ISource> getSource(const std::string &id) const;
 
 
     std::shared_ptr<base::ISource> getSource(size_t index) const;
+
+
+    std::shared_ptr<base::ISource> getSourceByName(const std::string &name) const;
 
 
     size_t sourceCount() const;

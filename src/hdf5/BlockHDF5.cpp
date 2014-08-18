@@ -123,6 +123,7 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
 
 bool BlockHDF5::deleteSource(const string &id) {
     boost::optional<Group> g = source_group(false);
+    bool deleted = false;
     
     if(g) {
         // call deleteSource on sources to trigger recursive call to all sub-sources
@@ -134,11 +135,11 @@ bool BlockHDF5::deleteSource(const string &id) {
                 source.deleteSource(child.id());
             }
             // if hasSource is true then source_group always exists
-            g->removeAllLinks(source.name());
+            deleted = g->removeAllLinks(source.name());
         }
     }
 
-    return hasSource(id);
+    return deleted;
 }
 
 
