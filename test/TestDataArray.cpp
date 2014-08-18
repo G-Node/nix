@@ -55,9 +55,6 @@ void TestDataArray::testId() {
 
 void TestDataArray::testName() {
     CPPUNIT_ASSERT(array1.name() == "array_one");
-    std::string name = nix::util::createId("", 32);
-    array1.name(name);
-    CPPUNIT_ASSERT(array1.name() == name);
 }
 
 

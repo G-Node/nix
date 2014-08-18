@@ -37,7 +37,14 @@ NamedEntityHDF5::NamedEntityHDF5(std::shared_ptr<IFile> file, Group group, const
     : EntityHDF5(file, group, id, time)
 {
     this->type(type);
-    this->name(name);
+    // set name
+    if (name.empty()) {
+        throw EmptyString("name");
+    } else {
+        group.setAttr("name", name);
+        forceUpdatedAt();
+    }
+
 }
 
 
@@ -58,16 +65,6 @@ string NamedEntityHDF5::type() const {
         return type;
     } else {
         throw MissingAttr("type");
-    }
-}
-
-
-void NamedEntityHDF5::name(const string &name) {
-    if (name.empty()) {
-        throw EmptyString("name");
-    } else {
-        group().setAttr("name", name);
-        forceUpdatedAt();
     }
 }
 

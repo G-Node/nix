@@ -46,9 +46,6 @@ void TestSection::testId() {
 
 void TestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
-    string name = util::createId("", 32);
-    section.name(name);
-    CPPUNIT_ASSERT(section.name() == name);
 }
 
 

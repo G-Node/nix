@@ -50,9 +50,6 @@ public:
     std::string type() const;
 
 
-    void name(const std::string &name);
-
-
     std::string name() const;
 
 
