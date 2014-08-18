@@ -29,7 +29,7 @@ const int    ID_BASE = 32;
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
 const string  PREFIXES = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|u|n|p|f|a|z|y)";
-const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB)";
+const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB|rad)";
 const string  POWER = "(\\^[+-]?[1-9]\\d*)";
 
 const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a", 1.0e-18}, {"f", 1.0e-15},
