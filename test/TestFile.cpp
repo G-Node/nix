@@ -161,7 +161,7 @@ void TestFile::testReopen() {
     b = none;
     file_open.close();
 
-    file_open = nix::File::open("test_file_b.h5");
+    file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
 }
 
