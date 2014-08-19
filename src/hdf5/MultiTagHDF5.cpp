@@ -23,27 +23,27 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
     : EntityWithSourcesHDF5(file, block, group)
 {
-    feature_group = group.openGroup("features", false);
-    refs_group = group.openGroup("references", false);
+    feature_group = group.openOptGroup("features");
+    refs_group = group.openOptGroup("references");
 }
 
 
-MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group,
                          const string &id, const std::string &type, const string &name, const DataArray &positions)
     : MultiTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group,
                          const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
-    feature_group = group.openGroup("features", true);
-    refs_group = group.openGroup("references", true);
+    feature_group = group.openOptGroup("features");
+    refs_group = group.openOptGroup("references");
     // TODO: the line below currently throws an exception if positions is
     // not in block - to consider if we prefer copying it to the block
     this->positions(positions.id());
@@ -161,21 +161,23 @@ void MultiTagHDF5::units(const none_t t) {
 // Methods concerning references.
 //--------------------------------------------------
 
-bool MultiTagHDF5::hasReference(const std::string &name) const {
-    return refs_group.hasGroup(name);
+bool MultiTagHDF5::hasReference(const std::string &id) const {
+    return refs_group() ? refs_group()->hasGroup(id) : false;
 }
 
 
 size_t MultiTagHDF5::referenceCount() const {
-    return refs_group.objectCount();
+    boost::optional<Group> g = refs_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IDataArray>  MultiTagHDF5::getReference(const std::string &id) const {
     shared_ptr<IDataArray> da;
+    boost::optional<Group> g = refs_group();
 
-    if (refs_group.hasGroup(id)) {
-        Group group = refs_group.openGroup(id, false);
+    if (g && hasReference(id)) {
+        Group group = g->openGroup(id);
         da = make_shared<DataArrayHDF5>(file(), block(), group);
     }
 
@@ -183,31 +185,40 @@ shared_ptr<IDataArray>  MultiTagHDF5::getReference(const std::string &id) const 
 }
 
 shared_ptr<IDataArray>  MultiTagHDF5::getReference(size_t index) const {
-    shared_ptr<IDataArray> da;
+    // check if index valid
+    if(index > referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
+    }
 
-    // get reference name
-    std::string name = refs_group.objectName(index);
-    da = getReference(name);
-
-    return da;
+    boost::optional<Group> g = refs_group();
+    string id = g ? g->objectName(index) : "";
+    return getReference(id);
 }
 
 void MultiTagHDF5::addReference(const std::string &id) {
     if (id.empty())
         throw EmptyString("addReference");
+    boost::optional<Group> g = refs_group(true);
 
     if (!block()->hasDataArray(id))
         throw std::runtime_error("MultiTagHDF5::addReference: DataArray not found in block!");
     
     auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
 
-    refs_group.createLink(target->group(), target->id());
+    g->createLink(target->group(), target->id());
 }
 
 
 bool MultiTagHDF5::removeReference(const std::string &id) {
-    refs_group.removeGroup(id);
-    return refs_group.hasGroup(id);
+    boost::optional<Group> g = refs_group();
+    bool removed = false;
+
+    if (g) {
+        g->removeGroup(id);
+        removed = true;
+    }
+
+    return removed;
 }
 
 
@@ -249,20 +260,23 @@ void MultiTagHDF5::references(const std::vector<DataArray> &refs_new) {
 //--------------------------------------------------
 
 bool MultiTagHDF5::hasFeature(const string &id) const {
-    return feature_group.hasGroup(id);
+    // let getFeature try to look up object by id
+    return getFeature(id) != nullptr;
 }
 
 
 size_t MultiTagHDF5::featureCount() const {
-    return feature_group.objectCount();
+    boost::optional<Group> g = feature_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IFeature>  MultiTagHDF5::getFeature(const std::string &id) const {
     shared_ptr<FeatureHDF5> feature;
+    boost::optional<Group> g = feature_group();
 
-    if (feature_group.hasGroup(id)) {
-        Group group = feature_group.openGroup(id, false);
+    if (g && hasFeature(id)) {
+        Group group = g->openGroup(id, false);
         feature = make_shared<FeatureHDF5>(file(), block(), group);
     }
 
@@ -271,29 +285,34 @@ shared_ptr<IFeature>  MultiTagHDF5::getFeature(const std::string &id) const {
 
 
 shared_ptr<IFeature>  MultiTagHDF5::getFeature(size_t index) const {
-    string id = feature_group.objectName(index);
+    boost::optional<Group> g = feature_group();
+    string id = g->objectName(index);
     return getFeature(id);
 }
 
 
 shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &id, LinkType link_type) {
     string rep_id = util::createId("feature");
-    while (feature_group.hasObject(rep_id))
+    boost::optional<Group> g = feature_group(true);
+    while (g->hasObject(rep_id))
         rep_id = util::createId("feature");
 
-    Group group = feature_group.openGroup(rep_id, true);
+    Group group = g->openGroup(rep_id, true);
     DataArray data = block()->getDataArray(id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
 
 bool MultiTagHDF5::deleteFeature(const string &id) {
-    if (feature_group.hasGroup(id)) {
-        feature_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    boost::optional<Group> g = feature_group();
+    bool deleted = false;
+    
+    if (g && hasFeature(id)) {
+        g->removeGroup(id);
+        deleted = true;
     }
+    
+    return deleted;
 }
 
 //--------------------------------------------------
