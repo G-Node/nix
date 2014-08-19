@@ -25,7 +25,7 @@ private:
 
     // TODO: consider writing parent_section as soft link into file
     std::shared_ptr<base::ISection> parent_section;
-    Group property_group, section_group;
+    optGroup property_group, section_group;
 
 public:
 

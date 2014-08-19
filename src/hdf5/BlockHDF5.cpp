@@ -122,13 +122,13 @@ bool BlockHDF5::deleteSource(const string &id) {
     boost::optional<Group> g = source_group();
     bool deleted = false;
     
-    if(g) {
+    if (g) {
         // call deleteSource on sources to trigger recursive call to all sub-sources
         if (hasSource(id)) {
             // get instance of source about to get deleted
             Source source = getSource(id);
             // loop through all child sources and call deleteSource on them
-            for(auto &child : source.sources()) {
+            for (auto &child : source.sources()) {
                 source.deleteSource(child.id());
             }
             // if hasSource is true then source_group always exists
