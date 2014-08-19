@@ -37,26 +37,24 @@ SourceHDF5::SourceHDF5(shared_ptr<IFile> file, Group group, const std::string &i
 
 
 bool SourceHDF5::hasSource(const string &id) const {
-    boost::optional<Group> g = source_group(false);
     // let getSource try to look up object by id
-    return g ? (getSource(id) != nullptr) : false;
+    return getSource(id) != nullptr;
 }
 
 
 bool SourceHDF5::hasSourceByName(const string &name) const {
-    boost::optional<Group> g = source_group(false);
     // let getTag try to look up object by id
-    return g ? (getSourceByName(name) != nullptr) : false;
+    return getSourceByName(name) != nullptr;
 }
 
 
 shared_ptr<ISource> SourceHDF5::getSourceByName(const string &name) const {
     shared_ptr<SourceHDF5> source;
-    boost::optional<Group> g = source_group(false);
+    boost::optional<Group> g = source_group();
 
-    if(g) {
+    if (g) {
         if (g->hasObject(name)) {
-            Group group = g->openGroup(name, false);
+            Group group = g->openGroup(name);
             source = make_shared<SourceHDF5>(file(), group);
         }
     }
@@ -67,9 +65,9 @@ shared_ptr<ISource> SourceHDF5::getSourceByName(const string &name) const {
 
 shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
     shared_ptr<SourceHDF5> source;
-    boost::optional<Group> g = source_group(false);
+    boost::optional<Group> g = source_group();
 
-    if(g) {
+    if (g) {
         boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
         if (group)
             source = make_shared<SourceHDF5>(file(), *group);
@@ -80,7 +78,7 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
 
 
 shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
-    boost::optional<Group> g = source_group(false);
+    boost::optional<Group> g = source_group();
     string name = g ? (*g).objectName(index) : "";
     return getSourceByName(name);
 }
@@ -106,7 +104,7 @@ shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &t
 
 
 bool SourceHDF5::deleteSource(const string &id) {
-    boost::optional<Group> g = source_group(false);
+    boost::optional<Group> g = source_group();
     bool deleted = false;
     
     if(g) {

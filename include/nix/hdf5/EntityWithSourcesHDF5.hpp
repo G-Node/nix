@@ -26,7 +26,7 @@ class EntityWithSourcesHDF5: public virtual base::IEntityWithSources, public Ent
 private:
 
     std::shared_ptr<base::IBlock> entity_block;
-    Group sources_refs;
+    optGroup sources_refs;
 
 public:
 
