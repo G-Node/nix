@@ -27,9 +27,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    Group data_array_group, tag_group, multi_tag_group;
-
-    optGroup source_group;
+    optGroup data_array_group, tag_group, multi_tag_group, source_group;
 
 public:
 

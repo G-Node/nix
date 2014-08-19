@@ -281,7 +281,7 @@ public:
      *
      * @return An optional with the opened group or unset.
      */
-    boost::optional<Group> operator() (bool create = true) const;
+    boost::optional<Group> operator() (bool create = false) const;
 };
 
 
