@@ -271,13 +271,15 @@ size_t MultiTagHDF5::featureCount() const {
 }
 
 
-shared_ptr<IFeature>  MultiTagHDF5::getFeature(const std::string &id) const {
+shared_ptr<IFeature> MultiTagHDF5::getFeature(const std::string &id) const {
     shared_ptr<FeatureHDF5> feature;
     boost::optional<Group> g = feature_group();
 
-    if (g && hasFeature(id)) {
-        Group group = g->openGroup(id, false);
-        feature = make_shared<FeatureHDF5>(file(), block(), group);
+    if (g) {
+        if(g->hasGroup(id)) {
+            Group group = g->openGroup(id, false);
+            feature = make_shared<FeatureHDF5>(file(), block(), group);
+        }
     }
 
     return feature;
@@ -292,6 +294,9 @@ shared_ptr<IFeature>  MultiTagHDF5::getFeature(size_t index) const {
 
 
 shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &id, LinkType link_type) {
+    if(!block()->hasDataArray(id)) {
+        throw std::runtime_error("DataArray not found in Block!");
+    }
     string rep_id = util::createId("feature");
     boost::optional<Group> g = feature_group(true);
     while (g->hasObject(rep_id))

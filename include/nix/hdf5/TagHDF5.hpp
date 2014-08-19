@@ -27,26 +27,26 @@ private:
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
 
-    Group feature_group;
-    Group refs_group;
+    optGroup feature_group;
+    optGroup refs_group;
 
 public:
 
     /**
      * Standard constructor for existing Tag
      */
-    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group);
 
     /**
      * Standard constructor for new Tag
      */
-    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
      * Standard constructor for new Tag that preserves the creation time.
      */
-    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group, const std::string &id,
+    TagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 
