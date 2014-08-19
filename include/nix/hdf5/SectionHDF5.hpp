@@ -111,6 +111,9 @@ public:
     size_t sectionCount() const;
 
 
+    bool hasSectionByName(const std::string &name) const;
+
+
     bool hasSection(const std::string &id) const;
 
 
@@ -118,6 +121,9 @@ public:
 
 
     std::shared_ptr<base::ISection> getSection(size_t index) const;
+
+
+    std::shared_ptr<base::ISection> getSectionByName(const std::string &name) const;
 
 
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);

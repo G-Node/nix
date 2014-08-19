@@ -218,12 +218,12 @@ bool BlockHDF5::deleteTag(const std::string &id) {
 // Methods related to DataArray
 
 bool BlockHDF5::hasDataArrayByName(const string &name) const {
-    // let getDataArrayByName try to look up object by name    
+    // let getDataArrayByName try to look up object by name
     return getDataArrayByName(name) != nullptr;
 }
 
 bool BlockHDF5::hasDataArray(const string &id) const {
-    // let getDataArray try to look up object by id    
+    // let getDataArray try to look up object by id
     return getDataArray(id) != nullptr;
 }
 

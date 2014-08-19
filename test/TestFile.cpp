@@ -83,6 +83,8 @@ void TestFile::testBlockAccess() {
 
         ids.push_back(bl.id());
     }
+    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
@@ -115,6 +117,8 @@ void TestFile::testSectionAccess() {
 
         ids.push_back(sec.id());
     }
+    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(file_open.sectionCount() == names.size());
     CPPUNIT_ASSERT(file_open.sections().size() == names.size());

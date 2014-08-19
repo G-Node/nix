@@ -94,6 +94,7 @@ public:
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
+
     bool hasDataArrayByName(const std::string &name) const;
 
 

@@ -145,7 +145,6 @@ void TagHDF5::addReference(const std::string &id) {
         throw EmptyString("addReference");
 
     if (!block()->hasDataArray(id)) {
-        std::cout << "\nid:" << id;
         throw std::runtime_error("TagHDF5::addReference: DataArray not found in block!");
     }
     
@@ -255,4 +254,3 @@ bool TagHDF5::deleteFeature(const string &id) {
 TagHDF5::~TagHDF5()
 {
 }
-

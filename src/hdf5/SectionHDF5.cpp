@@ -184,46 +184,66 @@ size_t SectionHDF5::sectionCount() const {
 }
 
 
+bool SectionHDF5::hasSectionByName(const string &name) const {
+    // let getSectionByName try to look up object by name
+    return getSectionByName(name) != nullptr;
+}
+
+
 bool SectionHDF5::hasSection(const string &id) const {
-    return section_group.hasGroup(id);
+    // let getSection try to look up object by id
+    return getSection(id) != nullptr;
 }
 
 
 shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
     shared_ptr<ISection> sec;
 
-    if (section_group.hasGroup(id)) {
-        Group group = section_group.openGroup(id, false);
-
+    boost::optional<Group> group = section_group.findGroupByAttribute("entity_id", id);
+    if (group) {
         auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-        sec = make_shared<SectionHDF5>(file(), p, group);
+        sec = make_shared<SectionHDF5>(file(), p, *group);
     }
 
     return sec;
 }
 
 
-shared_ptr<ISection> SectionHDF5::getSection(size_t index) const {
-    string id = section_group.objectName(index);
+shared_ptr<ISection> SectionHDF5::getSectionByName(const string &name) const {
+    shared_ptr<SectionHDF5> sec;
+    
+    if (section_group.hasObject(name)) {
+        Group group = section_group.openGroup(name, false);
+        auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+        sec = make_shared<SectionHDF5>(file(), p, group);
+    }
+    
+    return sec;
+}
 
-    return getSection(id);
+
+shared_ptr<ISection> SectionHDF5::getSection(size_t index) const {
+    string name = section_group.objectName(index);
+    return getSectionByName(name);
 }
 
 
 shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string &type) {
-    string new_id = util::createId("section");
-    while (section_group.hasObject(new_id)) {
-        new_id = util::createId("section");
+    if (hasSectionByName(name)) {
+        throw DuplicateName("createSection");
     }
+    string new_id = util::createId("section");
 
     auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-    Group grp = section_group.openGroup(new_id, true);
+    Group grp = section_group.openGroup(name, true);
     return make_shared<SectionHDF5>(file(), p, grp, new_id, type, name);
 }
 
 
 bool SectionHDF5::deleteSection(const string &id) {
-    // call deleteSection on sources to trigger recursive call to all sub-sections
+    bool deleted = false;
+
+    // call deleteSection on sections to trigger recursive call to all sub-sections
     if (hasSection(id)) {
         // get instance of section about to get deleted
         Section section = getSection(id);
@@ -231,10 +251,11 @@ bool SectionHDF5::deleteSection(const string &id) {
         for(auto &child : section.sections()) {
             section.deleteSection(child.id());
         }
-        section_group.removeAllLinks(id);
+        // if hasSection is true then section_group always exists
+        deleted = section_group.removeAllLinks(section.name());
     }
-    
-    return hasSection(id);
+
+    return deleted;
 }
 
 
