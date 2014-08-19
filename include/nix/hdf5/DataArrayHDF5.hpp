@@ -29,7 +29,7 @@ private:
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
 
-    Group dimension_group;
+    optGroup dimension_group;
 
 public:
 

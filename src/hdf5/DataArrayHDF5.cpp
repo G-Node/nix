@@ -21,7 +21,7 @@ using namespace nix::hdf5;
 DataArrayHDF5::DataArrayHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group)
     : EntityWithSourcesHDF5(file, block, group)
 {
-    dimension_group = this->group().openGroup("dimensions", false);
+    dimension_group = this->group().openOptGroup("dimensions");
 }
                   
                   
@@ -36,7 +36,7 @@ DataArrayHDF5::DataArrayHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, c
                              const string &id, const string &type, const string &name, time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
-    dimension_group = this->group().openGroup("dimensions", true);
+    dimension_group = this->group().openOptGroup("dimensions");
 }
 
 //--------------------------------------------------
@@ -169,17 +169,21 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 
 
 size_t DataArrayHDF5::dimensionCount() const {
-    return dimension_group.objectCount();
+    boost::optional<Group> g = dimension_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IDimension> DataArrayHDF5::getDimension(size_t index) const {
     shared_ptr<IDimension> dim;
+    boost::optional<Group> g = dimension_group();
 
-    string str_id = util::numToStr(index);
-    if (dimension_group.hasGroup(str_id)) {
-        Group g = dimension_group.openGroup(str_id, false);
-        dim = openDimensionHDF5(g, index);
+    if (g) {
+        string str_id = util::numToStr(index);
+        if (g->hasGroup(str_id)) {
+            Group group = g->openGroup(str_id, false);
+            dim = openDimensionHDF5(group, index);
+        }
     }
 
     return dim;
@@ -205,16 +209,18 @@ std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(s
 
 
 Group DataArrayHDF5::createDimensionGroup(size_t index) {
+    boost::optional<Group> g = dimension_group(true);
+
     size_t dim_max   = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
         throw new runtime_error("Invalid dimension index: has to be 0 < index <= " + util::numToStr(dim_max));
 
     string str_id = util::numToStr(index);
-    if (dimension_group.hasGroup(str_id)) {
-        dimension_group.removeGroup(str_id);
+    if (g->hasGroup(str_id)) {
+        g->removeGroup(str_id);
     }
 
-    return dimension_group.openGroup(str_id, true);
+    return g->openGroup(str_id, true);
 }
 
 
@@ -222,17 +228,20 @@ bool DataArrayHDF5::deleteDimension(size_t index) {
     bool deleted = false;
     size_t dim_count = dimensionCount();
     string str_id = util::numToStr(index);
+    boost::optional<Group> g = dimension_group();
 
-    if (dimension_group.hasGroup(str_id)) {
-        dimension_group.removeGroup(str_id);
-        deleted = true;
-    }
+    if (g) {
+        if (g->hasGroup(str_id)) {
+            g->removeGroup(str_id);
+            deleted = true;
+        }
 
-    if (deleted && index < dim_count) {
-        for (size_t old_id = index + 1; old_id <= dim_count; old_id++) {
-            string str_old_id = util::numToStr(old_id);
-            string str_new_id = util::numToStr(old_id - 1);
-            dimension_group.renameGroup(str_old_id, str_new_id);
+        if (deleted && index < dim_count) {
+            for (size_t old_id = index + 1; old_id <= dim_count; old_id++) {
+                string str_old_id = util::numToStr(old_id);
+                string str_new_id = util::numToStr(old_id - 1);
+                g->renameGroup(str_old_id, str_new_id);
+            }
         }
     }
 

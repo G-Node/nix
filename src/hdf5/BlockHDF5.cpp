@@ -318,7 +318,7 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
         throw DuplicateName("createMultiTag");
     }
     string id = util::createId("multi_tag");
-    boost::optional<Group> g = tag_group(true);
+    boost::optional<Group> g = multi_tag_group(true);
 
     Group group = g->openGroup(name);
     return make_shared<MultiTagHDF5>(file(), block(), group, id, type, name, positions);
