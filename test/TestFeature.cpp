@@ -38,7 +38,7 @@ void TestFeature::testValidate() {
 
 void TestFeature::testId() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-    CPPUNIT_ASSERT(rp.id().size() == 24);
+    CPPUNIT_ASSERT(rp.id().size() == 36);
     tag.deleteFeature(rp.id());
 }
 

@@ -67,7 +67,7 @@ void TestMultiTag::testValidate() {
 
 
 void TestMultiTag::testId() {
-    CPPUNIT_ASSERT(tag.id().size() == 26);
+    CPPUNIT_ASSERT(tag.id().size() == 36);
 }
 
 
@@ -78,14 +78,14 @@ void TestMultiTag::testName() {
 
 void TestMultiTag::testType() {
     CPPUNIT_ASSERT(tag.type() == "test_tag");
-    std::string type = util::createId("", 32);
+    std::string type = util::createId();
     tag.type(type);
     CPPUNIT_ASSERT(tag.type() == type);
 }
 
 
 void TestMultiTag::testDefinition() {
-    std::string def = util::createId("", 128);
+    std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
     tag.definition(none);

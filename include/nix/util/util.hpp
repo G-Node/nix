@@ -53,12 +53,9 @@ NIXAPI std::string deblankString(const std::string &str);
 /**
  * @brief Generates an ID-String.
  *
- * @param prefix    The prefix to append to the generated id.
- * @param length    The length of the ID.
- *
  * @return The generated id string.
  */
-NIXAPI std::string createId(std::string prefix = "", int length = 16);
+NIXAPI std::string createId();
 
 /**
  * @brief Convert a time value into a string representation.

@@ -49,7 +49,7 @@ void TestDataArray::testValidate() {
 
 
 void TestDataArray::testId() {
-    CPPUNIT_ASSERT(array1.id().size() == 27);
+    CPPUNIT_ASSERT(array1.id().size() == 36);
 }
 
 
@@ -60,14 +60,14 @@ void TestDataArray::testName() {
 
 void TestDataArray::testType() {
     CPPUNIT_ASSERT(array1.type() == "testdata");
-    std::string typ = nix::util::createId("", 32);
+    std::string typ = nix::util::createId();
     array1.type(typ);
     CPPUNIT_ASSERT(array1.type() == typ);
 }
 
 
 void TestDataArray::testDefinition() {
-    std::string def = nix::util::createId("", 128);
+    std::string def = nix::util::createId();
     array1.definition(def);
     CPPUNIT_ASSERT(*array1.definition() == def);
     array1.definition(boost::none);

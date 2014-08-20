@@ -110,7 +110,7 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
     if (hasSourceByName(name)) {
         throw DuplicateName("createSource");
     }
-    string id = util::createId("source");
+    string id = util::createId();
     boost::optional<Group> g = source_group(true);
 
     Group group = g->openGroup(name, true);
@@ -147,7 +147,7 @@ shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string
     if (hasTagByName(name)) {
         throw DuplicateName("createTag");
     }
-    string id = util::createId("tag");
+    string id = util::createId();
     boost::optional<Group> g = tag_group(true);
 
     Group group = g->openGroup(name);
@@ -284,7 +284,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     if (hasDataArrayByName(name)) {
         throw DuplicateName("createDataArray");
     }
-    string id = util::createId("data_array");
+    string id = util::createId();
     boost::optional<Group> g = data_array_group(true);
 
     Group group = g->openGroup(name, true);
@@ -317,7 +317,7 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
     if (hasMultiTagByName(name)) {
         throw DuplicateName("createMultiTag");
     }
-    string id = util::createId("multi_tag");
+    string id = util::createId();
     boost::optional<Group> g = multi_tag_group(true);
 
     Group group = g->openGroup(name);

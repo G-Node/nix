@@ -96,7 +96,7 @@ shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &t
     }
     boost::optional<Group> g = source_group(true);
 
-    string id = util::createId("source");
+    string id = util::createId();
 
     Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), group, id, type, name);

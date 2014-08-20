@@ -14,6 +14,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
 #include <nix/util/util.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 #include <nix/base/IDimensions.hpp>
 
@@ -23,8 +26,6 @@ using namespace std;
 namespace nix {
 namespace util {
 
-// default id base (16 or 32)
-const int    ID_BASE = 32;
 // Base32hex alphabet (RFC 4648)
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
@@ -37,20 +38,9 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
     {"k", 1.0e3}, {"M",1.0e6}, {"G", 1.0e9}, {"T", 1.0e12}, {"P", 1.0e15}, {"E",1.0e18}, {"Z", 1.0e21}, {"Y", 1.0e24}};
 
 
-string createId(string prefix, int length) {
-    static std::once_flag rand_init;
-    std::call_once(rand_init, []() { srand(static_cast<unsigned int>(time(0))); });
-
-    string id;
-    if (prefix.length() > 0) {
-        id.append(prefix);
-        id.append("_");
-    }
-    for (int i = 0; i < length; i++) {
-        char c = ID_ALPHABET[(size_t) (((double) (rand())) / RAND_MAX * ID_BASE)];
-        id.push_back(c);
-    }
-    return id;
+string createId() {
+    static auto gen = boost::uuids::random_generator();
+    return boost::uuids::to_string(gen());
 }
 
 

@@ -40,7 +40,7 @@ void TestSection::testValidate() {
 
 
 void TestSection::testId() {
-    CPPUNIT_ASSERT(section.id().size() == 24);
+    CPPUNIT_ASSERT(section.id().size() == 36);
 }
 
 
@@ -51,14 +51,14 @@ void TestSection::testName() {
 
 void TestSection::testType() {
     CPPUNIT_ASSERT(section.type() == "metadata");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
 }
 
 
 void TestSection::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
     section.definition(nix::none);
@@ -79,7 +79,7 @@ void TestSection::testParent() {
 
 void TestSection::testRepository() {
     CPPUNIT_ASSERT(!section.repository());
-    string rep = "http://foo.bar/" + util::createId("", 32);
+    string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
@@ -108,7 +108,7 @@ void TestSection::testLink() {
 
 void TestSection::testMapping() {
     CPPUNIT_ASSERT(!section.mapping());
-    string map = "http://foo.bar/" + util::createId("", 32);
+    string map = "http://foo.bar/" + util::createId();
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);

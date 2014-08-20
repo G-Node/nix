@@ -240,7 +240,7 @@ shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string
     if (hasSectionByName(name)) {
         throw DuplicateName("createSection");
     }
-    string new_id = util::createId("section");
+    string new_id = util::createId();
     boost::optional<Group> g = section_group(true);
 
     auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
@@ -334,7 +334,7 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
     if (hasPropertyByName(name)) {
         throw DuplicateName("hasPropertyByName");
     }
-    string new_id = util::createId("property");
+    string new_id = util::createId();
     boost::optional<Group> g = property_group(true);
 
     H5::DataType fileType = DataSet::fileTypeForValue(dtype);

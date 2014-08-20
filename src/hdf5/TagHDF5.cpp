@@ -246,10 +246,8 @@ shared_ptr<IFeature> TagHDF5::createFeature(const std::string &id, LinkType link
     if(!block()->hasDataArray(id)) {
         throw std::runtime_error("DataArray not found in Block!");
     }
-    string rep_id = util::createId("feature");
+    string rep_id = util::createId();
     boost::optional<Group> g = feature_group(true);
-    while (g->hasObject(rep_id))
-        rep_id = util::createId("feature");
 
     Group group = g->openGroup(rep_id, true);
     DataArray data = block()->getDataArray(id);

@@ -111,7 +111,7 @@ shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string 
     if (hasBlockByName(name)) {
         throw DuplicateName("createBlock");
     }
-    string id = util::createId("block");
+    string id = util::createId();
 
     Group group = data.openGroup(name, true);
     return make_shared<BlockHDF5>(file(), group, id, type, name);
@@ -180,7 +180,7 @@ shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  st
     if (hasSectionByName(name)) {
         throw DuplicateName("createSection");
     }
-    string id = util::createId("section");
+    string id = util::createId();
 
     Group group = metadata.openGroup(name, true);
     return make_shared<SectionHDF5>(file(), group, id, type, name);
