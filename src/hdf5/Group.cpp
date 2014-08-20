@@ -73,24 +73,23 @@ size_t Group::objectCount() const {
 
 
 boost::optional<Group> Group::findGroupByAttribute(const std::string &attribute, const std::string &value) const {
-    std::vector<Group> groups;
     boost::optional<Group> ret;
 
-    // look up all direct sub-groups that have the given attribute
+    // look up first direct sub-group that has given attribute with given value
     for (size_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasGroup(obj_name)) {
             Group group = openGroup(obj_name, false);
-            if(group.hasAttr(attribute)) groups.push_back(group);
+            if(group.hasAttr(attribute)) {
+                std::string attr_value;
+                group.getAttr(attribute, attr_value);
+                if (attr_value == value) {
+                    ret = group;
+                    break;
+                }
+            }
         }
     }
-    // look for first group with given attribute set to given value
-    auto found = std::find_if(groups.begin(), groups.end(),
-                 [value, attribute](Group &group) {
-                     std::string attr_value;
-                     group.getAttr(attribute, attr_value);
-                     return attr_value == value; });
-    if(found != groups.end()) ret = *found;
 
     return ret;
 }

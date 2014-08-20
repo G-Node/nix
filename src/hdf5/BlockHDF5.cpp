@@ -107,6 +107,9 @@ size_t BlockHDF5::sourceCount() const {
 
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
+    if (name.empty()) {
+        throw EmptyString("name");
+    }
     if (hasSourceByName(name)) {
         throw DuplicateName("createSource");
     }

@@ -9,11 +9,13 @@
 #include <string>
 #include <cstdlib>
 #include <mutex>
+#include <random>
 #include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
 #include <nix/util/util.hpp>
+#include <boost/random.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -39,8 +41,10 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 
 string createId() {
-    static auto gen = boost::uuids::random_generator();
-    return boost::uuids::to_string(gen());
+    static boost::mt19937 ran(std::time(0));
+    static boost::uuids::basic_random_generator<boost::mt19937> gen(&ran);
+    boost::uuids::uuid u = gen();
+    return boost::uuids::to_string(u);
 }
 
 

@@ -25,11 +25,11 @@ SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group)
 }
     
 
-SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, const Group &group)
+SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, Group group)
     : NamedEntityHDF5(file, group), parent_section(parent)
 {
-    property_group = this->group().openOptGroup("properties");
-    section_group = this->group().openOptGroup("sections");
+    property_group = group.openOptGroup("properties");
+    section_group = group.openOptGroup("sections");
 }
 
 
@@ -40,7 +40,7 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const strin
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, Group group,
                          const string &id, const string &type, const string &name)
     : SectionHDF5(file, parent, group, id, type, name, util::getTime())
 {
@@ -54,12 +54,12 @@ SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const strin
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, const Group &group,
+SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, Group group,
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {
-    property_group = this->group().openOptGroup("properties");
-    section_group = this->group().openOptGroup("sections");
+    property_group = group.openOptGroup("properties");
+    section_group = group.openOptGroup("sections");
 }
 
 //--------------------------------------------------

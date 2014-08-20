@@ -86,7 +86,7 @@ public:
     virtual std::shared_ptr<base::ISetDimension> createSetDimension(size_t id) = 0;
 
 
-    virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, std::vector<double> ticks) = 0;
+    virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks) = 0;
 
 
     virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval) = 0;
