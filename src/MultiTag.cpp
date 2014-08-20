@@ -71,7 +71,7 @@ bool MultiTag::removeReference(const DataArray &reference) {
 }
 
 
-std::vector<DataArray> MultiTag::references(util::Filter<DataArray>::type filter) const
+std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type &filter) const
 {
     auto f = [this] (size_t i) { return getReference(i); };
     return getEntities<DataArray>(f,
@@ -88,7 +88,7 @@ bool MultiTag::hasFeature(const Feature &feature) const {
 }
 
 
-std::vector<Feature> MultiTag::features(util::Filter<Feature>::type filter) const
+std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filter) const
 {
     auto f = [this] (size_t i) { return getFeature(i); };
     return getEntities<Feature>(f,

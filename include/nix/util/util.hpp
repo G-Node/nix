@@ -96,6 +96,16 @@ std::string toId(const T &entity) {
 }
 
 /**
+ * @brief Extract name from given entity. Does not work for dimensions
+ *
+ * @return The entity name.
+ */
+template<typename T>
+std::string toName(const T &entity) {
+    return entity.name();
+}
+
+/**
  * @brief Sanitizer function that deblanks units and replaces mu and µ
  * with the "u" replacement.
  *

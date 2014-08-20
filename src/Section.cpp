@@ -86,7 +86,7 @@ struct SectionCont {
 };
 
 
-std::vector<Section> Section::sections(util::Filter<Section>::type filter) const {
+std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
     auto f = [this] (size_t i) { return getSection(i); };
     return getEntities<Section>(f,
                                 sectionCount(),
@@ -94,7 +94,7 @@ std::vector<Section> Section::sections(util::Filter<Section>::type filter) const
 }
 
 
-std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
+std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
                                            size_t max_depth) const
 {
     std::vector<Section>  results;
@@ -125,7 +125,7 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
     return results;
 }
 
-static inline auto erase_section_with_id(vector<Section> &sections, const string my_id)
+static inline auto erase_section_with_id(vector<Section> &sections, const string &my_id)
     -> decltype(sections.size())
 {
     sections.erase(remove_if(sections.begin(),
@@ -138,7 +138,7 @@ static inline auto erase_section_with_id(vector<Section> &sections, const string
     return sections.size();
 }
 
-std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) const
+std::vector<Section> Section::findRelated(const util::Filter<Section>::type &filter) const
 {
     std::vector<Section> results = findDownstream(filter);
     const string &my_id = id();
@@ -170,7 +170,7 @@ bool Section::hasProperty(const Property &property) const {
     return backend()->hasProperty(property.id());
 }
 
-std::vector<Property> Section::properties(util::Filter<Property>::type filter) const {
+std::vector<Property> Section::properties(const util::Filter<Property>::type &filter) const {
     auto f = [this] (size_t i) { return getProperty(i); };
     return getEntities<Property>(f,
             propertyCount(),
@@ -223,7 +223,7 @@ size_t Section::tree_depth() const{
 }
 
 
-vector<Section> Section::findDownstream(std::function<bool(Section)> filter) const{
+vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const{
     vector<Section> results;
     size_t max_depth = tree_depth();
     size_t actual_depth = 1;
@@ -235,7 +235,7 @@ vector<Section> Section::findDownstream(std::function<bool(Section)> filter) con
 }
 
 
-vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const{
+vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter) const{
     vector<Section> results;
     Section p = parent();
 
@@ -250,7 +250,7 @@ vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const
 }
 
 
-vector<Section> Section::findSideways(std::function<bool(Section)> filter, const string &caller_id) const{
+vector<Section> Section::findSideways(const std::function<bool(Section)> &filter, const string &caller_id) const{
     vector<Section> results;
     Section p = parent();
     if (p != nullptr) {

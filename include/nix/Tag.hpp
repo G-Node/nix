@@ -293,7 +293,7 @@ public:
      *
      * @return A vector containing the matching data arrays.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter) const;
+    std::vector<DataArray> references(const util::Filter<DataArray>::type &filter) const;
 
     /**
      * @brief Get all referenced data arrays associated with this tag.
@@ -385,7 +385,7 @@ public:
      *
      * @return A vector containing the matching features.
      */
-    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const;
+    std::vector<Feature> features(const util::Filter<Feature>::type &filter = util::AcceptAll<Feature>()) const;
 
     /**
      * @brief Create a new feature.

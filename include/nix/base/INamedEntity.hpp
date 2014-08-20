@@ -33,9 +33,6 @@ public:
     virtual std::string type() const = 0;
 
 
-    virtual void name(const std::string &name) = 0;
-
-
     virtual std::string name() const = 0;
 
 

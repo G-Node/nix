@@ -24,8 +24,8 @@ class MultiTagHDF5 : virtual public base::IMultiTag, public EntityWithSourcesHDF
 
 private:
 
-    Group feature_group;
-    Group refs_group;
+    optGroup feature_group;
+    optGroup refs_group;
 
 public:
 
@@ -33,19 +33,19 @@ public:
     /**
      * Standard constructor for new MultiTag
      */
-    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group);
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group);
                 
     /**
      * Standard constructor for new MultiTag
      */
-    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions);
 
 
     /**
      * Standard constructor for new MultiTag with time
      */
-    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, const Group &group,
+    MultiTagHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions, time_t time);
 
 

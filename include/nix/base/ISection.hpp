@@ -103,7 +103,7 @@ public:
     virtual std::shared_ptr<IProperty> getProperty(size_t index) const = 0;
 
 
-    virtual bool hasPropertyWithName(const std::string &name) const = 0;
+    virtual bool hasPropertyByName(const std::string &name) const = 0;
 
 
     virtual std::shared_ptr<IProperty> getPropertyByName(const std::string &name) const = 0;

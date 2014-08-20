@@ -62,9 +62,6 @@ void TestSource::testId() {
 
 void TestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
-    string name = util::createId("", 32);
-    source.name(name);
-    CPPUNIT_ASSERT(source.name() == name);
 }
 
 
@@ -117,6 +114,8 @@ void TestSource::testSourceAccess() {
 
         ids.push_back(child_source.id());
     }
+    CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());

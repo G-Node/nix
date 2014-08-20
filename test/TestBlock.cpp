@@ -12,6 +12,7 @@
 #include "TestBlock.hpp"
 
 #include <nix/valid/validate.hpp>
+#include <nix/Exception.hpp>
 
 using namespace std;
 using namespace nix;
@@ -49,9 +50,6 @@ void TestBlock::testId() {
 
 void TestBlock::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
-    string name = util::createId("", 32);
-    block.name(name);
-    CPPUNIT_ASSERT(block.name() == name);
 }
 
 
@@ -102,7 +100,8 @@ void TestBlock::testSourceAccess() {
 
         ids.push_back(src.id());
     }
-
+    CPPUNIT_ASSERT_THROW(block.createSource(names[0], "channel"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
@@ -141,6 +140,8 @@ void TestBlock::testDataArrayAccess() {
 
         ids.push_back(data_array.id());
     }
+    CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
@@ -194,6 +195,8 @@ void TestBlock::testTagAccess() {
 
         ids.push_back(tag.id());
     }
+    CPPUNIT_ASSERT_THROW(block.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(block.tagCount() == names.size());
     CPPUNIT_ASSERT(block.tags().size() == names.size());
@@ -240,7 +243,8 @@ void TestBlock::testMultiTagAccess() {
 
         ids.push_back(tag.id());
     }
-
+    CPPUNIT_ASSERT_THROW(block.createMultiTag(names[0], "segment", positions),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(block.multiTagCount() == names.size());
     CPPUNIT_ASSERT(block.multiTags().size() == names.size());

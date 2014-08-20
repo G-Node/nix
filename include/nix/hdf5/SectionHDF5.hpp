@@ -25,7 +25,7 @@ private:
 
     // TODO: consider writing parent_section as soft link into file
     std::shared_ptr<base::ISection> parent_section;
-    Group property_group, section_group;
+    optGroup property_group, section_group;
 
 public:
 
@@ -111,6 +111,9 @@ public:
     size_t sectionCount() const;
 
 
+    bool hasSectionByName(const std::string &name) const;
+
+
     bool hasSection(const std::string &id) const;
 
 
@@ -118,6 +121,9 @@ public:
 
 
     std::shared_ptr<base::ISection> getSection(size_t index) const;
+
+
+    std::shared_ptr<base::ISection> getSectionByName(const std::string &name) const;
 
 
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
@@ -136,13 +142,13 @@ public:
     bool hasProperty(const std::string &id) const;
 
 
+    bool hasPropertyByName(const std::string &name) const;
+
+
     std::shared_ptr<base::IProperty> getProperty(const std::string &id) const;
 
 
     std::shared_ptr<base::IProperty> getProperty(size_t index) const;
-
-
-    bool hasPropertyWithName(const std::string &name) const;
 
 
     std::shared_ptr<base::IProperty> getPropertyByName(const std::string &name) const;

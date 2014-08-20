@@ -34,9 +34,6 @@ void TestEntity::testId() {
 
 void TestEntity::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
-    string name = util::createId("", 32);
-    block.name(name);
-    CPPUNIT_ASSERT(block.name() == name);
 }
 
 

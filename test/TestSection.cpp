@@ -46,9 +46,6 @@ void TestSection::testId() {
 
 void TestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
-    string name = util::createId("", 32);
-    section.name(name);
-    CPPUNIT_ASSERT(section.name() == name);
 }
 
 
@@ -133,6 +130,8 @@ void TestSection::testSectionAccess() {
 
         ids.push_back(child_section.id());
     }
+    CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(section.sectionCount() == names.size());
     CPPUNIT_ASSERT(section.sections().size() == names.size());
@@ -164,10 +163,10 @@ void TestSection::testFindSection() {
     Section l2n5 = l1n3.createSection("l2n5", "typ2");
     Section l2n6 = l1n3.createSection("l2n6", "typ3");
 
-    Section l3n1 = l2n1.createSection("l2n3", "typ1");
-    Section l3n2 = l2n3.createSection("l2n3", "typ2");
-    Section l3n3 = l2n3.createSection("l2n3", "typ2");
-    Section l3n4 = l2n5.createSection("l2n3", "typ2");
+    Section l3n1 = l2n1.createSection("l3n1", "typ1");
+    Section l3n2 = l2n3.createSection("l3n2", "typ2");
+    Section l3n3 = l2n3.createSection("l3n3", "typ2");
+    Section l3n4 = l2n5.createSection("l3n4", "typ2");
 
     // test depth limit
     CPPUNIT_ASSERT(section.findSections().size() == 14);
@@ -284,7 +283,7 @@ void TestSection::testPropertyAccess() {
 
     Value dummy(10);
     prop = section.createProperty("single value", dummy);
-    CPPUNIT_ASSERT(section.hasPropertyWithName("single value"));
+    CPPUNIT_ASSERT(section.hasPropertyByName("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     section.deleteProperty(prop.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -293,7 +292,7 @@ void TestSection::testPropertyAccess() {
     for (auto name : names) {
         prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
-        CPPUNIT_ASSERT(section.hasPropertyWithName(name));
+        CPPUNIT_ASSERT(section.hasPropertyByName(name));
 
         Property prop_copy = section.getPropertyByName(name);
 
@@ -301,6 +300,8 @@ void TestSection::testPropertyAccess() {
 
         ids.push_back(prop.id());
     }
+    CPPUNIT_ASSERT_THROW(section.createProperty(names[0], dummy),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());

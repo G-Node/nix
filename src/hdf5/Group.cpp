@@ -72,6 +72,54 @@ size_t Group::objectCount() const {
 }
 
 
+boost::optional<Group> Group::findGroupByAttribute(const std::string &attribute, const std::string &value) const {
+    std::vector<Group> groups;
+    boost::optional<Group> ret;
+
+    // look up all direct sub-groups that have the given attribute
+    for (size_t index = 0; index < objectCount(); index++) {
+        std::string obj_name = objectName(index);
+        if(hasGroup(obj_name)) {
+            Group group = openGroup(obj_name, false);
+            if(group.hasAttr(attribute)) groups.push_back(group);
+        }
+    }
+    // look for first group with given attribute set to given value
+    auto found = std::find_if(groups.begin(), groups.end(),
+                 [value, attribute](Group &group) {
+                     std::string attr_value;
+                     group.getAttr(attribute, attr_value);
+                     return attr_value == value; });
+    if(found != groups.end()) ret = *found;
+
+    return ret;
+}
+
+
+boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute, const std::string &value) const {
+    std::vector<DataSet> dsets;
+    boost::optional<DataSet> ret;
+
+    // look up all direct sub-datasets that have the given attribute
+    for (size_t index = 0; index < objectCount(); index++) {
+        std::string obj_name = objectName(index);
+        if(hasData(obj_name)) {
+            DataSet dset(h5group.openDataSet(obj_name));
+            if(dset.hasAttr(attribute)) dsets.push_back(dset);
+        }
+    }
+    // look for first dataset with given attribute set to given value
+    auto found = std::find_if(dsets.begin(), dsets.end(),
+                 [value, attribute](DataSet &dset) {
+                     std::string attr_value;
+                     dset.getAttr(attribute, attr_value);
+                     return attr_value == value; });
+    if(found != dsets.end()) ret = *found;
+
+    return ret;
+}
+
+
 std::string Group::objectName(size_t index) const {
     // check if index valid
     if(index > objectCount()) {

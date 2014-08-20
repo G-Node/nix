@@ -82,15 +82,6 @@ public:
     }
 
     /**
-     * @brief Setter for the name of the entity.
-     *
-     * @param name The name of the entity.
-     */
-    void name(const std::string &name) {
-        Entity<T>::backend()->name(name);
-    }
-
-    /**
      * @brief Getter for the name of the entity.
      *
      * The {@link name} of an entity serves as a human readable identifier. It is not obliged

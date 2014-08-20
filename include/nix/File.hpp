@@ -88,7 +88,7 @@ public:
      *
      * @return The opened file.
      */
-    static File open(const std::string name, FileMode mode=FileMode::ReadWrite,
+    static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
                      Implementation impl=Implementation::Hdf5);
 
     /**
@@ -178,13 +178,26 @@ public:
      * @brief Get all blocks within this file.
      *
      * The parameter filter can be used to filter block by various
-     * criteria. By default a filter is used that accepts all blocks.
+     * criteria.
      *
      * @param filter    A filter function.
      *
      * @return A vector of filtered Block entities.
      */
-    std::vector<Block> blocks(util::Filter<Block>::type filter = util::AcceptAll<Block>()) const;
+    std::vector<Block> blocks(const util::Filter<Block>::type &filter) const;
+
+    /**
+     * @brief Get all blocks within this file.
+     *
+     * The parameter filter can be used to filter block by various
+     * criteria. By default a filter is used that accepts all blocks.
+     *
+     * @return A vector of filtered Block entities.
+     */
+    std::vector<Block> blocks() const
+    {
+        return blocks(util::AcceptAll<Block>());
+    }
 
     //--------------------------------------------------
     // Methods concerning sections
@@ -246,13 +259,45 @@ public:
      * @brief Get all root sections within this file.
      *
      * The parameter filter can be used to filter sections by various
-     * criteria. By default a filter is used that accepts all sections.
+     * criteria.
      *
      * @param filter    A filter function.
      *
      * @return A vector of filtered Section entities.
      */
-    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
+    std::vector<Section> sections(const util::Filter<Section>::type &filter) const;
+    
+
+    /**
+     * @brief Get all root sections within this file.
+     *
+     * The parameter filter can be used to filter sections by various
+     * criteria. By default a filter is used that accepts all sections.
+     *
+     * @return A vector of filtered Section entities.
+     */
+    std::vector<Section> sections() const
+    {
+        return sections(util::AcceptAll<Section>());
+    }
+    
+
+    /**
+     * @brief Get all sections in this file recursively.
+     *
+     * This method traverses the trees of all section in the file. The traversal
+     * is accomplished via breadth first and can be limited in depth. On each node or
+     * section a filter is applied. If the filter returns true the respective section
+     * will be added to the result list.
+     *
+     * @param filter       A filter function.
+     * @param max_depth    The maximum depth of traversal.
+     *
+     * @return A vector containing the matching sections.
+     */
+    std::vector<Section> findSections(const util::Filter<Section>::type &filter,
+                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
+
 
     /**
      * @brief Get all sections in this file recursively.
@@ -263,13 +308,15 @@ public:
      * will be added to the result list.
      * By default a filter is used that accepts all sections.
      *
-     * @param filter       A filter function.
      * @param max_depth    The maximum depth of traversal.
      *
      * @return A vector containing the matching sections.
      */
-    std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
-                                      size_t max_depth = std::numeric_limits<size_t>::max()) const;
+    std::vector<Section> findSections(size_t max_depth = std::numeric_limits<size_t>::max()) const
+    {
+        return findSections(util::AcceptAll<Section>());
+    }
+
 
     /**
      * @brief Creates a new Section with a given name and type. Both must not be empty.

@@ -10,6 +10,7 @@
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
+#include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/hdf5/DataSet.hpp>
@@ -21,27 +22,27 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
+TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
     : EntityWithSourcesHDF5(file, block, group)
 {
-    feature_group = group.openGroup("features", false);
-    refs_group = group.openGroup("references", false);
+    feature_group = group.openOptGroup("features");
+    refs_group = group.openOptGroup("references");
 }
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
+TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position)
     : TagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group, const string &id,
+TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
-    feature_group = group.openGroup("features", true);
-    refs_group = group.openGroup("references", true);
+    feature_group = group.openOptGroup("features");
+    refs_group = group.openOptGroup("references");
     this->position(position);
 }
 
@@ -107,20 +108,22 @@ void TagHDF5::extent(const none_t t) {
 
 
 bool TagHDF5::hasReference(const std::string &id) const {
-    return refs_group.hasGroup(id);
+    return refs_group() ? refs_group()->hasGroup(id) : false;
 }
 
 
 size_t TagHDF5::referenceCount() const {
-    return refs_group.objectCount();
+    boost::optional<Group> g = refs_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IDataArray> TagHDF5::getReference(const std::string &id) const {
     shared_ptr<IDataArray> da;
+    boost::optional<Group> g = refs_group();
 
-    if (refs_group.hasGroup(id)) {
-        Group group = refs_group.openGroup(id, false);
+    if (g && hasReference(id)) {
+        Group group = g->openGroup(id);
         da = make_shared<DataArrayHDF5>(file(), block(), group);
     }
 
@@ -129,84 +132,100 @@ shared_ptr<IDataArray> TagHDF5::getReference(const std::string &id) const {
 
 
 shared_ptr<IDataArray> TagHDF5::getReference(size_t index) const {
-    shared_ptr<IDataArray> da;
+    // check if index valid
+    if(index > referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
+    }
 
-    // get reference id
-    std::string id = refs_group.objectName(index);
-    da = getReference(id);
-
-    return da;
+    boost::optional<Group> g = refs_group();
+    string id = g ? g->objectName(index) : "";
+    return getReference(id);
 }
 
 
 void TagHDF5::addReference(const std::string &id) {
     if (id.empty())
         throw EmptyString("addReference");
+    boost::optional<Group> g = refs_group(true);
 
     if (!block()->hasDataArray(id))
-        throw std::runtime_error("TagHDF5::addReference: DataArray not found in block!");
+        throw std::runtime_error("MultiTagHDF5::addReference: DataArray not found in block!");
     
     auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
 
-    refs_group.createLink(target->group(), id);
+    g->createLink(target->group(), target->id());
 }
 
 
 bool TagHDF5::removeReference(const std::string &id) {
-    refs_group.removeGroup(id);
-    return refs_group.hasGroup(id);
+    boost::optional<Group> g = refs_group();
+    bool removed = false;
+
+    if (g) {
+        g->removeGroup(id);
+        removed = true;
+    }
+
+    return removed;
 }
 
 // TODO fix this when base entities are fixed
 void TagHDF5::references(const std::vector<DataArray> &refs_new) {
-    // extract vectors of ids from vectors of new & old references
-    std::vector<std::string> ids_new(refs_new.size());
-    transform(refs_new.begin(), refs_new.end(), ids_new.begin(), util::toId<DataArray>);
+    // extract vectors of names from vectors of new & old references
+    std::vector<std::string> names_new(refs_new.size());
+    transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
     std::vector<DataArray> refs_old(referenceCount());
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
-    std::vector<std::string> ids_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), ids_old.begin(), util::toId<DataArray>);
+    std::vector<std::string> names_old(refs_old.size());
+    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
     // sort them
-    std::sort(ids_new.begin(), ids_new.end());
-    std::sort(ids_new.begin(), ids_new.end());
-    // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
-    std::vector<std::string> ids_add;
-    std::vector<std::string> ids_rem;
-    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(),
-                        std::inserter(ids_add, ids_add.begin()));
-    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(),
-                        std::inserter(ids_rem, ids_rem.begin()));
+    std::sort(names_new.begin(), names_new.end());
+    std::sort(names_new.begin(), names_new.end());
+    // get names only in names_new (add), names only in names_old (remove) & ignore rest
+    std::vector<std::string> names_add;
+    std::vector<std::string> names_rem;
+    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
+                        std::inserter(names_add, names_add.begin()));
+    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
+                        std::inserter(names_rem, names_rem.begin()));
 
     // check if all new references exist & add sources
-    for (auto id : ids_add) {
-        if(!block()->hasDataArray(id)) 
+    auto blck = dynamic_pointer_cast<BlockHDF5>(block());
+    for (auto name : names_add) {
+        if (!blck->hasDataArrayByName(name)) 
             throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(id);
+        addReference(blck->getDataArrayByName(name)->id());
     }
     // remove references
-    for (auto id : ids_rem) {
-        removeReference(id);
+    for (auto name : names_rem) {
+        if (!blck->hasDataArrayByName(name)) 
+        removeReference(blck->getDataArrayByName(name)->id());
     }
 }
 
 // Methods concerning features.
 
 bool TagHDF5::hasFeature(const string &id) const {
-    return feature_group.hasGroup(id);
+    // let getFeature try to look up object by id
+    return getFeature(id) != nullptr;
 }
 
 
 size_t TagHDF5::featureCount() const {
-    return feature_group.objectCount();
+    boost::optional<Group> g = feature_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IFeature> TagHDF5::getFeature(const std::string &id) const {
-    shared_ptr<IFeature> feature;
+    shared_ptr<FeatureHDF5> feature;
+    boost::optional<Group> g = feature_group();
 
-    if (hasFeature(id)) {
-        Group group = feature_group.openGroup(id, false);
-        feature = make_shared<FeatureHDF5>(file(), block(), group);
+    if (g) {
+        if(g->hasGroup(id)) {
+            Group group = g->openGroup(id, false);
+            feature = make_shared<FeatureHDF5>(file(), block(), group);
+        }
     }
 
     return feature;
@@ -214,8 +233,8 @@ shared_ptr<IFeature> TagHDF5::getFeature(const std::string &id) const {
 
 
 shared_ptr<IFeature> TagHDF5::getFeature(size_t index) const {
-    string id = feature_group.objectName(index);
-
+    boost::optional<Group> g = feature_group();
+    string id = g->objectName(index);
     return getFeature(id);
 }
 
@@ -224,24 +243,30 @@ shared_ptr<IFeature> TagHDF5::createFeature(const std::string &id, LinkType link
     if (link_type == LinkType::Indexed) {
         throw std::runtime_error("LinkType 'indexed' is not valid for Tag entities and can only be used for MultiTag entities.");
     }
-
+    if(!block()->hasDataArray(id)) {
+        throw std::runtime_error("DataArray not found in Block!");
+    }
     string rep_id = util::createId("feature");
-    while (feature_group.hasObject(rep_id))
+    boost::optional<Group> g = feature_group(true);
+    while (g->hasObject(rep_id))
         rep_id = util::createId("feature");
 
-    Group group = feature_group.openGroup(rep_id, true);
+    Group group = g->openGroup(rep_id, true);
     DataArray data = block()->getDataArray(id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
 
 bool TagHDF5::deleteFeature(const string &id) {
-    if (feature_group.hasGroup(id)) {
-        feature_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    boost::optional<Group> g = feature_group();
+    bool deleted = false;
+    
+    if (g && hasFeature(id)) {
+        g->removeGroup(id);
+        deleted = true;
     }
+    
+    return deleted;
 }
 
 // Other methods and functions
@@ -250,4 +275,3 @@ bool TagHDF5::deleteFeature(const string &id) {
 TagHDF5::~TagHDF5()
 {
 }
-

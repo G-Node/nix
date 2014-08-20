@@ -49,7 +49,7 @@ bool Source::hasSource(const Source &source) const {
 }
 
 
-std::vector<Source> Source::sources(util::Filter<Source>::type filter) const {
+std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) const {
     auto f = [this] (size_t i) { return getSource(i); };
     return getEntities<Source>(f,
                                sourceCount(),
@@ -72,7 +72,7 @@ struct SourceCont {
 };
 
 
-std::vector<Source> Source::findSources(util::Filter<Source>::type filter,
+std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter,
                                         size_t max_depth) const
 {
     std::vector<Source>  results;
