@@ -79,24 +79,27 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &id) const {
 
 shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
     boost::optional<Group> g = source_group();
-    string name = g ? (*g).objectName(index) : "";
+    string name = g ? g->objectName(index) : "";
     return getSourceByName(name);
 }
 
 
 size_t SourceHDF5::sourceCount() const {
     boost::optional<Group> g = source_group(false);
-    return g ? (*g).objectCount() : size_t(0);
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
+    if (name.empty()) {
+        throw EmptyString("name");
+    }
     if (hasSourceByName(name)) {
         throw DuplicateName("createSource");
     }
+    string id = util::createId();
     boost::optional<Group> g = source_group(true);
 
-    string id = util::createId("source");
 
     Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), group, id, type, name);

@@ -196,7 +196,7 @@ std::shared_ptr<base::ISetDimension> DataArrayHDF5::createSetDimension(size_t in
 }
 
 
-std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_t index, std::vector<double> ticks) {
+std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_t index, const std::vector<double> &ticks) {
     Group g = createDimensionGroup(index);
     return make_shared<RangeDimensionHDF5>(g, index, ticks);
 }

@@ -56,7 +56,7 @@ void TestSource::testValidate() {
 
 
 void TestSource::testId() {
-    CPPUNIT_ASSERT(source.id().size() == 23);
+    CPPUNIT_ASSERT(source.id().size() == 36);
 }
 
 
@@ -67,14 +67,14 @@ void TestSource::testName() {
 
 void TestSource::testType() {
     CPPUNIT_ASSERT(source.type() == "channel");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
 }
 
 
 void TestSource::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);

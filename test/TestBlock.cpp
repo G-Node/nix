@@ -44,7 +44,7 @@ void TestBlock::testValidate() {
 
 
 void TestBlock::testId() {
-    CPPUNIT_ASSERT(block.id().size() == 22);
+    CPPUNIT_ASSERT(block.id().size() == 36);
 }
 
 
@@ -55,14 +55,14 @@ void TestBlock::testName() {
 
 void TestBlock::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
 }
 
 
 void TestBlock::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
 }

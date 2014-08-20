@@ -345,7 +345,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    RangeDimension createRangeDimension(size_t id, std::vector<double> &ticks) {
+    RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
 

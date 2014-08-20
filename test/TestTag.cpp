@@ -51,7 +51,7 @@ void TestTag::testValidate() {
 
 
 void TestTag::testId() {
-    CPPUNIT_ASSERT(tag.id().size() == 20);
+    CPPUNIT_ASSERT(tag.id().size() == 36);
 }
 
 
@@ -62,14 +62,14 @@ void TestTag::testName() {
 
 void TestTag::testType() {
     CPPUNIT_ASSERT(tag.type() == "test_tag");
-    std::string type = util::createId("", 32);
+    std::string type = util::createId();
     tag.type(type);
     CPPUNIT_ASSERT(tag.type() == type);
 }
 
 
 void TestTag::testDefinition() {
-    std::string def = util::createId("", 128);
+    std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
     tag.definition(nix::none);

@@ -49,7 +49,7 @@ void TestProperty::testValidate() {
 
 
 void TestProperty::testId() {
-    CPPUNIT_ASSERT(property.id().size() == 25);
+    CPPUNIT_ASSERT(property.id().size() == 36);
 }
 
 
