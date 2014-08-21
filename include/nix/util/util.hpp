@@ -51,6 +51,15 @@ NIXAPI void deblankString(std::string &str);
 NIXAPI std::string deblankString(const std::string &str);
 
 /**
+ * @brief Replace forbidden chars in name string
+ *
+ * @param name   The string to sanitize
+ *
+ * @return The sanitized string
+ */
+NIXAPI std::string nameSanitizer(const std::string &name);
+
+/**
  * @brief Generates an ID-String.
  *
  * @return The generated id string.

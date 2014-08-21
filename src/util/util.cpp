@@ -83,12 +83,23 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
+std::string nameSanitizer(const std::string &name) {
+    std::string str_copy = name;
+    size_t pos = str_copy.find("/");
+    
+    while(pos != std::string::npos) {
+        str_copy = str_copy.replace(pos, 1, "_");
+        pos = str_copy.find("/");
+    }
+    
+    return str_copy;    
+}
+
 std::string unitSanitizer(const std::string &unit) {
      std::string new_unit = deblankString(unit);
      while (new_unit.find("mu") != string::npos) {
           size_t pos = new_unit.find("mu");
           new_unit = new_unit.replace(pos, 2, "u");
-
      }
      while (new_unit.find("µ") != string::npos) {
           size_t pos = new_unit.find("µ");
