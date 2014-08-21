@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/Group.hpp>
+#include <nix/util/util.hpp>
 #include <boost/multi_array.hpp>
 
 namespace nix {
@@ -192,6 +193,7 @@ bool Group::hasGroup(const std::string &name) const {
 
 
 Group Group::openGroup(const std::string &name, bool create) const {
+    if(!util::nameCheck(name)) throw InvalidName("openGroup");
     Group g;
     if (hasGroup(name)) {
         g = Group(h5group.openGroup(name));
@@ -205,6 +207,7 @@ Group Group::openGroup(const std::string &name, bool create) const {
 
 
 optGroup Group::openOptGroup(const std::string &name) {
+    if(!util::nameCheck(name)) throw InvalidName("openOptGroup");
     return optGroup(*this, name);
 }
 
@@ -216,6 +219,7 @@ void Group::removeGroup(const std::string &name) {
 
 
 void Group::renameGroup(const std::string &old_name, const std::string &new_name) {
+    if(!util::nameCheck(new_name)) throw InvalidName("renameGroup");
     if (hasGroup(old_name)) {
         h5group.move(old_name, new_name);
     }
@@ -238,6 +242,7 @@ H5::Group Group::h5Group() const {
 
 
 Group Group::createLink(const Group &target, const std::string &link_name) {
+    if(!util::nameCheck(link_name)) throw InvalidName("createLink");
     herr_t error = H5Lcreate_hard(target.h5group.getLocId(), ".", h5group.getLocId(), link_name.c_str(),
                                   H5L_SAME_LOC, H5L_SAME_LOC);
     if (error)
@@ -248,6 +253,7 @@ Group Group::createLink(const Group &target, const std::string &link_name) {
 
 // TODO implement some kind of roll-back in order to avoid half renamed links.
 bool Group::renameAllLinks(const std::string &old_name, const std::string &new_name) {
+    if(!util::nameCheck(new_name)) throw InvalidName("renameAllLinks");
     bool renamed = false;
 
     if (hasGroup(old_name)) {

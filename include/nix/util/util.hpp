@@ -60,6 +60,15 @@ NIXAPI std::string deblankString(const std::string &str);
 NIXAPI std::string nameSanitizer(const std::string &name);
 
 /**
+ * @brief Check if the name is legit or needs the {@link nameSanitizer}
+ *
+ * @param name   The string to check
+ *
+ * @return true if name is legit, false otherwise
+ */
+NIXAPI bool nameCheck(const std::string &name);
+
+/**
  * @brief Generates an ID-String.
  *
  * @return The generated id string.

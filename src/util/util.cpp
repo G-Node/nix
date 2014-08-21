@@ -83,6 +83,10 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
+bool nameCheck(const std::string &name) {
+    return name.find("/") == std::string::npos;
+}
+
 std::string nameSanitizer(const std::string &name) {
     std::string str_copy = name;
     size_t pos = str_copy.find("/");
