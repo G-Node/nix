@@ -71,3 +71,13 @@ void TestFeature::testData() {
     CPPUNIT_ASSERT_THROW(rp.data(), std::runtime_error);
     tag.deleteFeature(rp.id());
 }
+
+void TestFeature::testOperator()
+{
+    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+
+    CPPUNIT_ASSERT(rp != none);
+    rp = none;
+    CPPUNIT_ASSERT(rp == false);
+    CPPUNIT_ASSERT(rp == none);
+}

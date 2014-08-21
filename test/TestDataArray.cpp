@@ -307,4 +307,8 @@ void TestDataArray::testOperator()
 {
     std::stringstream mystream;
     mystream << array1;
+
+    array1 = none;
+    CPPUNIT_ASSERT(array1 == false);
+    CPPUNIT_ASSERT(array1 == none);
 }

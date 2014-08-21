@@ -181,6 +181,20 @@ void TestDimension::testSampledDimOperators() {
 
     data_array.deleteDimension(d.index());
     data_array.deleteDimension(d2.index());
+
+    Dimension dim = data_array.appendSampledDimension(samplingInterval);
+    SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
+    RangeDimension range = data_array.appendRangeDimension(std::vector<double>({1, 2}));
+    SetDimension set = data_array.appendSetDimension();
+    CPPUNIT_ASSERT(d != none);
+    CPPUNIT_ASSERT(sampled != none);
+    CPPUNIT_ASSERT(range != none);
+    CPPUNIT_ASSERT(set != none);
+    d = none; sampled = none; range = none; set = none;
+    CPPUNIT_ASSERT(d == none);
+    CPPUNIT_ASSERT(sampled == none);
+    CPPUNIT_ASSERT(range == none);
+    CPPUNIT_ASSERT(set == none);
 }
 
 

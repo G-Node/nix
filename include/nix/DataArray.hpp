@@ -434,6 +434,14 @@ public:
     //--------------------------------------------------
 
     /**
+     * @brief Assignment operator for none.
+     */
+    DataArray &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);

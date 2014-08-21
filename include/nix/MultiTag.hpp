@@ -453,10 +453,10 @@ public:
     //------------------------------------------------------
 
     /**
-     * @brief Assign none operator.
+     * @brief Assignment operator for none.
      */
-    virtual MultiTag &operator=(none_t) {
-        nullify();
+    MultiTag &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 

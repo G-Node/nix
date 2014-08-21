@@ -266,8 +266,8 @@ public:
     /**
      * @brief Assignment operator for none.
      */
-    virtual Property &operator=(none_t) {
-        nullify();
+    Property &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 

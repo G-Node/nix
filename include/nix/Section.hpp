@@ -476,15 +476,15 @@ public:
      */
     bool deleteProperty(const Property &property);
 
-    //------------------------------------------------------
-    // Operators and other functions
-    //------------------------------------------------------
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
 
     /**
      * @brief Assignment operator for none.
      */
-    virtual Section &operator=(none_t) {
-        nullify();
+    Section &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
