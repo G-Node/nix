@@ -197,15 +197,15 @@ public:
      */
     bool deleteSource(const Source &source);
 
-    //------------------------------------------------------
-    // Operators and other functions
-    //------------------------------------------------------
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
 
     /**
-     * @brief Assignment operator to none.
+     * @brief Assignment operator for none.
      */
-    virtual Source &operator=(none_t) {
-        nullify();
+    Source &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 

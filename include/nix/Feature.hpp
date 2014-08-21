@@ -151,6 +151,18 @@ public:
      */
     virtual ~Feature() {}
 
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
+
+    /**
+     * @brief Assignment operator for none.
+     */
+    Feature &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+
 };
 
 /**

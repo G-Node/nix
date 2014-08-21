@@ -455,8 +455,8 @@ public:
     /**
      * @brief Assignment operator for none.
      */
-    virtual File &operator=(none_t) {
-        nullify();
+    File &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 

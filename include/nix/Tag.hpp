@@ -434,10 +434,10 @@ public:
     //--------------------------------------------------
 
     /**
-     * @brief Assignment operator to none.
+     * @brief Assignment operator for none.
      */
-    virtual Tag &operator=(none_t) {
-        nullify();
+    Tag &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 

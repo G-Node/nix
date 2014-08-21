@@ -236,6 +236,14 @@ public:
      */
     SampledDimension& operator=(const Dimension &other);
 
+    /**
+     * @brief Assignment operator for none.
+     */
+    SampledDimension &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+
 };
 
 
@@ -361,6 +369,14 @@ public:
      * @param other     The dimension to assign.
      */
     SetDimension& operator=(const Dimension &other);
+
+    /**
+     * @brief Assignment operator for none.
+     */
+    SetDimension &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
 
 };
 
@@ -542,6 +558,14 @@ public:
      */
     RangeDimension& operator=(const Dimension &other);
 
+    /**
+     * @brief Assignment operator for none.
+     */
+    RangeDimension &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+
 };
 
 
@@ -682,6 +706,14 @@ public:
      * @param other     The dimension to assign.
      */
     Dimension& operator=(const SetDimension &other);
+
+    /**
+     * @brief Assignment operator for none.
+     */
+    Dimension &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
 
 };
 

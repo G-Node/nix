@@ -622,8 +622,8 @@ public:
     /**
      * @brief Assignment operator for none.
      */
-    virtual Block &operator=(none_t) {
-        nullify();
+    Block &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
