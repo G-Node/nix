@@ -126,7 +126,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Block(const std::shared_ptr<base::IBlock> &&ptr)
+    Block(std::shared_ptr<base::IBlock> &&ptr)
         : EntityWithMetadata(std::move(ptr))
     {
     }

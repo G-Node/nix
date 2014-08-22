@@ -35,18 +35,18 @@ public:
     /**
      * Standard constructor for existing Tag
      */
-    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group);
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
 
     /**
      * Standard constructor for new Tag
      */
-    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group, const std::string &id,
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
      * Standard constructor for new Tag that preserves the creation time.
      */
-    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group, const std::string &id,
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
                   const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 

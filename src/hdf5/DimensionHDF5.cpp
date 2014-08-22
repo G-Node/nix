@@ -63,7 +63,7 @@ std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
 }
 
 
-shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(Group group, size_t index) {
+shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(const Group &group, size_t index) {
     string type_name;
     group.getAttr("dimension_type", type_name);
 
@@ -88,7 +88,7 @@ shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(Group group, size_t index) {
 
 // Implementation of Dimension
 
-DimensionHDF5::DimensionHDF5(Group group, size_t index)
+DimensionHDF5::DimensionHDF5(const Group &group, size_t index)
     : group(group), dim_index(index)
 {
 }
@@ -116,12 +116,12 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index)
+SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
 {
 }
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
+SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index, double sampling_interval)
     : SampledDimensionHDF5(group, index)
 {
     setType();
@@ -237,7 +237,7 @@ SampledDimensionHDF5::~SampledDimensionHDF5() {}
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
 
-SetDimensionHDF5::SetDimensionHDF5(Group group, size_t index)
+SetDimensionHDF5::SetDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
 {
     setType();
@@ -273,13 +273,13 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index)
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
 {
 }
 
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<double> ticks)
     : RangeDimensionHDF5(group, index)
 {
     setType();

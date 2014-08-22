@@ -31,7 +31,7 @@ Source::Source(const std::shared_ptr<base::ISource> &p_impl)
 }
 
 
-Source::Source(const std::shared_ptr<base::ISource> &&ptr)
+Source::Source(std::shared_ptr<base::ISource> &&ptr)
     : EntityWithMetadata(std::move(ptr))
 {
 }

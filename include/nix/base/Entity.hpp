@@ -52,7 +52,7 @@ public:
      * @brief Constructor with move semantics that creates a new entity from a
      * shared pointer to an implementation instance.
      */
-    Entity(const std::shared_ptr<T> &&ptr)
+    Entity(std::shared_ptr<T> &&ptr)
         : ImplContainer<T>(std::move(ptr))
     {
     }

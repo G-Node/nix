@@ -20,19 +20,19 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, Group group)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group)
     : NamedEntityHDF5(file, group)
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name)
     : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name, time_t time)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time)
 {
 }

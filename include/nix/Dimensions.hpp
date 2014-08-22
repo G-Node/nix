@@ -74,7 +74,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SampledDimension(const std::shared_ptr<base::ISampledDimension> &&ptr);
+    SampledDimension(std::shared_ptr<base::ISampledDimension> &&ptr);
 
     /**
      * @brief Copy constructor
@@ -289,7 +289,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SetDimension(const std::shared_ptr<base::ISetDimension> &&ptr);
+    SetDimension(std::shared_ptr<base::ISetDimension> &&ptr);
 
     /**
      * @brief Copy constructor.
@@ -425,7 +425,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    RangeDimension(const std::shared_ptr<base::IRangeDimension> &&ptr);
+    RangeDimension(std::shared_ptr<base::IRangeDimension> &&ptr);
 
     /**
      * @brief Copy constructor
@@ -609,7 +609,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Dimension(const std::shared_ptr<base::IDimension> &&ptr);
+    Dimension(std::shared_ptr<base::IDimension> &&ptr);
 
 
     /**

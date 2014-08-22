@@ -98,7 +98,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Feature(const std::shared_ptr<base::IFeature> &&ptr)
+    Feature(std::shared_ptr<base::IFeature> &&ptr)
         : Entity(std::move(ptr))
     {
     }

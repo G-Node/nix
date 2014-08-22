@@ -33,19 +33,19 @@ public:
     /**
      * Standard constructor for new MultiTag
      */
-    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group);
+    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
                 
     /**
      * Standard constructor for new MultiTag
      */
-    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group,
+    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions);
 
 
     /**
      * Standard constructor for new MultiTag with time
      */
-    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group,
+    MultiTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
                 const std::string &id, const std::string &type, const std::string &name, const DataArray &positions, time_t time);
 
 

@@ -16,23 +16,23 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, Group group)
+SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, const Group &group)
     : EntityWithMetadataHDF5(file, group)
 {
-    source_group = group.openOptGroup("sources");
+    source_group = this->group().openOptGroup("sources");
 }
     
     
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, Group group, const std::string &id, const string &type, const string &name)
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const Group &group, const std::string &id, const string &type, const string &name)
     : SourceHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, Group group, const std::string &id, const string &type, const string &name, time_t time)
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const Group &group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    source_group = group.openOptGroup("sources");
+    source_group = this->group().openOptGroup("sources");
 }
 
 

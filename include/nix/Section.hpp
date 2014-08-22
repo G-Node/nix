@@ -74,7 +74,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Section(const std::shared_ptr<base::ISection> &&ptr);
+    Section(std::shared_ptr<base::ISection> &&ptr);
 
     //--------------------------------------------------
     // Attribute getter and setter

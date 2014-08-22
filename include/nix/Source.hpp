@@ -75,7 +75,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Source(const std::shared_ptr<base::ISource> &&ptr);
+    Source(std::shared_ptr<base::ISource> &&ptr);
 
     //--------------------------------------------------
     // Methods concerning child sources

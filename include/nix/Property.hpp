@@ -86,7 +86,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Property(const std::shared_ptr<base::IProperty> &&ptr)
+    Property(std::shared_ptr<base::IProperty> &&ptr)
         : Entity(std::move(ptr))
     {
     }

@@ -92,7 +92,7 @@ public:
     {
     }
 
-    ImplContainer(const std::shared_ptr<T> &&ptr)
+    ImplContainer(std::shared_ptr<T> &&ptr)
         : impl_ptr(std::move(ptr))
     {
     }

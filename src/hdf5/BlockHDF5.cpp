@@ -22,28 +22,28 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, Group group)
+BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, const Group &group)
     : EntityWithMetadataHDF5(file, group)
 {
-    data_array_group = group.openOptGroup("data_arrays");
-    tag_group = group.openOptGroup("tags");
-    multi_tag_group = group.openOptGroup("multi_tags");
-    source_group = group.openOptGroup("sources");
+    data_array_group = this->group().openOptGroup("data_arrays");
+    tag_group = this->group().openOptGroup("tags");
+    multi_tag_group = this->group().openOptGroup("multi_tags");
+    source_group = this->group().openOptGroup("sources");
 }
 
-BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name)
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name, time_t time)
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
-    data_array_group = group.openOptGroup("data_arrays");
-    tag_group = group.openOptGroup("tags");
-    multi_tag_group = group.openOptGroup("multi_tags");
-    source_group = group.openOptGroup("sources");
+    data_array_group = this->group().openOptGroup("data_arrays");
+    tag_group = this->group().openOptGroup("tags");
+    multi_tag_group = this->group().openOptGroup("multi_tags");
+    source_group = this->group().openOptGroup("sources");
 }
 
 
