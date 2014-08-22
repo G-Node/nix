@@ -24,9 +24,6 @@ using namespace nix::base;
     : entity_file(file)
 {
     this->entity_dataset = dataset;
-    
-    setUpdatedAt();
-    forceCreatedAt(util::getTime());
 }
 
 

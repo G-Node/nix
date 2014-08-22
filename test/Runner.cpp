@@ -40,6 +40,7 @@
 #include "TestDataAccess.hpp"
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
+#include "TestReadOnly.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
@@ -64,6 +65,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnly);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
