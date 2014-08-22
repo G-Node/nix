@@ -22,7 +22,7 @@ using namespace nix::hdf5;
 using namespace nix::base;
 
 
-BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
+BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, Group group)
     : EntityWithMetadataHDF5(file, group)
 {
     data_array_group = group.openOptGroup("data_arrays");
@@ -31,13 +31,13 @@ BlockHDF5::BlockHDF5(std::shared_ptr<base::IFile> file, Group group)
     source_group = group.openOptGroup("sources");
 }
 
-BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name)
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name)
     : BlockHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-BlockHDF5::BlockHDF5(shared_ptr<IFile> file, Group group, const string &id, const string &type, const string &name, time_t time)
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, Group group, const string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     data_array_group = group.openOptGroup("data_arrays");

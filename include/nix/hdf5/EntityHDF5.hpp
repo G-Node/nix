@@ -34,10 +34,10 @@ private:
 
 public:
 
-    EntityHDF5(std::shared_ptr<base::IFile> file, Group group);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, Group group);
 
 
-    EntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, time_t time);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, Group group, const std::string &id, time_t time);
 
 
     std::string id() const;

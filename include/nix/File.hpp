@@ -73,7 +73,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    File(std::shared_ptr<base::IFile> &&ptr)
+    File(const std::shared_ptr<base::IFile> &&ptr)
         : ImplContainer(std::move(ptr))
     {
     }

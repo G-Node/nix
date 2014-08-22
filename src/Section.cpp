@@ -39,7 +39,7 @@ Section::Section(const shared_ptr<base::ISection> &p_impl)
 }
 
 
-Section::Section(shared_ptr<base::ISection> &&ptr)
+Section::Section(const shared_ptr<base::ISection> &&ptr)
     : NamedEntity(std::move(ptr))
 {
 }

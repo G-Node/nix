@@ -33,18 +33,18 @@ public:
     /**
      * Standard constructor for existing entity.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group);
+    EntityWithSourcesHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group);
     
     /**
      * Standard constructor for new entity.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
+    EntityWithSourcesHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group,
                           const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    EntityWithSourcesHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::IBlock> block, Group group,
+    EntityWithSourcesHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, Group group,
                           const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     size_t sourceCount() const;

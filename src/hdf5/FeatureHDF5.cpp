@@ -36,19 +36,19 @@ LinkType nix::hdf5::linkTypeFromString(const string &str) {
 }
 
 
-FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group)
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
     : EntityHDF5(file, group), block(block)
 {
 }
 
-FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
                          const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
                          const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {

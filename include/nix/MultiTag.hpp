@@ -83,7 +83,7 @@ public:
     {
     }
 
-    MultiTag(std::shared_ptr<base::IMultiTag> &&ptr)
+    MultiTag(const std::shared_ptr<base::IMultiTag> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }

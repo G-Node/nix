@@ -19,13 +19,13 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group)
+SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group)
     : SectionHDF5(file, nullptr, group)
 {
 }
     
 
-SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, Group group)
+SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, Group group)
     : NamedEntityHDF5(file, group), parent_section(parent)
 {
     property_group = group.openOptGroup("properties");
@@ -33,28 +33,28 @@ SectionHDF5::SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id,
                          const string &type, const string &name)
     : SectionHDF5(file, nullptr, group, id, type, name)
 {
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, Group group,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const shared_ptr<ISection> &parent, Group group,
                          const string &id, const string &type, const string &name)
     : SectionHDF5(file, parent, group, id, type, name, util::getTime())
 {
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id,
                          const string &type, const string &name, time_t time)
     : SectionHDF5(file, nullptr, group, id, type, name, time)
 {
 }
 
 
-SectionHDF5::SectionHDF5(shared_ptr<IFile> file, shared_ptr<ISection> parent, Group group,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const shared_ptr<ISection> &parent, Group group,
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {

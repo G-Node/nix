@@ -117,7 +117,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    DataArray(std::shared_ptr<base::IDataArray> &&ptr)
+    DataArray(const std::shared_ptr<base::IDataArray> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }

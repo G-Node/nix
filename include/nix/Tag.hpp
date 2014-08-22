@@ -99,7 +99,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    Tag(std::shared_ptr<base::ITag> &&ptr)
+    Tag(const std::shared_ptr<base::ITag> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }

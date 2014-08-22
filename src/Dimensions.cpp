@@ -31,7 +31,7 @@ Dimension::Dimension(const shared_ptr<IDimension> &p_impl)
 }
 
 
-Dimension::Dimension(shared_ptr<IDimension> &&ptr)
+Dimension::Dimension(const shared_ptr<IDimension> &&ptr)
     : ImplContainer(std::move(ptr))
 {
 }
@@ -133,7 +133,7 @@ SampledDimension::SampledDimension(const std::shared_ptr<ISampledDimension> &p_i
 }
 
 
-SampledDimension::SampledDimension(std::shared_ptr<ISampledDimension> &&ptr)
+SampledDimension::SampledDimension(const std::shared_ptr<ISampledDimension> &&ptr)
     : ImplContainer(std::move(ptr))
 {
 }
@@ -199,7 +199,7 @@ SetDimension::SetDimension(const std::shared_ptr<ISetDimension> &p_impl)
 {
 }
 
-SetDimension::SetDimension(std::shared_ptr<ISetDimension> &&ptr)
+SetDimension::SetDimension(const std::shared_ptr<ISetDimension> &&ptr)
     : ImplContainer(std::move(ptr))
 {
 }
@@ -248,7 +248,7 @@ RangeDimension::RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl)
 {
 }
 
-RangeDimension::RangeDimension(std::shared_ptr<IRangeDimension> &&ptr)
+RangeDimension::RangeDimension(const std::shared_ptr<IRangeDimension> &&ptr)
     : ImplContainer(std::move(ptr))
 {
 }

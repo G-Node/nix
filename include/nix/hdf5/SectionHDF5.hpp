@@ -32,35 +32,35 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group);
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
     
     /**
      * Standard constructor for existing entity
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, Group group);
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, Group group);
 
     /**
      * Standard constructor for new entity
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id,
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id,
                 const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity with parent.
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, Group group,
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, Group group,
                 const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Constructor that preserves the creation time.
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, const Group &group, const std::string &id,
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id,
                 const std::string &type, const std::string &name, time_t time);
 
     /**
      * Constructor with parent that preserves the creation time.
      */
-    SectionHDF5(std::shared_ptr<base::IFile> file, std::shared_ptr<base::ISection> parent, Group group,
+    SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, Group group,
                 const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 

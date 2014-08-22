@@ -31,18 +31,18 @@ public:
     /**
      * Standard constructor for existing Property
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset);
+    PropertyHDF5(const std::shared_ptr<base::IFile> &file, const DataSet &dataset);
 
     /**
      * Standard constructor for new Property
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id,
+    PropertyHDF5(const std::shared_ptr<base::IFile> &file, const DataSet &dataset, const std::string &id,
                  const std::string &name);
 
     /**
      * Constructor for new Property with time
      */
-    PropertyHDF5(std::shared_ptr<base::IFile> file, const DataSet &dataset, const std::string &id,
+    PropertyHDF5(const std::shared_ptr<base::IFile> &file, const DataSet &dataset, const std::string &id,
                  const std::string &name, time_t time);
 
 
@@ -115,7 +115,7 @@ public:
     void values(const boost::none_t t);
 
 
-    int compare(std::shared_ptr<IProperty> other) const;
+    int compare(const std::shared_ptr<IProperty> &other) const;
 
 
     bool operator==(const PropertyHDF5 &other) const;

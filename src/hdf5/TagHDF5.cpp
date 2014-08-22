@@ -22,7 +22,7 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group)
     : EntityWithSourcesHDF5(file, block, group)
 {
     feature_group = group.openOptGroup("features");
@@ -30,14 +30,14 @@ TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
 }
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position)
     : TagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
-TagHDF5::TagHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group, const string &id,
                              const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {

@@ -19,21 +19,21 @@ using namespace nix;
 using namespace nix::hdf5;
 using namespace nix::base;
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group)
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group)
     : EntityWithMetadataHDF5(file, group), entity_block(block)
 {
     sources_refs = group.openOptGroup("sources");
 }
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group, const string &id,
                                              const string &type, const string &name)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5 (shared_ptr<IFile> file, shared_ptr<IBlock> block, Group group, const string &id,
+EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, Group group, const string &id,
                                               const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block)
 {
