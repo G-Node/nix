@@ -45,7 +45,7 @@ public:
     virtual void definition(const none_t t) = 0;
 
 
-    virtual int compare(std::shared_ptr<INamedEntity> other) const = 0;
+    virtual int compare(const std::shared_ptr<INamedEntity> &other) const = 0;
 
 
     virtual ~INamedEntity() {}

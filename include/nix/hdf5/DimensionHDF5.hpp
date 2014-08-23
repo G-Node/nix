@@ -27,7 +27,7 @@ DimensionType dimensionTypeFromStr(const std::string &str);
 std::string dimensionTypeToStr(DimensionType dim);
 
 
-std::shared_ptr<base::IDimension> openDimensionHDF5(Group group, size_t index);
+std::shared_ptr<base::IDimension> openDimensionHDF5(const Group &group, size_t index);
 
 
 class DimensionHDF5 : virtual public base::IDimension {
@@ -39,7 +39,7 @@ protected:
 
 public:
 
-    DimensionHDF5(Group group, size_t index);
+    DimensionHDF5(const Group &group, size_t index);
 
 
     size_t index() const { return dim_index; }
@@ -64,10 +64,10 @@ class SampledDimensionHDF5 : virtual public base::ISampledDimension, public Dime
 
 public:
 
-    SampledDimensionHDF5(Group group, size_t index);
+    SampledDimensionHDF5(const Group &group, size_t index);
 
 
-    SampledDimensionHDF5(Group group, size_t index, double sampling_interval);
+    SampledDimensionHDF5(const Group &group, size_t index, double sampling_interval);
 
 
     DimensionType dimensionType() const;
@@ -115,7 +115,7 @@ class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF
 
 public:
 
-    SetDimensionHDF5(Group group, size_t index);
+    SetDimensionHDF5(const Group &group, size_t index);
 
 
     DimensionType dimensionType() const;
@@ -139,10 +139,10 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(Group group, size_t index);
+    RangeDimensionHDF5(const Group &group, size_t index);
 
 
-    RangeDimensionHDF5(Group group, size_t index, std::vector<double> ticks);
+    RangeDimensionHDF5(const Group &group, size_t index, std::vector<double> ticks);
 
 
     DimensionType dimensionType() const;

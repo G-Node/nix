@@ -28,18 +28,18 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    EntityWithMetadataHDF5(std::shared_ptr<base::IFile> file, Group group);
+    EntityWithMetadataHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
     
     /**
      * Standard constructor for new entity
      */
-    EntityWithMetadataHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id,
+    EntityWithMetadataHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id,
                            const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    EntityWithMetadataHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id,
+    EntityWithMetadataHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id,
                            const std::string &type, const std::string &name, time_t time);
 
 

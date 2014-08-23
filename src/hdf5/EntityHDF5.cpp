@@ -17,7 +17,7 @@ using namespace nix::base;
 using namespace nix::hdf5;
 
 
-EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group)
+EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group)
     : entity_file(file), entity_group(group)
 {
     setUpdatedAt();
@@ -25,7 +25,7 @@ EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group)
 }
 
 
-EntityHDF5::EntityHDF5(shared_ptr<IFile> file, Group group, const string &id, time_t time)
+EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, time_t time)
     : entity_file(file), entity_group(group)
 {
     group.setAttr("entity_id", id);

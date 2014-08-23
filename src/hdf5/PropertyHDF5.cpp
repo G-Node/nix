@@ -20,21 +20,21 @@ using namespace nix::base;
 
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset)
+    PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset)
     : entity_file(file)
 {
     this->entity_dataset = dataset;
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset, const string &id,
+    PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset, const string &id,
                                const string &name)
     : PropertyHDF5(file, dataset, id, name, util::getTime())
 {
 }
 
 
-    PropertyHDF5::PropertyHDF5(std::shared_ptr<IFile> file, const DataSet &dataset, const string &id,
+    PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset, const string &id,
                                const string &name, time_t time)
     : entity_file(file)
 {
@@ -244,7 +244,7 @@ void PropertyHDF5::values(const nix::none_t t) {
 }
 
 
-int PropertyHDF5::compare(std::shared_ptr<IProperty> other) const {
+int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
     int cmp = 0;
     if (!name().empty() && !other->name().empty()) {
         cmp = (name()).compare(other->name());

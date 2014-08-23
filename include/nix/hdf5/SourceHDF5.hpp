@@ -34,18 +34,18 @@ public:
     /**
      * Standard constructor for existing Source
      */
-    SourceHDF5(std::shared_ptr<base::IFile> file, Group group);
+    SourceHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
 
     /**
      * Default constructor.
      */
-    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+    SourceHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, const std::string &type,
                const std::string &name);
 
     /**
      * Default constructor that preserves the creation time.
      */
-    SourceHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+    SourceHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, const std::string &type,
                const std::string &name, time_t time);
 
     //--------------------------------------------------

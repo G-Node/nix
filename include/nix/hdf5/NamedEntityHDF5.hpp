@@ -29,18 +29,18 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group);
+    NamedEntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
 
     /**
      * Standard constructor for new entity
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+    NamedEntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, const std::string &type,
                     const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    NamedEntityHDF5(std::shared_ptr<base::IFile> file, Group group, const std::string &id, const std::string &type,
+    NamedEntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, const std::string &type,
                     const std::string &name, time_t time);
 
 
@@ -62,7 +62,7 @@ public:
     void definition(const none_t t);
 
 
-    int compare(std::shared_ptr<INamedEntity> other) const;
+    int compare(const std::shared_ptr<INamedEntity> &other) const;
 
 
     ~NamedEntityHDF5();
