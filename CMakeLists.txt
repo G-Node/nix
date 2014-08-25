@@ -50,7 +50,7 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
+find_package(Boost 1.49.0 REQUIRED date_time regex)
 
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
@@ -161,6 +161,13 @@ endforeach(test)
 
 include(CTest)
 
+  foreach(test ${Tests_SOURCES})
+    get_filename_component(TestFileName ${test} NAME_WE)
+    string(REPLACE "Test" "" TestName ${TestFileName})
+    message(STATUS " Test added: ${TestName}")
+    add_test(${TestName} TestRunner ${TestName})
+  endforeach(test)
+endif()
 
 ########################################
 # Install
