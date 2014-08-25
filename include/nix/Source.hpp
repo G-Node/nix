@@ -10,15 +10,12 @@
 #define NIX_SOURCE_H
 
 #include <limits>
-#include <functional>
 
 #include <nix/util/filter.hpp>
-#include <nix/util/util.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -32,7 +29,7 @@ namespace nix {
  * This can, for example, be used to specify that a source electrode array contains
  * multiple electrodes as its child sources.
  */
-class NIXAPI Source : virtual public base::ISource, public base::EntityWithMetadata<base::ISource> {
+class NIXAPI Source : public base::EntityWithMetadata<base::ISource> {
 
 public:
 
@@ -84,6 +81,14 @@ public:
     // Methods concerning child sources
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if this source has a specific source as direct descendant.
+     *
+     * @param id        The id of the source.
+     *
+     * @return True if a source with the given id is a direct descendant, false
+     *         otherwise.
+     */
     bool hasSource(const std::string &id) const {
         return backend()->hasSource(id);
     }
@@ -95,21 +100,36 @@ public:
      *
      * @return True if a source is a direct descendant, false otherwise.
      */
-    bool hasSource(const Source &source) const {
-        if(source == none) {
-            throw std::runtime_error("Source::hasSource: emtpy Source entity given!");
-        }
-        return backend()->hasSource(source.id());
-    }
+    bool hasSource(const Source &source) const;
 
+    /**
+     * @brief Retrieves a specific child source that is a direct descendant.
+     *
+     * @param id        The id of the source.
+     *
+     * @return The source with the given id. If it doesn't exist an exception
+     *         will be thrown.
+     */
     Source getSource(const std::string &id) const {
         return backend()->getSource(id);
     }
 
+    /**
+     * @brief Retrieves a specific source by index.
+     *
+     * @param index     The index of the source.
+     *
+     * @return The source at the specified index.
+     */
     Source getSource(size_t index) const {
         return backend()->getSource(index);
     }
 
+    /**
+     * @brief Returns the number of sources that are direct descendants of this source.
+     *
+     * @return The number of direct child sources.
+     */
     size_t sourceCount() const {
         return backend()->sourceCount();
     }
@@ -124,14 +144,7 @@ public:
      *
      * @return A vector containing the matching child sources.
      */
-    std::vector<Source> sources(util::Filter<Source>::type filter = util::AcceptAll<Source>()) const
-    {
-        auto f = [this] (size_t i) { return getSource(i); };
-        return getEntities<Source>(f,
-                                   sourceCount(),
-                                   filter);
-    }
-
+    std::vector<Source> sources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>()) const;
 
     /**
      * @brief Get all descendant sources of the source recursively.
@@ -147,14 +160,29 @@ public:
      *
      * @return A vector containing the matching descendant sources.
      */
-    std::vector<Source> findSources(util::Filter<Source>::type filter = util::AcceptAll<Source>(),
+    std::vector<Source> findSources(const util::Filter<Source>::type &filter = util::AcceptAll<Source>(),
                                     size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
-
+    /**
+     * @brief Create a new root source.
+     *
+     * @param name      The name of the source to create.
+     * @param type      The type of the source.
+     *
+     * @return The created source object.
+     */
     Source createSource(const std::string &name, const std::string &type) {
         return backend()->createSource(name, type);
     }
 
+    /**
+     * @brief Delete a root source and all its child sources from
+     *        the source.
+     *
+     * @param id        The id of the source to remove.
+     *
+     * @return True if the source was deleted, false otherwise.
+     */
     bool deleteSource(const std::string &id) {
         return backend()->deleteSource(id);
     }
@@ -167,42 +195,24 @@ public:
      *
      * @return True if the source was deleted, false otherwise.
      */
-    bool deleteSource(const Source &source) {
-        if (source == none) {
-            throw std::runtime_error("Source::deleteSource: empty Source entity given!");
-        }
-        return backend()->deleteSource(source.id());
-    }
+    bool deleteSource(const Source &source);
 
-    //------------------------------------------------------
-    // Operators and other functions
-    //------------------------------------------------------
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
 
     /**
-     * @brief Assignment operator to none.
+     * @brief Assignment operator for none.
      */
-    virtual Source &operator=(none_t) {
-        nullify();
+    Source &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Source &ent);
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithMetadata<base::ISource>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &Source::sourceCount, valid::isGreater(0), "sources are not set!")
-        });
-        
-        return result.concat(result_base);
-    }
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Source &ent);
 
 };
 

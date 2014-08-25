@@ -36,7 +36,6 @@ public:
     void setUp();
     void tearDown();
 
-    void testValidate();
     void testId();
     void testType();
     void testName();
@@ -47,12 +46,12 @@ public:
     void testUnit();
     void testDimension();
     void testOperator();
+    void testValidate();
 
 private:
 
     CPPUNIT_TEST_SUITE(TestDataArray);
 
-    CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testName);
@@ -63,6 +62,7 @@ private:
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
     CPPUNIT_TEST(testOperator);
+    CPPUNIT_TEST(testValidate);
 
     CPPUNIT_TEST_SUITE_END ();
 

@@ -14,9 +14,11 @@
 #ifndef NIX_DATAACCESS_H
 #define NIX_DATAACCESS_H
 
-#include <nix/util/util.hpp>
 #include <nix/NDArray.hpp>
-#include <nix.hpp>
+#include <nix/Dimensions.hpp>
+#include <nix/DataArray.hpp>
+#include <nix/MultiTag.hpp>
+#include <nix/Tag.hpp>
 
 namespace nix {
 namespace util {
@@ -76,39 +78,39 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Sa
 NIXAPI size_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 /**
- * @brief Returns the offsets and element counts associated with position and extent of a SimpleTag and
+ * @brief Returns the offsets and element counts associated with position and extent of a Tag and
  *        the referenced DataArray.
  *
- * @param tag           The simple tag.
+ * @param tag           The tag.
  * @param array         A referenced data array.
  * @param[out] offsets  The resulting offset.
  * @param[out] counts   The number of elements to read from data
  */
-NIXAPI void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
 
 
-NIXAPI void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
 
 /**
- * @brief Retrieve the data referenced by the given position and extent of the DataTag.
+ * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
- * @param tag                   The data tag.
+ * @param tag                   The multi tag.
  * @param position_index        The index of the position.
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by position and extent.
  */
-NIXAPI NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference_index);
+NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
 
 /**
- * @brief Retrieve the data referenced by the given position and extent of the SimpleTag.
+ * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
- * @param tag                   The data tag.
+ * @param tag                   The multi tag.
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by the position.
  */
-NIXAPI NDArray retrieveData(const SimpleTag &tag, size_t reference_index);
+NIXAPI NDArray retrieveData(const Tag &tag, size_t reference_index);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.

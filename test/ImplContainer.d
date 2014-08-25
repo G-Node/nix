@@ -155,16 +155,16 @@ pid$target::*ImplContainer(std*shared_ptr?nix??base??IDataArray??const?):entry
 }
 
 
-/* SimpleTag */
-pid$target::*ImplContainer(std*shared_ptr?nix??base??ISimpleTag???):entry
+/* Tag */
+pid$target::*ImplContainer(std*shared_ptr?nix??base??ITag???):entry
 {
   @["ImplContainer::shrd_ctor_move"] = count();
-  @["SimpleTag::shrd_ctor_move"] = count();
+  @["Tag::shrd_ctor_move"] = count();
 }
 
-pid$target::*ImplContainer(std*shared_ptr?nix??base??ISimpleTag??const?):entry
+pid$target::*ImplContainer(std*shared_ptr?nix??base??ITag??const?):entry
 {
-  @["SimpleTag::shrd_ctor_copy"] = count();
+  @["Tag::shrd_ctor_copy"] = count();
   /* ustack(); */
 }
 
@@ -197,15 +197,15 @@ pid$target::*ImplContainer(std*shared_ptr?nix??base??*Representation??const?):en
 }
 */
 
-/* DataTag */
-pid$target::*ImplContainer(std*shared_ptr?nix??base??IDataTag???):entry
+/* MultiTag */
+pid$target::*ImplContainer(std*shared_ptr?nix??base??IMultiTag???):entry
 {
   @["ImplContainer::shrd_ctor_move"] = count();
-  @["DataTag::shrd_ctor_move"] = count();
+  @["MultiTag::shrd_ctor_move"] = count();
 }
 
-pid$target::*ImplContainer(std*shared_ptr?nix??base??IDataTag??const?):entry
+pid$target::*ImplContainer(std*shared_ptr?nix??base??IMultiTag??const?):entry
 {
-  @["DataTag::shrd_ctor_copy"] = count();
+  @["MultiTag::shrd_ctor_copy"] = count();
   /* ustack(); */
 }

@@ -8,8 +8,9 @@
 
 
 #include <list>
+#include <algorithm>
 
-#include <nix.hpp>
+#include <nix/Section.hpp>
 
 using namespace std;
 using namespace nix;
@@ -44,11 +45,33 @@ Section::Section(shared_ptr<base::ISection> &&ptr)
 }
 
 
+void Section::link(const Section &link) {
+    if (link == none) {
+        backend()->link(none);
+    } else {
+        backend()->link(link.id());
+    }
+}
 
 //-----------------------------------------------------
 // Methods concerning child sections
 //-----------------------------------------------------
 
+
+bool Section::hasSection(const Section &section) const {
+    if (section == none) {
+        throw std::runtime_error("Section::hasSection: Empty Section entity given!");
+    }
+    return backend()->hasSection(section.id());
+}
+
+
+bool Section::deleteSection(const Section &section) {
+    if (section == none) {
+        throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
+    }
+    return backend()->deleteSection(section.id());
+}
 
 /*
  * Helper struct for {@link findSections}.
@@ -63,7 +86,15 @@ struct SectionCont {
 };
 
 
-std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
+std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
+    auto f = [this] (size_t i) { return getSection(i); };
+    return getEntities<Section>(f,
+                                sectionCount(),
+                                filter);
+}
+
+
+std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
                                            size_t max_depth) const
 {
     std::vector<Section>  results;
@@ -71,7 +102,7 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
 
     todo.push_back(SectionCont(*this));
 
-    while(todo.size() > 0)
+    while (todo.size() > 0)
     {
         SectionCont current = todo.front();
         todo.pop_front();
@@ -94,31 +125,34 @@ std::vector<Section> Section::findSections(util::Filter<Section>::type filter,
     return results;
 }
 
+static inline auto erase_section_with_id(vector<Section> &sections, const string &my_id)
+    -> decltype(sections.size())
+{
+    sections.erase(remove_if(sections.begin(),
+                             sections.end(),
+                             [&my_id](const Section &section) {
+                                 return my_id == section.id();
+                             }),
+                   sections.end());
 
-std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) const
+    return sections.size();
+}
+
+std::vector<Section> Section::findRelated(const util::Filter<Section>::type &filter) const
 {
     std::vector<Section> results = findDownstream(filter);
-    if(results.size() > 0) { //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    }
-    if (results.size() == 0) {
+    const string &my_id = id();
+
+    //This checking of results can be removed if we decide not to include this in findSection
+    auto results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findUpstream(filter);
     }
-    if(results.size() > 0) //This checking of results can be removed if we decide not to include this in findSection
-        for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-            if((*it).id() == id()) {
-                results.erase(it, it+1);
-                if (it == results.end())
-                    break;
-            }
-        }
-    if (results.size() == 0) {
+    //This checking of results can be removed if we decide not to include this in findSection
+    results_size = erase_section_with_id(results, my_id);
+
+    if (results_size == 0) {
         results = findSideways(filter, id());
     }
     return results;
@@ -129,6 +163,26 @@ std::vector<Section> Section::findRelated(util::Filter<Section>::type filter) co
 // Methods for property access
 //-----------------------------------------------------
 
+bool Section::hasProperty(const Property &property) const {
+    if (property == none) {
+        throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
+    }
+    return backend()->hasProperty(property.id());
+}
+
+std::vector<Property> Section::properties(const util::Filter<Property>::type &filter) const {
+    auto f = [this] (size_t i) { return getProperty(i); };
+    return getEntities<Property>(f,
+            propertyCount(),
+            filter);
+}
+
+bool Section::deleteProperty(const Property &property) {
+    if (property == none) {
+        throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
+    }
+    return backend()->deleteProperty(property.id());
+}
 
 vector<Property> Section::inheritedProperties() const {
 
@@ -139,20 +193,14 @@ vector<Property> Section::inheritedProperties() const {
 
     const vector<Property> linked = link().properties();
 
-    for (auto &linked_prop : linked) {
-
-        bool not_own = true;
-        for (const auto &own_prop : own) {
-            if (linked_prop.name() == own_prop.name()) {
-                not_own = false;
-                break;
-            }
-        }
-
-        if (not_own) {
-            own.push_back(linked_prop);
-        }
-    }
+    copy_if (linked.begin(), linked.end(),
+             back_inserter(own),
+             [&own](const Property &linked_prop) {
+                 return find_if (own.begin(), own.end(),
+                                [&linked_prop](const Property &own_prop) {
+                                    return linked_prop.name() == own_prop.name();
+                                }) == own.end();
+             });
 
     return own;
 }
@@ -161,6 +209,7 @@ vector<Property> Section::inheritedProperties() const {
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+
 size_t Section::tree_depth() const{
   const vector<Section> children = sections();
   size_t depth = 0;
@@ -174,7 +223,7 @@ size_t Section::tree_depth() const{
 }
 
 
-vector<Section> Section::findDownstream(std::function<bool(Section)> filter) const{
+vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const{
     vector<Section> results;
     size_t max_depth = tree_depth();
     size_t actual_depth = 1;
@@ -186,13 +235,13 @@ vector<Section> Section::findDownstream(std::function<bool(Section)> filter) con
 }
 
 
-vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const{
+vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter) const{
     vector<Section> results;
     Section p = parent();
 
-    if(p != nullptr) {
+    if (p != nullptr) {
         results = p.findSections(filter,1);
-        if(results.size() > 0) {
+        if (results.size() > 0) {
             return results;
         }
         return p.findUpstream(filter);
@@ -201,19 +250,20 @@ vector<Section> Section::findUpstream(std::function<bool(Section)> filter) const
 }
 
 
-vector<Section> Section::findSideways(std::function<bool(Section)> filter, const string &caller_id) const{
+vector<Section> Section::findSideways(const std::function<bool(Section)> &filter, const string &caller_id) const{
     vector<Section> results;
     Section p = parent();
-    if(p != nullptr) {
+    if (p != nullptr) {
         results = p.findSections(filter,1);
-        if(results.size() > 0) {
-            for (vector<Section>::iterator it = results.begin(); it != results.end(); ++it) {
-                if(it->id() == caller_id) {
-                    results.erase(it, it+1);
-                    if (it == results.end())
-                        break;
-                }
-            }
+        if (results.size() > 0) {
+
+            results.erase(remove_if(results.begin(),
+                                    results.end(),
+                                    [&caller_id](const Section &section) {
+                                        return section.id() == caller_id;
+                                    }),
+                          results.end());
+
             return results;
         }
         return p.findSideways(filter, caller_id);

@@ -10,9 +10,13 @@
 
 #include "TestSource.hpp"
 
+#include <nix/util/util.hpp>
+#include <nix/valid/validate.hpp>
+
 
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestSource::setUp() {
@@ -24,6 +28,18 @@ void TestSource::setUp() {
     source = block.createSource("source_one", "channel");
     source_other = block.createSource("source_two", "channel");
     source_null  = nullptr;
+
+    // create a DataArray & a MultiTag
+    darray = block.createDataArray("DataArray", "dataArray",
+                                   DataType::Double, {0, 0});
+    typedef boost::multi_array<double, 2> array_type;
+    typedef array_type::index index;
+    array_type A(boost::extents[5][5]);
+    for(index i = 0; i < 5; ++i){
+        A[i][i] = 100.0*i;
+    }
+    darray.setData(A);
+    mtag = block.createMultiTag("tag_one", "test_tag", darray);
 }
 
 
@@ -33,33 +49,32 @@ void TestSource::tearDown() {
 
 
 void TestSource::testValidate() {
-    std::cout << std::endl << source.validate();
+    valid::Result result = validate(source);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void TestSource::testId() {
-    CPPUNIT_ASSERT(source.id().size() == 23);
+    CPPUNIT_ASSERT(source.id().size() == 36);
 }
 
 
 void TestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
-    string name = util::createId("", 32);
-    source.name(name);
-    CPPUNIT_ASSERT(source.name() == name);
 }
 
 
 void TestSource::testType() {
     CPPUNIT_ASSERT(source.type() == "channel");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
 }
 
 
 void TestSource::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);
@@ -73,8 +88,15 @@ void TestSource::testMetadataAccess() {
     source.metadata(section);
     CPPUNIT_ASSERT(source.metadata());
 
+    // test none-unsetter
     source.metadata(none);
     CPPUNIT_ASSERT(!source.metadata());
+    // test deleter removing link too
+    source.metadata(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!source.metadata());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 
@@ -92,6 +114,8 @@ void TestSource::testSourceAccess() {
 
         ids.push_back(child_source.id());
     }
+    CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
@@ -111,25 +135,52 @@ void TestSource::testSourceAccess() {
 
 
 void TestSource::testFindSource() {
-    // prepare
+    /* We create the following tree:
+     * 
+     * source---l1n1---l2n1---l3n1
+     *    |      |      |
+     *    |      ------l2n2
+     *    |      |
+     *    |      |-----l2n3---l3n2
+     *    |             |
+     *    |             ------l3n3
+     *    ------l1n2
+     *    | 
+     *    ------l1n3---l2n4
+     *           |
+     *           ------l2n5---l3n4
+     *           |
+     *           ------l2n6---l3n5
+     *                  |      |
+     * mtag-------------|      |
+     *                         |
+     * darray-------------------
+     */
     Source l1n1 = source.createSource("l1n1", "typ1");
     Source l1n2 = source.createSource("l1n2", "typ2");
     Source l1n3 = source.createSource("l1n3", "typ3");
-
     Source l2n1 = l1n1.createSource("l2n1", "typ1");
     Source l2n2 = l1n1.createSource("l2n2", "typ2");
     Source l2n3 = l1n1.createSource("l2n3", "typ2");
     Source l2n4 = l1n3.createSource("l2n4", "typ2");
     Source l2n5 = l1n3.createSource("l2n5", "typ2");
     Source l2n6 = l1n3.createSource("l2n6", "typ3");
-
-    Source l3n1 = l2n1.createSource("l2n3", "typ1");
-    Source l3n2 = l2n3.createSource("l2n3", "typ2");
-    Source l3n3 = l2n3.createSource("l2n3", "typ2");
-    Source l3n4 = l2n5.createSource("l2n3", "typ2");
+    Source l3n1 = l2n1.createSource("l3n1", "typ1");
+    Source l3n2 = l2n3.createSource("l3n2", "typ2");
+    Source l3n3 = l2n3.createSource("l3n3", "typ2");
+    Source l3n4 = l2n5.createSource("l3n4", "typ2");
+    Source l3n5 = l2n5.createSource("l3n5", "typ2");
+    mtag.addSource(l2n6.id());
+    darray.addSource(l3n5.id());
+    
+    // test if sources are in place
+    CPPUNIT_ASSERT(mtag.hasSource(l2n6));
+    CPPUNIT_ASSERT(darray.hasSource(l3n5));
+    CPPUNIT_ASSERT(mtag.sources().size() == 1);
+    CPPUNIT_ASSERT(darray.sources().size() == 1);
 
     // test depth limit
-    CPPUNIT_ASSERT(source.findSources().size() == 14);
+    CPPUNIT_ASSERT(source.findSources().size() == 15);
     CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 2).size() == 10);
     CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 1).size() == 4);
     CPPUNIT_ASSERT(source.findSources(util::AcceptAll<Source>(), 0).size() == 1);
@@ -137,9 +188,52 @@ void TestSource::testFindSource() {
     // test filter
     auto filter_typ1 = util::TypeFilter<Source>("typ1");
     auto filter_typ2 = util::TypeFilter<Source>("typ2");
-
     CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
-    CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 8);
+    CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 9);
+    
+    // test deleter
+    /* chop the tree down to:
+     * 
+     * source---l1n2
+     *    | 
+     *    ------l1n3---l2n4
+     *           |
+     *           ------l2n5---l3n4
+     *           |
+     *           ------l2n6---l3n5
+     *                  |      |
+     * mtag-------------|      |
+     *                         |
+     * darray-------------------
+     */
+    source.deleteSource(l1n1.id());
+    CPPUNIT_ASSERT(source.findSources().size() == 8);
+    /* chop the tree down to:
+     * 
+     * source---l1n3---l2n4
+     *           |
+     *           ------l2n5---l3n4
+     *           |
+     *           ------l2n6---l3n5
+     *                  |      |
+     * mtag-------------|      |
+     *                         |
+     * darray-------------------
+     */
+    source.deleteSource(l1n2.id());
+    CPPUNIT_ASSERT(source.findSources().size() == 7);
+    /* chop the tree down to:
+     * 
+     * source
+     * mtag
+     * darray
+     */
+    source.deleteSource(l1n3.id());
+    CPPUNIT_ASSERT(source.findSources().size() == 1);
+    CPPUNIT_ASSERT(!mtag.hasSource(l2n6));
+    CPPUNIT_ASSERT(!darray.hasSource(l3n5));
+    CPPUNIT_ASSERT(mtag.sources().size() == 0);
+    CPPUNIT_ASSERT(darray.sources().size() == 0);
 }
 
 

@@ -7,15 +7,11 @@
 // LICENSE file in the root of the Project.
 
 
-#ifndef NIX_SIMPLE_TAG_HDF5_H
-#define NIX_SIMPLE_TAG_HDF5_H
+#ifndef NIX_TAG_HDF5_H
+#define NIX_TAG_HDF5_H
 
-#include <string>
-#include <vector>
-
-#include <nix.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
-#include <nix/hdf5/ReferenceList.hpp>
+#include <nix/base/ITag.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -24,34 +20,34 @@ namespace hdf5 {
 /**
  * Class that represents a NIX tag.
  */
-class SimpleTagHDF5 : virtual public base::ISimpleTag, public EntityWithSourcesHDF5 {
+class TagHDF5 : virtual public base::ITag, public EntityWithSourcesHDF5 {
 
 private:
 
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
 
-    Group feature_group;
-    ReferenceList references_list;
+    optGroup feature_group;
+    optGroup refs_group;
 
 public:
 
     /**
-     * Copy constructor
+     * Standard constructor for existing Tag
      */
-    SimpleTagHDF5(const SimpleTagHDF5 &tag);
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
 
     /**
-     * Standard constructor
+     * Standard constructor for new Tag
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                  const std::string &type, const std::string &name, const std::vector<DataArray> &refs);
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
+                  const std::string &type, const std::string &name, const std::vector<double> &position);
 
     /**
-     * Standard constructor that preserves the creation time.
+     * Standard constructor for new Tag that preserves the creation time.
      */
-    SimpleTagHDF5(const File &file, const Block &block, const Group &group, const std::string &id,
-                  const std::string &type, const std::string &name, const std::vector<DataArray> &refs, const time_t time);
+    TagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
+                  const std::string &type, const std::string &name, const std::vector<double> &_position, const time_t time);
 
 
     std::vector<std::string> units() const;
@@ -67,9 +63,6 @@ public:
 
 
     void position(const std::vector<double> &position);
-
-
-    void position(const none_t t);
 
 
     std::vector<double> extent() const;
@@ -91,10 +84,10 @@ public:
     size_t referenceCount() const;
 
 
-    DataArray getReference(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
 
 
-    DataArray getReference(size_t index) const;
+    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
 
 
     void addReference(const std::string &id);
@@ -115,13 +108,13 @@ public:
     size_t featureCount() const;
 
 
-    Feature getFeature(const std::string &id) const;
+    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
 
 
-    Feature getFeature(size_t index) const;
+    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
 
 
-    Feature createFeature(const std::string &data_array_id, LinkType link_type);
+    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);
@@ -131,22 +124,10 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-    void swap(SimpleTagHDF5 &other);
-
-    /**
-     * Assignment operator
-     */
-    SimpleTagHDF5& operator=(const SimpleTagHDF5 &other);
-
-    /**
-     * Output operator
-     */
-    friend std::ostream& operator<<(std::ostream &out, const SimpleTagHDF5 &ent);
-
     /**
      * Destructor.
      */
-    virtual ~SimpleTagHDF5();
+    virtual ~TagHDF5();
 
 };
 
@@ -154,4 +135,4 @@ public:
 } // namespace hdf5
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_HDF5_H
+#endif // NIX_TAG_HDF5_H

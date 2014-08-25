@@ -11,8 +11,11 @@
 #include "TestFile.hpp"
 #include <nix/util/util.hpp>
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestFile::setUp() {
@@ -30,7 +33,9 @@ void TestFile::tearDown() {
 
 
 void TestFile::testValidate() {
-    std::cout << std::endl << file_open.validate();
+    valid::Result result = validate(file_open);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
 }
 
 
@@ -46,7 +51,8 @@ void TestFile::testLocation() {
 
 
 void TestFile::testVersion() {
-    CPPUNIT_ASSERT(file_open.version() == "1.0");
+    vector<int> version{1, 0, 0};
+    CPPUNIT_ASSERT(file_open.version() == version);
 }
 
 
@@ -77,6 +83,8 @@ void TestFile::testBlockAccess() {
 
         ids.push_back(bl.id());
     }
+    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
@@ -109,6 +117,8 @@ void TestFile::testSectionAccess() {
 
         ids.push_back(sec.id());
     }
+    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(file_open.sectionCount() == names.size());
     CPPUNIT_ASSERT(file_open.sections().size() == names.size());
@@ -146,13 +156,12 @@ void TestFile::testOperators(){
 }
 
 void TestFile::testReopen() {
-
     //file_open is currently open
     Block b = file_open.createBlock("a", "a");
     b = none;
     file_open.close();
 
-    file_open = nix::File::open("test_file_b.h5");
+    file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
 }
 

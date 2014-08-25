@@ -40,8 +40,8 @@ private:
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testDataArrayAccess);
-    CPPUNIT_TEST(testSimpleTagAccess);
-    CPPUNIT_TEST(testDataTagAccess);
+    CPPUNIT_TEST(testTagAccess);
+    CPPUNIT_TEST(testMultiTagAccess);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
@@ -68,8 +68,8 @@ public:
     void testMetadataAccess();
     void testSourceAccess();
     void testDataArrayAccess();
-    void testSimpleTagAccess();
-    void testDataTagAccess();
+    void testTagAccess();
+    void testMultiTagAccess();
 
     void testOperators();
     void testUpdatedAt();

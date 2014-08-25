@@ -11,8 +11,11 @@
 #include <nix/util/util.hpp>
 #include "TestSection.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestSection::setUp() {
@@ -30,33 +33,32 @@ void TestSection::tearDown() {
 
 
 void TestSection::testValidate() {
-    std::cout << std::endl << section.validate();
+    valid::Result result = validate(section);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void TestSection::testId() {
-    CPPUNIT_ASSERT(section.id().size() == 24);
+    CPPUNIT_ASSERT(section.id().size() == 36);
 }
 
 
 void TestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
-    string name = util::createId("", 32);
-    section.name(name);
-    CPPUNIT_ASSERT(section.name() == name);
 }
 
 
 void TestSection::testType() {
     CPPUNIT_ASSERT(section.type() == "metadata");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
 }
 
 
 void TestSection::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
     section.definition(nix::none);
@@ -77,7 +79,7 @@ void TestSection::testParent() {
 
 void TestSection::testRepository() {
     CPPUNIT_ASSERT(!section.repository());
-    string rep = "http://foo.bar/" + util::createId("", 32);
+    string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
@@ -92,14 +94,21 @@ void TestSection::testLink() {
     CPPUNIT_ASSERT(section.link());
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
 
-    section.link(boost::none);
+    // test none-unsetter
+    section.link(none);
     CPPUNIT_ASSERT(!section.link());
+    // test deleter removing link too
+    section.link(section);
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(!section.link());
+    // re-create section
+    section = file.createSection("foo_section", "metadata");
 }
 
 
 void TestSection::testMapping() {
     CPPUNIT_ASSERT(!section.mapping());
-    string map = "http://foo.bar/" + util::createId("", 32);
+    string map = "http://foo.bar/" + util::createId();
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
@@ -121,6 +130,8 @@ void TestSection::testSectionAccess() {
 
         ids.push_back(child_section.id());
     }
+    CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(section.sectionCount() == names.size());
     CPPUNIT_ASSERT(section.sections().size() == names.size());
@@ -152,10 +163,10 @@ void TestSection::testFindSection() {
     Section l2n5 = l1n3.createSection("l2n5", "typ2");
     Section l2n6 = l1n3.createSection("l2n6", "typ3");
 
-    Section l3n1 = l2n1.createSection("l2n3", "typ1");
-    Section l3n2 = l2n3.createSection("l2n3", "typ2");
-    Section l3n3 = l2n3.createSection("l2n3", "typ2");
-    Section l3n4 = l2n5.createSection("l2n3", "typ2");
+    Section l3n1 = l2n1.createSection("l3n1", "typ1");
+    Section l3n2 = l2n3.createSection("l3n2", "typ2");
+    Section l3n3 = l2n3.createSection("l3n3", "typ2");
+    Section l3n4 = l2n5.createSection("l3n4", "typ2");
 
     // test depth limit
     CPPUNIT_ASSERT(section.findSections().size() == 14);
@@ -171,20 +182,31 @@ void TestSection::testFindSection() {
     CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
 }
 
-void TestSection::testFindRelated(){
+void TestSection::testFindRelated() {
+    /* We create the following tree:
+     * 
+     * section---l1n1---l2n1---l3n1------------
+     *            |      |                    |
+     *            ------l2n2---l3n2---l4n1---l5n1
+     *                   |      |      |
+     *                   ------l3n3---l4n2
+     * section_other------------|
+     */
     Section l1n1 = section.createSection("l1n1", "typ1");
 
     Section l2n1 = l1n1.createSection("l2n1", "t1");
     Section l2n2 = l1n1.createSection("l2n2", "t2");
-
     Section l3n1 = l2n1.createSection("l3n1", "t3");
     Section l3n2 = l2n2.createSection("l3n2", "t3");
     Section l3n3 = l2n2.createSection("l3n3", "t4");
-
     Section l4n1 = l3n2.createSection("l4n1", "typ2");
     Section l4n2 = l3n3.createSection("l4n2", "typ2");
-
     Section l5n1 = l4n1.createSection("l5n1", "typ2");
+    l2n1.link(l2n2.id());
+    l3n1.link(l5n1.id());
+    l3n2.link(l3n3.id());
+    l4n1.link(l4n2.id());
+    section_other.link(l3n3.id());
 
     string t1 = "t1";
     string t3 = "t3";
@@ -194,28 +216,53 @@ void TestSection::testFindRelated(){
 
     vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
     CPPUNIT_ASSERT(related.size() == 1);
-
     related = l1n1.findRelated(util::TypeFilter<Section>(t3));
     CPPUNIT_ASSERT(related.size() == 2);
-
     related = l1n1.findRelated(util::TypeFilter<Section>(t4));
     CPPUNIT_ASSERT(related.size() == 1);
-
     related = l1n1.findRelated(util::TypeFilter<Section>(typ2));
     CPPUNIT_ASSERT(related.size() == 2);
-
     related = l4n1.findRelated(util::TypeFilter<Section>(typ1));
     CPPUNIT_ASSERT(related.size() == 1);
-
     related = l4n1.findRelated(util::TypeFilter<Section>(t1));
     CPPUNIT_ASSERT(related.size() == 1);
-
     related = l3n2.findRelated(util::TypeFilter<Section>(t1));
     CPPUNIT_ASSERT(related.size() == 1);
-
     related = l3n2.findRelated(util::TypeFilter<Section>(t3));
     CPPUNIT_ASSERT(related.size() == 0);
-    section.deleteSection(l1n1.id());
+
+    /* Chop the tree to:
+     * 
+     * section---l1n1---l2n1---l3n1
+     * section_other
+     *                   
+     */
+    l1n1.deleteSection(l2n2.id());
+    CPPUNIT_ASSERT(section.findSections().size() == 4);
+    // test that all (horizontal) links are gone too:
+    CPPUNIT_ASSERT(!l2n1.link());
+    CPPUNIT_ASSERT(!l3n1.link());
+    CPPUNIT_ASSERT(!l3n2.link());
+    CPPUNIT_ASSERT(!l4n1.link());
+    CPPUNIT_ASSERT(!section_other.link());
+    CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
+    /* Extend the tree to:
+     * 
+     * section---l1n1---l2n1---l3n1
+     * section_other-----|
+     * 
+     * and then chop it down to:
+     * 
+     * section_other
+     *                   
+     */
+    section_other.link(l2n1.id());
+    file.deleteSection(section.id());
+    CPPUNIT_ASSERT(section_other.findSections().size() == 1);
+    CPPUNIT_ASSERT(!section_other.link());
+
+    // re-create section
+    section = file.createSection("section", "metadata");
 }
 
 
@@ -226,11 +273,26 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 
+    Property p = section.createProperty("empty_prop", DataType::Double);
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    Property prop = section.getPropertyByName("empty_prop");
+    CPPUNIT_ASSERT(prop.valueCount() == 0);
+    CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
+    section.deleteProperty(p.id());
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+
+    Value dummy(10);
+    prop = section.createProperty("single value", dummy);
+    CPPUNIT_ASSERT(section.hasPropertyByName("single value"));
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    section.deleteProperty(prop.id());
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+
     vector<string> ids;
     for (auto name : names) {
-        Property prop = section.createProperty(name);
+        prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
-        CPPUNIT_ASSERT(section.hasPropertyWithName(name));
+        CPPUNIT_ASSERT(section.hasPropertyByName(name));
 
         Property prop_copy = section.getPropertyByName(name);
 
@@ -238,11 +300,12 @@ void TestSection::testPropertyAccess() {
 
         ids.push_back(prop.id());
     }
+    CPPUNIT_ASSERT_THROW(section.createProperty(names[0], dummy),
+                         DuplicateName);
 
     CPPUNIT_ASSERT(section.propertyCount() == names.size());
     CPPUNIT_ASSERT(section.properties().size() == names.size());
-
-    section_other.createProperty("some_prop", {Value(10)});
+    section_other.createProperty("some_prop", dummy);
     section_other.link(section);
     CPPUNIT_ASSERT(section_other.propertyCount() == 1);
     CPPUNIT_ASSERT(section_other.inheritedProperties().size() == names.size() + 1);
@@ -258,6 +321,14 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
+
+    vector<Value> values;
+    values.push_back(Value(10));
+    values.push_back(Value(100));
+    section.createProperty("another test", values);
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    prop = section.getPropertyByName("another test");
+    CPPUNIT_ASSERT(prop.valueCount() == 2);
 }
 
 

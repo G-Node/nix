@@ -28,28 +28,25 @@ void TestEntity::tearDown() {
 
 
 void TestEntity::testId() {
-    CPPUNIT_ASSERT(block.id().size() == 22);
+    CPPUNIT_ASSERT(block.id().size() == 36);
 }
 
 
 void TestEntity::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
-    string name = util::createId("", 32);
-    block.name(name);
-    CPPUNIT_ASSERT(block.name() == name);
 }
 
 
 void TestEntity::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
-    string typ = util::createId("", 32);
+    string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
 }
 
 
 void TestEntity::testDefinition() {
-    string def = util::createId("", 128);
+    string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
     block.definition(nix::none);

@@ -9,11 +9,18 @@
 #include <string>
 #include <cstdlib>
 #include <mutex>
+#include <random>
 #include <math.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
 #include <nix/util/util.hpp>
+#include <boost/random.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+#include <nix/base/IDimensions.hpp>
 
 
 using namespace std;
@@ -21,13 +28,11 @@ using namespace std;
 namespace nix {
 namespace util {
 
-// default id base (16 or 32)
-const int    ID_BASE = 32;
 // Base32hex alphabet (RFC 4648)
 const char*  ID_ALPHABET = "0123456789abcdefghijklmnopqrstuv";
 // Unit scaling, SI only, substitutions for micro and ohm...
 const string  PREFIXES = "(Y|Z|E|P|T|G|M|k|h|da|d|c|m|u|n|p|f|a|z|y)";
-const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB)";
+const string  UNITS = "(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat|l|L|Ohm|%|dB|rad)";
 const string  POWER = "(\\^[+-]?[1-9]\\d*)";
 
 const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a", 1.0e-18}, {"f", 1.0e-15},
@@ -35,20 +40,11 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
     {"k", 1.0e3}, {"M",1.0e6}, {"G", 1.0e9}, {"T", 1.0e12}, {"P", 1.0e15}, {"E",1.0e18}, {"Z", 1.0e21}, {"Y", 1.0e24}};
 
 
-string createId(string prefix, int length) {
-    static std::once_flag rand_init;
-    std::call_once(rand_init, []() { srand(static_cast<unsigned int>(time(0))); });
-
-    string id;
-    if (prefix.length() > 0) {
-        id.append(prefix);
-        id.append("_");
-    }
-    for (int i = 0; i < length; i++) {
-        char c = ID_ALPHABET[(size_t) (((double) (rand())) / RAND_MAX * ID_BASE)];
-        id.push_back(c);
-    }
-    return id;
+string createId() {
+    static boost::mt19937 ran(std::time(0));
+    static boost::uuids::basic_random_generator<boost::mt19937> gen(&ran);
+    boost::uuids::uuid u = gen();
+    return boost::uuids::to_string(u);
 }
 
 
@@ -87,12 +83,27 @@ std::string deblankString(const std::string &str) {
     return str_copy;
 }
 
+bool nameCheck(const std::string &name) {
+    return name.find("/") == std::string::npos;
+}
+
+std::string nameSanitizer(const std::string &name) {
+    std::string str_copy = name;
+    size_t pos = str_copy.find("/");
+    
+    while(pos != std::string::npos) {
+        str_copy = str_copy.replace(pos, 1, "_");
+        pos = str_copy.find("/");
+    }
+    
+    return str_copy;    
+}
+
 std::string unitSanitizer(const std::string &unit) {
      std::string new_unit = deblankString(unit);
      while (new_unit.find("mu") != string::npos) {
           size_t pos = new_unit.find("mu");
           new_unit = new_unit.replace(pos, 2, "u");
-
      }
      while (new_unit.find("µ") != string::npos) {
           size_t pos = new_unit.find("µ");
@@ -166,6 +177,13 @@ bool isCompoundSIUnit(const string &unit) {
 }
 
 
+std::string dimTypeToStr(const nix::DimensionType &dtype) {
+    std::stringstream s;
+    s << dtype;
+    return s.str();
+}
+
+
 bool isScalable(const string &unitA, const string &unitB) {
     if (!(isSIUnit(unitA) && isSIUnit(unitB))) {
         return false;
@@ -178,6 +196,44 @@ bool isScalable(const string &unitA, const string &unitB) {
         return false;
     }
     return true;
+}
+
+
+bool isScalable(const vector<string> &unitsA, const vector<string> &unitsB) {
+    bool scalable = true;
+    
+    if (unitsA.size() != unitsB.size()) {
+        return false;
+    }
+    
+    auto itA = unitsA.begin();
+    auto itB = unitsB.begin();
+    while (scalable && itA != unitsA.end()) {
+        scalable = isScalable(*itA, *itB);
+        ++itA; 
+        ++itB;
+    }
+    
+    return scalable;
+}
+
+
+bool isSetAtSamePos(const vector<string> &unitsA, const vector<string> &unitsB) {
+    bool set_same = true;
+    
+    if (unitsA.size() != unitsB.size()) {
+        return false;
+    }
+    
+    auto itA = unitsA.begin();
+    auto itB = unitsB.begin();
+    while (set_same && itA != unitsA.end()) {
+        set_same = (*itA).empty() == (*itB).empty();
+        ++itA; 
+        ++itB;
+    }
+    
+    return set_same;
 }
 
 

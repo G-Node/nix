@@ -9,9 +9,12 @@
 #include <string>
 #include <cstdlib>
 #include <cmath>
-#include <boost/optional.hpp>
-#include <nix/util/dataAccess.hpp>
 #include <algorithm>
+
+#include <boost/optional.hpp>
+
+#include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
 
 using namespace std;
 
@@ -111,7 +114,7 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
 }
 
 
-void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &offset, NDSize &count) {
+void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, NDSize &count) {
     vector<double> position = tag.position();
     vector<double> extent = tag.extent();
     vector<string> units = tag.units();
@@ -133,7 +136,7 @@ void getOffsetAndCount(const SimpleTag &tag, const DataArray &array, NDSize &off
 }
 
 
-void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts) {
+void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
@@ -154,7 +157,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
     if (position_size[1] > dimension_count) {
         throw nix::IncompatibleDimensions("Number of dimensions in positions do not match dimensionality of data","util::getOffsetAndCount");
     }
-    if(extents && extent_size[1] > dimension_count) {
+    if (extents && extent_size[1] > dimension_count) {
         throw nix::IncompatibleDimensions("Number of dimensions in extents do not match dimensionality of data","util::getOffsetAndCount");
     }
 
@@ -176,7 +179,7 @@ void getOffsetAndCount(const DataTag &tag, const DataArray &array, size_t index,
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
     }
 
-    if(extents) {
+    if (extents) {
         NDArray extent(extents.dataType(), temp_count);
         extents.getData(extent, temp_count, temp_offset);
         for (size_t i = 0; i < offset.num_elements(); ++i) {
@@ -216,7 +219,7 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference_index) {
+NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
@@ -249,7 +252,7 @@ NDArray retrieveData(const DataTag &tag, size_t position_index, size_t reference
 }
 
 
-NDArray retrieveData(const SimpleTag &tag, size_t reference_index) {
+NDArray retrieveData(const Tag &tag, size_t reference_index) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
     vector<DataArray> refs = tag.references();
