@@ -1,0 +1,38 @@
+nix (0.10.3-1) trusty; urgency=medium
+
+  * Beta 1 release update 
+
+ -- Balint Morvai <balint@morvai.de>  Mon, 25 Aug 2014 15:55:20 +0200
+
+nix (0.9.3-1) trusty; urgency=medium
+
+  * Update to version 0.9.3 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Fri, 18 Jul 2014 12:25:55 +0200
+
+nix (0.9.2-2) trusty; urgency=medium
+
+  * Add pkg-config file to package libnix-dev 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Fri, 18 Jul 2014 11:23:40 +0200
+
+nix (0.9.2-1) trusty; urgency=medium
+
+  * Alpha 1 release update 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Thu, 17 Jul 2014 11:33:21 +0200
+
+nix (0.9.1-1) saucy; urgency=low
+ 
+  * Separate -dev und binary package
+  * Add -dbg package
+  * Add git-buildpackage config (gbp.conf)
+  * Properly version the binary package
+
+ -- Christian Kellner <ck@xatom.net>  Wed, 16 Apr 2014 18:27:42 +0200
+
+nix (0.9-1) saucy; urgency=low
+
+  * Initial debian packaging. 
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Mon, 07 Apr 2014 17:16:30 +0200

@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_strip:
+	dh_strip --dbg-package=libnix1-dbg
+
+.PHONY: override_dh_strip

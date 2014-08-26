@@ -1,0 +1,56 @@
+Source: nix
+Maintainer: G-Node Debian Team <debian-team@g-node.org>
+Uploaders: Jan Grewe <jan.grewe@g-node.org>,
+           Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>,
+           Christian Kellner <christian@kellner.me>
+Section: science
+Priority: optional
+Standards-Version: 3.9.4
+Build-Depends: debhelper (>= 9),
+               libboost-dev (>=1.49),
+               libboost-date-time-dev (>=1.49),
+               libboost-regex-dev (>=1.49),
+               libboost-program-options-dev (>=1.49),
+               libboost-system-dev (>=1.49),
+               libboost-filesystem-dev (>=1.49),
+               libhdf5-dev (>=1.8),
+               cmake (>=2.8.10),
+               gcc (>=4.8),
+               g++ (>=4.8),
+               libcppunit-dev (>=1.12)
+Vcs-Git: git://github.com/G-Node/pandora.git
+Homepage: https://www.github.com/g-node/pandora
+
+Package: libnix1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: IO-libray for nix data files. 
+ Neuroscience information exchange - data model for annotated (neuroscience)
+ data. For more information visit https://github.com/G-Node/pandora
+ .
+ This package contains the shared libraries.
+
+Package: libnix-dev
+Section: libdevel
+Priority: optional
+Architecture: any
+Depends: libnix1 (=${binary:Version}), ${misc:Depends}, libhdf5-dev (>=1.8), libboost-date-time-dev (>=1.49)
+Description: IO-libray for nix data files.
+ Neuroscience information exchange - data model for annotated (neuroscience)
+ data. For more information visit https://github.com/G-Node/pandora
+ .
+ This package contains the development libraries and header files needed 
+ by programs that want to compile with nix.
+
+Package: libnix1-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: libnix1 (=${binary:Version}), ${misc:Depends}, libhdf5-dev (>=1.8), libboost-date-time-dev (>=1.49)
+Description: IO-libray for nix data files.
+ Neuroscience information exchange - data model for annotated (neuroscience)
+ data. For more information visit https://github.com/G-Node/pandora
+ .
+ This package contains the debugging symbols that are needed
+ to debug programs that link against libnix1
+
