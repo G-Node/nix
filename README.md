@@ -8,6 +8,18 @@ electrophysiology and other neuroscience data together with their metadata in on
 [See the wiki for more information](https://github.com/G-Node/nix/wiki)
 
 
+Debian PPA
+-----------
+
+You can get a ready to install package for different Ubuntu versions. You have to add the following software source to your system:
+
+```
+deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
+deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
+```
+Modify "trusty" (=14.04) to "precise" (="12.04") if you are running the Ubuntu 12.04 LTS.
+
+
 Build Dependencies
 ------------------
 
