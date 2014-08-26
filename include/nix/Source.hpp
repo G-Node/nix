@@ -19,6 +19,8 @@
 
 namespace nix {
 
+typedef base::EntityWithMetadata<base::ISource> EntityWithMetadataISource;
+
 /**
  * @brief A class that describes the provenance of other entities of the NIX data model.
  *
@@ -29,7 +31,7 @@ namespace nix {
  * This can, for example, be used to specify that a source electrode array contains
  * multiple electrodes as its child sources.
  */
-class NIXAPI Source : public base::EntityWithMetadata<base::ISource> {
+class NIXAPI Source : public EntityWithMetadataISource {
 
 public:
 

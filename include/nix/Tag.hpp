@@ -20,6 +20,7 @@
 
 namespace nix {
 
+typedef base::EntityWithSources<base::ITag> EntityWithSourcesITag;
 
 /**
  * @brief A tag class that defines a single point or region of interest.
@@ -44,7 +45,7 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI Tag : public base::EntityWithSources<base::ITag> {
+class NIXAPI Tag : public EntityWithSourcesITag {
 
 public:
 

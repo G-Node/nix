@@ -19,6 +19,8 @@
 
 namespace nix {
 
+typedef base::Entity<base::IProperty> EntityIProperty;
+
 /**
  * @brief Class representing an odML property entity.
  *

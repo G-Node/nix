@@ -25,6 +25,8 @@ namespace nix {
 
 class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
+typedef base::NamedEntity<base::ISection> NamedEntityISection;
+
 public:
 
     /**
