@@ -17,6 +17,7 @@
 
 namespace nix {
 
+typedef base::Entity<base::IFeature> EntityIFeature;
 
 /**
  * @brief {@link Feature} entities are used to attach further data to a {@link nix::Tag} or
@@ -43,7 +44,7 @@ namespace nix {
  * the data linked via this {@link Feature} has to be accessed according
  * to the index in the respective position entry.
  */
-class NIXAPI Feature : public base::Entity<base::IFeature> {
+class NIXAPI Feature : public EntityIFeature {
 
 public:
 
