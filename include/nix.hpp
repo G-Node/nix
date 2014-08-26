@@ -8,13 +8,13 @@
 
 #include <nix/Block.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/DataTag.hpp>
+#include <nix/MultiTag.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/File.hpp>
 #include <nix/Property.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Section.hpp>
-#include <nix/SimpleTag.hpp>
+#include <nix/Tag.hpp>
 #include <nix/Source.hpp>
 #include <nix/Value.hpp>
 

@@ -6,64 +6,81 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <memory>
+
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
+#include <nix/File.hpp>
+#include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 using namespace std;
-using namespace nix::util;
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
-namespace nix {
-namespace hdf5 {
+
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group)
+    : NamedEntityHDF5(file, group)
+{
+}
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type, const string &name)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name)
     : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(File file, Group group, const string &id, const string &type, const string &name, time_t time)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time)
 {
 }
 
 
 void EntityWithMetadataHDF5::metadata(const std::string &id) {
-    vector<Section> found = file().findSections(IdFilter<Section>(id));
-    if (found.size() == 0) {
-        throw runtime_error("EntityWithMetadataHDF5::metadata: cannot set metadata because Section does not exist in this file!");
-    } else {
-        group().setAttr("metadata", id);
-        forceUpdatedAt();
-    }
+    if (id.empty())
+        throw EmptyString("metadata");
+
+    if (group().hasGroup("metadata"))
+        metadata(none);
+        
+    File tmp = file();
+    auto found = tmp.findSections(util::IdFilter<Section>(id));
+    if (found.empty())
+        throw std::runtime_error("EntityWithMetadataHDF5::metadata: Section not found in file!");
+    
+    auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
+
+    group().createLink(target->group(), "metadata");
 }
 
 
-Section EntityWithMetadataHDF5::metadata() const {
-    if (group().hasAttr("metadata")) {
-        std::string sectionId;
-        group().getAttr("metadata", sectionId);
-        return file().getSection(sectionId);
-    }
-    else {
-        return nix::Section();
-    }
-}
+shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
+    shared_ptr<ISection> sec;
 
+    if (group().hasGroup("metadata")) {
+        Group other_group = group().openGroup("metadata", false);
+        auto sec_tmp = make_shared<EntityWithMetadataHDF5>(file(), other_group);
+        // re-get above section "sec_tmp": we just got it to have id, parent is missing, 
+        // findSections will return it with parent!
+        auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
+        if (found.size() > 0) {
+            sec = found.front().impl();
+        }
+    }
+
+    return sec;
+}
 
 
 void EntityWithMetadataHDF5::metadata(const none_t t) {
-    if(group().hasAttr("metadata")) {
-        group().removeAttr("metadata");
+    if (group().hasGroup("metadata")) {
+        group().removeGroup("metadata");
     }
+    forceUpdatedAt();
 }
 
 
-EntityWithMetadataHDF5::~EntityWithMetadataHDF5() {
+EntityWithMetadataHDF5::~EntityWithMetadataHDF5() {}
 
-}
-
-
-} // namespace hdf5
-} // namespace nix

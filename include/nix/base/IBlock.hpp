@@ -9,20 +9,17 @@
 #ifndef NIX_I_BLOCK_H
 #define NIX_I_BLOCK_H
 
-#include <nix/base/IEntityWithMetadata.hpp>
-
 #include <string>
 #include <vector>
-#include <functional>
+
+#include <nix/base/IEntityWithMetadata.hpp>
+#include <nix/base/ISource.hpp>
+#include <nix/base/IDataArray.hpp>
+#include <nix/base/ITag.hpp>
+#include <nix/base/IMultiTag.hpp>
+#include <nix/NDSize.hpp>
 
 namespace nix {
-
-class Source;
-class DataArray;
-class SimpleTag;
-class DataTag;
-
-
 namespace base {
 
 /**
@@ -34,257 +31,92 @@ class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
 
-    /**
-     * @brief Checks if this block has a specific root source.
-     *
-     * @param id        The id of the source.
-     *
-     * @return True if a source with the given id exists at the root, false
-     *         otherwise.
-     */
+
     virtual bool hasSource(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a specific root source by its id.
-     *
-     * @param id        The id of the source.
-     *
-     * @return The source with the given id. If it doesn't exist an exception
-     *         will be thrown.
-     */
-    virtual Source getSource(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a specific root source by index.
-     *
-     * @param index     The index of the source.
-     *
-     * @return The source at the specified index.
-     */
-    virtual Source getSource(size_t index) const = 0;
+    virtual std::shared_ptr<base::ISource> getSource(const std::string &id) const = 0;
 
 
-    /**
-     * @brief Returns the number of root sources in this block.
-     *
-     * @return The number of root sources.
-     */
+    virtual std::shared_ptr<base::ISource> getSource(size_t index) const = 0;
+
+
     virtual size_t sourceCount() const = 0;
 
 
-    /**
-     * @brief Create a new root source.
-     *
-     * @param name      The name of the source to create.
-     * @param type      The type of the source.
-     *
-     * @return The created source object.
-     */
-    virtual Source createSource(const std::string &name, const std::string &type) = 0;
+    virtual std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type) = 0;
 
-    /**
-     * @brief Deletes a root source.
-     *
-     * This will also delete all child sources of this root source from the file.
-     * The deletion of a source can't be undone.
-     *
-     * @param id        The id of the source to delete.
-     *
-     * @return True if the source was deleted, false otherwise.
-     */
+
     virtual bool deleteSource(const std::string &id) = 0;
 
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    /**
-     * @brief Checks if a specific data array exists in this block.
-     *
-     * @param id        The id of a data array.
-     *
-     * @return True if the data array exists, false otherwise.
-     */
     virtual bool hasDataArray(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a specific data array from the block by id.
-     *
-     * @param id        The id of an existing data array.
-     *
-     * @return The data array with the specified id. If this
-     *         doesn't exist, an exception will be thrown.
-     */
-    virtual DataArray getDataArray(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a data array by index.
-     *
-     * @param index     The index of the data array.
-     *
-     * @return The data array at the specified index.
-     */
-    virtual DataArray getDataArray(size_t index) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const = 0;
 
-    /**
-     * @brief Returns the number of all data arrays of the block.
-     *
-     * @return The number of data arrays of the block.
-     */
+
+    virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
+
+
     virtual size_t dataArrayCount() const = 0;
 
-    /**
-     * @brief Create a new data array associated with this block.
-     *
-     * @param name      The name of the data array to create.
-     * @param type      The type of the data array.
-     *
-     * @return The newly created data array.
-     */
-    virtual DataArray createDataArray(const std::string &name, const std::string &type) = 0;
 
-    /**
-     * @brief Deletes a data array from this block.
-     *
-     * This deletes a data array and all its dimensions from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param id        The id of the data array to delete.
-     *
-     * @return True if the data array was deleted, false otherwise.
-     */
+    virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
+                                                              nix::DataType data_type, const NDSize &shape) = 0;
+
+
     virtual bool deleteDataArray(const std::string &id) = 0;
 
     //--------------------------------------------------
-    // Methods concerning simple tags.
+    // Methods concerning tags.
     //--------------------------------------------------
 
-    /**
-     * @brief Checks if a specific simple tag exists in the block.
-     *
-     * @param id        The id of a simple tag.
-     *
-     * @return True if the simple tag exists, false otherwise.
-     */
-    virtual bool hasSimpleTag(const std::string &id) const = 0;
+    virtual bool hasTag(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a specific simple tag from the block by its id.
-     *
-     * @param id        The id of the simple tag.
-     *
-     * @return The tag with the specified id. If this tag doesn't exist
-     *         an exception will be thrown.
-     */
-    virtual SimpleTag getSimpleTag(const std::string &id) const = 0;
 
-    /**
-     * @brief Retrieves a specific simple tag by index.
-     *
-     * @param index     The index of the tag.
-     *
-     * @return The simple tag at the specified index.
-     */
-    virtual SimpleTag getSimpleTag(size_t index) const = 0;
+    virtual std::shared_ptr<base::ITag> getTag(const std::string &id) const = 0;
 
-    /**
-     * @brief Returns the number of simple tags within this block.
-     *
-     * @return The number of simple tags.
-     */
-    virtual size_t simpleTagCount() const = 0;
 
-    /**
-     * @brief Create a new simple tag associated with this block.
-     *
-     * @param name      The name of the simple tag to create.
-     * @param type      The type of the tag.
-     * @param refs      A Vector with referenced data array entities.
-     *
-     * @return The newly created tag.
-     */
-    virtual SimpleTag createSimpleTag(const std::string &name, const std::string &type, 
-                                      const std::vector<DataArray> &refs) = 0;
+    virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
 
-    /**
-     * @brief Deletes a simple tag from the block.
-     *
-     * Deletes a simple tag with all its features from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param id        The id of the tag to remove.
-     *
-     * @return True if the tag was removed, false otherwise.
-     */
-    virtual bool deleteSimpleTag(const std::string &id) = 0;
+
+    virtual size_t tagCount() const = 0;
+
+
+    virtual std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
+                                                              const std::vector<double> &position) = 0;
+
+
+    virtual bool deleteTag(const std::string &id) = 0;
 
     //--------------------------------------------------
-    // Methods concerning data tags.
+    // Methods concerning multi tags.
     //--------------------------------------------------
 
-    /**
-     * @brief Checks if a specific data tag exists in the block.
-     *
-     * @param id        The id of a data tag.
-     *
-     * @return True if the data tag exists, false otherwise.
-     */
-    virtual bool hasDataTag(const std::string &id) const = 0;
-
-    /**
-     * @brief Retrieves a specific data tag from the block by its id.
-     *
-     * @param id        The id of the data tag.
-     *
-     * @return The tag with the specified id. If this tag doesn't exist
-     *         an exception will be thrown.
-     */
-    virtual DataTag getDataTag(const std::string &id) const = 0;
-
-    /**
-     * @brief Retrieves a specific data tag by index.
-     *
-     * @param index     The index of the tag.
-     *
-     * @return The data tag at the specified index.
-     */
-    virtual DataTag getDataTag(size_t index) const = 0;
-
-    /**
-     * @brief Returns the number of data tags associated with this block.
-     *
-     * @return The number of data tags.
-     */
-    virtual size_t dataTagCount() const = 0;
-
-    /**
-     * @brief Create a new data tag associated with this block.
-     *
-     * @param name      The name of the data tag to create.
-     * @param type      The type of the tag.
-     * @param positions The positions of the tag.
-     *
-     * @return The newly created tag.
-     */
-    virtual DataTag createDataTag(const std::string &name, const std::string &type, 
-                                  const DataArray positions) = 0;
-
-    /**
-     * @brief Deletes a data tag from the block.
-     *
-     * Deletes a data tag and all its features from the block and the file.
-     * The deletion can't be undone.
-     *
-     * @param id        The id of the tag to remove.
-     *
-     * @return True if the tag was removed, false otherwise.
-     */
-    virtual bool deleteDataTag(const std::string &id) = 0;
+    virtual bool hasMultiTag(const std::string &id) const = 0;
 
 
-    /**
-     * @brief Destructor
-     */
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const = 0;
+
+
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
+
+
+    virtual size_t multiTagCount() const = 0;
+
+
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+    virtual std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
+                                                          const DataArray &positions) = 0;
+
+
+    virtual bool deleteMultiTag(const std::string &id) = 0;
+
+
     virtual ~IBlock() {}
 
 };

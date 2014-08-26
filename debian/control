@@ -10,8 +10,13 @@ Build-Depends: debhelper (>= 9),
                libboost-dev (>=1.49),
                libboost-date-time-dev (>=1.49),
                libboost-regex-dev (>=1.49),
+               libboost-program-options-dev (>=1.49),
+               libboost-system-dev (>=1.49),
+               libboost-filesystem-dev (>=1.49),
                libhdf5-dev (>=1.8),
                cmake (>=2.8.10),
+               gcc (>=4.8),
+               g++ (>=4.8),
                libcppunit-dev (>=1.12)
 Vcs-Git: git://github.com/G-Node/pandora.git
 Homepage: https://www.github.com/g-node/pandora

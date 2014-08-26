@@ -10,10 +10,13 @@
 #define NIX_ENTITY_HDF5_H
 
 #include <string>
-#include <iostream>
+#include <memory>
 
-#include <nix.hpp>
+#include <nix/base/IFile.hpp>
+
+#include <nix/base/IEntity.hpp>
 #include <nix/hdf5/Group.hpp>
+
 
 namespace nix {
 namespace hdf5 {
@@ -26,16 +29,15 @@ class EntityHDF5 : virtual public base::IEntity {
 
 private:
 
-    File          entity_file;
-    Group         entity_group;
-    std::string   entity_id;
+    std::shared_ptr<base::IFile>  entity_file;
+    Group                         entity_group;
 
 public:
 
-    EntityHDF5(File file, Group group, const std::string &id);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
 
 
-    EntityHDF5(File file, Group group, const std::string &id, time_t time);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, time_t time);
 
 
     std::string id() const;
@@ -59,29 +61,20 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    int compare(const IEntity &other) const;
-
-
-    void swap(EntityHDF5 &other);
-
-
     bool operator==(const EntityHDF5 &other) const;
 
 
     bool operator!=(const EntityHDF5 &other) const;
 
 
+    Group group() const;
+
+
     virtual ~EntityHDF5();
 
 protected:
 
-    File file() const {
-        return entity_file;
-    }
-
-    Group group() const {
-        return entity_group;
-    }
+    std::shared_ptr<base::IFile> file() const;
 
 };
 

@@ -67,6 +67,38 @@ private:
 };
 
 
+class DuplicateName: public std::exception {
+public:
+    DuplicateName(const std::string &caller_arg):
+    caller(caller_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("DuplicateName: ");
+        sstream << "Duplicate name given - names have to be unique for a given entity type & parent. (" << caller << ")";
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string caller;
+};
+
+
+class InvalidName: public std::exception {
+public:
+    InvalidName(const std::string &caller_arg):
+    caller(caller_arg) { }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("InvalidName: ");
+        sstream << "Invalid name given - names have to be sanitized using util function. (" << caller << ")";
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string caller;
+};
+
+
 class MissingAttr: public std::exception {
 public:
     MissingAttr(const std::string &attr_arg):

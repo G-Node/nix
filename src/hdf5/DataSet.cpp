@@ -93,7 +93,6 @@ void DataSet::read(DataType dtype, const NDSize &size, void *data) const
         H5::DataSet::vlenReclaim(*writer, memType, space);
     } else {
         h5dset.read(data, memType);
-
     }
 }
 
@@ -126,9 +125,7 @@ void DataSet::read(DataType        dtype,
         H5::DataSet::vlenReclaim(*writer, memType, memSel.h5space());
     } else {
         h5dset.read(data, memType, memSel.h5space(), fileSel.h5space());
-
     }
-
 }
 
 void DataSet::write(DataType         dtype,
@@ -146,6 +143,39 @@ void DataSet::write(DataType         dtype,
     }
 }
 
+
+bool DataSet::hasAttr(const std::string &name) const {
+    return H5Aexists(h5dset.getId(), name.c_str());
+}
+
+
+void DataSet::removeAttr(const std::string &name) const {
+    h5dset.removeAttr(name);
+}
+
+
+void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
+    attr.read(mem_type, data);
+}
+
+
+void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
+    StringWriter writer(size, data);
+    attr.read(mem_type, *writer);
+    writer.finish();
+    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
+}
+
+
+void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
+    attr.write(mem_type, data);
+}
+
+
+void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
+    StringReader reader(size, data);
+    attr.write(mem_type, *reader);
+}
 
 
 double psize_product(const NDSize &dims)
@@ -175,7 +205,6 @@ double psize_product(const NDSize &dims)
  */
 NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
 {
-
     const size_t type_size = data_type_to_size(dtype);
     NDSize chunks = guessChunking(dims, type_size);
     return chunks;
@@ -184,7 +213,7 @@ NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
 /**
  * Infer the chunk size from the supplied size information
  *
- * @param dims          Size information to base the guessing on
+ * @param chunks        Size information to base the guessing on
  * @param elementSize   The size of a single element in bytes
  *
  * This function is a port of the guess_chunk() function from h5py
@@ -196,18 +225,17 @@ NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
+NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 {
     // original source:
     //    https://github.com/h5py/h5py/blob/2.1.3/h5py/_hl/filters.py
 
-    if(dims.size() == 0) {
-        throw 1;
+    if (chunks.size() == 0) {
+        throw InvalidRank("Cannot guess chunks for 0-dimensional data");
     }
 
-    NDSize chunks(dims);
     double product = 1;
-    std::for_each(dims.begin(), dims.end(), [&](hsize_t &val) {
+    std::for_each(chunks.begin(), chunks.end(), [&](hsize_t &val) {
         //todo: check for +infinity
         if (val == 0)
             val = 1024;
@@ -216,16 +244,14 @@ NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
     });
 
     product *= element_size;
-
-    double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0L * 1024.0L)));
+    double target_size = CHUNK_BASE * pow(2, log10(product/(1024.0 * 1024.0)));
     if (target_size > CHUNK_MAX)
         target_size = CHUNK_MAX;
     else if (target_size < CHUNK_MIN)
         target_size = CHUNK_MIN;
 
     size_t i = 0;
-    while(true) {
-
+    while (true) {
         double csize = static_cast<double>(chunks.nelms());
         if (csize == 1.0) {
             break;
@@ -239,10 +265,11 @@ NDSize DataSet::guessChunking(NDSize dims, size_t element_size)
 
         //not done yet, one more iteration
         size_t idx = i % chunks.size();
-        chunks[idx] = chunks[idx] >> 1; //divide by two
+        if (chunks[idx] > 1) {
+            chunks[idx] = chunks[idx] >> 1; //divide by two
+        }
         i++;
     }
-
     return chunks;
 }
 
@@ -294,10 +321,26 @@ DataType DataSet::dataType(void) const
 {
     hid_t ftype = H5Dget_type(h5dset.getId());
     H5T_class_t ftclass = H5Tget_class(ftype);
-    //if is a compound type, we should catched that here
 
-    size_t size = H5Tget_size(ftype);
-    H5T_sign_t sign = H5Tget_sign(ftype);
+    size_t     size;
+    H5T_sign_t sign;
+
+    if (ftclass == H5T_COMPOUND) {
+        //if it is a compound data type then it must be a
+        //a property dataset, we can handle that
+        int nmems = H5Tget_nmembers(ftype);
+        assert(nmems == 6);
+        hid_t vtype = H5Tget_member_type(ftype, 0);
+
+        ftclass = H5Tget_class(vtype);
+        size = H5Tget_size(vtype);
+        sign = H5Tget_sign(vtype);
+
+        H5Tclose(vtype);
+    } else {
+        size = H5Tget_size(ftype);
+        sign = H5Tget_sign(ftype);
+    }
 
     DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
     H5Tclose(ftype);
@@ -349,13 +392,13 @@ H5::DataType h5_type_for_value(bool for_memory)
     H5::CompType h5type(sizeof(file_value_t));
 
     DataType dtype = to_data_type<T>::value;
-    if(for_memory) {
+    if (for_memory) {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_memtype(dtype));
     } else {
         h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_filetype(dtype));
     }
 
-    if(for_memory) {
+    if (for_memory) {
         h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_memtype(DataType::Double));
     } else {
        h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_filetype(DataType::Double));
@@ -427,24 +470,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
 
 void DataSet::read(std::vector<Value> &values) const
 {
-    //we first have to obtain the DataType from hdf5
-    hid_t ftype = H5Dget_type(h5dset.getId());
-    H5T_class_t ftclass = H5Tget_class(ftype);
-    assert(ftclass == H5T_COMPOUND);
-
-    int nmems = H5Tget_nmembers(ftype);
-    assert(nmems == 6);
-    hid_t vtype = H5Tget_member_type(ftype, 0);
-
-    H5T_class_t vclass = H5Tget_class(vtype);
-    size_t vsize = H5Tget_size(vtype);
-    H5T_sign_t vsign = H5Tget_sign(vtype);
-
-    DataType dtype = nix::hdf5::data_type_from_h5(vclass, vsize, vsign);
-
-    H5Tclose(vtype);
-    H5Tclose(ftype);
-
+    DataType dtype = dataType();
     NDSize shape = size();
 
     if (shape.size() < 1 || shape[0] < 1) {
