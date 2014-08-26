@@ -1,3 +1,9 @@
+nix (0.10.4-1) trusty; urgency=medium
+
+  * Beta 1 release v4 
+
+ -- Balint Morvai <balint@morvai.de>  Tue, 26 Aug 2014 18:20:55 +0200
+
 nix (0.10.3-1) trusty; urgency=medium
 
   * Beta 1 release update 
