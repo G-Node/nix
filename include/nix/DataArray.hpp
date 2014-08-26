@@ -22,6 +22,8 @@ namespace nix {
 
 // TODO add documentation for undocumented methods.
 
+typedef base::EntityWithSources<base::IDataArray> EntityWithSourcesIDataArray;
+
 /**
  * @brief A class that can store arbitrary n-dimensional data along with further
  * information.
