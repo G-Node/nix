@@ -23,8 +23,6 @@
 
 namespace nix {
 
-typedef base::EntityWithMetadata<base::IBlock> EntityWithMetadataIBlock;
-
 /**
  * @brief Class for grouping further data entities.
  *
@@ -76,7 +74,7 @@ typedef base::EntityWithMetadata<base::IBlock> EntityWithMetadataIBlock;
  * cout << "The block was " << deleted ? "" : "not " << "deleted" << endl;
  * ~~~
  */
-class NIXAPI Block : public EntityWithMetadataIBlock {
+class NIXAPI Block : public base::EntityWithMetadata<base::IBlock> {
 
 public:
 

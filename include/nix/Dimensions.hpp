@@ -16,11 +16,6 @@ namespace nix {
 
 class Dimension;
 
-typedef base::ImplContainer<base::ISampledDimension> ImplContainerISampledDimension;
-typedef base::ImplContainer<base::IRangeDimension> ImplContainerIRangeDimension;
-typedef base::ImplContainer<base::ISetDimension> ImplContainerISetDimension;
-typedef base::ImplContainer<base::IDimension> ImplContainerIDimension;
-
 /**
  * @brief Dimension descriptor for regularly sampled dimensions.
  *
@@ -44,7 +39,7 @@ typedef base::ImplContainer<base::IDimension> ImplContainerIDimension;
  * sd.offset(10000)
  * ~~~
  */
-class NIXAPI SampledDimension : public ImplContainerISampledDimension {
+class NIXAPI SampledDimension : public base::ImplContainer<base::ISampledDimension> {
 
 public:
 
@@ -259,7 +254,7 @@ public:
  * also a list of recorded signals or a stack of images. Optionally an array of labels, one for each index of this
  * dimension, can be specified.
  */
-class NIXAPI SetDimension : public ImplContainerISetDimension {
+class NIXAPI SetDimension : public base::ImplContainer<base::ISetDimension> {
 
 public:
 
@@ -395,7 +390,7 @@ public:
  * array of mapping values must be provided. Those values are stored in the dimensions {@link ticks}
  * property. In analogy to the sampled dimension a {@link unit} and a {@link label} can be defined.
  */
-class NIXAPI RangeDimension : public ImplContainerIRangeDimension {
+class NIXAPI RangeDimension : public base::ImplContainer<base::IRangeDimension> {
 
 public:
 
@@ -579,7 +574,7 @@ public:
  *
  * The real dimension descriptor are defined in three subclasses: RangeDimension, SampledDimension and  SetDimension
  */
-class NIXAPI Dimension : public ImplContainerIDimension {
+class NIXAPI Dimension : public base::ImplContainer<base::IDimension> {
 
 public:
 

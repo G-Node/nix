@@ -20,9 +20,8 @@
 
 namespace nix {
 
-typedef base::ImplContainer<base::IFile> ImplContainerIFile;
 
-class NIXAPI File : public ImplContainerIFile {
+class NIXAPI File : public base::ImplContainer<base::IFile> {
 
 public:
 
@@ -267,7 +266,7 @@ public:
      * @return A vector of filtered Section entities.
      */
     std::vector<Section> sections(const util::Filter<Section>::type &filter) const;
-
+    
 
     /**
      * @brief Get all root sections within this file.
@@ -281,7 +280,7 @@ public:
     {
         return sections(util::AcceptAll<Section>());
     }
-
+    
 
     /**
      * @brief Get all sections in this file recursively.
