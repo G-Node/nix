@@ -179,26 +179,6 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 
 ########################################
 
-# CPack for Win
-
-if(WIN32)
-  set(CPACK_GENERATOR NSIS)
-  set(CPACK_PACKAGE_NAME "nix")
-  set(CPACK_PACKAGE_VENDOR "CMake.org")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
-  set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-  set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
-  set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
-  set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "nix")
-  set(CPACK_NSIS_MODIFY_PATH ON)
-  set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-  set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-  INCLUDE(CPack)
-endif()
-
-########################################
-
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
