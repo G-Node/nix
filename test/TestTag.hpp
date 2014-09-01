@@ -22,22 +22,22 @@
 #include <boost/math/constants/constants.hpp>
 
 #include <nix.hpp>
-#include <nix/hdf5/SimpleTagHDF5.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
 #include <nix/util/util.hpp>
 
 
-class TestSimpleTag: public CPPUNIT_NS::TestFixture {
+class TestTag: public CPPUNIT_NS::TestFixture {
 private:
 
     nix::File file;
     nix::Block block;
     nix::DataArray positions, extents;
-    nix::SimpleTag tag, tag_other, tag_null;
+    nix::Tag tag, tag_other, tag_null;
     nix::Section section;
     time_t startup_time;
 
 
-    CPPUNIT_TEST_SUITE(TestSimpleTag);
+    CPPUNIT_TEST_SUITE(TestTag);
     
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);

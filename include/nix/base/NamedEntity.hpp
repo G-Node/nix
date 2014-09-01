@@ -12,8 +12,6 @@
 #include <nix/base/INamedEntity.hpp>
 #include <nix/base/Entity.hpp>
 
-#include <nix/valid/validate.hpp>
-
 namespace nix {
 namespace base {
 
@@ -31,7 +29,7 @@ namespace base {
  * property that allows the user to add a freely assignable textual definition to the entity.
  */
 template<typename T>
-class NamedEntity : virtual public INamedEntity, public Entity<T> {
+class NamedEntity : public Entity<T> {
 
 public:
 
@@ -61,65 +59,86 @@ public:
     {
     }
 
+    /**
+     * @brief Setter for the type of the entity.
+     *
+     * @param type The type to set.
+     */
     void type(const std::string &type) {
         Entity<T>::backend()->type(type);
     }
 
-
+    /**
+     * @brief Getter for the type of the entity.
+     *
+     * The property {@link type} is used in order to allow the specification
+     * of additional semantic meaning for an entity and therefore can introduce
+     * domain-specificity into the quite generic data model.
+     *
+     * @return The current type.
+     */
     std::string type() const {
         return Entity<T>::backend()->type();
     }
 
-
-    void name(const std::string &name) {
-        Entity<T>::backend()->name(name);
-    }
-
-
+    /**
+     * @brief Getter for the name of the entity.
+     *
+     * The {@link name} of an entity serves as a human readable identifier. It is not obliged
+     * to be unique. However it is strongly recommended to use unique name inside one specific
+     * {@link nix::Block}.
+     *
+     * @return string The name of the entity.
+     */
     std::string name() const {
         return Entity<T>::backend()->name();
     }
-    
 
+    /**
+     * @brief Setter for the definition of the entity.
+     *
+     * @param definition The definition of the entity.
+     */
     void definition(const std::string &definition) {
         Entity<T>::backend()->definition(definition);
     }
 
-
+    /**
+     * @brief Getter for the definition of the entity.
+     *
+     * The {@link definition} is an optional property that allows the user to add
+     * a freely assignable textual definition to the entity.
+     *
+     * @return The definition of the entity.
+     */
     boost::optional<std::string> definition() const {
         return Entity<T>::backend()->definition();
     }
 
-
+    /**
+     * @brief Deleter for the definition of the entity.
+     */
     void definition(const none_t t)
     {
         Entity<T>::backend()->definition(t);
     }
 
-
-    int compare(const INamedEntity &other) const {
-        return Entity<T>::backend()->compare(other);
+    /**
+     * @brief Compare two named entities.
+     *
+     * @param other The entity to compare with.
+     *
+     * @return > 0 if the entity is larger that other, 0 if both are
+     * equal, and < 0 otherwise.
+     */
+    int compare(NamedEntity &other) const {
+        return Entity<T>::backend()->compare(other.impl());
     }
 
     /**
      * @brief Destructor
      */
     virtual ~NamedEntity() {}
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = Entity<T>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::must(*this, &NamedEntity::name, valid::notEmpty(), "no name set!"),
-            valid::must(*this, &NamedEntity::type, valid::notEmpty(), "no type set!"),
-            valid::should(*this, &NamedEntity::definition, valid::notFalse(), "no definition set!")
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 

@@ -131,11 +131,11 @@ private:
     CPPUNIT_TEST(testSectionLink);
     CPPUNIT_TEST(testSectionMapping);
     CPPUNIT_TEST(testSectionRepository);
-    CPPUNIT_TEST(testSimpleTagExtent);
-    CPPUNIT_TEST(testSimpleTagPosition);
-    CPPUNIT_TEST(testSimpleTagUnits);
-    CPPUNIT_TEST(testDataTagExtents);
-    CPPUNIT_TEST(testDataTagPositions);
+    CPPUNIT_TEST(testTagExtent);
+    CPPUNIT_TEST(testTagPosition);
+    CPPUNIT_TEST(testTagUnits);
+    CPPUNIT_TEST(testMultiTagExtents);
+    CPPUNIT_TEST(testMultiTagPositions);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -144,15 +144,15 @@ private:
     nix::Block block;
     nix::Property property;
     nix::DataArray dataArray, positions;
-    nix::SimpleTag simpleTag;
-    nix::DataTag dataTag;
+    nix::Tag tag;
+    nix::MultiTag multiTag;
     nix::Source source;
     nix::SetDimension set_dim;
     nix::SampledDimension sampled_dim;
     nix::RangeDimension range_dim;
     nix::Feature feature;
     time_t startup_time;
-
+    nix::Value dummy;
     bool is_opt;   // whether getter return value is boost::optional
     bool is_set;   // whether getter return value is set
     // bool accepts_none; // whether setter accepts boost::none (declared in place)
@@ -192,11 +192,11 @@ public:
     void testSectionLink();
     void testSectionMapping();
     void testSectionRepository();
-    void testSimpleTagExtent();
-    void testSimpleTagPosition();
-    void testSimpleTagUnits();
-    void testDataTagExtents();
-    void testDataTagPositions();
+    void testTagExtent();
+    void testTagPosition();
+    void testTagUnits();
+    void testMultiTagExtents();
+    void testMultiTagPositions();
 
     void summarize(std::string name, bool is_opt, bool is_set, bool accepts_none);
 

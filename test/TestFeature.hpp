@@ -33,13 +33,14 @@ private:
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testLinkType);
     CPPUNIT_TEST(testData);
+    CPPUNIT_TEST(testOperator);
 
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
     nix::DataArray data_array;
     nix::Block block;
-    nix::SimpleTag tag;
+    nix::Tag tag;
 
 public:
 
@@ -51,6 +52,7 @@ public:
 
     void testLinkType();
     void testData();
+    void testOperator();
 
 };
 

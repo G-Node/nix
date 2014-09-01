@@ -10,10 +10,7 @@
 #define NIX_ENTITY_WITH_METADATA_H
 
 #include <nix/base/NamedEntity.hpp>
-#include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/Section.hpp>
-
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 namespace base {
@@ -22,14 +19,14 @@ namespace base {
  * @brief Base class for entities that can be associated with additional metadata.
  *
  * The data part of the NIX data model consists of five main elements which all inherit from
- * {@link nix::base::EntityWithMetadata}: {@link nix::Block}, {@link nix::DataArray}, {@link nix::DataTag},
- * {@link nix::SimpleTag}, and {@link nix::Source} that serve different purposes.
+ * {@link nix::base::EntityWithMetadata}: {@link nix::Block}, {@link nix::DataArray}, {@link nix::MultiTag},
+ * {@link nix::Tag}, and {@link nix::Source} that serve different purposes.
  * Common to all those entities is an optional property {@link metadata} which  provides a link to a
  * {@link nix::Section} entity and therefore makes it possible to annotate the entities with additional
  * metadata.
  */
 template <typename T>
-class EntityWithMetadata : virtual public IEntityWithMetadata, public NamedEntity<T> {
+class EntityWithMetadata : public NamedEntity<T> {
 
 public:
 
@@ -59,6 +56,12 @@ public:
     {
     }
 
+    /**
+     * @brief Get metadata associated with this entity.
+     *
+     * @return The associated section, if no such section exists an
+     *         uninitialized {@link nix::Section} will be returned.
+     */
     Section metadata() const {
         return NamedEntity<T>::backend()->metadata();
     }
@@ -80,12 +83,27 @@ public:
         }
     }
 
+    /**
+     * @brief Associate the entity with some metadata.
+     *
+     * Calling this method will replace previously stored information.
+     *
+     * @param id        The id of the {@link nix::Section} that should be associated
+     *                  with this entity.
+     */
     void metadata(const std::string &id) {
         NamedEntity<T>::backend()->metadata(id);
     }
 
-    void metadata(const none_t t)
-    {
+    /**
+     * @brief Remove associated metadata from the entity.
+     *
+     * This method just removes the association between the respective
+     * {@link nix::Section} but will not remove it from the file.
+     *
+     * @param t         None
+     */
+    void metadata(const none_t t) {
         NamedEntity<T>::backend()->metadata(t);
     }
 
@@ -93,19 +111,6 @@ public:
      * Destructor
      */
     virtual ~EntityWithMetadata() {}
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = NamedEntity<T>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &EntityWithMetadata::metadata, valid::notFalse(), "no metadata set!")
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 

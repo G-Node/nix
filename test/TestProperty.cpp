@@ -14,19 +14,22 @@
 #include <nix/util/util.hpp>
 #include "TestProperty.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestProperty::setUp()
 {
     startup_time = time(NULL);
     file = nix::File::open("test_property.h5", nix::FileMode::Overwrite);
-
     section = file.createSection("cool section", "metadata");
-
-    property = section.createProperty("prop");
-    property_other = section.createProperty("other");
+    int_dummy = Value(10);
+    str_dummy = Value("test");
+    property = section.createProperty("prop", int_dummy);
+    property_other = section.createProperty("other", int_dummy);
     property_null = nullptr;
 }
 
@@ -38,21 +41,20 @@ void TestProperty::tearDown()
 
 
 void TestProperty::testValidate() {
-    std::cout << std::endl << property.validate();
+    // values are set but unit is missing: 1 warning
+    valid::Result result = validate(property);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 1);
 }
 
 
-
 void TestProperty::testId() {
-    CPPUNIT_ASSERT(property.id().size() == 25);
+    CPPUNIT_ASSERT(property.id().size() == 36);
 }
 
 
 void TestProperty::testName() {
     CPPUNIT_ASSERT(property.name() == "prop");
-    string name = util::createId("", 32);
-    property.name(name);
-    CPPUNIT_ASSERT(property.name() == name);
 }
 
 
@@ -77,18 +79,14 @@ void TestProperty::testMapping() {
 void TestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty");
-
-
+    nix::Property p1 = section.createProperty("strProperty", str_dummy);
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
                                           nix::Value("schoener"),
                                           nix::Value("Goetterfunken") };
-
     p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
     std::vector<nix::Value> ctrlValues = p1.values();
-
     for(size_t i = 0; i < ctrlValues.size(); ++i) {
         CPPUNIT_ASSERT_EQUAL(strValues[i], ctrlValues[i]);
     }
@@ -105,13 +103,16 @@ void TestProperty::testValues()
     p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
 
-    nix::Property p2 = section.createProperty("toDelete");
-    p2.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
+    nix::Property p2 = section.createProperty("toDelete", str_dummy);
+    CPPUNIT_ASSERT(p2.valueCount() == 1);
+    CPPUNIT_ASSERT_EQUAL(p2.values()[0], str_dummy);
+
     strValues.clear();
     p2.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
     p2.deleteValues();
+    CPPUNIT_ASSERT(p2.values().empty() == true);
+    p2.values(strValues);
     p2.values(none);
     CPPUNIT_ASSERT(p2.values().empty() == true);
 }
@@ -119,22 +120,17 @@ void TestProperty::testValues()
 
 void TestProperty::testDataType() {
     nix::Section section = file.createSection("Area51", "Boolean");
-    nix::Property p1 = section.createProperty("strProperty");
-    nix::Property p2 = section.createProperty("doubleProperty");
-    CPPUNIT_ASSERT(!p1.dataType());
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
                                           nix::Value("schoener"),
                                           nix::Value("Goetterfunken") };
-    p1.values(strValues);
-    CPPUNIT_ASSERT(p1.dataType() && *p1.dataType() == DataType::String);
-    p1.deleteValues();
-    CPPUNIT_ASSERT(!p1.dataType());
-
     std::vector<nix::Value> doubleValues = { nix::Value(1.0),
                                              nix::Value(2.0),
                                              nix::Value(-99.99) };
-    p2.values(doubleValues);
-    CPPUNIT_ASSERT(p2.dataType() && *p2.dataType() == DataType::Double);
+    nix::Property p1 = section.createProperty("strProperty", strValues);
+    nix::Property p2 = section.createProperty("doubleProperty", doubleValues);
+
+    CPPUNIT_ASSERT(p1.dataType() == DataType::String);
+    CPPUNIT_ASSERT(p2.dataType() == DataType::Double);
 
     file.deleteSection(section.id());
 }
@@ -142,20 +138,20 @@ void TestProperty::testDataType() {
 
 void TestProperty::testUnit(){
     nix::Section section = file.createSection("testSection", "test");
-    nix::Property p1 = section.createProperty("testProperty");
     nix::Value v(22.2);
     v.uncertainty = 1.2;
     std::vector<Value> values = {v};
+    nix::Property p1 = section.createProperty("testProperty", int_dummy);
     std::string inv_unit = "invalid unit";
     std::string valid_unit = "mV*cm^-2";
     std::string second_unit = "mV";
-    p1.values(values);
 
     CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnit);
     CPPUNIT_ASSERT(!p1.unit());
+
     p1.unit(valid_unit);
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
-    CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error);
+    //    CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error); why should this fail??
     p1.unit(none);
     CPPUNIT_ASSERT(!p1.unit());
     CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));

@@ -58,6 +58,7 @@ void TestUtil::testIsSIUnit() {
     CPPUNIT_ASSERT(util::isSIUnit("mV^-2"));
     CPPUNIT_ASSERT(!util::isSIUnit("mV/cm"));
     CPPUNIT_ASSERT(util::isSIUnit("dB"));
+    CPPUNIT_ASSERT(util::isSIUnit("rad"));
 }
 
 void TestUtil::testSIUnitSplit() {

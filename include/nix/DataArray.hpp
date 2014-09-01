@@ -17,7 +17,6 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -150,8 +149,7 @@ public:
      *
      * @param t         None
      */
-    void label(const none_t t)
-    {
+    void label(const none_t t) {
         backend()->label(t);
     }
 
@@ -169,8 +167,7 @@ public:
      *
      * @param t         None
      */
-    void unit(const none_t t)
-    {
+    void unit(const none_t t) {
         backend()->unit(t);
     }
 
@@ -179,12 +176,7 @@ public:
      *
      * @param unit      The unit of the data array.
      */
-    void unit(const std::string &unit) {
-        if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
-            throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
-        }
-        backend()->unit(unit);
-    }
+    void unit(const std::string &unit);
 
     /**
      * @brief Returns the expansion origin of the calibration polynom.
@@ -214,8 +206,7 @@ public:
      *
      * @param t         None
      */
-    void expansionOrigin(const none_t t)
-    {
+    void expansionOrigin(const none_t t) {
         backend()->expansionOrigin(t);
     }
 
@@ -245,8 +236,7 @@ public:
      *
      * @param t         None
      */
-    void polynomCoefficients(const none_t t)
-    {
+    void polynomCoefficients(const none_t t) {
         backend()->polynomCoefficients(t);
     }
 
@@ -255,22 +245,26 @@ public:
     //--------------------------------------------------
 
     /**
-     * Get all dimensions associated with this data array.
+     * @brief Get all dimensions associated with this data array.
      *
      * The parameter filter can be used to filter sources by various
-     * criteria. By default a filter is used that accepts all sources.
+     * criteria.
      *
      * @param filter    A filter function ({@link nix::util::Filter::type})
      *
      * @return The filtered dimensions as a vector
      */
-    std::vector<Dimension> dimensions(util::AcceptAll<Dimension>::type filter
-                                      = util::AcceptAll<Dimension>()) const
-    {
-        auto f = [this] (size_t i) { return getDimension(i+1); }; // +1 since index starts at 1
-        return getEntities<Dimension>(f,
-                                      dimensionCount(),
-                                      filter);
+    std::vector<Dimension> dimensions(const util::Filter<Dimension>::type &filter) const;
+
+    /**
+     * @brief Get all dimensions associated with this data array.
+     *
+     * Always uses filter that accepts all sources.
+     *
+     * @return The filtered dimensions as a vector
+     */
+    std::vector<Dimension> dimensions() const {
+        return dimensions(util::AcceptAll<Dimension>());
     }
 
     /**
@@ -311,7 +305,7 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(std::vector<double> ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
 
@@ -351,7 +345,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    RangeDimension createRangeDimension(size_t id, std::vector<double> ticks) {
+    RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
         return backend()->createRangeDimension(id, ticks);
     }
 
@@ -382,36 +376,6 @@ public:
     //--------------------------------------------------
     // Methods concerning data access.
     //--------------------------------------------------
-
-    /**
-     * @brief Allocate file space for this data array.
-     *
-     * The following example allocates a data space for a matrix of integers with 10 x 100 elements.
-     *
-     * ~~~
-     * DataArray da = ...;
-     * if (!da.hasData()) {
-     *     da.createData(DataType::Int32, {10, 100});
-     * }
-     * ~~~
-     *
-     * @param dtype     The data type that should be stored in this data array.
-     * @param size      The size of the data to store.
-     */
-    void createData(DataType dtype, const NDSize &size) {
-        backend()->createData(dtype, size);
-    }
-
-    /**
-     * @brief Check if the data array contains data.
-     *
-     * @return True if the array contains data, false otherwise.
-     */
-    bool hasData() const {
-        return backend()->hasData();
-    }
-
-    template<typename T> void createData(const T &value, const NDSize &size = {});
 
     template<typename T> void getData(T &value) const;
 
@@ -470,47 +434,22 @@ public:
     //--------------------------------------------------
 
     /**
+     * @brief Assignment operator for none.
+     */
+    DataArray &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const DataArray &ent) {
-        out << "DataArray: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+
 
     double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithSources<base::IDataArray>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::must(*this, &DataArray::dataType, valid::notEqual<DataType>(DataType::Nothing), "data type is not set!"),
-            valid::should(*this, &DataArray::dataExtent, valid::notEmpty(), "data extent is not set!"),
-            valid::should(*this, &DataArray::label, valid::notFalse(), "label is not set!"),
-            valid::should(*this, &DataArray::unit, valid::notFalse(), "unit is not set!"),
-            valid::should(*this, &DataArray::polynomCoefficients, valid::notEmpty(), "polynomial coefficients for calibration are not set!"),
-            valid::should(*this, &DataArray::expansionOrigin, valid::notFalse(), "expansion origin for calibration is not set!"),
-            valid::should(*this, &DataArray::dimensionCount, valid::isGreater(0), "dimensions are not set!"),
-            valid::should(*this, &DataArray::hasData, valid::notFalse(), "data is not set!")
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
-
-template<typename T>
-void DataArray::createData(const T &value, const NDSize &size)
-{
-    const Hydra<const T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    createData(dtype, size.size() ? size : hydra.shape());
-}
 
 template<typename T>
 void DataArray::getData(T &value) const

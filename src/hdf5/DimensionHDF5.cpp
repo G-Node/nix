@@ -12,12 +12,12 @@
 #include <nix/hdf5/DataSet.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::hdf5;
+using namespace nix::base;
 
-namespace nix {
-namespace hdf5 {
 
-
-DimensionType dimensionTypeFromStr(const string &str) {
+DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
     if (str == "set") {
         return DimensionType::Set;
     } else if (str == "range") {
@@ -30,7 +30,7 @@ DimensionType dimensionTypeFromStr(const string &str) {
 }
 
 
-std::string dimensionTypeToStr(DimensionType dim) {
+std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
 
     //The way this switch + string.empty() checking is
     // done here might seem a bit convoluted, but the
@@ -60,32 +60,43 @@ std::string dimensionTypeToStr(DimensionType dim) {
     }
 
     return dimType;
-
 }
+
+
+shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(const Group &group, size_t index) {
+    string type_name;
+    group.getAttr("dimension_type", type_name);
+
+    DimensionType type = dimensionTypeFromStr(type_name);
+    shared_ptr<IDimension> dim;
+
+    switch (type) {
+        case DimensionType::Set:
+            dim = make_shared<SetDimensionHDF5>(group, index);
+            break;
+        case DimensionType::Range:
+            dim = make_shared<RangeDimensionHDF5>(group, index);
+            break;
+        case DimensionType::Sample:
+            dim = make_shared<SampledDimensionHDF5>(group, index);
+            break;
+    }
+
+    return dim;
+}
+
 
 // Implementation of Dimension
 
-DimensionHDF5::DimensionHDF5(Group group, size_t index)
+DimensionHDF5::DimensionHDF5(const Group &group, size_t index)
     : group(group), dim_index(index)
 {
 }
 
 
-DimensionHDF5::DimensionHDF5(const DimensionHDF5 &other)
-    : group(other.group), dim_index(other.dim_index)
-{
-}
-
-
 void DimensionHDF5::setType() {
-    group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
-}
-
-
-void DimensionHDF5::swap(DimensionHDF5 &other) {
-    using std::swap;
-    swap(group, other.group);
-    swap(dim_index, other.dim_index);
+    if (!group.hasAttr("dimension_type"))
+        group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
 }
 
 
@@ -105,19 +116,16 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(Group group, size_t index, double sampling_interval)
+SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
+{
+}
+
+SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index, double sampling_interval)
+    : SampledDimensionHDF5(group, index)
 {
     setType();
     this->samplingInterval(sampling_interval);
-}
-
-
-SampledDimensionHDF5::SampledDimensionHDF5(const SampledDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
-{
-    setType();
-    samplingInterval(other.samplingInterval());
 }
 
 
@@ -138,10 +146,9 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    if(label.empty()) {
+    if (label.empty()) {
         throw EmptyString("label");
-    }
-    else {
+    } else {
         group.setAttr("label", label);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -149,7 +156,7 @@ void SampledDimensionHDF5::label(const string &label) {
 
 
 void SampledDimensionHDF5::label(const none_t t) {
-    if(group.hasAttr("label")) {
+    if (group.hasAttr("label")) {
         group.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -168,10 +175,9 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
-    }
-    else {
+    } else {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -179,7 +185,7 @@ void SampledDimensionHDF5::unit(const string &unit) {
 
 
 void SampledDimensionHDF5::unit(const none_t t) {
-    if(group.hasAttr("unit")) {
+    if (group.hasAttr("unit")) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -189,7 +195,7 @@ void SampledDimensionHDF5::unit(const none_t t) {
 double SampledDimensionHDF5::samplingInterval() const {
     double sampling_interval;
 
-    if(group.hasAttr("sampling_interval")) {
+    if (group.hasAttr("sampling_interval")) {
         group.getAttr("sampling_interval", sampling_interval);
         return sampling_interval;
     } else {
@@ -206,7 +212,7 @@ void SampledDimensionHDF5::samplingInterval(double sampling_interval) {
 boost::optional<double> SampledDimensionHDF5::offset() const {
     boost::optional<double> ret;
     double offset = 0;
-    if(group.getAttr("offset", offset)) {
+    if (group.getAttr("offset", offset)) {
         ret = offset;
     }
     return ret;
@@ -219,16 +225,9 @@ void SampledDimensionHDF5::offset(double offset) {
 
 
 void SampledDimensionHDF5::offset(const none_t t) {
-    if(group.hasAttr("offset")) {
+    if (group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
-}
-
-
-SampledDimensionHDF5& SampledDimensionHDF5::operator=(const SampledDimensionHDF5 &other) {
-    SampledDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
 }
 
 
@@ -238,15 +237,8 @@ SampledDimensionHDF5::~SampledDimensionHDF5() {}
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
 
-SetDimensionHDF5::SetDimensionHDF5(Group group, size_t index)
+SetDimensionHDF5::SetDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
-{
-    setType();
-}
-
-
-SetDimensionHDF5::SetDimensionHDF5(const SetDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
 {
     setType();
 }
@@ -270,17 +262,10 @@ void SetDimensionHDF5::labels(const vector<string> &labels) {
 }
 
 void SetDimensionHDF5::labels(const none_t t) {
-    if(group.hasAttr("offset")) {
+    if (group.hasAttr("offset")) {
         group.removeAttr("offset");
     }
 }
-
-SetDimensionHDF5& SetDimensionHDF5::operator=(const SetDimensionHDF5 &other) {
-    SetDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
-}
-
 
 SetDimensionHDF5::~SetDimensionHDF5() {}
 
@@ -288,19 +273,17 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(Group group, size_t index, vector<double> ticks)
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index)
     : DimensionHDF5(group, index)
 {
-    setType();
-    this->ticks(ticks);
 }
 
 
-RangeDimensionHDF5::RangeDimensionHDF5(const RangeDimensionHDF5 &other)
-    : DimensionHDF5(other.group, other.dim_index)
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<double> ticks)
+    : RangeDimensionHDF5(group, index)
 {
     setType();
-    ticks(other.ticks());
+    this->ticks(ticks);
 }
 
 
@@ -321,10 +304,9 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    if(label.empty()) {
+    if (label.empty()) {
         throw EmptyString("label");
-    }
-    else {
+    } else {
         group.setAttr("label", label);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -332,7 +314,7 @@ void RangeDimensionHDF5::label(const string &label) {
 
 
 void RangeDimensionHDF5::label(const none_t t) {
-    if(group.hasAttr("label")) {
+    if (group.hasAttr("label")) {
         group.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -351,10 +333,9 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    if(unit.empty()) {
+    if (unit.empty()) {
         throw EmptyString("unit");
-    }
-    else {
+    } else {
         group.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
@@ -362,24 +343,17 @@ void RangeDimensionHDF5::unit(const string &unit) {
 
 
 void RangeDimensionHDF5::unit(const none_t t) {
-    if(group.hasAttr("unit")) {
+    if (group.hasAttr("unit")) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
-RangeDimensionHDF5& RangeDimensionHDF5::operator=(const RangeDimensionHDF5 &other) {
-    RangeDimensionHDF5 tmp(other);
-    swap(tmp);
-    return *this;
-}
-
-
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
 
-    if(group.hasData("ticks")) {
+    if (group.hasData("ticks")) {
         group.getData("ticks", ticks);
         return ticks;
     } else {
@@ -393,8 +367,4 @@ void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix
 

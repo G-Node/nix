@@ -7,50 +7,59 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/util/filter.hpp>
+#include <nix/File.hpp>
+#include <nix/Section.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
+using namespace nix;
+using namespace nix::base;
+using namespace nix::hdf5;
 
-namespace nix {
-namespace hdf5 {
 
-
-SectionHDF5::SectionHDF5(const SectionHDF5 &section)
-    : NamedEntityHDF5(section.file(), section.group(), section.id(), section.type(), section.name())
+SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group)
+    : SectionHDF5(file, nullptr, group)
 {
-    property_group = section.property_group;
-    section_group = section.section_group;
+}
+    
+
+SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, const Group &group)
+    : NamedEntityHDF5(file, group), parent_section(parent)
+{
+    property_group = this->group().openOptGroup("properties");
+    section_group = this->group().openOptGroup("sections");
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id,
                          const string &type, const string &name)
     : SectionHDF5(file, nullptr, group, id, type, name)
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const shared_ptr<ISection> &parent, const Group &group,
                          const string &id, const string &type, const string &name)
     : SectionHDF5(file, parent, group, id, type, name, util::getTime())
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Group &group, const string &id,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id,
                          const string &type, const string &name, time_t time)
     : SectionHDF5(file, nullptr, group, id, type, name, time)
 {
 }
 
 
-SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &group,
+SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const shared_ptr<ISection> &parent, const Group &group,
                          const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time), parent_section(parent)
 {
-    property_group = this->group().openGroup("properties");
-    section_group = this->group().openGroup("sections");
+    property_group = this->group().openOptGroup("properties");
+    section_group = this->group().openOptGroup("sections");
 }
 
 //--------------------------------------------------
@@ -58,7 +67,7 @@ SectionHDF5::SectionHDF5(const File &file, const Section &parent, const Group &g
 //--------------------------------------------------
 
 void SectionHDF5::repository(const string &repository) {
-    if(repository.empty()) {
+    if (repository.empty()) {
         throw EmptyString("repository");
     } else {
         group().setAttr("repository", repository);
@@ -70,7 +79,7 @@ void SectionHDF5::repository(const string &repository) {
 boost::optional<string> SectionHDF5::repository() const {
     boost::optional<string> ret;
     string repository;
-    if(group().getAttr("repository", repository)) {
+    if (group().getAttr("repository", repository)) {
         ret = repository;
     }
     return ret;
@@ -78,7 +87,7 @@ boost::optional<string> SectionHDF5::repository() const {
 
 
 void SectionHDF5::repository(const none_t t) {
-    if(group().hasAttr("repository")) {
+    if (group().hasAttr("repository")) {
         group().removeAttr("repository");
     }
     forceUpdatedAt();
@@ -86,46 +95,50 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const std::string &id) {
-    if(id.empty()) {
-        throw EmptyString("mapping");
-    } else if (file().hasSection(id)) {
-        group().setAttr("link", id);
-    } else {
-        throw std::runtime_error("Section not found in file!");
-    }
+    if (id.empty())
+        throw EmptyString("link");
+
+    if (group().hasGroup("link"))
+        link(none);
+        
+    File tmp = file();
+    auto found = tmp.findSections(util::IdFilter<Section>(id));
+    if (found.empty())
+        throw std::runtime_error("SectionHDF5::link: Section not found in file!");
+    
+    auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
+
+    group().createLink(target->group(), "link");
 }
 
 
-Section SectionHDF5::link() const {
-    string id;
-    group().getAttr("link", id);
+shared_ptr<ISection> SectionHDF5::link() const {
+    shared_ptr<ISection> sec;
 
-    vector<Section> found;
-    if (id != "") {
-        auto filter = [&](const Section &s) {
-            return id == s.id();
-        };
-
-        found = file().findSections(filter);
+    if (group().hasGroup("link")) {
+        Group other_group = group().openGroup("link", false);
+        auto sec_tmp = make_shared<SectionHDF5>(file(), other_group);
+        // re-get above section "sec_tmp": parent missing, findSections will set it!
+        auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
+        if (found.size() > 0) {
+            sec = found.front().impl();
+        }
     }
 
-    if (found.size() > 0)
-        return found[0];
-    else
-        return Section();
+    return sec;
 }
 
 
 void SectionHDF5::link(const none_t t) {
-    if(group().hasAttr("link")) {
-        group().removeAttr("link");
+    if (group().hasGroup("link")) {
+        group().removeGroup("link");
     }
     forceUpdatedAt();
 }
 
 
 void SectionHDF5::mapping(const string &mapping) {
-    if(mapping.empty()) {
+    if (mapping.empty()) {
         throw EmptyString("mapping");
     } else {
         group().setAttr("mapping", mapping);
@@ -137,7 +150,7 @@ void SectionHDF5::mapping(const string &mapping) {
 boost::optional<string> SectionHDF5::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if(group().getAttr("mapping", mapping)) {
+    if (group().getAttr("mapping", mapping)) {
         ret = mapping;
     }
     return ret;
@@ -145,7 +158,7 @@ boost::optional<string> SectionHDF5::mapping() const {
 
 
 void SectionHDF5::mapping(const none_t t) {
-    if(group().hasAttr("mapping")) {
+    if (group().hasAttr("mapping")) {
         group().removeAttr("mapping");
     }
     forceUpdatedAt();
@@ -156,7 +169,7 @@ void SectionHDF5::mapping(const none_t t) {
 //--------------------------------------------------
 
 
-Section SectionHDF5::parent() const {
+shared_ptr<ISection> SectionHDF5::parent() const {
     return parent_section;
 }
 
@@ -167,62 +180,94 @@ Section SectionHDF5::parent() const {
 
 
 size_t SectionHDF5::sectionCount() const {
-    return section_group.objectCount();
+    boost::optional<Group> g = section_group();
+    return g ? g->objectCount() : size_t(0);
+}
+
+
+bool SectionHDF5::hasSectionByName(const string &name) const {
+    // let getSectionByName try to look up object by name
+    return getSectionByName(name) != nullptr;
 }
 
 
 bool SectionHDF5::hasSection(const string &id) const {
-    return section_group.hasGroup(id);
+    // let getSection try to look up object by id
+    return getSection(id) != nullptr;
 }
 
 
-Section SectionHDF5::getSection(const string &id) const {
-    if (section_group.hasGroup(id)) {
-        Group group = section_group.openGroup(id, false);
-        std::string type;
-        std::string name;
-        group.getAttr("type", type);
-        group.getAttr("name", name);
+shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
+    shared_ptr<SectionHDF5> section;
+    boost::optional<Group> g = section_group();
 
-        Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
-        auto tmp = make_shared<SectionHDF5>(file(), parent, group, id, type, name);
-        return Section(tmp);
-    } else {
-        return Section();
-    }
-}
-
-
-Section SectionHDF5::getSection(size_t index) const {
-    string id = section_group.objectName(index);
-
-    return getSection(id);
-}
-
-
-Section SectionHDF5::createSection(const string &name, const string &type) {
-    string new_id = util::createId("section");
-
-    while (section_group.hasObject(new_id)) {
-        new_id = util::createId("section");
+    if(g) {
+        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        if (group) {
+            auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+            section = make_shared<SectionHDF5>(file(), p, *group);
+        }
     }
 
-    Section parent(const_pointer_cast<SectionHDF5>(shared_from_this()));
+    return section;
+}
 
-    Group grp = section_group.openGroup(new_id, true);
-    auto tmp = make_shared<SectionHDF5>(file(), parent, grp, new_id, type, name);
 
-    return Section(tmp);
+shared_ptr<ISection> SectionHDF5::getSectionByName(const string &name) const {
+    shared_ptr<SectionHDF5> sec;    
+    boost::optional<Group> g = section_group();
+
+    if(g) {
+        if (g->hasObject(name)) {
+            Group group = g->openGroup(name, false);
+            auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+            sec = make_shared<SectionHDF5>(file(), p, group);
+        }
+    }
+    
+    return sec;
+}
+
+
+shared_ptr<ISection> SectionHDF5::getSection(size_t index) const {
+    boost::optional<Group> g = section_group();
+    string name = g ? g->objectName(index) : "";
+    return getSectionByName(name);
+}
+
+
+shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string &type) {
+    if (hasSectionByName(name)) {
+        throw DuplicateName("createSection");
+    }
+    string new_id = util::createId();
+    boost::optional<Group> g = section_group(true);
+
+    auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
+    Group grp = g->openGroup(name, true);
+    return make_shared<SectionHDF5>(file(), p, grp, new_id, type, name);
 }
 
 
 bool SectionHDF5::deleteSection(const string &id) {
-    if (section_group.hasGroup(id)) {
-        section_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    boost::optional<Group> g = section_group();
+    bool deleted = false;
+
+    if (g) {
+        // call deleteSection on sections to trigger recursive call to all sub-sections
+        if (hasSection(id)) {
+            // get instance of section about to get deleted
+            Section section = getSection(id);
+            // loop through all child sections and call deleteSection on them
+            for (auto &child : section.sections()) {
+                section.deleteSection(child.id());
+            }
+            // if hasSection is true then section_group always exists
+            deleted = g->removeAllLinks(section.name());
+        }
     }
+
+    return deleted;
 }
 
 
@@ -231,110 +276,106 @@ bool SectionHDF5::deleteSection(const string &id) {
 //--------------------------------------------------
 
 
-
 size_t SectionHDF5::propertyCount() const {
-    return property_group.objectCount();
+    boost::optional<Group> g = property_group();
+    return g ? g->objectCount() : size_t(0);
 }
 
 
 bool SectionHDF5::hasProperty(const string &id) const {
-    return property_group.hasGroup(id);
+    // let getProperty try to look up object by id    
+    return getProperty(id) != nullptr;
 }
 
 
-Property SectionHDF5::getProperty(const string &id) const {
-    if (property_group.hasGroup(id)) {
-        Group group = property_group.openGroup(id, false);
-        string name;
-        group.getAttr("name", name);
-        auto tmp = make_shared<PropertyHDF5>(file(), group, id, name);
-        return Property(tmp);
-    } else {
-        return Property();
-    }
+bool SectionHDF5::hasPropertyByName(const string &name) const {
+    // let getPropertyByName try to look up object by name    
+    return getPropertyByName(name) != nullptr;
 }
 
 
-Property SectionHDF5::getProperty(size_t index) const {
-    string id = property_group.objectName(index);
+shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
+    shared_ptr<PropertyHDF5> prop;
+    boost::optional<Group> g = property_group();
 
-    return getProperty(id);
-}
-
-
-bool SectionHDF5::hasPropertyWithName(const string &name) const {
-    bool found = false;
-
-    for (size_t i = 0; i < propertyCount(); i++) {
-        string id = property_group.objectName(i);
-        Group grp = property_group.openGroup(id);
-
-        string other_name;
-        grp.getAttr("name", other_name);
-
-        if (other_name == name) {
-            found = true;
-            break;
-        }
+    if (g) {
+        boost::optional<DataSet> dset = g->findDataByAttribute("entity_id", id);
+        if (dset)
+            prop = make_shared<PropertyHDF5>(file(), *dset);
     }
 
-    return found;
-}
-
-
-Property SectionHDF5::getPropertyByName(const string &name) const {
-    Property prop;
-
-    for (size_t i = 0; i < propertyCount(); i++) {
-        string id = property_group.objectName(i);
-        Group grp = property_group.openGroup(id);
-
-        string other_name;
-        grp.getAttr("name", other_name);
-
-        if (other_name == name) {
-            string type;
-            grp.getAttr("type", type);
-            auto tmp = make_shared<PropertyHDF5>(file(), grp, id, name);
-            prop = Property(tmp);
-            break;
-        }
-    }
-
-    // return empty object if not found (since then "prop" is still empty Property)
     return prop;
 }
 
 
-Property SectionHDF5::createProperty(const string &name) {
-    if (hasPropertyWithName(name))
-        throw runtime_error("Try to create a property with existing name: " + name);
+shared_ptr<IProperty> SectionHDF5::getProperty(size_t index) const {
+    boost::optional<Group> g = property_group();
+    string name = g ? g->objectName(index) : "";
+    return getPropertyByName(name);
+}
 
-    string new_id = util::createId("property");
 
-    while (property_group.hasObject(new_id))
-        new_id = util::createId("property");
+shared_ptr<IProperty> SectionHDF5::getPropertyByName(const string &name) const {
+    shared_ptr<PropertyHDF5> prop;
+    boost::optional<Group> g = property_group();
+    
+    if (g) {
+        if (g->hasObject(name)) {
+            DataSet dset = g->openData(name);
+            prop = make_shared<PropertyHDF5>(file(), dset);
+        }
+    }
+    
+    return prop;
+}
 
-    Group grp = property_group.openGroup(new_id, true);
 
-    auto tmp = make_shared<PropertyHDF5>(file(), grp, new_id, name);
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
+    if (hasPropertyByName(name)) {
+        throw DuplicateName("hasPropertyByName");
+    }
+    string new_id = util::createId();
+    boost::optional<Group> g = property_group(true);
 
-    return Property(tmp);
+    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
+    DataSet dataset = DataSet::create(g->h5Group(), name, fileType, {0});
+
+    return make_shared<PropertyHDF5>(file(), dataset, new_id, name);
+}
+
+
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Value &value) {
+    shared_ptr<IProperty> p = createProperty(name, value.type());
+
+    vector<Value> val{value};
+    p->values(val);
+
+    return p;
+}
+
+
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vector<Value> &values) {
+    if (values.size() < 1)
+        throw runtime_error("Trying to create a property without a value!");
+
+    shared_ptr<IProperty> p = createProperty(name, values[0].type());
+    p->values(values);
+
+    return p;
 }
 
 
 bool SectionHDF5::deleteProperty(const string &id) {
-    if (property_group.hasObject(id)) {
-        property_group.removeGroup(id);
-        return true;
-    } else {
-        return false;
+    boost::optional<Group> g = property_group();
+    bool deleted = false;
+
+    if (g && hasProperty(id)) {
+        g->removeData(getProperty(id)->name());
+        deleted = true;
     }
+
+    return deleted;
 }
 
 
 SectionHDF5::~SectionHDF5() {}
-
-
-} // namespace hdf5
-} // namespace nix

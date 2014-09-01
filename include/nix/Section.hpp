@@ -11,21 +11,19 @@
 
 #include <limits>
 #include <functional>
+#include <string>
 
-#include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
-
+#include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
 
-
-class NIXAPI Section : virtual public base::ISection, public base::NamedEntity<base::ISection> {
+class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
 public:
 
@@ -82,46 +80,104 @@ public:
     // Attribute getter and setter
     //--------------------------------------------------
 
+    /**
+     * @brief Set the repository in which a section of this type is defined.
+     *
+     * Usually this information is provided in the form of an URL
+     *
+     * @param repository        URL to the repository.
+     */
     void repository(const std::string &repository) {
         backend()->repository(repository);
     }
 
+    /**
+     * @brief Gets the repository URL.
+     *
+     * @return The URL to the repository.
+     */
     boost::optional<std::string> repository() const {
         return backend()->repository();
     }
 
+    /**
+     * @brief Deleter for the repository.
+     *
+     * @param t         None
+     */
     void repository(const boost::none_t t) {
         backend()->repository(t);
     }
 
+    /**
+     * @brief Establish a link to another section.
+     *
+     * The linking section inherits the properties defined in the linked section.
+     * Properties of the same name are overridden.
+     *
+     * @param id        The id of the section that should be linked.
+     */
     void link(const std::string &id) {
         backend()->link(id);
     }
 
-    void link(const Section &link) {
-        if (link == none) {
-            backend()->link(none);
-        } else {
-            backend()->link(link.id());
-        }
-    }
+    /**
+     * @brief Establish a link to another section.
+     *
+     * The linking section inherits the properties defined in the linked section.
+     * Properties of the same name are overridden.
+     *
+     * @param link      The section to link with.
+     */
+    void link(const Section &link);
 
+    /**
+     * @brief Get the linked section.
+     *
+     * @return The linked section. If no section was linked a null
+     *         Section will be returned.
+     */
     Section link() const {
         return backend()->link();
     }
 
+    /**
+     * @brief Deleter for the linked section.
+     *
+     * This just removes the link between both sections, but does not remove
+     * the linked section from the file.
+     *
+     * @param t         None
+     */
     void link(const boost::none_t t) {
         backend()->link(t);
     }
 
+    /**
+     * @brief Sets the mapping information for this section.
+     *
+     * The mapping is provided as a path or URL to another section.
+     *
+     * @param mapping   The mapping information to this section.
+     */
     void mapping(const std::string &mapping) {
         backend()->mapping(mapping);
     }
 
+    /**
+     * @brief Gets the mapping information.
+     *
+     * @return The mapping information.
+     */
     boost::optional<std::string> mapping() const {
         return backend()->mapping();
     }
 
+    /**
+     * @brief Deleter for the mapping information.
+     *
+     * @param t         None
+     */
     void mapping(const boost::none_t t) {
         backend()->mapping(t);
     }
@@ -130,6 +186,14 @@ public:
     // Methods for parent access
     //--------------------------------------------------
 
+    /**
+     * @brief Returns the parent section.
+     *
+     * Each section which is not a root section has a parent.
+     *
+     * @return The parent section. If the section has no parent, a null
+     *         section will be returned.
+     */
     Section parent() const {
         return backend()->parent();
     }
@@ -138,10 +202,22 @@ public:
     // Methods for child section access
     //--------------------------------------------------
 
+    /**
+     * @brief Get the number of child section of the section.
+     *
+     * @return The number of child sections.
+     */
     size_t sectionCount() const {
         return backend()->sectionCount();
     }
 
+    /**
+     * @brief Checks whether a section has a certain child section.
+     *
+     * @param id        The id of requested section.
+     *
+     * @return True if the section is a child, false otherwise.
+     */
     bool hasSection(const std::string &id) const {
         return backend()->hasSection(id);
     }
@@ -153,17 +229,26 @@ public:
      *
      * @return True if the section is a child, false otherwise.
      */
-    bool hasSection(const Section &section) const {
-        if(section == none) {
-            throw std::runtime_error("Section::hasSection: Empty Section entity given!");
-        }
-        return backend()->hasSection(section.id());
-    }
+    bool hasSection(const Section &section) const;
 
+    /**
+     * @brief Get a specific child section by its id.
+     *
+     * @param id        The id of the child section.
+     *
+     * @return The child section.
+     */
     Section getSection(const std::string &id) const {
         return backend()->getSection(id);
     }
 
+    /**
+     * @brief Get a child section by its index.
+     *
+     * @param index     The index of the child.
+     *
+     * @return The specified child section.
+     */
     virtual Section getSection(size_t index) const {
         return backend()->getSection(index);
     }
@@ -178,13 +263,7 @@ public:
      *
      * @return A vector containing the matching child sections.
      */
-    std::vector<Section> sections(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const
-    {
-        auto f = [this] (size_t i) { return getSection(i); };
-        return getEntities<Section>(f,
-                                    sectionCount(),
-                                    filter);
-    }
+    std::vector<Section> sections(const util::Filter<Section>::type &filter = util::AcceptAll<Section>()) const;
 
     /**
      * @brief Get all descendant sections of the section recursively.
@@ -200,7 +279,7 @@ public:
      *
      * @return A vector containing the matching descendant sections.
      */
-    std::vector<Section> findSections(util::Filter<Section>::type filter = util::AcceptAll<Section>(),
+    std::vector<Section> findSections(const util::Filter<Section>::type &filter = util::AcceptAll<Section>(),
                                       size_t max_depth = std::numeric_limits<size_t>::max()) const;
 
     /**
@@ -210,12 +289,27 @@ public:
      *
      * @return A vector containing all filtered related sections.
      */
-    std::vector<Section> findRelated(util::Filter<Section>::type filter = util::AcceptAll<Section>()) const;
+    std::vector<Section> findRelated(const util::Filter<Section>::type &filter = util::AcceptAll<Section>()) const;
 
+    /**
+     *  @brief Adds a new child section.
+     *
+     *  @param name     The name of the new section
+     *  @param type     The type of the section
+     *
+     *  @return The new child section.
+     */
     Section createSection(const std::string &name, const std::string &type) {
         return backend()->createSection(name, type);
     }
 
+    /**
+     * @brief Deletes a section from the section.
+     *
+     * @param id        The id of the child section to delete.
+     *
+     * @return True if the section was deleted, false otherwise.
+     */
     bool deleteSection(const std::string &id) {
         return backend()->deleteSection(id);
     }
@@ -227,21 +321,28 @@ public:
      *
      * @return bool successful or not
      */
-    bool deleteSection(const Section &section) {
-        if(section == none) {
-            throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
-        }
-        return backend()->deleteSection(section.id());
-    }
+    bool deleteSection(const Section &section);
 
     //--------------------------------------------------
     // Methods for property access
     //--------------------------------------------------
 
+    /**
+     * @brief Gets the number of properties of this section.
+     *
+     * @return The number of Properties
+     */
     size_t propertyCount() const {
         return backend()->propertyCount();
     }
 
+    /**
+     * @brief Checks if a Property with this id exists in this Section.
+     *
+     * @param id        The id of the property.
+     *
+     * @return True if the property exists, false otherwise.
+     */
     bool hasProperty(const std::string &id) const {
         return backend()->hasProperty(id);
     }
@@ -253,25 +354,48 @@ public:
      *
      * @return True if the property exists, false otherwise.
      */
-    bool hasProperty(const Property &property) const {
-        if(property == none) {
-            throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
-        }
-        return backend()->hasProperty(property.id());
-    }
+    bool hasProperty(const Property &property) const;
 
+    /**
+     * @brief Gets the Property identified by its id.
+     *
+     * @param id        The id of the property.
+     *
+     * @return The specified property.
+     */
     Property getProperty(const std::string &id) const {
         return backend()->getProperty(id);
     }
 
+    /**
+     * @brief Gets the property defined by its index.
+     *
+     * @param index     The index of the property
+     *
+     * @return The property.
+     */
     Property getProperty(size_t index) const {
         return backend()->getProperty(index);
     }
 
-    bool hasPropertyWithName(const std::string &name) const {
-        return backend()->hasPropertyWithName(name);
+    /**
+     * @brief Checks if a property with a certain name exists.
+     *
+     * @param name      The name of the property.
+     *
+     * @return True if a property with the given name exists false otherwise.
+     */
+    bool hasPropertyByName(const std::string &name) const {
+        return backend()->hasPropertyByName(name);
     }
 
+    /**
+     * @brief Returns a property identified by its name.
+     *
+     * @param name      The name of the property.
+     *
+     * @return The found property.
+     */
     Property getPropertyByName(const std::string &name) const {
         return backend()->getPropertyByName(name);
     }
@@ -286,13 +410,7 @@ public:
      *
      * @return A vector containing the matching properties.
      */
-    std::vector<Property> properties(util::Filter<Property>::type filter = util::AcceptAll<Property>()) const
-    {
-        auto f = [this] (size_t i) { return getProperty(i); };
-        return getEntities<Property>(f,
-                                    propertyCount(),
-                                    filter);
-    }
+    std::vector<Property> properties(const util::Filter<Property>::type &filter=util::AcceptAll<Property>()) const;
 
     /**
      * Returns all Properties inherited from a linked section.
@@ -302,8 +420,28 @@ public:
      */
     std::vector<Property> inheritedProperties() const;
 
-    Property createProperty(const std::string &name) {
-        return backend()->createProperty(name);
+    /**
+     * @brief Add a new Property that does not have any Values to this Section.
+     *
+     * @param name     The name of the property.
+     * @param dtype    The DataType of the property.
+     *
+     * @return The newly created property
+     */
+    Property createProperty(const std::string &name, const DataType &dtype) {
+        return backend()->createProperty(name, dtype);
+    }
+
+    /**
+     * @brief Add a new Property to the Section.
+     *
+     * @param name      The name of the property.
+     * @param value     The Value to be stored.
+     *
+     * @return The newly created property.
+     */
+    Property createProperty(const std::string &name, const Value &value) {
+        return backend()->createProperty(name, value);
     }
 
     /**
@@ -314,12 +452,17 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const std::vector<Value>& values) {
-        Property p = backend()->createProperty(name);
-        p.values(values);
-        return p;
+    Property createProperty(const std::string &name, const std::vector<Value> &values) {
+        return backend()->createProperty(name, values);
     }
 
+    /**
+     * @brief Delete the Property identified by its id.
+     *
+     * @param id        The id of the property.
+     *
+     * @return True if the property was deleted, false otherwise.
+     */
     bool deleteProperty(const std::string &id) {
         return backend()->deleteProperty(id);
     }
@@ -331,55 +474,32 @@ public:
      *
      * @return True if the property was deleted, false otherwise.
      */
-    bool deleteProperty(const Property &property) {
-        if(property == none) {
-            throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
-        }
-        return backend()->deleteProperty(property.id());
-    }
+    bool deleteProperty(const Property &property);
 
-    //------------------------------------------------------
-    // Operators and other functions
-    //------------------------------------------------------
+    //--------------------------------------------------
+    // Other methods and functions
+    //--------------------------------------------------
 
     /**
      * @brief Assignment operator for none.
      */
-    virtual Section &operator=(none_t) {
-        nullify();
+    Section &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Section &ent);
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::NamedEntity<base::ISection>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &Section::link, valid::notFalse(), "link is not set!"),
-            valid::should(*this, &Section::repository, valid::notFalse(), "repository is not set!"),
-            valid::should(*this, &Section::mapping, valid::notFalse(), "mapping is not set!"),
-            valid::should(*this, &Section::sectionCount, valid::isGreater(0), "sections are not set!"),
-            valid::should(*this, &Section::propertyCount, valid::isGreater(0), "properties are not set!")
-        });
-        
-        return result.concat(result_base);
-    }
-
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Section &ent);
 
 private:
 
-    std::vector<Section> findDownstream(std::function<bool(Section)> filter) const;
+    std::vector<Section> findDownstream(const std::function<bool(Section)> &filter) const;
 
-    std::vector<Section> findUpstream(std::function<bool(Section)> filter) const;
+    std::vector<Section> findUpstream(const std::function<bool(Section)> &filter) const;
 
-    std::vector<Section> findSideways(std::function<bool(Section)> filter, const std::string &caller_id) const;
+    std::vector<Section> findSideways(const std::function<bool(Section)> &filter, const std::string &caller_id) const;
 
     size_t tree_depth() const;
 };

@@ -5,8 +5,8 @@ cmake_minimum_required (VERSION 2.8.10)
 project (nix CXX)
 
 set(VERSION_MAJOR 0)
-set(VERSION_MINOR 9)
-set(VERSION_PATCH 3)
+set(VERSION_MINOR 10)
+set(VERSION_PATCH 1)
 
 set(VERSION_ABI   1)
 
@@ -50,7 +50,7 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.49.0 REQUIRED date_time regex)
+find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
@@ -121,35 +121,46 @@ endif()
 
 
 ########################################
+# CLI
+
+file(GLOB NixCli_SOURCES "cli/*.cpp")
+file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
+include_directories("cli")
+
+add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
+if(NOT WIN32)
+  set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+endif()
+target_link_libraries(nix-tool nix)
+message(STATUS "CLI executable added")
+
+########################################
 # Tests
+
+enable_testing()
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+find_package(CppUnit)
+include_directories(${CPPUNIT_INCLUDE_DIR})
+
+file(GLOB Tests_SOURCES "test/Test*.cpp")
+
+add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+if(NOT WIN32)
+  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+endif()
+target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+
+foreach(test ${Tests_SOURCES})
+  get_filename_component(TestFileName ${test} NAME_WE)
+  string(REPLACE "Test" "" TestName ${TestFileName})
+  message(STATUS " Test added: ${TestName}")
+  add_test(${TestName} TestRunner ${TestName})
+endforeach(test)
 
 include(CTest)
 
-if(BUILD_TESTING)
-  enable_testing()
-
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
-  find_package(CppUnit)
-  include_directories(${CPPUNIT_INCLUDE_DIR})
-
-  file(GLOB Tests_SOURCES "test/Test*.cpp")
-
-  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
-  if(NOT WIN32)
-    #CppUnit uses auto_ptr which is deprecated, avoid getting warnings for that
-    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-  endif()
-
-  foreach(test ${Tests_SOURCES})
-    get_filename_component(TestFileName ${test} NAME_WE)
-    string(REPLACE "Test" "" TestName ${TestFileName})
-    message(STATUS " Test added: ${TestName}")
-    add_test(${TestName} TestRunner ${TestName})
-  endforeach(test)
-endif()
 
 ########################################
 # Install
@@ -165,6 +176,26 @@ install(DIRECTORY include/ DESTINATION include)
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
 install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 
+
+########################################
+
+# CPack for Win
+
+if(WIN32)
+  set(CPACK_GENERATOR NSIS)
+  set(CPACK_PACKAGE_NAME "nix")
+  set(CPACK_PACKAGE_VENDOR "CMake.org")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
+  set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+  set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
+  set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
+  set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY "nix")
+  set(CPACK_NSIS_MODIFY_PATH ON)
+  set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+  set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+  INCLUDE(CPack)
+endif()
 
 ########################################
 

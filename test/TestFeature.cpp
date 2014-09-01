@@ -3,23 +3,21 @@
 #include <nix/util/util.hpp>
 #include "TestFeature.hpp"
 
+#include <nix/valid/validate.hpp>
+
 using namespace std;
 using namespace nix;
+using namespace valid;
 
 
 void TestFeature::setUp() {
     file = File::open("test_feature.h5", FileMode::Overwrite);
     block = file.createBlock("featureTest","test");
 
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (auto it = array_names.begin(); it != array_names.end(); it++) {
-        refs.push_back(block.createDataArray(*it, "reference"));
-    }
-
-    data_array = block.createDataArray("featureTest", "Test");
-    tag = block.createSimpleTag("featureTest", "Test", refs);
+    data_array = block.createDataArray("featureTest", "Test",
+                                       DataType::Double, nix::NDSize({ 0 }));
+    
+    tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
 
 
@@ -32,13 +30,15 @@ void TestFeature::tearDown() {
 void TestFeature::testValidate() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     
-    std::cout << std::endl << rp.validate();
+    valid::Result result = validate(rp);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void TestFeature::testId() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-    CPPUNIT_ASSERT(rp.id().size() == 24);
+    CPPUNIT_ASSERT(rp.id().size() == 36);
     tag.deleteFeature(rp.id());
 }
 
@@ -61,10 +61,23 @@ void TestFeature::testLinkType(){
 
 void TestFeature::testData() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-    DataArray da_2 = block.createDataArray("array2", "Test");
+    DataArray da_2 = block.createDataArray("array2", "Test",
+                                           DataType::Double, nix::NDSize({ 0 }));
     CPPUNIT_ASSERT(rp.data().id() == data_array.id());
     rp.data(da_2);
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     block.deleteDataArray(da_2.id());
+    // make sure link is gone with deleted data array
+    CPPUNIT_ASSERT_THROW(rp.data(), std::runtime_error);
     tag.deleteFeature(rp.id());
+}
+
+void TestFeature::testOperator()
+{
+    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+
+    CPPUNIT_ASSERT(rp != none);
+    rp = none;
+    CPPUNIT_ASSERT(rp == false);
+    CPPUNIT_ASSERT(rp == none);
 }

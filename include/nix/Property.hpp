@@ -16,7 +16,6 @@
 #include <nix/Value.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -32,7 +31,7 @@ namespace nix {
  * to the {@link nix::Section} entity, mapping information can be provided
  * using the {@link mapping} field.
  */
-class NIXAPI Property : virtual public base::IProperty, public base::Entity<base::IProperty> {
+class NIXAPI Property : public base::Entity<base::IProperty> {
 
 public:
 
@@ -97,60 +96,108 @@ public:
     // Attribute getter and setter
     //--------------------------------------------------
 
-
-    void name(const std::string &name) {
-        backend()->name(name);
-    }
-
+    /**
+     * @brief Getter for the name of the property.
+     *
+     * The {@link name} of an property serves as a human readable identifier. It is not obliged
+     * to be unique. However it is strongly recommended to use unique name inside one specific
+     * {@link nix::Section}.
+     *
+     * @return string The name of the property.
+     */
     std::string name() const {
         return backend()->name();
     }
 
+    /**
+     * @brief Setter for the definition of the property.
+     *
+     * @param definition The definition of the property.
+     */
     void definition(const std::string &definition) {
         backend()->definition(definition);
     }
 
+    /**
+     * @brief Getter for the definition of the property.
+     *
+     * The {@link definition} is an optional property that allows the user to add
+     * a freely assignable textual definition to the property.
+     *
+     * @return The definition of the property.
+     */
     boost::optional<std::string> definition() const {
         return backend()->definition();
     }
 
-    void definition(const none_t t)
-    {
+    /**
+     * @brief Deleter for the definition of the property.
+     */
+    void definition(const none_t t) {
         backend()->definition(t);
     }
 
+    /**
+     * @brief Set the mapping information for this Property.
+     *
+     * The mapping defines how this Property should be treated in a mapping procedure. The mapping
+     * is provided in form of an url pointing to the definition of a section into which this
+     * property should be mapped.
+     *
+     * @param mapping   The mapping information.
+     */
     void mapping(const std::string &mapping) {
         backend()->mapping(mapping);
     }
 
+    /**
+     * @brief Getter for the mapping information stored in this Property.
+     *
+     * @return The mapping for the Property.
+     */
     boost::optional<std::string> mapping() const {
         return backend()->mapping();
     }
 
+    /**
+     * @brief Deletes the mapping information.
+     *
+     * @param t         None
+     */
     void mapping(const boost::none_t t) {
         backend()->mapping(t);
     }
 
-    boost::optional<DataType> dataType() const {
+    /**
+     * @brief Returns the data type of the stored Values.
+     *
+     * @return The data type.
+     */
+    DataType dataType() const {
         return backend()->dataType();
     }
 
-    void unit(const std::string &unit) {
-        if (backend()->valueCount() > 0 && backend()->unit()) {
-            throw std::runtime_error("Cannot change unit of a not-empty property!");
-        }
+    /**
+     * @brief Set the unit for all stored values.
+     *
+     * @param unit      The unit for all values.
+     */
+    void unit(const std::string &unit);
 
-        std::string clean_unit = util::deblankString(unit);
-        if (!(util::isSIUnit(clean_unit) || util::isCompoundSIUnit(clean_unit))) {
-            throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
-        }
-        backend()->unit(clean_unit);
-    }
-
+    /**
+     * @brief Returns the unit for all stored values.
+     *
+     * @return The unit for all values.
+     */
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
 
+    /**
+     * @brief Remove the unit.
+     *
+     * @param t         None
+     */
     void unit(const boost::none_t t) {
         return backend()->unit(t);
     }
@@ -159,22 +206,43 @@ public:
     // Methods for Value access
     //--------------------------------------------------
 
+    /**
+     * @brief Deletes all values from the property.
+     */
     void deleteValues() {
         backend()->deleteValues();
     }
 
+    /**
+     * @brief Get the number of values of the property.
+     *
+     * @return The number of values.
+     */
     size_t valueCount() const {
         return backend()->valueCount();
     }
 
+    /**
+     * @brief Set the values of the property.
+     *
+     * @param values    The values to set.
+     */
     void values(const std::vector<Value> &values) {
         backend()->values(values);
     }
 
+    /**
+     * @brief Get all values of the property.
+     *
+     * @return The values of the property.
+     */
     std::vector<Value> values(void) const {
         return backend()->values();
     }
 
+    /**
+     * @brief Deletes all values from the property.
+     */
     void values(const boost::none_t t) {
         backend()->values(t);
     }
@@ -183,43 +251,35 @@ public:
     // Operators and other functions
     //------------------------------------------------------
 
-    int compare(const IProperty &other) const {
-        return backend()->compare(other);
+    /**
+     * @brief Compare two properties.
+     *
+     * @param other The property to compare with.
+     *
+     * @return > 0 if the property is larger that other, 0 if both are
+     * equal, and < 0 otherwise.
+     */
+    int compare(const Property &other) const {
+        return backend()->compare(other.impl());
     }
 
     /**
      * @brief Assignment operator for none.
      */
-    virtual Property &operator=(none_t) {
-        nullify();
+    Property &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const Property &ent) {
-        out << "Property: {name = " << ent.name() << "}";
-        return out;
-    }
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Property &ent);
 
+    /**
+     * @brief Destructor
+     */
     virtual ~Property() {}
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::Entity<base::IProperty>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &Property::mapping, valid::notFalse(), "mapping is not set!"),
-            valid::should(*this, &Property::unit, valid::notFalse(), "unit is not set!"),
-            valid::should(*this, &Property::values, valid::notEmpty(), "values are not set!")
-            // TODO: dataType to be tested too?
-        });
-        
-        return result.concat(result_base);
-    }
 
 };
 

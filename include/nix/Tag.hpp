@@ -6,19 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#ifndef NIX_SIMPLE_TAG_H
-#define NIX_SIMPLE_TAG_H
+#ifndef NIX_TAG_H
+#define NIX_TAG_H
 
 #include <algorithm>
 
 #include <nix/base/EntityWithSources.hpp>
-#include <nix/base/ISimpleTag.hpp>
-#include <nix/Section.hpp>
+#include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
 
 #include <nix/Platform.hpp>
-#include <nix/valid/validate.hpp>
 
 namespace nix {
 
@@ -46,18 +44,18 @@ namespace nix {
  * This could be for example data that represents a stimulus (e.g. an image or a
  * signal) that was applied in a certain interval during the recording.
  */
-class NIXAPI SimpleTag : virtual public base::ISimpleTag, public base::EntityWithSources<base::ISimpleTag> {
+class NIXAPI Tag : public base::EntityWithSources<base::ITag> {
 
 public:
 
     /**
-     * @brief Constructor that creates an uninitialized SimpleTag.
+     * @brief Constructor that creates an uninitialized Tag.
      *
      * Calling any method on an uninitialized tag will throw a {@link nix::UninitializedEntity}
      * exception. The following code illustrates how to check if a tag is initialized:
      *
      * ~~~
-     * SimpleTag e = ...;
+     * Tag e = ...;
      * if (e) {
      *     // e is initialised
      * } else {
@@ -65,7 +63,7 @@ public:
      * }
      * ~~~
      */
-    SimpleTag()
+    Tag()
         : EntityWithSources()
     {
     }
@@ -73,13 +71,13 @@ public:
     /**
      * @brief Copy constructor.
      *
-     * Copying of all NIX front facing objects like SimpleTag is a rather cheap operation.
+     * Copying of all NIX front facing objects like Tag is a rather cheap operation.
      * Semantically this is equivalent to the creation of another reference to the original
      * object.
      *
      * @param other     The tag to copy.
      */
-    SimpleTag(const SimpleTag &other)
+    Tag(const Tag &other)
         : EntityWithSources(other.impl())
     {
     }
@@ -90,7 +88,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SimpleTag(const std::shared_ptr<base::ISimpleTag> &p_impl)
+    Tag(const std::shared_ptr<base::ITag> &p_impl)
         : EntityWithSources(p_impl)
     {
     }
@@ -101,7 +99,7 @@ public:
      *
      * This constructor should only be used in the back-end.
      */
-    SimpleTag(std::shared_ptr<base::ISimpleTag> &&ptr)
+    Tag(std::shared_ptr<base::ITag> &&ptr)
         : EntityWithSources(std::move(ptr))
     {
     }
@@ -110,48 +108,80 @@ public:
     // Element getters and setters
     //--------------------------------------------------
 
+    /**
+     * @brief Gets the units of the tag.
+     *
+     * The units are applied to all values for position and extent in order to calculate the
+     * right position vectors in referenced data arrays.
+     *
+     * @return All units of the tag as a vector.
+     */
     std::vector<std::string> units() const {
         return backend()->units();
     }
 
-    void units(const std::vector<std::string> &units) {
-        std::vector<std::string> sanitized;
-        sanitized.reserve(units.size());
-        std::transform(begin(units), end(units), std::back_inserter(sanitized), [](const std::string &x) {
-                std::string unit = util::unitSanitizer(x);
-                if (unit.length() > 0 && (unit != "none" && !(util::isSIUnit(unit)))) {
-                    std::string msg = "Unit " + unit +" is not a SI unit. Note: so far only atomic SI units are supported.";
-                    throw InvalidUnit(msg, "SimpleTag::units(vector<string> &units)");
-                }
-                return unit;
-            });
-        backend()->units(sanitized);
-    }
+    /**
+     * @brief Sets the units of a tag.
+     *
+     * @param units     All units as a vector.
+     */
+    void units(const std::vector<std::string> &units);
 
+    /**
+     * @brief Deleter for the units of a tag.
+     *
+     * @param t         None
+     */
     void units(const boost::none_t t) {
         backend()->units(t);
     }
 
+    /**
+     * @brief Gets the position of a tag.
+     *
+     * The position is a vector that points into referenced DataArrays.
+     *
+     * @return The position vector.
+     */
     std::vector<double> position() const {
         return backend()->position();
     }
 
+    /**
+     * @brief Sets the position of a tag.
+     *
+     * @param position  The position vector.
+     */
     void position(const std::vector<double> &position) {
         backend()->position(position);
     }
 
-    void position(const boost::none_t t) {
-        backend()->position(t);
-    }
-
+    /**
+     * @brief Gets the extent of a tag.
+     *
+     * Given a specified position vector, the extent vector defined the size
+     * of a region of interest in the referenced DataArray entities.
+     *
+     * @return The extent of the tag.
+     */
     std::vector<double> extent() const {
         return backend()->extent();
     }
 
+    /**
+     * @brief Sets the extent of a tag.
+     *
+     * @param extent    The extent vector.
+     */
     void extent(const std::vector<double> &extent) {
         backend()->extent(extent);
     }
 
+    /**
+     * @brief Deleter for the extent of a tag.
+     *
+     * @param t         None
+     */
     void extent(const boost::none_t t) {
         backend()->extent(t);
     }
@@ -160,6 +190,13 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
+    /**
+     * @brief Checks whether a DataArray is referenced by the tag.
+     *
+     * @param id        The id of the DataArray to check.
+     *
+     * @return True if the data array is referenced, false otherwise.
+     */
     bool hasReference(const std::string &id) const {
         return backend()->hasReference(id);
     }
@@ -171,21 +208,35 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasReference(const DataArray &reference) const {
-        if (reference == none) {
-            throw std::runtime_error("SimpleTag::hasReference: Emty DataArray entity given!");
-        }
-        return backend()->hasReference(reference.id());
-    }
+    bool hasReference(const DataArray &reference) const;
 
+    /**
+     * @brief Gets the number of referenced DataArray entities of the tag.
+     *
+     * @return The number of referenced data arrays.
+     */
     size_t referenceCount() const {
         return backend()->referenceCount();
     }
 
+    /**
+     * @brief Gets a specific referenced DataArray from the tag.
+     *
+     * @param id        The id of the referenced DataArray.
+     *
+     * @return The referenced data array.
+     */
     DataArray getReference(const std::string &id) const {
         return backend()->getReference(id);
     }
 
+    /**
+     * @brief Gets a referenced DataArray by its index.
+     *
+     * @param index     The index of the DataArray.
+     *
+     * @return The referenced data array.
+     */
     DataArray getReference(size_t index) const {
         return backend()->getReference(index);
     }
@@ -195,13 +246,13 @@ public:
      *
      * @param reference The DataArray to add.
      */
-    void addReference(const DataArray &reference) {
-        if (reference == none) {
-            throw std::runtime_error("SimpleTag::addReference: Empty DataArray entity given!");
-        }
-        backend()->addReference(reference.id());
-    }
+    void addReference(const DataArray &reference);
 
+    /**
+     * @brief Add a DataArray to the list of referenced data of the tag.
+     *
+     * @param id        The id of the DataArray to add.
+     */
     void addReference(const std::string &id) {
         backend()->addReference(id);
     }
@@ -216,35 +267,54 @@ public:
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeReference(const DataArray &reference) {
-        if(reference == none) {
-            throw std::runtime_error("SimpleTag::removeReference: Empty DataArray entity given!");
-        }
-        return backend()->removeReference(reference.id());
-    }
+    bool removeReference(const DataArray &reference);
 
+    /**
+     * @brief Remove a DataArray from the list of referenced data of the tag.
+     *
+     * This method just removes the association between the data array and the
+     * tag, the data array itself will not be removed from the file.
+     *
+     * @param id        The id of the DataArray to remove.
+     *
+     * @returns True if the DataArray was removed, false otherwise.
+     */
     bool removeReference(const std::string &id) {
         return backend()->removeReference(id);
     }
 
     /**
-     * @brief Get referenced data arrays associated with this simple tag.
+     * @brief Get referenced data arrays associated with this tag.
      *
      * The parameter filter can be used to filter data arrays by various
-     * criteria. By default a filter is used that accepts all data arrays.
+     * criteria.
      *
      * @param filter    A filter function.
      *
      * @return A vector containing the matching data arrays.
      */
-    std::vector<DataArray> references(util::Filter<DataArray>::type filter = util::AcceptAll<DataArray>()) const
+    std::vector<DataArray> references(const util::Filter<DataArray>::type &filter) const;
+
+    /**
+     * @brief Get all referenced data arrays associated with this tag.
+     *
+     * Always uses filter that accepts all sources.
+     *
+     * @return The filtered dimensions as a vector
+     */
+    std::vector<DataArray> references() const
     {
-        auto f = [this] (size_t i) { return getReference(i); };
-        return getEntities<DataArray>(f,
-                                      referenceCount(),
-                                      filter);
+        return references(util::AcceptAll<DataArray>());
     }
 
+    /**
+     * @brief Sets all referenced DataArray entities.
+     *
+     * Previously referenced data arrays, that are not in the references vector
+     * will be removed.
+     *
+     * @param references    All referenced arrays.
+     */
     void references(const std::vector<DataArray> &references) {
         backend()->references(references);
     }
@@ -253,6 +323,13 @@ public:
     // Methods concerning features.
     //--------------------------------------------------
 
+    /**
+     * @brief Checks if a specific feature exists on the tag.
+     *
+     * @param id        The id of a feature.
+     *
+     * @return True if the feature exists, false otherwise.
+     */
     bool hasFeature(const std::string &id) const {
         return backend()->hasFeature(id);
     }
@@ -264,21 +341,36 @@ public:
      *
      * @return True if the feature exists, false otherwise.
      */
-    bool hasFeature(const Feature &feature) const {
-        if(feature == none) {
-            throw std::runtime_error("SimpleTag::hasFeature: Empty DataArray entity given!");
-        }
-        return backend()->hasFeature(feature.id());
-    }
+    bool hasFeature(const Feature &feature) const;
 
+    /**
+     * @brief Gets the number of features in this block.
+     *
+     * @return The number of features.
+     */
     size_t featureCount() const {
         return backend()->featureCount();
     }
 
+    /**
+     * @brief Retrieves a specific feature from the tag.
+     *
+     * @param id        The id of the feature.
+     *
+     * @return The feature with the specified id. If it doesn't exist
+     *         an exception will be thrown.
+     */
     Feature getFeature(const std::string &id) const {
         return backend()->getFeature(id);
     }
 
+    /**
+     * @brief Retrieves a specific feature from the tag.
+     *
+     * @param index        The index of the feature.
+     *
+     * @return The feature with the specified index.
+     */
     Feature getFeature(size_t index) const {
         return backend()->getFeature(index);
     }
@@ -293,13 +385,7 @@ public:
      *
      * @return A vector containing the matching features.
      */
-    std::vector<Feature> features(util::Filter<Feature>::type filter = util::AcceptAll<Feature>()) const
-    {
-        auto f = [this] (size_t i) { return getFeature(i); };
-        return getEntities<Feature>(f,
-                                    featureCount(),
-                                    filter);
-    }
+    std::vector<Feature> features(const util::Filter<Feature>::type &filter = util::AcceptAll<Feature>()) const;
 
     /**
      * @brief Create a new feature.
@@ -309,17 +395,27 @@ public:
      *
      * @return The created feature object.
      */
-    Feature createFeature(const DataArray &data, LinkType link_type) {
-        if(data == none) {
-            throw std::runtime_error("SimpleTag::createFeature: Empty DataArray entity given!");
-        }
-        return backend()->createFeature(data.id(), link_type);
-    }
+    Feature createFeature(const DataArray &data, LinkType link_type);
 
+    /**
+     * @brief Create a new feature.
+     *
+     * @param data_array_id     The id of the data array of this feature.
+     * @param link_type         The link type of this feature.
+     *
+     * @return The created feature object.
+     */
     Feature createFeature(const std::string &data_array_id, LinkType link_type) {
         return backend()->createFeature(data_array_id, link_type);
     }
 
+    /**
+     * @brief Deletes a feature from the tag.
+     *
+     * @param id        The id of the feature to remove.
+     *
+     * @return True if the feature was removed, false otherwise.
+     */
     bool deleteFeature(const std::string &id) {
         return backend()->deleteFeature(id);
     }
@@ -331,55 +427,28 @@ public:
      *
      * @return True if the feature was removed, false otherwise.
      */
-    bool deleteFeature(const Feature &feature) {
-        if (feature == none) {
-            throw std::runtime_error("SimpleTag::deleteFeature: Empty Feature entity given!");
-        }
-        return backend()->deleteFeature(feature.id());
-    }
+    bool deleteFeature(const Feature &feature);
 
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
 
     /**
-     * @brief Assignment operator to none.
+     * @brief Assignment operator for none.
      */
-    virtual SimpleTag &operator=(none_t) {
-        nullify();
+    Tag &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
         return *this;
     }
 
     /**
      * @brief Output operator
      */
-    friend std::ostream& operator<<(std::ostream &out, const SimpleTag &ent) {
-        out << "SimpleTag: {name = " << ent.name();
-        out << ", type = " << ent.type();
-        out << ", id = " << ent.id() << "}";
-        return out;
-    }
-    
-    //------------------------------------------------------
-    // Validation
-    //------------------------------------------------------
-    
-    valid::Result validate() {
-        valid::Result result_base = base::EntityWithSources<base::ISimpleTag>::validate();
-        valid::Result result = valid::validate(std::initializer_list<valid::condition> {
-            valid::should(*this, &SimpleTag::extent, valid::notEmpty(), "extent is not set!"),
-            valid::should(*this, &SimpleTag::position, valid::notEmpty(), "position is not set!"),
-            valid::should(*this, &SimpleTag::units, valid::notEmpty(), "units are not set!"),
-            valid::must(*this, &SimpleTag::referenceCount, valid::isGreater(0), "references are not set!"),            
-            valid::should(*this, &SimpleTag::featureCount, valid::isGreater(0), "features are not set!")
-        });
-        
-        return result.concat(result_base);
-    }
-    
+    NIXAPI friend std::ostream& operator<<(std::ostream &out, const Tag &ent);
+
 };
 
 
 } // namespace nix
 
-#endif // NIX_SIMPLE_TAG_H
+#endif // NIX_TAG_H
