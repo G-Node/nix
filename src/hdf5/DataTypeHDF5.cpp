@@ -40,6 +40,8 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
         case DataType::Float:  return H5::PredType::IEEE_F32LE;
         case DataType::Double: return H5::PredType::IEEE_F64LE;
         case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+        //shall we create our own OPAQUE type?
+        case DataType::Opaque: return H5::PredType::NATIVE_OPAQUE;
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;
@@ -72,6 +74,7 @@ H5::DataType data_type_to_h5_memtype(DataType dtype) {
         case DataType::Float:  return H5::PredType::NATIVE_FLOAT;
         case DataType::Double: return H5::PredType::NATIVE_DOUBLE;
         case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+        case DataType::Opaque: return H5::PredType::NATIVE_OPAQUE;
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;
