@@ -25,7 +25,7 @@ Dependencies
    - From within the build folder execute:
      ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..```
    - From within the hdf5\build folder execute:
-       Build HDF5 via: `> cmake --build .. --config Release`
+       Build HDF5 via: `> cmake --build . --config Release`
    - Install Nullsoft installer version 2.x from: http://nsis.sourceforge.net - newer versions 3.x will _not_ work!
    - From within the hdf5 folder execute:
        Create a installer for HDF5 via: `> cpack -C Release CPackConfig.cmake`
