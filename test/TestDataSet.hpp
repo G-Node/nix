@@ -39,6 +39,7 @@ public:
     void testValueIO();
     void testNDArrayIO();
     void testValArrayIO();
+    void testOpaqueIO();
     void tearDown();
 
 private:
@@ -57,6 +58,7 @@ private:
     CPPUNIT_TEST(testValueIO);
     CPPUNIT_TEST(testNDArrayIO);
     CPPUNIT_TEST(testValArrayIO);
+    CPPUNIT_TEST(testOpaqueIO);
     CPPUNIT_TEST_SUITE_END ();
 };
 

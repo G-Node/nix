@@ -381,6 +381,20 @@ void TestDataSet::testValArrayIO() {
     }
 }
 
+void TestDataSet::testOpaqueIO() {
+    char bytes[10];
+    std::iota(std::begin(bytes), std::end(bytes), 0);
+    NDSize size = {sizeof(bytes)};
+
+    DataSet ds = nix::hdf5::DataSet::create(h5group, "OpaqueB10", DataType::Opaque, size);
+    ds.write(DataType::Opaque, size, bytes);
+
+    char bytes_read[10];
+    ds.read(DataType::Opaque, size, bytes_read);
+
+    CPPUNIT_ASSERT(memcmp(bytes, bytes_read, sizeof(bytes)) == 0);
+}
+
 void TestDataSet::tearDown() {
     h5group.close();
     h5file.close();
