@@ -35,7 +35,14 @@ endif()
 #########################################
 # HDF-5
 # FIND_PACKAGE (HDF5 NAMES hdf5)
-find_package (HDF5 REQUIRED COMPONENTS C CXX)
+if(WIN32)
+  set(HDF5_USE_STATIC_LIBS ON)
+  set(HDF5_USE_STATIC_LIBRARIES ON)
+  find_package (HDF5 NO_MODULE)
+else()
+  set(HDF5_USE_STATIC_LIBS OFF)
+  find_package (HDF5 REQUIRED COMPONENTS C CXX)
+endif()
 include_directories (${HDF5_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
 
@@ -80,14 +87,6 @@ set_target_properties(nix PROPERTIES
 
 if(WIN32)
   set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
-	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
-	                 COMMENT "Copying HDF5 C DLL")
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
-	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
-	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
 
@@ -180,11 +179,14 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 ########################################
 
 # CPack for Win
-
 if(WIN32)
+  install(TARGETS nix
+  ARCHIVE
+  DESTINATION lib
+  COMPONENT libraries)
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
-  set(CPACK_PACKAGE_VENDOR "CMake.org")
+  set(CPACK_PACKAGE_VENDOR "g-node.org")
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
   set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
   set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
