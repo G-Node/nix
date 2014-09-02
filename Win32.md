@@ -23,14 +23,15 @@ Dependencies
    - Create a build sub-folder (e.g. "build") in the HDF5 folder
    - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
    - From within the build folder execute:
-     ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF ..```
+     ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..```
    - From within the hdf5 folder execute:
        Build HDF5 via: `> cmake --build . --config Release`
    - Install Nullsoft installer version 2.x from: http://nsis.sourceforge.net - newer versions 3.x will _not_ work!
    - From within the hdf5 folder execute:
        Create a installer for HDF5 via: `> cpack -C Release CPackConfig.cmake`
-   - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. "HDF5-1.8.12-win64.exe". 
-   - Set `HDF5_ROOT` to HDF5 directory (`> set HDF5_ROOT=<DIRECTORY>` and `> setx HDF5_ROOT <DIRECTORY> /m`) and add HDF5 bin, lib & include dirs to PATH, e.g.: "C:\Program Files\HDF5\1.8.12\bin", "C:\Program Files\HDF5\1.8.12\lib", "C:\Program Files\HDF5\1.8.12\include"
+   - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. "HDF5-1.8.13-win64.exe". 
+   - Set `HDF5_ROOT` to HDF5 directory (`> set HDF5_ROOT=<DIRECTORY>` and `> setx HDF5_ROOT <DIRECTORY> /m`) and make sure that HDF5 bin, lib & include dirs are added to PATH, e.g.: "C:\Program Files\HDF5\1.8.13\bin", "C:\Program Files\HDF5\1.8.13\lib", "C:\Program Files\HDF5\1.8.13\include"
+   - Set `HDF5_DIR` to `<HDF5_ROOT>\cmake\hdf5` (`> set HDF5_DIR=<HDF5_ROOT>\cmake\hdf5` and `> setx HDF5_DIR <HDF5_ROOT>\cmake\hdf5 /m`) 
 
 2) **Boost**:
    - Obtain sources from: http://www.boost.org/users/download/
