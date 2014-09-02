@@ -40,6 +40,7 @@ NIXAPI enum class DataType {
     String,
     Date,
     DateTime,
+    Opaque,
 
     Nothing = -1
 };
