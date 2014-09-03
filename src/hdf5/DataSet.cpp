@@ -337,6 +337,8 @@ DataType DataSet::dataType(void) const
         sign = H5Tget_sign(vtype);
 
         H5Tclose(vtype);
+    } else if (ftclass == H5T_OPAQUE) {
+      return DataType::Opaque;
     } else {
         size = H5Tget_size(ftype);
         sign = H5Tget_sign(ftype);

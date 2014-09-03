@@ -12,6 +12,8 @@
 #include <nix/hdf5/Selection.hpp>
 #include <nix/DataType.hpp>
 
+#include <string.h>
+
 using namespace nix; //quick fix for now
 using namespace nix::hdf5;
 
@@ -379,6 +381,20 @@ void TestDataSet::testValArrayIO() {
         CPPUNIT_ASSERT_DOUBLES_EQUAL(va_double[i], va_double1[i],
                                      std::numeric_limits<double>::epsilon());
     }
+}
+
+void TestDataSet::testOpaqueIO() {
+    char bytes[10];
+    std::iota(std::begin(bytes), std::end(bytes), 0);
+    NDSize size = {sizeof(bytes)};
+
+    DataSet ds = nix::hdf5::DataSet::create(h5group, "OpaqueB10", DataType::Opaque, size);
+    ds.write(DataType::Opaque, size, bytes);
+
+    char bytes_read[10];
+    ds.read(DataType::Opaque, size, bytes_read);
+
+    CPPUNIT_ASSERT(memcmp(bytes, bytes_read, sizeof(bytes)) == 0);
 }
 
 void TestDataSet::tearDown() {
