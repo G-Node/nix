@@ -12,6 +12,8 @@
 #include <nix/hdf5/Selection.hpp>
 #include <nix/DataType.hpp>
 
+#include <string.h>
+
 using namespace nix; //quick fix for now
 using namespace nix::hdf5;
 
