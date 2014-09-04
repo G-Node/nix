@@ -15,7 +15,7 @@ Dependencies
     <br><br>Extra stuff<br>
     - If you want a "Developer Command Prompt" inside the "Visual Studio->Tools" menu (oldschool way) do the following:
       - Open "Tools->External Tools" and click "Add"
-      - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars64.bat"`<br><br>
+      - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\VC\bin\vcvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\VC\bin\x86_amd64\vcvarsx86_amd64.bat"`<br><br>
   - ***CMake***
     - Obtain from http://www.cmake.org and install the binary for windows
     - If "cmake" not added to PATH (command not found when typed in cmd window): reboot. If still missing follow these steps: https://www.java.com/en/download/help/path.xml
