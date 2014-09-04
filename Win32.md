@@ -60,7 +60,7 @@ Dependencies
   - Open src/CppUnitLibraries.dsw in VS2013 (and agree to conversion, ignore error on creation of backup file)
   - Go to BUILD->Configuration Manage and :three::two: set build configuration to `Release` & platform to `win32` :six::four: set build configuration to `Release` & platform to `x64`.
   - Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> C/C++ -> Code Generation -> Runtime Library" is set to "Multi-threaded DLL (/MD)
-  - :six::four: Only if you are building 64-bit: right click each item in the solution and select "Properties"->"Configuration Properties"->"Librarian" or "Linker"->"General"->"Output File" and change it by adding the prefix "$(SolutionDir)$(Platform)". E.g. "Release\cppunit.lib" should change to "$(SolutionDir)$(Platform)\Release\cppunit.lib". Do this for all items in solution.
+  - :six::four: Only if you are building 64-bit: right click each item in the solution and select "Properties"->"Configuration Properties"->"Librarian" or "Linker"->"General"->"Output File" and change it by adding the prefix "$(SolutionDir)$(Platform)". E.g. "Release\cppunit.lib" should change to "$(SolutionDir)$(Platform)\Release\cppunit.lib". IMPORTANT: delete any leading `.` (dot) in the paths.  Do this for all items in solution.
   - Now try to build the solution at least once: ignore the errors you get, we just need a part to build which should work!
   - Add cppunit include dir to global PATH, e.g.: `C:\Users\B\opt\cppunit\include`
   <br><br>Troubleshooting - If you get into trouble try this<br>
