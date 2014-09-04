@@ -15,8 +15,7 @@ Dependencies
     <br><br>Extra stuff<br>
     - If you want a "Developer Command Prompt" inside the "Visual Studio->Tools" menu (oldschool way) do the following:
       - Open "Tools->External Tools" and click "Add"
-      - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars64.bat"`
-
+      - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars64.bat"`<br><br>
   - ***CMake***
     - Obtain from http://www.cmake.org and install the binary for windows
     - If "cmake" not added to PATH (command not found when typed in cmd window): reboot. If still missing follow these steps: https://www.java.com/en/download/help/path.xml
@@ -34,42 +33,45 @@ Dependencies
   - Install Nullsoft installer version 2.x from: http://nsis.sourceforge.net - newer versions 3.x will _not_ work!
   - From within the hdf5 folder execute:
     Create a installer for HDF5 via: `> cpack -C Release CPackConfig.cmake`
-  - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. :three::two:`HDF5-1.8.13-win32.exe` or :six::four:`HDF5-1.8.13-win64.exe`. Install inside `C:\opt\hdf5`. (Or any folder you like, but then you are on your own regarding paths & environment vars)
+  - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. :three::two:`HDF5-1.8.13-win32.exe` or :six::four:`HDF5-1.8.13-win64.exe`. <br>Install inside `C:\opt\hdf5`. (Or any folder you like, but then you are on your own regarding paths & environment vars)
+  - Set `HDF5_DIR` to `C:\opt\hdf5\cmake\hdf5` (`> set HDF5_DIR=C:\opt\hdf5\cmake\hdf5` and `> setx HDF5_DIR C:\opt\hdf5\cmake\hdf5 /m`)
   <br><br>Troubleshooting - If you get errors try this<br>
   - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
 
 3. **Boost**:
   - Obtain sources from: http://www.boost.org/users/download/
   - Boostrap with: `> bootstrap`
-  - Build needed libraries via (and install to PREFIX, change "address-model=64" to ="32" for 32-bit build):
+  - Build & install needed libraries via (installs to `C:\opt\boost`, choose any folder you like, but then you are on your own regarding paths & environment vars):<br>
+  :three::two:
     ```
-     > .\b2 --toolset=msvc-12.0 threading=multi architecture=x86 address-model=64
-     --prefix=<PREFIX> --libdir=<PREFIX>\lib --include-dir=<PREFIX>\include
-     -j4 --build-type=complete --with-date_time --with-regex --with-filesystem 
-     --with-program_options --with-system install
+     > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=32 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
+    ```<br>
+  :six::four:
     ```
-  - Set `BOOST_ROOT` to PREFIX (`> set BOOST_ROOT=<PREFIX>` and `> setx BOOST_ROOT <PREFIX> /m`) and add BOOST root & include dirs to PATH, e.g.: "C:\Users\B\opt\boost", "C:\Users\B\opt\boost\include\boost-1_55\boost"
+     > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=64 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
+    ```
+   - Set `BOOST_ROOT` to `C:\opt\boost` (`> set BOOST_ROOTC:\opt\boost` and `> setx BOOST_ROOT C:\opt\boost /m`)
 
 4. **CppUnit**:
   - Obtain sources: http://sourceforge.net/apps/mediawiki/cppunit/
   - Use 7-zip to extract ".tar.gz" file: http://www.7-zip.org/
   - Open src/CppUnitLibraries.dsw in VS2013 (and agree to conversion, ignore error on creation of backup file)
-  - Set build configratuion to Release via: BUILD->Configuration Manager
-  - Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> C/C++ -> Code Generation -> Runtime Library" is set to "Multi-threaded DLL (/MD)"
-  - If you are building 64-bit: use Configuration Manager and set Platform to "x64" for all entries
-  - If you are building 64-bit: right click each item in the solution and select "Properties"->"Configuration Properties"->"Librarian" or "Linker"->"General"->"Output File" and change it by adding the prefix "$(SolutionDir)$(Platform)". E.g. "Release\cppunit.lib" should change to "$(SolutionDir)$(Platform)\Release\cppunit.lib". Do this for all items in solution.
+  - Go to BUILD->Configuration Manage and :three::two: set build configuration to `Release` & platform to `win32` :six::four: set build configuration to `Release` & platform to `x64`.
+  - Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> C/C++ -> Code Generation -> Runtime Library" is set to "Multi-threaded DLL (/MD)
+  - :six::four: Only if you are building 64-bit: right click each item in the solution and select "Properties"->"Configuration Properties"->"Librarian" or "Linker"->"General"->"Output File" and change it by adding the prefix "$(SolutionDir)$(Platform)". E.g. "Release\cppunit.lib" should change to "$(SolutionDir)$(Platform)\Release\cppunit.lib". Do this for all items in solution.
   - Now try to build the solution at least once: ignore the errors you get, we just need a part to build which should work!
-  - Add cppunit include dir to PATH, e.g.: "C:\Users\B\opt\cppunit\include"
-  <br><br>The following point can most likely be ignored unless you can't get the necessary parts of cppunit to build:<br>
+  - Add cppunit include dir to global PATH, e.g.: `C:\Users\B\opt\cppunit\include`
+  <br><br>Troubleshooting - If you get into trouble try this<br>
   - If you get errors about "Multibyte Character Set" being used, try the following measures: 
     - Download and install "Multibyte MFC Library for Visual Studio 2013" from: https://www.microsoft.com/en-us/download/details.aspx?id=40770
     - If still getting errors (even after reboot): Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> General -> Character Set" is set to "Use Unicode Character set"
 
 5. **Nix**:
+<br>!!! IMPORTANT !!! : close and restart the "Command Prompt" you are in.
   - Obtain sources from git (https://github.com/G-Node/nix)
-  - Create build folder (e.g. nix/build)
-  - Run CMake: `> cmake .. -G"Visual Studio 12 Win64"`
-  - Open "nix.sln" with Visual Studio, go to "Configuration Manager" and set config to "Release" and build the solution. Or build via CMake: `> cmake --build . --config Release`
+  - Create build folder (e.g. "build")
+  - Run CMake from build folder: :three::two:`> cmake .. -G"Visual Studio 12"` or :six::four:`> cmake .. -G"Visual Studio 12 Win64"`
+  - Open `nix.sln` with Visual Studio, go to "Configuration Manager" and set config to `Release` and platform to :three::two: `win32` or :six::four:`x64`. If you want the nix installer to be built too, make `PACKAGE` checked in the `build` column. Now build via "Build->Build Solution" (You can also build via CMake: `> cmake --build . --config Release`. Then there is no need to adjust things _but_ the nix installer will be missing.)
   - If all went well exectue the tests: `> ctest .` and `Release\TestRunner.exe`
 
 6. **Troubleshooting**:
