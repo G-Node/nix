@@ -71,7 +71,7 @@ Dependencies
   - Obtain sources from git (https://github.com/G-Node/nix)
   - Create build folder (e.g. "build")
   - Run CMake from build folder: :three::two:`> cmake .. -G"Visual Studio 12"` or :six::four:`> cmake .. -G"Visual Studio 12 Win64"`
-  - Open `nix.sln` with Visual Studio, go to "Configuration Manager" and set config to `Release` and platform to :three::two: `win32` or :six::four:`x64`. If you want the nix installer to be built too, make `PACKAGE` checked in the `build` column. Now build via "Build->Build Solution" (You can also build via CMake: `> cmake --build . --config Release`. Then there is no need to adjust things _but_ the nix installer will be missing.)
+  - Open `nix.sln` with Visual Studio, go to "Configuration Manager" and set configuration to `Release` and platform to :three::two: `win32` or :six::four:`x64`. If you want the nix installer to be built too, make `PACKAGE` checked in the `build` column. Now build via "Build->Build Solution" (You can also build via CMake: `> cmake --build . --config Release`. Then there is no need to adjust things _but_ the nix installer will be missing.)
   - If all went well exectue the tests: `> ctest .` and `Release\TestRunner.exe`
 
 6. **Troubleshooting**:
