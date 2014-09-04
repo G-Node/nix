@@ -34,7 +34,8 @@ Dependencies
   - From within the hdf5 folder execute:
     Create a installer for HDF5 via: `> cpack -C Release CPackConfig.cmake`
   - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. :three::two:`HDF5-1.8.13-win32.exe` or :six::four:`HDF5-1.8.13-win64.exe`. <br>Install inside `C:\opt\hdf5`. (Or any folder you like, but then you are on your own regarding paths & environment vars)
-  - Set `HDF5_DIR` to `C:\opt\hdf5\cmake\hdf5` (`> set HDF5_DIR=C:\opt\hdf5\cmake\hdf5` and `> setx HDF5_DIR C:\opt\hdf5\cmake\hdf5 /m`)
+  - Set `HDF5_DIR` to `C:\opt\hdf5\cmake\hdf5` (`> set HDF5_DIR=C:\opt\hdf5\cmake\hdf5`)
+    <br>(And `> setx HDF5_DIR C:\opt\hdf5\cmake\hdf5 /m` if you want the set to be permanent)
   <br><br>Troubleshooting - If you get errors try this<br>
   - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
 
@@ -50,7 +51,8 @@ Dependencies
     ```
      > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=64 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
     ```
-   - Set `BOOST_ROOT` to `C:\opt\boost` (`> set BOOST_ROOT=C:\opt\boost` and `> setx BOOST_ROOT C:\opt\boost /m`)
+   - Set `BOOST_ROOT` to `C:\opt\boost` (`> set BOOST_ROOT=C:\opt\boost`)
+     <br> (And `> setx BOOST_ROOT C:\opt\boost /m` if you want the set to be permanent)
 
 4. **CppUnit**:
   - Obtain sources: http://sourceforge.net/apps/mediawiki/cppunit/
