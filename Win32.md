@@ -1,39 +1,44 @@
-How to compile nix on Win32
-===========================
+How to compile nix on Windows
+=============================
 
-NB: Currently only Relase type builds on Windows x64 have been successfully tested.
+The following guide shows build options for both, 32- and 64-bit. They are marked with :three::two: and :six::four: in the text.
 
 Dependencies
 ------------
 
-0. **Required build tools**
+1. **Required build tools**
   - ***Visual Studio 2013 Express***
     - Download link: http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
     - The required edition is "Visual Studio Express 2013 for Windows Desktop" (the download is free, but registration is needed)
-    - From now on exectue commands (marked with "`>`") from the "Developer Command Prompt for VS2013" found under the Visual Studio Tools submenu in the Visual Studio 2013 start menu.
+    - From now on exectue commands (marked with "`>`") from the "Developer Command Prompt for VS2013" found as explained here: http://msdn.microsoft.com/en-us/library/ms229859.aspx
     - Expressions inside brackets "`< >`" are to be replaced (together with brackets) by a value: "`<A>`" => "`15`" if A was 15.
-    - If "Developer Command Prompt for VS2013" is missing in your installation follow these steps: https://stackoverflow.com/questions/21476588/where-is-developer-command-prompt-for-vs2013
+    <br><br>Extra stuff<br>
+    - If you want a "Developer Command Prompt" inside the "Visual Studio->Tools" menu (oldschool way) do the following:
+      - Open "Tools->External Tools" and click "Add"
+      - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\Common7\Tools\vsvars64.bat"`
 
   - ***CMake***
     - Obtain from http://www.cmake.org and install the binary for windows
     - If "cmake" not added to PATH (command not found when typed in cmd window): reboot. If still missing follow these steps: https://www.java.com/en/download/help/path.xml
 
-1. **HDF5**
-  - Obtain sources from: http://www.hdfgroup.org/HDF5/release/obtainsrc.html
-  - Create a build sub-folder (e.g. "build") in the HDF5 folder
-  - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
-  - From within the build folder execute:
+2. **HDF5**
+  - Obtain sources (>= 1.8.13) from: http://www.hdfgroup.org/HDF5/release/obtainsrc.html
+  - Create a build sub-folder (e.g. `build`) in the HDF5 folder
+  - From within the build folder execute:<br>
+  :three::two:
+    ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..```<br>
+  :six::four:
     ```> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..```
   - From within the hdf5\build folder execute:
     Build HDF5 via: `> cmake --build . --config Release`
   - Install Nullsoft installer version 2.x from: http://nsis.sourceforge.net - newer versions 3.x will _not_ work!
   - From within the hdf5 folder execute:
     Create a installer for HDF5 via: `> cpack -C Release CPackConfig.cmake`
-  - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. "HDF5-1.8.13-win64.exe". 
-  - Set `HDF5_ROOT` to HDF5 directory (`> set HDF5_ROOT=<DIRECTORY>` and `> setx HDF5_ROOT <DIRECTORY> /m`) and make sure that HDF5 bin, lib & include dirs are added to PATH, e.g.: "C:\Program Files\HDF5\1.8.13\bin", "C:\Program Files\HDF5\1.8.13\lib", "C:\Program Files\HDF5\1.8.13\include"
-  - Set `HDF5_DIR` to `<HDF5_ROOT>\cmake\hdf5` (`> set HDF5_DIR=<HDF5_ROOT>\cmake\hdf5` and `> setx HDF5_DIR <HDF5_ROOT>\cmake\hdf5 /m`) 
+  - Install HDF5 via the installer which now should have been created in the hdf5 folder named e.g. :three::two:`HDF5-1.8.13-win32.exe` or :six::four:`HDF5-1.8.13-win64.exe`. Install inside `C:\opt\hdf5`. (Or any folder you like, but then you are on your own regarding paths & environment vars)
+  <br><br>Troubleshooting - If you get errors try this<br>
+  - Find a file named "release" in the hdf5 "/bin" folder and rename it to "_release"
 
-2. **Boost**:
+3. **Boost**:
   - Obtain sources from: http://www.boost.org/users/download/
   - Boostrap with: `> bootstrap`
   - Build needed libraries via (and install to PREFIX, change "address-model=64" to ="32" for 32-bit build):
@@ -45,7 +50,7 @@ Dependencies
     ```
   - Set `BOOST_ROOT` to PREFIX (`> set BOOST_ROOT=<PREFIX>` and `> setx BOOST_ROOT <PREFIX> /m`) and add BOOST root & include dirs to PATH, e.g.: "C:\Users\B\opt\boost", "C:\Users\B\opt\boost\include\boost-1_55\boost"
 
-3. **CppUnit**:
+4. **CppUnit**:
   - Obtain sources: http://sourceforge.net/apps/mediawiki/cppunit/
   - Use 7-zip to extract ".tar.gz" file: http://www.7-zip.org/
   - Open src/CppUnitLibraries.dsw in VS2013 (and agree to conversion, ignore error on creation of backup file)
@@ -60,14 +65,14 @@ Dependencies
     - Download and install "Multibyte MFC Library for Visual Studio 2013" from: https://www.microsoft.com/en-us/download/details.aspx?id=40770
     - If still getting errors (even after reboot): Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> General -> Character Set" is set to "Use Unicode Character set"
 
-4. **Nix**:
+5. **Nix**:
   - Obtain sources from git (https://github.com/G-Node/nix)
   - Create build folder (e.g. nix/build)
   - Run CMake: `> cmake .. -G"Visual Studio 12 Win64"`
   - Open "nix.sln" with Visual Studio, go to "Configuration Manager" and set config to "Release" and build the solution. Or build via CMake: `> cmake --build . --config Release`
   - If all went well exectue the tests: `> ctest .` and `Release\TestRunner.exe`
 
-5. **Troubleshooting**:
+6. **Troubleshooting**:
 
   - If you get "'cl' is not recognized as internal or external command..." make sure VC++ bin dir is added to PATH
   - If you get include file(s) not found errors look for "vcvars*.bat" file, e.g. "vcvars32.bat" and execute it once
