@@ -289,7 +289,7 @@ std::string numToStr(T number) {
 /**
  * @brief Convert a DimensionType into a string representation.
  *
- * @param number  The DimensionType to convert
+ * @param dtype  The DimensionType to convert
  *
  * @return The string representation of the DimensionType
  */
