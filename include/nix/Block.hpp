@@ -471,7 +471,7 @@ public:
      *
      * @param name      The name of the tag to create.
      * @param type      The type of the tag.
-     * @param refs      A Vector with referenced data array entities.
+     * @param position  The position of the tag.
      *
      * @return The newly created tag.
      */
@@ -578,9 +578,9 @@ public:
     /**
      * @brief Create a new multi tag associated with this block.
      *
-     * @param name      The name of the multi tag to create.
-     * @param type      The type of the tag.
-     * @param position  The position of the tag.
+     * @param name       The name of the multi tag to create.
+     * @param type       The type of the tag.
+     * @param positions  The positions of the tag.
      *
      * @return The newly created tag.
      */
