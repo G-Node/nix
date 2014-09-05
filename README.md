@@ -35,7 +35,7 @@ You can get a ready to install package for Ubuntu "trusty". You have to add the 
 deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 ```
-by executing `sudo add-apt-repository ppa:gnode/nix`. Now you can `sudo apt-get update` and `sudo apt-get install nixlib*`.
+by executing `sudo add-apt-repository ppa:gnode/nix`. Now you can `sudo apt-get update` and `sudo apt-get install nixlib-dev`.
 
 **Build NIX under Ubuntu 14.04**
 
