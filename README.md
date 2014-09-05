@@ -1,38 +1,54 @@
 About NIX
 -------------
 
-The NIX project (previously called Pandora) started as an initiative of the Electrophysiology Task Force which is part
+The *NIX* project (previously called Pandora) started as an initiative of the Electrophysiology Task Force which is part
 of the INCF Datasharing Program. As such the project aims to develop standardized methods and models for storing
 electrophysiology and other neuroscience data together with their metadata in one common file format based on HDF5.
 
 [See the wiki for more information](https://github.com/G-Node/nix/wiki)
 
+Development Status
+------------------
 
-Debian PPA
------------
+The *NIX* project is now in a Beta stage and should not be seen as a final product. However, the data model as well as the HDF schema and the C++ api are feature complete and should undergo little to no changes in the future.
 
-You can get a ready to install package for different Ubuntu versions. You have to add the following software source to your system:
+An Ubuntu 14.04 ("trusty") PPA with the Beta version can be installed by adding the following software sources to your system:
+
+```
+deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
+deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
+```
+The Beta version source can be found as release here on github: [Beta 1](https://github.com/G-Node/nix/releases)
+
+Also we provide bindings for python2.7 for windows and a windows installer for nix, grab both: <br>
+[nix - Beta 1](https://github.com/G-Node/nix/releases) <br>
+[nixpy - Beta 1](https://github.com/G-Node/nixpy/releases)
+
+Getting Started (Linux)
+-----------------------
+
+**Debian PPA**
+
+You can get a ready to install package for Ubuntu "trusty". You have to add the following software source to your system:
 
 ```
 deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 ```
-Modify "trusty" (=14.04) to "precise" (="12.04") if you are running the Ubuntu 12.04 LTS.
+by executing `sudo add-apt-repository ppa:gnode/nix`. Now you can `sudo apt-get update` and `sudo apt-get install nixlib*`.
 
+**Build NIX under Ubuntu 14.04**
 
-Build Dependencies
-------------------
+_Dependencies_
 
-In order to build the NIX library a recent C++11 compatible compiler is needed (g++ 4.8, clang 3.4 or Visual Studio 2013)
-as well as the build tool CMake. Further nix depends on the following third party libraries:
+In order to build the NIX library a recent C++11 compatible compiler is needed (g++ >= 4.8, clang >= 3.4)
+as well as the build tool CMake (>= 2.8.9). Further nix depends on the following third party libraries:
 
-- HDF5 (version 1.8 or higher)
-- Boost
-- CppUnit
+- HDF5 (version 1.8.13 or higher)
+- Boost (version 1.56 or higher)
+- CppUnit (version 1.12.1 or higher)
 
-
-Build NIX under Ubuntu 14.04
-----------------------------
+_Instructions_
 
 ```bash
 # install dependencies
@@ -54,6 +70,17 @@ ctest
 # install
 sudo make install
 ```
+
+Getting Started (Windows)
+-------------------------
+
+**Windows Installer**
+
+You can get a windows installer for both, 32- and 64-bit: [nix - Beta 1](https://github.com/G-Node/nix/releases)
+
+**Build NIX under Windows**
+
+To build NIX under windows follow the guide provided under: [Win32.md](https://github.com/G-Node/nix/blob/master/Win32.md)
 
 NIX API Documentation
 ---------------------
