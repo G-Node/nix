@@ -10,32 +10,26 @@ electrophysiology and other neuroscience data together with their metadata in on
 Development Status
 ------------------
 
-The *NIX* project is now in a Beta stage and should not be seen as a final product. However, the data model as well as the HDF schema and the C++ api are feature complete and should undergo little to no changes in the future.
-
-An Ubuntu 14.04 ("trusty") PPA with the Beta version can be installed by adding the following software sources to your system:
-
-```
-deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
-deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
-```
-The Beta version source can be found as release here on github: [Beta 1](https://github.com/G-Node/nix/releases)
-
-Also we provide bindings for python2.7 for windows and a windows installer for nix, grab both: <br>
-[nix - Beta 1](https://github.com/G-Node/nix/releases) <br>
-[nixpy - Beta 1](https://github.com/G-Node/nixpy/releases)
+The *NIX* project is now in a [Beta](https://github.com/G-Node/nix/releases) stage and should not be seen as a final product. However, the data model as well as the HDF schema and the C++ api are feature complete and should undergo little to no changes in the future.
 
 Getting Started (Linux)
 -----------------------
 
 **Debian PPA**
 
-You can get a ready to install package for Ubuntu "trusty". You have to add the following software source to your system:
+You can get a ready to install package for Ubuntu "trusty". You have to add & install the following software source to your system:
 
 ```
 deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
 ```
-by executing `sudo add-apt-repository ppa:gnode/nix`. Now you can `sudo apt-get update` and `sudo apt-get install nixlib-dev`.
+by executing 
+
+```
+sudo add-apt-repository ppa:gnode/nix
+sudo apt-get update
+sudo apt-get install nixlib-dev
+```
 
 **Build NIX under Ubuntu 14.04**
 
