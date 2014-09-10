@@ -168,11 +168,11 @@ public:
     yamlstream& operator<<(const std::vector<T> &t) {
         indent_if();
         if(t.size()) {
-            sstream << "{";
+            sstream << "[";
             for(auto &el : t) {
                 sstream << el << ((*t.rbegin()) != el ? ", " : "");            
             }
-            sstream << "}";
+            sstream << "]";
         }
         return *this;
     }
@@ -238,9 +238,9 @@ public:
     template<typename T>
     yamlstream& operator<<(const nix::base::Entity<T> &entity) {
         (*this)
-        << item() << "id" << scalar_start << entity.id() << scalar_end
-        << item() << "createdAt" << scalar_start << t(entity.createdAt()) << scalar_end
-        << item() << "updatedAt" << scalar_start << t(entity.updatedAt()) << scalar_end;
+        << "id" << scalar_start << "" << entity.id() << scalar_end
+        << "createdAt" << scalar_start << t(entity.createdAt()) << scalar_end
+        << "updatedAt" << scalar_start << t(entity.updatedAt()) << scalar_end;
         
         return *this;
     }
@@ -257,9 +257,9 @@ public:
     yamlstream& operator<<(const nix::base::NamedEntity<T> &namedEntity) {
         (*this)
         << static_cast<nix::base::Entity<T>>(namedEntity)
-        << item() << "name" << scalar_start << namedEntity.name() << scalar_end
-        << item() << "type" << scalar_start << namedEntity.type() << scalar_end
-        << item() << "definition" << scalar_start << namedEntity.definition() << scalar_end;
+        << "name" << scalar_start << namedEntity.name() << scalar_end
+        << "type" << scalar_start << namedEntity.type() << scalar_end
+        << "definition" << scalar_start << namedEntity.definition() << scalar_end;
         
         return *this;
     }
@@ -276,7 +276,7 @@ public:
     yamlstream& operator<<(const nix::base::EntityWithMetadata<T> &entityWithMetadata) {
         (*this)
         << static_cast<nix::base::NamedEntity<T>>(entityWithMetadata)
-        << item() << "metadata"; ++(*this) << entityWithMetadata.metadata(); --(*this);
+        << "metadata"; ++(*this) << entityWithMetadata.metadata(); --(*this);
         
         return *this;
     }
@@ -293,11 +293,21 @@ public:
     yamlstream& operator<<(const nix::base::EntityWithSources<T> &entityWithSources) {
         (*this)
         << static_cast<nix::base::EntityWithMetadata<T>>(entityWithSources)
-        << item() << "sourceCount" << scalar_start << entityWithSources.sourceCount() << scalar_end;
+        << "sourceCount" << scalar_start << entityWithSources.sourceCount() << scalar_end;
         // NOTE: dont output sources as those are handled by derived frontend entity
         
         return *this;
     }
+
+    /**
+     * @brief Value output into stringstream
+     *
+     * Output Value to stringstream.
+     *
+     * @param entity nix value
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Value &value);
 
     /**
      * @brief Property output into stringstream
@@ -308,6 +318,16 @@ public:
      * @return self
      */
     yamlstream& operator<<(const nix::Property &property);
+    
+    /**
+     * @brief Source output into stringstream
+     *
+     * Output Source to stringstream.
+     *
+     * @param entity nix Source
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Source &source);
     
     /**
      * @brief Section output into stringstream
