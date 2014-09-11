@@ -15,6 +15,8 @@
 //#include <Cli.hpp>
 #include <modules/Dump.hpp>
 #include <Exception.hpp>
+#include <limits>
+#include <cstddef>
 
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
@@ -474,16 +476,23 @@ void Dump::load(po::options_description &desc) const {
                                      ": dump selected contents of given input file\nSupported options"));
     // declare supported options
     po::options_description opt;
-    //opt.add_options()
-    //    ("", "")
-    //;
+    opt.add_options()
+        (DATA_OPTION, "dump (only) data from all 2D arrays")
+        (PLOT_OPTION, ("dump & plot (only) data from all 2D arrays (linux only, invokes --" + std::string(DATA_OPTION) + ")").c_str())
+    ;
     desc.add(opt);
 }
 
 std::string Dump::call(const po::variables_map &vm, const po::options_description &desc) {
     std::vector<nix::File> files; // opened nix files
     std::stringstream out;
+    std::ofstream fout;
     nix::File tmp_file;
+    std::string file_name;
+    double A_min = std::numeric_limits<double>::max();
+    double A_max = std::numeric_limits<double>::min();
+    typedef boost::multi_array<double, 2> array_type;
+    typedef array_type::index index;
     
     // --help
     if (vm.count(HELP_OPTION)) {
@@ -493,7 +502,7 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
     // --input-file
     if (vm.count(INPFILE_OPTION)) {
         // open all files
-        for(auto &file_path : vm[INPFILE_OPTION].as< std::vector<std::string> >()) {
+        for (auto &file_path : vm[INPFILE_OPTION].as< std::vector<std::string> >()) {
             // file exists?
             if (!boost::filesystem::exists(file_path)) {
                 throw FileNotFound(file_path);
@@ -508,64 +517,52 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
             files.push_back(tmp_file); // ReadOnly, ReadWrite, Overwrite
         }
         // loop through entities in all files
-        for(auto &file : files) {
-            yaml << file;
-            out << yaml.str();
-            /*// Blocks
-            auto blcks = nix_file.blocks();
-            for(auto &block : blcks) {
-                // DataArrays
-                auto data_arrays = block.dataArrays();
-                for(auto &data_array : data_arrays) {
-                    // Dimensions
-                    auto dims = data_array.dimensions();
-                    std::vector<nix::RangeDimension> range_dims;
-                    std::vector<nix::SetDimension> set_dims;
-                    std::vector<nix::SampledDimension> sample_dims;
-                    for(auto &dim : dims) {
-                        if(dim.dimensionType() == DimensionType::Range) {
-                            auto d = dim.asRangeDimension();
-                            range_dims.push_back(d);
-                        }
-                        if(dim.dimensionType() == DimensionType::Set) {
-                            auto d = dim.asSetDimension();
-                            set_dims.push_back(d);
-                        }
-                        if(dim.dimensionType() == DimensionType::Sample) {
-                            auto d = dim.asSampledDimension();
-                            sample_dims.push_back(d);
-                        }
-                    }
-                }
-                // MultiTags
-                auto multi_tags = block.multiTags();
-                for(auto &multi_tag : multi_tags) {
-                    // Features
-                    auto features = multi_tag.features();
-                    for(auto &feature : features) {
-                    }
-                }
-                // Tags
-                auto tags = block.tags();
-                for(auto &tag : tags) {
-                    // Features
-                    auto features = tag.features();
-                    for(auto &feature : features) {
-                    }
-                }
-                // Sources
-                auto sources = block.findSources();
-                for(auto &source : sources) {
-                }
+        for (auto &file : files) {
+            if ( ! (vm.count(DATA_OPTION) || vm.count(PLOT_OPTION)) ) {
+                yaml << file;
+                out << yaml.str();
             }
-            // Sections
-            auto sections = nix_file.findSections();
-            for(auto &section : sections) {
-                // Properties
-                auto props = section.properties();
-                for(auto &prop : props) {
-                }
-            }*/
+            else {
+                // loop through all data_arrays
+                auto blcks = file.blocks();
+                for (auto &block : blcks) {
+                    auto data_arrays = block.dataArrays();
+                    for (auto &data_array : data_arrays) {
+                        // if we have a 2D data_array, output data & plot script
+                        if (data_array.dataExtent().size() == 2) {
+                            file_name = "data_array_" + data_array.id();
+                            fout.open(file_name + ".txt");
+                            size_t dim1 = data_array.dataExtent()[0];
+                            size_t dim2 = data_array.dataExtent()[1];
+                            array_type A(boost::extents[ dim1 ]
+                                                       [ dim2 ]);
+                            data_array.getData(A);
+                            // loop through data_array values
+                            for (size_t i = 0; i < dim1; i++) {
+                                for (size_t j = 0; j < dim2; j++) {
+                                    fout << A[i][j] << ((j != dim2-1) ? " " : "");
+                                    if(A[i][j] < A_min) A_min = A[i][j];
+                                    if(A[i][j] > A_max) A_max = A[i][j];
+                                }
+                                fout << ((i != dim1-1) ? "\n" : "");
+                            }
+                            fout.close();
+
+                            #ifndef _WIN32
+                            if (vm.count(PLOT_OPTION)) {
+                                std::cout << "press ctrl+c for next plot" << std::endl;
+                                plot_script script(A_min, A_max, dim1, dim2, file_name + ".txt");
+                                fout.open(file_name + ".gnu");
+                                fout << script.str();
+                                fout.close();
+                                std::system(("chmod 755 " + file_name + ".gnu").c_str());
+                                std::system(("./" + file_name + ".gnu").c_str());
+                            }
+                            #endif
+                        } // if data_array.dataExtent().size() == 2
+                    } // for data_arrays
+                } // for blcks
+            } // if vm.count(DATA_OPTION) || vm.count(PLOT_OPTION)
         } // for: files
     } // if: INPFILE_OPTION
     else {

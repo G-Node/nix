@@ -19,14 +19,71 @@
 #include <Cli.hpp>
 #include <modules/IModule.hpp>
 
+#include <string>
+#include <cstring>
+#include <fstream>
 #include <iostream>
+#include <regex>
+#include <stdlib.h>
+#include <cmath>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 namespace cli {
 namespace module {
+
+const char *const DATA_OPTION = "data";
+const char *const PLOT_OPTION = "plot";
+
+class plot_script {
+private:
+    char* script;
+
+public:
+    template<typename T1, typename T2>
+    plot_script(T1 minval, T2 maxval, size_t nx, size_t ny, std::string file_path) {
+        std::string str_script = (std::string() + 
+            "#!/usr/bin/gnuplot" + "\n\n" +
+            "set terminal x11" + "\n" +
+            "set title \"2D data plot\"" + "\n" +
+            "unset key" + "\n" +
+            "set tic scale 0" + "\n\n" +
+            "# Color runs from white to green" + "\n" +
+            "set palette rgbformula -7,-7,2" + "\n" +
+            "set cbrange [MINVAL:MAXVAL]" + "\n" +
+            "set cblabel \"Score\"" + "\n" +
+            "unset cbtics" + "\n\n" +
+            "set xrange [-0.5:NX.5]" + "\n"
+            "set yrange [-0.5:NY.5]" + "\n\n"
+            "set view map" + "\n"
+            "splot 'FILE' matrix with image" + "\n"
+            "pause -1" + "\n");
+
+        // round min & max to precision of two digits beyond magnitude of their difference,
+        // if their difference is < 2. Round them to ints otherwise.
+        double multiplier = abs( round(1 / (maxval - minval)) ) * 100;
+        minval = (multiplier != 0) ? round(minval * multiplier) / multiplier : round(minval);
+        maxval = (multiplier != 0) ? round(maxval * multiplier) / multiplier : round(maxval);
+        str_script.replace(str_script.find("MINVAL"), std::string("MINVAL").length(), nix::util::numToStr(minval));
+        str_script.replace(str_script.find("MAXVAL"), std::string("MAXVAL").length(), nix::util::numToStr(maxval));
+        str_script.replace(str_script.find("NX"), std::string("NX").length(), nix::util::numToStr(nx));
+        str_script.replace(str_script.find("NY"), std::string("NY").length(), nix::util::numToStr(ny));
+        str_script.replace(str_script.find("FILE"), std::string("FILE").length(), file_path);
+        
+        script = (char*) malloc (str_script.size());
+        std::strcpy(script, str_script.c_str());
+    }
     
+    std::string str() {
+        return std::string(script);
+    }
+    
+    ~plot_script() {
+        free(script);
+    }
+};
+
 class yamlstream {
     static const char* indent_str;
     static const char* scalar_start;
