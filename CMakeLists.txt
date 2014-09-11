@@ -184,6 +184,10 @@ if(WIN32)
   ARCHIVE
   DESTINATION lib
   COMPONENT libraries)
+  install(TARGETS nix-tool
+  RUNTIME
+  DESTINATION bin
+  COMPONENT applications)
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
   set(CPACK_PACKAGE_VENDOR "g-node.org")
