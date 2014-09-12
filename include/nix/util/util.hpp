@@ -330,7 +330,7 @@ T deRef(T var) {
 }
 template<typename R>
 R deRef(boost::optional<R> var) {
-    if(var) return *var;
+    if (var) return *var;
     else return R();
 }
 

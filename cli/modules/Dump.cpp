@@ -32,17 +32,18 @@ const char* yamlstream::sequ_end = "";
 const char* yamlstream::scalar_start = ": ";
 const char* yamlstream::scalar_end = "\n";
 const char* yamlstream::item_str = "- ";
+const char* plot_script::plot_file = "dump_plot.gnu";
 
 void yamlstream::indent_if() {
     // if endl
-    if(!strcmp(&*sstream.str().rbegin(), "\n")) {
+    if (!strcmp(&*sstream.str().rbegin(), "\n")) {
         (*this)[level];
     }
 }
 
 void yamlstream::endl_if() {
     // if _not_ endl
-    if(strcmp(&*sstream.str().rbegin(), "\n")) {
+    if (strcmp(&*sstream.str().rbegin(), "\n")) {
         sstream << "\n";
     }
 }
@@ -77,7 +78,7 @@ yamlstream yamlstream::operator--(int) {
 
 yamlstream& yamlstream::operator[](const int &n_indent) {
     endl_if();
-    for(int i = 0; i < n_indent; i++) {
+    for (int i = 0; i < n_indent; i++) {
         sstream << indent_str;
     }
     return *this;
@@ -131,7 +132,7 @@ yamlstream& yamlstream::operator<<(const nix::Value &value) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Property &property) {
-    if(!property) {
+    if (!property) {
         return *this; // unset entity protection
     }
         
@@ -149,7 +150,7 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
         *this << "values";
         ++(*this);
             auto values = property.values();
-            for(auto &value : values) {
+            for (auto &value : values) {
                 *this << value; 
             }
         --(*this);
@@ -158,7 +159,7 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Source &source) {
-    if(!source) {
+    if (!source) {
         return *this; // unset entity protection
     }
 
@@ -171,7 +172,7 @@ yamlstream& yamlstream::operator<<(const nix::Source &source) {
         *this << "sources";
         ++(*this);
             auto sources = source.sources();
-            for(auto &source : sources) {
+            for (auto &source : sources) {
                 *this << source;            
             }
         --(*this);
@@ -180,7 +181,7 @@ yamlstream& yamlstream::operator<<(const nix::Source &source) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Section &section) {
-    if(!section) {
+    if (!section) {
         return *this; // unset entity protection
     }
 
@@ -197,7 +198,7 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         *this << "properties";
         ++(*this);
             auto properties = section.properties();
-            for(auto &property : properties) {
+            for (auto &property : properties) {
                 *this << property;
             }
         --(*this);
@@ -205,7 +206,7 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         *this << "sections";
         ++(*this);
             auto sections = section.sections();
-            for(auto &section : sections) {
+            for (auto &section : sections) {
                 *this << section;            
             }
         --(*this);
@@ -214,7 +215,7 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::SetDimension &dim) {
-    if(!dim) {
+    if (!dim) {
         return *this; // unset entity protection
     }
     
@@ -228,7 +229,7 @@ yamlstream& yamlstream::operator<<(const nix::SetDimension &dim) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::SampledDimension &dim) {
-    if(!dim) {
+    if (!dim) {
         return *this; // unset entity protection
     }
     
@@ -245,7 +246,7 @@ yamlstream& yamlstream::operator<<(const nix::SampledDimension &dim) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::RangeDimension &dim) {
-    if(!dim) {
+    if (!dim) {
         return *this; // unset entity protection
     }
     
@@ -261,17 +262,17 @@ yamlstream& yamlstream::operator<<(const nix::RangeDimension &dim) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
-    if(!dim) {
+    if (!dim) {
         return *this; // unset entity protection
     }
     
-    if(dim.dimensionType() == nix::DimensionType::Range) {
+    if (dim.dimensionType() == nix::DimensionType::Range) {
         (*this) << dim.asRangeDimension();
     }
-    if(dim.dimensionType() == nix::DimensionType::Set) {
+    if (dim.dimensionType() == nix::DimensionType::Set) {
         (*this) << dim.asSetDimension();
     }
-    if(dim.dimensionType() == nix::DimensionType::Sample) {
+    if (dim.dimensionType() == nix::DimensionType::Sample) {
         (*this) << dim.asSampledDimension();
     }
     
@@ -279,7 +280,7 @@ yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
-    if(!data_array) {
+    if (!data_array) {
         return *this; // unset entity protection
     }
     
@@ -297,7 +298,7 @@ yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
         *this << "dimensions";
         ++(*this);
             auto dims = data_array.dimensions();
-            for(auto &dim : dims) {
+            for (auto &dim : dims) {
                 *this << dim;
             }
         --(*this);
@@ -306,7 +307,7 @@ yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Feature &feature) {
-    if(!feature) {
+    if (!feature) {
         return *this; // unset entity protection
     }
     
@@ -320,7 +321,7 @@ yamlstream& yamlstream::operator<<(const nix::Feature &feature) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
-    if(!tag) {
+    if (!tag) {
         return *this; // unset entity protection
     }
     
@@ -336,7 +337,7 @@ yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
         *this << "references";
         ++(*this);
             auto refs = tag.references();
-            for(auto &ref : refs) {
+            for (auto &ref : refs) {
                 *this << ref;
             }
         --(*this);
@@ -344,7 +345,7 @@ yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
         *this << "features";
         ++(*this);
             auto features = tag.features();
-            for(auto &feature : features) {
+            for (auto &feature : features) {
                 *this << feature;
             }
         --(*this);
@@ -353,7 +354,7 @@ yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
-    if(!multi_tag) {
+    if (!multi_tag) {
         return *this; // unset entity protection
     }
     
@@ -369,7 +370,7 @@ yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
         *this << "references";
         ++(*this);
             auto refs = multi_tag.references();
-            for(auto &ref : refs) {
+            for (auto &ref : refs) {
                 *this << ref;
             }
         --(*this);
@@ -377,7 +378,7 @@ yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
         *this << "features";
         ++(*this);
             auto features = multi_tag.features();
-            for(auto &feature : features) {
+            for (auto &feature : features) {
                 *this << feature;
             }
         --(*this);
@@ -386,7 +387,7 @@ yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::Block &block) {
-    if(!block) {
+    if (!block) {
         return *this; // unset entity protection
     }
     
@@ -401,7 +402,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
         *this << "data_arrays";
         ++(*this);
             auto data_arrays = block.dataArrays();
-            for(auto &data_array : data_arrays) {
+            for (auto &data_array : data_arrays) {
                 *this << data_array;
             }
         --(*this);
@@ -409,7 +410,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
         *this << "multi_tags";
         ++(*this);
             auto multi_tags = block.multiTags();
-            for(auto &multi_tag : multi_tags) {
+            for (auto &multi_tag : multi_tags) {
                 *this << multi_tag;
             }
         --(*this);
@@ -417,7 +418,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
         *this << "tags";
         ++(*this);
             auto tags = block.tags();
-            for(auto &tag : tags) {
+            for (auto &tag : tags) {
                 *this << tag;
             }
         --(*this);
@@ -425,7 +426,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
         *this << "sources";
         ++(*this);
             auto sources = block.sources();
-            for(auto &source : sources) {
+            for (auto &source : sources) {
                 *this << source;            
             }
         --(*this);
@@ -434,7 +435,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
 }
 
 yamlstream& yamlstream::operator<<(const nix::File &file) {
-    if(!file) {
+    if (!file) {
         return *this; // unset entity protection
     }
     
@@ -452,7 +453,7 @@ yamlstream& yamlstream::operator<<(const nix::File &file) {
         *this << "blocks";
         ++(*this);
             auto blocks = file.blocks();
-            for(auto &block : blocks) {
+            for (auto &block : blocks) {
                 *this << block;
             }
         --(*this);
@@ -460,7 +461,7 @@ yamlstream& yamlstream::operator<<(const nix::File &file) {
         *this << "sections";
         ++(*this);
             auto sections = file.sections();
-            for(auto &section : sections) {
+            for (auto &section : sections) {
                 *this << section;            
             }
         --(*this);
@@ -541,8 +542,8 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                             for (size_t i = 0; i < dim1; i++) {
                                 for (size_t j = 0; j < dim2; j++) {
                                     fout << A[i][j] << ((j != dim2-1) ? " " : "");
-                                    if(A[i][j] < A_min) A_min = A[i][j];
-                                    if(A[i][j] > A_max) A_max = A[i][j];
+                                    if (A[i][j] < A_min) A_min = A[i][j];
+                                    if (A[i][j] > A_max) A_max = A[i][j];
                                 }
                                 fout << ((i != dim1-1) ? "\n" : "");
                             }

@@ -39,6 +39,7 @@ const char *const PLOT_OPTION = "plot";
 class plot_script {
 private:
     char* script;
+    static const char* plot_file;
 
 public:
     template<typename T1, typename T2>
@@ -59,6 +60,12 @@ public:
             "set view map" + "\n"
             "splot 'FILE' matrix with image" + "\n"
             "pause -1" + "\n");
+
+        std::ifstream f(plot_file);
+        if (f.good()) {
+            str_script = std::string((std::istreambuf_iterator<char>(f)),
+                                      std::istreambuf_iterator<char>());
+        }
 
         // round min & max to precision of two digits beyond magnitude of their difference,
         // if their difference is < 2. Round them to ints otherwise.
@@ -224,9 +231,9 @@ public:
     template<typename T>
     yamlstream& operator<<(const std::vector<T> &t) {
         indent_if();
-        if(t.size()) {
+        if (t.size()) {
             sstream << "[";
-            for(auto &el : t) {
+            for (auto &el : t) {
                 sstream << el << ((*t.rbegin()) != el ? ", " : "");            
             }
             sstream << "]";
@@ -245,7 +252,7 @@ public:
     yamlstream& operator<<(const nix::NDSize &t) {
         indent_if();
         std::vector<double> extent;
-        for(size_t i = 0; i < t.size(); i++) {
+        for (size_t i = 0; i < t.size(); i++) {
             extent.push_back(t[i]);
         }
         (*this) << extent;
