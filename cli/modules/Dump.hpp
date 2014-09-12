@@ -20,10 +20,8 @@
 #include <modules/IModule.hpp>
 
 #include <string>
-#include <cstring>
 #include <fstream>
 #include <iostream>
-#include <regex>
 #include <stdlib.h>
 #include <cmath>
 
