@@ -390,17 +390,12 @@ public:
     void getData(DataType dtype,
                  void *data,
                  const NDSize &count,
-                 const NDSize &offset) const {
-        backend()->read(dtype, data, count, offset);
-    }
+                 const NDSize &offset) const;
 
     void setData(DataType dtype,
                  const void *data,
                  const NDSize &count,
-                 const NDSize &offset)
-    {
-        backend()->write(dtype, data, count, offset);
-    }
+                 const NDSize &offset);
 
     void getDataDirect(DataType dtype,
                        void *data,

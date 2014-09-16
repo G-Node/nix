@@ -12,6 +12,21 @@
 using namespace nix;
 
 
+void DataArray::getData(DataType dtype,
+                        void *data,
+                        const NDSize &count,
+                        const NDSize &offset) const {
+    backend()->read(dtype, data, count, offset);
+}
+
+void DataArray::setData(DataType dtype,
+                        const void *data,
+                        const NDSize &count,
+                        const NDSize &offset)
+{
+    backend()->write(dtype, data, count, offset);
+}
+
 double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
     double value = 0.0;
     double term = 1.0;
