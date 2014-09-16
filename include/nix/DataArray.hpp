@@ -402,6 +402,22 @@ public:
         backend()->write(dtype, data, count, offset);
     }
 
+    void getDataDirect(DataType dtype,
+            void *data,
+            const NDSize &count,
+            const NDSize &offset) const {
+        backend()->read(dtype, data, count, offset);
+    }
+
+    void setDataDirect(DataType dtype,
+            const void *data,
+            const NDSize &count,
+            const NDSize &offset)
+    {
+        backend()->write(dtype, data, count, offset);
+    }
+
+
     /**
      * @brief Get the extent of the data of the DataArray entity.
      *
