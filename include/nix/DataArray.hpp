@@ -403,16 +403,16 @@ public:
     }
 
     void getDataDirect(DataType dtype,
-            void *data,
-            const NDSize &count,
-            const NDSize &offset) const {
+                       void *data,
+                       const NDSize &count,
+                       const NDSize &offset) const {
         backend()->read(dtype, data, count, offset);
     }
 
     void setDataDirect(DataType dtype,
-            const void *data,
-            const NDSize &count,
-            const NDSize &offset)
+                       const void *data,
+                       const NDSize &count,
+                       const NDSize &offset)
     {
         backend()->write(dtype, data, count, offset);
     }
@@ -478,7 +478,7 @@ void DataArray::getData(T &value) const
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    backend()->read(dtype, hydra.data(), shape, {});
+    getData(dtype, hydra.data(), shape, {});
 }
 
 template<typename T>
@@ -493,7 +493,7 @@ void DataArray::setData(const T &value)
         backend()->createData(dtype, shape);
     }
     backend()->dataExtent(shape);
-    backend()->write(dtype, hydra.data(), shape, {});
+    setData(dtype, hydra.data(), shape, {});
 }
 
 template<typename T>
@@ -503,7 +503,7 @@ void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) con
     DataType dtype = hydra.element_data_type();
 
     hydra.resize(count);
-    backend()->read(dtype, hydra.data(), count, offset);
+    getData(dtype, hydra.data(), count, offset);
 }
 
 template<typename T>
@@ -513,7 +513,7 @@ void DataArray::getData(T &value, const NDSize &offset) const
     DataType dtype = hydra.element_data_type();
 
     NDSize count = hydra.shape();
-    backend()->read(dtype, hydra.data(), count, offset);
+    getData(dtype, hydra.data(), count, offset);
 }
 
 
@@ -525,7 +525,7 @@ void DataArray::setData(const T &value, const NDSize &offset)
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    backend()->write(dtype, hydra.data(), shape, offset);
+    setData(dtype, hydra.data(), shape, offset);
 }
 
 } // namespace nix
