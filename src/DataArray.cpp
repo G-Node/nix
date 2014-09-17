@@ -10,6 +10,8 @@
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
 
+#include <cstring>
+
 using namespace nix;
 
 static void convertData(DataType source, DataType destination, void *data, size_t nelms)
