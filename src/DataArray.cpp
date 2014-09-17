@@ -42,8 +42,8 @@ void DataArray::getData(DataType dtype,
         }
 
         backend()->read(DataType::Double, read_buffer, count, offset);
-        std::transform(read_buffer, read_buffer + nelms, read_buffer, [this, &poly](double x) -> double {
-            return applyPolynomial(poly, 0.0, x);
+        std::transform(read_buffer, read_buffer + nelms, read_buffer, [&poly](double x) -> double {
+            return util::applyPolynomial(poly, 0.0, x);
         });
 
         convertData(DataType::Double, dtype, read_buffer, nelms);
@@ -63,16 +63,6 @@ void DataArray::setData(DataType dtype,
                         const NDSize &offset)
 {
     backend()->write(dtype, data, count, offset);
-}
-
-double DataArray::applyPolynomial(std::vector<double> &coefficients, double origin, double input) const{
-    double value = 0.0;
-    double term = 1.0;
-    for (size_t i = 0; i < coefficients.size(); i++) {
-        value += coefficients[i] * term;
-        term *= input - origin;
-    }
-    return value;
 }
 
 

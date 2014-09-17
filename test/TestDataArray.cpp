@@ -201,7 +201,7 @@ void TestDataArray::testPolynomial()
         coefficients2.push_back(i);
     }
 
-    double res1 = array1.applyPolynomial(coefficients2, 0, PI);
+    double res1 = util::applyPolynomial(coefficients2, 0, PI);
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
     //evalutate_polynomial from boost might use a different algorithm
