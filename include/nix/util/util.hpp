@@ -334,7 +334,7 @@ R deRef(boost::optional<R> var) {
     else return R();
 }
 
-double applyPolynomial(std::vector<double> &coefficients, double origin, double input);
+double applyPolynomial(const std::vector<double> &coefficients, double origin, double input);
 
 } // namespace util
 } // namespace nix
