@@ -25,7 +25,7 @@ void DataArray::getData(DataType dtype,
         const NDSize &count,
         const NDSize &offset) const {
 
-    std::vector<double> poly = polynomCoefficients();
+    const std::vector<double> poly = polynomCoefficients();
 
     if (poly.size()) {
         size_t data_esize = data_type_to_size(dtype);
