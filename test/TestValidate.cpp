@@ -8,15 +8,17 @@
 
 #include <ctime>
 #include <functional>
+#include <math.h>
 
 #include <nix/valid/validator.hpp>
 #include <nix/valid/checks.hpp>
 #include <nix/valid/conditions.hpp>
 #include <nix/valid/validate.hpp>
-
 #include <nix.hpp>
 
 #include "TestValidate.hpp"
+#include <boost/math/constants/constants.hpp>
+
 
 using namespace nix;
 using namespace valid;
@@ -31,6 +33,7 @@ void TestValidate::setUp() {
     array1 = block.createDataArray("array_one", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     array3 = block.createDataArray("array_three", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
+    array4 = block.createDataArray("array_four", "sindata", nix::DataType::Double, nix::NDSize({ 0, 0}));
     // set references vector
     refs = {array2, array3};
     // create positions & extents arrays
@@ -64,36 +67,46 @@ void TestValidate::tearDown() {
 }
 
 void TestValidate::setValid() {
+    // fill sin data & leave it in file for plot testing
+    typedef boost::multi_array<double, 2> array2D_type;
+    typedef array2D_type::index index;
+    array2D_type sin_array(boost::extents[1000][1000]);
+    const double PI = boost::math::constants::pi<double>();
+    for (index i = 0; i < 1000; ++i) {
+        for (index j = 0; j < 1000; ++j) {
+            sin_array[i][j] = std::sin(PI * j / std::sqrt((i>0)?i:1));
+        }
+    }
+    array4.setData(sin_array);
+    
     // fill array1 & array2
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[3][4][2]);
     int values = 0;
-    for(index i = 0; i != 3; ++i)
-        for(index j = 0; j != 4; ++j)
-            for(index k = 0; k != 2; ++k)
+    for (index i = 0; i != 3; ++i)
+        for (index j = 0; j != 4; ++j)
+            for (index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
     array3.setData(A);
     // fill extent & position
-    for(index i = 0; i < 3; ++i) {
+    for (index i = 0; i < 3; ++i) {
         extent.push_back(i);
         position.push_back(i);
     }
     // fill extents & positions
-    typedef boost::multi_array<double, 2> array2D_type;
-    typedef array2D_type::index index;
     array2D_type B(boost::extents[5][3]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 3; ++j) {
+    for (index i = 0; i < 5; ++i) {
+        for (index j = 0; j < 3; ++j) {
             B[i][j] = 100.0*i;
         }
     }
     positions.setData(B);
     array2D_type C(boost::extents[5][3]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 3; ++j) {
+    for (index i = 0; i < 5; ++i) {
+        for (index j = 0; j < 3; ++j) {
             C[i][j] = 100.0*i;
         }
     }
@@ -127,33 +140,33 @@ void TestValidate::setInvalid() {
     typedef array_type::index index;
     array_type A(boost::extents[3][4][2]);
     int values = 0;
-    for(index i = 0; i != 3; ++i)
-        for(index j = 0; j != 4; ++j)
-            for(index k = 0; k != 2; ++k)
+    for (index i = 0; i != 3; ++i)
+        for (index j = 0; j != 4; ++j)
+            for (index k = 0; k != 2; ++k)
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
     array3.setData(A);
     // fill extent & position
-    for(index i = 0; i < 6; ++i) {
+    for (index i = 0; i < 6; ++i) {
         extent.push_back(i);
     }
-    for(index i = 0; i < 9; ++i) {
+    for (index i = 0; i < 9; ++i) {
         position.push_back(i);
     }
     // fill extents & positions
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array2D_type::index index;
     array2D_type B(boost::extents[4][2]);
-    for(index i = 0; i < 4; ++i) {
-        for(index j = 0; j < 2; ++j) {
+    for (index i = 0; i < 4; ++i) {
+        for (index j = 0; j < 2; ++j) {
             B[i][j] = 100.0*i;
         }
     }
     extents.setData(B);
     array2D_type C(boost::extents[5][2]);
-    for(index i = 0; i < 5; ++i) {
-        for(index j = 0; j < 2; ++j) {
+    for (index i = 0; i < 5; ++i) {
+        for (index j = 0; j < 2; ++j) {
             C[i][j] = 100.0*i;
         }
     }

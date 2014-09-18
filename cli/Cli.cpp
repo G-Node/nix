@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         std::stringstream mod_list;
         mod_list << cli::MODULE_OPTION << ": ";
         i = 0;
-        for(auto &mod : cli::modules) {
+        for (auto &mod : cli::modules) {
             i++;
             mod_list << "use 'module name --help'" << std::endl << "    " << i << ": ";
             mod_list << mod.first << (cli::modules.size() != i ? ", " : "");
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
         
         // load & call module
         auto it = cli::modules.find(name);
-        if(it != cli::modules.end()) {
+        if (it != cli::modules.end()) {
             (*it).second->load(desc);    
             // process the cmd line input
             po::store(parser3.options(desc).positional(pdesc).run(), vm);

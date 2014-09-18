@@ -43,7 +43,7 @@ std::string data_type_to_string(DataType dtype) {
 
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
-    out << "DataType::" << data_type_to_string(dtype);
+    out << data_type_to_string(dtype);
     return out;
 }
 
