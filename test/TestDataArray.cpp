@@ -251,6 +251,26 @@ void TestDataArray::testPolynomial()
         CPPUNIT_ASSERT_EQUAL(ref[i], dvin_poly[i]);
     }
 
+    //poly + expansionOrigin
+    const double origin = 4.0;
+    dap.expansionOrigin(origin);
+    dap.getData(DataType::Int32, dvin_poly.data(), nix::NDSize({2, 3}), nix::NDSize({0, 0}));
+    // polyval(p, [1,2,3,4,5,6]-4)
+    // ans =  22     9     2     1     6    17
+    std::vector<int32_t> ref_eop = {22, 9, 2, 1, 6, 17};
+
+    CPPUNIT_ASSERT_EQUAL(ref_eop.size(), dvin_poly.size());
+    for (size_t i = 0; i < dvin_poly.size(); i++) {
+        CPPUNIT_ASSERT_EQUAL(ref_eop[i], dvin_poly[i]);
+    }
+
+    // expansionOrigin alone
+    dap.polynomCoefficients(boost::none);
+    dap.getData(DataType::Int32, dvin_poly.data(), nix::NDSize({2, 3}), nix::NDSize({0, 0}));
+    CPPUNIT_ASSERT_EQUAL(dv.size(), dvin_poly.size());
+    for (size_t i = 0; i < dvin_poly.size(); i++) {
+        CPPUNIT_ASSERT_EQUAL(static_cast<int32_t >(dv[i]-origin), dvin_poly[i]);
+    }
 }
 
 void TestDataArray::testLabel()
