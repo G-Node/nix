@@ -27,6 +27,11 @@ void TestTag::setUp() {
 
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
+    refs.clear();
+    for (const auto & name : array_names) {
+        refs.push_back(block.createDataArray(name, "reference",
+                                             DataType::Double, nix::NDSize({ 0 })));
+    }
 
     tag = block.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
     tag_other = block.createTag("tag_two", "test_tag", {0.0, 2.0, 3.4});
@@ -81,12 +86,6 @@ void TestTag::testCreateRemove() {
     std::vector<std::string> ids;
     size_t count = block.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference", DataType::Double, nix::NDSize({ 0 })));
-    }
 
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
@@ -123,13 +122,6 @@ void TestTag::testReferences() {
                                            DataType::Double, nix::NDSize({ 0 }));
     DataArray da_2 = block.createDataArray("TestReference 2","Reference",
                                            DataType::Double, nix::NDSize({ 0 }));
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, nix::NDSize({ 0 })));
-    }
 
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
@@ -183,14 +175,6 @@ void TestTag::testReferences() {
 
 
 void TestTag::testExtent() {
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto & name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, nix::NDSize({ 0 })));
-    }
-
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 
@@ -213,14 +197,6 @@ void TestTag::testExtent() {
 
 
 void TestTag::testPosition() {
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, nix::NDSize({ 0 })));
-    }
-
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 
@@ -255,8 +231,8 @@ void TestTag::testMetadataAccess() {
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
     // TODO This test fails due to operator== of Section
-    // CPPUNIT_ASSERT(source.metadata() == section);
-    
+    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
+
     // test none-unsetter
     tag.metadata(none);
     CPPUNIT_ASSERT(!tag.metadata());
@@ -299,14 +275,6 @@ void TestTag::testSourceAccess() {
 
 
 void TestTag::testUnits() {
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
-    for (const auto & name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, nix::NDSize({ 0 })));
-    }
-
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 

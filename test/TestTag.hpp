@@ -35,7 +35,7 @@ private:
     nix::Tag tag, tag_other, tag_null;
     nix::Section section;
     time_t startup_time;
-
+    std::vector<nix::DataArray> refs;
 
     CPPUNIT_TEST_SUITE(TestTag);
     
