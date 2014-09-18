@@ -214,6 +214,9 @@ void TestDataArray::testPolynomial()
         CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
     }
 
+    array2.polynomCoefficients(nix::none);
+    CPPUNIT_ASSERT(array2.polynomCoefficients().size() == 0);
+
     array2.expansionOrigin(3);
     boost::optional<double> retval = array2.expansionOrigin();
     CPPUNIT_ASSERT(*retval == 3);

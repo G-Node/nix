@@ -157,8 +157,8 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
 
 
 void DataArrayHDF5::polynomCoefficients(const none_t t) {
-    if (group().hasAttr("polynom_coefficients")) {
-        group().removeAttr("polynom_coefficients");
+    if (group().hasData("polynom_coefficients")) {
+        group().removeData("polynom_coefficients");
     }
     forceUpdatedAt();
 }
