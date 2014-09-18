@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
 #include <nix/Tag.hpp>
 
 using namespace std;
@@ -88,6 +89,10 @@ bool Tag::deleteFeature(const Feature &feature) {
         throw std::runtime_error("Tag::deleteFeature: Empty Feature entity given!");
     }
     return backend()->deleteFeature(feature.id());
+}
+
+NDArray Tag::retrieveData(size_t referenceIndex) const {
+   return util::retrieveData(*this, referenceIndex);
 }
 
 std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {

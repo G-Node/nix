@@ -15,7 +15,7 @@
 #include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
-
+#include <nix/NDArray.hpp>
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -428,6 +428,20 @@ public:
      * @return True if the feature was removed, false otherwise.
      */
     bool deleteFeature(const Feature &feature);
+
+    //--------------------------------------------------
+    // Methods for data retrieval
+    //--------------------------------------------------
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param reference_index The index of the reference of which
+     *                        the data should be returned.
+     *
+     * @return the data
+     */
+    NDArray retrieveData(size_t reference_index) const;
 
     //--------------------------------------------------
     // Other methods and functions
