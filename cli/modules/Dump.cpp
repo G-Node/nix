@@ -539,8 +539,8 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                                                        [ dim2 ]);
                             data_array.getData(A);
                             // loop through data_array values
-                            for (size_t i = 0; i < dim1; i++) {
-                                for (size_t j = 0; j < dim2; j++) {
+                            for (index i = 0; i < dim1; i++) {
+                                for (index j = 0; j < dim2; j++) {
                                     fout << A[i][j] << ((j != dim2-1) ? " " : "");
                                     if (A[i][j] < A_min) A_min = A[i][j];
                                     if (A[i][j] > A_max) A_max = A[i][j];
