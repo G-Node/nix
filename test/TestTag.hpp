@@ -38,10 +38,9 @@ private:
     std::vector<nix::DataArray> refs;
 
     CPPUNIT_TEST_SUITE(TestTag);
-    
+
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
-    
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testDefinition);
@@ -49,6 +48,7 @@ private:
     CPPUNIT_TEST(testExtent);
     CPPUNIT_TEST(testPosition);
     CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testDataAccess);
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testUnits);
@@ -61,11 +61,10 @@ public:
 
     void setUp();
     void tearDown();
-    
+
     void testValidate();
-    
+
     void testId();
-    
     void testName();
     void testType();
     void testDefinition();
@@ -73,6 +72,7 @@ public:
     void testExtent();
     void testPosition();
     void testReferences();
+    void testDataAccess();
     void testMetadataAccess();
     void testSourceAccess();
     void testUnits();

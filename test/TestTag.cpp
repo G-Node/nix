@@ -307,6 +307,72 @@ void TestTag::testUnits() {
 }
 
 
+void TestTag::testDataAccess() {
+    double samplingInterval = 1.0;
+    vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
+    string unit = "ms";
+    SampledDimension sampledDim;
+    RangeDimension rangeDim;
+    SetDimension setDim;
+    vector<double> position {0.0, 2.0, 3.4};
+    vector<double> extent {0.0, 6.0, 2.3};
+    vector<string> units {"none", "ms", "ms"};
+
+    DataArray data_array = block.createDataArray("dimensionTest",
+                                                 "test",
+                                                 DataType::Double,
+                                                 NDSize({0, 0, 0}));
+    vector<DataArray> reference;
+    reference.push_back(data_array);
+
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type data(boost::extents[2][10][5]);
+    int value;
+    for(index i = 0; i != 2; ++i) {
+        value = 0;
+        for(index j = 0; j != 10; ++j) {
+            for(index k = 0; k != 5; ++k) {
+                data[i][j][k] = value++;
+            }
+        }
+    }
+    data_array.setData(data);
+
+    setDim = data_array.appendSetDimension();
+    std::vector<std::string> labels = {"label_a", "label_b"};
+    setDim.labels(labels);
+
+    sampledDim = data_array.appendSampledDimension(samplingInterval);
+    sampledDim.unit(unit);
+
+    rangeDim = data_array.appendRangeDimension(ticks);
+    rangeDim.unit(unit);
+
+    Tag position_tag = block.createTag("position tag", "event", position);
+    position_tag.references(reference);
+    position_tag.units(units);
+
+    Tag segment_tag = block.createTag("region tag", "segment", position);
+    segment_tag.references(reference);
+    segment_tag.extent(extent);
+    segment_tag.units(units);
+
+    NDArray retrieved_data = position_tag.retrieveData(0);
+    NDSize data_size = retrieved_data.size();
+    CPPUNIT_ASSERT(retrieved_data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
+
+    retrieved_data = segment_tag.retrieveData( 0);
+    data_size = retrieved_data.size();
+    CPPUNIT_ASSERT(retrieved_data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+
+    block.deleteTag(position_tag);
+    block.deleteTag(segment_tag);
+}
+
+
 void TestTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
