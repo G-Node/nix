@@ -15,6 +15,8 @@
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
+#include <cstdint>
+
 using namespace nix;
 using namespace valid;
 
@@ -199,7 +201,7 @@ void TestDataArray::testPolynomial()
         coefficients2.push_back(i);
     }
 
-    double res1 = array1.applyPolynomial(coefficients2, 0, PI);
+    double res1 = util::applyPolynomial(coefficients2, 0, PI);
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
     //evalutate_polynomial from boost might use a different algorithm
@@ -217,6 +219,35 @@ void TestDataArray::testPolynomial()
     CPPUNIT_ASSERT(*retval == 3);
     array2.expansionOrigin(nix::none);
     CPPUNIT_ASSERT(array2.expansionOrigin() == nix::none);
+
+    //test IO with a polynomial set
+    nix::DataArray dap = block.createDataArray("polyio",
+                                               "double",
+                                               nix::DataType::Double,
+                                               nix::NDSize({2, 3}));
+
+    std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    dap.setData(nix::DataType::Double, dv.data(), nix::NDSize({2, 3}), nix::NDSize({0, 0}));
+
+    std::vector<double> poly = {1.0, 2.0, 3.0};
+    dap.polynomCoefficients(poly);
+
+    std::vector<int32_t> dvin_poly;
+    dvin_poly.resize(2*3);
+    dap.getData(DataType::Int32, dvin_poly.data(), nix::NDSize({2, 3}), nix::NDSize({0, 0}));
+
+    // reference data generated with MATLAB(c) as folows:
+    // p = [3, 2, 1]
+    // polyval(p, [1, 2, 3, 4, 5, 6])
+    // ans =
+    // 6    17    34    57    86   121
+    std::vector<int32_t> ref = {6, 17, 34, 57, 86, 121};
+
+    CPPUNIT_ASSERT_EQUAL(ref.size(), dvin_poly.size());
+    for (size_t i = 0; i < dvin_poly.size(); i++) {
+        CPPUNIT_ASSERT_EQUAL(ref[i], dvin_poly[i]);
+    }
+
 }
 
 void TestDataArray::testLabel()

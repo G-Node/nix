@@ -266,5 +266,15 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
+double applyPolynomial(const std::vector<double> &coefficients, double origin, double input) {
+    double value = 0.0;
+    double term = 1.0;
+    for (size_t i = 0; i < coefficients.size(); i++) {
+        value += coefficients[i] * term;
+        term *= input - origin;
+    }
+    return value;
+}
+
 } // namespace util
 } // namespace nix
