@@ -28,8 +28,9 @@ void DataArray::getData(DataType dtype,
         const NDSize &offset) const {
 
     const std::vector<double> poly = polynomCoefficients();
+    boost::optional<double> opt_origin = expansionOrigin();
 
-    if (poly.size()) {
+    if (poly.size() || opt_origin) {
         size_t data_esize = data_type_to_size(dtype);
         size_t nelms = count.nelms();
         std::vector<double> tmp;
@@ -44,9 +45,21 @@ void DataArray::getData(DataType dtype,
         }
 
         backend()->read(DataType::Double, read_buffer, count, offset);
-        std::transform(read_buffer, read_buffer + nelms, read_buffer, [&poly](double x) -> double {
-            return util::applyPolynomial(poly, 0.0, x);
-        });
+
+        const double origin = opt_origin ? *opt_origin : 0.0;
+
+        if (poly.size() == 0) {
+            // this means we only have the expansion origin set but *not*
+            // the polynomial, we therefore cannot use applyPolynomial()
+            for(size_t i = 0; i < nelms; i++) {
+                read_buffer[i] -= origin;
+            }
+        } else {
+            std::transform(read_buffer, read_buffer + nelms, read_buffer,
+                    [&poly, origin](double x) -> double {
+                return util::applyPolynomial(poly, origin, x);
+            });
+        }
 
         convertData(DataType::Double, dtype, read_buffer, nelms);
 
