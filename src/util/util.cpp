@@ -266,16 +266,31 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
     return scaling;
 }
 
-void applyPolynomial(const std::vector<double> &coefficients, double origin, double *input, double *output, size_t n) {
-    for (size_t k = 0; k < n; k++) {
-        const double x = input[k] - origin;
-        double value = 0.0;
-        double term = 1.0;
-        for (size_t i = 0; i < coefficients.size(); i++) {
-            value += coefficients[i] * term;
-            term *= x;
+void applyPolynomial(const std::vector<double> &coefficients,
+                     double origin,
+                     const double *input,
+                     double *output,
+                     size_t n) {
+
+    if (!coefficients.size()) {
+        // if we have no coefficients, i.e no polynomial specified we
+        // should still apply the the origin transformation
+        for (size_t k = 0; k < n; k++) {
+            output[k] = input[k] - origin;
         }
-        output[k] = value;
+
+    } else {
+
+        for (size_t k = 0; k < n; k++) {
+            const double x = input[k] - origin;
+            double value = 0.0;
+            double term = 1.0;
+            for (size_t i = 0; i < coefficients.size(); i++) {
+                value += coefficients[i] * term;
+                term *= x;
+            }
+            output[k] = value;
+        }
     }
 }
 

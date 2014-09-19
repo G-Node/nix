@@ -45,19 +45,9 @@ void DataArray::getData(DataType dtype,
         }
 
         backend()->read(DataType::Double, read_buffer, count, offset);
-
         const double origin = opt_origin ? *opt_origin : 0.0;
 
-        if (poly.size() == 0) {
-            // this means we only have the expansion origin set but *not*
-            // the polynomial, we therefore cannot use applyPolynomial()
-            for(size_t i = 0; i < nelms; i++) {
-                read_buffer[i] -= origin;
-            }
-        } else {
-            util::applyPolynomial(poly, origin, read_buffer, read_buffer, nelms);
-        }
-
+        util::applyPolynomial(poly, origin, read_buffer, read_buffer, nelms);
         convertData(DataType::Double, dtype, read_buffer, nelms);
 
         if (tmp.size()) {
