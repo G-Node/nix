@@ -533,8 +533,8 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                         if (data_array.dataExtent().size() == 2) {
                             file_name = "data_array_" + data_array.id();
                             fout.open(file_name + ".txt");
-                            size_t dim1 = data_array.dataExtent()[0];
-                            size_t dim2 = data_array.dataExtent()[1];
+                            index dim1 = static_cast<index>(data_array.dataExtent()[0]);
+                            index dim2 = static_cast<index>(data_array.dataExtent()[1]);
                             array_type A(boost::extents[ dim1 ]
                                                        [ dim2 ]);
                             data_array.getData(A);
@@ -552,7 +552,7 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                             #ifndef _WIN32
                             if (vm.count(PLOT_OPTION)) {
                                 std::cout << "press ctrl+c for next plot" << std::endl;
-                                plot_script script(A_min, A_max, dim1, dim2, file_name + ".txt");
+                                plot_script script(A_min, A_max, static_cast<size_t>(dim1), static_cast<size_t>(dim2), file_name + ".txt");
                                 fout.open(file_name + ".gnu");
                                 fout << script.str();
                                 fout.close();
