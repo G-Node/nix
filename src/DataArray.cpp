@@ -55,10 +55,7 @@ void DataArray::getData(DataType dtype,
                 read_buffer[i] -= origin;
             }
         } else {
-            std::transform(read_buffer, read_buffer + nelms, read_buffer,
-                    [&poly, origin](double x) -> double {
-                return util::applyPolynomial(poly, origin, x);
-            });
+            util::applyPolynomial(poly, origin, read_buffer, read_buffer, nelms);
         }
 
         convertData(DataType::Double, dtype, read_buffer, nelms);
