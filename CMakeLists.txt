@@ -161,6 +161,12 @@ endforeach(test)
 include(CTest)
 
 
+add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
+target_link_libraries(nix-bench nix)
+if(NOT WIN32)
+  set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+endif()
+
 ########################################
 # Install
 
