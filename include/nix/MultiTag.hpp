@@ -15,6 +15,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
+#include <nix/NDArray.hpp>
 
 namespace nix {
 
@@ -335,6 +336,17 @@ public:
     void references(const std::vector<DataArray> &references) {
         backend()->references(references);
     }
+
+    /**
+     * @brief Retrieves the data slice tagged by a certain position and extent
+     *        of a certain reference.  
+     *
+     * @param position_index the index of the requested position.
+     * @param reference_index the index of the requested reference.
+     *
+     * @return the requested data.
+     */
+    NDArray retrieveData(size_t position_index, size_t reference_index) const;
 
     //--------------------------------------------------
     // Methods concerning features.
