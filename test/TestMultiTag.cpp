@@ -277,12 +277,107 @@ void TestMultiTag::testPositionExtents() {
 }
 
 
+void TestMultiTag::testDataAccess() {
+    DataArray data_array = block.createDataArray("dimensionTest",
+                                       "test",
+                                       DataType::Double,
+                                       NDSize({0, 0, 0}));
+    double samplingInterval = 1.0;
+    std::vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
+    std::string unit = "ms";
+
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type data(boost::extents[2][10][5]);
+    int value;
+    for(index i = 0; i != 2; ++i) {
+        value = 0;
+        for(index j = 0; j != 10; ++j) {
+            for(index k = 0; k != 5; ++k) {
+                data[i][j][k] = value++;
+            }
+        }
+    }
+    data_array.setData(data);
+
+    SetDimension setDim = data_array.appendSetDimension();
+    std::vector<std::string> labels = {"label_a", "label_b"};
+    setDim.labels(labels);
+
+    SampledDimension sampledDim = data_array.appendSampledDimension(samplingInterval);
+    sampledDim.unit(unit);
+
+    RangeDimension rangeDim = data_array.appendRangeDimension(ticks);
+    rangeDim.unit(unit);
+
+    typedef boost::multi_array<double, 2> position_type;
+    position_type event_positions(boost::extents[2][3]);
+    position_type event_extents(boost::extents[2][3]);
+    event_positions[0][0] = 0.0;
+    event_positions[0][1] = 3.0;
+    event_positions[0][2] = 3.4;
+
+    event_extents[0][0] = 0.0;
+    event_extents[0][1] = 6.0;
+    event_extents[0][2] = 2.3;
+
+    event_positions[1][0] = 0.0;
+    event_positions[1][1] = 8.0;
+    event_positions[1][2] = 2.3;
+
+    event_extents[1][0] = 0.0;
+    event_extents[1][1] = 3.0;
+    event_extents[1][2] = 2.0;
+
+    std::vector<std::string> event_labels = {"event 1", "event 2"};
+    std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};
+
+    DataArray event_array = block.createDataArray("positions", "test",
+                                                  DataType::Double, NDSize({ 0, 0 }));
+    event_array.setData(event_positions);
+    SetDimension event_set_dim;
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(event_labels);
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(dim_labels);
+
+    DataArray extent_array = block.createDataArray("extents", "test",
+                                                   DataType::Double, NDSize({ 0, 0 }));
+    extent_array.setData(event_extents);
+    SetDimension extent_set_dim;
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(event_labels);
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(dim_labels);
+
+    MultiTag multi_tag = block.createMultiTag("multi_tag", "events", event_array);
+    multi_tag.extents(extent_array);
+    multi_tag.addReference(data_array);
+
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(-1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(10, 0), nix::OutOfBounds);
+
+    NDArray ret_data = multi_tag.retrieveData(0, 0);
+    NDSize data_size = ret_data.size();
+    CPPUNIT_ASSERT(ret_data.rank() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);
+    
+    block.deleteMultiTag(multi_tag);
+    block.deleteDataArray(data_array);
+    block.deleteDataArray(event_array);
+    block.deleteDataArray(event_array);
+}
+
+
 void TestMultiTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
-    // TODO This test fails due to operator== of Section
-    // CPPUNIT_ASSERT(tag.metadata() == section);
+    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
     
     // test none-unsetter
     tag.metadata(none);
