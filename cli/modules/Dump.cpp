@@ -473,13 +473,13 @@ yamlstream& yamlstream::operator<<(const nix::File &file) {
 
 void Dump::load(po::options_description &desc) const {
     // declare purpose
-    desc.add(po::options_description(std::string(module_name) + 
-                                     ": dump selected contents of given input file\nSupported options"));
+    desc.add(po::options_description("nix-tool " + std::string(module_name) + ":\n\n\t" + 
+                                     "Dump data-contents of a given nix file as yaml to std out.\n\nSupported options"));
     // declare supported options
     po::options_description opt;
     opt.add_options()
-        (DATA_OPTION, "dump (only) data from all 2D arrays")
-        (PLOT_OPTION, ("dump & plot (only) data from all 2D arrays (linux only, invokes --" + std::string(DATA_OPTION) + ")").c_str())
+        (DATA_OPTION, "dump data from all 2D DataArrays")
+        (PLOT_OPTION, ("dump & plot (only) data from all 2D DataArrays (linux only, invokes --" + std::string(DATA_OPTION) + ")").c_str())
     ;
     desc.add(opt);
 }
@@ -497,7 +497,9 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
     
     // --help
     if (vm.count(HELP_OPTION)) {
-        out << desc << std::endl;
+        po::options_description temp;
+        load(temp);
+        out << temp << std::endl;
         return out.str();
     }
     // --input-file
