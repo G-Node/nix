@@ -287,7 +287,7 @@ NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
     }
     Feature feat = tag.getFeature(feature_index);
     DataArray data = feat.data();
-    if (data == none) {
+    if (data == nix::none) {
         return NDArray(nix::DataType::Float,{0});
     }
     if (feat.linkType() == nix::LinkType::Tagged) {
@@ -305,6 +305,51 @@ NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
     data.getData(feat_data);
     return feat_data;
 }
+
+
+NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+       throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index > tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    DataArray data = feat.data();
+    if (data == nix::none) {
+        return NDArray(nix::DataType::Float,{0});
+    }
+    if (feat.linkType() == nix::LinkType::Tagged) {
+        NDSize offset, count;
+        getOffsetAndCount(tag, data, position_index, offset, count);
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        NDArray feat_data(data.dataType(), count);
+        data.getData(feat_data, count, offset);
+        return feat_data;
+    } else if (feat.linkType() == nix::LinkType::Indexed) {
+        //FIXME does the feature data to have a setdimension in the first dimension?
+        //For now it will just be a slice across the first dim.
+        if (position_index > data.dataExtent()[0]){
+            throw nix::OutOfBounds("Position is larger than the data stored in the feature.", 0);
+        }
+        int start = 0;
+        NDSize offset(data.dataExtent().size(), start);
+        offset[0] = position_index;
+        NDSize count(data.dataExtent());
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        NDArray feat_data(data.dataType(), count);
+        data.getData(feat_data, count, offset);
+        return feat_data;
+    }
+    NDArray feat_data(data.dataType(), data.dataExtent());
+    data.getData(feat_data);
+    return feat_data;
+}
+
 
 } // namespace util
 } // namespace nix
