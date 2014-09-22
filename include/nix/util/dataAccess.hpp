@@ -133,6 +133,16 @@ NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
  */
 NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
 
+/**
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested
+ * @param feature_index The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI NDArray retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+
 }
 }
 #endif // NIX_DATAACCESS_H

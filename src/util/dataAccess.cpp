@@ -277,5 +277,34 @@ NDArray retrieveData(const Tag &tag, size_t reference_index) {
     return data;
 }
 
+
+NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index > tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    DataArray data = feat.data();
+    if (data == none) {
+        return NDArray(nix::DataType::Float,{0});
+    }
+    if (feat.linkType() == nix::LinkType::Tagged) {
+        NDSize offset, count;
+        getOffsetAndCount(tag, data, offset, count);
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        NDArray feat_data(data.dataType(), count);
+        data.getData(feat_data, count, offset);
+        return feat_data;
+    }
+    // for untagged and indexed return the full data
+    NDArray feat_data(data.dataType(), data.dataExtent());
+    data.getData(feat_data);
+    return feat_data;
+}
+
 } // namespace util
 } // namespace nix
