@@ -62,11 +62,13 @@ int main(int argc, char* argv[]) {
         // create string list of all modules
         std::stringstream mod_list;
         mod_list << cli::MODULE_OPTION << ": ";
+        mod_list << "use 'module name --help' for more information on the specific tool. Avalibale modules are:\n\t";
+           
         i = 0;
         for (auto &mod : cli::modules) {
             i++;
-            mod_list << "use 'module name --help'" << std::endl << "    " << i << ": ";
-            mod_list << mod.first << (cli::modules.size() != i ? ", " : "");
+            mod_list << i << ": ";
+            mod_list << mod.first << (cli::modules.size() != i ? ",\n\t" : "");
         }
         // declare generally supported options
         desc.add_options()
@@ -107,7 +109,10 @@ int main(int argc, char* argv[]) {
             out << (*it).second->call(vm, desc);
         }
         else {
-            out << std::endl << "unknown module" << std::endl << std::endl;
+            out << std::endl << "Nix command line tool " <<  "\n\n";
+            out << "\tUse the modules of this tool to dump nix-file contents as yaml to std out\n";
+            out << "\tor validate the nix file to detect structural and/or logical errors.\n\n";
+            out << "\tUsage: ./nix-tool module [--help] [[module args] input-file] \n\n";
             out << desc << std::endl;
         }
         
