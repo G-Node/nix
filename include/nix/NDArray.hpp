@@ -71,8 +71,7 @@ template<typename T>
 const T NDArray::get(const NDSize &index) const
 {
     size_t pos = sub2index(index);
-    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-    return dx[pos];
+    return get<T>(pos);
 }
 
 
@@ -88,8 +87,7 @@ template<typename T>
 void NDArray::set(const NDSize &index, T value)
 {
     size_t pos = sub2index(index);
-    T* dx = reinterpret_cast<T *>(&dstore[0]);
-    dx[pos] = value;
+    set(pos, value);
 }
 
 /* ****************************************** */
