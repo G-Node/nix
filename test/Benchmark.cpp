@@ -174,12 +174,11 @@ private:
     std::vector<std::thread> workers;
 };
 
-
-class Benchmark {
+class Config {
 
 public:
-    Benchmark(nix::DataType dtype, const nix::NDSize &blocksize)
-            : dtype(dtype), blocksize(blocksize) {
+    Config(nix::DataType data_type, const nix::NDSize &blocksize)
+            : data_type(data_type), block_size(blocksize) {
 
         sdim = find_single_dim();
         shape = blocksize;
@@ -191,8 +190,8 @@ public:
     size_t find_single_dim() {
         size_t sdim;
         bool have_rdim = false;
-        for (size_t i = 0; i < blocksize.size(); i ++) {
-            if (blocksize[i] == 1) {
+        for (size_t i = 0; i < block_size.size(); i ++) {
+            if (block_size[i] == 1) {
                 sdim = i;
                 have_rdim = true;
             }
@@ -204,14 +203,49 @@ public:
         return sdim;
     }
 
+    nix::DataType dtype() const { return data_type; }
+    const nix::NDSize& size() const { return block_size; }
+    const nix::NDSize& extend() const { return shape; }
+    size_t singleton_dimension() const { return sdim; }
+    const std::string & name() const { return my_name; };
+
+private:
+    void make_name() {
+        std::stringstream s;
+
+        s << data_type << "@{ ";
+        for (auto x : block_size) {
+            s << x << " ";
+        }
+        s << "}";
+
+        my_name = s.str();
+    }
+
+private:
+    const nix::DataType data_type;
+    const nix::NDSize block_size;
+
+    size_t        sdim;
+    nix::NDSize   shape;
+
+    std::string   my_name;
+};
+
+class Benchmark {
+
+public:
+    Benchmark(const Config &cfg)
+            : config(cfg) {
+    };
 
     void test_write_io(nix::Block block) {
         block_id = block.id();
 
-        nix::DataArray da = block.createDataArray(my_name, "nix.test.da", dtype, shape);
+        nix::DataArray da = block.createDataArray(config.name(), "nix.test.da", config.dtype(), config.extend());
         dset_id = da.id();
 
-        switch (dtype) {
+        switch (config.dtype()) {
 
             case nix::DataType::Double:
                 do_write_test<double>(da);
@@ -226,39 +260,43 @@ public:
         nix::Block block = fd.getBlock(block_id);
         nix::DataArray da = block.getDataArray(dset_id);
 
-        nix::NDArray array(dtype, blocksize);
+        speed_read = test_read_io(da);
+    }
+
+    double test_read_io(nix::DataArray da) {
+
+        nix::NDArray array(config.dtype(), config.size());
         nix::NDSize extend = da.dataExtent();
-        size_t N = extend[sdim];
+        size_t N = extend[config.singleton_dimension()];
 
         nix::NDSize pos = {0, 0};
 
         ssize_t ms = time_it([this, &da, &N, &pos, &array] {
             for(size_t i = 0; i < N; i++) {
-                da.getData(dtype, array.data(), blocksize, pos);
-                pos[sdim] += 1;
+                da.getData(config.dtype(), array.data(), config.size(), pos);
+                pos[config.singleton_dimension()] += 1;
             }
         });
 
-        speed_read = calc_speed_mbs(ms, N);
+        return calc_speed_mbs(ms, N);
     }
 
-    void make_name() {
-        std::stringstream s;
+    void test_read_io_polynom(nix::File fd) {
+        nix::Block block = fd.getBlock(block_id);
+        nix::DataArray da = block.getDataArray(dset_id);
 
-        s << dtype << "@{ ";
-        for (auto x : blocksize) {
-            s << x << " ";
-        }
-        s << "}";
+        da.polynomCoefficients({3, 4, 5, 6});
 
-        my_name = s.str();
+        speed_read_poly = test_read_io(da);
     }
+
 
     void report() {
-        std::cout << my_name << ": "
+        std::cout << config.name() << ": "
                 << "G: " << speed_generator << " MB/s, "
                 << "W: " << speed_write << " MB/s, "
-                << "R: " << speed_read << " MB/s" << std::endl;
+                << "R: " << speed_read << " MB/s, "
+                << "P: " << speed_read_poly << " MB/s" << std::endl;
     }
 
     template<typename F>
@@ -271,7 +309,7 @@ public:
 private:
     template<typename T>
     void do_write_test(nix::DataArray da) {
-        size_t nelms = blocksize.nelms();
+        size_t nelms = config.size().nelms();
         BlockGenerator<T> generator(nelms, 10);
         generator.start_worker();
         speed_generator = generator.speed_test();
@@ -288,9 +326,9 @@ private:
 
             for (size_t i = 0; i < N; i++) {
                 std::vector<T> block = generator.next_block();
-                da.dataExtent(blocksize + pos);
-                da.setData(dtype, block.data(), blocksize, pos);
-                pos[sdim] += 1;
+                da.dataExtent(config.size() + pos);
+                da.setData(config.dtype(), block.data(), config.size(), pos);
+                pos[config.singleton_dimension()] += 1;
                 iterations++;
             }
 
@@ -303,17 +341,13 @@ private:
     }
 
     double calc_speed_mbs(ssize_t ms, size_t iterations) {
-        return iterations * blocksize.nelms() * nix::data_type_to_size(dtype) * (1000.0/ms) / (1024.0*1024.0);
+        return iterations * config.size().nelms() * nix::data_type_to_size(config.dtype()) * (1000.0/ms) /
+                (1024.0*1024.0);
     }
 
 private:
-    nix::DataType dtype;
-    nix::NDSize   blocksize;
 
-    size_t        sdim;
-    nix::NDSize   shape;
-
-    std::string   my_name;
+    const Config config;
 
     std::string   dset_id;
     std::string   block_id;
@@ -321,6 +355,7 @@ private:
     double        speed_write;
     double        speed_read;
     double        speed_generator;
+    double        speed_read_poly;
 };
 
 /* ************************************ */
@@ -329,8 +364,8 @@ static std::vector<Benchmark> make_benchmarks() {
     std::vector<Benchmark> marks;
 
     //TODO: auto-generate
-    marks.emplace_back(nix::DataType::Double, nix::NDSize{2048, 1});
-    marks.emplace_back(nix::DataType::Double, nix::NDSize{1, 2048});
+    marks.emplace_back(Config(nix::DataType::Double, nix::NDSize{2048, 1}));
+    marks.emplace_back(Config(nix::DataType::Double, nix::NDSize{1, 2048}));
 
     return marks;
 }
@@ -351,6 +386,12 @@ int main(int argc, char **argv)
     for (Benchmark &mark : marks) {
         mark.test_read_io(fd);
     }
+
+    std::cout << "Performing read (poly) tests..." << std::endl;
+    for (Benchmark &mark : marks) {
+        mark.test_read_io_polynom(fd);
+    }
+
     std::cout << " === Reports ===" << std::endl;
     for (Benchmark &mark : marks) {
         mark.report();
