@@ -23,7 +23,7 @@
 #include <nix.hpp>
 #include <nix/hdf5/MultiTagHDF5.hpp>
 #include <nix/util/util.hpp>
-
+#include <nix/util/dataAccess.hpp>
 
 class TestMultiTag: public CPPUNIT_NS::TestFixture {
 private:
@@ -48,6 +48,7 @@ private:
     CPPUNIT_TEST(testPositions);
     CPPUNIT_TEST(testPositionExtents);
     CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testDataAccess);
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testCreatedAt);
@@ -69,6 +70,7 @@ public:
     void testUnits();
     void testPositions();
     void testReferences();
+    void testDataAccess();
     void testPositionExtents();
     void testMetadataAccess();
     void testSourceAccess();

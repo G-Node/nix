@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
 #include <nix/MultiTag.hpp>
 
 namespace nix {
@@ -71,12 +72,16 @@ bool MultiTag::removeReference(const DataArray &reference) {
 }
 
 
-std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type &filter) const
-{
+std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
     return getEntities<DataArray>(f,
                                   referenceCount(),
                                   filter);
+}
+
+
+NDArray MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
+    return util::retrieveData(*this, position_index, reference_index);
 }
 
 
@@ -88,8 +93,7 @@ bool MultiTag::hasFeature(const Feature &feature) const {
 }
 
 
-std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filter) const
-{
+std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
     return getEntities<Feature>(f,
                                 featureCount(),
