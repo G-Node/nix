@@ -38,8 +38,8 @@ public:
     template<typename T> void set(size_t index, T value);
     template<typename T> void set(const NDSize &index, T value);
 
-    byte_type *data() { return &dstore[0]; }
-    const byte_type *data() const { return &dstore[0]; }
+    byte_type *data() { return dstore.data(); }
+    const byte_type *data() const { return dstore.data(); }
 
     void resize(const NDSize &new_size);
 
