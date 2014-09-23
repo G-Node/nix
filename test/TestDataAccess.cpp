@@ -51,7 +51,7 @@ void TestDataAccess::setUp() {
     vector<double> position {0.0, 2.0, 3.4};
     vector<double> extent {0.0, 6.0, 2.3};
     vector<string> units {"none", "ms", "ms"};
-    
+
     position_tag = block.createTag("position tag", "event", position);
     position_tag.references(refs);
     position_tag.units(units);
@@ -60,7 +60,7 @@ void TestDataAccess::setUp() {
     segment_tag.references(refs);
     segment_tag.extent(extent);
     segment_tag.units(units);
-    
+
     //setup multiTag
     typedef boost::multi_array<double, 2> position_type;
     position_type event_positions(boost::extents[2][3]);
@@ -218,6 +218,43 @@ void TestDataAccess::testRetrieveData() {
     data_size = data.size();
     CPPUNIT_ASSERT(data.rank() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+}
+
+void TestDataAccess::testTagFeatureData() {
+    DataArray number_feat = block.createDataArray("number feature", "test", nix::DataType::Double, {1});
+    vector<double> number = {10.0};
+    number_feat.setData(number);
+    DataArray ramp_feat = block.createDataArray("ramp feature", "test", nix::DataType::Double, {10});
+    ramp_feat.label("voltage");
+    ramp_feat.unit("mV");
+    SampledDimension dim = ramp_feat.appendSampledDimension(1.0);
+    dim.unit("ms");
+    vector<double> ramp_data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+    ramp_feat.setData(ramp_data);
+
+    Tag pos_tag = block.createTag("feature test", "test", {0.5});
+    pos_tag.units({"ms"});
+
+    Feature f1 = pos_tag.createFeature(number_feat, nix::LinkType::Untagged);
+    Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
+    Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
+
+    // positional tag
+    NDArray data1 = util::retrieveFeatureData(pos_tag, 0);
+    NDArray data2 = util::retrieveFeatureData(pos_tag, 1);
+    NDArray data3 = util::retrieveFeatureData(pos_tag, 2);
+
+    CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
+    CPPUNIT_ASSERT(data1.num_elements() == 1);
+    CPPUNIT_ASSERT(data2.num_elements() == 1);
+    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
+
+    pos_tag.deleteFeature(f1.id());
+    pos_tag.deleteFeature(f2.id());
+    pos_tag.deleteFeature(f3.id());
+    block.deleteDataArray(number_feat.id());
+    block.deleteDataArray(ramp_feat.id());
+    block.deleteTag(pos_tag);
 }
 
 void TestDataAccess::testMultiTagUnitSupport() {
