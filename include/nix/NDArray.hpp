@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <iostream>
+#include <cstring>
 
 #include <nix/Hydra.hpp>
 
@@ -62,8 +63,10 @@ private:
 template<typename T>
 const T NDArray::get(size_t index) const
 {
-    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-    return dx[index];
+    T value;
+    const byte_type *offset = dstore.data() + sizeof(T) * index;
+    memcpy(&value, offset, sizeof(T));
+    return value;
 }
 
 
@@ -78,8 +81,8 @@ const T NDArray::get(const NDSize &index) const
 template<typename T>
 void NDArray::set(size_t index, T value)
 {
-    T* dx = reinterpret_cast<T *>(&dstore[0]);
-    dx[index] = value;
+    byte_type *offset = dstore.data() + sizeof(T) * index;
+    memcpy(offset, &value, sizeof(T));
 }
 
 
