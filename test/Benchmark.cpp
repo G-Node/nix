@@ -278,10 +278,7 @@ public:
     };
 
     void test_write_io(nix::Block block) {
-        block_id = block.id();
-
         nix::DataArray da = openDataArray(block);
-        dset_id = da.id();
 
         switch (config.dtype()) {
 
@@ -374,9 +371,6 @@ private:
     }
 
 private:
-    std::string   dset_id;
-    std::string   block_id;
-
     double        speed_write;
     double        speed_read;
     double        speed_generator;
@@ -397,7 +391,7 @@ static std::vector<IOBenchmark> make_benchmarks() {
     for (const Config &cfg : configs) {
         marks.emplace_back(cfg);
     }
-    
+
     return marks;
 }
 
