@@ -138,12 +138,12 @@ public:
         }
     }
 
-    double speed_test() {
+    double speed_test(size_t &iterations) {
 
         Stopwatch sw;
 
         size_t N = 100;
-        size_t iterations = 0;
+        iterations = 0;
 
         do {
             Stopwatch inner;
@@ -160,7 +160,7 @@ public:
         } while (sw.ms() < 1000);
 
         ssize_t count = sw.ms();
-        return iterations * blocksize * sizeof(T) * (1000.0/count) / (1024.0*1024.0);
+        return count;
     }
 
 private:
@@ -174,12 +174,11 @@ private:
     std::vector<std::thread> workers;
 };
 
-
-class Benchmark {
+class Config {
 
 public:
-    Benchmark(nix::DataType dtype, const nix::NDSize &blocksize)
-            : dtype(dtype), blocksize(blocksize) {
+    Config(nix::DataType data_type, const nix::NDSize &blocksize)
+            : data_type(data_type), block_size(blocksize) {
 
         sdim = find_single_dim();
         shape = blocksize;
@@ -191,8 +190,8 @@ public:
     size_t find_single_dim() {
         size_t sdim;
         bool have_rdim = false;
-        for (size_t i = 0; i < blocksize.size(); i ++) {
-            if (blocksize[i] == 1) {
+        for (size_t i = 0; i < block_size.size(); i ++) {
+            if (block_size[i] == 1) {
                 sdim = i;
                 have_rdim = true;
             }
@@ -204,14 +203,124 @@ public:
         return sdim;
     }
 
+    nix::DataType dtype() const { return data_type; }
+    const nix::NDSize& size() const { return block_size; }
+    const nix::NDSize& extend() const { return shape; }
+    size_t singleton_dimension() const { return sdim; }
+    const std::string & name() const { return my_name; };
 
-    void test_write_io(nix::Block block) {
-        block_id = block.id();
 
-        nix::DataArray da = block.createDataArray(my_name, "nix.test.da", dtype, shape);
-        dset_id = da.id();
+private:
+    void make_name() {
+        std::stringstream s;
 
-        switch (dtype) {
+        s << data_type << "@{ ";
+        for (auto x : block_size) {
+            s << x << " ";
+        }
+        s << "}";
+
+        my_name = s.str();
+    }
+
+private:
+    const nix::DataType data_type;
+    const nix::NDSize block_size;
+
+    size_t        sdim;
+    nix::NDSize   shape;
+
+    std::string   my_name;
+};
+
+
+class Benchmark {
+public:
+    Benchmark(const Config &cfg) : config(cfg) { }
+    const Config & cfg() const { return config; }
+
+    nix::DataArray openDataArray(nix::Block block) const {
+        const std::string &cfg_name = config.name();
+        std::vector<nix::DataArray> v = block.dataArrays(nix::util::NameFilter<nix::DataArray>(cfg_name));
+        if (v.empty()) {
+            return block.createDataArray(cfg_name, "nix.test.da", config.dtype(), config.extend());
+        } else {
+            return v[0];
+        }
+    }
+
+    virtual ~Benchmark() { }
+
+    virtual double speed_in_mbs() {
+        return count * config.size().nelms() * nix::data_type_to_size(config.dtype()) *
+                (1000.0/millis) / (1024 * 1024);
+    }
+
+    virtual double speed_in_nps() {
+        return count * config.size().nelms() * (1000.0/millis);
+    }
+
+    template<typename F>
+    ssize_t time_it(F func) {
+        Stopwatch watch;
+        func();
+        return watch.ms();
+    }
+
+
+    virtual void run(nix::Block block) = 0;
+    virtual std::string id() = 0;
+
+protected:
+    const Config config;
+    size_t       count;
+    double       millis;
+};
+
+class GeneratorBenchmark : public Benchmark {
+public:
+    GeneratorBenchmark(const Config &cfg)
+            : Benchmark(cfg) {
+
+    };
+
+    void run(nix::Block block) override {
+        switch (config.dtype()) {
+
+            case nix::DataType::Double:
+                test_speed<double>();
+                break;
+
+            default:
+                throw std::runtime_error("Unsupported DataType!");
+        }
+    }
+
+    template<typename T>
+    void test_speed() {
+        size_t nelms = config.size().nelms();
+        BlockGenerator<T> generator(nelms, 10);
+        generator.start_worker();
+        this->millis = generator.speed_test(this->count);
+    }
+
+    std::string id() override {
+        return "P";
+    }
+};
+
+
+class WriteBenchmark : public Benchmark {
+
+public:
+    WriteBenchmark(const Config &cfg)
+            : Benchmark(cfg) {
+    };
+
+    void run(nix::Block block) override {
+        nix::DataArray da = openDataArray(block);
+
+        switch (config.dtype()) {
 
             case nix::DataType::Double:
                 do_write_test<double>(da);
@@ -222,60 +331,16 @@ public:
         }
     }
 
-    void test_read_io(nix::File fd) {
-        nix::Block block = fd.getBlock(block_id);
-        nix::DataArray da = block.getDataArray(dset_id);
-
-        nix::NDArray array(dtype, blocksize);
-        nix::NDSize extend = da.dataExtent();
-        size_t N = extend[sdim];
-
-        nix::NDSize pos = {0, 0};
-
-        ssize_t ms = time_it([this, &da, &N, &pos, &array] {
-            for(size_t i = 0; i < N; i++) {
-                da.getData(dtype, array.data(), blocksize, pos);
-                pos[sdim] += 1;
-            }
-        });
-
-        speed_read = calc_speed_mbs(ms, N);
-    }
-
-    void make_name() {
-        std::stringstream s;
-
-        s << dtype << "@{ ";
-        for (auto x : blocksize) {
-            s << x << " ";
-        }
-        s << "}";
-
-        my_name = s.str();
-    }
-
-    void report() {
-        std::cout << my_name << ": "
-                << "G: " << speed_generator << " MB/s, "
-                << "W: " << speed_write << " MB/s, "
-                << "R: " << speed_read << " MB/s" << std::endl;
-    }
-
-    template<typename F>
-    ssize_t time_it(F func) {
-        Stopwatch watch;
-        func();
-        return watch.ms();
+    std::string id() override {
+        return "W";
     }
 
 private:
     template<typename T>
     void do_write_test(nix::DataArray da) {
-        size_t nelms = blocksize.nelms();
+        size_t nelms = config.size().nelms();
         BlockGenerator<T> generator(nelms, 10);
         generator.start_worker();
-        speed_generator = generator.speed_test();
-
 
         size_t N = 100;
         size_t iterations = 0;
@@ -288,9 +353,9 @@ private:
 
             for (size_t i = 0; i < N; i++) {
                 std::vector<T> block = generator.next_block();
-                da.dataExtent(blocksize + pos);
-                da.setData(dtype, block.data(), blocksize, pos);
-                pos[sdim] += 1;
+                da.dataExtent(config.size() + pos);
+                da.setData(config.dtype(), block.data(), config.size(), pos);
+                pos[config.singleton_dimension()] += 1;
                 iterations++;
             }
 
@@ -299,40 +364,78 @@ private:
             }
 
         } while ((ms = sw.ms()) < 3*1000);
-        speed_write = calc_speed_mbs(ms, iterations);
+
+        this->count = iterations;
+        this->millis = ms;
+    }
+};
+
+
+class ReadBenchmark : public Benchmark {
+
+public:
+    ReadBenchmark(const Config &cfg)
+            : Benchmark(cfg) {
+    };
+
+    void test_read_io(nix::DataArray da) {
+
+        nix::NDArray array(config.dtype(), config.size());
+        nix::NDSize extend = da.dataExtent();
+        size_t N = extend[config.singleton_dimension()];
+
+        nix::NDSize pos = {0, 0};
+
+        ssize_t ms = time_it([this, &da, &N, &pos, &array] {
+            for(size_t i = 0; i < N; i++) {
+                da.getData(config.dtype(), array.data(), config.size(), pos);
+                pos[config.singleton_dimension()] += 1;
+            }
+        });
+
+        this->count = N;
+        this->millis = ms;
     }
 
-    double calc_speed_mbs(ssize_t ms, size_t iterations) {
-        return iterations * blocksize.nelms() * nix::data_type_to_size(dtype) * (1000.0/ms) / (1024.0*1024.0);
+    void run(nix::Block block) override {
+        nix::DataArray da = openDataArray(block);
+        test_read_io(da);
     }
 
-private:
-    nix::DataType dtype;
-    nix::NDSize   blocksize;
+    std::string id() override {
+        return "R";
+    }
+};
 
-    size_t        sdim;
-    nix::NDSize   shape;
 
-    std::string   my_name;
+class ReadPolyBenchmark : public ReadBenchmark {
 
-    std::string   dset_id;
-    std::string   block_id;
+public:
+    ReadPolyBenchmark(const Config &cfg)
+            : ReadBenchmark(cfg) {
+    };
 
-    double        speed_write;
-    double        speed_read;
-    double        speed_generator;
+    void run(nix::Block block) override {
+        nix::DataArray da = openDataArray(block);
+        da.polynomCoefficients({3, 4, 5, 6});
+        test_read_io(da);
+    }
+
+    std::string id() override {
+        return "P";
+    }
 };
 
 /* ************************************ */
 
-static std::vector<Benchmark> make_benchmarks() {
-    std::vector<Benchmark> marks;
+static std::vector<Config> make_configs() {
 
-    //TODO: auto-generate
-    marks.emplace_back(nix::DataType::Double, nix::NDSize{2048, 1});
-    marks.emplace_back(nix::DataType::Double, nix::NDSize{1, 2048});
+    std::vector<Config> configs;
 
-    return marks;
+    configs.emplace_back(nix::DataType::Double, nix::NDSize{2048, 1});
+    configs.emplace_back(nix::DataType::Double, nix::NDSize{1, 2048});
+
+    return configs;
 }
 
 int main(int argc, char **argv)
@@ -340,21 +443,47 @@ int main(int argc, char **argv)
     nix::File fd = nix::File::open("iospeed.h5", nix::FileMode::Overwrite);
     nix::Block block = fd.createBlock("speed", "nix.test");
 
-    std::vector<Benchmark> marks = make_benchmarks();
+    std::vector<Config> configs = make_configs();
+    std::vector<Benchmark *> marks;
+
+    std::cout << "Performing generators tests..." << std::endl;
+    for (const Config &cfg : configs) {
+        GeneratorBenchmark *benchmark = new GeneratorBenchmark(cfg);
+        benchmark->run(block);
+        marks.push_back(benchmark);
+    }
 
     std::cout << "Performing write tests..." << std::endl;
-    for (Benchmark &mark : marks) {
-        mark.test_write_io(block);
+    for (const Config &cfg : configs) {
+        WriteBenchmark *benchmark = new WriteBenchmark(cfg);
+        benchmark->run(block);
+        marks.push_back(benchmark);
     }
 
     std::cout << "Performing read tests..." << std::endl;
-    for (Benchmark &mark : marks) {
-        mark.test_read_io(fd);
+    for (const Config &cfg : configs) {
+        ReadBenchmark *benchmark = new ReadBenchmark(cfg);
+        benchmark->run(block);
+        marks.push_back(benchmark);
     }
+
+    std::cout << "Performing read (poly) tests..." << std::endl;
+    for (const Config &cfg : configs) {
+        ReadPolyBenchmark *benchmark = new ReadPolyBenchmark(cfg);
+        benchmark->run(block);
+        marks.push_back(benchmark);
+    }
+
     std::cout << " === Reports ===" << std::endl;
-    for (Benchmark &mark : marks) {
-        mark.report();
+    std::cout.precision(5);
+    std::cout.unsetf (std::ios::floatfield);
+    for (Benchmark *mark : marks) {
+        std::cout << mark->cfg().name() << ", " << mark->id() << ", "
+                << mark->speed_in_mbs() << " MB/s, "
+                << mark->speed_in_nps() << " N/s" << std::endl;
+        delete mark;
     }
+
 
     return 0;
 }
