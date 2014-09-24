@@ -209,6 +209,7 @@ public:
     size_t singleton_dimension() const { return sdim; }
     const std::string & name() const { return my_name; };
 
+
 private:
     void make_name() {
         std::stringstream s;
@@ -237,6 +238,16 @@ class Benchmark {
 public:
     Benchmark(const Config &cfg) : config(cfg) { }
     const Config & cfg() const { return config; }
+
+    nix::DataArray openDataArray(nix::Block block) const {
+        const std::string &cfg_name = config.name();
+        std::vector<nix::DataArray> v = block.dataArrays(nix::util::NameFilter<nix::DataArray>(cfg_name));
+        if (v.empty()) {
+            return block.createDataArray(cfg_name, "nix.test.da", config.dtype(), config.extend());
+        } else {
+            return v[0];
+        }
+    }
 
     virtual ~Benchmark() { }
 
@@ -269,7 +280,7 @@ public:
     void test_write_io(nix::Block block) {
         block_id = block.id();
 
-        nix::DataArray da = block.createDataArray(config.name(), "nix.test.da", config.dtype(), config.extend());
+        nix::DataArray da = openDataArray(block);
         dset_id = da.id();
 
         switch (config.dtype()) {
@@ -283,10 +294,8 @@ public:
         }
     }
 
-    void test_read_io(nix::File fd) {
-        nix::Block block = fd.getBlock(block_id);
-        nix::DataArray da = block.getDataArray(dset_id);
-
+    void test_read_io(nix::Block block) {
+        nix::DataArray da = openDataArray(block);
         speed_read = test_read_io(da);
     }
 
@@ -308,9 +317,8 @@ public:
         return calc_speed_mbs(ms, N);
     }
 
-    void test_read_io_polynom(nix::File fd) {
-        nix::Block block = fd.getBlock(block_id);
-        nix::DataArray da = block.getDataArray(dset_id);
+    void test_read_io_polynom(nix::Block block) {
+        nix::DataArray da = openDataArray(block);
 
         da.polynomCoefficients({3, 4, 5, 6});
 
@@ -401,12 +409,12 @@ int main(int argc, char **argv)
 
     std::cout << "Performing read tests..." << std::endl;
     for (IOBenchmark &mark : marks) {
-        mark.test_read_io(fd);
+        mark.test_read_io(block);
     }
 
     std::cout << "Performing read (poly) tests..." << std::endl;
     for (IOBenchmark &mark : marks) {
-        mark.test_read_io_polynom(fd);
+        mark.test_read_io_polynom(block);
     }
 
     std::cout << " === Reports ===" << std::endl;
