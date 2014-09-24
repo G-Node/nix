@@ -386,12 +386,18 @@ private:
 /* ************************************ */
 
 static std::vector<IOBenchmark> make_benchmarks() {
+
+    std::vector<Config> configs;
+
+    configs.emplace_back(nix::DataType::Double, nix::NDSize{2048, 1});
+    configs.emplace_back(nix::DataType::Double, nix::NDSize{1, 2048});
+
     std::vector<IOBenchmark> marks;
 
-    //TODO: auto-generate
-    marks.emplace_back(Config(nix::DataType::Double, nix::NDSize{2048, 1}));
-    marks.emplace_back(Config(nix::DataType::Double, nix::NDSize{1, 2048}));
-
+    for (const Config &cfg : configs) {
+        marks.emplace_back(cfg);
+    }
+    
     return marks;
 }
 
