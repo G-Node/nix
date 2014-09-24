@@ -344,10 +344,6 @@ public:
         test_write_io(block);
     }
 
-    double speed_in_mbs() override {
-        return speed_write;
-    }
-
     std::string id() override {
         return "W";
     }
@@ -381,11 +377,10 @@ private:
             }
 
         } while ((ms = sw.ms()) < 3*1000);
-        speed_write = calc_speed_mbs(ms, iterations);
-    }
 
-private:
-    double        speed_write;
+        this->count = iterations;
+        this->millis = ms;
+    }
 };
 
 
@@ -399,7 +394,7 @@ public:
 
     void test_read_io(nix::Block block) {
         nix::DataArray da = openDataArray(block);
-        speed_read = test_read_io(da);
+        millis = test_read_io(da);
     }
 
     double test_read_io(nix::DataArray da) {
@@ -417,23 +412,17 @@ public:
             }
         });
 
-        return calc_speed_mbs(ms, N);
+        this->count = N;
+        return ms;
     }
 
     void run(nix::Block block) override {
         test_read_io(block);
     }
 
-    double speed_in_mbs() override {
-        return speed_read;
-    }
-
     std::string id() override {
         return "R";
     }
-
-private:
-    double        speed_read;
 };
 
 
@@ -446,26 +435,17 @@ public:
 
     void test_read_io_polynom(nix::Block block) {
         nix::DataArray da = openDataArray(block);
-
         da.polynomCoefficients({3, 4, 5, 6});
-
-        speed_read_poly = test_read_io(da);
+        millis = test_read_io(da);
     }
 
     void run(nix::Block block) override {
         test_read_io_polynom(block);
     }
 
-    double speed_in_mbs() override {
-        return speed_read_poly;
-    }
-
     std::string id() override {
         return "P";
     }
-
-private:
-    double        speed_read_poly;
 };
 
 /* ************************************ */
