@@ -138,12 +138,12 @@ public:
         }
     }
 
-    double speed_test() {
+    double speed_test(size_t &iterations) {
 
         Stopwatch sw;
 
         size_t N = 100;
-        size_t iterations = 0;
+        iterations = 0;
 
         do {
             Stopwatch inner;
@@ -160,7 +160,7 @@ public:
         } while (sw.ms() < 1000);
 
         ssize_t count = sw.ms();
-        return iterations * blocksize * sizeof(T) * (1000.0/count) / (1024.0*1024.0);
+        return count;
     }
 
 private:
@@ -301,19 +301,12 @@ public:
         size_t nelms = config.size().nelms();
         BlockGenerator<T> generator(nelms, 10);
         generator.start_worker();
-        speed = generator.speed_test();
-    }
-
-    double speed_in_mbs() override {
-        return speed;
+        this->millis = generator.speed_test(this->count);
     }
 
     std::string id() override {
         return "P";
     }
-
-private:
-    double speed;
 };
 
 
