@@ -256,6 +256,10 @@ public:
                 (1000.0/millis) / (1024 * 1024);
     }
 
+    virtual double speed_in_nps() {
+        return count * config.size().nelms() * (1000.0/millis);
+    }
+
     template<typename F>
     ssize_t time_it(F func) {
         Stopwatch watch;
@@ -266,12 +270,6 @@ public:
 
     virtual void run(nix::Block block) = 0;
     virtual std::string id() = 0;
-
-protected:
-    double calc_speed_mbs(ssize_t ms, size_t iterations) {
-        return iterations * config.size().nelms() * nix::data_type_to_size(config.dtype()) * (1000.0/ms) /
-                (1024.0*1024.0);
-    }
 
 protected:
     const Config config;
@@ -326,7 +324,7 @@ public:
             : Benchmark(cfg) {
     };
 
-    void test_write_io(nix::Block block) {
+    void run(nix::Block block) override {
         nix::DataArray da = openDataArray(block);
 
         switch (config.dtype()) {
@@ -338,10 +336,6 @@ public:
             default:
                 throw std::runtime_error("Unsupported DataType!");
         }
-    }
-
-    void run(nix::Block block) override {
-        test_write_io(block);
     }
 
     std::string id() override {
@@ -391,13 +385,7 @@ public:
             : Benchmark(cfg) {
     };
 
-
-    void test_read_io(nix::Block block) {
-        nix::DataArray da = openDataArray(block);
-        millis = test_read_io(da);
-    }
-
-    double test_read_io(nix::DataArray da) {
+    void test_read_io(nix::DataArray da) {
 
         nix::NDArray array(config.dtype(), config.size());
         nix::NDSize extend = da.dataExtent();
@@ -413,11 +401,12 @@ public:
         });
 
         this->count = N;
-        return ms;
+        this->millis = ms;
     }
 
     void run(nix::Block block) override {
-        test_read_io(block);
+        nix::DataArray da = openDataArray(block);
+        test_read_io(da);
     }
 
     std::string id() override {
@@ -433,14 +422,10 @@ public:
             : ReadBenchmark(cfg) {
     };
 
-    void test_read_io_polynom(nix::Block block) {
+    void run(nix::Block block) override {
         nix::DataArray da = openDataArray(block);
         da.polynomCoefficients({3, 4, 5, 6});
-        millis = test_read_io(da);
-    }
-
-    void run(nix::Block block) override {
-        test_read_io_polynom(block);
+        test_read_io(da);
     }
 
     std::string id() override {
@@ -497,9 +482,12 @@ int main(int argc, char **argv)
     }
 
     std::cout << " === Reports ===" << std::endl;
+    std::cout.precision(5);
+    std::cout.unsetf (std::ios::floatfield);
     for (Benchmark *mark : marks) {
         std::cout << mark->cfg().name() << ", " << mark->id() << ", "
-                << mark->speed_in_mbs() << " MB/s" << std::endl;
+                << mark->speed_in_mbs() << " MB/s, "
+                << mark->speed_in_nps() << " N/s" << std::endl;
         delete mark;
     }
 
