@@ -251,7 +251,7 @@ public:
 
     virtual ~Benchmark() { }
 
-    double virtual speed_in_mbs() {
+    virtual double speed_in_mbs() {
         return count * config.size().nelms() * nix::data_type_to_size(config.dtype()) *
                 (1000.0/millis) / (1024 * 1024);
     }
@@ -265,7 +265,7 @@ public:
 
 
     virtual void run(nix::Block block) = 0;
-    virtual void report() = 0;
+    virtual std::string id() = 0;
 
 protected:
     double calc_speed_mbs(ssize_t ms, size_t iterations) {
@@ -303,18 +303,16 @@ public:
         size_t nelms = config.size().nelms();
         BlockGenerator<T> generator(nelms, 10);
         generator.start_worker();
-         speed = generator.speed_test();
+        speed = generator.speed_test();
     }
 
     double speed_in_mbs() override {
         return speed;
     }
 
-    void report() override {
-        std::cout << config.name() << ": "
-                << "G: " << speed << " MB/s, " << std::endl;
+    std::string id() override {
+        return "P";
     }
-
 
 private:
     double speed;
@@ -342,13 +340,16 @@ public:
         }
     }
 
-    void report() override {
-        std::cout << config.name() << ": "
-                << "W: " << speed_write << " MB/s, " << std::endl;
-    }
-
     void run(nix::Block block) override {
         test_write_io(block);
+    }
+
+    double speed_in_mbs() override {
+        return speed_write;
+    }
+
+    std::string id() override {
+        return "W";
     }
 
 private:
@@ -419,13 +420,16 @@ public:
         return calc_speed_mbs(ms, N);
     }
 
-    void report() override {
-        std::cout << config.name() << ": "
-                << "R: " << speed_read << " MB/s, " << std::endl;
-    }
-
     void run(nix::Block block) override {
         test_read_io(block);
+    }
+
+    double speed_in_mbs() override {
+        return speed_read;
+    }
+
+    std::string id() override {
+        return "R";
     }
 
 private:
@@ -448,14 +452,16 @@ public:
         speed_read_poly = test_read_io(da);
     }
 
-
-    void report() override {
-        std::cout << config.name() << ": "
-                << "P: " << speed_read_poly << " MB/s, " << std::endl;
-    }
-
     void run(nix::Block block) override {
         test_read_io_polynom(block);
+    }
+
+    double speed_in_mbs() override {
+        return speed_read_poly;
+    }
+
+    std::string id() override {
+        return "P";
     }
 
 private:
@@ -512,7 +518,8 @@ int main(int argc, char **argv)
 
     std::cout << " === Reports ===" << std::endl;
     for (Benchmark *mark : marks) {
-        mark->report();
+        std::cout << mark->cfg().name() << ", " << mark->id() << ", "
+                << mark->speed_in_mbs() << " MB/s" << std::endl;
         delete mark;
     }
 
