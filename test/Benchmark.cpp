@@ -232,11 +232,38 @@ private:
     std::string   my_name;
 };
 
+
 class Benchmark {
+public:
+    Benchmark(const Config &cfg) : config(cfg) { }
+    const Config & cfg() const { return config; }
+
+    virtual ~Benchmark() { }
+
+    double speed_in_mbs() {
+        return count * config.size().nelms() * nix::data_type_to_size(config.dtype()) *
+                (1000.0/millis) / (1024 * 1024);
+    }
+
+    template<typename F>
+    ssize_t time_it(F func) {
+        Stopwatch watch;
+        func();
+        return watch.ms();
+    }
+
+
+protected:
+    const Config config;
+    size_t       count;
+    double       millis;
+};
+
+class IOBenchmark : Benchmark {
 
 public:
-    Benchmark(const Config &cfg)
-            : config(cfg) {
+    IOBenchmark(const Config &cfg)
+            : Benchmark(cfg) {
     };
 
     void test_write_io(nix::Block block) {
@@ -299,13 +326,6 @@ public:
                 << "P: " << speed_read_poly << " MB/s" << std::endl;
     }
 
-    template<typename F>
-    ssize_t time_it(F func) {
-        Stopwatch watch;
-        func();
-        return watch.ms();
-    }
-
 private:
     template<typename T>
     void do_write_test(nix::DataArray da) {
@@ -346,9 +366,6 @@ private:
     }
 
 private:
-
-    const Config config;
-
     std::string   dset_id;
     std::string   block_id;
 
@@ -360,8 +377,8 @@ private:
 
 /* ************************************ */
 
-static std::vector<Benchmark> make_benchmarks() {
-    std::vector<Benchmark> marks;
+static std::vector<IOBenchmark> make_benchmarks() {
+    std::vector<IOBenchmark> marks;
 
     //TODO: auto-generate
     marks.emplace_back(Config(nix::DataType::Double, nix::NDSize{2048, 1}));
@@ -375,25 +392,25 @@ int main(int argc, char **argv)
     nix::File fd = nix::File::open("iospeed.h5", nix::FileMode::Overwrite);
     nix::Block block = fd.createBlock("speed", "nix.test");
 
-    std::vector<Benchmark> marks = make_benchmarks();
+    std::vector<IOBenchmark> marks = make_benchmarks();
 
     std::cout << "Performing write tests..." << std::endl;
-    for (Benchmark &mark : marks) {
+    for (IOBenchmark &mark : marks) {
         mark.test_write_io(block);
     }
 
     std::cout << "Performing read tests..." << std::endl;
-    for (Benchmark &mark : marks) {
+    for (IOBenchmark &mark : marks) {
         mark.test_read_io(fd);
     }
 
     std::cout << "Performing read (poly) tests..." << std::endl;
-    for (Benchmark &mark : marks) {
+    for (IOBenchmark &mark : marks) {
         mark.test_read_io_polynom(fd);
     }
 
     std::cout << " === Reports ===" << std::endl;
-    for (Benchmark &mark : marks) {
+    for (IOBenchmark &mark : marks) {
         mark.report();
     }
 
