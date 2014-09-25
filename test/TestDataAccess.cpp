@@ -232,14 +232,13 @@ void TestDataAccess::testTagFeatureData() {
     vector<double> ramp_data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
     ramp_feat.setData(ramp_data);
 
-    Tag pos_tag = block.createTag("feature test", "test", {0.5});
+    Tag pos_tag = block.createTag("feature test", "test", {5.0});
     pos_tag.units({"ms"});
 
     Feature f1 = pos_tag.createFeature(number_feat, nix::LinkType::Untagged);
     Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
     Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
 
-    // positional tag
     NDArray data1 = util::retrieveFeatureData(pos_tag, 0);
     NDArray data2 = util::retrieveFeatureData(pos_tag, 1);
     NDArray data3 = util::retrieveFeatureData(pos_tag, 2);
@@ -247,6 +246,15 @@ void TestDataAccess::testTagFeatureData() {
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.num_elements() == 1);
     CPPUNIT_ASSERT(data2.num_elements() == 1);
+    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
+    // make tag pointing to a slice
+    pos_tag.extent({2.0});
+    data1 = util::retrieveFeatureData(pos_tag, 0);
+    data2 = util::retrieveFeatureData(pos_tag, 1);
+    data3 = util::retrieveFeatureData(pos_tag, 2);
+
+    CPPUNIT_ASSERT(data1.num_elements() == 1);
+    CPPUNIT_ASSERT(data2.num_elements() == 3);
     CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
 
     pos_tag.deleteFeature(f1.id());
