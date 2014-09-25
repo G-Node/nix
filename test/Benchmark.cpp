@@ -305,7 +305,7 @@ public:
     }
 
     std::string id() override {
-        return "P";
+        return "G";
     }
 };
 
