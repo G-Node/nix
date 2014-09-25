@@ -9,6 +9,7 @@
 #include <nix/hdf5/Group.hpp>
 #include <nix/util/util.hpp>
 #include <boost/multi_array.hpp>
+#include <H5Gpublic.h>
 
 namespace nix {
 namespace hdf5 {
@@ -198,7 +199,25 @@ Group Group::openGroup(const std::string &name, bool create) const {
     if (hasGroup(name)) {
         g = Group(h5group.openGroup(name));
     } else if (create) {
-        g = Group(h5group.createGroup(name));
+        hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
+
+        if (gcpl < 0) {
+            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Pcreate)");
+        }
+
+        //we want hdf5 to keep track of the order in which links were created so that
+        //the order for indexed based accessors is stable cf. issue #387
+        herr_t res = H5Pset_link_creation_order(gcpl, H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+        if (res < 0) {
+            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
+        }
+
+        hid_t h5_gid = H5Gcreate2(h5group.getLocId(), name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT);
+        H5Pclose(gcpl);
+        if (h5_gid < 0) {
+            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Gcreate2)");
+        }
+        g = Group(H5::Group(h5_gid));
     } else {
         throw std::runtime_error("Unable to open group with name '" + name + "'!");
     }

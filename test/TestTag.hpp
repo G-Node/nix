@@ -48,6 +48,7 @@ private:
     CPPUNIT_TEST(testExtent);
     CPPUNIT_TEST(testPosition);
     CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testFeatures);
     CPPUNIT_TEST(testDataAccess);
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
@@ -72,6 +73,7 @@ public:
     void testExtent();
     void testPosition();
     void testReferences();
+    void testFeatures();
     void testDataAccess();
     void testMetadataAccess();
     void testSourceAccess();

@@ -174,6 +174,32 @@ void TestTag::testReferences() {
 }
 
 
+void TestTag::testFeatures() {
+    Tag st = block.createTag("TestTag", "tag", {10.0});
+    DataArray da1 = block.createDataArray("featureArray1", "test", nix::DataType::Double, {1});
+    DataArray da2 = block.createDataArray("featureArray2", "test", nix::DataType::Double, {1});
+    DataArray da3 = block.createDataArray("featureArray3", "test", nix::DataType::Double, {1});
+
+    int failures = 0;
+    for (int i = 0; i < 20; i++) {
+        Feature f1 = st.createFeature(da1, nix::LinkType::Untagged);
+        Feature f2 = st.createFeature(da2, nix::LinkType::Tagged);
+        Feature f3 = st.createFeature(da3, nix::LinkType::Untagged);
+        if (st.getFeature(0).id() != f1.id() || st.getFeature(1).id() != f2.id() || st.getFeature(2).id() != f3.id()) {
+            failures ++;
+        }
+        st.deleteFeature(f1.id());
+        st.deleteFeature(f2.id());
+        st.deleteFeature(f3.id());
+    }
+    block.deleteTag(st.id());
+    block.deleteDataArray(da1.id());
+    block.deleteDataArray(da2.id());
+    block.deleteDataArray(da3.id());
+    CPPUNIT_ASSERT(failures == 0);
+}
+
+
 void TestTag::testExtent() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);

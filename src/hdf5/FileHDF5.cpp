@@ -50,8 +50,17 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
         mode = FileMode::Overwrite;
     }
 
+    //we want hdf5 to keep track of the order in which links were created so that
+    //the order for indexed based accessors is stable cf. issue #387
+    H5::FileCreatPropList fcpl =  H5::FileCreatPropList::DEFAULT;
+    herr_t res = H5Pset_link_creation_order(fcpl.getId(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+
+    if (res < 0) {
+        throw std::runtime_error("Unable to create file (H5Pset_link_creation_order failed.)");
+    }
+
     unsigned int h5mode =  map_file_mode(mode);
-    h5file = H5::H5File(name.c_str(), h5mode);
+    h5file = H5::H5File(name.c_str(), h5mode, fcpl);
 
     root = Group(h5file.openGroup("/"));
     metadata = root.openGroup("metadata");
