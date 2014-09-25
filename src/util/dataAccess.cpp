@@ -329,7 +329,7 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         data.getData(feat_data, count, offset);
         return feat_data;
     } else if (feat.linkType() == nix::LinkType::Indexed) {
-        //FIXME does the feature data to have a setdimension in the first dimension?
+        //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
         if (position_index > data.dataExtent()[0]){
             throw nix::OutOfBounds("Position is larger than the data stored in the feature.", 0);
@@ -345,6 +345,7 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         data.getData(feat_data, count, offset);
         return feat_data;
     }
+    // FIXME is this expected behavior? In the untagged case all data is returned
     NDArray feat_data(data.dataType(), data.dataExtent());
     data.getData(feat_data);
     return feat_data;

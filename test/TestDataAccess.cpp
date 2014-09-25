@@ -265,6 +265,19 @@ void TestDataAccess::testTagFeatureData() {
     block.deleteTag(pos_tag);
 }
 
+
+void TestDataAccess::testMultiTagFeatureData() {
+    DataArray feat_data = block.createDataArray("feature data", "test", nix::DataType::Double, {10, 10});
+    SampledDimension dim1 = feat_data.appendSampledDimension(1.0);
+    dim1.unit('ms');
+    SampledDimension dim2 = feat_data.appendSampledDimension(1.0);
+    dim2.unit('ms');
+
+    multi_tag.
+
+}
+
+
 void TestDataAccess::testMultiTagUnitSupport() {
     vector<string> valid_units{"none","ms","s"};
     vector<string> invalid_units{"mV", "Ohm", "muV"};
