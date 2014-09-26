@@ -19,7 +19,33 @@
 #include <condition_variable>
 #include <thread>
 #include <stdexcept>
+#include <cstdio>
+#include <string>
+#include <cstdint>
+#include <utility>
 
+/* ************************************ */
+namespace nix {
+
+template<typename Func, typename... Args>
+void data_type_dispatch(nix::DataType dtype, Func F, Args&&... args)
+{
+    double d_tag = 0.0;
+
+    switch (dtype) {
+
+        case DataType::Double:
+            F(d_tag, std::forward<Args>(args)...);
+            break;
+
+        default:
+            throw std::invalid_argument("Unkown DataType");
+    }
+
+}
+
+
+}
 
 /* ************************************ */
 
@@ -305,7 +331,7 @@ public:
     }
 
     std::string id() override {
-        return "P";
+        return "G";
     }
 };
 
@@ -426,6 +452,138 @@ public:
     }
 };
 
+class DiskBenchmark : public Benchmark {
+public:
+    DiskBenchmark(const Config &cfg)
+            : Benchmark(cfg), fd(nullptr) {
+
+    };
+
+    void openFile(bool readOnly) {
+        std::string path = config.name() + "io.raw";
+        const char *mode = readOnly ? "rb" : "wb";
+        fd = fopen(path.c_str(), mode);
+        setvbuf(fd, nullptr, _IONBF, 0);
+    }
+
+    void read_test() {
+        const size_t nelms = config.size().nelms();
+        const size_t elmsize = nix::data_type_to_size(config.dtype());
+        const size_t nbytes = nelms * elmsize;
+        std::vector<char> buffer(nbytes, 0);
+
+        Stopwatch sw;
+        ssize_t n;
+        size_t count = 0;
+
+        while ((n = fread(buffer.data(), nbytes, 1, fd)) > 0) {
+            count += n;
+        }
+
+        this->millis = sw.ms();
+        this->count = count;
+    }
+
+    struct DataWriter {
+
+        template<typename T>
+        void operator()(T tag, const Config &config, size_t &count, double &millis, FILE *fd) {
+            size_t nelms = config.size().nelms();
+            BlockGenerator<T> generator(nelms, 10);
+            generator.start_worker();
+
+            size_t N = 100;
+            size_t iterations = 0;
+
+            nix::NDSize pos = {0, 0};
+            Stopwatch sw;
+            ssize_t ms = 0;
+            do {
+                Stopwatch inner;
+
+                for (size_t i = 0; i < N; i++) {
+                    std::vector<T> block = generator.next_block();
+
+                    ssize_t nwritten = fwrite(block.data(), sizeof(T), block.size(), fd);
+
+                    if (nwritten != block.size()) {
+                        throw std::runtime_error("Output error in disk write test.");
+                    }
+
+                    iterations++;
+                }
+
+                fflush(fd);
+
+                if (inner.ms() < 100) {
+                    N *= 2;
+                }
+
+            } while ((ms = sw.ms()) < 3 * 1000);
+
+            count = iterations;
+            millis = ms;
+        }
+    };
+
+    void write_test() {
+        DataWriter writer;
+        nix::data_type_dispatch(config.dtype(), writer, config, count, millis, fd);
+    }
+
+
+    void closeFile() {
+        if (fd) {
+            fclose(fd);
+            fd = nullptr;
+        }
+    }
+
+
+    ~DiskBenchmark() {
+        closeFile();
+    }
+
+private:
+    std::FILE *fd;
+};
+
+class DiskReadBenchmark : public DiskBenchmark {
+public:
+    DiskReadBenchmark(const Config &cfg)
+            : DiskBenchmark(cfg) {
+
+    };
+
+    void run(nix::Block b) override {
+        openFile(true);
+        read_test();
+        closeFile();
+    }
+
+    std::string id() override {
+        return "I";
+    }
+};
+
+class DiskWriteBenchmark : public DiskBenchmark {
+public:
+    DiskWriteBenchmark(const Config &cfg)
+            : DiskBenchmark(cfg) {
+
+    };
+
+    void run(nix::Block b) override {
+        openFile(false);
+        write_test();
+        closeFile();
+    }
+
+    std::string id() override {
+        return "O";
+    }
+};
+
 /* ************************************ */
 
 static std::vector<Config> make_configs() {
@@ -451,6 +609,20 @@ int main(int argc, char **argv)
         GeneratorBenchmark *benchmark = new GeneratorBenchmark(cfg);
         benchmark->run(block);
         marks.push_back(benchmark);
+    }
+
+    std::cout << "Performing disk IO tests..." << std::endl;
+    for (const Config &cfg : configs) {
+        DiskWriteBenchmark *b = new DiskWriteBenchmark(cfg);
+        b->run(block);
+        marks.push_back(b);
+    }
+
+    std::cout << "Performing read tests..." << std::endl;
+    for (const Config &cfg : configs) {
+        DiskReadBenchmark *b = new DiskReadBenchmark(cfg);
+        b->run(block);
+        marks.push_back(b);
     }
 
     std::cout << "Performing write tests..." << std::endl;
