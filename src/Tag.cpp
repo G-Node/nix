@@ -92,7 +92,11 @@ bool Tag::deleteFeature(const Feature &feature) {
 }
 
 NDArray Tag::retrieveData(size_t referenceIndex) const {
-   return util::retrieveData(*this, referenceIndex);
+    return util::retrieveData(*this, referenceIndex);
+}
+
+NDArray Tag::retrieveFeatureData(size_t feature_index) const {
+    return util::retrieveFeatureData(*this, feature_index);
 }
 
 std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
