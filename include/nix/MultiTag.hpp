@@ -460,6 +460,16 @@ public:
      */
     bool deleteFeature(const Feature &feature);
 
+    /**
+     * @brief Retrieves the data stored in a feature related to a certain
+     *        position of this tag.
+     *
+     * @param position_index The index of the requested position
+     * @param feature_index The index of the selected feature
+     *
+     * @return The data
+     */
+    NDArray retrieveFeatureData(size_t position_index, size_t feature_index) const;
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------
