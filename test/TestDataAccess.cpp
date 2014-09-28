@@ -267,14 +267,107 @@ void TestDataAccess::testTagFeatureData() {
 
 
 void TestDataAccess::testMultiTagFeatureData() {
-    DataArray feat_data = block.createDataArray("feature data", "test", nix::DataType::Double, {10, 10});
-    SampledDimension dim1 = feat_data.appendSampledDimension(1.0);
-    dim1.unit('ms');
-    SampledDimension dim2 = feat_data.appendSampledDimension(1.0);
-    dim2.unit('ms');
+    DataArray index_data = block.createDataArray("indexed feature data", "test", nix::DataType::Double, {10, 10});
+    SampledDimension dim1 = index_data.appendSampledDimension(1.0);
+    dim1.unit("ms");
+    SampledDimension dim2 = index_data.appendSampledDimension(1.0);
+    dim2.unit("ms");
+    typedef boost::multi_array<double, 2> two_d_array;
+    typedef two_d_array::index index;
+    two_d_array data1(boost::extents[10][10]);
+    int value;
+    double total;
+    for(index i = 0; i != 10; ++i) {
+        value = 100 * i;
+        for(index j = 0; j != 10; ++j) {
+            data1[i][j] = value++;
+            total += data1[i][j];
+        }
+    }
+    index_data.setData(data1);
 
-    multi_tag.
+    DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10});
+    dim1 = tagged_data.appendSampledDimension(1.0);
+    dim1.unit("ms");
+    dim2 = tagged_data.appendSampledDimension(1.0);
+    dim2.unit("ms");
+    SampledDimension dim3;
+    dim3 = tagged_data.appendSampledDimension(1.0);
+    dim3.unit("ms");
+    typedef boost::multi_array<double, 3> three_d_array;
+    typedef three_d_array::index three_d_index;
+    three_d_array data2(boost::extents[10][20][10]);
 
+    for(three_d_index i = 0; i != 2; ++i) {
+        value = 100 * i;
+        for(three_d_index j = 0; j != 20; ++j) {
+            for(three_d_index k = 0; k != 10; ++k) {
+                data2[i][j][k] = value++;
+            }
+        }
+    }
+    tagged_data.setData(data2);
+
+    Feature index_feature = multi_tag.createFeature(index_data, nix::LinkType::Indexed);
+    Feature tagged_feature = multi_tag.createFeature(tagged_data, nix::LinkType::Tagged);
+    Feature untagged_feature = multi_tag.createFeature(index_data, nix::LinkType::Untagged);
+
+    // preparations done, actually test 
+    CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
+    // indexed feature
+    NDArray data = util::retrieveFeatureData(multi_tag, 0, 0);
+    NDSize data_size = data.size();
+
+    CPPUNIT_ASSERT(data_size.size() == 2);
+    CPPUNIT_ASSERT(data.num_elements() == 10);
+    double sum = 0.;
+    NDSize pos(2,0);
+    for (size_t i = 0; i < data_size[1]; ++i){
+        pos[1] = i;
+        sum += data.get<double>(pos);
+    }
+    CPPUNIT_ASSERT(sum == 45);
+    data = util::retrieveFeatureData(multi_tag, 9, 0);
+    sum = 0;
+    for (size_t i = 0; i < data_size[1]; ++i){
+        pos[1] = i;
+        sum += data.get<double>(pos);
+    }
+    CPPUNIT_ASSERT(sum == 9045);
+    // untagged feature
+    data = util::retrieveFeatureData(multi_tag, 0, 2);
+    CPPUNIT_ASSERT(data.num_elements() == 100);
+    data = util::retrieveFeatureData(multi_tag, 1, 2);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data.num_elements() == 100);
+    sum = 0;
+
+    for (size_t i = 0; i < data_size[0]; ++i) {
+        pos[0] = i;
+        for (size_t j = 0; j < data_size[1]; ++j) {
+            pos[1] = j;
+            sum += data.get<double>(pos);
+        }
+    }
+    CPPUNIT_ASSERT(sum == total);
+    // tagged feature
+    data = util::retrieveFeatureData(multi_tag, 0, 1);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+
+    data = util::retrieveFeatureData(multi_tag, 1, 1);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 3), nix::OutOfBounds);
+
+    // clean up
+    multi_tag.deleteFeature(index_feature.id());
+    multi_tag.deleteFeature(tagged_feature.id());
+    multi_tag.deleteFeature(untagged_feature.id());
+    block.deleteDataArray(tagged_data.id());
+    block.deleteDataArray(index_data.id());
 }
 
 
