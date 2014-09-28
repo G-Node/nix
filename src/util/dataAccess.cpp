@@ -155,10 +155,10 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
     if (position_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in positions do not match dimensionality of data","util::getOffsetAndCount");
+        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data","util::getOffsetAndCount");
     }
     if (extents && extent_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in extents do not match dimensionality of data","util::getOffsetAndCount");
+        throw nix::IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data","util::getOffsetAndCount");
     }
 
     NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
