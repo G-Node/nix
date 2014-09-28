@@ -311,7 +311,7 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
     }
-    if (feature_index > tag.featureCount()) {
+    if (feature_index >= tag.featureCount()) {
         throw nix::OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
@@ -322,9 +322,11 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
     if (feat.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
         getOffsetAndCount(tag, data, position_index, offset, count);
+        
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
+
         NDArray feat_data(data.dataType(), count);
         data.getData(feat_data, count, offset);
         return feat_data;
@@ -334,10 +336,11 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         if (position_index > data.dataExtent()[0]){
             throw nix::OutOfBounds("Position is larger than the data stored in the feature.", 0);
         }
-        int start = 0;
-        NDSize offset(data.dataExtent().size(), start);
+        NDSize offset(data.dataExtent().size(), 0);
         offset[0] = position_index;
         NDSize count(data.dataExtent());
+        count[0] = 1;
+        
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
