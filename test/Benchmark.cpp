@@ -28,14 +28,20 @@
 namespace nix {
 
 template<typename Func, typename... Args>
-void data_type_dispatch(nix::DataType dtype, Func F, Args&&... args)
+void data_type_dispatch(nix::DataType dtype, Func &&F, Args&&... args)
 {
-    double d_tag = 0.0;
-
     switch (dtype) {
 
         case DataType::Double:
-            F(d_tag, std::forward<Args>(args)...);
+            std::forward<Func>(F)(double(), std::forward<Args>(args)...);
+            break;
+
+        case DataType::Int8:
+            std::forward<Func>(F)(int8_t(), std::forward<Args>(args)...);
+            break;
+
+        case DataType::Int16:
+            std::forward<Func>(F)(int16_t(), std::forward<Args>(args)...);
             break;
 
         default:
@@ -97,14 +103,14 @@ private:
 template<typename T>
 class RndGen<T, typename std::enable_if<std::is_integral<T>::value >::type> : RndGenBase {
 public:
-    RndGen() : dis(-1024, +1024) { };
+    RndGen() : dis(std::numeric_limits<T>::min(), std::numeric_limits<T>::max()) { };
 
     T operator()(void) {
         return dis(rd_gen);
     };
 
 private:
-    std::uniform_real_distribution<T> dis;
+    std::uniform_int_distribution<T> dis;
 };
 
 /* ************************************ */
@@ -175,7 +181,7 @@ public:
             Stopwatch inner;
 
             for (size_t i = 0; i < N; i++) {
-                std::vector<double> block = next_block();
+                std::vector<T> block = next_block();
                 iterations++;
             }
 
