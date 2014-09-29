@@ -97,7 +97,7 @@ private:
 template<typename T>
 class RndGen<T, typename std::enable_if<std::is_integral<T>::value >::type> : RndGenBase {
 public:
-    RndGen() : dis(-1024, +1024) { };
+    RndGen() : dis(std::numeric_limits<T>::min(), std::numeric_limits<T>::max()) { };
 
     T operator()(void) {
         return dis(rd_gen);
