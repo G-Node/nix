@@ -104,7 +104,7 @@ public:
     };
 
 private:
-    std::uniform_real_distribution<T> dis;
+    std::uniform_int_distribution<T> dis;
 };
 
 /* ************************************ */
