@@ -175,7 +175,7 @@ public:
             Stopwatch inner;
 
             for (size_t i = 0; i < N; i++) {
-                std::vector<double> block = next_block();
+                std::vector<T> block = next_block();
                 iterations++;
             }
 
