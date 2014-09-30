@@ -33,6 +33,8 @@ private:
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
+    CPPUNIT_TEST(testTagFeatureData);
+    CPPUNIT_TEST(testMultiTagFeatureData);
     CPPUNIT_TEST(testMultiTagUnitSupport);
     CPPUNIT_TEST_SUITE_END ();
 
@@ -54,6 +56,8 @@ public:
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
+    void testTagFeatureData();
+    void testMultiTagFeatureData();
     void testMultiTagUnitSupport();
 };
 

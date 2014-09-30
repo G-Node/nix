@@ -133,6 +133,27 @@ NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
  */
 NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
 
+/**
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested
+ * @param feature_index The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI NDArray retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+
+/**
+ * @brief Returns the feature data accosiated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature_index  The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
+
 }
 }
 #endif // NIX_DATAACCESS_H

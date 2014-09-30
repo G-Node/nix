@@ -51,7 +51,7 @@ void TestDataAccess::setUp() {
     vector<double> position {0.0, 2.0, 3.4};
     vector<double> extent {0.0, 6.0, 2.3};
     vector<string> units {"none", "ms", "ms"};
-    
+
     position_tag = block.createTag("position tag", "event", position);
     position_tag.references(refs);
     position_tag.units(units);
@@ -60,7 +60,7 @@ void TestDataAccess::setUp() {
     segment_tag.references(refs);
     segment_tag.extent(extent);
     segment_tag.units(units);
-    
+
     //setup multiTag
     typedef boost::multi_array<double, 2> position_type;
     position_type event_positions(boost::extents[2][3]);
@@ -219,6 +219,157 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data.rank() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 }
+
+void TestDataAccess::testTagFeatureData() {
+    DataArray number_feat = block.createDataArray("number feature", "test", nix::DataType::Double, {1});
+    vector<double> number = {10.0};
+    number_feat.setData(number);
+    DataArray ramp_feat = block.createDataArray("ramp feature", "test", nix::DataType::Double, {10});
+    ramp_feat.label("voltage");
+    ramp_feat.unit("mV");
+    SampledDimension dim = ramp_feat.appendSampledDimension(1.0);
+    dim.unit("ms");
+    vector<double> ramp_data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+    ramp_feat.setData(ramp_data);
+
+    Tag pos_tag = block.createTag("feature test", "test", {5.0});
+    pos_tag.units({"ms"});
+
+    Feature f1 = pos_tag.createFeature(number_feat, nix::LinkType::Untagged);
+    Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
+    Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
+
+    NDArray data1 = util::retrieveFeatureData(pos_tag, 0);
+    NDArray data2 = util::retrieveFeatureData(pos_tag, 1);
+    NDArray data3 = util::retrieveFeatureData(pos_tag, 2);
+
+    CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
+    CPPUNIT_ASSERT(data1.num_elements() == 1);
+    CPPUNIT_ASSERT(data2.num_elements() == 1);
+    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
+    // make tag pointing to a slice
+    pos_tag.extent({2.0});
+    data1 = util::retrieveFeatureData(pos_tag, 0);
+    data2 = util::retrieveFeatureData(pos_tag, 1);
+    data3 = util::retrieveFeatureData(pos_tag, 2);
+
+    CPPUNIT_ASSERT(data1.num_elements() == 1);
+    CPPUNIT_ASSERT(data2.num_elements() == 3);
+    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
+
+    pos_tag.deleteFeature(f1.id());
+    pos_tag.deleteFeature(f2.id());
+    pos_tag.deleteFeature(f3.id());
+    block.deleteDataArray(number_feat.id());
+    block.deleteDataArray(ramp_feat.id());
+    block.deleteTag(pos_tag);
+}
+
+
+void TestDataAccess::testMultiTagFeatureData() {
+    DataArray index_data = block.createDataArray("indexed feature data", "test", nix::DataType::Double, {10, 10});
+    SampledDimension dim1 = index_data.appendSampledDimension(1.0);
+    dim1.unit("ms");
+    SampledDimension dim2 = index_data.appendSampledDimension(1.0);
+    dim2.unit("ms");
+    typedef boost::multi_array<double, 2> two_d_array;
+    typedef two_d_array::index index;
+    two_d_array data1(boost::extents[10][10]);
+    int value;
+    double total = 0.0;
+    for(index i = 0; i != 10; ++i) {
+        value = 100 * i;
+        for(index j = 0; j != 10; ++j) {
+            data1[i][j] = value++;
+            total += data1[i][j];
+        }
+    }
+    index_data.setData(data1);
+
+    DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10});
+    dim1 = tagged_data.appendSampledDimension(1.0);
+    dim1.unit("ms");
+    dim2 = tagged_data.appendSampledDimension(1.0);
+    dim2.unit("ms");
+    SampledDimension dim3;
+    dim3 = tagged_data.appendSampledDimension(1.0);
+    dim3.unit("ms");
+    typedef boost::multi_array<double, 3> three_d_array;
+    typedef three_d_array::index three_d_index;
+    three_d_array data2(boost::extents[10][20][10]);
+
+    for(three_d_index i = 0; i != 2; ++i) {
+        value = 100 * i;
+        for(three_d_index j = 0; j != 20; ++j) {
+            for(three_d_index k = 0; k != 10; ++k) {
+                data2[i][j][k] = value++;
+            }
+        }
+    }
+    tagged_data.setData(data2);
+
+    Feature index_feature = multi_tag.createFeature(index_data, nix::LinkType::Indexed);
+    Feature tagged_feature = multi_tag.createFeature(tagged_data, nix::LinkType::Tagged);
+    Feature untagged_feature = multi_tag.createFeature(index_data, nix::LinkType::Untagged);
+
+    // preparations done, actually test 
+    CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
+    // indexed feature
+    NDArray data = util::retrieveFeatureData(multi_tag, 0, 0);
+    NDSize data_size = data.size();
+
+    CPPUNIT_ASSERT(data_size.size() == 2);
+    CPPUNIT_ASSERT(data.num_elements() == 10);
+    double sum = 0.;
+    NDSize pos(2,0);
+    for (size_t i = 0; i < data_size[1]; ++i){
+        pos[1] = i;
+        sum += data.get<double>(pos);
+    }
+    CPPUNIT_ASSERT(sum == 45);
+    data = util::retrieveFeatureData(multi_tag, 9, 0);
+    sum = 0;
+    for (size_t i = 0; i < data_size[1]; ++i){
+        pos[1] = i;
+        sum += data.get<double>(pos);
+    }
+    CPPUNIT_ASSERT(sum == 9045);
+    // untagged feature
+    data = util::retrieveFeatureData(multi_tag, 0, 2);
+    CPPUNIT_ASSERT(data.num_elements() == 100);
+    data = util::retrieveFeatureData(multi_tag, 1, 2);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data.num_elements() == 100);
+    sum = 0;
+
+    for (size_t i = 0; i < data_size[0]; ++i) {
+        pos[0] = i;
+        for (size_t j = 0; j < data_size[1]; ++j) {
+            pos[1] = j;
+            sum += data.get<double>(pos);
+        }
+    }
+    CPPUNIT_ASSERT(sum == total);
+    // tagged feature
+    data = util::retrieveFeatureData(multi_tag, 0, 1);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+
+    data = util::retrieveFeatureData(multi_tag, 1, 1);
+    data_size = data.size();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 3), nix::OutOfBounds);
+
+    // clean up
+    multi_tag.deleteFeature(index_feature.id());
+    multi_tag.deleteFeature(tagged_feature.id());
+    multi_tag.deleteFeature(untagged_feature.id());
+    block.deleteDataArray(tagged_data.id());
+    block.deleteDataArray(index_data.id());
+}
+
 
 void TestDataAccess::testMultiTagUnitSupport() {
     vector<string> valid_units{"none","ms","s"};
