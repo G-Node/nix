@@ -121,10 +121,13 @@ public:
 
     BlockGenerator(nix::NDSize blocksize, size_t bufsize) : blocksize(blocksize), bufsize(bufsize) { };
 
-    std::vector<T> make_block() {
+    nix::NDArray make_block() {
+        RndGen<T> rnd_gen;
         std::vector<T> block(blocksize.nelms());
         std::generate(block.begin(), block.end(), std::ref(rnd_gen));
-        return block;
+        nix::NDArray data(nix::to_data_type<T>::value, blocksize);
+        memcpy(data.data(), block.data(), sizeof(T)*data.num_elements());
+        return data;
     }
 
     nix::NDArray next_block() {
@@ -134,19 +137,16 @@ public:
             cnd.wait(lock, [this]{ return !queue.empty(); });
         }
 
-        std::vector<T> x(std::move(queue.front()));
+        nix::NDArray block(std::move(queue.front()));
         queue.pop();
         cnd.notify_all();
-
-        nix::NDArray data(nix::to_data_type<T>::value, blocksize);
-        memcpy(data.data(), x.data(), sizeof(T)*data.num_elements());
-        return data;
+        return block;
     }
 
     void worker_thread() {
         while (do_run) {
             std::unique_lock<std::mutex> lock(mtx);
-            std::vector<T> block = make_block();
+            nix::NDArray block = make_block();
 
             if (queue.size() > bufsize) {
                 //wait until there is room
@@ -203,10 +203,9 @@ private:
     bool do_run = true;
     nix::NDSize blocksize;
     size_t bufsize;
-    RndGen<T> rnd_gen;
     std::mutex mtx;
     std::condition_variable cnd;
-    std::queue<std::vector<T>> queue;
+    std::queue<nix::NDArray> queue;
     std::vector<std::thread> workers;
 };
 
