@@ -123,10 +123,12 @@ public:
 
     nix::NDArray make_block() {
         RndGen<T> rnd_gen;
-        std::vector<T> block(blocksize.nelms());
-        std::generate(block.begin(), block.end(), std::ref(rnd_gen));
+
         nix::NDArray data(nix::to_data_type<T>::value, blocksize);
-        memcpy(data.data(), block.data(), sizeof(T)*data.num_elements());
+        for(size_t i = 0; i < data.num_elements(); i++) {
+            data.set(i, rnd_gen());
+        }
+
         return data;
     }
 
