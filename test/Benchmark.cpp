@@ -119,10 +119,10 @@ template<typename T>
 class BlockGenerator {
 public:
 
-    BlockGenerator(size_t blocksize, size_t bufsize) : blocksize(blocksize), bufsize(bufsize) { };
+    BlockGenerator(nix::NDSize blocksize, size_t bufsize) : blocksize(blocksize), bufsize(bufsize) { };
 
     std::vector<T> make_block() {
-        std::vector<T> block(blocksize);
+        std::vector<T> block(blocksize.nelms());
         std::generate(block.begin(), block.end(), std::ref(rnd_gen));
         return block;
     }
@@ -138,7 +138,7 @@ public:
         queue.pop();
         cnd.notify_all();
 
-        nix::NDArray data(nix::to_data_type<T>::value, nix::NDSize({blocksize}));
+        nix::NDArray data(nix::to_data_type<T>::value, blocksize);
         memcpy(data.data(), x.data(), sizeof(T)*data.num_elements());
         return data;
     }
@@ -185,7 +185,7 @@ public:
 
             for (size_t i = 0; i < N; i++) {
                 nix::NDArray data = next_block();
-                assert(data.num_elements() == blocksize);
+                assert(data.size() == blocksize);
                 iterations++;
             }
 
@@ -201,7 +201,7 @@ public:
 
 private:
     bool do_run = true;
-    size_t blocksize;
+    nix::NDSize blocksize;
     size_t bufsize;
     RndGen<T> rnd_gen;
     std::mutex mtx;
@@ -334,8 +334,7 @@ public:
 
     template<typename T>
     void test_speed() {
-        size_t nelms = config.size().nelms();
-        BlockGenerator<T> generator(nelms, 10);
+        BlockGenerator<T> generator(config.size(), 10);
         generator.start_worker();
         this->millis = generator.speed_test(this->count);
     }
@@ -374,8 +373,7 @@ public:
 private:
     template<typename T>
     void do_write_test(nix::DataArray da) {
-        size_t nelms = config.size().nelms();
-        BlockGenerator<T> generator(nelms, 10);
+        BlockGenerator<T> generator(config.size(), 10);
         generator.start_worker();
 
         size_t N = 100;
@@ -498,8 +496,7 @@ public:
 
         template<typename T>
         void operator()(T tag, const Config &config, size_t &count, double &millis, FILE *fd) {
-            size_t nelms = config.size().nelms();
-            BlockGenerator<T> generator(nelms, 10);
+            BlockGenerator<T> generator(config.size(), 10);
             generator.start_worker();
 
             size_t N = 100;
