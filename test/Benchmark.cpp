@@ -28,20 +28,21 @@
 namespace nix {
 
 template<typename Func, typename... Args>
-void data_type_dispatch(nix::DataType dtype, Func &&F, Args&&... args)
+auto data_type_dispatch(nix::DataType dtype, Func &&F, Args&&... args)
+    -> decltype(std::forward<Func>(F)(double(), std::forward<Args>(args)...))
 {
     switch (dtype) {
 
         case DataType::Double:
-            std::forward<Func>(F)(double(), std::forward<Args>(args)...);
+            return std::forward<Func>(F)(double(), std::forward<Args>(args)...);
             break;
 
         case DataType::Int8:
-            std::forward<Func>(F)(int8_t(), std::forward<Args>(args)...);
+            return std::forward<Func>(F)(int8_t(), std::forward<Args>(args)...);
             break;
 
         case DataType::Int16:
-            std::forward<Func>(F)(int16_t(), std::forward<Args>(args)...);
+            return std::forward<Func>(F)(int16_t(), std::forward<Args>(args)...);
             break;
 
         default:
