@@ -122,15 +122,27 @@ public:
 
     BlockGenerator(nix::NDSize blocksize, size_t bufsize) : blocksize(blocksize), bufsize(bufsize) { };
 
+    struct BlockMaker {
+
+    public:
+        template<typename U>
+        nix::NDArray operator()(U tag, const nix::NDSize &size) {
+            RndGen<U> rnd_gen;
+
+            nix::NDArray data(nix::to_data_type<U>::value, size);
+            for(size_t i = 0; i < data.num_elements(); i++) {
+                data.set(i, rnd_gen());
+            }
+
+            return data;
+        };
+
+    };
+
     nix::NDArray make_block() {
-        RndGen<T> rnd_gen;
 
-        nix::NDArray data(nix::to_data_type<T>::value, blocksize);
-        for(size_t i = 0; i < data.num_elements(); i++) {
-            data.set(i, rnd_gen());
-        }
-
-        return data;
+        BlockMaker maker;
+        return nix::data_type_dispatch(nix::to_data_type<T>::value, maker, std::ref(blocksize));
     }
 
     nix::NDArray next_block() {
