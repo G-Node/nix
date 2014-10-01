@@ -177,11 +177,15 @@ private:
 
 
 
-class BlockGenerator {
+class BlockGenerator : public RndGenBase {
 public:
 
     BlockGenerator(const Config &cfg, size_t bufsize)
-            : blocksize(cfg.size()), dtype(cfg.dtype()), bufsize(bufsize) { };
+            : blocksize(cfg.size()), dtype(cfg.dtype()), uni_dis(0, bufsize-1) {
+        for(size_t i = 0; i < bufsize; i++) {
+            blocks.push_back(make_block());
+        }
+    };
 
     struct BlockMaker {
 
@@ -200,52 +204,14 @@ public:
     };
 
     nix::NDArray make_block() {
-
         BlockMaker maker;
         return nix::data_type_dispatch(dtype, maker, std::ref(blocksize));
     }
 
     nix::NDArray next_block() {
-        std::unique_lock<std::mutex> lock(mtx);
-
-        if (queue.empty()) {
-            cnd.wait(lock, [this]{ return !queue.empty(); });
-        }
-
-        nix::NDArray block(std::move(queue.front()));
-        queue.pop();
-        cnd.notify_all();
+        size_t index = uni_dis(rd_gen);
+        nix::NDArray block = blocks[index];
         return block;
-    }
-
-    void worker_thread() {
-        while (do_run) {
-            std::unique_lock<std::mutex> lock(mtx);
-            nix::NDArray block = make_block();
-
-            if (queue.size() > bufsize) {
-                //wait until there is room
-                cnd.wait(lock, [this]{ return !do_run || queue.size() < bufsize;});
-                if (!do_run) {
-                    return;
-                }
-            }
-
-            queue.push(std::move(block));
-            cnd.notify_all();
-        }
-    }
-
-    void start_worker() {
-        workers.emplace_back(&BlockGenerator::worker_thread, this);
-    }
-
-    ~BlockGenerator() {
-        do_run = false;
-        cnd.notify_all();
-        for (auto &w : workers) {
-            w.join();
-        }
     }
 
     double speed_test(size_t &iterations) {
@@ -275,14 +241,10 @@ public:
     }
 
 private:
-    bool do_run = true;
     nix::NDSize blocksize;
     nix::DataType dtype;
-    size_t bufsize;
-    std::mutex mtx;
-    std::condition_variable cnd;
-    std::queue<nix::NDArray> queue;
-    std::vector<std::thread> workers;
+    std::uniform_int_distribution<size_t> uni_dis;
+    std::vector<nix::NDArray> blocks;
 };
 
 
@@ -337,21 +299,7 @@ public:
     };
 
     void run(nix::Block block) override {
-        switch (config.dtype()) {
-
-            case nix::DataType::Double:
-                test_speed<double>();
-                break;
-
-            default:
-                throw std::runtime_error("Unsupported DataType!");
-        }
-    }
-
-    template<typename T>
-    void test_speed() {
         BlockGenerator generator(config, 10);
-        generator.start_worker();
         this->millis = generator.speed_test(this->count);
     }
 
@@ -371,26 +319,7 @@ public:
     void run(nix::Block block) override {
         nix::DataArray da = openDataArray(block);
 
-        switch (config.dtype()) {
-
-            case nix::DataType::Double:
-                do_write_test<double>(da);
-                break;
-
-            default:
-                throw std::runtime_error("Unsupported DataType!");
-        }
-    }
-
-    std::string id() override {
-        return "W";
-    }
-
-private:
-    template<typename T>
-    void do_write_test(nix::DataArray da) {
         BlockGenerator generator(config, 10);
-        generator.start_worker();
 
         size_t N = 100;
         size_t iterations = 0;
@@ -417,6 +346,10 @@ private:
 
         this->count = iterations;
         this->millis = ms;
+    }
+
+    std::string id() override {
+        return "W";
     }
 };
 
@@ -508,52 +441,42 @@ public:
         this->count = count;
     }
 
-    struct DataWriter {
-
-        template<typename T>
-        void operator()(T tag, const Config &config, size_t &count, double &millis, FILE *fd) {
-            BlockGenerator generator(config, 10);
-            generator.start_worker();
-
-            size_t N = 100;
-            size_t iterations = 0;
-
-            nix::NDSize pos = {0, 0};
-            Stopwatch sw;
-            ssize_t ms = 0;
-            do {
-                Stopwatch inner;
-
-                for (size_t i = 0; i < N; i++) {
-                    nix::NDArray block = generator.next_block();
-
-                    ssize_t nwritten = fwrite(block.data(), sizeof(T), block.num_elements(), fd);
-
-                    if (nwritten != block.num_elements()) {
-                        throw std::runtime_error("Output error in disk write test.");
-                    }
-
-                    iterations++;
-                }
-
-                fflush(fd);
-
-                if (inner.ms() < 100) {
-                    N *= 2;
-                }
-
-            } while ((ms = sw.ms()) < 3 * 1000);
-
-            count = iterations;
-            millis = ms;
-        }
-    };
-
     void write_test() {
-        DataWriter writer;
-        nix::data_type_dispatch(config.dtype(), writer, config, count, millis, fd);
-    }
+        BlockGenerator generator(config, 10);
 
+        size_t N = 100;
+        size_t iterations = 0;
+
+        nix::NDSize pos = {0, 0};
+        Stopwatch sw;
+        ssize_t ms = 0;
+        const size_t elm_size = nix::data_type_to_size(config.dtype());
+        do {
+            Stopwatch inner;
+
+            for (size_t i = 0; i < N; i++) {
+                nix::NDArray block = generator.next_block();
+
+                ssize_t nwritten = fwrite(block.data(), elm_size, block.num_elements(), fd);
+
+                if (nwritten != block.num_elements()) {
+                    throw std::runtime_error("Output error in disk write test.");
+                }
+
+                iterations++;
+            }
+
+            fflush(fd);
+
+            if (inner.ms() < 100) {
+                N *= 2;
+            }
+
+        } while ((ms = sw.ms()) < 3 * 1000);
+
+        count = iterations;
+        millis = ms;
+    }
 
     void closeFile() {
         if (fd) {
