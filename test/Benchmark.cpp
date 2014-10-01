@@ -116,11 +116,72 @@ private:
 
 /* ************************************ */
 
-template<typename T>
+class Config {
+
+public:
+    Config(nix::DataType data_type, const nix::NDSize &blocksize)
+            : data_type(data_type), block_size(blocksize) {
+
+        sdim = find_single_dim();
+        shape = blocksize;
+        shape[sdim] = 0;
+
+        make_name();
+    };
+
+    size_t find_single_dim() {
+        size_t sdim;
+        bool have_rdim = false;
+        for (size_t i = 0; i < block_size.size(); i ++) {
+            if (block_size[i] == 1) {
+                sdim = i;
+                have_rdim = true;
+            }
+        }
+
+        if (!have_rdim) {
+            throw std::runtime_error("Could not find singelton dimension");
+        }
+        return sdim;
+    }
+
+    nix::DataType dtype() const { return data_type; }
+    const nix::NDSize& size() const { return block_size; }
+    const nix::NDSize& extend() const { return shape; }
+    size_t singleton_dimension() const { return sdim; }
+    const std::string & name() const { return my_name; };
+
+
+private:
+    void make_name() {
+        std::stringstream s;
+
+        s << data_type << "@{ ";
+        for (auto x : block_size) {
+            s << x << " ";
+        }
+        s << "}";
+
+        my_name = s.str();
+    }
+
+private:
+    const nix::DataType data_type;
+    const nix::NDSize block_size;
+
+    size_t        sdim;
+    nix::NDSize   shape;
+
+    std::string   my_name;
+};
+
+
+
 class BlockGenerator {
 public:
 
-    BlockGenerator(nix::NDSize blocksize, size_t bufsize) : blocksize(blocksize), bufsize(bufsize) { };
+    BlockGenerator(const Config &cfg, size_t bufsize)
+            : blocksize(cfg.size()), dtype(cfg.dtype()), bufsize(bufsize) { };
 
     struct BlockMaker {
 
@@ -136,13 +197,12 @@ public:
 
             return data;
         };
-
     };
 
     nix::NDArray make_block() {
 
         BlockMaker maker;
-        return nix::data_type_dispatch(nix::to_data_type<T>::value, maker, std::ref(blocksize));
+        return nix::data_type_dispatch(dtype, maker, std::ref(blocksize));
     }
 
     nix::NDArray next_block() {
@@ -217,70 +277,12 @@ public:
 private:
     bool do_run = true;
     nix::NDSize blocksize;
+    nix::DataType dtype;
     size_t bufsize;
     std::mutex mtx;
     std::condition_variable cnd;
     std::queue<nix::NDArray> queue;
     std::vector<std::thread> workers;
-};
-
-class Config {
-
-public:
-    Config(nix::DataType data_type, const nix::NDSize &blocksize)
-            : data_type(data_type), block_size(blocksize) {
-
-        sdim = find_single_dim();
-        shape = blocksize;
-        shape[sdim] = 0;
-
-        make_name();
-    };
-
-    size_t find_single_dim() {
-        size_t sdim;
-        bool have_rdim = false;
-        for (size_t i = 0; i < block_size.size(); i ++) {
-            if (block_size[i] == 1) {
-                sdim = i;
-                have_rdim = true;
-            }
-        }
-
-        if (!have_rdim) {
-            throw std::runtime_error("Could not find singelton dimension");
-        }
-        return sdim;
-    }
-
-    nix::DataType dtype() const { return data_type; }
-    const nix::NDSize& size() const { return block_size; }
-    const nix::NDSize& extend() const { return shape; }
-    size_t singleton_dimension() const { return sdim; }
-    const std::string & name() const { return my_name; };
-
-
-private:
-    void make_name() {
-        std::stringstream s;
-
-        s << data_type << "@{ ";
-        for (auto x : block_size) {
-            s << x << " ";
-        }
-        s << "}";
-
-        my_name = s.str();
-    }
-
-private:
-    const nix::DataType data_type;
-    const nix::NDSize block_size;
-
-    size_t        sdim;
-    nix::NDSize   shape;
-
-    std::string   my_name;
 };
 
 
@@ -348,7 +350,7 @@ public:
 
     template<typename T>
     void test_speed() {
-        BlockGenerator<T> generator(config.size(), 10);
+        BlockGenerator generator(config, 10);
         generator.start_worker();
         this->millis = generator.speed_test(this->count);
     }
@@ -387,7 +389,7 @@ public:
 private:
     template<typename T>
     void do_write_test(nix::DataArray da) {
-        BlockGenerator<T> generator(config.size(), 10);
+        BlockGenerator generator(config, 10);
         generator.start_worker();
 
         size_t N = 100;
@@ -510,7 +512,7 @@ public:
 
         template<typename T>
         void operator()(T tag, const Config &config, size_t &count, double &millis, FILE *fd) {
-            BlockGenerator<T> generator(config.size(), 10);
+            BlockGenerator generator(config, 10);
             generator.start_worker();
 
             size_t N = 100;
