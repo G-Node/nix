@@ -127,7 +127,7 @@ public:
         return block;
     }
 
-    std::vector<T> next_block() {
+    nix::NDArray next_block() {
         std::unique_lock<std::mutex> lock(mtx);
 
         if (queue.empty()) {
@@ -137,7 +137,10 @@ public:
         std::vector<T> x(std::move(queue.front()));
         queue.pop();
         cnd.notify_all();
-        return x;
+
+        nix::NDArray data(nix::to_data_type<T>::value, nix::NDSize({blocksize}));
+        memcpy(data.data(), x.data(), sizeof(T)*data.num_elements());
+        return data;
     }
 
     void worker_thread() {
@@ -181,7 +184,8 @@ public:
             Stopwatch inner;
 
             for (size_t i = 0; i < N; i++) {
-                std::vector<T> block = next_block();
+                nix::NDArray data = next_block();
+                assert(data.num_elements() == blocksize);
                 iterations++;
             }
 
@@ -384,7 +388,7 @@ private:
             Stopwatch inner;
 
             for (size_t i = 0; i < N; i++) {
-                std::vector<T> block = generator.next_block();
+                nix::NDArray block = generator.next_block();
                 da.dataExtent(config.size() + pos);
                 da.setData(config.dtype(), block.data(), config.size(), pos);
                 pos[config.singleton_dimension()] += 1;
@@ -508,11 +512,11 @@ public:
                 Stopwatch inner;
 
                 for (size_t i = 0; i < N; i++) {
-                    std::vector<T> block = generator.next_block();
+                    nix::NDArray block = generator.next_block();
 
-                    ssize_t nwritten = fwrite(block.data(), sizeof(T), block.size(), fd);
+                    ssize_t nwritten = fwrite(block.data(), sizeof(T), block.num_elements(), fd);
 
-                    if (nwritten != block.size()) {
+                    if (nwritten != block.num_elements()) {
                         throw std::runtime_error("Output error in disk write test.");
                     }
 
