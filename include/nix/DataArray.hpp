@@ -9,6 +9,8 @@
 #ifndef NIX_DATA_ARRAY_H
 #define NIX_DATA_ARRAY_H
 
+#include <nix/DataIO.hpp>
+
 #include <boost/multi_array.hpp>
 
 #include <nix/base/EntityWithSources.hpp>
@@ -17,6 +19,7 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
+
 
 namespace nix {
 
@@ -63,7 +66,7 @@ namespace nix {
  * bool deleted = da.deleteDataArray(some_id);
  * ~~~
  */
-class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray> {
+class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray>, public DataIO {
 
 public:
 
@@ -377,26 +380,6 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    template<typename T> void getData(T &value) const;
-
-    template<typename T> void setData(const T &value);
-
-    template<typename T> void getData(T &value, const NDSize &count, const NDSize &offset) const;
-
-    template<typename T> void getData(T &value, const NDSize &offset) const;
-
-    template<typename T> void setData(const T &value, const NDSize &offset);
-
-    void getData(DataType dtype,
-                 void *data,
-                 const NDSize &count,
-                 const NDSize &offset) const;
-
-    void setData(DataType dtype,
-                 const void *data,
-                 const NDSize &count,
-                 const NDSize &offset);
-
     void getDataDirect(DataType dtype,
                        void *data,
                        const NDSize &count,
@@ -458,68 +441,19 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
+
+    //
+protected:
+    virtual void ioRead(DataType dtype,
+                        void *data,
+                        const NDSize &count,
+                        const NDSize &offset) const;
+
+    virtual void ioWrite(DataType dtype,
+                         const void *data,
+                         const NDSize &count,
+                         const NDSize &offset);
 };
-
-template<typename T>
-void DataArray::getData(T &value) const
-{
-    Hydra<T> hydra(value);
-
-    NDSize extent = backend()->dataExtent();
-    hydra.resize(extent);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    getData(dtype, hydra.data(), shape, {});
-}
-
-template<typename T>
-void DataArray::setData(const T &value)
-{
-    const Hydra<const T> hydra(value);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    if(!backend()->hasData()) {
-        backend()->createData(dtype, shape);
-    }
-    backend()->dataExtent(shape);
-    setData(dtype, hydra.data(), shape, {});
-}
-
-template<typename T>
-void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) const
-{
-    Hydra<T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    hydra.resize(count);
-    getData(dtype, hydra.data(), count, offset);
-}
-
-template<typename T>
-void DataArray::getData(T &value, const NDSize &offset) const
-{
-    Hydra<T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    NDSize count = hydra.shape();
-    getData(dtype, hydra.data(), count, offset);
-}
-
-
-template<typename T>
-void DataArray::setData(const T &value, const NDSize &offset)
-{
-    const Hydra<const T> hydra(value);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    setData(dtype, hydra.data(), shape, offset);
-}
 
 } // namespace nix
 
