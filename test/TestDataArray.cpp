@@ -189,6 +189,38 @@ void TestDataArray::testData()
         CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[i], dvin[i],
                                      std::numeric_limits<double>::epsilon());
     }
+
+    // test IO of a scalar
+
+    double scalar = -1.0;
+
+    //value + offset + count
+    // nix::NDSize({}) indicates a scalar
+    scalar = -1.0;
+    da3.getData(scalar, nix::NDSize({}), nix::NDSize({0}));
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[0], scalar,
+                                 std::numeric_limits<double>::epsilon());
+
+
+    // nix::NDSize({1, 1, ..., 1}) has a number of elemts == 1
+    // so that should work too
+    scalar = -1.0;
+    da3.getData(scalar, nix::NDSize({1}), nix::NDSize({0}));
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[0], scalar,
+                                 std::numeric_limits<double>::epsilon());
+
+    scalar = -1.0;
+    da3.getData(scalar, nix::NDSize({1, 1}), nix::NDSize({0}));
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[0], scalar,
+                                 std::numeric_limits<double>::epsilon());
+
+    //value + offset
+    scalar = -1.0;
+    da3.getData(scalar, nix::NDSize({0}));
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(dv[0], scalar,
+                                 std::numeric_limits<double>::epsilon());
+
+    //TODO: setData(scalar) + getData(scalar)
 }
 
 void TestDataArray::testPolynomial()

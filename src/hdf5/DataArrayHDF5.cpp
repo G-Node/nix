@@ -302,7 +302,9 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
-        fileSel.select(count, offset);
+        // if count.size() == 0, i.e. we want to read a scalar,
+        // we have to supply something that fileSel can make sense of
+        fileSel.select(count ? count : NDSize({1}), offset);
         Selection memSel(DataSpace::create(count, false));
 
         ds.read(dtype, data, fileSel, memSel);
