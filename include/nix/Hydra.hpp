@@ -54,7 +54,7 @@ struct data_traits {
     }
 
     static void resize(reference value, const NDSize &dims) {
-        if (dims.size() != 0) {
+        if (!(dims.size() == 0 || dims.nelms() == 1)) {
             throw InvalidRank("Cannot resize scalar");
         }
     }
