@@ -33,14 +33,14 @@ public:
     template<typename T> void setData(const T &value, const NDSize &offset);
 
 
-    virtual void getData(DataType dtype,
+    void getData(DataType dtype,
                          void *data,
                          const NDSize &count,
                          const NDSize &offset) const {
         ioRead(dtype, data, count, offset);
     }
 
-    virtual void setData(DataType dtype,
+    void setData(DataType dtype,
                          const void *data,
                          const NDSize &count,
                          const NDSize &offset) {
@@ -48,16 +48,6 @@ public:
     }
 
     // *** the virtual interface ***
-    virtual void getDataDirect(DataType dtype,
-                               void *data,
-                               const NDSize &count,
-                               const NDSize &offset) const = 0;
-
-    virtual void setDataDirect(DataType dtype,
-                               const void *data,
-                               const NDSize &count,
-                               const NDSize &offset) = 0;
-
     virtual void dataExtent(const NDSize &extent) = 0;
     virtual NDSize dataExtent() const = 0;
 
