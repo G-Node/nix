@@ -444,15 +444,16 @@ public:
 
     //
 protected:
-    virtual void ioRead(DataType dtype,
-                        void *data,
-                        const NDSize &count,
-                        const NDSize &offset) const;
+    //implementation of the DataIO interface
+    void ioRead(DataType dtype,
+                void *data,
+                const NDSize &count,
+                const NDSize &offset) const override;
 
-    virtual void ioWrite(DataType dtype,
-                         const void *data,
-                         const NDSize &count,
-                         const NDSize &offset);
+    void ioWrite(DataType dtype,
+                 const void *data,
+                 const NDSize &count,
+                 const NDSize &offset) override;
 };
 
 } // namespace nix
