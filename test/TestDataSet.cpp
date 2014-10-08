@@ -117,6 +117,22 @@ void TestDataSet::testNDSize() {
     dp = s.dot(s);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(25), dp);
 
+    //comparison tests
+    CPPUNIT_ASSERT_THROW(f < s, IncompatibleDimensions);
+
+    NDSize t({4, 5});
+    NDSize u({4, 4});
+
+    // actual non-delegation implementations are < and <=
+    CPPUNIT_ASSERT(s < t);
+    CPPUNIT_ASSERT(u <= t);
+
+    // everything else, i.e. >, >= is delegated
+    CPPUNIT_ASSERT(t > s);
+    CPPUNIT_ASSERT(t >= u);
+
+    CPPUNIT_ASSERT(!(t <= s));
+    CPPUNIT_ASSERT(!(t < u));
 }
 
 void TestDataSet::testChunkGuessing() {
