@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/ZonedIO.hpp>
 #include "TestDataAccess.hpp"
 
 using namespace std;
@@ -384,4 +385,40 @@ void TestDataAccess::testMultiTagUnitSupport() {
     testTag.units(invalid_units);
     CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, 0, 0), nix::IncompatibleDimensions);
 
+}
+
+void TestDataAccess::testZonedIO() {
+
+    NDSize zcount = {2, 5, 2};
+    NDSize zoffset = {0, 5, 2};
+
+    ZonedIO io = ZonedIO(data_array, zcount, zoffset);
+
+    CPPUNIT_ASSERT_EQUAL(zcount, io.dataExtent());
+
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type data(boost::extents[2][5][2]);
+    io.getData(data);
+
+    const array_type::size_type *ext = data.shape();
+    for (size_t i = 0; i < 3; i++) {
+        CPPUNIT_ASSERT_EQUAL(static_cast<array_type::size_type >(zcount[i]), ext[i]);
+    }
+
+    array_type ref;
+    data_array.getData(ref);
+
+    for(index i = 0; i < zcount[0]; ++i) {
+        for(index j = 0; j < zcount[1]; ++j) {
+            for(index k = 0; k < zcount[2]; ++k) {
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
+                                             data[i][j][k],
+                                             std::numeric_limits<double>::epsilon());
+            }
+        }
+    }
+
+    double val = 0.0;
+    CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3}), OutOfBounds);
 }
