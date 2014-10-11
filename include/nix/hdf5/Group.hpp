@@ -118,6 +118,8 @@ public:
      */
     boost::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
 
+    boost::optional<Group> findByNameOrAttribute(std::string const &value, std::string const &attribute) const;
+
     /**
      * @brief Create a new hard link with the given name inside this group,
      *        that points to the target group.

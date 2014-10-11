@@ -372,5 +372,20 @@ Group::~Group() {
     h5group.close();
 }
 
+static bool looksLikeUUID(const std::string id) {
+    return true;
+}
+
+boost::optional<Group> Group::findByNameOrAttribute(std::string const &value, std::string const &attr) const {
+
+    if (hasObject(value)) {
+        return boost::optional<Group>(openGroup(value, false));
+    } else if (looksLikeUUID(value)) {
+        return findGroupByAttribute(attr, value);
+    } else {
+        return boost::optional<Group>();
+    }
+}
+
 } // namespace hdf5
 } // namespace nix
