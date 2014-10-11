@@ -165,3 +165,28 @@ void TestGroup::testArray() {
     }
 #endif
 }
+
+void TestGroup::testOpen() {
+    nix::hdf5::Group root(h5group);
+
+    nix::hdf5::Group g = root.openGroup("name_a", true);
+    std::string uuid = nix::util::createId();
+    g.setAttr("entity_id", uuid);
+
+    CPPUNIT_ASSERT(root.hasGroup("name_a"));
+
+    std::string idout;
+
+    boost::optional<nix::hdf5::Group> a = root.findByNameOrAttribute("name_a", "entity_id");
+    CPPUNIT_ASSERT(a);
+    CPPUNIT_ASSERT(a->hasAttr("entity_id"));
+    a->getAttr("entity_id", idout);
+    CPPUNIT_ASSERT_EQUAL(uuid, idout);
+
+    boost::optional<nix::hdf5::Group> b = root.findByNameOrAttribute(uuid, "entity_id");
+    CPPUNIT_ASSERT(b);
+    CPPUNIT_ASSERT(b->hasAttr("entity_id"));
+    b->getAttr("entity_id", idout);
+    CPPUNIT_ASSERT_EQUAL(uuid, idout);
+
+}
