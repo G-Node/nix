@@ -146,6 +146,15 @@ void TestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
 
+    for (const auto &name : names) {
+        DataArray da_name = block.getDataArray(name);
+        CPPUNIT_ASSERT(da_name);
+
+        DataArray da_id = block.getDataArray(da_name.id());
+        CPPUNIT_ASSERT(da_id);
+        CPPUNIT_ASSERT_EQUAL(da_name.name(), da_id.name());
+    }
+
     vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
     CPPUNIT_ASSERT_EQUAL(names.size(), filteredArrays.size());
 
