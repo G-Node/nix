@@ -258,7 +258,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
     boost::optional<Group> g = data_array_group();
 
     if(g) {
-        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", id);
         if (group)
             da = make_shared<DataArrayHDF5>(file(), block(), *group);
     }

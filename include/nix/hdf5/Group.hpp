@@ -119,6 +119,19 @@ public:
     boost::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
+    * @brief Look for the first sub-data in the group with the given
+    * name (value). If none cannot be found then search for an attribute that
+    * is set to the given string value and return that if found.
+    * Returns an empty optional otherwise.
+    *
+    * @param attribute The name of the attribute to search.
+    * @param value     The name of the Group or the value of the attribute to look for.
+    *
+    * @return Optional containing the located Group or empty optional otherwise.
+    */
+    boost::optional<Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+
+    /**
      * @brief Create a new hard link with the given name inside this group,
      *        that points to the target group.
      *

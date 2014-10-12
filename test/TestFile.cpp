@@ -89,6 +89,15 @@ void TestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
 
+    for (const auto &name : names) {
+        Block bl_name = file_open.getBlock(name);
+        CPPUNIT_ASSERT(bl_name);
+
+        Block bl_id = file_open.getBlock(bl_name.id());
+        CPPUNIT_ASSERT(bl_id);
+        CPPUNIT_ASSERT_EQUAL(bl_name.name(), bl_id.name());
+    }
+    
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Block bl = file_open.getBlock(*it);
         CPPUNIT_ASSERT(file_open.hasBlock(*it) == true);

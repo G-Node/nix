@@ -42,6 +42,8 @@ public:
 
     void testArray();
 
+    void testOpen();
+
     template<typename T>
     static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
 
@@ -65,6 +67,7 @@ private:
     H5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestGroup);
+    CPPUNIT_TEST(testOpen);
     CPPUNIT_TEST(testBaseTypes);
     CPPUNIT_TEST(testVector);
     CPPUNIT_TEST(testMultiArray);

@@ -281,15 +281,15 @@ public:
     bool hasDataArray(const DataArray &data_array) const;
 
     /**
-     * @brief Retrieves a specific data array from the block by id.
+     * @brief Retrieves a specific data array from the block by name or id.
      *
-     * @param id        The id of an existing data array.
+     * @param id        The name or the id of an existing data array.
      *
      * @return The data array with the specified id. If this
      *         doesn't exist, an exception will be thrown.
      */
-    DataArray getDataArray(const std::string &id) const {
-        return backend()->getDataArray(id);
+    DataArray getDataArray(const std::string &name_or_id) const {
+        return backend()->getDataArray(name_or_id);
     }
 
     /**
