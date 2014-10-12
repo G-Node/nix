@@ -129,7 +129,7 @@ public:
     *
     * @return Optional containing the located Group or empty optional otherwise.
     */
-    boost::optional<Group> findByNameOrAttribute(std::string const &value, std::string const &attribute) const;
+    boost::optional<Group> findGroupByNameOrAttribute(std::string const &value, std::string const &attribute) const;
 
     /**
      * @brief Create a new hard link with the given name inside this group,
