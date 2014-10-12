@@ -379,7 +379,7 @@ static bool looksLikeUUID(const std::string id) {
 boost::optional<Group> Group::findByNameOrAttribute(std::string const &value, std::string const &attr) const {
 
     if (hasObject(value)) {
-        return boost::optional<Group>(openGroup(value, false));
+        return boost::make_optional(openGroup(value, false));
     } else if (looksLikeUUID(value)) {
         return findGroupByAttribute(attr, value);
     } else {
