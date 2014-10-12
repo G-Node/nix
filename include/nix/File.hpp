@@ -123,12 +123,12 @@ public:
     /**
      * @brief Read an existing block from the file.
      *
-     * @param id    The ID of the block.
+     * @param name_or_id    The name or the ID of the block.
      *
-     * @return The block with the given id.
+     * @return The block with the given name or id.
      */
-    Block getBlock(const std::string &id) const {
-        return backend()->getBlock(id);
+    Block getBlock(const std::string &name_or_id) const {
+        return backend()->getBlock(name_or_id);
     }
 
     /**

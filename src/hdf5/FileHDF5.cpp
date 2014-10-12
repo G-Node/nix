@@ -90,7 +90,7 @@ bool FileHDF5::hasBlockByName(const string &name) const {
 shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
     shared_ptr<BlockHDF5> block;
 
-    boost::optional<Group> group = data.findGroupByAttribute("entity_id", id);
+    boost::optional<Group> group = data.findGroupByNameOrAttribute("entity_id", id);
     if (group)
         block = make_shared<BlockHDF5>(file(), *group);
 
