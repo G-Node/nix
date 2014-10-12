@@ -177,13 +177,13 @@ void TestGroup::testOpen() {
 
     std::string idout;
 
-    boost::optional<nix::hdf5::Group> a = root.findGroupByNameOrAttribute("name_a", "entity_id");
+    boost::optional<nix::hdf5::Group> a = root.findGroupByNameOrAttribute("entity_id", "name_a");
     CPPUNIT_ASSERT(a);
     CPPUNIT_ASSERT(a->hasAttr("entity_id"));
     a->getAttr("entity_id", idout);
     CPPUNIT_ASSERT_EQUAL(uuid, idout);
 
-    boost::optional<nix::hdf5::Group> b = root.findGroupByNameOrAttribute(uuid, "entity_id");
+    boost::optional<nix::hdf5::Group> b = root.findGroupByNameOrAttribute("entity_id", uuid);
     CPPUNIT_ASSERT(b);
     CPPUNIT_ASSERT(b->hasAttr("entity_id"));
     b->getAttr("entity_id", idout);
