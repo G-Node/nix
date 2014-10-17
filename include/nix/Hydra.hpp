@@ -176,15 +176,20 @@ public:
     }
 
     static void resize(reference value, const NDSize &dims) {
-
-        if (dims.size() != 1) {
-            throw InvalidRank("Cannot change rank of vector"); //FIXME
+        size_t non_singletons = 0;
+        size_t non_singleton_index = 0;
+        for (size_t i = 0; i < dims.size(); ++i) {
+            if (dims[i] > 1) {
+                non_singletons++;
+                non_singleton_index = i;
+            }
         }
-
-        if (dims[0] == value.size())
+        if (non_singletons > 1) {
+            throw InvalidRank("Cannot change rank of vector");
+        }
+        if (dims[non_singleton_index] == value.size())
             return;
-
-        value.resize(dims[0]);
+        value.resize(dims[non_singleton_index]);
     }
 };
 
