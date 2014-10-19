@@ -221,6 +221,31 @@ void TestDataArray::testData()
                                  std::numeric_limits<double>::epsilon());
 
     //TODO: setData(scalar) + getData(scalar)
+
+    DataArray daA = block.createDataArray("append", "double", DataType::Double , NDSize({0, 4, 5}));
+
+    CPPUNIT_ASSERT_THROW(daA.appendData(DataType::Double, nullptr, NDSize({2, 4, 5}), 3), InvalidRank);
+    CPPUNIT_ASSERT_THROW(daA.appendData(DataType::Double, nullptr, NDSize({2, 4, 5, 6}), 0), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(daA.appendData(DataType::Double, nullptr, NDSize({4, 4, 6}), 0), IncompatibleDimensions);
+
+    std::vector<double> append_data(3*4*5, 1);
+
+    daA.appendData(DataType::Double, append_data.data(), {3, 4, 5}, 0);
+    CPPUNIT_ASSERT_EQUAL(NDSize({3, 4, 5}), daA.dataExtent());
+
+    std::fill(append_data.begin(), append_data.end(), 2);
+
+    daA.appendData(DataType::Double, append_data.data(), {3, 4, 5}, 0);
+    CPPUNIT_ASSERT_EQUAL(NDSize({6, 4, 5}), daA.dataExtent());
+
+    std::vector<double> append_check(6*4*5, 0);
+
+    daA.getData(DataType::Double, append_check.data(), {6, 4, 5}, {});
+
+    for(size_t i = 0; i < 6*4*5; i++) {
+        CPPUNIT_ASSERT_EQUAL(i > 3*4*5-1 ? 2.0 : 1.0, append_check[i]);
+    }
+
 }
 
 void TestDataArray::testPolynomial()

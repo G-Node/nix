@@ -440,6 +440,8 @@ public:
         return backend()->dataType();
     }
 
+    void appendData(DataType dtype, const void *data, const NDSize &count, size_t axis);
+
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------

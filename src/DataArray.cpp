@@ -68,6 +68,41 @@ void DataArray::setData(DataType dtype,
 }
 
 
+void DataArray::appendData(DataType dtype, const void *data, const NDSize &count, size_t axis) {
+
+    //first some sanity checks
+    NDSize extent = dataExtent();
+
+    if (axis >= extent.size()) {
+        throw InvalidRank("axis is out of bounds");
+    }
+
+    if (extent.size() != count.size()) {
+        throw IncompatibleDimensions("Data and DataArray must have the same dimensionality", "appendData");
+    }
+
+    for (size_t i = 0; i < count.size(); i ++) {
+        if (i == axis) {
+            continue;
+        }
+
+        if (extent[i] != count[i]) {
+            throw IncompatibleDimensions("Shape of data and shape of DataArray must match in all dimension but axis!",
+                                         "appenData");
+        }
+    }
+
+    NDSize offset(extent.size(), 0);
+    offset[axis] = extent[axis];
+    extent[axis] += count[axis];
+
+    //enlarge the DataArray to fit the new data
+    dataExtent(extent);
+
+    setData(dtype, data, count, offset);
+
+}
+
 void DataArray::unit(const std::string &unit) {
     if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
@@ -90,4 +125,5 @@ std::ostream& nix::operator<<(std::ostream &out, const DataArray &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
+
 
