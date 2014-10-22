@@ -80,7 +80,7 @@ std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type 
 }
 
 
-NDArray MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
+ZonedIO MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
     return util::retrieveData(*this, position_index, reference_index);
 }
 

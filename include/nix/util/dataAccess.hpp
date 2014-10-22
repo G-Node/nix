@@ -15,6 +15,7 @@
 #define NIX_DATAACCESS_H
 
 #include <nix/NDArray.hpp>
+#include <nix/ZonedIO.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
@@ -100,7 +101,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_
  *
  * @return The data referenced by position and extent.
  */
-NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
+NIXAPI ZonedIO retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.

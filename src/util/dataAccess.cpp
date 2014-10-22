@@ -219,7 +219,7 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
+ZonedIO retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
@@ -246,9 +246,8 @@ NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t referenc
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].dataType(), count);
-    refs[reference_index].getData(data, count, offset);
-    return data;
+    ZonedIO io = ZonedIO(refs[reference_index], count, offset);
+    return io;
 }
 
 
