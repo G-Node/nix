@@ -95,7 +95,7 @@ ZonedIO Tag::retrieveData(size_t reference_index) const {
     return util::retrieveData(*this, reference_index);
 }
 
-NDArray Tag::retrieveFeatureData(size_t feature_index) const {
+ZonedIO Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }
 

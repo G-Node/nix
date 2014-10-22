@@ -142,7 +142,7 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @return The associated data.
  */
-NIXAPI NDArray retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+NIXAPI ZonedIO retrieveFeatureData(const Tag &tag, size_t feature_index=0);
 
 /**
  * @brief Returns the feature data accosiated with the given MuliTag's position.
