@@ -91,7 +91,7 @@ bool Tag::deleteFeature(const Feature &feature) {
     return backend()->deleteFeature(feature.id());
 }
 
-NDArray Tag::retrieveData(size_t reference_index) const {
+ZonedIO Tag::retrieveData(size_t reference_index) const {
     return util::retrieveData(*this, reference_index);
 }
 

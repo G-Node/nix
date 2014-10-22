@@ -16,6 +16,7 @@
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
 #include <nix/NDArray.hpp>
+#include <nix/ZonedIO.hpp>
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -441,7 +442,7 @@ public:
      *
      * @return the data
      */
-    NDArray retrieveData(size_t reference_index) const;
+    ZonedIO retrieveData(size_t reference_index) const;
     
     /**
      * @brief Returns the data stored in the seleceted Feature.

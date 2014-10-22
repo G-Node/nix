@@ -111,7 +111,7 @@ NIXAPI ZonedIO retrieveData(const MultiTag &tag, size_t position_index, size_t r
  *
  * @return The data referenced by the position.
  */
-NIXAPI NDArray retrieveData(const Tag &tag, size_t reference_index);
+NIXAPI ZonedIO retrieveData(const Tag &tag, size_t reference_index);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
