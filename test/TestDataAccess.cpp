@@ -209,17 +209,16 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
     
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 1, 0), nix::OutOfBounds);
-    /*
+    
     data_view = util::retrieveData(position_tag, 0);
-    data_size = data_view.size();
+    data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1);
 
     data_view = util::retrieveData(segment_tag, 0);
-    data_size = data_view.size();
+    data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
-    */
 }
 
 void TestDataAccess::testTagFeatureData() {
