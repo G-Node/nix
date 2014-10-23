@@ -359,9 +359,9 @@ void TestMultiTag::testDataAccess() {
     CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(-1, 0), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(10, 0), nix::OutOfBounds);
 
-    NDArray ret_data = multi_tag.retrieveData(0, 0);
-    NDSize data_size = ret_data.size();
-    CPPUNIT_ASSERT(ret_data.rank() == 3);
+    ZonedIO ret_data = multi_tag.retrieveData(0, 0);
+    NDSize data_size = ret_data.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 
     CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);

@@ -16,6 +16,7 @@
 #include <iostream>
 
 #include <nix/Platform.hpp>
+#include <nix/Exception.hpp>
 
 namespace nix {
 
@@ -401,6 +402,54 @@ inline bool operator!=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
     return !operator==(lhs, rhs);
 }
 
+
+template<typename T>
+inline bool operator<(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    if (lhs.size() != rhs.size()) {
+        throw IncompatibleDimensions("size must agree to compare",
+                                     "NDSizeBase < NDSizeBase ");
+    }
+
+    const size_t size = lhs.size();
+    for (size_t i = 0; i < size; i++) {
+        if (lhs[i] >= rhs[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+inline bool operator<=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    if (lhs.size() != rhs.size()) {
+        throw IncompatibleDimensions("size must agree to compare",
+                                     "NDSizeBase < NDSizeBase ");
+    }
+
+    const size_t size = lhs.size();
+    for (size_t i = 0; i < size; i++) {
+        if (lhs[i] > rhs[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+inline bool operator>(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    return !(lhs <= rhs);
+}
+
+template<typename T>
+inline bool operator>=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    return !(lhs < rhs);
+}
 
 template<typename T>
 inline std::ostream& operator<<(std::ostream &os, const NDSizeBase<T> &ndsize)

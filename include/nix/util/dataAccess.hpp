@@ -15,6 +15,7 @@
 #define NIX_DATAACCESS_H
 
 #include <nix/NDArray.hpp>
+#include <nix/ZonedIO.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
@@ -100,7 +101,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_
  *
  * @return The data referenced by position and extent.
  */
-NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
+NIXAPI ZonedIO retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -110,7 +111,7 @@ NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t r
  *
  * @return The data referenced by the position.
  */
-NIXAPI NDArray retrieveData(const Tag &tag, size_t reference_index);
+NIXAPI ZonedIO retrieveData(const Tag &tag, size_t reference_index);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
@@ -141,7 +142,7 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @return The associated data.
  */
-NIXAPI NDArray retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+NIXAPI ZonedIO retrieveFeatureData(const Tag &tag, size_t feature_index=0);
 
 /**
  * @brief Returns the feature data accosiated with the given MuliTag's position.
@@ -152,7 +153,7 @@ NIXAPI NDArray retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  *
  * @return The associated data.
  */
-NIXAPI NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
+NIXAPI ZonedIO retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
 
 }
 }

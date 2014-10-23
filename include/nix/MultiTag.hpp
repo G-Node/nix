@@ -15,7 +15,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
-#include <nix/NDArray.hpp>
+#include <nix/ZonedIO.hpp>
 
 namespace nix {
 
@@ -346,7 +346,7 @@ public:
      *
      * @return the requested data.
      */
-    NDArray retrieveData(size_t position_index, size_t reference_index) const;
+    ZonedIO retrieveData(size_t position_index, size_t reference_index) const;
 
     //--------------------------------------------------
     // Methods concerning features.
@@ -469,7 +469,7 @@ public:
      *
      * @return The data
      */
-    NDArray retrieveFeatureData(size_t position_index, size_t feature_index) const;
+    ZonedIO retrieveFeatureData(size_t position_index, size_t feature_index) const;
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------

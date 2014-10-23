@@ -22,11 +22,8 @@ static void convertData(DataType source, DataType destination, void *data, size_
     h5_src.convert(h5_dst, nelms, data, nullptr);
 }
 
-void DataArray::getData(DataType dtype,
-        void *data,
-        const NDSize &count,
-        const NDSize &offset) const {
 
+void DataArray::ioRead(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
     const std::vector<double> poly = polynomCoefficients();
     boost::optional<double> opt_origin = expansionOrigin();
 
@@ -44,7 +41,7 @@ void DataArray::getData(DataType dtype,
             read_buffer = reinterpret_cast<double *>(data);
         }
 
-        backend()->read(DataType::Double, read_buffer, count, offset);
+        getDataDirect(DataType::Double, read_buffer, count, offset);
         const double origin = opt_origin ? *opt_origin : 0.0;
 
         util::applyPolynomial(poly, origin, read_buffer, read_buffer, nelms);
@@ -55,18 +52,13 @@ void DataArray::getData(DataType dtype,
         }
 
     } else {
-        backend()->read(dtype, data, count, offset);
+        getDataDirect(dtype, data, count, offset);
     }
 }
 
-void DataArray::setData(DataType dtype,
-                        const void *data,
-                        const NDSize &count,
-                        const NDSize &offset)
-{
-    backend()->write(dtype, data, count, offset);
+void DataArray::ioWrite(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
+    setDataDirect(dtype, data, count, offset);
 }
-
 
 void DataArray::appendData(DataType dtype, const void *data, const NDSize &count, size_t axis) {
 
@@ -125,5 +117,3 @@ std::ostream& nix::operator<<(std::ostream &out, const DataArray &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
-
-

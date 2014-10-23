@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/ZonedIO.hpp>
 #include "TestDataAccess.hpp"
 
 using namespace std;
@@ -202,21 +203,21 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, -1, 0), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 10, 0), nix::OutOfBounds);
 
-    NDArray data = util::retrieveData(multi_tag, 0, 0);
-    NDSize data_size = data.size();
-    CPPUNIT_ASSERT(data.rank() == 3);
+    ZonedIO data_view = util::retrieveData(multi_tag, 0,0);
+    NDSize data_size = data_view.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3); 
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
-
+    
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 1, 0), nix::OutOfBounds);
-
-    data = util::retrieveData(position_tag, 0);
-    data_size = data.size();
-    CPPUNIT_ASSERT(data.rank() == 3);
+    
+    data_view = util::retrieveData(position_tag, 0);
+    data_size = data_view.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1);
 
-    data = util::retrieveData(segment_tag, 0);
-    data_size = data.size();
-    CPPUNIT_ASSERT(data.rank() == 3);
+    data_view = util::retrieveData(segment_tag, 0);
+    data_size = data_view.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
 }
 
@@ -239,24 +240,24 @@ void TestDataAccess::testTagFeatureData() {
     Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
     Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
 
-    NDArray data1 = util::retrieveFeatureData(pos_tag, 0);
-    NDArray data2 = util::retrieveFeatureData(pos_tag, 1);
-    NDArray data3 = util::retrieveFeatureData(pos_tag, 2);
+    ZonedIO data1 = util::retrieveFeatureData(pos_tag, 0);
+    ZonedIO data2 = util::retrieveFeatureData(pos_tag, 1);
+    ZonedIO data3 = util::retrieveFeatureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
-    CPPUNIT_ASSERT(data1.num_elements() == 1);
-    CPPUNIT_ASSERT(data2.num_elements() == 1);
-    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
+    CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
+    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 1);
+    CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
     // make tag pointing to a slice
     pos_tag.extent({2.0});
     data1 = util::retrieveFeatureData(pos_tag, 0);
     data2 = util::retrieveFeatureData(pos_tag, 1);
     data3 = util::retrieveFeatureData(pos_tag, 2);
 
-    CPPUNIT_ASSERT(data1.num_elements() == 1);
-    CPPUNIT_ASSERT(data2.num_elements() == 3);
-    CPPUNIT_ASSERT(data3.num_elements() == ramp_data.size());
-
+    CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
+    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 3);
+    CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
+    
     pos_tag.deleteFeature(f1.id());
     pos_tag.deleteFeature(f2.id());
     pos_tag.deleteFeature(f3.id());
@@ -315,53 +316,62 @@ void TestDataAccess::testMultiTagFeatureData() {
     // preparations done, actually test 
     CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
     // indexed feature
-    NDArray data = util::retrieveFeatureData(multi_tag, 0, 0);
-    NDSize data_size = data.size();
+    ZonedIO data_view = util::retrieveFeatureData(multi_tag, 0, 0);
+    NDSize data_size = data_view.dataExtent();
 
     CPPUNIT_ASSERT(data_size.size() == 2);
-    CPPUNIT_ASSERT(data.num_elements() == 10);
+    CPPUNIT_ASSERT(data_size.nelms() == 10);
     double sum = 0.;
-    NDSize pos(2,0);
+    double temp;
+    NDSize offset(data_view.dataExtent().size(), 0);
+    
     for (size_t i = 0; i < data_size[1]; ++i){
-        pos[1] = i;
-        sum += data.get<double>(pos);
+        offset[1] = i;
+        data_view.getData<double>(temp, offset);
+        sum += temp;
     }
+
     CPPUNIT_ASSERT(sum == 45);
-    data = util::retrieveFeatureData(multi_tag, 9, 0);
+
+    data_view = util::retrieveFeatureData(multi_tag, 9, 0);
     sum = 0;
-    for (size_t i = 0; i < data_size[1]; ++i){
-        pos[1] = i;
-        sum += data.get<double>(pos);
+    for (size_t i = 0; i < data_view.dataExtent()[1]; ++i){
+        offset[1] = i;
+        data_view.getData<double>(temp, offset);
+        sum += temp;
     }
     CPPUNIT_ASSERT(sum == 9045);
     // untagged feature
-    data = util::retrieveFeatureData(multi_tag, 0, 2);
-    CPPUNIT_ASSERT(data.num_elements() == 100);
-    data = util::retrieveFeatureData(multi_tag, 1, 2);
-    data_size = data.size();
-    CPPUNIT_ASSERT(data.num_elements() == 100);
+    data_view = util::retrieveFeatureData(multi_tag, 0, 2);
+    CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 100);
+    
+    
+    data_view = util::retrieveFeatureData(multi_tag, 1, 2);
+    data_size = data_view.dataExtent();
+    CPPUNIT_ASSERT(data_size.nelms() == 100);
     sum = 0;
 
     for (size_t i = 0; i < data_size[0]; ++i) {
-        pos[0] = i;
+        offset[0] = i;
         for (size_t j = 0; j < data_size[1]; ++j) {
-            pos[1] = j;
-            sum += data.get<double>(pos);
+            offset[1] = j;
+            data_view.getData<double>(temp, offset);
+            sum += temp;
         }
     }
     CPPUNIT_ASSERT(sum == total);
     // tagged feature
-    data = util::retrieveFeatureData(multi_tag, 0, 1);
-    data_size = data.size();
+    data_view = util::retrieveFeatureData(multi_tag, 0, 1);
+    data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    data = util::retrieveFeatureData(multi_tag, 1, 1);
-    data_size = data.size();
+    data_view = util::retrieveFeatureData(multi_tag, 1, 1);
+    data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
     CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 3), nix::OutOfBounds);
-
+    
     // clean up
     multi_tag.deleteFeature(index_feature.id());
     multi_tag.deleteFeature(tagged_feature.id());
@@ -384,4 +394,39 @@ void TestDataAccess::testMultiTagUnitSupport() {
     testTag.units(invalid_units);
     CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, 0, 0), nix::IncompatibleDimensions);
 
+}
+
+void TestDataAccess::testZonedIO() {
+
+    NDSize zcount = {2, 5, 2};
+    NDSize zoffset = {0, 5, 2};
+
+    ZonedIO io = ZonedIO(data_array, zcount, zoffset);
+
+    CPPUNIT_ASSERT_EQUAL(zcount, io.dataExtent());
+
+    typedef boost::multi_array<double, 3> array_type;
+    array_type data(boost::extents[2][5][2]);
+    io.getData(data);
+
+    const array_type::size_type *ext = data.shape();
+    for (size_t i = 0; i < 3; i++) {
+        CPPUNIT_ASSERT_EQUAL(static_cast<array_type::size_type >(zcount[i]), ext[i]);
+    }
+
+    array_type ref;
+    data_array.getData(ref);
+
+    for(size_t i = 0; i < zcount[0]; ++i) {
+        for(size_t j = 0; j < zcount[1]; ++j) {
+            for(size_t k = 0; k < zcount[2]; ++k) {
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
+                                             data[i][j][k],
+                                             std::numeric_limits<double>::epsilon());
+            }
+        }
+    }
+
+    double val = 0.0;
+    CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3}), OutOfBounds);
 }

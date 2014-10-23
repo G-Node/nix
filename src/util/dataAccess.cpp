@@ -219,7 +219,7 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
+ZonedIO retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
@@ -246,13 +246,12 @@ NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t referenc
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].dataType(), count);
-    refs[reference_index].getData(data, count, offset);
-    return data;
+    ZonedIO io = ZonedIO(refs[reference_index], count, offset);
+    return io;
 }
 
 
-NDArray retrieveData(const Tag &tag, size_t reference_index) {
+ZonedIO retrieveData(const Tag &tag, size_t reference_index) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
     vector<DataArray> refs = tag.references();
@@ -272,13 +271,12 @@ NDArray retrieveData(const Tag &tag, size_t reference_index) {
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].dataType(), count);
-    refs[reference_index].getData(data, count, offset);
-    return data;
+    ZonedIO io = ZonedIO(refs[reference_index], count, offset);
+    return io;
 }
 
 
-NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
+ZonedIO retrieveFeatureData(const Tag &tag, size_t feature_index) {
     if (tag.featureCount() == 0) {
         throw nix::OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -288,7 +286,8 @@ NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
     Feature feat = tag.getFeature(feature_index);
     DataArray data = feat.data();
     if (data == nix::none) {
-        return NDArray(nix::DataType::Float,{0});
+        throw nix::UninitializedEntity();
+        //return NDArray(nix::DataType::Float,{0});
     }
     if (feat.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
@@ -296,18 +295,17 @@ NDArray retrieveFeatureData(const Tag &tag, size_t feature_index) {
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
-        NDArray feat_data(data.dataType(), count);
-        data.getData(feat_data, count, offset);
-        return feat_data;
+        ZonedIO io = ZonedIO(data, count, offset);
+        return io;
     }
     // for untagged and indexed return the full data
-    NDArray feat_data(data.dataType(), data.dataExtent());
-    data.getData(feat_data);
-    return feat_data;
+    NDSize offset(data.dataExtent().size(), 0);
+    ZonedIO io = ZonedIO(data, data.dataExtent(), offset);
+    return io;
 }
 
 
-NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
+ZonedIO retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -317,7 +315,8 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
     Feature feat = tag.getFeature(feature_index);
     DataArray data = feat.data();
     if (data == nix::none) {
-        return NDArray(nix::DataType::Float,{0});
+        throw nix::UninitializedEntity();
+        //return NDArray(nix::DataType::Float,{0});
     }
     if (feat.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
@@ -326,10 +325,8 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
-
-        NDArray feat_data(data.dataType(), count);
-        data.getData(feat_data, count, offset);
-        return feat_data;
+        ZonedIO io = ZonedIO(data, count, offset);
+        return io;
     } else if (feat.linkType() == nix::LinkType::Indexed) {
         //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
@@ -344,14 +341,13 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
-        NDArray feat_data(data.dataType(), count);
-        data.getData(feat_data, count, offset);
-        return feat_data;
+        ZonedIO io = ZonedIO(data, count, offset);
+        return io;
     }
     // FIXME is this expected behavior? In the untagged case all data is returned
-    NDArray feat_data(data.dataType(), data.dataExtent());
-    data.getData(feat_data);
-    return feat_data;
+    NDSize offset(data.dataExtent().size(), 0);
+    ZonedIO io = ZonedIO(data, data.dataExtent(), offset);
+    return io;
 }
 
 
