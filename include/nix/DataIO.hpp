@@ -108,6 +108,9 @@ void DataIO::getData(T &value, const NDSize &offset) const
     DataType dtype = hydra.element_data_type();
 
     NDSize count = hydra.shape();
+    if (! count) {
+        count = NDSize(offset.size(), 1);
+    }
     getData(dtype, hydra.data(), count, offset);
 }
 
