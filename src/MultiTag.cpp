@@ -109,7 +109,7 @@ bool MultiTag::deleteFeature(const Feature &feature) {
 }
 
 
-NDArray MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
+ZonedIO MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
     return util::retrieveFeatureData(*this, position_index, feature_index);
 }
 

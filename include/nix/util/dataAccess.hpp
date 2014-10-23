@@ -153,7 +153,7 @@ NIXAPI ZonedIO retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  *
  * @return The associated data.
  */
-NIXAPI NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
+NIXAPI ZonedIO retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
 
 }
 }

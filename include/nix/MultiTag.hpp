@@ -16,7 +16,6 @@
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
 #include <nix/ZonedIO.hpp>
-#include <nix/NDArray.hpp>
 
 namespace nix {
 
@@ -470,7 +469,7 @@ public:
      *
      * @return The data
      */
-    NDArray retrieveFeatureData(size_t position_index, size_t feature_index) const;
+    ZonedIO retrieveFeatureData(size_t position_index, size_t feature_index) const;
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------

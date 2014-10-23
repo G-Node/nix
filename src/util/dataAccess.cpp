@@ -305,7 +305,7 @@ ZonedIO retrieveFeatureData(const Tag &tag, size_t feature_index) {
 }
 
 
-NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
+ZonedIO retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -315,7 +315,8 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
     Feature feat = tag.getFeature(feature_index);
     DataArray data = feat.data();
     if (data == nix::none) {
-        return NDArray(nix::DataType::Float,{0});
+        throw nix::UninitializedEntity();
+        //return NDArray(nix::DataType::Float,{0});
     }
     if (feat.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
@@ -324,10 +325,8 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
-
-        NDArray feat_data(data.dataType(), count);
-        data.getData(feat_data, count, offset);
-        return feat_data;
+        ZonedIO io = ZonedIO(data, count, offset);
+        return io;
     } else if (feat.linkType() == nix::LinkType::Indexed) {
         //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
@@ -342,14 +341,13 @@ NDArray retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t f
         if (!positionAndExtentInData(data, offset, count)) {
             throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
         }
-        NDArray feat_data(data.dataType(), count);
-        data.getData(feat_data, count, offset);
-        return feat_data;
+        ZonedIO io = ZonedIO(data, count, offset);
+        return io;
     }
     // FIXME is this expected behavior? In the untagged case all data is returned
-    NDArray feat_data(data.dataType(), data.dataExtent());
-    data.getData(feat_data);
-    return feat_data;
+    NDSize offset(data.dataExtent().size(), 0);
+    ZonedIO io = ZonedIO(data, data.dataExtent(), offset);
+    return io;
 }
 
 
