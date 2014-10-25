@@ -12,7 +12,6 @@
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 using namespace std;
-using namespace boost;
 
 using namespace nix::base;
 
@@ -91,8 +90,8 @@ void NamedEntityHDF5::definition(const string &definition) {
 }
 
 
-optional<string> NamedEntityHDF5::definition() const {
-    optional<string> ret;
+boost::optional<string> NamedEntityHDF5::definition() const {
+    boost::optional<string> ret;
     string definition;
     bool have_attr = group().getAttr("definition", definition);
     if (have_attr) {

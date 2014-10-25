@@ -12,7 +12,6 @@
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
-using namespace boost;
 
 using namespace nix::base;
 
@@ -130,8 +129,8 @@ void PropertyHDF5::definition(const string &definition) {
 }
 
 
-optional<string> PropertyHDF5::definition() const {
-    optional<string> ret;
+boost::optional<string> PropertyHDF5::definition() const {
+    boost::optional<string> ret;
     string definition;
     bool have_attr = dataset().getAttr("definition", definition);
     if (have_attr) {
