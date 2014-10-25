@@ -15,7 +15,7 @@
 
 namespace nix {
 
-class ZonedIO : public DataIO {
+class ZonedIO : public DataSet {
 public:
     ZonedIO(DataArray da, NDSize count, NDSize offset)
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
