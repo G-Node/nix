@@ -16,7 +16,6 @@
 #include <nix/valid/validate.hpp>
 
 using namespace nix;
-using namespace nix::hdf5;
 using namespace valid;
 using namespace std;
 
