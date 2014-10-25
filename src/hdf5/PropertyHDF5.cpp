@@ -14,9 +14,10 @@
 using namespace std;
 using namespace boost;
 
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
+
+namespace nix {
+namespace hdf5 {
 
 
 
@@ -258,3 +259,5 @@ int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
 
 PropertyHDF5::~PropertyHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

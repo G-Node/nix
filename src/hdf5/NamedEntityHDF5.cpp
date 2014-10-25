@@ -14,9 +14,10 @@
 using namespace std;
 using namespace boost;
 
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 NamedEntityHDF5::NamedEntityHDF5(const std::shared_ptr<IFile> &file, const Group &group)
@@ -122,3 +123,6 @@ int NamedEntityHDF5::compare(const std::shared_ptr<INamedEntity> &other) const {
 
 
 NamedEntityHDF5::~NamedEntityHDF5() {}
+
+} // ns nix::hdf5
+} // ns nix

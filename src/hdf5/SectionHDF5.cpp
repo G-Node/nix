@@ -14,9 +14,10 @@
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const Group &group)
@@ -379,3 +380,6 @@ bool SectionHDF5::deleteProperty(const string &id) {
 
 
 SectionHDF5::~SectionHDF5() {}
+
+} // ns nix::hdf5
+} // ns nix

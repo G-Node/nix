@@ -15,9 +15,10 @@
 
 
 using namespace std;
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
+
+namespace nix {
+namespace hdf5 {
 
 EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
     : EntityWithMetadataHDF5(file, group), entity_block(block)
@@ -140,3 +141,5 @@ std::shared_ptr<base::IBlock> EntityWithSourcesHDF5::block() const {
 
 EntityWithSourcesHDF5::~EntityWithSourcesHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

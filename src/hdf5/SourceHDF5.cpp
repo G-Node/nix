@@ -11,9 +11,10 @@
 #include <nix/Source.hpp>
 
 using namespace std;
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
+
+namespace nix {
+namespace hdf5 {
 
 
 SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, const Group &group)
@@ -129,4 +130,7 @@ bool SourceHDF5::deleteSource(const string &id) {
 
 
 SourceHDF5::~SourceHDF5() {}
+
+} // ns nix::hdf5
+} // ns nix
 
