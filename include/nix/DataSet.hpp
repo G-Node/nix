@@ -20,7 +20,7 @@
 
 namespace nix {
 
-class NIXAPI DataIO {
+class NIXAPI DataSet {
 public:
     template<typename T> void getData(T &value) const;
 
@@ -66,7 +66,7 @@ protected:
 };
 
 template<typename T>
-void DataIO::getData(T &value) const
+void DataSet::getData(T &value) const
 {
     Hydra<T> hydra(value);
 
@@ -80,7 +80,7 @@ void DataIO::getData(T &value) const
 }
 
 template<typename T>
-void DataIO::setData(const T &value)
+void DataSet::setData(const T &value)
 {
     const Hydra<const T> hydra(value);
 
@@ -92,7 +92,7 @@ void DataIO::setData(const T &value)
 }
 
 template<typename T>
-void DataIO::getData(T &value, const NDSize &count, const NDSize &offset) const
+void DataSet::getData(T &value, const NDSize &count, const NDSize &offset) const
 {
     Hydra<T> hydra(value);
     DataType dtype = hydra.element_data_type();
@@ -102,7 +102,7 @@ void DataIO::getData(T &value, const NDSize &count, const NDSize &offset) const
 }
 
 template<typename T>
-void DataIO::getData(T &value, const NDSize &offset) const
+void DataSet::getData(T &value, const NDSize &offset) const
 {
     Hydra<T> hydra(value);
     DataType dtype = hydra.element_data_type();
@@ -116,7 +116,7 @@ void DataIO::getData(T &value, const NDSize &offset) const
 
 
 template<typename T>
-void DataIO::setData(const T &value, const NDSize &offset)
+void DataSet::setData(const T &value, const NDSize &offset)
 {
     const Hydra<const T> hydra(value);
 

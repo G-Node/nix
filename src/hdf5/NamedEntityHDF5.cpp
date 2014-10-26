@@ -12,11 +12,11 @@
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 
 using namespace std;
-using namespace boost;
 
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 NamedEntityHDF5::NamedEntityHDF5(const std::shared_ptr<IFile> &file, const Group &group)
@@ -90,8 +90,8 @@ void NamedEntityHDF5::definition(const string &definition) {
 }
 
 
-optional<string> NamedEntityHDF5::definition() const {
-    optional<string> ret;
+boost::optional<string> NamedEntityHDF5::definition() const {
+    boost::optional<string> ret;
     string definition;
     bool have_attr = group().getAttr("definition", definition);
     if (have_attr) {
@@ -122,3 +122,6 @@ int NamedEntityHDF5::compare(const std::shared_ptr<INamedEntity> &other) const {
 
 
 NamedEntityHDF5::~NamedEntityHDF5() {}
+
+} // ns nix::hdf5
+} // ns nix

@@ -9,7 +9,7 @@
 #ifndef NIX_DATA_ARRAY_H
 #define NIX_DATA_ARRAY_H
 
-#include <nix/DataIO.hpp>
+#include <nix/DataSet.hpp>
 
 #include <boost/multi_array.hpp>
 
@@ -66,7 +66,7 @@ namespace nix {
  * bool deleted = da.deleteDataArray(some_id);
  * ~~~
  */
-class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray>, public DataIO {
+class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray>, public DataSet {
 
 public:
 

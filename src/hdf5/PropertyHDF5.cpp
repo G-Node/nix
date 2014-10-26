@@ -12,11 +12,11 @@
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;
-using namespace boost;
 
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
+
+namespace nix {
+namespace hdf5 {
 
 
 
@@ -129,8 +129,8 @@ void PropertyHDF5::definition(const string &definition) {
 }
 
 
-optional<string> PropertyHDF5::definition() const {
-    optional<string> ret;
+boost::optional<string> PropertyHDF5::definition() const {
+    boost::optional<string> ret;
     string definition;
     bool have_attr = dataset().getAttr("definition", definition);
     if (have_attr) {
@@ -258,3 +258,5 @@ int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
 
 PropertyHDF5::~PropertyHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

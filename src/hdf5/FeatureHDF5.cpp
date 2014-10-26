@@ -13,18 +13,19 @@
 #include <nix/hdf5/FeatureHDF5.hpp>
 
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
-string nix::hdf5::linkTypeToString(LinkType link_type) {
+string linkTypeToString(LinkType link_type) {
     static vector<string> type_names = {"tagged", "untagged", "indexed"};
     return type_names[static_cast<int>(link_type)];
 }
 
 
-LinkType nix::hdf5::linkTypeFromString(const string &str) {
+LinkType linkTypeFromString(const string &str) {
     if (str == "tagged")
         return LinkType::Tagged;
     else if (str == "untagged")
@@ -113,3 +114,6 @@ LinkType FeatureHDF5::linkType() const {
 
 
 FeatureHDF5::~FeatureHDF5() {}
+
+} // ns nix::hdf5
+} // ns nix

@@ -9,15 +9,15 @@
 #include <nix/util/util.hpp>
 
 #include <nix/hdf5/DimensionHDF5.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 
 using namespace std;
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
 
+namespace nix {
+namespace hdf5 {
 
-DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
+DimensionType dimensionTypeFromStr(const string &str) {
     if (str == "set") {
         return DimensionType::Set;
     } else if (str == "range") {
@@ -30,7 +30,7 @@ DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
 }
 
 
-std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
+std::string dimensionTypeToStr(DimensionType dim) {
 
     //The way this switch + string.empty() checking is
     // done here might seem a bit convoluted, but the
@@ -63,7 +63,7 @@ std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
 }
 
 
-shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(const Group &group, size_t index) {
+shared_ptr<IDimension> openDimensionHDF5(const Group &group, size_t index) {
     string type_name;
     group.getAttr("dimension_type", type_name);
 
@@ -368,3 +368,5 @@ void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

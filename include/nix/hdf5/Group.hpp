@@ -12,7 +12,7 @@
 #include <string>
 
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/Platform.hpp>

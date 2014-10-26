@@ -12,9 +12,10 @@
 #include <nix/hdf5/EntityHDF5.hpp>
 
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group)
@@ -111,3 +112,5 @@ bool EntityHDF5::operator!=(const EntityHDF5 &other) const {
 
 EntityHDF5::~EntityHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

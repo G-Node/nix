@@ -15,10 +15,10 @@
 #include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 using namespace std;
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
 
+namespace nix {
+namespace hdf5 {
 
 EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group)
     : NamedEntityHDF5(file, group)
@@ -84,3 +84,5 @@ void EntityWithMetadataHDF5::metadata(const none_t t) {
 
 EntityWithMetadataHDF5::~EntityWithMetadataHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

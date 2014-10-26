@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/DataIO.hpp>
+#include <nix/DataSet.hpp>
 
 #include <nix/util/util.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>

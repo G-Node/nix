@@ -15,7 +15,7 @@
 #include <string.h>
 
 using namespace nix; //quick fix for now
-using namespace nix::hdf5;
+
 
 unsigned int & TestDataSet::open_mode()
 {
@@ -137,12 +137,12 @@ void TestDataSet::testNDSize() {
 
 void TestDataSet::testChunkGuessing() {
 
-    CPPUNIT_ASSERT_THROW(DataSet::guessChunking(NDSize{}, DataType::Double),
+    CPPUNIT_ASSERT_THROW(hdf5::DataSet::guessChunking(NDSize{}, DataType::Double),
                          InvalidRank);
 
     NDSize dims({1024, 1024});
 
-    NDSize chunks = DataSet::guessChunking(dims, DataType::Double);
+    NDSize chunks = hdf5::DataSet::guessChunking(dims, DataType::Double);
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }
@@ -170,7 +170,7 @@ void TestDataSet::testDataType() {
     const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
-        DataSet ds = DataSet::create(h5group, _types[i].name, _types[i].dtype, dims);
+        hdf5::DataSet ds = hdf5::DataSet::create(h5group, _types[i].name, _types[i].dtype, dims);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }
 
@@ -179,10 +179,10 @@ void TestDataSet::testDataType() {
 void TestDataSet::testBasic() {
     NDSize dims({4, 6});
 
-    DataSet ds = DataSet::create(h5group, "dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
+    hdf5::DataSet ds = hdf5::DataSet::create(h5group, "dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
     CPPUNIT_ASSERT_EQUAL(ds.size(), (NDSize{0, 0}));
 
-    ds = DataSet::create(h5group, "dsDouble", DataType::Double, dims);
+    ds = hdf5::DataSet::create(h5group, "dsDouble", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -235,7 +235,7 @@ void TestDataSet::testBasic() {
     CPPUNIT_ASSERT_THROW(ds.setExtent(nix::NDSize({ 4, 6, 8 })), nix::InvalidRank);
     //***
 
-    DataSet ds2 = DataSet::create(h5group, "dsDouble2", A);
+    hdf5::DataSet ds2 = hdf5::DataSet::create(h5group, "dsDouble2", A);
     ds2.write(A);
     array_type D(boost::extents[1][1]);
     ds2.read(D, true);
@@ -251,7 +251,7 @@ void TestDataSet::testBasic() {
 void TestDataSet::testSelection() {
     NDSize dims({15, 15});
 
-    DataSet ds = DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims);
+    hdf5::DataSet ds = hdf5::DataSet::create(h5group, "dsDoubleSelection", DataType::Double, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -261,8 +261,8 @@ void TestDataSet::testSelection() {
         for(index j = 0; j != 5; ++j)
             A[i][j] = values++;
 
-    Selection memSelection(A);
-    Selection fileSelection = ds.createSelection();
+    hdf5::Selection memSelection(A);
+    hdf5::Selection fileSelection = ds.createSelection();
 
     NDSize fileCount(dims.size());
     NDSize fileStart(dims.size());
@@ -346,7 +346,7 @@ void TestDataSet::testNDArrayIO()
         for(size_t j = 0; j != 5; ++j)
             A.set<double>(nix::NDSize({ i, j }), values++);
 
-    DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", A);
+    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", A);
     ds.write(A);
 
     nix::NDArray Atest(nix::DataType::Double, dims);
@@ -386,7 +386,7 @@ void TestDataSet::testValArrayIO() {
     std::valarray<double> va_double(10);
     std::iota(std::begin(va_double), std::end(va_double), 0);
 
-    DataSet ds = nix::hdf5::DataSet::create(h5group, "ValArrayd10", va_double);
+    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "ValArrayd10", va_double);
     ds.write(va_double);
 
     std::valarray<double> va_double1{};
@@ -404,7 +404,7 @@ void TestDataSet::testOpaqueIO() {
     std::iota(std::begin(bytes), std::end(bytes), 0);
     NDSize size = {sizeof(bytes)};
 
-    DataSet ds = nix::hdf5::DataSet::create(h5group, "OpaqueB10", DataType::Opaque, size);
+    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "OpaqueB10", DataType::Opaque, size);
     ds.write(DataType::Opaque, size, bytes);
 
     char bytes_read[10];

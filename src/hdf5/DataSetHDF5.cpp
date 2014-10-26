@@ -9,7 +9,7 @@
 #include <iostream>
 #include <cmath>
 
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 
 namespace nix {
 

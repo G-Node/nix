@@ -13,13 +13,14 @@
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
@@ -273,3 +274,6 @@ bool TagHDF5::deleteFeature(const string &id) {
 TagHDF5::~TagHDF5()
 {
 }
+
+} // ns nix::hdf5
+} // ns nix

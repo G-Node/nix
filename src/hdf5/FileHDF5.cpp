@@ -17,8 +17,8 @@
 
 using namespace std;
 
-using namespace nix;
-using namespace nix::hdf5;
+namespace nix {
+namespace hdf5 {
 
 
 // Format definition
@@ -375,6 +375,9 @@ bool FileHDF5::operator!=(const FileHDF5 &other) const {
 FileHDF5::~FileHDF5() {
     close();
 }
+
+} // ns nix::hdf5
+} // ns nix
 
 
 
