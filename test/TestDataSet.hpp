@@ -23,7 +23,7 @@
 
 #include <nix/NDArray.hpp>
 #include <nix.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 
 
 class TestDataSet:public CPPUNIT_NS::TestFixture {

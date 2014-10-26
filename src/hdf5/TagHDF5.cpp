@@ -13,7 +13,7 @@
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
