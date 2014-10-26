@@ -22,6 +22,7 @@ set(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE ${CTEST_SOURCE_DIRECTORY}/.valgrind.supp
 
 find_program(GCOV gcov-4.8)
 set(CTEST_COVERAGE_COMMAND ${GCOV})
+  set(COVERAGE_EXTRA_FLAGS "-l -p")
 
 ctest_start(Continuous)
 ctest_configure()
