@@ -348,22 +348,28 @@ public:
     * @param name      The name of the data array to create.
     * @param type      The type of the data array.
     * @param data      Data to create array with.
+    * @param data_type A optional nix::DataType indicating the format to store values.
     *
     * Create a data array with shape and type inferred from data. After
     * successful creation, the contents of data will be written to the
-    * data array.
+    * data array. If data_type has been specified the DataArray will be created
+    * with the specified type instead of the type inferred from the data.
     *
     * @return The newly created data array.
     */
     template<typename T>
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
-                              const T &data) {
+                              const T &data,
+                              DataType data_type = DataType::Nothing) {
          const Hydra<const T> hydra(data);
-         DataType dtype = hydra.element_data_type();
+
+         if (data_type == DataType::Nothing) {
+              data_type = hydra.element_data_type();
+         }
 
          const NDSize shape = hydra.shape();
-         DataArray da = createDataArray(name, type, dtype, shape);
+         DataArray da = createDataArray(name, type, data_type, shape);
 
          const NDSize offset(shape.size(), 0);
          da.setData(data, offset);
