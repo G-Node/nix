@@ -128,6 +128,24 @@ void TestDataArray::testData()
 
     CPPUNIT_ASSERT_EQUAL(0, errors);
 
+    //test createDataArray overload that takes data but specify an storage datat type
+    DataArray directFloat = block.createDataArray("da_direct_int", "int", A, DataType::Int32);
+    CPPUNIT_ASSERT_EQUAL(DataType::Int32, directFloat.dataType());
+    boost::multi_array<int, 3> AdirectFloat(boost::extents[3][4][2]);
+    direct.getData(AdirectFloat);
+
+    errors = 0;
+    verify = 0;
+    for(index i = 0; i != 3; ++i) {
+        for(index j = 0; j != 4; ++j) {
+            for(index k = 0; k != 2; ++k) {
+                int v = verify++;
+                errors += AdirectFloat[i][j][k] != v;
+            }
+        }
+    }
+
+    CPPUNIT_ASSERT_EQUAL(0, errors);
 
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array_type::index index;
