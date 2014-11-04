@@ -39,7 +39,7 @@ In order to build the NIX library a recent C++11 compatible compiler is needed (
 as well as the build tool CMake (>= 2.8.9). Further nix depends on the following third party libraries:
 
 - HDF5 (version 1.8.13 or higher)
-- Boost (version 1.56 or higher)
+- Boost (version 1.49 or higher)
 - CppUnit (version 1.12.1 or higher)
 
 _Instructions_
@@ -47,6 +47,9 @@ _Instructions_
 ```bash
 # install dependencies
 sudo apt-get install libboost-all-dev libhdf5-serial-dev libcppunit-dev cmake build-essential
+
+**Note:** If the standard version of the boost libraries in your distribution is less than 1.49, 
+# manually install a version larger than 1.49 from the launchad (https://launchpad.net/~boost-latest/+archive/ubuntu/ppa)
 
 # clone NIX
 git clone https://github.com/G-Node/nix
