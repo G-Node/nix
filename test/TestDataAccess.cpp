@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/ZonedIO.hpp>
+#include <nix/DataView.hpp>
 #include "TestDataAccess.hpp"
 
 using namespace std;
@@ -203,7 +203,7 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, -1, 0), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 10, 0), nix::OutOfBounds);
 
-    ZonedIO data_view = util::retrieveData(multi_tag, 0,0);
+    DataView data_view = util::retrieveData(multi_tag, 0,0);
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3); 
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
@@ -240,9 +240,9 @@ void TestDataAccess::testTagFeatureData() {
     Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
     Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
 
-    ZonedIO data1 = util::retrieveFeatureData(pos_tag, 0);
-    ZonedIO data2 = util::retrieveFeatureData(pos_tag, 1);
-    ZonedIO data3 = util::retrieveFeatureData(pos_tag, 2);
+    DataView data1 = util::retrieveFeatureData(pos_tag, 0);
+    DataView data2 = util::retrieveFeatureData(pos_tag, 1);
+    DataView data3 = util::retrieveFeatureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
@@ -316,7 +316,7 @@ void TestDataAccess::testMultiTagFeatureData() {
     // preparations done, actually test 
     CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
     // indexed feature
-    ZonedIO data_view = util::retrieveFeatureData(multi_tag, 0, 0);
+    DataView data_view = util::retrieveFeatureData(multi_tag, 0, 0);
     NDSize data_size = data_view.dataExtent();
 
     CPPUNIT_ASSERT(data_size.size() == 2);
@@ -401,7 +401,7 @@ void TestDataAccess::testZonedIO() {
     NDSize zcount = {2, 5, 2};
     NDSize zoffset = {0, 5, 2};
 
-    ZonedIO io = ZonedIO(data_array, zcount, zoffset);
+    DataView io = DataView(data_array, zcount, zoffset);
 
     CPPUNIT_ASSERT_EQUAL(zcount, io.dataExtent());
 

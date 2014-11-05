@@ -15,7 +15,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
-#include <nix/ZonedIO.hpp>
+#include "DataView.hpp"
 
 namespace nix {
 
@@ -346,7 +346,7 @@ public:
      *
      * @return the requested data.
      */
-    ZonedIO retrieveData(size_t position_index, size_t reference_index) const;
+    DataView retrieveData(size_t position_index, size_t reference_index) const;
 
     //--------------------------------------------------
     // Methods concerning features.
@@ -469,7 +469,7 @@ public:
      *
      * @return The data
      */
-    ZonedIO retrieveFeatureData(size_t position_index, size_t feature_index) const;
+    DataView retrieveFeatureData(size_t position_index, size_t feature_index) const;
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------

@@ -8,21 +8,21 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#ifndef ZONED_IO_HPP
-#define ZONED_IO_HPP
+#ifndef DATA_VIEW_HPP
+#define DATA_VIEW_HPP
 
 #include <nix/DataArray.hpp>
 
 namespace nix {
 
-class ZonedIO : public DataSet {
+class DataView : public DataSet {
 public:
-    ZonedIO(DataArray da, NDSize count, NDSize offset)
+    DataView(DataArray da, NDSize count, NDSize offset)
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
 
         if (this->offset + this->count > array.dataExtent()) {
             //TODO: fix OOB error's ctor to only optionally take the size_t params
-            throw OutOfBounds("Trying to create ZonedIO which is out of bounds", 0);
+            throw OutOfBounds("Trying to create DataView which is out of bounds", 0);
         }
     }
 
@@ -51,8 +51,6 @@ private:
 
 };
 
+} // nix::
 
-}
-
-
-#endif
+#endif // DATA_VIEW_HPP

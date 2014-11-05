@@ -383,7 +383,7 @@ void TestTag::testDataAccess() {
     segment_tag.extent(extent);
     segment_tag.units(units);
 
-    ZonedIO retrieved_data = position_tag.retrieveData(0);
+    DataView retrieved_data = position_tag.retrieveData(0);
     NDSize data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);

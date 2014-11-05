@@ -15,7 +15,7 @@
 #include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
-#include <nix/ZonedIO.hpp>
+#include "DataView.hpp"
 #include <nix/Platform.hpp>
 
 namespace nix {
@@ -441,7 +441,7 @@ public:
      *
      * @return the data
      */
-    ZonedIO retrieveData(size_t reference_index) const;
+    DataView retrieveData(size_t reference_index) const;
     
     /**
      * @brief Returns the data stored in the seleceted Feature.
@@ -451,7 +451,7 @@ public:
      * @return The data stored in the Feature.
      *
      */
-    ZonedIO retrieveFeatureData(size_t feature_indec) const;
+    DataView retrieveFeatureData(size_t feature_indec) const;
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------

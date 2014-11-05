@@ -91,11 +91,11 @@ bool Tag::deleteFeature(const Feature &feature) {
     return backend()->deleteFeature(feature.id());
 }
 
-ZonedIO Tag::retrieveData(size_t reference_index) const {
+DataView Tag::retrieveData(size_t reference_index) const {
     return util::retrieveData(*this, reference_index);
 }
 
-ZonedIO Tag::retrieveFeatureData(size_t feature_index) const {
+DataView Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }
 
