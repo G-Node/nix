@@ -21,8 +21,7 @@ public:
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
 
         if (this->offset + this->count > array.dataExtent()) {
-            //TODO: fix OOB error's ctor to only optionally take the size_t params
-            throw OutOfBounds("Trying to create DataView which is out of bounds", 0);
+            throw OutOfBounds("Trying to create DataView which is out of bounds");
         }
     }
 
