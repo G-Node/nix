@@ -21,24 +21,26 @@ namespace nix {
 class OutOfBounds : public std::out_of_range {
 public:
     OutOfBounds(const std::string &what_arg, size_t where) :
-        out_of_range(what_arg), index(where) {
-        std::stringstream sstream(what_arg);
+            out_of_range(make_message(what_arg, where)), index(where) {
 
-        sstream << " [at index: " << where << "]";
-        msg = sstream.str();
     }
+
+    OutOfBounds(const std::string &what_arg) :
+            out_of_range(what_arg), index(0) { }
 
     size_t where(void) const {
         return index;
     }
 
-    const char *what() const NOEXCEPT {
-        return msg.c_str();
+    static std::string make_message(const std::string &str, size_t where) {
+            std::stringstream sstream(str);
+
+            sstream << " [at index: " << where << "]";
+            return sstream.str();
     }
 
 private:
     size_t index;
-    std::string msg;
 };
 
 

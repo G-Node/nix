@@ -9,20 +9,20 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 
-#include <nix/ZonedIO.hpp>
+#include <nix/DataView.hpp>
 #include <nix/Exception.hpp>
 
 namespace nix {
 
-void ZonedIO::dataExtent(const NDSize &extent) {
+void DataView::dataExtent(const NDSize &extent) {
     throw std::runtime_error("Not allowed!");
 }
 
-NDSize ZonedIO::dataExtent() const {
+NDSize DataView::dataExtent() const {
     return count;
 }
 
-NDSize ZonedIO::transform_coordinates(const NDSize &cnt, const NDSize &off) const {
+NDSize DataView::transform_coordinates(const NDSize &cnt, const NDSize &off) const {
 
     if (!off) {
         //maybe NDSize should accept "x + {}" as valid
@@ -41,14 +41,14 @@ NDSize ZonedIO::transform_coordinates(const NDSize &cnt, const NDSize &off) cons
     }
 }
 
-void ZonedIO::ioRead(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
+void DataView::ioRead(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
 
     const NDSize &real_count =  count ? count : this->count;
     NDSize base = transform_coordinates(real_count, offset);
     array.getData(dtype, data, real_count, base);
 }
 
-void ZonedIO::ioWrite(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
+void DataView::ioWrite(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
 
     const NDSize &real_count =  count ? count : this->count;
     NDSize base = transform_coordinates(real_count, offset);

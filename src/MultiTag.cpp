@@ -80,7 +80,7 @@ std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type 
 }
 
 
-ZonedIO MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
+DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
     return util::retrieveData(*this, position_index, reference_index);
 }
 
@@ -109,7 +109,7 @@ bool MultiTag::deleteFeature(const Feature &feature) {
 }
 
 
-ZonedIO MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
+DataView MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
     return util::retrieveFeatureData(*this, position_index, feature_index);
 }
 
