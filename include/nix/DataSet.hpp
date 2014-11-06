@@ -50,6 +50,7 @@ public:
     // *** the virtual interface ***
     virtual void dataExtent(const NDSize &extent) = 0;
     virtual NDSize dataExtent() const = 0;
+    virtual DataType dataType() const  = 0;
 
 
 protected:
