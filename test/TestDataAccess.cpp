@@ -396,7 +396,7 @@ void TestDataAccess::testMultiTagUnitSupport() {
 
 }
 
-void TestDataAccess::testZonedIO() {
+void TestDataAccess::testDataView() {
 
     NDSize zcount = {2, 5, 2};
     NDSize zoffset = {0, 5, 2};

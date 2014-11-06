@@ -36,7 +36,7 @@ private:
     CPPUNIT_TEST(testTagFeatureData);
     CPPUNIT_TEST(testMultiTagFeatureData);
     CPPUNIT_TEST(testMultiTagUnitSupport);
-    CPPUNIT_TEST(testZonedIO);
+    CPPUNIT_TEST(testDataView);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
@@ -60,6 +60,6 @@ public:
     void testTagFeatureData();
     void testMultiTagFeatureData();
     void testMultiTagUnitSupport();
-    void testZonedIO();
+    void testDataView();
 };
 
