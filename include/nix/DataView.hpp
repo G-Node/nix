@@ -28,6 +28,7 @@ public:
     // the DataIO interface implementation
     virtual void dataExtent(const NDSize &extent);
     virtual NDSize dataExtent() const;
+    virtual DataType dataType() const override;
 
 protected:
     void ioRead(DataType dtype,

@@ -55,4 +55,8 @@ void DataView::ioWrite(DataType dtype, const void *data, const NDSize &count, co
     array.setData(dtype, data, real_count, base);
 }
 
+DataType DataView::dataType() const {
+    return array.dataType();
+}
+
 }

@@ -404,6 +404,7 @@ void TestDataAccess::testZonedIO() {
     DataView io = DataView(data_array, zcount, zoffset);
 
     CPPUNIT_ASSERT_EQUAL(zcount, io.dataExtent());
+    CPPUNIT_ASSERT_EQUAL(data_array.dataType(), io.dataType());
 
     typedef boost::multi_array<double, 3> array_type;
     array_type data(boost::extents[2][5][2]);
