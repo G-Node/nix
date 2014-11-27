@@ -145,20 +145,32 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     if (positions) {
         position_size = positions.dataExtent();
     }
+
     if (extents) {
         extent_size = extents.dataExtent();
     }
+
     if (!positions || index >= position_size[0]) {
         throw nix::OutOfBounds("Index out of bounds of positions!", 0);
     }
+
     if (extents && index >= extent_size[0]) {
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
-    if (position_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data","util::getOffsetAndCount");
+    
+    if (position_size.size() == 1 && dimension_count != 1) {
+        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data", 
+                                          "util::getOffsetAndCount");
     }
-    if (extents && extent_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data","util::getOffsetAndCount");
+
+    if (position_size.size() > 1 && position_size[1] > dimension_count) {
+        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
+                                          "util::getOffsetAndCount");
+    }
+    
+    if (extents && extent_size.size() > 1 && extent_size[1] > dimension_count) {
+        throw nix::IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data",
+                                          "util::getOffsetAndCount");
     }
 
     NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
@@ -236,13 +248,21 @@ DataView retrieveData(const MultiTag &tag, size_t position_index, size_t referen
     }
 
     size_t dimension_count = refs[reference_index].dimensionCount();
-    if (positions.dataExtent()[1] > dimension_count ||
-        (extents &&extents.dataExtent()[1] > dimension_count)) {
-        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
+    if (positions.dataExtent().size() == 1 && dimension_count != 1) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
+                                          "util::retrieveData");
+    } else if (positions.dataExtent().size() > 1) {
+        if (positions.dataExtent()[1] > dimension_count ||
+            (extents && extents.dataExtent()[1] > dimension_count)) {
+            throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
+                                              "util::retrieveData");
+        }
     }
+
 
     NDSize offset, count;
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
+
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
