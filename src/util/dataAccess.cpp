@@ -190,21 +190,20 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
         }
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
     }
-
     if (extents) {
         NDArray extent(extents.dataType(), temp_count);
         extents.getData(extent, temp_count, temp_offset);
-        for (size_t i = 0; i < offset.num_elements(); ++i) {
+        for (size_t i = 0; i < extent.num_elements(); ++i) {
             Dimension dimension = array.getDimension(i+1);
             string unit = "none";
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            if (i < extent.num_elements()) {
-                data_count[i] = 1 + positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
-            }
+            size_t c = positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
+            data_count[i] = (c > 1) ? c : 1;
         }
     }
+
     offsets = data_offset;
     counts = data_count;
 }
@@ -258,7 +257,6 @@ DataView retrieveData(const MultiTag &tag, size_t position_index, size_t referen
                                               "util::retrieveData");
         }
     }
-
 
     NDSize offset, count;
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
