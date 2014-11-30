@@ -176,13 +176,13 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 3);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 3);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 3 && counts[2] == 2);
 }
 
 
@@ -206,7 +206,7 @@ void TestDataAccess::testRetrieveData() {
     DataView data_view = util::retrieveData(multi_tag, 0,0);
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3); 
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
     
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 1, 0), nix::OutOfBounds);
     
