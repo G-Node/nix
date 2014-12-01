@@ -128,7 +128,8 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
         Dimension dim = array.getDimension(i+1);
         temp_offset[i] = positionToIndex(position[i], i > units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            temp_count[i] = 1 + positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            size_t c = positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            temp_count[i] = (c > 1) ? c : 1;
         }
     }
     offset = temp_offset;
