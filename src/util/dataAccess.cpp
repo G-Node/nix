@@ -68,11 +68,11 @@ size_t positionToIndex(double position, const string &unit, const SetDimension &
     if (unit.length() > 0 && unit != "none") {
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    if (static_cast<size_t>(index) < dimension.labels().size()){
-        return index;
-    } else {
+
+    if (dimension.labels().size() > 0 && index > dimension.labels().size()) {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
     }
+    return index;
 }
 
 
@@ -128,7 +128,8 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
         Dimension dim = array.getDimension(i+1);
         temp_offset[i] = positionToIndex(position[i], i > units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            temp_count[i] = 1 + positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            size_t c = positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            temp_count[i] = (c > 1) ? c : 1;
         }
     }
     offset = temp_offset;
@@ -190,21 +191,20 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
         }
         data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
     }
-
     if (extents) {
         NDArray extent(extents.dataType(), temp_count);
         extents.getData(extent, temp_count, temp_offset);
-        for (size_t i = 0; i < offset.num_elements(); ++i) {
+        for (size_t i = 0; i < extent.num_elements(); ++i) {
             Dimension dimension = array.getDimension(i+1);
             string unit = "none";
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            if (i < extent.num_elements()) {
-                data_count[i] = 1 + positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
-            }
+            size_t c = positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
+            data_count[i] = (c > 1) ? c : 1;
         }
     }
+
     offsets = data_offset;
     counts = data_count;
 }
@@ -258,7 +258,6 @@ DataView retrieveData(const MultiTag &tag, size_t position_index, size_t referen
                                               "util::retrieveData");
         }
     }
-
 
     NDSize offset, count;
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);

@@ -391,7 +391,7 @@ void TestTag::testDataAccess() {
     retrieved_data = segment_tag.retrieveData( 0);
     data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
 
     block.deleteTag(position_tag);
     block.deleteTag(segment_tag);

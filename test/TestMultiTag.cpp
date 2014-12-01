@@ -361,7 +361,7 @@ void TestMultiTag::testDataAccess() {
     DataView ret_data = multi_tag.retrieveData(0, 0);
     NDSize data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
 
     CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);
     
