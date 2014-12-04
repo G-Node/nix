@@ -131,13 +131,23 @@ std::string toName(const T &entity) {
 NIXAPI std::string unitSanitizer(const std::string &unit);
 
 /**
- * @brief Checks if the passed string represents a valid SI unit.
+ * @brief Checks if the passed string represents a valid SI unit.  The passed
+ * unit may be atomic, e.g. 'V' or a compound unit, e.g. 'J/s'.
  *
  * @param unit  A string that is supposed to represent an SI unit.
  *
  * @return True if a valid SI unit, false otherwise.
  */
 NIXAPI bool isSIUnit(const std::string &unit);
+
+/**
+ * @brief Checks if the passed string represents a valid SI unit.
+ *
+ * @param unit  A string that is supposed to represent an SI unit.
+ *
+ * @return True if a valid SI unit, false otherwise.
+ */
+NIXAPI bool isAtomicSIUnit(const std::string &unit);
 
 /**
  * @brief Checks if the passed string is a valid combination of SI units.

@@ -165,6 +165,11 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
 
 
 bool isSIUnit(const string &unit) {
+    return isAtomicSIUnit(unit) || isCompoundSIUnit(unit);
+}
+
+
+bool isAtomicSIUnit(const string &unit) {
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     return boost::regex_match(unit, opt_prefix_and_unit_and_power);
 }
