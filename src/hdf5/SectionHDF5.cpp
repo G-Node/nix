@@ -198,12 +198,12 @@ bool SectionHDF5::hasSection(const string &id) const {
 }
 
 
-shared_ptr<ISection> SectionHDF5::getSection(const string &id) const {
+shared_ptr<ISection> SectionHDF5::getSection(const string &name_or_id) const {
     shared_ptr<SectionHDF5> section;
     boost::optional<Group> g = section_group();
 
     if(g) {
-        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group) {
             auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
             section = make_shared<SectionHDF5>(file(), p, *group);

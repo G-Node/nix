@@ -234,12 +234,12 @@ public:
     /**
      * @brief Get a specific child section by its id.
      *
-     * @param id        The id of the child section.
+     * @param id_or_id  The name or the ID of the child section.
      *
      * @return The child section.
      */
-    Section getSection(const std::string &id) const {
-        return backend()->getSection(id);
+    Section getSection(const std::string &name_or_id) const {
+        return backend()->getSection(name_or_id);
     }
 
     /**
