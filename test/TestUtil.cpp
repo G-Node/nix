@@ -56,7 +56,7 @@ void TestUtil::testIsSIUnit() {
     CPPUNIT_ASSERT(util::isSIUnit("V"));
     CPPUNIT_ASSERT(util::isSIUnit("mV"));
     CPPUNIT_ASSERT(util::isSIUnit("mV^-2"));
-    CPPUNIT_ASSERT(!util::isSIUnit("mV/cm"));
+    CPPUNIT_ASSERT(util::isSIUnit("mV/cm"));
     CPPUNIT_ASSERT(util::isSIUnit("dB"));
     CPPUNIT_ASSERT(util::isSIUnit("rad"));
 }
@@ -79,6 +79,15 @@ void TestUtil::testSIUnitSplit() {
     CPPUNIT_ASSERT(prefix == "m" && unit == "V" && power == "-2");
     util::splitUnit(unit_5, prefix, unit, power);
     CPPUNIT_ASSERT(prefix == "" && unit == "m" && power == "2");
+}
+
+void TestUtil::testIsAtomicSIUnit() {
+    CPPUNIT_ASSERT(util::isAtomicSIUnit("V"));
+    CPPUNIT_ASSERT(util::isAtomicSIUnit("mV"));
+    CPPUNIT_ASSERT(util::isAtomicSIUnit("mV^-2"));
+    CPPUNIT_ASSERT(!util::isAtomicSIUnit("mV/cm"));
+    CPPUNIT_ASSERT(util::isAtomicSIUnit("dB"));
+    CPPUNIT_ASSERT(util::isAtomicSIUnit("rad"));
 }
 
 void TestUtil::testIsCompoundSIUnit() {
