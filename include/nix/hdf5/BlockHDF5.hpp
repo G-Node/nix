@@ -87,18 +87,12 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArrayByName(const std::string &name) const;
-
-
     bool hasDataArray(const std::string &id) const;
 
 
     std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
 
     
-    std::shared_ptr<base::IDataArray> getDataArrayByName(const std::string &name) const;
-
-
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
 
 
@@ -118,10 +112,7 @@ public:
     bool hasTag(const std::string &id) const;
 
 
-    bool hasTagByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::ITag> getTag(const std::string &id) const;
+    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ITag> getTag(size_t index) const;
@@ -144,9 +135,6 @@ public:
 
 
     std::shared_ptr<base::IMultiTag> getMultiTagByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::ITag> getTagByName(const std::string &name) const;
 
 
     bool hasMultiTagByName(const std::string &name) const;

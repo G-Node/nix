@@ -245,14 +245,14 @@ void MultiTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // check if all new references exist & add sources
     auto blck = dynamic_pointer_cast<BlockHDF5>(block());
     for (auto name : names_add) {
-        if (!blck->hasDataArrayByName(name)) 
+        if (!blck->hasDataArray(name))
             throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(blck->getDataArrayByName(name)->id());
+        addReference(blck->getDataArray(name)->id());
     }
     // remove references
     for (auto name : names_rem) {
-        if (!blck->hasDataArrayByName(name))
-            removeReference(blck->getDataArrayByName(name)->id());
+        if (!blck->hasDataArray(name))
+            removeReference(blck->getDataArray(name)->id());
     }
 }
 

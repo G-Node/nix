@@ -126,7 +126,7 @@ bool BlockHDF5::deleteSource(const string &name_or_id) {
 
 shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string &type,
                                       const std::vector<double> &position) {
-    if (hasTagByName(name)) {
+    if (hasTag(name)) {
         throw DuplicateName("createTag");
     }
     string id = util::createId();
@@ -137,39 +137,17 @@ shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string
 }
 
 
-bool BlockHDF5::hasTag(const string &id) const {
-    // let getTag try to look up object by id
-    return getTag(id) != nullptr;
+bool BlockHDF5::hasTag(const string &name_or_id) const {
+    return getTag(name_or_id) != nullptr;
 }
 
 
-bool BlockHDF5::hasTagByName(const string &name) const {
-    // let getTagByName try to look up object by name    
-    return getTagByName(name) != nullptr;
-}
-
-
-shared_ptr<ITag> BlockHDF5::getTagByName(const string &name) const {
+shared_ptr<ITag> BlockHDF5::getTag(const string &name_or_id) const {
     shared_ptr<TagHDF5> tag;
     boost::optional<Group> g = tag_group();
 
     if (g) {
-        if (g->hasObject(name)) {
-            Group group = g->openGroup(name, false);
-            tag = make_shared<TagHDF5>(file(), block(), group);
-        }
-    }
-
-    return tag;
-}
-
-
-shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
-    shared_ptr<TagHDF5> tag;
-    boost::optional<Group> g = tag_group();
-
-    if (g) {
-        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             tag = make_shared<TagHDF5>(file(), block(), *group);
     }
@@ -181,7 +159,7 @@ shared_ptr<ITag> BlockHDF5::getTag(const string &id) const {
 shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
     boost::optional<Group> g = tag_group();
     string name = g ? g->objectName(index) : "";
-    return getTagByName(name);
+    return getTag(name);
 }
 
 
@@ -191,13 +169,13 @@ size_t BlockHDF5::tagCount() const {
 }
 
 
-bool BlockHDF5::deleteTag(const std::string &id) {
+bool BlockHDF5::deleteTag(const std::string &name_or_id) {
     boost::optional<Group> g = tag_group();
     bool deleted = false;
 
-    if (hasTag(id) && g) {
+    if (hasTag(name_or_id) && g) {
         // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getTag(id)->name());
+        deleted = g->removeAllLinks(getTag(name_or_id)->name());
     }
 
     return deleted;
@@ -209,38 +187,17 @@ bool BlockHDF5::deleteTag(const std::string &id) {
 //--------------------------------------------------
 
 
-bool BlockHDF5::hasDataArrayByName(const string &name) const {
-    // let getDataArrayByName try to look up object by name
-    return getDataArrayByName(name) != nullptr;
-}
-
-bool BlockHDF5::hasDataArray(const string &id) const {
-    // let getDataArray try to look up object by id
-    return getDataArray(id) != nullptr;
+bool BlockHDF5::hasDataArray(const string &name_or_id) const {
+    return getDataArray(name_or_id) != nullptr;
 }
 
 
-shared_ptr<IDataArray> BlockHDF5::getDataArrayByName(const string &name) const {
+shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &name_or_id) const {
     shared_ptr<DataArrayHDF5> da;
     boost::optional<Group> g = data_array_group();
 
     if (g) {
-        if (g->hasObject(name)) {
-            Group group = g->openGroup(name, false);
-            da = make_shared<DataArrayHDF5>(file(), block(), group);
-        }
-    }
-
-    return da;
-}
-
-
-shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
-    shared_ptr<DataArrayHDF5> da;
-    boost::optional<Group> g = data_array_group();
-
-    if (g) {
-        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", id);
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             da = make_shared<DataArrayHDF5>(file(), block(), *group);
     }
@@ -252,7 +209,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &id) const {
 shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
     boost::optional<Group> g = data_array_group();
     string name = g ? g->objectName(index) : "";
-    return getDataArrayByName(name);
+    return getDataArray(name);
 }
 
 
@@ -266,7 +223,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
                                                   const NDSize &shape) {
-    if (hasDataArrayByName(name)) {
+    if (hasDataArray(name)) {
         throw DuplicateName("createDataArray");
     }
     string id = util::createId();
@@ -282,13 +239,13 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
 }
 
 
-bool BlockHDF5::deleteDataArray(const string &id) {
+bool BlockHDF5::deleteDataArray(const string &name_or_id) {
     bool deleted = false;
     boost::optional<Group> g = data_array_group();
 
-    if (hasDataArray(id) && g) {
+    if (hasDataArray(name_or_id) && g) {
         // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getDataArray(id)->name());
+        deleted = g->removeAllLinks(getDataArray(name_or_id)->name());
     }
 
     return deleted;

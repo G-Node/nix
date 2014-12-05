@@ -53,10 +53,10 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    virtual bool hasDataArray(const std::string &id) const = 0;
+    virtual bool hasDataArray(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
@@ -69,16 +69,16 @@ public:
                                                               nix::DataType data_type, const NDSize &shape) = 0;
 
 
-    virtual bool deleteDataArray(const std::string &id) = 0;
+    virtual bool deleteDataArray(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
-    virtual bool hasTag(const std::string &id) const = 0;
+    virtual bool hasTag(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::ITag> getTag(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
@@ -91,7 +91,7 @@ public:
                                                               const std::vector<double> &position) = 0;
 
 
-    virtual bool deleteTag(const std::string &id) = 0;
+    virtual bool deleteTag(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning multi tags.
