@@ -32,10 +32,10 @@ class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 public:
 
 
-    virtual bool hasSource(const std::string &id) const = 0;
+    virtual bool hasSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::ISource> getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::ISource> getSource(size_t index) const = 0;
