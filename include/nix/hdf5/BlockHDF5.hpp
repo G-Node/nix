@@ -66,19 +66,13 @@ public:
     // Methods concerning sources
     //--------------------------------------------------
 
-    bool hasSource(const std::string &id) const;
+    bool hasSource(const std::string &name_or_id) const;
 
     
-    bool hasSourceByName(const std::string &name) const;
-
-
     std::shared_ptr<base::ISource> getSource(const std::string &id) const;
 
 
     std::shared_ptr<base::ISource> getSource(size_t index) const;
-
-
-    std::shared_ptr<base::ISource> getSourceByName(const std::string &name) const;
 
 
     size_t sourceCount() const;
@@ -93,18 +87,12 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArrayByName(const std::string &name) const;
-
-
     bool hasDataArray(const std::string &id) const;
 
 
     std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
 
     
-    std::shared_ptr<base::IDataArray> getDataArrayByName(const std::string &name) const;
-
-
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
 
 
@@ -124,10 +112,7 @@ public:
     bool hasTag(const std::string &id) const;
 
 
-    bool hasTagByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::ITag> getTag(const std::string &id) const;
+    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ITag> getTag(size_t index) const;
@@ -147,15 +132,6 @@ public:
     //--------------------------------------------------
 
     bool hasMultiTag(const std::string &id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTagByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::ITag> getTagByName(const std::string &name) const;
-
-
-    bool hasMultiTagByName(const std::string &name) const;
 
 
     std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const;

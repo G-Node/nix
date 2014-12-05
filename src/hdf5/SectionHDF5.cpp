@@ -186,15 +186,8 @@ size_t SectionHDF5::sectionCount() const {
 }
 
 
-bool SectionHDF5::hasSectionByName(const string &name) const {
-    // let getSectionByName try to look up object by name
-    return getSectionByName(name) != nullptr;
-}
-
-
-bool SectionHDF5::hasSection(const string &id) const {
-    // let getSection try to look up object by id
-    return getSection(id) != nullptr;
+bool SectionHDF5::hasSection(const string &name_or_id) const {
+    return getSection(name_or_id) != nullptr;
 }
 
 
@@ -214,31 +207,15 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &name_or_id) const {
 }
 
 
-shared_ptr<ISection> SectionHDF5::getSectionByName(const string &name) const {
-    shared_ptr<SectionHDF5> sec;    
-    boost::optional<Group> g = section_group();
-
-    if(g) {
-        if (g->hasObject(name)) {
-            Group group = g->openGroup(name, false);
-            auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-            sec = make_shared<SectionHDF5>(file(), p, group);
-        }
-    }
-    
-    return sec;
-}
-
-
 shared_ptr<ISection> SectionHDF5::getSection(size_t index) const {
     boost::optional<Group> g = section_group();
     string name = g ? g->objectName(index) : "";
-    return getSectionByName(name);
+    return getSection(name);
 }
 
 
 shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string &type) {
-    if (hasSectionByName(name)) {
+    if (hasSection(name)) {
         throw DuplicateName("createSection");
     }
     string new_id = util::createId();
@@ -250,15 +227,15 @@ shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string
 }
 
 
-bool SectionHDF5::deleteSection(const string &id) {
+bool SectionHDF5::deleteSection(const string &name_or_id) {
     boost::optional<Group> g = section_group();
     bool deleted = false;
 
     if (g) {
         // call deleteSection on sections to trigger recursive call to all sub-sections
-        if (hasSection(id)) {
+        if (hasSection(name_or_id)) {
             // get instance of section about to get deleted
-            Section section = getSection(id);
+            Section section = getSection(name_or_id);
             // loop through all child sections and call deleteSection on them
             for (auto &child : section.sections()) {
                 section.deleteSection(child.id());
@@ -283,24 +260,17 @@ size_t SectionHDF5::propertyCount() const {
 }
 
 
-bool SectionHDF5::hasProperty(const string &id) const {
-    // let getProperty try to look up object by id    
-    return getProperty(id) != nullptr;
+bool SectionHDF5::hasProperty(const string &name_or_id) const {
+    return getProperty(name_or_id) != nullptr;
 }
 
 
-bool SectionHDF5::hasPropertyByName(const string &name) const {
-    // let getPropertyByName try to look up object by name    
-    return getPropertyByName(name) != nullptr;
-}
-
-
-shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
+shared_ptr<IProperty> SectionHDF5::getProperty(const string &name_or_id) const {
     shared_ptr<PropertyHDF5> prop;
     boost::optional<Group> g = property_group();
 
     if (g) {
-        boost::optional<DataSet> dset = g->findDataByAttribute("entity_id", id);
+        boost::optional<DataSet> dset = g->findDataByNameOrAttribute("entity_id", name_or_id);
         if (dset)
             prop = make_shared<PropertyHDF5>(file(), *dset);
     }
@@ -312,28 +282,13 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &id) const {
 shared_ptr<IProperty> SectionHDF5::getProperty(size_t index) const {
     boost::optional<Group> g = property_group();
     string name = g ? g->objectName(index) : "";
-    return getPropertyByName(name);
-}
-
-
-shared_ptr<IProperty> SectionHDF5::getPropertyByName(const string &name) const {
-    shared_ptr<PropertyHDF5> prop;
-    boost::optional<Group> g = property_group();
-    
-    if (g) {
-        if (g->hasObject(name)) {
-            DataSet dset = g->openData(name);
-            prop = make_shared<PropertyHDF5>(file(), dset);
-        }
-    }
-    
-    return prop;
+    return getProperty(name);
 }
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
-    if (hasPropertyByName(name)) {
-        throw DuplicateName("hasPropertyByName");
+    if (hasProperty(name)) {
+        throw DuplicateName("hasProperty");
     }
     string new_id = util::createId();
     boost::optional<Group> g = property_group(true);
@@ -366,12 +321,12 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vect
 }
 
 
-bool SectionHDF5::deleteProperty(const string &id) {
+bool SectionHDF5::deleteProperty(const string &name_or_id) {
     boost::optional<Group> g = property_group();
     bool deleted = false;
 
-    if (g && hasProperty(id)) {
-        g->removeData(getProperty(id)->name());
+    if (g && hasProperty(name_or_id)) {
+        g->removeData(getProperty(name_or_id)->name());
         deleted = true;
     }
 

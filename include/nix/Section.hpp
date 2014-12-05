@@ -214,12 +214,12 @@ public:
     /**
      * @brief Checks whether a section has a certain child section.
      *
-     * @param id        The id of requested section.
+     * @param id        Name or id of requested section.
      *
      * @return True if the section is a child, false otherwise.
      */
-    bool hasSection(const std::string &id) const {
-        return backend()->hasSection(id);
+    bool hasSection(const std::string &name_or_id) const {
+        return backend()->hasSection(name_or_id);
     }
 
     /**
@@ -232,7 +232,7 @@ public:
     bool hasSection(const Section &section) const;
 
     /**
-     * @brief Get a specific child section by its id.
+     * @brief Get a specific child section by its name or id.
      *
      * @param id_or_id  The name or the ID of the child section.
      *
@@ -306,12 +306,12 @@ public:
     /**
      * @brief Deletes a section from the section.
      *
-     * @param id        The id of the child section to delete.
+     * @param name_or_id        Name or id of the child section to delete.
      *
      * @return True if the section was deleted, false otherwise.
      */
-    bool deleteSection(const std::string &id) {
-        return backend()->deleteSection(id);
+    bool deleteSection(const std::string &name_or_id) {
+        return backend()->deleteSection(name_or_id);
     }
 
     /**
@@ -337,14 +337,14 @@ public:
     }
 
     /**
-     * @brief Checks if a Property with this id exists in this Section.
+     * @brief Checks if a Property with this name/id exists in this Section.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return True if the property exists, false otherwise.
      */
-    bool hasProperty(const std::string &id) const {
-        return backend()->hasProperty(id);
+    bool hasProperty(const std::string &name_or_id) const {
+        return backend()->hasProperty(name_or_id);
     }
 
     /**
@@ -357,14 +357,14 @@ public:
     bool hasProperty(const Property &property) const;
 
     /**
-     * @brief Gets the Property identified by its id.
+     * @brief Gets the Property identified by its name or id.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return The specified property.
      */
-    Property getProperty(const std::string &id) const {
-        return backend()->getProperty(id);
+    Property getProperty(const std::string &name_or_id) const {
+        return backend()->getProperty(name_or_id);
     }
 
     /**
@@ -376,28 +376,6 @@ public:
      */
     Property getProperty(size_t index) const {
         return backend()->getProperty(index);
-    }
-
-    /**
-     * @brief Checks if a property with a certain name exists.
-     *
-     * @param name      The name of the property.
-     *
-     * @return True if a property with the given name exists false otherwise.
-     */
-    bool hasPropertyByName(const std::string &name) const {
-        return backend()->hasPropertyByName(name);
-    }
-
-    /**
-     * @brief Returns a property identified by its name.
-     *
-     * @param name      The name of the property.
-     *
-     * @return The found property.
-     */
-    Property getPropertyByName(const std::string &name) const {
-        return backend()->getPropertyByName(name);
     }
 
     /**
@@ -457,14 +435,14 @@ public:
     }
 
     /**
-     * @brief Delete the Property identified by its id.
+     * @brief Delete the Property identified by its name or id.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return True if the property was deleted, false otherwise.
      */
-    bool deleteProperty(const std::string &id) {
-        return backend()->deleteProperty(id);
+    bool deleteProperty(const std::string &name_or_id) {
+        return backend()->deleteProperty(name_or_id);
     }
 
     /**

@@ -94,19 +94,13 @@ public:
     virtual size_t propertyCount() const = 0;
 
 
-    virtual bool hasProperty(const std::string &id) const = 0;
+    virtual bool hasProperty(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IProperty> getProperty(const std::string &id) const = 0;
+    virtual std::shared_ptr<IProperty> getProperty(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<IProperty> getProperty(size_t index) const = 0;
-
-
-    virtual bool hasPropertyByName(const std::string &name) const = 0;
-
-
-    virtual std::shared_ptr<IProperty> getPropertyByName(const std::string &name) const = 0;
 
 
     virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const DataType &dtype) = 0;
