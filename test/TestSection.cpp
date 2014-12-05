@@ -275,7 +275,7 @@ void TestSection::testPropertyAccess() {
 
     Property p = section.createProperty("empty_prop", DataType::Double);
     CPPUNIT_ASSERT(section.propertyCount() == 1);
-    Property prop = section.getPropertyByName("empty_prop");
+    Property prop = section.getProperty("empty_prop");
     CPPUNIT_ASSERT(prop.valueCount() == 0);
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
     section.deleteProperty(p.id());
@@ -283,7 +283,7 @@ void TestSection::testPropertyAccess() {
 
     Value dummy(10);
     prop = section.createProperty("single value", dummy);
-    CPPUNIT_ASSERT(section.hasPropertyByName("single value"));
+    CPPUNIT_ASSERT(section.hasProperty("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     section.deleteProperty(prop.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -292,9 +292,9 @@ void TestSection::testPropertyAccess() {
     for (auto name : names) {
         prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
-        CPPUNIT_ASSERT(section.hasPropertyByName(name));
+        CPPUNIT_ASSERT(section.hasProperty(name));
 
-        Property prop_copy = section.getPropertyByName(name);
+        Property prop_copy = section.getProperty(name);
 
         CPPUNIT_ASSERT(prop_copy.id() == prop.id());
 
@@ -327,7 +327,7 @@ void TestSection::testPropertyAccess() {
     values.push_back(Value(100));
     section.createProperty("another test", values);
     CPPUNIT_ASSERT(section.propertyCount() == 1);
-    prop = section.getPropertyByName("another test");
+    prop = section.getProperty("another test");
     CPPUNIT_ASSERT(prop.valueCount() == 2);
 }
 
