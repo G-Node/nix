@@ -134,12 +134,6 @@ public:
     bool hasMultiTag(const std::string &id) const;
 
 
-    std::shared_ptr<base::IMultiTag> getMultiTagByName(const std::string &name) const;
-
-
-    bool hasMultiTagByName(const std::string &name) const;
-
-
     std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const;
 
 

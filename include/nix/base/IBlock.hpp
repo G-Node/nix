@@ -97,10 +97,10 @@ public:
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    virtual bool hasMultiTag(const std::string &id) const = 0;
+    virtual bool hasMultiTag(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
@@ -114,7 +114,7 @@ public:
                                                           const DataArray &positions) = 0;
 
 
-    virtual bool deleteMultiTag(const std::string &id) = 0;
+    virtual bool deleteMultiTag(const std::string &name_or_id) = 0;
 
 
     virtual ~IBlock() {}

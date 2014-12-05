@@ -259,7 +259,7 @@ bool BlockHDF5::deleteDataArray(const string &name_or_id) {
 
 shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const std::string &type,
                                                 const DataArray &positions) {
-    if (hasMultiTagByName(name)) {
+    if (hasMultiTag(name)) {
         throw DuplicateName("createMultiTag");
     }
     string id = util::createId();
@@ -270,39 +270,17 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
 }
 
 
-bool BlockHDF5::hasMultiTag(const string &id) const {
-    // let getMultiTag try to look up object by id    
-    return getMultiTag(id) != nullptr;
+bool BlockHDF5::hasMultiTag(const string &name_or_id) const {
+    return getMultiTag(name_or_id) != nullptr;
 }
 
 
-bool BlockHDF5::hasMultiTagByName(const string &name) const {
-    // let getMultiTagByName try to look up object by name    
-    return getMultiTagByName(name) != nullptr;
-}
-
-
-shared_ptr<IMultiTag> BlockHDF5::getMultiTagByName(const string &name) const {
+shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const string &name_or_id) const {
     shared_ptr<MultiTagHDF5> mtag;
     boost::optional<Group> g = multi_tag_group();
 
     if (g) {
-        if (g->hasObject(name)) {
-            Group group = g->openGroup(name, false);
-            mtag = make_shared<MultiTagHDF5>(file(), block(), group);
-        }
-    }
-
-    return mtag;
-}
-
-
-shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const string &id) const {
-    shared_ptr<MultiTagHDF5> mtag;
-    boost::optional<Group> g = multi_tag_group();
-
-    if (g) {
-        boost::optional<Group> group = g->findGroupByAttribute("entity_id", id);
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             mtag = make_shared<MultiTagHDF5>(file(), block(), *group);
     }
@@ -314,7 +292,7 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const string &id) const {
 shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
     boost::optional<Group> g = multi_tag_group();
     string name = g ? g->objectName(index) : "";
-    return getMultiTagByName(name);
+    return getMultiTag(name);
 }
 
 
@@ -324,13 +302,13 @@ size_t BlockHDF5::multiTagCount() const {
 }
 
 
-bool BlockHDF5::deleteMultiTag(const std::string &id) {
+bool BlockHDF5::deleteMultiTag(const std::string &name_or_id) {
     boost::optional<Group> g = multi_tag_group();
     bool deleted = false;
 
-    if (hasMultiTag(id) && g) {
+    if (hasMultiTag(name_or_id) && g) {
         // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getMultiTag(id)->name());
+        deleted = g->removeAllLinks(getMultiTag(name_or_id)->name());
     }
 
     return deleted;
