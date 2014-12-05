@@ -74,23 +74,20 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     }
 }
 
+//--------------------------------------------------
+// Methods concerning blocks
+//--------------------------------------------------
 
-bool FileHDF5::hasBlock(const std::string &id) const {
-    // let getBlock try to look up object by id
-    return getBlock(id) != nullptr;
+
+bool FileHDF5::hasBlock(const std::string &name_or_id) const {
+    return getBlock(name_or_id) != nullptr;
 }
 
 
-bool FileHDF5::hasBlockByName(const string &name) const {
-    // let getBlockByName try to look up object by name
-    return getBlockByName(name) != nullptr;
-}
-
-
-shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
+shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &name_or_id) const {
     shared_ptr<BlockHDF5> block;
 
-    boost::optional<Group> group = data.findGroupByNameOrAttribute("entity_id", id);
+    boost::optional<Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         block = make_shared<BlockHDF5>(file(), *group);
 
@@ -100,24 +97,12 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &id) const {
 
 shared_ptr<base::IBlock> FileHDF5::getBlock(size_t index) const {
     string name = data.objectName(index);
-    return getBlockByName(name);
-}
-
-
-shared_ptr<base::IBlock> FileHDF5::getBlockByName(const string &name) const {
-    shared_ptr<BlockHDF5> block;
-    
-    if (data.hasObject(name)) {
-        Group group = data.openGroup(name, false);
-        block = make_shared<BlockHDF5>(file(), group);
-    }
-    
-    return block;
+    return getBlock(name);
 }
 
 
 shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string &type) {
-    if (hasBlockByName(name)) {
+    if (hasBlock(name)) {
         throw DuplicateName("createBlock");
     }
     string id = util::createId();
@@ -127,12 +112,12 @@ shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string 
 }
 
 
-bool FileHDF5::deleteBlock(const std::string &id) {
+bool FileHDF5::deleteBlock(const std::string &name_or_id) {
     bool deleted = false;
 
-    if (hasBlock(id)) {
+    if (hasBlock(name_or_id)) {
         // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = data.removeAllLinks(getBlock(id)->name());
+        deleted = data.removeAllLinks(getBlock(name_or_id)->name());
     }
 
     return deleted;
@@ -144,22 +129,20 @@ size_t FileHDF5::blockCount() const {
 }
 
 
-bool FileHDF5::hasSection(const std::string &id) const {
-    // let getSection try to look up object by id
-    return getSection(id) != nullptr;
+//--------------------------------------------------
+// Methods concerning sections
+//--------------------------------------------------
+
+
+bool FileHDF5::hasSection(const std::string &name_or_id) const {
+    return getSection(name_or_id) != nullptr;
 }
 
 
-bool FileHDF5::hasSectionByName(const string &name) const {
-    // let getSectionByName try to look up object by name
-    return getSectionByName(name) != nullptr;
-}
-
-
-shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
+shared_ptr<base::ISection> FileHDF5::getSection(const std::string &name_or_id) const {
     shared_ptr<SectionHDF5> sec;
 
-    boost::optional<Group> group = metadata.findGroupByAttribute("entity_id", id);
+    boost::optional<Group> group = metadata.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         sec = make_shared<SectionHDF5>(file(), *group);
 
@@ -169,24 +152,12 @@ shared_ptr<base::ISection> FileHDF5::getSection(const std::string &id) const {
 
 shared_ptr<base::ISection> FileHDF5::getSection(size_t index) const{
     string name = metadata.objectName(index);
-    return getSectionByName(name);
-}
-
-
-shared_ptr<base::ISection> FileHDF5::getSectionByName(const string &name) const {
-    shared_ptr<SectionHDF5> sec;
-    
-    if (metadata.hasObject(name)) {
-        Group group = metadata.openGroup(name, false);
-        sec = make_shared<SectionHDF5>(file(), group);
-    }
-    
-    return sec;
+    return getSection(name);
 }
 
 
 shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  string &type) {
-    if (hasSectionByName(name)) {
+    if (hasSection(name)) {
         throw DuplicateName("createSection");
     }
     string id = util::createId();
@@ -196,13 +167,13 @@ shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  st
 }
 
 
-bool FileHDF5::deleteSection(const std::string &id) {
+bool FileHDF5::deleteSection(const std::string &name_or_id) {
     bool deleted = false;
 
     // call deleteSection on sections to trigger recursive call to all sub-sections
-    if (hasSection(id)) {
+    if (hasSection(name_or_id)) {
         // get instance of section about to get deleted
-        Section section = getSection(id);
+        Section section = getSection(name_or_id);
         // loop through all child sections and call deleteSection on them
         for(auto &child : section.sections()) {
             section.deleteSection(child.id());
@@ -218,6 +189,11 @@ bool FileHDF5::deleteSection(const std::string &id) {
 size_t FileHDF5::sectionCount() const {
     return metadata.objectCount();
 }
+
+
+//--------------------------------------------------
+// Local attributes
+//--------------------------------------------------
 
 
 time_t FileHDF5::updatedAt() const {

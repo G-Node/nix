@@ -52,19 +52,13 @@ public:
     size_t blockCount() const;
 
 
-    bool hasBlock(const std::string &id) const;
+    bool hasBlock(const std::string &name_or_id) const;
 
 
-    bool hasBlockByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::IBlock> getBlock(const std::string &id) const;
+    std::shared_ptr<base::IBlock> getBlock(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::IBlock> getBlock(size_t index) const;
-
-
-    std::shared_ptr<base::IBlock> getBlockByName(const std::string &name) const;
 
 
     std::shared_ptr<base::IBlock> createBlock(const std::string &name, const std::string &type);
@@ -79,16 +73,10 @@ public:
     bool hasSection(const std::string &id) const;
 
 
-    bool hasSectionByName(const std::string &name) const;
-
-
     std::shared_ptr<base::ISection> getSection(const std::string &id) const;
 
 
     std::shared_ptr<base::ISection> getSection(size_t index) const;
-
-
-    std::shared_ptr<base::ISection> getSectionByName(const std::string &name) const;
 
 
     size_t sectionCount() const;
