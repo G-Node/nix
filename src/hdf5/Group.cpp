@@ -389,5 +389,16 @@ boost::optional<Group> Group::findGroupByNameOrAttribute(std::string const &attr
     }
 }
 
+boost::optional<DataSet> Group::findDataByNameOrAttribute(std::string const &attr, std::string const &value) const {
+
+    if (hasObject(value)) {
+        return boost::make_optional(openData(value));
+    } else if (looksLikeUUID(value)) {
+        return findDataByAttribute(attr, value);
+    } else {
+        return boost::optional<DataSet>();
+    }
+}
+
 } // namespace hdf5
 } // namespace nix

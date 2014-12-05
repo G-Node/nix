@@ -111,25 +111,19 @@ public:
     size_t sectionCount() const;
 
 
-    bool hasSectionByName(const std::string &name) const;
+    bool hasSection(const std::string &name_or_id) const;
 
 
-    bool hasSection(const std::string &id) const;
-
-
-    std::shared_ptr<base::ISection> getSection(const std::string &id) const;
+    std::shared_ptr<base::ISection> getSection(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ISection> getSection(size_t index) const;
 
 
-    std::shared_ptr<base::ISection> getSectionByName(const std::string &name) const;
-
-
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
 
 
-    bool deleteSection(const std::string &id);
+    bool deleteSection(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods for property access
@@ -139,19 +133,13 @@ public:
     size_t propertyCount() const;
 
 
-    bool hasProperty(const std::string &id) const;
+    bool hasProperty(const std::string &name_or_id) const;
 
 
-    bool hasPropertyByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::IProperty> getProperty(const std::string &id) const;
+    std::shared_ptr<base::IProperty> getProperty(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::IProperty> getProperty(size_t index) const;
-
-
-    std::shared_ptr<base::IProperty> getPropertyByName(const std::string &name) const;
 
 
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);
@@ -163,7 +151,7 @@ public:
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Value> &values);
 
 
-    bool deleteProperty(const std::string &id);
+    bool deleteProperty(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Ohter methods and operators
