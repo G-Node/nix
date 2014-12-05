@@ -50,10 +50,10 @@ public:
     virtual size_t blockCount() const = 0;
 
 
-    virtual bool hasBlock(const std::string &id) const = 0;
+    virtual bool hasBlock(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IBlock> getBlock(const std::string &id) const = 0;
+    virtual std::shared_ptr<IBlock> getBlock(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<IBlock> getBlock(size_t index) const = 0;
@@ -62,16 +62,16 @@ public:
     virtual std::shared_ptr<IBlock> createBlock(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteBlock(const std::string &id) = 0;
+    virtual bool deleteBlock(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
 
-    virtual bool hasSection(const std::string &id) const = 0;
+    virtual bool hasSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISection> getSection(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
@@ -83,7 +83,7 @@ public:
     virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSection(const std::string &id) = 0;
+    virtual bool deleteSection(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods for file attribute access.
