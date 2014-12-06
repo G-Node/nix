@@ -183,6 +183,17 @@ double SampledDimension::positionAt(const size_t index) const {
 }
 
 
+vector<double> SampledDimension::axis(const size_t count, const size_t startIndex) const {
+    vector<double> axis(count);
+    double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    for (size_t i = 0; i < axis.size(); ++i) {
+        axis[i] = (i + startIndex) * sampling_interval + offset;
+    }
+    return axis;
+}
+
+
 SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
     shared_ptr<ISampledDimension> tmp(other.impl());
 

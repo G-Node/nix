@@ -250,6 +250,19 @@ public:
     double positionAt(const size_t index) const;
 
     /**
+     * @brief Returns a vector containing the positions defined by this
+     * dimension
+     *
+     * Returns an axis vector defined by this dimsension.
+     *
+     * @param count        The number of indices
+     * @param startIndex   The start index, default = 0
+     *
+     * @returns A vector of doubles containing the respective dimension.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.
