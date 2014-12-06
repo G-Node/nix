@@ -270,7 +270,19 @@ public:
         ImplContainer::operator=(t);
         return *this;
     }
-
+    
+    /**
+     * @brief Returns the position at the given index
+     *
+     * @see positionAt for more information.
+     *
+     * @param index The index.
+     *
+     * @returns The position at the given index, e.g. the time.
+     */
+    double operator[](const size_t index) {
+        return positionAt(index);
+    }
 };
 
 
