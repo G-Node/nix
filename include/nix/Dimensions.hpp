@@ -223,6 +223,20 @@ public:
     }
 
     /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data!
+     *
+     * @param position  The position, e.g. a time
+     *
+     * @returns The respective index.
+     */
+    size_t indexOf(const double position);
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.

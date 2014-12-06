@@ -6,6 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <cmath>
 #include <nix/util/util.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/Exception.hpp>
@@ -159,6 +160,19 @@ void SampledDimension::samplingInterval(double interval) {
         throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
     }
     backend()->samplingInterval(interval);
+}
+
+
+size_t SampledDimension::indexOf(const double position) {
+    size_t index = 0;
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    if ((position - offset) < 0 && sampling_interval > 0) {
+        index = 0;
+    } else {
+        index = static_cast<size_t>(round(( position - offset) / sampling_interval));
+    }
+    return index;
 }
 
 
