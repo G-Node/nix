@@ -234,7 +234,20 @@ public:
      *
      * @returns The respective index.
      */
-    size_t indexOf(const double position);
+    size_t indexOf(const double position) const;
+
+    /**
+     * @brief Returns the position of this dimension at a given index.
+     *
+     * This method returns the position at a given index. Use this method for
+     * example to find the position that relates to a certain index. Note: This
+     * method does not check if the index is the extent of the data!
+     *
+     * @param index  The index.
+     *
+     * @returns The respective position, e.g. a time.
+     */
+    double positionAt(const size_t index) const;
 
     /**
      * @brief Assignment operator.

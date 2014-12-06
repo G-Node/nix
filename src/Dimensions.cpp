@@ -163,7 +163,7 @@ void SampledDimension::samplingInterval(double interval) {
 }
 
 
-size_t SampledDimension::indexOf(const double position) {
+size_t SampledDimension::indexOf(const double position) const {
     size_t index = 0;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
@@ -173,6 +173,13 @@ size_t SampledDimension::indexOf(const double position) {
         index = static_cast<size_t>(round(( position - offset) / sampling_interval));
     }
     return index;
+}
+
+
+double SampledDimension::positionAt(const size_t index) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    return index * sampling_interval + offset;
 }
 
 
