@@ -163,6 +163,34 @@ void TestDimension::testSampledDimOffset() {
 }
 
 
+void TestDimension::testSampledDimIndexOf() {
+    double offset = 1.0;
+    double samplingInterval = boost::math::constants::pi<double>();
+
+    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
+
+    SampledDimension sd;
+    sd = d;
+    CPPUNIT_ASSERT(sd.indexOf(-3.14) == 0);
+    CPPUNIT_ASSERT(sd.indexOf(3.14) == 1);
+    CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
+    CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
+    CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
+    
+    sd.offset(offset);
+    CPPUNIT_ASSERT(*(sd.offset()) == offset);
+    CPPUNIT_ASSERT(sd.indexOf(0.0) == 0);
+    CPPUNIT_ASSERT(sd.indexOf(-3.14) == 0);
+    CPPUNIT_ASSERT(sd.indexOf(2.14) == 0);
+    CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
+    CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
+    CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
+    
+    data_array.deleteDimension(d.index());
+}
+
+
 void TestDimension::testSampledDimOperators() {
     double samplingInterval = boost::math::constants::pi<double>();
 
