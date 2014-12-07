@@ -223,6 +223,46 @@ public:
     }
 
     /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data!
+     *
+     * @param position  The position, e.g. a time
+     *
+     * @returns The respective index.
+     */
+    size_t indexOf(const double position) const;
+
+    /**
+     * @brief Returns the position of this dimension at a given index.
+     *
+     * This method returns the position at a given index. Use this method for
+     * example to find the position that relates to a certain index. Note: This
+     * method does not check if the index is the extent of the data!
+     *
+     * @param index  The index.
+     *
+     * @returns The respective position, e.g. a time.
+     */
+    double positionAt(const size_t index) const;
+
+    /**
+     * @brief Returns a vector containing the positions defined by this
+     * dimension
+     *
+     * Returns an axis vector defined by this dimsension.
+     *
+     * @param count        The number of indices
+     * @param startIndex   The start index, default = 0
+     *
+     * @returns A vector of doubles containing the respective dimension.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.
@@ -243,7 +283,19 @@ public:
         ImplContainer::operator=(t);
         return *this;
     }
-
+    
+    /**
+     * @brief Returns the position at the given index
+     *
+     * @see positionAt for more information.
+     *
+     * @param index The index.
+     *
+     * @returns The position at the given index, e.g. the time.
+     */
+    double operator[](const size_t index) {
+        return positionAt(index);
+    }
 };
 
 

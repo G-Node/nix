@@ -38,6 +38,9 @@ private:
     CPPUNIT_TEST(testSampledDimUnit);
     CPPUNIT_TEST(testSampledDimSamplingInterval);
     CPPUNIT_TEST(testSampledDimOperators);
+    CPPUNIT_TEST(testSampledDimIndexOf);
+    CPPUNIT_TEST(testSampledDimPositionAt);
+    CPPUNIT_TEST(testSampledDimAxis);
 
     CPPUNIT_TEST(testSetDimLabels);
 
@@ -68,6 +71,9 @@ public:
     void testSampledDimUnit();
     void testSampledDimSamplingInterval();
     void testSampledDimOperators();
+    void testSampledDimIndexOf();
+    void testSampledDimPositionAt();
+    void testSampledDimAxis();
 
     void testSetDimLabels();
 
