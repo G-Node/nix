@@ -372,17 +372,11 @@ Group::~Group() {
     h5group.close();
 }
 
-static bool looksLikeUUID(const std::string &id) {
-    // we don't want a complete check, just a glance
-    // uuid form is: 8-4-4-4-12 = 36 [8, 13, 18, 23, ]
-    return id.size() == 36 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] =='-';
-}
-
 boost::optional<Group> Group::findGroupByNameOrAttribute(std::string const &attr, std::string const &value) const {
 
     if (hasObject(value)) {
         return boost::make_optional(openGroup(value, false));
-    } else if (looksLikeUUID(value)) {
+    } else if (util::looksLikeUUID(value)) {
         return findGroupByAttribute(attr, value);
     } else {
         return boost::optional<Group>();
@@ -393,7 +387,7 @@ boost::optional<DataSet> Group::findDataByNameOrAttribute(std::string const &att
 
     if (hasObject(value)) {
         return boost::make_optional(openData(value));
-    } else if (looksLikeUUID(value)) {
+    } else if (util::looksLikeUUID(value)) {
         return findDataByAttribute(attr, value);
     } else {
         return boost::optional<DataSet>();

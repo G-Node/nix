@@ -40,6 +40,9 @@ void TestEntityWithSources::testSourceAccess() {
         ids.push_back(src.id());
     }
 
+    std::string name = names[0];
+    Source source = block.getSource(name);
+    CPPUNIT_ASSERT(source.name() == name);
 
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());

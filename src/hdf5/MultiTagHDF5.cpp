@@ -173,9 +173,15 @@ size_t MultiTagHDF5::referenceCount() const {
 }
 
 
-shared_ptr<IDataArray>  MultiTagHDF5::getReference(const std::string &id) const {
+shared_ptr<IDataArray>  MultiTagHDF5::getReference(const std::string &name_or_id) const {
     shared_ptr<IDataArray> da;
     boost::optional<Group> g = refs_group();
+
+    std::string id = name_or_id;
+
+    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
+        id = block()->getDataArray(name_or_id)->id();
+    }
 
     if (g && hasReference(id)) {
         Group group = g->openGroup(id);

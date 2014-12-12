@@ -53,9 +53,19 @@ bool EntityWithSourcesHDF5::hasSource(const string &id) const {
 }
 
 
-shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &id) const {
+shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &name_or_id) const {
     shared_ptr<SourceHDF5> source;
     boost::optional<Group> g = sources_refs();
+
+    std::string id = name_or_id;
+
+    if (!util::looksLikeUUID(name_or_id)) {
+        Block tmp(entity_block);
+        auto found = tmp.findSources(util::NameFilter<Source>(name_or_id));
+
+        if (!found.empty())
+            id = found.front().id();
+    }
 
     if (g && hasSource(id)) {
         Group group = g->openGroup(id);

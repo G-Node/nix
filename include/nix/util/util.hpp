@@ -350,6 +350,8 @@ void applyPolynomial(const std::vector<double> &coefficients,
                      double *output,
                      size_t n);
 
+bool looksLikeUUID(const std::string &id);
+
 } // namespace util
 } // namespace nix
 
