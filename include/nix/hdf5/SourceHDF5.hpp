@@ -53,19 +53,13 @@ public:
     //--------------------------------------------------
 
 
-    bool hasSource(const std::string &id) const;
+    bool hasSource(const std::string &name_or_id) const;
 
     
-    bool hasSourceByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::ISource> getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ISource> getSource(size_t index) const;
-
-
-    std::shared_ptr<base::ISource> getSourceByName(const std::string &name) const;
 
 
     size_t sourceCount() const;
@@ -74,7 +68,7 @@ public:
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
-    bool deleteSource(const std::string &id);
+    bool deleteSource(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions
