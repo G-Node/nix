@@ -15,7 +15,7 @@
 
 namespace nix {
 
-class DataView : public DataSet {
+class NIXAPI DataView : public DataSet {
 public:
     DataView(DataArray da, NDSize count, NDSize offset)
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
