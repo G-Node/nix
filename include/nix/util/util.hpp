@@ -344,11 +344,11 @@ R deRef(boost::optional<R> var) {
     else return R();
 }
 
-void applyPolynomial(const std::vector<double> &coefficients,
-                     double origin,
-                     const double *input,
-                     double *output,
-                     size_t n);
+NIXAPI void applyPolynomial(const std::vector<double> &coefficients,
+                            double origin,
+                            const double *input,
+                            double *output,
+                            size_t n);
 
 bool looksLikeUUID(const std::string &id);
 
