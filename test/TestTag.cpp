@@ -289,6 +289,10 @@ void TestTag::testSourceAccess() {
     CPPUNIT_ASSERT(tag.sourceCount() == names.size());
     CPPUNIT_ASSERT(tag.sources().size() == names.size());
 
+    std::string name = names[0];
+    Source source = tag.getSource(name);
+    CPPUNIT_ASSERT(source.name() == name);
+
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source child_source = tag.getSource(*it);
         CPPUNIT_ASSERT(tag.hasSource(*it) == true);

@@ -63,7 +63,7 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &name_or_id) c
         Block tmp(entity_block);
         auto found = tmp.findSources(util::NameFilter<Source>(name_or_id));
 
-        if (found.empty())
+        if (!found.empty())
             id = found.front().id();
     }
 
