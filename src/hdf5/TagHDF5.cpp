@@ -119,9 +119,19 @@ size_t TagHDF5::referenceCount() const {
 }
 
 
-shared_ptr<IDataArray> TagHDF5::getReference(const std::string &id) const {
+shared_ptr<IDataArray> TagHDF5::getReference(const std::string &name_or_id) const {
     shared_ptr<IDataArray> da;
     boost::optional<Group> g = refs_group();
+
+    std::string id = name_or_id;
+
+    if (!util::looksLikeUUID(name_or_id)) {
+        auto blck = dynamic_pointer_cast<BlockHDF5>(block());
+
+        if (blck->hasDataArray(name_or_id)) {
+            id = blck->getDataArray(name_or_id)->id();
+        }
+    }
 
     if (g && hasReference(id)) {
         Group group = g->openGroup(id);

@@ -175,6 +175,9 @@ void TestMultiTag::testReferences(){
     std::stringstream retrieveerrmsg;
     retrieveerrmsg << "TestMultiTag::testReference: Retrieval did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
+    DataArray ref2 = dt.getReference(da_1.name());
+    retrieveerrmsg << "TestMultiTag::testReference: Retrieval by name did not work!";
+    CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref2.id() == da_1.id());
 
     std::vector<DataArray> arrays = dt.references();
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);

@@ -140,6 +140,9 @@ void TestTag::testReferences() {
     DataArray ref1 = st.getReference(da_1.id());
     retrieveerrmsg << "TestTag::testReference: Retrieval did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
+    DataArray ref2 = st.getReference(da_1.name());
+    retrieveerrmsg << "TestTag::testReference: Retrieval by name did not work!";
+    CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref2.id() == da_1.id());
 
     std::vector<DataArray> arrays = st.references();
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 7);
