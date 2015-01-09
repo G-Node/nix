@@ -43,12 +43,8 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
     size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
-
     if (!dim_unit && unit != "none") {
         throw nix::IncompatibleDimensions("Units of position and SampledDimension must both be given!", "nix::util::positionToIndex");
-    }
-    if ((dimension.offset() && position < *dimension.offset()) || (!dimension.offset() && position < 0.0)) {
-        throw nix::OutOfBounds("Position is out of bounds in SampledDimension.", static_cast<int>(position));
     }
     if (dim_unit && unit != "none") {
         try {
@@ -57,7 +53,7 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = static_cast<size_t>(round(position * scaling / dimension.samplingInterval()));
+    index = dimension.indexOf(position * scaling);    
     return index;
 }
 
@@ -182,14 +178,21 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     NDSize data_offset(dimension_count, static_cast<size_t>(0));
     NDSize data_count(dimension_count, static_cast<size_t>(1));
     vector<string> units = tag.units();
-
+    double pos;   
     for (size_t i = 0; i < offset.num_elements(); ++i) {
         Dimension dimension = array.getDimension(i+1);
         string unit = "none";
         if (i <= units.size() && units.size() > 0) {
             unit = units[i];
         }
-        data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
+        if (offset.dtype() == nix::DataType::Double) {
+            pos = offset.get<double>(i);
+        } else if (offset.dtype() == nix::DataType::Int64) {
+            pos = static_cast<double>(offset.get<int>(i));
+        } else {
+            throw std::runtime_error("Unexpected DataType for the position, expect double or integer!");
+        }
+        data_offset[i] = positionToIndex(pos, unit, dimension);
     }
     if (extents) {
         NDArray extent(extents.dataType(), temp_count);
@@ -200,7 +203,15 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            size_t c = positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
+            double endPos;
+            if (extent.dtype() == nix::DataType::Double) {
+                endPos = pos + extent.get<double>(i);
+            } else if (extent.dtype() == nix::DataType::Int64) {
+                endPos = pos + static_cast<double>(extent.get<int>(i));
+            } else {
+                throw std::runtime_error("Unexpected DataType for the extent, expect double or integer!");
+            }
+            size_t c = positionToIndex(endPos, unit, dimension) - data_offset[i];
             data_count[i] = (c > 1) ? c : 1;
         }
     }
