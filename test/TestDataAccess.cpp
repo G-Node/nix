@@ -163,12 +163,28 @@ void TestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
+    position_tag.units(vector<string>());
+    util::getOffsetAndCount(position_tag, data_array, offsets, counts);
+
+    CPPUNIT_ASSERT(position_tag.units().size() == 0);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
-
+    
+    segment_tag.units(vector<string>());
+    util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+    
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
 
