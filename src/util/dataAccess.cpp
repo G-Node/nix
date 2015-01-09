@@ -172,46 +172,32 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
 
     NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
     NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
-    NDArray offset(positions.dataType(), temp_count);
+    vector<double> offset;
     positions.getData(offset, temp_count, temp_offset);
 
     NDSize data_offset(dimension_count, static_cast<size_t>(0));
     NDSize data_count(dimension_count, static_cast<size_t>(1));
     vector<string> units = tag.units();
-    double pos;   
-    for (size_t i = 0; i < offset.num_elements(); ++i) {
+    
+    for (size_t i = 0; i < offset.size(); ++i) {
         Dimension dimension = array.getDimension(i+1);
         string unit = "none";
         if (i <= units.size() && units.size() > 0) {
             unit = units[i];
         }
-        if (offset.dtype() == nix::DataType::Double) {
-            pos = offset.get<double>(i);
-        } else if (offset.dtype() == nix::DataType::Int64) {
-            pos = static_cast<double>(offset.get<int>(i));
-        } else {
-            throw std::runtime_error("Unexpected DataType for the position, expect double or integer!");
-        }
-        data_offset[i] = positionToIndex(pos, unit, dimension);
+        data_offset[i] = positionToIndex(offset[i], unit, dimension);
     }
+    
     if (extents) {
-        NDArray extent(extents.dataType(), temp_count);
+        vector<double> extent;
         extents.getData(extent, temp_count, temp_offset);
-        for (size_t i = 0; i < extent.num_elements(); ++i) {
+        for (size_t i = 0; i < extent.size(); ++i) {
             Dimension dimension = array.getDimension(i+1);
             string unit = "none";
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            double endPos;
-            if (extent.dtype() == nix::DataType::Double) {
-                endPos = pos + extent.get<double>(i);
-            } else if (extent.dtype() == nix::DataType::Int64) {
-                endPos = pos + static_cast<double>(extent.get<int>(i));
-            } else {
-                throw std::runtime_error("Unexpected DataType for the extent, expect double or integer!");
-            }
-            size_t c = positionToIndex(endPos, unit, dimension) - data_offset[i];
+            size_t c = positionToIndex(offset[i] + extent[i], unit, dimension) - data_offset[i];
             data_count[i] = (c > 1) ? c : 1;
         }
     }
