@@ -21,7 +21,7 @@ using namespace std;
 namespace nix {
 namespace util {
 
-//TODO maybe a relaxed handling of units would be better, e.g. if none given, take the one from the dimension...
+
 int positionToIndex(double position, const string &unit, const Dimension &dimension) {
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
         SampledDimension dim;
@@ -126,9 +126,9 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
     }
     for (size_t i = 0; i < position.size(); ++i) {
         Dimension dim = array.getDimension(i+1);
-        temp_offset[i] = positionToIndex(position[i], i > units.size() ? "none" : units[i], dim);
+        temp_offset[i] = positionToIndex(position[i], i >= units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            size_t c = positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            size_t c = positionToIndex(position[i] + extent[i], i >= units.size() ? "none" : units[i], dim) - temp_offset[i];
             temp_count[i] = (c > 1) ? c : 1;
         }
     }
