@@ -172,7 +172,8 @@ void TestDimension::testSampledDimIndexOf() {
 
     SampledDimension sd;
     sd = d;
-    CPPUNIT_ASSERT(sd.indexOf(-3.14) == 0);
+    CPPUNIT_ASSERT_THROW(sd.indexOf(-3.14), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf(-1.14));
     CPPUNIT_ASSERT(sd.indexOf(3.14) == 1);
     CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
@@ -180,8 +181,8 @@ void TestDimension::testSampledDimIndexOf() {
     
     sd.offset(offset);
     CPPUNIT_ASSERT(*(sd.offset()) == offset);
-    CPPUNIT_ASSERT(sd.indexOf(0.0) == 0);
-    CPPUNIT_ASSERT(sd.indexOf(-3.14) == 0);
+    CPPUNIT_ASSERT(sd.indexOf(-1 * samplingInterval / 2 + offset + 0.001) == 0);
+    CPPUNIT_ASSERT_THROW(sd.indexOf(-3.14), nix::OutOfBounds);
     CPPUNIT_ASSERT(sd.indexOf(2.14) == 0);
     CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);

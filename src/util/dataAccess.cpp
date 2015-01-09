@@ -53,7 +53,7 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = dimension.indexOf(position * scaling);    
+    index = dimension.indexOf(position * scaling); 
     return index;
 }
 
