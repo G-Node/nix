@@ -618,6 +618,21 @@ public:
      */
     size_t indexOf(const double position) const;
     
+    /**
+     * @brief Returns a vector containing a number of ticks
+     *
+     * The result vector contains a given number of ticks starting from a
+     * starting index 
+     *
+     * @param count       The number of ticks.
+     * @param startIndex  The starting index. Default 0.
+     *
+     * @return vector<double> containing the ticks. 
+     *
+     * Method will throw a nix::OutOfBounds exception if startIndex + count is beyond
+     * the number of ticks.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
 
     /**
      * @brief Assignment operator.

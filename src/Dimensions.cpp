@@ -346,6 +346,17 @@ size_t RangeDimension::indexOf(const double position) const {
 }
 
 
+vector<double> RangeDimension::axis(const size_t count, const size_t startIndex) const {
+    vector<double> ticks = this->ticks();
+    if ((startIndex + count) > ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count is invalid, reaches beyond the ticks stored in this dimension.");
+    } 
+    vector<double>::const_iterator first = ticks.begin() + startIndex;
+    vector<double> axis(first, first + count);
+    return axis;
+}
+
+
 RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
     shared_ptr<IRangeDimension> tmp(other.impl());
 
