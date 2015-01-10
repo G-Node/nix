@@ -595,6 +595,18 @@ public:
      * @param ticks     The new ticks for the dimension provided as a vector.
      */
     void ticks(const std::vector<double> &ticks);
+    
+    /**
+     * @brief Returns the entry of the range dimension at a given index.
+     *
+     * @param index     The index.
+     *
+     * @return The tick at the given index.
+     *
+     * Method will throw an nix::OutOfBounds Exception if the index is invalid
+     */
+    double tickAt(const size_t index) const;
+
 
     /**
      * @brief Assignment operator.

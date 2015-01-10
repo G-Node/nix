@@ -309,6 +309,15 @@ void RangeDimension::ticks(const std::vector<double> &ticks) {
 }
 
 
+double RangeDimension::tickAt(const size_t index) const {
+    vector<double> ticks = this->ticks();
+    if (index >= ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", index);
+    }
+    return ticks[index];
+}
+
+
 RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
     shared_ptr<IRangeDimension> tmp(other.impl());
 
