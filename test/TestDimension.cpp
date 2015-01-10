@@ -392,6 +392,25 @@ void TestDimension::testRangeDimIndexOf() {
     data_array.deleteDimension(d.index());
 }
 
+void TestDimension::testRangeDimTickAt() {
+    std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
+    Dimension d = data_array.appendRangeDimension(ticks);
+   
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
+
+    RangeDimension rd;
+    rd = d;
+    CPPUNIT_ASSERT(rd.tickAt(0) == -100.);
+    CPPUNIT_ASSERT(rd.tickAt(4) == 100.);
+    CPPUNIT_ASSERT_THROW(rd.tickAt(10), OutOfBounds);
+
+    CPPUNIT_ASSERT(rd[0] == -100.);
+    CPPUNIT_ASSERT(rd[4] == 100.);
+    CPPUNIT_ASSERT_THROW(rd[10], OutOfBounds);
+
+    data_array.deleteDimension(d.index());
+}
+
 void TestDimension::testRangeDimAxis() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
