@@ -607,6 +607,17 @@ public:
      */
     double tickAt(const size_t index) const;
 
+    /**
+     * @brief Returns the index of the given position
+     *
+     * Method will return the index closest to the given position  
+     * 
+     * @param position    The position.
+     *
+     * @return The index.
+     */
+    size_t indexOf(const double position) const;
+    
 
     /**
      * @brief Assignment operator.
