@@ -595,6 +595,44 @@ public:
      * @param ticks     The new ticks for the dimension provided as a vector.
      */
     void ticks(const std::vector<double> &ticks);
+    
+    /**
+     * @brief Returns the entry of the range dimension at a given index.
+     *
+     * @param index     The index.
+     *
+     * @return The tick at the given index.
+     *
+     * Method will throw an nix::OutOfBounds Exception if the index is invalid
+     */
+    double tickAt(const size_t index) const;
+
+    /**
+     * @brief Returns the index of the given position
+     *
+     * Method will return the index closest to the given position  
+     * 
+     * @param position    The position.
+     *
+     * @return The index.
+     */
+    size_t indexOf(const double position) const;
+    
+    /**
+     * @brief Returns a vector containing a number of ticks
+     *
+     * The result vector contains a given number of ticks starting from a
+     * starting index 
+     *
+     * @param count       The number of ticks.
+     * @param startIndex  The starting index. Default 0.
+     *
+     * @return vector<double> containing the ticks. 
+     *
+     * Method will throw a nix::OutOfBounds exception if startIndex + count is beyond
+     * the number of ticks.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
 
     /**
      * @brief Assignment operator.
@@ -616,6 +654,19 @@ public:
     RangeDimension &operator=(const none_t &t) {
         ImplContainer::operator=(t);
         return *this;
+    }
+
+    /**
+     * @brief Returns the position at the given index
+     *
+     * @see positionAt for more information.
+     *
+     * @param index The index.
+     *
+     * @returns The position at the given index, e.g. the time.
+     */
+    double operator[](const size_t index) {
+        return tickAt(index);
     }
 
 };
