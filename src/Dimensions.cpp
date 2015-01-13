@@ -149,7 +149,8 @@ SampledDimension::SampledDimension(const SampledDimension &other)
 
 void SampledDimension::unit(const std::string &unit) {
     if (!(util::isSIUnit(unit))) {
-        throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
+        throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.",
+                          "SampledDimension::unit(const string &unit)");
     }
     backend()->unit(unit);
 }
@@ -164,15 +165,14 @@ void SampledDimension::samplingInterval(double interval) {
 
 
 size_t SampledDimension::indexOf(const double position) const {
-    size_t index = 0;
+    int index;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    if ((position - offset) < 0 && sampling_interval > 0) {
-        index = 0;
-    } else {
-        index = static_cast<size_t>(round(( position - offset) / sampling_interval));
+    index = round(( position - offset) / sampling_interval);
+    if (index < 0) {
+        throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
     }
-    return index;
+    return static_cast<size_t>(index);
 }
 
 
