@@ -166,6 +166,25 @@ private:
     std::string caller;
 };
 
+
+class InvalidDimension : public std::exception {
+
+public:
+    InvalidDimension(const std::string &message, const std::string &caller):
+        msg(message), caller(caller){ }
+
+    const char *what() const NOEXCEPT {
+        std::stringstream sstream("InvalidDimension: ");
+        sstream << msg << " evoked at: " << caller;
+        return sstream.str().c_str();
+    }
+
+private:
+    std::string msg;
+    std::string caller;
+};
+
+
 class InvalidRank : public std::out_of_range {
 public:
     InvalidRank(const std::string &message)
