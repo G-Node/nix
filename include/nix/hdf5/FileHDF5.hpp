@@ -64,16 +64,16 @@ public:
     std::shared_ptr<base::IBlock> createBlock(const std::string &name, const std::string &type);
 
 
-    bool deleteBlock(const std::string &id);
+    bool deleteBlock(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
 
-    bool hasSection(const std::string &id) const;
+    bool hasSection(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISection> getSection(const std::string &id) const;
+    std::shared_ptr<base::ISection> getSection(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ISection> getSection(size_t index) const;
@@ -85,7 +85,7 @@ public:
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
 
 
-    bool deleteSection(const std::string &id);
+    bool deleteSection(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods for file attribute access.

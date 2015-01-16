@@ -42,7 +42,7 @@ public:
     virtual LinkType linkType() const = 0;
 
 
-    virtual void data(const std::string &id) = 0;
+    virtual void data(const std::string &name_or_id) = 0;
 
 
     virtual std::shared_ptr<IDataArray> data() const = 0;

@@ -103,12 +103,12 @@ public:
     /**
      * @brief Check if a block exists in the file.
      *
-     * @param id    The ID of the block.
+     * @param name_or_id    Name or ID of the block.
      *
      * @return True if the block exists, false otherwise.
      */
-    bool hasBlock(const std::string &id) const {
-        return backend()->hasBlock(id);
+    bool hasBlock(const std::string &name_or_id) const {
+        return backend()->hasBlock(name_or_id);
     }
 
     /**
@@ -123,7 +123,7 @@ public:
     /**
      * @brief Read an existing block from the file.
      *
-     * @param name_or_id    The name or the ID of the block.
+     * @param name_or_id    Name or ID of the block.
      *
      * @return The block with the given name or id.
      */
@@ -157,7 +157,7 @@ public:
     /**
      * @brief Deletes a block from the file.
      *
-     * @param id    Name or id of the block to delete.
+     * @param name_or_id    Name or id of the block to delete.
      *
      * @return True if the block has been removed, false otherwise.
      */
@@ -206,7 +206,7 @@ public:
     /**
      * @brief Check if a specific root section exists in the file.
      *
-     * @param id      Name or ID of the section.
+     * @param name_or_id      Name or ID of the section.
      *
      * @return True if the section exists, false otherwise.
      */
@@ -333,12 +333,12 @@ public:
     /**
      * @brief Deletes the Section that is specified with the id.
      *
-     * @param id        The id of the section to delete.
+     * @param name_or_id        Name or id of the section to delete.
      *
      * @return True if the section was deleted, false otherwise.
      */
-    bool deleteSection(const std::string &id) {
-        return backend()->deleteSection(id);
+    bool deleteSection(const std::string &name_or_id) {
+        return backend()->deleteSection(name_or_id);
     }
 
     /**

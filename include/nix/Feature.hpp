@@ -124,10 +124,10 @@ public:
     /**
      * @brief Sets the data array associated with this feature.
      *
-     * @param id        The id of the data array to set.
+     * @param name_or_id        Name or id of the data array to set.
      */
-    void data(const std::string &id) {
-        backend()->data(id);
+    void data(const std::string &name_or_id) {
+        backend()->data(name_or_id);
     }
 
     /**
