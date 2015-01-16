@@ -72,15 +72,15 @@ shared_ptr<IDataArray> MultiTagHDF5::positions() const {
 }
 
 
-void MultiTagHDF5::positions(const string &id) {
-    if (id.empty())
+void MultiTagHDF5::positions(const string &name_or_id) {
+    if (name_or_id.empty())
         throw EmptyString("positions");
-    if (!block()->hasDataArray(id))
+    if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
         group().removeGroup("positions");
     
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
 
     group().createLink(target->group(), "positions");
     forceUpdatedAt();
@@ -113,15 +113,15 @@ shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
 }
 
 
-void MultiTagHDF5::extents(const string &id) {
-    if (id.empty())
+void MultiTagHDF5::extents(const string &name_or_id) {
+    if (name_or_id.empty())
         throw EmptyString("extents");
-    if (!block()->hasDataArray(id))
+    if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))
         group().removeGroup("extents");
 
-    auto da = block()->getDataArray(id);
+    auto da = block()->getDataArray(name_or_id);
     if (!checkDimensions(da, positions()))
         throw runtime_error("MultiTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
     auto target = dynamic_pointer_cast<DataArrayHDF5>(da);
@@ -162,7 +162,13 @@ void MultiTagHDF5::units(const none_t t) {
 // Methods concerning references.
 //--------------------------------------------------
 
-bool MultiTagHDF5::hasReference(const std::string &id) const {
+bool MultiTagHDF5::hasReference(const std::string &name_or_id) const {
+    std::string id = name_or_id;
+
+    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
+        id = block()->getDataArray(name_or_id)->id();
+    }
+
     return refs_group() ? refs_group()->hasGroup(id) : false;
 }
 
@@ -202,15 +208,15 @@ shared_ptr<IDataArray>  MultiTagHDF5::getReference(size_t index) const {
     return getReference(id);
 }
 
-void MultiTagHDF5::addReference(const std::string &id) {
-    if (id.empty())
+void MultiTagHDF5::addReference(const std::string &name_or_id) {
+    if (name_or_id.empty())
         throw EmptyString("addReference");
     boost::optional<Group> g = refs_group(true);
 
-    if (!block()->hasDataArray(id))
+    if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::addReference: DataArray not found in block!");
     
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(id));
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
 
     g->createLink(target->group(), target->id());
 }
@@ -266,9 +272,8 @@ void MultiTagHDF5::references(const std::vector<DataArray> &refs_new) {
 // Methods concerning features.
 //--------------------------------------------------
 
-bool MultiTagHDF5::hasFeature(const string &id) const {
-    // let getFeature try to look up object by id
-    return getFeature(id) != nullptr;
+bool MultiTagHDF5::hasFeature(const string &name_or_id) const {
+    return getFeature(name_or_id) != nullptr;
 }
 
 
@@ -278,15 +283,14 @@ size_t MultiTagHDF5::featureCount() const {
 }
 
 
-shared_ptr<IFeature> MultiTagHDF5::getFeature(const std::string &id) const {
+shared_ptr<IFeature> MultiTagHDF5::getFeature(const std::string &name_or_id) const {
     shared_ptr<FeatureHDF5> feature;
     boost::optional<Group> g = feature_group();
 
     if (g) {
-        if(g->hasGroup(id)) {
-            Group group = g->openGroup(id, false);
-            feature = make_shared<FeatureHDF5>(file(), block(), group);
-        }
+        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        if (group)
+            feature = make_shared<FeatureHDF5>(file(), block(), group.get());
     }
 
     return feature;
@@ -300,15 +304,15 @@ shared_ptr<IFeature>  MultiTagHDF5::getFeature(size_t index) const {
 }
 
 
-shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &id, LinkType link_type) {
-    if(!block()->hasDataArray(id)) {
+shared_ptr<IFeature>  MultiTagHDF5::createFeature(const std::string &name_or_id, LinkType link_type) {
+    if(!block()->hasDataArray(name_or_id)) {
         throw std::runtime_error("DataArray not found in Block!");
     }
     string rep_id = util::createId();
     boost::optional<Group> g = feature_group(true);
 
     Group group = g->openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(id);
+    DataArray data = block()->getDataArray(name_or_id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 

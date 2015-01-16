@@ -171,6 +171,11 @@ void TestMultiTag::testReferences(){
     dt.addReference(da_2);
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
 
+    std::stringstream haserrmsg;
+    haserrmsg << "TestMultiTag::testReference: Has method did not work!";
+    CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.id()));
+    CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.name()));
+
     DataArray ref1 = dt.getReference(da_1.id());
     std::stringstream retrieveerrmsg;
     retrieveerrmsg << "TestMultiTag::testReference: Retrieval did not work!";
