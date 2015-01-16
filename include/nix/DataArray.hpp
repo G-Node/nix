@@ -308,7 +308,10 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) { 
+        if (ticks.size() == 0) {
+            throw std::runtime_error("The ticks of a range dimension must not be empty!");
+        }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
 
@@ -349,6 +352,9 @@ public:
      * @return The created dimension descriptor.
      */
     RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
+        if (ticks.size() == 0) {
+            throw std::runtime_error("The ticks of a range dimension must not be empty!");
+        }
         return backend()->createRangeDimension(id, ticks);
     }
 
