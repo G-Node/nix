@@ -69,7 +69,7 @@ public:
     bool hasSource(const std::string &name_or_id) const;
 
     
-    std::shared_ptr<base::ISource> getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ISource> getSource(size_t index) const;
@@ -81,16 +81,16 @@ public:
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
-    bool deleteSource(const std::string &id);
+    bool deleteSource(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArray(const std::string &id) const;
+    bool hasDataArray(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
 
     
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
@@ -103,13 +103,13 @@ public:
                                                       nix::DataType data_type, const NDSize &shape) override;
 
 
-    bool deleteDataArray(const std::string &id);
+    bool deleteDataArray(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasTag(const std::string &id) const;
+    bool hasTag(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
@@ -125,16 +125,16 @@ public:
                                                       const std::vector<double> &position);
 
 
-    bool deleteTag(const std::string &id);
+    bool deleteTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasMultiTag(const std::string &id) const;
+    bool hasMultiTag(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const;
+    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const;
@@ -147,7 +147,7 @@ public:
                                                   const DataArray &positions);
 
 
-    bool deleteMultiTag(const std::string &id);
+    bool deleteMultiTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions

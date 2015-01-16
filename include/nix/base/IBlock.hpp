@@ -47,7 +47,7 @@ public:
     virtual std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSource(const std::string &id) = 0;
+    virtual bool deleteSource(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning data arrays

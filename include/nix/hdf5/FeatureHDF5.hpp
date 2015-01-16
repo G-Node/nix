@@ -71,7 +71,7 @@ public:
     LinkType linkType() const;
 
 
-    void data(const std::string &data_array_id);
+    void data(const std::string &name_or_id);
 
 
     std::shared_ptr<base::IDataArray> data() const;
