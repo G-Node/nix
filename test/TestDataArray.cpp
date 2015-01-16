@@ -381,6 +381,9 @@ void TestDataArray::testDimension()
     for(size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
+    
+    CPPUNIT_ASSERT_THROW(array2.appendRangeDimension(std::vector<double>{}), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array2.createRangeDimension(1, std::vector<double>{}), nix::InvalidDimension);
 
     dims.push_back(array2.createSampledDimension(1, samplingInterval));
     dims.push_back(array2.createSetDimension(2));
