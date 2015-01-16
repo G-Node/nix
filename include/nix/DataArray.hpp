@@ -310,7 +310,8 @@ public:
      */
     RangeDimension appendRangeDimension(const std::vector<double> &ticks) { 
         if (ticks.size() == 0) {
-            throw std::runtime_error("The ticks of a range dimension must not be empty!");
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+                                        "DataArray::appendRangeDimension");
         }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
@@ -353,7 +354,8 @@ public:
      */
     RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
         if (ticks.size() == 0) {
-            throw std::runtime_error("The ticks of a range dimension must not be empty!");
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+                                        "DataArray::createRangeDimension");
         }
         return backend()->createRangeDimension(id, ticks);
     }
