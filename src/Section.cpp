@@ -9,6 +9,7 @@
 
 #include <list>
 #include <algorithm>
+#include <iterator>
 
 #include <nix/Section.hpp>
 

@@ -8,6 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix/hdf5/FileHDF5.hpp>
 #include "TestGroup.hpp"
 
 unsigned int & TestGroup::open_mode()
@@ -189,4 +190,67 @@ void TestGroup::testOpen() {
     b->getAttr("entity_id", idout);
     CPPUNIT_ASSERT_EQUAL(uuid, idout);
 
+}
+
+void TestGroup::testRefCount() {
+    H5::H5File fd("test_refcounting.h5", H5F_ACC_TRUNC);
+    H5::Group r = fd.openGroup("/");
+
+    //This is plain HDF5
+    H5::Group rc = r;
+    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+    rc.close();
+    CPPUNIT_ASSERT_EQUAL(1, r.getCounter());
+
+    nix::hdf5::Group wrapped(r);
+
+    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(r.getLocId(), wrapped.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+
+    nix::hdf5::Group g;
+    CPPUNIT_ASSERT_EQUAL(H5::Group().getLocId(), g.h5Group().getLocId());
+
+    g = nix::hdf5::Group(r);
+    CPPUNIT_ASSERT_EQUAL(r.getLocId(), g.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(3, r.getCounter());
+    nix::hdf5::Group c = g;
+
+    CPPUNIT_ASSERT_EQUAL(r.getLocId(), c.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
+
+    {
+        nix::hdf5::Group tmp = g;
+        CPPUNIT_ASSERT_EQUAL(r.getLocId(), tmp.h5Group().getLocId());
+        CPPUNIT_ASSERT_EQUAL(5, r.getCounter());
+    }
+
+    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
+
+    H5::Group ha = fd.openGroup("/");
+
+    CPPUNIT_ASSERT(ha.getLocId() != r.getLocId());
+
+    CPPUNIT_ASSERT_EQUAL(1, ha.getCounter());
+    nix::hdf5::Group b(ha);
+    CPPUNIT_ASSERT_EQUAL(ha.getLocId(), b.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(2, ha.getCounter());
+
+    wrapped = nix::hdf5::Group(r);
+    CPPUNIT_ASSERT_EQUAL(r.getLocId(), wrapped.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(2, ha.getCounter());
+
+    c = nix::hdf5::Group(b);
+    CPPUNIT_ASSERT_EQUAL(ha.getLocId(), c.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(3, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(3, ha.getCounter());
+
+    wrapped = c;
+    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(4, ha.getCounter());
+
+    b = wrapped;
+    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(4, ha.getCounter());
 }

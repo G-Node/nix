@@ -36,6 +36,7 @@ public:
     void setUp();
     void tearDown();
 
+    void testRefCount();
     void testBaseTypes();
     void testMultiArray();
     void testVector();
@@ -67,6 +68,7 @@ private:
     H5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestGroup);
+    CPPUNIT_TEST(testRefCount);
     CPPUNIT_TEST(testOpen);
     CPPUNIT_TEST(testBaseTypes);
     CPPUNIT_TEST(testVector);
