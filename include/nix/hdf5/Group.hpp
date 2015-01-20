@@ -190,6 +190,7 @@ public:
 private:
 
     H5::Attribute openAttr(const std::string &name) const;
+    H5::Attribute createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const;
 
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);

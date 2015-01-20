@@ -396,6 +396,11 @@ H5::Attribute Group::openAttr(const std::string &name) const {
     return H5::Attribute(ha);
 }
 
+H5::Attribute Group::createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const {
+    hid_t ha = H5Acreate(groupId, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, H5P_DEFAULT);
+    return H5::Attribute(ha);
+}
+
 Group::~Group() {
     close();
 }
