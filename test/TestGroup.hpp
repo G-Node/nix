@@ -64,8 +64,8 @@ private:
 
     static unsigned int &open_mode();
 
-    H5::H5File h5file;
-    H5::Group h5group;
+    hid_t h5file;
+    hid_t h5group;
 
     CPPUNIT_TEST_SUITE(TestGroup);
     CPPUNIT_TEST(testRefCount);

@@ -20,18 +20,26 @@ unsigned int & TestGroup::open_mode()
 void TestGroup::setUp() {
     unsigned int &openMode = open_mode();
 
-    h5file = H5::H5File("test_group.h5", openMode);
     if (openMode == H5F_ACC_TRUNC) {
-        h5group = h5file.createGroup("tstGroup");
+        h5file = H5Fcreate("test_grou.h5", openMode, H5P_DEFAULT, H5P_DEFAULT);
     } else {
-        h5group = h5file.openGroup("tstGroup");
+        h5file = H5Fopen("test_group.h5", openMode, H5P_DEFAULT);
     }
+
+    CPPUNIT_ASSERT(H5Iis_valid(h5file));
+
+    if (openMode == H5F_ACC_TRUNC) {
+        h5group = H5Gcreate2(h5file, "tstGroup", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    } else {
+        h5group = H5Gopen2(h5file, "tstGroup", H5P_DEFAULT);
+    }
+
     openMode = H5F_ACC_RDWR;
 }
 
 void TestGroup::tearDown() {
-    h5group.close();
-    h5file.close();
+    H5Fclose(h5file);
+    H5Oclose(h5group);
 }
 
 void TestGroup::testBaseTypes() {
