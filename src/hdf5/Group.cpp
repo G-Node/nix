@@ -228,7 +228,9 @@ Group Group::openGroup(const std::string &name, bool create) const {
     if(!util::nameCheck(name)) throw InvalidName("openGroup");
     Group g;
     if (hasGroup(name)) {
-        g = Group(h5Group().openGroup(name));
+        hid_t gid = H5Gopen(groupId, name.c_str(), H5P_DEFAULT);
+        g = Group(gid);
+        H5Idec_ref(gid);
     } else if (create) {
         hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
 
