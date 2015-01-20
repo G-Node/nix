@@ -87,6 +87,27 @@ bool Group::hasObject(const std::string &name) const {
     return res;
 }
 
+bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
+    herr_t err;
+    H5O_info_t info;
+
+    hid_t obj = H5Oopen(groupId, name.c_str(), H5P_DEFAULT);
+
+    if (!H5Iis_valid(obj)) {
+        return false;
+    }
+
+    err = H5Oget_info(obj, &info);
+
+    if (err < 0) {
+        throw std::runtime_error("Could not obtain object info");
+    }
+
+    bool res = info.type == type;
+
+    H5Oclose(obj);
+    return res;
+}
 
 size_t Group::objectCount() const {
     hsize_t n_objs;
