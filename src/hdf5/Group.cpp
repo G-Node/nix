@@ -203,14 +203,7 @@ std::string Group::objectName(size_t index) const {
 
 
 bool Group::hasData(const std::string &name) const {
-    if (hasObject(name)) {
-        H5G_stat_t info;
-        h5Group().getObjinfo(name, info);
-        if (info.type == H5G_DATASET) {
-            return true;
-        }
-    }
-    return false;
+    return hasObject(name) && objectOfType(name, H5O_TYPE_DATASET);
 }
 
 
@@ -227,14 +220,7 @@ DataSet Group::openData(const std::string &name) const {
 
 
 bool Group::hasGroup(const std::string &name) const {
-    if (hasObject(name)) {
-        H5G_stat_t info;
-        h5Group().getObjinfo(name, info);
-        if (info.type == H5G_GROUP) {
-            return true;
-        }
-    }
-    return false;
+    return hasObject(name) && objectOfType(name, H5O_TYPE_GROUP);
 }
 
 
