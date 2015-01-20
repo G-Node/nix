@@ -391,6 +391,10 @@ void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const ND
     attr.write(mem_type, *reader);
 }
 
+H5::Attribute Group::openAttr(const std::string &name) const {
+    hid_t ha = H5Aopen(groupId, name.c_str(), H5P_DEFAULT);
+    return H5::Attribute(ha);
+}
 
 Group::~Group() {
     close();

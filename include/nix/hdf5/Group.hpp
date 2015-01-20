@@ -188,6 +188,9 @@ public:
     virtual ~Group();
 
 private:
+
+    H5::Attribute openAttr(const std::string &name) const;
+
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
 
