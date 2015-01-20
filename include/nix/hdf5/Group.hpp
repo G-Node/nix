@@ -187,6 +187,12 @@ public:
     H5::Group h5Group() const;
     virtual ~Group();
 
+
+    //NB: use the following functions with caution
+    hid_t h5id() const; //no refcount increase
+    int refCount() const;
+
+
 private:
 
     H5::Attribute openAttr(const std::string &name) const;

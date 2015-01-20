@@ -303,6 +303,13 @@ H5::Group Group::h5Group() const {
     }
 }
 
+hid_t Group::h5id() const {
+    return groupId;
+}
+
+int Group::refCount() const {
+    return H5Iget_ref(groupId);
+}
 
 Group Group::createLink(const Group &target, const std::string &link_name) {
     if(!util::nameCheck(link_name)) throw InvalidName("createLink");
