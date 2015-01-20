@@ -216,7 +216,7 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
     } else {
         H5::DataType fileType = data_type_to_h5_filetype(dtype);
         H5::DataSpace fileSpace = DataSpace::create(shape, false);
-        attr = h5Group().createAttribute(name, fileType, fileSpace);
+        attr = createAttr(name, fileType, fileSpace);
     }
 
     writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
