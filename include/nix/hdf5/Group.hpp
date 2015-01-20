@@ -211,7 +211,7 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
     H5::Attribute attr;
 
     if (hasAttr(name)) {
-        attr = h5Group().openAttribute(name);
+        attr = openAttr(name);
     } else {
         H5::DataType fileType = data_type_to_h5_filetype(dtype);
         H5::DataSpace fileSpace = DataSpace::create(shape, false);
@@ -232,7 +232,7 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     Hydra<T> hydra(value);
 
     //determine attr's size and resize value accordingly
-    H5::Attribute attr = h5Group().openAttribute(name);
+    H5::Attribute attr = openAttr(name);
     H5::DataSpace space = attr.getSpace();
     int rank = space.getSimpleExtentNdims();
     NDSize dims(static_cast<size_t>(rank));
