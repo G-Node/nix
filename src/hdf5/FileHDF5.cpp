@@ -261,6 +261,10 @@ void FileHDF5::close() {
     if (!isOpen())
         return;
 
+    data.close();
+    metadata.close();
+    root.close();
+
     unsigned types = H5F_OBJ_GROUP|H5F_OBJ_DATASET|H5F_OBJ_DATATYPE;
 
     hsize_t obj_count = h5file.getObjCount(types);
