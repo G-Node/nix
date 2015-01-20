@@ -264,7 +264,7 @@ void Group::removeGroup(const std::string &name) {
 void Group::renameGroup(const std::string &old_name, const std::string &new_name) {
     if(!util::nameCheck(new_name)) throw InvalidName("renameGroup");
     if (hasGroup(old_name)) {
-        h5Group().move(old_name, new_name);
+        H5Gmove(groupId, old_name.c_str(), new_name.c_str()); //FIXME: H5Gmove is deprecated
     }
 }
 
