@@ -393,6 +393,10 @@ void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const ND
 
 
 Group::~Group() {
+    close();
+}
+
+void Group::close() {
     //NB: the group might have been closed outside this object
     //    like e.g. FileHDF5::close currently does so
     if (H5Iis_valid(groupId)) {

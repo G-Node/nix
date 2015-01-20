@@ -45,6 +45,8 @@ public:
 
     Group& operator=(Group group);
 
+    void close();
+
     bool hasAttr(const std::string &name) const;
     void removeAttr(const std::string &name) const;
 
