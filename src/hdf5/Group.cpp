@@ -275,7 +275,7 @@ bool Group::operator!=(const Group &group) const {
 
 
 H5::Group Group::h5Group() const {
-    if (groupId != H5I_INVALID_HID) {
+    if (H5Iis_valid(groupId)) {
         H5Iinc_ref(groupId);
         return H5::Group(groupId);
     } else {
