@@ -38,7 +38,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> positions() const = 0;
 
 
-    virtual void positions(const std::string &id) = 0;
+    virtual void positions(const std::string &name_or_id) = 0;
 
 
     virtual bool hasPositions() const = 0;
@@ -47,7 +47,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> extents() const = 0;
 
 
-    virtual void extents(const std::string &id) = 0;
+    virtual void extents(const std::string &name_or_id) = 0;
 
 
     virtual void extents(const none_t t) = 0;
@@ -67,19 +67,19 @@ public:
     //--------------------------------------------------
 
 
-    virtual bool hasReference(const std::string &id) const = 0;
+    virtual bool hasReference(const std::string &name_or_id) const = 0;
 
 
     virtual size_t referenceCount() const = 0;
 
 
-    virtual std::shared_ptr<base::IDataArray> getReference(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getReference(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::IDataArray> getReference(size_t index) const = 0;
 
 
-    virtual void addReference(const std::string &id) = 0;
+    virtual void addReference(const std::string &name_or_id) = 0;
 
 
     virtual bool removeReference(const std::string &id) = 0;
@@ -92,19 +92,19 @@ public:
     //--------------------------------------------------
 
 
-    virtual bool hasFeature(const std::string &id) const = 0;
+    virtual bool hasFeature(const std::string &name_or_id) const = 0;
 
 
     virtual size_t featureCount() const = 0;
 
 
-    virtual std::shared_ptr<base::IFeature> getFeature(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IFeature> getFeature(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<base::IFeature> getFeature(size_t index) const = 0;
 
 
-    virtual std::shared_ptr<base::IFeature> createFeature(const std::string &id, LinkType link_type) = 0;
+    virtual std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type) = 0;
 
 
     virtual bool deleteFeature(const std::string &id) = 0;

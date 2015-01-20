@@ -52,7 +52,7 @@ public:
     std::shared_ptr<base::IDataArray> positions() const;
 
 
-    void positions(const std::string &id);
+    void positions(const std::string &name_or_id);
 
 
     bool hasPositions() const;
@@ -61,7 +61,7 @@ public:
     std::shared_ptr<base::IDataArray> extents() const;
 
 
-    void extents(const std::string &extentsId);
+    void extents(const std::string &name_or_id);
 
 
     void extents(const none_t t);
@@ -79,19 +79,19 @@ public:
     // Methods concerning references.
     //--------------------------------------------------
 
-    bool hasReference(const std::string &id) const;
+    bool hasReference(const std::string &name_or_id) const;
 
 
     size_t referenceCount() const;
 
 
-    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getReference(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::IDataArray> getReference(size_t index) const;
 
 
-    void addReference(const std::string &id);
+    void addReference(const std::string &name_or_id);
 
 
     bool removeReference(const std::string &id);
@@ -104,19 +104,19 @@ public:
     //--------------------------------------------------
 
 
-    bool hasFeature(const std::string &id) const;
+    bool hasFeature(const std::string &name_or_id) const;
 
 
     size_t featureCount() const;
 
 
-    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
+    std::shared_ptr<base::IFeature> getFeature(const std::string &name_or_id) const;
 
 
     std::shared_ptr<base::IFeature> getFeature(size_t index) const;
 
 
-    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
+    std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type);
 
 
     bool deleteFeature(const std::string &id);

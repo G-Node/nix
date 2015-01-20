@@ -109,10 +109,10 @@ public:
     /**
      * @brief Setter for the positions of the tag.
      *
-     * @param id      The id of the DataArray that defines the positions for this tag.
+     * @param name_or_id      Name or id of the DataArray that defines the positions for this tag.
      */
-    void positions(const std::string &id) {
-        backend()->positions(id);
+    void positions(const std::string &name_or_id) {
+        backend()->positions(name_or_id);
     }
 
     /**
@@ -153,10 +153,10 @@ public:
     /**
      * @brief Setter for the positions of the tag.
      *
-     * @param id        The id of the DataArray that defines the extents of the tag.
+     * @param name_or_id        Name or id of the DataArray that defines the extents of the tag.
      */
-    void extents(const std::string &id) {
-        backend()->extents(id);
+    void extents(const std::string &name_or_id) {
+        backend()->extents(name_or_id);
     }
 
     /**
@@ -220,12 +220,12 @@ public:
     /**
      * @brief Checks if the specified DataArray is referenced in this tag.
      *
-     * @param id        The id of the data array to check.
+     * @param name_or_id        Name or id of the data array to check.
      *
      * @return True if a data array with the given id is referenced, false otherwise.
      */
-    bool hasReference(const std::string &id) const {
-        return backend()->hasReference(id);
+    bool hasReference(const std::string &name_or_id) const {
+        return backend()->hasReference(name_or_id);
     }
 
     /**
@@ -238,14 +238,14 @@ public:
     }
 
     /**
-     * @brief Get a referenced DataArray by its id.
+     * @brief Get a referenced DataArray by its name or id.
      *
-     * @param id        The id of the data array.
+     * @param name_or_id        Name or id of the data array.
      *
      * @return The referenced data array.
      */
-    DataArray getReference(const std::string &id) const {
-        return backend()->getReference(id);
+    DataArray getReference(const std::string &name_or_id) const {
+        return backend()->getReference(name_or_id);
     }
 
     /**
@@ -262,10 +262,10 @@ public:
     /**
      * @brief Add a new DataArray to the list of referenced data.
      *
-     * @param id        The id of the data array.
+     * @param name_or_id        Name or id of the data array.
      */
-    void addReference(const std::string &id) {
-        backend()->addReference(id);
+    void addReference(const std::string &name_or_id) {
+        backend()->addReference(name_or_id);
     }
 
     /**
@@ -281,12 +281,12 @@ public:
      * This function only removes the association between the tag and the data array,
      * but does not delete the data array itself.
      *
-     * @param id        the id of the data array.
+     * @param name_or_id        Name or id of the data array.
      *
      * @return True if the data array was removed, false otherwise.
      */
-    bool removeReference(const std::string &id) {
-        return backend()->removeReference(id);
+    bool removeReference(const std::string &name_or_id) {
+        return backend()->removeReference(name_or_id);
     }
 
     /**
@@ -355,12 +355,12 @@ public:
     /**
      * @brief Checks if a specific feature exists on the tag.
      *
-     * @param id        The id of a feature.
+     * @param name_or_id        Name or id of a feature.
      *
      * @return True if the feature exists, false otherwise.
      */
-    bool hasFeature(const std::string &id) const {
-        return backend()->hasFeature(id);
+    bool hasFeature(const std::string &name_or_id) const {
+        return backend()->hasFeature(name_or_id);
     }
 
     /**
@@ -384,13 +384,13 @@ public:
     /**
      * @brief Retrieves a specific feature from the tag.
      *
-     * @param id        The id of the feature.
+     * @param name_or_id        Name or id of the feature.
      *
-     * @return The feature with the specified id. If it doesn't exist
+     * @return The feature with the specified name or id. If it doesn't exist
      *         an exception will be thrown.
      */
-    Feature getFeature(const std::string &id) const {
-        return backend()->getFeature(id);
+    Feature getFeature(const std::string &name_or_id) const {
+        return backend()->getFeature(name_or_id);
     }
 
     /**
@@ -431,24 +431,24 @@ public:
     /**
      * @brief Create a new feature.
      *
-     * @param id        The id of the data array that is part of the new feature.
-     * @param link_type The link type of this feature.
+     * @param name_or_id        Name or id of the data array that is part of the new feature.
+     * @param link_type         The link type of this feature.
      *
      * @return The created feature object.
      */
-    Feature createFeature(const std::string &id, LinkType link_type) {
-        return backend()->createFeature(id, link_type);
+    Feature createFeature(const std::string &name_or_id, LinkType link_type) {
+        return backend()->createFeature(name_or_id, link_type);
     }
 
     /**
      * @brief Delete a feature from the tag.
      *
-     * @param id        The id of the feature to remove.
+     * @param name_or_id        Name or id of the feature to remove.
      *
      * @return True if the feature was removed, false otherwise.
      */
-    bool deleteFeature(const std::string &id) {
-        return backend()->deleteFeature(id);
+    bool deleteFeature(const std::string &name_or_id) {
+        return backend()->deleteFeature(name_or_id);
     }
 
     /**
