@@ -61,6 +61,9 @@ public:
     std::string objectName(size_t index) const;
 
     bool hasData(const std::string &name) const;
+    DataSet createData(const std::string &name,
+            const H5::DataType &fileType,
+            const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const;
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 

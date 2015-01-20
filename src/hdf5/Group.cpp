@@ -11,6 +11,7 @@
 #include <boost/multi_array.hpp>
 #include <H5Gpublic.h>
 
+
 namespace nix {
 namespace hdf5 {
 
@@ -217,6 +218,12 @@ void Group::removeData(const std::string &name) {
         H5Gunlink(groupId, name.c_str());
 }
 
+DataSet Group::createData(const std::string &name,
+            const H5::DataType &fileType,
+            const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
+    hid_t hid = H5Dcreate(groupId, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
+    return DataSet(H5::DataSet(hid));
+}
 
 DataSet Group::openData(const std::string &name) const {
     hid_t did = H5Dopen(groupId, name.c_str(), H5P_DEFAULT);
