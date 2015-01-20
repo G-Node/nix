@@ -201,64 +201,56 @@ void TestGroup::testOpen() {
 }
 
 void TestGroup::testRefCount() {
-    H5::H5File fd("test_refcounting.h5", H5F_ACC_TRUNC);
-    H5::Group r = fd.openGroup("/");
 
-    //This is plain HDF5
-    H5::Group rc = r;
-    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
-    rc.close();
-    CPPUNIT_ASSERT_EQUAL(1, r.getCounter());
+    nix::hdf5::Group wrapped(h5group);
 
-    nix::hdf5::Group wrapped(r);
-
-    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
-    CPPUNIT_ASSERT_EQUAL(r.getLocId(), wrapped.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(h5group));
+    CPPUNIT_ASSERT_EQUAL(h5group, wrapped.h5id());
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(h5group));
 
     nix::hdf5::Group g;
-    CPPUNIT_ASSERT_EQUAL(H5::Group().getLocId(), g.h5Group().getLocId());
+    CPPUNIT_ASSERT_EQUAL(H5I_INVALID_HID, g.h5id());
 
-    g = nix::hdf5::Group(r);
-    CPPUNIT_ASSERT_EQUAL(r.getLocId(), g.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(3, r.getCounter());
+    g = nix::hdf5::Group(h5group);
+    CPPUNIT_ASSERT_EQUAL(h5group, g.h5id());
+    CPPUNIT_ASSERT_EQUAL(3, H5Iget_ref(h5group));
     nix::hdf5::Group c = g;
 
-    CPPUNIT_ASSERT_EQUAL(r.getLocId(), c.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(h5group, c.h5id());
+    CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(h5group));
 
     {
         nix::hdf5::Group tmp = g;
-        CPPUNIT_ASSERT_EQUAL(r.getLocId(), tmp.h5Group().getLocId());
-        CPPUNIT_ASSERT_EQUAL(5, r.getCounter());
+        CPPUNIT_ASSERT_EQUAL(h5group, tmp.h5id());
+        CPPUNIT_ASSERT_EQUAL(5, H5Iget_ref(h5group));
     }
 
-    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
+    CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(h5group));
 
-    H5::Group ha = fd.openGroup("/");
+    hid_t ha = H5Gopen2(h5file, "/", H5P_DEFAULT);
 
-    CPPUNIT_ASSERT(ha.getLocId() != r.getLocId());
+    CPPUNIT_ASSERT(ha != h5group);
 
-    CPPUNIT_ASSERT_EQUAL(1, ha.getCounter());
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ha));
     nix::hdf5::Group b(ha);
-    CPPUNIT_ASSERT_EQUAL(ha.getLocId(), b.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(2, ha.getCounter());
+    CPPUNIT_ASSERT_EQUAL(ha, b.h5id());
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(ha));
 
-    wrapped = nix::hdf5::Group(r);
-    CPPUNIT_ASSERT_EQUAL(r.getLocId(), wrapped.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(4, r.getCounter());
-    CPPUNIT_ASSERT_EQUAL(2, ha.getCounter());
+    wrapped = nix::hdf5::Group(h5group);
+    CPPUNIT_ASSERT_EQUAL(h5group, wrapped.h5id());
+    CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(h5group));
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(ha));
 
     c = nix::hdf5::Group(b);
-    CPPUNIT_ASSERT_EQUAL(ha.getLocId(), c.h5Group().getLocId());
-    CPPUNIT_ASSERT_EQUAL(3, r.getCounter());
-    CPPUNIT_ASSERT_EQUAL(3, ha.getCounter());
+    CPPUNIT_ASSERT_EQUAL(ha, c.h5id());
+    CPPUNIT_ASSERT_EQUAL(3, H5Iget_ref(h5group));
+    CPPUNIT_ASSERT_EQUAL(3, H5Iget_ref(ha));
 
     wrapped = c;
-    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
-    CPPUNIT_ASSERT_EQUAL(4, ha.getCounter());
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(h5group));
+    CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(ha));
 
     b = wrapped;
-    CPPUNIT_ASSERT_EQUAL(2, r.getCounter());
-    CPPUNIT_ASSERT_EQUAL(4, ha.getCounter());
+    CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(h5group));
+    CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(ha));
 }
