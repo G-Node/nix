@@ -150,8 +150,13 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
     for (size_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasData(obj_name)) {
-            DataSet dset(h5Group().openDataSet(obj_name));
-            if(dset.hasAttr(attribute)) dsets.push_back(dset);
+            hid_t did = H5Dopen(groupId, obj_name.c_str(), H5P_DEFAULT);
+
+            if (H5Aexists(did, attribute.c_str())) {
+                dsets.emplace_back(H5::DataSet(did));
+            } else {
+                H5Dclose(did);
+            }
         }
     }
     // look for first dataset with given attribute set to given value
@@ -214,7 +219,8 @@ void Group::removeData(const std::string &name) {
 
 
 DataSet Group::openData(const std::string &name) const {
-    H5::DataSet ds5 = h5Group().openDataSet(name);
+    hid_t did = H5Dopen(groupId, name.c_str(), H5P_DEFAULT);
+    H5::DataSet ds5(did);
     return DataSet(ds5);
 }
 
