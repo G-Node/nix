@@ -195,7 +195,7 @@ bool Group::hasData(const std::string &name) const {
 
 void Group::removeData(const std::string &name) {
     if (hasData(name))
-        h5Group().unlink(name);
+        H5Gunlink(groupId, name.c_str());
 }
 
 
@@ -257,7 +257,7 @@ optGroup Group::openOptGroup(const std::string &name) {
 
 void Group::removeGroup(const std::string &name) {
     if (hasGroup(name))
-        h5Group().unlink(name);
+        H5Gunlink(groupId, name.c_str());
 }
 
 
