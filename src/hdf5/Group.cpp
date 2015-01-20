@@ -74,7 +74,7 @@ bool Group::hasAttr(const std::string &name) const {
 
 
 void Group::removeAttr(const std::string &name) const {
-    h5Group().removeAttr(name);
+    H5Adelete(groupId, name.c_str());
 }
 
 
