@@ -89,7 +89,12 @@ bool Group::hasObject(const std::string &name) const {
 
 
 size_t Group::objectCount() const {
-    return h5Group().getNumObjs();
+    hsize_t n_objs;
+    herr_t res = H5Gget_num_objs(groupId, &n_objs);
+    if(res < 0) {
+        throw std::runtime_error("Could not get object count"); //FIXME
+    }
+    return n_objs;
 }
 
 
