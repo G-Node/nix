@@ -31,17 +31,21 @@ class NIXAPI Group {
 
 private:
 
-    H5::Group h5group;
+    hid_t groupId;
 
 public:
 
     Group();
 
-    Group(H5::Group h5group);
+    Group(const H5::Group &h5group);
+    Group(hid_t id);
 
     Group(const Group &group);
+    Group(Group &&other);
 
-    Group& operator=(const Group &group);
+    Group& operator=(Group group);
+
+    void close();
 
     bool hasAttr(const std::string &name) const;
     void removeAttr(const std::string &name) const;
@@ -57,6 +61,9 @@ public:
     std::string objectName(size_t index) const;
 
     bool hasData(const std::string &name) const;
+    DataSet createData(const std::string &name,
+            const H5::DataType &fileType,
+            const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const;
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
@@ -183,7 +190,19 @@ public:
     H5::Group h5Group() const;
     virtual ~Group();
 
+
+    //NB: use the following functions with caution
+    hid_t h5id() const; //no refcount increase
+    int refCount() const;
+
+
 private:
+
+    H5::Attribute openAttr(const std::string &name) const;
+    H5::Attribute createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const;
+
+    bool objectOfType(const std::string &name, H5O_type_t type) const;
+
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
     static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
 
@@ -204,11 +223,11 @@ template<typename T> void Group::setAttr(const std::string &name, const T &value
     H5::Attribute attr;
 
     if (hasAttr(name)) {
-        attr = h5group.openAttribute(name);
+        attr = openAttr(name);
     } else {
         H5::DataType fileType = data_type_to_h5_filetype(dtype);
         H5::DataSpace fileSpace = DataSpace::create(shape, false);
-        attr = h5group.createAttribute(name, fileType, fileSpace);
+        attr = createAttr(name, fileType, fileSpace);
     }
 
     writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
@@ -225,7 +244,7 @@ template<typename T> bool Group::getAttr(const std::string &name, T &value) cons
     Hydra<T> hydra(value);
 
     //determine attr's size and resize value accordingly
-    H5::Attribute attr = h5group.openAttribute(name);
+    H5::Attribute attr = openAttr(name);
     H5::DataSpace space = attr.getSpace();
     int rank = space.getSimpleExtentNdims();
     NDSize dims(static_cast<size_t>(rank));
@@ -249,7 +268,7 @@ void Group::setData(const std::string &name, const T &value)
 
     DataSet ds;
     if (!hasData(name)) {
-        ds = DataSet::create(h5group, name, dtype, shape);
+        ds = DataSet::create(h5Group(), name, dtype, shape);
     } else {
         ds = openData(name);
         ds.setExtent(shape);
