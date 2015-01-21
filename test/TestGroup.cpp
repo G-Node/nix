@@ -21,7 +21,7 @@ void TestGroup::setUp() {
     unsigned int &openMode = open_mode();
 
     if (openMode == H5F_ACC_TRUNC) {
-        h5file = H5Fcreate("test_grou.h5", openMode, H5P_DEFAULT, H5P_DEFAULT);
+        h5file = H5Fcreate("test_group.h5", openMode, H5P_DEFAULT, H5P_DEFAULT);
     } else {
         h5file = H5Fopen("test_group.h5", openMode, H5P_DEFAULT);
     }
