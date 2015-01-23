@@ -41,16 +41,6 @@ Group::Group(const Group &other) : BaseHDF5(other) {}
 Group::Group(const H5::Group &h5group) : BaseHDF5(h5group.getLocId()) {}
 
 
-bool Group::hasAttr(const std::string &name) const {
-    return H5Aexists(hid, name.c_str());
-}
-
-
-void Group::removeAttr(const std::string &name) const {
-    H5Adelete(hid, name.c_str());
-}
-
-
 bool Group::hasObject(const std::string &name) const {
     // empty string should return false, not exception (which H5Lexists would)
     if (name.empty()) {
@@ -354,42 +344,6 @@ bool Group::removeAllLinks(const std::string &name) {
     }
 
     return removed;
-}
-
-
-void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
-}
-
-
-void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
-}
-
-
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
-}
-
-
-H5::Attribute Group::openAttr(const std::string &name) const {
-    hid_t ha = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
-    return H5::Attribute(ha);
-}
-
-
-H5::Attribute Group::createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const {
-    hid_t ha = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, H5P_DEFAULT);
-    return H5::Attribute(ha);
 }
 
 
