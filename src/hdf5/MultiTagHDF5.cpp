@@ -222,13 +222,16 @@ void MultiTagHDF5::addReference(const std::string &name_or_id) {
 }
 
 
-bool MultiTagHDF5::removeReference(const std::string &id) {
+bool MultiTagHDF5::removeReference(const std::string &name_or_id) {
     boost::optional<Group> g = refs_group();
     bool removed = false;
 
     if (g) {
-        g->removeGroup(id);
-        removed = true;
+        shared_ptr<IDataArray> reference = getReference(name_or_id);
+        if (reference) {
+            g->removeGroup(reference->id());
+            removed = true;
+        }
     }
 
     return removed;

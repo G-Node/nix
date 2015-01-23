@@ -82,7 +82,7 @@ public:
     virtual void addReference(const std::string &name_or_id) = 0;
 
 
-    virtual bool removeReference(const std::string &id) = 0;
+    virtual bool removeReference(const std::string &name_or_id) = 0;
 
 
     virtual void references(const std::vector<DataArray> &references) = 0;

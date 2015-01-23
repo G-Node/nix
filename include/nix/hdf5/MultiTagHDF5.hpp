@@ -94,7 +94,7 @@ public:
     void addReference(const std::string &name_or_id);
 
 
-    bool removeReference(const std::string &id);
+    bool removeReference(const std::string &name_or_id);
 
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     void references(const std::vector<DataArray> &references);
