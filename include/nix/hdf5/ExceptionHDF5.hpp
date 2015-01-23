@@ -37,6 +37,22 @@ private:
 };
 
 
+class H5Error : public H5Exception {
+public:
+    H5Error(herr_t err, const std::string &msg)
+    : H5Exception(msg), error(err) {
+    }
+
+    static void check(herr_t result, const std::string &msg_if_fail) {
+        if (result < 0) {
+            throw H5Error(result, msg_if_fail);
+        }
+    }
+
+private:
+    herr_t      error;
+};
+
 
 } // nix::hdf5
 } // nix::
