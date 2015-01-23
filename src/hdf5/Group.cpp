@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 #include <nix/util/util.hpp>
 #include <boost/multi_array.hpp>
 #include <H5Gpublic.h>
@@ -62,9 +63,7 @@ bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
 
     err = H5Oget_info(obj, &info);
 
-    if (err < 0) {
-        throw std::runtime_error("Could not obtain object info");
-    }
+    H5Error::check(err, "Could not obtain object info");
 
     bool res = info.type == type;
 
@@ -75,9 +74,7 @@ bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
 size_t Group::objectCount() const {
     hsize_t n_objs;
     herr_t res = H5Gget_num_objs(hid, &n_objs);
-    if(res < 0) {
-        throw std::runtime_error("Could not get object count"); //FIXME
-    }
+    H5Error::check(res, "Could not get object count");
     return n_objs;
 }
 
@@ -163,7 +160,7 @@ std::string Group::objectName(size_t index) const {
         str_name = name;
         delete [] name;
     } else {
-        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");
+        throw H5Exception("objectName: No object found, H5Lget_name_by_idx returned no name");
     }
 
     return str_name;
@@ -210,24 +207,22 @@ Group Group::openGroup(const std::string &name, bool create) const {
         hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
 
         if (gcpl < 0) {
-            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Pcreate)");
+            throw H5Exception("Unable to create group with name '" + name + "'! (H5Pcreate)");
         }
 
         //we want hdf5 to keep track of the order in which links were created so that
         //the order for indexed based accessors is stable cf. issue #387
         herr_t res = H5Pset_link_creation_order(gcpl, H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
-        if (res < 0) {
-            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
-        }
+        H5Error::check(res, "Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
 
         hid_t h5_gid = H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT);
         H5Pclose(gcpl);
         if (h5_gid < 0) {
-            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Gcreate2)");
+            throw H5Exception("Unable to create group with name '" + name + "'! (H5Gcreate2)");
         }
         g = Group(H5::Group(h5_gid));
     } else {
-        throw std::runtime_error("Unable to open group with name '" + name + "'!");
+        throw H5Exception("Unable to open group with name '" + name + "'!");
     }
     return g;
 }
@@ -267,9 +262,7 @@ Group Group::createLink(const Group &target, const std::string &link_name) {
     if(!util::nameCheck(link_name)) throw InvalidName("createLink");
     herr_t error = H5Lcreate_hard(target.hid, ".", hid, link_name.c_str(),
                                   H5L_SAME_LOC, H5L_SAME_LOC);
-    if (error)
-        throw std::runtime_error("Unable to create link " + link_name);
-
+    H5Error::check(error, "Unable to create link " + link_name);
     return openGroup(link_name, false);
 }
 
