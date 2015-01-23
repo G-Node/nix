@@ -12,9 +12,10 @@
 #include <string>
 
 #include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/WrapH5ID.hpp>
 #include <nix/hdf5/DataSetHDF5.hpp>
-#include <nix/Hydra.hpp>
 #include <nix/hdf5/DataSpace.hpp>
+#include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
 
 #include <boost/optional.hpp>
@@ -27,25 +28,19 @@ struct optGroup;
 /**
  * TODO documentation
  */
-class NIXAPI Group {
-
-private:
-
-    hid_t groupId;
+class NIXAPI Group : public WrapH5ID {
 
 public:
 
     Group();
 
+    Group(hid_t hid);
+
+    Group(const Group &other);
+
+//    Group(Group &&other);
+
     Group(const H5::Group &h5group);
-    Group(hid_t id);
-
-    Group(const Group &group);
-    Group(Group &&other);
-
-    Group& operator=(Group group);
-
-    void close();
 
     bool hasAttr(const std::string &name) const;
     void removeAttr(const std::string &name) const;
@@ -184,16 +179,8 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
-    bool operator==(const Group &group) const;
-    bool operator!=(const Group &group) const;
-
     H5::Group h5Group() const;
     virtual ~Group();
-
-
-    //NB: use the following functions with caution
-    hid_t h5id() const; //no refcount increase
-    int refCount() const;
 
 
 private:
@@ -299,7 +286,7 @@ bool Group::getData(const std::string &name, T &value) const
 
 /**
  * Helper struct that works as a functor like {@link Group::openGroup}:
- * 
+ *
  * Open and eventually create a group with the given name inside
  * this group. If creation is not allowed (bool param is "false") and
  * the group does not exist an error is thrown. If creation is not
@@ -310,7 +297,7 @@ struct NIXAPI optGroup {
     mutable boost::optional<Group> g;
     Group parent;
     std::string g_name;
-    
+
 public:
     optGroup(const Group &parent, const std::string &g_name);
 
