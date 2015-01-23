@@ -148,7 +148,7 @@ void TestMultiTag::testUnits() {
     block.deleteMultiTag(dt.id());
 }
 
-//TODO Constraints on References are not tested yet.
+//TODO merge this test into TestBaseTag::testReferences
 
 void TestMultiTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
