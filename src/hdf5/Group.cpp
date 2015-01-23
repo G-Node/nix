@@ -38,9 +38,6 @@ Group::Group(hid_t hid) : WrapH5ID(hid) {}
 Group::Group(const Group &other) : WrapH5ID(other) {}
 
 
-//Group::Group(Group &&other) : WrapH5ID(other) {}
-
-
 Group::Group(const H5::Group &h5group) : WrapH5ID(h5group.getLocId()) {}
 
 

@@ -19,8 +19,8 @@ WrapH5ID::WrapH5ID()
 {}
 
 
-WrapH5ID::WrapH5ID(hid_t hid)
-    : hid(hid)
+WrapH5ID::WrapH5ID(hid_t id)
+    : hid(id)
 {
     inc();
 }
@@ -39,8 +39,11 @@ WrapH5ID::WrapH5ID(WrapH5ID &&other) : hid(other.hid) {
 
 
 WrapH5ID& WrapH5ID::operator=(const WrapH5ID &other) {
-    hid = other.hid;
-    inc();
+    if (hid != other.hid) {
+        dec();
+        hid = other.hid;
+        inc();
+    }
     return *this;
 }
 

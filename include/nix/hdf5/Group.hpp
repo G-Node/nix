@@ -38,8 +38,6 @@ public:
 
     Group(const Group &other);
 
-//    Group(Group &&other);
-
     Group(const H5::Group &h5group);
 
     bool hasAttr(const std::string &name) const;
