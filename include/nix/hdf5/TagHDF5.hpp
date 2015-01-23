@@ -10,7 +10,7 @@
 #ifndef NIX_TAG_HDF5_H
 #define NIX_TAG_HDF5_H
 
-#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include <nix/hdf5/BaseTagHDF5.hpp>
 #include <nix/base/ITag.hpp>
 
 namespace nix {
@@ -20,15 +20,12 @@ namespace hdf5 {
 /**
  * Class that represents a NIX tag.
  */
-class TagHDF5 : virtual public base::ITag, public EntityWithSourcesHDF5 {
+class TagHDF5 : public BaseTagHDF5, virtual public base::ITag {
 
 private:
 
     static const NDSize MIN_CHUNK_SIZE;
     static const NDSize MAX_SIZE_1D;
-
-    optGroup feature_group;
-    optGroup refs_group;
 
 public:
 
@@ -72,53 +69,6 @@ public:
 
 
     void extent(const none_t t);
-
-
-    //--------------------------------------------------
-    // Methods concerning references.
-    //--------------------------------------------------
-
-    bool hasReference(const std::string &id) const;
-
-
-    size_t referenceCount() const;
-
-
-    std::shared_ptr<base::IDataArray> getReference(const std::string &id) const;
-
-
-    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
-
-
-    void addReference(const std::string &id);
-
-
-    bool removeReference(const std::string &id);
-
-
-    void references(const std::vector<DataArray> &references);
-
-    //--------------------------------------------------
-    // Methods concerning features.
-    //--------------------------------------------------
-
-    bool hasFeature(const std::string &id) const;
-
-
-    size_t featureCount() const;
-
-
-    std::shared_ptr<base::IFeature> getFeature(const std::string &id) const;
-
-
-    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
-
-
-    std::shared_ptr<base::IFeature> createFeature(const std::string &data_array_id, LinkType link_type);
-
-
-    bool deleteFeature(const std::string &id);
-
 
     //--------------------------------------------------
     // Other methods and functions
