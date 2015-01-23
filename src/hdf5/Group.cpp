@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 #include <nix/util/util.hpp>
 #include <boost/multi_array.hpp>
 #include <H5Gpublic.h>
@@ -163,7 +164,7 @@ std::string Group::objectName(size_t index) const {
         str_name = name;
         delete [] name;
     } else {
-        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");
+        throw H5Exception("objectName: No object found, H5Lget_name_by_idx returned no name");
     }
 
     return str_name;
@@ -210,7 +211,7 @@ Group Group::openGroup(const std::string &name, bool create) const {
         hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
 
         if (gcpl < 0) {
-            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Pcreate)");
+            throw H5Exception("Unable to create group with name '" + name + "'! (H5Pcreate)");
         }
 
         //we want hdf5 to keep track of the order in which links were created so that
@@ -223,11 +224,11 @@ Group Group::openGroup(const std::string &name, bool create) const {
         hid_t h5_gid = H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT);
         H5Pclose(gcpl);
         if (h5_gid < 0) {
-            throw std::runtime_error("Unable to create group with name '" + name + "'! (H5Gcreate2)");
+            throw H5Exception("Unable to create group with name '" + name + "'! (H5Gcreate2)");
         }
         g = Group(H5::Group(h5_gid));
     } else {
-        throw std::runtime_error("Unable to open group with name '" + name + "'!");
+        throw H5Exception("Unable to open group with name '" + name + "'!");
     }
     return g;
 }
