@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/WrapH5ID.hpp>
+#include <nix/hdf5/BaseHDF5.hpp>
 #include <H5Gpublic.h>
 
 
@@ -14,31 +14,31 @@ namespace nix {
 namespace hdf5 {
 
 
-WrapH5ID::WrapH5ID()
+BaseHDF5::BaseHDF5()
     : hid(H5I_INVALID_HID)
 {}
 
 
-WrapH5ID::WrapH5ID(hid_t id)
+BaseHDF5::BaseHDF5(hid_t id)
     : hid(id)
 {
     inc();
 }
 
 
-WrapH5ID::WrapH5ID(const WrapH5ID &other)
+BaseHDF5::BaseHDF5(const BaseHDF5 &other)
     : hid(other.hid)
 {
     inc();
 }
 
 
-WrapH5ID::WrapH5ID(WrapH5ID &&other) : hid(other.hid) {
+BaseHDF5::BaseHDF5(BaseHDF5 &&other) : hid(other.hid) {
     other.invalidate();
 }
 
 
-WrapH5ID& WrapH5ID::operator=(const WrapH5ID &other) {
+BaseHDF5& BaseHDF5::operator=(const BaseHDF5 &other) {
     if (hid != other.hid) {
         dec();
         hid = other.hid;
@@ -48,14 +48,14 @@ WrapH5ID& WrapH5ID::operator=(const WrapH5ID &other) {
 }
 
 
-WrapH5ID& WrapH5ID::operator=(WrapH5ID &&other) {
+BaseHDF5& BaseHDF5::operator=(BaseHDF5 &&other) {
     hid = other.hid;
     other.invalidate();
     return *this;
 }
 
 
-bool WrapH5ID::operator==(const WrapH5ID &other) const {
+bool BaseHDF5::operator==(const BaseHDF5 &other) const {
     if (H5Iis_valid(hid) && H5Iis_valid(other.hid))
         return hid == other.hid;
     else
@@ -63,17 +63,17 @@ bool WrapH5ID::operator==(const WrapH5ID &other) const {
 }
 
 
-bool WrapH5ID::operator!=(const WrapH5ID &other) const {
+bool BaseHDF5::operator!=(const BaseHDF5 &other) const {
     return !(*this == other);
 }
 
 
-hid_t WrapH5ID::h5id() const {
+hid_t BaseHDF5::h5id() const {
     return hid;
 }
 
 
-int WrapH5ID::refCount() const {
+int BaseHDF5::refCount() const {
     if (H5Iis_valid(hid)) {
         return H5Iget_ref(hid);
     } else {
@@ -82,32 +82,32 @@ int WrapH5ID::refCount() const {
 }
 
 
-void WrapH5ID::close() {
+void BaseHDF5::close() {
     dec();
     invalidate();
 }
 
 
-WrapH5ID::~WrapH5ID() {
+BaseHDF5::~BaseHDF5() {
     close();
 }
 
 
-void WrapH5ID::inc() const {
+void BaseHDF5::inc() const {
     if (H5Iis_valid(hid)) {
         H5Iinc_ref(hid);
     }
 }
 
 
-void WrapH5ID::dec() const {
+void BaseHDF5::dec() const {
     if (H5Iis_valid(hid)) {
         H5Idec_ref(hid);
     }
 }
 
 
-void WrapH5ID::invalidate() {
+void BaseHDF5::invalidate() {
     hid = H5I_INVALID_HID;
 }
 

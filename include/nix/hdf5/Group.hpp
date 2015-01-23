@@ -12,7 +12,7 @@
 #include <string>
 
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/WrapH5ID.hpp>
+#include <nix/hdf5/BaseHDF5.hpp>
 #include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/Hydra.hpp>
@@ -28,7 +28,7 @@ struct optGroup;
 /**
  * TODO documentation
  */
-class NIXAPI Group : public WrapH5ID {
+class NIXAPI Group : public BaseHDF5 {
 
 public:
 

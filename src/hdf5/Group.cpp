@@ -29,16 +29,16 @@ boost::optional<Group> optGroup::operator() (bool create) const {
 }
 
 
-Group::Group() : WrapH5ID() {}
+Group::Group() : BaseHDF5() {}
 
 
-Group::Group(hid_t hid) : WrapH5ID(hid) {}
+Group::Group(hid_t hid) : BaseHDF5(hid) {}
 
 
-Group::Group(const Group &other) : WrapH5ID(other) {}
+Group::Group(const Group &other) : BaseHDF5(other) {}
 
 
-Group::Group(const H5::Group &h5group) : WrapH5ID(h5group.getLocId()) {}
+Group::Group(const H5::Group &h5group) : BaseHDF5(h5group.getLocId()) {}
 
 
 bool Group::hasAttr(const std::string &name) const {

@@ -19,7 +19,7 @@
 namespace nix {
 namespace hdf5 {
 
-class NIXAPI WrapH5ID {
+class NIXAPI BaseHDF5 {
 
 protected:
 
@@ -27,21 +27,21 @@ protected:
 
 public:
 
-    WrapH5ID();
+    BaseHDF5();
 
-    WrapH5ID(hid_t hid);
+    BaseHDF5(hid_t hid);
 
-    WrapH5ID(const WrapH5ID &other);
+    BaseHDF5(const BaseHDF5 &other);
 
-    WrapH5ID(WrapH5ID &&other);
+    BaseHDF5(BaseHDF5 &&other);
 
-    WrapH5ID& operator=(const WrapH5ID &other);
+    BaseHDF5& operator=(const BaseHDF5 &other);
 
-    WrapH5ID& operator=(WrapH5ID &&other);
+    BaseHDF5& operator=(BaseHDF5 &&other);
 
-    bool operator==(const WrapH5ID &other) const;
+    bool operator==(const BaseHDF5 &other) const;
 
-    bool operator!=(const WrapH5ID &other) const;
+    bool operator!=(const BaseHDF5 &other) const;
 
     //NB: use the following functions with caution
     hid_t h5id() const; //no refcount increase
@@ -50,7 +50,7 @@ public:
 
     void close();
 
-    virtual ~WrapH5ID();
+    virtual ~BaseHDF5();
 
 protected:
 
