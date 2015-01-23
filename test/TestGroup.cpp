@@ -236,7 +236,7 @@ void TestGroup::testRefCount() {
     CPPUNIT_ASSERT_EQUAL(ha, b.h5id());
     CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(ha));
 
-    wrapped = nix::hdf5::Group(h5group);
+    wrapped = nix::hdf5::Group(h5group);  // test self assignment! no inc ref
     CPPUNIT_ASSERT_EQUAL(h5group, wrapped.h5id());
     CPPUNIT_ASSERT_EQUAL(4, H5Iget_ref(h5group));
     CPPUNIT_ASSERT_EQUAL(2, H5Iget_ref(ha));
