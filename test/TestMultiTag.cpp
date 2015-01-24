@@ -148,7 +148,7 @@ void TestMultiTag::testUnits() {
     block.deleteMultiTag(dt.id());
 }
 
-//TODO Constraints on References are not tested yet.
+//TODO merge this test into TestBaseTag::testReferences
 
 void TestMultiTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
@@ -196,9 +196,10 @@ void TestMultiTag::testReferences(){
     delReferrmsg << "TestMultiTag::testReference: removeReference did not work!";
     dt.removeReference(da_1.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
-    dt.removeReference(da_2.id());
+    dt.removeReference("NONEXISTENT");
+    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
+    dt.removeReference(da_2.name());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
-
 
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};

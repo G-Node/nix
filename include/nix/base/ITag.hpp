@@ -15,6 +15,7 @@
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/IFeature.hpp>
+#include <nix/base/IBaseTag.hpp>
 
 namespace nix {
 
@@ -27,7 +28,7 @@ namespace base {
  *
  * See {@link nix::Tag} for a more detailed description.
  */
-class NIXAPI ITag : virtual public base::IEntityWithSources {
+class NIXAPI ITag : virtual public base::IBaseTag {
 
 public:
 
@@ -53,51 +54,6 @@ public:
 
 
     virtual void extent(const none_t t) = 0;
-
-    //--------------------------------------------------
-    // Methods concerning references.
-    //--------------------------------------------------
-
-    virtual bool hasReference(const std::string &id) const = 0;
-
-
-    virtual size_t referenceCount() const = 0;
-
-
-    virtual std::shared_ptr<IDataArray> getReference(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<IDataArray> getReference(size_t index) const = 0;
-
-
-    virtual void addReference(const std::string &id) = 0;
-
-
-    virtual bool removeReference(const std::string &id) = 0;
-
-    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
-    virtual void references(const std::vector<DataArray> &references) = 0;
-
-    //--------------------------------------------------
-    // Methods concerning features.
-    //--------------------------------------------------
-
-    virtual bool hasFeature(const std::string &id) const = 0;
-
-
-    virtual size_t featureCount() const = 0;
-
-
-    virtual std::shared_ptr<IFeature> getFeature(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<IFeature> getFeature(size_t index) const = 0;
-
-
-    virtual std::shared_ptr<IFeature> createFeature(const std::string &data_array_id, LinkType link_type) = 0;
-
-
-    virtual bool deleteFeature(const std::string &id) = 0;
 
 
     virtual ~ITag() {}

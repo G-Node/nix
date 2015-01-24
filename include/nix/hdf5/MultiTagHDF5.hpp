@@ -14,18 +14,14 @@
 #include <string>
 #include <vector>
 
-#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include <nix/base/IMultiTag.hpp>
+#include <nix/hdf5/BaseTagHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
 
 
-class MultiTagHDF5 : virtual public base::IMultiTag, public EntityWithSourcesHDF5 {
-
-private:
-
-    optGroup feature_group;
-    optGroup refs_group;
+class MultiTagHDF5 : public BaseTagHDF5, virtual public base::IMultiTag {
 
 public:
 
@@ -74,57 +70,6 @@ public:
 
 
     void units(const none_t t);
-
-    //--------------------------------------------------
-    // Methods concerning references.
-    //--------------------------------------------------
-
-    bool hasReference(const std::string &name_or_id) const;
-
-
-    size_t referenceCount() const;
-
-
-    std::shared_ptr<base::IDataArray> getReference(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IDataArray> getReference(size_t index) const;
-
-
-    void addReference(const std::string &name_or_id);
-
-
-    bool removeReference(const std::string &id);
-
-    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
-    void references(const std::vector<DataArray> &references);
-
-    //--------------------------------------------------
-    // Methods concerning features.
-    //--------------------------------------------------
-
-
-    bool hasFeature(const std::string &name_or_id) const;
-
-
-    size_t featureCount() const;
-
-
-    std::shared_ptr<base::IFeature> getFeature(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IFeature> getFeature(size_t index) const;
-
-
-    std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type);
-
-
-    bool deleteFeature(const std::string &id);
-
-
-    //--------------------------------------------------
-    // Other methods and functions
-    //--------------------------------------------------
 
 
     virtual ~MultiTagHDF5();
