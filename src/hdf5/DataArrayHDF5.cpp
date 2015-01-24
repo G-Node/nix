@@ -147,7 +147,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients);
+        ds = DataSet::create(group().h5Group(), "polynom_coefficients", DataType::Double, {coefficients.size()});
     }
     ds.write(coefficients);
     forceUpdatedAt();
