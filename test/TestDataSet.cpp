@@ -233,16 +233,6 @@ void TestDataSet::testBasic() {
             CPPUNIT_ASSERT_EQUAL(E[i][j], F[i][j]);
 
     CPPUNIT_ASSERT_THROW(ds.setExtent(nix::NDSize({ 4, 6, 8 })), nix::InvalidRank);
-    //***
-
-    hdf5::DataSet ds2 = hdf5::DataSet::create(h5group, "dsDouble2", A);
-    ds2.write(A);
-    array_type D(boost::extents[1][1]);
-    ds2.read(D, true);
-
-    for(index i = 0; i != 4; ++i)
-        for(index j = 0; j != 6; ++j)
-            CPPUNIT_ASSERT_EQUAL(A[i][j], D[i][j]);
 
 }
 
@@ -346,7 +336,7 @@ void TestDataSet::testNDArrayIO()
         for(size_t j = 0; j != 5; ++j)
             A.set<double>(nix::NDSize({ i, j }), values++);
 
-    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", A);
+    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "NArray5x5", nix::DataType::Double, dims);
     ds.write(A);
 
     nix::NDArray Atest(nix::DataType::Double, dims);
@@ -367,7 +357,7 @@ void TestDataSet::testNDArrayIO()
             for(size_t k = 0; k != dims[2]; ++k)
                 B.set<double>(nix::NDSize({ i, j, k }), values++);
 
-    ds = nix::hdf5::DataSet::create(h5group, "NDArray3x4x5", B);
+    ds = nix::hdf5::DataSet::create(h5group, "NDArray3x4x5", nix::DataType::Double, dims);
     ds.write(B);
 
     nix::NDArray Btest(nix::DataType::Double, dims);
@@ -386,7 +376,7 @@ void TestDataSet::testValArrayIO() {
     std::valarray<double> va_double(10);
     std::iota(std::begin(va_double), std::end(va_double), 0);
 
-    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "ValArrayd10", va_double);
+    hdf5::DataSet ds = nix::hdf5::DataSet::create(h5group, "ValArrayd10", nix::DataType::Double, NDSize{10});
     ds.write(va_double);
 
     std::valarray<double> va_double1{};
