@@ -117,9 +117,6 @@ public:
 
     static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype, const NDSize &size);
 
-    template<typename T>
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, const T &value);
-
     static DataSet create(const H5::CommonFG &parent, const std::string &name, const H5::DataType &fileType,
                           const NDSize &size, const NDSize &maxsize = {}, const NDSize &chunks = {},
                           bool maxSizeUnlimited = true, bool guessChunks = true);
@@ -206,29 +203,6 @@ template<typename T> bool DataSet::getAttr(const std::string &name, T &value) co
 
     return true;
 }
-
-
-template<typename T>
-DataSet DataSet::create(const H5::CommonFG &parent, const std::string &name, const T &data)
-{
-    const Hydra<const T> hydra(data);
-
-    DataType dtype = hydra.element_data_type();
-    H5::DataType fileType = data_type_to_h5_filetype(dtype);
-
-    NDSize shape = hydra.shape();
-    NDSize maxsize(shape.size(), H5S_UNLIMITED);
-
-    NDSize chunks = guessChunking(shape, dtype);
-    H5::DSetCreatPropList plcreate;
-    int rank = static_cast<int>(chunks.size());
-    plcreate.setChunk(rank, chunks.data());
-
-    H5::DataSpace space = DataSpace::create(shape, maxsize);
-    H5::DataSet dset = parent.createDataSet(name, fileType, space, plcreate);
-    return DataSet(dset);
-}
-
 
 
 /**
