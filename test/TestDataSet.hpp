@@ -23,6 +23,7 @@
 
 #include <nix/NDArray.hpp>
 #include <nix.hpp>
+#include <nix/hdf5/Group.hpp>
 #include <nix/hdf5/DataSetHDF5.hpp>
 
 
@@ -46,8 +47,8 @@ private:
 
     static unsigned int &open_mode();
 
-    H5::H5File h5file;
-    H5::Group h5group;
+    hid_t h5file;
+    nix::hdf5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestDataSet);
     CPPUNIT_TEST(testNDSize);

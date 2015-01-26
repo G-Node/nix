@@ -113,10 +113,10 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
             hid_t did = H5Dopen(hid, obj_name.c_str(), H5P_DEFAULT);
 
             if (H5Aexists(did, attribute.c_str())) {
-                dsets.emplace_back(H5::DataSet(did));
-            } else {
-                H5Dclose(did);
+                dsets.emplace_back(did);
             }
+
+            H5Dclose(did);
         }
     }
     // look for first dataset with given attribute set to given value
@@ -181,13 +181,63 @@ DataSet Group::createData(const std::string &name,
             const H5::DataType &fileType,
             const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
     hid_t id = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
-    return DataSet(H5::DataSet(id));
+
+    DataSet ds(id);
+    H5Dclose(id);
+    return ds;
 }
+
+DataSet Group::createData(const std::string &name,
+        DataType dtype,
+        const NDSize &size) const
+{
+    H5::DataType fileType = data_type_to_h5_filetype(dtype);
+    return createData(name, fileType, size);
+}
+
+
+DataSet Group::createData(const std::string &name,
+        const H5::DataType &fileType,
+        const NDSize &size,
+        const NDSize &maxsize,
+        const NDSize &chunks,
+        bool max_size_unlimited,
+        bool guess_chunks) const
+{
+    H5::DataSpace space;
+
+    if (size) {
+        if (maxsize) {
+            space = DataSpace::create(size, maxsize);
+        } else {
+            space = DataSpace::create(size, max_size_unlimited);
+        }
+    }
+
+    H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+
+    if (chunks) {
+        int rank = static_cast<int>(chunks.size());
+        plcreate.setChunk(rank, chunks.data());
+    } else if (guess_chunks) {
+        NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
+        plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
+    }
+
+    return createData(name, fileType, space, plcreate);
+}
+
 
 DataSet Group::openData(const std::string &name) const {
     hid_t did = H5Dopen(hid, name.c_str(), H5P_DEFAULT);
-    H5::DataSet ds5(did);
-    return DataSet(ds5);
+
+    if (did < 0) {
+        throw H5Exception("Group::openData(): Could not open DataSet");
+    }
+
+    DataSet ds(did);
+    H5Dclose(did);
+    return ds;
 }
 
 

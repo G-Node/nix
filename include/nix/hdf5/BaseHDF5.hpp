@@ -18,11 +18,74 @@
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
-#include <nix/hdf5/DataSetHDF5.hpp>
 
 
 namespace nix {
 namespace hdf5 {
+
+
+class StringWriter {
+public:
+    typedef std::string  value_type;
+    typedef value_type  *pointer;
+    typedef char        *data_type;
+    typedef data_type   *data_ptr;
+
+
+    StringWriter(const NDSize &size, pointer stringdata)
+            : nelms(size.nelms()), data(stringdata) {
+        buffer = new data_type[nelms];
+    }
+
+    data_ptr operator*() {
+        return buffer;
+    }
+
+    void finish() {
+        for (size_t i = 0; i < nelms; i++) {
+            data[i] = buffer[i];
+        }
+    }
+
+    ~StringWriter() {
+        delete[] buffer;
+    }
+
+private:
+    size_t   nelms;
+    pointer  data;
+    data_ptr buffer;
+};
+
+class StringReader {
+public:
+    typedef const std::string   value_type;
+    typedef value_type         *pointer;
+    typedef const char         *data_type;
+    typedef data_type          *data_ptr;
+
+
+    StringReader(const NDSize &size, pointer stringdata)
+            : nelms(size.nelms()), data(stringdata) {
+        buffer = new data_type[nelms];
+        for (size_t i = 0; i < nelms; i++) {
+            buffer[i] = data[i].c_str();
+        }
+    }
+
+    data_ptr operator*() {
+        return buffer;
+    }
+
+    ~StringReader() {
+        delete[] buffer;
+    }
+
+private:
+    size_t   nelms;
+    pointer  data;
+    data_ptr buffer;
+};
 
 
 class NIXAPI BaseHDF5 {
