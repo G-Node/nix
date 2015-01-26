@@ -184,6 +184,48 @@ DataSet Group::createData(const std::string &name,
     return DataSet(H5::DataSet(id));
 }
 
+DataSet Group::createData(const std::string &name,
+        DataType dtype,
+        const NDSize &size) const
+{
+    H5::DataType fileType = data_type_to_h5_filetype(dtype);
+    return createData(name, fileType, size);
+}
+
+
+DataSet Group::createData(const std::string &name,
+        const H5::DataType &fileType,
+        const NDSize &size,
+        const NDSize &maxsize,
+        const NDSize &chunks,
+        bool max_size_unlimited,
+        bool guess_chunks) const
+{
+    H5::DataSpace space;
+
+    if (size) {
+        if (maxsize) {
+            space = DataSpace::create(size, maxsize);
+        } else {
+            space = DataSpace::create(size, max_size_unlimited);
+        }
+    }
+
+    H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+
+    if (chunks) {
+        int rank = static_cast<int>(chunks.size());
+        plcreate.setChunk(rank, chunks.data());
+    } else if (guess_chunks) {
+        NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
+        plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
+    }
+
+    H5::DataSet dset = h5Group().createDataSet(name, fileType, space, plcreate);
+    return DataSet(dset);
+}
+
+
 DataSet Group::openData(const std::string &name) const {
     hid_t did = H5Dopen(hid, name.c_str(), H5P_DEFAULT);
     H5::DataSet ds5(did);
