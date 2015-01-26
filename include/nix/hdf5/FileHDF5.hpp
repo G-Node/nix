@@ -23,12 +23,9 @@ namespace hdf5 {
 /**
  * Class that represents a NIX file.
  */
-class FileHDF5 : public base::IFile, public std::enable_shared_from_this<FileHDF5> {
+class FileHDF5 : public BaseHDF5, public base::IFile, public std::enable_shared_from_this<FileHDF5> {
 
 private:
-
-    /* the opened HDF5 file */
-    H5::H5File h5file;
 
     /* groups representing different sections of the file */
     Group root, metadata, data;
@@ -119,7 +116,7 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    void close();
+    void close() override;
 
 
     bool isOpen() const;
