@@ -63,7 +63,7 @@ public:
 
     int refCount() const;
 
-    void close();
+    virtual void close();
 
     virtual ~BaseHDF5();
 
