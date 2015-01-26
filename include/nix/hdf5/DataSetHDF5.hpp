@@ -22,25 +22,18 @@
 namespace nix {
 namespace hdf5 {
 
-
-
-
-
-
-
-
-
-class NIXAPI DataSet {
-
-private:
-
-    H5::DataSet h5dset;
+class NIXAPI DataSet : public BaseHDF5 {
 
 public:
-    DataSet() { }
-    explicit DataSet(H5::DataSet dset);
 
-    DataSet& operator=(const DataSet &other) {h5dset = other.h5dset; return *this;}
+    DataSet() : BaseHDF5() { };
+
+    DataSet(hid_t hid);
+
+    DataSet(const DataSet &other);
+
+    void read(hid_t memType, void *data) const;
+    void write(hid_t memType, const void *data);
 
     void read(DataType dtype, const NDSize &size, void *data) const;
     void write(DataType dtype, const NDSize &size, const void *data);
@@ -67,80 +60,16 @@ public:
     Selection createSelection() const;
     NDSize size() const;
 
-    void vlenReclaim(DataType mem_type, void *data, H5::DataSpace *dspace = nullptr) const;
+    void vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace = nullptr) const;
 
     static H5::DataType fileTypeForValue(DataType dtype);
     static H5::DataType memTypeForValue(DataType dtype);
 
     DataType dataType(void) const;
 
-    bool hasAttr(const std::string &name) const;
-    void removeAttr(const std::string &name) const;
-
-    template <typename T>
-    void setAttr(const std::string &name, const T &value) const;
-
-    template <typename T>
-    bool getAttr(const std::string &name, T &value) const;
-
-
-private:
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
-
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data);
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data);
-
+    hid_t getSpace() const;
 };
 
-//template functions
-
-template<typename T>
-void DataSet::setAttr(const std::string &name, const T &value) const
-{
-    typedef Hydra<const T> hydra_t;
-
-    const hydra_t hydra(value);
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    H5::Attribute attr;
-
-    if (hasAttr(name)) {
-        attr = h5dset.openAttribute(name);
-    } else {
-        H5::DataType fileType = data_type_to_h5_filetype(dtype);
-        H5::DataSpace fileSpace = DataSpace::create(shape, false);
-        attr = h5dset.createAttribute(name, fileType, fileSpace);
-    }
-
-    writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
-}
-
-
-template<typename T> bool DataSet::getAttr(const std::string &name, T &value) const
-{
-    if (!hasAttr(name)) {
-        return false;
-    }
-
-    Hydra<T> hydra(value);
-
-    //determine attr's size and resize value accordingly
-    H5::Attribute attr = h5dset.openAttribute(name);
-    H5::DataSpace space = attr.getSpace();
-    int rank = space.getSimpleExtentNdims();
-    NDSize dims(static_cast<size_t>(rank));
-    space.getSimpleExtentDims (dims.data(), nullptr);
-    hydra.resize(dims);
-
-    DataType dtype = hydra.element_data_type();
-    H5::DataType mem_type = data_type_to_h5_memtype(dtype);
-
-    readAttr(attr, mem_type, dims, hydra.data());
-
-    return true;
-}
 
 
 /**

@@ -10,6 +10,7 @@
 #include <cmath>
 
 #include <nix/hdf5/DataSetHDF5.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 namespace nix {
 
@@ -27,13 +28,28 @@ struct to_data_type<const char *> {
     static const DataType value = DataType::String;
 };
 
-
 namespace hdf5 {
 
+DataSet::DataSet(hid_t hid)
+        : BaseHDF5(hid) {
 
-DataSet::DataSet(H5::DataSet dset)
-    : h5dset(dset)
+}
+
+DataSet::DataSet(const DataSet &other)
+        : BaseHDF5(other)  {
+
+}
+
+void DataSet::read(hid_t memType, void *data) const
 {
+    herr_t res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    H5Error::check(res, "DataSet::read() IO error");
+}
+
+void DataSet::write(hid_t memType, const void *data)
+{
+    herr_t res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    H5Error::check(res, "DataSet::write() IOError");
 }
 
 void DataSet::read(DataType dtype, const NDSize &size, void *data) const
@@ -42,12 +58,11 @@ void DataSet::read(DataType dtype, const NDSize &size, void *data) const
 
     if (dtype == DataType::String) {
         StringWriter writer(size, static_cast<std::string *>(data));
-        h5dset.read(*writer, memType);
+        read(memType.getId(), *writer);
         writer.finish();
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(*writer, memType, space);
+        vlenReclaim(memType.getId(), *writer);
     } else {
-        h5dset.read(data, memType);
+        read(memType.getId(), data);
     }
 }
 
@@ -57,9 +72,9 @@ void DataSet::write(DataType dtype, const NDSize &size, const void *data)
     H5::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {
         StringReader reader(size, static_cast<const std::string *>(data));
-        h5dset.write(*reader, memType);
+        write(memType.getId(), *reader);
     } else {
-        h5dset.write(data, memType);
+        write(memType.getId(), data);
     }
 }
 
@@ -71,16 +86,18 @@ void DataSet::read(DataType        dtype,
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
 
+    herr_t res;
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
-        h5dset.read(*writer, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dread(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, *writer);
         writer.finish();
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(*writer, memType, memSel.h5space());
+        vlenReclaim(memType, *writer);
     } else {
-        h5dset.read(data, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dread(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, data);
     }
+
+    H5Error::check(res, "DataSet::read() IO error");
 }
 
 void DataSet::write(DataType         dtype,
@@ -89,47 +106,17 @@ void DataSet::write(DataType         dtype,
                     const Selection &memSel)
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
+    herr_t res;
+
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringReader reader(size, static_cast<const std::string *>(data));
-        h5dset.write(*reader, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dwrite(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, *reader);
     } else {
-        h5dset.write(data, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dwrite(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, data);
     }
-}
 
-
-bool DataSet::hasAttr(const std::string &name) const {
-    return H5Aexists(h5dset.getId(), name.c_str());
-}
-
-
-void DataSet::removeAttr(const std::string &name) const {
-    h5dset.removeAttr(name);
-}
-
-
-void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
-}
-
-
-void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
-}
-
-
-void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
+    H5Error::check(res, "DataSet::write(): IO error");
 }
 
 
@@ -230,14 +217,19 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 
 void DataSet::setExtent(const NDSize &dims)
 {
-    H5::DataSpace space = h5dset.getSpace();
-    size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
+    hid_t space = getSpace();
+    int ndims = H5Sget_simple_extent_ndims(space);
+    if (ndims < 0) {
+        throw H5Exception("DataSet::setExtent(): could not obtain number of dimensions");
+    }
+    size_t rank = static_cast<size_t>(ndims);
 
     if (rank != dims.size()) {
         throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
-    herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
+    herr_t err = H5Dset_extent(hid, dims.data());
+    H5Sclose(space);
     if (err < 0) {
         throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
     }
@@ -245,36 +237,47 @@ void DataSet::setExtent(const NDSize &dims)
 
 Selection DataSet::createSelection() const
 {
-    H5::DataSpace space = h5dset.getSpace();
+    H5::DataSpace space(getSpace());
     return Selection(space);
 }
 
 
 NDSize DataSet::size() const
 {
-    H5::DataSpace space = h5dset.getSpace();
-    size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
+    hid_t space = getSpace();
+    int ndims = H5Sget_simple_extent_ndims(space);
+    if (ndims < 0) {
+        throw H5Exception("DataSet::size(): could not obtain number of dimensions");
+    }
+    size_t rank = static_cast<size_t>(ndims);
     NDSize dims(rank);
-    space.getSimpleExtentDims (dims.data(), nullptr);
+    int res = H5Sget_simple_extent_dims(space, dims.data(), nullptr);
+
+    if (res < 0) {
+        throw H5Exception("DataSet::size(): could not obtain extents");
+    }
+
     return dims;
 }
 
-void DataSet::vlenReclaim(DataType mem_type, void *data, H5::DataSpace *dspace) const
+void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace) const
 {
-    H5::DataType h5MemType = data_type_to_h5_memtype(mem_type);
-
+    herr_t res;
     if (dspace != nullptr) {
-        H5::DataSet::vlenReclaim(data, h5MemType, *dspace);
+        res = H5Dvlen_reclaim(mem_type.getId(), dspace->getId(), H5P_DEFAULT, data);
     } else {
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(data, h5MemType, space);
+        hid_t space = getSpace();
+        res = H5Dvlen_reclaim(mem_type.getId(), space, H5P_DEFAULT, data);
+        H5Sclose(space);
     }
+
+    H5Error::check(res, "DataSet::vlenReclaim(): could not reclaim dynamic bufferes");
 }
 
 
 DataType DataSet::dataType(void) const
 {
-    hid_t ftype = H5Dget_type(h5dset.getId());
+    hid_t ftype = H5Dget_type(hid);
     H5T_class_t ftclass = H5Tget_class(ftype);
 
     size_t     size;
@@ -303,6 +306,14 @@ DataType DataSet::dataType(void) const
     H5Tclose(ftype);
 
     return dtype;
+}
+
+hid_t DataSet::getSpace() const {
+    hid_t space = H5Dget_space(hid);
+    if (space < 0) {
+        throw new H5Exception("DataSet::getSpace(): Could not obtain dataspace");
+    }
+    return space;
 }
 
 /* Value related functions */
@@ -401,7 +412,7 @@ H5::DataType DataSet::memTypeForValue(DataType dtype)
 }
 
 template<typename T>
-void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &values)
+void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
 {
     H5::DataType memType = h5_type_for_value<T>(true);
 
@@ -410,7 +421,8 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
 
     fileValues.resize(size);
     values.resize(size);
-    h5ds.read(fileValues.data(), memType);
+
+    h5ds.read(memType.getId(), fileValues.data());
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
             Value temp(static_cast<T>(val.value)); //we cast because of the bool specialization
@@ -422,7 +434,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
             return temp;
         });
 
-    H5::DataSet::vlenReclaim(fileValues.data(), memType, h5ds.getSpace());
+    h5ds.vlenReclaim(memType, fileValues.data());
 }
 
 void DataSet::read(std::vector<Value> &values) const
@@ -438,13 +450,13 @@ void DataSet::read(std::vector<Value> &values) const
     size_t nvalues = shape[0];
 
     switch (dtype) {
-    case DataType::Bool:   do_read_value<bool>(h5dset, nvalues, values);     break;
-    case DataType::Int32:  do_read_value<int32_t>(h5dset, nvalues, values);  break;
-    case DataType::UInt32: do_read_value<uint32_t>(h5dset, nvalues, values); break;
-    case DataType::Int64:  do_read_value<int64_t>(h5dset, nvalues, values);  break;
-    case DataType::UInt64: do_read_value<uint64_t>(h5dset, nvalues, values); break;
-    case DataType::String: do_read_value<char *>(h5dset, nvalues, values);   break;
-    case DataType::Double: do_read_value<double>(h5dset, nvalues, values);   break;
+    case DataType::Bool:   do_read_value<bool>(*this, nvalues, values);     break;
+    case DataType::Int32:  do_read_value<int32_t>(*this, nvalues, values);  break;
+    case DataType::UInt32: do_read_value<uint32_t>(*this, nvalues, values); break;
+    case DataType::Int64:  do_read_value<int64_t>(*this, nvalues, values);  break;
+    case DataType::UInt64: do_read_value<uint64_t>(*this, nvalues, values); break;
+    case DataType::String: do_read_value<char *>(*this, nvalues, values);   break;
+    case DataType::Double: do_read_value<double>(*this, nvalues, values);   break;
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
@@ -455,7 +467,7 @@ void DataSet::read(std::vector<Value> &values) const
 #define NOT_IMPLEMENTED 1
 
 template<typename T>
-void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
+void do_write_value(DataSet &h5ds, const std::vector<Value> &values)
 {
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
@@ -474,7 +486,7 @@ void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
         });
 
     H5::DataType memType = h5_type_for_value<T>(true);
-    h5ds.write(fileValues.data(), memType);
+    h5ds.write(memType.getId(), fileValues.data());
 }
 
 void DataSet::write(const std::vector<Value> &values)
@@ -487,13 +499,13 @@ void DataSet::write(const std::vector<Value> &values)
 
     switch(values[0].type()) {
 
-    case DataType::Bool:   do_write_value<bool>(h5dset, values); break;
-    case DataType::Int32:  do_write_value<int32_t>(h5dset, values); break;
-    case DataType::UInt32: do_write_value<uint32_t>(h5dset, values); break;
-    case DataType::Int64:  do_write_value<int64_t>(h5dset, values); break;
-    case DataType::UInt64: do_write_value<uint64_t>(h5dset, values); break;
-    case DataType::String: do_write_value<const char *>(h5dset, values); break;
-    case DataType::Double: do_write_value<double>(h5dset, values); break;
+    case DataType::Bool:   do_write_value<bool>(*this, values); break;
+    case DataType::Int32:  do_write_value<int32_t>(*this, values); break;
+    case DataType::UInt32: do_write_value<uint32_t>(*this, values); break;
+    case DataType::Int64:  do_write_value<int64_t>(*this, values); break;
+    case DataType::UInt64: do_write_value<uint64_t>(*this, values); break;
+    case DataType::String: do_write_value<const char *>(*this, values); break;
+    case DataType::Double: do_write_value<double>(*this, values); break;
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
