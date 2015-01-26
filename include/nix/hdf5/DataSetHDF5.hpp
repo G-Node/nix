@@ -114,13 +114,6 @@ public:
     template<typename T> void write(const T &value, const Selection &fileSel);
     template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
-
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, DataType dtype, const NDSize &size);
-
-    static DataSet create(const H5::CommonFG &parent, const std::string &name, const H5::DataType &fileType,
-                          const NDSize &size, const NDSize &maxsize = {}, const NDSize &chunks = {},
-                          bool maxSizeUnlimited = true, bool guessChunks = true);
-
     static NDSize guessChunking(NDSize dims, DataType dtype);
 
     static NDSize guessChunking(NDSize dims, size_t element_size);
