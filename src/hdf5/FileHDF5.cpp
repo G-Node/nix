@@ -316,7 +316,7 @@ void FileHDF5::close() {
     for (auto obj : objs) {
         int ref_count = H5Iget_ref(obj);
 
-        for (hsize_t j = 0; j < ref_count; j++) {
+        for (int j = 0; j < ref_count; j++) {
             H5Oclose(obj);
         }
     }
