@@ -307,10 +307,13 @@ void FileHDF5::close() {
 
     if (obj_count > 0) {
         obj_count = H5Fget_obj_ids(hid, types, objs.size(), objs.data());
+
+        if (obj_count < 0) {
+            throw H5Exception("FileHDF5::close(): Could not get objs");
+        }
     }
     
-    for (hsize_t i = 0; i < obj_count; i++) {
-        hid_t   obj = objs[i];
+    for (auto obj : objs) {
         int ref_count = H5Iget_ref(obj);
 
         for (hsize_t j = 0; j < ref_count; j++) {
