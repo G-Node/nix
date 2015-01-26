@@ -196,7 +196,7 @@ void Group::setData(const std::string &name, const T &value)
 
     DataSet ds;
     if (!hasData(name)) {
-        ds = DataSet::create(h5Group(), name, dtype, shape);
+        ds = createData(name, dtype, shape);
     } else {
         ds = openData(name);
         ds.setExtent(shape);
