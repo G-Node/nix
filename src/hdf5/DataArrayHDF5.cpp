@@ -147,7 +147,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = DataSet::create(group().h5Group(), "polynom_coefficients", DataType::Double, {coefficients.size()});
+        ds = group().createData("polynom_coefficients", DataType::Double, {coefficients.size()});
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -260,7 +260,7 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
         throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
     }
 
-    DataSet::create(group().h5Group(), "data", dtype, size);
+    group().createData("data", dtype, size); //FIXME: check if this 2-step creation is needed
     DataSet ds = group().openData("data");
 }
 
@@ -272,7 +272,8 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     DataSet ds;
 
     if (!group().hasData("data")) {
-        ds = DataSet::create(group().h5Group(), "data", dtype, count);
+        //FIXME: this case should actually never be possible, replace with exception?
+        ds = group().createData("data", dtype, count);
     } else {
         ds = group().openData("data");
     }
