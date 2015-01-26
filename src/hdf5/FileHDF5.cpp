@@ -14,6 +14,7 @@
 #include <nix/hdf5/FileHDF5.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 using namespace std;
 
@@ -60,9 +61,26 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     }
 
     unsigned int h5mode =  map_file_mode(mode);
-    h5file = H5::H5File(name.c_str(), h5mode, fcpl);
 
-    root = Group(h5file.openGroup("/"));
+    if (h5mode & H5F_ACC_TRUNC) {
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.getId(), H5P_DEFAULT);
+    } else {
+        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+    }
+
+    if (!H5Iis_valid(hid)) {
+        throw H5Exception("Could not open/create file");
+    }
+
+    hid_t h5root = H5Gopen2(hid, "/", H5P_DEFAULT);
+
+    if (!H5Iis_valid(hid)) {
+        throw H5Exception("Could not root group");
+    }
+
+    root = Group(h5root);
+    H5Idec_ref(h5root);
+
     metadata = root.openGroup("metadata");
     data = root.openGroup("data");
 
@@ -252,7 +270,19 @@ string FileHDF5::format() const {
 
 
 string FileHDF5::location() const {
-    return h5file.getFileName();
+    ssize_t size = H5Fget_name(hid, nullptr, 0);
+
+    if (size < 0) {
+        throw H5Exception("H5Fget_name failed");
+    }
+
+    std::vector<char> buf(static_cast<size_t>(size + 1), 0);
+    size = H5Fget_name(hid, buf.data(), buf.size());
+    if (size < 0) {
+        throw H5Exception("H5Fget_name failed");
+    }
+
+    return std::string(buf.data());
 }
 
 
@@ -267,33 +297,37 @@ void FileHDF5::close() {
 
     unsigned types = H5F_OBJ_GROUP|H5F_OBJ_DATASET|H5F_OBJ_DATATYPE;
 
-    hsize_t obj_count = h5file.getObjCount(types);
-    hid_t*  objs = new hid_t[obj_count];
-    h5file.getObjIDs(types, obj_count, objs);
+    ssize_t obj_count = H5Fget_obj_count(hid, types);
 
+    if (obj_count < 0) {
+        throw H5Exception("FileHDF5::close(): Could not get object count");
+    }
 
+    std::vector<hid_t> objs(static_cast<size_t>(obj_count));
+
+    if (obj_count > 0) {
+        obj_count = H5Fget_obj_ids(hid, types, objs.size(), objs.data());
+    }
+    
     for (hsize_t i = 0; i < obj_count; i++) {
         hid_t   obj = objs[i];
-        hsize_t ref_count = H5Iget_ref(obj);
+        int ref_count = H5Iget_ref(obj);
 
         for (hsize_t j = 0; j < ref_count; j++) {
             H5Oclose(obj);
         }
     }
 
-    delete[] objs;
-
-    h5file.close();
+    BaseHDF5::close();
 }
 
 
 bool FileHDF5::isOpen() const {
-    hid_t file_id = h5file.getId();
 
-    if (file_id == 0)
+    if (! H5Iis_valid(hid))
         return false;
 
-    H5I_type_t id_type = H5Iget_type(file_id);
+    H5I_type_t id_type = H5Iget_type(hid);
 
     if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
         return false;
@@ -343,12 +377,12 @@ bool FileHDF5::fileExists(const string &name) const {
 
 
 bool FileHDF5::operator==(const FileHDF5 &other) const {
-    return h5file.getFileName() == other.h5file.getFileName();
+    return location() == other.location();
 }
 
 
 bool FileHDF5::operator!=(const FileHDF5 &other) const {
-    return h5file.getFileName() != other.h5file.getFileName();
+    return !(*this == other);
 }
 
 
