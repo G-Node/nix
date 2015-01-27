@@ -71,9 +71,10 @@ time_t getTime() {
 void deblankString(std::string &str) {
     typedef std::string::value_type char_type;
 
+    // c > 0 check is for windows where isblank asserts c > -1 && < 256
     str.erase(std::remove_if(str.begin(),
                              str.end(),
-                             [](char_type c) { return std::isblank(c); }),
+                             [](char_type c) { return c > 0 && std::isblank(c); }),
               str.end());
 }
 

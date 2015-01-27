@@ -168,11 +168,11 @@ public:
     }
 
     static const_element_pointer get_data(const_reference value) {
-        return &value[0];
+        return value.data();
     }
 
     static element_pointer get_data(value_type &value) {
-        return &value[0];
+        return value.data();
     }
 
     static void resize(reference value, const NDSize &dims) {
