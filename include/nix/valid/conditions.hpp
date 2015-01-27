@@ -23,13 +23,6 @@ namespace nix {
 namespace valid {
 
     /**
-     * @brief return type of conditions {@link should} & {@link must}
-     * 
-     * Actual condition type, return type of conditions functionals
-     */
-    typedef std::function<Result(void)> condition;
-
-    /**
      * @brief creates condition throwing error if check fails
      * 
      * Creates a condition check that produces an error with the given
