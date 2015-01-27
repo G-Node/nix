@@ -31,12 +31,12 @@ struct to_data_type<const char *> {
 namespace hdf5 {
 
 DataSet::DataSet(hid_t hid)
-        : BaseHDF5(hid) {
+        : LocID(hid) {
 
 }
 
 DataSet::DataSet(const DataSet &other)
-        : BaseHDF5(other)  {
+        : LocID(other)  {
 
 }
 

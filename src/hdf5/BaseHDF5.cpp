@@ -56,52 +56,6 @@ BaseHDF5& BaseHDF5::operator=(BaseHDF5 &&other) {
 }
 
 
-bool BaseHDF5::hasAttr(const std::string &name) const {
-    return H5Aexists(hid, name.c_str());
-}
-
-
-void BaseHDF5::removeAttr(const std::string &name) const {
-    H5Adelete(hid, name.c_str());
-}
-
-
-H5::Attribute BaseHDF5::openAttr(const std::string &name) const {
-    hid_t ha = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
-    return H5::Attribute(ha);
-}
-
-
-H5::Attribute BaseHDF5::createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const {
-    hid_t ha = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, H5P_DEFAULT);
-    return H5::Attribute(ha);
-}
-
-
-void BaseHDF5::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
-}
-
-
-void BaseHDF5::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
-}
-
-
-void BaseHDF5::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void BaseHDF5::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
-}
-
-
 bool BaseHDF5::operator==(const BaseHDF5 &other) const {
     if (H5Iis_valid(hid) && H5Iis_valid(other.hid))
         return hid == other.hid;

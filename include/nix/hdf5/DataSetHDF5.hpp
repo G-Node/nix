@@ -13,7 +13,7 @@
 #include <nix/hdf5/Selection.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
-#include <nix/hdf5/BaseHDF5.hpp>
+#include <nix/hdf5/LocID.hpp>
 #include <nix/Hydra.hpp>
 #include <nix/Value.hpp>
 
@@ -22,11 +22,11 @@
 namespace nix {
 namespace hdf5 {
 
-class NIXAPI DataSet : public BaseHDF5 {
+class NIXAPI DataSet : public LocID {
 
 public:
 
-    DataSet() : BaseHDF5() { };
+    DataSet() : LocID() { };
 
     DataSet(hid_t hid);
 
