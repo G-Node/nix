@@ -352,32 +352,71 @@ struct FileValue<bool>  {
 
 //
 
+class CompoundType {
+public:
+
+    explicit CompoundType(size_t size) : strType(H5I_INVALID_HID) {
+        hid = H5Tcreate(H5T_COMPOUND, size);
+        if (hid < 0) {
+            throw H5Exception("Could not create compound type");
+        }
+    }
+
+    void insert(const std::string &name, size_t offset, hid_t memberType) {
+        herr_t result = H5Tinsert(hid, name.c_str(), offset, memberType);
+        H5Error::check(result, "CompoundType::insert(): Could not insert member into compound type");
+    }
+
+    void insertString(const std::string &name, size_t offset) {
+        if (strType == H5I_INVALID_HID) {
+            strType = H5Tcopy (H5T_C_S1);
+
+            if (strType < 0) {
+                throw H5Exception("H5Tcopy: Could not copy C_S1 type");
+            }
+
+            herr_t status = H5Tset_size (strType, H5T_VARIABLE);
+            H5Error::check(status, "CompoundType::insertString(): H5Tset_size failed");
+        }
+
+        insert(name, offset, strType);
+    }
+
+    void insert(const std::string &name, size_t offset, DataType memberType, bool forMemory) {
+        H5::DataType h5dt;
+
+        if (forMemory) {
+            h5dt = hdf5::data_type_to_h5_memtype(memberType);
+        } else {
+            h5dt = hdf5::data_type_to_h5_filetype(memberType);
+        }
+
+        insert(name, offset, h5dt.getId());
+    }
+
+    hid_t h5id() {
+        return hid;
+    }
+
+private:
+    hid_t hid;
+    hid_t strType;
+};
+
 template<typename T>
 H5::DataType h5_type_for_value(bool for_memory)
 {
     typedef FileValue<T> file_value_t;
+    CompoundType ct(sizeof(file_value_t));
 
-    H5::CompType h5type(sizeof(file_value_t));
+    ct.insert("value", HOFFSET(file_value_t, value), to_data_type<T>::value, for_memory);
+    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), DataType::Double, for_memory);
+    ct.insertString("reference", HOFFSET(file_value_t, reference));
+    ct.insertString("filename", HOFFSET(file_value_t, filename));
+    ct.insertString("encoder", HOFFSET(file_value_t, encoder));
+    ct.insertString("checksum", HOFFSET(file_value_t, checksum));
 
-    DataType dtype = to_data_type<T>::value;
-    if (for_memory) {
-        h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_memtype(dtype));
-    } else {
-        h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_filetype(dtype));
-    }
-
-    if (for_memory) {
-        h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_memtype(DataType::Double));
-    } else {
-       h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_filetype(DataType::Double));
-    }
-
-    h5type.insertMember("reference", HOFFSET(file_value_t, reference), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("filename", HOFFSET(file_value_t, filename), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("encoder", HOFFSET(file_value_t, encoder), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("checksum", HOFFSET(file_value_t, checksum), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-
-    return h5type;
+    return ct.h5id();
 }
 
 #if 0 //set to one to check that all supported DataTypes are handled
