@@ -224,11 +224,12 @@ public:
 
 
     size_t nelms() const {
-        size_t product = 1;
+        T product = 1;
         std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
-        return product;
+        //FIXME: check overflow before casting
+        return static_cast<size_t>(product);
     }
 
 
