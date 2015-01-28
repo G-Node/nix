@@ -165,10 +165,12 @@ void SampledDimension::samplingInterval(double interval) {
 
 
 size_t SampledDimension::indexOf(const double position) const {
-    int index;
+    //FIXME: should we use NDSSize::value_type here instead of ssize_t?
+    //FIXME: also, on the smae grounds, should the return not be NDSize::value_type?
+    ssize_t index;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    index = round(( position - offset) / sampling_interval);
+    index = static_cast<ssize_t>(round(( position - offset) / sampling_interval));
     if (index < 0) {
         throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
     }
