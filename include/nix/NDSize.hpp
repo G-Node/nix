@@ -232,12 +232,12 @@ public:
     }
 
 
-    size_t dot(const NDSizeBase<T> &other) const {
+    T dot(const NDSizeBase<T> &other) const {
         if(size() != other.size()) {
             throw std::out_of_range ("Dimensions do not match"); //fixme: use different exception
         }
 
-        size_t res  = 0;
+        T res  = 0;
         for (size_t i = 0; i < rank; i++) {
             res += dims[i] * other.dims[i];
         }
