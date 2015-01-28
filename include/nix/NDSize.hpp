@@ -224,20 +224,21 @@ public:
 
 
     size_t nelms() const {
-        size_t product = 1;
+        T product = 1;
         std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
-        return product;
+        //FIXME: check overflow before casting
+        return static_cast<size_t>(product);
     }
 
 
-    size_t dot(const NDSizeBase<T> &other) const {
+    T dot(const NDSizeBase<T> &other) const {
         if(size() != other.size()) {
             throw std::out_of_range ("Dimensions do not match"); //fixme: use different exception
         }
 
-        size_t res  = 0;
+        T res  = 0;
         for (size_t i = 0; i < rank; i++) {
             res += dims[i] * other.dims[i];
         }

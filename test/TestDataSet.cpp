@@ -123,12 +123,12 @@ void TestDataSet::testNDSize() {
 
     CPPUNIT_ASSERT(j == k);
 
-    size_t dp = j.dot(h);
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(999), dp);
+    NDSize::value_type dp = j.dot(h);
+    CPPUNIT_ASSERT_EQUAL(static_cast<NDSize::value_type>(999), dp);
 
     NDSize s({3, 4});
     dp = s.dot(s);
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(25), dp);
+    CPPUNIT_ASSERT_EQUAL(static_cast<NDSize::value_type>(25), dp);
 
     //comparison tests
     CPPUNIT_ASSERT_THROW(f < s, IncompatibleDimensions);
