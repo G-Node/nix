@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/G-Node/nix.png?branch=master)](https://travis-ci.org/G-Node/nix)
+[![Build status](https://ci.appveyor.com/api/projects/status/cdupf2np8ffg5hjt/branch/master?svg=true)](https://ci.appveyor.com/project/stoewer/nix/branch/master)
+
+--
+
 About NIX
 -------------
 
@@ -84,6 +89,3 @@ NIX API Documentation
 
 The API documentation can be found [here](http://g-node.github.io/nix/)
 
---
-
-[![Build Status](https://travis-ci.org/G-Node/nix.png?branch=master)](https://travis-ci.org/G-Node/nix)
