@@ -17,8 +17,10 @@
 #pragma warning(disable: 4250 4251)
 
  //workaround for missing ssize_t on windows
- #include <BaseTsd.h>
- typedef SSIZE_T ssize_t;
+ #ifndef ssize_t
+   #include <BaseTsd.h>
+   typedef SSIZE_T ssize_t;
+ #endif
 #else
  #define NIXAPI
 #endif
