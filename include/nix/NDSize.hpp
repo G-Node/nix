@@ -20,6 +20,10 @@
 
 namespace nix {
 
+#ifdef _WIN32
+//TODO: consider reimplementing NDSizeBase using std::vector (cf. issue #449)
+#pragma warning(disable: 4996)
+#endif
 
 template<typename T>
 class NDSizeBase {

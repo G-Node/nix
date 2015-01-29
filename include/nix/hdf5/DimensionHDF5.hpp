@@ -79,7 +79,7 @@ public:
     void label(const std::string &label);
 
 
-    void label(none_t t);
+    void label(const none_t t);
 
 
     boost::optional<std::string> unit() const;
@@ -154,7 +154,7 @@ public:
     void label(const std::string &label);
 
 
-    void label(none_t t);
+    void label(const none_t t);
 
 
     boost::optional<std::string> unit() const;
