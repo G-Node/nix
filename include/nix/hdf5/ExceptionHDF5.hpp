@@ -21,7 +21,7 @@
 namespace nix {
 namespace hdf5 {
 
-class H5Exception : public std::exception {
+class NIXAPI H5Exception : public std::exception {
 public:
     H5Exception(const std::string &message)
             : msg(message) {
@@ -37,7 +37,7 @@ private:
 };
 
 
-class H5Error : public H5Exception {
+class NIXAPI H5Error : public H5Exception {
 public:
     H5Error(herr_t err, const std::string &msg)
     : H5Exception(msg), error(err) {
