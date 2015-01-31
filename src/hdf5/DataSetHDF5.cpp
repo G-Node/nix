@@ -257,6 +257,8 @@ NDSize DataSet::size() const
         throw H5Exception("DataSet::size(): could not obtain extents");
     }
 
+    H5Sclose(space);
+
     return dims;
 }
 
