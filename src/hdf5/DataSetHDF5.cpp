@@ -31,12 +31,12 @@ struct to_data_type<const char *> {
 namespace hdf5 {
 
 DataSet::DataSet(hid_t hid)
-        : BaseHDF5(hid) {
+        : LocID(hid) {
 
 }
 
 DataSet::DataSet(const DataSet &other)
-        : BaseHDF5(other)  {
+        : LocID(other)  {
 
 }
 
@@ -256,6 +256,8 @@ NDSize DataSet::size() const
     if (res < 0) {
         throw H5Exception("DataSet::size(): could not obtain extents");
     }
+
+    H5Sclose(space);
 
     return dims;
 }
