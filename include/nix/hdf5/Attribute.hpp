@@ -20,7 +20,9 @@ namespace hdf5 {
 
 class NIXAPI Attribute : public BaseHDF5 {
 public:
-    using BaseHDF5::BaseHDF5;
+    Attribute();
+    Attribute(hid_t hid);
+    Attribute(const Attribute &other);
 
     void read(H5::DataType mem_type, const NDSize &size, void *data);
     void read(H5::DataType mem_type, const NDSize &size, std::string *data);

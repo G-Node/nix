@@ -1,9 +1,20 @@
 
 #include <nix/hdf5/Attribute.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
+#include <H5Ipublic.h>
 
 namespace nix {
 namespace hdf5 {
+
+
+Attribute::Attribute() : BaseHDF5() {
+}
+
+Attribute::Attribute(hid_t hid) : BaseHDF5(hid) {
+}
+
+Attribute::Attribute(const Attribute &other) : BaseHDF5(other) {
+}
 
 
 void Attribute::read(H5::DataType mem_type, const NDSize &size, void *data) {
