@@ -35,40 +35,21 @@ void LocID::removeAttr(const std::string &name) const {
 }
 
 
-H5::Attribute LocID::openAttr(const std::string &name) const {
+Attribute LocID::openAttr(const std::string &name) const {
     hid_t ha = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
-    return H5::Attribute(ha);
+    Attribute attr = Attribute(ha);
+    H5Idec_ref(ha);
+    return attr;
 }
 
 
-H5::Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const {
+Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const {
     hid_t ha = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, H5P_DEFAULT);
-    return H5::Attribute(ha);
+    Attribute attr = Attribute(ha);
+    H5Idec_ref(ha);
+    return attr;
 }
 
-
-void LocID::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
-}
-
-
-void LocID::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
-}
-
-
-void LocID::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void LocID::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
-}
 
 } // nix::hdf5
 

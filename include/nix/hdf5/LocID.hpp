@@ -12,6 +12,7 @@
 #define NIX_LOCATION_H5_H
 
 #include <nix/hdf5/BaseHDF5.hpp>
+#include <nix/hdf5/Attribute.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -38,14 +39,9 @@ public:
 
 private:
 
-    H5::Attribute openAttr(const std::string &name) const;
-    H5::Attribute createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const;
+    Attribute openAttr(const std::string &name) const;
+    Attribute createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const;
 
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
-
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data);
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data);
 };
 
 
@@ -57,7 +53,7 @@ template<typename T> void LocID::setAttr(const std::string &name, const T &value
     DataType dtype = hydra.element_data_type();
     NDSize shape = hydra.shape();
 
-    H5::Attribute attr;
+    Attribute attr;
 
     if (hasAttr(name)) {
         attr = openAttr(name);
@@ -67,7 +63,7 @@ template<typename T> void LocID::setAttr(const std::string &name, const T &value
         attr = createAttr(name, fileType, fileSpace);
     }
 
-    writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
+    attr.write(data_type_to_h5_memtype(dtype), shape, hydra.data());
 }
 
 
@@ -81,17 +77,14 @@ template<typename T> bool LocID::getAttr(const std::string &name, T &value) cons
     Hydra<T> hydra(value);
 
     //determine attr's size and resize value accordingly
-    H5::Attribute attr = openAttr(name);
-    H5::DataSpace space = attr.getSpace();
-    int rank = space.getSimpleExtentNdims();
-    NDSize dims(static_cast<size_t>(rank));
-    space.getSimpleExtentDims (dims.data(), nullptr);
+    Attribute attr = openAttr(name);
+    NDSize dims = attr.extent();
     hydra.resize(dims);
 
     DataType dtype = hydra.element_data_type();
     H5::DataType mem_type = data_type_to_h5_memtype(dtype);
 
-    readAttr(attr, mem_type, dims, hydra.data());
+    attr.read(mem_type, dims, hydra.data());
 
     return true;
 }
