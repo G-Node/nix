@@ -12,10 +12,8 @@
 
 namespace nix {
 namespace hdf5 {
-namespace DataSpace {
 
-
-H5::DataSpace create(const NDSize &dims, const NDSize &maxdims)
+H5::DataSpace DataSpace::create(const NDSize &dims, const NDSize &maxdims)
 {
     H5::DataSpace space;
 
@@ -34,7 +32,7 @@ H5::DataSpace create(const NDSize &dims, const NDSize &maxdims)
     return space;
 }
 
-H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited)
+H5::DataSpace DataSpace::create(const NDSize &dims, bool maxdims_unlimited)
 {
 
     if (maxdims_unlimited) {
@@ -47,6 +45,5 @@ H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited)
 }
 
 
-} //::nix::hdf5::DataSpace
 } //::nix::hdf5
 } //::nix
