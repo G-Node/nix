@@ -31,7 +31,7 @@ public:
     void write(H5::DataType mem_type, const NDSize &size, const void *data);
     void write(H5::DataType mem_type, const NDSize &size, const std::string *data);
 
-    hid_t getSpace() const;
+    DataSpace getSpace() const;
     NDSize extent() const;
 };
 
