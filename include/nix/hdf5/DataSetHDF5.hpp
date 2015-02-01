@@ -67,7 +67,7 @@ public:
 
     DataType dataType(void) const;
 
-    hid_t getSpace() const;
+    DataSpace getSpace() const;
 };
 
 

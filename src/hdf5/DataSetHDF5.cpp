@@ -217,19 +217,14 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 
 void DataSet::setExtent(const NDSize &dims)
 {
-    hid_t space = getSpace();
-    int ndims = H5Sget_simple_extent_ndims(space);
-    if (ndims < 0) {
-        throw H5Exception("DataSet::setExtent(): could not obtain number of dimensions");
-    }
-    size_t rank = static_cast<size_t>(ndims);
+    DataSpace space = getSpace();
 
-    if (rank != dims.size()) {
+    if (space.extent().size() != dims.size()) {
         throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
     herr_t err = H5Dset_extent(hid, dims.data());
-    H5Sclose(space);
+
     if (err < 0) {
         throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
     }
@@ -237,31 +232,14 @@ void DataSet::setExtent(const NDSize &dims)
 
 Selection DataSet::createSelection() const
 {
-    hid_t dspace = getSpace();
-    DataSpace space(dspace);
-    H5Sclose(dspace);
+    DataSpace space = getSpace();
     return Selection(space);
 }
 
 
 NDSize DataSet::size() const
 {
-    hid_t space = getSpace();
-    int ndims = H5Sget_simple_extent_ndims(space);
-    if (ndims < 0) {
-        throw H5Exception("DataSet::size(): could not obtain number of dimensions");
-    }
-    size_t rank = static_cast<size_t>(ndims);
-    NDSize dims(rank);
-    int res = H5Sget_simple_extent_dims(space, dims.data(), nullptr);
-
-    if (res < 0) {
-        throw H5Exception("DataSet::size(): could not obtain extents");
-    }
-
-    H5Sclose(space);
-
-    return dims;
+    return getSpace().extent();
 }
 
 void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace) const
@@ -270,9 +248,8 @@ void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspa
     if (dspace != nullptr) {
         res = H5Dvlen_reclaim(mem_type.getId(), dspace->getId(), H5P_DEFAULT, data);
     } else {
-        hid_t space = getSpace();
-        res = H5Dvlen_reclaim(mem_type.getId(), space, H5P_DEFAULT, data);
-        H5Sclose(space);
+        DataSpace space = getSpace();
+        res = H5Dvlen_reclaim(mem_type.getId(), space.h5id(), H5P_DEFAULT, data);
     }
 
     H5Error::check(res, "DataSet::vlenReclaim(): could not reclaim dynamic bufferes");
@@ -312,12 +289,14 @@ DataType DataSet::dataType(void) const
     return dtype;
 }
 
-hid_t DataSet::getSpace() const {
+DataSpace DataSet::getSpace() const {
     hid_t space = H5Dget_space(hid);
     if (space < 0) {
         throw new H5Exception("DataSet::getSpace(): Could not obtain dataspace");
     }
-    return space;
+    DataSpace sp(space);
+    H5Idec_ref(space);
+    return sp;
 }
 
 /* Value related functions */
