@@ -8,7 +8,6 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/NDSize.hpp>
 
 #include <nix/Platform.hpp>
@@ -24,12 +23,14 @@ namespace hdf5 {
 class NIXAPI DataSpace : public BaseHDF5 {
 public:
 
+    DataSpace() : BaseHDF5(H5S_ALL) { }
     DataSpace(hid_t space) : BaseHDF5(space) { }
+    DataSpace(const DataSpace &other) : BaseHDF5(other) { }
 
     NDSize extent() const;
 
-static H5::DataSpace create(const NDSize &dims, const NDSize &maxdims = {});
-static H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited);
+    static DataSpace create(const NDSize &dims, const NDSize &maxdims = {});
+    static DataSpace create(const NDSize &dims, bool maxdims_unlimited);
 
 };
 

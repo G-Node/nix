@@ -179,8 +179,8 @@ void Group::removeData(const std::string &name) {
 
 DataSet Group::createData(const std::string &name,
             const H5::DataType &fileType,
-            const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
-    hid_t id = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.getId(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
+            const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
+    hid_t id = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
 
     DataSet ds(id);
     H5Dclose(id);
@@ -204,7 +204,7 @@ DataSet Group::createData(const std::string &name,
         bool max_size_unlimited,
         bool guess_chunks) const
 {
-    H5::DataSpace space;
+    DataSpace space;
 
     if (size) {
         if (maxsize) {

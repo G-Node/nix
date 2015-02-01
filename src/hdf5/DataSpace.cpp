@@ -11,29 +11,39 @@
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
 
+#include <hdf5.h>
+
 namespace nix {
 namespace hdf5 {
 
-H5::DataSpace DataSpace::create(const NDSize &dims, const NDSize &maxdims)
+DataSpace DataSpace::create(const NDSize &dims, const NDSize &maxdims)
 {
-    H5::DataSpace space;
+    DataSpace space;
 
+    hid_t spaceId;
     if (!dims) {
-        space = H5::DataSpace();
-        return space;
+        spaceId = H5Screate(H5S_SCALAR);
+    } else {
+        int rank = (int) dims.size();
+
+        if (maxdims) {
+            spaceId = H5Screate_simple(rank, dims.data(), maxdims.data());
+        } else {
+            spaceId = H5Screate_simple(rank, dims.data(), nullptr);
+        }
     }
 
-    int rank = (int) dims.size();
-    if (maxdims) {
-        space = H5::DataSpace(rank, dims.data(), maxdims.data());
-    } else {
-        space = H5::DataSpace(rank, dims.data());
+    if (spaceId < 0) {
+        H5Exception("Could not create data space");
     }
+
+    space = DataSpace(spaceId);
+    H5Idec_ref(spaceId);
 
     return space;
 }
 
-H5::DataSpace DataSpace::create(const NDSize &dims, bool maxdims_unlimited)
+DataSpace DataSpace::create(const NDSize &dims, bool maxdims_unlimited)
 {
 
     if (maxdims_unlimited) {
@@ -61,6 +71,7 @@ NDSize DataSpace::extent() const {
 
     return dims;
 }
+
 
 
 } //::nix::hdf5

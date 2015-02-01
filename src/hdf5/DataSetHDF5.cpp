@@ -90,11 +90,11 @@ void DataSet::read(DataType        dtype,
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
-        res = H5Dread(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, *writer);
+        res = H5Dread(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *writer);
         writer.finish();
         vlenReclaim(memType, *writer);
     } else {
-        res = H5Dread(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, data);
+        res = H5Dread(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
 
     H5Error::check(res, "DataSet::read() IO error");
@@ -111,9 +111,9 @@ void DataSet::write(DataType         dtype,
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringReader reader(size, static_cast<const std::string *>(data));
-        res = H5Dwrite(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, *reader);
+        res = H5Dwrite(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *reader);
     } else {
-        res = H5Dwrite(hid, memType.getId(), memSel.h5space().getId(), fileSel.h5space().getId(), H5P_DEFAULT, data);
+        res = H5Dwrite(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
 
     H5Error::check(res, "DataSet::write(): IO error");
@@ -237,7 +237,9 @@ void DataSet::setExtent(const NDSize &dims)
 
 Selection DataSet::createSelection() const
 {
-    H5::DataSpace space(getSpace());
+    hid_t dspace = getSpace();
+    DataSpace space(dspace);
+    H5Sclose(dspace);
     return Selection(space);
 }
 
