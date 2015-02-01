@@ -12,7 +12,7 @@
 #include <string>
 
 #include <nix/hdf5/hdf5include.hpp>
-#include "LocID.hpp"
+#include <nix/hdf5/LocID.hpp>
 #include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/Hydra.hpp>
@@ -47,7 +47,7 @@ public:
     bool hasData(const std::string &name) const;
     DataSet createData(const std::string &name,
             const H5::DataType &fileType,
-            const H5::DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const;
+            const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const;
     DataSet createData(const std::string &name, DataType dtype, const NDSize &size) const;
 
     DataSet createData(const std::string &name, const H5::DataType &fileType,

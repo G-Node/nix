@@ -16,8 +16,6 @@
 #include <nix/Platform.hpp>
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/DataSpace.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
 
 
 namespace nix {

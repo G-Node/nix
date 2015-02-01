@@ -12,6 +12,7 @@
 #define NIX_ATTRIBUTE_H5_H
 
 #include <nix/hdf5/BaseHDF5.hpp>
+#include <nix/hdf5/DataSpace.hpp>
 
 namespace nix {
 
@@ -30,7 +31,7 @@ public:
     void write(H5::DataType mem_type, const NDSize &size, const void *data);
     void write(H5::DataType mem_type, const NDSize &size, const std::string *data);
 
-    hid_t getSpace() const;
+    DataSpace getSpace() const;
     NDSize extent() const;
 };
 

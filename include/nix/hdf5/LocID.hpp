@@ -13,6 +13,8 @@
 
 #include <nix/hdf5/BaseHDF5.hpp>
 #include <nix/hdf5/Attribute.hpp>
+#include <nix/Hydra.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -40,7 +42,7 @@ public:
 private:
 
     Attribute openAttr(const std::string &name) const;
-    Attribute createAttr(const std::string &name, H5::DataType fileType, H5::DataSpace fileSpace) const;
+    Attribute createAttr(const std::string &name, H5::DataType fileType, const DataSpace &fileSpace) const;
 
 };
 
@@ -59,7 +61,7 @@ template<typename T> void LocID::setAttr(const std::string &name, const T &value
         attr = openAttr(name);
     } else {
         H5::DataType fileType = data_type_to_h5_filetype(dtype);
-        H5::DataSpace fileSpace = DataSpace::create(shape, false);
+        DataSpace fileSpace = DataSpace::create(shape, false);
         attr = createAttr(name, fileType, fileSpace);
     }
 
