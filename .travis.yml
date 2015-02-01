@@ -18,7 +18,7 @@ install:
 - sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost1.54-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 valgrind cmake
 
 after_success:
-  - if [[ "$COMPILER" == "g++-4.8" ]]; then coveralls --exclude test --exclude tmp; fi
+  - if [[ "$COMPILER" == "g++-4.8" ]]; then coveralls --exclude test --exclude tmp --gcov gcov-4.8; fi
 
 notifications:
   irc: "chat.freenode.net#gnode"
