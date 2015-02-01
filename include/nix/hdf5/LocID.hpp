@@ -13,6 +13,7 @@
 
 #include <nix/hdf5/BaseHDF5.hpp>
 #include <nix/hdf5/Attribute.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {

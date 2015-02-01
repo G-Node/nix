@@ -12,6 +12,7 @@
 #define NIX_ATTRIBUTE_H5_H
 
 #include <nix/hdf5/BaseHDF5.hpp>
+#include <nix/hdf5/DataSpace.hpp>
 
 namespace nix {
 
