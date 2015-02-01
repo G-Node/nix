@@ -21,8 +21,12 @@
 namespace nix {
 namespace hdf5 {
 
-class NIXAPI DataSpace {
+class NIXAPI DataSpace : public BaseHDF5 {
 public:
+
+    DataSpace(hid_t space) : BaseHDF5(space) { }
+
+    NDSize extent() const;
 
 static H5::DataSpace create(const NDSize &dims, const NDSize &maxdims = {});
 static H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited);

@@ -9,6 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/hdf5/DataSpace.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -42,6 +43,23 @@ H5::DataSpace DataSpace::create(const NDSize &dims, bool maxdims_unlimited)
         return create(dims);
     }
 
+}
+
+NDSize DataSpace::extent() const {
+
+    int ndims = H5Sget_simple_extent_ndims(hid);
+    if (ndims < 0) {
+        throw H5Exception("DataSet::size(): could not obtain number of dimensions");
+    }
+    size_t rank = static_cast<size_t>(ndims);
+    NDSize dims(rank);
+    int res = H5Sget_simple_extent_dims(hid, dims.data(), nullptr);
+
+    if (res < 0) {
+        throw H5Exception("DataSet::size(): could not obtain extents");
+    }
+
+    return dims;
 }
 
 
