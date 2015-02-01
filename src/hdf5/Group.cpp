@@ -39,9 +39,6 @@ Group::Group(hid_t hid) : LocID(hid) {}
 Group::Group(const Group &other) : LocID(other) {}
 
 
-Group::Group(const H5::Group &h5group) : LocID(h5group.getLocId()) {}
-
-
 bool Group::hasObject(const std::string &name) const {
     // empty string should return false, not exception (which H5Lexists would)
     if (name.empty()) {
@@ -270,7 +267,8 @@ Group Group::openGroup(const std::string &name, bool create) const {
         if (h5_gid < 0) {
             throw H5Exception("Unable to create group with name '" + name + "'! (H5Gcreate2)");
         }
-        g = Group(H5::Group(h5_gid));
+        g = Group(h5_gid);
+        H5Idec_ref(h5_gid);
     } else {
         throw H5Exception("Unable to open group with name '" + name + "'!");
     }
@@ -294,16 +292,6 @@ void Group::renameGroup(const std::string &old_name, const std::string &new_name
     if(!util::nameCheck(new_name)) throw InvalidName("renameGroup");
     if (hasGroup(old_name)) {
         H5Gmove(hid, old_name.c_str(), new_name.c_str()); //FIXME: H5Gmove is deprecated
-    }
-}
-
-
-H5::Group Group::h5Group() const {
-    if (H5Iis_valid(hid)) {
-        H5Iinc_ref(hid);
-        return H5::Group(hid);
-    } else {
-        return H5::Group();
     }
 }
 
