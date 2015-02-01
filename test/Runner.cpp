@@ -18,6 +18,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#include "TestH5.hpp"
 #include "TestEntity.hpp"
 #include "TestEntityWithMetadata.hpp"
 #include "TestEntityWithSources.hpp"
@@ -44,6 +45,7 @@
 #include "TestReadOnly.hpp"
 
 int main(int argc, char* argv[]) {
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
