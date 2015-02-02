@@ -9,6 +9,8 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/hdf5/LocID.hpp>
+#include <H5Ipublic.h>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 namespace nix {
 
@@ -49,6 +51,10 @@ Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, cons
 }
 
 
+void LocID::deleteLink(std::string name, hid_t plist) {
+    herr_t res = H5Ldelete(hid, name.c_str(), plist);
+    H5Error::check(res, "LocIDL::deleteLink: Could not delete link: " + name);
+}
 } // nix::hdf5
 
 } // nix::

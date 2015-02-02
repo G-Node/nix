@@ -9,6 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/hdf5/FileHDF5.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 #include "TestH5.hpp"
 
 unsigned int & TestH5::open_mode()
@@ -46,6 +47,17 @@ void TestH5::setUp() {
 void TestH5::tearDown() {
     h5group.close();
     H5Fclose(h5file);
+}
+
+
+void TestH5::testBase() {
+    std::string name = h5group.name();
+
+    CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
+
+    nix::hdf5::Group g_invalid{};
+    CPPUNIT_ASSERT_EQUAL(std::string{}, g_invalid.name());
+
 }
 
 void TestH5::testDataSpace() {

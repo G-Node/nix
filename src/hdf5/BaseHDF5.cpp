@@ -9,6 +9,7 @@
 #include <nix/hdf5/BaseHDF5.hpp>
 #include <H5ACpublic.h>
 #include <H5Gpublic.h>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 
 namespace nix {
@@ -80,6 +81,30 @@ int BaseHDF5::refCount() const {
     } else {
         return -1;
     }
+}
+
+
+std::string BaseHDF5::name() const {
+    if (! H5Iis_valid(hid)) {
+        //maybe throw an exception?
+        return "";
+    }
+
+    ssize_t len = H5Iget_name(hid, nullptr, 0);
+
+    if (len < 0) {
+        throw H5Exception("Could not get size of name");
+    }
+
+    std::vector<char> buffer(static_cast<size_t>(len + 1), 0);
+    len = H5Iget_name(hid, buffer.data(), buffer.size());
+
+    if (len < 0) {
+        throw H5Exception("Could not obtain name");
+    }
+
+    std::string name =  std::string(buffer.data());
+    return name;
 }
 
 

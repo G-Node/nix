@@ -313,22 +313,12 @@ bool Group::renameAllLinks(const std::string &old_name, const std::string &new_n
         std::vector<std::string> links;
 
         Group  group     = openGroup(old_name, false);
-        size_t size      = 128;
-        char *name_read  = new char[size];
+        std::string gname = group.name();
 
-        size_t size_read = H5Iget_name(group.hid, name_read, size);
-        while (size_read > 0) {
-
-            if (size_read < size) {
-                H5Ldelete(hid, name_read, H5L_SAME_LOC);
-                links.push_back(name_read);
-            } else {
-                delete[] name_read;
-                size = size * 2;
-                name_read = new char[size];
-            }
-
-            size_read = H5Iget_name(group.hid, name_read, size);
+        while (! gname.empty()) {
+            deleteLink(gname);
+            links.push_back(gname);
+            gname = group.name();
         }
 
         renamed = links.size() > 0;
@@ -355,22 +345,14 @@ bool Group::removeAllLinks(const std::string &name) {
 
     if (hasGroup(name)) {
         Group  group      = openGroup(name, false);
-        size_t size       = 128;
-        char *name_read   = new char[size];
 
-        size_t size_read  = H5Iget_name(group.hid, name_read, size);
-        while (size_read > 0) {
-            if (size_read < size) {
-                H5Ldelete(hid, name_read, H5L_SAME_LOC);
-            } else {
-                delete[] name_read;
-                size = size * 2;
-                name_read = new char[size];
-            }
-            size_read = H5Iget_name(group.hid, name_read, size);
+        std::string gname = group.name();
+
+        while (! gname.empty()) {
+            deleteLink(gname);
+            gname = group.name();
         }
 
-        delete[] name_read;
         removed = true;
     }
 
