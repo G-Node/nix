@@ -26,7 +26,8 @@ LocID::LocID(const LocID &other) : BaseHDF5(other) {}
 
 
 bool LocID::hasAttr(const std::string &name) const {
-    return H5Aexists(hid, name.c_str());
+    HTri res = H5Aexists(hid, name.c_str());
+    return res.check("LocID.hasAttr() failed");
 }
 
 

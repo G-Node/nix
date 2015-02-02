@@ -44,8 +44,9 @@ bool Group::hasObject(const std::string &name) const {
     if (name.empty()) {
         return false;
     }
-    htri_t res = H5Lexists(hid, name.c_str(), H5P_DEFAULT);
-    return res;
+
+    HTri res = H5Lexists(hid, name.c_str(), H5P_DEFAULT);
+    return res.check("Group::hasObject(): H5Lexists failed");
 }
 
 bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
