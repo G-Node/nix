@@ -43,7 +43,6 @@ public:
 private:
 
     H5::H5File h5file;
-    H5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestValue);
     CPPUNIT_TEST(testObject);

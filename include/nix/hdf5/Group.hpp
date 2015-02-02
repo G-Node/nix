@@ -38,8 +38,6 @@ public:
 
     Group(const Group &other);
 
-    Group(const H5::Group &h5group);
-
     bool hasObject(const std::string &path) const;
     size_t objectCount() const;
     std::string objectName(size_t index) const;
@@ -174,7 +172,6 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
-    H5::Group h5Group() const;
     virtual ~Group();
 
 

@@ -27,9 +27,6 @@ public:
 
     LocID(const LocID &other);
 
-    LocID(const H5::Group &h5group);
-
-
     bool hasAttr(const std::string &name) const;
     void removeAttr(const std::string &name) const;
 

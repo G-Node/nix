@@ -23,8 +23,6 @@ LocID::LocID(hid_t hid) : BaseHDF5(hid) {}
 LocID::LocID(const LocID &other) : BaseHDF5(other) {}
 
 
-LocID::LocID(const H5::Group &h5group) : LocID(h5group.getLocId()) {}
-
 bool LocID::hasAttr(const std::string &name) const {
     return H5Aexists(hid, name.c_str());
 }
