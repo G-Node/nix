@@ -115,6 +115,8 @@ public:
 
     int refCount() const;
 
+    std::string name() const;
+
     virtual void close();
 
     virtual ~BaseHDF5();
