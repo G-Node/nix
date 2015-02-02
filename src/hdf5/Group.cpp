@@ -316,8 +316,7 @@ bool Group::renameAllLinks(const std::string &old_name, const std::string &new_n
         std::string gname = group.name();
 
         while (! gname.empty()) {
-            herr_t res = H5Ldelete(hid, gname.c_str(), H5L_SAME_LOC);
-            H5Error::check(res, "Group::removeAllLinks(): Could not delete link: " + gname);
+            deleteLink(gname);
             links.push_back(gname);
             gname = group.name();
         }
@@ -350,8 +349,7 @@ bool Group::removeAllLinks(const std::string &name) {
         std::string gname = group.name();
 
         while (! gname.empty()) {
-            herr_t res = H5Ldelete(hid, gname.c_str(), H5L_SAME_LOC);
-            H5Error::check(res, "Group::removeAllLinks(): Could not delete link: " + gname);
+            deleteLink(gname);
             gname = group.name();
         }
 
