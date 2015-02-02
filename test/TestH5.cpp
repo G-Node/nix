@@ -51,6 +51,35 @@ void TestH5::tearDown() {
 
 
 void TestH5::testBase() {
+
+    // check HTri
+
+    typedef nix::hdf5::HTri::value_type tri_type;
+
+    nix::hdf5::HTri htri_true(static_cast<tri_type >(1));
+    nix::hdf5::HTri htri_false(static_cast<tri_type >(0));
+    nix::hdf5::HTri htri_error(static_cast<tri_type >(-1));
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<tri_type >(1), htri_true.value);
+    CPPUNIT_ASSERT_EQUAL(true, htri_true.result());
+    CPPUNIT_ASSERT_EQUAL(false, htri_true.isError());
+    CPPUNIT_ASSERT_EQUAL(false, !htri_true);
+    CPPUNIT_ASSERT_EQUAL(true, htri_true.check("Error"));
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<tri_type >(0), htri_false.value);
+    CPPUNIT_ASSERT_EQUAL(false, htri_false.result());
+    CPPUNIT_ASSERT_EQUAL(false, htri_false.isError());
+    CPPUNIT_ASSERT_EQUAL(true, !htri_false);
+    CPPUNIT_ASSERT_EQUAL(false, htri_false.check("Error"));
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<tri_type >(-1), htri_error.value);
+    CPPUNIT_ASSERT_EQUAL(false, htri_error.result());
+    CPPUNIT_ASSERT_EQUAL(true, htri_error.isError());
+    CPPUNIT_ASSERT_EQUAL(true, !htri_error);
+    CPPUNIT_ASSERT_THROW(htri_error.check("Error"), nix::hdf5::H5Exception);
+
+    //check BaseHDF5
+
     std::string name = h5group.name();
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
