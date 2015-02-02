@@ -36,6 +36,8 @@ public:
     template <typename T>
     bool getAttr(const std::string &name, T &value) const;
 
+    void deleteLink(std::string name, hid_t plist = H5L_SAME_LOC);
+
 private:
 
     Attribute openAttr(const std::string &name) const;
