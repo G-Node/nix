@@ -16,6 +16,7 @@
 #include <nix/Platform.hpp>
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/hdf5include.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 
 namespace nix {
@@ -128,6 +129,35 @@ protected:
     void dec() const;
 
     void invalidate();
+};
+
+
+struct NIXAPI HTri {
+    typedef htri_t value_type;
+
+    HTri(value_type result) : value(result) {}
+
+    inline bool result() {
+        return value > 0;
+    }
+
+    inline bool isError() {
+        return value < 0;
+    }
+
+    explicit operator bool() {
+        return result();
+    }
+
+    inline bool check(const std::string &msg) {
+        if (value < 0) {
+            throw H5Exception(msg);
+        }
+
+        return result();
+    }
+
+    value_type value;
 };
 
 
