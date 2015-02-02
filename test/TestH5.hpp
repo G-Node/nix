@@ -36,6 +36,7 @@ public:
     void tearDown();
     static unsigned int &open_mode();
 
+    void testBase();
     void testDataSpace();
 
 private:
@@ -43,6 +44,7 @@ private:
     nix::hdf5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestH5);
+    CPPUNIT_TEST(testBase);
     CPPUNIT_TEST(testDataSpace);
     CPPUNIT_TEST_SUITE_END ();
 
