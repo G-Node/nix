@@ -25,6 +25,8 @@ public:
 
     LocID(hid_t hid);
 
+    LocID(hid_t hid, bool is_copy) : BaseHDF5(hid, is_copy) { }
+
     LocID(const LocID &other);
 
     bool hasAttr(const std::string &name) const;
