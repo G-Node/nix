@@ -38,8 +38,8 @@ NDSize Selection::size() const
 
 bool Selection::isValid() const
 {
-    htri_t res = H5Sselect_valid(space.h5id());
-    return res > 0; //FIXME: check error
+    HTri res = H5Sselect_valid(space.h5id());
+    return res.check("Selection::isValid(): H5Sselect_valid failed");
 }
 
 void Selection::bounds(NDSize &start, NDSize &end) const
