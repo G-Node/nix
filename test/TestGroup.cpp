@@ -44,7 +44,7 @@ void TestGroup::tearDown() {
 }
 
 void TestGroup::testBaseTypes() {
-    nix::hdf5::Group group(h5group);
+    nix::hdf5::Group group(h5group, true);
 
     //int
     //attr
@@ -73,7 +73,7 @@ void TestGroup::testBaseTypes() {
 }
 
 void TestGroup::testMultiArray() {
-    nix::hdf5::Group group(h5group);
+    nix::hdf5::Group group(h5group, true);
     //arrays
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
@@ -125,7 +125,7 @@ void TestGroup::testMultiArray() {
 }
 
 void TestGroup::testVector() {
-    nix::hdf5::Group group(h5group);
+    nix::hdf5::Group group(h5group, true);
 
     std::vector<int> iv;
     iv.push_back(7);
@@ -153,7 +153,7 @@ void TestGroup::testVector() {
 
 void TestGroup::testArray() {
 
-    nix::hdf5::Group group(h5group);
+    nix::hdf5::Group group(h5group, true);
     int ia1d[5] = {1, 2, 3, 4, 5};
 
     group.setAttr("t_intarray1d", ia1d);
@@ -177,7 +177,7 @@ void TestGroup::testArray() {
 }
 
 void TestGroup::testOpen() {
-    nix::hdf5::Group root(h5group);
+    nix::hdf5::Group root(h5group, true);
 
     nix::hdf5::Group g = root.openGroup("name_a", true);
     std::string uuid = nix::util::createId();

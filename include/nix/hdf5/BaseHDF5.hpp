@@ -97,7 +97,7 @@ public:
 
     BaseHDF5() : hid(H5I_INVALID_HID) { }
 
-    BaseHDF5(hid_t hid) : BaseHDF5(hid, true) { };
+    BaseHDF5(hid_t hid) : BaseHDF5(hid, false) { };
 
     BaseHDF5(hid_t hid, bool is_copy) : hid(hid) {
         if (is_copy) {

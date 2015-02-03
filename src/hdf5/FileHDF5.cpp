@@ -72,14 +72,8 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
         throw H5Exception("Could not open/create file");
     }
 
-    hid_t h5root = H5Gopen2(hid, "/", H5P_DEFAULT);
-
-    if (!H5Iis_valid(hid)) {
-        throw H5Exception("Could not root group");
-    }
-
-    root = Group(h5root);
-    H5Idec_ref(h5root);
+    root = Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root.check("Could not root group");
 
     metadata = root.openGroup("metadata");
     data = root.openGroup("data");

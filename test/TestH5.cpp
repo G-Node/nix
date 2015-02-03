@@ -41,7 +41,6 @@ void TestH5::setUp() {
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
     h5group = nix::hdf5::Group(g);
-    H5Idec_ref(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -102,8 +101,6 @@ void TestH5::testBase() {
     std::string name = h5group.name();
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
-
-    nix::hdf5::Group g_invalid{};
     CPPUNIT_ASSERT_EQUAL(std::string{}, g_invalid.name());
 
 }
@@ -119,9 +116,6 @@ void TestH5::testDataSpace() {
     CPPUNIT_ASSERT_EQUAL(es[0], dims[0]);
     CPPUNIT_ASSERT_EQUAL(es[1], dims[1]);
 
-    space.close();
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ds));
-
-    H5Sclose(ds);
-
+    space.close();
 }

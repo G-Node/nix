@@ -45,7 +45,6 @@ void TestDataSet::setUp() {
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
     h5group = nix::hdf5::Group(g);
-    H5Idec_ref(g);
 
     openMode = H5F_ACC_RDWR;
 }

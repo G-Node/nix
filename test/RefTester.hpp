@@ -59,8 +59,10 @@ void test_refcounting(hid_t a_id, hid_t b_id) {
     T wa_owner(a_id, false); // =, take ownership, no refcount change to a
     a_tst.check(&wa_owner);
 
-    T wa_ic = a_id; // +1, currently makes a copy
-    a_tst.inc_check(&wa_ic);
+    H5Iinc_ref(a_id);
+    a_tst.inc_check();
+    T wa_ic = a_id; // =, this transfers ownership
+    a_tst.check(&wa_ic);
 
     {
         T tmp = T(a_id, true); //+1

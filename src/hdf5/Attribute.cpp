@@ -46,15 +46,9 @@ void Attribute::write(H5::DataType mem_type, const NDSize &size, const std::stri
 
 DataSpace Attribute::getSpace() const {
 
-    hid_t space = H5Aget_space(hid);
-    if (space < 0) {
-        throw H5Exception("Attribute::getSpace(): Dould not get data space");
-    }
-
-    DataSpace ds(space);
-    H5Idec_ref(space);
-
-    return ds;
+    DataSpace space = H5Aget_space(hid);
+    space.check("Attribute::getSpace(): Dould not get data space");
+    return space;
 }
 
 NDSize Attribute::extent() const {

@@ -290,13 +290,9 @@ DataType DataSet::dataType(void) const
 }
 
 DataSpace DataSet::getSpace() const {
-    hid_t space = H5Dget_space(hid);
-    if (space < 0) {
-        throw new H5Exception("DataSet::getSpace(): Could not obtain dataspace");
-    }
-    DataSpace sp(space);
-    H5Idec_ref(space);
-    return sp;
+    DataSpace space = H5Dget_space(hid);
+    space.check("DataSet::getSpace(): Could not obtain dataspace");
+    return space;
 }
 
 /* Value related functions */

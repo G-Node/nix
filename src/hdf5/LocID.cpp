@@ -39,7 +39,7 @@ void LocID::removeAttr(const std::string &name) const {
 Attribute LocID::openAttr(const std::string &name) const {
     hid_t ha = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
     Attribute attr = Attribute(ha);
-    H5Idec_ref(ha);
+    attr.check("LocID::openAttr: Could not open attribute " + name);
     return attr;
 }
 
@@ -47,7 +47,7 @@ Attribute LocID::openAttr(const std::string &name) const {
 Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, const DataSpace &fileSpace) const {
     hid_t ha = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
     Attribute attr = Attribute(ha);
-    H5Idec_ref(ha);
+    attr.check("LocID::openAttr: Could not create attribute " + name);
     return attr;
 }
 

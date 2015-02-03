@@ -108,13 +108,11 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
     for (size_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasData(obj_name)) {
-            hid_t did = H5Dopen(hid, obj_name.c_str(), H5P_DEFAULT);
+            DataSet ds = openData(obj_name);
 
-            if (H5Aexists(did, attribute.c_str())) {
-                dsets.emplace_back(did);
+            if (ds.hasAttr(attribute)) {
+                dsets.push_back(ds);
             }
-
-            H5Dclose(did);
         }
     }
     // look for first dataset with given attribute set to given value
@@ -178,10 +176,8 @@ void Group::removeData(const std::string &name) {
 DataSet Group::createData(const std::string &name,
             const H5::DataType &fileType,
             const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
-    hid_t id = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
-
-    DataSet ds(id);
-    H5Dclose(id);
+    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
+    ds.check("Group::createData: Could not create DataSet with name " + name);
     return ds;
 }
 
@@ -227,14 +223,8 @@ DataSet Group::createData(const std::string &name,
 
 
 DataSet Group::openData(const std::string &name) const {
-    hid_t did = H5Dopen(hid, name.c_str(), H5P_DEFAULT);
-
-    if (did < 0) {
-        throw H5Exception("Group::openData(): Could not open DataSet");
-    }
-
-    DataSet ds(did);
-    H5Dclose(did);
+    DataSet ds = H5Dopen(hid, name.c_str(), H5P_DEFAULT);
+    ds.check("Group::openData(): Could not open DataSet");
     return ds;
 }
 
@@ -248,9 +238,8 @@ Group Group::openGroup(const std::string &name, bool create) const {
     if(!util::nameCheck(name)) throw InvalidName("openGroup");
     Group g;
     if (hasGroup(name)) {
-        hid_t gid = H5Gopen(hid, name.c_str(), H5P_DEFAULT);
-        g = Group(gid);
-        H5Idec_ref(gid);
+        g = Group(H5Gopen(hid, name.c_str(), H5P_DEFAULT));
+        g.check("Group::openGroup(): Could not open group: " + name);
     } else if (create) {
         hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
 
@@ -263,13 +252,10 @@ Group Group::openGroup(const std::string &name, bool create) const {
         herr_t res = H5Pset_link_creation_order(gcpl, H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
         H5Error::check(res, "Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
 
-        hid_t h5_gid = H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT);
+        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT));
         H5Pclose(gcpl);
-        if (h5_gid < 0) {
-            throw H5Exception("Unable to create group with name '" + name + "'! (H5Gcreate2)");
-        }
-        g = Group(h5_gid);
-        H5Idec_ref(h5_gid);
+        g.check("Unable to create group with name '" + name + "'! (H5Gcreate2)");
+
     } else {
         throw H5Exception("Unable to open group with name '" + name + "'!");
     }
