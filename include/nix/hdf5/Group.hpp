@@ -36,6 +36,8 @@ public:
 
     Group(hid_t hid);
 
+    Group(hid_t hid, bool is_copy) : LocID(hid, is_copy) { }
+
     Group(const Group &other);
 
     bool hasObject(const std::string &path) const;
