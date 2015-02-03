@@ -30,6 +30,8 @@ public:
 
     DataSet(hid_t hid);
 
+    DataSet(hid_t hid, bool is_copy) : LocID(hid, is_copy) { }
+
     DataSet(const DataSet &other);
 
     void read(hid_t memType, void *data) const;
