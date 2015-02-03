@@ -90,6 +90,8 @@ void TestH5::testBase() {
 
     test_refcounting<nix::hdf5::BaseHDF5>(ga, gb);
 
+    test_refcounting<nix::hdf5::LocID>(ga, gb);
+
     //name()
     std::string name = h5group.name();
 
