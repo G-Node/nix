@@ -12,6 +12,8 @@
 #include <nix/hdf5/ExceptionHDF5.hpp>
 #include "TestH5.hpp"
 
+#include "RefTester.hpp"
+
 unsigned int & TestH5::open_mode()
 {
     static unsigned int openMode = H5F_ACC_TRUNC;
@@ -79,7 +81,16 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT_THROW(htri_error.check("Error"), nix::hdf5::H5Exception);
 
     //check BaseHDF5
+    //ref counting
+    hid_t ga = H5Gopen(h5file, "/", H5P_DEFAULT);
+    hid_t gb = H5Gopen(h5file, "/h5", H5P_DEFAULT);
 
+    CPPUNIT_ASSERT(ga > 0);
+    CPPUNIT_ASSERT(gb > 0);
+
+    test_refcounting<nix::hdf5::BaseHDF5>(ga, gb);
+
+    //name()
     std::string name = h5group.name();
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
