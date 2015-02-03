@@ -53,6 +53,11 @@ void TestH5::tearDown() {
 
 
 void TestH5::testBase() {
+    CPPUNIT_ASSERT(h5group.isValid());
+
+    nix::hdf5::Group g_invalid{};
+    CPPUNIT_ASSERT_EQUAL(false, g_invalid.isValid());
+    CPPUNIT_ASSERT_THROW(g_invalid.check("Error"), nix::hdf5::H5Exception);
 
     // check HTri
 
@@ -81,6 +86,7 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT_THROW(htri_error.check("Error"), nix::hdf5::H5Exception);
 
     //check BaseHDF5
+
     //ref counting
     hid_t ga = H5Gopen(h5file, "/", H5P_DEFAULT);
     hid_t gb = H5Gopen(h5file, "/h5", H5P_DEFAULT);
