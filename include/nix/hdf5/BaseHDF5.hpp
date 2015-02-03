@@ -99,6 +99,12 @@ public:
 
     BaseHDF5(hid_t hid);
 
+    BaseHDF5(hid_t hid, bool is_copy) : hid(hid) {
+        if (is_copy) {
+            inc();
+        }
+    }
+
     BaseHDF5(const BaseHDF5 &other);
 
     BaseHDF5(BaseHDF5 &&other);
