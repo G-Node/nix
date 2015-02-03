@@ -122,6 +122,14 @@ public:
 
     int refCount() const;
 
+    bool isValid() const;
+
+    void check(const std::string &msg_if_fail) {
+        if (!isValid()) {
+            throw H5Exception(msg_if_fail);
+        }
+    }
+
     std::string name() const;
 
     virtual void close();

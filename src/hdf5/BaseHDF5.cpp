@@ -71,6 +71,11 @@ int BaseHDF5::refCount() const {
     }
 }
 
+bool BaseHDF5::isValid() const {
+    HTri res = H5Iis_valid(hid);
+    res.check("BaseHDF5::isValid() failed");
+    return res.result();
+}
 
 std::string BaseHDF5::name() const {
     if (! H5Iis_valid(hid)) {
