@@ -1,7 +1,7 @@
 
 string(SUBSTRING "$ENV{TRAVIS_COMMIT}" 0 7 COMMIT_ID)
 set(CTEST_SITE "travis")
-set(CTEST_BUILD_NAME "$ENV{TRAVIS_BUILD_NUMBER}-${COMMIT_ID}-$ENV{COMPILER}")
+set(CTEST_BUILD_NAME "$ENV{TRAVIS_BUILD_NUMBER}-${COMMIT_ID}-$ENV{CXX}")
 
 set(CTEST_SOURCE_DIRECTORY "$ENV{TRAVIS_BUILD_DIR}")
 set(CTEST_BINARY_DIRECTORY "${CTEST_SOURCE_DIRECTORY}/build")
@@ -28,17 +28,17 @@ ctest_start(Continuous)
 ctest_configure()
 ctest_build()
 
-if(CLANG_CHECK AND $ENV{COMPILER} MATCHES "clang")
+if(CLANG_CHECK AND $ENV{CXX} MATCHES "clang")
   ctest_build(TARGET check)
 endif()
 
 ctest_test()
 
-if(VALGRIND AND $ENV{COMPILER} MATCHES "clang")
+if(VALGRIND AND $ENV{CXX} MATCHES "clang")
   ctest_memcheck()
 endif()
 
-if(GCOV AND $ENV{COMPILER} MATCHES "g\\+\\+")
+if(GCOV AND $ENV{CXX} MATCHES "g\\+\\+")
   ctest_coverage()
 endif()
 

@@ -1,24 +1,42 @@
 language: cpp
-env:
-  matrix:
-    - COMPILER=g++-4.8 CTEST_ARGS=-V
-    - COMPILER=clang CXXFLAGS="-stdlib=libstdc++ -Qunused-arguments" CTEST_ARGS=-VV
 
-script:
-- CXX=${COMPILER} ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
+compiler:
+  - gcc
+  - clang
 
 before_install:
-  - if [[ "$COMPILER" == "g++-4.8" ]]; then sudo pip install cpp-coveralls; fi
+  - if [[ "$CXX" == "g++" ]]; then
+      export CTEST_ARGS=-V;
+      sudo pip install cpp-coveralls;
+    else
+      export CTEST_ARGS=-VV;
+    fi
 
 install:
-- sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-- sudo add-apt-repository ppa:boost-latest/ppa -y
-- sudo add-apt-repository ppa:gnode/pandora -y
-- sudo apt-get update -qq -y
-- sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost1.54-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 valgrind cmake
+  - sudo add-apt-repository ppa:boost-latest/ppa -y
+  - sudo add-apt-repository ppa:gnode/pandora -y
+  - sudo apt-get update -qq -y
+  - sudo apt-get install -q libcppunit-dev libboost1.54-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 valgrind cmake
+  - if [[ "$CXX" == "g++" ]]; then
+      sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y;
+      sudo apt-get update -qq -y;
+      sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev;
+      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100;
+      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100;
+      sudo update-alternatives --config gcc;
+      sudo update-alternatives --config g++;
+      g++ --version;
+    else
+      clang --version;
+    fi
+
+script:
+  - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
 
 after_success:
-  - if [[ "$COMPILER" == "g++-4.8" ]]; then coveralls -b build --exclude test --exclude tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ; fi
+  - if [[ "$CXX" == "g++" ]]; then
+      coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ;
+    fi
 
 notifications:
   irc: "chat.freenode.net#gnode"
