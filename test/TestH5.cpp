@@ -84,6 +84,26 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT_EQUAL(true, !htri_error);
     CPPUNIT_ASSERT_THROW(htri_error.check("Error"), nix::hdf5::H5Exception);
 
+    // check HErr
+
+    typedef nix::hdf5::HErr::value_type err_type;
+
+    nix::hdf5::HErr herr_success(static_cast<err_type>(1));
+    nix::hdf5::HErr herr_fail(static_cast<err_type>(-1));
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<tri_type >(1), herr_success.value);
+    CPPUNIT_ASSERT_EQUAL(false, herr_success.isError());
+    CPPUNIT_ASSERT_EQUAL(false, !herr_success);
+    CPPUNIT_ASSERT_EQUAL(true, herr_success.check("Error"));
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<tri_type >(-1), herr_fail.value);
+    CPPUNIT_ASSERT_EQUAL(true, herr_fail.isError());
+    CPPUNIT_ASSERT_EQUAL(true, !herr_fail);
+    CPPUNIT_ASSERT_THROW(herr_fail.check("Error"), nix::hdf5::H5Error);
+
+    nix::hdf5::HErr herr_default;
+    CPPUNIT_ASSERT_EQUAL(true, herr_default.isError());
+
     //check BaseHDF5
 
     //ref counting

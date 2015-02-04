@@ -15,16 +15,16 @@ namespace hdf5 {
 
 void Selection::offset(const NDSSize &offset)
 {
-    herr_t status = H5Soffset_simple(space.h5id(), offset.data());
-    H5Error::check(status, "Selection::offset(): Could not set offset");
+    HErr status = H5Soffset_simple(space.h5id(), offset.data());
+    status.check("Selection::offset(): Could not set offset");
 }
 
 
 void Selection::select(const NDSize &count, const NDSize &start, Mode mode)
 {
     H5S_seloper_t op = static_cast<H5S_seloper_t>(mode);
-    herr_t status = H5Sselect_hyperslab(space.h5id(), op, start.data(), nullptr, count.data(), nullptr);
-    H5Error::check(status, "Selection::select(): Could not select hyperslab");
+    HErr status = H5Sselect_hyperslab(space.h5id(), op, start.data(), nullptr, count.data(), nullptr);
+    status.check("Selection::select(): Could not select hyperslab");
 }
 
 
@@ -44,8 +44,8 @@ bool Selection::isValid() const
 
 void Selection::bounds(NDSize &start, NDSize &end) const
 {
-    herr_t status = H5Sget_select_bounds(space.h5id(), start.data(), end.data());
-    H5Error::check(status, "Selection::bounds(): Could not get bounds");
+    HErr status = H5Sget_select_bounds(space.h5id(), start.data(), end.data());
+    status.check("Selection::bounds(): Could not get bounds");
 }
 
 size_t Selection::rank() const

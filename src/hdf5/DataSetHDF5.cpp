@@ -42,14 +42,14 @@ DataSet::DataSet(const DataSet &other)
 
 void DataSet::read(hid_t memType, void *data) const
 {
-    herr_t res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
-    H5Error::check(res, "DataSet::read() IO error");
+    HErr res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    res.check("DataSet::read() IO error");
 }
 
 void DataSet::write(hid_t memType, const void *data)
 {
-    herr_t res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
-    H5Error::check(res, "DataSet::write() IOError");
+    HErr res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    res.check("DataSet::write() IOError");
 }
 
 void DataSet::read(DataType dtype, const NDSize &size, void *data) const
@@ -86,7 +86,7 @@ void DataSet::read(DataType        dtype,
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
 
-    herr_t res;
+    HErr res;
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
@@ -97,7 +97,7 @@ void DataSet::read(DataType        dtype,
         res = H5Dread(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
 
-    H5Error::check(res, "DataSet::read() IO error");
+    res.check("DataSet::read() IO error");
 }
 
 void DataSet::write(DataType         dtype,
@@ -106,7 +106,7 @@ void DataSet::write(DataType         dtype,
                     const Selection &memSel)
 {
     H5::DataType memType = data_type_to_h5_memtype(dtype);
-    herr_t res;
+    HErr res;
 
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
@@ -116,7 +116,7 @@ void DataSet::write(DataType         dtype,
         res = H5Dwrite(hid, memType.getId(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
 
-    H5Error::check(res, "DataSet::write(): IO error");
+    res.check("DataSet::write(): IO error");
 }
 
 
@@ -223,11 +223,9 @@ void DataSet::setExtent(const NDSize &dims)
         throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
-    herr_t err = H5Dset_extent(hid, dims.data());
+    HErr res = H5Dset_extent(hid, dims.data());
+    res.check("DataSet::setExtent(): Could not set the extent of the DataSet.");
 
-    if (err < 0) {
-        throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
-    }
 }
 
 Selection DataSet::createSelection() const
@@ -244,7 +242,7 @@ NDSize DataSet::size() const
 
 void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace) const
 {
-    herr_t res;
+    HErr res;
     if (dspace != nullptr) {
         res = H5Dvlen_reclaim(mem_type.getId(), dspace->getId(), H5P_DEFAULT, data);
     } else {
@@ -252,7 +250,7 @@ void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspa
         res = H5Dvlen_reclaim(mem_type.getId(), space.h5id(), H5P_DEFAULT, data);
     }
 
-    H5Error::check(res, "DataSet::vlenReclaim(): could not reclaim dynamic bufferes");
+    res.check("DataSet::vlenReclaim(): could not reclaim dynamic bufferes");
 }
 
 
@@ -342,8 +340,8 @@ public:
     }
 
     void insert(const std::string &name, size_t offset, hid_t memberType) {
-        herr_t result = H5Tinsert(hid, name.c_str(), offset, memberType);
-        H5Error::check(result, "CompoundType::insert(): Could not insert member into compound type");
+        HErr result = H5Tinsert(hid, name.c_str(), offset, memberType);
+        result.check("CompoundType::insert(): Could not insert member into compound type");
     }
 
     void insertString(const std::string &name, size_t offset) {
@@ -354,8 +352,8 @@ public:
                 throw H5Exception("H5Tcopy: Could not copy C_S1 type");
             }
 
-            herr_t status = H5Tset_size (strType, H5T_VARIABLE);
-            H5Error::check(status, "CompoundType::insertString(): H5Tset_size failed");
+            HErr status = H5Tset_size (strType, H5T_VARIABLE);
+            status.check("CompoundType::insertString(): H5Tset_size failed");
         }
 
         insert(name, offset, strType);
