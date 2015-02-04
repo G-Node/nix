@@ -12,6 +12,8 @@
 #include <nix/hdf5/ExceptionHDF5.hpp>
 #include "TestH5.hpp"
 
+#include "RefTester.hpp"
+
 unsigned int & TestH5::open_mode()
 {
     static unsigned int openMode = H5F_ACC_TRUNC;
@@ -39,7 +41,6 @@ void TestH5::setUp() {
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
     h5group = nix::hdf5::Group(g);
-    H5Idec_ref(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -51,6 +52,11 @@ void TestH5::tearDown() {
 
 
 void TestH5::testBase() {
+    CPPUNIT_ASSERT(h5group.isValid());
+
+    nix::hdf5::Group g_invalid{};
+    CPPUNIT_ASSERT_EQUAL(false, g_invalid.isValid());
+    CPPUNIT_ASSERT_THROW(g_invalid.check("Error"), nix::hdf5::H5Exception);
 
     // check HTri
 
@@ -80,11 +86,21 @@ void TestH5::testBase() {
 
     //check BaseHDF5
 
+    //ref counting
+    hid_t ga = H5Gopen(h5file, "/", H5P_DEFAULT);
+    hid_t gb = H5Gopen(h5file, "/h5", H5P_DEFAULT);
+
+    CPPUNIT_ASSERT(ga > 0);
+    CPPUNIT_ASSERT(gb > 0);
+
+    test_refcounting<nix::hdf5::BaseHDF5>(ga, gb);
+
+    test_refcounting<nix::hdf5::LocID>(ga, gb);
+
+    //name()
     std::string name = h5group.name();
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
-
-    nix::hdf5::Group g_invalid{};
     CPPUNIT_ASSERT_EQUAL(std::string{}, g_invalid.name());
 
 }
@@ -100,9 +116,6 @@ void TestH5::testDataSpace() {
     CPPUNIT_ASSERT_EQUAL(es[0], dims[0]);
     CPPUNIT_ASSERT_EQUAL(es[1], dims[1]);
 
-    space.close();
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ds));
-
-    H5Sclose(ds);
-
+    space.close();
 }

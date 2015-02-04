@@ -33,13 +33,8 @@ DataSpace DataSpace::create(const NDSize &dims, const NDSize &maxdims)
         }
     }
 
-    if (spaceId < 0) {
-        H5Exception("Could not create data space");
-    }
-
     space = DataSpace(spaceId);
-    H5Idec_ref(spaceId);
-
+    space.check("Could not create data space");
     return space;
 }
 

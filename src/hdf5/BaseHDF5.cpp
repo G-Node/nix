@@ -16,18 +16,6 @@ namespace nix {
 namespace hdf5 {
 
 
-BaseHDF5::BaseHDF5()
-    : hid(H5I_INVALID_HID)
-{}
-
-
-BaseHDF5::BaseHDF5(hid_t id)
-    : hid(id)
-{
-    inc();
-}
-
-
 BaseHDF5::BaseHDF5(const BaseHDF5 &other)
     : hid(other.hid)
 {
@@ -83,6 +71,11 @@ int BaseHDF5::refCount() const {
     }
 }
 
+bool BaseHDF5::isValid() const {
+    HTri res = H5Iis_valid(hid);
+    res.check("BaseHDF5::isValid() failed");
+    return res.result();
+}
 
 std::string BaseHDF5::name() const {
     if (! H5Iis_valid(hid)) {

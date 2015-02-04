@@ -13,6 +13,7 @@
 #include <nix/DataType.hpp>
 
 #include <string.h>
+#include "RefTester.hpp"
 
 using namespace nix; //quick fix for now
 
@@ -44,7 +45,6 @@ void TestDataSet::setUp() {
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
     h5group = nix::hdf5::Group(g);
-    H5Idec_ref(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -192,10 +192,12 @@ void TestDataSet::testDataType() {
 void TestDataSet::testBasic() {
     NDSize dims({4, 6});
 
-    hdf5::DataSet ds = h5group.createData("dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
-    CPPUNIT_ASSERT_EQUAL(ds.size(), (NDSize{0, 0}));
+    hdf5::DataSet dsZero = h5group.createData("dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
+    CPPUNIT_ASSERT_EQUAL(dsZero.size(), (NDSize{0, 0}));
 
-    ds = h5group.createData("dsDouble", DataType::Double, dims);
+    hdf5::DataSet ds = h5group.createData("dsDouble", DataType::Double, dims);
+
+    test_refcounting<hdf5::DataSet>(dsZero.h5id(), ds.h5id());
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
