@@ -1,8 +1,12 @@
 language: cpp
 
+env:
+  global:
+    #coverty
+    - secure: "BVL/XbYry4ki2GGn91TIlDd5UeRdIKv+OpGymi0E0srbtlFXur+9UzRYCOUzeJ2J1lL933swbVB0woyI5tN5Ef4iA7ilxDPW1CJTXnVqa699Pws7nPPb/njiRmwuYgHt87gUR481sUQx1r2HxE/eJnpqrdm8xM3F9QaWkBlw4gU="
+
 compiler:
   - gcc
-  - clang
 
 before_install:
   - if [[ "$CXX" == "g++" ]]; then
@@ -31,12 +35,24 @@ install:
     fi
 
 script:
-  - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
+  - if [[ ${COVERITY_SCAN_BRANCH} != 1 ]]; then
+      ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    fi
 
 after_success:
-  - if [[ "$CXX" == "g++" ]]; then
+  - if [[ "$CXX" == "g++" ]] && [[ ${COVERITY_SCAN_BRANCH} != 1 ]]; then
       coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ;
     fi
 
 notifications:
   irc: "chat.freenode.net#gnode"
+
+addons:
+  coverity_scan:
+    project:
+      name: "G-Node/nix"
+      description: "Neuroscience information exchange format"
+    notification_email: christian@kellner.me
+    build_command_prepend: "mkdir build; cd build; cmake .."
+    build_command:   "make -j4"
+    branch_pattern: coverty_scan
