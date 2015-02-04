@@ -174,6 +174,31 @@ struct NIXAPI HTri {
     value_type value;
 };
 
+struct NIXAPI HErr {
+    typedef herr_t value_type;
+
+    HErr() : value(static_cast<value_type>(-1)) { }
+    HErr(value_type result) : value(result) {}
+
+    inline bool isError() {
+        return value < 0;
+    }
+
+    explicit operator bool() {
+        return !isError();
+    }
+
+    inline bool check(const std::string &msg) {
+        if (isError()) {
+            throw H5Error(value, msg);
+        }
+
+        return true;
+    }
+
+    value_type value;
+};
+
 
 } // namespace hdf5
 } // namespace nix
