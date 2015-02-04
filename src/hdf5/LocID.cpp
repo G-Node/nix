@@ -32,29 +32,28 @@ bool LocID::hasAttr(const std::string &name) const {
 
 
 void LocID::removeAttr(const std::string &name) const {
-    H5Adelete(hid, name.c_str());
+    HErr res = H5Adelete(hid, name.c_str());
+    res.check("LocID::removeAttr(): could not delete attribute");
 }
 
 
 Attribute LocID::openAttr(const std::string &name) const {
-    hid_t ha = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
-    Attribute attr = Attribute(ha);
+    Attribute attr = H5Aopen(hid, name.c_str(), H5P_DEFAULT);
     attr.check("LocID::openAttr: Could not open attribute " + name);
     return attr;
 }
 
 
 Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, const DataSpace &fileSpace) const {
-    hid_t ha = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
-    Attribute attr = Attribute(ha);
+    Attribute attr = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
     attr.check("LocID::openAttr: Could not create attribute " + name);
     return attr;
 }
 
 
 void LocID::deleteLink(std::string name, hid_t plist) {
-    herr_t res = H5Ldelete(hid, name.c_str(), plist);
-    H5Error::check(res, "LocIDL::deleteLink: Could not delete link: " + name);
+    HErr res = H5Ldelete(hid, name.c_str(), plist);
+    res.check("LocIDL::deleteLink: Could not delete link: " + name);
 }
 } // nix::hdf5
 

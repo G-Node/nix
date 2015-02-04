@@ -18,8 +18,8 @@ Attribute::Attribute(const Attribute &other) : BaseHDF5(other) {
 
 
 void Attribute::read(H5::DataType mem_type, const NDSize &size, void *data) {
-    herr_t status = H5Aread(hid, mem_type.getId(), data);
-    H5Error::check(status, "Attribute::read(): Could not read data");
+    HErr status = H5Aread(hid, mem_type.getId(), data);
+    status.check("Attribute::read(): Could not read data");
 }
 
 void Attribute::read(H5::DataType mem_type, const NDSize &size, std::string *data) {
@@ -29,13 +29,13 @@ void Attribute::read(H5::DataType mem_type, const NDSize &size, std::string *dat
 
     DataSpace space = getSpace();
 
-    herr_t status = H5Dvlen_reclaim(mem_type.getId(), space.h5id(), H5P_DEFAULT, *writer);
-    H5Error::check(status, "Attribute::read(): Could not reclaim variable length data");
+    HErr status = H5Dvlen_reclaim(mem_type.getId(), space.h5id(), H5P_DEFAULT, *writer);
+    status.check("Attribute::read(): Could not reclaim variable length data");
 }
 
 void Attribute::write(H5::DataType mem_type, const NDSize &size, const void *data) {
-    herr_t status = H5Awrite(hid, mem_type.getId(), data);
-    H5Error::check(status, "Attribute::write(): Could not write data");
+    HErr status = H5Awrite(hid, mem_type.getId(), data);
+    status.check("Attribute::write(): Could not write data");
 }
 
 void Attribute::write(H5::DataType mem_type, const NDSize &size, const std::string *data) {
