@@ -35,7 +35,7 @@ script:
 
 after_success:
   - if [[ "$CXX" == "g++" ]]; then
-      coveralls -b build --exclude test --exclude tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ;
+      coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ;
     fi
 
 notifications:
