@@ -59,138 +59,62 @@ public:
     }
 };
 
-
-class EmptyString: public std::exception {
+class EmptyString: public std::invalid_argument {
 public:
-    EmptyString(const std::string &caller_arg):
-    caller(caller_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("EmptyString: ");
-        sstream << "Empty string given - not a valid value for " << caller;
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string caller;
+    EmptyString(const std::string &caller) :
+            std::invalid_argument("Empty string given - not a valid value for " + caller) { }
 };
 
 
-class DuplicateName: public std::exception {
+class DuplicateName: public std::invalid_argument {
 public:
-    DuplicateName(const std::string &caller_arg):
-    caller(caller_arg) { }
+    DuplicateName(const std::string &caller):
+    std::invalid_argument("Duplicate name - names have to be unique for a given entity type & parent. (" + caller + ")") { }
 
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("DuplicateName: ");
-        sstream << "Duplicate name given - names have to be unique for a given entity type & parent. (" << caller << ")";
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string caller;
 };
 
 
-class InvalidName: public std::exception {
+class InvalidName: public std::invalid_argument {
 public:
-    InvalidName(const std::string &caller_arg):
-    caller(caller_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("InvalidName: ");
-        sstream << "Invalid name given - names have to be sanitized using util function. (" << caller << ")";
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string caller;
+    InvalidName(const std::string &caller):
+    std::invalid_argument("Invalid name given - names have to be sanitized using util function. (" + caller + ")") { }
 };
 
 
-class MissingAttr: public std::exception {
+class UnsortedTicks: public std::invalid_argument {
 public:
-    MissingAttr(const std::string &attr_arg):
-    attr(attr_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("MissingAttribute: ");
-        sstream << "Obligatory attribute " << attr << " is not set!";
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string attr;
+    UnsortedTicks(const std::string &caller):
+            std::invalid_argument("Ticks are not given in a ascending order: " + caller) { }
 };
 
 
-class UnsortedTicks: public std::exception {
+class InvalidUnit: public std::invalid_argument {
 public:
-    UnsortedTicks(const std::string &caller_arg):
-    caller(caller_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("UnsortedTics: ");
-        sstream << "Ticks are not given in a ascending order: " << caller;
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string caller;
+    InvalidUnit(const std::string &what, const std::string &where):
+            std::invalid_argument("InvalidUnit: " + what + " evoked at: " + where) { }
 };
 
 
-class InvalidUnit: public std::exception {
+class IncompatibleDimensions: public std::invalid_argument {
 public:
-    InvalidUnit(const std::string &what_arg, const std::string &caller_arg):
-    what_msg(what_arg), caller(caller_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("InvalidUnit: ");
-        sstream << what_msg << " evoked at: " << caller;
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string what_msg;
-    std::string caller;
+    IncompatibleDimensions(const std::string &what, const std::string &where):
+            std::invalid_argument("IncompatibleDimensions: " + what + " evoked at: " + where) { }
 };
 
 
-class IncompatibleDimensions: public std::exception {
+class InvalidDimension : public std::invalid_argument {
+
 public:
-    IncompatibleDimensions(const std::string &what_arg, const std::string &caller_arg):
-    what_msg(what_arg), caller(caller_arg) { }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("IncompatibleDimensions: ");
-        sstream << what_msg << " evoked at: " << caller;
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string what_msg;
-    std::string caller;
+    InvalidDimension(const std::string &what, const std::string &where):
+            std::invalid_argument("InvalidDimension: " + what + " evoked at: " + where) { }
 };
 
 
-class InvalidDimension : public std::exception {
-
+class MissingAttr: public std::runtime_error {
 public:
-    InvalidDimension(const std::string &message, const std::string &caller):
-        msg(message), caller(caller){ }
-
-    const char *what() const NOEXCEPT {
-        std::stringstream sstream("InvalidDimension: ");
-        sstream << msg << " evoked at: " << caller;
-        return sstream.str().c_str();
-    }
-
-private:
-    std::string msg;
-    std::string caller;
+    MissingAttr(const std::string &name):
+            std::runtime_error("MissingAttribute: Obligatory attribute " + name + " is not set!") { }
 };
-
 
 }
 
