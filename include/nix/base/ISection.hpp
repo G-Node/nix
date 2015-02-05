@@ -73,10 +73,10 @@ public:
     virtual size_t sectionCount() const = 0;
 
 
-    virtual bool hasSection(const std::string &id) const = 0;
+    virtual bool hasSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISection> getSection(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
@@ -85,7 +85,7 @@ public:
     virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSection(const std::string &id) = 0;
+    virtual bool deleteSection(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods for property access
@@ -112,7 +112,7 @@ public:
     virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const std::vector<Value> &values) = 0;
 
 
-    virtual bool deleteProperty(const std::string &id) = 0;
+    virtual bool deleteProperty(const std::string &name_or_id) = 0;
 
 
     virtual ~ISection() {}

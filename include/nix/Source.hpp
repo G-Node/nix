@@ -84,13 +84,13 @@ public:
     /**
      * @brief Checks if this source has a specific source as direct descendant.
      *
-     * @param id        The id of the source.
+     * @param name_or_id        The name or id of the source.
      *
-     * @return True if a source with the given id is a direct descendant, false
+     * @return True if a source with the given name/id is a direct descendant, false
      *         otherwise.
      */
-    bool hasSource(const std::string &id) const {
-        return backend()->hasSource(id);
+    bool hasSource(const std::string &name_or_id) const {
+        return backend()->hasSource(name_or_id);
     }
 
     /**
@@ -105,13 +105,13 @@ public:
     /**
      * @brief Retrieves a specific child source that is a direct descendant.
      *
-     * @param id        The id of the source.
+     * @param name_or_id        The name or id of the source.
      *
-     * @return The source with the given id. If it doesn't exist an exception
+     * @return The source with the given name/id. If it doesn't exist an exception
      *         will be thrown.
      */
-    Source getSource(const std::string &id) const {
-        return backend()->getSource(id);
+    Source getSource(const std::string &name_or_id) const {
+        return backend()->getSource(name_or_id);
     }
 
     /**
@@ -179,12 +179,12 @@ public:
      * @brief Delete a root source and all its child sources from
      *        the source.
      *
-     * @param id        The id of the source to remove.
+     * @param name_or_id        The name or id of the source to remove.
      *
      * @return True if the source was deleted, false otherwise.
      */
-    bool deleteSource(const std::string &id) {
-        return backend()->deleteSource(id);
+    bool deleteSource(const std::string &name_or_id) {
+        return backend()->deleteSource(name_or_id);
     }
 
     /**

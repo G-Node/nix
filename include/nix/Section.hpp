@@ -214,7 +214,7 @@ public:
     /**
      * @brief Checks whether a section has a certain child section.
      *
-     * @param id        Name or id of requested section.
+     * @param name_or_id        Name or id of requested section.
      *
      * @return True if the section is a child, false otherwise.
      */
@@ -234,7 +234,7 @@ public:
     /**
      * @brief Get a specific child section by its name or id.
      *
-     * @param id_or_id  The name or the ID of the child section.
+     * @param name_or_id  The name or the ID of the child section.
      *
      * @return The child section.
      */
