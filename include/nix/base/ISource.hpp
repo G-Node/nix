@@ -27,10 +27,10 @@ class NIXAPI ISource : virtual public IEntityWithMetadata {
 
 public:
 
-    virtual bool hasSource(const std::string &id) const = 0;
+    virtual bool hasSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISource> getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISource> getSource(const std::string &name_or_id) const = 0;
 
 
     virtual std::shared_ptr<ISource> getSource(size_t index) const = 0;
@@ -42,7 +42,7 @@ public:
     virtual std::shared_ptr<ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSource(const std::string &id) = 0;
+    virtual bool deleteSource(const std::string &name_or_id) = 0;
 
 
     virtual ~ISource() {}
