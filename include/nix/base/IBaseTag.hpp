@@ -24,8 +24,6 @@ namespace base {
 
 /**
 * @brief Interface for implementations of the BaseTag entity.
-*
-* See {@link nix::BaseTag} for a more detailed description.
 */
 class NIXAPI IBaseTag : virtual public base::IEntityWithSources {
 

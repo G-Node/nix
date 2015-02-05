@@ -234,7 +234,7 @@ public:
     /**
      * @brief Get a specific child section by its name or id.
      *
-     * @param id_or_id  The name or the ID of the child section.
+     * @param name_or_id  The name or the ID of the child section.
      *
      * @return The child section.
      */

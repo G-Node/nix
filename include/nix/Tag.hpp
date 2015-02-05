@@ -444,14 +444,14 @@ public:
     DataView retrieveData(size_t reference_index) const;
     
     /**
-     * @brief Returns the data stored in the seleceted Feature.
+     * @brief Returns the data stored in the selected Feature.
      *
      * @param feature_index   The index of the requested feature.
      *
      * @return The data stored in the Feature.
      *
      */
-    DataView retrieveFeatureData(size_t feature_indec) const;
+    DataView retrieveFeatureData(size_t feature_index) const;
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
