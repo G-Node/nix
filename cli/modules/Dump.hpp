@@ -249,15 +249,7 @@ public:
      * @param t NDSize class
      * @return self
      */
-    yamlstream& operator<<(const nix::NDSize &t) {
-        indent_if();
-        std::vector<double> extent;
-        for (size_t i = 0; i < t.size(); i++) {
-            extent.push_back(t[i]);
-        }
-        (*this) << extent;
-        return *this;
-    }
+    yamlstream& operator<<(const nix::NDSize &t);
     
     /**
      * @brief boost::optional output into stringstream

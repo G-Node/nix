@@ -6,13 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-/*#include <nix/base/Entity.hpp>
-#include <nix/base/NamedEntity.hpp>
-#include <nix/base/EntityWithMetadata.hpp>
-#include <nix/base/EntityWithSources.hpp>
-#include <nix.hpp>*/
 
-//#include <Cli.hpp>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
+
+#include <algorithm>
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 #include <modules/Dump.hpp>
 #include <Exception.hpp>
 #include <limits>
@@ -92,6 +97,17 @@ std::string yamlstream::t(const time_t &tm) {
 
 std::string yamlstream::str() {
     return sstream.str();
+}
+
+yamlstream& yamlstream::operator<<(const nix::NDSize &t)
+{
+    indent_if();
+    std::vector<double> extent(t.size());
+    std::transform(t.begin(), t.end(), extent.begin(), [](nix::ndsize_t val){
+        return static_cast<double>(val);
+    });
+    (*this) << extent;
+    return *this;
 }
 
 yamlstream& yamlstream::operator<<(const nix::Value &value) {
