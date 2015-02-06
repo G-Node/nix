@@ -16,6 +16,7 @@
 
 #include <ctime>
 #include <functional>
+#include <numeric>
 #include <math.h>
 
 #include <boost/math/constants/constants.hpp>
@@ -92,11 +93,13 @@ void TestValidate::setValid() {
     array1.setData(A);
     array2.setData(A);
     array3.setData(A);
+
     // fill extent & position
-    for (index i = 0; i < 3; ++i) {
-        extent.push_back(i);
-        position.push_back(i);
-    }
+    extent.resize(3);
+    position.resize(3);
+    std::iota(std::begin(extent), std::end(extent), 0);
+    std::iota(std::begin(position), std::end(position), 0);
+
     // fill extents & positions
     array2D_type B(boost::extents[5][3]);
     for (index i = 0; i < 5; ++i) {
@@ -148,13 +151,13 @@ void TestValidate::setInvalid() {
     array1.setData(A);
     array2.setData(A);
     array3.setData(A);
+
     // fill extent & position
-    for (index i = 0; i < 6; ++i) {
-        extent.push_back(i);
-    }
-    for (index i = 0; i < 9; ++i) {
-        position.push_back(i);
-    }
+    extent.resize(6);
+    position.resize(9);
+    std::iota(std::begin(extent), std::end(extent), 0);
+    std::iota(std::begin(position), std::end(position), 0);
+
     // fill extents & positions
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array2D_type::index index;
