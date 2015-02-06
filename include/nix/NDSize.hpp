@@ -20,9 +20,14 @@
 
 namespace nix {
 
-#ifdef _WIN32
-//TODO: consider reimplementing NDSizeBase using std::vector (cf. issue #449)
-#pragma warning(disable: 4996)
+//Ideally we would use unit64_t (and int64_t) here to directly specify
+//the size we want, but for now we stick with how the hdf5 library
+//defines hsize_t, otherwise we will run into issues when on plaforms
+// where unit64_t is an incompatible type to the type of hsize_t
+//(e.g. Ubuntu 12.04 LTS Server Edition 64 bit.)
+
+typedef unsigned long long int ndsize_t;
+typedef long long int          ndssize_t;
 #endif
 
 template<typename T>
