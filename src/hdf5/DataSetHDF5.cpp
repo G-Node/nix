@@ -324,7 +324,9 @@ struct FileValue<bool>  {
 
     //ctors
     FileValue() {}
-    explicit FileValue(const bool &vref) : value(vref) { }
+    explicit FileValue(const bool &vref) :
+            value(static_cast<unsigned char>(vref ? 1 : 0)) {
+    }
 };
 
 //
