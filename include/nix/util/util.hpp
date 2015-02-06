@@ -265,21 +265,27 @@ T convertToSeconds(const std::string &unit, T value) {
  */
 template<typename T>
 T convertToKelvin(const std::string &unit, T value) {
-   T temperature;
+
+   if (unit == "°K" || unit == "K") {
+        return value; //nothing to do
+   }
+
+   double temperature;
+
    if (unit == "°C" || unit == "C") {
        temperature = value + 273.15;
    } else if (unit == "°F" || unit == "F") {
-       double temp = (value - 32) * 5.0/9 + 273.15;
-       temperature = std::is_integral<T>::value ? std::round(temp) : temp;
+       temperature = (value - 32) * 5.0/9 + 273.15;
    } else if (unit == "°K" || unit == "K") {
        temperature = value;
    } else if (isScalable(unit, "K")) {
        temperature = value * getSIScaling(unit, "K");
    } else {
        std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
-       temperature = value;
+       return value;
    }
-   return temperature;
+
+   return static_cast<T>(std::is_integral<T>::value ? std::round(temperature) : temperature);
 }
 
 /**
