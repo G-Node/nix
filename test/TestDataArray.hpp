@@ -8,6 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix/hydra/multiArray.hpp>
 #include <nix.hpp>
 
 #include <iostream>

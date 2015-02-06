@@ -9,12 +9,14 @@
 #ifndef CLI_DUMP_H
 #define CLI_DUMP_H
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <nix/base/types.hpp>
 #include <nix/base/Entity.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/EntityWithSources.hpp>
-#include <nix.hpp>
 
 #include <Cli.hpp>
 #include <modules/IModule.hpp>
