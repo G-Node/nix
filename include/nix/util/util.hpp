@@ -246,7 +246,8 @@ T convertToSeconds(const std::string &unit, T value) {
     } else if (unit == "s" || unit == "sec") {
         seconds = value;
     } else if (isScalable(unit, "s")) {
-        seconds = value * getSIScaling(unit, "s");
+        double scaled = value * getSIScaling(unit, "s");
+        seconds = static_cast<T>(std::is_integral<T>::value ? std::round(scaled) : scaled);
     } else {
         std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
         seconds = value;
