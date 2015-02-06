@@ -167,9 +167,6 @@ bool MultiTagHDF5::checkPositionsAndExtents() const {
     if (hasPositions() && extents()) {
         DataArray pos = positions();
         DataArray ext = extents();
-        boost::multi_array<double,1> posData, extData;
-        pos.getData(posData);
-        ext.getData(extData);
         return checkDimensions(pos, ext);
     }
 
