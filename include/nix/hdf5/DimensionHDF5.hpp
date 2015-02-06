@@ -15,6 +15,7 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <memory>
 
 namespace nix {
 namespace hdf5 {
