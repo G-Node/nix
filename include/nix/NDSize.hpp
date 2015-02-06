@@ -37,11 +37,11 @@ typedef long long int          ndssize_t;
 // To avoid this we implement the following functions in NDSize.cpp
 // and disable the correspoding warning (C4996) for <algorithm>
 
-void nd_fill(ndsize_t *data, size_t len, ndsize_t value);
-void nd_fill(ndssize_t *data, size_t len, ndssize_t value);
+NIXAPI void nd_fill(ndsize_t *data, size_t len, ndsize_t value);
+NIXAPI void nd_fill(ndssize_t *data, size_t len, ndssize_t value);
 
-void nd_copy(ndsize_t *source, size_t n, ndsize_t *dest);
-void nd_copy(ndssize_t *source, size_t n, ndssize_t *dest);
+NIXAPI void nd_copy(ndsize_t *source, size_t n, ndsize_t *dest);
+NIXAPI void nd_copy(ndssize_t *source, size_t n, ndssize_t *dest);
 
 #else
 
