@@ -11,7 +11,6 @@
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
 
-#include <hdf5.h>
 
 namespace nix {
 namespace hdf5 {

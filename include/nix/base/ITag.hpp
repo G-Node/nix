@@ -9,13 +9,13 @@
 #ifndef NIX_I_TAG_H
 #define NIX_I_TAG_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/base/IBaseTag.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 

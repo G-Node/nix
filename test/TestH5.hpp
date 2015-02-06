@@ -8,11 +8,8 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <iostream>
-#include <sstream>
-#include <iterator>
-#include <stdexcept>
-#include <limits>
+#include <nix.hpp>
+#include <nix/hdf5/Group.hpp>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -26,8 +23,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix.hpp>
-#include <nix/hdf5/Group.hpp>
+
 
 class TestH5 : public CPPUNIT_NS::TestFixture {
 public:

@@ -9,6 +9,7 @@
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
 #include "TestBaseTag.hpp"
+
 #include <nix/Exception.hpp>
 #include <sstream>
 

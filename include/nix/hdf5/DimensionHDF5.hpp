@@ -9,13 +9,12 @@
 #ifndef NIX_DIMENSIONS_HDF5_H
 #define NIX_DIMENSIONS_HDF5_H
 
-#include <string>
-#include <iostream>
-#include <ctime>
-
 #include <nix/base/IDimensions.hpp>
 #include <nix/hdf5/Group.hpp>
 
+#include <string>
+#include <iostream>
+#include <ctime>
 
 namespace nix {
 namespace hdf5 {

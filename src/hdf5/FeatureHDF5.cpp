@@ -6,11 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hdf5/FeatureHDF5.hpp>
+
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
-#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/FeatureHDF5.hpp>
+
 
 using namespace std;
 using namespace nix::base;

@@ -9,13 +9,16 @@
 #ifndef NIX_MULTI_TAG_H
 #define NIX_MULTI_TAG_H
 
-#include <algorithm>
-
 #include <nix/base/IMultiTag.hpp>
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
-#include "DataView.hpp"
+#include <nix/DataView.hpp>
+
+#include <algorithm>
+#include <memory>
+#include <vector>
+#include <string>
 
 namespace nix {
 

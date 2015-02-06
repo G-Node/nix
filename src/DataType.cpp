@@ -9,8 +9,9 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/DataType.hpp>
-#include <stdexcept>
+
 #include <string>
+#include <stdexcept>
 
 namespace nix {
 

@@ -6,8 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <type_traits>
 #include "TestDataSet.hpp"
+
+#include <type_traits>
 
 #include <nix/hdf5/Selection.hpp>
 #include <nix/DataType.hpp>

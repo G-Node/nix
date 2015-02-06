@@ -9,7 +9,7 @@
 #ifndef NIX_I_DIMENSIONS_CPP
 #define NIX_I_DIMENSIONS_CPP
 
-#include <nix.hpp>
+#include <nix/base/IDimensions.hpp>
 
 namespace nix {
 

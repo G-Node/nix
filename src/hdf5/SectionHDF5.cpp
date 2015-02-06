@@ -6,11 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hdf5/SectionHDF5.hpp>
+
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/File.hpp>
 #include <nix/Section.hpp>
-#include <nix/hdf5/SectionHDF5.hpp>
+
 #include <nix/hdf5/PropertyHDF5.hpp>
 
 using namespace std;

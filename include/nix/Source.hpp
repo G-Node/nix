@@ -9,13 +9,14 @@
 #ifndef NIX_SOURCE_H
 #define NIX_SOURCE_H
 
-#include <limits>
-
 #include <nix/util/filter.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
 #include <nix/Platform.hpp>
+
+#include <ostream>
+#include <string>
 
 namespace nix {
 

@@ -6,12 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/Section.hpp>
 
 #include <list>
 #include <algorithm>
 #include <iterator>
 
-#include <nix/Section.hpp>
 
 using namespace std;
 using namespace nix;

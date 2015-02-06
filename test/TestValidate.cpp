@@ -6,9 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
-#include <functional>
-#include <math.h>
+#include "TestValidate.hpp"
 
 #include <nix/valid/validator.hpp>
 #include <nix/valid/checks.hpp>
@@ -16,7 +14,10 @@
 #include <nix/valid/validate.hpp>
 #include <nix.hpp>
 
-#include "TestValidate.hpp"
+#include <ctime>
+#include <functional>
+#include <math.h>
+
 #include <boost/math/constants/constants.hpp>
 
 

@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/valid/checks.hpp>
+
 #include <functional>
 #include <vector>
 #include <string>

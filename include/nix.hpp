@@ -6,6 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/types.hpp>
+
+#include <nix/Platform.hpp>
+#include <nix/NDSize.hpp>
 #include <nix/Block.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>

@@ -8,13 +8,14 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include "TestProperty.hpp"
+
+#include <nix/util/util.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <ctime>
 #include <iostream>
 
-#include <nix/util/util.hpp>
-#include "TestProperty.hpp"
-
-#include <nix/valid/validate.hpp>
 
 using namespace std;
 using namespace nix;

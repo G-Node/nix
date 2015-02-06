@@ -6,10 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <iostream>
+#include <nix/hdf5/PropertyHDF5.hpp>
 
 #include <nix/util/util.hpp>
-#include <nix/hdf5/PropertyHDF5.hpp>
+
+#include <iostream>
 
 using namespace std;
 

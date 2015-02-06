@@ -10,6 +10,7 @@
 
 
 #include <nix/DataView.hpp>
+
 #include <nix/Exception.hpp>
 
 namespace nix {

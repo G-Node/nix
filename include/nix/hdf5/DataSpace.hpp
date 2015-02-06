@@ -9,7 +9,6 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/NDSize.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <nix/hdf5/BaseHDF5.hpp>

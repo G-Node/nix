@@ -12,15 +12,14 @@
 #ifndef NIX_WRAP_ID_H
 #define NIX_WRAP_ID_H
 
-#include <string>
-
-#include <boost/optional.hpp>
-
 #include <nix/Platform.hpp>
 #include <nix/Hydra.hpp>
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
 
+#include <nix/hdf5/hdf5include.hpp>
+
+#include <string>
+#include <boost/optional.hpp>
 
 namespace nix {
 namespace hdf5 {

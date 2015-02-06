@@ -6,8 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
+
+#include <nix/util/util.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
 
 #include <cstring>

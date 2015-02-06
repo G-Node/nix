@@ -9,12 +9,14 @@
 #ifndef NIX_PROPERTY_HDF5_H
 #define NIX_PROPERTY_HDF5_H
 
-#include <string>
-
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
+
+#include <string>
+#include <memory>
+#include <ctime>
 
 namespace nix {
 namespace hdf5 {
@@ -118,17 +120,15 @@ public:
     int compare(const std::shared_ptr<IProperty> &other) const;
 
 
-    bool operator==(const PropertyHDF5 &other) const;
+    bool operator==(const PropertyHDF5 &other) const; //FIXME: not implemented
 
 
-    bool operator!=(const PropertyHDF5 &other) const;
+    bool operator!=(const PropertyHDF5 &other) const; //FIXME: not implemented
 
 
     virtual ~PropertyHDF5();
 
 private:
-
-    bool checkDataType(const H5::DataSet &dataset, H5T_class_t type) const;
 
     DataSet dataset() const {
         return entity_dataset;

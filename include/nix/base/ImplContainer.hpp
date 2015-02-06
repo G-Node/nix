@@ -9,15 +9,15 @@
 #ifndef IMPL_CONTAINER_H
 #define IMPL_CONTAINER_H
 
+#include <nix/Platform.hpp> //for pragma warnings on windows
+#include <nix/None.hpp>
+#include <nix/Exception.hpp>
+
 #include <memory>
 #include <vector>
 #include <list>
 #include <functional>
 #include <utility>
-
-#include <nix/Platform.hpp> //for pragma warnings on windows
-#include <nix/None.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 namespace base {

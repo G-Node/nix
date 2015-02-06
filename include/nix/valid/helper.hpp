@@ -9,13 +9,14 @@
 #ifndef NIX_HELPER_H
 #define NIX_HELPER_H
 
-#include <string>
-#include <vector>
 #include <nix/base/IDimensions.hpp>
 #include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
 
 #include <nix/types.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace valid {

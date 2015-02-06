@@ -9,8 +9,6 @@
 #ifndef NIX_BLOCK_H
 #define NIX_BLOCK_H
 
-#include <string>
-
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/Source.hpp>
@@ -20,6 +18,8 @@
 
 #include <nix/Platform.hpp>
 
+#include <string>
+#include <memory>
 
 namespace nix {
 

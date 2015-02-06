@@ -9,8 +9,9 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/hdf5/LocID.hpp>
-#include <H5Ipublic.h>
+
 #include <nix/hdf5/ExceptionHDF5.hpp>
+#include <nix/hdf5/hdf5include.hpp>
 
 namespace nix {
 

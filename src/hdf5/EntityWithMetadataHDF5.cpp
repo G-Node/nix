@@ -6,13 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <memory>
+#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/File.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
-#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
+
+#include <memory>
 
 using namespace std;
 using namespace nix::base;

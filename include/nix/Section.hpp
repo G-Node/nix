@@ -9,16 +9,17 @@
 #ifndef NIX_SECTION_H
 #define NIX_SECTION_H
 
-#include <limits>
-#include <functional>
-#include <string>
-
 #include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
+
+#include <memory>
+#include <functional>
+#include <string>
+#include <cstdlib>
 
 namespace nix {
 

@@ -6,6 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+
+#include <nix.hpp>
+#include <nix/hdf5/MultiTagHDF5.hpp>
+#include <nix/util/util.hpp>
+#include <nix/util/dataAccess.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -20,10 +26,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
-#include <nix/hdf5/MultiTagHDF5.hpp>
-#include <nix/util/util.hpp>
-#include <nix/util/dataAccess.hpp>
 
 class TestMultiTag: public CPPUNIT_NS::TestFixture {
 private:

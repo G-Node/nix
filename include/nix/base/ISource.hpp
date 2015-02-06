@@ -9,10 +9,11 @@
 #ifndef NIX_I_SOURCE_H
 #define NIX_I_SOURCE_H
 
-#include <string>
-#include <memory>
 
 #include <nix/base/IEntityWithMetadata.hpp>
+
+#include <string>
+#include <memory>
 
 namespace nix {
 namespace base {

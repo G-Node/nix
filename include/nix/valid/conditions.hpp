@@ -9,15 +9,15 @@
 #ifndef NIX_CONDITIONS_H
 #define NIX_CONDITIONS_H
 
-#include <string>
-#include <functional>
-
 #include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>
 #include <nix/valid/checks.hpp>
 #include <nix/valid/validator.hpp>
+
+#include <string>
+#include <functional>
 
 namespace nix {
 namespace valid {

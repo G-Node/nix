@@ -9,14 +9,14 @@
 #ifndef NIX_I_SECTION_H
 #define NIX_I_SECTION_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/IEntity.hpp>
 #include <nix/base/INamedEntity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Value.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace base {

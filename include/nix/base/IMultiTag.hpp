@@ -9,13 +9,14 @@
 #ifndef NIX_I_MULTI_TAG_H
 #define NIX_I_MULTI_TAG_H
 
-#include <vector>
-#include <string>
-
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/base/IBaseTag.hpp>
+#include <nix/None.hpp>
+
+#include <vector>
+#include <string>
 
 namespace nix {
 

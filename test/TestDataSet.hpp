@@ -6,6 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/NDArray.hpp>
+#include <nix.hpp>
+#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -20,11 +25,6 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
-
-#include <nix/NDArray.hpp>
-#include <nix.hpp>
-#include <nix/hdf5/Group.hpp>
-#include <nix/hdf5/DataSetHDF5.hpp>
 
 
 class TestDataSet:public CPPUNIT_NS::TestFixture {

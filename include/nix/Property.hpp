@@ -9,13 +9,14 @@
 #ifndef NIX_PROPERTY_H
 #define NIX_PROPERTY_H
 
-#include <stdexcept>
-
 #include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
 
 #include <nix/Platform.hpp>
+
+#include <ostream>
+#include <memory>
 
 namespace nix {
 

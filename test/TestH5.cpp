@@ -8,11 +8,19 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/FileHDF5.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
 #include "TestH5.hpp"
 
+#include <nix/hdf5/FileHDF5.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
+
 #include "RefTester.hpp"
+
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include <limits>
+
 
 unsigned int & TestH5::open_mode()
 {

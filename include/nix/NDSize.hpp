@@ -9,14 +9,14 @@
 #ifndef NIX_PSIZE_H
 #define NIX_PSIZE_H
 
+#include <nix/Platform.hpp>
+#include <nix/Exception.hpp>
+
 #include <cstdint>
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
-
-#include <nix/Platform.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 

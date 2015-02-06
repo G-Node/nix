@@ -9,15 +9,16 @@
 #ifndef NIX_I_BLOCK_H
 #define NIX_I_BLOCK_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/ITag.hpp>
 #include <nix/base/IMultiTag.hpp>
 #include <nix/NDSize.hpp>
+
+#include <string>
+#include <vector>
+#include <memory>
 
 namespace nix {
 namespace base {

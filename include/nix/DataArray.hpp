@@ -11,8 +11,6 @@
 
 #include <nix/DataSet.hpp>
 
-#include <boost/multi_array.hpp>
-
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
 #include <nix/Dimensions.hpp>

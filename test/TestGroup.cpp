@@ -8,9 +8,11 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/FileHDF5.hpp>
 #include "TestGroup.hpp"
+
 #include "RefTester.hpp"
+
+#include <nix/hdf5/FileHDF5.hpp>
 
 unsigned int & TestGroup::open_mode()
 {

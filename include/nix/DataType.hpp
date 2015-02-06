@@ -11,10 +11,10 @@
 #ifndef NIX_DATATYPE_H
 #define NIX_DATATYPE_H
 
+#include <nix/Platform.hpp>
+
 #include <cstdint>
 #include <ostream>
-
-#include <nix/Platform.hpp>
 
 namespace nix {
 

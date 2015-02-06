@@ -12,6 +12,9 @@
 #include <nix/base/INamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 
+#include <string>
+#include <memory>
+
 namespace nix {
 namespace base {
 
