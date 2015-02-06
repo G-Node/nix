@@ -177,7 +177,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream& operator[](const int &n_indent);
+    yamlstream& operator[](const size_t n_indent);
     
     /**
      * @brief convert unix epoch time to local time string

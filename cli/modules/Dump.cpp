@@ -76,9 +76,9 @@ yamlstream yamlstream::operator--(int) {
     return tmp;   // return value before increment
 }
 
-yamlstream& yamlstream::operator[](const int &n_indent) {
+yamlstream& yamlstream::operator[](const size_t n_indent) {
     endl_if();
-    for (int i = 0; i < n_indent; i++) {
+    for (size_t i = 0; i < n_indent; i++) {
         sstream << indent_str;
     }
     return *this;
