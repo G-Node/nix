@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
+#include <vector>
 
 namespace nix {
 
@@ -28,6 +29,25 @@ namespace nix {
 
 typedef unsigned long long int ndsize_t;
 typedef long long int          ndssize_t;
+
+
+#ifdef _MSC_VER
+// This is a workaround for MVSC that spits out warnings for
+// unsafe operations when using copy_n, fill_n and raw pointers
+// To avoid this we implement the following functions in NDSize.cpp
+// and disable the correspoding warning (C4996) for <algorithm>
+
+void nd_fill(ndsize_t *data, size_t len, ndsize_t value);
+void nd_fill(ndssize_t *data, size_t len, ndssize_t value);
+
+void nd_copy(ndsize_t *source, size_t n, ndsize_t *dest);
+void nd_copy(ndssize_t *source, size_t n, ndssize_t *dest);
+
+#else
+
+#define nd_fill std::fill_n
+#define nd_copy std::copy_n
+
 #endif
 
 template<typename T>
@@ -69,7 +89,19 @@ public:
         : rank(args.size())
     {
         allocate();
-        std::transform(args.begin(), args.end(), dims, [](const U& val) { return static_cast<T>(val);});
+
+        #ifdef _MSC_VER
+        //std::transform triggers C4996, see nd_copy, nd_fill above
+        std::vector<U> u = args;
+        for (size_t i = 0; i < rank; i++) {
+            dims[i] = static_cast<T>(u[i]);
+        }
+        #else
+        std::transform(args.begin(), args.end(), dims,
+                       [](const U& val) {
+                           return static_cast<T>(val);
+                       });
+        #endif
     }
 
     //copy
@@ -77,7 +109,7 @@ public:
         : rank(other.rank), dims(nullptr)
     {
         allocate();
-        std::copy(other.dims, other.dims + rank, dims);
+        nd_copy(other.dims, rank, dims);
     }
 
     //move (not tested due to: http://llvm.org/bugs/show_bug.cgi?id=12208)
@@ -263,7 +295,7 @@ public:
 
 
     void fill(T value) {
-        std::fill_n(dims, rank, value);
+        nd_fill(dims, rank, value);
     }
 
 
