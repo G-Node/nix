@@ -8,8 +8,6 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-
-
 #include "TestDataArray.hpp"
 
 #include <nix/util/util.hpp>

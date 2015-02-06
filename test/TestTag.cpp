@@ -9,11 +9,12 @@
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
 #include "TestTag.hpp"
+
 #include <nix/Exception.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <sstream>
 #include <ctime>
-
-#include <nix/valid/validate.hpp>
 
 using namespace nix;
 using namespace valid;

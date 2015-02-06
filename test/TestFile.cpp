@@ -6,12 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include "TestFile.hpp"
+
+#include <nix/util/util.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <ctime>
 
-#include "TestFile.hpp"
-#include <nix/util/util.hpp>
-
-#include <nix/valid/validate.hpp>
 
 using namespace std;
 using namespace nix;

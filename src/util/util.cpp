@@ -6,6 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
+
+#include <nix/base/IDimensions.hpp>
+
 #include <string>
 #include <cstdlib>
 #include <mutex>
@@ -14,13 +18,10 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
-#include <nix/util/util.hpp>
 #include <boost/random.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
-#include <nix/base/IDimensions.hpp>
 
 
 using namespace std;

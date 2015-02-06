@@ -6,8 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/DataView.hpp>
 #include "TestDataAccess.hpp"
+
+#include <nix/DataView.hpp>
 
 using namespace std;
 using namespace nix;

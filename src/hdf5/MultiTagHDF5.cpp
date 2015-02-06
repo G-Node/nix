@@ -6,16 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <algorithm>
+#include <nix/hdf5/MultiTagHDF5.hpp>
 
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
-#include <nix/hdf5/MultiTagHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
 #include <nix/Exception.hpp>
+
+#include <algorithm>
 
 using namespace std;
 using namespace nix::base;

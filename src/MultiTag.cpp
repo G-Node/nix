@@ -6,9 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/MultiTag.hpp>
+
 #include <nix/util/util.hpp>
 #include <nix/util/dataAccess.hpp>
-#include <nix/MultiTag.hpp>
+
 
 namespace nix {
 

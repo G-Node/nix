@@ -8,14 +8,14 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <type_traits>
-
-#include <boost/multi_array.hpp>
-#include <valarray>
-
 #include <nix/Exception.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/DataType.hpp>
+
+#include <type_traits>
+#include <valarray>
+
+#include <boost/multi_array.hpp>
 
 #ifndef NIX_HYDRA_H
 #define NIX_HYDRA_H

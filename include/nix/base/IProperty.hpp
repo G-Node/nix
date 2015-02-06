@@ -9,11 +9,12 @@
 #ifndef NIX_I_PROPERTY_H
 #define NIX_I_PROPERTY_H
 
-#include <string>
-#include <vector>
-
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
+
+#include <string>
+#include <vector>
+#include <cstdlib>
 
 namespace nix {
 namespace base {

@@ -6,9 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/Dimensions.hpp>
+
 #include <cmath>
 #include <nix/util/util.hpp>
-#include <nix/Dimensions.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;

@@ -12,6 +12,9 @@
 #include <nix/Platform.hpp>
 #include <nix/None.hpp>
 
+#include <string>
+#include <ctime>
+
 namespace nix {
 namespace base {
 

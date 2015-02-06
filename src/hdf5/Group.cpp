@@ -7,10 +7,12 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/Group.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+
 #include <nix/util/util.hpp>
-#include <boost/multi_array.hpp>
-#include <H5Gpublic.h>
+
+#include <nix/hdf5/ExceptionHDF5.hpp>
+#include <nix/hdf5/hdf5include.hpp>
+
 
 
 namespace nix {

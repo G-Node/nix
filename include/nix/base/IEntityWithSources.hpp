@@ -9,11 +9,12 @@
 #ifndef NIX_I_ENTITY_WITH_SOURCES_H
 #define NIX_I_ENTITY_WITH_SOURCES_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/ISource.hpp>
 #include <nix/base/IEntityWithMetadata.hpp>
+
+#include <string>
+#include <vector>
+#include <memory>
 
 namespace nix {
 

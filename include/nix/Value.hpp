@@ -11,14 +11,14 @@
 #ifndef NIX_VALUE_H
 #define NIX_VALUE_H
 
+#include <nix/DataType.hpp>
+#include <nix/Platform.hpp>
+#include <nix/None.hpp>
+
 #include <string>
 #include <cstdint>
 #include <stdexcept>
 #include <iostream>
-
-#include <nix/DataType.hpp>
-#include <nix/Platform.hpp>
-#include <nix/None.hpp>
 
 namespace nix {
 

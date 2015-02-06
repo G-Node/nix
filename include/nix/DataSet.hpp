@@ -12,7 +12,6 @@
 #ifndef NIX_DATA_IO_H
 #define NIX_DATA_IO_H
 
-#include <boost/multi_array.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/Hydra.hpp>
 

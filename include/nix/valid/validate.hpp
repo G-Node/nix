@@ -12,9 +12,10 @@
 
 #include <nix/Platform.hpp>
 #include <nix/valid/result.hpp>
-#include <cstdarg>
 
 #include <nix/types.hpp>
+
+#include <cstdarg>
 
 namespace nix {
 

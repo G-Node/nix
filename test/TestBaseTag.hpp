@@ -6,6 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+
+#include <nix.hpp>
+#include <nix/hdf5/BaseTagHDF5.hpp>
+#include <nix/util/util.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -20,10 +25,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
-
-#include <nix.hpp>
-#include <nix/hdf5/BaseTagHDF5.hpp>
-#include <nix/util/util.hpp>
 
 
 class TestBaseTag: public CPPUNIT_NS::TestFixture {

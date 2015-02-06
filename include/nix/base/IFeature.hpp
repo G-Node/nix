@@ -9,8 +9,11 @@
 #ifndef NIX_I_FEATURE_H
 #define NIX_I_FEATURE_H
 
-
 #include <nix/base/IDataArray.hpp>
+
+#include <string>
+#include <memory>
+
 
 namespace nix {
 

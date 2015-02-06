@@ -8,6 +8,8 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -26,8 +28,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/math/tools/rational.hpp>
 #include <boost/iterator/zip_iterator.hpp>
-
-#include <nix.hpp>
 
 class TestDataArray:public CPPUNIT_NS::TestFixture {
 

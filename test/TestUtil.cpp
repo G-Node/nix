@@ -6,9 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include "TestUtil.hpp"
+
 #include <ctime>
 #include <cmath>
-#include "TestUtil.hpp"
+
 
 using namespace std;
 using namespace nix;

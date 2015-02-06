@@ -1,9 +1,17 @@
-#include <ctime>
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
-#include <nix/util/util.hpp>
 #include "TestFeature.hpp"
 
+#include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
+
+#include <ctime>
 
 using namespace std;
 using namespace nix;

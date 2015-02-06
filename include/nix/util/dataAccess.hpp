@@ -21,6 +21,8 @@
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
 
+#include <ctime>
+
 namespace nix {
 namespace util {
 

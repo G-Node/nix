@@ -9,16 +9,18 @@
 #ifndef NIX_GROUP_H
 #define NIX_GROUP_H
 
-#include <string>
-
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/LocID.hpp>
 #include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
 
+#include <nix/hdf5/hdf5include.hpp>
+
 #include <boost/optional.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace hdf5 {

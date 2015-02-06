@@ -9,12 +9,12 @@
 #ifndef NIX_FILE_HDF5_H
 #define NIX_FILE_HDF5_H
 
-#include <string>
-#include <memory>
-
 #include <nix/base/IFile.hpp>
 #include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/Group.hpp>
+
+#include <string>
+#include <memory>
 
 namespace nix {
 namespace hdf5 {

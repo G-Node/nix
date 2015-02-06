@@ -6,9 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <queue>
-
 #include <nix/Source.hpp>
+
+#include <queue>
 
 using namespace std;
 using namespace nix;

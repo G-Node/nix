@@ -18,8 +18,13 @@
 
  //workaround for missing ssize_t on windows
  #ifndef ssize_t
-   #include <BaseTsd.h>
-   typedef SSIZE_T ssize_t;
+   #ifdef _WIN64
+     #include <BaseTsd.h>
+     typedef SSIZE_T ssize_t;
+   #else
+     //hdf5 defines ssize_t to be int on 32bit Win
+     typedef int ssize_t;
+   #endif
  #endif
 #else
  #define NIXAPI

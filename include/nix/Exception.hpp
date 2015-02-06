@@ -11,10 +11,10 @@
 #ifndef NIX_EXCEPTION_H
 #define NIX_EXCEPTION_H
 
+#include <nix/Platform.hpp>
+
 #include <stdexcept>
 #include <sstream>
-
-#include <nix/Platform.hpp>
 
 namespace nix {
 

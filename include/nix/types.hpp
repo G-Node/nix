@@ -13,18 +13,21 @@ namespace nix {
 
 // Can be used for forward declaration
 class Block;
-class DataArray;
-class MultiTag;
-class Dimension;
-class RangeDimension;
-class SetDimension;
-class SampledDimension;
 class Feature;
 class File;
+class DataArray;
+class DataSet;
+class DataView;
+class Dimension;
+class MultiTag;
+class NDArray;
 class Property;
+class RangeDimension;
+class SampledDimension;
 class Section;
-class Tag;
+class SetDimension;
 class Source;
+class Tag;
 class Value;
 
 }

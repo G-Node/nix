@@ -9,14 +9,15 @@
 #ifndef NIX_CHECKS_H
 #define NIX_CHECKS_H
 
-#include <boost/optional.hpp>
-#include <boost/any.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
 
 #include <nix/base/IDimensions.hpp>
 
 #include <nix/types.hpp>
+
+#include <boost/optional.hpp>
+#include <boost/any.hpp>
 
 namespace nix {
 namespace valid {

@@ -6,10 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
+#include "TestEntity.hpp"
 
 #include <nix/util/util.hpp>
-#include "TestEntity.hpp"
+#include <ctime>
 
 using namespace std;
 using namespace nix;

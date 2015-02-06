@@ -6,11 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/File.hpp>
+
+#include <nix/hdf5/FileHDF5.hpp>
 
 #include <nix/valid/validate.hpp>
-
-#include <nix/File.hpp>
-#include <nix/hdf5/FileHDF5.hpp>
 
 using namespace std;
 

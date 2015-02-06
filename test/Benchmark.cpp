@@ -8,9 +8,10 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <cstdio>
 #include <nix.hpp>
 #include <nix/NDArray.hpp>
+
+#include <cstdio>
 #include <queue>
 #include <random>
 #include <type_traits>

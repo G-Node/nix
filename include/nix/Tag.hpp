@@ -9,14 +9,15 @@
 #ifndef NIX_TAG_H
 #define NIX_TAG_H
 
-#include <algorithm>
-
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
-#include "DataView.hpp"
+#include <nix/DataView.hpp>
 #include <nix/Platform.hpp>
+
+#include <algorithm>
+
 
 namespace nix {
 

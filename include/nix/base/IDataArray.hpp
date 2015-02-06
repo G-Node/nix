@@ -9,14 +9,13 @@
 #ifndef NIX_I_DATA_ARRAY_H
 #define NIX_I_DATA_ARRAY_H
 
-#include <string>
-#include <vector>
-#include <memory>
-
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDimensions.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace base {

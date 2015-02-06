@@ -8,6 +8,9 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix.hpp>
+#include <nix/hdf5/Group.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -26,8 +29,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix.hpp>
-#include <nix/hdf5/Group.hpp>
 
 class TestGroup:public CPPUNIT_NS::TestFixture {
 

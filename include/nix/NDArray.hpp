@@ -10,13 +10,14 @@
 #ifndef NIX_NDARRAY_H
 #define NIX_NDARRAY_H
 
+
+#include <nix/Hydra.hpp>
+#include <nix/NDSize.hpp>
+#include <nix/Platform.hpp>
+
 #include <vector>
 #include <iostream>
 #include <cstring>
-
-#include <nix/Hydra.hpp>
-
-#include <nix/Platform.hpp>
 
 namespace nix {
 

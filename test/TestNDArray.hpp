@@ -21,8 +21,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
-
 
 class TestNDArray : public CPPUNIT_NS::TestFixture {
 
@@ -30,7 +28,6 @@ public:
 
     void setUp();
     void basic();
-    void testCharon();
     void tearDown();
 
 

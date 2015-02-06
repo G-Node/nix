@@ -11,9 +11,10 @@
 
 #include <nix/Platform.hpp>
 #include <nix/valid/result.hpp>
-#include <cstdarg>
 
-#include <nix.hpp>
+#include <functional>
+#include <cstdarg>
+#include <vector>
 
 namespace nix {
 namespace valid {

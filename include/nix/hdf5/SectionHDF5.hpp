@@ -9,11 +9,12 @@
 #ifndef NIX_SECTION_HDF5_H
 #define NIX_SECTION_HDF5_H
 
-#include <memory>
-
 #include <nix/hdf5/NamedEntityHDF5.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Section.hpp>
+
+#include <string>
+#include <memory>
 
 namespace nix {
 namespace hdf5 {

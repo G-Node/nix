@@ -9,12 +9,12 @@
 #ifndef NIX_SOURCE_HDF5_H
 #define NIX_SOURCE_HDF5_H
 
+#include <nix/base/ISource.hpp>
+#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
+
 #include <vector>
 #include <string>
 #include <boost/optional.hpp>
-
-#include <nix/base/ISource.hpp>
-#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {

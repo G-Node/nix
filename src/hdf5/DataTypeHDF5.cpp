@@ -6,10 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <stdexcept>
 
 #include <nix/hdf5/DataTypeHDF5.hpp>
 
+#include <stdexcept>
 #include <iostream>
 #include <cassert>
 

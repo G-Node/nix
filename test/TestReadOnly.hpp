@@ -6,6 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -22,7 +24,6 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
 
-#include <nix.hpp>
 
 
 class TestReadOnly : public CPPUNIT_NS::TestFixture {

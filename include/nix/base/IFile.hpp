@@ -9,12 +9,13 @@
 #ifndef I_FILE_H
 #define I_FILE_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/ISection.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/Platform.hpp>
+
+#include <string>
+#include <vector>
+#include <ctime>
 
 namespace nix {
 

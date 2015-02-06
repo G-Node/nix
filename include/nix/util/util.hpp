@@ -14,6 +14,9 @@
 #ifndef NIX_UTIL_H
 #define NIX_UTIL_H
 
+#include <nix/Exception.hpp>
+#include <nix/Platform.hpp>
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -23,10 +26,6 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
-
-#include <nix/Exception.hpp>
-#include <nix/Platform.hpp>
-
 
 namespace nix {
     

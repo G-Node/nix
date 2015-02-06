@@ -6,13 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <algorithm>
-#include <functional>
+#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 
 #include <nix/util/util.hpp>
 #include <nix/Block.hpp>
-#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
 
+#include <algorithm>
+#include <functional>
 
 using namespace std;
 using namespace nix::base;
