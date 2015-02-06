@@ -42,7 +42,8 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 
 string createId() {
-    static boost::mt19937 ran(std::time(0));
+    typedef boost::mt19937::result_type seed_type;
+    static boost::mt19937 ran(static_cast<seed_type>(std::time(0)));
     static boost::uuids::basic_random_generator<boost::mt19937> gen(&ran);
     boost::uuids::uuid u = gen();
     return boost::uuids::to_string(u);
