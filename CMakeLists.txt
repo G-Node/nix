@@ -32,12 +32,11 @@ if(NOT WIN32)
   endif()
 endif()
 
+
 #########################################
 # HDF-5
-# FIND_PACKAGE (HDF5 NAMES hdf5)
 if(WIN32)
-  set(HDF5_USE_STATIC_LIBS ON)
-  set(HDF5_USE_STATIC_LIBRARIES ON)
+  set(HDF5_USE_STATIC_LIBS OFF)
   find_package (HDF5 NO_MODULE)
 else()
   set(HDF5_USE_STATIC_LIBS OFF)
@@ -51,12 +50,13 @@ set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 # Boost
 if(WIN32)
   set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_USE_STATIC_RUNTIME OFF)
 else()
   set(Boost_USE_STATIC_LIBS OFF)
 endif()
 
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
+
 find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
@@ -73,7 +73,9 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
+
 ########################################
+# NIX
 
 include_directories(include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
@@ -97,9 +99,6 @@ if(NIX_FRAMEWORK)
                         PUBLIC_HEADER "${nix_INCLUDES}")
 endif()
 
-#IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#  set(CMAKE_VERBOSE_MAKEFILE TRUE)
-#endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   add_executable(playground EXCLUDE_FROM_ALL main.cpp)
@@ -107,7 +106,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
 endif()
 
 
-######## static analysis
+########################################
+# static analysis
 find_program(CLANG_CHECK clang-check)
 if(CLANG_CHECK)
   MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
@@ -132,6 +132,7 @@ if(NOT WIN32)
 endif()
 target_link_libraries(nix-tool nix)
 message(STATUS "CLI executable added")
+
 
 ########################################
 # Tests
@@ -167,6 +168,7 @@ if(NOT WIN32)
   set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
 
+
 ########################################
 # Install
 
@@ -183,17 +185,19 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 
 
 ########################################
-
 # CPack for Win
 if(WIN32)
   install(TARGETS nix
-  ARCHIVE
-  DESTINATION lib
-  COMPONENT libraries)
+		  ARCHIVE
+		  DESTINATION lib
+		  COMPONENT libraries)
+  install(FILES ${HDF5_LIBRARIES}
+		  DESTINATION lib
+		  COMPONENT libraries)
   install(TARGETS nix-tool
-  RUNTIME
-  DESTINATION bin
-  COMPONENT applications)
+		  RUNTIME
+		  DESTINATION bin
+		  COMPONENT applications)
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
   set(CPACK_PACKAGE_VENDOR "g-node.org")
