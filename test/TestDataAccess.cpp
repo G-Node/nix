@@ -298,7 +298,7 @@ void TestDataAccess::testMultiTagFeatureData() {
     for(index i = 0; i != 10; ++i) {
         value = 100 * i;
         for(index j = 0; j != 10; ++j) {
-            data1[i][j] = value++;
+            data1[i][j] = static_cast<double>(value++);
             total += data1[i][j];
         }
     }
@@ -320,7 +320,7 @@ void TestDataAccess::testMultiTagFeatureData() {
         value = 100 * i;
         for(three_d_index j = 0; j != 20; ++j) {
             for(three_d_index k = 0; k != 10; ++k) {
-                data2[i][j][k] = value++;
+                data2[i][j][k] = static_cast<double>(value++);
             }
         }
     }
