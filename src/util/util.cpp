@@ -151,18 +151,47 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
 }
 
 
+void invertPower(std::string &unit) {
+    string p, u, pow;
+    util::splitUnit(unit, p, u, pow);
+    if (pow.empty()) {
+        unit = (p + u + "^-1");
+    } else {
+        if (pow[0] == '-') {
+            unit = p + u + "^" + pow.substr(1);
+        } else {
+            unit = p + u + "^-" + pow;
+        }
+    }
+}
+
+
 void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits) {
     string s = compoundUnit;
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
-
+    string sep;
     while (boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
-        atomicUnits.push_back(m[0]);
+        util::deblankString(suffix);
+        if (sep == "/") {
+            string unit = m[0];
+            invertPower(unit);
+            atomicUnits.push_back(unit);
+        } else {
+            atomicUnits.push_back(m[0]);
+        }
+        sep = suffix[0];
         s = suffix.substr(1);
     }
-    atomicUnits.push_back(m[0]);
+    if (sep == "/") {
+        string unit = m[0];
+        invertPower(unit);
+        atomicUnits.push_back(unit);
+    } else {
+        atomicUnits.push_back(m[0]);
+    }
 }
 
 
