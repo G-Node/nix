@@ -90,9 +90,24 @@ yamlstream& yamlstream::operator[](const size_t n_indent) {
 }
 
 std::string yamlstream::t(const time_t &tm) {
-    char* a = asctime(localtime(&tm));       // get time as char*
-    a[std::strlen(a)-1] = a[std::strlen(a)]; // remove "\n"
-    return std::string(a);
+    char tbuff[100];
+    std::tm t_local;
+
+#ifndef _MSC_VER
+    t_local = *std::localtime(&tm);
+#else
+    errno_t err = localtime_s(&t_local, &tm);
+    if (err) {
+	    return "NA";
+    }
+#endif
+
+    size_t res = strftime(tbuff, sizeof(tbuff), "%c", &t_local);
+    if (res == 0) {
+        return "NA";
+    }
+
+    return std::string(tbuff);
 }
 
 std::string yamlstream::str() {

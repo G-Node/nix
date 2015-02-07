@@ -24,8 +24,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <cmath>
+#include <ctime>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
