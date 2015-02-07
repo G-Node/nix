@@ -107,14 +107,24 @@ void TestUtil::testIsCompoundSIUnit() {
 
 void TestUtil::testSplitCompoundUnit() {
     string unit = "mV/cm^2*kg*V";
-    vector<string> atomic_units;
+    string unit_2 = "mOhm/m";
+    string unit_3 = "mV";
 
+    vector<string> atomic_units, atomic_units_2, atomic_units_3;
     util::splitCompoundUnit(unit, atomic_units);
-
     CPPUNIT_ASSERT(atomic_units.size() == 4);
-    CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^2" &&
+    CPPUNIT_ASSERT(atomic_units[0] == "mV" && atomic_units[1] == "cm^-2" &&
                    atomic_units[2] == "kg" && atomic_units[3] == "V");
+
+    util::splitCompoundUnit(unit_2, atomic_units_2);
+    CPPUNIT_ASSERT(atomic_units_2.size() == 2);
+    CPPUNIT_ASSERT(atomic_units_2[0] == "mOhm" && atomic_units_2[1] == "m^-1");
+
+    util::splitCompoundUnit(unit_3, atomic_units_3);
+    CPPUNIT_ASSERT(atomic_units_3.size() == 1);
+    CPPUNIT_ASSERT(atomic_units_3[0] == unit_3);
 }
+
 
 void TestUtil::testConvertToSeconds() {
     string unit_min = "min";
