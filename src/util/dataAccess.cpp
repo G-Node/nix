@@ -24,19 +24,22 @@ namespace util {
 
 
 int positionToIndex(double position, const string &unit, const Dimension &dimension) {
+    size_t pos;
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
         SampledDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     } else if (dimension.dimensionType() == nix::DimensionType::Set) {
         SetDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     }
+
+    return static_cast<int>(pos); //FIXME: int, really? 
 }
 
 

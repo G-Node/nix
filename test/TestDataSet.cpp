@@ -8,6 +8,9 @@
 
 #include "TestDataSet.hpp"
 
+#include <nix/hdf5/DataSetHDF5.hpp>
+#include <nix/NDArray.hpp>
+
 #include <type_traits>
 
 #include <nix/hdf5/Selection.hpp>

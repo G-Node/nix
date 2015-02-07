@@ -80,7 +80,7 @@ struct IdsFilter : public Filter<T> {
     virtual bool operator()(const T &e) {
         // std::unordered_set.count is a fast by-hash-getter that
         // returns 1 (if val found) or 0 (if not found).
-        return (bool) ids.count(e.id());
+        return ids.count(e.id()) > 0;
     }
 
 };

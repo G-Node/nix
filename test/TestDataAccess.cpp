@@ -293,7 +293,7 @@ void TestDataAccess::testMultiTagFeatureData() {
     typedef boost::multi_array<double, 2> two_d_array;
     typedef two_d_array::index index;
     two_d_array data1(boost::extents[10][10]);
-    int value;
+    index value;
     double total = 0.0;
     for(index i = 0; i != 10; ++i) {
         value = 100 * i;

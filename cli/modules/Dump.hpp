@@ -9,12 +9,14 @@
 #ifndef CLI_DUMP_H
 #define CLI_DUMP_H
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <nix/base/types.hpp>
 #include <nix/base/Entity.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/EntityWithSources.hpp>
-#include <nix.hpp>
 
 #include <Cli.hpp>
 #include <modules/IModule.hpp>
@@ -175,7 +177,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream& operator[](const int &n_indent);
+    yamlstream& operator[](const size_t n_indent);
     
     /**
      * @brief convert unix epoch time to local time string
@@ -247,15 +249,7 @@ public:
      * @param t NDSize class
      * @return self
      */
-    yamlstream& operator<<(const nix::NDSize &t) {
-        indent_if();
-        std::vector<double> extent;
-        for (size_t i = 0; i < t.size(); i++) {
-            extent.push_back(t[i]);
-        }
-        (*this) << extent;
-        return *this;
-    }
+    yamlstream& operator<<(const nix::NDSize &t);
     
     /**
      * @brief boost::optional output into stringstream

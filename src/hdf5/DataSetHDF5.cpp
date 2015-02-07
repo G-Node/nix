@@ -309,6 +309,8 @@ struct FileValue  {
     //ctors
     FileValue() {}
     explicit FileValue(const T &vref) : value(vref) { }
+
+    inline T val() const { return value; }
 };
 
 template<>
@@ -324,7 +326,11 @@ struct FileValue<bool>  {
 
     //ctors
     FileValue() {}
-    explicit FileValue(const bool &vref) : value(vref) { }
+    explicit FileValue(const bool &vref) :
+            value(static_cast<unsigned char>(vref ? 1 : 0)) {
+    }
+
+    inline bool val() const { return value > 0; }
 };
 
 //
@@ -441,7 +447,7 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
     h5ds.read(memType.getId(), fileValues.data());
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
-            Value temp(static_cast<T>(val.value)); //we cast because of the bool specialization
+            Value temp(val.val());
             temp.uncertainty = val.uncertainty;
             temp.reference = val.reference;
             temp.filename = val.filename;

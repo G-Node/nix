@@ -15,6 +15,7 @@
 #include <string>
 #include <iostream>
 #include <ctime>
+#include <memory>
 
 namespace nix {
 namespace hdf5 {
@@ -87,7 +88,7 @@ public:
     void unit(const std::string &unit);
 
 
-    void unit(none_t t);
+    void unit(const none_t t);
 
 
     double samplingInterval() const;
@@ -162,7 +163,7 @@ public:
     void unit(const std::string &unit);
 
 
-    void unit(none_t t);
+    void unit(const none_t t);
 
 
     std::vector<double> ticks() const;
