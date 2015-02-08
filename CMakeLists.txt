@@ -41,10 +41,10 @@ if(WIN32)
   find_package (HDF5 NO_MODULE)
 else()
   set(HDF5_USE_STATIC_LIBS OFF)
-  find_package (HDF5 REQUIRED COMPONENTS C CXX)
+  find_package (HDF5 REQUIRED COMPONENTS C)
 endif()
 include_directories (${HDF5_INCLUDE_DIR})
-set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 
 
 ########################################
