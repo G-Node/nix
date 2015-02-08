@@ -240,11 +240,11 @@ NDSize DataSet::size() const
     return getSpace().extent();
 }
 
-void DataSet::vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace) const
+void DataSet::vlenReclaim(H5::DataType mem_type, void *data, DataSpace *dspace) const
 {
     HErr res;
     if (dspace != nullptr) {
-        res = H5Dvlen_reclaim(mem_type.getId(), dspace->getId(), H5P_DEFAULT, data);
+        res = H5Dvlen_reclaim(mem_type.getId(), dspace->h5id(), H5P_DEFAULT, data);
     } else {
         DataSpace space = getSpace();
         res = H5Dvlen_reclaim(mem_type.getId(), space.h5id(), H5P_DEFAULT, data);

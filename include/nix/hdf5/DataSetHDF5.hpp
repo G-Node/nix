@@ -62,7 +62,7 @@ public:
     Selection createSelection() const;
     NDSize size() const;
 
-    void vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace = nullptr) const;
+    void vlenReclaim(H5::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
 
     static H5::DataType fileTypeForValue(DataType dtype);
     static H5::DataType memTypeForValue(DataType dtype);
