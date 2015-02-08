@@ -152,15 +152,15 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
 
 
 void invertPower(std::string &unit) {
-    string p, u, pow;
-    util::splitUnit(unit, p, u, pow);
-    if (pow.empty()) {
+    string p, u, power;
+    util::splitUnit(unit, p, u, power);
+    if (power.empty()) {
         unit = (p + u + "^-1");
     } else {
-        if (pow[0] == '-') {
-            unit = p + u + "^" + pow.substr(1);
+        if (power[0] == '-') {
+            unit = p + u + "^" + power.substr(1);
         } else {
-            unit = p + u + "^-" + pow;
+            unit = p + u + "^-" + power;
         }
     }
 }
