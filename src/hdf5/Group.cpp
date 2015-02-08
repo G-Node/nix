@@ -11,8 +11,6 @@
 #include <nix/util/util.hpp>
 
 #include <nix/hdf5/ExceptionHDF5.hpp>
-#include <nix/hdf5/hdf5include.hpp>
-
 
 
 namespace nix {

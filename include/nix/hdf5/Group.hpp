@@ -15,8 +15,6 @@
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
 
-#include <nix/hdf5/hdf5include.hpp>
-
 #include <boost/optional.hpp>
 
 #include <string>
