@@ -54,14 +54,15 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
 
     //we want hdf5 to keep track of the order in which links were created so that
     //the order for indexed based accessors is stable cf. issue #387
-    H5::FileCreatPropList fcpl =  H5::FileCreatPropList::DEFAULT;
-    HErr res = H5Pset_link_creation_order(fcpl.getId(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+    BaseHDF5 fcpl = H5Pcreate(H5P_FILE_CREATE);
+    fcpl.check("Could not create file creation plist");
+    HErr res = H5Pset_link_creation_order(fcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
 
     unsigned int h5mode =  map_file_mode(mode);
 
     if (h5mode & H5F_ACC_TRUNC) {
-        hid = H5Fcreate(name.c_str(), h5mode, fcpl.getId(), H5P_DEFAULT);
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
     } else {
         hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
     }
