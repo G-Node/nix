@@ -44,10 +44,10 @@ public:
 }
 
 
-NIXAPI H5::DataType data_type_to_h5_filetype(DataType dtype);
+NIXAPI h5x::DataType data_type_to_h5_filetype(DataType dtype);
 
 
-NIXAPI H5::DataType data_type_to_h5_memtype(DataType dtype);
+NIXAPI h5x::DataType data_type_to_h5_memtype(DataType dtype);
 
 NIXAPI DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
 

@@ -311,10 +311,12 @@ void TestDataSet::testSelection() {
 template<typename T>
 void test_val_generic(nix::hdf5::Group &h5group, const T &test_value, std::string name)
 {
+    namespace h5x = nix::hdf5::h5x;
+
     std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
 
     nix::NDSize size = {1};
-    H5::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
+    h5x::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
 
     nix::hdf5::DataSet ds = h5group.createData(name, fileType, size);
 

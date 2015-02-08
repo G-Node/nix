@@ -176,9 +176,10 @@ void Group::removeData(const std::string &name) {
 }
 
 DataSet Group::createData(const std::string &name,
-            const H5::DataType &fileType,
-            const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
-    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
+                          const h5x::DataType &fileType,
+                          const DataSpace &fileSpace,
+                          const H5::DSetCreatPropList &cpList) const {
+    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
     ds.check("Group::createData: Could not create DataSet with name " + name);
     return ds;
 }
@@ -187,13 +188,13 @@ DataSet Group::createData(const std::string &name,
         DataType dtype,
         const NDSize &size) const
 {
-    H5::DataType fileType = data_type_to_h5_filetype(dtype);
+    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
     return createData(name, fileType, size);
 }
 
 
 DataSet Group::createData(const std::string &name,
-        const H5::DataType &fileType,
+        const h5x::DataType &fileType,
         const NDSize &size,
         const NDSize &maxsize,
         const NDSize &chunks,
@@ -216,7 +217,7 @@ DataSet Group::createData(const std::string &name,
         int rank = static_cast<int>(chunks.size());
         plcreate.setChunk(rank, chunks.data());
     } else if (guess_chunks) {
-        NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
+        NDSize guessedChunks = DataSet::guessChunking(size, fileType.size());
         plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
     }
 

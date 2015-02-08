@@ -48,11 +48,11 @@ public:
 
     bool hasData(const std::string &name) const;
     DataSet createData(const std::string &name,
-            const H5::DataType &fileType,
+            const h5x::DataType &fileType,
             const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const;
     DataSet createData(const std::string &name, DataType dtype, const NDSize &size) const;
 
-    DataSet createData(const std::string &name, const H5::DataType &fileType,
+    DataSet createData(const std::string &name, const h5x::DataType &fileType,
             const NDSize &size, const NDSize &maxsize = {}, const NDSize &chunks = {},
             bool maxSizeUnlimited = true, bool guessChunks = true) const;
 

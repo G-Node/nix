@@ -225,8 +225,6 @@ void PropertyHDF5::values(const std::vector<Value> &values)
         deleteValues();
         return;
     }
-    DataType dtype = values[0].type();
-    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     dataset().write(values);
 }
 
