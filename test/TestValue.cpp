@@ -11,11 +11,9 @@
 #include "TestValue.hpp"
 
 void TestValue::setUp() {
-    h5file = H5::H5File("test_value.h5", H5F_ACC_TRUNC);
 }
 
 void TestValue::tearDown() {
-    h5file.close();
 }
 
 void TestValue::testObject() {
