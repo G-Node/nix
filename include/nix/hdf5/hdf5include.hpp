@@ -10,6 +10,5 @@
 #define NIX_HDF5_INCLUDE_HPP
 
 #include <hdf5.h>
-#include <H5Cpp.h>
 
 #endif // NIX_HDF5_INCLUDE_HPP
