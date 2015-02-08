@@ -176,15 +176,6 @@ void Group::removeData(const std::string &name) {
 }
 
 DataSet Group::createData(const std::string &name,
-                          const h5x::DataType &fileType,
-                          const DataSpace &fileSpace,
-                          const H5::DSetCreatPropList &cpList) const {
-    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
-    ds.check("Group::createData: Could not create DataSet with name " + name);
-    return ds;
-}
-
-DataSet Group::createData(const std::string &name,
         DataType dtype,
         const NDSize &size) const
 {
@@ -197,7 +188,7 @@ DataSet Group::createData(const std::string &name,
         const h5x::DataType &fileType,
         const NDSize &size,
         const NDSize &maxsize,
-        const NDSize &chunks,
+        NDSize chunks,
         bool max_size_unlimited,
         bool guess_chunks) const
 {
@@ -211,17 +202,23 @@ DataSet Group::createData(const std::string &name,
         }
     }
 
-    H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+    BaseHDF5 dcpl = H5Pcreate(H5P_DATASET_CREATE);
+    dcpl.check("Could not create data creation plist");
+
+    if (!chunks && guess_chunks) {
+        chunks = DataSet::guessChunking(size, fileType.size());
+    }
 
     if (chunks) {
         int rank = static_cast<int>(chunks.size());
-        plcreate.setChunk(rank, chunks.data());
-    } else if (guess_chunks) {
-        NDSize guessedChunks = DataSet::guessChunking(size, fileType.size());
-        plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
+        HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
+        res.check("Could not set chunk size on data set creation plist");
     }
 
-    return createData(name, fileType, space, plcreate);
+    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    ds.check("Group::createData: Could not create DataSet with name " + name);
+
+    return ds;
 }
 
 
