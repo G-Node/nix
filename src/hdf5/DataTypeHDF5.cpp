@@ -15,6 +15,40 @@
 
 namespace nix {
 namespace hdf5 {
+namespace h5x {
+
+DataType DataType::copy(hid_t source) {
+    DataType hi_copy = H5Tcopy(source);
+    hi_copy.check("Could not copy type");
+    return hi_copy;
+}
+
+DataType DataType::makeStrType(size_t size) {
+    DataType str_type = H5Tcopy(H5T_C_S1);
+    str_type.check("Could not create string type");
+    str_type.size(size);
+    return str_type;
+}
+
+
+void DataType::size(size_t t) {
+    HErr res = H5Tset_size(hid, t);
+    res.check("DataType::size: Could not set size");
+}
+
+size_t DataType::size() const {
+    return H5Tget_size(hid); //FIXME: throw on 0?
+}
+
+
+bool DataType::isVariableString() const {
+    HTri res = H5Tis_variable_str(hid);
+    res.check("DataType::isVariableString(): H5Tis_variable_str failed");
+    return res.result();
+}
+} // h5x
+
+
 
 
 H5::DataType data_type_to_h5_filetype(DataType dtype) {
