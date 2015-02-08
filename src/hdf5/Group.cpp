@@ -237,28 +237,26 @@ bool Group::hasGroup(const std::string &name) const {
 Group Group::openGroup(const std::string &name, bool create) const {
     if(!util::nameCheck(name)) throw InvalidName("openGroup");
     Group g;
+
     if (hasGroup(name)) {
         g = Group(H5Gopen(hid, name.c_str(), H5P_DEFAULT));
         g.check("Group::openGroup(): Could not open group: " + name);
     } else if (create) {
-        hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
-
-        if (gcpl < 0) {
-            throw H5Exception("Unable to create group with name '" + name + "'! (H5Pcreate)");
-        }
+        BaseHDF5 gcpl = H5Pcreate(H5P_GROUP_CREATE);
+        gcpl.check("Unable to create group with name '" + name + "'! (H5Pcreate)");
 
         //we want hdf5 to keep track of the order in which links were created so that
         //the order for indexed based accessors is stable cf. issue #387
-        HErr res = H5Pset_link_creation_order(gcpl, H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+        HErr res = H5Pset_link_creation_order(gcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
         res.check("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
 
-        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT));
-        H5Pclose(gcpl);
+        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl.h5id(), H5P_DEFAULT));
         g.check("Unable to create group with name '" + name + "'! (H5Gcreate2)");
 
     } else {
         throw H5Exception("Unable to open group with name '" + name + "'!");
     }
+
     return g;
 }
 
