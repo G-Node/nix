@@ -130,6 +130,27 @@ void TestH5::testBase() {
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
     CPPUNIT_ASSERT_EQUAL(std::string{}, g_invalid.name());
+}
+
+void TestH5::testDataType() {
+    namespace h5x = nix::hdf5::h5x;
+
+    hid_t t_int = H5Tcopy(H5T_NATIVE_INT);
+    hid_t t_dbl = H5Tcopy(H5T_NATIVE_DOUBLE);
+
+    CPPUNIT_ASSERT(t_int > 0);
+    CPPUNIT_ASSERT(t_dbl > 0);
+
+    test_refcounting<h5x::DataType>(t_int, t_dbl);
+
+    H5Tclose(t_int);
+    H5Tclose(t_dbl);
+    
+    h5x::DataType v_str = h5x::DataType::makeStrType();
+    CPPUNIT_ASSERT_EQUAL(true, v_str.isVariableString());
+
+    h5x::DataType str_255 = h5x::DataType::makeStrType(255);
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_255.size());
 
 }
 

@@ -33,6 +33,7 @@ public:
     static unsigned int &open_mode();
 
     void testBase();
+    void testDataType();
     void testDataSpace();
 
 private:
@@ -41,6 +42,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestH5);
     CPPUNIT_TEST(testBase);
+    CPPUNIT_TEST(testDataType);
     CPPUNIT_TEST(testDataSpace);
     CPPUNIT_TEST_SUITE_END ();
 
