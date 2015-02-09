@@ -11,8 +11,8 @@
 #ifndef NIX_ATTRIBUTE_H5_H
 #define NIX_ATTRIBUTE_H5_H
 
-#include <nix/hdf5/BaseHDF5.hpp>
 #include <nix/hdf5/DataSpace.hpp>
+#include <nix/hdf5/DataTypeHDF5.hpp>
 
 namespace nix {
 
@@ -25,11 +25,11 @@ public:
     Attribute(hid_t hid);
     Attribute(const Attribute &other);
 
-    void read(H5::DataType mem_type, const NDSize &size, void *data);
-    void read(H5::DataType mem_type, const NDSize &size, std::string *data);
+    void read(h5x::DataType mem_type, const NDSize &size, void *data);
+    void read(h5x::DataType mem_type, const NDSize &size, std::string *data);
 
-    void write(H5::DataType mem_type, const NDSize &size, const void *data);
-    void write(H5::DataType mem_type, const NDSize &size, const std::string *data);
+    void write(h5x::DataType mem_type, const NDSize &size, const void *data);
+    void write(h5x::DataType mem_type, const NDSize &size, const std::string *data);
 
     DataSpace getSpace() const;
     NDSize extent() const;

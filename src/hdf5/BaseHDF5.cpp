@@ -9,8 +9,6 @@
 #include <nix/hdf5/BaseHDF5.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
 
-#include <nix/hdf5/hdf5include.hpp>
-
 
 namespace nix {
 namespace hdf5 {

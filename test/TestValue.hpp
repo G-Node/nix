@@ -28,7 +28,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix/hdf5/Group.hpp> //for the hdf5 namespace
 
 class TestValue : public CPPUNIT_NS::TestFixture {
 
@@ -41,8 +40,6 @@ public:
     void testSwap();
 
 private:
-
-    H5::H5File h5file;
 
     CPPUNIT_TEST_SUITE(TestValue);
     CPPUNIT_TEST(testObject);

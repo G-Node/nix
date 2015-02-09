@@ -9,7 +9,6 @@
 #ifndef NIX_DATASET_H
 #define NIX_DATASET_H
 
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/Selection.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 #include <nix/hdf5/DataTypeHDF5.hpp>
@@ -62,10 +61,10 @@ public:
     Selection createSelection() const;
     NDSize size() const;
 
-    void vlenReclaim(H5::DataType mem_type, void *data, H5::DataSpace *dspace = nullptr) const;
+    void vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
 
-    static H5::DataType fileTypeForValue(DataType dtype);
-    static H5::DataType memTypeForValue(DataType dtype);
+    static h5x::DataType fileTypeForValue(DataType dtype);
+    static h5x::DataType memTypeForValue(DataType dtype);
 
     DataType dataType(void) const;
 

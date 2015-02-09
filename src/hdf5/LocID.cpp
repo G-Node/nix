@@ -10,9 +10,6 @@
 
 #include <nix/hdf5/LocID.hpp>
 
-#include <nix/hdf5/ExceptionHDF5.hpp>
-#include <nix/hdf5/hdf5include.hpp>
-
 namespace nix {
 
 namespace hdf5 {
@@ -45,8 +42,8 @@ Attribute LocID::openAttr(const std::string &name) const {
 }
 
 
-Attribute LocID::createAttr(const std::string &name, H5::DataType fileType, const DataSpace &fileSpace) const {
-    Attribute attr = H5Acreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
+Attribute LocID::createAttr(const std::string &name, h5x::DataType fileType, const DataSpace &fileSpace) const {
+    Attribute attr = H5Acreate(hid, name.c_str(), fileType.h5id(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
     attr.check("LocID::openAttr: Could not create attribute " + name);
     return attr;
 }

@@ -16,7 +16,7 @@
 #include <nix/Hydra.hpp>
 #include <nix/hdf5/ExceptionHDF5.hpp>
 
-#include <nix/hdf5/hdf5include.hpp>
+#include <hdf5.h>
 
 #include <string>
 #include <boost/optional.hpp>

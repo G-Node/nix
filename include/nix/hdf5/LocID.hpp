@@ -43,7 +43,7 @@ public:
 private:
 
     Attribute openAttr(const std::string &name) const;
-    Attribute createAttr(const std::string &name, H5::DataType fileType, const DataSpace &fileSpace) const;
+    Attribute createAttr(const std::string &name, h5x::DataType fileType, const DataSpace &fileSpace) const;
 
 };
 
@@ -61,7 +61,7 @@ template<typename T> void LocID::setAttr(const std::string &name, const T &value
     if (hasAttr(name)) {
         attr = openAttr(name);
     } else {
-        H5::DataType fileType = data_type_to_h5_filetype(dtype);
+        h5x::DataType fileType = data_type_to_h5_filetype(dtype);
         DataSpace fileSpace = DataSpace::create(shape, false);
         attr = createAttr(name, fileType, fileSpace);
     }
@@ -85,7 +85,7 @@ template<typename T> bool LocID::getAttr(const std::string &name, T &value) cons
     hydra.resize(dims);
 
     DataType dtype = hydra.element_data_type();
-    H5::DataType mem_type = data_type_to_h5_memtype(dtype);
+    h5x::DataType mem_type = data_type_to_h5_memtype(dtype);
 
     attr.read(mem_type, dims, hydra.data());
 

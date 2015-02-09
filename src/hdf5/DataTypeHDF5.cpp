@@ -15,9 +15,43 @@
 
 namespace nix {
 namespace hdf5 {
+namespace h5x {
+
+DataType DataType::copy(hid_t source) {
+    DataType hi_copy = H5Tcopy(source);
+    hi_copy.check("Could not copy type");
+    return hi_copy;
+}
+
+DataType DataType::makeStrType(size_t size) {
+    DataType str_type = H5Tcopy(H5T_C_S1);
+    str_type.check("Could not create string type");
+    str_type.size(size);
+    return str_type;
+}
 
 
-H5::DataType data_type_to_h5_filetype(DataType dtype) {
+void DataType::size(size_t t) {
+    HErr res = H5Tset_size(hid, t);
+    res.check("DataType::size: Could not set size");
+}
+
+size_t DataType::size() const {
+    return H5Tget_size(hid); //FIXME: throw on 0?
+}
+
+
+bool DataType::isVariableString() const {
+    HTri res = H5Tis_variable_str(hid);
+    res.check("DataType::isVariableString(): H5Tis_variable_str failed");
+    return res.result();
+}
+} // h5x
+
+
+
+
+h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
    /* The switch is structred in a way in order to get
       warnings from the compiler when not all cases are
@@ -28,20 +62,20 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
 
     switch (dtype) {
 
-        case DataType::Bool:   return H5::PredType::STD_B8LE;
-        case DataType::Int8:   return H5::PredType::STD_I8LE;
-        case DataType::Int16:  return H5::PredType::STD_I16LE;
-        case DataType::Int32:  return H5::PredType::STD_I32LE;
-        case DataType::Int64:  return H5::PredType::STD_I64LE;
-        case DataType::UInt8:  return H5::PredType::STD_U8LE;
-        case DataType::UInt16: return H5::PredType::STD_U16LE;
-        case DataType::UInt32: return H5::PredType::STD_U32LE;
-        case DataType::UInt64: return H5::PredType::STD_U64LE;
-        case DataType::Float:  return H5::PredType::IEEE_F32LE;
-        case DataType::Double: return H5::PredType::IEEE_F64LE;
-        case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
+        case DataType::Bool:   return h5x::DataType::copy(H5T_STD_B8LE);
+        case DataType::Int8:   return h5x::DataType::copy(H5T_STD_I8LE);
+        case DataType::Int16:  return h5x::DataType::copy(H5T_STD_I16LE);
+        case DataType::Int32:  return h5x::DataType::copy(H5T_STD_I32LE);
+        case DataType::Int64:  return h5x::DataType::copy(H5T_STD_I64LE);
+        case DataType::UInt8:  return h5x::DataType::copy(H5T_STD_U8LE);
+        case DataType::UInt16: return h5x::DataType::copy(H5T_STD_U16LE);
+        case DataType::UInt32: return h5x::DataType::copy(H5T_STD_U32LE);
+        case DataType::UInt64: return h5x::DataType::copy(H5T_STD_U64LE);
+        case DataType::Float:  return h5x::DataType::copy(H5T_IEEE_F32LE);
+        case DataType::Double: return h5x::DataType::copy(H5T_IEEE_F64LE);
+        case DataType::String: return h5x::DataType::makeStrType();
         //shall we create our own OPAQUE type?
-        case DataType::Opaque: return H5::PredType::NATIVE_OPAQUE;
+        case DataType::Opaque: return h5x::DataType::copy(H5T_NATIVE_OPAQUE);
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;
@@ -53,7 +87,7 @@ H5::DataType data_type_to_h5_filetype(DataType dtype) {
 }
 
 
-H5::DataType data_type_to_h5_memtype(DataType dtype) {
+h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
     // See data_type_to_h5_filetype for the reason why the switch is structured
     // in the way it is.
@@ -62,19 +96,19 @@ H5::DataType data_type_to_h5_memtype(DataType dtype) {
         //special case the bool
         //we treat them as bit fields for now, since hdf5 has no bool support
         //as of 1.8.12
-        case DataType::Bool:   return H5::PredType::NATIVE_B8;
-        case DataType::Int8:   return H5::PredType::NATIVE_INT8;
-        case DataType::Int16:  return H5::PredType::NATIVE_INT16;
-        case DataType::Int32:  return H5::PredType::NATIVE_INT32;
-        case DataType::Int64:  return H5::PredType::NATIVE_INT64;
-        case DataType::UInt8:  return H5::PredType::NATIVE_UINT8;
-        case DataType::UInt16: return H5::PredType::NATIVE_UINT16;
-        case DataType::UInt32: return H5::PredType::NATIVE_UINT32;
-        case DataType::UInt64: return H5::PredType::NATIVE_UINT64;
-        case DataType::Float:  return H5::PredType::NATIVE_FLOAT;
-        case DataType::Double: return H5::PredType::NATIVE_DOUBLE;
-        case DataType::String: return H5::StrType(H5::PredType::C_S1, H5T_VARIABLE);
-        case DataType::Opaque: return H5::PredType::NATIVE_OPAQUE;
+        case DataType::Bool:   return h5x::DataType::copy(H5T_NATIVE_B8);
+        case DataType::Int8:   return h5x::DataType::copy(H5T_NATIVE_INT8);
+        case DataType::Int16:  return h5x::DataType::copy(H5T_NATIVE_INT16);
+        case DataType::Int32:  return h5x::DataType::copy(H5T_NATIVE_INT32);
+        case DataType::Int64:  return h5x::DataType::copy(H5T_NATIVE_INT64);
+        case DataType::UInt8:  return h5x::DataType::copy(H5T_NATIVE_UINT8);
+        case DataType::UInt16: return h5x::DataType::copy(H5T_NATIVE_UINT16);
+        case DataType::UInt32: return h5x::DataType::copy(H5T_NATIVE_UINT32);
+        case DataType::UInt64: return h5x::DataType::copy(H5T_NATIVE_UINT64);
+        case DataType::Float:  return h5x::DataType::copy(H5T_NATIVE_FLOAT);
+        case DataType::Double: return h5x::DataType::copy(H5T_NATIVE_DOUBLE);
+        case DataType::String: return h5x::DataType::makeStrType();
+        case DataType::Opaque: return h5x::DataType::copy(H5T_NATIVE_OPAQUE);
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;

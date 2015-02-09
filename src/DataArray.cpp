@@ -17,10 +17,11 @@ using namespace nix;
 
 static void convertData(DataType source, DataType destination, void *data, size_t nelms)
 {
-    H5::DataType h5_src = hdf5::data_type_to_h5_memtype(source);
-    H5::DataType h5_dst = hdf5::data_type_to_h5_memtype(destination);
+    hdf5::h5x::DataType h5_src = hdf5::data_type_to_h5_memtype(source);
+    hdf5::h5x::DataType h5_dst = hdf5::data_type_to_h5_memtype(destination);
 
-    h5_src.convert(h5_dst, nelms, data, nullptr);
+    hdf5::HErr res = H5Tconvert(h5_src.h5id(), h5_dst.h5id(), nelms, data, nullptr, H5P_DEFAULT);
+    res.check("Could not convert data");
 }
 
 

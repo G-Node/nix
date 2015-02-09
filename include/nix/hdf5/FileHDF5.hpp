@@ -10,7 +10,7 @@
 #define NIX_FILE_HDF5_H
 
 #include <nix/base/IFile.hpp>
-#include <nix/hdf5/hdf5include.hpp>
+
 #include <nix/hdf5/Group.hpp>
 
 #include <string>

@@ -11,8 +11,6 @@
 #include <nix/util/util.hpp>
 
 #include <nix/hdf5/ExceptionHDF5.hpp>
-#include <nix/hdf5/hdf5include.hpp>
-
 
 
 namespace nix {
@@ -176,27 +174,19 @@ void Group::removeData(const std::string &name) {
 }
 
 DataSet Group::createData(const std::string &name,
-            const H5::DataType &fileType,
-            const DataSpace &fileSpace, const H5::DSetCreatPropList &cpList) const {
-    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.getId(), fileSpace.h5id(), H5P_DEFAULT, cpList.getId(), H5P_DEFAULT);
-    ds.check("Group::createData: Could not create DataSet with name " + name);
-    return ds;
-}
-
-DataSet Group::createData(const std::string &name,
         DataType dtype,
         const NDSize &size) const
 {
-    H5::DataType fileType = data_type_to_h5_filetype(dtype);
+    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
     return createData(name, fileType, size);
 }
 
 
 DataSet Group::createData(const std::string &name,
-        const H5::DataType &fileType,
+        const h5x::DataType &fileType,
         const NDSize &size,
         const NDSize &maxsize,
-        const NDSize &chunks,
+        NDSize chunks,
         bool max_size_unlimited,
         bool guess_chunks) const
 {
@@ -210,17 +200,23 @@ DataSet Group::createData(const std::string &name,
         }
     }
 
-    H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
+    BaseHDF5 dcpl = H5Pcreate(H5P_DATASET_CREATE);
+    dcpl.check("Could not create data creation plist");
+
+    if (!chunks && guess_chunks) {
+        chunks = DataSet::guessChunking(size, fileType.size());
+    }
 
     if (chunks) {
         int rank = static_cast<int>(chunks.size());
-        plcreate.setChunk(rank, chunks.data());
-    } else if (guess_chunks) {
-        NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
-        plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
+        HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
+        res.check("Could not set chunk size on data set creation plist");
     }
 
-    return createData(name, fileType, space, plcreate);
+    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    ds.check("Group::createData: Could not create DataSet with name " + name);
+
+    return ds;
 }
 
 
@@ -239,28 +235,26 @@ bool Group::hasGroup(const std::string &name) const {
 Group Group::openGroup(const std::string &name, bool create) const {
     if(!util::nameCheck(name)) throw InvalidName("openGroup");
     Group g;
+
     if (hasGroup(name)) {
         g = Group(H5Gopen(hid, name.c_str(), H5P_DEFAULT));
         g.check("Group::openGroup(): Could not open group: " + name);
     } else if (create) {
-        hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
-
-        if (gcpl < 0) {
-            throw H5Exception("Unable to create group with name '" + name + "'! (H5Pcreate)");
-        }
+        BaseHDF5 gcpl = H5Pcreate(H5P_GROUP_CREATE);
+        gcpl.check("Unable to create group with name '" + name + "'! (H5Pcreate)");
 
         //we want hdf5 to keep track of the order in which links were created so that
         //the order for indexed based accessors is stable cf. issue #387
-        HErr res = H5Pset_link_creation_order(gcpl, H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+        HErr res = H5Pset_link_creation_order(gcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
         res.check("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
 
-        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl, H5P_DEFAULT));
-        H5Pclose(gcpl);
+        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl.h5id(), H5P_DEFAULT));
         g.check("Unable to create group with name '" + name + "'! (H5Gcreate2)");
 
     } else {
         throw H5Exception("Unable to open group with name '" + name + "'!");
     }
+
     return g;
 }
 

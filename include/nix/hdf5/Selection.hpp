@@ -11,10 +11,12 @@
 
 #include <nix/NDSize.hpp>
 #include <nix/Hydra.hpp>
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 
 #include <nix/Platform.hpp>
+
+#include <hdf5.h>
+
 
 namespace nix {
 namespace hdf5 {
