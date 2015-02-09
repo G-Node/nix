@@ -53,7 +53,24 @@ private:
     herr_t      error;
 };
 
+namespace check {
 
+struct SourceLocation {
+
+    SourceLocation(const std::string &fp, int fl, const std::string &fs) :
+            filepath(fp), fileline(fl), funcsig(fs) {}
+    std::string filepath;
+    int         fileline;
+    std::string funcsig;
+
+};
+
+NIXAPI void check_h5_arg_name_loc(const std::string &name, const SourceLocation &location);
+#define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FILE, \
+                                                                                   NIX_SRC_LINE, \
+                                                                                   NIX_SRC_FUNC})
+
+} //nix::hdf5::check
 } // nix::hdf5
 } // nix::
 
