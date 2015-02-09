@@ -233,7 +233,8 @@ bool Group::hasGroup(const std::string &name) const {
 
 
 Group Group::openGroup(const std::string &name, bool create) const {
-    if(!util::nameCheck(name)) throw InvalidName("openGroup");
+    check_h5_arg_name(name);
+
     Group g;
 
     if (hasGroup(name)) {
@@ -260,7 +261,7 @@ Group Group::openGroup(const std::string &name, bool create) const {
 
 
 optGroup Group::openOptGroup(const std::string &name) {
-    if(!util::nameCheck(name)) throw InvalidName("openOptGroup");
+    check_h5_arg_name(name);
     return optGroup(*this, name);
 }
 
@@ -272,7 +273,8 @@ void Group::removeGroup(const std::string &name) {
 
 
 void Group::renameGroup(const std::string &old_name, const std::string &new_name) {
-    if(!util::nameCheck(new_name)) throw InvalidName("renameGroup");
+    check_h5_arg_name(new_name);
+
     if (hasGroup(old_name)) {
         H5Gmove(hid, old_name.c_str(), new_name.c_str()); //FIXME: H5Gmove is deprecated
     }
@@ -280,7 +282,8 @@ void Group::renameGroup(const std::string &old_name, const std::string &new_name
 
 
 Group Group::createLink(const Group &target, const std::string &link_name) {
-    if(!util::nameCheck(link_name)) throw InvalidName("createLink");
+    check_h5_arg_name(link_name);
+
     HErr res = H5Lcreate_hard(target.hid, ".", hid, link_name.c_str(),
                               H5L_SAME_LOC, H5L_SAME_LOC);
     res.check("Unable to create link " + link_name);
@@ -289,7 +292,8 @@ Group Group::createLink(const Group &target, const std::string &link_name) {
 
 // TODO implement some kind of roll-back in order to avoid half renamed links.
 bool Group::renameAllLinks(const std::string &old_name, const std::string &new_name) {
-    if(!util::nameCheck(new_name)) throw InvalidName("renameAllLinks");
+    check_h5_arg_name(new_name);
+
     bool renamed = false;
 
     if (hasGroup(old_name)) {

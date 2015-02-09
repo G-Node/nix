@@ -35,3 +35,12 @@
 #else
 #define NOEXCEPT noexcept
 #endif
+
+#define NIX_SRC_FILE __FILE__
+#define NIX_SRC_LINE __LINE__
+
+#ifndef _MSC_VER
+#define NIX_SRC_FUNC  __PRETTY_FUNCTION__
+#else
+#define NIX_SRC_FUNC __FUNCSIG__
+#endif

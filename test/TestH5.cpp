@@ -66,6 +66,9 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT_EQUAL(false, g_invalid.isValid());
     CPPUNIT_ASSERT_THROW(g_invalid.check("Error"), nix::hdf5::H5Exception);
 
+    // check check, heh
+    CPPUNIT_ASSERT_THROW(check_h5_arg_name("foo/bar"), std::invalid_argument);
+
     // check HTri
 
     typedef nix::hdf5::HTri::value_type tri_type;
