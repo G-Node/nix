@@ -319,16 +319,7 @@ void FileHDF5::close() {
 
 
 bool FileHDF5::isOpen() const {
-
-    if (! H5Iis_valid(hid))
-        return false;
-
-    H5I_type_t id_type = H5Iget_type(hid);
-
-    if (id_type <= H5I_BADID || id_type >= H5I_NTYPES)
-        return false;
-    else
-        return true;
+    return isValid();
 }
 
 
