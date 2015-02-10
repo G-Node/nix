@@ -71,7 +71,8 @@ size_t Group::objectCount() const {
     hsize_t n_objs;
     HErr res = H5Gget_num_objs(hid, &n_objs);
     res.check("Could not get object count");
-    return n_objs;
+    //FIXME: return type should be ndsize_t, #473
+    return static_cast<size_t>(n_objs);
 }
 
 
