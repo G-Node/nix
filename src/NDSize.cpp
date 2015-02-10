@@ -29,10 +29,20 @@ void nd_fill(ndssize_t *data, size_t len, ndssize_t value) {
 }
 
 void nd_copy(ndsize_t *source, size_t n, ndsize_t *dest) {
+    //if n == 0, then source or dest might be nullptrs
+    // which triggers an assertion on windows
+	if (n == 0) {
+		return;
+	}
     std::copy_n(source, n, dest);
 }
 
 void nd_copy(ndssize_t *source, size_t n, ndsize_t *dest) {
+    //see above for why we do this
+	if (n == 0) {
+		return;
+	}
+
     std::copy_n(source, n, dest);
 }
 
