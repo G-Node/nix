@@ -469,7 +469,7 @@ void DataSet::read(std::vector<Value> &values) const
     }
 
     assert(shape.size() == 1);
-    size_t nvalues = shape[0];
+    size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
 
     switch (dtype) {
     case DataType::Bool:   do_read_value<bool>(*this, nvalues, values);     break;
