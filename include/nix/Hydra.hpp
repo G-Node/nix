@@ -13,12 +13,32 @@
 #include <nix/DataType.hpp>
 
 #include <type_traits>
+#include <limits>
 #include <valarray>
 
 #ifndef NIX_HYDRA_H
 #define NIX_HYDRA_H
 
 namespace nix {
+
+namespace check {
+
+template<typename T>
+inline typename std::enable_if<! std::is_same<T, size_t>::value, size_t>::type
+fits_in_size_t(T size, const std::string &msg_if_fail) {
+    if (size > std::numeric_limits<size_t>::max()) {
+        throw OutOfBounds(msg_if_fail);
+    }
+    return static_cast<size_t>(size);
+}
+
+template<typename T>
+inline typename std::enable_if<std::is_same<T, size_t>::value, size_t>::type
+fits_in_size_t(T size, const std::string &msg_if_fail) {
+    return size;
+}
+
+} // nix::check::
 
 template<typename T>
 struct data_traits {
@@ -185,9 +205,10 @@ public:
         if (non_singletons > 1) {
             throw InvalidRank("Cannot change rank of vector");
         }
-        if (dims[non_singleton_index] == value.size())
-            return;
-        value.resize(dims[non_singleton_index]);
+
+        ndsize_t to_resize = dims[non_singleton_index];
+        size_t size = check::fits_in_size_t(to_resize, "Can't resize: data to big for memory");
+        value.resize(size);
     }
 };
 
@@ -229,10 +250,8 @@ public:
             throw InvalidRank("Cannot change rank of valarray");
         }
 
-        if (dims[0] == value.size())
-            return;
-
-        value.resize(dims[0]);
+        size_t size = check::fits_in_size_t(dims[0], "can't resize: data to big for memory");
+        value.resize(size);
     }
 };
 

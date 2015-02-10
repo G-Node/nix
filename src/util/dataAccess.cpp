@@ -105,7 +105,7 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
         Dimension dim = array.getDimension(i+1);
         temp_offset[i] = positionToIndex(position[i], i >= units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            size_t c = positionToIndex(position[i] + extent[i], i >= units.size() ? "none" : units[i], dim) - temp_offset[i];
+            ndsize_t c = positionToIndex(position[i] + extent[i], i >= units.size() ? "none" : units[i], dim) - temp_offset[i];
             temp_count[i] = (c > 1) ? c : 1;
         }
     }
@@ -178,7 +178,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            size_t c = positionToIndex(offset[i] + extent[i], unit, dimension) - data_offset[i];
+            ndsize_t c = positionToIndex(offset[i] + extent[i], unit, dimension) - data_offset[i];
             data_count[i] = (c > 1) ? c : 1;
         }
     }

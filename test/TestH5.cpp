@@ -133,6 +133,16 @@ void TestH5::testBase() {
 
     CPPUNIT_ASSERT_EQUAL(std::string("/h5"), name);
     CPPUNIT_ASSERT_EQUAL(std::string{}, g_invalid.name());
+
+    //FIXME: this should be somewhere lese
+
+    size_t sz_a = 10;
+    CPPUNIT_ASSERT_EQUAL(sz_a, nix::check::fits_in_size_t(sz_a, "OOB"));
+
+    //this is a bit of a hack to get a size that will be bigger then
+    //size_t's max value on 64bit systems
+    double sz_b = static_cast<double>(std::numeric_limits<size_t>::max()) * 2.0;
+    CPPUNIT_ASSERT_THROW(nix::check::fits_in_size_t(sz_b, "OOB"), nix::OutOfBounds);
 }
 
 void TestH5::testDataType() {

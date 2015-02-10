@@ -21,6 +21,8 @@
 
 #include <nix/Hydra.hpp>
 
+#include <type_traits>
+
 #ifndef HYDRA_MULTI_ARRAY_H
 #define HYDRA_MULTI_ARRAY_H
 
@@ -65,12 +67,23 @@ public:
     }
 
     static void resize(reference value, const NDSize &dims) {
-        if (dims.size() != N) {
-            throw InvalidRank("Cannot change rank of multiarray");
+        check_rank(dims.size());
+        //FIXME: not needed for ndsize_t == size_t case, optimize
+        std::vector<size_t> size(N);
+
+        for (size_t i = 0; i < N; i++) {
+            size[i] = check::fits_in_size_t(dims[i], "Cannot resize multiarray: too big for memroy");
         }
 
-        value.resize(dims);
+        value.resize(size);
     }
+
+    static void check_rank(size_t rank) {
+        if (rank != N) {
+            throw InvalidRank("Cannot change rank of multiarray");
+        }
+    }
+
 };
 
 } //nix::

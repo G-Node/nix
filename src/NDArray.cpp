@@ -45,8 +45,9 @@ void NDArray::calc_strides() {
 
 
 size_t NDArray::sub2index(const NDSize &sub) const {
-    size_t index = strides.dot(sub);
-    return index;
+    ndsize_t pos = strides.dot(sub);
+    size_t idx = check::fits_in_size_t(pos, "index does not fit into memory");
+    return idx;
 }
 
 } // namespace nix
