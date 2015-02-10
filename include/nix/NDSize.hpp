@@ -269,7 +269,7 @@ public:
         std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
-        //FIXME: check overflow before casting
+        //FIXME: return-type should be T too, issue #473
         return static_cast<size_t>(product);
     }
 
