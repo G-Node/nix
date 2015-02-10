@@ -116,6 +116,16 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT_EQUAL(true, herr_default.isError());
 
     //check BaseHDF5
+    hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
+    hid_t dcpl = H5Pcreate(H5P_DATASET_CREATE);
+
+    CPPUNIT_ASSERT(gcpl > 0);
+    CPPUNIT_ASSERT(dcpl > 0);
+
+    test_refcounting<nix::hdf5::BaseHDF5>(gcpl, dcpl);
+
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gcpl));
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(dcpl));
 
     //ref counting
     hid_t ga = H5Gopen(h5file, "/", H5P_DEFAULT);
@@ -126,7 +136,16 @@ void TestH5::testBase() {
 
     test_refcounting<nix::hdf5::BaseHDF5>(ga, gb);
 
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ga));
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gb));
+
     test_refcounting<nix::hdf5::LocID>(ga, gb);
+
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ga));
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gb));
+
+    H5Gclose(ga);
+    H5Gclose(gb);
 
     //name()
     std::string name = h5group.name();
@@ -155,6 +174,9 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT(t_dbl > 0);
 
     test_refcounting<h5x::DataType>(t_int, t_dbl);
+
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(t_int));
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(t_dbl));
 
     H5Tclose(t_int);
     H5Tclose(t_dbl);
