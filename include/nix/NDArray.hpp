@@ -30,7 +30,7 @@ public:
     NDArray(DataType dtype, NDSize dims);
 
     size_t rank() const { return extends.size(); }
-    size_t num_elements() const { return extends.nelms(); }
+    ndsize_t num_elements() const { return extends.nelms(); }
     NDSize  shape() const { return extends; }
     NDSize  size()const { return extends; }
     DataType dtype() const { return dataType ;}
@@ -115,7 +115,7 @@ struct data_traits<NDArray> {
         return value.shape();
     }
 
-    static size_t num_elements(const_reference value) {
+    static ndsize_t num_elements(const_reference value) {
         return value.num_elements();
     }
 

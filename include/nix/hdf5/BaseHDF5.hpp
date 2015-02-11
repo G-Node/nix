@@ -35,7 +35,9 @@ public:
 
     StringWriter(const NDSize &size, pointer stringdata)
             : nelms(size.nelms()), data(stringdata) {
-        buffer = new data_type[nelms];
+		size_t bs = nix::check::fits_in_size_t(nelms,
+                         "Cannot allocate storage (exceeds memory)");
+        buffer = new data_type[bs];
     }
 
     data_ptr operator*() {
@@ -43,7 +45,7 @@ public:
     }
 
     void finish() {
-        for (size_t i = 0; i < nelms; i++) {
+        for (ndsize_t i = 0; i < nelms; i++) {
             data[i] = buffer[i];
         }
     }
@@ -53,7 +55,7 @@ public:
     }
 
 private:
-    size_t   nelms;
+    ndsize_t nelms;
     pointer  data;
     data_ptr buffer;
 };
@@ -68,8 +70,10 @@ public:
 
     StringReader(const NDSize &size, pointer stringdata)
             : nelms(size.nelms()), data(stringdata) {
-        buffer = new data_type[nelms];
-        for (size_t i = 0; i < nelms; i++) {
+		size_t bs = nix::check::fits_in_size_t(nelms,
+                         "Cannot allocate storage (exceeds memory)");
+        buffer = new data_type[bs];
+        for (ndsize_t i = 0; i < bs; i++) {
             buffer[i] = data[i].c_str();
         }
     }
@@ -83,7 +87,7 @@ public:
     }
 
 private:
-    size_t   nelms;
+    ndsize_t   nelms;
     pointer  data;
     data_ptr buffer;
 };
