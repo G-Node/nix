@@ -31,7 +31,8 @@ void DataArray::ioRead(DataType dtype, void *data, const NDSize &count, const ND
 
     if (poly.size() || opt_origin) {
         size_t data_esize = data_type_to_size(dtype);
-        size_t nelms = count.nelms();
+        size_t nelms = check::fits_in_size_t(count.nelms(),
+			"Cannot apply polynom or oirign transform. Buffer needed exceeds memory.");
         std::vector<double> tmp;
         double *read_buffer;
 

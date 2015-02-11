@@ -264,13 +264,14 @@ public:
     size_t size() const { return rank; }
 
 
-    size_t nelms() const {
+    T nelms() const {
         T product = 1;
-        std::for_each(begin(), end(), [&](T val) {
+        //TODO: check for "overflow" in calculations
+		std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
-        //FIXME: return-type should be T too, issue #473
-        return static_cast<size_t>(product);
+
+        return product;
     }
 
 
