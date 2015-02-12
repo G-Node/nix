@@ -308,14 +308,13 @@ void TestValidate::test() {
         should(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
     // have debug info
-    std::cout << myResult;
+    // std::cout << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
 
     myResult = file.validate();
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), myResult.getWarnings().size()); //FIMXE: should be 0 ;-)
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(4), myResult.getErrors().size());   //FIXME: should be 0 too
-
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getErrors().size());
     // entity failure cases---------------------------------------------
     // -----------------------------------------------------------------
     setInvalid();
