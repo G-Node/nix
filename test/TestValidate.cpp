@@ -284,7 +284,11 @@ void TestValidate::test() {
     std::cout << myResult;
     CPPUNIT_ASSERT(myResult.hasWarnings() == false);
     CPPUNIT_ASSERT(myResult.hasErrors() == false);
-    
+
+    myResult = file.validate();
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), myResult.getWarnings().size()); //FIMXE: should be 0 ;-)
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(4), myResult.getErrors().size());   //FIXME: should be 0 too
+
     // entity failure cases---------------------------------------------
     // -----------------------------------------------------------------
     setInvalid();
@@ -311,10 +315,18 @@ void TestValidate::test() {
         must(  tag, &nix::Tag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (tag)"),
         should(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
+
+    CPPUNIT_ASSERT(myResult.getWarnings().size() == 9);
+    CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
+
+    myResult = file.validate();
+
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(3), myResult.getWarnings().size());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(13), myResult.getErrors().size());
+
     // uncomment this to have debug info
     // std::cout << myResult;
     // lets leave the file clean & valid
     setValid();
-    CPPUNIT_ASSERT(myResult.getWarnings().size() == 9);
-    CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
+
 }
