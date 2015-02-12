@@ -80,7 +80,7 @@ void TestValidate::setValid() {
         }
     }
     array4.setData(sin_array);
-    for (index i = 1; i <= array4.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= array4.dimensionCount(); ++i) {
         array4.deleteDimension(i);
     }
     array4.appendSampledDimension(1.);
@@ -122,12 +122,12 @@ void TestValidate::setValid() {
     extents.setData(C);
     
     // ensure correct dimension descriptors for positions
-    for (index i = 1; i <= positions.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= positions.dimensionCount(); ++i) {
         positions.deleteDimension(i);
     }
     positions.appendSetDimension();
     positions.appendSetDimension();
-    for (index i = 1; i <= extents.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= extents.dimensionCount(); ++i) {
         extents.deleteDimension(i);
     }
     extents.appendSetDimension();
@@ -150,7 +150,7 @@ void TestValidate::setValid() {
     dim_sample1.unit(atomic_units[0]);
     dim_sample2.unit(atomic_units[1]);
     dim_sample3.unit(atomic_units[2]);
-    // fill tag_tmp    
+    // fill tag_tmp
     units_tmp = tag_tmp(compound_units);
     
     return;
@@ -210,16 +210,16 @@ void TestValidate::setInvalid() {
     dim_sample3.unit(atomic_units[0]);
     dim_sample1.unit(atomic_units[1]);
     dim_sample2.unit(atomic_units[2]);
-    // fill tag_tmp    
+    // fill tag_tmp
     units_tmp = tag_tmp(invalid_units);
     // remove dimension descriptors from array4, position and extents
-    for (index i = 1; i <= array4.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= array4.dimensionCount(); ++i) {
         array4.deleteDimension(i);
     }
-    for (index i = 1; i <= positions.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= positions.dimensionCount(); ++i) {
         positions.deleteDimension(i);
     }
-    for (index i = 1; i <= extents.dimensionCount(); ++i) {
+    for (size_t i = 1; i <= extents.dimensionCount(); ++i) {
         extents.deleteDimension(i);
     }
     return;
