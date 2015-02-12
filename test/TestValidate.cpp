@@ -69,7 +69,7 @@ void TestValidate::tearDown() {
 }
 
 void TestValidate::setValid() {
-    // fill sin data & leave it in file for plot testing
+    // fill sinus data & leave it in file for plot testing
     typedef boost::multi_array<double, 2> array2D_type;
     typedef array2D_type::index index;
     array2D_type sin_array(boost::extents[1000][1000]);
@@ -80,7 +80,11 @@ void TestValidate::setValid() {
         }
     }
     array4.setData(sin_array);
-    
+    for (index i = 1; i <= array4.dimensionCount(); ++i) {
+        array4.deleteDimension(i);
+    }
+    array4.appendSampledDimension(1.);
+    array4.appendSetDimension();
     // fill array1 & array2
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
@@ -108,6 +112,7 @@ void TestValidate::setValid() {
         }
     }
     positions.setData(B);
+   
     array2D_type C(boost::extents[5][3]);
     for (index i = 0; i < 5; ++i) {
         for (index j = 0; j < 3; ++j) {
@@ -115,6 +120,19 @@ void TestValidate::setValid() {
         }
     }
     extents.setData(C);
+    
+    // ensure correct dimension descriptors for positions
+    for (index i = 1; i <= positions.dimensionCount(); ++i) {
+        positions.deleteDimension(i);
+    }
+    positions.appendSetDimension();
+    positions.appendSetDimension();
+    for (index i = 1; i <= extents.dimensionCount(); ++i) {
+        extents.deleteDimension(i);
+    }
+    extents.appendSetDimension();
+    extents.appendSetDimension();
+
     // fill MultiTag
     refs = {array2, array3};
     mtag.units(atomic_units);
@@ -194,7 +212,16 @@ void TestValidate::setInvalid() {
     dim_sample2.unit(atomic_units[2]);
     // fill tag_tmp    
     units_tmp = tag_tmp(invalid_units);
-    
+    // remove dimension descriptors from array4, position and extents
+    for (index i = 1; i <= array4.dimensionCount(); ++i) {
+        array4.deleteDimension(i);
+    }
+    for (index i = 1; i <= positions.dimensionCount(); ++i) {
+        positions.deleteDimension(i);
+    }
+    for (index i = 1; i <= extents.dimensionCount(); ++i) {
+        extents.deleteDimension(i);
+    }
     return;
 }
 
