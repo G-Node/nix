@@ -104,12 +104,12 @@ bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
         if ((*it).dimensionType() == DimensionType::Range) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asRangeDimension();
-            mismatch = dim.ticks().size() == data.dataExtent()[dimIndex];
+            mismatch = !(dim.ticks().size() == data.dataExtent()[dimIndex]);
         }
         ++it;
     }
     
-    return mismatch;
+    return !mismatch;
 }
 
 bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
@@ -119,12 +119,12 @@ bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
         if ((*it).dimensionType() == DimensionType::Set) {
             size_t dimIndex = (*it).index() - 1;
             auto dim = (*it).asSetDimension();
-            mismatch = dim.labels().size() == data.dataExtent()[dimIndex];
+            mismatch = dim.labels().size() > 0 && !(dim.labels().size() == data.dataExtent()[dimIndex]);
         }
         ++it;
     }
     
-    return mismatch;
+    return !mismatch;
 }
 
 } // namespace valid
