@@ -101,7 +101,7 @@ Result validate(const DataArray &data_array) {
     Result result_base = validate_entity_with_sources(data_array);
     Result result = validator({
         must(data_array, &DataArray::dataType, notEqual<DataType>(DataType::Nothing), "data type is not set!"),
-        should(data_array, &DataArray::dimensionCount, isEqual<size_t>(data_array.dataExtent().size()), "data dimensionality does not match number of defined dimensions!", {
+        must(data_array, &DataArray::dimensionCount, isEqual<size_t>(data_array.dataExtent().size()), "data dimensionality does not match number of defined dimensions!", {
             could(data_array, &DataArray::dimensions, notEmpty(), {
                 must(data_array, &DataArray::dimensions, dimTicksMatchData(data_array), "in some of the Range dimensions the number of ticks differs from the number of data entries along the corresponding data dimension!"),
                 must(data_array, &DataArray::dimensions, dimLabelsMatchData(data_array), "in some of the Set dimensions the number of labels differs from the number of data entries along the corresponding data dimension!") }) }),
