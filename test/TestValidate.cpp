@@ -220,13 +220,13 @@ void TestValidate::setInvalid() {
     // fill tag_tmp
     units_tmp = tag_tmp(invalid_units);
     // remove dimension descriptors from array4, position and extents
-    for (size_t i = 1; i <= array4.dimensionCount(); ++i) {
+    for (size_t i = array4.dimensionCount(); i > 0; --i) {
         array4.deleteDimension(i);
     }
-    for (size_t i = 1; i <= positions.dimensionCount(); ++i) {
+    for (size_t i = positions.dimensionCount(); i > 0; --i) {
         positions.deleteDimension(i);
     }
-    for (size_t i = 1; i <= extents.dimensionCount(); ++i) {
+    for (size_t i = extents.dimensionCount(); i > 0; --i) {
         extents.deleteDimension(i);
     }
     return;
