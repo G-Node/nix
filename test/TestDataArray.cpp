@@ -43,8 +43,8 @@ void TestDataArray::tearDown()
 void TestDataArray::testValidate() {
     // dims are not equal data dims: 1 warning
     valid::Result result = validate(array1);
-    CPPUNIT_ASSERT(result.getErrors().size() == 0);
-    CPPUNIT_ASSERT(result.getWarnings().size() == 1);
+    CPPUNIT_ASSERT(result.getErrors().size() == 1);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
