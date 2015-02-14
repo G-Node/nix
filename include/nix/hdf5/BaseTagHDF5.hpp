@@ -53,7 +53,7 @@ public:
     virtual bool hasReference(const std::string &name_or_id) const;
 
 
-    virtual size_t referenceCount() const;
+    virtual ndsize_t referenceCount() const;
 
 
     virtual std::shared_ptr<base::IDataArray> getReference(const std::string &name_or_id) const;

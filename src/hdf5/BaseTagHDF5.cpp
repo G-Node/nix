@@ -63,7 +63,7 @@ bool BaseTagHDF5::hasReference(const std::string &name_or_id) const {
 }
 
 
-size_t BaseTagHDF5::referenceCount() const {
+ndsize_t BaseTagHDF5::referenceCount() const {
     boost::optional<Group> g = refs_group();
     return g ? g->objectCount() : size_t(0);
 }
