@@ -48,7 +48,7 @@ class NIXAPI IFile {
 
 public:
 
-    virtual size_t blockCount() const = 0;
+    virtual ndsize_t blockCount() const = 0;
 
 
     virtual bool hasBlock(const std::string &name_or_id) const = 0;

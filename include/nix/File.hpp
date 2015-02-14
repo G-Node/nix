@@ -96,7 +96,7 @@ public:
      *
      * @return The number of blocks.
      */
-    size_t blockCount() const {
+    ndsize_t blockCount() const {
         return backend()->blockCount();
     }
 

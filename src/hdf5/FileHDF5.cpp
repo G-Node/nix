@@ -135,7 +135,7 @@ bool FileHDF5::deleteBlock(const std::string &name_or_id) {
 }
 
 
-size_t FileHDF5::blockCount() const {
+ndsize_t FileHDF5::blockCount() const {
     return data.objectCount();
 }
 

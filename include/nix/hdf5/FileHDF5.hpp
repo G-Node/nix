@@ -46,7 +46,7 @@ public:
     //--------------------------------------------------
 
 
-    size_t blockCount() const;
+    ndsize_t blockCount() const;
 
 
     bool hasBlock(const std::string &name_or_id) const;
