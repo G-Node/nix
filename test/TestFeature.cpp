@@ -84,6 +84,13 @@ void TestFeature::testData() {
 
 void TestFeature::testOperator()
 {
+
+void TestFeature::testLinkType2Str() {
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Tagged) == "Tagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Untagged) == "Untagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Indexed) == "Indexed");
+}
+
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);
