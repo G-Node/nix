@@ -109,7 +109,7 @@ public:
     //--------------------------------------------------
 
 
-    size_t sectionCount() const;
+    ndsize_t sectionCount() const;
 
 
     bool hasSection(const std::string &name_or_id) const;

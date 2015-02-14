@@ -208,7 +208,7 @@ public:
      *
      * @return The number of child sections.
      */
-    size_t sectionCount() const {
+    ndsize_t sectionCount() const {
         return backend()->sectionCount();
     }
 

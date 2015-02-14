@@ -182,7 +182,7 @@ shared_ptr<ISection> SectionHDF5::parent() const {
 //--------------------------------------------------
 
 
-size_t SectionHDF5::sectionCount() const {
+ndsize_t SectionHDF5::sectionCount() const {
     boost::optional<Group> g = section_group();
     return g ? g->objectCount() : size_t(0);
 }
