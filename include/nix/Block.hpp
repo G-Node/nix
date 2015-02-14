@@ -185,7 +185,7 @@ public:
      *
      * @return The number of root sources.
      */
-    size_t sourceCount() const {
+    ndsize_t sourceCount() const {
         return backend()->sourceCount();
     }
 
