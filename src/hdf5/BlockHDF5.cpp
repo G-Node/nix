@@ -164,7 +164,7 @@ shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
 }
 
 
-size_t BlockHDF5::tagCount() const {
+ndsize_t BlockHDF5::tagCount() const {
     boost::optional<Group> g = tag_group();
     return g ? g->objectCount() : size_t(0);
 }

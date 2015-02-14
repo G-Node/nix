@@ -85,7 +85,7 @@ public:
     virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
 
 
-    virtual size_t tagCount() const = 0;
+    virtual ndsize_t tagCount() const = 0;
 
 
     virtual std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,

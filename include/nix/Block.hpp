@@ -468,7 +468,7 @@ public:
      *
      * @return The number of tags.
      */
-    size_t tagCount() const {
+    ndsize_t tagCount() const {
         return backend()->tagCount();
     }
 
