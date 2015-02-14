@@ -93,11 +93,15 @@ void TestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
+
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Source src = block.createSource(*it, "channel");
-        CPPUNIT_ASSERT(src.name() == *it);
+    for (const auto &name : names) {
+        Source src = block.createSource(name, "channel");
+        CPPUNIT_ASSERT(src.name() == name);
+        CPPUNIT_ASSERT(block.hasSource(name));
+        CPPUNIT_ASSERT(block.hasSource(src));
 
         ids.push_back(src.id());
     }
@@ -108,12 +112,12 @@ void TestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == names.size());
 
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source src = block.getSource(*it);
-        CPPUNIT_ASSERT(block.hasSource(*it) == true);
-        CPPUNIT_ASSERT(src.id() == *it);
+    for (const auto &id : ids) {
+        Source src = block.getSource(id);
+        CPPUNIT_ASSERT(block.hasSource(id) == true);
+        CPPUNIT_ASSERT(src.id() == id);
 
-        block.deleteSource(*it);
+        block.deleteSource(id);
     }
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
