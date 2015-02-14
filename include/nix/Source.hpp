@@ -131,7 +131,7 @@ public:
      *
      * @return The number of direct child sources.
      */
-    size_t sourceCount() const {
+    ndsize_t sourceCount() const {
         return backend()->sourceCount();
     }
 

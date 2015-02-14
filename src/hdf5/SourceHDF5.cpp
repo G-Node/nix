@@ -63,7 +63,7 @@ shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
 }
 
 
-size_t SourceHDF5::sourceCount() const {
+ndsize_t SourceHDF5::sourceCount() const {
     boost::optional<Group> g = source_group(false);
     return g ? g->objectCount() : size_t(0);
 }
