@@ -213,10 +213,9 @@ void PropertyHDF5::deleteValues() {
 }
 
 
-size_t PropertyHDF5::valueCount() const {
+ndsize_t PropertyHDF5::valueCount() const {
     NDSize size = dataset().size();
-    //FIXME: 32bit casting issue, cf issue #473
-    return static_cast<size_t>(size[0]);
+    return size[0];
 }
 
 

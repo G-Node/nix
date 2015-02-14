@@ -219,7 +219,7 @@ public:
      *
      * @return The number of values.
      */
-    size_t valueCount() const {
+    ndsize_t valueCount() const {
         return backend()->valueCount();
     }
 

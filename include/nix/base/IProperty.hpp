@@ -12,6 +12,8 @@
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
 
+#include <nix/NDSize.hpp>
+
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -64,7 +66,7 @@ public:
     virtual void deleteValues() = 0;
 
 
-    virtual size_t valueCount() const = 0;
+    virtual ndsize_t valueCount() const = 0;
 
 
     virtual void values(const std::vector<Value> &values) = 0;
