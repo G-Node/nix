@@ -321,7 +321,7 @@ public:
      *
      * @return The number of data arrays of the block.
      */
-    size_t dataArrayCount() const {
+    ndsize_t dataArrayCount() const {
         return backend()->dataArrayCount();
     }
 

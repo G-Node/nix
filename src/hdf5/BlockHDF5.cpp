@@ -214,7 +214,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
 }
 
 
-size_t BlockHDF5::dataArrayCount() const {
+ndsize_t BlockHDF5::dataArrayCount() const {
     boost::optional<Group> g = data_array_group();
     return g ? g->objectCount() : size_t(0);
 }

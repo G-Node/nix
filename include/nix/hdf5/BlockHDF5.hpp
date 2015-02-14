@@ -96,7 +96,7 @@ public:
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
 
 
-    size_t dataArrayCount() const;
+    ndsize_t dataArrayCount() const;
 
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,

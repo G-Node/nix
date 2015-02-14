@@ -63,7 +63,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
 
 
-    virtual size_t dataArrayCount() const = 0;
+    virtual ndsize_t dataArrayCount() const = 0;
 
 
     virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
