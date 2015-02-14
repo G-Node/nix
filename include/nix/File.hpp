@@ -250,7 +250,7 @@ public:
      *
      * @return size_t   The number of sections.
      */
-    size_t sectionCount() const {
+    ndsize_t sectionCount() const {
         return backend()->sectionCount();
     }
 

@@ -197,7 +197,7 @@ bool FileHDF5::deleteSection(const std::string &name_or_id) {
 }
 
 
-size_t FileHDF5::sectionCount() const {
+ndsize_t FileHDF5::sectionCount() const {
     return metadata.objectCount();
 }
 
