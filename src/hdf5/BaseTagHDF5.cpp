@@ -172,7 +172,7 @@ bool BaseTagHDF5::hasFeature(const string &name_or_id) const {
 }
 
 
-size_t BaseTagHDF5::featureCount() const {
+ndsize_t BaseTagHDF5::featureCount() const {
     boost::optional<Group> g = feature_group();
     return g ? g->objectCount() : size_t(0);
 }

@@ -349,7 +349,7 @@ public:
      *
      * @return The number of features.
      */
-    size_t featureCount() const {
+    ndsize_t featureCount() const {
         return backend()->featureCount();
     }
 
