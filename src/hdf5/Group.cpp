@@ -79,7 +79,7 @@ boost::optional<Group> Group::findGroupByAttribute(const std::string &attribute,
     boost::optional<Group> ret;
 
     // look up first direct sub-group that has given attribute with given value
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasGroup(obj_name)) {
             Group group = openGroup(obj_name, false);
@@ -103,7 +103,7 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
     boost::optional<DataSet> ret;
 
     // look up all direct sub-datasets that have the given attribute
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasData(obj_name)) {
             DataSet ds = openData(obj_name);
