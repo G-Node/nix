@@ -271,6 +271,22 @@ void TestTag::testReferences() {
     CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
 }
 
+
+void TestTag::testFeatures() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), std::runtime_error);
+    
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+}
+
+
 void TestTag::testDataAccess() {
     double samplingInterval = 1.0;
     vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
@@ -367,7 +383,3 @@ void TestTag::testCreatedAt() {
 void TestTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
-
-
-
-
