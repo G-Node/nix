@@ -93,7 +93,7 @@ public:
     // Methods for property access
     //--------------------------------------------------
 
-    virtual size_t propertyCount() const = 0;
+    virtual ndsize_t propertyCount() const = 0;
 
 
     virtual bool hasProperty(const std::string &name_or_id) const = 0;

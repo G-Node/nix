@@ -333,7 +333,7 @@ public:
      *
      * @return The number of Properties
      */
-    size_t propertyCount() const {
+    ndsize_t propertyCount() const {
         return backend()->propertyCount();
     }
 
