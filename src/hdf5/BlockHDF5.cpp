@@ -297,7 +297,7 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
 }
 
 
-size_t BlockHDF5::multiTagCount() const {
+ndsize_t BlockHDF5::multiTagCount() const {
     boost::optional<Group> g = multi_tag_group();
     return g ? g->objectCount() : size_t(0);
 }

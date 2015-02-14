@@ -140,7 +140,7 @@ public:
     std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const;
 
 
-    size_t multiTagCount() const;
+    ndsize_t multiTagCount() const;
 
 
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,

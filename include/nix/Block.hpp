@@ -577,7 +577,7 @@ public:
      *
      * @return The number of multi tags.
      */
-    size_t multiTagCount() const {
+    ndsize_t multiTagCount() const {
         return backend()->multiTagCount();
     }
 

@@ -107,7 +107,7 @@ public:
     virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
 
 
-    virtual size_t multiTagCount() const = 0;
+    virtual ndsize_t multiTagCount() const = 0;
 
 
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
