@@ -265,6 +265,10 @@ void TestTag::testReferences() {
         CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
     }
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    DataArray a;
+    CPPUNIT_ASSERT_THROW(tag.hasReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.addReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
 }
 
 void TestTag::testDataAccess() {
