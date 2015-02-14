@@ -9,6 +9,8 @@
 #ifndef NIX_I_ENTITY_WITH_SOURCES_H
 #define NIX_I_ENTITY_WITH_SOURCES_H
 
+#include <nix/NDSize.hpp>
+
 #include <nix/base/ISource.hpp>
 #include <nix/base/IEntityWithMetadata.hpp>
 
@@ -31,7 +33,7 @@ class NIXAPI IEntityWithSources : virtual public IEntityWithMetadata {
 
 public:
 
-    virtual size_t sourceCount() const = 0;
+    virtual ndsize_t sourceCount() const = 0;
 
 
     virtual void addSource(const std::string &id) = 0;

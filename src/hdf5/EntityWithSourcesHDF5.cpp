@@ -42,7 +42,7 @@ EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const shared_ptr<IFile> &file, con
 }
 
 
-size_t EntityWithSourcesHDF5::sourceCount() const {
+ndsize_t EntityWithSourcesHDF5::sourceCount() const {
     boost::optional<Group> g = sources_refs();
     return g ? g->objectCount() : size_t(0);
 }
