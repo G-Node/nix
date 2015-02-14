@@ -11,6 +11,7 @@
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
+#include <sstream>
 #include <ctime>
 
 using namespace std;
@@ -82,8 +83,6 @@ void TestFeature::testData() {
     tag.deleteFeature(rp.id());
 }
 
-void TestFeature::testOperator()
-{
 
 void TestFeature::testLinkType2Str() {
     CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Tagged) == "Tagged");
@@ -91,6 +90,19 @@ void TestFeature::testLinkType2Str() {
     CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Indexed) == "Indexed");
 }
 
+
+void TestFeature::testStreamOperator() {
+    stringstream s1, s2, s3;
+    s1 << nix::LinkType::Indexed;
+    CPPUNIT_ASSERT(s1.str() == "LinkType::Indexed");
+    s2 << nix::LinkType::Tagged;
+    CPPUNIT_ASSERT(s2.str() == "LinkType::Tagged");
+    s3 << nix::LinkType::Untagged;
+    CPPUNIT_ASSERT(s3.str() == "LinkType::Untagged");
+}
+
+
+void TestFeature::testOperator() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);

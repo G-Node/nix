@@ -35,6 +35,7 @@ private:
     CPPUNIT_TEST(testLinkType);
     CPPUNIT_TEST(testData);
     CPPUNIT_TEST(testLinkType2Str);
+    CPPUNIT_TEST(testStreamOperator);
     CPPUNIT_TEST(testOperator);
 
     CPPUNIT_TEST_SUITE_END ();
@@ -55,6 +56,7 @@ public:
     void testLinkType();
     void testData();
     void testLinkType2Str();
+    void testStreamOperator();
     void testOperator();
 
 };
