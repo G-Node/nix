@@ -125,7 +125,7 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
 }
 
 
-std::string Group::objectName(size_t index) const {
+std::string Group::objectName(ndsize_t index) const {
     // check if index valid
     if(index > objectCount()) {
         throw OutOfBounds("No object at given index", index);
