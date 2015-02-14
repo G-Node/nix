@@ -253,6 +253,20 @@ void TestTag::testUnits() {
 }
 
 
+void TestTag::testReferences() {
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    for (size_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
+        CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
+    for (size_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+}
+
 void TestTag::testDataAccess() {
     double samplingInterval = 1.0;
     vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
