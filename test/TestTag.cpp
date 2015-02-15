@@ -10,6 +10,7 @@
 
 #include "TestTag.hpp"
 
+#include <nix/NDSize.hpp>
 #include <nix/Exception.hpp>
 #include <nix/valid/validate.hpp>
 
@@ -84,7 +85,7 @@ void TestTag::testDefinition() {
 
 void TestTag::testCreateRemove() {
     std::vector<std::string> ids;
-    size_t count = static_cast<size_t>(block.tagCount());
+    ndsize_t count = block.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
 
     for (int i = 0; i < 5; i++) {
@@ -106,7 +107,7 @@ void TestTag::testCreateRemove() {
     for (auto it = refs.begin(); it != refs.end(); it++) {
         block.deleteDataArray((*it).id());
     }
-    for (size_t i = 0; i < ids.size(); i++) {
+    for (ndsize_t i = 0; i < ids.size(); i++) {
         block.deleteTag(ids[i]);
     }
 
@@ -125,7 +126,7 @@ void TestTag::testExtent() {
 
     std::vector<double> retrieved = st.extent();
     CPPUNIT_ASSERT(retrieved.size() == extent.size());
-    for(size_t i = 0; i < retrieved.size(); i++){
+    for(ndsize_t i = 0; i < retrieved.size(); i++){
         CPPUNIT_ASSERT(retrieved[i] == extent[i]);
     }
 
@@ -149,7 +150,7 @@ void TestTag::testPosition() {
     std::vector<double> retrieved = st.position();
     CPPUNIT_ASSERT(retrieved.size() == position.size());
 
-    for(size_t i = 0; i < retrieved.size(); i++){
+    for(ndsize_t i = 0; i < retrieved.size(); i++){
         CPPUNIT_ASSERT(retrieved[i] == position[i]);
     }
 
@@ -157,7 +158,7 @@ void TestTag::testPosition() {
     retrieved = st.position();
     CPPUNIT_ASSERT(retrieved.size() == new_position.size());
 
-    for(size_t i = 0; i < retrieved.size(); i++){
+    for(ndsize_t i = 0; i < retrieved.size(); i++){
         CPPUNIT_ASSERT(retrieved[i] == new_position[i]);
     }
     for (auto it = refs.begin(); it != refs.end(); it++) {
@@ -231,7 +232,7 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT_NO_THROW(st.units(valid_units));
     CPPUNIT_ASSERT(st.units().size() == valid_units.size());
     std::vector<std::string> retrieved_units = st.units();
-    for(size_t i = 0; i < retrieved_units.size(); i++){
+    for(ndsize_t i = 0; i < retrieved_units.size(); i++){
         CPPUNIT_ASSERT(retrieved_units[i] == valid_units[i]);
     }
 
@@ -250,6 +251,40 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
     block.deleteTag(st.id());
+}
+
+
+void TestTag::testReferences() {
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    for (ndsize_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
+        CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
+    for (ndsize_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    DataArray a;
+    CPPUNIT_ASSERT_THROW(tag.hasReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.addReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
+}
+
+
+void TestTag::testFeatures() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), std::runtime_error);
+    
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
 }
 
 
@@ -349,7 +384,3 @@ void TestTag::testCreatedAt() {
 void TestTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
-
-
-
-
