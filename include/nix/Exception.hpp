@@ -13,6 +13,10 @@
 
 #include <nix/Platform.hpp>
 
+#include <limits>
+#include <type_traits>
+#include <cstddef>
+
 #include <stdexcept>
 #include <sstream>
 
