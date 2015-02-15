@@ -85,7 +85,8 @@ void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
     // extract vectors of ids from vectors of new & old sources
     std::vector<std::string> ids_new(sources.size());
     transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
-    std::vector<Source> sources_old(sourceCount());
+    //FIXME: issue #473
+    std::vector<Source> sources_old(static_cast<size_t>(sourceCount()));
     for (size_t i = 0; i < sources_old.size(); i++) sources_old[i] = getSource(i);
     std::vector<std::string> ids_old(sources_old.size());
     transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
