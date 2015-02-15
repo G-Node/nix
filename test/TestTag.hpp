@@ -53,6 +53,8 @@ private:
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testUnits);
+    CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testFeatures);
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testOperators);
@@ -76,6 +78,8 @@ public:
     void testMetadataAccess();
     void testSourceAccess();
     void testUnits();
+    void testReferences();
+    void testFeatures();
     void testOperators();
     void testCreatedAt();
     void testUpdatedAt();

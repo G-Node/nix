@@ -10,6 +10,7 @@
 
 #include "TestTag.hpp"
 
+#include <nix/NDSize.hpp>
 #include <nix/Exception.hpp>
 #include <nix/valid/validate.hpp>
 
@@ -84,7 +85,7 @@ void TestTag::testDefinition() {
 
 void TestTag::testCreateRemove() {
     std::vector<std::string> ids;
-    size_t count = static_cast<size_t>(block.tagCount());
+    ndsize_t count = block.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
 
     for (int i = 0; i < 5; i++) {
@@ -106,8 +107,8 @@ void TestTag::testCreateRemove() {
     for (auto it = refs.begin(); it != refs.end(); it++) {
         block.deleteDataArray((*it).id());
     }
-    for (size_t i = 0; i < ids.size(); i++) {
-        block.deleteTag(ids[i]);
+    for (const auto &id : ids) {
+        block.deleteTag(id);
     }
 
     std::stringstream errmsg1;
@@ -253,6 +254,40 @@ void TestTag::testUnits() {
 }
 
 
+void TestTag::testReferences() {
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    for (size_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
+        CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
+    for (size_t i = 0; i < refs.size(); ++i) {
+        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+    }
+    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    DataArray a;
+    CPPUNIT_ASSERT_THROW(tag.hasReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.addReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
+}
+
+
+void TestTag::testFeatures() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), std::runtime_error);
+    
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+}
+
+
 void TestTag::testDataAccess() {
     double samplingInterval = 1.0;
     vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
@@ -349,7 +384,3 @@ void TestTag::testCreatedAt() {
 void TestTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
-
-
-
-

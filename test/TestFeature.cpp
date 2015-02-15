@@ -11,6 +11,7 @@
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
+#include <sstream>
 #include <ctime>
 
 using namespace std;
@@ -55,12 +56,10 @@ void TestFeature::testLinkType(){
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
     rp.linkType(nix::LinkType::Untagged);
+    
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Untagged);
     rp.linkType(nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
-
-    // TODO find out why this should throw exception
-    //CPPUNIT_ASSERT_THROW(tag.createFeature(data_array, nix::LinkType::Indexed), std::runtime_error);
 
     rp.linkType(nix::LinkType::Indexed);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Indexed);
@@ -70,6 +69,10 @@ void TestFeature::testLinkType(){
 
 
 void TestFeature::testData() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(f.data(a), std::runtime_error);
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
                                            DataType::Double, nix::NDSize({ 0 }));
@@ -82,8 +85,26 @@ void TestFeature::testData() {
     tag.deleteFeature(rp.id());
 }
 
-void TestFeature::testOperator()
-{
+
+void TestFeature::testLinkType2Str() {
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Tagged) == "Tagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Untagged) == "Untagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Indexed) == "Indexed");
+}
+
+
+void TestFeature::testStreamOperator() {
+    stringstream s1, s2, s3;
+    s1 << nix::LinkType::Indexed;
+    CPPUNIT_ASSERT(s1.str() == "LinkType::Indexed");
+    s2 << nix::LinkType::Tagged;
+    CPPUNIT_ASSERT(s2.str() == "LinkType::Tagged");
+    s3 << nix::LinkType::Untagged;
+    CPPUNIT_ASSERT(s3.str() == "LinkType::Untagged");
+}
+
+
+void TestFeature::testOperator() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);
