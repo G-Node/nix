@@ -236,7 +236,7 @@ public:
      *
      * @return The number of referenced data arrays.
      */
-    size_t referenceCount() const {
+    ndsize_t referenceCount() const {
         return backend()->referenceCount();
     }
 
@@ -380,7 +380,7 @@ public:
      *
      * @return The number of features.
      */
-    size_t featureCount() const {
+    ndsize_t featureCount() const {
         return backend()->featureCount();
     }
 

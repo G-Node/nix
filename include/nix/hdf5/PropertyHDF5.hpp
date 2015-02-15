@@ -105,7 +105,7 @@ public:
     void deleteValues();
 
 
-    size_t valueCount() const;
+    ndsize_t valueCount() const;
 
 
     void values(const std::vector<Value> &values);

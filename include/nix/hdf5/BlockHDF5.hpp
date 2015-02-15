@@ -75,7 +75,7 @@ public:
     std::shared_ptr<base::ISource> getSource(size_t index) const;
 
 
-    size_t sourceCount() const;
+    ndsize_t sourceCount() const;
 
 
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
@@ -96,7 +96,7 @@ public:
     std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
 
 
-    size_t dataArrayCount() const;
+    ndsize_t dataArrayCount() const;
 
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
@@ -118,7 +118,7 @@ public:
     std::shared_ptr<base::ITag> getTag(size_t index) const;
 
 
-    size_t tagCount() const;
+    ndsize_t tagCount() const;
 
 
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
@@ -140,7 +140,7 @@ public:
     std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const;
 
 
-    size_t multiTagCount() const;
+    ndsize_t multiTagCount() const;
 
 
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,

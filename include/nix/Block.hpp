@@ -185,7 +185,7 @@ public:
      *
      * @return The number of root sources.
      */
-    size_t sourceCount() const {
+    ndsize_t sourceCount() const {
         return backend()->sourceCount();
     }
 
@@ -321,7 +321,7 @@ public:
      *
      * @return The number of data arrays of the block.
      */
-    size_t dataArrayCount() const {
+    ndsize_t dataArrayCount() const {
         return backend()->dataArrayCount();
     }
 
@@ -468,7 +468,7 @@ public:
      *
      * @return The number of tags.
      */
-    size_t tagCount() const {
+    ndsize_t tagCount() const {
         return backend()->tagCount();
     }
 
@@ -577,7 +577,7 @@ public:
      *
      * @return The number of multi tags.
      */
-    size_t multiTagCount() const {
+    ndsize_t multiTagCount() const {
         return backend()->multiTagCount();
     }
 

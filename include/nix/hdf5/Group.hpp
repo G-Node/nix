@@ -41,8 +41,8 @@ public:
     Group(const Group &other);
 
     bool hasObject(const std::string &path) const;
-    size_t objectCount() const;
-    std::string objectName(size_t index) const;
+    ndsize_t objectCount() const;
+    std::string objectName(ndsize_t index) const;
 
     bool hasData(const std::string &name) const;
 

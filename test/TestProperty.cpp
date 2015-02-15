@@ -85,7 +85,7 @@ void TestProperty::testValues()
                                           nix::Value("schoener"),
                                           nix::Value("Goetterfunken") };
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     std::vector<nix::Value> ctrlValues = p1.values();
     for(size_t i = 0; i < ctrlValues.size(); ++i) {
@@ -98,11 +98,11 @@ void TestProperty::testValues()
     strValues.emplace_back("Wir betreten feuertrunken");
 
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     strValues.erase(strValues.begin()+6);
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     nix::Property p2 = section.createProperty("toDelete", str_dummy);
     CPPUNIT_ASSERT(p2.valueCount() == 1);
@@ -110,7 +110,7 @@ void TestProperty::testValues()
 
     strValues.clear();
     p2.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), static_cast<ndsize_t>(strValues.size()));
     p2.deleteValues();
     CPPUNIT_ASSERT(p2.values().empty() == true);
     p2.values(strValues);

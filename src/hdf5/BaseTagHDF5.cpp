@@ -63,7 +63,7 @@ bool BaseTagHDF5::hasReference(const std::string &name_or_id) const {
 }
 
 
-size_t BaseTagHDF5::referenceCount() const {
+ndsize_t BaseTagHDF5::referenceCount() const {
     boost::optional<Group> g = refs_group();
     return g ? g->objectCount() : size_t(0);
 }
@@ -132,7 +132,8 @@ void BaseTagHDF5::references(const std::vector<DataArray> &refs_new) {
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(refs_new.size());
     transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
-    std::vector<DataArray> refs_old(referenceCount());
+	//FIXME: issue 473
+    std::vector<DataArray> refs_old(static_cast<size_t>(referenceCount()));
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
     std::vector<std::string> names_old(refs_old.size());
     transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
@@ -172,7 +173,7 @@ bool BaseTagHDF5::hasFeature(const string &name_or_id) const {
 }
 
 
-size_t BaseTagHDF5::featureCount() const {
+ndsize_t BaseTagHDF5::featureCount() const {
     boost::optional<Group> g = feature_group();
     return g ? g->objectCount() : size_t(0);
 }

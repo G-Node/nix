@@ -182,7 +182,7 @@ shared_ptr<ISection> SectionHDF5::parent() const {
 //--------------------------------------------------
 
 
-size_t SectionHDF5::sectionCount() const {
+ndsize_t SectionHDF5::sectionCount() const {
     boost::optional<Group> g = section_group();
     return g ? g->objectCount() : size_t(0);
 }
@@ -256,7 +256,7 @@ bool SectionHDF5::deleteSection(const string &name_or_id) {
 //--------------------------------------------------
 
 
-size_t SectionHDF5::propertyCount() const {
+ndsize_t SectionHDF5::propertyCount() const {
     boost::optional<Group> g = property_group();
     return g ? g->objectCount() : size_t(0);
 }

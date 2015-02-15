@@ -208,7 +208,7 @@ public:
      *
      * @return The number of child sections.
      */
-    size_t sectionCount() const {
+    ndsize_t sectionCount() const {
         return backend()->sectionCount();
     }
 
@@ -333,7 +333,7 @@ public:
      *
      * @return The number of Properties
      */
-    size_t propertyCount() const {
+    ndsize_t propertyCount() const {
         return backend()->propertyCount();
     }
 

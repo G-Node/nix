@@ -42,7 +42,7 @@ public:
     virtual std::shared_ptr<base::ISource> getSource(size_t index) const = 0;
 
 
-    virtual size_t sourceCount() const = 0;
+    virtual ndsize_t sourceCount() const = 0;
 
 
     virtual std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type) = 0;
@@ -63,7 +63,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
 
 
-    virtual size_t dataArrayCount() const = 0;
+    virtual ndsize_t dataArrayCount() const = 0;
 
 
     virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
@@ -85,7 +85,7 @@ public:
     virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
 
 
-    virtual size_t tagCount() const = 0;
+    virtual ndsize_t tagCount() const = 0;
 
 
     virtual std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
@@ -107,7 +107,7 @@ public:
     virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
 
 
-    virtual size_t multiTagCount() const = 0;
+    virtual ndsize_t multiTagCount() const = 0;
 
 
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>

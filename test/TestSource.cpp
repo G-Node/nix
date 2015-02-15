@@ -105,11 +105,14 @@ void TestSource::testSourceAccess() {
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
     CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, source.hasSource("invalid_id"));
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Source child_source = source.createSource(*it, "channel");
-        CPPUNIT_ASSERT(child_source.name() == *it);
+    for (const auto &name : names) {
+        Source child_source = source.createSource(name, "channel");
+        CPPUNIT_ASSERT(child_source.name() == name);
+        CPPUNIT_ASSERT(source.hasSource(child_source));
+        CPPUNIT_ASSERT(source.hasSource(name));
 
         ids.push_back(child_source.id());
     }
@@ -119,12 +122,12 @@ void TestSource::testSourceAccess() {
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source child_source = source.getSource(*it);
-        CPPUNIT_ASSERT(source.hasSource(*it) == true);
-        CPPUNIT_ASSERT(child_source.id() == *it);
+    for (const auto &id : ids) {
+        Source child_source = source.getSource(id);
+        CPPUNIT_ASSERT(source.hasSource(id));
+        CPPUNIT_ASSERT(child_source.id() == id);
 
-        source.deleteSource(*it);
+        source.deleteSource(id);
     }
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);

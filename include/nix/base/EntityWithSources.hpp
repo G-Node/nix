@@ -59,7 +59,7 @@ public:
      *
      * @return The number sources.
      */
-    size_t sourceCount() const {
+    ndsize_t sourceCount() const {
         return EntityWithMetadata<T>::backend()->sourceCount();
     }
 

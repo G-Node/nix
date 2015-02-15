@@ -122,11 +122,13 @@ void TestSection::testSectionAccess() {
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, section.hasSection("invalid_id"));
 
     vector<string> ids;
     for (auto name : names) {
         Section child_section = section.createSection(name, "metadata");
         CPPUNIT_ASSERT(child_section.name() == name);
+        CPPUNIT_ASSERT_EQUAL(true, section.hasSection(name));
 
         ids.push_back(child_section.id());
     }
@@ -138,10 +140,11 @@ void TestSection::testSectionAccess() {
 
     for (auto id : ids) {
         Section child_section = section.getSection(id);
-        CPPUNIT_ASSERT(section.hasSection(id) == true);
-        CPPUNIT_ASSERT(child_section.id() == id);
+        CPPUNIT_ASSERT(section.hasSection(id));
+        CPPUNIT_ASSERT_EQUAL(id, child_section.id());
 
         section.deleteSection(id);
+
     }
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -272,9 +275,12 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, section.hasProperty("invalid_id"));
 
     Property p = section.createProperty("empty_prop", DataType::Double);
     CPPUNIT_ASSERT(section.propertyCount() == 1);
+    CPPUNIT_ASSERT(section.hasProperty(p));
+    CPPUNIT_ASSERT(section.hasProperty("empty_prop"));
     Property prop = section.getProperty("empty_prop");
     CPPUNIT_ASSERT(prop.valueCount() == 0);
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);

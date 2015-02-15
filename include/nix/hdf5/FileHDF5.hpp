@@ -46,7 +46,7 @@ public:
     //--------------------------------------------------
 
 
-    size_t blockCount() const;
+    ndsize_t blockCount() const;
 
 
     bool hasBlock(const std::string &name_or_id) const;
@@ -76,7 +76,7 @@ public:
     std::shared_ptr<base::ISection> getSection(size_t index) const;
 
 
-    size_t sectionCount() const;
+    ndsize_t sectionCount() const;
 
 
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);

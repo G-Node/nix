@@ -84,7 +84,7 @@ void TestTag::testDefinition() {
 
 void TestTag::testCreateRemove() {
     std::vector<std::string> ids;
-    size_t count = block.tagCount();
+    size_t count = static_cast<size_t>(block.tagCount());
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
 
     for (int i = 0; i < 5; i++) {

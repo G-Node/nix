@@ -76,11 +76,14 @@ void TestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Block bl = file_open.createBlock(*it, "dataset");
-        CPPUNIT_ASSERT(bl.name() == *it);
+    for (const auto &name : names) {
+        Block bl = file_open.createBlock(name, "dataset");
+        CPPUNIT_ASSERT(bl.name() == name);
+        CPPUNIT_ASSERT(file_open.hasBlock(bl));
+        CPPUNIT_ASSERT(file_open.hasBlock(name));
 
         ids.push_back(bl.id());
     }
@@ -99,12 +102,12 @@ void TestFile::testBlockAccess() {
         CPPUNIT_ASSERT_EQUAL(bl_name.name(), bl_id.name());
     }
     
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Block bl = file_open.getBlock(*it);
-        CPPUNIT_ASSERT(file_open.hasBlock(*it) == true);
-        CPPUNIT_ASSERT(bl.id() == *it);
+    for (const auto &id: ids) {
+        Block bl = file_open.getBlock(id);
+        CPPUNIT_ASSERT(file_open.hasBlock(id) == true);
+        CPPUNIT_ASSERT(bl.id() == id);
 
-        file_open.deleteBlock(*it);
+        file_open.deleteBlock(id);
     }
 
     CPPUNIT_ASSERT(file_open.blockCount() == 0);

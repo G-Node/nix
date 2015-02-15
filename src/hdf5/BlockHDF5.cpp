@@ -77,7 +77,7 @@ shared_ptr<ISource> BlockHDF5::getSource(size_t index) const {
 }
 
 
-size_t BlockHDF5::sourceCount() const {
+ndsize_t BlockHDF5::sourceCount() const {
     boost::optional<Group> g = source_group();
     return g ? g->objectCount() : size_t(0);
 }
@@ -164,7 +164,7 @@ shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
 }
 
 
-size_t BlockHDF5::tagCount() const {
+ndsize_t BlockHDF5::tagCount() const {
     boost::optional<Group> g = tag_group();
     return g ? g->objectCount() : size_t(0);
 }
@@ -214,7 +214,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
 }
 
 
-size_t BlockHDF5::dataArrayCount() const {
+ndsize_t BlockHDF5::dataArrayCount() const {
     boost::optional<Group> g = data_array_group();
     return g ? g->objectCount() : size_t(0);
 }
@@ -297,7 +297,7 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
 }
 
 
-size_t BlockHDF5::multiTagCount() const {
+ndsize_t BlockHDF5::multiTagCount() const {
     boost::optional<Group> g = multi_tag_group();
     return g ? g->objectCount() : size_t(0);
 }

@@ -109,7 +109,7 @@ public:
     //--------------------------------------------------
 
 
-    size_t sectionCount() const;
+    ndsize_t sectionCount() const;
 
 
     bool hasSection(const std::string &name_or_id) const;
@@ -131,7 +131,7 @@ public:
     //--------------------------------------------------
 
 
-    size_t propertyCount() const;
+    ndsize_t propertyCount() const;
 
 
     bool hasProperty(const std::string &name_or_id) const;

@@ -9,11 +9,13 @@
 #ifndef NIX_I_SECTION_H
 #define NIX_I_SECTION_H
 
+
 #include <nix/base/IEntity.hpp>
 #include <nix/base/INamedEntity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Value.hpp>
+#include <nix/NDSize.hpp>
 
 #include <string>
 #include <vector>
@@ -70,7 +72,7 @@ public:
     // Methods for child section access
     //--------------------------------------------------
 
-    virtual size_t sectionCount() const = 0;
+    virtual ndsize_t sectionCount() const = 0;
 
 
     virtual bool hasSection(const std::string &name_or_id) const = 0;
@@ -91,7 +93,7 @@ public:
     // Methods for property access
     //--------------------------------------------------
 
-    virtual size_t propertyCount() const = 0;
+    virtual ndsize_t propertyCount() const = 0;
 
 
     virtual bool hasProperty(const std::string &name_or_id) const = 0;

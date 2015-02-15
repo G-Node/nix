@@ -13,6 +13,10 @@
 
 #include <nix/Platform.hpp>
 
+#include <limits>
+#include <type_traits>
+#include <cstddef>
+
 #include <stdexcept>
 #include <sstream>
 
@@ -115,6 +119,27 @@ public:
     MissingAttr(const std::string &name):
             std::runtime_error("MissingAttribute: Obligatory attribute " + name + " is not set!") { }
 };
+
+
+namespace check {
+
+template<typename T>
+inline typename std::enable_if<! std::is_same<T, size_t>::value, size_t>::type
+fits_in_size_t(T size, const std::string &msg_if_fail) {
+    if (size > std::numeric_limits<size_t>::max()) {
+        throw OutOfBounds(msg_if_fail);
+    }
+    return static_cast<size_t>(size);
+}
+
+template<typename T>
+inline typename std::enable_if<std::is_same<T, size_t>::value, size_t>::type
+fits_in_size_t(T size, const std::string &msg_if_fail) {
+    return size;
+}
+
+} // nix::check::
+
 
 }
 

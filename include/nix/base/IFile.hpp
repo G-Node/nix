@@ -48,7 +48,7 @@ class NIXAPI IFile {
 
 public:
 
-    virtual size_t blockCount() const = 0;
+    virtual ndsize_t blockCount() const = 0;
 
 
     virtual bool hasBlock(const std::string &name_or_id) const = 0;
@@ -78,7 +78,7 @@ public:
     virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
 
 
-    virtual size_t sectionCount() const = 0;
+    virtual ndsize_t sectionCount() const = 0;
 
 
     virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;

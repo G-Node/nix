@@ -67,12 +67,11 @@ bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
     return res;
 }
 
-size_t Group::objectCount() const {
+ndsize_t Group::objectCount() const {
     hsize_t n_objs;
     HErr res = H5Gget_num_objs(hid, &n_objs);
     res.check("Could not get object count");
-    //FIXME: return type should be ndsize_t, #473
-    return static_cast<size_t>(n_objs);
+    return n_objs;
 }
 
 
@@ -80,7 +79,7 @@ boost::optional<Group> Group::findGroupByAttribute(const std::string &attribute,
     boost::optional<Group> ret;
 
     // look up first direct sub-group that has given attribute with given value
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasGroup(obj_name)) {
             Group group = openGroup(obj_name, false);
@@ -104,7 +103,7 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
     boost::optional<DataSet> ret;
 
     // look up all direct sub-datasets that have the given attribute
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasData(obj_name)) {
             DataSet ds = openData(obj_name);
@@ -126,10 +125,12 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
 }
 
 
-std::string Group::objectName(size_t index) const {
+std::string Group::objectName(ndsize_t index) const {
     // check if index valid
     if(index > objectCount()) {
-        throw OutOfBounds("No object at given index", index);
+		//FIXME: issue #473
+        throw OutOfBounds("No object at given index",
+			              static_cast<size_t>(index));
     }
 
     std::string str_name;

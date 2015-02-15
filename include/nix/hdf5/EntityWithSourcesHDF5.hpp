@@ -47,7 +47,7 @@ public:
     EntityWithSourcesHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
                           const std::string &id, const std::string &type, const std::string &name, time_t time);
 
-    size_t sourceCount() const;
+    ndsize_t sourceCount() const;
 
 
     bool hasSource(const std::string &id) const;
