@@ -176,6 +176,10 @@ void TestProperty::testOperators() {
     property_other = none;
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
+    
+    stringstream s;
+    s << property;
+    CPPUNIT_ASSERT(s.str() == "Property: {name = " + property.name() + "}");
 }
 
 
