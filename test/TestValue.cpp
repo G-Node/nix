@@ -103,6 +103,8 @@ struct ValueTester : ValTester {
 
         CPPUNIT_ASSERT_EQUAL(b.get<T>(), val);
         CPPUNIT_ASSERT(other.value_same(a));
+
+        CPPUNIT_ASSERT_EQUAL(other.type() == dtype, other.theVal() == value);
     }
 
     nix::Value theVal() const override {
