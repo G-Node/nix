@@ -69,6 +69,58 @@ void TestValue::testObject() {
     CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
 }
 
+struct ValTester {
+
+    virtual void check_basic() const = 0;
+    virtual void check_swap(const ValTester &other) const = 0;
+    virtual bool value_same(const nix::Value &other) const = 0;
+
+    virtual nix::Value theVal() const = 0;
+    virtual nix::DataType type() const = 0;
+
+    virtual ~ValTester() { };
+};
+
+template<typename T>
+struct ValueTester : ValTester {
+    typedef T value_type;
+
+    ValueTester(const T& v) : value(v), dtype(nix::to_data_type<T>::value), val(v) { }
+
+    void check_basic() const override {
+        CPPUNIT_ASSERT_EQUAL(dtype, value.type());
+        CPPUNIT_ASSERT_EQUAL(val, value.get<T>());
+    }
+
+    void check_swap(const ValTester &other) const override {
+        nix::Value a = value;
+        nix::Value b = other.theVal();
+
+        a.swap(b);
+
+        CPPUNIT_ASSERT_EQUAL(b.type(), dtype);
+        CPPUNIT_ASSERT_EQUAL(a.type(), other.type());
+
+        CPPUNIT_ASSERT_EQUAL(b.get<T>(), val);
+        CPPUNIT_ASSERT(other.value_same(a));
+    }
+
+    nix::Value theVal() const override {
+        return value;
+    }
+
+    nix::DataType type() const override {
+        return dtype;
+    }
+
+    bool value_same(const nix::Value &other) const override {
+        return other.type() == dtype && other.get<T>() == val;
+    }
+
+    nix::Value    value;
+    nix::DataType dtype;
+    T             val;
+};
 
 void TestValue::testSwap()
 {
@@ -102,6 +154,29 @@ void TestValue::testSwap()
     v4.swap(v2);
     CPPUNIT_ASSERT_EQUAL(v2.get<int>(), 42);
     CPPUNIT_ASSERT_EQUAL(v4.get<std::string>(), checkStr);
+
+    //now lets do that systematically
+
+    std::vector<ValTester *> vals = { new ValueTester<std::string>("String"),
+                                      new ValueTester<uint32_t>(42),
+                                      new ValueTester< int32_t>(42),
+                                      new ValueTester<uint64_t>(42),
+                                      new ValueTester< int64_t>(42),
+                                      new ValueTester< double>(42.0),
+                                      new ValueTester< bool>(true)};
+
+    for (const ValTester *a : vals) {
+        a->check_basic();
+
+        for (const ValTester *b : vals) {
+            a->check_swap(*b);
+        }
+    }
+
+    for (ValTester *vt : vals) {
+        delete vt;
+    }
+
 }
 
 
