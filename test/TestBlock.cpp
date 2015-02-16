@@ -89,7 +89,8 @@ void TestBlock::testMetadataAccess() {
 
 void TestBlock::testSourceAccess() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-
+    Source s;
+    CPPUNIT_ASSERT_THROW(block.hasSource(s), std::runtime_error);
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
@@ -116,9 +117,12 @@ void TestBlock::testSourceAccess() {
         Source src = block.getSource(id);
         CPPUNIT_ASSERT(block.hasSource(id) == true);
         CPPUNIT_ASSERT(src.id() == id);
-
         block.deleteSource(id);
     }
+    
+    s = block.createSource("test", "test");
+    CPPUNIT_ASSERT(block.sourceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteSource(s));
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
