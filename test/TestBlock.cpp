@@ -133,17 +133,16 @@ void TestBlock::testSourceAccess() {
 void TestBlock::testDataArrayAccess() {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
+    DataArray data_array, a;
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-
+    
     vector<string> ids;
     for (const auto &name : names) {
-        DataArray data_array = block.createDataArray(name,
-                                                     "channel",
-                                                     DataType::Double,
-                                                     nix::NDSize({ 0 }));
+        data_array = block.createDataArray(name, "channel",
+                                           DataType::Double, nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
 
@@ -151,7 +150,8 @@ void TestBlock::testDataArrayAccess() {
     }
     CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
                          DuplicateName);
-
+    CPPUNIT_ASSERT(block.hasDataArray(data_array));
+    CPPUNIT_ASSERT_THROW(block.hasDataArray(a), std::runtime_error);
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
 
@@ -181,7 +181,7 @@ void TestBlock::testDataArrayAccess() {
 
         block.deleteDataArray(*it);
     }
-
+    CPPUNIT_ASSERT_THROW(block.deleteDataArray(a), std::runtime_error);
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
