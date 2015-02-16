@@ -152,7 +152,7 @@ void TestProperty::testUnit(){
 
     p1.unit(valid_unit);
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
-    //    CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error); why should this fail??
+
     p1.unit(none);
     CPPUNIT_ASSERT(!p1.unit());
     CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
