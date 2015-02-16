@@ -242,6 +242,7 @@ void TestBlock::testTagAccess() {
 
 void TestBlock::testMultiTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    MultiTag mtag, m;
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
     DataArray positions = block.createDataArray("array_one",
@@ -260,13 +261,13 @@ void TestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
-
+    CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), std::runtime_error);
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        MultiTag tag = block.createMultiTag(*it, "segment", positions);
-        CPPUNIT_ASSERT(tag.name() == *it);
-
-        ids.push_back(tag.id());
+        mtag = block.createMultiTag(*it, "segment", positions);
+        CPPUNIT_ASSERT(mtag.name() == *it);
+        CPPUNIT_ASSERT(block.hasMultiTag(mtag));
+        ids.push_back(mtag.id());
     }
     CPPUNIT_ASSERT_THROW(block.createMultiTag(names[0], "segment", positions),
                          DuplicateName);
@@ -275,13 +276,16 @@ void TestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        MultiTag tag = block.getMultiTag(*it);
+        mtag = block.getMultiTag(*it);
         CPPUNIT_ASSERT(block.hasMultiTag(*it) == true);
-        CPPUNIT_ASSERT(tag.id() == *it);
+        CPPUNIT_ASSERT(mtag.id() == *it);
 
         block.deleteMultiTag(*it);
     }
-
+    mtag = block.createMultiTag("test", "test", positions);
+    CPPUNIT_ASSERT(block.hasMultiTag(mtag));
+    CPPUNIT_ASSERT_THROW(block.deleteMultiTag(m), std::runtime_error);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteMultiTag(mtag));
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
