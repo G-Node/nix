@@ -194,6 +194,7 @@ void TestBlock::testTagAccess() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
+    Tag tag, t;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name,
                                              "reference",
@@ -204,13 +205,14 @@ void TestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
     CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(block.hasTag(t), std::runtime_error);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        Tag tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
+        tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
         tag.references(refs);
         CPPUNIT_ASSERT(tag.name() == *it);
-
+        CPPUNIT_ASSERT(block.hasTag(tag));
         ids.push_back(tag.id());
     }
     CPPUNIT_ASSERT_THROW(block.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
@@ -220,12 +222,17 @@ void TestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); ++it) {
-        Tag tag = block.getTag(*it);
+        tag = block.getTag(*it);
         CPPUNIT_ASSERT(block.hasTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
         block.deleteTag(*it);
     }
+    
+    tag = block.createTag("test", "test", {0.0});
+    CPPUNIT_ASSERT(block.hasTag(tag));
+    CPPUNIT_ASSERT_NO_THROW(block.deleteTag(tag));
+    CPPUNIT_ASSERT_THROW(block.deleteTag(t), std::runtime_error);
 
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
