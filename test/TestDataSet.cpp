@@ -338,9 +338,12 @@ void test_val_generic(nix::hdf5::Group &h5group, const T &test_value, std::strin
 
 void TestDataSet::testValueIO() {
 
-    test_val_generic(h5group, true, "boolValue");
-    test_val_generic(h5group, 42.0, "doubleValue");
-    test_val_generic(h5group, 42U, "unsighedValue");
+    test_val_generic(h5group, true,  "boolValue");
+    test_val_generic(h5group, 42.0,  "doubleValue");
+    test_val_generic(h5group, uint32_t(42), "uint32Value");
+    test_val_generic(h5group,  int32_t(42),  "int32Value");
+    test_val_generic(h5group, uint64_t(42), "uint64Value");
+    test_val_generic(h5group,  int64_t(42),  "int64Value");
 
     test_val_generic(h5group, std::string("String Value"), "stringValue");
 

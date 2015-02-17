@@ -119,18 +119,6 @@ void DataSet::write(DataType         dtype,
     res.check("DataSet::write(): IO error");
 }
 
-
-double psize_product(const NDSize &dims)
-{
-    double product = 1;
-    std::for_each(dims.begin(), dims.end(), [&](hsize_t val) {
-        product *= val;
-    });
-
-    return product;
-}
-
-
 #define CHUNK_BASE   16*1024
 #define CHUNK_MIN     8*1024
 #define CHUNK_MAX  1024*1024
