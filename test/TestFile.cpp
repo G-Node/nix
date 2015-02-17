@@ -121,10 +121,11 @@ void TestFile::testBlockAccess() {
 
 void TestFile::testSectionAccess() {
     vector<string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
-
+    Section s;
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(file_open.hasSection(s), std::runtime_error);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -146,7 +147,10 @@ void TestFile::testSectionAccess() {
 
         file_open.deleteSection(*it);
     }
-
+    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), std::runtime_error);
+    s = file_open.createSection("test","test");
+    CPPUNIT_ASSERT(file_open.hasSection(s));
+    CPPUNIT_ASSERT(file_open.deleteSection(s));
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
