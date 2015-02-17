@@ -90,3 +90,11 @@ NIX API Documentation
 
 The API documentation can be found [here](http://g-node.github.io/nix/)
 
+NIX Tutorials
+-------------
+
+If you want to learn about the features of the NIX data model and how
+it can be used to represent various kinds of data you may want to
+check out the tutorials.  We have assembled a set of tutorial
+[here](http://g-node.github.io/nixpy/tutorial.html) using the python
+wrapper.
