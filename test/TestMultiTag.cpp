@@ -171,18 +171,22 @@ void TestMultiTag::testReferences(){
     DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
                                            DataType::Double,
                                            NDSize({ 0 }));
-
+    DataArray a;
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(dt.hasReference(a), std::runtime_error);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
-
+    
     dt.addReference(da_1);
     dt.addReference(da_2);
+    CPPUNIT_ASSERT_THROW(dt.addReference(a), std::runtime_error);
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
+    CPPUNIT_ASSERT(dt.hasReference(da_1));
+    CPPUNIT_ASSERT(dt.hasReference(da_2));
 
     std::stringstream haserrmsg;
     haserrmsg << "TestMultiTag::testReference: Has method did not work!";
@@ -213,7 +217,11 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
     dt.removeReference(da_2.name());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
-
+    dt.addReference(da_1);
+    CPPUNIT_ASSERT(dt.referenceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(dt.removeReference(da_1));
+    CPPUNIT_ASSERT(dt.referenceCount() == 0);
+    
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
     block.deleteDataArray(da_1.id());
