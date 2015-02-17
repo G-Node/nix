@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/G-Node/nix.png?branch=master)](https://travis-ci.org/G-Node/nix)
 [![Build status](https://ci.appveyor.com/api/projects/status/cdupf2np8ffg5hjt/branch/master?svg=true)](https://ci.appveyor.com/project/stoewer/nix/branch/master)
+[![Coverage Status](https://coveralls.io/repos/G-Node/nix/badge.svg?branch=master)](https://coveralls.io/r/G-Node/nix?branch=master)
 
 --
 
@@ -89,3 +90,11 @@ NIX API Documentation
 
 The API documentation can be found [here](http://g-node.github.io/nix/)
 
+NIX Tutorials
+-------------
+
+If you want to learn about the features of the NIX data model and how
+it can be used to represent various kinds of data you may want to
+check out the tutorials.  We have assembled a set of tutorial
+[here](http://g-node.github.io/nixpy/tutorial.html) using the python
+wrapper.
