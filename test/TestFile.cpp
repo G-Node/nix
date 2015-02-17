@@ -72,12 +72,13 @@ void TestFile::testUpdatedAt() {
 
 void TestFile::testBlockAccess() {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
-
+    Block b;
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
-
+    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), std::runtime_error);
+    
     vector<string> ids;
     for (const auto &name : names) {
         Block bl = file_open.createBlock(name, "dataset");
@@ -109,7 +110,9 @@ void TestFile::testBlockAccess() {
 
         file_open.deleteBlock(id);
     }
-
+    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), std::runtime_error);
+    b = file_open.createBlock("test","test");
+    CPPUNIT_ASSERT(file_open.deleteBlock(b));
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
