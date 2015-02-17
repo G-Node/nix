@@ -263,6 +263,9 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
     if (hasMultiTag(name)) {
         throw DuplicateName("createMultiTag");
     }
+    if (!positions) {
+        throw UninitializedEntity();
+    }
     string id = util::createId();
     boost::optional<Group> g = multi_tag_group(true);
 

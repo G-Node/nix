@@ -121,6 +121,16 @@ void TestMultiTag::testCreateRemove() {
     std::stringstream errmsg1;
     errmsg1 << "Error while removing multiTags!";
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
+
+    DataArray a;
+    MultiTag mtag;
+    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = block.createMultiTag("test", "test", positions);
+    mtag.extents(positions);
+    CPPUNIT_ASSERT_THROW(mtag.positions(a), std::runtime_error);
+    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
+    CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
+    CPPUNIT_ASSERT(!mtag.extents());
 }
 
 void TestMultiTag::testUnits() {
@@ -161,18 +171,22 @@ void TestMultiTag::testReferences(){
     DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
                                            DataType::Double,
                                            NDSize({ 0 }));
-
+    DataArray a;
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(dt.hasReference(a), std::runtime_error);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
-
+    
     dt.addReference(da_1);
     dt.addReference(da_2);
+    CPPUNIT_ASSERT_THROW(dt.addReference(a), std::runtime_error);
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
+    CPPUNIT_ASSERT(dt.hasReference(da_1));
+    CPPUNIT_ASSERT(dt.hasReference(da_2));
 
     std::stringstream haserrmsg;
     haserrmsg << "TestMultiTag::testReference: Has method did not work!";
@@ -203,7 +217,11 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
     dt.removeReference(da_2.name());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
-
+    dt.addReference(da_1);
+    CPPUNIT_ASSERT(dt.referenceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(dt.removeReference(da_1));
+    CPPUNIT_ASSERT(dt.referenceCount() == 0);
+    
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
     block.deleteDataArray(da_1.id());
@@ -213,6 +231,21 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
     block.deleteMultiTag(dt.id());
+}
+
+
+void TestMultiTag::testFeatures() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
+    
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
 }
 
 
