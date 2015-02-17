@@ -121,6 +121,16 @@ void TestMultiTag::testCreateRemove() {
     std::stringstream errmsg1;
     errmsg1 << "Error while removing multiTags!";
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
+
+    DataArray a;
+    MultiTag mtag;
+    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = block.createMultiTag("test", "test", positions);
+    mtag.extents(positions);
+    CPPUNIT_ASSERT_THROW(mtag.positions(a), std::runtime_error);
+    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
+    CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
+    CPPUNIT_ASSERT(!mtag.extents());
 }
 
 void TestMultiTag::testUnits() {
