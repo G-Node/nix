@@ -201,6 +201,24 @@ void Value::assign_variant_from(const Value &other) {
     }
 }
 
+
+bool Value::supports_type(DataType dtype) {
+    switch (dtype) {
+        case DataType::Bool:    // we fall through here ...
+        case DataType::Int32:   // .oO ( what's happening ...
+        case DataType::UInt32:  // ... who am I ...
+        case DataType::Int64:   // ... why am I here ...
+        case DataType::UInt64:  // ... wind, is that a good name ..
+        case DataType::Double:  // ... lets call it tail ...
+        case DataType::String:  // ... round, ... ground, ...
+        case DataType::Nothing: // ... hello ground ...
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 /* operators and functions */
 
 std::ostream& operator<<(std::ostream &out, const Value &value)

@@ -67,12 +67,16 @@ void TestValue::testObject() {
 
     v1.set(nix::none); //set v1 to none
     CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
+
+    //the rest of the supports_type test are in ValTester::check_basic, below
+    CPPUNIT_ASSERT_EQUAL(false, nix::Value::supports_type(nix::DataType::DateTime));
 }
 
 struct ValTester {
 
     virtual void check_basic() const = 0;
     virtual void check_swap(const ValTester &other) const = 0;
+    virtual void check_to_string() const = 0;
     virtual bool value_same(const nix::Value &other) const = 0;
 
     virtual nix::Value theVal() const = 0;
@@ -88,6 +92,7 @@ struct ValueTester : ValTester {
     ValueTester(const T& v) : value(v), dtype(nix::to_data_type<T>::value), val(v) { }
 
     void check_basic() const override {
+        CPPUNIT_ASSERT(nix::Value::supports_type(dtype));
         CPPUNIT_ASSERT_EQUAL(dtype, value.type());
         CPPUNIT_ASSERT_EQUAL(val, value.get<T>());
     }
@@ -105,6 +110,19 @@ struct ValueTester : ValTester {
         CPPUNIT_ASSERT(other.value_same(a));
 
         CPPUNIT_ASSERT_EQUAL(other.type() == dtype, other.theVal() == value);
+    }
+
+    void check_to_string() const override {
+        std::stringstream val_stream;
+
+        val_stream << val;
+
+        std::stringstream value_stream;
+
+        value_stream << value;
+
+        std::string::size_type pos = val_stream.str().find(value_stream.str());
+        CPPUNIT_ASSERT(pos != std::string::npos);
     }
 
     nix::Value theVal() const override {
