@@ -122,6 +122,8 @@ public:
 
     void swap(Value &other);
 
+    static bool supports_type(DataType dtype);
+
 private:
 
     template<typename T>
