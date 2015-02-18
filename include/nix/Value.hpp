@@ -56,11 +56,11 @@ public:
 
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
-    Value(char *value) : dtype(DataType::Nothing) {
+    explicit Value(char *value) : dtype(DataType::Nothing) {
         set(std::string(value));
     }
 
-    Value(const char *value) : dtype(DataType::Nothing) {
+    explicit Value(const char *value) : dtype(DataType::Nothing) {
         set(std::string(value));
     }
 
