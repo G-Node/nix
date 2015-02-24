@@ -187,17 +187,30 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 ########################################
 # CPack for Win
 if(WIN32)
+  
   install(TARGETS nix
 		  ARCHIVE
 		  DESTINATION lib
 		  COMPONENT libraries)
-  install(FILES ${HDF5_LIBRARIES}
-		  DESTINATION lib
+  file(GLOB NIX_LICENSE "LICENSE*")
+  install(FILES ${NIX_LICENSE}
+		  DESTINATION ./
 		  COMPONENT libraries)
+		  
+  file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
+  install(FILES ${HDF5_DLLS}
+		  DESTINATION bin
+		  COMPONENT libraries)
+  file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
+  install(FILES ${HDF5_COPYING}
+		  DESTINATION ./
+		  COMPONENT libraries)
+		  
   install(TARGETS nix-tool
 		  RUNTIME
 		  DESTINATION bin
 		  COMPONENT applications)
+		  
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
   set(CPACK_PACKAGE_VENDOR "g-node.org")
