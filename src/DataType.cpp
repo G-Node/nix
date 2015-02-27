@@ -11,6 +11,8 @@
 #include <nix/DataType.hpp>
 #include <stdexcept>
 #include <string>
+#include <map>
+#include <algorithm>
 
 namespace nix {
 
@@ -41,6 +43,12 @@ std::string data_type_to_string(DataType dtype) {
     return str;
 }
 
+DataType string_to_data_type(std::string dtype) {
+    std::string dtype_l = dtype;
+    std::transform(dtype_l.begin(), dtype_l.end(), dtype_l.begin(), ::tolower);
+
+    return data_type_maps::str_to_dtype[dtype];
+}
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
     out << data_type_to_string(dtype);
@@ -80,5 +88,24 @@ size_t data_type_to_size(DataType dtype) {
             throw std::invalid_argument("Unkown DataType");
     }
 }
+
+
+std::map<std::string, DataType> data_type_maps::str_to_dtype = {
+    {"bool", nix::DataType::Bool},
+    {"char", nix::DataType::Char},
+    {"float", nix::DataType::Float},
+    {"single", nix::DataType::Float},
+    {"double", nix::DataType::Double},
+    {"int8", nix::DataType::Int8},
+    {"int16", nix::DataType::Int16},
+    {"int32", nix::DataType::Int32},
+    {"int64", nix::DataType::Int64},
+    {"uint8", nix::DataType::UInt8},
+    {"uint16", nix::DataType::UInt16},
+    {"uint32", nix::DataType::UInt32},
+    {"uint64", nix::DataType::UInt64},
+    {"string", nix::DataType::String},
+    {"nothing", nix::DataType::Nothing}
+};
 
 }

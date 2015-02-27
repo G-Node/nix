@@ -15,6 +15,7 @@
 #include <ostream>
 
 #include <nix/Platform.hpp>
+#include <map>
 
 namespace nix {
 
@@ -173,6 +174,13 @@ struct to_data_type<std::string> {
 };
 
 /**
+* @brief Map of the DataType to its string representation.
+*/
+struct data_type_maps {
+    static std::map<std::string, DataType> str_to_dtype;
+};
+
+/**
  * @brief Determine the size of a data type.
  *
  * @param dtype         The data type.
@@ -189,6 +197,15 @@ NIXAPI size_t data_type_to_size(DataType dtype);
  * @return A human readable name for the given type.
  */
 NIXAPI std::string data_type_to_string(DataType dtype);
+
+/**
+* @brief Yield a data type from a string representation.
+*
+* @param dtype         The string-like data type.
+*
+* @return A human readable name for the given type.
+*/
+NIXAPI DataType string_to_data_type(std::string dtype);
 
 /**
  * @brief Output operator for data type.
