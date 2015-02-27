@@ -35,6 +35,7 @@ public:
     void testNDSize();
     void testChunkGuessing();
     void testDataType();
+    void testDataTypeFromString();
     void testBasic();
     void testSelection();
     void testValueIO();
@@ -54,6 +55,7 @@ private:
     CPPUNIT_TEST(testNDSize);
     CPPUNIT_TEST(testChunkGuessing);
     CPPUNIT_TEST(testDataType);
+    CPPUNIT_TEST(testDataTypeFromString);
     CPPUNIT_TEST(testBasic);
     CPPUNIT_TEST(testSelection);
     CPPUNIT_TEST(testValueIO);

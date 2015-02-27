@@ -17,7 +17,6 @@
 #include <ostream>
 
 #include <nix/Platform.hpp>
-#include <map>
 
 namespace nix {
 
@@ -173,13 +172,6 @@ template<>
 struct to_data_type<std::string> {
     static const bool is_valid = true;
     static const DataType value = DataType::String;
-};
-
-/**
-* @brief Map of the DataType to its string representation.
-*/
-struct data_type_maps {
-    static std::map<std::string, DataType> str_to_dtype;
 };
 
 /**

@@ -45,10 +45,33 @@ std::string data_type_to_string(DataType dtype) {
 }
 
 DataType string_to_data_type(std::string dtype) {
+
+    struct data_type_map : public std::map<std::string, DataType> {
+        data_type_map() {
+            (*this)["bool"] = DataType::Bool;
+            (*this)["char"] = DataType::Char;
+            (*this)["float"] = DataType::Float;
+            (*this)["single"] = DataType::Float;
+            (*this)["double"] = DataType::Double;
+            (*this)["int8"] = DataType::Int8;
+            (*this)["int16"] = DataType::Int16;
+            (*this)["int32"] = DataType::Int32;
+            (*this)["int64"] = DataType::Int64;
+            (*this)["uint8"] = DataType::UInt8;
+            (*this)["uint16"] = DataType::UInt16;
+            (*this)["uint32"] = DataType::UInt32;
+            (*this)["uint64"] = DataType::UInt64;
+            (*this)["string"] = DataType::String;
+            (*this)["nothing"] = DataType::Nothing;
+        }
+    };
+
+    static data_type_map dt;
+
     std::string dtype_l = dtype;
     std::transform(dtype_l.begin(), dtype_l.end(), dtype_l.begin(), ::tolower);
 
-    return data_type_maps::str_to_dtype[dtype];
+    return dt[dtype];
 }
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
@@ -89,24 +112,5 @@ size_t data_type_to_size(DataType dtype) {
             throw std::invalid_argument("Unkown DataType");
     }
 }
-
-
-std::map<std::string, DataType> data_type_maps::str_to_dtype = {
-    {"bool", nix::DataType::Bool},
-    {"char", nix::DataType::Char},
-    {"float", nix::DataType::Float},
-    {"single", nix::DataType::Float},
-    {"double", nix::DataType::Double},
-    {"int8", nix::DataType::Int8},
-    {"int16", nix::DataType::Int16},
-    {"int32", nix::DataType::Int32},
-    {"int64", nix::DataType::Int64},
-    {"uint8", nix::DataType::UInt8},
-    {"uint16", nix::DataType::UInt16},
-    {"uint32", nix::DataType::UInt32},
-    {"uint64", nix::DataType::UInt64},
-    {"string", nix::DataType::String},
-    {"nothing", nix::DataType::Nothing}
-};
 
 }
