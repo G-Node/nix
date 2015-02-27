@@ -16,8 +16,6 @@
 #include <cstdint>
 #include <ostream>
 
-#include <nix/Platform.hpp>
-
 namespace nix {
 
 /**
