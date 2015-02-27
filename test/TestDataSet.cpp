@@ -176,6 +176,34 @@ void TestDataSet::testDataType() {
 
 }
 
+
+void TestDataSet::testDataTypeFromString() {
+    static struct _type_info {
+        std::string name;
+        nix::DataType dtype;
+    } _types[] = {
+            {"bool", nix::DataType::Bool},
+            {"int8", nix::DataType::Int8},
+            {"uint8", nix::DataType::UInt8},
+            {"int16", nix::DataType::Int16},
+            {"uint16", nix::DataType::UInt16},
+            {"int32", nix::DataType::Int32},
+            {"uint32", nix::DataType::UInt32},
+            {"int64", nix::DataType::Int64},
+            {"uint64", nix::DataType::UInt64},
+            {"float", nix::DataType::Float},
+            {"double", nix::DataType::Double},
+            {"string", nix::DataType::String}
+    };
+
+    for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+        nix::DataType dt = nix::string_to_data_type(_types[i].name);
+        CPPUNIT_ASSERT_EQUAL(dt, _types[i].dtype);
+    }
+
+}
+
+
 void TestDataSet::testBasic() {
     NDSize dims({4, 6});
 
