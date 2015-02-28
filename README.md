@@ -74,6 +74,14 @@ ctest
 sudo make install
 ```
 
+**NIX with Docker**
+
+To develop with NIX inside the [Linux Container](https://linuxcontainers.org/) system [Docker](https://www.docker.com/) 
+you can use the images available under the [balint42/nix](https://registry.hub.docker.com/u/balint42/nix/) repository 
+on the public [Docker Hub](https://hub.docker.com/).
+Further instructions on how to use the images are on the Docker repository. Further instructions for Docker can be found 
+[on their site](http://docs.docker.com/).
+
 Getting Started (Windows)
 -------------------------
 
