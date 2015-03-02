@@ -197,7 +197,7 @@ NIXAPI std::string data_type_to_string(DataType dtype);
 *
 * @return A human readable name for the given type.
 */
-NIXAPI DataType string_to_data_type(std::string dtype);
+NIXAPI DataType string_to_data_type(const std::string& dtype);
 
 /**
  * @brief Output operator for data type.

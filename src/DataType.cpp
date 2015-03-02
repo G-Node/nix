@@ -44,7 +44,7 @@ std::string data_type_to_string(DataType dtype) {
     return str;
 }
 
-DataType string_to_data_type(std::string dtype) {
+DataType string_to_data_type(const std::string& dtype) {
 
     static std::map<std::string, DataType> type_map = {
         {"bool", DataType::Bool},
