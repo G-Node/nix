@@ -38,7 +38,7 @@ std::string data_type_to_string(DataType dtype) {
     case DataType::String:  str = "String";  break;
     case DataType::Nothing: str = "Nothing"; break;
     default:
-        str = "FIXME";
+        throw std::invalid_argument("Unkown DataType");
     }
 
     return str;
@@ -67,7 +67,11 @@ DataType string_to_data_type(const std::string& dtype) {
     std::string dtype_l = dtype;
     std::transform(dtype_l.begin(), dtype_l.end(), dtype_l.begin(), ::tolower);
 
-    return type_map[dtype];
+    if (type_map.find(dtype_l) == type_map.end()) {
+        throw std::invalid_argument("Unkown DataType");
+    }
+
+    return type_map[dtype_l];
 }
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
