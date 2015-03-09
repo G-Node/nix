@@ -1,3 +1,17 @@
+nix (1.0.0-2) utopic; urgency=medium
+
+  * Release for ubuntu 14.10 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Mon, 09 Mar 2015 14:22:47 +0100
+
+nix (1.0.0-1) trusty; urgency=medium
+
+  * Many bugs fixed since Beta 1 release
+  * New helpers for working with tags
+  * Updated documentation 
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Mon, 09 Mar 2015 14:19:45 +0100
+
 nix (0.10.5-2) trusty; urgency=medium
 
   * Beta 1 release update 
