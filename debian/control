@@ -5,7 +5,7 @@ Uploaders: Jan Grewe <jan.grewe@g-node.org>,
            Christian Kellner <christian@kellner.me>
 Section: science
 Priority: optional
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Build-Depends: debhelper (>= 9),
                libboost-dev (>=1.49),
                libboost-date-time-dev (>=1.49),
@@ -47,7 +47,7 @@ Architecture: any
 Depends: libnix1 (=${binary:Version}), ${misc:Depends}, libhdf5-dev (>=1.8), libboost-date-time-dev (>=1.49)
 Description: IO-libray for nix data files.
  Neuroscience information exchange - data model for annotated (neuroscience)
- data. For more information visit https://github.com/G-Node/pandora
+ data. For more information visit https://github.com/G-Node/nix
  .
  This package contains the debugging symbols that are needed
  to debug programs that link against libnix1
