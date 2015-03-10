@@ -6,6 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <limits>
+
 #include "TestDimension.hpp"
 
 #include <nix/util/util.hpp>
@@ -200,10 +202,16 @@ void TestDimension::testSampledDimPositionAt() {
     sd = d;
     sd.offset(offset);
     CPPUNIT_ASSERT(sd.positionAt(0) == offset);
-    CPPUNIT_ASSERT(sd.positionAt(200) == 200 * samplingInterval + offset);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(
+            200 * samplingInterval + offset,
+            sd.positionAt(200),
+            std::numeric_limits<double>::round_error());
 
     CPPUNIT_ASSERT(sd[0] == offset);
-    CPPUNIT_ASSERT(sd[200] == 200 * samplingInterval + offset);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(
+            200 * samplingInterval + offset,
+            sd[200],
+            std::numeric_limits<double>::round_error());
 
     data_array.deleteDimension(d.index());
 }
@@ -223,11 +231,20 @@ void TestDimension::testSampledDimAxis() {
     vector<double> axis = sd.axis(100);
     CPPUNIT_ASSERT(axis.size() == 100);
     CPPUNIT_ASSERT(axis[0] == offset);
-    CPPUNIT_ASSERT(axis.back() == 99 * samplingInterval + offset);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(
+            99 * samplingInterval + offset,
+            axis.back(),
+            std::numeric_limits<double>::round_error());
     
     axis = sd.axis(100, 10);
-    CPPUNIT_ASSERT(axis[0] == 10 * samplingInterval + offset);
-    CPPUNIT_ASSERT(axis.back() == 109 * samplingInterval + offset);
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(
+            10 * samplingInterval + offset,
+            axis[0],
+            std::numeric_limits<double>::round_error());
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(
+            109 * samplingInterval + offset,
+            axis.back(),
+            std::numeric_limits<double>::round_error());
     
     data_array.deleteDimension(d.index());
 }
