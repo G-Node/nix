@@ -1,3 +1,15 @@
+nix (1.0.2-1) trusty; urgency=medium
+
+  * Set to version 1.0.2
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Tue, 10 Mar 2015 09:43:50 +0100
+
+nix (1.0.1-1) trusty; urgency=medium
+
+  * Fix unit tests on x86
+
+ -- Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>  Mon, 09 Mar 2015 16:26:13 +0100
+
 nix (1.0.0-2) utopic; urgency=medium
 
   * Release for ubuntu 14.10 
