@@ -87,7 +87,7 @@ Getting Started (Windows)
 
 **Windows Installer**
 
-You can get a windows installer for both, 32- and 64-bit: [nix - Beta 1](https://github.com/G-Node/nix/releases)
+You can get a [windows installer](https://github.com/G-Node/nix/releases) for both, 32- and 64-bit.
 
 **Build NIX under Windows**
 
