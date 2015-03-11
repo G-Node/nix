@@ -191,6 +191,15 @@ NIXAPI size_t data_type_to_size(DataType dtype);
 NIXAPI std::string data_type_to_string(DataType dtype);
 
 /**
+* @brief Yield a data type from a string representation.
+*
+* @param dtype         The string-like data type.
+*
+* @return A human readable name for the given type.
+*/
+NIXAPI DataType string_to_data_type(const std::string& dtype);
+
+/**
  * @brief Output operator for data type.
  *
  * Prints a human readable string representation of the

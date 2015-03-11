@@ -12,6 +12,8 @@
 
 #include <string>
 #include <stdexcept>
+#include <map>
+#include <algorithm>
 
 namespace nix {
 
@@ -36,12 +38,41 @@ std::string data_type_to_string(DataType dtype) {
     case DataType::String:  str = "String";  break;
     case DataType::Nothing: str = "Nothing"; break;
     default:
-        str = "FIXME";
+        throw std::invalid_argument("Unkown DataType");
     }
 
     return str;
 }
 
+DataType string_to_data_type(const std::string& dtype) {
+
+    static std::map<std::string, DataType> type_map = {
+        {"bool", DataType::Bool},
+        {"char", DataType::Char},
+        {"float", DataType::Float},
+        {"single", DataType::Float},
+        {"double", DataType::Double},
+        {"int8", DataType::Int8},
+        {"int16", DataType::Int16},
+        {"int32", DataType::Int32},
+        {"int64", DataType::Int64},
+        {"uint8", DataType::UInt8},
+        {"uint16", DataType::UInt16},
+        {"uint32", DataType::UInt32},
+        {"uint64", DataType::UInt64},
+        {"string", DataType::String},
+        {"nothing", DataType::Nothing}
+    };
+
+    std::string dtype_l = dtype;
+    std::transform(dtype_l.begin(), dtype_l.end(), dtype_l.begin(), ::tolower);
+
+    if (type_map.find(dtype_l) == type_map.end()) {
+        throw std::invalid_argument("Unkown DataType");
+    }
+
+    return type_map[dtype_l];
+}
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
     out << data_type_to_string(dtype);
