@@ -138,7 +138,7 @@ void TestUtil::testConvertToSeconds() {
     int64_t m_value = 25;
     CPPUNIT_ASSERT_DOUBLES_EQUAL(1530.0, util::convertToSeconds(unit_min, min_value), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(44100.0, util::convertToSeconds(unit_h, h_value), std::numeric_limits<double>::round_error());
-    CPPUNIT_ASSERT_DOUBLES_EQUAL(1500, util::convertToSeconds(unit_min, m_value), std::numeric_limits<double>::round_error());
+    CPPUNIT_ASSERT(1500 == util::convertToSeconds(unit_min, m_value));
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value, util::convertToSeconds(unit_s, s_value), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value/1000., util::convertToSeconds(unit_ms, s_value), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value*1000000., util::convertToSeconds(unit_Ms, s_value), std::numeric_limits<double>::round_error());
