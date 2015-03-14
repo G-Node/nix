@@ -17,6 +17,7 @@
 #include <nix/DataType.hpp>
 
 #include <string.h>
+#include <sstream>
 #include "RefTester.hpp"
 
 using namespace nix; //quick fix for now
@@ -218,9 +219,11 @@ void TestDataSet::testDataTypeFromString() {
         CPPUNIT_ASSERT_EQUAL(dt, _types[i].dtype);
         std::string name = nix::data_type_to_string(dt);
         std::transform (name.begin(), name.end(), name.begin(), ::tolower);
+        std::stringstream stream;
+        stream << dt;
         CPPUNIT_ASSERT_EQUAL(name, _types[i].name);
+        CPPUNIT_ASSERT_EQUAL(stream.str(), nix::data_type_to_string(dt));
     }
-
 }
 
 
