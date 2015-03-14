@@ -216,6 +216,9 @@ void TestDataSet::testDataTypeFromString() {
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
         nix::DataType dt = nix::string_to_data_type(_types[i].name);
         CPPUNIT_ASSERT_EQUAL(dt, _types[i].dtype);
+        std::string name = nix::data_type_to_string(dt);
+        std::transform (name.begin(), name.end(), name.begin(), ::tolower);
+        CPPUNIT_ASSERT_EQUAL(name, _types[i].name);
     }
 
 }
