@@ -92,7 +92,7 @@ void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
     transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
     // sort them
     std::sort(ids_new.begin(), ids_new.end());
-    std::sort(ids_new.begin(), ids_new.end());
+    std::sort(ids_old.begin(), ids_old.end());
     // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
     std::vector<std::string> ids_add;
     std::vector<std::string> ids_rem;

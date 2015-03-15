@@ -16,13 +16,14 @@ using namespace std;
 using namespace nix;
 
 void TestEntityWithSources::setUp() {
-    file = File::open("test_block.h5", FileMode::Overwrite);
+    file = File::open("test_entity_sources.h5", FileMode::Overwrite);
 
     block = file.createBlock("block_one", "dataset");
 }
 
 
 void TestEntityWithSources::tearDown() {
+    file.deleteBlock(block);
     file.close();
 }
 
@@ -62,3 +63,31 @@ void TestEntityWithSources::testSourceAccess() {
 }
 
 
+void TestEntityWithSources::testSourceVectorSetter() {
+    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    vector<Source> sources;
+    DataArray da = block.createDataArray("Test","test", nix::DataType::Double, nix::NDSize {0,0});
+    for (auto it = names.begin(); it != names.end(); it++) {
+        sources.push_back(block.createSource(*it, "channel"));
+    }
+    CPPUNIT_ASSERT(block.sourceCount() == sources.size());
+    CPPUNIT_ASSERT(da.sourceCount() == 0);
+
+    da.addSource(sources[0]);
+    da.addSource(sources[1]);
+    CPPUNIT_ASSERT(da.sourceCount() == 2);
+
+    da.sources(sources);
+    CPPUNIT_ASSERT(da.sourceCount() == sources.size());
+
+    sources.clear();
+    sources.push_back(block.createSource("source_f", "channel"));
+    sources.push_back(block.createSource("source_g", "channel"));
+    da.sources(sources);
+    CPPUNIT_ASSERT(da.sourceCount() == sources.size());
+    CPPUNIT_ASSERT(block.sourceCount() == (sources.size() + names.size())); 
+
+    vector<Source> deleter;
+    da.sources(deleter);
+    CPPUNIT_ASSERT(da.sourceCount() == 0);
+}

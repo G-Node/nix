@@ -31,6 +31,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestEntityWithSources);
     CPPUNIT_TEST(testSourceAccess);
+    CPPUNIT_TEST(testSourceVectorSetter);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
@@ -42,4 +43,6 @@ public:
     void tearDown();
 
     void testSourceAccess();
+    void testSourceVectorSetter();
+
 };
