@@ -322,3 +322,12 @@ void TestBlock::testCreatedAt() {
 void TestBlock::testUpdatedAt() {
     CPPUNIT_ASSERT(block.updatedAt() >= startup_time);
 }
+
+
+void TestBlock::testCompare() {
+    string other_name = block_other.name();
+    string block_name = block.name();
+        
+    CPPUNIT_ASSERT(block.compare(block) == 0);
+    CPPUNIT_ASSERT(block.compare(block_other) ==  block_name.compare(other_name));
+}
