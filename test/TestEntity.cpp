@@ -29,11 +29,13 @@ void TestEntity::tearDown() {
 
 void TestEntity::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
+    CPPUNIT_ASSERT(util::toId(block).compare(block.id()) == 0);
 }
 
 
 void TestEntity::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
+    CPPUNIT_ASSERT(util::toName(block).compare(block.name()) == 0);
 }
 
 
