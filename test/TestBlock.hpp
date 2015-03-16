@@ -47,6 +47,8 @@ private:
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
+    
+    CPPUNIT_TEST(testCompare);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -76,4 +78,5 @@ public:
     void testUpdatedAt();
     void testCreatedAt();
 
+    void testCompare();
 };
