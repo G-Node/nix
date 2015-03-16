@@ -267,17 +267,14 @@ template<typename T>
 T convertToKelvin(const std::string &unit, T value) {
 
    if (unit == "°K" || unit == "K") {
-        return value; //nothing to do
+       return value;
    }
 
    double temperature;
-
    if (unit == "°C" || unit == "C") {
        temperature = value + 273.15;
    } else if (unit == "°F" || unit == "F") {
        temperature = (value - 32) * 5.0/9 + 273.15;
-   } else if (unit == "°K" || unit == "K") {
-       temperature = value;
    } else if (isScalable(unit, "K")) {
        temperature = value * getSIScaling(unit, "K");
    } else {

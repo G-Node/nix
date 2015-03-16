@@ -142,6 +142,7 @@ void TestUtil::testConvertToSeconds() {
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value, util::convertToSeconds(unit_s, s_value), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value/1000., util::convertToSeconds(unit_ms, s_value), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value*1000000., util::convertToSeconds(unit_Ms, s_value), std::numeric_limits<double>::round_error());
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(s_value, util::convertToSeconds("std", s_value), std::numeric_limits<double>::round_error());
 }
 
 void TestUtil::testConvertToKelvin() {
@@ -162,6 +163,7 @@ void TestUtil::testConvertToKelvin() {
     CPPUNIT_ASSERT_DOUBLES_EQUAL(temperature, util::convertToKelvin(unit_k2, temperature), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(temperature/1000., util::convertToKelvin(unit_mk, temperature), std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(temperature*1000000., util::convertToKelvin(unit_Mk, temperature), std::numeric_limits<double>::round_error());
+    CPPUNIT_ASSERT_DOUBLES_EQUAL(temperature, util::convertToKelvin("kelvin", temperature), std::numeric_limits<double>::round_error());
     int temp_fi = 100;
     CPPUNIT_ASSERT(util::convertToKelvin(unit_f, temp_fi) == 311);
 }
