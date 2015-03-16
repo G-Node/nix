@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <limits>
+#include <sstream>
 
 #include "TestDimension.hpp"
 
@@ -273,6 +274,15 @@ void TestDimension::testSampledDimOperators() {
     SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
     RangeDimension range = data_array.appendRangeDimension(std::vector<double>({1, 2}));
     SetDimension set = data_array.appendSetDimension();
+
+    stringstream s_stream, r_stream, set_stream;
+    s_stream << sampled.dimensionType();
+    r_stream << range.dimensionType();
+    set_stream << set.dimensionType();    
+    CPPUNIT_ASSERT(s_stream.str() == "Sample");
+    CPPUNIT_ASSERT(set_stream.str() == "Set");
+    CPPUNIT_ASSERT(r_stream.str() == "Range");
+
     CPPUNIT_ASSERT(d != none);
     CPPUNIT_ASSERT(sampled != none);
     CPPUNIT_ASSERT(range != none);
