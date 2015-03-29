@@ -261,8 +261,8 @@ void SetDimensionHDF5::labels(const vector<string> &labels) {
 }
 
 void SetDimensionHDF5::labels(const none_t t) {
-    if (group.hasAttr("offset")) {
-        group.removeAttr("offset");
+    if (group.hasData("labels")) {
+        group.removeData("labels");
     }
 }
 
