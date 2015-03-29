@@ -319,6 +319,10 @@ void TestDimension::testSetDimLabels() {
         CPPUNIT_ASSERT(new_labels[i] == retrieved_labels[i]);
     }
 
+    sd.labels(boost::none);
+    retrieved_labels = sd.labels();
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), retrieved_labels.size());
+
     data_array.deleteDimension(d.index());
 }
 
