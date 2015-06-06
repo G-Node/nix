@@ -104,6 +104,25 @@ public:
         #endif
     }
 
+    template<typename U>
+    NDSizeBase(const std::vector<U> &args)
+        : rank(args.size())
+    {
+        allocate();
+
+        #ifdef _MSC_VER
+        //std::transform triggers C4996, see nd_copy, nd_fill above
+        for (size_t i = 0; i < rank; i++) {
+            dims[i] = static_cast<T>(args[i]);
+        }
+        #else
+        std::transform(args.begin(), args.end(), dims,
+                       [](const U& val) {
+                           return static_cast<T>(val);
+                       });
+        #endif
+    }
+
     //copy
     NDSizeBase(const NDSizeBase &other)
         : rank(other.rank), dims(nullptr)
