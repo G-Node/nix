@@ -34,7 +34,7 @@ by executing
 ```
 sudo add-apt-repository ppa:gnode/nix
 sudo apt-get update
-sudo apt-get install nixlib-dev
+sudo apt-get install libnix-dev
 ```
 
 **Build NIX under Ubuntu 14.04**
