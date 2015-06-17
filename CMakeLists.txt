@@ -172,12 +172,11 @@ endif()
 ########################################
 # Install
 
-install(TARGETS nix
+install(TARGETS nix nix-tool
         LIBRARY DESTINATION lib
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION include)
-
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
