@@ -31,6 +31,8 @@ namespace valid {
         std::string id;
         std::string msg;
 
+        Message() { }
+
         Message(std::string new_id, std::string new_msg)
         : id(new_id), msg(new_msg)
         {
