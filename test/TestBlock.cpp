@@ -28,7 +28,7 @@ void TestBlock::setUp() {
 
     block = file.createBlock("block_one", "dataset");
     block_other = file.createBlock("block_two", "dataset");
-    block_null  = nullptr;
+    block_null  = nix::none;
 }
 
 

@@ -31,7 +31,7 @@ void TestProperty::setUp()
     str_dummy = Value("test");
     property = section.createProperty("prop", int_dummy);
     property_other = section.createProperty("other", int_dummy);
-    property_null = nullptr;
+    property_null = nix::none;
 }
 
 

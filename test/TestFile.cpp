@@ -23,7 +23,7 @@ void TestFile::setUp() {
     statup_time = time(NULL);
     file_open = File::open("test_file.h5", FileMode::Overwrite);
     file_other = File::open("test_file_other.h5", FileMode::Overwrite);
-    file_null = NULL;
+    file_null = nix::none;
 }
 
 

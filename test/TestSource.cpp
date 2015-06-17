@@ -26,7 +26,7 @@ void TestSource::setUp() {
 
     source = block.createSource("source_one", "channel");
     source_other = block.createSource("source_two", "channel");
-    source_null  = nullptr;
+    source_null  = nix::none;
 
     // create a DataArray & a MultiTag
     darray = block.createDataArray("DataArray", "dataArray",

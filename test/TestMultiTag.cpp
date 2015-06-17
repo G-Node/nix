@@ -47,7 +47,7 @@ void TestMultiTag::setUp() {
 
     tag = block.createMultiTag("tag_one", "test_tag", positions);
     tag_other = block.createMultiTag("tag_two", "test_tag", positions);
-    tag_null = nullptr;
+    tag_null = nix::none;
 
     section = file.createSection("foo_section", "metadata");
 }
