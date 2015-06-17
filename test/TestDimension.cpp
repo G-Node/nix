@@ -157,7 +157,7 @@ void TestDimension::testSampledDimOffset() {
     CPPUNIT_ASSERT_NO_THROW(sd.offset(offset));
     CPPUNIT_ASSERT(*(sd.offset()) == offset);
     CPPUNIT_ASSERT_NO_THROW(sd.offset(boost::none));
-    CPPUNIT_ASSERT(sd.offset() == 0);
+    CPPUNIT_ASSERT(sd.offset() == boost::none);
 
     data_array.deleteDimension(d.index());
 }
