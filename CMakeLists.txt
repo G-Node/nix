@@ -33,6 +33,8 @@ if(NOT WIN32)
 endif()
 
 
+set(CMAKE_MACOSX_RPATH 1)
+
 #########################################
 # HDF-5
 if(WIN32)
@@ -131,6 +133,7 @@ if(NOT WIN32)
   set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
 target_link_libraries(nix-tool nix)
+set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 message(STATUS "CLI executable added")
 
 
