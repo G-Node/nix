@@ -9,6 +9,7 @@
 #include <nix/Dimensions.hpp>
 
 #include <cmath>
+#include <nix/DataArray.hpp>
 #include <nix/util/util.hpp>
 #include <nix/Exception.hpp>
 
@@ -278,10 +279,20 @@ RangeDimension::RangeDimension()
 }
 
 
+RangeDimension::RangeDimension(const DataArray &array)
+    : ImplContainer()
+{
+    if (array.dataExtent().size() > 1) {
+        throw InvalidRank("Error creating RangeDimension with DataArray: array must be 1-D!");
+    }
+}
+
+
 RangeDimension::RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl)
     : ImplContainer(p_impl)
 {
 }
+
 
 RangeDimension::RangeDimension(std::shared_ptr<IRangeDimension> &&ptr)
     : ImplContainer(std::move(ptr))
