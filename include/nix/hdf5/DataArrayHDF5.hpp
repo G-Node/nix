@@ -108,6 +108,9 @@ public:
     std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks);
 
 
+    std::shared_ptr<base::IRangeDimension> createAliasRangeDimension();
+
+
     std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval);
 
 

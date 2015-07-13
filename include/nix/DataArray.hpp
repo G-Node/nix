@@ -313,6 +313,18 @@ public:
         }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
+    
+    /**
+     * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception 
+     * will be thrown otherwise.
+     * 
+     * @return The created RangeDimension
+     */
+    RangeDimension appendAliasRangeDimension() {
+        return backend()->createAliasRangeDimension();
+    }
+
 
     /**
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
@@ -356,6 +368,20 @@ public:
                                         "DataArray::createRangeDimension");
         }
         return backend()->createRangeDimension(id, ticks);
+    }
+
+    /**
+     * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * 
+     * @return The created dimension descriptor.
+     */
+    RangeDimension createAliasRangeDimension() {
+        if (this->dataExtent().size() > 1) {
+            throw nix::InvalidDimension("AliasRangeDimensions oly allowed for 1D numeric DataArrays!",
+                                        "DataArray::appendAliasRangeDimension");
+        }
+        // TODO:: test for numeric data types
+        return backend()->createAliasRangeDimension();
     }
 
     /**
