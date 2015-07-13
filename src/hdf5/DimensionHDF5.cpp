@@ -7,7 +7,6 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/DimensionHDF5.hpp>
-
 #include <nix/util/util.hpp>
 
 using namespace std;
@@ -286,6 +285,13 @@ RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<
 }
 
 
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const DataArray &array)
+    :RangeDimensionHDF5(group, index)
+{
+    setType();
+    // TODO link the DataArray
+}
+
 DimensionType RangeDimensionHDF5::dimensionType() const {
     return DimensionType::Range;
 }
@@ -346,6 +352,11 @@ void RangeDimensionHDF5::unit(const none_t t) {
         group.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
+}
+
+
+bool RangeDimensionHDF5::alias() const {
+    return group.hasData("ticks");
 }
 
 

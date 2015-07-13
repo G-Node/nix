@@ -137,6 +137,9 @@ public:
 
     virtual boost::optional<std::string> label() const = 0;
 
+    
+    virtual bool alias() const = 0;
+
 
     virtual void label(const std::string &label) = 0;
 
