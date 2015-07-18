@@ -298,6 +298,18 @@ DimensionType RangeDimensionHDF5::dimensionType() const {
 }
 
 
+Group RangeDimensionHDF5::redirectGroup() const {
+    Group g;
+    if (alias()) {
+        string group_name = group.objectName(0);
+        g = group.openGroup(group_name, false);
+    } else {
+        g = group;
+    }
+    return g;
+}
+
+
 boost::optional<std::string> RangeDimensionHDF5::label() const {
     boost::optional<std::string> ret;
     string label;

@@ -180,6 +180,9 @@ public:
 
     virtual ~RangeDimensionHDF5();
 
+private:
+
+    Group redirectGroup() const;
 };
 
 
