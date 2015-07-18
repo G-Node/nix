@@ -165,7 +165,6 @@ void TestDataSet::testChunkGuessing() {
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }
 
-
 void TestDataSet::testDataType() {
     static struct _type_info {
         std::string name;
@@ -225,6 +224,34 @@ void TestDataSet::testDataTypeFromString() {
         CPPUNIT_ASSERT_EQUAL(stream.str(), nix::data_type_to_string(dt));
     }
 }
+
+
+void TestDataSet::testDataTypeIsNumeric() {
+    static struct _type_info {
+        bool is_numeric;
+        nix::DataType dtype;
+    } _types[] = {
+            {false, nix::DataType::Bool},
+            {true, nix::DataType::Int8},
+            {true, nix::DataType::UInt8},
+            {true, nix::DataType::Int16},
+            {true, nix::DataType::UInt16},
+            {true, nix::DataType::Int32},
+            {true, nix::DataType::UInt32},
+            {true, nix::DataType::Int64},
+            {true, nix::DataType::UInt64},
+            {true, nix::DataType::Float},
+            {true, nix::DataType::Double},
+            {false, nix::DataType::String},
+            {false, nix::DataType::Nothing}
+    };
+
+    for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+        bool is_numeric = nix::data_type_is_numeric(_types[i].dtype);
+        CPPUNIT_ASSERT_EQUAL(is_numeric, _types[i].is_numeric);
+    }
+}
+
 
 
 void TestDataSet::testBasic() {
