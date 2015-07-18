@@ -313,7 +313,8 @@ Group RangeDimensionHDF5::redirectGroup() const {
 boost::optional<std::string> RangeDimensionHDF5::label() const {
     boost::optional<std::string> ret;
     string label;
-    bool have_attr = group.getAttr("label", label);
+    Group g = redirectGroup();
+    bool have_attr = g.getAttr("label", label);
     if (have_attr) {
         ret = label;
     }
@@ -324,16 +325,17 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 void RangeDimensionHDF5::label(const string &label) {
     if (label.empty()) {
         throw EmptyString("label");
-    } else {
-        group.setAttr("label", label);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
+    Group g = redirectGroup();
+    g.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
 void RangeDimensionHDF5::label(const none_t t) {
-    if (group.hasAttr("label")) {
-        group.removeAttr("label");
+    Group g = redirectGroup();
+    if (g.hasAttr("label")) {
+        g.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
