@@ -46,6 +46,7 @@ public:
     void testLabel();
     void testUnit();
     void testDimension();
+    void testAliasRangeDimension();
     void testOperator();
     void testValidate();
 
@@ -62,6 +63,7 @@ private:
     CPPUNIT_TEST(testLabel);
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
+    CPPUNIT_TEST(testAliasRangeDimension);
     CPPUNIT_TEST(testOperator);
     CPPUNIT_TEST(testValidate);
 
@@ -69,6 +71,6 @@ private:
 
     nix::File file;
     nix::Block block;
-    nix::DataArray array1, array2;
+    nix::DataArray array1, array2, array3;
     time_t startup_time;
 };

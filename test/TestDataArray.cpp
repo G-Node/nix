@@ -32,6 +32,10 @@ void TestDataArray::setUp()
                                    "double",
                                    nix::DataType::Double,
                                    nix::NDSize({ 20, 20 }));
+    array3 = block.createDataArray("one_d",
+                                   "double",
+                                   nix::DataType::Double,
+                                   nix::NDSize({ 20 }));
 }
 
 void TestDataArray::tearDown()
@@ -432,6 +436,18 @@ void TestDataArray::testDimension()
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);
+}
+
+
+void TestDataArray::testAliasRangeDimension() {
+    array3.createAliasRangeDimension();
+    CPPUNIT_ASSERT(array3.dimensionCount() == 1);
+    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array3.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
+    std::cerr << array3.dimensionCount() << std::endl;
+    
 }
 
 
