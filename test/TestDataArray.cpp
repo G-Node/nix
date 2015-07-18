@@ -21,7 +21,7 @@ using namespace valid;
 void TestDataArray::setUp()
 {
     startup_time = time(NULL);
-    file = nix::File::open("test_DataArray.h5", nix::FileMode::Overwrite);
+    file = nix::File::open("test_DataArray1.h5", nix::FileMode::Overwrite);
 
     block = file.createBlock("block_one", "dataset");
     array1 = block.createDataArray("array_one",
@@ -450,7 +450,10 @@ void TestDataArray::testAliasRangeDimension() {
     CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array3.createAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
-
+    DataArray bool_array = block.createDataArray("string array", "string_array",
+                                                 nix::DataType::Bool,
+                                                 nix::NDSize({20}));
+    CPPUNIT_ASSERT_THROW(bool_array.createAliasRangeDimension(), nix::InvalidDimension);
     nix::RangeDimension rd;
     rd = dim;
     CPPUNIT_ASSERT(rd.alias());

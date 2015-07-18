@@ -377,14 +377,17 @@ public:
      */
     RangeDimension createAliasRangeDimension() {
         if (this->dataExtent().size() > 1) {
-            throw nix::InvalidDimension("AliasRangeDimensions oly allowed for 1D numeric DataArrays!",
-                                        "DataArray::appendAliasRangeDimension");
+            throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (!nix::data_type_is_numeric(this->dataType())) {
+            throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
         }
         if (dimensionCount() > 0) {
             throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
-                                        "DataArray::appendAliasRangeDimension");
+                                        "DataArray::createAliasRangeDimension");
         }
-        // TODO:: test for numeric data types
         return backend()->createAliasRangeDimension();
     }
 
