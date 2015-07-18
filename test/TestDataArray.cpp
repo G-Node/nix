@@ -36,6 +36,8 @@ void TestDataArray::setUp()
                                    "double",
                                    nix::DataType::Double,
                                    nix::NDSize({ 20 }));
+    array3.label("label");
+    array3.unit("Hz");
 }
 
 void TestDataArray::tearDown()
@@ -398,13 +400,14 @@ void TestDataArray::testDimension()
     nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
     nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
     nix::SetDimension dim_set = array1.appendSetDimension();
-
+    
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(array2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
-
+    CPPUNIT_ASSERT(!dim_range.alias());
+    
     CPPUNIT_ASSERT(array2.dimensionCount() == 5);
 
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
@@ -440,14 +443,30 @@ void TestDataArray::testDimension()
 
 
 void TestDataArray::testAliasRangeDimension() {
-    array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.createAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
+    CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array3.createAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
-    std::cerr << array3.dimensionCount() << std::endl;
-    
+
+    nix::RangeDimension rd;
+    rd = dim;
+    CPPUNIT_ASSERT(rd.alias());
+
+    CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
+    rd.label("new_label");
+    CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
+    rd.label(none);
+    CPPUNIT_ASSERT(!rd.label() && !array3.label());
+
+    CPPUNIT_ASSERT((rd.unit() && array3.unit()) && (*rd.unit() == *array3.unit()));
+    rd.unit("ms");
+    CPPUNIT_ASSERT((rd.unit() && array3.unit()) && (*rd.unit() == *array3.unit()));
+    rd.unit(none);
+    CPPUNIT_ASSERT(!rd.unit() && !array3.unit());
+
 }
 
 
