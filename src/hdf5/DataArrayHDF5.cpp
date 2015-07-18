@@ -208,7 +208,7 @@ std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_
 
 std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createAliasRangeDimension() {
     Group g = createDimensionGroup(1);
-    return make_shared<RangeDimensionHDF5>(g, 1, ticks);
+    return make_shared<RangeDimensionHDF5>(g, 1, *this);
 }
 
 

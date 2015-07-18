@@ -285,12 +285,13 @@ RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<
 }
 
 
-RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const DataArray &array)
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const DataArrayHDF5 &array)
     :RangeDimensionHDF5(group, index)
 {
     setType();
-    // TODO link the DataArray
+    this->group.createLink(array.group(), "ticks");
 }
+
 
 DimensionType RangeDimensionHDF5::dimensionType() const {
     return DimensionType::Range;

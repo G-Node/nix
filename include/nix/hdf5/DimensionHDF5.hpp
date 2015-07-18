@@ -11,7 +11,7 @@
 
 #include <nix/base/IDimensions.hpp>
 #include <nix/hdf5/Group.hpp>
-#include <nix/DataArray.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -145,7 +145,7 @@ public:
     RangeDimensionHDF5(const Group &group, size_t index, std::vector<double> ticks);
 
 
-    RangeDimensionHDF5(const Group &group, size_t index, const DataArray &array);
+    RangeDimensionHDF5(const Group &group, size_t index, const DataArrayHDF5 &dataArray );
 
 
     DimensionType dimensionType() const;
