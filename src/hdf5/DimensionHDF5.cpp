@@ -289,7 +289,7 @@ RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const D
     :RangeDimensionHDF5(group, index)
 {
     setType();
-    this->group.createLink(array.group(), "ticks");
+    this->group.createLink(array.group(), array.id());
 }
 
 
@@ -357,7 +357,7 @@ void RangeDimensionHDF5::unit(const none_t t) {
 
 
 bool RangeDimensionHDF5::alias() const {
-    return group.hasData("ticks");
+    return !group.hasData("ticks");
 }
 
 
