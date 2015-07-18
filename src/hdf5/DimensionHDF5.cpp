@@ -344,7 +344,8 @@ void RangeDimensionHDF5::label(const none_t t) {
 boost::optional<std::string> RangeDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    bool have_attr = group.getAttr("unit", unit);
+    Group g = redirectGroup();
+    bool have_attr = g.getAttr("unit", unit);
     if (have_attr) {
         ret = unit;
     }
@@ -356,15 +357,17 @@ void RangeDimensionHDF5::unit(const string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
     } else {
-        group.setAttr("unit", unit);
+        Group g = redirectGroup();
+        g.setAttr("unit", unit);
         // NOTE: forceUpdatedAt() not possible since not reachable from here
     }
 }
 
 
 void RangeDimensionHDF5::unit(const none_t t) {
-    if (group.hasAttr("unit")) {
-        group.removeAttr("unit");
+    Group g = redirectGroup();
+    if (g.hasAttr("unit")) {
+        g.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
@@ -377,7 +380,7 @@ bool RangeDimensionHDF5::alias() const {
 
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
-
+    
     if (group.hasData("ticks")) {
         group.getData("ticks", ticks);
         return ticks;
