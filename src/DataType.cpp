@@ -74,6 +74,15 @@ DataType string_to_data_type(const std::string& dtype) {
     return type_map[dtype_l];
 }
 
+
+bool data_type_is_numeric(DataType dtype) {
+    return !(dtype == DataType::Bool ||
+             dtype == DataType::Char ||
+             dtype == DataType::String ||
+             dtype == DataType::Nothing);
+}
+
+
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
     out << data_type_to_string(dtype);
     return out;

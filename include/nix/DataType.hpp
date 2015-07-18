@@ -195,9 +195,18 @@ NIXAPI std::string data_type_to_string(DataType dtype);
 *
 * @param dtype         The string-like data type.
 *
-* @return A human readable name for the given type.
+* @return The DataType matching the provided string.
 */
 NIXAPI DataType string_to_data_type(const std::string& dtype);
+
+/**
+* @brief Determines whether a DataType is numeric.
+*
+* @param dtype      The data type
+*
+* @return True when dtype represents a numeric data type, false otherwise
+*/
+NIXAPI bool data_type_is_numeric(DataType dtype);
 
 /**
  * @brief Output operator for data type.
