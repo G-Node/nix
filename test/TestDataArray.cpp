@@ -36,6 +36,10 @@ void TestDataArray::setUp()
                                    "double",
                                    nix::DataType::Double,
                                    nix::NDSize({ 20 }));
+    std::vector<double> t;
+    for (size_t i = 0; i < 20; i++) 
+        t.push_back(1.3 * i);
+    array3.setData(nix::DataType::Double, t.data(), nix::NDSize({ 20 }), nix::NDSize({ 0 }));
     array3.label("label");
     array3.unit("Hz");
 }
@@ -470,6 +474,9 @@ void TestDataArray::testAliasRangeDimension() {
     rd.unit(none);
     CPPUNIT_ASSERT(!rd.unit() && !array3.unit());
 
+    std::vector<double> t = rd.ticks();
+    CPPUNIT_ASSERT(t.size() == array3.dataExtent().nelms());
+    
 }
 
 

@@ -380,9 +380,12 @@ bool RangeDimensionHDF5::alias() const {
 
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
-    
-    if (group.hasData("ticks")) {
-        group.getData("ticks", ticks);
+    Group g = redirectGroup();
+    if (g.hasData("ticks")) {
+        g.getData("ticks", ticks);
+        return ticks;
+    } else if (g.hasData("data")) {
+        g.getData("data", ticks);
         return ticks;
     } else {
         throw MissingAttr("ticks");
