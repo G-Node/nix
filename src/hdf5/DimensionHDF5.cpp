@@ -374,7 +374,7 @@ void RangeDimensionHDF5::unit(const none_t t) {
 
 
 bool RangeDimensionHDF5::alias() const {
-    return !group.hasData("ticks");
+    return group.objectCount() > 0 && !group.hasData("ticks");
 }
 
 
@@ -394,7 +394,17 @@ vector<double> RangeDimensionHDF5::ticks() const {
 
 
 void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
-    group.setData("ticks", ticks);
+    Group g = redirectGroup();
+    if (!alias()) {
+        g.setData("ticks", ticks);
+    } else if (g.hasData("data")) {
+        NDSize extent(1, ticks.size());
+        DataSet ds = g.openData("data");
+        ds.setExtent(extent);
+        ds.write(nix::DataType::Double, extent, ticks.data());
+    } else {
+        throw MissingAttr("ticks");
+    }
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}
