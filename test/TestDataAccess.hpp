@@ -42,12 +42,12 @@ private:
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
-    nix::DataArray data_array;
-    nix::Tag position_tag, segment_tag;
+    nix::DataArray data_array, alias_array;
+    nix::Tag position_tag, segment_tag, times_tag;
     nix::MultiTag multi_tag;
     nix::Block block;
     nix::SampledDimension sampledDim;
-    nix::RangeDimension rangeDim;
+    nix::RangeDimension rangeDim, aliasDim;
     nix::SetDimension setDim;
 
 public:
