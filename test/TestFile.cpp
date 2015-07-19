@@ -112,6 +112,8 @@ void TestFile::testBlockAccess() {
     }
     CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), std::runtime_error);
     b = file_open.createBlock("test","test");
+    CPPUNIT_ASSERT_NO_THROW(file_open.getBlock(0));
+    CPPUNIT_ASSERT_THROW(file_open.getBlock(file_open.blockCount()), nix::OutOfBounds);
     CPPUNIT_ASSERT(file_open.deleteBlock(b));
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
@@ -149,6 +151,8 @@ void TestFile::testSectionAccess() {
     }
     CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), std::runtime_error);
     s = file_open.createSection("test","test");
+    CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
+    CPPUNIT_ASSERT_THROW(file_open.getSection(file_open.sectionCount()), nix::OutOfBounds);
     CPPUNIT_ASSERT(file_open.hasSection(s));
     CPPUNIT_ASSERT(file_open.deleteSection(s));
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
