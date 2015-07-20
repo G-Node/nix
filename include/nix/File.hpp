@@ -139,6 +139,9 @@ public:
      * @return The block at the given index.
      */
     Block getBlock(size_t index) const {
+        if (index >= blockCount()) {
+            throw nix::OutOfBounds("Index is out of bounds when calling File::getBlock(index)!");
+        }
         return backend()->getBlock(index);
     }
 
@@ -242,6 +245,9 @@ public:
      * @return The section with the specified index.
      */
     Section getSection(size_t index) const {
+        if (index >= sectionCount()) {
+            throw nix::OutOfBounds("Index is out of bounds when calling File::getSection(index)!");
+        }
         return backend()->getSection(index);
     }
 
