@@ -76,6 +76,11 @@ public:
 
     Value(const Value &other) : Value() {
         assign_variant_from(other);
+        uncertainty = other.uncertainty;
+        checksum = other.checksum;
+        encoder = other.encoder;
+        filename = other.filename;
+        reference = other.reference;
     }
 
     Value(Value &&other) NOEXCEPT : Value() {
