@@ -142,9 +142,9 @@ void Value::get(std::string &value) const {
 
 void Value::swap(Value &other) {
     using std::swap;
-
     swap(uncertainty, other.uncertainty);
     swap(reference, other.reference);
+    swap(filename, other.filename);
     swap(encoder, other.encoder);
     swap(checksum, other.checksum);
 
