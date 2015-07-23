@@ -273,7 +273,7 @@ vector<Section> Section::findSideways(const std::function<bool(Section)> &filter
 }
 
 
-std::ostream& nix::operator<<(ostream &out, const Section &ent) {
+std::ostream& operator<<(ostream &out, const Section &ent) {
     out << "Section: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
