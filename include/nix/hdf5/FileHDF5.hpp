@@ -55,7 +55,7 @@ public:
     std::shared_ptr<base::IBlock> getBlock(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IBlock> getBlock(size_t index) const;
+    std::shared_ptr<base::IBlock> getBlock(ndsize_t index) const;
 
 
     std::shared_ptr<base::IBlock> createBlock(const std::string &name, const std::string &type);
@@ -73,7 +73,7 @@ public:
     std::shared_ptr<base::ISection> getSection(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISection> getSection(size_t index) const;
+    std::shared_ptr<base::ISection> getSection(ndsize_t index) const;
 
 
     ndsize_t sectionCount() const;
