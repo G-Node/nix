@@ -316,8 +316,8 @@ public:
     
     /**
      * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
-     * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception 
-     * will be thrown otherwise.
+     * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
+     * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
      * 
      * @return The created RangeDimension
      */
