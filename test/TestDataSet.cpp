@@ -243,7 +243,10 @@ void TestDataSet::testDataTypeIsNumeric() {
             {true, nix::DataType::Float},
             {true, nix::DataType::Double},
             {false, nix::DataType::String},
-            {false, nix::DataType::Nothing}
+            {false, nix::DataType::Nothing},
+            {false, nix::DataType::Date},
+            {false, nix::DataType::DateTime},
+            {false, nix::DataType::Opaque}
     };
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
