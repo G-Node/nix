@@ -50,7 +50,7 @@ bool Source::hasSource(const Source &source) const {
 
 
 std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) const {
-    auto f = [this] (size_t i) { return getSource(i); };
+    auto f = [this] (ndsize_t i) { return getSource(i); };
     return getEntities<Source>(f,
                                sourceCount(),
                                filter);
@@ -108,7 +108,7 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 
 
-std::ostream& nix::operator<<(ostream &out, const Source &ent) {
+std::ostream& operator<<(ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
