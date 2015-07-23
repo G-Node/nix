@@ -118,7 +118,7 @@ public:
     std::shared_ptr<base::ISection> getSection(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISection> getSection(size_t index) const;
+    std::shared_ptr<base::ISection> getSection(ndsize_t index) const;
 
 
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
@@ -140,7 +140,7 @@ public:
     std::shared_ptr<base::IProperty> getProperty(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IProperty> getProperty(size_t index) const;
+    std::shared_ptr<base::IProperty> getProperty(ndsize_t index) const;
 
 
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);

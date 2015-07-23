@@ -250,7 +250,7 @@ public:
      *
      * @return The specified child section.
      */
-    virtual Section getSection(size_t index) const {
+    virtual Section getSection(ndsize_t index) const {
         return backend()->getSection(index);
     }
 
@@ -375,7 +375,7 @@ public:
      *
      * @return The property.
      */
-    Property getProperty(size_t index) const {
+    Property getProperty(ndsize_t index) const {
         return backend()->getProperty(index);
     }
 

@@ -209,7 +209,7 @@ shared_ptr<ISection> SectionHDF5::getSection(const string &name_or_id) const {
 }
 
 
-shared_ptr<ISection> SectionHDF5::getSection(size_t index) const {
+shared_ptr<ISection> SectionHDF5::getSection(ndsize_t index) const {
     boost::optional<Group> g = section_group();
     string name = g ? g->objectName(index) : "";
     return getSection(name);
@@ -281,7 +281,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(const string &name_or_id) const {
 }
 
 
-shared_ptr<IProperty> SectionHDF5::getProperty(size_t index) const {
+shared_ptr<IProperty> SectionHDF5::getProperty(ndsize_t index) const {
     boost::optional<Group> g = property_group();
     string name = g ? g->objectName(index) : "";
     return getProperty(name);

@@ -81,7 +81,7 @@ public:
     virtual std::shared_ptr<ISection> getSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
+    virtual std::shared_ptr<ISection> getSection(ndsize_t index) const = 0;
 
 
     virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;
@@ -102,7 +102,7 @@ public:
     virtual std::shared_ptr<IProperty> getProperty(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IProperty> getProperty(size_t index) const = 0;
+    virtual std::shared_ptr<IProperty> getProperty(ndsize_t index) const = 0;
 
 
     virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const DataType &dtype) = 0;
