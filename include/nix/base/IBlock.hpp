@@ -39,7 +39,7 @@ public:
     virtual std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::ISource> getSource(size_t index) const = 0;
+    virtual std::shared_ptr<base::ISource> getSource(ndsize_t index) const = 0;
 
 
     virtual ndsize_t sourceCount() const = 0;
@@ -60,7 +60,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::IDataArray> getDataArray(size_t index) const = 0;
+    virtual std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const = 0;
 
 
     virtual ndsize_t dataArrayCount() const = 0;
@@ -82,7 +82,7 @@ public:
     virtual std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::ITag> getTag(size_t index) const = 0;
+    virtual std::shared_ptr<base::ITag> getTag(ndsize_t index) const = 0;
 
 
     virtual ndsize_t tagCount() const = 0;
@@ -104,7 +104,7 @@ public:
     virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const = 0;
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const = 0;
 
 
     virtual ndsize_t multiTagCount() const = 0;

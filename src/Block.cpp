@@ -34,7 +34,7 @@ bool Block::hasSource(const Source &source) const {
 }
 
 std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) const {
-    auto f = [this](size_t i) { return getSource(i); };
+    auto f = [this](ndsize_t i) { return getSource(i); };
     return getEntities<Source>(f,
             sourceCount(),
             filter);
@@ -76,7 +76,7 @@ bool Block::hasTag(const Tag &tag) const {
 }
 
 std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
-    auto f = [this] (size_t i) { return getTag(i); };
+    auto f = [this] (ndsize_t i) { return getTag(i); };
     return getEntities<Tag>(f,
                             tagCount(),
                             filter);
@@ -97,7 +97,7 @@ bool Block::hasMultiTag(const MultiTag &multi_tag) const {
 }
 
 std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &filter) const {
-    auto f = [this] (size_t i) { return getMultiTag(i); };
+    auto f = [this] (ndsize_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f,
                                 multiTagCount(),
                                 filter);
