@@ -196,7 +196,34 @@ void TestValue::testSwap()
     for (ValTester *vt : vals) {
         delete vt;
     }
+}
 
+void TestValue::testEquals() {
+    nix::Value v1("Hallo");
+    nix::Value v2("Welt");
+    v1.reference = "reference";
+    v1.encoder = "encoder";
+    v1.filename = "filename";
+    v1.checksum = "checksum";
+    v1.uncertainty = 20;
+
+    CPPUNIT_ASSERT(v2 != v1);
+    v2 = v1;
+    CPPUNIT_ASSERT(v2 == v1);
+    v2.checksum = "checksum2";
+    CPPUNIT_ASSERT(!(v2 == v1));
+    v2.checksum = "checksum";
+    v2.uncertainty = 10;
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.uncertainty = v1.uncertainty;
+    v2.filename = "another";
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.filename = v1.filename;
+    v2.encoder = "another";
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.encoder = v1.encoder;
+    v2.reference = "another";
+    CPPUNIT_ASSERT(v2 != v1);
 }
 
 

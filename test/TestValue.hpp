@@ -38,12 +38,14 @@ public:
 
     void testObject();
     void testSwap();
+    void testEquals();
 
 private:
 
     CPPUNIT_TEST_SUITE(TestValue);
     CPPUNIT_TEST(testObject);
     CPPUNIT_TEST(testSwap);
+    CPPUNIT_TEST(testEquals);
     CPPUNIT_TEST_SUITE_END ();
 
 };
