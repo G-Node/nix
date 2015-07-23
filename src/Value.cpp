@@ -272,6 +272,14 @@ bool operator==(const Value &a, const Value &b)
     if (a.type() != b.type()) {
         return false;
     }
+    bool match = true;
+    match = match & (a.reference == b.reference);
+    match = match & (a.checksum == b.checksum);
+    match = match & (a.uncertainty == b.uncertainty);
+    match = match & (a.filename == b.filename);
+    match = match & (a.encoder == b.encoder);
+    if (!match)
+        return match;
 
     switch(a.type()) {
     case DataType::Nothing: return true;
@@ -285,7 +293,7 @@ bool operator==(const Value &a, const Value &b)
 #ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return false;
 #endif
-        }
+    }
 }
 
 void swap(Value &a, Value &b)
