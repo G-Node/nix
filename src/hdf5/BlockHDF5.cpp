@@ -70,7 +70,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &name_or_id) const {
 }
 
 
-shared_ptr<ISource> BlockHDF5::getSource(size_t index) const {
+shared_ptr<ISource> BlockHDF5::getSource(ndsize_t index) const {
     boost::optional<Group> g = source_group();
     string name = g ? g->objectName(index) : "";
     return getSource(name);
@@ -157,7 +157,7 @@ shared_ptr<ITag> BlockHDF5::getTag(const string &name_or_id) const {
 }
 
 
-shared_ptr<ITag> BlockHDF5::getTag(size_t index) const {
+shared_ptr<ITag> BlockHDF5::getTag(ndsize_t index) const {
     boost::optional<Group> g = tag_group();
     string name = g ? g->objectName(index) : "";
     return getTag(name);
@@ -207,7 +207,7 @@ shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &name_or_id) const {
 }
 
 
-shared_ptr<IDataArray> BlockHDF5::getDataArray(size_t index) const {
+shared_ptr<IDataArray> BlockHDF5::getDataArray(ndsize_t index) const {
     boost::optional<Group> g = data_array_group();
     string name = g ? g->objectName(index) : "";
     return getDataArray(name);
@@ -293,7 +293,7 @@ shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const string &name_or_id) const {
 }
 
 
-shared_ptr<IMultiTag> BlockHDF5::getMultiTag(size_t index) const {
+shared_ptr<IMultiTag> BlockHDF5::getMultiTag(ndsize_t index) const {
     boost::optional<Group> g = multi_tag_group();
     string name = g ? g->objectName(index) : "";
     return getMultiTag(name);

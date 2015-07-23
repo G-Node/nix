@@ -22,23 +22,23 @@ std::string data_type_to_string(DataType dtype) {
     std::string str;
 
     switch(dtype) {
-
-    case DataType::Bool:    str = "Bool";    break;
-    case DataType::Char:    str = "Char";    break;
-    case DataType::Float:   str = "Float";   break;
-    case DataType::Double:  str = "Double";  break;
-    case DataType::Int8:    str = "Int8";    break;
-    case DataType::Int16:   str = "Int16";   break;
-    case DataType::Int32:   str = "Int32";   break;
-    case DataType::Int64:   str = "Int64";   break;
-    case DataType::UInt8:   str = "UInt8";   break;
-    case DataType::UInt16:  str = "UInt16";  break;
-    case DataType::UInt32:  str = "UInt32";  break;
-    case DataType::UInt64:  str = "UInt64";  break;
-    case DataType::String:  str = "String";  break;
-    case DataType::Nothing: str = "Nothing"; break;
-    default:
-        throw std::invalid_argument("Unkown DataType");
+    case DataType::Bool:     str = "Bool";     break;
+    case DataType::Char:     str = "Char";     break;
+    case DataType::Float:    str = "Float";    break;
+    case DataType::Double:   str = "Double";   break;
+    case DataType::Int8:     str = "Int8";     break;
+    case DataType::Int16:    str = "Int16";    break;
+    case DataType::Int32:    str = "Int32";    break;
+    case DataType::Int64:    str = "Int64";    break;
+    case DataType::UInt8:    str = "UInt8";    break;
+    case DataType::UInt16:   str = "UInt16";   break;
+    case DataType::UInt32:   str = "UInt32";   break;
+    case DataType::UInt64:   str = "UInt64";   break;
+    case DataType::String:   str = "String";   break;
+    case DataType::Nothing:  str = "Nothing";  break;
+    case DataType::Date:     str = "Date";     break;
+    case DataType::DateTime: str = "Datetime"; break;
+    case DataType::Opaque:   str = "Opaque";   break;
     }
 
     return str;

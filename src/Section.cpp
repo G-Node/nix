@@ -88,7 +88,7 @@ struct SectionCont {
 
 
 std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
-    auto f = [this] (size_t i) { return getSection(i); };
+    auto f = [this] (ndsize_t i) { return getSection(i); };
     return getEntities<Section>(f,
                                 sectionCount(),
                                 filter);
@@ -172,7 +172,7 @@ bool Section::hasProperty(const Property &property) const {
 }
 
 std::vector<Property> Section::properties(const util::Filter<Property>::type &filter) const {
-    auto f = [this] (size_t i) { return getProperty(i); };
+    auto f = [this] (ndsize_t i) { return getProperty(i); };
     return getEntities<Property>(f,
             propertyCount(),
             filter);
@@ -273,7 +273,7 @@ vector<Section> Section::findSideways(const std::function<bool(Section)> &filter
 }
 
 
-std::ostream& nix::operator<<(ostream &out, const Section &ent) {
+std::ostream& operator<<(ostream &out, const Section &ent) {
     out << "Section: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";

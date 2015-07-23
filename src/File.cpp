@@ -44,7 +44,7 @@ bool File::deleteBlock(const Block &block) {
 
 std::vector<Block> File::blocks(const util::Filter<Block>::type &filter) const
 {
-    auto f = [this] (size_t i) { return getBlock(i); };
+    auto f = [this] (ndsize_t i) { return getBlock(i); };
     return getEntities<Block>(f,
                               blockCount(),
                               filter);
@@ -61,7 +61,7 @@ bool File::hasSection(const Section &section) const {
 
 std::vector<Section> File::sections(const util::Filter<Section>::type &filter) const
 {
-    auto f = [this] (size_t i) { return getSection(i); };
+    auto f = [this] (ndsize_t i) { return getSection(i); };
     return getEntities<Section>(f,
                                 sectionCount(),
                                 filter);

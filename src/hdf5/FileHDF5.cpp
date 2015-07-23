@@ -106,7 +106,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &name_or_id) const
 }
 
 
-shared_ptr<base::IBlock> FileHDF5::getBlock(size_t index) const {
+shared_ptr<base::IBlock> FileHDF5::getBlock(ndsize_t index) const {
     string name = data.objectName(index);
     return getBlock(name);
 }
@@ -161,7 +161,7 @@ shared_ptr<base::ISection> FileHDF5::getSection(const std::string &name_or_id) c
 }
 
 
-shared_ptr<base::ISection> FileHDF5::getSection(size_t index) const{
+shared_ptr<base::ISection> FileHDF5::getSection(ndsize_t index) const{
     string name = metadata.objectName(index);
     return getSection(name);
 }

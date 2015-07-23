@@ -59,7 +59,7 @@ public:
     std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISource> getSource(size_t index) const;
+    std::shared_ptr<base::ISource> getSource(ndsize_t index) const;
 
 
     ndsize_t sourceCount() const;

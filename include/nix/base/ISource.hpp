@@ -34,7 +34,7 @@ public:
     virtual std::shared_ptr<ISource> getSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISource> getSource(size_t index) const = 0;
+    virtual std::shared_ptr<ISource> getSource(ndsize_t index) const = 0;
 
 
     virtual ndsize_t sourceCount() const = 0;

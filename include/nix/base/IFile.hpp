@@ -57,7 +57,7 @@ public:
     virtual std::shared_ptr<IBlock> getBlock(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IBlock> getBlock(size_t index) const = 0;
+    virtual std::shared_ptr<IBlock> getBlock(ndsize_t index) const = 0;
 
 
     virtual std::shared_ptr<IBlock> createBlock(const std::string &name, const std::string &type) = 0;
@@ -75,7 +75,7 @@ public:
     virtual std::shared_ptr<ISection> getSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
+    virtual std::shared_ptr<ISection> getSection(ndsize_t index) const = 0;
 
 
     virtual ndsize_t sectionCount() const = 0;

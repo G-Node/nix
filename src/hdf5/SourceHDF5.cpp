@@ -56,7 +56,7 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
 }
 
 
-shared_ptr<ISource> SourceHDF5::getSource(size_t index) const {
+shared_ptr<ISource> SourceHDF5::getSource(ndsize_t index) const {
     boost::optional<Group> g = source_group();
     string name = g ? g->objectName(index) : "";
     return getSource(name);

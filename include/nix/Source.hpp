@@ -122,7 +122,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(size_t index) const {
+    Source getSource(ndsize_t index) const {
         return backend()->getSource(index);
     }
 

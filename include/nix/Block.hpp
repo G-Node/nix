@@ -176,7 +176,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(size_t index) const {
+    Source getSource(ndsize_t index) const {
         return backend()->getSource(index);
     }
 
@@ -299,7 +299,7 @@ public:
      *
      * @return The data array at the specified index.
      */
-    DataArray getDataArray(size_t index) const {
+    DataArray getDataArray(ndsize_t index) const {
         return backend()->getDataArray(index);
     }
 
@@ -446,7 +446,7 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(size_t index) const {
+    Tag getTag(ndsize_t index) const {
         return backend()->getTag(index);
     }
 
@@ -555,7 +555,7 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(size_t index) const {
+    MultiTag getMultiTag(ndsize_t index) const {
         return backend()->getMultiTag(index);
     }
 
