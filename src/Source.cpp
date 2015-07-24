@@ -108,7 +108,7 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 
 
-std::ostream& operator<<(ostream &out, const Source &ent) {
+std::ostream& nix::operator<<(ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
