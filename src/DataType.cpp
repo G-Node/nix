@@ -61,6 +61,9 @@ DataType string_to_data_type(const std::string& dtype) {
         {"uint32", DataType::UInt32},
         {"uint64", DataType::UInt64},
         {"string", DataType::String},
+        {"date", DataType::Date},
+        {"datetime", DataType::DateTime},
+        {"opaque", DataType::Opaque},
         {"nothing", DataType::Nothing}
     };
 
@@ -73,6 +76,21 @@ DataType string_to_data_type(const std::string& dtype) {
 
     return type_map[dtype_l];
 }
+
+
+bool data_type_is_numeric(DataType dtype) {
+    return (dtype == DataType::UInt8 ||
+            dtype == DataType::UInt16 ||
+            dtype == DataType::UInt32 ||
+            dtype == DataType::UInt64 ||
+            dtype == DataType::Int8 ||
+            dtype == DataType::Int16 ||
+            dtype == DataType::Int32 ||
+            dtype == DataType::Int64 ||
+            dtype == DataType::Float ||
+            dtype == DataType::Double);
+}
+
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
     out << data_type_to_string(dtype);

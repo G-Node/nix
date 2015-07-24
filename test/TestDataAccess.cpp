@@ -107,6 +107,22 @@ void TestDataAccess::setUp() {
     multi_tag = block.createMultiTag("multi_tag", "events", event_array);
     multi_tag.extents(extent_array);
     multi_tag.addReference(data_array);
+
+    alias_array = block.createDataArray("alias array", "event times", 
+                                        DataType::Double, NDSize({ 100 }));
+    vector<double> times(100);
+    for (size_t i = 0; i < 100; i++) {
+        times[i] = 1.3 * i;
+    }
+    alias_array.setData(times, NDSize({ 0 }));
+    alias_array.unit("ms");
+    alias_array.label("time");
+    aliasDim = alias_array.appendAliasRangeDimension();
+    vector<double> segment_time({4.5});
+    times_tag = block.createTag("stimulus on", "segment", vector<double>({4.5}));
+    times_tag.extent(vector<double>({100.0}));
+    times_tag.units(vector<string>({"ms"}));
+    times_tag.addReference(alias_array);
 }
 
 
@@ -236,6 +252,13 @@ void TestDataAccess::testRetrieveData() {
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
+
+    DataView times_view = util::retrieveData(times_tag, 0);
+    data_size = times_view.dataExtent();
+    vector<double> times(data_size.size());
+    times_view.getData(times);
+    CPPUNIT_ASSERT(data_size.size() == 1);
+    CPPUNIT_ASSERT(data_size[0] == 77);
 }
 
 void TestDataAccess::testTagFeatureData() {

@@ -13,7 +13,7 @@
 #include <nix/base/IDimensions.hpp>
 
 namespace nix {
-
+class DataArray;
 class Dimension;
 
 /**
@@ -464,6 +464,16 @@ public:
     RangeDimension();
 
     /**
+     * @brief Constructor that sets up the RangeDimension to use the values
+     * stored in the DataArray as ticks.
+     *
+     * This is **only** valid for DataArray that are 1D and contain numeric values!
+     *
+     * @param array   The DataArray.
+     */
+    RangeDimension(const DataArray &array);
+
+    /**
      * @brief Constructor that creates a new dimension from a shared pointer to
      * an implementation instance.
      *
@@ -489,7 +499,16 @@ public:
      * @param other     The dimension to copy.
      */
     RangeDimension(const RangeDimension &other);
-
+    
+    /**
+     *   @brief tells if the RangeDimension uses the contents of a linked DataArray for ticks, 
+     *  i.e. is an alias.
+     *  
+     * @return bool true, if RangeDimension is an alias, false otherwise. 
+     */
+    bool alias() const {
+        return backend()->alias();
+    }
     /**
      * @brief The actual dimension that is described by the dimension descriptor.
      *

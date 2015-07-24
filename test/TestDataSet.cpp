@@ -165,7 +165,6 @@ void TestDataSet::testChunkGuessing() {
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }
 
-
 void TestDataSet::testDataType() {
     static struct _type_info {
         std::string name;
@@ -182,12 +181,14 @@ void TestDataSet::testDataType() {
         {"uint64", nix::DataType::UInt64},
         {"float", nix::DataType::Float},
         {"double", nix::DataType::Double},
-        {"string", nix::DataType::String}
+        {"string", nix::DataType::String},
+        {"opaque", nix::DataType::Opaque}
     };
 
     const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+        std::cerr << _types[i].name << std::endl;
         hdf5::DataSet ds = h5group.createData(_types[i].name, _types[i].dtype, dims);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }
@@ -211,7 +212,9 @@ void TestDataSet::testDataTypeFromString() {
             {"uint64", nix::DataType::UInt64},
             {"float", nix::DataType::Float},
             {"double", nix::DataType::Double},
-            {"string", nix::DataType::String}
+            {"string", nix::DataType::String},
+            {"opaque", nix::DataType::Opaque},
+            {"nothing", nix::DataType::Nothing}
     };
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
@@ -225,6 +228,37 @@ void TestDataSet::testDataTypeFromString() {
         CPPUNIT_ASSERT_EQUAL(stream.str(), nix::data_type_to_string(dt));
     }
 }
+
+
+void TestDataSet::testDataTypeIsNumeric() {
+    static struct _type_info {
+        bool is_numeric;
+        nix::DataType dtype;
+    } _types[] = {
+            {false, nix::DataType::Bool},
+            {true, nix::DataType::Int8},
+            {true, nix::DataType::UInt8},
+            {true, nix::DataType::Int16},
+            {true, nix::DataType::UInt16},
+            {true, nix::DataType::Int32},
+            {true, nix::DataType::UInt32},
+            {true, nix::DataType::Int64},
+            {true, nix::DataType::UInt64},
+            {true, nix::DataType::Float},
+            {true, nix::DataType::Double},
+            {false, nix::DataType::String},
+            {false, nix::DataType::Nothing},
+            {false, nix::DataType::Date},
+            {false, nix::DataType::DateTime},
+            {false, nix::DataType::Opaque}
+    };
+
+    for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
+        bool is_numeric = nix::data_type_is_numeric(_types[i].dtype);
+        CPPUNIT_ASSERT_EQUAL(is_numeric, _types[i].is_numeric);
+    }
+}
+
 
 
 void TestDataSet::testBasic() {

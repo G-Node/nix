@@ -64,11 +64,12 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
 
 size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
     size_t index;
-    index = static_cast<size_t>(round(position));
     if (unit.length() > 0 && unit != "none") {
+        // TODO check here for the content
+        // convert unit and the go looking for it, see range dimension
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-
+    index = static_cast<size_t>(round(position));
     if (dimension.labels().size() > 0 && index > dimension.labels().size()) {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
     }
@@ -214,7 +215,7 @@ DataView retrieveData(const MultiTag &tag, size_t position_index, size_t referen
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
 
-    if (refs.size() == 0) {
+    if (refs.size() == 0) { // Do I need this?
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
     if (position_index >= positions.dataExtent()[0] ||

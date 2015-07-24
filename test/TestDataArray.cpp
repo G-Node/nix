@@ -32,6 +32,16 @@ void TestDataArray::setUp()
                                    "double",
                                    nix::DataType::Double,
                                    nix::NDSize({ 20, 20 }));
+    array3 = block.createDataArray("one_d",
+                                   "double",
+                                   nix::DataType::Double,
+                                   nix::NDSize({ 20 }));
+    std::vector<double> t;
+    for (size_t i = 0; i < 20; i++) 
+        t.push_back(1.3 * i);
+    array3.setData(nix::DataType::Double, t.data(), nix::NDSize({ 20 }), nix::NDSize({ 0 }));
+    array3.label("label");
+    array3.unit("Hz");
 }
 
 void TestDataArray::tearDown()
@@ -379,10 +389,8 @@ void TestDataArray::testDimension()
     for(size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
-    
     CPPUNIT_ASSERT_THROW(array2.appendRangeDimension(std::vector<double>{}), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array2.createRangeDimension(1, std::vector<double>{}), nix::InvalidDimension);
-
     dims.push_back(array2.createSampledDimension(1, samplingInterval));
     dims.push_back(array2.createSetDimension(2));
     dims.push_back(array2.createRangeDimension(3, ticks));
@@ -394,15 +402,14 @@ void TestDataArray::testDimension()
     nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
     nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
     nix::SetDimension dim_set = array1.appendSetDimension();
-
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(array2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
-
+    CPPUNIT_ASSERT(!dim_range.alias());
+    
     CPPUNIT_ASSERT(array2.dimensionCount() == 5);
-
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
     CPPUNIT_ASSERT(dims.size() == 1);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
@@ -421,17 +428,70 @@ void TestDataArray::testDimension()
     CPPUNIT_ASSERT(dims[2].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[4].dimensionType() == nix::DimensionType::Set);
-
     // since deleteDimension renumbers indices to be continuous we test that too
     array2.deleteDimension(5);
     array2.deleteDimension(4);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
     array2.deleteDimension(1);
-
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);
+}
+
+
+void TestDataArray::testAliasRangeDimension() {
+    nix::Dimension dim = array3.createAliasRangeDimension();
+    CPPUNIT_ASSERT(array3.dimensionCount() == 1);
+    CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array3.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
+    DataArray bool_array = block.createDataArray("string array", "string_array",
+                                                 nix::DataType::Bool,
+                                                 nix::NDSize({20}));
+    CPPUNIT_ASSERT_THROW(bool_array.createAliasRangeDimension(), nix::InvalidDimension);
+    nix::RangeDimension rd;
+    rd = dim;
+    CPPUNIT_ASSERT(rd.alias());
+
+    CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
+    rd.label("new_label");
+    CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
+    rd.label(none);
+    CPPUNIT_ASSERT(!rd.label() && !array3.label());
+
+    CPPUNIT_ASSERT((rd.unit() && array3.unit()) && (*rd.unit() == *array3.unit()));
+    rd.unit("ms");
+    CPPUNIT_ASSERT((rd.unit() && array3.unit()) && (*rd.unit() == *array3.unit()));
+    rd.unit(none);
+    CPPUNIT_ASSERT(!rd.unit() && !array3.unit());
+
+    std::vector<double> t = rd.ticks();
+    CPPUNIT_ASSERT(t.size() == array3.dataExtent().nelms());
+    t.clear();
+    t.resize(10);
+    for (size_t i = 0; i < 10; i++) {
+        t.push_back(0.2 * i);
+    }
+    rd.ticks(t);
+    CPPUNIT_ASSERT(t.size() == t.size());
+    CPPUNIT_ASSERT(t.size() == array3.dataExtent().nelms());
+    
+    DataArray int_array = block.createDataArray("int array", "int_array",
+                                                 nix::DataType::Int64,
+                                                 nix::NDSize({20}));
+    CPPUNIT_ASSERT_NO_THROW(int_array.createAliasRangeDimension());
+    dim = int_array.getDimension(1);
+    rd = dim;
+    CPPUNIT_ASSERT(rd.alias());
+    rd.ticks(t);
+    CPPUNIT_ASSERT(t.size() == t.size());
+    CPPUNIT_ASSERT(t.size() == int_array.dataExtent().nelms());
+    
+    std::vector<double> ticks_2 = rd.ticks();
+    CPPUNIT_ASSERT(t.size() == ticks_2.size());
 }
 
 

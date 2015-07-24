@@ -206,6 +206,12 @@ std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_
 }
 
 
+std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createAliasRangeDimension() {
+    Group g = createDimensionGroup(1);
+    return make_shared<RangeDimensionHDF5>(g, 1, *this);
+}
+
+
 std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(size_t index, double sampling_interval) {
     Group g = createDimensionGroup(index);
     return make_shared<SampledDimensionHDF5>(g, index, sampling_interval);

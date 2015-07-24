@@ -313,6 +313,18 @@ public:
         }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
+    
+    /**
+     * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
+     * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
+     * 
+     * @return The created RangeDimension
+     */
+    RangeDimension appendAliasRangeDimension() {
+        return createAliasRangeDimension();
+    }
+
 
     /**
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
@@ -356,6 +368,27 @@ public:
                                         "DataArray::createRangeDimension");
         }
         return backend()->createRangeDimension(id, ticks);
+    }
+
+    /**
+     * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * 
+     * @return The created dimension descriptor.
+     */
+    RangeDimension createAliasRangeDimension() {
+        if (this->dataExtent().size() > 1) {
+            throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (!nix::data_type_is_numeric(this->dataType())) {
+            throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (dimensionCount() > 0) {
+            throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        return backend()->createAliasRangeDimension();
     }
 
     /**
