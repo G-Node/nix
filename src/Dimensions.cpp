@@ -333,7 +333,6 @@ double RangeDimension::tickAt(const size_t index) const {
 
 
 size_t RangeDimension::indexOf(const double position) const {
-    size_t index;
     vector<double> ticks = this->ticks();
     if (position < *ticks.begin()) {
         return 0;
@@ -341,22 +340,7 @@ size_t RangeDimension::indexOf(const double position) const {
         return prev(ticks.end()) - ticks.begin();
     }
     vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position);
-    if (*low == position) {
-        return low - ticks.begin();
-    }
-    if (low != ticks.begin() && *low != position) {
-        double diff_low, diff_before;
-        diff_low = fabs(*low - position);
-        diff_before = fabs(*(std::prev(low)) - position);
-        if (diff_low < diff_before) {
-            index = low - ticks.begin();
-        } else {
-            index = low - ticks.begin() - 1;
-        }
-        return index;
-    } else {
-        return low - ticks.begin();
-    }
+    return low - ticks.begin();
 }
 
 

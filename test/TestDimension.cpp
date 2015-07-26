@@ -413,8 +413,8 @@ void TestDimension::testRangeDimIndexOf() {
     rd = d;
     CPPUNIT_ASSERT(rd.indexOf(-100.) == 0);
     CPPUNIT_ASSERT(rd.indexOf(-50.) == 1);
-    CPPUNIT_ASSERT(rd.indexOf(-70.) == 0);
-    CPPUNIT_ASSERT(rd.indexOf(5.0) == 2);
+    CPPUNIT_ASSERT(rd.indexOf(-70.) == 1);
+    CPPUNIT_ASSERT(rd.indexOf(5.0) == 3);
     CPPUNIT_ASSERT(rd.indexOf(257.28) == 4);
     CPPUNIT_ASSERT(rd.indexOf(-257.28) == 0);
 

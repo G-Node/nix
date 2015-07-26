@@ -142,9 +142,9 @@ void TestDataAccess::testPositionToIndexRangeDimension() {
     CPPUNIT_ASSERT(util::positionToIndex(0.001, scaled_unit, rangeDim) == 0);
     CPPUNIT_ASSERT(util::positionToIndex(0.008, scaled_unit, rangeDim) == 4);
     CPPUNIT_ASSERT(util::positionToIndex(3.4, unit, rangeDim) == 2);
-    CPPUNIT_ASSERT(util::positionToIndex(3.6, unit, rangeDim) == 2);
+    CPPUNIT_ASSERT(util::positionToIndex(3.6, unit, rangeDim) == 3);
     CPPUNIT_ASSERT(util::positionToIndex(4.0, unit, rangeDim) == 3);
-    CPPUNIT_ASSERT(util::positionToIndex(0.0036, scaled_unit, rangeDim) == 2);
+    CPPUNIT_ASSERT(util::positionToIndex(0.0036, scaled_unit, rangeDim) == 3);
 }
 
 
