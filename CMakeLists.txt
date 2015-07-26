@@ -64,6 +64,14 @@ find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesy
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
+########################################
+# Yaml-cpp
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+find_package(YamlCpp REQUIRED)
+include_directories(${YAMLCPP_INCLUDE_DIRS})
+set (LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
 
 ########################################
 # Doxygen
