@@ -32,7 +32,8 @@ NIXAPI enum class FileMode {
  * @brief NIX back-end implementations.
  */
 NIXAPI enum class Implementation {
-    Hdf5 = 0
+    Hdf5 = 0,
+    FileSys
 };
 
 
