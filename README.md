@@ -82,6 +82,22 @@ on the public [Docker Hub](https://hub.docker.com/).
 Further instructions on how to use the images are on the Docker repository. Further instructions for Docker can be found 
 [on their site](http://docs.docker.com/).
 
+Getting Started (MacOS X)
+-------------------------
+
+The easiest way to get NIX is via [homebrew](http://brew.sh). We provide a tap with the formula.
+Currently only using git master is support. Following commands should do the trick:
+
+```shell
+# tap into g-node's homebrew tap
+brew tap g-node/data
+
+# install nix including missing dependencies
+# replace install, with reinstall to upgrade
+# an existing installation
+brew install --HEAD nix
+```
+
 Getting Started (Windows)
 -------------------------
 
