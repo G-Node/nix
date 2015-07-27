@@ -629,7 +629,7 @@ public:
     /**
      * @brief Returns the index of the given position
      *
-     * Method will return the index closest to the given position  
+     * Method will return the index equal or larger than position
      * 
      * @param position    The position.
      *
