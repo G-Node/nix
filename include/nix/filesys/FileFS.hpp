@@ -1,13 +1,10 @@
-//
-// Created by jan on 7/25/15.
-//
-
-#ifndef NIX_FILEFS_H
-#define NIX_FILEFS_H
+#ifndef NIX_FILE_FS_H
+#define NIX_FILE_FS_H
 
 #include <nix/base/IFile.hpp>
 #include <string>
 #include <memory>
+#include <boost/filesystem.hpp>
 
 namespace nix {
 namespace filesys {
@@ -15,14 +12,19 @@ namespace filesys {
 class FileFS : public base::IFile {
 
 private:
+    boost::filesystem::path root_path, data_path, metadata_path;
+    unsigned int file_mode;
 
+    void open_or_create();
 
 public:
-    FileFS(std::string &name, const FileMode mode = FileMode::ReadWrite);
+    FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
+
+
 
     ndsize_t blockCount() const;
 
-
+    /*
     bool hasBlock(const std::string &name_or_id) const;
 
 
@@ -96,13 +98,13 @@ public:
     bool isOpen() const;
 
 
-    bool operator==(const FileHDF5 &other) const;
+    bool operator==(const FileFS &other) const;
 
 
-    bool operator!=(const FileHDF5 &other) const;
+    bool operator!=(const FileFS &other) const;
 
 
-    virtual ~FileHDF5();
+    virtual ~FileFS();
 
     private:
 
@@ -113,12 +115,12 @@ public:
 
     // check if the header of the filesys is valid
     bool checkHeader() const;
-
+*/
+};
 
 } // namespace filesys
 } // namespace nix
 
 
-};
 
-#endif //NIX_FILEFS_H
+#endif //NIX_FILE_FS_H
