@@ -202,7 +202,7 @@ namespace filesys {
 
 
     std::string FileFS::location() const {
-        return "";
+        return boost::filesystem::absolute(this->root_path).string();
     }
 
 
