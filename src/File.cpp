@@ -9,7 +9,7 @@
 #include <nix/File.hpp>
 #include <nix/util/util.hpp>
 #include <nix/hdf5/FileHDF5.hpp>
-
+#include <nix/filesys/FileFS.hpp>
 #include <nix/valid/validate.hpp>
 
 using namespace std;
@@ -20,6 +20,8 @@ namespace nix {
 File File::open(const std::string &name, FileMode mode, Implementation impl) {
     if (impl == Implementation::Hdf5) {
         return File(std::make_shared<hdf5::FileHDF5>(name, mode));
+    } else if (impl == Implementation::FileSys) {
+        return File(std::make_shared<filesys::FileFS>(name, mode));
     } else {
         throw runtime_error("Unknown implementation!");
     }
