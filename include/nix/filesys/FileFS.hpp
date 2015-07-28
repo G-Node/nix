@@ -24,7 +24,7 @@ public:
 
     ndsize_t blockCount() const;
 
-    /*
+
     bool hasBlock(const std::string &name_or_id) const;
 
 
@@ -115,7 +115,7 @@ public:
 
     // check if the header of the filesys is valid
     bool checkHeader() const;
-*/
+
 };
 
 } // namespace filesys
