@@ -5,6 +5,8 @@
 #include <string>
 #include <memory>
 #include <boost/filesystem.hpp>
+#include <yaml-cpp/yaml.h>
+
 
 namespace nix {
 namespace filesys {
@@ -14,6 +16,7 @@ class FileFS : public base::IFile {
 private:
     boost::filesystem::path root_path, data_path, metadata_path;
     unsigned int file_mode;
+    YAML::Node attributes;
 
     void open_or_create();
 
