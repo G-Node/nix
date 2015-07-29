@@ -93,15 +93,13 @@ namespace filesys {
 
             ofstream ofs;
             ofs.open(this->location() + "/.attributes", std::ofstream::out | std::ofstream::app);
-            //YAML::Node node;
-            //node["created_at"] = util::timeToStr(t);
-            //n["updated_at"] = util::timeToStr(t);
-            //n["version"] = "0.9";
+            YAML::Node node;
+            node["created_at"] = util::timeToStr(t);
+            node["updated_at"] = util::timeToStr(t);
+            node["format"] = FILE_FORMAT;
+            node["version"] = FILE_VERSION;
             if (ofs.is_open()) {
-                ofs << "created_at: " << util::timeToStr(t) << "\n";
-                ofs << "updated_at: " << util::timeToStr(t) << "\n";
-                ofs << "format: " << FILE_FORMAT << "\n";
-                ofs << "version: " << FILE_VERSION[0] << ", " << FILE_VERSION[1] << ", " << FILE_FORMAT[2] << "\n";
+                ofs << node << endl;
             } else
                 cerr << "file not open" << endl;
             ofs.close();
@@ -113,7 +111,7 @@ namespace filesys {
                 boost::filesystem::create_directories(this->metadata_path);
             }
         }
-        //this->attributes = YAML::Load(this->location() + ".attributes");
+        this->attributes = YAML::Load(this->location() + ".attributes");
     }
 
 
