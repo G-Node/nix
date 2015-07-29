@@ -5,9 +5,11 @@
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/util/util.hpp>
+
 #include <iostream>
+#include <fstream>
 #include "../../include/nix/NDSize.hpp"
-#include "../../../../../../../usr/local/include/boost/filesystem/operations.hpp"
+//#include "../../../../../../../usr/local/include/boost/filesystem/operations.hpp"
 
 // #include <nix/filesys/BlockFS.hpp>
 // #include <nix/filesys/SectionFS.hpp>
@@ -86,6 +88,23 @@ namespace filesys {
             boost::filesystem::create_directory(this->root_path);
             boost::filesystem::create_directories(this->data_path);
             boost::filesystem::create_directories(this->metadata_path);
+
+            time_t t = time(NULL);
+
+            ofstream ofs;
+            ofs.open(this->location() + "/.attributes", std::ofstream::out | std::ofstream::app);
+            //YAML::Node node;
+            //node["created_at"] = util::timeToStr(t);
+            //n["updated_at"] = util::timeToStr(t);
+            //n["version"] = "0.9";
+            if (ofs.is_open()) {
+                ofs << "created_at: " << util::timeToStr(t) << "\n";
+                ofs << "updated_at: " << util::timeToStr(t) << "\n";
+                ofs << "format: " << FILE_FORMAT << "\n";
+                ofs << "version: " << FILE_VERSION[0] << ", " << FILE_VERSION[1] << ", " << FILE_FORMAT[2] << "\n";
+            } else
+                cerr << "file not open" << endl;
+            ofs.close();
         } else {
             if (!boost::filesystem::exists(this->data_path)) {
                 boost::filesystem::create_directories(this->data_path);
@@ -94,6 +113,7 @@ namespace filesys {
                 boost::filesystem::create_directories(this->metadata_path);
             }
         }
+        //this->attributes = YAML::Load(this->location() + ".attributes");
     }
 
 
