@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix.hpp>
-#include <nix/file/FilesystemAttribute.hpp>
+#include "nix/file/AttributesFS.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -25,11 +25,11 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestFileSysAttributes : public CPPUNIT_NS::TestFixture {
+class TestAttributesFS : public CPPUNIT_NS::TestFixture {
 private:
     boost::filesystem::path location;
 
-    CPPUNIT_TEST_SUITE(TestFileSysAttributes);
+    CPPUNIT_TEST_SUITE(TestAttributesFS);
     CPPUNIT_TEST(testOpenCreate);
     CPPUNIT_TEST_SUITE_END ();
 

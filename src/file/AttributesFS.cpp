@@ -2,16 +2,16 @@
 // Created by jan on 7/30/15.
 //
 
-#include <nix/file/FilesystemAttribute.hpp>
+#include "nix/file/AttributesFS.hpp"
 
 using namespace nix::file;
 using namespace boost::filesystem;
 using namespace YAML;
 
-FilesystemAttribute::FilesystemAttribute() { }
+AttributesFS::AttributesFS() { }
 
 
-FilesystemAttribute::FilesystemAttribute(const std::string &file_path) {
+AttributesFS::AttributesFS(const std::string &file_path) {
     path temp(file_path.c_str());
     if (exists(temp)) {
         this->loc = temp;
@@ -20,7 +20,7 @@ FilesystemAttribute::FilesystemAttribute(const std::string &file_path) {
 }
 
 
-void FilesystemAttribute::open_or_create() {
+void AttributesFS::open_or_create() {
     path attr(".attributes");
     path temp = this->location() /  attr;
     if (!exists(temp)) {
@@ -32,6 +32,6 @@ void FilesystemAttribute::open_or_create() {
 }
 
 
-path FilesystemAttribute::location() const {
+path AttributesFS::location() const {
     return this->loc;
 }
