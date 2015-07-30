@@ -13,7 +13,7 @@
 #include <nix/Platform.hpp>
 
 namespace nix {
-namespace filesys {
+namespace file {
 
 class FilesystemAttribute {
 
@@ -27,7 +27,7 @@ public:
     FilesystemAttribute();
 
     FilesystemAttribute(const std::string &file_path);
-    // FilesystemAttribute(const nix::filesys::FilesystemAttribute &other);
+    // FilesystemAttribute(const nix::file::FilesystemAttribute &other);
 
     boost::filesystem::path location() const;
 
@@ -49,7 +49,7 @@ template <typename T> bool FilesystemAttribute::write(const std::string &name, c
     return true;
 }
 
-} // namespace filesys
+} // namespace file
 } // namespace nix
 
 #endif //NIX_ATTRIBUTE_HPP

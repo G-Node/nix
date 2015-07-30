@@ -6,10 +6,10 @@
 #include <memory>
 #include <boost/filesystem.hpp>
 #include <yaml-cpp/yaml.h>
-#include <nix/filesys/FilesystemAttribute.hpp>
+#include <nix/file/FilesystemAttribute.hpp>
 
 namespace nix {
-namespace filesys {
+namespace file {
 
 class FileFS : public base::IFile {
 
@@ -64,7 +64,7 @@ public:
     bool deleteSection(const std::string &name_or_id);
 
     //--------------------------------------------------
-    // Methods for filesys attribute access.
+    // Methods for file attribute access.
     //--------------------------------------------------
 
 
@@ -116,12 +116,12 @@ public:
     // check for existence
     bool fileExists(const std::string &name) const;
 
-    // check if the header of the filesys is valid
+    // check if the header of the file is valid
     bool checkHeader() const;
 
 };
 
-} // namespace filesys
+} // namespace file
 } // namespace nix
 
 

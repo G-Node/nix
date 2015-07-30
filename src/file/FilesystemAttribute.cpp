@@ -2,9 +2,9 @@
 // Created by jan on 7/30/15.
 //
 
-#include <nix/filesys/FilesystemAttribute.hpp>
+#include <nix/file/FilesystemAttribute.hpp>
 
-using namespace nix::filesys;
+using namespace nix::file;
 using namespace boost::filesystem;
 using namespace YAML;
 
