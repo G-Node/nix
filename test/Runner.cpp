@@ -32,6 +32,7 @@
 #include "TestValidate.hpp"
 #include "TestReadOnlyHDF5.hpp"
 #include "TestGroupHDF5.hpp"
+#include "TestFileSysAttributes.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -58,9 +59,14 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
+<<<<<<< HEAD
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
 
+=======
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnly);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileSysAttributes);
+>>>>>>> [file backend] add test stub for FileSysAttributes
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
