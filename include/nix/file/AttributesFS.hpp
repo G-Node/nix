@@ -15,7 +15,7 @@
 namespace nix {
 namespace file {
 
-class FilesystemAttribute {
+class AttributesFS {
 
 private:
     YAML::Node node;
@@ -24,10 +24,10 @@ private:
     void open_or_create();
 
 public:
-    FilesystemAttribute();
+    AttributesFS();
 
-    FilesystemAttribute(const std::string &file_path);
-    // FilesystemAttribute(const nix::file::FilesystemAttribute &other);
+    AttributesFS(const std::string &file_path);
+    // AttributesFS(const nix::file::AttributesFS &other);
 
     boost::filesystem::path location() const;
 
@@ -37,13 +37,13 @@ public:
 
 };
 
-template <typename T> void FilesystemAttribute::read(const std::string &name, T &value) {
+template <typename T> void AttributesFS::read(const std::string &name, T &value) {
     open_or_create();
 
     return 0;
 }
 
-template <typename T> bool FilesystemAttribute::write(const std::string &name, const T &value) {
+template <typename T> bool AttributesFS::write(const std::string &name, const T &value) {
     this->open_or_create();
 
     return true;
