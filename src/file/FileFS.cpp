@@ -1,23 +1,16 @@
-//
-// Created by jan on 7/26/15.
-//
-#include <nix/filesys/FileFS.hpp>
+#include <nix/file/FileFS.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/util/util.hpp>
 
 #include <iostream>
 #include <fstream>
-#include "../../include/nix/NDSize.hpp"
-//#include "../../../../../../../usr/local/include/boost/filesystem/operations.hpp"
 
-// #include <nix/filesys/BlockFS.hpp>
-// #include <nix/filesys/SectionFS.hpp>
 using namespace std;
 using namespace nix;
 
 namespace nix {
-namespace filesys {
+namespace file {
 
     // Format definition
 #define FILE_VERSION std::vector<int>{1, 0, 0}
@@ -205,7 +198,7 @@ namespace filesys {
     }
 
     //--------------------------------------------------
-    // Methods for filesys attribute access.
+    // Methods for file attribute access.
     //--------------------------------------------------
 
 
@@ -276,5 +269,5 @@ namespace filesys {
 
     }
 
-} // namspace filesys
+} // namspace file
 } // namespace nix
