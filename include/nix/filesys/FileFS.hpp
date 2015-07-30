@@ -1,12 +1,12 @@
-#ifndef NIX_FILE_FS_H
-#define NIX_FILE_FS_H
+#ifndef NIX_FILE_FS_HPP
+#define NIX_FILE_FS_HPP
 
 #include <nix/base/IFile.hpp>
 #include <string>
 #include <memory>
 #include <boost/filesystem.hpp>
 #include <yaml-cpp/yaml.h>
-
+#include <nix/filesys/FilesystemAttribute.hpp>
 
 namespace nix {
 namespace filesys {
@@ -17,12 +17,12 @@ private:
     boost::filesystem::path root_path, data_path, metadata_path;
     unsigned int file_mode;
     YAML::Node attributes;
+    FilesystemAttribute attribute;
 
     void open_or_create();
 
 public:
     FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
-
 
 
     ndsize_t blockCount() const;

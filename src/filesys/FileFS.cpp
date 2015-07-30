@@ -50,6 +50,7 @@ namespace filesys {
         this->file_mode = map_file_mode(mode);
         this->root_path = p;
         this->open_or_create();
+        this->attribute = FilesystemAttribute(this->location());
         /*
          if (h5mode & H5F_ACC_TRUNC) {
              hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
