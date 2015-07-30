@@ -31,6 +31,7 @@
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
 #include "TestReadOnly.hpp"
+#include "TestFileSysAttributes.hpp"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -67,6 +68,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnly);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileSysAttributes);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
