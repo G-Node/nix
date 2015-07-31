@@ -23,6 +23,8 @@ private:
 
     void open_or_create();
 
+    void write_file();
+
 public:
     AttributesFS();
 
