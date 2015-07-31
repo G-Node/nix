@@ -56,6 +56,10 @@ void TestAttributesFS::testReadField() {
     float float_value = 3.14;
     float float_return;
 
+    string vector_field = "vector_field";
+    vector<int> vector_values{1, 2, 3, 4, 5};
+    vector<int> vector_return;
+
     file::AttributesFS attrs(this->location.string());
     attrs.set(string_field, string_value);
     attrs.get(string_field, string_return);
@@ -64,4 +68,8 @@ void TestAttributesFS::testReadField() {
     attrs.set(float_field, float_value);
     attrs.get(float_field, float_return);
     CPPUNIT_ASSERT(float_value == float_return);
+
+    attrs.set(vector_field, vector_values);
+    attrs.get(vector_field, vector_return);
+    CPPUNIT_ASSERT(vector_values == vector_return);
 }
