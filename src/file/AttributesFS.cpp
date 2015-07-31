@@ -40,7 +40,7 @@ bool AttributesFS::hasField(const std::string &name) {
 
 void AttributesFS::write_file() {
     std::ofstream ofs;
-    ofs.open(this->location().string() + "/.attributes", std::ofstream::app);
+    ofs.open(this->location().string() + "/.attributes", std::ofstream::trunc);
     if(ofs.is_open())
         ofs << this->node << std::endl;
     else
