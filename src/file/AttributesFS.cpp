@@ -32,6 +32,12 @@ void AttributesFS::open_or_create() {
 }
 
 
+bool AttributesFS::hasField(const std::string &name) {
+    this->open_or_create();
+    return (this->node.size() > 0) && (this->node[name]);
+}
+
+
 path AttributesFS::location() const {
     return this->loc;
 }
