@@ -29,3 +29,10 @@ void TestAttributesFS::testOpenCreate() {
     file::AttributesFS attrs(this->location.string());
     CPPUNIT_ASSERT(boost::filesystem::exists(this->location / p));
 }
+
+void TestAttributesFS::testHasField() {
+    file::AttributesFS attrs(this->location.string());
+    CPPUNIT_ASSERT(!attrs.hasField("format"));
+    attrs.write("format", "nix");
+    CPPUNIT_ASSERT(attrs.hasField("format"));
+}
