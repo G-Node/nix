@@ -33,6 +33,7 @@ private:
     CPPUNIT_TEST(testOpenCreate);
     CPPUNIT_TEST(testHasField);
     CPPUNIT_TEST(testWriteField);
+    CPPUNIT_TEST(testReadField);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -46,5 +47,7 @@ public:
     void testHasField();
 
     void testWriteField();
+
+    void testReadField();
 
 };

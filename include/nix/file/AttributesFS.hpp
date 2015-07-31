@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include <nix/Platform.hpp>
+#include <nix/NDSize.hpp>
 
 namespace nix {
 namespace file {
@@ -45,12 +46,10 @@ public:
 };
 
 template <typename T> void AttributesFS::read(const std::string &name, T &value) {
-    T result;
     this->open_or_create();
     if (hasField(name)) {
-        return this->node[name].as<T>();
+        value = this->node[name].as<T>();
     }
-    return 0;
 }
 
 template <typename T> void AttributesFS::write(const std::string &name, const T &value) {
