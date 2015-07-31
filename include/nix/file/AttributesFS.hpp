@@ -31,22 +31,27 @@ public:
 
     boost::filesystem::path location() const;
 
-    template <typename T> void read(const std::string &name, T &value);
+    bool hasField(const std::string &name);
 
+    template <typename T> void read(const std::string &name, T &value);
 
     template <typename T> void write(const std::string &name, const T &value);
 };
 
 template <typename T> void AttributesFS::read(const std::string &name, T &value) {
-    open_or_create();
-
+    T result;
+    this->open_or_create();
+    if (hasField(name)) {
+        return this->node[name].as<T>();
+    }
     return 0;
 }
 
-template <typename T> bool AttributesFS::write(const std::string &name, const T &value) {
+template <typename T> void AttributesFS::write(const std::string &name, const T &value) {
     this->open_or_create();
-
-    return true;
+    this->node[name] = value;
+    this->write_file();
+    std::cerr << this->node << std::endl;
 }
 
 } // namespace file
