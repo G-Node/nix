@@ -32,6 +32,7 @@ private:
     CPPUNIT_TEST_SUITE(TestAttributesFS);
     CPPUNIT_TEST(testOpenCreate);
     CPPUNIT_TEST(testHasField);
+    CPPUNIT_TEST(testWriteField);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -43,4 +44,7 @@ public:
     void testOpenCreate();
 
     void testHasField();
+
+    void testWriteField();
+
 };

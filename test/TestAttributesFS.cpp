@@ -36,3 +36,13 @@ void TestAttributesFS::testHasField() {
     attrs.write("format", "nix");
     CPPUNIT_ASSERT(attrs.hasField("format"));
 }
+
+void TestAttributesFS::testWriteField() {
+    file::AttributesFS attrs(this->location.string());
+    attrs.write("format", "nix");
+    CPPUNIT_ASSERT(attrs.attributeCount() == 1);
+    attrs.write("created_at", "2015-01-01");
+    CPPUNIT_ASSERT(attrs.attributeCount() == 2);
+    attrs.remove("created_at");
+    CPPUNIT_ASSERT(attrs.attributeCount() == 1);
+}
