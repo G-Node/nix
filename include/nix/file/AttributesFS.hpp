@@ -35,6 +35,8 @@ public:
 
     bool hasField(const std::string &name);
 
+    void remove(const std::string &name);
+
     template <typename T> void read(const std::string &name, T &value);
 
     template <typename T> void write(const std::string &name, const T &value);
