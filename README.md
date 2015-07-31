@@ -86,14 +86,14 @@ Getting Started (MacOS X)
 -------------------------
 
 The easiest way to get NIX is via [homebrew](http://brew.sh). We provide a tap with the formula.
-Currently only using git master is support. Following commands should do the trick:
+Currently only using git master is supported. The following commands should do the trick:
 
 ```shell
 # tap into g-node's homebrew tap
 brew tap g-node/data
 
 # install nix including missing dependencies
-# replace install, with reinstall to upgrade
+# replace 'install', with 'reinstall' to upgrade
 # an existing installation
 brew install --HEAD nix
 ```
