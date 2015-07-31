@@ -55,9 +55,11 @@ template <typename T> void AttributesFS::read(const std::string &name, T &value)
 
 template <typename T> void AttributesFS::write(const std::string &name, const T &value) {
     this->open_or_create();
+    if (this->node[name]) {
+        this->node.remove(name);
+    }
     this->node[name] = value;
     this->write_file();
-    std::cerr << this->node << std::endl;
 }
 
 } // namespace file
