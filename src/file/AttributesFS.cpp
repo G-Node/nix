@@ -32,13 +32,13 @@ void AttributesFS::open_or_create() {
 }
 
 
-bool AttributesFS::hasField(const std::string &name) {
+bool AttributesFS::has(const std::string &name) {
     this->open_or_create();
     return (this->node.size() > 0) && (this->node[name]);
 }
 
 
-void AttributesFS::write_file() {
+void AttributesFS::flush() {
     std::ofstream ofs;
     ofs.open(this->location().string() + "/.attributes", std::ofstream::trunc);
     if(ofs.is_open())
@@ -62,5 +62,5 @@ void AttributesFS::remove(const std::string &name) {
     if (this->node[name]) {
         this->node.remove(name);
     }
-    this->write_file();
+    this->flush();
 }
