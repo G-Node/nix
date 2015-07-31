@@ -32,16 +32,16 @@ void TestAttributesFS::testOpenCreate() {
 
 void TestAttributesFS::testHasField() {
     file::AttributesFS attrs(this->location.string());
-    CPPUNIT_ASSERT(!attrs.hasField("format"));
-    attrs.write("format", "nix");
-    CPPUNIT_ASSERT(attrs.hasField("format"));
+    CPPUNIT_ASSERT(!attrs.has("format"));
+    attrs.set("format", "nix");
+    CPPUNIT_ASSERT(attrs.has("format"));
 }
 
 void TestAttributesFS::testWriteField() {
     file::AttributesFS attrs(this->location.string());
-    attrs.write("format", "nix");
+    attrs.set("format", "nix");
     CPPUNIT_ASSERT(attrs.attributeCount() == 1);
-    attrs.write("created_at", "2015-01-01");
+    attrs.set("created_at", "2015-01-01");
     CPPUNIT_ASSERT(attrs.attributeCount() == 2);
     attrs.remove("created_at");
     CPPUNIT_ASSERT(attrs.attributeCount() == 1);
@@ -57,11 +57,11 @@ void TestAttributesFS::testReadField() {
     float float_return;
 
     file::AttributesFS attrs(this->location.string());
-    attrs.write(string_field, string_value);
-    attrs.read(string_field, string_return);
+    attrs.set(string_field, string_value);
+    attrs.get(string_field, string_return);
     CPPUNIT_ASSERT(string_value == string_return);
 
-    attrs.write(float_field, float_value);
-    attrs.read(float_field, float_return);
+    attrs.set(float_field, float_value);
+    attrs.get(float_field, float_return);
     CPPUNIT_ASSERT(float_value == float_return);
 }

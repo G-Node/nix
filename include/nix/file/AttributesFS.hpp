@@ -24,7 +24,7 @@ private:
 
     void open_or_create();
 
-    void write_file();
+    void flush();
 
 public:
     AttributesFS();
@@ -34,31 +34,31 @@ public:
 
     boost::filesystem::path location() const;
 
-    bool hasField(const std::string &name);
+    bool has(const std::string &name);
 
     void remove(const std::string &name);
 
-    template <typename T> void read(const std::string &name, T &value);
+    template <typename T> void get(const std::string &name, T &value);
 
-    template <typename T> void write(const std::string &name, const T &value);
+    template <typename T> void set(const std::string &name, const T &value);
 
     ndsize_t attributeCount();
 };
 
-template <typename T> void AttributesFS::read(const std::string &name, T &value) {
+template <typename T> void AttributesFS::get(const std::string &name, T &value) {
     this->open_or_create();
-    if (hasField(name)) {
+    if (has(name)) {
         value = this->node[name].as<T>();
     }
 }
 
-template <typename T> void AttributesFS::write(const std::string &name, const T &value) {
+template <typename T> void AttributesFS::set(const std::string &name, const T &value) {
     this->open_or_create();
     if (this->node[name]) {
         this->node.remove(name);
     }
     this->node[name] = value;
-    this->write_file();
+    this->flush();
 }
 
 } // namespace file
