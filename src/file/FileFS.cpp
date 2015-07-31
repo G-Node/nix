@@ -3,9 +3,6 @@
 #include <nix/hdf5/SectionHDF5.hpp>
 #include <nix/util/util.hpp>
 
-#include <iostream>
-#include <fstream>
-
 using namespace std;
 using namespace nix;
 
@@ -33,8 +30,7 @@ namespace file {
     }
 
 
-    FileFS::FileFS(const string &name, FileMode mode)
-    {
+    FileFS::FileFS(const string &name, FileMode mode) {
         boost::filesystem::path p(name.c_str());
         if (!boost::filesystem::exists(p)) {
             mode = FileMode::Overwrite;
@@ -43,31 +39,12 @@ namespace file {
         this->file_mode = map_file_mode(mode);
         this->root_path = p;
         this->open_or_create();
-        this->attribute = AttributesFS(this->location());
-        /*
-         if (h5mode & H5F_ACC_TRUNC) {
-             hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-         } else {
-             hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
-         }
+        setCreatedAt();
+        setUpdatedAt();
 
-         if (!H5Iis_valid(hid)) {
-             throw H5Exception("Could not open/create file");
-         }
-
-         root = Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-         root.check("Could not root group");
-
-         metadata = root.openGroup("metadata");
-         data = root.openGroup("data");
-
-         setCreatedAt();
-         setUpdatedAt();
-
-         if (!checkHeader()) {
-             throw std::runtime_error("Invalid file header: either file format or file version not correct");
-         }
-         */
+        if (!checkHeader()) {
+            throw std::runtime_error("Invalid file header: either file format or file version not correct");
+        }
     }
 
     void FileFS::open_or_create() {
@@ -77,26 +54,10 @@ namespace file {
 
         this->data_path = this->root_path / data;
         this->metadata_path = this->root_path / metadata;
-
         if (!boost::filesystem::exists(this->root_path)) {
             boost::filesystem::create_directory(this->root_path);
             boost::filesystem::create_directories(this->data_path);
             boost::filesystem::create_directories(this->metadata_path);
-
-            time_t t = time(NULL);
-
-            ofstream ofs;
-            ofs.open(this->location() + "/.attributes", std::ofstream::out | std::ofstream::app);
-            YAML::Node node;
-            node["created_at"] = util::timeToStr(t);
-            node["updated_at"] = util::timeToStr(t);
-            node["format"] = FILE_FORMAT;
-            node["version"] = FILE_VERSION;
-            if (ofs.is_open()) {
-                ofs << node << endl;
-            } else
-                cerr << "file not open" << endl;
-            ofs.close();
         } else {
             if (!boost::filesystem::exists(this->data_path)) {
                 boost::filesystem::create_directories(this->data_path);
@@ -105,7 +66,7 @@ namespace file {
                 boost::filesystem::create_directories(this->metadata_path);
             }
         }
-        this->attributes = YAML::Load(this->location() + ".attributes");
+        this->attributes = AttributesFS(this->location());
     }
 
 
@@ -229,22 +190,29 @@ namespace file {
 
 
     void FileFS::setUpdatedAt(){
-
+        if (!this->attributes.has("updated_at")) {
+            time_t t = time(NULL);
+            this->attributes.set("updated_at", util::timeToStr(t));
+        }
     }
 
 
     void FileFS::forceUpdatedAt() {
-
+        time_t t = time(NULL);
+        this->attributes.set("updated_at", util::timeToStr(t));
     }
 
 
     void FileFS::setCreatedAt() {
-
+        if (!this->attributes.has("created_at")) {
+            time_t t = time(NULL);
+            this->attributes.set("created_at", util::timeToStr(t));
+        }
     }
 
 
     void FileFS::forceCreatedAt(time_t t) {
-
+        this->attributes.set("created_at", util::timeToStr(t));
     }
 
 
@@ -269,5 +237,30 @@ namespace file {
 
     }
 
-} // namspace file
+bool FileFS::checkHeader() {
+    bool check = true;
+    vector<int> version;
+    string str;
+    // check format
+    if (this->attributes.has("format")) {
+        this->attributes.get("format", str);
+        if (str != FILE_FORMAT) {
+            check = false;
+        }
+    } else {
+        this->attributes.set("format", FILE_FORMAT);
+    }
+    // check version
+    if (this->attributes.has("version")) {
+        this->attributes.get("version", version);
+        if (version != FILE_VERSION) {
+            check = false;
+        }
+    } else {
+        this->attributes.set("version", FILE_VERSION);
+    }
+    return check;
+}
+
+} // namespace file
 } // namespace nix
