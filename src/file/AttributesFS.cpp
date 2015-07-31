@@ -51,6 +51,12 @@ void AttributesFS::write_file() {
 path AttributesFS::location() const {
     return this->loc;
 }
+
+nix::ndsize_t AttributesFS::attributeCount() {
+    this->open_or_create();
+    return this->node.size();
+}
+
 void AttributesFS::remove(const std::string &name) {
     this->open_or_create();
     if (this->node[name]) {

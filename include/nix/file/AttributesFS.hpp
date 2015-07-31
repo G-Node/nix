@@ -40,6 +40,8 @@ public:
     template <typename T> void read(const std::string &name, T &value);
 
     template <typename T> void write(const std::string &name, const T &value);
+
+    ndsize_t attributeCount();
 };
 
 template <typename T> void AttributesFS::read(const std::string &name, T &value) {
