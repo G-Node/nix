@@ -28,7 +28,7 @@ void AttributesFS::open_or_create() {
         ofs.open(this->location().string() + "/.attributes", std::ofstream::out | std::ofstream::app);
         ofs.close();
     }
-    this->node = Load(this->location().string() + "/.attributes");
+    this->node = LoadFile(this->location().string() + "/.attributes");
 }
 
 
