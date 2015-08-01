@@ -4,9 +4,15 @@
 
 #include "nix/file/AttributesFS.hpp"
 
+
 using namespace nix::file;
 using namespace boost::filesystem;
 using namespace YAML;
+
+namespace nix {
+namespace file {
+
+#define ATTRIBUTES_FILE std::string("attributes")
 
 AttributesFS::AttributesFS() { }
 
@@ -16,19 +22,19 @@ AttributesFS::AttributesFS(const std::string &file_path) {
     if (exists(temp)) {
         this->loc = temp;
         this->open_or_create();
-   }
+    }
 }
 
 
 void AttributesFS::open_or_create() {
-    path attr(".attributes");
-    path temp = this->location() /  attr;
+    path attr(ATTRIBUTES_FILE);
+    path temp = this->location() / attr;
     if (!exists(temp)) {
         std::ofstream ofs;
-        ofs.open(this->location().string() + "/.attributes", std::ofstream::out | std::ofstream::app);
+        ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
         ofs.close();
     }
-    this->node = LoadFile(this->location().string() + "/.attributes");
+    this->node = LoadFile(this->location().string() + "/" + ATTRIBUTES_FILE);
 }
 
 
@@ -40,8 +46,8 @@ bool AttributesFS::has(const std::string &name) {
 
 void AttributesFS::flush() {
     std::ofstream ofs;
-    ofs.open(this->location().string() + "/.attributes", std::ofstream::trunc);
-    if(ofs.is_open())
+    ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::trunc);
+    if (ofs.is_open())
         ofs << this->node << std::endl;
     else
         std::cerr << "Failure!!!" << std::endl;
@@ -64,3 +70,6 @@ void AttributesFS::remove(const std::string &name) {
     }
     this->flush();
 }
+
+} //namespace file
+} //namespace nix
