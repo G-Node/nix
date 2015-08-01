@@ -15,7 +15,7 @@ class FileFS : public base::IFile {
 private:
     boost::filesystem::path root_path, data_path, metadata_path;
     unsigned int file_mode;
-    AttributesFS attributes;
+    mutable AttributesFS attributes;
 
     void open_or_create();
 
