@@ -39,10 +39,10 @@ FileFS::FileFS(const string &name, FileMode mode) {
     this->file_mode = map_file_mode(mode);
     this->root_path = p;
     this->open_or_create();
-    setCreatedAt();
-    setUpdatedAt();
+    this->setCreatedAt();
+    this->setUpdatedAt();
 
-    if (!checkHeader()) {
+    if (!this->checkHeader()) {
         throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
@@ -165,12 +165,15 @@ bool FileFS::deleteSection(const std::string &name_or_id) {
 
 std::vector<int> FileFS::version() const {
     vector<int> version;
+    this->attributes.get("version", version);
     return  version;
 }
 
 
 std::string FileFS::format() const {
-    return "nix";
+    string format;
+    this->attributes.get("format", format);
+    return format;
 }
 
 
@@ -180,12 +183,16 @@ std::string FileFS::location() const {
 
 
 time_t FileFS::createdAt() const {
-    return util::strToTime("00:00.00");
+    string temp_t;
+    this->attributes.get("created_at", temp_t);
+    return util::strToTime(temp_t);
 }
 
 
 time_t FileFS::updatedAt() const {
-    return util::strToTime("00:00.00");
+    string temp_t;
+    this->attributes.get("updated_at", temp_t);
+    return util::strToTime(temp_t);
 }
 
 
@@ -220,17 +227,17 @@ void FileFS::close() {}
 
 
 bool FileFS::isOpen() const {
-    return false;
+    return true;
 }
 
 
 bool FileFS::operator==(const FileFS &other) const {
-    return false;
+    return this->location() == other.location();
 }
 
 
 bool FileFS::operator!=(const FileFS &other) const {
-    return false;
+    return this->location() != other.location();
 }
 
 FileFS::~FileFS() {
