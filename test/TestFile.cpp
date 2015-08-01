@@ -84,6 +84,11 @@ void TestFile::testCreatedAt() {
 void TestFile::testUpdatedAt() {
     CPPUNIT_ASSERT(file_open.updatedAt() >= startup_time);
     CPPUNIT_ASSERT(file_fs.updatedAt() >= startup_time);
+    time_t now = time(NULL);
+    file_fs.forceUpdatedAt();
+    file_open.forceUpdatedAt();
+    CPPUNIT_ASSERT(file_open.updatedAt() >= now);
+    CPPUNIT_ASSERT(file_fs.updatedAt() >= now);
 }
 
 
