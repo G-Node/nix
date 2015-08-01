@@ -69,6 +69,9 @@ void BaseTestFile::testCreatedAt() {
 
 void BaseTestFile::testUpdatedAt() {
     CPPUNIT_ASSERT(file_open.updatedAt() >= statup_time);
+    time_t now = time(NULL);
+    file_open.forceUpdatedAt();
+    CPPUNIT_ASSERT(file_open.updatedAt() >= now);
 }
 
 
