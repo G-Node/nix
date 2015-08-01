@@ -24,7 +24,7 @@ void TestAttributesFS::tearDown() {
 
 
 void TestAttributesFS::testOpenCreate() {
-    boost::filesystem::path p = ".attributes";
+    boost::filesystem::path p = "attributes";
     CPPUNIT_ASSERT(!boost::filesystem::exists(this->location / p));
     file::AttributesFS attrs(this->location.string());
     CPPUNIT_ASSERT(boost::filesystem::exists(this->location / p));
