@@ -12,7 +12,7 @@
 #include <nix/valid/validate.hpp>
 
 #include <ctime>
-
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace nix;
@@ -20,16 +20,21 @@ using namespace valid;
 
 
 void TestFile::setUp() {
-    statup_time = time(NULL);
+    startup_time = time(NULL);
     file_open = File::open("test_file.h5", FileMode::Overwrite);
     file_other = File::open("test_file_other.h5", FileMode::Overwrite);
     file_null = nix::none;
+
+    file_fs = File::open("test_file", FileMode::Overwrite, Implementation::FileSys);
+    file_other_fs = File::open("other_file", FileMode::Overwrite, Implementation::FileSys);
 }
 
 
 void TestFile::tearDown() {
     file_open.close();
     file_other.close();
+    boost::filesystem::remove_all(boost::filesystem::path(file_fs.location().c_str()));
+    boost::filesystem::remove_all(boost::filesystem::path(file_other_fs.location().c_str()));
 }
 
 
@@ -42,31 +47,43 @@ void TestFile::testValidate() {
 
 void TestFile::testFormat() {
     CPPUNIT_ASSERT(file_open.format() == "nix");
+    CPPUNIT_ASSERT(file_fs.format() == "nix");
 }
 
 
 void TestFile::testLocation() {
     CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
     CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
+    boost::filesystem::path p = boost::filesystem::current_path();
+    boost::filesystem::path p_file("test_file");
+    boost::filesystem::path p_other("other_file");
+    CPPUNIT_ASSERT(file_fs.location() ==  (p / p_file).string());
+    CPPUNIT_ASSERT(file_other_fs.location() == (p / p_other).string());
 }
 
 
 void TestFile::testVersion() {
     vector<int> version{1, 0, 0};
     CPPUNIT_ASSERT(file_open.version() == version);
+    CPPUNIT_ASSERT(file_fs.version() == version);
 }
 
 
 void TestFile::testCreatedAt() {
-    CPPUNIT_ASSERT(file_open.createdAt() >= statup_time);
+    CPPUNIT_ASSERT(file_open.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     file_open.forceCreatedAt(past_time);
     CPPUNIT_ASSERT(file_open.createdAt() == past_time);
+
+    CPPUNIT_ASSERT(file_fs.createdAt() >= startup_time);
+    file_fs.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(file_fs.createdAt() == past_time);
 }
 
 
 void TestFile::testUpdatedAt() {
-    CPPUNIT_ASSERT(file_open.updatedAt() >= statup_time);
+    CPPUNIT_ASSERT(file_open.updatedAt() >= startup_time);
+    CPPUNIT_ASSERT(file_fs.updatedAt() >= startup_time);
 }
 
 
@@ -177,6 +194,12 @@ void TestFile::testOperators(){
     file_other = none;
     CPPUNIT_ASSERT(file_null == false);
     CPPUNIT_ASSERT(file_null == none);
+
+    CPPUNIT_ASSERT(file_fs != file_other_fs);
+    CPPUNIT_ASSERT(!(file_fs == file_other_fs));
+
+    CPPUNIT_ASSERT(file_fs != false);
+    CPPUNIT_ASSERT(file_fs != none);
 }
 
 void TestFile::testReopen() {
