@@ -19,7 +19,7 @@ namespace file {
 
 
 EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc)
-    : entity_file(file), attributes(loc), loc(loc)
+    : entity_file(file), loc(loc), attributes(loc)
 {
     setUpdatedAt();
     setCreatedAt();
@@ -27,7 +27,7 @@ EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc)
 
 
 EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc, const string &id, time_t time)
-    : entity_file(file), attributes(loc), loc(loc)
+    : entity_file(file), loc(loc), attributes(loc)
 {
     attributes.set("entity_id", id);
     setUpdatedAt();

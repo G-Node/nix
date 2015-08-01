@@ -28,8 +28,10 @@ class EntityFS : virtual public base::IEntity {
 private:
 
     std::shared_ptr<base::IFile>  entity_file;
-    mutable AttributesFS          attributes;
     std::string                   loc;
+
+protected:
+    mutable AttributesFS          attributes;
 
 public:
 
