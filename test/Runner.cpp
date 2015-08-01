@@ -32,7 +32,6 @@
 #include "TestValidate.hpp"
 #include "TestReadOnly.hpp"
 #include "TestAttributesFS.hpp"
-#include "TestFileFS.hpp"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -70,7 +69,6 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnly);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestAttributesFS);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileFS);
 
 
     CPPUNIT_NS::TestResult testresult;
