@@ -77,6 +77,7 @@ ndsize_t FileFS::blockCount() const {
         boost::filesystem::directory_iterator di(this->data_path);
         while (di != end) {
             count ++;
+            ++di;
         }
     }
     return count;
