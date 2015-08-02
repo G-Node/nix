@@ -37,8 +37,7 @@ FileFS::FileFS(const string &name, FileMode mode) {
     }
 
     this->file_mode = map_file_mode(mode);
-    this->root_path = p;
-    this->open_or_create();
+    this->open_or_create(name);
     this->setCreatedAt();
     this->setUpdatedAt();
 
@@ -47,11 +46,12 @@ FileFS::FileFS(const string &name, FileMode mode) {
     }
 }
 
-void FileFS::open_or_create() {
+void FileFS::open_or_create(const string &name) {
     //TODO respect the file mode
+    boost::filesystem::path root(name);
     boost::filesystem::path data("data");
     boost::filesystem::path metadata("metadata");
-
+    this->root_path = root;
     this->data_path = this->root_path / data;
     this->metadata_path = this->root_path / metadata;
     if (!boost::filesystem::exists(this->root_path)) {
@@ -178,7 +178,7 @@ std::string FileFS::format() const {
 
 
 std::string FileFS::location() const {
-    return boost::filesystem::absolute(this->root_path).string();
+    return boost::filesystem::canonical(this->root_path).string();
 }
 
 
