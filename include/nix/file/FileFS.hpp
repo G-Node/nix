@@ -17,7 +17,7 @@ private:
     unsigned int file_mode;
     mutable AttributesFS attributes;
 
-    void open_or_create();
+    void open_or_create(const std::string &name);
 
 public:
     FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
