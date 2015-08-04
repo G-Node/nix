@@ -17,6 +17,7 @@
 using namespace std;
 using namespace nix;
 using namespace valid;
+namespace fs = boost::filesystem;
 
 
 void BaseTestFile::testOpen() {
@@ -40,9 +41,9 @@ void BaseTestFile::testFormat() {
 void BaseTestFile::testLocation() {
     CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
     CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
-    boost::filesystem::path p = boost::filesystem::current_path();
-    boost::filesystem::path p_file("test_file");
-    boost::filesystem::path p_other("other_file");
+    fs::path p = boost::filesystem::current_path();
+    fs::path p_file("test_file");
+    fs::path p_other("other_file");
     CPPUNIT_ASSERT(file_fs.location() ==  (p / p_file).string());
     CPPUNIT_ASSERT(file_other_fs.location() == (p / p_other).string());
 }
@@ -163,6 +164,15 @@ void BaseTestFile::testSectionAccess() {
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
+
+    // Tests for the filesystem backend
+    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
+    CPPUNIT_ASSERT(file_fs.sections().size() == 0);
+    CPPUNIT_ASSERT(file_fs.getSection("invalid_id") == false);
+
+    s = file_fs.createSection("test_sec", "test");
+    cerr << s << endl;
+    //CPPUNIT_ASSERT_THROW(file_fs.hasSection(s), std::runtime_error);
 }
 
 
