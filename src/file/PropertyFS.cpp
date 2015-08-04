@@ -13,106 +13,85 @@
 #include <iostream>
 
 using namespace std;
-
 using namespace nix::base;
 
 namespace nix {
 namespace file {
 
-
-
-PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const DataSet &dataset)
-    : entity_file(file)
+PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const string &id, const string &name, const DataType &dataType)
+    : Directory(file->location(), name), entity_file(file), dtype(dataType)
 {
-    this->entity_dataset = dataset;
-}
-
-
-PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset, const string &id,
-                           const string &name)
-    : PropertyHDF5(file, dataset, id, name, util::getTime())
-{
-}
-
-
-PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset, const string &id,
-                           const string &name, time_t time)
-    : entity_file(file)
-{
-    this->entity_dataset = dataset;
-    // set name
     if (name.empty()) {
         throw EmptyString("name");
     } else {
-        dataset.setAttr("name", name);
+        setAttr("name", name);
         forceUpdatedAt();
     }
 
-    dataset.setAttr("entity_id", id);
+    setAttr("entity_id", id);
+    time_t t = util::getTime();
     setUpdatedAt();
-    forceCreatedAt(time);
+    forceCreatedAt(t);
 }
 
 
-string PropertyHDF5::id() const {
+string PropertyFS::id() const {
     string t;
-
-    if (dataset().hasAttr("entity_id")) {
-        dataset().getAttr("entity_id", t);
+    if (hasAttr("entity_id")) {
+        getAttr("entity_id", t);
     }
     else {
         throw runtime_error("Entity has no id!");
     }
-
     return t;
 }
 
 
-time_t PropertyHDF5::updatedAt() const {
+time_t PropertyFS::updatedAt() const {
     string t;
-    dataset().getAttr("updated_at", t);
+    getAttr("updated_at", t);
     return util::strToTime(t);
 }
 
 
-void PropertyHDF5::setUpdatedAt() {
-    if (!dataset().hasAttr("updated_at")) {
+void PropertyFS::setUpdatedAt() {
+    if (!hasAttr("updated_at")) {
         time_t t = util::getTime();
-        dataset().setAttr("updated_at", util::timeToStr(t));
+        setAttr("updated_at", util::timeToStr(t));
     }
 }
 
 
-void PropertyHDF5::forceUpdatedAt() {
+void PropertyFS::forceUpdatedAt() {
     time_t t = util::getTime();
-    dataset().setAttr("updated_at", util::timeToStr(t));
+    setAttr("updated_at", util::timeToStr(t));
 }
 
 
-time_t PropertyHDF5::createdAt() const {
+time_t PropertyFS::createdAt() const {
     string t;
-    dataset().getAttr("created_at", t);
+    getAttr("created_at", t);
     return util::strToTime(t);
 }
 
 
-void PropertyHDF5::setCreatedAt() {
-    if (!dataset().hasAttr("created_at")) {
+void PropertyFS::setCreatedAt() {
+    if (!hasAttr("created_at")) {
         time_t t = util::getTime();
-        dataset().setAttr("created_at", util::timeToStr(t));
+        setAttr("created_at", util::timeToStr(t));
     }
 }
 
 
-void PropertyHDF5::forceCreatedAt(time_t t) {
-    dataset().setAttr("created_at", util::timeToStr(t));
+void PropertyFS::forceCreatedAt(time_t t) {
+    setAttr("created_at", util::timeToStr(t));
 }
 
 
-string PropertyHDF5::name() const {
+string PropertyFS::name() const {
     string name;
-    if (dataset().hasAttr("name")) {
-        dataset().getAttr("name", name);
+    if (hasAttr("name")) {
+        getAttr("name", name);
         return name;
     } else {
         throw MissingAttr("name");
@@ -120,130 +99,126 @@ string PropertyHDF5::name() const {
 }
 
 
-void PropertyHDF5::definition(const string &definition) {
+void PropertyFS::definition(const string &definition) {
     if (definition.empty()) {
         throw EmptyString("definition");
     } else {
-        dataset().setAttr("definition", definition);
+        setAttr("definition", definition);
         forceUpdatedAt();
     }
 }
 
 
-boost::optional<string> PropertyHDF5::definition() const {
+boost::optional<string> PropertyFS::definition() const {
     boost::optional<string> ret;
     string definition;
-    bool have_attr = dataset().getAttr("definition", definition);
-    if (have_attr) {
+    if (hasAttr("definition")) {
+        getAttr("definition", definition);
         ret = definition;
     }
     return ret;
 }
 
 
-void PropertyHDF5::definition(const nix::none_t t) {
-    if (dataset().hasAttr("definition")) {
-        dataset().removeAttr("definition");
+void PropertyFS::definition(const nix::none_t t) {
+    if (hasAttr("definition")) {
+        removeAttr("definition");
     }
     forceUpdatedAt();
 }
 
 
-DataType PropertyHDF5::dataType() const {
-    return this->dataset().dataType();
+DataType PropertyFS::dataType() const {
+    return this->dataType();
 }
 
 
-void PropertyHDF5::mapping(const string &mapping) {
+void PropertyFS::mapping(const string &mapping) {
     if (mapping.empty()) {
         throw EmptyString("mapping");
     }
-    dataset().setAttr("mapping", mapping);
+    setAttr("mapping", mapping);
     forceUpdatedAt();
 }
 
 
-boost::optional<string> PropertyHDF5::mapping() const {
+boost::optional<string> PropertyFS::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if (dataset().getAttr("mapping", mapping)) {
+    if (hasAttr("mapping")) {
+        getAttr("mapping", mapping);
         ret = mapping;
     }
     return ret;
 }
 
 
-void PropertyHDF5::mapping(const nix::none_t t) {
-    if (dataset().hasAttr("mapping")) {
-        dataset().removeAttr("mapping");
+void PropertyFS::mapping(const nix::none_t t) {
+    if (hasAttr("mapping")) {
+        removeAttr("mapping");
         forceUpdatedAt();
     }
 }
 
 
-void PropertyHDF5::unit(const string &unit) {
+void PropertyFS::unit(const string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
     }
-    dataset().setAttr("unit", unit);
+    setAttr("unit", unit);
     forceUpdatedAt();
 }
 
 
-boost::optional<string> PropertyHDF5::unit() const {
+boost::optional<string> PropertyFS::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    if (dataset().getAttr("unit", unit)) {
+    if (hasAttr("unit")) {
+        getAttr("unit", unit);
         ret = unit;
     }
     return ret;
 }
 
 
-void PropertyHDF5::unit(const nix::none_t t) {
-    if (dataset().hasAttr("unit")) {
-        dataset().removeAttr("unit");
+void PropertyFS::unit(const nix::none_t t) {
+    if (hasAttr("unit")) {
+        removeAttr("unit");
     }
     forceUpdatedAt();
 }
 
 
-void PropertyHDF5::deleteValues() {
-    dataset().setExtent({0});
+void PropertyFS::deleteValues() {
+    // FIXME
 }
 
 
-ndsize_t PropertyHDF5::valueCount() const {
-    NDSize size = dataset().size();
-    return size[0];
+ndsize_t PropertyFS::valueCount() const {
+    // FIXME
+    return 0;
 }
 
 
-void PropertyHDF5::values(const std::vector<Value> &values)
-{
-    if (values.size() < 1) {
-        deleteValues();
-        return;
-    }
-    dataset().write(values);
+void PropertyFS::values(const std::vector<Value> &values) {
+    // FIXME
 }
 
 
-std::vector<Value> PropertyHDF5::values(void) const
-{
+std::vector<Value> PropertyFS::values(void) const {
     std::vector<Value> values;
-    dataset().read(values);
+    // FIXME
     return values;
 }
 
 
-void PropertyHDF5::values(const nix::none_t t) {
+void PropertyFS::values(const nix::none_t t) {
     // TODO: rethink if we want two methods for same thing
     deleteValues();
 }
 
 
-int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
+int PropertyFS::compare(const std::shared_ptr<IProperty> &other) const {
     int cmp = 0;
     if (!name().empty() && !other->name().empty()) {
         cmp = (name()).compare(other->name());
@@ -251,11 +226,11 @@ int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
     if (cmp == 0) {
         cmp = id().compare(other->id());
     }
-    return cmp;
+    return cmp; //FIXME!!!
 }
 
 
-PropertyHDF5::~PropertyHDF5() {}
+PropertyFS::~PropertyFS() {}
 
 } // ns nix::file
 } // ns nix
