@@ -5,19 +5,17 @@
 #include <string>
 #include <memory>
 #include <boost/filesystem.hpp>
-#include "AttributesFS.hpp"
+#include <nix/file/Directory.hpp>
 
 namespace nix {
 namespace file {
 
-class FileFS : public base::IFile {
+class FileFS : public base::IFile, public Directory{
 
 private:
-    boost::filesystem::path root_path, data_path, metadata_path;
+    boost::filesystem::path data_path, metadata_path;
     unsigned int file_mode;
-    mutable AttributesFS attributes;
-
-    void open_or_create(const std::string &name);
+    void create_subfolders();
 
 public:
     FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
