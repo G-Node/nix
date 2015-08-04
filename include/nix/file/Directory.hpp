@@ -10,17 +10,36 @@
 namespace nix {
 namespace file {
 
-class NIXAPI Directory {
-    private:
-    AttributesFS attributes;
+class Directory {
 
-    public:
+private:
+    boost::filesystem::path loc;
+    mutable AttributesFS attributes;
+
+    void open_or_create();
+
+public:
     Directory (const boost::filesystem::path &parent, const std::string &name);
 
+    template <typename T> void setAttr(const std::string &name, const T &value);
 
+    template <typename T> void getAttr(const std::string &name, T &value) const;
 
+    bool hasAttr(const std::string &name) const;
 
+    std::string location() const;
 };
+
+
+template <typename T>
+void Directory::setAttr(const std::string &name, const T &value) {
+    attributes.set(name, value);
+}
+
+template <typename T>
+void Directory::getAttr(const std::string &name, T &value) const {
+    attributes.get(name, value);
+}
 
 }
 }
