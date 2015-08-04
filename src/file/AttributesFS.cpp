@@ -17,12 +17,14 @@ namespace file {
 AttributesFS::AttributesFS() { }
 
 
-AttributesFS::AttributesFS(const std::string &file_path): AttributesFS(path(file_path.c_str()))
+AttributesFS::AttributesFS(const std::string &file_path, FileMode mode)
+    : AttributesFS(path(file_path.c_str()), mode)
 { }
 
-AttributesFS::AttributesFS(const path &file_path) {
+AttributesFS::AttributesFS(const path &file_path, FileMode mode) {
     if (exists(file_path)) {
         this->loc = file_path;
+        this->mode = mode;
         this->open_or_create();
     }
 }
@@ -31,9 +33,13 @@ void AttributesFS::open_or_create() {
     path attr(ATTRIBUTES_FILE);
     path temp = this->location() / attr;
     if (!exists(temp)) {
-        std::ofstream ofs;
-        ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
-        ofs.close();
+        if (mode > FileMode::ReadOnly) {
+            std::ofstream ofs;
+            ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
+            ofs.close();
+        } else {
+            throw std::logic_error("Trying to create new attributes in ReadOnly mode!");
+        }
     }
     this->node = LoadFile(this->location().string() + "/" + ATTRIBUTES_FILE);
 }
@@ -66,6 +72,9 @@ nix::ndsize_t AttributesFS::attributeCount() {
 
 void AttributesFS::remove(const std::string &name) {
     this->open_or_create();
+    if (mode == FileMode::ReadOnly) {
+        throw std::logic_error("Trying to remove an attributes in ReadOnly mode!");
+    }
     if (this->node[name]) {
         this->node.remove(name);
     }

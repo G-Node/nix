@@ -12,6 +12,7 @@
 
 #include <nix/Platform.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/base/IFile.hpp>
 
 namespace nix {
 namespace file {
@@ -21,6 +22,7 @@ class AttributesFS {
 private:
     YAML::Node node;
     boost::filesystem::path loc;
+    FileMode mode;
 
     void open_or_create();
 
@@ -29,9 +31,9 @@ private:
 public:
     AttributesFS();
 
-    AttributesFS(const std::string &file_path);
+    AttributesFS(const std::string &file_path, FileMode mode = FileMode::ReadOnly);
 
-    AttributesFS(const boost::filesystem::path &file_path);
+    AttributesFS(const boost::filesystem::path &file_path, FileMode mode = FileMode::ReadOnly);
 
     // AttributesFS(const nix::file::AttributesFS &other);
 
@@ -49,16 +51,19 @@ public:
 };
 
 template <typename T> void AttributesFS::get(const std::string &name, T &value) {
-    this->open_or_create();
+    open_or_create();
     if (has(name)) {
-        value = this->node[name].as<T>();
+        value = node[name].as<T>();
     }
 }
 
 template <typename T> void AttributesFS::set(const std::string &name, const T &value) {
-    this->open_or_create();
-    if (this->node[name]) {
-        this->node.remove(name);
+    open_or_create();
+    if (mode == FileMode::ReadOnly) {
+        throw std::logic_error("Trying to set an attributes in ReadOnly mode!");
+    }
+    if (node[name]) {
+        node.remove(name);
     }
     this->node[name] = value;
     this->flush();
