@@ -10,11 +10,11 @@
 namespace nix {
 namespace file {
 
-class FileFS : public base::IFile, public Directory{
+class FileFS : public base::IFile, public Directory, public std::enable_shared_from_this<FileFS> {
 
 private:
     boost::filesystem::path data_path, metadata_path;
-    unsigned int file_mode;
+    FileMode file_mode;
     void create_subfolders();
 
 public:
@@ -95,6 +95,9 @@ public:
 
 
     bool isOpen() const;
+
+
+    FileMode read_write_mode() const;
 
 
     bool operator==(const FileFS &other) const;
