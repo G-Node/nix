@@ -11,7 +11,7 @@
 #include <nix/Section.hpp>
 
 #include <nix/file/SectionFS.hpp>
-#include <nix/hdf5/PropertyHDF5.hpp>
+#include <nix/file/PropertyFS.hpp>
 
 using namespace std;
 using namespace nix::base;
@@ -277,7 +277,7 @@ bool SectionFS::hasProperty(const string &name_or_id) const {
 
 
 shared_ptr<IProperty> SectionFS::getProperty(const string &name_or_id) const {
-    shared_ptr<nix::hdf5::PropertyHDF5> prop;
+    shared_ptr<PropertyFS> prop;
     /*
     boost::optional<Group> g = property_group();
 
@@ -297,16 +297,13 @@ shared_ptr<IProperty> SectionFS::getProperty(ndsize_t index) const {
     return getProperty("");
 }
 
-/*
+
 shared_ptr<IProperty> SectionFS::createProperty(const string &name, const DataType &dtype) {
     if (hasProperty(name)) {
         throw DuplicateName("hasProperty");
     }
     string new_id = util::createId();
-
-    h5x::DataType fileType = DataSet::fileTypeForValue(dtype);
-    DataSet dataset = g->createData(name, fileType, {0});
-    return make_shared<nix::hdf5::PropertyHDF5>(file(), dataset, new_id, name);
+    return make_shared<PropertyFS>(file(), new_id, name, dtype);
 }
 
 
@@ -326,10 +323,9 @@ shared_ptr<IProperty> SectionFS::createProperty(const string &name, const vector
 
     shared_ptr<IProperty> p = createProperty(name, values[0].type());
     p->values(values);
-
     return p;
 }
-*/
+
 
 bool SectionFS::deleteProperty(const string &name_or_id) {
     /*
