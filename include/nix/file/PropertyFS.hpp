@@ -11,40 +11,26 @@
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
 #include <nix/base/IProperty.hpp>
-#include <nix/hdf5/NamedEntityFS.hpp>
+#include <nix/file/NamedEntityFS.hpp>
+#include <nix/file/Directory.hpp>
 
 #include <string>
 #include <memory>
 #include <ctime>
+#include "../DataType.hpp"
 
 namespace nix {
 namespace file {
 
 
-class PropertyFS : virtual public base::IProperty {
-
+class PropertyFS : virtual public base::IProperty, public nix::file::Directory {
     std::shared_ptr<base::IFile>  entity_file;
-    DataSet                       entity_dataset;
+    DataType dtype;
 
 public:
 
-
-    /**
-     * Standard constructor for existing Property
-     */
-    PropertyFS(const std::shared_ptr<base::IFile> &file, const DataSet &dataset);
-
-    /**
-     * Standard constructor for new Property
-     */
-    PropertyFS(const std::shared_ptr<base::IFile> &file, const DataSet &dataset, const std::string &id,
-                 const std::string &name);
-
-    /**
-     * Constructor for new Property with time
-     */
-    PropertyFS(const std::shared_ptr<base::IFile> &file, const DataSet &dataset, const std::string &id,
-                 const std::string &name, time_t time);
+    PropertyFS(const std::shared_ptr<base::IFile> &file, const std::string &id, const std::string &name,
+               const DataType &dataType);
 
 
     std::string id() const;
@@ -126,12 +112,6 @@ public:
 
 
     virtual ~PropertyFS();
-
-private:
-
-    DataSet dataset() const {
-        return entity_dataset;
-    }
 
 };
 
