@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <nix/file/Directory.hpp>
+#include "../../../../../../../usr/include/c++/4.8/bits/stringfwd.h"
 
 using namespace std;
 
@@ -22,6 +23,7 @@ Directory::Directory(const path &parent, const string &name): loc(parent / path(
     attributes = AttributesFS(loc);
 }
 
+Directory::Directory(const string &parent, const string &name): Directory(path(parent.c_str()), name){}
 
 void Directory::open_or_create() {
     if (!exists(loc)) {
@@ -32,6 +34,10 @@ void Directory::open_or_create() {
 
 bool Directory::hasAttr(const string &name) const  {
     return attributes.has(name);
+}
+
+void Directory::removeAttr(const string &name) {
+    attributes.remove(name);
 }
 
 string Directory::location() const {

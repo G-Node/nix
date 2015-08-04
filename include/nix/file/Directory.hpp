@@ -21,11 +21,15 @@ private:
 public:
     Directory (const boost::filesystem::path &parent, const std::string &name);
 
+    Directory (const std::string &parentPath, const std::string &name);
+
     template <typename T> void setAttr(const std::string &name, const T &value);
 
     template <typename T> void getAttr(const std::string &name, T &value) const;
 
     bool hasAttr(const std::string &name) const;
+
+    void removeAttr(const std::string &name);
 
     std::string location() const;
 };
