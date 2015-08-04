@@ -8,7 +8,8 @@
 
 #include <iostream>
 #include <nix/file/Directory.hpp>
-#include "../../../../../../../usr/include/c++/4.8/bits/stringfwd.h"
+#include "../../include/nix/file/Directory.hpp"
+#include "../../include/nix/base/IFile.hpp"
 
 using namespace std;
 
@@ -17,19 +18,22 @@ using namespace boost::filesystem;
 namespace nix {
 namespace file {
 
-
-Directory::Directory(const path &parent, const string &name): loc(parent / path(name.c_str())) {
+Directory::Directory(const path &parent, const std::string &name, FileMode mode)
+    : loc(parent / path(name.c_str())), mode(mode) {
     open_or_create();
-    attributes = AttributesFS(loc);
+    attributes = AttributesFS(loc, mode);
 }
 
-Directory::Directory(const string &parent, const string &name): Directory(path(parent.c_str()), name){}
+Directory::Directory(const string &parent, const string &name, FileMode mode): Directory(path(parent.c_str()), name) {}
 
 void Directory::open_or_create() {
     if (!exists(loc)) {
-        create_directories(loc);
+        if (mode > FileMode::ReadOnly) {
+            create_directories(loc);
+        } else {
+            throw std::logic_error("Trying to create new directory in ReadOnly mode!");
+        }
     }
-
 }
 
 bool Directory::hasAttr(const string &name) const  {
@@ -44,5 +48,5 @@ string Directory::location() const {
     return loc.string();
 }
 
-} // nix::file::
+} // nix::file
 } // nix
