@@ -17,7 +17,7 @@ namespace file {
 AttributesFS::AttributesFS() { }
 
 
-AttributesFS::AttributesFS(const std::string &file_path): AttributesFS(path(file_path.c_str))
+AttributesFS::AttributesFS(const std::string &file_path): AttributesFS(path(file_path.c_str()))
 { }
 
 AttributesFS::AttributesFS(const path &file_path) {
