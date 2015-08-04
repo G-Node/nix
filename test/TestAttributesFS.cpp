@@ -26,19 +26,19 @@ void TestAttributesFS::tearDown() {
 void TestAttributesFS::testOpenCreate() {
     boost::filesystem::path p = "attributes";
     CPPUNIT_ASSERT(!boost::filesystem::exists(this->location / p));
-    file::AttributesFS attrs(this->location.string());
+    file::AttributesFS attrs(this->location.string(), FileMode::Overwrite);
     CPPUNIT_ASSERT(boost::filesystem::exists(this->location / p));
 }
 
 void TestAttributesFS::testHasField() {
-    file::AttributesFS attrs(this->location.string());
+    file::AttributesFS attrs(this->location.string(), FileMode::Overwrite);
     CPPUNIT_ASSERT(!attrs.has("format"));
     attrs.set("format", "nix");
     CPPUNIT_ASSERT(attrs.has("format"));
 }
 
 void TestAttributesFS::testWriteField() {
-    file::AttributesFS attrs(this->location.string());
+    file::AttributesFS attrs(this->location.string(), FileMode::Overwrite);
     attrs.set("format", "nix");
     CPPUNIT_ASSERT(attrs.attributeCount() == 1);
     attrs.set("created_at", "2015-01-01");
@@ -60,7 +60,7 @@ void TestAttributesFS::testReadField() {
     vector<int> vector_values{1, 2, 3, 4, 5};
     vector<int> vector_return;
 
-    file::AttributesFS attrs(this->location.string());
+    file::AttributesFS attrs(this->location.string(), FileMode::Overwrite);
     attrs.set(string_field, string_value);
     attrs.get(string_field, string_return);
     CPPUNIT_ASSERT(string_value == string_return);
