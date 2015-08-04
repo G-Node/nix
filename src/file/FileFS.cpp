@@ -34,11 +34,11 @@ static unsigned int map_file_mode(FileMode mode) {
 
 FileFS::FileFS(const string &name, FileMode mode) : Directory(fs::current_path(), name, mode){
     fs::path p(name.c_str());
-    this->file_mode = map_file_mode(mode);
-    this->setCreatedAt();
-    this->setUpdatedAt();
+    file_mode = mode;
+    setCreatedAt();
+    setUpdatedAt();
     create_subfolders();
-    if (!this->checkHeader()) {
+    if (!checkHeader()) {
         throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
@@ -59,8 +59,8 @@ void FileFS::create_subfolders() {
 ndsize_t FileFS::blockCount() const {
     ndsize_t count = 0;
     boost::filesystem::directory_iterator end;
-    if (boost::filesystem::exists(this->data_path) && boost::filesystem::is_directory(this->data_path)) {
-        boost::filesystem::directory_iterator di(this->data_path);
+    if (boost::filesystem::exists(data_path) && boost::filesystem::is_directory(data_path)) {
+        boost::filesystem::directory_iterator di(data_path);
         while (di != end) {
             count ++;
             ++di;
@@ -125,8 +125,8 @@ std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
 ndsize_t FileFS::sectionCount() const {
     ndsize_t count = 0;
     boost::filesystem::directory_iterator end;
-    if (boost::filesystem::exists(this->metadata_path) && boost::filesystem::is_directory(this->metadata_path)) {
-        boost::filesystem::directory_iterator di(this->metadata_path);
+    if (boost::filesystem::exists(metadata_path) && boost::filesystem::is_directory(metadata_path)) {
+        boost::filesystem::directory_iterator di(metadata_path);
         while (di != end) {
             count ++;
         }
@@ -136,8 +136,11 @@ ndsize_t FileFS::sectionCount() const {
 
 
 std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, const std::string &type) {
-    shared_ptr<SectionFS> block;
-    return block;
+    if (hasSection(name)) {
+        throw DuplicateName("createSection");
+    }
+    string id = util::createId();
+    return make_shared<SectionFS>(file(), location(), id, type, name);
 }
 
 
@@ -219,12 +222,12 @@ bool FileFS::isOpen() const {
 
 
 bool FileFS::operator==(const FileFS &other) const {
-    return this->location() == other.location();
+    return location() == other.location();
 }
 
 
 bool FileFS::operator!=(const FileFS &other) const {
-    return this->location() != other.location();
+    return location() != other.location();
 }
 
 
@@ -251,6 +254,14 @@ bool FileFS::checkHeader() {
         setAttr("version", FILE_VERSION);
     }
     return check;
+}
+
+std::shared_ptr<base::IFile> FileFS::file() const {
+    return const_pointer_cast<FileFS>(shared_from_this());
+}
+
+FileMode FileFS::read_write_mode() const {
+    return file_mode;
 }
 
 FileFS::~FileFS() {}
