@@ -11,7 +11,7 @@
 
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
-#include <nix/file/AttributesFS.hpp>
+#include <nix/file/Directory.hpp>
 
 #include <string>
 #include <memory>
@@ -23,15 +23,11 @@ namespace file {
 /**
  * Filesystem implementation of IEntity
  */
-class EntityFS : virtual public base::IEntity {
+class EntityFS : virtual public base::IEntity, public Directory {
 
 private:
 
     std::shared_ptr<base::IFile>  entity_file;
-    std::string                   loc;
-
-protected:
-    mutable AttributesFS          attributes;
 
 public:
 
@@ -66,9 +62,6 @@ public:
 
 
     bool operator!=(const EntityFS &other) const;
-
-
-    std::string location() const;
 
 
     virtual ~EntityFS();
