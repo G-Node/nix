@@ -14,14 +14,15 @@ class Directory {
 
 private:
     boost::filesystem::path loc;
+    FileMode mode;
     mutable AttributesFS attributes;
 
     void open_or_create();
 
 public:
-    Directory (const boost::filesystem::path &parent, const std::string &name);
+    Directory (const boost::filesystem::path &parent, const std::string &name, FileMode mode = FileMode::ReadOnly);
 
-    Directory (const std::string &parentPath, const std::string &name);
+    Directory (const std::string &parentPath, const std::string &name, FileMode mode = FileMode::ReadOnly);
 
     template <typename T> void setAttr(const std::string &name, const T &value);
 
