@@ -1,15 +1,17 @@
 #include <nix/file/FileFS.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
-#include <nix/hdf5/SectionHDF5.hpp>
+#include <nix/file/SectionFS.hpp>
 #include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
 
+namespace fs = boost::filesystem;
+
 namespace nix {
 namespace file {
 
-    // Format definition
+// Format definition
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
 
@@ -30,43 +32,27 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-FileFS::FileFS(const string &name, FileMode mode) {
-    boost::filesystem::path p(name.c_str());
-    if (!boost::filesystem::exists(p)) {
-        mode = FileMode::Overwrite;
-    }
-
+FileFS::FileFS(const string &name, FileMode mode) : Directory(fs::current_path(), name, mode){
+    fs::path p(name.c_str());
     this->file_mode = map_file_mode(mode);
-    this->open_or_create(name);
     this->setCreatedAt();
     this->setUpdatedAt();
-
+    create_subfolders();
     if (!this->checkHeader()) {
         throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
 
-void FileFS::open_or_create(const string &name) {
-    //TODO respect the file mode
-    boost::filesystem::path root(name);
+void FileFS::create_subfolders() {
     boost::filesystem::path data("data");
     boost::filesystem::path metadata("metadata");
-    this->root_path = root;
-    this->data_path = this->root_path / data;
-    this->metadata_path = this->root_path / metadata;
-    if (!boost::filesystem::exists(this->root_path)) {
-        boost::filesystem::create_directory(this->root_path);
-        boost::filesystem::create_directories(this->data_path);
-        boost::filesystem::create_directories(this->metadata_path);
-    } else {
-        if (!boost::filesystem::exists(this->data_path)) {
-            boost::filesystem::create_directories(this->data_path);
-        }
-        if (!boost::filesystem::exists(this->metadata_path)) {
-            boost::filesystem::create_directories(this->metadata_path);
-        }
-    }
-    this->attributes = AttributesFS(this->location());
+    fs::path p = location();
+    data_path = p / data;
+    metadata_path = p / metadata;
+    if (!exists(data_path))
+        boost::filesystem::create_directories(data_path);
+    if (!boost::filesystem::exists(metadata_path))
+        boost::filesystem::create_directories(metadata_path);
 }
 
 
@@ -125,14 +111,14 @@ bool FileFS::hasSection(const std::string &name_or_id) const {
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id) const {
-    shared_ptr<nix::hdf5::SectionHDF5> block;
-    return block;
+    shared_ptr<SectionFS> sec;
+    return sec;
 }
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
-    shared_ptr<nix::hdf5::SectionHDF5> block;
-    return block;
+    shared_ptr<SectionFS> sec;
+    return sec;
 }
 
 
@@ -150,7 +136,7 @@ ndsize_t FileFS::sectionCount() const {
 
 
 std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, const std::string &type) {
-    shared_ptr<hdf5::SectionHDF5> block;
+    shared_ptr<SectionFS> block;
     return block;
 }
 
@@ -166,61 +152,61 @@ bool FileFS::deleteSection(const std::string &name_or_id) {
 
 std::vector<int> FileFS::version() const {
     vector<int> version;
-    this->attributes.get("version", version);
+    getAttr("version", version);
     return  version;
 }
 
 
 std::string FileFS::format() const {
     string format;
-    this->attributes.get("format", format);
+    getAttr("format", format);
     return format;
 }
 
 
 std::string FileFS::location() const {
-    return boost::filesystem::canonical(this->root_path).string();
+    return boost::filesystem::canonical(Directory::location()).string();
 }
 
 
 time_t FileFS::createdAt() const {
     string temp_t;
-    this->attributes.get("created_at", temp_t);
+    getAttr("created_at", temp_t);
     return util::strToTime(temp_t);
 }
 
 
 time_t FileFS::updatedAt() const {
     string temp_t;
-    this->attributes.get("updated_at", temp_t);
+    getAttr("updated_at", temp_t);
     return util::strToTime(temp_t);
 }
 
 
 void FileFS::setUpdatedAt(){
-    if (!this->attributes.has("updated_at")) {
+    if (!hasAttr("updated_at")) {
         time_t t = time(NULL);
-        this->attributes.set("updated_at", util::timeToStr(t));
+        setAttr("updated_at", util::timeToStr(t));
     }
 }
 
 
 void FileFS::forceUpdatedAt() {
     time_t t = time(NULL);
-    this->attributes.set("updated_at", util::timeToStr(t));
+    setAttr("updated_at", util::timeToStr(t));
 }
 
 
 void FileFS::setCreatedAt() {
-    if (!this->attributes.has("created_at")) {
+    if (!hasAttr("created_at")) {
         time_t t = time(NULL);
-        this->attributes.set("created_at", util::timeToStr(t));
+        setAttr("created_at", util::timeToStr(t));
     }
 }
 
 
 void FileFS::forceCreatedAt(time_t t) {
-    this->attributes.set("created_at", util::timeToStr(t));
+    setAttr("created_at", util::timeToStr(t));
 }
 
 
@@ -241,34 +227,33 @@ bool FileFS::operator!=(const FileFS &other) const {
     return this->location() != other.location();
 }
 
-FileFS::~FileFS() {
-
-}
 
 bool FileFS::checkHeader() {
     bool check = true;
     vector<int> version;
     string str;
     // check format
-    if (this->attributes.has("format")) {
-        this->attributes.get("format", str);
+    if (hasAttr("format")) {
+        getAttr("format", str);
         if (str != FILE_FORMAT) {
             check = false;
         }
     } else {
-        this->attributes.set("format", FILE_FORMAT);
+        setAttr("format", FILE_FORMAT);
     }
     // check version
-    if (this->attributes.has("version")) {
-        this->attributes.get("version", version);
+    if (hasAttr("version")) {
+        getAttr("version", version);
         if (version != FILE_VERSION) {
             check = false;
         }
     } else {
-        this->attributes.set("version", FILE_VERSION);
+        setAttr("version", FILE_VERSION);
     }
     return check;
 }
+
+FileFS::~FileFS() {}
 
 } // namespace file
 } // namespace nix
