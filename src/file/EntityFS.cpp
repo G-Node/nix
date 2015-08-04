@@ -19,7 +19,7 @@ namespace file {
 
 
 EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc)
-    : entity_file(file), loc(loc), attributes(loc)
+    : Directory(file->location(), loc, file->fileMode())
 {
     setUpdatedAt();
     setCreatedAt();
@@ -27,10 +27,9 @@ EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc)
 
 
 EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc, const string &id, time_t time)
-    : entity_file(file), loc(loc), attributes(loc)
+    : EntityFS(file, loc)
 {
-    attributes.set("entity_id", id);
-    setUpdatedAt();
+    setAttr("entity_id", id);
     forceCreatedAt(time);
 }
 
@@ -38,8 +37,8 @@ EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc, const strin
 string EntityFS::id() const {
     string t;
 
-    if (attributes.has("entity_id")) {
-        attributes.get("entity_id", t);
+    if (hasAttr("entity_id")) {
+        getAttr("entity_id", t);
     }
     else {
         throw runtime_error("Entity has no id!");
@@ -50,49 +49,49 @@ string EntityFS::id() const {
 
 time_t EntityFS::updatedAt() const {
     string t;
-    attributes.get("updated_at", t);
+    getAttr("updated_at", t);
     return util::strToTime(t);
 }
 
 
 void EntityFS::setUpdatedAt() {
-    if (!attributes.has("updated_at")) {
+    if (!hasAttr("updated_at")) {
         time_t t = util::getTime();
-        attributes.set("updated_at", util::timeToStr(t));
+        setAttr("updated_at", util::timeToStr(t));
     }
 }
 
 
 void EntityFS::forceUpdatedAt() {
     time_t t = util::getTime();
-    attributes.set("updated_at", util::timeToStr(t));
+    setAttr("updated_at", util::timeToStr(t));
 }
 
 
 time_t EntityFS::createdAt() const {
     string t;
-    attributes.get("created_at", t);
+    getAttr("created_at", t);
     return util::strToTime(t);
 }
 
 
 void EntityFS::setCreatedAt() {
-    if (!attributes.has("created_at")) {
+    if (!hasAttr("created_at")) {
         time_t t = util::getTime();
-        attributes.set("created_at", util::timeToStr(t));
+        setAttr("created_at", util::timeToStr(t));
     }
 }
 
 
 void EntityFS::forceCreatedAt(time_t t) {
-    attributes.set("created_at", util::timeToStr(t));
+    setAttr("created_at", util::timeToStr(t));
 }
 
-
+/*
 string EntityFS::location() const {
-    return loc;
+    return location();
 }
-
+*/
 
 std::shared_ptr<base::IFile> EntityFS::file() const {
     return entity_file;

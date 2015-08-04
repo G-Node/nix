@@ -37,11 +37,12 @@ NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &l
                                  const string &name, time_t time)
     : EntityFS(file, loc, id, time)
 {
+    cerr << "File location:  " << file->location() << endl;
     this->type(type);
     if (name.empty()) {
         throw EmptyString("name");
     } else {
-        attributes.set("name", name);
+        setAttr("name", name);
         forceUpdatedAt();
     }
 }
@@ -51,7 +52,7 @@ void NamedEntityFS::type(const string &type) {
     if (type.empty()) {
         throw EmptyString("type");
     } else {
-        attributes.set("type", type);
+        setAttr("type", type);
         forceUpdatedAt();
     }
 }
@@ -59,8 +60,8 @@ void NamedEntityFS::type(const string &type) {
 
 string NamedEntityFS::type() const {
     string type;
-    if (attributes.has("type")) {
-        attributes.get("type", type);
+    if (hasAttr("type")) {
+        getAttr("type", type);
         return type;
     } else {
         throw MissingAttr("type");
@@ -70,8 +71,8 @@ string NamedEntityFS::type() const {
 
 string NamedEntityFS::name() const {
     string name;
-    if (attributes.has("name")) {
-        attributes.get("name", name);
+    if (hasAttr("name")) {
+        getAttr("name", name);
         return name;
     } else {
         throw MissingAttr("name");
@@ -83,7 +84,7 @@ void NamedEntityFS::definition(const string &definition) {
     if (definition.empty()) {
         throw EmptyString("definition");
     } else {
-        attributes.set("definition", definition);
+        setAttr("definition", definition);
         forceUpdatedAt();
     }
 }
@@ -92,9 +93,8 @@ void NamedEntityFS::definition(const string &definition) {
 boost::optional<string> NamedEntityFS::definition() const {
     boost::optional<string> ret;
     string definition;
-    bool have_attr = attributes.has("definition");
-    if (have_attr) {
-        attributes.get("definition", definition);
+    if (hasAttr("definition")) {
+        getAttr("definition", definition);
         ret = definition;
     }
     return ret;
@@ -102,8 +102,8 @@ boost::optional<string> NamedEntityFS::definition() const {
 
 
 void NamedEntityFS::definition(const nix::none_t t) {
-    if (attributes.has("definition")) {
-        attributes.remove("definition");
+    if (hasAttr("definition")) {
+        removeAttr("definition");
     }
     forceUpdatedAt();
 }
@@ -123,5 +123,5 @@ int NamedEntityFS::compare(const std::shared_ptr<INamedEntity> &other) const {
 
 NamedEntityFS::~NamedEntityFS() {}
 
-} // ns nix::hdf5
+} // ns nix::file
 } // ns nix

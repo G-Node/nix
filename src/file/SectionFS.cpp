@@ -72,7 +72,7 @@ void SectionFS::repository(const string &repository) {
     if (repository.empty()) {
         throw EmptyString("repository");
     } else {
-        attributes.set("repository", repository);
+        setAttr("repository", repository);
         forceUpdatedAt();
     }
 }
@@ -81,8 +81,8 @@ void SectionFS::repository(const string &repository) {
 boost::optional<string> SectionFS::repository() const {
     boost::optional<string> ret;
     string repository;
-    if (attributes.has("repository")) {
-        attributes.get("repository", repository);
+    if (hasAttr("repository")) {
+        getAttr("repository", repository);
         ret = repository;
     }
     return ret;
@@ -90,8 +90,8 @@ boost::optional<string> SectionFS::repository() const {
 
 
 void SectionFS::repository(const none_t t) {
-    if (attributes.has("repository")) {
-        attributes.remove("repository");
+    if (hasAttr("repository")) {
+        removeAttr("repository");
     }
     forceUpdatedAt();
 }
@@ -141,7 +141,7 @@ void SectionFS::mapping(const string &mapping) {
     if (mapping.empty()) {
         throw EmptyString("mapping");
     } else {
-        attributes.set("mapping", mapping);
+        setAttr("mapping", mapping);
         forceUpdatedAt();
     }
 }
@@ -150,8 +150,8 @@ void SectionFS::mapping(const string &mapping) {
 boost::optional<string> SectionFS::mapping() const {
     boost::optional<string> ret;
     string mapping;
-    if (attributes.has("mapping")) {
-        attributes.get("mapping", mapping);
+    if (hasAttr("mapping")) {
+        getAttr("mapping", mapping);
         ret = mapping;
     }
     return ret;
