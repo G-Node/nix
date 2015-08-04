@@ -17,14 +17,15 @@ namespace file {
 AttributesFS::AttributesFS() { }
 
 
-AttributesFS::AttributesFS(const std::string &file_path) {
-    path temp(file_path.c_str());
-    if (exists(temp)) {
-        this->loc = temp;
+AttributesFS::AttributesFS(const std::string &file_path): AttributesFS(path(file_path.c_str))
+{ }
+
+AttributesFS::AttributesFS(const path &file_path) {
+    if (exists(file_path)) {
+        this->loc = file_path;
         this->open_or_create();
     }
 }
-
 
 void AttributesFS::open_or_create() {
     path attr(ATTRIBUTES_FILE);
