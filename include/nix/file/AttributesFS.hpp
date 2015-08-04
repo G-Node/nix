@@ -30,6 +30,9 @@ public:
     AttributesFS();
 
     AttributesFS(const std::string &file_path);
+
+    AttributesFS(const boost::filesystem::path &file_path);
+
     // AttributesFS(const nix::file::AttributesFS &other);
 
     boost::filesystem::path location() const;
