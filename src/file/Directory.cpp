@@ -8,8 +8,6 @@
 
 #include <iostream>
 #include <nix/file/Directory.hpp>
-#include "../../include/nix/file/Directory.hpp"
-#include "../../include/nix/base/IFile.hpp"
 
 using namespace std;
 
@@ -21,7 +19,6 @@ namespace file {
 Directory::Directory(const path &location, FileMode mode)
     : loc(location), mode(mode) {
     open_or_create();
-    attributes = AttributesFS(loc, mode);
 }
 
 Directory::Directory(const string &location, FileMode mode): Directory(path(location.c_str()), mode) {}
@@ -36,17 +33,23 @@ void Directory::open_or_create() {
     }
 }
 
-bool Directory::hasAttr(const string &name) const  {
-    return attributes.has(name);
-}
-
-void Directory::removeAttr(const string &name) {
-    attributes.remove(name);
-}
 
 string Directory::location() const {
     return loc.string();
 }
+
+
+ndsize_t Directory::subdir_count() const {
+    ndsize_t count = 0;
+    directory_iterator end;
+    directory_iterator di(location().c_str());
+    while (di != end) {
+        if (is_directory(*di))
+            count ++;
+        ++di;
+    }
+}
+
 
 } // nix::file
 } // nix
