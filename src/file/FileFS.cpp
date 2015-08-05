@@ -140,7 +140,7 @@ std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, c
         throw DuplicateName("createSection");
     }
     string id = util::createId();
-    return make_shared<SectionFS>(file(), location(), id, type, name);
+    return make_shared<SectionFS>(file(), metadata_path.string(), id, type, name);
 }
 
 
