@@ -20,7 +20,7 @@ namespace file {
 
 
 EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc)
-    : Directory(loc, file->fileMode())
+    : DirectoryWithAttributes(loc, file->fileMode())
 {
     setUpdatedAt();
     setCreatedAt();

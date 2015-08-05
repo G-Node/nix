@@ -32,7 +32,8 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-FileFS::FileFS(const string &name, FileMode mode) : Directory(name, mode){
+FileFS::FileFS(const string &name, FileMode mode)
+    : DirectoryWithAttributes(name, mode){
     fs::path p(name.c_str());
     this->mode = mode;
     setCreatedAt();
@@ -44,6 +45,9 @@ FileFS::FileFS(const string &name, FileMode mode) : Directory(name, mode){
 }
 
 void FileFS::create_subfolders() {
+    data_dir = Directory(location(), mode);
+    metadata_dir = Directory(location(), mode);
+    /*
     boost::filesystem::path data("data");
     boost::filesystem::path metadata("metadata");
     fs::path p = location();
@@ -53,6 +57,7 @@ void FileFS::create_subfolders() {
         boost::filesystem::create_directories(data_path);
     if (!boost::filesystem::exists(metadata_path))
         boost::filesystem::create_directories(metadata_path);
+    */
 }
 
 

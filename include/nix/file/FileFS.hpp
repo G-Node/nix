@@ -5,16 +5,17 @@
 #include <string>
 #include <memory>
 #include <boost/filesystem.hpp>
-#include <nix/file/Directory.hpp>
+#include <nix/file/DirectoryWithAttributes.hpp>
 
 namespace nix {
 namespace file {
 
-class FileFS : public base::IFile, public Directory, public std::enable_shared_from_this<FileFS> {
+class FileFS : public base::IFile, public DirectoryWithAttributes, public std::enable_shared_from_this<FileFS> {
 
 private:
-    boost::filesystem::path data_path, metadata_path;
+    Directory data_dir, metadata_dir;
     FileMode mode;
+
     void create_subfolders();
 
 public:

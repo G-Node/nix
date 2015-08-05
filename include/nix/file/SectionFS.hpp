@@ -24,10 +24,10 @@ class SectionFS : public NamedEntityFS, virtual public base::ISection,
                     public std::enable_shared_from_this<SectionFS> {
 
 private:
-
+    Directory property_dir, subsection_dir;
     // TODO: consider writing parent_section as soft link into file
     std::shared_ptr<base::ISection> parent_section;
-    //optGroup property_group, section_group;
+
     void createSubFolders();
 public:
 
