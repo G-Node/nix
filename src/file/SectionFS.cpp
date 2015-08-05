@@ -30,8 +30,7 @@ SectionFS::SectionFS(const std::shared_ptr<base::IFile> &file, const std::shared
                      const string &loc)
     : NamedEntityFS(file, loc), parent_section(parent)
 {
-    //property_group = this->group().openOptGroup("properties"); FIXME
-    //section_group = this->group().openOptGroup("sections");
+    createSubFolders();
 }
 
 
@@ -60,10 +59,16 @@ SectionFS::SectionFS(const shared_ptr<IFile> &file, const shared_ptr<ISection> &
                      const string &id, const string &type, const string &name, time_t time)
     : NamedEntityFS(file, loc, id, type, name, time), parent_section(parent)
 {
-    //property_group = this->group().openOptGroup("properties"); FIXME
-    //section_group = this->group().openOptGroup("sections");
+    cerr << "Section:: location!  "<< this->location() << endl;
+    createSubFolders();
 }
 
+
+void SectionFS::createSubFolders() {
+    boost::filesystem::path props("properties"), secs("sections");
+    boost::filesystem::create_directories(boost::filesystem::path(location().c_str() / props));
+    boost::filesystem::create_directories(boost::filesystem::path(location().c_str() / secs));
+}
 //--------------------------------------------------
 // Attribute getter and setter
 //--------------------------------------------------
@@ -234,7 +239,7 @@ shared_ptr<ISection> SectionFS::createSection(const string &name, const string &
 
     auto p = const_pointer_cast<SectionFS>(shared_from_this());
     //Group grp = g->openGgrproup(name, true);
-    return make_shared<SectionFS>(file(), p, location() + "/" + name, new_id, type, name);
+    return make_shared<SectionFS>(file(), p, location() + "/" + name, new_id, type, name); //FIXME this needs to go to the sections subfolder!
 }
 
 
