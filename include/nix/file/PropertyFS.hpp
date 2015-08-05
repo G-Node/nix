@@ -23,7 +23,7 @@ namespace nix {
 namespace file {
 
 
-class PropertyFS : virtual public base::IProperty, public nix::file::Directory {
+class PropertyFS : virtual public base::IProperty, public nix::file::DirectoryWithAttributes {
     std::shared_ptr<base::IFile>  entity_file;
     DataType dtype;
 

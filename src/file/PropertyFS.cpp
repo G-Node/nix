@@ -19,7 +19,7 @@ namespace nix {
 namespace file {
 
 PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const string &id, const string &name, const DataType &dataType)
-    : Directory(file->location(), file->fileMode()), entity_file(file), dtype(dataType)
+    : DirectoryWithAttributes(file->location(), file->fileMode()), entity_file(file), dtype(dataType)
 {
     if (name.empty()) {
         throw EmptyString("name");

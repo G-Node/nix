@@ -65,9 +65,8 @@ SectionFS::SectionFS(const shared_ptr<IFile> &file, const shared_ptr<ISection> &
 
 
 void SectionFS::createSubFolders() {
-    boost::filesystem::path props("properties"), secs("sections");
-    boost::filesystem::create_directories(boost::filesystem::path(location().c_str() / props));
-    boost::filesystem::create_directories(boost::filesystem::path(location().c_str() / secs));
+    property_dir = Directory("properties", file()->fileMode());
+    subsection_dir = Directory("sections", file()->fileMode());
 }
 //--------------------------------------------------
 // Attribute getter and setter

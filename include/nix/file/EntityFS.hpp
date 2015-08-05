@@ -11,7 +11,7 @@
 
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
-#include <nix/file/Directory.hpp>
+#include <nix/file/DirectoryWithAttributes.hpp>
 
 #include <string>
 #include <memory>
@@ -23,7 +23,7 @@ namespace file {
 /**
  * Filesystem implementation of IEntity
  */
-class EntityFS : virtual public base::IEntity, public Directory {
+class EntityFS : virtual public base::IEntity, public DirectoryWithAttributes {
 
 private:
 
