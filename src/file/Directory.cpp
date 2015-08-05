@@ -27,8 +27,6 @@ Directory::Directory(const path &location, FileMode mode)
 Directory::Directory(const string &location, FileMode mode): Directory(path(location.c_str()), mode) {}
 
 void Directory::open_or_create() {
-   // path temp = current_path();
-   // current_path(parent);
     if (!exists(loc)) {
         if (mode > FileMode::ReadOnly) {
             create_directories(loc);
@@ -36,7 +34,6 @@ void Directory::open_or_create() {
             throw std::logic_error("Trying to create new directory in ReadOnly mode!");
         }
     }
-    // current_path(temp);
 }
 
 bool Directory::hasAttr(const string &name) const  {
