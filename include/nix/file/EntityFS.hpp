@@ -31,10 +31,10 @@ private:
 
 public:
 
-    EntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc);
+    EntityFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc);
 
 
-    EntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, time_t time);
+    EntityFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc, const std::string &id, time_t time);
 
 
     std::string id() const;

@@ -18,15 +18,17 @@ using namespace boost::filesystem;
 namespace nix {
 namespace file {
 
-Directory::Directory(const path &parent, const std::string &name, FileMode mode)
-    : loc(parent / path(name.c_str())), mode(mode) {
+Directory::Directory(const path &location, FileMode mode)
+    : loc(location), mode(mode) {
     open_or_create();
     attributes = AttributesFS(loc, mode);
 }
 
-Directory::Directory(const string &parent, const string &name, FileMode mode): Directory(path(parent.c_str()), name, mode) {}
+Directory::Directory(const string &location, FileMode mode): Directory(path(location.c_str()), mode) {}
 
 void Directory::open_or_create() {
+   // path temp = current_path();
+   // current_path(parent);
     if (!exists(loc)) {
         if (mode > FileMode::ReadOnly) {
             create_directories(loc);
@@ -34,6 +36,7 @@ void Directory::open_or_create() {
             throw std::logic_error("Trying to create new directory in ReadOnly mode!");
         }
     }
+    // current_path(temp);
 }
 
 bool Directory::hasAttr(const string &name) const  {
