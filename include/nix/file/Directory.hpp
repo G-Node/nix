@@ -3,6 +3,7 @@
 
 #include <boost/filesystem.hpp>
 #include <nix/file/AttributesFS.hpp>
+#include <nix/File.hpp>
 
 #include <string>
 #include <vector>
@@ -15,36 +16,20 @@ class Directory {
 private:
     boost::filesystem::path loc;
     FileMode mode;
-    mutable AttributesFS attributes;
 
     void open_or_create();
 
 public:
+    Directory () {};
+
     Directory (const boost::filesystem::path &location, FileMode mode = FileMode::ReadOnly);
 
     Directory (const std::string &location, FileMode mode = FileMode::ReadOnly);
 
-    template <typename T> void setAttr(const std::string &name, const T &value);
-
-    template <typename T> void getAttr(const std::string &name, T &value) const;
-
-    bool hasAttr(const std::string &name) const;
-
-    void removeAttr(const std::string &name);
-
     std::string location() const;
+
+    ndsize_t subdir_count() const;
 };
-
-
-template <typename T>
-void Directory::setAttr(const std::string &name, const T &value) {
-    attributes.set(name, value);
-}
-
-template <typename T>
-void Directory::getAttr(const std::string &name, T &value) const {
-    attributes.get(name, value);
-}
 
 }
 }
