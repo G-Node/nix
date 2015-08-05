@@ -62,16 +62,7 @@ void FileFS::create_subfolders() {
 
 
 ndsize_t FileFS::blockCount() const {
-    ndsize_t count = 0;
-    boost::filesystem::directory_iterator end;
-    if (boost::filesystem::exists(data_path) && boost::filesystem::is_directory(data_path)) {
-        boost::filesystem::directory_iterator di(data_path);
-        while (di != end) {
-            count ++;
-            ++di;
-        }
-    }
-    return count;
+    return data_dir.subdir_count();
 }
 
 bool FileFS::hasBlock(const std::string &name_or_id) const  {
@@ -128,15 +119,7 @@ std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
 
 
 ndsize_t FileFS::sectionCount() const {
-    ndsize_t count = 0;
-    boost::filesystem::directory_iterator end;
-    if (boost::filesystem::exists(metadata_path) && boost::filesystem::is_directory(metadata_path)) {
-        boost::filesystem::directory_iterator di(metadata_path);
-        while (di != end) {
-            count ++;
-        }
-    }
-    return count;
+    return metadata_dir.subdir_count();
 }
 
 
@@ -145,7 +128,7 @@ std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, c
         throw DuplicateName("createSection");
     }
     string id = util::createId();
-    return make_shared<SectionFS>(file(), metadata_path.string(), id, type, name);
+    return make_shared<SectionFS>(file(), metadata_dir.location(), id, type, name);
 }
 
 
