@@ -13,20 +13,21 @@
 
 using namespace std;
 using namespace nix::base;
+using namespace boost::filesystem;
 
 namespace nix {
 namespace file {
 
 
-EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc)
-    : Directory(file->location(), loc, file->fileMode())
+EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc)
+    : Directory(loc, file->fileMode())
 {
     setUpdatedAt();
     setCreatedAt();
 }
 
 
-EntityFS::EntityFS(const shared_ptr<IFile> &file, const string &loc, const string &id, time_t time)
+EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc, const string &id, time_t time)
     : EntityFS(file, loc)
 {
     setAttr("entity_id", id);

@@ -13,8 +13,8 @@
 #include <ctime>
 
 using namespace std;
-
 using namespace nix::base;
+using namespace boost::filesystem;
 
 namespace nix {
 namespace file {
@@ -35,9 +35,8 @@ NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &l
 
 NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &loc, const string &id, const string &type,
                                  const string &name, time_t time)
-    : EntityFS(file, loc, id, time)
+    : EntityFS(file, (path(loc.c_str()) / path(name.c_str())), id, time)
 {
-    cerr << "File location:  " << file->location() << endl;
     this->type(type);
     if (name.empty()) {
         throw EmptyString("name");
