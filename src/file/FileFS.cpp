@@ -32,7 +32,7 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-FileFS::FileFS(const string &name, FileMode mode) : Directory(fs::current_path(), name, mode){
+FileFS::FileFS(const string &name, FileMode mode) : Directory(name, mode){
     fs::path p(name.c_str());
     this->mode = mode;
     setCreatedAt();
