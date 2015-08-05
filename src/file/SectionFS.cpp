@@ -185,18 +185,7 @@ shared_ptr<ISection> SectionFS::parent() const {
 
 
 ndsize_t SectionFS::sectionCount() const {
-    ndsize_t count = 0;
-    boost::filesystem::directory_iterator end;
-    boost::filesystem::path p(location() + "/sections");
-    if (boost::filesystem::exists(p) &&
-        boost::filesystem::is_directory(p)) {
-        boost::filesystem::directory_iterator di(p);
-        while (di != end) {
-            count ++;
-            ++di;
-        }
-    }
-    return count;
+    return subsection_dir.subdir_count();
 }
 
 
@@ -270,8 +259,7 @@ bool SectionFS::deleteSection(const string &name_or_id) {
 
 
 ndsize_t SectionFS::propertyCount() const {
-    // boost::optional<Group> g = property_group(); FIXME
-    return 0;
+    return property_dir.subdir_count();
 }
 
 
