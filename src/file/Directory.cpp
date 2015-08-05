@@ -24,7 +24,7 @@ Directory::Directory(const path &parent, const std::string &name, FileMode mode)
     attributes = AttributesFS(loc, mode);
 }
 
-Directory::Directory(const string &parent, const string &name, FileMode mode): Directory(path(parent.c_str()), name) {}
+Directory::Directory(const string &parent, const string &name, FileMode mode): Directory(path(parent.c_str()), name, mode) {}
 
 void Directory::open_or_create() {
     if (!exists(loc)) {
