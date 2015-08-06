@@ -62,5 +62,48 @@ boost::filesystem::path Directory::sub_dir_by_index(ndsize_t index) const {
     return p;
 }
 
+
+boost::optional<path> Directory::findByNameOrAttribute(const std::string &attribute, const std::string &value) const {
+    boost::optional<path> p;
+    if (hasObject(value)) {
+        p = location() / path(value.c_str());
+        return p;
+    }
+    if (util::looksLikeUUID(value)) {
+        path attr_path("attributes");
+        directory_iterator end;
+        directory_iterator di(location().c_str());
+        while (di != end) {
+            path temp = *di;
+            if (is_directory(temp) && exists(temp / attr_path)){
+                AttributesFS attr(temp);
+                string s;
+                if (attr.has(attribute)) {
+                    attr.get(attribute, s);
+                    if (s == value) {
+                        p = temp;
+                        return p;
+                    }
+                }
+            }
+            ++di;
+        }
+    }
+    return p;
+}
+
+
+bool Directory::hasObject(const std::string &name) const {
+    directory_iterator end;
+    directory_iterator di(location().c_str());
+    while (di != end) {
+        path temp = *di;
+        if (is_directory(temp) && temp.filename().string() == name)
+            return true;
+        ++di;
+    }
+    return false;
+}
+
 } // nix::file
 } // nix
