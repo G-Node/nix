@@ -94,12 +94,19 @@ bool FileFS::deleteBlock(const std::string &name_or_id) {
 //--------------------------------------------------
 
 bool FileFS::hasSection(const std::string &name_or_id) const {
-    return false;
+    boost::optional<boost::filesystem::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    return (bool)path;
 }
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id) const {
-    shared_ptr<SectionFS> sec;
+    shared_ptr<base::ISection> sec;
+    boost::optional<boost::filesystem::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    if (path) {
+        SectionFS s(file(), path->string());
+        return make_shared<SectionFS>(s);
+    }
+
     return sec;
 }
 
@@ -109,10 +116,8 @@ std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
         throw OutOfBounds("Trying to access file.section with invalid index.", index);
     }
     fs::path p = metadata_dir.sub_dir_by_index(index);
-
     shared_ptr<SectionFS> sec;
     sec = make_shared<SectionFS>(file(), p.string());
-
     return sec;
 }
 
