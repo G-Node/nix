@@ -113,7 +113,14 @@ std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
+    if (index >= sectionCount()) {
+        throw OutOfBounds("Trying to access file.section with invalid index.", index);
+    }
+    fs::path p = metadata_dir.sub_dir_by_index(index);
+
     shared_ptr<SectionFS> sec;
+    sec = make_shared<SectionFS>(file(), p.string());
+
     return sec;
 }
 

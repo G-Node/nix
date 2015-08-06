@@ -6,6 +6,7 @@
 #include <memory>
 #include <boost/filesystem.hpp>
 #include <nix/file/DirectoryWithAttributes.hpp>
+#include <nix/Exception.hpp>
 
 namespace nix {
 namespace file {
