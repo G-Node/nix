@@ -48,8 +48,19 @@ ndsize_t Directory::subdir_count() const {
             count ++;
         ++di;
     }
+    return count;
 }
 
+
+boost::filesystem::path Directory::sub_dir_by_index(ndsize_t index) const {
+    path p;
+    vector<path> paths;
+    copy(directory_iterator(loc), directory_iterator(), back_inserter(paths));
+    sort(paths.begin(), paths.end());
+    if (index < paths.size())
+        p = paths[index];
+    return p;
+}
 
 } // nix::file
 } // nix
