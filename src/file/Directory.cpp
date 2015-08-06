@@ -105,5 +105,13 @@ bool Directory::hasObject(const std::string &name) const {
     return false;
 }
 
+bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const {
+    boost::optional<path> p = findByNameOrAttribute(attribute, name_or_id);
+    if (p && mode > FileMode::ReadOnly) {
+        uintmax_t ret = remove_all(*p);
+        return ret > 0;
+    }
+    return false;
+}
 } // nix::file
 } // nix
