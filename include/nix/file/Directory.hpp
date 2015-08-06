@@ -32,9 +32,11 @@ public:
 
     boost::filesystem::path sub_dir_by_index(ndsize_t index) const;
 
-    bool hasObject(const std::string &name)const;
+    bool hasObject(const std::string &name) const;
 
     boost::optional<boost::filesystem::path> findByNameOrAttribute(const std::string &attribute, const std::string &value) const;
+
+    bool removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const;
 };
 
 }
