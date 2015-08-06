@@ -28,7 +28,7 @@ private:
     // TODO: consider writing parent_section as soft link into file
     std::shared_ptr<base::ISection> parent_section;
 
-    void createSubFolders();
+    void createSubFolders(const std::shared_ptr<base::IFile> &file);
 public:
 
     /**
