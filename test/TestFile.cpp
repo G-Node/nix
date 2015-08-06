@@ -188,7 +188,20 @@ void TestFile::testSectionAccess() {
     CPPUNIT_ASSERT(file_fs.getSection("invalid_id") == false);
 
     s = file_fs.createSection("test_sec", "test");
-    cerr << s << endl;
+    CPPUNIT_ASSERT(file_fs.sectionCount() == 1);
+
+    CPPUNIT_ASSERT(file_fs.hasSection("test_sec"));
+    CPPUNIT_ASSERT(!file_fs.hasSection("unknown section"));
+
+    Section s2 = file_fs.getSection("test_sec");
+    CPPUNIT_ASSERT(s.compare(s2) == 0 );
+
+    s2 = file_fs.getSection(s.id());
+    CPPUNIT_ASSERT(s.compare(s2) == 0 );
+
+    s2 = file_fs.getSection(0);
+    CPPUNIT_ASSERT(s.compare(s2) == 0 );
+    CPPUNIT_ASSERT_THROW(file_fs.getSection(1), nix::OutOfBounds);
     //CPPUNIT_ASSERT_THROW(file_fs.hasSection(s), std::runtime_error);
 }
 
