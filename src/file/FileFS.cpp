@@ -1,7 +1,6 @@
 #include <nix/file/FileFS.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/file/SectionFS.hpp>
-#include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
@@ -45,19 +44,12 @@ FileFS::FileFS(const string &name, FileMode mode)
 }
 
 void FileFS::create_subfolders() {
-    data_dir = Directory(location(), mode);
-    metadata_dir = Directory(location(), mode);
-    /*
-    boost::filesystem::path data("data");
-    boost::filesystem::path metadata("metadata");
-    fs::path p = location();
-    data_path = p / data;
-    metadata_path = p / metadata;
-    if (!exists(data_path))
-        boost::filesystem::create_directories(data_path);
-    if (!boost::filesystem::exists(metadata_path))
-        boost::filesystem::create_directories(metadata_path);
-    */
+    fs::path data("data");
+    fs::path metadata("metadata");
+    fs::path p(location());
+
+    data_dir = Directory(p / data, mode);
+    metadata_dir = Directory(p / metadata, mode);
 }
 
 
@@ -135,7 +127,8 @@ std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, c
         throw DuplicateName("createSection");
     }
     string id = util::createId();
-    return make_shared<SectionFS>(file(), metadata_dir.location(), id, type, name);
+    SectionFS s(file(), metadata_dir.location(), id, type, name);
+    return make_shared<SectionFS>(s);
 }
 
 
