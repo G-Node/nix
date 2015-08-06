@@ -20,9 +20,9 @@ namespace file {
 class AttributesFS {
 
 private:
-    YAML::Node node;
     boost::filesystem::path loc;
     FileMode mode;
+    YAML::Node node;
 
     void open_or_create();
 

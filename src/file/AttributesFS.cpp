@@ -21,64 +21,64 @@ AttributesFS::AttributesFS(const std::string &file_path, FileMode mode)
     : AttributesFS(path(file_path.c_str()), mode)
 { }
 
-AttributesFS::AttributesFS(const path &file_path, FileMode mode) {
+AttributesFS::AttributesFS(const path &file_path, FileMode mode)
+    : loc(file_path), mode(mode) {
     if (exists(file_path)) {
-        this->loc = file_path;
-        this->mode = mode;
-        this->open_or_create();
+        open_or_create();
     }
 }
 
+
 void AttributesFS::open_or_create() {
     path attr(ATTRIBUTES_FILE);
-    path temp = this->location() / attr;
+    path temp = location() / attr;
     if (!exists(temp)) {
         if (mode > FileMode::ReadOnly) {
             std::ofstream ofs;
-            ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
+            ofs.open(location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
             ofs.close();
         } else {
             throw std::logic_error("Trying to create new attributes in ReadOnly mode!");
         }
     }
-    this->node = LoadFile(this->location().string() + "/" + ATTRIBUTES_FILE);
+    node = LoadFile(location().string() + "/" + ATTRIBUTES_FILE);
 }
 
 
 bool AttributesFS::has(const std::string &name) {
-    this->open_or_create();
-    return (this->node.size() > 0) && (this->node[name]);
+    open_or_create();
+    return (node.size() > 0) && (node[name]);
 }
 
 
 void AttributesFS::flush() {
     std::ofstream ofs;
-    ofs.open(this->location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::trunc);
+    ofs.open(location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::trunc);
     if (ofs.is_open())
-        ofs << this->node << std::endl;
+        ofs << node << std::endl;
     else
         std::cerr << "Failure!!!" << std::endl;
     ofs.close();
 }
 
 path AttributesFS::location() const {
-    return this->loc;
+    return loc;
 }
 
 nix::ndsize_t AttributesFS::attributeCount() {
-    this->open_or_create();
-    return this->node.size();
+    open_or_create();
+    return node.size();
 }
 
 void AttributesFS::remove(const std::string &name) {
-    this->open_or_create();
+    open_or_create();
     if (mode == FileMode::ReadOnly) {
         throw std::logic_error("Trying to remove an attributes in ReadOnly mode!");
     }
-    if (this->node[name]) {
-        this->node.remove(name);
+    if (node[name]) {
+        node.remove(name);
     }
-    this->flush();
+    flush();
 }
 
 } //namespace file
