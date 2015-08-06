@@ -12,6 +12,7 @@
 
 #include <nix/file/SectionFS.hpp>
 #include <nix/file/PropertyFS.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace nix::base;
@@ -30,7 +31,7 @@ SectionFS::SectionFS(const std::shared_ptr<base::IFile> &file, const std::shared
                      const string &loc)
     : NamedEntityFS(file, loc), parent_section(parent)
 {
-    createSubFolders();
+    createSubFolders(file);
 }
 
 
@@ -59,14 +60,17 @@ SectionFS::SectionFS(const shared_ptr<IFile> &file, const shared_ptr<ISection> &
                      const string &id, const string &type, const string &name, time_t time)
     : NamedEntityFS(file, loc, id, type, name, time), parent_section(parent)
 {
-    cerr << "Section:: location!  "<< this->location() << endl;
-    createSubFolders();
+    createSubFolders(file);
 }
 
 
-void SectionFS::createSubFolders() {
-    property_dir = Directory("properties", file()->fileMode());
-    subsection_dir = Directory("sections", file()->fileMode());
+void SectionFS::createSubFolders(const shared_ptr<IFile> &file) {
+    boost::filesystem::path data("properties");
+    boost::filesystem::path metadata("sections");
+    boost::filesystem::path p(location());
+
+    property_dir = Directory(p / data, file->fileMode());
+    subsection_dir = Directory(p / metadata, file->fileMode());
 }
 //--------------------------------------------------
 // Attribute getter and setter
