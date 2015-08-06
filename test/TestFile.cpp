@@ -202,7 +202,10 @@ void TestFile::testSectionAccess() {
     s2 = file_fs.getSection(0);
     CPPUNIT_ASSERT(s.compare(s2) == 0 );
     CPPUNIT_ASSERT_THROW(file_fs.getSection(1), nix::OutOfBounds);
-    //CPPUNIT_ASSERT_THROW(file_fs.hasSection(s), std::runtime_error);
+
+    CPPUNIT_ASSERT(file_fs.deleteSection(s.name()));
+    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
+
 }
 
 

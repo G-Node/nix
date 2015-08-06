@@ -106,7 +106,6 @@ std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id
         SectionFS s(file(), path->string());
         return make_shared<SectionFS>(s);
     }
-
     return sec;
 }
 
@@ -138,7 +137,7 @@ std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, c
 
 
 bool FileFS::deleteSection(const std::string &name_or_id) {
-    return  false;
+    return metadata_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
 //--------------------------------------------------
