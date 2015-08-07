@@ -8,11 +8,9 @@
 #include <nix/util/util.hpp>
 #include <nix/util/filter.hpp>
 #include <nix/File.hpp>
-#include <nix/Section.hpp>
-
 #include <nix/file/SectionFS.hpp>
 #include <nix/file/PropertyFS.hpp>
-#include <boost/filesystem.hpp>
+
 
 using namespace std;
 using namespace nix::base;
@@ -199,26 +197,24 @@ bool SectionFS::hasSection(const string &name_or_id) const {
 
 
 shared_ptr<ISection> SectionFS::getSection(const string &name_or_id) const {
-    shared_ptr<SectionFS> section;
-    boost::filesystem::path p(location() + "/sections");
-    /*
-    if(boost::filesystem::exists({location() + "/sections"})) {
-        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group) {
-            auto p = const_pointer_cast<SectionHDF5>(shared_from_this());
-            section = make_shared<SectionHDF5>(file(), p, *group);
-        }
+    shared_ptr<base::ISection> sec;
+    boost::optional<boost::filesystem::path> path = subsection_dir.findByNameOrAttribute("entity_id", name_or_id);
+    if (path) {
+        SectionFS s(file(), path->string());
+        return make_shared<SectionFS>(s);
     }
-    */
-    //FIXME
-    return section;
+    return sec;
 }
 
 
 shared_ptr<ISection> SectionFS::getSection(ndsize_t index) const {
-    // boost::optional<Group> g = section_group(); FIXME
-    // string name = g ? g->objectName(index) : "";
-    return getSection("");
+    if (index >= sectionCount()) {
+        throw OutOfBounds("Trying to access section.subsection with invalid index.", index);
+    }
+    boost::filesystem::path p = subsection_dir.sub_dir_by_index(index);
+    shared_ptr<SectionFS> sec;
+    sec = make_shared<SectionFS>(file(), p.string());
+    return sec;
 }
 
 
@@ -226,34 +222,14 @@ shared_ptr<ISection> SectionFS::createSection(const string &name, const string &
     if (hasSection(name)) {
         throw DuplicateName("createSection");
     }
-    string new_id = util::createId();
-    //boost::optional<Group> g = section_group(true);
-
-    auto p = const_pointer_cast<SectionFS>(shared_from_this());
-    //Group grp = g->openGgrproup(name, true);
-    return make_shared<SectionFS>(file(), p, location() + "/" + name, new_id, type, name); //FIXME this needs to go to the sections subfolder!
+    string id = util::createId();
+    SectionFS s(file(), subsection_dir.location(), id, type, name);
+    return make_shared<SectionFS>(s);
 }
 
 
 bool SectionFS::deleteSection(const string &name_or_id) {
-    //boost::optional<Group> g = section_group();
-    bool deleted = false;
-    /*
-    if (g) {
-        // call deleteSection on sections to trigger recursive call to all sub-sections
-        if (hasSection(name_or_id)) {
-            // get instance of section about to get deleted
-            Section section = getSection(name_or_id);
-            // loop through all child sections and call deleteSection on them
-            for (auto &child : section.sections()) {
-                section.deleteSection(child.id());
-            }
-            // if hasSection is true then section_group always exists
-            deleted = g->removeAllLinks(section.name());
-        }
-    }
-    */ //FIXME
-    return deleted;
+    return subsection_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
 
@@ -274,23 +250,23 @@ bool SectionFS::hasProperty(const string &name_or_id) const {
 
 shared_ptr<IProperty> SectionFS::getProperty(const string &name_or_id) const {
     shared_ptr<PropertyFS> prop;
-    /*
-    boost::optional<Group> g = property_group();
-
-    if (g) {
-        boost::optional<DataSet> dset = g->findDataByNameOrAttribute("entity_id", name_or_id);
-        if (dset)
-            prop = make_shared<PropertyHDF5>(file(), *dset);
+    boost::optional<boost::filesystem::path> path = property_dir.findByNameOrAttribute("entity_id", name_or_id);
+    if (path) {
+        PropertyFS p(file(), *path);
+        return make_shared<PropertyFS>(p);
     }
-    */
     return prop;
 }
 
 
 shared_ptr<IProperty> SectionFS::getProperty(ndsize_t index) const {
-    // boost::optional<Group> g = property_group();
-    //string name = g ? g->objectName(index) : ""; FIXME
-    return getProperty("");
+    if (index >= propertyCount()) {
+        throw OutOfBounds("Trying to access section.property with invalid index.", index);
+    }
+    boost::filesystem::path p = property_dir.sub_dir_by_index(index);
+    shared_ptr<PropertyFS> prop;
+    prop = make_shared<PropertyFS>(file(), p.string());
+    return prop;
 }
 
 
@@ -299,16 +275,15 @@ shared_ptr<IProperty> SectionFS::createProperty(const string &name, const DataTy
         throw DuplicateName("hasProperty");
     }
     string new_id = util::createId();
-    return make_shared<PropertyFS>(file(), new_id, name, dtype);
+    PropertyFS p(file(), property_dir.location(), new_id, name, dtype);
+    return make_shared<PropertyFS>(p);
 }
 
 
 shared_ptr<IProperty> SectionFS::createProperty(const string &name, const Value &value) {
     shared_ptr<IProperty> p = createProperty(name, value.type());
-
     vector<Value> val{value};
     p->values(val);
-
     return p;
 }
 
@@ -324,16 +299,7 @@ shared_ptr<IProperty> SectionFS::createProperty(const string &name, const vector
 
 
 bool SectionFS::deleteProperty(const string &name_or_id) {
-    /*
-    boost::optional<Group> g = property_group();
-    bool deleted = false;
-
-    if (g && hasProperty(name_or_id)) {
-        g->removeData(getProperty(name_or_id)->name());
-        deleted = true;
-    }
-    */
-    return false;
+    return property_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
 
