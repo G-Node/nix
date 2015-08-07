@@ -11,26 +11,28 @@
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
 #include <nix/base/IProperty.hpp>
-#include <nix/file/NamedEntityFS.hpp>
-#include <nix/file/Directory.hpp>
+#include <nix/DataType.hpp>
+#include <nix/file/DirectoryWithAttributes.hpp>
 
 #include <string>
 #include <memory>
 #include <ctime>
-#include "../DataType.hpp"
 
 namespace nix {
 namespace file {
 
 
-class PropertyFS : virtual public base::IProperty, public nix::file::DirectoryWithAttributes {
-    std::shared_ptr<base::IFile>  entity_file;
+class PropertyFS : virtual public base::IProperty, public DirectoryWithAttributes,
+                   public std::enable_shared_from_this<PropertyFS> {
+
     DataType dtype;
 
 public:
+    PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc);
 
-    PropertyFS(const std::shared_ptr<base::IFile> &file, const std::string &id, const std::string &name,
-               const DataType &dataType);
+
+    PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc, const std::string &id,
+               const std::string &name, const DataType &dataType);
 
 
     std::string id() const;
