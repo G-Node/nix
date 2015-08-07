@@ -18,8 +18,15 @@ using namespace nix::base;
 namespace nix {
 namespace file {
 
-PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const string &id, const string &name, const DataType &dataType)
-    : DirectoryWithAttributes(file->location(), file->fileMode()), entity_file(file), dtype(dataType)
+PropertyFS::PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc)
+    : DirectoryWithAttributes(loc, file->fileMode())
+{
+}
+
+
+PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const boost::filesystem::path &loc, const string &id,
+                       const string &name, const DataType &dataType)
+    : DirectoryWithAttributes(loc / boost::filesystem::path(name), file->fileMode()), dtype(dataType)
 {
     if (name.empty()) {
         throw EmptyString("name");
@@ -129,7 +136,7 @@ void PropertyFS::definition(const nix::none_t t) {
 
 
 DataType PropertyFS::dataType() const {
-    return this->dataType();
+    return this->dtype;
 }
 
 
@@ -226,7 +233,7 @@ int PropertyFS::compare(const std::shared_ptr<IProperty> &other) const {
     if (cmp == 0) {
         cmp = id().compare(other->id());
     }
-    return cmp; //FIXME!!!
+    return cmp;
 }
 
 
