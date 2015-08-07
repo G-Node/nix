@@ -58,7 +58,8 @@ ndsize_t FileFS::blockCount() const {
 }
 
 bool FileFS::hasBlock(const std::string &name_or_id) const  {
-    return false;
+    boost::optional<fs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
+    return (bool)path;
 }
 
 
@@ -94,14 +95,14 @@ bool FileFS::deleteBlock(const std::string &name_or_id) {
 //--------------------------------------------------
 
 bool FileFS::hasSection(const std::string &name_or_id) const {
-    boost::optional<boost::filesystem::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<fs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
     return (bool)path;
 }
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id) const {
     shared_ptr<base::ISection> sec;
-    boost::optional<boost::filesystem::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<fs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
         SectionFS s(file(), path->string());
         return make_shared<SectionFS>(s);
@@ -205,10 +206,9 @@ void FileFS::forceCreatedAt(time_t t) {
 }
 
 
-void FileFS::close() {}
+void FileFS::close() {} // FIXME not needed?
 
-
-bool FileFS::isOpen() const {
+bool FileFS::isOpen() const { //FIXME not needed?
     return true;
 }
 
