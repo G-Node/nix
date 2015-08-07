@@ -50,6 +50,9 @@ install:
     else
       clang --version;
     fi
+  - sudo add-apt-repository ppa:pritunl/pritunl-build -y
+  - sudo apt-get update -qq -y
+  - sudo apt-get install -q libyaml-cpp-dev
 
 script:
   - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
