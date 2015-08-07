@@ -1,5 +1,5 @@
 #include <nix/file/FileFS.hpp>
-#include <nix/hdf5/BlockHDF5.hpp>
+#include <nix/file/BlockFS.hpp>
 #include <nix/file/SectionFS.hpp>
 
 using namespace std;
@@ -33,7 +33,6 @@ static unsigned int map_file_mode(FileMode mode) {
 
 FileFS::FileFS(const string &name, FileMode mode)
     : DirectoryWithAttributes(name, mode){
-    fs::path p(name.c_str());
     this->mode = mode;
     setCreatedAt();
     setUpdatedAt();
@@ -64,25 +63,34 @@ bool FileFS::hasBlock(const std::string &name_or_id) const  {
 
 
 std::shared_ptr<base::IBlock> FileFS::getBlock(const std::string &name_or_id) const {
-    shared_ptr<nix::hdf5::BlockHDF5> block;
-    /*
-    boost::optional<Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
-    if (group)
-       block = make_shared<BlockHDF5>(file(), *group);
-    */
+    shared_ptr<BlockFS> block;
+    boost::optional<fs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
+    if (path) {
+        BlockFS b(file(), path->string());
+        return make_shared<BlockFS>(b);
+    }
     return block;
 }
 
 
 std::shared_ptr<base::IBlock> FileFS::getBlock(ndsize_t index) const {
-    shared_ptr<nix::hdf5::BlockHDF5> block;
-    return block;
+    if (index >= blockCount()) {
+        throw nix::OutOfBounds("TRying to access file.block with invalid index", index);
+    }
+    fs::path p = data_dir.sub_dir_by_index(index);
+    shared_ptr<BlockFS> b;
+    b = make_shared<BlockFS>(file(), p.string());
+    return b;
 }
 
 
 std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const std::string &type) {
-    shared_ptr<nix::hdf5::BlockHDF5> block;
-    return block;
+    if (hasBlock(name)) {
+        throw DuplicateName("createBlock"); // FIXME to test
+    }
+    string id = util::createId();
+    BlockFS b(file(), data_dir.location(), id, type, name);
+    return make_shared<BlockFS>(b);
 }
 
 
