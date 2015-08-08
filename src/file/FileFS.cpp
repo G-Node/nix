@@ -95,7 +95,7 @@ std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const
 
 
 bool FileFS::deleteBlock(const std::string &name_or_id) {
-    return false;
+    return data_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
 //--------------------------------------------------
