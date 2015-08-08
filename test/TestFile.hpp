@@ -37,6 +37,7 @@ private:
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST(testCheckHeader);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file_open, file_other, file_null, file_fs, file_other_fs;
@@ -56,4 +57,5 @@ public:
     void testSectionAccess();
     void testOperators();
     void testReopen();
+    void testCheckHeader();
 };

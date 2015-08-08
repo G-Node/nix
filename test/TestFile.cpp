@@ -10,7 +10,7 @@
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
-
+#include <nix/file/AttributesFS.hpp>
 #include <ctime>
 #include <boost/filesystem.hpp>
 
@@ -128,7 +128,7 @@ void TestFile::testBlockAccess() {
     
     for (const auto &id: ids) {
         Block bl = file_open.getBlock(id);
-        CPPUNIT_ASSERT(file_open.hasBlock(id) == true);
+        CPPUNIT_ASSERT(file_open.hasBlock(id));
         CPPUNIT_ASSERT(bl.id() == id);
 
         file_open.deleteBlock(id);
@@ -141,6 +141,44 @@ void TestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
+
+    // Filesystem tests
+    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
+    CPPUNIT_ASSERT(!file_fs.hasBlock("unknown"));
+
+    ids.clear();
+    for (const auto &name : names) {
+        Block bl = file_fs.createBlock(name, "dataset");
+        CPPUNIT_ASSERT(bl.name() == name);
+        CPPUNIT_ASSERT(file_fs.hasBlock(bl));
+        CPPUNIT_ASSERT(file_fs.hasBlock(name));
+
+        ids.push_back(bl.id());
+    }
+
+    CPPUNIT_ASSERT_THROW(file_fs.createBlock(names[0], "dataset"),
+                         DuplicateName);
+
+    CPPUNIT_ASSERT(file_fs.blockCount() == names.size());
+    CPPUNIT_ASSERT(file_fs.blocks().size() == names.size());
+
+    for (const auto &id: ids) {
+        Block bl = file_fs.getBlock(id);
+        CPPUNIT_ASSERT(file_fs.hasBlock(id));
+        CPPUNIT_ASSERT(bl.id() == id);
+
+        file_fs.deleteBlock(id);
+    }
+    Block b2;
+    CPPUNIT_ASSERT_THROW(file_fs.deleteBlock(b2), std::runtime_error);
+    b2 = file_fs.createBlock("test","test");
+    CPPUNIT_ASSERT_NO_THROW(file_fs.getBlock(0));
+    CPPUNIT_ASSERT_THROW(file_fs.getBlock(file_fs.blockCount()), nix::OutOfBounds);
+    CPPUNIT_ASSERT(file_fs.deleteBlock(b2));
+    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
+    CPPUNIT_ASSERT(file_fs.blocks().size() == 0);
+    CPPUNIT_ASSERT(file_fs.getBlock("invalid_id") == false);
+
 }
 
 
@@ -167,7 +205,7 @@ void TestFile::testSectionAccess() {
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Section sec = file_open.getSection(*it);
-        CPPUNIT_ASSERT(file_open.hasSection(*it) == true);
+        CPPUNIT_ASSERT(file_open.hasSection(*it));
         CPPUNIT_ASSERT(sec.id() == *it);
 
         file_open.deleteSection(*it);
@@ -189,6 +227,7 @@ void TestFile::testSectionAccess() {
 
     s = file_fs.createSection("test_sec", "test");
     CPPUNIT_ASSERT(file_fs.sectionCount() == 1);
+    CPPUNIT_ASSERT_THROW(file_fs.createSection("test_sec", "test"), nix::DuplicateName);
 
     CPPUNIT_ASSERT(file_fs.hasSection("test_sec"));
     CPPUNIT_ASSERT(!file_fs.hasSection("unknown section"));
@@ -205,6 +244,7 @@ void TestFile::testSectionAccess() {
 
     CPPUNIT_ASSERT(file_fs.deleteSection(s.name()));
     CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
+
 
 }
 
@@ -233,6 +273,7 @@ void TestFile::testOperators(){
     CPPUNIT_ASSERT(file_fs != none);
 }
 
+
 void TestFile::testReopen() {
     //file_open is currently open
     Block b = file_open.createBlock("a", "a");
@@ -241,5 +282,21 @@ void TestFile::testReopen() {
 
     file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
+
+    CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
+    CPPUNIT_ASSERT(file_fs.fileMode() == FileMode::Overwrite);
+    CPPUNIT_ASSERT_THROW(nix::File::open("test_file_b.h5", FileMode::Overwrite, (Implementation)2), std::runtime_error);
 }
 
+
+void TestFile::testCheckHeader() {
+    file::AttributesFS attr(file_fs.location(), file_fs.fileMode());
+    string frmt("xin");
+    attr.set("format", frmt);
+    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::Overwrite, Implementation::FileSys), std::runtime_error);
+    attr.set("format", "nix");
+
+    vector<int> version{2, 0, 0};
+    attr.set("version", version);
+    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::Overwrite, Implementation::FileSys), std::runtime_error);
+}
