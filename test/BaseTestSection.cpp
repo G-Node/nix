@@ -38,11 +38,13 @@ void BaseTestSection::testValidate() {
 
 void BaseTestSection::testId() {
     CPPUNIT_ASSERT(section.id().size() == 36);
+    CPPUNIT_ASSERT(section_fs.id().size() == 36);
 }
 
 
 void BaseTestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
+    CPPUNIT_ASSERT(section_fs.name() == "section_fs");
 }
 
 
@@ -51,6 +53,10 @@ void BaseTestSection::testType() {
     string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
+
+    CPPUNIT_ASSERT(section_fs.type() == "metadata");
+    section_fs.type(typ);
+    CPPUNIT_ASSERT(section_fs.type() == typ);
 }
 
 
@@ -60,6 +66,11 @@ void BaseTestSection::testDefinition() {
     CPPUNIT_ASSERT(*section.definition() == def);
     section.definition(nix::none);
     CPPUNIT_ASSERT(section.definition() == nix::none);
+
+    section_fs.definition(def);
+    CPPUNIT_ASSERT(*section_fs.definition() == def);
+    section_fs.definition(nix::none);
+    CPPUNIT_ASSERT(section_fs.definition() == nix::none);
 }
 
 
@@ -71,6 +82,13 @@ void BaseTestSection::testParent() {
     CPPUNIT_ASSERT(child.parent().id() == section.id());
 
     CPPUNIT_ASSERT(child.parent().parent() == nix::none);
+    /*
+    CPPUNIT_ASSERT(section_fs.parent() == nullptr);
+    Section child_fs = section_fs.createSection("child", "section");
+    CPPUNIT_ASSERT(child_fs.parent() != nullptr);
+    CPPUNIT_ASSERT(child_fs.parent().id() == section_fs.id());
+    CPPUNIT_ASSERT(child_fs.parent().parent() == nullptr);
+    */
 }
 
 
@@ -81,6 +99,12 @@ void BaseTestSection::testRepository() {
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
     CPPUNIT_ASSERT(!section.repository());
+
+    CPPUNIT_ASSERT(!section_fs.repository());
+    section_fs.repository(rep);
+    CPPUNIT_ASSERT(section_fs.repository() == rep);
+    section_fs.repository(boost::none);
+    CPPUNIT_ASSERT(!section_fs.repository());
 }
 
 
