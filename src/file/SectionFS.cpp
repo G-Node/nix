@@ -106,8 +106,9 @@ void SectionFS::repository(const none_t t) {
 void SectionFS::link(const std::string &id) {
     if (id.empty())
         throw EmptyString("link");
+    boost::filesystem::path p(location()), l("link");
 
-    if (boost::filesystem::exists({location() + "/link"}))
+    if (boost::filesystem::exists(p / l))
         link(none);
 
     File tmp = file();
@@ -116,7 +117,9 @@ void SectionFS::link(const std::string &id) {
         throw std::runtime_error("SectionFS::link: Section not found in file!");
 
     auto target = dynamic_pointer_cast<SectionFS>(found.front().impl());
-    boost::filesystem::create_directory_symlink(target->location(), {"link"});
+    boost::filesystem::path t(target->location());
+    boost::filesystem::create_directory_symlink(t, p / l);
+    forceUpdatedAt();
 }
 
 
