@@ -85,19 +85,18 @@ void TestSection::testDefinition() {
 
 
 void TestSection::testParent() {
-    CPPUNIT_ASSERT(section.parent() == nullptr);
+    CPPUNIT_ASSERT((section.parent() == nullptr));
     Section child = section.createSection("child", "section");
     CPPUNIT_ASSERT(child.parent() != nullptr);
     CPPUNIT_ASSERT(child.parent().id() == section.id());
     CPPUNIT_ASSERT(child.parent().parent() == nullptr);
 
-    /*
     CPPUNIT_ASSERT(section_fs.parent() == nullptr);
     Section child_fs = section_fs.createSection("child", "section");
     CPPUNIT_ASSERT(child_fs.parent() != nullptr);
     CPPUNIT_ASSERT(child_fs.parent().id() == section_fs.id());
     CPPUNIT_ASSERT(child_fs.parent().parent() == nullptr);
-    */
+
 }
 
 
@@ -133,6 +132,14 @@ void TestSection::testLink() {
     CPPUNIT_ASSERT(!section.link());
     // re-create section
     section = file.createSection("foo_section", "metadata");
+
+    CPPUNIT_ASSERT(!section_fs.link());
+    section_fs.link(section_fs_other);
+    CPPUNIT_ASSERT(section_fs.link());
+    CPPUNIT_ASSERT(section_fs.link().id() == section_fs_other.id());
+    // test none-unsetter
+    section_fs.link(none);
+    CPPUNIT_ASSERT(!section_fs.link());
 }
 
 
@@ -143,6 +150,12 @@ void TestSection::testMapping() {
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
     CPPUNIT_ASSERT(!section.mapping());
+
+    CPPUNIT_ASSERT(!section_fs.mapping());
+    section_fs.mapping(map);
+    CPPUNIT_ASSERT(section_fs.mapping() == map);
+    section_fs.mapping(boost::none);
+    CPPUNIT_ASSERT(!section_fs.mapping());
 }
 
 
@@ -180,6 +193,38 @@ void TestSection::testSectionAccess() {
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
+
+    // Filesystem checks
+    CPPUNIT_ASSERT(section_fs.sectionCount() == 0);
+    CPPUNIT_ASSERT(section_fs.sections().size() == 0);
+    CPPUNIT_ASSERT(section_fs.getSection("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, section_fs.hasSection("invalid_id"));
+
+    ids.clear();
+    for (auto name : names) {
+        Section child_section = section_fs.createSection(name, "metadata");
+        CPPUNIT_ASSERT(child_section.name() == name);
+        CPPUNIT_ASSERT_EQUAL(true, section_fs.hasSection(name));
+
+        ids.push_back(child_section.id());
+    }
+    CPPUNIT_ASSERT_THROW(section_fs.createSection(names[0], "metadata"),
+                         DuplicateName);
+
+    CPPUNIT_ASSERT(section_fs.sectionCount() == names.size());
+    CPPUNIT_ASSERT(section_fs.sections().size() == names.size());
+
+    for (auto id : ids) {
+        Section child_section = section_fs.getSection(id);
+        CPPUNIT_ASSERT(section_fs.hasSection(id));
+        CPPUNIT_ASSERT_EQUAL(id, child_section.id());
+
+        section_fs.deleteSection(id);
+    }
+
+    CPPUNIT_ASSERT(section_fs.sectionCount() == 0);
+    CPPUNIT_ASSERT(section_fs.sections().size() == 0);
+    CPPUNIT_ASSERT(section_fs.getSection("invalid_id") == false);
 }
 
 
@@ -365,6 +410,71 @@ void TestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     prop = section.getProperty("another test");
     CPPUNIT_ASSERT(prop.valueCount() == 2);
+
+    // Filesystem checks
+    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
+    CPPUNIT_ASSERT(section_fs.properties().size() == 0);
+    CPPUNIT_ASSERT(section_fs.getProperty("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, section_fs.hasProperty("invalid_id"));
+
+    p = section_fs.createProperty("empty_prop", DataType::Double);
+    CPPUNIT_ASSERT(section_fs.propertyCount() == 1);
+    CPPUNIT_ASSERT(section_fs.hasProperty(p));
+    CPPUNIT_ASSERT(section_fs.hasProperty("empty_prop"));
+    prop = section_fs.getProperty("empty_prop");
+    CPPUNIT_ASSERT(prop.valueCount() == 0);
+    CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
+    section_fs.deleteProperty(p.id());
+    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
+
+    /*
+    Value dummy(10);
+    prop = section.createProperty("single value", dummy);
+    CPPUNIT_ASSERT(section.hasProperty("single value"));
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    section.deleteProperty(prop.id());
+    CPPUNIT_ASSERT(section.propertyCount() == 0);
+    */ // values are not yet supported in filesys backend
+    ids.clear();
+    for (auto name : names) {
+        prop = section_fs.createProperty(name, dummy);
+        CPPUNIT_ASSERT(prop.name() == name);
+        CPPUNIT_ASSERT(section_fs.hasProperty(name));
+
+        Property prop_copy = section_fs.getProperty(name);
+        CPPUNIT_ASSERT(prop_copy.id() == prop.id());
+        ids.push_back(prop.id());
+    }
+    CPPUNIT_ASSERT_THROW(section_fs.createProperty(names[0], dummy),
+                         DuplicateName);
+
+    CPPUNIT_ASSERT(section_fs.propertyCount() == names.size());
+    CPPUNIT_ASSERT(section_fs.properties().size() == names.size());
+    section_fs_other.createProperty("some_prop", dummy);
+    section_fs_other.link(section_fs);
+    CPPUNIT_ASSERT(section_fs_other.propertyCount() == 1);
+    CPPUNIT_ASSERT(section_fs_other.inheritedProperties().size() == names.size() + 1);
+
+    for (auto id : ids) {
+        Property prop = section_fs.getProperty(id);
+        CPPUNIT_ASSERT(section_fs.hasProperty(id));
+        CPPUNIT_ASSERT(prop.id() == id);
+
+        section_fs.deleteProperty(id);
+    }
+
+    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
+    CPPUNIT_ASSERT(section_fs.properties().size() == 0);
+    CPPUNIT_ASSERT(section_fs.getProperty("invalid_id") == false);
+    /*
+    vector<Value> values;
+    values.push_back(Value(10));
+    values.push_back(Value(100));
+    section.createProperty("another test", values);
+    CPPUNIT_ASSERT(section.propertyCount() == 1);
+    prop = section.getProperty("another test");
+    CPPUNIT_ASSERT(prop.valueCount() == 2);
+    */ // Values are not supported yet
 }
 
 
@@ -384,6 +494,16 @@ void TestSection::testOperators() {
     section_other = none;
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);
+
+    CPPUNIT_ASSERT(section_fs != false);
+    CPPUNIT_ASSERT(section_fs != none);
+
+    CPPUNIT_ASSERT(section_fs == section_fs);
+    CPPUNIT_ASSERT(section_fs != section_fs_other);
+
+    section_fs_other = section_fs;
+    CPPUNIT_ASSERT(section_fs == section_fs_other);
+
 }
 
 
@@ -392,9 +512,14 @@ void TestSection::testCreatedAt() {
     time_t past_time = time(NULL) - 10000000;
     section.forceCreatedAt(past_time);
     CPPUNIT_ASSERT(section.createdAt() == past_time);
+
+    CPPUNIT_ASSERT(section_fs.createdAt() >= startup_time);
+    section_fs.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(section_fs.createdAt() == past_time);
 }
 
 
 void TestSection::testUpdatedAt() {
     CPPUNIT_ASSERT(section.updatedAt() >= startup_time);
+    CPPUNIT_ASSERT(section_fs.updatedAt() >= startup_time);
 }
