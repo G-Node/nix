@@ -223,7 +223,7 @@ shared_ptr<ISection> SectionFS::createSection(const string &name, const string &
         throw DuplicateName("createSection");
     }
     string id = util::createId();
-    SectionFS s(file(), subsection_dir.location(), id, type, name);
+    SectionFS s(file(), shared_from_this(), subsection_dir.location(), id, type, name);
     return make_shared<SectionFS>(s);
 }
 
