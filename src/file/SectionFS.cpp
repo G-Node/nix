@@ -168,8 +168,8 @@ boost::optional<string> SectionFS::mapping() const {
 
 
 void SectionFS::mapping(const none_t t) {
-    if (boost::filesystem::exists({location() + "/mapping"})) {
-        boost::filesystem::remove_all({location() + "/mapping"});
+    if (hasAttr("mapping")) {
+        removeAttr("mapping");
     }
     forceUpdatedAt();
 }
