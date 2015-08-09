@@ -25,8 +25,6 @@ namespace file {
 class PropertyFS : virtual public base::IProperty, public DirectoryWithAttributes,
                    public std::enable_shared_from_this<PropertyFS> {
 
-    DataType dtype;
-
 public:
     PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc);
 

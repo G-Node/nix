@@ -26,7 +26,7 @@ PropertyFS::PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::fi
 
 PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const boost::filesystem::path &loc, const string &id,
                        const string &name, const DataType &dataType)
-    : DirectoryWithAttributes(loc / boost::filesystem::path(name), file->fileMode()), dtype(dataType)
+    : DirectoryWithAttributes(loc / boost::filesystem::path(name), file->fileMode())
 {
     if (name.empty()) {
         throw EmptyString("name");
@@ -36,6 +36,7 @@ PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const boost::filesyst
     }
 
     setAttr("entity_id", id);
+    setAttr("data_type", nix::data_type_to_string(dataType));
     time_t t = util::getTime();
     setUpdatedAt();
     forceCreatedAt(t);
@@ -136,7 +137,9 @@ void PropertyFS::definition(const nix::none_t t) {
 
 
 DataType PropertyFS::dataType() const {
-    return this->dtype;
+    string dtype;
+    getAttr("data_type", dtype);
+    return nix::string_to_data_type(dtype);
 }
 
 
