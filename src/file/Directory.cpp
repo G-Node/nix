@@ -30,6 +30,11 @@ void Directory::open_or_create() {
         } else {
             throw std::logic_error("Trying to create new directory in ReadOnly mode!");
         }
+    } else {
+        if (mode == FileMode::Overwrite) {
+            boost::filesystem::remove_all(loc);
+            create_directories(loc);
+        }
     }
 }
 
