@@ -34,6 +34,9 @@ static unsigned int map_file_mode(FileMode mode) {
 FileFS::FileFS(const string &name, FileMode mode)
     : DirectoryWithAttributes(name, mode){
     this->mode = mode;
+    if (mode == FileMode::Overwrite) {
+        removeAll();
+    }
     setCreatedAt();
     setUpdatedAt();
     create_subfolders();
