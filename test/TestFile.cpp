@@ -293,10 +293,10 @@ void TestFile::testCheckHeader() {
     file::AttributesFS attr(file_fs.location(), file_fs.fileMode());
     string frmt("xin");
     attr.set("format", frmt);
-    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::Overwrite, Implementation::FileSys), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::ReadWrite, Implementation::FileSys), std::runtime_error);
     attr.set("format", "nix");
 
     vector<int> version{2, 0, 0};
     attr.set("version", version);
-    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::Overwrite, Implementation::FileSys), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::ReadWrite, Implementation::FileSys), std::runtime_error);
 }
