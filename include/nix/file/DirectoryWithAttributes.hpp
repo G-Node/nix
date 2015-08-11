@@ -28,6 +28,8 @@ public:
     bool hasAttr(const std::string &name) const;
 
     void removeAttr(const std::string &name);
+
+    void removeAll();
 };
 
 

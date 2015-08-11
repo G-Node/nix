@@ -34,5 +34,10 @@ void DirectoryWithAttributes::removeAttr(const string &name) {
     attributes.remove(name);
 }
 
+void DirectoryWithAttributes::removeAll() {
+    Directory::removeAll();
+    attributes = AttributesFS(location(), fileMode());
+}
+
 } // nix::file
 } // nix
