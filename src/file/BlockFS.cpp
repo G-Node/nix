@@ -68,7 +68,7 @@ std::shared_ptr<base::ISource> BlockFS::getSource(const std::string &name_or_id)
 
 
 ndsize_t BlockFS::sourceCount() const {
-    return source_dir.subdir_count();
+    return source_dir.subdirCount();
 }
 
 
@@ -121,7 +121,7 @@ std::shared_ptr<base::IDataArray> BlockFS::getDataArray(ndsize_t index) const {
 
 
 ndsize_t BlockFS::dataArrayCount() const {
-    return data_array_dir.subdir_count();
+    return data_array_dir.subdirCount();
 }
 
 
@@ -146,7 +146,7 @@ bool BlockFS::hasTag(const std::string &name_or_id) const {
 
 
 ndsize_t BlockFS::tagCount() const {
-    return tag_dir.subdir_count();
+    return tag_dir.subdirCount();
 }
 
 
@@ -191,7 +191,7 @@ bool BlockFS::hasMultiTag(const std::string &name_or_id) const {
 
 
 ndsize_t BlockFS::multiTagCount() const {
-    return multi_tag_dir.subdir_count();
+    return multi_tag_dir.subdirCount();
 }
 
 

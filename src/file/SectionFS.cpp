@@ -190,7 +190,7 @@ shared_ptr<ISection> SectionFS::parent() const {
 
 
 ndsize_t SectionFS::sectionCount() const {
-    return subsection_dir.subdir_count();
+    return subsection_dir.subdirCount();
 }
 
 
@@ -242,7 +242,7 @@ bool SectionFS::deleteSection(const string &name_or_id) {
 
 
 ndsize_t SectionFS::propertyCount() const {
-    return property_dir.subdir_count();
+    return property_dir.subdirCount();
 }
 
 

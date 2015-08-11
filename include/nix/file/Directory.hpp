@@ -28,9 +28,9 @@ public:
 
     std::string location() const;
 
-    ndsize_t subdir_count() const;
     FileMode fileMode() const;
 
+    ndsize_t subdirCount() const;
 
     boost::filesystem::path sub_dir_by_index(ndsize_t index) const;
 

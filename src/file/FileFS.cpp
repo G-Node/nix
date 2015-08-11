@@ -53,7 +53,7 @@ void FileFS::create_subfolders() {
 
 
 ndsize_t FileFS::blockCount() const {
-    return data_dir.subdir_count();
+    return data_dir.subdirCount();
 }
 
 bool FileFS::hasBlock(const std::string &name_or_id) const  {
@@ -131,7 +131,7 @@ std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
 
 
 ndsize_t FileFS::sectionCount() const {
-    return metadata_dir.subdir_count();
+    return metadata_dir.subdirCount();
 }
 
 
