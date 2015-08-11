@@ -39,6 +39,8 @@ public:
     boost::optional<boost::filesystem::path> findByNameOrAttribute(const std::string &attribute, const std::string &value) const;
 
     bool removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const;
+
+    void removeAll();
 };
 
 }

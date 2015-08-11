@@ -62,6 +62,16 @@ ndsize_t Directory::subdirCount() const {
 }
 
 
+void Directory::removeAll() {
+    directory_iterator end;
+    directory_iterator di(location().c_str());
+    while (di != end) {
+        remove_all(*di);
+        ++di;
+    }
+}
+
+
 boost::filesystem::path Directory::sub_dir_by_index(ndsize_t index) const {
     path p;
     vector<path> paths;
