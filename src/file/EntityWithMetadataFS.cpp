@@ -41,6 +41,9 @@ EntityWithMetadataFS::EntityWithMetadataFS(const shared_ptr<IFile> &file, const 
 
 
 void EntityWithMetadataFS::metadata(const std::string &id) {
+    if (fileMode() == FileMode::ReadOnly) {
+        throw std::runtime_error("EntityWithMetdata::metadata trying to set metadata in ReadOnly mode.");
+    }
     if (id.empty())
         throw EmptyString("metadata");
 
@@ -74,6 +77,9 @@ shared_ptr<ISection> EntityWithMetadataFS::metadata() const {
 
 
 void EntityWithMetadataFS::metadata(const none_t t) {
+    if (fileMode() == FileMode::ReadOnly) {
+        throw std::runtime_error("EntityWithMetdata::metadata trying to set metadata in ReadOnly mode.");
+    }
     if (hasMetadata()) {
         boost::filesystem::path p1(location()), p2("metadata");
         boost::filesystem::remove_all(p1/p2);
