@@ -44,7 +44,12 @@ string Directory::location() const {
 }
 
 
-ndsize_t Directory::subdir_count() const {
+FileMode Directory::fileMode() const {
+    return mode;
+}
+
+
+ndsize_t Directory::subdirCount() const {
     ndsize_t count = 0;
     directory_iterator end;
     directory_iterator di(location().c_str());
