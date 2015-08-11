@@ -29,6 +29,11 @@ void TestBlock::setUp() {
     block = file.createBlock("block_one", "dataset");
     block_other = file.createBlock("block_two", "dataset");
     block_null  = nix::none;
+
+    file_fs = File::open("test_block", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block_one", "dataset");
+    section_fs = file_fs.createSection("foo_section", "metadata");
+
 }
 
 
@@ -46,11 +51,13 @@ void TestBlock::testValidate() {
 
 void TestBlock::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
+    CPPUNIT_ASSERT(block_fs.id().size() == 36);
 }
 
 
 void TestBlock::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
+    CPPUNIT_ASSERT(block_fs.name() == "block_one");
 }
 
 
@@ -59,6 +66,10 @@ void TestBlock::testType() {
     string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
+
+    CPPUNIT_ASSERT(block_fs.type() == "dataset");
+    block_fs.type(typ);
+    CPPUNIT_ASSERT(block_fs.type() == typ);
 }
 
 
@@ -66,6 +77,9 @@ void TestBlock::testDefinition() {
     string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
+
+    block_fs.definition(def);
+    CPPUNIT_ASSERT(*block_fs.definition() == def);
 }
 
 
@@ -84,6 +98,19 @@ void TestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
     // re-create section
     section = file.createSection("foo_section", "metadata");
+
+    CPPUNIT_ASSERT(!block_fs.metadata());
+    block_fs.metadata(section_fs);
+    CPPUNIT_ASSERT(block_fs.metadata());
+    // test none-unsetter
+    block_fs.metadata(none);
+    CPPUNIT_ASSERT(!block_fs.metadata());
+    // test deleter removing link too
+    block_fs.metadata(section_fs);
+    file_fs.deleteSection(section_fs.id());
+    CPPUNIT_ASSERT(!block.metadata());
+    // re-create section
+    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 

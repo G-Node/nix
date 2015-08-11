@@ -52,9 +52,9 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Section section;
-    nix::Block block, block_other, block_null;
+    nix::File file, file_fs;
+    nix::Section section, section_fs;
+    nix::Block block, block_other, block_null, block_fs;
     time_t startup_time;
 
 public:
