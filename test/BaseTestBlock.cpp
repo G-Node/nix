@@ -33,11 +33,13 @@ void BaseTestBlock::testValidate() {
 
 void BaseTestBlock::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
+    CPPUNIT_ASSERT(block_fs.id().size() == 36);
 }
 
 
 void BaseTestBlock::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
+    CPPUNIT_ASSERT(block_fs.name() == "block_one");
 }
 
 
@@ -46,6 +48,10 @@ void BaseTestBlock::testType() {
     std::string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
+
+    CPPUNIT_ASSERT(block_fs.type() == "dataset");
+    block_fs.type(typ);
+    CPPUNIT_ASSERT(block_fs.type() == typ);
 }
 
 
@@ -53,6 +59,9 @@ void BaseTestBlock::testDefinition() {
     std::string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
+
+    block_fs.definition(def);
+    CPPUNIT_ASSERT(*block_fs.definition() == def);
 }
 
 
@@ -71,6 +80,19 @@ void BaseTestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
     // re-create section
     section = file.createSection("foo_section", "metadata");
+
+    CPPUNIT_ASSERT(!block_fs.metadata());
+    block_fs.metadata(section_fs);
+    CPPUNIT_ASSERT(block_fs.metadata());
+    // test none-unsetter
+    block_fs.metadata(none);
+    CPPUNIT_ASSERT(!block_fs.metadata());
+    // test deleter removing link too
+    block_fs.metadata(section_fs);
+    file_fs.deleteSection(section_fs.id());
+    CPPUNIT_ASSERT(!block.metadata());
+    // re-create section
+    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 
