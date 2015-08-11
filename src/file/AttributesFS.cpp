@@ -35,13 +35,13 @@ void AttributesFS::open_or_create() {
     if (!exists(temp)) {
         if (mode > FileMode::ReadOnly) {
             std::ofstream ofs;
-            ofs.open(location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::out | std::ofstream::app);
+            ofs.open(temp.string(), std::ofstream::out | std::ofstream::app);
             ofs.close();
         } else {
             throw std::logic_error("Trying to create new attributes in ReadOnly mode!");
         }
     }
-    node = LoadFile(location().string() + "/" + ATTRIBUTES_FILE);
+    node = LoadFile(temp.string());
 }
 
 
@@ -53,7 +53,8 @@ bool AttributesFS::has(const std::string &name) {
 
 void AttributesFS::flush() {
     std::ofstream ofs;
-    ofs.open(location().string() + "/" + ATTRIBUTES_FILE, std::ofstream::trunc);
+    path temp = location() / path(ATTRIBUTES_FILE);
+    ofs.open(temp.string(), std::ofstream::trunc);
     if (ofs.is_open())
         ofs << node << std::endl;
     else
