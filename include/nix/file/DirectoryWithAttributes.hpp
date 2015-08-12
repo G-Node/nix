@@ -38,6 +38,10 @@ public:
     void removeAttr(const std::string &name);
 
     void removeAll();
+
+    void createLink(const boost::filesystem::path &linker);
+
+    void unlink(const boost::filesystem::path &linker);
 };
 
 
