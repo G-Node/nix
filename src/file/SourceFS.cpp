@@ -63,9 +63,9 @@ shared_ptr<ISource> SourceFS::getSource(ndsize_t index) const {
         throw OutOfBounds("Trying to access source.source with invalid index.", index);
     }
     boost::filesystem::path p = sources_dir.sub_dir_by_index(index);
-    shared_ptr<SourceFS> sec;
-    sec = make_shared<SourceFS>(file(), p.string());
-    return sec;
+    shared_ptr<SourceFS> source;
+    source = make_shared<SourceFS>(file(), p.string());
+    return source;
 }
 
 
