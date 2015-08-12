@@ -39,5 +39,28 @@ void DirectoryWithAttributes::removeAll() {
     attributes = AttributesFS(location(), fileMode());
 }
 
+void DirectoryWithAttributes::createLink(const boost::filesystem::path &linker) {
+    vector<string> links;
+    if (hasAttr("links")) {
+        getAttr("links", links);
+    }
+    create_directory_symlink(path(location()), linker);
+    links.push_back(linker.string());
+    setAttr("links", links);
+}
+
+void DirectoryWithAttributes::unlink(const boost::filesystem::path &linker) {
+    vector<string> links, active_links;
+    if (hasAttr("links")) {
+        getAttr("links", links);
+    }
+    for (auto &l : links) {
+        if (l != linker.string()) {
+            active_links.push_back(l);
+        }
+    }
+    setAttr("links", active_links);
+}
+
 } // nix::file
 } // nix
