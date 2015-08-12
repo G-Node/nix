@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/file/BlockFS.hpp>
+#include <nix/file/SourceFS.hpp>
 
 namespace nix {
 namespace file {
@@ -61,12 +62,10 @@ bool BlockFS::hasSource(const std::string &name_or_id) const {
 std::shared_ptr<base::ISource> BlockFS::getSource(const std::string &name_or_id) const {
     shared_ptr<base::ISource> source;
     boost::optional<boost::filesystem::path> path = source_dir.findByNameOrAttribute("entity_id", name_or_id);
-    /* FIXME once Source is implemented
     if (path) {
-        SourceFS s(file(), path->string());
-        return make_shared<SourceFS>(s);
+        return make_shared<SourceFS>(file(), path->string());
+
     }
-     */
     return source;
 }
 
@@ -80,13 +79,23 @@ std::shared_ptr<base::ISource> BlockFS::getSource(ndsize_t index) const {
     if (index >= sourceCount()) {
         throw OutOfBounds("Trying to access block.source with invalid index.", index);
     }
-    return std::shared_ptr<base::ISource>(); //FIXME
+    boost::filesystem::path p = source_dir.sub_dir_by_index(index);
+    shared_ptr<SourceFS> source;
+    source = make_shared<SourceFS>(file(), p.string());
+    return source;
 }
 
 
 std::shared_ptr<base::ISource> BlockFS::createSource(const std::string &name, const std::string &type) {
-    // FIXME once source is implemented
-    return std::shared_ptr<base::ISource>();
+    if (name.empty()) {
+        throw EmptyString("name");
+    }
+    if (hasSource(name)) {
+        throw DuplicateName("createSource");
+    }
+    string id = util::createId();
+    SourceFS s(file(), source_dir.location(), id, type, name);
+    return make_shared<SourceFS>(s);
 }
 
 
@@ -141,7 +150,7 @@ bool BlockFS::deleteDataArray(const std::string &name_or_id) {
 }
 
 //--------------------------------------------------
-// Methods concerning tage
+// Methods concerning tags
 //--------------------------------------------------
 
 bool BlockFS::hasTag(const std::string &name_or_id) const {
