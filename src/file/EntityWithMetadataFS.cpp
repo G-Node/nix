@@ -56,7 +56,8 @@ void EntityWithMetadataFS::metadata(const std::string &id) {
 
     auto target = dynamic_pointer_cast<SectionFS>(found.front().impl());
     boost::filesystem::path t(target->location()), p(location()), m("metadata");
-    boost::filesystem::create_directory_symlink(t, p / m);
+    target->createLink(p / m);
+    //boost::filesystem::create_directory_symlink(t, p / m);
 }
 
 
@@ -81,7 +82,10 @@ void EntityWithMetadataFS::metadata(const none_t t) {
         throw std::runtime_error("EntityWithMetdata::metadata trying to set metadata in ReadOnly mode.");
     }
     if (hasMetadata()) {
+        boost::filesystem::path p(location()), m("metadata"), other_loc(p/m);
+        auto sec_tmp = make_shared<EntityWithMetadataFS>(file(), other_loc.string());
         boost::filesystem::path p1(location()), p2("metadata");
+        sec_tmp->unlink(p1 / p2);
         boost::filesystem::remove_all(p1/p2);
     }
     forceUpdatedAt();
