@@ -49,12 +49,14 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file, file_fs;
-    nix::Section section, section_other, section_null, section_fs, section_fs_other;
+    nix::File file;
+    nix::Section section, section_other, section_null;
+    nix::Block block, block_fs;
+    nix::Source source, source_other, source_null;
+    nix::DataArray darray;
+    nix::MultiTag mtag;
     time_t startup_time;
 
-    void test_metadata_access(nix::File &f, nix::Block &b, nix::Section &s);
-    void test_source_access(nix::File &f, nix::Block &b);
 public:
 
     void setUp();

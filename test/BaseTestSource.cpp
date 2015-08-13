@@ -34,16 +34,22 @@ void BaseTestSource::testValidate() {
     valid::Result result = validate(source);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
+
+    result = validate(source_fs);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void BaseTestSource::testId() {
     CPPUNIT_ASSERT(source.id().size() == 36);
+    CPPUNIT_ASSERT(source_fs.id().size() == 36);
 }
 
 
 void BaseTestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
+    CPPUNIT_ASSERT(source_fs.name() == "source_one");
 }
 
 
@@ -52,6 +58,10 @@ void BaseTestSource::testType() {
     string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
+
+    CPPUNIT_ASSERT(source_fs.type() == "channel");
+    source_fs.type(typ);
+    CPPUNIT_ASSERT(source_fs.type() == typ);
 }
 
 
@@ -61,13 +71,18 @@ void BaseTestSource::testDefinition() {
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);
     CPPUNIT_ASSERT(source.definition() == nix::none);
+
+    source_fs.definition(def);
+    CPPUNIT_ASSERT(*source_fs.definition() == def);
+    source_fs.definition(nix::none);
+    CPPUNIT_ASSERT(source_fs.definition() == nix::none);
 }
 
 
 void BaseTestSource::testMetadataAccess() {
     CPPUNIT_ASSERT(!source.metadata());
 
-    source.metadata(section);
+    source.metadata(s);
     CPPUNIT_ASSERT(source.metadata());
 
     // test none-unsetter
@@ -98,7 +113,6 @@ void BaseTestSource::testSourceAccess() {
         CPPUNIT_ASSERT(child_source.name() == name);
         CPPUNIT_ASSERT(source.hasSource(child_source));
         CPPUNIT_ASSERT(source.hasSource(name));
-
         ids.push_back(child_source.id());
     }
     CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
@@ -258,4 +272,3 @@ void BaseTestSource::testCreatedAt() {
 void BaseTestSource::testUpdatedAt() {
     CPPUNIT_ASSERT(source.updatedAt() >= startup_time);
 }
-
