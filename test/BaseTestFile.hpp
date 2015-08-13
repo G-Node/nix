@@ -29,6 +29,10 @@ protected:
     nix::File file_open, file_other, file_null, file_fs, file_other_fs;
     time_t startup_time;
 
+
+    void test_section_access(nix::File &f);
+    void test_block_access(nix::File &f);
+
 public:
 
     void testOpen();

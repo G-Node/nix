@@ -79,6 +79,7 @@ void BaseTestFile::testUpdatedAt() {
 void BaseTestFile::testBlockAccess() {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
     Block b;
+
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
@@ -87,15 +88,16 @@ void BaseTestFile::testBlockAccess() {
 
     vector<string> ids;
     for (const auto &name : names) {
-        Block bl = file_open.createBlock(name, "dataset");
+        Block bl = file.createBlock(name, "dataset");
         CPPUNIT_ASSERT(bl.name() == name);
-        CPPUNIT_ASSERT(file_open.hasBlock(bl));
-        CPPUNIT_ASSERT(file_open.hasBlock(name));
+        CPPUNIT_ASSERT(file.hasBlock(bl));
+        CPPUNIT_ASSERT(file.hasBlock(name));
 
         ids.push_back(bl.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
-                         DuplicateName);
+
+    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(file.createBlock("", "dataset"), EmptyString);
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
 
@@ -124,44 +126,6 @@ void BaseTestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
-
-    // Filesystem tests
-    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
-    CPPUNIT_ASSERT(!file_fs.hasBlock("unknown"));
-
-    ids.clear();
-    for (const auto &name : names) {
-        Block bl = file_fs.createBlock(name, "dataset");
-        CPPUNIT_ASSERT(bl.name() == name);
-        CPPUNIT_ASSERT(file_fs.hasBlock(bl));
-        CPPUNIT_ASSERT(file_fs.hasBlock(name));
-
-        ids.push_back(bl.id());
-    }
-
-    CPPUNIT_ASSERT_THROW(file_fs.createBlock(names[0], "dataset"),
-                         DuplicateName);
-
-    CPPUNIT_ASSERT(file_fs.blockCount() == names.size());
-    CPPUNIT_ASSERT(file_fs.blocks().size() == names.size());
-
-    for (const auto &id: ids) {
-        Block bl = file_fs.getBlock(id);
-        CPPUNIT_ASSERT(file_fs.hasBlock(id));
-        CPPUNIT_ASSERT(bl.id() == id);
-
-        file_fs.deleteBlock(id);
-    }
-    Block b2;
-    CPPUNIT_ASSERT_THROW(file_fs.deleteBlock(b2), std::runtime_error);
-    b2 = file_fs.createBlock("test","test");
-    CPPUNIT_ASSERT_NO_THROW(file_fs.getBlock(0));
-    CPPUNIT_ASSERT_THROW(file_fs.getBlock(file_fs.blockCount()), nix::OutOfBounds);
-    CPPUNIT_ASSERT(file_fs.deleteBlock(b2));
-    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
-    CPPUNIT_ASSERT(file_fs.blocks().size() == 0);
-    CPPUNIT_ASSERT(file_fs.getBlock("invalid_id") == false);
-
 }
 
 
@@ -175,23 +139,23 @@ void BaseTestFile::testSectionAccess() {
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        Section sec = file_open.createSection(*it, "root section");
+        Section sec = file.createSection(*it, "root section");
         CPPUNIT_ASSERT(sec.name() == *it);
 
         ids.push_back(sec.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"),
-                         DuplicateName);
+    CPPUNIT_ASSERT_THROW(file.createSection(names[0], "root section"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(file.createSection("", "root section"), EmptyString);
 
-    CPPUNIT_ASSERT(file_open.sectionCount() == names.size());
-    CPPUNIT_ASSERT(file_open.sections().size() == names.size());
+    CPPUNIT_ASSERT(file.sectionCount() == names.size());
+    CPPUNIT_ASSERT(file.sections().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        Section sec = file_open.getSection(*it);
-        CPPUNIT_ASSERT(file_open.hasSection(*it));
+        Section sec = file.getSection(*it);
+        CPPUNIT_ASSERT(file.hasSection(*it));
         CPPUNIT_ASSERT(sec.id() == *it);
 
-        file_open.deleteSection(*it);
+        file.deleteSection(*it);
     }
     CPPUNIT_ASSERT(!file_open.deleteSection(s));
     s = file_open.createSection("test","test");
@@ -202,33 +166,6 @@ void BaseTestFile::testSectionAccess() {
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
-
-    // Tests for the filesystem backend
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
-    CPPUNIT_ASSERT(file_fs.sections().size() == 0);
-    CPPUNIT_ASSERT(file_fs.getSection("invalid_id") == false);
-
-    s = file_fs.createSection("test_sec", "test");
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 1);
-    CPPUNIT_ASSERT_THROW(file_fs.createSection("test_sec", "test"), nix::DuplicateName);
-
-    CPPUNIT_ASSERT(file_fs.hasSection("test_sec"));
-    CPPUNIT_ASSERT(!file_fs.hasSection("unknown section"));
-
-    Section s2 = file_fs.getSection("test_sec");
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-
-    s2 = file_fs.getSection(s.id());
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-
-    s2 = file_fs.getSection(0);
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-    CPPUNIT_ASSERT_THROW(file_fs.getSection(1), nix::OutOfBounds);
-
-    CPPUNIT_ASSERT(file_fs.deleteSection(s.name()));
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
-
-
 }
 
 
