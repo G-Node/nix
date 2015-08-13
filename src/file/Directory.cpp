@@ -123,6 +123,17 @@ bool Directory::hasObject(const std::string &name) const {
 bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const {
     boost::optional<path> p = findByNameOrAttribute(attribute, name_or_id);
     if (p && mode > FileMode::ReadOnly) {
+        path attr_path = "attributes";
+        if (exists(*p / attr_path)) {
+            AttributesFS attr(*p, mode);
+            if (attr.has("links")) {
+                vector<string> links;
+                attr.get("links", links);
+                for (auto &l :links) {
+                    remove_all(path(l));
+                }
+            }
+        }
         uintmax_t ret = remove_all(*p);
         return ret > 0;
     }
