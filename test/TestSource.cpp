@@ -161,9 +161,12 @@ void TestSource::test_source_access(nix::File &f, nix::Source &src) {
     }
     CPPUNIT_ASSERT_THROW(src.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(src.createSource("", "channel"),
+                         EmptyString);
 
     CPPUNIT_ASSERT(src.sourceCount() == names.size());
     CPPUNIT_ASSERT(src.sources().size() == names.size());
+    CPPUNIT_ASSERT_THROW(src.getSource(src.sourceCount() + 1), OutOfBounds);
 
     for (const auto &id : ids) {
         Source child_source = src.getSource(id);
