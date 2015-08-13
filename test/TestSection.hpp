@@ -53,6 +53,8 @@ private:
     nix::Section section, section_other, section_null, section_fs, section_fs_other;
     time_t startup_time;
 
+    void test_metadata_access(nix::File &f, nix::Block &b, nix::Section &s);
+    void test_source_access(nix::File &f, nix::Block &b);
 public:
 
     void setUp();

@@ -67,10 +67,8 @@ void BaseTestBlock::testDefinition() {
 
 void BaseTestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
-
-    block.metadata(section);
+    block.metadata(ssection);
     CPPUNIT_ASSERT(block.metadata());
-    
     // test none-unsetter
     block.metadata(none);
     CPPUNIT_ASSERT(!block.metadata());
@@ -80,19 +78,6 @@ void BaseTestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
     // re-create section
     section = file.createSection("foo_section", "metadata");
-
-    CPPUNIT_ASSERT(!block_fs.metadata());
-    block_fs.metadata(section_fs);
-    CPPUNIT_ASSERT(block_fs.metadata());
-    // test none-unsetter
-    block_fs.metadata(none);
-    CPPUNIT_ASSERT(!block_fs.metadata());
-    // test deleter removing link too
-    block_fs.metadata(section_fs);
-    file_fs.deleteSection(section_fs.id());
-    CPPUNIT_ASSERT(!block.metadata());
-    // re-create section
-    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 
@@ -104,7 +89,6 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
-
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -121,15 +105,14 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
 
-
     for (const auto &id : ids) {
         Source src = block.getSource(id);
         CPPUNIT_ASSERT(block.hasSource(id) == true);
         CPPUNIT_ASSERT(src.id() == id);
         block.deleteSource(id);
     }
-    
-    s = block.createSource("test", "test");
+
+    s = b.createSource("test", "test");
     CPPUNIT_ASSERT(block.sourceCount() == 1);
     CPPUNIT_ASSERT_NO_THROW(block.deleteSource(s));
 
@@ -137,7 +120,6 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
 }
-
 
 void BaseTestBlock::testDataArrayAccess() {
     std::vector<std::string> names = { "data_array_a", "data_array_b", "data_array_c",
