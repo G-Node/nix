@@ -117,9 +117,12 @@ void BaseTestSource::testSourceAccess() {
     }
     CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(src.createSource("", "channel"),
+                         EmptyString);
 
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
+    CPPUNIT_ASSERT_THROW(source.getSource(source.sourceCount() + 1), OutOfBounds);
 
     for (const auto &id : ids) {
         Source child_source = source.getSource(id);
