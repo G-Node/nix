@@ -69,7 +69,7 @@ std::shared_ptr<base::IBlock> FileFS::getBlock(const std::string &name_or_id) co
 
 std::shared_ptr<base::IBlock> FileFS::getBlock(ndsize_t index) const {
     if (index >= blockCount()) {
-        throw nix::OutOfBounds("TRying to access file.block with invalid index", index);
+        throw nix::OutOfBounds("Trying to access file.block with invalid index", index);
     }
     fs::path p = data_dir.sub_dir_by_index(index);
     shared_ptr<BlockFS> b;
@@ -79,8 +79,11 @@ std::shared_ptr<base::IBlock> FileFS::getBlock(ndsize_t index) const {
 
 
 std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const std::string &type) {
+    if (name.empty()) {
+        throw EmptyString("Trying to create Block with empty name!");
+    }
     if (hasBlock(name)) {
-        throw DuplicateName("createBlock"); // FIXME to test
+        throw DuplicateName("Block with the given name already exists!");
     }
     string id = util::createId();
     BlockFS b(file(), data_dir.location(), id, type, name);
@@ -130,8 +133,11 @@ ndsize_t FileFS::sectionCount() const {
 
 
 std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, const std::string &type) {
+    if (name.empty()) {
+        throw EmptyString("Trying to create a Section with an empty name!");
+    }
     if (hasSection(name)) {
-        throw DuplicateName("createSection");
+        throw DuplicateName("Section with the specified name altready exists!");
     }
     string id = util::createId();
     SectionFS s(file(), metadata_dir.location(), id, type, name);
