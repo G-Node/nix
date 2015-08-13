@@ -89,6 +89,7 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
+    CPPUNIT_ASSERT(b.getSource(b.sourceCount() + 10) == nullptr);
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -101,6 +102,7 @@ void BaseTestBlock::testSourceAccess() {
     }
     CPPUNIT_ASSERT_THROW(block.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(block.createSource("", "test"), nix::EmptyString);
 
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
