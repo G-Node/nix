@@ -106,6 +106,7 @@ void BaseTestBlock::testSourceAccess() {
 
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
+    CPPUNIT_ASSERT_THROW(block.getSource(block.sourceCount() + 10), OutOfBounds);
 
     for (const auto &id : ids) {
         Source src = block.getSource(id);

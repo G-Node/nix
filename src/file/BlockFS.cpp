@@ -76,10 +76,12 @@ ndsize_t BlockFS::sourceCount() const {
 
 
 std::shared_ptr<base::ISource> BlockFS::getSource(ndsize_t index) const {
-    shared_ptr<SourceFS> source;
+    if (index >= sourceCount()) {
+        throw OutOfBounds("Trying to access block.source with invalid index.", index);
+    }
     boost::filesystem::path p = source_dir.sub_dir_by_index(index);
-    if (!p.empty())
-        source = make_shared<SourceFS>(file(), p.string());
+    shared_ptr<SourceFS> source;
+    source = make_shared<SourceFS>(file(), p.string());
     return source;
 }
 
