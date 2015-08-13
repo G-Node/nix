@@ -94,8 +94,19 @@ void TestFile::testUpdatedAt() {
 
 
 void TestFile::testBlockAccess() {
+    cerr << "\n\t Backend: HDF5\t";
+    test_block_access(file_open);
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_block_access(file_fs);
+    cerr << "... done!\n";
+}
+
+
+void TestFile::test_block_access(nix::File &f) {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
     Block b;
+
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
@@ -104,85 +115,57 @@ void TestFile::testBlockAccess() {
     
     vector<string> ids;
     for (const auto &name : names) {
-        Block bl = file_open.createBlock(name, "dataset");
+        Block bl = f.createBlock(name, "dataset");
         CPPUNIT_ASSERT(bl.name() == name);
-        CPPUNIT_ASSERT(file_open.hasBlock(bl));
-        CPPUNIT_ASSERT(file_open.hasBlock(name));
+        CPPUNIT_ASSERT(f.hasBlock(bl));
+        CPPUNIT_ASSERT(f.hasBlock(name));
 
         ids.push_back(bl.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
-                         DuplicateName);
+    CPPUNIT_ASSERT_THROW(f.createBlock(names[0], "dataset"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(f.createBlock("", "dataset"), EmptyString);
 
-    CPPUNIT_ASSERT(file_open.blockCount() == names.size());
-    CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
+    CPPUNIT_ASSERT(f.blockCount() == names.size());
+    CPPUNIT_ASSERT(f.blocks().size() == names.size());
 
     for (const auto &name : names) {
-        Block bl_name = file_open.getBlock(name);
+        Block bl_name = f.getBlock(name);
         CPPUNIT_ASSERT(bl_name);
 
-        Block bl_id = file_open.getBlock(bl_name.id());
+        Block bl_id = f.getBlock(bl_name.id());
         CPPUNIT_ASSERT(bl_id);
         CPPUNIT_ASSERT_EQUAL(bl_name.name(), bl_id.name());
     }
-    
-    for (const auto &id: ids) {
-        Block bl = file_open.getBlock(id);
-        CPPUNIT_ASSERT(file_open.hasBlock(id));
-        CPPUNIT_ASSERT(bl.id() == id);
-
-        file_open.deleteBlock(id);
-    }
-    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), UninitializedEntity);
-    b = file_open.createBlock("test","test");
-    CPPUNIT_ASSERT_NO_THROW(file_open.getBlock(0));
-    CPPUNIT_ASSERT_THROW(file_open.getBlock(file_open.blockCount()), nix::OutOfBounds);
-    CPPUNIT_ASSERT(file_open.deleteBlock(b));
-    CPPUNIT_ASSERT(file_open.blockCount() == 0);
-    CPPUNIT_ASSERT(file_open.blocks().size() == 0);
-    CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
-
-    // Filesystem tests
-    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
-    CPPUNIT_ASSERT(!file_fs.hasBlock("unknown"));
-
-    ids.clear();
-    for (const auto &name : names) {
-        Block bl = file_fs.createBlock(name, "dataset");
-        CPPUNIT_ASSERT(bl.name() == name);
-        CPPUNIT_ASSERT(file_fs.hasBlock(bl));
-        CPPUNIT_ASSERT(file_fs.hasBlock(name));
-
-        ids.push_back(bl.id());
-    }
-
-    CPPUNIT_ASSERT_THROW(file_fs.createBlock(names[0], "dataset"),
-                         DuplicateName);
-
-    CPPUNIT_ASSERT(file_fs.blockCount() == names.size());
-    CPPUNIT_ASSERT(file_fs.blocks().size() == names.size());
 
     for (const auto &id: ids) {
-        Block bl = file_fs.getBlock(id);
-        CPPUNIT_ASSERT(file_fs.hasBlock(id));
+        Block bl = f.getBlock(id);
+        CPPUNIT_ASSERT(f.hasBlock(id));
         CPPUNIT_ASSERT(bl.id() == id);
 
-        file_fs.deleteBlock(id);
+        f.deleteBlock(id);
     }
-    Block b2;
-    CPPUNIT_ASSERT_THROW(file_fs.deleteBlock(b2), std::runtime_error);
-    b2 = file_fs.createBlock("test","test");
-    CPPUNIT_ASSERT_NO_THROW(file_fs.getBlock(0));
-    CPPUNIT_ASSERT_THROW(file_fs.getBlock(file_fs.blockCount()), nix::OutOfBounds);
-    CPPUNIT_ASSERT(file_fs.deleteBlock(b2));
-    CPPUNIT_ASSERT(file_fs.blockCount() == 0);
-    CPPUNIT_ASSERT(file_fs.blocks().size() == 0);
-    CPPUNIT_ASSERT(file_fs.getBlock("invalid_id") == false);
-
+    CPPUNIT_ASSERT_THROW(f.deleteBlock(b), std::runtime_error);
+    b = f.createBlock("test","test");
+    CPPUNIT_ASSERT_NO_THROW(f.getBlock(0));
+    CPPUNIT_ASSERT_THROW(f.getBlock(f.blockCount()), nix::OutOfBounds);
+    CPPUNIT_ASSERT(f.deleteBlock(b));
+    CPPUNIT_ASSERT(f.blockCount() == 0);
+    CPPUNIT_ASSERT(f.blocks().size() == 0);
+    CPPUNIT_ASSERT(f.getBlock("invalid_id") == false);
 }
 
 
 void TestFile::testSectionAccess() {
+    cerr << "\n\t Backend: HDF5\t";
+    test_section_access(file_open);
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_section_access(file_fs);
+    cerr << "... done!\n";
+}
+
+
+void TestFile::test_section_access(File &f) {
     vector<string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
     Section s;
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
@@ -192,60 +175,34 @@ void TestFile::testSectionAccess() {
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        Section sec = file_open.createSection(*it, "root section");
+        Section sec = f.createSection(*it, "root section");
         CPPUNIT_ASSERT(sec.name() == *it);
 
         ids.push_back(sec.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"),
-                         DuplicateName);
+    CPPUNIT_ASSERT_THROW(f.createSection(names[0], "root section"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(f.createSection("", "root section"), EmptyString);
 
-    CPPUNIT_ASSERT(file_open.sectionCount() == names.size());
-    CPPUNIT_ASSERT(file_open.sections().size() == names.size());
+    CPPUNIT_ASSERT(f.sectionCount() == names.size());
+    CPPUNIT_ASSERT(f.sections().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        Section sec = file_open.getSection(*it);
-        CPPUNIT_ASSERT(file_open.hasSection(*it));
+        Section sec = f.getSection(*it);
+        CPPUNIT_ASSERT(f.hasSection(*it));
         CPPUNIT_ASSERT(sec.id() == *it);
 
-        file_open.deleteSection(*it);
+        f.deleteSection(*it);
     }
-    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), UninitializedEntity);
-    s = file_open.createSection("test","test");
-    CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
-    CPPUNIT_ASSERT_THROW(file_open.getSection(file_open.sectionCount()), nix::OutOfBounds);
-    CPPUNIT_ASSERT(file_open.hasSection(s));
-    CPPUNIT_ASSERT(file_open.deleteSection(s));
-    CPPUNIT_ASSERT(file_open.sectionCount() == 0);
-    CPPUNIT_ASSERT(file_open.sections().size() == 0);
-    CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
 
-    // Tests for the filesystem backend
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
-    CPPUNIT_ASSERT(file_fs.sections().size() == 0);
-    CPPUNIT_ASSERT(file_fs.getSection("invalid_id") == false);
-
-    s = file_fs.createSection("test_sec", "test");
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 1);
-    CPPUNIT_ASSERT_THROW(file_fs.createSection("test_sec", "test"), nix::DuplicateName);
-
-    CPPUNIT_ASSERT(file_fs.hasSection("test_sec"));
-    CPPUNIT_ASSERT(!file_fs.hasSection("unknown section"));
-
-    Section s2 = file_fs.getSection("test_sec");
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-
-    s2 = file_fs.getSection(s.id());
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-
-    s2 = file_fs.getSection(0);
-    CPPUNIT_ASSERT(s.compare(s2) == 0 );
-    CPPUNIT_ASSERT_THROW(file_fs.getSection(1), nix::OutOfBounds);
-
-    CPPUNIT_ASSERT(file_fs.deleteSection(s.name()));
-    CPPUNIT_ASSERT(file_fs.sectionCount() == 0);
-
-
+    CPPUNIT_ASSERT_THROW(f.deleteSection(s), std::runtime_error);
+    s = f.createSection("test","test");
+    CPPUNIT_ASSERT_NO_THROW(f.getSection(0));
+    CPPUNIT_ASSERT_THROW(f.getSection(f.sectionCount()), nix::OutOfBounds);
+    CPPUNIT_ASSERT(f.hasSection(s));
+    CPPUNIT_ASSERT(f.deleteSection(s));
+    CPPUNIT_ASSERT(f.sectionCount() == 0);
+    CPPUNIT_ASSERT(f.sections().size() == 0);
+    CPPUNIT_ASSERT(f.getSection("invalid_id") == false);
 }
 
 
