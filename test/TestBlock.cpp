@@ -84,37 +84,37 @@ void TestBlock::testDefinition() {
 
 
 void TestBlock::testMetadataAccess() {
-    CPPUNIT_ASSERT(!block.metadata());
+    cerr << "\n\t Backend: HDF5\n";
+    test_metadata_access(file, block, section);
+    cerr << "\t Backend: filesystem\n";
+    test_metadata_access(file_fs, block_fs, section_fs);
+}
 
-    block.metadata(section);
-    CPPUNIT_ASSERT(block.metadata());
-    
-    // test none-unsetter
-    block.metadata(none);
-    CPPUNIT_ASSERT(!block.metadata());
-    // test deleter removing link too
-    block.metadata(section);
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!block.metadata());
-    // re-create section
-    section = file.createSection("foo_section", "metadata");
 
-    CPPUNIT_ASSERT(!block_fs.metadata());
-    block_fs.metadata(section_fs);
-    CPPUNIT_ASSERT(block_fs.metadata());
+void TestBlock::test_metadata_access(File &f, Block &b, Section &s) {
+    CPPUNIT_ASSERT(!b.metadata());
+    b.metadata(s);
+    CPPUNIT_ASSERT(b.metadata());
     // test none-unsetter
-    block_fs.metadata(none);
-    CPPUNIT_ASSERT(!block_fs.metadata());
+    b.metadata(none);
+    CPPUNIT_ASSERT(!b.metadata());
     // test deleter removing link too
-    block_fs.metadata(section_fs);
-    file_fs.deleteSection(section_fs.id());
-    CPPUNIT_ASSERT(!block.metadata());
+    b.metadata(s);
+    f.deleteSection(s.id());
+    CPPUNIT_ASSERT(!b.metadata());
     // re-create section
-    section_fs = file_fs.createSection("foo_section", "metadata");
+    s = f.createSection("foo_section", "metadata");
 }
 
 
 void TestBlock::testSourceAccess() {
+    cerr << "\n\t Backend: HDF5\n";
+    test_source_access(file, block);
+    cerr << "\t Backend: filesystem\n";
+    test_source_access(file_fs, block_fs);
+}
+
+void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
     CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
@@ -123,39 +123,37 @@ void TestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
 
-
     vector<string> ids;
     for (const auto &name : names) {
-        Source src = block.createSource(name, "channel");
+        Source src = b.createSource(name, "channel");
         CPPUNIT_ASSERT(src.name() == name);
-        CPPUNIT_ASSERT(block.hasSource(name));
-        CPPUNIT_ASSERT(block.hasSource(src));
+        CPPUNIT_ASSERT(b.hasSource(name));
+        CPPUNIT_ASSERT(b.hasSource(src));
 
         ids.push_back(src.id());
     }
-    CPPUNIT_ASSERT_THROW(block.createSource(names[0], "channel"),
+    CPPUNIT_ASSERT_THROW(b.createSource(names[0], "channel"),
                          DuplicateName);
 
-    CPPUNIT_ASSERT(block.sourceCount() == names.size());
-    CPPUNIT_ASSERT(block.sources().size() == names.size());
+    CPPUNIT_ASSERT(b.sourceCount() == names.size());
+    CPPUNIT_ASSERT(b.sources().size() == names.size());
 
 
     for (const auto &id : ids) {
-        Source src = block.getSource(id);
-        CPPUNIT_ASSERT(block.hasSource(id) == true);
+        Source src = b.getSource(id);
+        CPPUNIT_ASSERT(b.hasSource(id) == true);
         CPPUNIT_ASSERT(src.id() == id);
-        block.deleteSource(id);
+        b.deleteSource(id);
     }
-    
-    s = block.createSource("test", "test");
-    CPPUNIT_ASSERT(block.sourceCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(block.deleteSource(s));
 
-    CPPUNIT_ASSERT(block.sourceCount() == 0);
-    CPPUNIT_ASSERT(block.sources().size() == 0);
-    CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
+    s = b.createSource("test", "test");
+    CPPUNIT_ASSERT(b.sourceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(b.deleteSource(s));
+
+    CPPUNIT_ASSERT(b.sourceCount() == 0);
+    CPPUNIT_ASSERT(b.sources().size() == 0);
+    CPPUNIT_ASSERT(b.getSource("invalid_id") == false);
 }
-
 
 void TestBlock::testDataArrayAccess() {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
