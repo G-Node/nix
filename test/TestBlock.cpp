@@ -84,10 +84,12 @@ void TestBlock::testDefinition() {
 
 
 void TestBlock::testMetadataAccess() {
-    cerr << "\n\t Backend: HDF5\n";
+    cerr << "\n\t Backend: HDF5\t";
     test_metadata_access(file, block, section);
-    cerr << "\t Backend: filesystem\n";
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
     test_metadata_access(file_fs, block_fs, section_fs);
+    cerr << "... done!\n";
 }
 
 
@@ -108,20 +110,24 @@ void TestBlock::test_metadata_access(File &f, Block &b, Section &s) {
 
 
 void TestBlock::testSourceAccess() {
-    cerr << "\n\t Backend: HDF5\n";
+    cerr << "\n\t Backend: HDF5\t";
     test_source_access(file, block);
-    cerr << "\t Backend: filesystem\n";
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
     test_source_access(file_fs, block_fs);
+    cerr << "... done!\n";
 }
 
 void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
+
     CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
+    CPPUNIT_ASSERT(b.getSource(b.sourceCount() + 10) == nullptr);
 
     vector<string> ids;
     for (const auto &name : names) {
@@ -134,6 +140,7 @@ void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
     }
     CPPUNIT_ASSERT_THROW(b.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(b.createSource("", "test"), nix::EmptyString);
 
     CPPUNIT_ASSERT(b.sourceCount() == names.size());
     CPPUNIT_ASSERT(b.sources().size() == names.size());
