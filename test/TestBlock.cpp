@@ -144,7 +144,7 @@ void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
 
     CPPUNIT_ASSERT(b.sourceCount() == names.size());
     CPPUNIT_ASSERT(b.sources().size() == names.size());
-
+    CPPUNIT_ASSERT_THROW(b.getSource(b.sourceCount() + 10), OutOfBounds);
 
     for (const auto &id : ids) {
         Source src = b.getSource(id);
