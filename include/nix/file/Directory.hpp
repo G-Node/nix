@@ -50,6 +50,8 @@ public:
 
     void createDirectoryLink(const std::string &target, const std::string &name);
 
+    void renameSubdir(const std::string &old_name, const std::string &new_name);
+
     void removeAll();
 };
 
