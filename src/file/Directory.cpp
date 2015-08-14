@@ -150,5 +150,13 @@ void Directory::createDirectoryLink(const std::string &target, const std::string
 
 }
 
+
+void Directory::renameSubdir(const std::string &old_name, const std::string &new_name) {
+    path o(path(location()) / path(old_name)), n(path(location()) / path(new_name));
+    if (hasObject(o.string()) && ! hasObject(n.string())) {
+        rename(o, n);
+    }
+}
+
 } // nix::file
 } // nix
