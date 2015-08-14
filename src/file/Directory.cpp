@@ -139,5 +139,16 @@ bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, cons
     }
     return false;
 }
+
+
+void Directory::createDirectoryLink(const std::string &target, const std::string &name) {
+    if (boost::filesystem::exists({target})) {
+        boost::filesystem::create_directory_symlink(boost::filesystem::path(target), loc / boost::filesystem::path(name));
+    } else {
+        throw runtime_error("Directory::createLink: target does not exist");
+    }
+
+}
+
 } // nix::file
 } // nix
