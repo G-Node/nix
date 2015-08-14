@@ -48,6 +48,8 @@ public:
 
     bool removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const;
 
+    void createDirectoryLink(const std::string &target, const std::string &name);
+
     void removeAll();
 };
 
