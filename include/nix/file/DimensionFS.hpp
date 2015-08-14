@@ -11,7 +11,7 @@
 
 #include <nix/base/IDimensions.hpp>
 #include <nix/file/DirectoryWithAttributes.hpp>
-#include <nix/hdf5/DataArrayHDF5.hpp>
+#include <nix/file/DataArrayFS.hpp>
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -143,7 +143,7 @@ public:
     RangeDimensionFS(const std::string &loc, size_t index, std::vector<double> ticks, FileMode mode);
 
 
-    RangeDimensionFS(const std::string &loc, size_t index, const nix::hdf5::DataArrayHDF5 &dataArray, FileMode mode); //FIXME
+    RangeDimensionFS(const std::string &loc, size_t index, const DataArrayFS &dataArray, FileMode mode); //FIXME
 
 
     DimensionType dimensionType() const;
