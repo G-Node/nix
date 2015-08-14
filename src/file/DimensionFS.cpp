@@ -60,7 +60,7 @@ std::string dimensionTypeToStr(DimensionType dim) {
 }
 
 
-shared_ptr<IDimension> openDimensionFS(string &loc, size_t index, FileMode mode) {
+shared_ptr<IDimension> openDimensionFS(const string &loc, size_t index, FileMode mode) {
     AttributesFS attr(loc, mode);
     string type_name;
     attr.get("dimension_type", type_name);
@@ -294,7 +294,7 @@ RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, vector<doubl
 }
 
 
-RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, const hdf5::DataArrayHDF5 &array, FileMode mode)
+RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, const DataArrayFS &array, FileMode mode)
     :RangeDimensionFS(loc, index, mode)
 {
     setType();
