@@ -67,7 +67,7 @@ void BaseTestBlock::testDefinition() {
 
 void BaseTestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
-    block.metadata(ssection);
+    block.metadata(section);
     CPPUNIT_ASSERT(block.metadata());
     // test none-unsetter
     block.metadata(none);
@@ -89,7 +89,7 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
-    CPPUNIT_ASSERT(b.getSource(b.sourceCount() + 10) == nullptr);
+    CPPUNIT_ASSERT(block.getSource(block.sourceCount() + 10) == nullptr);
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -135,15 +135,15 @@ void BaseTestBlock::testDataArrayAccess() {
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
-        data_array = block.createDataArray(name, "channel",
-                                           DataType::Double, nix::NDSize({ 0 }));
+        data_array = block.createDataArray(name, "channel", DataType::Double, nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
-
         ids.push_back(data_array.id());
     }
-    CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
-                         DuplicateName);
+
+    CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })), DuplicateName);
+    CPPUNIT_ASSERT_THROW(block.createDataArray("", "channel", DataType::Double, nix::NDSize({ 0 })), EmptyString);
+
     CPPUNIT_ASSERT(block.hasDataArray(data_array));
     CPPUNIT_ASSERT(!block.hasDataArray(a));
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
@@ -152,7 +152,6 @@ void BaseTestBlock::testDataArrayAccess() {
     for (const auto &name : names) {
         DataArray da_name = block.getDataArray(name);
         CPPUNIT_ASSERT(da_name);
-
         DataArray da_id = block.getDataArray(da_name.id());
         CPPUNIT_ASSERT(da_id);
         CPPUNIT_ASSERT_EQUAL(da_name.name(), da_id.name());
@@ -179,7 +178,6 @@ void BaseTestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-
 }
 
 
