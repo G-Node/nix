@@ -14,13 +14,15 @@
 
 using namespace std;
 using namespace nix::base;
+using namespace boost::filesystem;
 
 namespace nix {
 namespace file {
 
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const string &loc)
-    : EntityWithSourcesFS(file, block, loc), dimensions(loc + boost::filesystem::path::preferred_separator + "dimensions") {
+    : EntityWithSourcesFS(file, block, loc),
+      dimensions(loc + path::preferred_separator + "dimensions", file->fileMode()) {
 }
 
 
@@ -32,7 +34,8 @@ DataArrayFS::DataArrayFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock>
 
 DataArrayFS::DataArrayFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
                              const string &id, const string &type, const string &name, time_t time)
-    : EntityWithSourcesFS(file, block, loc, id, type, name, time), dimensions(loc + boost::filesystem::path::preferred_separator + "dimensions") {
+    : EntityWithSourcesFS(file, block, loc, id, type, name, time),
+      dimensions(loc + path::preferred_separator  + name + path::preferred_separator + "dimensions", file->fileMode()) {
 }
 
 //--------------------------------------------------
@@ -159,7 +162,7 @@ size_t DataArrayFS::dimensionCount() const {
 
 shared_ptr<IDimension> DataArrayFS::getDimension(size_t index) const {
     shared_ptr<IDimension> dim;
-    boost::filesystem::path p = dimensions.sub_dir_by_index(index);
+    path p = dimensions.sub_dir_by_index(index);
     if (!p.empty()) {
         dim = openDimensionFS(p.string(), index, fileMode());
     }
