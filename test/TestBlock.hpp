@@ -59,6 +59,7 @@ private:
 
     void test_metadata_access(nix::File &f, nix::Block &b, nix::Section &s);
     void test_source_access(nix::File &f, nix::Block &b);
+    void test_data_array_access(nix::Block &b);
 public:
 
     void setUp();

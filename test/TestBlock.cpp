@@ -86,7 +86,7 @@ void TestBlock::testDefinition() {
 void TestBlock::testMetadataAccess() {
     cerr << "\n\t Backend: HDF5\t";
     test_metadata_access(file, block, section);
-    cerr << "... done!\n";
+    cerr << "\t... done!\n";
     cerr << "\t Backend: filesystem\t";
     test_metadata_access(file_fs, block_fs, section_fs);
     cerr << "... done!\n";
@@ -112,7 +112,7 @@ void TestBlock::test_metadata_access(File &f, Block &b, Section &s) {
 void TestBlock::testSourceAccess() {
     cerr << "\n\t Backend: HDF5\t";
     test_source_access(file, block);
-    cerr << "... done!\n";
+    cerr << "\t... done!\n";
     cerr << "\t Backend: filesystem\t";
     test_source_access(file_fs, block_fs);
     cerr << "... done!\n";
@@ -163,43 +163,51 @@ void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
 }
 
 void TestBlock::testDataArrayAccess() {
+    cerr << "\n\t Backend: HDF5\t";
+    test_data_array_access(block);
+    cerr << "\t... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_data_array_access(block_fs);
+    cerr << "... done!\n";
+}
+
+void TestBlock::test_data_array_access(Block &b) {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
     DataArray data_array, a;
 
-    CPPUNIT_ASSERT(block.dataArrayCount() == 0);
-    CPPUNIT_ASSERT(block.dataArrays().size() == 0);
-    CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-    
+    CPPUNIT_ASSERT(b.dataArrayCount() == 0);
+    CPPUNIT_ASSERT(b.dataArrays().size() == 0);
+    CPPUNIT_ASSERT(b.getDataArray("invalid_id") == false);
+
     vector<string> ids;
     for (const auto &name : names) {
-        data_array = block.createDataArray(name, "channel",
-                                           DataType::Double, nix::NDSize({ 0 }));
+        data_array = b.createDataArray(name, "channel", DataType::Double, nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
-
         ids.push_back(data_array.id());
     }
-    CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
-                         DuplicateName);
-    CPPUNIT_ASSERT(block.hasDataArray(data_array));
+
+    CPPUNIT_ASSERT_THROW(b.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })), DuplicateName);
+    CPPUNIT_ASSERT_THROW(b.createDataArray("", "channel", DataType::Double, nix::NDSize({ 0 })), EmptyString);
+
+    CPPUNIT_ASSERT(b.hasDataArray(data_array));
     CPPUNIT_ASSERT_THROW(block.hasDataArray(a), UninitializedEntity);
-    CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
-    CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
+    CPPUNIT_ASSERT(b.dataArrayCount() == names.size());
+    CPPUNIT_ASSERT(b.dataArrays().size() == names.size());
 
     for (const auto &name : names) {
-        DataArray da_name = block.getDataArray(name);
+        DataArray da_name = b.getDataArray(name);
         CPPUNIT_ASSERT(da_name);
-
-        DataArray da_id = block.getDataArray(da_name.id());
+        DataArray da_id = b.getDataArray(da_name.id());
         CPPUNIT_ASSERT(da_id);
         CPPUNIT_ASSERT_EQUAL(da_name.name(), da_id.name());
     }
 
-    vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
+    vector<DataArray> filteredArrays = b.dataArrays(util::TypeFilter<DataArray>("channel"));
     CPPUNIT_ASSERT_EQUAL(names.size(), filteredArrays.size());
 
-    filteredArrays = block.dataArrays(util::NameFilter<DataArray>("data_array_c"));
+    filteredArrays = b.dataArrays(util::NameFilter<DataArray>("data_array_c"));
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), filteredArrays.size());
     if (filteredArrays.size() > 0) {
         boost::optional<std::string> name = filteredArrays[0].name();
@@ -207,17 +215,16 @@ void TestBlock::testDataArrayAccess() {
     }
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        DataArray data_array = block.getDataArray(*it);
-        CPPUNIT_ASSERT(block.hasDataArray(*it) == true);
+        DataArray data_array = b.getDataArray(*it);
+        CPPUNIT_ASSERT(b.hasDataArray(*it) == true);
         CPPUNIT_ASSERT(data_array.id() == *it);
 
-        block.deleteDataArray(*it);
+        b.deleteDataArray(*it);
     }
     CPPUNIT_ASSERT_THROW(block.deleteDataArray(a), UninitializedEntity);
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-
 }
 
 
