@@ -11,6 +11,7 @@
 
 #include <nix/base/IBlock.hpp>
 #include <nix/file/EntityWithMetadataFS.hpp>
+#include <nix/file/DataArrayFS.hpp>
 
 #include <vector>
 #include <string>
