@@ -115,12 +115,10 @@ bool BlockFS::hasDataArray(const std::string &name_or_id) const {
 std::shared_ptr<base::IDataArray> BlockFS::getDataArray(const std::string &name_or_id) const {
     shared_ptr<base::IDataArray> array;
     boost::optional<boost::filesystem::path> path = data_array_dir.findByNameOrAttribute("entity_id", name_or_id);
-    /* FIXME once DataArrays exist
     if (path) {
-        DataArrayFS a(file(), path->string());
+        DataArrayFS a(file(), block(), path->string());
         return make_shared<DataArrayFS>(a);
     }
-    */
     return array;
 }
 
@@ -129,7 +127,9 @@ std::shared_ptr<base::IDataArray> BlockFS::getDataArray(ndsize_t index) const {
     if (index >= dataArrayCount()) {
         throw OutOfBounds("Trying to access block.dataArray with invalid index.", index);
     }
-    return std::shared_ptr<base::IDataArray>(); //FIXME
+    boost::filesystem::path p = data_array_dir.sub_dir_by_index(index);
+    DataArrayFS a(file(), block(), p.string());
+    return make_shared<DataArrayFS>(a);
 }
 
 
@@ -140,8 +140,16 @@ ndsize_t BlockFS::dataArrayCount() const {
 
 std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &name, const std::string &type,
                                                            nix::DataType data_type, const NDSize &shape) {
-    // FIXME
-    return std::shared_ptr<base::IDataArray>();
+    if (name.empty()) {
+        throw EmptyString("Block::createDataArray empty name provided!");
+    }
+    if (hasDataArray(name)) {
+        throw DuplicateName("Block::createDataArray: an entity with the same name already exists!");
+    }
+    string id = util::createId();
+    DataArrayFS da(file(), block(), data_array_dir.location(), id, type, name);
+    da.createData(data_type, shape);
+    return make_shared<DataArrayFS>(da);
 }
 
 
