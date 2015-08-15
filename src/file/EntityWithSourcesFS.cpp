@@ -16,12 +16,14 @@
 
 using namespace std;
 using namespace nix::base;
+using namespace boost::filesystem;
 
 namespace nix {
 namespace file {
 
 EntityWithSourcesFS::EntityWithSourcesFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc)
-    : EntityWithMetadataFS(file, loc), sources_dir(loc + boost::filesystem::path::preferred_separator + "sources"), entity_block(block)
+    : EntityWithMetadataFS(file, loc),
+      sources_dir(loc + path::preferred_separator + "sources", file->fileMode()), entity_block(block)
 {
 }
 
@@ -35,7 +37,8 @@ EntityWithSourcesFS::EntityWithSourcesFS(const shared_ptr<IFile> &file, const sh
 
 EntityWithSourcesFS::EntityWithSourcesFS (const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc, const string &id,
                                               const string &type, const string &name, time_t time)
-    : EntityWithMetadataFS(file, loc, id, type, name, time), sources_dir(loc + boost::filesystem::path::preferred_separator + "sources"), entity_block(block)
+    : EntityWithMetadataFS(file, loc, id, type, name, time),
+      sources_dir(loc + path::preferred_separator + name + path::preferred_separator + "sources", file->fileMode()), entity_block(block)
 {
 }
 
@@ -52,7 +55,7 @@ bool EntityWithSourcesFS::hasSource(const string &id) const {
 
 shared_ptr<ISource> EntityWithSourcesFS::getSource(const string &name_or_id) const {
     shared_ptr<base::ISource> source;
-    boost::optional<boost::filesystem::path> path = sources_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<path> path = sources_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
         return make_shared<SourceFS>(file(), path->string());
 
@@ -62,7 +65,7 @@ shared_ptr<ISource> EntityWithSourcesFS::getSource(const string &name_or_id) con
 
 shared_ptr<ISource> EntityWithSourcesFS::getSource(const size_t index) const {
     shared_ptr<base::ISource> source;
-    boost::filesystem::path p = sources_dir.sub_dir_by_index(index);
+    path p = sources_dir.sub_dir_by_index(index);
     if (!p.empty()) {
         return make_shared<SourceFS>(file(), p.string());
 
