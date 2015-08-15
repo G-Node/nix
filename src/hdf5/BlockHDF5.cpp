@@ -224,6 +224,9 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
                                                   const NDSize &shape) {
+    if (name.empty()) {
+        throw EmptyString("Block::createDataArray: empty name provided!");
+    }
     if (hasDataArray(name)) {
         throw DuplicateName("createDataArray");
     }
