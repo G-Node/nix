@@ -51,7 +51,7 @@ private:
 
     nix::File file;
     nix::Section section, section_other, section_null;
-    nix::Block block, block_fs;
+    nix::Block block;
     nix::Source source, source_other, source_null;
     nix::DataArray darray;
     nix::MultiTag mtag;
