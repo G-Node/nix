@@ -306,31 +306,24 @@ DimensionType RangeDimensionFS::dimensionType() const {
 }
 
 
-string RangeDimensionFS::redirectGroup() const {
-    /*
-    Group g;
+DirectoryWithAttributes RangeDimensionFS::redirectGroup() const {
+    boost::filesystem::path l(location());
     if (alias()) {
-        string group_name = group.objectName(0);
-        g = group.openGroup(group_name, false);
+        return DirectoryWithAttributes(l / {"data"}, fileMode());
     } else {
-        g = group;
+        return DirectoryWithAttributes(l);
     }
-    return g;
-    */
-    return "";
 }
 
 
 boost::optional<std::string> RangeDimensionFS::label() const {
     boost::optional<std::string> ret;
     string label;
-    /*
-    Group g = redirectGroup();
-    bool have_attr = g.getAttr("label", label);
-    if (have_attr) {
+    DirectoryWithAttributes d = redirectGroup();
+    if (d.hasAttr("label")) {
+        d.getAttr("label", label);
         ret = label;
     }
-    */
     return ret;
 }
 
@@ -395,8 +388,7 @@ void RangeDimensionFS::unit(const none_t t) {
 
 
 bool RangeDimensionFS::alias() const {
-    return false;
-    // return group.objectCount() > 0 && !group.hasData("ticks");FIXME
+    return subdirCount() > 0 && !hasObject("ticks");
 }
 
 

@@ -180,7 +180,7 @@ public:
 
 private:
 
-    std::string redirectGroup() const;
+    DirectoryWithAttributes redirectGroup() const;
 };
 
 
