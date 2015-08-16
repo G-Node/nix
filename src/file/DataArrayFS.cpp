@@ -76,7 +76,7 @@ boost::optional<std::string> DataArrayFS::unit() const {
     boost::optional<std::string> ret;
     string value;
     if (hasAttr("unit")) {
-        getAttr("value", value);
+        getAttr("unit", value);
         ret = value;
     }
     return ret;
@@ -84,7 +84,7 @@ boost::optional<std::string> DataArrayFS::unit() const {
 
 
 void DataArrayFS::unit(const string &unit) {
-    if (unit.empty()) {
+    if (unit.empty()) { // TODO maybe switch to unsetting
         throw EmptyString("unit");
     }
     else {
