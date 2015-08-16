@@ -297,7 +297,7 @@ RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, const DataAr
     :RangeDimensionFS(loc, index, mode)
 {
     setType();
-    // this->group.createLink(array.group(), array.id()); FIXME
+    createDirectoryLink(array.location(), "data");
 }
 
 
@@ -332,23 +332,16 @@ void RangeDimensionFS::label(const string &label) {
     if (label.empty()) {
         throw EmptyString("label");
     }
-    /*
-    Group g = redirectGroup();
-    g.setAttr("label", label);
-    // NOTE: forceUpdatedAt() not possible since not reachable from here
-    */
-    // FIXME
+    DirectoryWithAttributes d = redirectGroup();
+    d.setAttr("label", label);
 }
 
 
 void RangeDimensionFS::label(const none_t t) {
-    /*
-    Group g = redirectGroup();
-    if (g.hasAttr("label")) {
-        g.removeAttr("label");
+    DirectoryWithAttributes d = redirectGroup();
+    if (d.hasAttr("label")) {
+        d.removeAttr("label");
     }
-     */
-    // FIXME
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
@@ -356,33 +349,30 @@ void RangeDimensionFS::label(const none_t t) {
 boost::optional<std::string> RangeDimensionFS::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    /*
-    Group g = redirectGroup();
-    bool have_attr = g.getAttr("unit", unit);
-    if (have_attr) {
+    DirectoryWithAttributes d = redirectGroup();
+    if (d.hasAttr("unit")) {
+        d.getAttr("unit", unit);
         ret = unit;
     }
-    */ // FIXME
     return ret;
 }
 
 
 void RangeDimensionFS::unit(const string &unit) {
     if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        // Group g = redirectGroup(); FIXME
-        // g.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
+        unit(none);
+        return;
     }
+    DirectoryWithAttributes d = redirectGroup();
+    d.setAttr("unit", unit);
 }
 
 
 void RangeDimensionFS::unit(const none_t t) {
-    // Group g = redirectGroup();
-    // if (g.hasAttr("unit")) {
-    //     g.removeAttr("unit");
-    //  } FIXME
+    DirectoryWithAttributes d = redirectGroup();
+    if (d.hasAttr("unit")) {
+        d.removeAttr("unit");
+    }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
