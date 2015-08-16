@@ -162,9 +162,9 @@ size_t DataArrayFS::dimensionCount() const {
 
 shared_ptr<IDimension> DataArrayFS::getDimension(size_t index) const {
     shared_ptr<IDimension> dim;
-    path p = dimensions.sub_dir_by_index(index);
-    if (!p.empty()) {
-        dim = openDimensionFS(p.string(), index, fileMode());
+    boost::optional<path> p = dimensions.findByNameOrAttribute("index", util::numToStr(index));
+    if (p) {
+        dim = openDimensionFS(p->string(), index, fileMode());
     }
     return dim;
 }
