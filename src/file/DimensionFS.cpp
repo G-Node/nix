@@ -103,8 +103,7 @@ size_t DimensionFS::index() const {
 }
 
 void DimensionFS::setType() {
-    if (!hasAttr("dimension_type"))
-        setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
+    setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
 }
 
 
