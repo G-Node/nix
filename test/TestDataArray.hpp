@@ -71,7 +71,7 @@ private:
 
     nix::File file, file_fs;
     nix::Block block, block_fs;
-    nix::DataArray array1, array2, array3, array_fs;
+    nix::DataArray array1, array2, array3, array1_fs, array2_fs;
     time_t startup_time;
 
     void test_definition(nix::DataArray &a);
@@ -79,4 +79,5 @@ private:
     void test_label(nix::DataArray &a);
     void test_unit(nix::DataArray &a);
     void test_operator(nix::DataArray &a);
+    void test_dimension(nix::DataArray &a1, nix::DataArray &a2);
 };
