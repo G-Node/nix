@@ -418,7 +418,6 @@ void BaseTestDataArray::testDimension() {
     CPPUNIT_ASSERT(dims.size() == 0);
 }
 
-
 void BaseTestDataArray::testAliasRangeDimension() {
     nix::Dimension dim = array3.createAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
