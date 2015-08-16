@@ -69,8 +69,14 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Block block;
-    nix::DataArray array1, array2, array3;
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+    nix::DataArray array1, array2, array3, array_fs;
     time_t startup_time;
+
+    void test_definition(nix::DataArray &a);
+    void test_type(nix::DataArray &a);
+    void test_label(nix::DataArray &a);
+    void test_unit(nix::DataArray &a);
+    void test_operator(nix::DataArray &a);
 };
