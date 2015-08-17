@@ -99,19 +99,29 @@ void TestDimension::test_sample_validate(DataArray &a) {
 
 
 void TestDimension::testIndex() {
-    Dimension sd = data_array.appendSetDimension();
-    CPPUNIT_ASSERT(data_array.dimensionCount() == 1 && sd.index() == 1);
-    data_array.deleteDimension(sd.index());
-    CPPUNIT_ASSERT(data_array.dimensionCount() == 0);
+    test_index(data_array);
+    test_index(data_array_fs);
+}
+
+void TestDimension::test_index(DataArray &a) {
+    Dimension sd = a.appendSetDimension();
+    CPPUNIT_ASSERT(a.dimensionCount() == 1 && sd.index() == 1);
+    a.deleteDimension(sd.index());
+    CPPUNIT_ASSERT(a.dimensionCount() == 0);
 }
 
 
 void TestDimension::testSampledDimLabel() {
+    test_sample_dim_label(data_array);
+    test_sample_dim_label(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_label(nix::DataArray &a) {
     std::string label = "aLabel";
     std::string other_label = "anotherLabel";
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -123,16 +133,21 @@ void TestDimension::testSampledDimLabel() {
     CPPUNIT_ASSERT_NO_THROW(sd.label(none));
     CPPUNIT_ASSERT(sd.label() == none);
 
-    data_array.deleteDimension(d.index());
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimUnit() {
+    test_sample_dim_unit(data_array);
+    test_sample_dim_unit(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_unit(nix::DataArray &a) {
     std::string invalidUnit = "invalidunit";
     std::string validUnit = "mV^2";
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -142,17 +157,21 @@ void TestDimension::testSampledDimUnit() {
     CPPUNIT_ASSERT(*(sd.unit()) == validUnit);
     CPPUNIT_ASSERT_NO_THROW(sd.unit(boost::none));
     CPPUNIT_ASSERT(sd.unit() == boost::none);
-
-    data_array.deleteDimension(d.index());
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimSamplingInterval() {
+    test_sample_dim_sampling_interval(data_array);
+    test_sample_dim_sampling_interval(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_sampling_interval(nix::DataArray &a) {
     double impossible_sampling_interval = -1.0;
     double invalid_sampling_interval = 0.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -163,15 +182,20 @@ void TestDimension::testSampledDimSamplingInterval() {
     CPPUNIT_ASSERT_NO_THROW(sd.samplingInterval(samplingInterval));
     CPPUNIT_ASSERT(sd.samplingInterval() == samplingInterval);
 
-    data_array.deleteDimension(d.index());
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimOffset() {
+    test_sample_dim_offset(data_array);
+    test_sample_dim_offset(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_offset(DataArray &a) {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -181,15 +205,20 @@ void TestDimension::testSampledDimOffset() {
     CPPUNIT_ASSERT_NO_THROW(sd.offset(boost::none));
     CPPUNIT_ASSERT(sd.offset() == boost::none);
 
-    data_array.deleteDimension(d.index());
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimIndexOf() {
+    test_sample_dim_index_of(data_array);
+    test_sample_dim_index_of(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_index_of(nix::DataArray &a) {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -200,7 +229,7 @@ void TestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
     CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
-    
+
     sd.offset(offset);
     CPPUNIT_ASSERT(*(sd.offset()) == offset);
     CPPUNIT_ASSERT(sd.indexOf(-1 * samplingInterval / 2 + offset + 0.001) == 0);
@@ -209,16 +238,21 @@ void TestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(sd.indexOf(6.28) == 2);
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
     CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
-    
-    data_array.deleteDimension(d.index());
+
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimPositionAt() {
+    test_sample_dim_position_at(data_array);
+    test_sample_dim_position_at(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_position_at(nix::DataArray &a) {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -226,25 +260,30 @@ void TestDimension::testSampledDimPositionAt() {
     sd.offset(offset);
     CPPUNIT_ASSERT(sd.positionAt(0) == offset);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(
-            200 * samplingInterval + offset,
-            sd.positionAt(200),
-            std::numeric_limits<double>::round_error());
+        200 * samplingInterval + offset,
+        sd.positionAt(200),
+        std::numeric_limits<double>::round_error());
 
     CPPUNIT_ASSERT(sd[0] == offset);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(
-            200 * samplingInterval + offset,
-            sd[200],
-            std::numeric_limits<double>::round_error());
+        200 * samplingInterval + offset,
+        sd[200],
+        std::numeric_limits<double>::round_error());
 
-    data_array.deleteDimension(d.index());
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimAxis() {
+    test_sample_dim_axis(data_array);
+    test_sample_dim_axis(data_array_fs);
+}
+
+void TestDimension::test_sample_dim_axis(nix::DataArray &a) {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd;
@@ -255,52 +294,56 @@ void TestDimension::testSampledDimAxis() {
     CPPUNIT_ASSERT(axis.size() == 100);
     CPPUNIT_ASSERT(axis[0] == offset);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(
-            99 * samplingInterval + offset,
-            axis.back(),
-            std::numeric_limits<double>::round_error());
-    
+        99 * samplingInterval + offset,
+        axis.back(),
+        std::numeric_limits<double>::round_error());
+
     axis = sd.axis(100, 10);
     CPPUNIT_ASSERT_DOUBLES_EQUAL(
-            10 * samplingInterval + offset,
-            axis[0],
-            std::numeric_limits<double>::round_error());
+        10 * samplingInterval + offset,
+        axis[0],
+        std::numeric_limits<double>::round_error());
     CPPUNIT_ASSERT_DOUBLES_EQUAL(
-            109 * samplingInterval + offset,
-            axis.back(),
-            std::numeric_limits<double>::round_error());
-    
-    data_array.deleteDimension(d.index());
+        109 * samplingInterval + offset,
+        axis.back(),
+        std::numeric_limits<double>::round_error());
+
+    a.deleteDimension(d.index());
 }
 
 
 void TestDimension::testSampledDimOperators() {
+
+}
+
+void TestDimension::test_sample_dim_operators(nix::DataArray &a) {
     double samplingInterval = boost::math::constants::pi<double>();
 
-    Dimension d = data_array.appendSampledDimension(samplingInterval);
-    Dimension d2 = data_array.appendSampledDimension(samplingInterval);
+    Dimension d = a.appendSampledDimension(samplingInterval);
+    Dimension d2 = a.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
     CPPUNIT_ASSERT(d2.dimensionType() == DimensionType::Sample);
 
     SampledDimension sd1, sd2, sd3;
     sd1 = d;
     sd2 = d2;
-    sd3 = data_array.getDimension(d.index());
+    sd3 = a.getDimension(d.index());
     CPPUNIT_ASSERT(sd1.index() == d.index() && sd2.index() == d2.index());
     CPPUNIT_ASSERT(sd1 != sd2);
     CPPUNIT_ASSERT(sd1 != sd3);
 
-    data_array.deleteDimension(d.index());
-    data_array.deleteDimension(d2.index());
+    a.deleteDimension(d.index());
+    a.deleteDimension(d2.index());
 
-    Dimension dim = data_array.appendSampledDimension(samplingInterval);
-    SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
-    RangeDimension range = data_array.appendRangeDimension(std::vector<double>({1, 2}));
-    SetDimension set = data_array.appendSetDimension();
+    Dimension dim = a.appendSampledDimension(samplingInterval);
+    SampledDimension sampled = a.appendSampledDimension(samplingInterval);
+    RangeDimension range = a.appendRangeDimension(std::vector<double>({1, 2}));
+    SetDimension set = a.appendSetDimension();
 
     stringstream s_stream, r_stream, set_stream;
     s_stream << sampled.dimensionType();
     r_stream << range.dimensionType();
-    set_stream << set.dimensionType();    
+    set_stream << set.dimensionType();
     CPPUNIT_ASSERT(s_stream.str() == "Sample");
     CPPUNIT_ASSERT(set_stream.str() == "Set");
     CPPUNIT_ASSERT(r_stream.str() == "Range");
