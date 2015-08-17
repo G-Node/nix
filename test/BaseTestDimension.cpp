@@ -33,7 +33,6 @@ using namespace valid;
 
 void BaseTestDimension::testValidate() {
     Dimension d = data_array.appendSetDimension();
-    
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -42,7 +41,6 @@ void BaseTestDimension::testValidate() {
 
 void BaseTestDimension::testSetValidate() {
     SetDimension d = data_array.appendSetDimension();
-    
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -54,9 +52,7 @@ void BaseTestDimension::testRangeValidate() {
     for (size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
-    
-    RangeDimension d = data_array.appendRangeDimension(ticks);
-    
+    RangeDimension d = a.appendRangeDimension(ticks);
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -65,9 +61,7 @@ void BaseTestDimension::testRangeValidate() {
 
 void BaseTestDimension::testSampleValidate() {
     double samplingInterval = boost::math::constants::pi<double>();
-    
     SampledDimension d = data_array.appendSampledDimension(samplingInterval);
-    
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
