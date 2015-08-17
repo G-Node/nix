@@ -309,7 +309,7 @@ DimensionType RangeDimensionFS::dimensionType() const {
 DirectoryWithAttributes RangeDimensionFS::redirectGroup() const {
     boost::filesystem::path l(location());
     if (alias()) {
-        return DirectoryWithAttributes(l / {"data"}, fileMode());
+        return DirectoryWithAttributes(l / boost::filesystem::path("data"), fileMode());
     } else {
         return DirectoryWithAttributes(l);
     }
@@ -360,8 +360,7 @@ boost::optional<std::string> RangeDimensionFS::unit() const {
 
 void RangeDimensionFS::unit(const string &unit) {
     if (unit.empty()) {
-        unit(none);
-        return;
+        throw EmptyString("unit");
     }
     DirectoryWithAttributes d = redirectGroup();
     d.setAttr("unit", unit);
