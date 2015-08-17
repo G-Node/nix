@@ -62,6 +62,16 @@ private:
     void test_set_validate(nix::DataArray &array);
     void test_sample_validate(nix::DataArray &array);
     void test_range_validate(nix::DataArray &array);
+    void test_index(nix::DataArray & array);
+    void test_sample_dim_label(nix::DataArray &a);
+    void test_sample_dim_offset(nix::DataArray &a);
+    void test_sample_dim_unit(nix::DataArray &a);
+    void test_sample_dim_sampling_interval(nix::DataArray &a);
+    void test_sample_dim_operators(nix::DataArray &a);
+    void test_sample_dim_index_of(nix::DataArray &a);
+    void test_sample_dim_position_at(nix::DataArray &a);
+    void test_sample_dim_axis(nix::DataArray &a);
+
 
 public:
 
