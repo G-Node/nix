@@ -53,9 +53,15 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::DataArray data_array;
-    nix::Block block;
+    nix::File file, file_fs;
+    nix::DataArray data_array, data_array_fs;
+    nix::Block block, block_fs;
+
+
+    void test_validate(nix::DataArray &array);
+    void test_set_validate(nix::DataArray &array);
+    void test_sample_validate(nix::DataArray &array);
+    void test_range_validate(nix::DataArray &array);
 
 public:
 

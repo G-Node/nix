@@ -24,6 +24,10 @@ void TestDimension::setUp() {
     block = file.createBlock("dimensionTest","test");
     data_array = block.createDataArray("dimensionTest", "Test",
                                        DataType::Double, NDSize({ 0 }));
+
+    file_fs = File::open("test_dimension", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("dimensionTest", "test");
+    data_array_fs = block_fs.createDataArray("dimensionTest", "test", DataType::Double, NDSize({ 0 }));
 }
 
 
@@ -34,8 +38,13 @@ void TestDimension::tearDown() {
 
 
 void TestDimension::testValidate() {
-    Dimension d = data_array.appendSetDimension();
-    
+    test_validate(data_array);
+    test_validate(data_array_fs);
+}
+
+
+void TestDimension::test_validate(DataArray &a) {
+    Dimension d = a.appendSetDimension();
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -43,8 +52,13 @@ void TestDimension::testValidate() {
 
 
 void TestDimension::testSetValidate() {
-    SetDimension d = data_array.appendSetDimension();
-    
+    test_set_validate(data_array);
+    test_set_validate(data_array_fs);
+}
+
+
+void TestDimension::test_set_validate(DataArray &a) {
+    SetDimension d = a.appendSetDimension();
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -52,13 +66,17 @@ void TestDimension::testSetValidate() {
 
 
 void TestDimension::testRangeValidate() {
+    test_range_validate(data_array);
+    // test_range_validate(data_array_fs); FIXME
+}
+
+
+void TestDimension::test_range_validate(DataArray &a) {
     std::vector<double> ticks;
     for (size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
-    
-    RangeDimension d = data_array.appendRangeDimension(ticks);
-    
+    RangeDimension d = a.appendRangeDimension(ticks);
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
@@ -66,10 +84,14 @@ void TestDimension::testRangeValidate() {
 
 
 void TestDimension::testSampleValidate() {
+    test_sample_validate(data_array);
+    test_sample_validate(data_array_fs);
+}
+
+
+void TestDimension::test_sample_validate(DataArray &a) {
     double samplingInterval = boost::math::constants::pi<double>();
-    
-    SampledDimension d = data_array.appendSampledDimension(samplingInterval);
-    
+    SampledDimension d = a.appendSampledDimension(samplingInterval);
     valid::Result result = validate(d);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
