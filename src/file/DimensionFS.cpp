@@ -97,8 +97,9 @@ void DimensionFS::index(size_t index) {
 
 size_t DimensionFS::index() const {
     size_t idx;
-    if (hasAttr("index"))
-        getAttr("index", idx);
+    if (!hasAttr("index"))
+        throw MissingAttr("MissingAttr index in Dimension");
+    getAttr("index", idx);
     return idx;
 }
 
@@ -124,8 +125,7 @@ DimensionFS::~DimensionFS() {}
 //--------------------------------------------------------------
 
 SampledDimensionFS::SampledDimensionFS(const string &loc, size_t index, FileMode mode)
-    : DimensionFS(loc, index, mode)
-{
+    : DimensionFS(loc, index, mode) {
 }
 
 SampledDimensionFS::SampledDimensionFS(const string &loc, size_t index, double sampling_interval, FileMode mode)
