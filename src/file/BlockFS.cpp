@@ -7,7 +7,6 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/file/BlockFS.hpp>
-#include <nix/file/SourceFS.hpp>
 
 namespace nix {
 namespace file {
@@ -64,7 +63,6 @@ std::shared_ptr<base::ISource> BlockFS::getSource(const std::string &name_or_id)
     boost::optional<boost::filesystem::path> path = source_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
         return make_shared<SourceFS>(file(), path->string());
-
     }
     return source;
 }
