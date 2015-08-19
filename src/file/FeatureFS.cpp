@@ -85,7 +85,7 @@ shared_ptr<IDataArray> FeatureFS::data() const {
     shared_ptr<IDataArray> da;
     /*
     bool error = false;
-    
+
     if (group().hasGroup("data")) {
         Group other_group = group().openGroup("data", false);
         da = make_shared<DataArrayHDF5>(file(), block, other_group);
