@@ -58,11 +58,9 @@ ndsize_t Directory::subdirCount() const {
 
 
 void Directory::removeAll() {
-    directory_iterator end;
-    directory_iterator di(location().c_str());
-    while (di != end) {
-        remove_all(*di);
-        ++di;
+    path p(location());
+    for (directory_iterator end_it, it(p); it!=end_it; ++it) {
+        remove_all(it->path());
     }
 }
 
