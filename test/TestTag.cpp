@@ -39,6 +39,17 @@ void TestTag::setUp() {
     tag_null = nix::none;
 
     section = file.createSection("foo_section", "metadata");
+
+    file_fs = File::open("test_tag", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block", "dataset");
+
+    refs_fs.clear();
+    for (const auto & name : array_names) {
+        refs_fs.push_back(block_fs.createDataArray(name, "reference",
+                                                   DataType::Double, nix::NDSize({ 0 })));
+    }
+    tag_fs = block_fs.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 
@@ -53,28 +64,45 @@ void TestTag::testValidate() {
     valid::Result result = validate(tag);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
+
+    valid::Result result_fs = validate(tag_fs);
+    CPPUNIT_ASSERT(result_fs.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result_fs.getWarnings().size() == 0);
+
 }
 
 
 void TestTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
+    CPPUNIT_ASSERT(tag_fs.id().size() == 36);
 }
 
 
 void TestTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
+    CPPUNIT_ASSERT(tag_fs.name() == "tag_one");
 }
 
 
 void TestTag::testType() {
-    CPPUNIT_ASSERT(tag.type() == "test_tag");
+    test_type(tag);
+    test_type(tag_fs);
+}
+
+void TestTag::test_type(Tag &t) {
+    CPPUNIT_ASSERT(t.type() == "test_tag");
     std::string type = util::createId();
-    tag.type(type);
-    CPPUNIT_ASSERT(tag.type() == type);
+    t.type(type);
+    CPPUNIT_ASSERT(t.type() == type);
 }
 
 
 void TestTag::testDefinition() {
+    test_definition(tag);
+    test_definition(tag_fs);
+}
+
+void TestTag::test_definition(Tag  &t) {
     std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
@@ -82,38 +110,42 @@ void TestTag::testDefinition() {
     CPPUNIT_ASSERT(tag.definition() == nix::none);
 }
 
-
 void TestTag::testCreateRemove() {
+    test_create_remove(block, refs);
+    test_create_remove(block_fs, refs_fs);
+}
+
+void TestTag::test_create_remove(Block &b, vector<DataArray> &r) {
     std::vector<std::string> ids;
-    ndsize_t count = block.tagCount();
+    ndsize_t count = b.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
 
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        Tag st1 = block.createTag(names[i], type, {0.0, 2.0, 3.4});
-        st1.references(refs);
-        Tag st2 = block.getTag(st1.id());
+        Tag st1 = b.createTag(names[i], type, {0.0, 2.0, 3.4});
+        st1.references(r);
+        Tag st2 = b.getTag(st1.id());
         ids.push_back(st1.id());
 
         std::stringstream errmsg;
         errmsg << "Error while accessing tag: st1.id() = " << st1.id()
-                                       << " / st2.id() = " << st2.id();
+        << " / st2.id() = " << st2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), st1.id().compare(st2.id()) == 0);
     }
     std::stringstream errmsg2;
     errmsg2 << "Error creating Tags. Counts do not match!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.tagCount() == (count+5));
+    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), b.tagCount() == (count+5));
 
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
     for (const auto &id : ids) {
-        block.deleteTag(id);
+        b.deleteTag(id);
     }
 
     std::stringstream errmsg1;
     errmsg1 << "Error while removing tags!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.tagCount() == count);
+    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), b.tagCount() == count);
 }
 
 
