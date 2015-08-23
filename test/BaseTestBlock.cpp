@@ -189,9 +189,9 @@ void BaseTestBlock::testTagAccess() {
     Tag tag, t;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name,
-                                             "reference",
-                                             DataType::Double,
-                                             nix::NDSize({ 0 })));
+                                         "reference",
+                                         DataType::Double,
+                                         nix::NDSize({ 0 })));
     }
 
     CPPUNIT_ASSERT(block.tagCount() == 0);
@@ -220,7 +220,7 @@ void BaseTestBlock::testTagAccess() {
 
         block.deleteTag(*it);
     }
-    
+
     tag = block.createTag("test", "test", {0.0});
     CPPUNIT_ASSERT(block.hasTag(tag));
     CPPUNIT_ASSERT(block.deleteTag(tag));
