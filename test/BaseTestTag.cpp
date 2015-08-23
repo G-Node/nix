@@ -79,7 +79,7 @@ void BaseTestTag::testCreateRemove() {
 
         std::stringstream errmsg;
         errmsg << "Error while accessing tag: st1.id() = " << st1.id()
-                                       << " / st2.id() = " << st2.id();
+        << " / st2.id() = " << st2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), st1.id().compare(st2.id()) == 0);
     }
     std::stringstream errmsg2;

@@ -26,7 +26,19 @@
 class TestSection: public CPPUNIT_NS::TestFixture {
 private:
 
+<<<<<<< HEAD:test/TestSection.hpp
     CPPUNIT_TEST_SUITE(TestSection);
+=======
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+    nix::DataArray positions, positions_fs, extents, extents_fs;
+    nix::Tag tag, tag_fs, tag_other, tag_null;
+    nix::Section section, section_fs;
+    time_t startup_time;
+    std::vector<nix::DataArray> refs, refs_fs;
+
+    CPPUNIT_TEST_SUITE(TestTag);
+>>>>>>> [file_backend/Tag] add some tests:test/TestTag.hpp
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
