@@ -229,16 +229,26 @@ void TestBlock::test_data_array_access(Block &b) {
 
 
 void TestBlock::testTagAccess() {
+    cerr << "\n\t Backend: HDF5\t";
+    test_tag_access(block);
+    cerr << "\t... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_data_array_access(block_fs);
+    cerr << "... done!\n";
+
+}
+
+void TestBlock::test_tag_access(Block &b) {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
     Tag tag, t;
     for (const auto &name : array_names) {
-        refs.push_back(block.createDataArray(name,
-                                             "reference",
-                                             DataType::Double,
-                                             nix::NDSize({ 0 })));
+        refs.push_back(b.createDataArray(name,
+                                         "reference",
+                                         DataType::Double,
+                                         nix::NDSize({ 0 })));
     }
 
     CPPUNIT_ASSERT(block.tagCount() == 0);
@@ -248,26 +258,26 @@ void TestBlock::testTagAccess() {
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
+        tag = b.createTag(*it, "segment", {0.0, 2.0, 3.4});
         tag.references(refs);
         CPPUNIT_ASSERT(tag.name() == *it);
-        CPPUNIT_ASSERT(block.hasTag(tag));
+        CPPUNIT_ASSERT(b.hasTag(tag));
         ids.push_back(tag.id());
     }
-    CPPUNIT_ASSERT_THROW(block.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
+    CPPUNIT_ASSERT_THROW(b.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
                          DuplicateName);
 
-    CPPUNIT_ASSERT(block.tagCount() == names.size());
-    CPPUNIT_ASSERT(block.tags().size() == names.size());
+    CPPUNIT_ASSERT(b.tagCount() == names.size());
+    CPPUNIT_ASSERT(b.tags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); ++it) {
-        tag = block.getTag(*it);
-        CPPUNIT_ASSERT(block.hasTag(*it) == true);
+        tag = b.getTag(*it);
+        CPPUNIT_ASSERT(b.hasTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
-        block.deleteTag(*it);
+        b.deleteTag(*it);
     }
-    
+
     tag = block.createTag("test", "test", {0.0});
     CPPUNIT_ASSERT(block.hasTag(tag));
     CPPUNIT_ASSERT_NO_THROW(block.deleteTag(tag));
