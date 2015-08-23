@@ -172,12 +172,10 @@ ndsize_t BlockFS::tagCount() const {
 std::shared_ptr<base::ITag> BlockFS::getTag(const std::string &name_or_id) const {
     shared_ptr<base::ITag> tag;
     boost::optional<boost::filesystem::path> path = tag_dir.findByNameOrAttribute("entity_id", name_or_id);
-    /* FIXME once Tags exist
     if (path) {
-        TagFS t(file(), path->string());
+        TagFS t(file(), block(), path->string());
         return make_shared<TagFS>(t);
     }
-    */
     return tag;
 }
 
@@ -186,13 +184,23 @@ std::shared_ptr<base::ITag> BlockFS::getTag(ndsize_t index) const {
     if (index >= tagCount()) {
         throw OutOfBounds("Trying to access block.tag with invalid index.", index);
     }
-    return std::shared_ptr<base::ITag>(); //FIXME
+    boost::filesystem::path p = tag_dir.sub_dir_by_index(index);
+    TagFS t(file(), block(), p.string());
+    return make_shared<TagFS>(t);
 }
 
 
 std::shared_ptr<base::ITag> BlockFS::createTag(const std::string &name, const std::string &type,
                                                const std::vector<double> &position) {
-    return std::shared_ptr<base::ITag>(); // FIXME
+    if (name.empty()) {
+        throw EmptyString("Block::createTag empty name provided!");
+    }
+    if (hasDataArray(name)) {
+        throw DuplicateName("Block::createTag: an entity with the same name already exists!");
+    }
+    string id = util::createId();
+    TagFS tag(file(), block(), tag_dir.location(), id, type, name, position);
+    return make_shared<TagFS>(tag);
 }
 
 
