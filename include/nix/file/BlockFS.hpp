@@ -12,6 +12,7 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/file/EntityWithMetadataFS.hpp>
 #include <nix/file/DataArrayFS.hpp>
+#include <nix/file/TagFS.hpp>
 
 #include <vector>
 #include <string>
