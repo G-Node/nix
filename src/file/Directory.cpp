@@ -82,25 +82,23 @@ boost::optional<path> Directory::findByNameOrAttribute(const std::string &attrib
         p = location() / path(value.c_str());
         return p;
     }
-    if (util::looksLikeUUID(value)) {
-        path attr_path("attributes");
-        directory_iterator end;
-        directory_iterator di(location().c_str());
-        while (di != end) {
-            path temp = *di;
-            if (is_directory(temp) && exists(temp / attr_path)){
-                AttributesFS attr(temp);
-                string s;
-                if (attr.has(attribute)) {
-                    attr.get(attribute, s);
-                    if (s == value) {
-                        p = temp;
-                        return p;
-                    }
+    path attr_path("attributes");
+    directory_iterator end;
+    directory_iterator di(location().c_str());
+    while (di != end) {
+        path temp = *di;
+        if (is_directory(temp) && exists(temp / attr_path)){
+            AttributesFS attr(temp);
+            string s;
+            if (attr.has(attribute)) {
+                attr.get(attribute, s);
+                if (s == value) {
+                    p = temp;
+                    return p;
                 }
             }
-            ++di;
         }
+        ++di;
     }
     return p;
 }
