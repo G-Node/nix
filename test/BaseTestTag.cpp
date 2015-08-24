@@ -152,7 +152,6 @@ void BaseTestTag::testPosition() {
 
 void BaseTestTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
-
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
     // TODO This test fails due to operator== of Section
@@ -198,7 +197,6 @@ void BaseTestTag::testSourceAccess() {
         tag.removeSource(*it);
         block.deleteSource(*it);
     }
-
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
 }
 
