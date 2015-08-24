@@ -63,6 +63,8 @@ private:
     void test_type(nix::Tag &t);
     void test_definition(nix::Tag &t);
     void test_create_remove(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_metadata_access(nix::Tag & t, nix::File &f, nix::Section &s);
+    void test_source_access(nix::Tag &t, nix::Block &b);
 
 public:
 

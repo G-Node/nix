@@ -201,55 +201,64 @@ void TestTag::testPosition() {
 
 
 void TestTag::testMetadataAccess() {
-    CPPUNIT_ASSERT(!tag.metadata());
+    test_metadata_access(tag, file, section);
+    test_metadata_access(tag_fs, file_fs, section_fs);
+}
 
-    tag.metadata(section);
-    CPPUNIT_ASSERT(tag.metadata());
+void TestTag::test_metadata_access(Tag &t, File &f, Section &s) {
+    CPPUNIT_ASSERT(!t.metadata());
+
+    t.metadata(s);
+    CPPUNIT_ASSERT(t.metadata());
     // TODO This test fails due to operator== of Section
-    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
+    CPPUNIT_ASSERT(t.metadata().id() == s.id());
 
     // test none-unsetter
-    tag.metadata(none);
-    CPPUNIT_ASSERT(!tag.metadata());
+    t.metadata(none);
+    CPPUNIT_ASSERT(!t.metadata());
     // test deleter removing link too
-    tag.metadata(section);
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!tag.metadata());
+    t.metadata(s);
+    f.deleteSection(s.id());
+    CPPUNIT_ASSERT(!t.metadata());
     // re-create section
-    section = file.createSection("foo_section", "metadata");
+    s = f.createSection("foo_section", "metadata");
 }
 
 
 void TestTag::testSourceAccess() {
+    test_source_access(tag, block);
+    test_source_access(tag_fs, block_fs);
+}
+
+void TestTag::test_source_access(Tag &t, Block &b) {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
-    CPPUNIT_ASSERT(tag.sources().size() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sources().size() == 0);
 
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        Source child_source = block.createSource(*it,"channel");
-        tag.addSource(child_source);
+        Source child_source = b.createSource(*it,"channel");
+        t.addSource(child_source);
         CPPUNIT_ASSERT(child_source.name() == *it);
         ids.push_back(child_source.id());
     }
 
-    CPPUNIT_ASSERT(tag.sourceCount() == names.size());
-    CPPUNIT_ASSERT(tag.sources().size() == names.size());
+    CPPUNIT_ASSERT(t.sourceCount() == names.size());
+    CPPUNIT_ASSERT(t.sources().size() == names.size());
 
     std::string name = names[0];
-    Source source = tag.getSource(name);
+    Source source = t.getSource(name);
     CPPUNIT_ASSERT(source.name() == name);
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source child_source = tag.getSource(*it);
-        CPPUNIT_ASSERT(tag.hasSource(*it) == true);
+        Source child_source = t.getSource(*it);
+        CPPUNIT_ASSERT(t.hasSource(*it) == true);
         CPPUNIT_ASSERT(child_source.id() == *it);
 
-        tag.removeSource(*it);
-        block.deleteSource(*it);
+        t.removeSource(*it);
+        b.deleteSource(*it);
     }
-
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
 }
 
 
