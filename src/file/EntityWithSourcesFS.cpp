@@ -55,7 +55,7 @@ bool EntityWithSourcesFS::hasSource(const string &id) const {
 
 shared_ptr<ISource> EntityWithSourcesFS::getSource(const string &name_or_id) const {
     shared_ptr<base::ISource> source;
-    boost::optional<path> path = sources_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<path> path = sources_dir.findByNameOrAttribute("name", name_or_id);
     if (path) {
         return make_shared<SourceFS>(file(), path->string());
 
