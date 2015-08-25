@@ -204,6 +204,8 @@ void BaseTestTag::testSourceAccess() {
 void BaseTestTag::testUnits() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
+    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(refs);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -220,7 +222,7 @@ void BaseTestTag::testUnits() {
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
-    for (auto it = refs.begin(); it != refs.end(); it++) {
+    for (auto it = r.begin(); it != r.end(); it++) {
         block.deleteDataArray((*it).id());
     }
 
@@ -256,6 +258,7 @@ void BaseTestTag::testReferences() {
 void BaseTestTag::testFeatures() {
     DataArray a;
     Feature f;
+
     CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT(!tag.hasFeature(f));
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
