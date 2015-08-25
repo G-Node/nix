@@ -11,7 +11,7 @@
 #include <nix/NDArray.hpp>
 #include <nix/file/DataArrayFS.hpp>
 #include <nix/file/BlockFS.hpp>
-// #include <nix/file/FeatureFS.hpp>
+#include <nix/file/FeatureFS.hpp>
 
 using namespace std;
 using namespace nix::base;
@@ -167,15 +167,10 @@ ndsize_t BaseTagFS::featureCount() const {
 
 shared_ptr<IFeature> BaseTagFS::getFeature(const std::string &name_or_id) const {
     shared_ptr<IFeature> feature;
-    /*
-    boost::optional<Group> g = feature_group();
-
-    if (g) {
-        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group)
-            feature = make_shared<FeatureHDF5>(file(), block(), group.get());
+    boost::optional<boost::filesystem::path> p = feature_group.findByNameOrAttribute("entity_id", name_or_id);
+    if (p) {
+        return make_shared<FeatureFS>(file(), block(), p->string());
     }
-*/ // FIXME once Features are implemented
     return feature;
 }
 
@@ -193,15 +188,9 @@ shared_ptr<IFeature>  BaseTagFS::createFeature(const std::string &name_or_id, Li
     if(!block()->hasDataArray(name_or_id)) {
         throw std::runtime_error("DataArray not found in Block!");
     }
-    /*
     string rep_id = util::createId();
-    boost::optional<Group> g = feature_group(true);
-
-    Group group = g->openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(name_or_id);
-    return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
-     */ // FIXME
-    return shared_ptr<IFeature>();
+    DataArray a = block()->getDataArray(name_or_id);
+    return make_shared<FeatureFS>(file(), block(), feature_group.location(), rep_id, a, link_type);
 }
 
 
