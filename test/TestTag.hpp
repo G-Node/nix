@@ -65,6 +65,9 @@ private:
     void test_create_remove(nix::Block &b, std::vector<nix::DataArray> &r);
     void test_metadata_access(nix::Tag & t, nix::File &f, nix::Section &s);
     void test_source_access(nix::Tag &t, nix::Block &b);
+    void test_unit(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_references(nix::Tag &t, std::vector<nix::DataArray> &r);
+    void test_features(nix::Tag &t, nix::DataArray &da);
 
 public:
 

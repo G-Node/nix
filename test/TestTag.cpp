@@ -263,8 +263,13 @@ void TestTag::test_source_access(Tag &t, Block &b) {
 
 
 void TestTag::testUnits() {
-    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
-    st.references(refs);
+    test_unit(block, refs);
+    test_unit(block_fs, refs_fs);
+}
+
+void TestTag::test_unit(Block &b, vector<DataArray> &r) {
+    Tag st = b.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(r);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -281,8 +286,8 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
 
     st.units(insane_units);
@@ -291,23 +296,29 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteTag(st.id());
+    b.deleteTag(st.id());
 }
 
 
 void TestTag::testReferences() {
-    CPPUNIT_ASSERT(tag.referenceCount() == 0);
-    for (size_t i = 0; i < refs.size(); ++i) {
-        CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
-        CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
-        CPPUNIT_ASSERT(tag.hasReference(refs[i]));
+    test_references(tag, refs);
+    test_references(tag_fs, refs_fs);
+}
+
+void TestTag::test_references(Tag &t, vector<DataArray> &r) {
+    CPPUNIT_ASSERT(t.referenceCount() == 0);
+    for (size_t i = 0; i < r.size(); ++i) {
+        CPPUNIT_ASSERT(!t.hasReference(r[i]));
+        CPPUNIT_ASSERT_NO_THROW(t.addReference(r[i]));
+        CPPUNIT_ASSERT(t.hasReference(r[i]));
     }
-    CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
-    for (size_t i = 0; i < refs.size(); ++i) {
-        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+    CPPUNIT_ASSERT(t.referenceCount() == r.size());
+    for (size_t i = 0; i < r.size(); ++i) {
+        CPPUNIT_ASSERT_NO_THROW(t.removeReference(r[i]));
     }
-    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    CPPUNIT_ASSERT(t.referenceCount() == 0);
     DataArray a;
+
     CPPUNIT_ASSERT_THROW(tag.hasReference(a), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.addReference(a), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.removeReference(a), UninitializedEntity);
@@ -315,8 +326,14 @@ void TestTag::testReferences() {
 
 
 void TestTag::testFeatures() {
+    test_features(tag, refs[0]);
+    test_features(tag_fs, refs_fs[0]);
+}
+
+void TestTag::test_features(Tag &t, DataArray &da) {
     DataArray a;
     Feature f;
+
     CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
