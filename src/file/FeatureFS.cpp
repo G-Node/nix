@@ -52,7 +52,7 @@ FeatureFS::FeatureFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &bl
 
 FeatureFS::FeatureFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
                      const string &id, DataArray data, LinkType link_type, time_t time)
-    : EntityFS(file, loc, id, time), block(block)
+    : EntityFS(file, (boost::filesystem::path(loc) / boost::filesystem::path(id)).string(), id, time), block(block)
 {
     linkType(link_type);
     // TODO: the line below currently throws an exception if the DataArray
@@ -75,29 +75,18 @@ void FeatureFS::data(const std::string &name_or_id) {
         throw std::runtime_error("FeatureFS::data: DataArray not found in block!");
 
     auto target = dynamic_pointer_cast<DataArrayFS>(block->getDataArray(name_or_id));
-    // FIXME create Link
-    //group().createLink(target->group(), "data");
+    createDirectoryLink(target->location(), "data");
     forceUpdatedAt();
 }
 
 
 shared_ptr<IDataArray> FeatureFS::data() const {
     shared_ptr<IDataArray> da;
-    /*
-    bool error = false;
-
-    if (group().hasGroup("data")) {
-        Group other_group = group().openGroup("data", false);
-        da = make_shared<DataArrayHDF5>(file(), block, other_group);
-        if (!block->hasDataArray(da->id())) error = true;
+    boost::optional<boost::filesystem::path> p = findByNameOrAttribute("name", "data");
+    if (p) {
+        DataArrayFS a(file(), block, p->string());
+        return make_shared<DataArrayFS>(a);
     }
-    else error = true;
-
-    // NOTE: we check that link exists in both places, here & in entity
-    // if error = true it was missing in one of the two
-    if (error)
-        throw std::runtime_error("FeatureHDF5::data: DataArray not found!");
-    */
     return da;
 }
 
