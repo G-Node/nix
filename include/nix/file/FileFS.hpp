@@ -25,7 +25,7 @@ private:
     Directory data_dir, metadata_dir;
     FileMode mode;
 
-    void create_subfolders();
+    void create_subfolders(const std::string &loc);
 
 public:
     FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
