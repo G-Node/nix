@@ -290,14 +290,19 @@ void TestBlock::test_tag_access(Block &b) {
 
 
 void TestBlock::testMultiTagAccess() {
+    test_multi_tag_access(block);
+}
+
+void TestBlock::test_multi_tag_access(Block &b) {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     MultiTag mtag, m;
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
-    DataArray positions = block.createDataArray("array_one",
-                                                "testdata",
-                                                DataType::Double,
-                                                nix::NDSize({ 3, 4, 2 }));
+    DataArray positions = b.createDataArray("array_one",
+                                            "testdata",
+                                            DataType::Double,
+                                            nix::NDSize({ 3, 4, 2 }));
+
     boost::multi_array<double, 3> A(boost::extents[3][4][2]);
     int values = 0;
     for(index i = 0; i != 3; ++i)
@@ -311,25 +316,26 @@ void TestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
     CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), UninitializedEntity);
+
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        mtag = block.createMultiTag(*it, "segment", positions);
+        mtag = b.createMultiTag(*it, "segment", positions);
         CPPUNIT_ASSERT(mtag.name() == *it);
-        CPPUNIT_ASSERT(block.hasMultiTag(mtag));
+        CPPUNIT_ASSERT(b.hasMultiTag(mtag));
         ids.push_back(mtag.id());
     }
-    CPPUNIT_ASSERT_THROW(block.createMultiTag(names[0], "segment", positions),
+    CPPUNIT_ASSERT_THROW(b.createMultiTag(names[0], "segment", positions),
                          DuplicateName);
 
-    CPPUNIT_ASSERT(block.multiTagCount() == names.size());
-    CPPUNIT_ASSERT(block.multiTags().size() == names.size());
+    CPPUNIT_ASSERT(b.multiTagCount() == names.size());
+    CPPUNIT_ASSERT(b.multiTags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        mtag = block.getMultiTag(*it);
-        CPPUNIT_ASSERT(block.hasMultiTag(*it) == true);
+        mtag = b.getMultiTag(*it);
+        CPPUNIT_ASSERT(b.hasMultiTag(*it) == true);
         CPPUNIT_ASSERT(mtag.id() == *it);
 
-        block.deleteMultiTag(*it);
+        b.deleteMultiTag(*it);
     }
     mtag = block.createMultiTag("test", "test", positions);
     CPPUNIT_ASSERT(block.hasMultiTag(mtag));
