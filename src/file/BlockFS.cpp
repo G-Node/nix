@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/file/BlockFS.hpp>
+#include <nix/file/MultiTagFS.hpp>
 
 namespace nix {
 namespace file {
@@ -225,12 +226,10 @@ ndsize_t BlockFS::multiTagCount() const {
 std::shared_ptr<base::IMultiTag> BlockFS::getMultiTag(const std::string &name_or_id) const {
     shared_ptr<base::IMultiTag> mtag;
     boost::optional<boost::filesystem::path> path = multi_tag_dir.findByNameOrAttribute("entity_id", name_or_id);
-    /* FIXME once Multi Tags exist
     if (path) {
-        MultiTagFS t(file(), path->string());
+        MultiTagFS t(file(), block(), path->string());
         return make_shared<MultiTagFS>(t);
     }
-    */
     return mtag;
 }
 
@@ -239,13 +238,23 @@ std::shared_ptr<base::IMultiTag> BlockFS::getMultiTag(ndsize_t index) const {
     if (index >= multiTagCount()) {
         throw OutOfBounds("Trying to access block.multiTag with invalid index.", index);
     }
-    return std::shared_ptr<base::IMultiTag>(); //FIXME
+    boost::filesystem::path p = multi_tag_dir.sub_dir_by_index(index);
+    MultiTagFS t(file(), block(), p.string());
+    return make_shared<MultiTagFS>(t);
 }
 
 
 std::shared_ptr<base::IMultiTag> BlockFS::createMultiTag(const std::string &name, const std::string &type,
                                                          const DataArray &positions) {
-    return std::shared_ptr<base::IMultiTag>(); // FIXME
+    if (name.empty()) {
+        throw EmptyString("Block::createMultiTag empty name provided!");
+    }
+    if (hasMultiTag(name)) {
+        throw DuplicateName("Block::createMultiTag: an entity with the same name already exists!");
+    }
+    string id = util::createId();
+    MultiTagFS tag(file(), block(), multi_tag_dir.location(), id, type, name, positions);
+    return make_shared<MultiTagFS>(tag);
 }
 
 
