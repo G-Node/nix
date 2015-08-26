@@ -237,10 +237,11 @@ void BaseTestBlock::testMultiTagAccess() {
     MultiTag mtag, m;
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
-    DataArray positions = block.createDataArray("array_one",
-                                                "testdata",
-                                                DataType::Double,
-                                                nix::NDSize({ 3, 4, 2 }));
+    DataArray positions = b.createDataArray("array_one",
+                                            "testdata",
+                                            DataType::Double,
+                                            nix::NDSize({ 3, 4, 2 }));
+
     boost::multi_array<double, 3> A(boost::extents[3][4][2]);
     int values = 0;
     for(index i = 0; i != 3; ++i)
