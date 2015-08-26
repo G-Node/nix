@@ -297,20 +297,10 @@ void TestBlock::test_multi_tag_access(Block &b) {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     MultiTag mtag, m;
     // create a valid positions data array below
-    typedef boost::multi_array<double, 3>::index index;
     DataArray positions = b.createDataArray("array_one",
                                             "testdata",
                                             DataType::Double,
                                             nix::NDSize({ 3, 4, 2 }));
-
-    boost::multi_array<double, 3> A(boost::extents[3][4][2]);
-    int values = 0;
-    for(index i = 0; i != 3; ++i)
-        for(index j = 0; j != 4; ++j)
-            for(index k = 0; k != 2; ++k)
-                A[i][j][k] = values++;
-
-    positions.setData(A);
 
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
