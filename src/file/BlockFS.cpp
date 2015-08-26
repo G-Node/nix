@@ -196,7 +196,7 @@ std::shared_ptr<base::ITag> BlockFS::createTag(const std::string &name, const st
     if (name.empty()) {
         throw EmptyString("Block::createTag empty name provided!");
     }
-    if (hasDataArray(name)) {
+    if (hasTag(name)) {
         throw DuplicateName("Block::createTag: an entity with the same name already exists!");
     }
     string id = util::createId();
