@@ -30,16 +30,17 @@ FileFS::FileFS(const string &name, FileMode mode)
     }
     setCreatedAt();
     setUpdatedAt();
-    create_subfolders();
+    create_subfolders(name);
     if (!checkHeader()) {
         throw std::runtime_error("Invalid file header: either file format or file version not correct");
     }
 }
 
-void FileFS::create_subfolders() {
+void FileFS::create_subfolders(const string &loc) {
     fs::path data("data");
     fs::path metadata("metadata");
-    fs::path p(location());
+    fs::path p;
+    p = fs::canonical(loc);
 
     data_dir = Directory(p / data, mode);
     metadata_dir = Directory(p / metadata, mode);
