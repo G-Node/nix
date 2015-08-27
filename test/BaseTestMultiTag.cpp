@@ -1,4 +1,4 @@
-// Copyright © 2014 German Neuroinformatics Node (G-Node)
+// Copyright © 2014 - 2015 German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -28,7 +28,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-
 using namespace nix;
 using namespace valid;
 
@@ -42,11 +41,13 @@ void BaseTestMultiTag::testValidate() {
 
 void BaseTestMultiTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
+    CPPUNIT_ASSERT(tag_fs.id().size() == 36);
 }
 
 
 void BaseTestMultiTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
+    CPPUNIT_ASSERT(tag_fs.name() == "tag_one");
 }
 
 
@@ -56,7 +57,6 @@ void BaseTestMultiTag::testType() {
     tag.type(type);
     CPPUNIT_ASSERT(tag.type() == type);
 }
-
 
 void BaseTestMultiTag::testDefinition() {
     std::string def = util::createId();
@@ -69,8 +69,8 @@ void BaseTestMultiTag::testDefinition() {
 
 void BaseTestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
-	//issue #473
-	ndsize_t count = static_cast<size_t>(block.multiTagCount());
+    //issue #473
+    ndsize_t count = static_cast<size_t>(b.multiTagCount());
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
@@ -80,17 +80,18 @@ void BaseTestMultiTag::testCreateRemove() {
 
         std::stringstream errmsg;
         errmsg << "Error while accessing multiTag: dt1.id() = " << dt1.id()
-               << " / dt2.id() = " << dt2.id();
+        << " / dt2.id() = " << dt2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), dt1.id().compare(dt2.id()) == 0);
     }
     std::stringstream errmsg2;
     errmsg2 << "Error creating MultiTags. Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.multiTagCount() == (count+5));
 
+    CPPUNIT_ASSERT_THROW(block.createMultiTag(names[4], "test", positions), DuplicateName);
+
     for (size_t i = 0; i < ids.size(); i++) {
         block.deleteMultiTag(ids[i]);
     }
-
     std::stringstream errmsg1;
     errmsg1 << "Error while removing multiTags!";
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
