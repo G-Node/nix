@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -31,11 +31,11 @@
 class TestMultiTag: public CPPUNIT_NS::TestFixture {
 private:
 
-    nix::File file;
-    nix::Block block;
-    nix::DataArray positions, extents;
-    nix::MultiTag tag, tag_other, tag_null;
-    nix::Section section;
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+    nix::DataArray positions, extents, positions_fs, extents_fs;
+    nix::MultiTag tag, tag_other, tag_null, tag_fs, tag_other_fs;
+    nix::Section section, section_fs;
     time_t startup_time;
 
 
@@ -59,6 +59,14 @@ private:
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST_SUITE_END ();
+
+    void test_type(nix::MultiTag &tag);
+    void test_validate(nix::MultiTag &tag);
+    void test_definition(nix::MultiTag &tag);
+    void test_units(nix::MultiTag &tag);
+    void test_create_remove(nix::Block &b, nix::DataArray &p);
+    void test_positions(nix::MultiTag &tag);
+    void test_extents(nix::MultiTag &tag);
 
 public:
 

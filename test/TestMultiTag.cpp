@@ -1,4 +1,4 @@
-// Copyright © 2014 German Neuroinformatics Node (G-Node)
+// Copyright © 2014 - 2015 German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -50,6 +50,16 @@ void TestMultiTag::setUp() {
     tag_null = nix::none;
 
     section = file.createSection("foo_section", "metadata");
+
+    file_fs = File::open("test_multi_tag", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block", "dataset");
+    positions_fs = block_fs.createDataArray("positions_DataArray", "dataArray",
+                                            DataType::Double, NDSize({ 0, 0 }));
+    extents_fs = block_fs.createDataArray("extents_DataArray", "dataArray",
+                                          DataType::Double, NDSize({ 0, 0 }));
+
+    tag_fs = block_fs.createMultiTag("tag_one", "test_tag", positions_fs);
+    tag_other_fs = block_fs.createMultiTag("tag_two", "test_tag", positions_fs);
 }
 
 
@@ -61,7 +71,12 @@ void TestMultiTag::tearDown(){
 
 
 void TestMultiTag::testValidate() {
-    valid::Result result = validate(tag);
+    test_validate(tag);
+    // test_validate(tag_fs); // does not work probably due to missing data support
+}
+
+void TestMultiTag::test_validate(MultiTag &t) {
+    valid::Result result = validate(t);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
@@ -69,58 +84,75 @@ void TestMultiTag::testValidate() {
 
 void TestMultiTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
+    CPPUNIT_ASSERT(tag_fs.id().size() == 36);
 }
 
 
 void TestMultiTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
+    CPPUNIT_ASSERT(tag_fs.name() == "tag_one");
 }
 
 
 void TestMultiTag::testType() {
-    CPPUNIT_ASSERT(tag.type() == "test_tag");
-    std::string type = util::createId();
-    tag.type(type);
-    CPPUNIT_ASSERT(tag.type() == type);
+    test_type(tag);
+    test_type(tag_fs);
 }
 
+void TestMultiTag::test_type(MultiTag &t) {
+    CPPUNIT_ASSERT(t.type() == "test_tag");
+    std::string type = util::createId();
+    t.type(type);
+    CPPUNIT_ASSERT(t.type() == type);
+}
 
 void TestMultiTag::testDefinition() {
+    test_definition(tag);
+    test_definition(tag_fs);
+}
+
+void TestMultiTag::test_definition(MultiTag &t) {
     std::string def = util::createId();
-    tag.definition(def);
-    CPPUNIT_ASSERT(*tag.definition() == def);
-    tag.definition(none);
-    CPPUNIT_ASSERT(tag.definition() == none);
+    t.definition(def);
+    CPPUNIT_ASSERT(*t.definition() == def);
+    t.definition(none);
+    CPPUNIT_ASSERT(t.definition() == none);
 }
 
 
 void TestMultiTag::testCreateRemove() {
+    test_create_remove(block, positions);
+    test_create_remove(block_fs, positions_fs);
+}
+
+void TestMultiTag::test_create_remove(Block &b, DataArray &p) {
     std::vector<std::string> ids;
-	//issue #473
-	ndsize_t count = static_cast<size_t>(block.multiTagCount());
+    //issue #473
+    ndsize_t count = static_cast<size_t>(b.multiTagCount());
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        MultiTag dt1 = block.createMultiTag(names[i], type, positions);
-        MultiTag dt2 = block.getMultiTag(dt1.id());
+        MultiTag dt1 = b.createMultiTag(names[i], type, p);
+        MultiTag dt2 = b.getMultiTag(dt1.id());
         ids.push_back(dt1.id());
 
         std::stringstream errmsg;
         errmsg << "Error while accessing multiTag: dt1.id() = " << dt1.id()
-               << " / dt2.id() = " << dt2.id();
+        << " / dt2.id() = " << dt2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), dt1.id().compare(dt2.id()) == 0);
     }
     std::stringstream errmsg2;
     errmsg2 << "Error creating MultiTags. Counts do not match!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.multiTagCount() == (count+5));
+    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), b.multiTagCount() == (count+5));
+
+    CPPUNIT_ASSERT_THROW(b.createMultiTag(names[4], "test", p), DuplicateName);
 
     for (size_t i = 0; i < ids.size(); i++) {
-        block.deleteMultiTag(ids[i]);
+        b.deleteMultiTag(ids[i]);
     }
-
     std::stringstream errmsg1;
     errmsg1 << "Error while removing multiTags!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
+    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), b.multiTagCount() == count);
 
     DataArray a;
     MultiTag mtag;
@@ -132,6 +164,7 @@ void TestMultiTag::testCreateRemove() {
     CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
     CPPUNIT_ASSERT(!mtag.extents());
 }
+
 
 void TestMultiTag::testUnits() {
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
