@@ -249,6 +249,9 @@ std::shared_ptr<base::IMultiTag> BlockFS::createMultiTag(const std::string &name
     if (name.empty()) {
         throw EmptyString("Block::createMultiTag empty name provided!");
     }
+    if (!positions) {
+        throw UninitializedEntity();
+    }
     if (hasMultiTag(name)) {
         throw DuplicateName("Block::createMultiTag: an entity with the same name already exists!");
     }
