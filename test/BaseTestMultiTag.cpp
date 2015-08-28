@@ -132,7 +132,7 @@ void BaseTestMultiTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteMultiTag(dt.id());
+    b.deleteMultiTag(dt.id());
 }
 
 //TODO merge this test into TestBaseTag::testReferences
@@ -443,6 +443,7 @@ void BaseTestMultiTag::testSourceAccess(){
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
     CPPUNIT_ASSERT(tag.sources().size() == 0);
 }
+
 
 void BaseTestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
