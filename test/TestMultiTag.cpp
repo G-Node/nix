@@ -60,6 +60,7 @@ void TestMultiTag::setUp() {
 
     tag_fs = block_fs.createMultiTag("tag_one", "test_tag", positions_fs);
     tag_other_fs = block_fs.createMultiTag("tag_two", "test_tag", positions_fs);
+    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 
@@ -167,7 +168,12 @@ void TestMultiTag::test_create_remove(Block &b, DataArray &p) {
 
 
 void TestMultiTag::testUnits() {
-    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
+    test_units(block, positions);
+    test_units(block_fs, positions_fs);
+}
+
+void TestMultiTag::test_units(Block &b, DataArray &p) {
+    MultiTag dt = b.createMultiTag("TestMultiTag1", "Tag", p);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -191,7 +197,7 @@ void TestMultiTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteMultiTag(dt.id());
+    b.deleteMultiTag(dt.id());
 }
 
 //TODO merge this test into TestBaseTag::testReferences
@@ -451,55 +457,65 @@ void TestMultiTag::testDataAccess() {
 
 
 void TestMultiTag::testMetadataAccess() {
-    CPPUNIT_ASSERT(!tag.metadata());
-    tag.metadata(section);
-    CPPUNIT_ASSERT(tag.metadata());
-    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
-    
-    // test none-unsetter
-    tag.metadata(none);
-    CPPUNIT_ASSERT(!tag.metadata());
-    // test deleter removing link too
-    tag.metadata(section);
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!tag.metadata());
-    // re-create section
-    section = file.createSection("foo_section", "metadata");
+    test_metadata_access(file, tag, section);
+    test_metadata_access(file_fs, tag_fs, section_fs);
 }
 
+void TestMultiTag::test_metadata_access(File &f, MultiTag &t, Section &s) {
+    CPPUNIT_ASSERT(!t.metadata());
+    t.metadata(s);
+    CPPUNIT_ASSERT(t.metadata());
+    CPPUNIT_ASSERT(t.metadata().id() == s.id());
+
+    // test none-unsetter
+    t.metadata(none);
+    CPPUNIT_ASSERT(!t.metadata());
+    // test deleter removing link too
+    t.metadata(s);
+    f.deleteSection(s.id());
+    CPPUNIT_ASSERT(!t.metadata());
+    // re-create section
+    s = f.createSection("foo_section", "metadata");
+}
 
 void TestMultiTag::testSourceAccess(){
+    test_source_access(block, tag);
+    test_source_access(block_fs, tag_fs);
+}
+
+void TestMultiTag::test_source_access(Block &b, MultiTag &t) {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
-    CPPUNIT_ASSERT(tag.sources().size() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sources().size() == 0);
 
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        Source child_source = block.createSource(*it,"channel");
-        tag.addSource(child_source);
+        Source child_source = b.createSource(*it,"channel");
+        t.addSource(child_source);
         CPPUNIT_ASSERT(child_source.name() == *it);
         ids.push_back(child_source.id());
     }
 
-    CPPUNIT_ASSERT(tag.sourceCount() == names.size());
-    CPPUNIT_ASSERT(tag.sources().size() == names.size());
+    CPPUNIT_ASSERT(t.sourceCount() == names.size());
+    CPPUNIT_ASSERT(t.sources().size() == names.size());
 
     std::string name = names[0];
-    Source source = tag.getSource(name);
+    Source source = t.getSource(name);
     CPPUNIT_ASSERT(source.name() == name);
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source child_source = tag.getSource(*it);
-        CPPUNIT_ASSERT(tag.hasSource(*it) == true);
+        Source child_source = t.getSource(*it);
+        CPPUNIT_ASSERT(t.hasSource(*it) == true);
         CPPUNIT_ASSERT(child_source.id() == *it);
 
-        tag.removeSource(*it);
-        block.deleteSource(*it);
+        t.removeSource(*it);
+        b.deleteSource(*it);
     }
 
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
-    CPPUNIT_ASSERT(tag.sources().size() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sources().size() == 0);
 }
+
 
 void TestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);

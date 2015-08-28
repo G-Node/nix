@@ -63,10 +63,12 @@ private:
     void test_type(nix::MultiTag &tag);
     void test_validate(nix::MultiTag &tag);
     void test_definition(nix::MultiTag &tag);
-    void test_units(nix::MultiTag &tag);
+    void test_units(nix::Block &b, nix::DataArray &p);
     void test_create_remove(nix::Block &b, nix::DataArray &p);
     void test_positions(nix::MultiTag &tag);
     void test_extents(nix::MultiTag &tag);
+    void test_metadata_access(nix::File &f, nix::MultiTag &t, nix::Section &s);
+    void test_source_access(nix::Block &b, nix::MultiTag &t);
 
 public:
 
