@@ -80,4 +80,5 @@ private:
     void test_unit(nix::DataArray &a);
     void test_operator(nix::DataArray &a);
     void test_dimension(nix::DataArray &a1, nix::DataArray &a2);
+
 };
