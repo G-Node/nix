@@ -59,14 +59,15 @@ private:
 
     void test_metadata_access(nix::File &f, nix::Block &b, nix::Section &s);
     void test_source_access(nix::File &f, nix::Block &b);
-    void test_data_array_access(nix::Block &b);
-    void test_tag_access(nix::Block &b);
-    void test_multi_tag_access(nix::Block &b);
+    void test_data_array_access(nix::Block &b, nix::Implementation impl);
+    void test_tag_access(nix::Block &b, nix::Implementation impl);
+    void test_multi_tag_access(nix::Block &b, nix::Implementation impl);
 public:
 
     void setUp();
     void tearDown();
 
+    void testConstructor();
     void testValidate();
     void testId();
     void testType();

@@ -14,6 +14,7 @@
 #include <nix/Exception.hpp>
 
 #include <ctime>
+#include <nix/hdf5/ExceptionHDF5.hpp>
 
 using namespace std;
 using namespace nix;
@@ -164,14 +165,14 @@ void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
 
 void TestBlock::testDataArrayAccess() {
     cerr << "\n\t Backend: HDF5\t";
-    test_data_array_access(block);
+    test_data_array_access(block, Implementation::Hdf5);
     cerr << "\t... done!\n";
     cerr << "\t Backend: filesystem\t";
-    test_data_array_access(block_fs);
+    test_data_array_access(block_fs, Implementation::FileSys);
     cerr << "... done!\n";
 }
 
-void TestBlock::test_data_array_access(Block &b) {
+void TestBlock::test_data_array_access(Block &b, Implementation impl) {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
     DataArray data_array, a;
@@ -190,6 +191,10 @@ void TestBlock::test_data_array_access(Block &b) {
 
     CPPUNIT_ASSERT_THROW(b.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })), DuplicateName);
     CPPUNIT_ASSERT_THROW(b.createDataArray("", "channel", DataType::Double, nix::NDSize({ 0 })), EmptyString);
+    if (impl == Implementation::FileSys)
+        CPPUNIT_ASSERT_THROW(b.getDataArray(b.dataArrayCount()), OutOfBounds);
+    // else if (impl == Implementation::Hdf5)
+    //     CPPUNIT_ASSERT_THROW(b.getDataArray(b.dataArrayCount()), nix::hdf5::H5Exception);
 
     CPPUNIT_ASSERT(b.hasDataArray(data_array));
     CPPUNIT_ASSERT_THROW(block.hasDataArray(a), UninitializedEntity);
@@ -230,14 +235,14 @@ void TestBlock::test_data_array_access(Block &b) {
 
 void TestBlock::testTagAccess() {
     cerr << "\n\t Backend: HDF5\t";
-    test_tag_access(block);
+    test_tag_access(block, Implementation::Hdf5);
     cerr << "\t... done!\n";
     cerr << "\t Backend: filesystem\t";
-    test_tag_access(block_fs);
+    test_tag_access(block_fs, Implementation::FileSys);
     cerr << "... done!\n";
 }
 
-void TestBlock::test_tag_access(Block &b) {
+void TestBlock::test_tag_access(Block &b, Implementation impl) {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
@@ -265,9 +270,14 @@ void TestBlock::test_tag_access(Block &b) {
     }
     CPPUNIT_ASSERT_THROW(b.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
                          DuplicateName);
-
-    // CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}),
-    //                      EmptyString);
+    if (impl == Implementation::FileSys) {
+        CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}), EmptyString);
+        CPPUNIT_ASSERT_THROW(b.getTag(b.tagCount()), OutOfBounds);
+    }
+    else if (impl == Implementation::Hdf5) {
+        CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}), nix::hdf5::H5Exception);
+        // CPPUNIT_ASSERT_THROW(b.getTag(b.tagCount()), nix::hdf5::H5Exception);
+    }
 
     CPPUNIT_ASSERT(b.tagCount() == names.size());
     CPPUNIT_ASSERT(b.tags().size() == names.size());
@@ -293,14 +303,14 @@ void TestBlock::test_tag_access(Block &b) {
 
 void TestBlock::testMultiTagAccess() {
     cerr << "\n\t Backend: HDF5\t";
-    test_multi_tag_access(block);
+    test_multi_tag_access(block, Implementation::Hdf5);
     cerr << "\t... done!\n";
     cerr << "\t Backend: filesystem\t";
-    test_multi_tag_access(block_fs);
+    test_multi_tag_access(block_fs, Implementation::FileSys);
     cerr << "... done!\n";
 }
 
-void TestBlock::test_multi_tag_access(Block &b) {
+void TestBlock::test_multi_tag_access(Block &b, Implementation impl) {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     MultiTag mtag, m;
     // create a valid positions data array below
@@ -323,9 +333,18 @@ void TestBlock::test_multi_tag_access(Block &b) {
     }
     CPPUNIT_ASSERT_THROW(b.createMultiTag(names[0], "segment", positions),
                          DuplicateName);
+    if (impl == Implementation::FileSys) {
+        CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions), EmptyString);
+        CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), OutOfBounds);
+    }
+    else if (impl == Implementation::Hdf5) {
+        CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions), nix::hdf5::H5Exception);
+        // CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), nix::hdf5::H5Exception);
+    }
 
     // CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions),
     //                      EmptyString);
+    //CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), OutOfBounds);
 
     CPPUNIT_ASSERT(b.multiTagCount() == names.size());
     CPPUNIT_ASSERT(b.multiTags().size() == names.size());
