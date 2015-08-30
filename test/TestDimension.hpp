@@ -50,6 +50,7 @@ private:
     CPPUNIT_TEST(testRangeDimIndexOf);
     CPPUNIT_TEST(testRangeDimTickAt);
     CPPUNIT_TEST(testRangeDimAxis);
+    CPPUNIT_TEST(testAsDimensionMethods);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -71,7 +72,7 @@ private:
     void test_sample_dim_index_of(nix::DataArray &a);
     void test_sample_dim_position_at(nix::DataArray &a);
     void test_sample_dim_axis(nix::DataArray &a);
-
+    void test_as_dimension(nix::DataArray &da);
 
 public:
 
@@ -102,5 +103,7 @@ public:
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
+
+    void testAsDimensionMethods();
 };
 
