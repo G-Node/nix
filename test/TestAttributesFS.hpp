@@ -36,6 +36,11 @@ private:
     CPPUNIT_TEST(testReadField);
     CPPUNIT_TEST_SUITE_END ();
 
+    nix::File file;
+    nix::DataArray data_array;
+    nix::Block block;
+    nix::Tag tag;
+
 public:
 
     void setUp();

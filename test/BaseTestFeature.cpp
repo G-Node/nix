@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -50,9 +50,10 @@ void BaseTestFeature::testId() {
 void BaseTestFeature::testLinkType(){
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
+
     rp.linkType(nix::LinkType::Untagged);
-    
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Untagged);
+
     rp.linkType(nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
 
@@ -67,7 +68,6 @@ void BaseTestFeature::testData() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
     a = block.createDataArray("Test", "array", DataType::Double, {0, 0});
     f = tag.createFeature(a, nix::LinkType::Untagged);
@@ -84,6 +84,7 @@ void BaseTestFeature::testData() {
     block.deleteDataArray(da_2.id());
     // make sure link is gone with deleted data array
     CPPUNIT_ASSERT(rp.data() == nix::none);
+    CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
     tag.deleteFeature(rp.id());
 }
 
@@ -108,7 +109,6 @@ void BaseTestFeature::testStreamOperator() {
 
 void BaseTestFeature::testOperator() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-
     CPPUNIT_ASSERT(rp != none);
     rp = none;
     CPPUNIT_ASSERT(rp == false);
