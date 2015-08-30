@@ -314,6 +314,8 @@ void TestDimension::test_sample_dim_axis(nix::DataArray &a) {
 
 void TestDimension::testSampledDimOperators() {
 
+
+
 }
 
 void TestDimension::test_sample_dim_operators(nix::DataArray &a) {
@@ -526,4 +528,43 @@ void TestDimension::testRangeDimAxis() {
 
     CPPUNIT_ASSERT_THROW(rd.axis(10), OutOfBounds);
     CPPUNIT_ASSERT_THROW(rd.axis(2, 10), OutOfBounds);
+}
+
+
+void TestDimension::testAsDimensionMethods() {
+    test_as_dimension(data_array);
+    test_as_dimension(data_array_fs);
+}
+
+void TestDimension::test_as_dimension(DataArray &da) {
+    std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
+    Dimension x;
+    Dimension d = da.appendRangeDimension(ticks);
+    CPPUNIT_ASSERT_THROW(d.asSampledDimension(), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(d.asSetDimension(), IncompatibleDimensions);
+    x = d;
+    CPPUNIT_ASSERT(x.dimensionType() == DimensionType::Range);
+    stringstream sa_str;
+    sa_str << x.dimensionType();
+    CPPUNIT_ASSERT(sa_str.str() == "Range");
+
+    da.deleteDimension(1);
+    d = da.appendSampledDimension(0.1);
+    CPPUNIT_ASSERT_THROW(d.asRangeDimension(), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(d.asSetDimension(), IncompatibleDimensions);
+    x = d;
+    CPPUNIT_ASSERT(x.dimensionType() == DimensionType::Sample);
+    stringstream range_str;
+    range_str << x.dimensionType();
+    CPPUNIT_ASSERT(range_str.str() == "Sample");
+
+    da.deleteDimension(1);
+    d = da.appendSetDimension();
+    CPPUNIT_ASSERT_THROW(d.asRangeDimension(), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(d.asSampledDimension(), IncompatibleDimensions);
+    x = d;
+    CPPUNIT_ASSERT(x.dimensionType() == DimensionType::Set);
+    stringstream set_str;
+    set_str << x.dimensionType();
+    CPPUNIT_ASSERT(set_str.str() == "Set");
 }
