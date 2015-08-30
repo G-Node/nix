@@ -73,7 +73,8 @@ void FeatureFS::data(const std::string &name_or_id) {
         throw EmptyString("data(id)");
     if (!block->hasDataArray(name_or_id))
         throw std::runtime_error("FeatureFS::data: DataArray not found in block!");
-
+    if (hasObject("data"))
+        removeObjectByNameOrAttribute("name", "data");
     auto target = dynamic_pointer_cast<DataArrayFS>(block->getDataArray(name_or_id));
     createDirectoryLink(target->location(), "data");
     forceUpdatedAt();
