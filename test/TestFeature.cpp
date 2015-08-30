@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -22,11 +22,15 @@ using namespace valid;
 void TestFeature::setUp() {
     file = File::open("test_feature.h5", FileMode::Overwrite);
     block = file.createBlock("featureTest","test");
-
     data_array = block.createDataArray("featureTest", "Test",
                                        DataType::Double, nix::NDSize({ 0 }));
-    
     tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
+
+    file_fs = File::open("test_feature", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("featureTest", "test");
+    data_array_fs = block_fs.createDataArray("featureTest", "Test",
+                                             DataType::Double, nix::NDSize({ 0 }));
+    tag_fs = block_fs.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
 }
 
 
@@ -53,22 +57,33 @@ void TestFeature::testId() {
 
 
 void TestFeature::testLinkType(){
-    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+    test_link_type(tag, data_array);
+    test_link_type(tag_fs, data_array_fs);
+}
+
+void TestFeature::test_link_type(Tag &t, DataArray &da) {
+    Feature rp = t.createFeature(da, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
+
     rp.linkType(nix::LinkType::Untagged);
-    
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Untagged);
+
     rp.linkType(nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
 
     rp.linkType(nix::LinkType::Indexed);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Indexed);
 
-    tag.deleteFeature(rp.id());
+    t.deleteFeature(rp.id());
 }
 
 
 void TestFeature::testData() {
+    test_data(block, tag, data_array);
+    test_data(block_fs, tag_fs, data_array_fs);
+}
+
+void TestFeature::test_data(Block &b, Tag &t, DataArray &da) {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
@@ -79,10 +94,12 @@ void TestFeature::testData() {
     CPPUNIT_ASSERT(rp.data().id() == data_array.id());
     rp.data(da_2);
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
-    block.deleteDataArray(da_2.id());
+    b.deleteDataArray(da_2.id());
     // make sure link is gone with deleted data array
     CPPUNIT_ASSERT(rp.data() == nullptr);
-    tag.deleteFeature(rp.id());
+
+    CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
+    t.deleteFeature(rp.id());
 }
 
 
@@ -105,7 +122,12 @@ void TestFeature::testStreamOperator() {
 
 
 void TestFeature::testOperator() {
-    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+    test_operator(tag, data_array);
+    test_operator(tag_fs, data_array_fs);
+}
+
+void TestFeature::test_operator(Tag &t, DataArray &da) {
+    Feature rp = t.createFeature(da, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);
     rp = none;
