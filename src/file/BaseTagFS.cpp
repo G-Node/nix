@@ -80,7 +80,7 @@ shared_ptr<IDataArray>  BaseTagFS::getReference(const std::string &name_or_id) c
     }
 
     if (hasReference(id)) {
-        boost::optional<boost::filesystem::path> path = refs_group.findByNameOrAttribute("entity_id", name_or_id);
+        boost::optional<boost::filesystem::path> path = refs_group.findByNameOrAttribute("name", name_or_id);
         if (path) {
             return make_shared<DataArrayFS>(file(), block(), path->string());
         }
@@ -111,7 +111,7 @@ void BaseTagFS::addReference(const std::string &name_or_id) {
 
 
 bool BaseTagFS::removeReference(const std::string &name_or_id) {
-    return refs_group.removeObjectByNameOrAttribute("entity_id", name_or_id);
+    return refs_group.removeObjectByNameOrAttribute("name", name_or_id);
 }
 
 
@@ -167,7 +167,7 @@ ndsize_t BaseTagFS::featureCount() const {
 
 shared_ptr<IFeature> BaseTagFS::getFeature(const std::string &name_or_id) const {
     shared_ptr<IFeature> feature;
-    boost::optional<boost::filesystem::path> p = feature_group.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<boost::filesystem::path> p = feature_group.findByNameOrAttribute("name", name_or_id);
     if (p) {
         return make_shared<FeatureFS>(file(), block(), p->string());
     }
@@ -195,7 +195,7 @@ shared_ptr<IFeature>  BaseTagFS::createFeature(const std::string &name_or_id, Li
 
 
 bool BaseTagFS::deleteFeature(const string &name_or_id) {
-    return feature_group.removeObjectByNameOrAttribute("entity_id", name_or_id);
+    return feature_group.removeObjectByNameOrAttribute("name", name_or_id);
 }
 
 
