@@ -34,8 +34,11 @@ private:
     CPPUNIT_TEST(testSourceVectorSetter);
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Block block;
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+
+    void test_source_access(nix::Block &b);
+    void test_source_setter(nix::Block &b);
 
 public:
 
