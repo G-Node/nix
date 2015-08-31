@@ -31,6 +31,9 @@
 
 class TestValue : public CPPUNIT_NS::TestFixture {
 
+    void test_references(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_features(nix::Block &b);
+
 public:
 
     void setUp();
