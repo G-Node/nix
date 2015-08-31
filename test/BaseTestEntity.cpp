@@ -63,6 +63,7 @@ void BaseTestEntity::testCreatedAt() {
 
 void BaseTestEntity::testUpdatedAt() {
     CPPUNIT_ASSERT(block.updatedAt() >= startup_time);
+    CPPUNIT_ASSERT(block_fs.updatedAt() >= startup_time);
 }
 
 
@@ -75,3 +76,16 @@ void BaseTestEntity::testIsValidEntity() {
 }
 
 
+void TestEntity::testOperators() {
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
+
+    CPPUNIT_ASSERT(block != false);
+    CPPUNIT_ASSERT(block != none);
+
+    CPPUNIT_ASSERT(block == block);
+    CPPUNIT_ASSERT(block != block_other);
+
+    block_other = block;
+    CPPUNIT_ASSERT(block_other == block);
+}
