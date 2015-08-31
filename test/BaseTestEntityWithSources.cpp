@@ -42,7 +42,6 @@ void BaseTestEntityWithSources::testSourceAccess() {
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
 
-
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source src = block.getSource(*it);
         CPPUNIT_ASSERT(block.hasSource(*it) == true);
@@ -78,7 +77,8 @@ void BaseTestEntityWithSources::testSourceVectorSetter() {
     sources.push_back(block.createSource("source_g", "channel"));
     da.sources(sources);
     CPPUNIT_ASSERT(da.sourceCount() == sources.size());
-    CPPUNIT_ASSERT(block.sourceCount() == (sources.size() + names.size())); 
+    CPPUNIT_ASSERT(block.sourceCount() == (sources.size() + names.size()));
+    CPPUNIT_ASSERT_THROW(da.addSource(""), EmptyString);
 
     vector<Source> deleter;
     da.sources(deleter);
