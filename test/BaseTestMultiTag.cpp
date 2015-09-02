@@ -229,6 +229,7 @@ void BaseTestMultiTag::testFeatures() {
 void BaseTestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
     CPPUNIT_ASSERT_THROW(tag.extents(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(tag.extents(wrongArray), std::runtime_error);
 
     DataArray a = block.createDataArray("name", "type", DataType::Double, {0,0});
     block.deleteDataArray(a);
