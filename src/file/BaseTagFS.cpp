@@ -156,7 +156,7 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
 //--------------------------------------------------
 
 bool BaseTagFS::hasFeature(const string &name_or_id) const {
-    return !feature_group.findByNameOrAttribute("entity_id", name())->empty();
+    return !feature_group.findByNameOrAttribute("entity_id", name_or_id)->empty();
 }
 
 
