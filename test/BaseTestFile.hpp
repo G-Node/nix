@@ -26,12 +26,8 @@
 class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
 protected:
-    nix::File file_open, file_other, file_null, file_fs, file_other_fs;
+    nix::File file_open, file_other, file_null;
     time_t startup_time;
-
-
-    void test_section_access(nix::File &f);
-    void test_block_access(nix::File &f);
 
 public:
 
@@ -47,4 +43,6 @@ public:
     void testOperators();
     void testReopen();
     void testCheckHeader();
+    void testCompare();
+
 };
