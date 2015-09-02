@@ -33,7 +33,7 @@ private:
 
     nix::File file, file_fs;
     nix::Block block, block_fs;
-    nix::DataArray positions, extents, positions_fs, extents_fs;
+    nix::DataArray positions, extents, positions_fs, extents_fs, wrongArray;
     nix::MultiTag tag, tag_other, tag_null, tag_fs, tag_other_fs;
     nix::Section section, section_fs;
     time_t startup_time;
@@ -65,8 +65,10 @@ private:
     void test_definition(nix::MultiTag &tag);
     void test_units(nix::Block &b, nix::DataArray &p);
     void test_create_remove(nix::Block &b, nix::DataArray &p);
-    void test_positions(nix::MultiTag &tag);
-    void test_extents(nix::MultiTag &tag);
+    void test_positions(nix::Block &b, nix::MultiTag &mt, nix::DataArray &pos);
+    void test_extents(nix::MultiTag &tag, nix::DataArray &pos, nix::DataArray &ext, nix::DataArray &wrong);
+    void test_references(nix::Block &b, nix::DataArray &pos);
+    void test_features(nix::MultiTag &mt, nix::DataArray &pos);
     void test_metadata_access(nix::File &f, nix::MultiTag &t, nix::Section &s);
     void test_source_access(nix::Block &b, nix::MultiTag &t);
 

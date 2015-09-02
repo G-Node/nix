@@ -25,11 +25,11 @@ void TestMultiTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_multiTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
-
     positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, NDSize({ 0, 0 }));
+                                      DataType::Double, NDSize({ 5, 5 }));
     extents = block.createDataArray("extents_DataArray", "dataArray",
-                                    DataType::Double, NDSize({ 0, 0 }));
+                                    DataType::Double, NDSize({ 5, 5 }));
+    wrongArray = block.createDataArray("wrong data", "test", DataType::Double, NDSize({5}));
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -203,15 +203,20 @@ void TestMultiTag::test_units(Block &b, DataArray &p) {
 //TODO merge this test into TestBaseTag::testReferences
 
 void TestMultiTag::testReferences(){
-    DataArray da_1 = block.createDataArray("TestReference 1",
-                                           "Reference",
-                                           DataType::Double,
-                                           NDSize({ 0 }));
-    DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
-                                           DataType::Double,
-                                           NDSize({ 0 }));
+    test_references(block, positions);
+    test_references(block_fs, positions_fs);
+}
+
+void TestMultiTag::test_references(Block &b, DataArray &pos) {
+    DataArray da_1 = b.createDataArray("TestReference 1",
+                                       "Reference",
+                                       DataType::Double,
+                                       NDSize({ 0 }));
+    DataArray da_2 = b.createDataArray("TestReference 2", "Reference",
+                                       DataType::Double,
+                                       NDSize({ 0 }));
     DataArray a;
-    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
+    MultiTag dt = b.createMultiTag("TestMultiTag1", "Tag", pos);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
     CPPUNIT_ASSERT_THROW(dt.hasReference(a), UninitializedEntity);
@@ -219,10 +224,12 @@ void TestMultiTag::testReferences(){
     std::stringstream counterrmsg;
     counterrmsg << "TestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
-    
+
     dt.addReference(da_1);
     dt.addReference(da_2);
     CPPUNIT_ASSERT_THROW(dt.addReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(dt.removeReference(a), UninitializedEntity);
+
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
     CPPUNIT_ASSERT(dt.hasReference(da_1));
     CPPUNIT_ASSERT(dt.hasReference(da_2));
@@ -260,75 +267,75 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT(dt.referenceCount() == 1);
     CPPUNIT_ASSERT_NO_THROW(dt.removeReference(da_1));
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
-    
+
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
-    block.deleteDataArray(da_1.id());
-    block.deleteDataArray(da_2.id());
+    b.deleteDataArray(da_1.id());
+    b.deleteDataArray(da_2.id());
     // check if references are gone too!
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
-    block.deleteMultiTag(dt.id());
+    b.deleteMultiTag(dt.id());
 }
 
 
 void TestMultiTag::testFeatures() {
+    test_features(tag, positions);
+    test_features(tag_fs, positions_fs);
+}
+
+void TestMultiTag::test_features(MultiTag &mt, DataArray &pos) {
     DataArray a;
     Feature f;
+
     CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(mt.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT(mt.featureCount() == 1);
 }
 
 
 void TestMultiTag::testExtents(){
-    CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
+    test_extents(tag, positions, extents, wrongArray);
+    test_extents(tag_fs, positions_fs, extents_fs, wrongArray);
+}
 
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        A[i][i] = 100.0*i;
-    }
-    positions.setData(A);
-    extents.setData(A);
+void TestMultiTag::test_extents(nix::MultiTag &mt, DataArray &pos, DataArray &ext, DataArray &wrongArray) {
+    CPPUNIT_ASSERT_THROW(mt.extents("wrong_data_array_id"), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(mt.extents(""), EmptyString);
 
-    tag.positions(positions);
-    tag.extents(extents);
-    CPPUNIT_ASSERT(tag.extents() == true);
-    tag.extents(none);
-    CPPUNIT_ASSERT(tag.extents() == false);
+    mt.positions(pos);
+    mt.extents(ext);
+    CPPUNIT_ASSERT(mt.extents() == true);
+    mt.extents(none);
+    CPPUNIT_ASSERT(mt.extents() == false);
 }
 
 
 void TestMultiTag::testPositions() {
-    CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"), std::runtime_error);
-
-    tag.positions(positions);
-    CPPUNIT_ASSERT(tag.positions().id() == positions.id());
-    block.deleteDataArray(positions.id());
-    // make sure link is gone with data array
-    CPPUNIT_ASSERT_THROW(tag.positions(), std::runtime_error);
-    
-    // re-create positions
-    positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, {0, 0});
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        A[i][i] = 100.0*i;
-    }
-    positions.setData(A);
+    test_positions(block, tag, positions);
+    test_positions(block_fs, tag_fs, positions_fs);
 }
 
+void TestMultiTag::test_positions(Block &b, MultiTag &mt, DataArray &pos) {
+    CPPUNIT_ASSERT_THROW(mt.positions("wrong_data_array_id"), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(mt.positions(""), EmptyString);
+
+    mt.positions(pos);
+    CPPUNIT_ASSERT(mt.positions().id() == pos.id());
+    CPPUNIT_ASSERT(mt.hasPositions());
+    b.deleteDataArray(pos.id());
+    // make sure link is gone with data array
+    CPPUNIT_ASSERT_THROW(mt.positions(), std::runtime_error);
+}
 
 void TestMultiTag::testPositionExtents() {
     tag.extents(extents);
