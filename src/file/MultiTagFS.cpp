@@ -54,8 +54,9 @@ shared_ptr<IDataArray> MultiTagFS::positions() const {
     if (p) {
         DataArrayFS a(file(), block(), p->string());
         return make_shared<DataArrayFS>(a);
+    } else {
+        throw runtime_error("MultiTagFS::positions: DataArray not found!");
     }
-    return da;
 }
 
 
@@ -68,8 +69,9 @@ void MultiTagFS::positions(const string &name_or_id) {
         removeObjectByNameOrAttribute("name", "positions");
 
     auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
-
-    createDirectoryLink(target->location(), "positions");
+    boost::filesystem::path t(target->location()), p(location()), m("positions");
+    target->createLink(p / m);
+    //createDirectoryLink(target->location(), "positions");
     forceUpdatedAt();
 }
 
