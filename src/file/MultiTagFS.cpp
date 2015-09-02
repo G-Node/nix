@@ -101,6 +101,9 @@ void MultiTagFS::extents(const string &name_or_id) {
         throw std::runtime_error("MultiTagFS::extents: DataArray not found in block!");
     if (hasObject("extents"))
         removeObjectByNameOrAttribute("name", "extents");
+    DataArray da = block()->getDataArray(name_or_id);
+    if (!checkDimensions(da, positions()))
+        throw runtime_error("MultiTagFS::extents: cannot set Extent because dimensionality of extent and position data do not match!");
 
     auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
     createDirectoryLink(target->location(), "extents");
