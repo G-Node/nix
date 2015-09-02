@@ -32,6 +32,11 @@ void TestProperty::setUp()
     property = section.createProperty("prop", int_dummy);
     property_other = section.createProperty("other", int_dummy);
     property_null = nix::none;
+
+    file_fs = nix::File::open("test_property", nix::FileMode::Overwrite, nix::Implementation::FileSys);
+    section_fs = file_fs.createSection("cool section", "metadata");
+    property_fs = section.createProperty("test_prop", DataType::Double);
+    property_other_fs = section.createProperty("other test_prop", DataType::Double);
 }
 
 
@@ -51,29 +56,43 @@ void TestProperty::testValidate() {
 
 void TestProperty::testId() {
     CPPUNIT_ASSERT(property.id().size() == 36);
+    CPPUNIT_ASSERT(property_fs.id().size() == 36);
 }
 
 
 void TestProperty::testName() {
     CPPUNIT_ASSERT(property.name() == "prop");
+    CPPUNIT_ASSERT(property_fs.name() == "test_prop");
 }
 
 
 void TestProperty::testDefinition() {
+    test_definition(property);
+    test_definition(property_fs);
+}
+
+void TestProperty::test_definition(Property &p) {
     string def = "some_str";
-    property.definition(def);
-    CPPUNIT_ASSERT(*property.definition() == def);
-    property.definition(nix::none);
-    CPPUNIT_ASSERT(property.definition() == nix::none);
+    CPPUNIT_ASSERT_THROW(p.definition(""), EmptyString);
+    p.definition(def);
+    CPPUNIT_ASSERT(*p.definition() == def);
+    p.definition(nix::none);
+    CPPUNIT_ASSERT(p.definition() == nix::none);
 }
 
 
 void TestProperty::testMapping() {
+    test_mapping(property);
+    test_mapping(property_fs);
+}
+
+void TestProperty::test_mapping(Property &p) {
     string map = "some_str";
-    property.mapping(map);
-    CPPUNIT_ASSERT(*property.mapping() == map);
-    property.mapping(boost::none);
-    CPPUNIT_ASSERT(!property.mapping());
+    CPPUNIT_ASSERT_THROW(p.mapping(""), EmptyString);
+    p.mapping(map);
+    CPPUNIT_ASSERT(*p.mapping() == map);
+    p.mapping(boost::none);
+    CPPUNIT_ASSERT(!p.mapping());
 }
 
 
@@ -138,60 +157,73 @@ void TestProperty::testDataType() {
 
 
 void TestProperty::testUnit(){
-    nix::Section section = file.createSection("testSection", "test");
-    nix::Value v(22.2);
-    v.uncertainty = 1.2;
-    std::vector<Value> values = {v};
-    nix::Property p1 = section.createProperty("testProperty", int_dummy);
+    test_unit(property);
+    test_unit(property_fs);
+}
+
+void TestProperty::test_unit(Property &p) {
     std::string inv_unit = "invalid unit";
     std::string valid_unit = "mV*cm^-2";
     std::string second_unit = "mV";
 
-    CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnit);
-    CPPUNIT_ASSERT(!p1.unit());
+    CPPUNIT_ASSERT_THROW(p.unit(""), nix::EmptyString);
+    CPPUNIT_ASSERT_THROW(p.unit(inv_unit), nix::InvalidUnit);
+    CPPUNIT_ASSERT(!p.unit());
 
-    p1.unit(valid_unit);
-    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
+    p.unit(valid_unit);
+    CPPUNIT_ASSERT(p.unit() && *p.unit() == valid_unit);
 
-    p1.unit(none);
-    CPPUNIT_ASSERT(!p1.unit());
-    CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
-    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == second_unit);
+    p.unit(none);
+    CPPUNIT_ASSERT(!p.unit());
+    CPPUNIT_ASSERT_NO_THROW(p.unit(second_unit));
+    CPPUNIT_ASSERT(p.unit() && *p.unit() == second_unit);
 }
 
 
 void TestProperty::testOperators() {
-    CPPUNIT_ASSERT(property_null == false);
-    CPPUNIT_ASSERT(property_null == none);
+    test_operators(property, property_other, property_null);
+    test_operators(property_fs, property_other_fs, property_null);
+}
 
-    CPPUNIT_ASSERT(property != false);
-    CPPUNIT_ASSERT(property != none);
+void TestProperty::test_operators(nix::Property &p, nix::Property &other, nix::Property &null) {
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
 
-    CPPUNIT_ASSERT(property == property);
-    CPPUNIT_ASSERT(property != property_other);
+    CPPUNIT_ASSERT(p != false);
+    CPPUNIT_ASSERT(p != none);
 
-    property_other = property;
-    CPPUNIT_ASSERT(property == property_other);
+    CPPUNIT_ASSERT(p == p);
+    CPPUNIT_ASSERT(p != other);
+    CPPUNIT_ASSERT(p.compare(other) != 0);
 
-    property_other = none;
-    CPPUNIT_ASSERT(property_null == false);
-    CPPUNIT_ASSERT(property_null == none);
-    
+    other = p;
+    CPPUNIT_ASSERT(p == other);
+    CPPUNIT_ASSERT(p.compare(other) == 0);
+
+    other = none;
+    CPPUNIT_ASSERT(other == false);
+    CPPUNIT_ASSERT(other == none);
+
     stringstream s;
-    s << property;
-    CPPUNIT_ASSERT(s.str() == "Property: {name = " + property.name() + "}");
+    s << p;
+    CPPUNIT_ASSERT(s.str() == "Property: {name = " + p.name() + "}");
 }
 
 
 void TestProperty::testCreatedAt() {
-    CPPUNIT_ASSERT(property.createdAt() >= startup_time);
-    time_t past_time = time(NULL) - 10000000;
-    property.forceCreatedAt(past_time);
-    CPPUNIT_ASSERT(property.createdAt() == past_time);
+    test_created_at(property);
+    test_created_at(property_fs);
 }
 
+void TestProperty::test_created_at(Property &p) {
+    CPPUNIT_ASSERT(p.createdAt() >= startup_time);
+    time_t past_time = time(NULL) - 10000000;
+    p.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(p.createdAt() == past_time);
+}
 
 void TestProperty::testUpdatedAt() {
     CPPUNIT_ASSERT(property.updatedAt() >= startup_time);
+    CPPUNIT_ASSERT(property_fs.updatedAt() >= startup_time);
 }
 
