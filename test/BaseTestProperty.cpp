@@ -45,11 +45,13 @@ void BaseTestProperty::testValidate() {
 
 void BaseTestProperty::testId() {
     CPPUNIT_ASSERT(property.id().size() == 36);
+    CPPUNIT_ASSERT(property_fs.id().size() == 36);
 }
 
 
 void BaseTestProperty::testName() {
     CPPUNIT_ASSERT(property.name() == "prop");
+    CPPUNIT_ASSERT(property_fs.name() == "test_prop");
 }
 
 
@@ -59,11 +61,13 @@ void BaseTestProperty::testDefinition() {
     CPPUNIT_ASSERT(*property.definition() == def);
     property.definition(nix::none);
     CPPUNIT_ASSERT(property.definition() == nix::none);
+    CPPUNIT_ASSERT_THROW(property.definition(""), EmptyString);
 }
 
 
 void BaseTestProperty::testMapping() {
-    std::string map = "some_str";
+    string map = "some_str";
+    CPPUNIT_ASSERT_THROW(porperty.mapping(""), EmptyString);
     property.mapping(map);
     CPPUNIT_ASSERT(*property.mapping() == map);
     property.mapping(boost::none);
@@ -137,20 +141,22 @@ void BaseTestProperty::testUnit(){
     v.uncertainty = 1.2;
     std::vector<Value> values = {v};
     nix::Property p1 = section.createProperty("testProperty", int_dummy);
+
     std::string inv_unit = "invalid unit";
     std::string valid_unit = "mV*cm^-2";
     std::string second_unit = "mV";
 
-    CPPUNIT_ASSERT_THROW(p1.unit(inv_unit), nix::InvalidUnit);
-    CPPUNIT_ASSERT(!p1.unit());
+    CPPUNIT_ASSERT_THROW(property.unit(""), nix::EmptyString);
+    CPPUNIT_ASSERT_THROW(property.unit(inv_unit), nix::InvalidUnit);
+    CPPUNIT_ASSERT(!property.unit());
 
-    p1.unit(valid_unit);
-    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
+    property.unit(valid_unit);
+    CPPUNIT_ASSERT(property.unit() && *property.unit() == valid_unit);
 
-    p1.unit(none);
-    CPPUNIT_ASSERT(!p1.unit());
-    CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
-    CPPUNIT_ASSERT(p1.unit() && *p1.unit() == second_unit);
+    property.unit(none);
+    CPPUNIT_ASSERT(!property.unit());
+    CPPUNIT_ASSERT_NO_THROW(property.unit(second_unit));
+    CPPUNIT_ASSERT(property.unit() && *property.unit() == second_unit);
 }
 
 
@@ -161,13 +167,18 @@ void BaseTestProperty::testOperators() {
     CPPUNIT_ASSERT(property != false);
     CPPUNIT_ASSERT(property != none);
 
-    CPPUNIT_ASSERT(property == property);
+    CPPUNIT_ASSERT(property == pproperty);
     CPPUNIT_ASSERT(property != property_other);
+    CPPUNIT_ASSERT(property.compare(property_other) != 0);
 
-    property_other = property;
+    property_other = p;
     CPPUNIT_ASSERT(property == property_other);
+    CPPUNIT_ASSERT(property.compare(property_other) == 0);
 
     property_other = none;
+    CPPUNIT_ASSERT(property_other == false);
+    CPPUNIT_ASSERT(property_other == none);
+
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
     
@@ -184,9 +195,16 @@ void BaseTestProperty::testCreatedAt() {
     CPPUNIT_ASSERT(property.createdAt() == past_time);
 }
 
+void TestProperty::test_created_at(Property &p) {
+    CPPUNIT_ASSERT(property.createdAt() >= startup_time);
+    time_t past_time = time(NULL) - 10000000;
+    property.forceCreatedAt(past_time);
+    CPPUNIT_ASSERT(property.createdAt() == past_time);
+}
 
 void BaseTestProperty::testUpdatedAt() {
     CPPUNIT_ASSERT(property.updatedAt() >= startup_time);
+    CPPUNIT_ASSERT(property_fs.updatedAt() >= startup_time);
 }
 
 void BaseTestProperty::testIsValidEntity() {
