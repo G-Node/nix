@@ -102,7 +102,6 @@ void BaseTestTag::testCreateRemove() {
 void BaseTestTag::testExtent() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
-
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
 
