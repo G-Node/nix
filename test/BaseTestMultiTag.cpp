@@ -69,8 +69,7 @@ void BaseTestMultiTag::testDefinition() {
 
 void BaseTestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
-    //issue #473
-    ndsize_t count = static_cast<size_t>(b.multiTagCount());
+    ndsize_t count = b.multiTagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
@@ -132,7 +131,7 @@ void BaseTestMultiTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    b.deleteMultiTag(dt.id());
+    block.deleteMultiTag(dt.id());
 }
 
 //TODO merge this test into TestBaseTag::testReferences
@@ -146,7 +145,7 @@ void BaseTestMultiTag::testReferences(){
                                            DataType::Double,
                                            NDSize({ 0 }));
     DataArray a;
-    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
+    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", pos);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
     CPPUNIT_ASSERT(!dt.hasReference(a));
@@ -154,10 +153,12 @@ void BaseTestMultiTag::testReferences(){
     std::stringstream counterrmsg;
     counterrmsg << "BaseTestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
-    
+
     dt.addReference(da_1);
     dt.addReference(da_2);
     CPPUNIT_ASSERT_THROW(dt.addReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(dt.removeReference(a), UninitializedEntity);
+
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
     CPPUNIT_ASSERT(dt.hasReference(da_1));
     CPPUNIT_ASSERT(dt.hasReference(da_2));
@@ -195,28 +196,30 @@ void BaseTestMultiTag::testReferences(){
     CPPUNIT_ASSERT(dt.referenceCount() == 1);
     CPPUNIT_ASSERT_NO_THROW(dt.removeReference(da_1));
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
-    
+
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
-    block.deleteDataArray(da_1.id());
-    block.deleteDataArray(da_2.id());
+    b.deleteDataArray(da_1.id());
+    b.deleteDataArray(da_2.id());
     // check if references are gone too!
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
-    block.deleteMultiTag(dt.id());
+    b.deleteMultiTag(dt.id());
 }
 
 
 void BaseTestMultiTag::testFeatures() {
     DataArray a;
     Feature f;
+
     CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT(!tag.hasFeature(f));
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -225,6 +228,8 @@ void BaseTestMultiTag::testFeatures() {
 
 void BaseTestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.extents(""), EmptyString);
+
     DataArray a = block.createDataArray("name", "type", DataType::Double, {0,0});
     block.deleteDataArray(a);
     CPPUNIT_ASSERT_THROW(tag.extents(a), UninitializedEntity);
@@ -247,23 +252,14 @@ void BaseTestMultiTag::testExtents(){
 
 void BaseTestMultiTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.positions(""), EmptyString);
 
     tag.positions(positions);
     CPPUNIT_ASSERT(tag.positions().id() == positions.id());
+    CPPUNIT_ASSERT(tag.hasPositions());
     block.deleteDataArray(positions.id());
     // make sure link is gone with data array
     CPPUNIT_ASSERT_THROW(tag.positions(), std::runtime_error);
-    
-    // re-create positions
-    positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, {0, 0});
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        A[i][i] = 100.0*i;
-    }
-    positions.setData(A);
 }
 
 

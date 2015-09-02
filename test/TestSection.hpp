@@ -26,26 +26,14 @@
 class TestSection: public CPPUNIT_NS::TestFixture {
 private:
 
-<<<<<<< HEAD:test/TestSection.hpp
-<<<<<<< HEAD:test/TestSection.hpp
     CPPUNIT_TEST_SUITE(TestSection);
-=======
-    nix::File file, file_fs;
-    nix::Block block, block_fs;
-    nix::DataArray positions, positions_fs, extents, extents_fs;
-    nix::Tag tag, tag_fs, tag_other, tag_null;
-=======
-    nix::File file, file_fs;
-    nix::Block block, block_fs;
-    nix::DataArray positions, extents, positions_fs, extents_fs;
-    nix::MultiTag tag, tag_other, tag_null, tag_fs, tag_other_fs;
->>>>>>> [file_backend/MultiTag] added some tests:test/TestMultiTag.hpp
-    nix::Section section, section_fs;
+    nix::File file;
+    nix::Block block;
+    nix::DataArray positions, extents, wrongArray;
+    nix::MultiTag tag, tag_other, tag_null;
     time_t startup_time;
-    std::vector<nix::DataArray> refs, refs_fs;
+    std::vector<nix::DataArray> refs;
 
-    CPPUNIT_TEST_SUITE(TestTag);
->>>>>>> [file_backend/Tag] add some tests:test/TestTag.hpp
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
@@ -67,14 +55,6 @@ private:
     CPPUNIT_TEST(testCreatedAt);
 
     CPPUNIT_TEST_SUITE_END ();
-
-    nix::File file;
-    nix::Section section, section_other, section_null;
-    nix::Block block;
-    nix::Source source, source_other, source_null;
-    nix::DataArray darray;
-    nix::MultiTag mtag;
-    time_t startup_time;
 
 public:
 
