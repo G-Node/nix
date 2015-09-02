@@ -61,6 +61,7 @@ void TestEntity::test_type(Block &b) {
     string typ = util::createId();
     b.type(typ);
     CPPUNIT_ASSERT(b.type() == typ);
+    CPPUNIT_ASSERT_THROW(b.type(""), EmptyString);
 }
 
 
@@ -75,6 +76,7 @@ void TestEntity::test_definition(Block &b) {
     CPPUNIT_ASSERT(*b.definition() == def);
     b.definition(nix::none);
     CPPUNIT_ASSERT(b.definition() == nix::none);
+    CPPUNIT_ASSERT_THROW(b.definition(""), EmptyString);
 }
 
 
@@ -99,6 +101,7 @@ void TestEntity::testUpdatedAt() {
 
 void TestEntity::testOperators() {
     test_operators(block, block_other, block_null);
+    test_operators(block_fs, block_other_fs, block_null);
 }
 
 void TestEntity::test_operators(Block &b, Block &other, Block &null) {
@@ -113,4 +116,16 @@ void TestEntity::test_operators(Block &b, Block &other, Block &null) {
 
     other = b;
     CPPUNIT_ASSERT(other == b);
+}
+
+
+void TestEntity::testCompare() {
+    test_compare(block, block_other);
+    test_compare(block_fs, block_other_fs);
+}
+
+void TestEntity::test_compare(nix::Block &b, nix::Block &other) {
+    Block b2(b);
+    CPPUNIT_ASSERT(b.compare(b2) == 0);
+    CPPUNIT_ASSERT(b.compare(other) != 0);
 }

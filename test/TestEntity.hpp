@@ -38,6 +38,7 @@ private:
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testCompare);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -49,6 +50,7 @@ private:
     void test_definition(nix::Block &b);
     void test_created_at(nix::Block &b);
     void test_operators(nix::Block &b, nix::Block &other, nix::Block &null);
+    void test_compare(nix::Block &b, nix::Block &other);
 
 public:
 
@@ -62,5 +64,6 @@ public:
     void testOperators();
     void testUpdatedAt();
     void testCreatedAt();
+    void testCompare();
 
 };
