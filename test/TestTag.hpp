@@ -68,6 +68,7 @@ private:
     void test_unit(nix::Block &b, std::vector<nix::DataArray> &r);
     void test_references(nix::Tag &t, std::vector<nix::DataArray> &r);
     void test_features(nix::Tag &t, nix::DataArray &da);
+    void test_extent(nix::Block &b, std::vector<nix::DataArray> &r);
 
 public:
 

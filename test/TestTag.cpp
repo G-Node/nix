@@ -150,8 +150,13 @@ void TestTag::test_create_remove(Block &b, vector<DataArray> &r) {
 
 
 void TestTag::testExtent() {
-    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
-    st.references(refs);
+    test_extent(block, refs);
+    test_extent(block_fs, refs_fs);
+}
+
+void TestTag::test_extent(Block &b, vector<DataArray> &r) {
+    Tag st = b.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(r);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -164,10 +169,10 @@ void TestTag::testExtent() {
 
     st.extent(none);
     CPPUNIT_ASSERT(st.extent().size() == 0);
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
-    block.deleteTag(st.id());
+    b.deleteTag(st.id());
 }
 
 
