@@ -311,6 +311,7 @@ void TestMultiTag::testExtents(){
 void TestMultiTag::test_extents(nix::MultiTag &mt, DataArray &pos, DataArray &ext, DataArray &wrongArray) {
     CPPUNIT_ASSERT_THROW(mt.extents("wrong_data_array_id"), std::runtime_error);
     CPPUNIT_ASSERT_THROW(mt.extents(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(mt.extents(wrongArray), std::runtime_error);
 
     mt.positions(pos);
     mt.extents(ext);
