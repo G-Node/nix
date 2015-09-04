@@ -47,6 +47,7 @@ void TestDataArray::setUp()
     block_fs = file_fs.createBlock("block_one", "dataset");
     array1_fs = block_fs.createDataArray("array_one", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     array2_fs = block_fs.createDataArray("random", "double", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+
 }
 
 void TestDataArray::tearDown()
@@ -378,6 +379,36 @@ void TestDataArray::testPolynomial() // FIXME test for filesys
     }
 }
 
+void TestDataArray::testPolynomialSetter() {
+    test_polynomial_setter(array1);
+    test_polynomial_setter(array1_fs);
+}
+
+void TestDataArray::test_polynomial_setter(DataArray &a) {
+    boost::array<double, 10> coefficients1;
+    std::vector<double> coefficients2;
+    for(int i=0; i<10; i++) {
+        coefficients1[i] = i;
+        coefficients2.push_back(i);
+    }
+
+    a.polynomCoefficients(coefficients2);
+    std::vector<double> ret = a.polynomCoefficients();
+    for(size_t i=0; i<ret.size(); i++) {
+        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
+    }
+
+    a.polynomCoefficients(nix::none);
+    CPPUNIT_ASSERT(a.polynomCoefficients().size() == 0);
+
+    a.expansionOrigin(3);
+    boost::optional<double> retval = a.expansionOrigin();
+    CPPUNIT_ASSERT(*retval == 3);
+    a.expansionOrigin(nix::none);
+    CPPUNIT_ASSERT(a.expansionOrigin() == nix::none);
+}
+
+
 void TestDataArray::testLabel()
 {
     test_label(array1);
@@ -391,6 +422,7 @@ void TestDataArray::test_label(DataArray &a) {
     CPPUNIT_ASSERT(*a.label() == testStr);
     a.label(boost::none);
     CPPUNIT_ASSERT(a.label() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.label(""), EmptyString);
 }
 
 
@@ -409,6 +441,7 @@ void TestDataArray::test_unit(nix::DataArray &a) {
     CPPUNIT_ASSERT(*a.unit() == validUnit);
     CPPUNIT_ASSERT_NO_THROW(a.unit(boost::none));
     CPPUNIT_ASSERT(a.unit() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.unit(""), EmptyString);
 }
 
 
@@ -547,3 +580,4 @@ void TestDataArray::test_operator(DataArray &a) {
     CPPUNIT_ASSERT(a == false);
     CPPUNIT_ASSERT(a == none);
 }
+
