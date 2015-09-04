@@ -318,6 +318,11 @@ DataType DataArrayFS::dataType(void) const {
     }
     // FIXME
     return DataType::Nothing;
+void DataArrayFS::setDtype(nix::DataType dtype) {
+    if (hasAttr("dtype")) {
+        removeAttr("dtype");
+    }
+    setAttr("dtype", nix::data_type_to_string(dtype));
 }
 
 } // ns nix::file
