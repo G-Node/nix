@@ -237,6 +237,8 @@ DataArrayFS::~DataArrayFS() {
 
 
 void DataArrayFS::createData(DataType dtype, const NDSize &size) {
+    setDtype(dtype);
+    dataExtent(size);
     /*
     if (group().hasData("data")) {
         throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
@@ -296,28 +298,39 @@ void DataArrayFS::read(DataType dtype, void *data, const NDSize &count, const ND
 }
 
 NDSize DataArrayFS::dataExtent(void) const {
-    if (!hasObject("data")) {
+    if (!hasAttr("extent")) {
         return NDSize{};
     }
-    // FIXME
-    return NDSize{};
+    vector<int> ext;
+    getAttr("extent", ext);
+    NDSize extent(ext.size());
+    for (ndsize_t i = 0; i < ext.size(); i++) {
+        extent[i] = ext[i];
+    }
+    return extent;
 }
 
 void DataArrayFS::dataExtent(const NDSize &extent) {
-    if (!hasObject("data")) {
-        throw runtime_error("Data field not found in DataArray!");
+    vector<int> ext;
+    for (ndsize_t i = 0; i < extent.size(); i++) {
+        ext.push_back(extent[i]);
     }
-    // FIXME
-    // DataSet ds = group().openData("data");
-    // ds.setExtent(extent);
+    if (hasAttr("extent")){
+        removeAttr("extent");
+    }
+    setAttr("extent", ext);
 }
 
 DataType DataArrayFS::dataType(void) const {
-    if (!hasObject("data")) {
+    if (!hasAttr("dtype")) {
         return DataType::Nothing;
     }
-    // FIXME
-    return DataType::Nothing;
+    string dtype;
+    getAttr("dtype", dtype);
+    return nix::string_to_data_type(dtype);
+}
+
+
 void DataArrayFS::setDtype(nix::DataType dtype) {
     if (hasAttr("dtype")) {
         removeAttr("dtype");
