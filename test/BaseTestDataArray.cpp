@@ -348,7 +348,34 @@ void BaseTestDataArray::testLabel() {
     CPPUNIT_ASSERT(*array1.label() == testStr);
     array1.label(boost::none);
     CPPUNIT_ASSERT(array1.label() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.label(""), EmptyString);
 }
+
+
+void BaseTestDataArray::testPolynomialSetter() {
+    boost::array<double, 10> coefficients1;
+    std::vector<double> coefficients2;
+    for(int i=0; i<10; i++) {
+        coefficients1[i] = i;
+        coefficients2.push_back(i);
+    }
+
+    array1.polynomCoefficients(coefficients2);
+    std::vector<double> ret = array1.polynomCoefficients();
+    for(size_t i=0; i<ret.size(); i++) {
+        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
+    }
+
+    array1.polynomCoefficients(nix::none);
+    CPPUNIT_ASSERT(array1.polynomCoefficients().size() == 0);
+
+    array1.expansionOrigin(3);
+    boost::optional<double> retval = array1.expansionOrigin();
+    CPPUNIT_ASSERT(*retval == 3);
+    array1.expansionOrigin(nix::none);
+    CPPUNIT_ASSERT(array1.expansionOrigin() == nix::none);
+}
+
 
 void BaseTestDataArray::testUnit() {
     std::string testStr = "somestring";
@@ -358,7 +385,9 @@ void BaseTestDataArray::testUnit() {
     CPPUNIT_ASSERT(*array1.unit() == validUnit);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
     CPPUNIT_ASSERT(array1.unit() == nix::none);
+    CPPUNIT_ASSERT_THROW(array1.unit(""), EmptyString);
 }
+
 
 void BaseTestDataArray::testDimension() {
     std::vector<nix::Dimension> dims;
