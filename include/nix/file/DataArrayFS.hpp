@@ -33,6 +33,7 @@ private:
 
     Directory dimensions;
 
+    void setDtype(nix::DataType dtype);
 public:
 
     /**
