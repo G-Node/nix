@@ -58,6 +58,9 @@ void TestBaseTag::test_references(Block &b, vector<DataArray> &r) {
     DataArray da_2 = b.createDataArray("TestReference 2","Reference",
                                        DataType::Double, nix::NDSize({ 0 }));
     Tag st = b.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    CPPUNIT_ASSERT_THROW(st.addReference(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(st.addReference("invalid data array id"), std::runtime_error);
+
     st.references(r);
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
@@ -118,6 +121,7 @@ void TestBaseTag::test_features(Block &b) {
     DataArray da2 = b.createDataArray("featureArray2", "test", nix::DataType::Double, {1});
     DataArray da3 = b.createDataArray("featureArray3", "test", nix::DataType::Double, {1});
 
+    CPPUNIT_ASSERT_THROW(st.createFeature("wrong_id", nix::LinkType::Tagged), std::runtime_error);
     int failures = 0;
     for (int i = 0; i < 20; i++) {
         vector<string> ids;
