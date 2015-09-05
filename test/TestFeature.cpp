@@ -99,6 +99,7 @@ void TestFeature::test_data(Block &b, Tag &t, DataArray &da) {
     CPPUNIT_ASSERT(rp.data() == nullptr);
 
     CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(rp.data("worng_id"), runtime_error);
     t.deleteFeature(rp.id());
 }
 
