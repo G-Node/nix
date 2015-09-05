@@ -263,6 +263,7 @@ void BaseTestTag::testFeatures() {
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(t.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -339,9 +340,6 @@ void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
 
-    CPPUNIT_ASSERT(tag != false);
-    CPPUNIT_ASSERT(tag != none);
-
     CPPUNIT_ASSERT(tag == tag);
     CPPUNIT_ASSERT(tag != tag_other);
 
@@ -349,8 +347,15 @@ void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag == tag_other);
 
     tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    CPPUNIT_ASSERT(tag_other == false);
+    CPPUNIT_ASSERT(tag_other == none);
+
+    stringstream str1, str2;
+    str1 <<  "Tag: {name = " << t.name();
+    str1 << ", type = " << t.type();
+    str1 << ", id = " << t.id() << "}";
+    str2 << t;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 
