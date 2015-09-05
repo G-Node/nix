@@ -49,6 +49,7 @@ void TestTag::setUp() {
                                                    DataType::Double, nix::NDSize({ 0 })));
     }
     tag_fs = block_fs.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    tag_other_fs = block_fs.createTag("tag_two", "test_tag", {0.0, 2.0, 3.4});
     section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
@@ -345,6 +346,7 @@ void TestTag::test_features(Tag &t, DataArray &da) {
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(t.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -418,21 +420,33 @@ void TestTag::testDataAccess() {
 
 
 void TestTag::testOperators() {
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    test_operators(tag, tag_other, tag_null);
+    test_operators(tag_fs, tag_other_fs, tag_null);
+}
 
-    CPPUNIT_ASSERT(tag != false);
-    CPPUNIT_ASSERT(tag != none);
+void TestTag::test_operators(Tag &t, Tag &other, Tag &null) {
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
 
-    CPPUNIT_ASSERT(tag == tag);
-    CPPUNIT_ASSERT(tag != tag_other);
+    CPPUNIT_ASSERT(t != false);
+    CPPUNIT_ASSERT(t != none);
 
-    tag_other = tag;
-    CPPUNIT_ASSERT(tag == tag_other);
+    CPPUNIT_ASSERT(t == t);
+    CPPUNIT_ASSERT(t != other);
 
-    tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    other = t;
+    CPPUNIT_ASSERT(t == other);
+
+    other = none;
+    CPPUNIT_ASSERT(other == false);
+    CPPUNIT_ASSERT(other == none);
+
+    stringstream str1, str2;
+    str1 <<  "Tag: {name = " << t.name();
+    str1 << ", type = " << t.type();
+    str1 << ", id = " << t.id() << "}";
+    str2 << t;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 

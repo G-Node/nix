@@ -34,7 +34,7 @@ private:
     nix::File file, file_fs;
     nix::Block block, block_fs;
     nix::DataArray positions, positions_fs, extents, extents_fs;
-    nix::Tag tag, tag_fs, tag_other, tag_null;
+    nix::Tag tag, tag_fs, tag_other, tag_other_fs, tag_null;
     nix::Section section, section_fs;
     time_t startup_time;
     std::vector<nix::DataArray> refs, refs_fs;
@@ -69,6 +69,7 @@ private:
     void test_references(nix::Tag &t, std::vector<nix::DataArray> &r);
     void test_features(nix::Tag &t, nix::DataArray &da);
     void test_extent(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_operators(nix::Tag &t, nix::Tag &other, nix::Tag &null);
 
 public:
 
