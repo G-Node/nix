@@ -85,6 +85,7 @@ void BaseTestFeature::testData() {
     // make sure link is gone with deleted data array
     CPPUNIT_ASSERT(rp.data() == nix::none);
     CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(rp.data("worng_id"), runtime_error);
     tag.deleteFeature(rp.id());
 }
 
