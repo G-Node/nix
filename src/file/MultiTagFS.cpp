@@ -69,9 +69,8 @@ void MultiTagFS::positions(const string &name_or_id) {
         removeObjectByNameOrAttribute("name", "positions");
 
     auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
-    boost::filesystem::path t(target->location()), p(location()), m("positions");
+    boost::filesystem::path p(location()), m("positions");
     target->createLink(p / m);
-    //createDirectoryLink(target->location(), "positions");
     forceUpdatedAt();
 }
 
@@ -106,7 +105,8 @@ void MultiTagFS::extents(const string &name_or_id) {
         throw runtime_error("MultiTagFS::extents: cannot set Extent because dimensionality of extent and position data do not match!");
 
     auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
-    createDirectoryLink(target->location(), "extents");
+    boost::filesystem::path p(location()), m("extents");
+    target->createLink(p / m);
     forceUpdatedAt();
 }
 
