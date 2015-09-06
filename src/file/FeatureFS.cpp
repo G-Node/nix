@@ -76,7 +76,8 @@ void FeatureFS::data(const std::string &name_or_id) {
     if (hasObject("data"))
         removeObjectByNameOrAttribute("name", "data");
     auto target = dynamic_pointer_cast<DataArrayFS>(block->getDataArray(name_or_id));
-    createDirectoryLink(target->location(), "data");
+    boost::filesystem::path p(location()), m("data");
+    target->createLink(p / m);
     forceUpdatedAt();
 }
 
