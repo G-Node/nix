@@ -526,21 +526,33 @@ void TestMultiTag::test_source_access(Block &b, MultiTag &t) {
 
 
 void TestMultiTag::testOperators() {
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    test_operators(tag, tag_other, tag_null);
+    test_operators(tag_fs, tag_other_fs, tag_null);
+}
 
-    CPPUNIT_ASSERT(tag != false);
-    CPPUNIT_ASSERT(tag != none);
+void TestMultiTag::test_operators(MultiTag &t, MultiTag &other, MultiTag &null) {
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
 
-    CPPUNIT_ASSERT(tag == tag);
-    CPPUNIT_ASSERT(tag != tag_other);
+    CPPUNIT_ASSERT(t != false);
+    CPPUNIT_ASSERT(t != none);
 
-    tag_other = tag;
-    CPPUNIT_ASSERT(tag == tag_other);
+    CPPUNIT_ASSERT(t == t);
+    CPPUNIT_ASSERT(t != other);
 
-    tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    other = t;
+    CPPUNIT_ASSERT(t == other);
+
+    other = none;
+    CPPUNIT_ASSERT(other == false);
+    CPPUNIT_ASSERT(other == none);
+
+    std::stringstream str1, str2;
+    str1 << "MultiTag: {name = " << t.name();
+    str1 << ", type = " << t.type();
+    str1 << ", id = " << t.id() << "}";
+    str2 << t;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 

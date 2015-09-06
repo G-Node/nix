@@ -71,6 +71,7 @@ private:
     void test_features(nix::MultiTag &mt, nix::DataArray &pos);
     void test_metadata_access(nix::File &f, nix::MultiTag &t, nix::Section &s);
     void test_source_access(nix::Block &b, nix::MultiTag &t);
+    void test_operators(nix::MultiTag &t, nix::MultiTag &other, nix::MultiTag &null);
 
 public:
 
