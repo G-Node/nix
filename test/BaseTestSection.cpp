@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -53,10 +53,6 @@ void BaseTestSection::testType() {
     string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
-
-    CPPUNIT_ASSERT(section_fs.type() == "metadata");
-    section_fs.type(typ);
-    CPPUNIT_ASSERT(section_fs.type() == typ);
 }
 
 
@@ -72,7 +68,6 @@ void BaseTestSection::testDefinition() {
     section_fs.definition(nix::none);
     CPPUNIT_ASSERT(section_fs.definition() == nix::none);
 }
-
 
 void BaseTestSection::testParent() {
     CPPUNIT_ASSERT(section.parent() == nix::none);
@@ -92,12 +87,7 @@ void BaseTestSection::testRepository() {
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
     CPPUNIT_ASSERT(!section.repository());
-
-    CPPUNIT_ASSERT(!section_fs.repository());
-    section_fs.repository(rep);
-    CPPUNIT_ASSERT(section_fs.repository() == rep);
-    section_fs.repository(boost::none);
-    CPPUNIT_ASSERT(!section_fs.repository());
+    CPPUNIT_ASSERT_THROW(section.repository(""), EmptyString);
 }
 
 
@@ -111,20 +101,24 @@ void BaseTestSection::testLink() {
     // test none-unsetter
     section.link(none);
     CPPUNIT_ASSERT(!section.link());
+    section.link(section_other);
+    CPPUNIT_ASSERT(section.link());
+    Section null;
+    section.link(null);
+    CPPUNIT_ASSERT(!section.link());
+
+    // test id setter and resetter
+    CPPUNIT_ASSERT_THROW(section.link(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(section.link("invalid id"), runtime_error);
+
+    section.link(section.id());
+    CPPUNIT_ASSERT(section.link().id() == section.id());
+    section.link(other.id());
+    CPPUNIT_ASSERT(section.link().id() == section_other.id());
     // test deleter removing link too
     section.link(section);
     file.deleteSection(section.id());
     CPPUNIT_ASSERT(!section.link());
-    // re-create section
-    section = file.createSection("foo_section", "metadata");
-
-    CPPUNIT_ASSERT(!section_fs.link());
-    section_fs.link(section_fs_other);
-    CPPUNIT_ASSERT(section_fs.link());
-    CPPUNIT_ASSERT(section_fs.link().id() == section_fs_other.id());
-    // test none-unsetter
-    section_fs.link(none);
-    CPPUNIT_ASSERT(!section_fs.link());
 }
 
 
@@ -135,17 +129,13 @@ void BaseTestSection::testMapping() {
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
     CPPUNIT_ASSERT(!section.mapping());
-
-    CPPUNIT_ASSERT(!section_fs.mapping());
-    section_fs.mapping(map);
-    CPPUNIT_ASSERT(section_fs.mapping() == map);
-    section_fs.mapping(boost::none);
-    CPPUNIT_ASSERT(!section_fs.mapping());
+    CPPUNIT_ASSERT_THROW(section.mapping(""), EmptyString);
 }
 
 
 void BaseTestSection::testSectionAccess() {
     vector<string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
+    Section null;
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
@@ -158,13 +148,22 @@ void BaseTestSection::testSectionAccess() {
         CPPUNIT_ASSERT(child_section.name() == name);
         CPPUNIT_ASSERT_EQUAL(true, section.hasSection(name));
 
-        ids.push_back(child_section.id());
+        idsection.push_back(child_section.id());
     }
+    CPPUNIT_ASSERT(section.sectionCount() == namesection.size());
+    CPPUNIT_ASSERT(section.sections().size() == namesection.size());
+
     CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(section.hasSection(null), runtime_error);
+    if (impl == Implementation::FileSys) {
+        CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
+        CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
 
-    CPPUNIT_ASSERT(section.sectionCount() == names.size());
-    CPPUNIT_ASSERT(section.sections().size() == names.size());
+    } else {
+        CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), hdf5::H5Exception);
+        CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), hdf5::H5Exception);
+    }
 
     for (auto id : ids) {
         Section child_section = section.getSection(id);
@@ -173,6 +172,9 @@ void BaseTestSection::testSectionAccess() {
         CPPUNIT_ASSERT_EQUAL(id, child_section.id());
         section.deleteSection(id);
     }
+    Section s2 = section.createSection("a name", "a type");
+    CPPUNIT_ASSERT_THROW(section.deleteSection(null), runtime_error);
+    CPPUNIT_ASSERT_NO_THROW(section.deleteSection(s2));
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
@@ -432,7 +434,7 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     prop = section.getProperty("another test");
     CPPUNIT_ASSERT(prop.valueCount() == 2);
-    */ // Values are not supported yet
+    */ //FIXME Values are not supported yet
 }
 
 
@@ -446,21 +448,19 @@ void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section == section);
     CPPUNIT_ASSERT(section != section_other);
 
-    section_other = section;
+    sectionother = section;
     CPPUNIT_ASSERT(section == section_other);
 
     section_other = none;
-    CPPUNIT_ASSERT(section_null == false);
-    CPPUNIT_ASSERT(section_null == none);
+    CPPUNIT_ASSERT(section_other == false);
+    CPPUNIT_ASSERT(section_other == none);
 
-    CPPUNIT_ASSERT(section_fs != false);
-    CPPUNIT_ASSERT(section_fs != none);
-
-    CPPUNIT_ASSERT(section_fs == section_fs);
-    CPPUNIT_ASSERT(section_fs != section_fs_other);
-
-    section_fs_other = section_fs;
-    CPPUNIT_ASSERT(section_fs == section_fs_other);
+    stringstream str1, str2;
+    str1 <<  "Section: {name = " << section.name();
+    str1 << ", type = " << section.type();
+    str1 << ", id = " << section.id() << "}";
+    str2 << section;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 
 }
 
