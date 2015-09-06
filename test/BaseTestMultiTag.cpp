@@ -445,6 +445,8 @@ void BaseTestMultiTag::testSourceAccess(){
 void BaseTestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
 
     CPPUNIT_ASSERT(tag != false);
     CPPUNIT_ASSERT(tag != none);
@@ -456,8 +458,15 @@ void BaseTestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag == tag_other);
 
     tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    CPPUNIT_ASSERT(tag_other == false);
+    CPPUNIT_ASSERT(tag_other == none);
+
+    std::stringstream str1, str2;
+    str1 << "MultiTag: {name = " << tag.name();
+    str1 << ", type = " << tag.type();
+    str1 << ", id = " << tag.id() << "}";
+    str2 << tag;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 
