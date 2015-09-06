@@ -117,8 +117,7 @@ void SectionFS::link(const std::string &id) {
         throw std::runtime_error("SectionFS::link: Section not found in file!");
 
     auto target = dynamic_pointer_cast<SectionFS>(found.front().impl());
-    boost::filesystem::path t(target->location());
-    boost::filesystem::create_directory_symlink(t, p / l);
+    target->createLink(p / l);
     forceUpdatedAt();
 }
 
