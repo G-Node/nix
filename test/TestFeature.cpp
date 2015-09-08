@@ -81,7 +81,7 @@ void TestFeature::testData() {
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     block.deleteDataArray(da_2.id());
     // make sure link is gone with deleted data array
-    CPPUNIT_ASSERT_THROW(rp.data(), std::runtime_error);
+    CPPUNIT_ASSERT(rp.data() == nullptr);
     tag.deleteFeature(rp.id());
 }
 
