@@ -14,7 +14,7 @@ class FileFS : public base::IFile, public Directory, public std::enable_shared_f
 
 private:
     boost::filesystem::path data_path, metadata_path;
-    FileMode file_mode;
+    FileMode mode;
     void create_subfolders();
 
 public:
@@ -97,7 +97,7 @@ public:
     bool isOpen() const;
 
 
-    FileMode read_write_mode() const;
+    FileMode fileMode() const;
 
 
     bool operator==(const FileFS &other) const;
