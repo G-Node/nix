@@ -51,7 +51,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
-
+    this->mode = mode;
     //we want hdf5 to keep track of the order in which links were created so that
     //the order for indexed based accessors is stable cf. issue #387
     BaseHDF5 fcpl = H5Pcreate(H5P_FILE_CREATE);
@@ -320,6 +320,11 @@ void FileHDF5::close() {
 
 bool FileHDF5::isOpen() const {
     return isValid();
+}
+
+
+FileMode FileHDF5::fileMode() const {
+    return mode;
 }
 
 
