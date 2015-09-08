@@ -34,7 +34,7 @@ static unsigned int map_file_mode(FileMode mode) {
 
 FileFS::FileFS(const string &name, FileMode mode) : Directory(fs::current_path(), name, mode){
     fs::path p(name.c_str());
-    file_mode = mode;
+    this->mode = mode;
     setCreatedAt();
     setUpdatedAt();
     create_subfolders();
@@ -260,8 +260,8 @@ std::shared_ptr<base::IFile> FileFS::file() const {
     return const_pointer_cast<FileFS>(shared_from_this());
 }
 
-FileMode FileFS::read_write_mode() const {
-    return file_mode;
+FileMode FileFS::fileMode() const {
+    return mode;
 }
 
 FileFS::~FileFS() {}
