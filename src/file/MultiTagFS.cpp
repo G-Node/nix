@@ -136,21 +136,9 @@ void MultiTagFS::units(const none_t t) {
 }
 
 // these methods could go to the frontend...
+
 bool MultiTagFS::checkDimensions(const DataArray &a, const DataArray &b)const {
     return a.dataExtent() == b.dataExtent();
-}
-
-
-bool MultiTagFS::checkPositionsAndExtents() const {
-    bool valid = true;
-
-    if (hasPositions() && extents() != nullptr) {
-        DataArray pos = positions();
-        DataArray ext = extents();
-        return checkDimensions(pos, ext);
-    }
-
-    return valid;
 }
 
 
