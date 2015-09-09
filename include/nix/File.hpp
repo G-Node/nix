@@ -458,6 +458,14 @@ public:
         return !isNone() && backend()->isOpen();
     }
 
+    /*
+     * @brief Returns the mode in which the file has been opened.
+     *
+     * @return the FileMode
+     */
+    FileMode fileMode() {
+        return backend()->fileMode();
+    }
     /**
      * @brief Assignment operator for none.
      */

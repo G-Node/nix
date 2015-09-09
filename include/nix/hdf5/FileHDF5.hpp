@@ -29,6 +29,7 @@ private:
 
     /* groups representing different sections of the file */
     Group root, metadata, data;
+    FileMode mode;
 
 public:
 
@@ -120,6 +121,9 @@ public:
 
 
     bool isOpen() const;
+
+
+    FileMode fileMode() const;
 
 
     bool operator==(const FileHDF5 &other) const;

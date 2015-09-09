@@ -47,7 +47,7 @@ Section::Section(shared_ptr<base::ISection> &&ptr)
 
 
 void Section::link(const Section &link) {
-    if (link == none) {
+    if (!link) {
         backend()->link(none);
     } else {
         backend()->link(link.id());

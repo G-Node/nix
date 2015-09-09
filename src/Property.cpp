@@ -14,7 +14,7 @@ namespace nix {
 
 void Property::unit(const std::string &unit) {
     util::deblankString(unit);
-    if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
+    if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
     }
     backend()->unit(unit);

@@ -89,7 +89,7 @@ shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id)
 
 shared_ptr<IDataArray>  BaseTagHDF5::getReference(size_t index) const {
     // check if index valid
-    if(index > referenceCount()) {
+    if(index >= referenceCount()) {
         throw OutOfBounds("No reference at given index", index);
     }
 
@@ -194,6 +194,9 @@ shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id) cons
 
 
 shared_ptr<IFeature>  BaseTagHDF5::getFeature(size_t index) const {
+    if (index >= featureCount()) {
+        throw OutOfBounds("No feature at given index", index);
+    }
     boost::optional<Group> g = feature_group();
     string id = g->objectName(index);
     return getFeature(id);

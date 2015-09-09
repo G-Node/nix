@@ -161,19 +161,6 @@ bool MultiTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const 
 }
 
 
-bool MultiTagHDF5::checkPositionsAndExtents() const {
-    bool valid = true;
-
-    if (hasPositions() && extents()) {
-        DataArray pos = positions();
-        DataArray ext = extents();
-        return checkDimensions(pos, ext);
-    }
-
-    return valid;
-}
-
-
 MultiTagHDF5::~MultiTagHDF5() {}
 
 } // ns nix::hdf5

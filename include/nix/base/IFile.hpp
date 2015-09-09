@@ -123,6 +123,9 @@ public:
     virtual bool isOpen() const = 0;
 
 
+    virtual FileMode fileMode() const = 0;
+
+
     virtual ~IFile() {}
 
 };

@@ -51,7 +51,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
-
+    this->mode = mode;
     //we want hdf5 to keep track of the order in which links were created so that
     //the order for indexed based accessors is stable cf. issue #387
     BaseHDF5 fcpl = H5Pcreate(H5P_FILE_CREATE);
@@ -113,8 +113,11 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(ndsize_t index) const {
 
 
 shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string &type) {
+    if (name.empty()) {
+        throw EmptyString("Trying to create Block with empty name!");
+    }
     if (hasBlock(name)) {
-        throw DuplicateName("createBlock");
+        throw DuplicateName("Block with the given name already exists!");
     }
     string id = util::createId();
 
@@ -168,8 +171,11 @@ shared_ptr<base::ISection> FileHDF5::getSection(ndsize_t index) const{
 
 
 shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  string &type) {
+    if (name.empty()) {
+        throw EmptyString("Trying to create Section with empty name!");
+    }
     if (hasSection(name)) {
-        throw DuplicateName("createSection");
+        throw DuplicateName("Section with the given name already exists!");
     }
     string id = util::createId();
 
@@ -320,6 +326,11 @@ void FileHDF5::close() {
 
 bool FileHDF5::isOpen() const {
     return isValid();
+}
+
+
+FileMode FileHDF5::fileMode() const {
+    return mode;
 }
 
 
