@@ -154,6 +154,15 @@ public:
      * @return The created block.
      */
     Block createBlock(const std::string &name, const std::string &type) {
+        if (name.empty()) {
+            throw EmptyString("Trying to create Block with empty name!");
+        }
+        if (type.empty()) {
+            throw EmptyString("Trying to create Block with empty type!");
+        }
+        if (hasBlock(name)) {
+            throw DuplicateName("Block with the given name already exists!");
+        }
         return backend()->createBlock(name, type);
     }
 
