@@ -122,6 +122,15 @@ int NamedEntityHDF5::compare(const std::shared_ptr<INamedEntity> &other) const {
 }
 
 
+void NamedEntityHDF5::init(const Group &group, const std::string &id, const std::string &name,
+                           const std::string &type) {
+    EntityHDF5::init(group, id);
+
+    group.setAttr("type", type);
+    group.setAttr("name", name);
+}
+
+
 NamedEntityHDF5::~NamedEntityHDF5() {}
 
 } // ns nix::hdf5
