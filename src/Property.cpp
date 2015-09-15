@@ -25,5 +25,16 @@ std::ostream& operator<<(std::ostream &out, const Property &ent) {
     return out;
 }
 
+int Property::compare(const Property &other) const {
+    int cmp = 0;
+    if (!name().empty() && !other.name().empty()) {
+        cmp = (name()).compare(other.name());
+    }
+    if (cmp == 0) {
+        cmp = id().compare(other.id());
+    }
+    return cmp;
+}
+
 } // namespace nix
 
