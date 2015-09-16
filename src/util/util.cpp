@@ -352,5 +352,11 @@ void checkEntityType(const std::string &str) {
     }
 }
 
+void checkNameOrId(const std::string &name_or_id) {
+    if (name_or_id.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
+}
+
 } // namespace util
 } // namespace nix
