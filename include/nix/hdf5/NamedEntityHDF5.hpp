@@ -64,6 +64,8 @@ public:
 
     int compare(const std::shared_ptr<INamedEntity> &other) const;
 
+    static void init(const Group &group, const std::string &id, const std::string &type,
+                     const std::string &name);
 
     ~NamedEntityHDF5();
 

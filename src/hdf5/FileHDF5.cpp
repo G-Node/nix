@@ -113,16 +113,15 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(ndsize_t index) const {
 
 
 shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string &type) {
-    if (name.empty()) {
-        throw EmptyString("Trying to create Block with empty name!");
-    }
-    if (hasBlock(name)) {
-        throw DuplicateName("Block with the given name already exists!");
-    }
-    string id = util::createId();
-
     Group group = data.openGroup(name, true);
-    return make_shared<BlockHDF5>(file(), group, id, type, name);
+
+    try {
+        BlockHDF5::init(group, util::createId(), name, type);
+        return make_shared<BlockHDF5>(file(), group);
+    } catch (exception &e) {
+        data.removeGroup(name);
+        throw e;
+    }
 }
 
 
