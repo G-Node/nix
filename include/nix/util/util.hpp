@@ -42,6 +42,15 @@ namespace util {
 NIXAPI void checkEntityName(const std::string &name);
 
 /**
+ * @brief Checks name_or_id argument often passed to methods.
+ * Throws exception in case of error.
+ *
+ * @param name_or_id  The string representing an entity name or id,
+ *
+ */
+NIXAPI void checkNameOrId(const std::string &name_or_id);
+
+/**
  *  @brief Tiny helper that throws nix::EmptyString exception
  *  if the passed string is indeed empty.
  *

@@ -352,5 +352,9 @@ void checkEntityType(const std::string &str) {
     }
 }
 
+void checkNameOrId(const std::string &name_or_id) {
+
+}
+
 } // namespace util
 } // namespace nix
