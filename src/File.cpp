@@ -26,6 +26,16 @@ File File::open(const std::string &name, FileMode mode, Implementation impl) {
 }
 
 
+Block File::createBlock(const std::string &name, const std::string &type) {
+    util::checkEntityName(name);
+    util::checkEntityType(type);
+    if (backend()->hasBlock(name)) {
+        throw DuplicateName("Block with the given name already exists!");
+    }
+    return backend()->createBlock(name, type);
+}
+
+
 bool File::hasBlock(const Block &block) const {
     if (block == none) {
         throw std::runtime_error("File::hasBlock: Empty Block entity given!");
@@ -48,6 +58,16 @@ std::vector<Block> File::blocks(const util::Filter<Block>::type &filter) const
     return getEntities<Block>(f,
                               blockCount(),
                               filter);
+}
+
+
+Section File::createSection(const std::string &name, const std::string &type) {
+    util::checkEntityName(name);
+    util::checkEntityType(type);
+    if (backend()->hasSection(name)) {
+        throw DuplicateName("Section with the given name already exists!");
+    }
+    return backend()->createSection(name, type);
 }
 
 

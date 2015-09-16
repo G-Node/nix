@@ -153,9 +153,7 @@ public:
      *
      * @return The created block.
      */
-    Block createBlock(const std::string &name, const std::string &type) {
-        return backend()->createBlock(name, type);
-    }
+    Block createBlock(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a block from the file.
@@ -332,9 +330,7 @@ public:
      *
      * @return The created Section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes the Section that is specified with the id.
