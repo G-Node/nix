@@ -260,9 +260,7 @@ public:
      * @return > 0 if the property is larger that other, 0 if both are
      * equal, and < 0 otherwise.
      */
-    int compare(const Property &other) const {
-        return backend()->compare(other.impl());
-    }
+    int compare(const Property &other) const;
 
     /**
      * @brief Assignment operator for none.

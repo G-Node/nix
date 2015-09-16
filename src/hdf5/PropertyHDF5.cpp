@@ -243,18 +243,6 @@ void PropertyHDF5::values(const nix::none_t t) {
 }
 
 
-int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
-    int cmp = 0;
-    if (!name().empty() && !other->name().empty()) {
-        cmp = (name()).compare(other->name());
-    }
-    if (cmp == 0) {
-        cmp = id().compare(other->id());
-    }
-    return cmp;
-}
-
-
 PropertyHDF5::~PropertyHDF5() {}
 
 } // ns nix::hdf5
