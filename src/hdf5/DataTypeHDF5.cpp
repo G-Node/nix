@@ -79,8 +79,6 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;
-        case DataType::Date: break;
-        case DataType::DateTime: break;
     }
 
     throw std::invalid_argument("Unkown DataType"); //FIXME
@@ -112,8 +110,6 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
         case DataType::Char: break; //FIXME
         case DataType::Nothing: break;
-        case DataType::Date: break;
-        case DataType::DateTime: break;
     }
 
     throw std::invalid_argument("DataType not handled!"); //FIXME

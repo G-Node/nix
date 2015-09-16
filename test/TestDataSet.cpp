@@ -248,8 +248,6 @@ void TestDataSet::testDataTypeIsNumeric() {
             {true, nix::DataType::Double},
             {false, nix::DataType::String},
             {false, nix::DataType::Nothing},
-            {false, nix::DataType::Date},
-            {false, nix::DataType::DateTime},
             {false, nix::DataType::Opaque}
     };
 
