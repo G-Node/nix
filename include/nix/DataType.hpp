@@ -38,8 +38,6 @@ NIXAPI enum class DataType {
     UInt32,
     UInt64,
     String,
-    Date,
-    DateTime,
     Opaque,
 
     Nothing = -1
