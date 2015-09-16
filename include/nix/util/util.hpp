@@ -34,6 +34,22 @@ enum class DimensionType : unsigned int;
 namespace util {
 
 /**
+ * @brief Checks the given string is valid as an entity name. Will
+ * throw an exception if the name is invalid.
+ *
+ * @param name   The name.
+ */
+NIXAPI void checkEntityName(const std::string &name);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ */
+NIXAPI void checkEntityType(const std::string &str);
+
+/**
  * @brief Remove blank spaces from the entire string
  *
  * @param str   The string to trim (will be modified in-place)
