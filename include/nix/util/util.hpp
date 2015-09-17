@@ -26,6 +26,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
+#include <nix/None.hpp>
 
 namespace nix {
     
@@ -50,6 +51,12 @@ NIXAPI void checkEntityName(const std::string &name);
  */
 NIXAPI void checkNameOrId(const std::string &name_or_id);
 
+template <typename T>
+NIXAPI void checkEntityInput(const T &entity) {
+    if (!entity || entity == none) {
+        throw UninitializedEntity();
+    }
+}
 /**
  *  @brief Tiny helper that throws nix::EmptyString exception
  *  if the passed string is indeed empty.
