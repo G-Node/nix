@@ -13,7 +13,6 @@
 #include <nix/base/IFile.hpp>
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
@@ -153,9 +152,7 @@ public:
      *
      * @return The created block.
      */
-    Block createBlock(const std::string &name, const std::string &type) {
-        return backend()->createBlock(name, type);
-    }
+    Block createBlock(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a block from the file.
@@ -332,9 +329,7 @@ public:
      *
      * @return The created Section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes the Section that is specified with the id.
