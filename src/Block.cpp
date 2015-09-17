@@ -7,10 +7,19 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/Block.hpp>
+#include <nix/util/util.hpp>
 
 using namespace std;
 
 namespace nix {
+
+Source Block::createSource(const std::string &name, const std::string &type){
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasSource(name)) {
+        throw DuplicateName("createSource");
+    }
+    return backend()->createSource(name, type);
+}
 
 std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
         size_t max_depth) const {
@@ -27,9 +36,7 @@ std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
 }
 
 bool Block::hasSource(const Source &source) const {
-    if (source == none) {
-        throw std::runtime_error("Empty Source entity given");
-    }
+    util::checkEntityInput(source);
     return backend()->hasSource(source.id());
 }
 
@@ -41,16 +48,21 @@ std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) con
 }
 
 bool Block::deleteSource(const Source &source) {
-    if (source == none) {
-        throw std::runtime_error("Empty Source entity given");
-    }
+    util::checkEntityInput(source);
     return backend()->deleteSource(source.id());
 }
 
-bool Block::hasDataArray(const DataArray &data_array) const {
-    if (data_array == none) {
-        throw std::runtime_error("Empty DataArray entity given!");
+DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
+                                 const NDSize &shape) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasDataArray(name)){
+        throw DuplicateName("create DataArray");
     }
+    return backend()->createDataArray(name, type, data_type, shape);
+}
+
+bool Block::hasDataArray(const DataArray &data_array) const {
+    util::checkEntityInput(data_array);
     return backend()->hasDataArray(data_array.id());
 }
 
@@ -62,16 +74,20 @@ std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type 
 }
 
 bool Block::deleteDataArray(const DataArray &data_array) {
-    if (data_array == none) {
-        throw std::runtime_error("Empty DataArray entity given!");
-    }
+    util::checkEntityInput(data_array);
     return backend()->deleteDataArray(data_array.id());
 }
 
-bool Block::hasTag(const Tag &tag) const {
-    if (tag == none) {
-        throw std::runtime_error("Empty Tag entity given!");
+Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasTag(name)){
+        throw DuplicateName("create Tag");
     }
+    return backend()->createTag(name, type, position);
+}
+
+bool Block::hasTag(const Tag &tag) const {
+    util::checkEntityInput(tag);
     return backend()->hasTag(tag.id());
 }
 
@@ -83,16 +99,21 @@ std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
 }
 
 bool Block::deleteTag(const Tag &tag) {
-    if (tag == none) {
-        throw std::runtime_error("Block::deleteTag: Empty Tag entity given!");
-    }
+    util::checkEntityInput(tag);
     return backend()->deleteTag(tag.id());
 }
 
-bool Block::hasMultiTag(const MultiTag &multi_tag) const {
-    if (multi_tag == none) {
-        throw std::runtime_error("Block::hasMultiTag: Empty MultiTag entitiy given!");
+MultiTag Block::createMultiTag(const std::string &name, const std::string &type, const DataArray &positions) {
+    util::checkEntityNameAndType(name, type);
+    util::checkEntityInput(positions);
+    if (backend()->hasMultiTag(name)) {
+        throw DuplicateName("createMultiTag");
     }
+    return backend()->createMultiTag(name, type, positions);
+}
+
+bool Block::hasMultiTag(const MultiTag &multi_tag) const {
+    util::checkEntityInput(multi_tag);
     return backend()->hasMultiTag(multi_tag.id());
 }
 
@@ -104,9 +125,7 @@ std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &fi
 }
 
 bool Block::deleteMultiTag(const MultiTag &multi_tag) {
-    if (multi_tag == none) {
-        throw std::runtime_error("Block::deleteMultiTag: Empty MultiTag entitiy given!");
-    }
+    util::checkEntityInput(multi_tag);
     return backend()->deleteMultiTag(multi_tag.id());
 }
 

@@ -84,12 +84,6 @@ ndsize_t BlockHDF5::sourceCount() const {
 
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
-    if (name.empty()) {
-        throw EmptyString("name");
-    }
-    if (hasSource(name)) {
-        throw DuplicateName("createSource");
-    }
     string id = util::createId();
     boost::optional<Group> g = source_group(true);
 
@@ -127,9 +121,6 @@ bool BlockHDF5::deleteSource(const string &name_or_id) {
 
 shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string &type,
                                       const std::vector<double> &position) {
-    if (hasTag(name)) {
-        throw DuplicateName("createTag");
-    }
     string id = util::createId();
     boost::optional<Group> g = tag_group(true);
 
@@ -224,12 +215,6 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
                                                   const NDSize &shape) {
-    if (name.empty()) {
-        throw EmptyString("Block::createDataArray: empty name provided!");
-    }
-    if (hasDataArray(name)) {
-        throw DuplicateName("createDataArray");
-    }
     string id = util::createId();
     boost::optional<Group> g = data_array_group(true);
 
@@ -238,7 +223,6 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
 
     // now create the actual H5::DataSet
     da->createData(data_type, shape);
-
     return da;
 }
 
@@ -263,12 +247,6 @@ bool BlockHDF5::deleteDataArray(const string &name_or_id) {
 
 shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const std::string &type,
                                                 const DataArray &positions) {
-    if (hasMultiTag(name)) {
-        throw DuplicateName("createMultiTag");
-    }
-    if (!positions) {
-        throw UninitializedEntity();
-    }
     string id = util::createId();
     boost::optional<Group> g = multi_tag_group(true);
 

@@ -26,20 +26,13 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
+#include <nix/None.hpp>
 
 namespace nix {
     
 enum class DimensionType : unsigned int;
 
 namespace util {
-
-/**
- * @brief Checks the given string is valid as an entity name. Will
- * throw an exception if the name is invalid.
- *
- * @param name   The name.
- */
-NIXAPI void checkEntityName(const std::string &name);
 
 /**
  * @brief Checks name_or_id argument often passed to methods.
@@ -51,12 +44,17 @@ NIXAPI void checkEntityName(const std::string &name);
 NIXAPI void checkNameOrId(const std::string &name_or_id);
 
 /**
- *  @brief Tiny helper that throws nix::EmptyString exception
- *  if the passed string is indeed empty.
+ * @brief Helper that checks the entity passed as an argument to a method.
+ * Throws an exception if the entity is not initialized.
  *
- *  @param  str   The string.
+ * @param entity    The entity
  */
-NIXAPI void checkEntityType(const std::string &str);
+template <typename T> void checkEntityInput(const T &entity) {
+    if (!entity || entity == none) {
+        throw UninitializedEntity();
+    }
+}
+
 
 /**
  * @brief Remove blank spaces from the entire string
@@ -91,6 +89,31 @@ NIXAPI std::string nameSanitizer(const std::string &name);
  * @return true if name is legit, false otherwise
  */
 NIXAPI bool nameCheck(const std::string &name);
+
+/**
+ * @brief Checks the given string is valid as an entity name. Will
+ * throw an exception if the name is invalid.
+ *
+ * @param name   The name.
+ */
+NIXAPI void checkEntityName(const std::string &name);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ */
+NIXAPI void checkEntityType(const std::string &str);
+
+/**
+ * @brief Helper that checks the name and the type strings that should be used to
+ * create a new entity.
+ *
+ * @param name  The name string.
+ * @param type  The type string.
+ */
+NIXAPI void checkEntityNameAndType(const std::string &name, const std::string &type);
 
 /**
  * @brief Generates an ID-String.

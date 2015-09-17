@@ -13,7 +13,6 @@
 #include <nix/base/IFile.hpp>
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>

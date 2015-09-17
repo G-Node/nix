@@ -337,6 +337,17 @@ bool looksLikeUUID(const std::string &id) {
     return id.size() == 36 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] =='-';
 }
 
+void checkEntityNameAndType(const std::string &name, const std::string &type) {
+    util::checkEntityName(name);
+    util::checkEntityType(type);
+}
+
+void checkEntityType(const std::string &str) {
+    if (str.empty()) {
+        throw EmptyString("String provided for entity type is empty!");
+    }
+}
+
 void checkEntityName(const std::string &name) {
     if (name.empty()) {
         throw EmptyString("String provided for entity name is empty!");
@@ -346,14 +357,10 @@ void checkEntityName(const std::string &name) {
     }
 }
 
-void checkEntityType(const std::string &str) {
-    if (str.empty()) {
-        throw EmptyString("String provided for entity type is empty!");
-    }
-}
-
 void checkNameOrId(const std::string &name_or_id) {
-
+    if (name_or_id.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
 }
 
 } // namespace util
