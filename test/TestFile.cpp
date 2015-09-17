@@ -77,7 +77,7 @@ void TestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
-    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), UninitializedEntity);
     
     vector<string> ids;
     for (const auto &name : names) {
@@ -110,7 +110,7 @@ void TestFile::testBlockAccess() {
 
         file_open.deleteBlock(id);
     }
-    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), UninitializedEntity);
     b = file_open.createBlock("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getBlock(0));
     CPPUNIT_ASSERT_THROW(file_open.getBlock(file_open.blockCount()), nix::OutOfBounds);
@@ -127,7 +127,7 @@ void TestFile::testSectionAccess() {
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(file_open.hasSection(s), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(file_open.hasSection(s), UninitializedEntity);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -149,7 +149,7 @@ void TestFile::testSectionAccess() {
 
         file_open.deleteSection(*it);
     }
-    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), UninitializedEntity);
     s = file_open.createSection("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
     CPPUNIT_ASSERT_THROW(file_open.getSection(file_open.sectionCount()), nix::OutOfBounds);
