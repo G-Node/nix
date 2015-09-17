@@ -13,8 +13,7 @@ using namespace std;
 namespace nix {
 
 Source Block::createSource(const std::string &name, const std::string &type){
-    util::checkEntityName(name);
-    util::checkEntityType(type);
+    util::checkEntityNameAndType(name, type);
     if (backend()->hasSource(name)) {
         throw DuplicateName("createSource");
     }
@@ -54,8 +53,7 @@ bool Block::deleteSource(const Source &source) {
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
                                  const NDSize &shape) {
-    util::checkEntityName(name);
-    util::checkEntityType(type);
+    util::checkEntityNameAndType(name, type);
     if (backend()->hasDataArray(name)){
         throw DuplicateName("create DataArray");
     }
@@ -80,8 +78,7 @@ bool Block::deleteDataArray(const DataArray &data_array) {
 }
 
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
-    util::checkEntityName(name);
-    util::checkEntityType(type);
+    util::checkEntityNameAndType(name, type);
     if (backend()->hasTag(name)){
         throw DuplicateName("create Tag");
     }
@@ -106,8 +103,7 @@ bool Block::deleteTag(const Tag &tag) {
 }
 
 MultiTag Block::createMultiTag(const std::string &name, const std::string &type, const DataArray &positions) {
-    util::checkEntityName(name);
-    util::checkEntityType(type);
+    util::checkEntityNameAndType(name, type);
     util::checkEntityInput(positions);
     if (backend()->hasMultiTag(name)) {
         throw DuplicateName("createMultiTag");
