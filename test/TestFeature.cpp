@@ -72,7 +72,7 @@ void TestFeature::testData() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(f.data(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
                                            DataType::Double, nix::NDSize({ 0 }));
