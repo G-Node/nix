@@ -127,7 +127,7 @@ void TestMultiTag::testCreateRemove() {
     CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
     mtag = block.createMultiTag("test", "test", positions);
     mtag.extents(positions);
-    CPPUNIT_ASSERT_THROW(mtag.positions(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(mtag.positions(a), UninitializedEntity);
     CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
     CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
     CPPUNIT_ASSERT(!mtag.extents());
@@ -175,7 +175,7 @@ void TestMultiTag::testReferences(){
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
-    CPPUNIT_ASSERT_THROW(dt.hasReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(dt.hasReference(a), UninitializedEntity);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestMultiTag::testReference: Counts do not match!";
@@ -183,7 +183,7 @@ void TestMultiTag::testReferences(){
     
     dt.addReference(da_1);
     dt.addReference(da_2);
-    CPPUNIT_ASSERT_THROW(dt.addReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(dt.addReference(a), UninitializedEntity);
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
     CPPUNIT_ASSERT(dt.hasReference(da_1));
     CPPUNIT_ASSERT(dt.hasReference(da_2));
@@ -238,8 +238,8 @@ void TestMultiTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
