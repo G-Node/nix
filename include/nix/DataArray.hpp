@@ -141,9 +141,7 @@ public:
      *
      * @param label     The label of the data array.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Deleter for the label attribute.

@@ -55,13 +55,8 @@ boost::optional<std::string> DataArrayHDF5::label() const {
 
 
 void DataArrayHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    }
-    else {
-        group().setAttr("label", label);
-        forceUpdatedAt();
-    }
+    group().setAttr("label", label);
+    forceUpdatedAt();
 }
 
 
@@ -85,13 +80,8 @@ boost::optional<std::string> DataArrayHDF5::unit() const {
 
 
 void DataArrayHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    }
-    else {
-        group().setAttr("unit", unit);
-        forceUpdatedAt();
-    }
+    group().setAttr("unit", unit);
+    forceUpdatedAt();
 }
 
 
