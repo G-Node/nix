@@ -128,9 +128,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Removes the label from a dimension.
@@ -550,9 +548,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Remove the label of the dimension.
