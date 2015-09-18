@@ -107,6 +107,16 @@ NIXAPI void checkEntityName(const std::string &name);
 NIXAPI void checkEntityType(const std::string &str);
 
 /**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ *  @param  field_name   A string stating for which purpose the string should be used.
+ *                       Will be part of the exception message.
+ */
+NIXAPI void checkEmptyString(const std::string &str, const std::string &field_name = "");
+
+/**
  * @brief Helper that checks the name and the type strings that should be used to
  * create a new entity.
  *
