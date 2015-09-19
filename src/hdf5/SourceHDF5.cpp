@@ -70,15 +70,8 @@ ndsize_t SourceHDF5::sourceCount() const {
 
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
-    if (name.empty()) {
-        throw EmptyString("name");
-    }
-    if (hasSource(name)) {
-        throw DuplicateName("createSource");
-    }
     string id = util::createId();
     boost::optional<Group> g = source_group(true);
-
 
     Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), group, id, type, name);
