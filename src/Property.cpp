@@ -13,6 +13,7 @@
 namespace nix {
 
 void Property::unit(const std::string &unit) {
+    util::checkEmptyString(unit, "unit");
     util::deblankString(unit);
     if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
@@ -34,6 +35,16 @@ int Property::compare(const Property &other) const {
         cmp = id().compare(other.id());
     }
     return cmp;
+}
+
+void Property::definition(const std::string &definition) {
+    util::checkEmptyString(definition, "definition");
+    backend()->definition(definition);
+}
+
+void Property::mapping(const std::string &mapping) {
+    util::checkEmptyString(mapping, "mapping");
+        backend()->mapping(mapping);
 }
 
 } // namespace nix

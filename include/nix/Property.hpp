@@ -115,9 +115,7 @@ public:
      *
      * @param definition The definition of the property.
      */
-    void definition(const std::string &definition) {
-        backend()->definition(definition);
-    }
+    void definition(const std::string &definition);
 
     /**
      * @brief Getter for the definition of the property.
@@ -147,9 +145,7 @@ public:
      *
      * @param mapping   The mapping information.
      */
-    void mapping(const std::string &mapping) {
-        backend()->mapping(mapping);
-    }
+    void mapping(const std::string &mapping);
 
     /**
      * @brief Getter for the mapping information stored in this Property.
