@@ -357,6 +357,12 @@ void checkEntityName(const std::string &name) {
     }
 }
 
+void checkEmptyString(const std::string & str, const std::string &field_name) {
+    if (str.empty()) {
+        throw EmptyString("String provided is empty! " + field_name);
+    }
+}
+
 void checkNameOrId(const std::string &name_or_id) {
     if (name_or_id.empty()) {
         throw EmptyString("String provided for entity name is empty!");

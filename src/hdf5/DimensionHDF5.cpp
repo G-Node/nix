@@ -144,12 +144,8 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    } else {
-        group.setAttr("label", label);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -173,12 +169,8 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        group.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -323,9 +315,6 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    }
     Group g = redirectGroup();
     g.setAttr("label", label);
     // NOTE: forceUpdatedAt() not possible since not reachable from here
@@ -354,13 +343,9 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        Group g = redirectGroup();
-        g.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    Group g = redirectGroup();
+    g.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 

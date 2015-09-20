@@ -121,12 +121,8 @@ string PropertyHDF5::name() const {
 
 
 void PropertyHDF5::definition(const string &definition) {
-    if (definition.empty()) {
-        throw EmptyString("definition");
-    } else {
         dataset().setAttr("definition", definition);
         forceUpdatedAt();
-    }
 }
 
 
@@ -155,9 +151,6 @@ DataType PropertyHDF5::dataType() const {
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    }
     dataset().setAttr("mapping", mapping);
     forceUpdatedAt();
 }
@@ -182,9 +175,6 @@ void PropertyHDF5::mapping(const nix::none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    }
     dataset().setAttr("unit", unit);
     forceUpdatedAt();
 }

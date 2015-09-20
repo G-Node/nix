@@ -69,9 +69,6 @@ void FeatureHDF5::linkType(LinkType link_type) {
 
 
 void FeatureHDF5::data(const std::string &name_or_id) {
-    if (name_or_id.empty()) {
-        throw EmptyString("data(id)");
-    }
     if (!block->hasDataArray(name_or_id)) {
         throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
     }

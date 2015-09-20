@@ -70,8 +70,6 @@ shared_ptr<IDataArray> MultiTagHDF5::positions() const {
 
 
 void MultiTagHDF5::positions(const string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("positions");
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
@@ -111,8 +109,6 @@ shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
 
 
 void MultiTagHDF5::extents(const string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("extents");
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))

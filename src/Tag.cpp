@@ -32,25 +32,33 @@ void Tag::units(const std::vector<std::string> &units) {
 
 
 bool Tag::hasReference(const DataArray &reference) const {
-    if (reference == none) {
-        throw std::runtime_error("Tag::hasReference: Emty DataArray entity given!");
-    }
+    util::checkEntityInput(reference);
     return backend()->hasReference(reference.id());
 }
 
 
-void Tag::addReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("Tag::addReference: Empty DataArray entity given!");
+DataArray Tag::getReference(size_t index) const {
+    if(index >= backend()->referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
     }
+    return backend()->getReference(index);
+}
+
+
+void Tag::addReference(const DataArray &reference) {
+    util::checkEntityInput(reference);
     backend()->addReference(reference.id());
 }
 
 
+void Tag::addReference(const std::string &id) {
+    util::checkNameOrId(id);
+    backend()->addReference(id);
+}
+
+
 bool Tag::removeReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("Tag::removeReference: Empty DataArray entity given!");
-    }
+    util::checkEntityInput(reference);
     return backend()->removeReference(reference.id());
 }
 
@@ -62,10 +70,9 @@ std::vector<DataArray> Tag::references(const util::Filter<DataArray>::type &filt
                                   filter);
 }
 
+
 bool Tag::hasFeature(const Feature &feature) const {
-    if (feature == none) {
-        throw std::runtime_error("Tag::hasFeature: Empty DataArray entity given!");
-    }
+    util::checkEntityInput(feature);
     return backend()->hasFeature(feature.id());
 }
 
@@ -78,28 +85,41 @@ std::vector<Feature> Tag::features(const util::Filter<Feature>::type &filter) co
 }
 
 
-Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
-    if (data == none) {
-        throw std::runtime_error("Tag::createFeature: Empty DataArray entity given!");
+Feature Tag::getFeature(const std::string &id) const {
+    util::checkNameOrId(id);
+    return backend()->getFeature(id);
+}
+
+
+Feature Tag::getFeature(size_t index) const {
+    if (index >= backend()->featureCount()) {
+        throw OutOfBounds("No feature at given index", index);
     }
+    return backend()->getFeature(index);
+}
+
+
+Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
+    util::checkEntityInput(data);
     return backend()->createFeature(data.id(), link_type);
 }
 
 
 bool Tag::deleteFeature(const Feature &feature) {
-    if (feature == none) {
-        throw std::runtime_error("Tag::deleteFeature: Empty Feature entity given!");
-    }
+    util::checkEntityInput(feature);
     return backend()->deleteFeature(feature.id());
 }
+
 
 DataView Tag::retrieveData(size_t reference_index) const {
     return util::retrieveData(*this, reference_index);
 }
 
+
 DataView Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }
+
 
 std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
     out << "Tag: {name = " << ent.name();
@@ -107,4 +127,3 @@ std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
-

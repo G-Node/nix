@@ -238,9 +238,7 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getReference(size_t index) const {
-        return backend()->getReference(index);
-    }
+    DataArray getReference(size_t index) const;
 
     /**
      * @brief Add a DataArray to the list of referenced data of the tag.
@@ -254,9 +252,7 @@ public:
      *
      * @param id        The id of the DataArray to add.
      */
-    void addReference(const std::string &id) {
-        backend()->addReference(id);
-    }
+    void addReference(const std::string &id);
 
     /**
      * @brief Remove a DataArray from the list of referenced data of the tag.
@@ -361,9 +357,7 @@ public:
      * @return The feature with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    Feature getFeature(const std::string &id) const {
-        return backend()->getFeature(id);
-    }
+    Feature getFeature(const std::string &id) const;
 
     /**
      * @brief Retrieves a specific feature from the tag.
@@ -372,9 +366,7 @@ public:
      *
      * @return The feature with the specified index.
      */
-    Feature getFeature(size_t index) const {
-        return backend()->getFeature(index);
-    }
+    Feature getFeature(size_t index) const;
 
     /**
      * @brief Get all Features of this tag.

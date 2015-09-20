@@ -267,9 +267,9 @@ void TestTag::testReferences() {
     }
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
     DataArray a;
-    CPPUNIT_ASSERT_THROW(tag.hasReference(a), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.addReference(a), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.hasReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.addReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.removeReference(a), UninitializedEntity);
 }
 
 
@@ -277,9 +277,9 @@ void TestTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
