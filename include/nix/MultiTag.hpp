@@ -254,9 +254,7 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getReference(size_t index) const {
-        return backend()->getReference(index);
-    }
+    DataArray getReference(size_t index) const;
 
     /**
      * @brief Add a new DataArray to the list of referenced data.

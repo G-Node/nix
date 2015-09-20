@@ -64,6 +64,14 @@ bool MultiTag::hasReference(const DataArray &reference) const {
 }
 
 
+DataArray MultiTag::getReference(size_t index) const {
+    if(index >= backend()->referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
+    }
+    return backend()->getReference(index);
+}
+
+
 void MultiTag::addReference(const DataArray &reference) {
     util::checkEntityInput(reference);
     backend()->addReference(reference.id());
