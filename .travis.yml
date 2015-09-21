@@ -1,31 +1,52 @@
 language: cpp
 
+sudo: false
+
 compiler:
   - gcc
   - clang
 
+os:
+  - linux
+  - osx
+
+matrix:
+  exclude:
+    - os: osx
+      compiler: gcc
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - kalakris-cmake
+      - boost-latest
+    packages:
+      - libcppunit-dev
+      - libboost1.55-all-dev
+      - libhdf5-serial-dev
+      - valgrind
+      - cmake
+      - g++-4.8
+
 before_install:
   - if [[ "$CXX" == "g++" ]]; then
       export CTEST_ARGS=-V;
-      sudo pip install cpp-coveralls;
+      pip install --user cpp-coveralls;
     else
       export CTEST_ARGS=-VV;
     fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update;
+      brew install cmake boost cppunit homebrew/science/hdf5;
+      brew --env;
+    fi
 
 install:
-  - sudo add-apt-repository ppa:boost-latest/ppa -y
-  - sudo add-apt-repository ppa:gnode/pandora -y
-  - sudo apt-get update -qq -y
-  - sudo apt-get install -q libcppunit-dev libboost1.54-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 valgrind cmake
   - if [[ "$CXX" == "g++" ]]; then
-      sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y;
-      sudo apt-get update -qq -y;
-      sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev;
-      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100;
-      sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 100;
-      sudo update-alternatives --config gcc;
-      sudo update-alternatives --config g++;
-      g++ --version;
+      export CXX="g++-4.8";
+      export COMPILER="g++";
+      $CXX --version;
     else
       clang --version;
     fi
@@ -34,7 +55,7 @@ script:
   - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
 
 after_success:
-  - if [[ "$CXX" == "g++" ]]; then
+  - if [[ "$COMPILER" == "g++" ]]; then
       coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null ;
     fi
 
