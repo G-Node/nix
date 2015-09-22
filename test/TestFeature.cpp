@@ -86,12 +86,12 @@ void TestFeature::testData() {
 void TestFeature::test_data(Block &b, Tag &t, DataArray &da) {
     DataArray a;
     Feature f;
-    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(t.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
-    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
-    DataArray da_2 = block.createDataArray("array2", "Test",
-                                           DataType::Double, nix::NDSize({ 0 }));
-    CPPUNIT_ASSERT(rp.data().id() == data_array.id());
+    Feature rp = t.createFeature(da, nix::LinkType::Tagged);
+    DataArray da_2 = b.createDataArray("array2", "Test",
+                                       DataType::Double, nix::NDSize({ 0 }));
+    CPPUNIT_ASSERT(rp.data().id() == da.id());
     rp.data(da_2);
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     b.deleteDataArray(da_2.id());
