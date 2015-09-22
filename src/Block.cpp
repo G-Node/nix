@@ -40,6 +40,13 @@ bool Block::hasSource(const Source &source) const {
     return backend()->hasSource(source.id());
 }
 
+Source Block::getSource(ndsize_t index) const {
+    if (index >= backend()->sourceCount()) {
+        throw OutOfBounds("Block::getSource: index is out of bounds!");
+    }
+    return backend()->getSource(index);
+}
+
 std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) const {
     auto f = [this](ndsize_t i) { return getSource(i); };
     return getEntities<Source>(f, sourceCount(), filter);
@@ -95,6 +102,13 @@ bool Block::hasTag(const Tag &tag) const {
     return backend()->hasTag(tag.id());
 }
 
+Tag Block::getTag(ndsize_t index) const {
+    if (index >= backend()->tagCount()) {
+        throw nix::OutOfBounds("Block::getTag: Index is out of Bounds!");
+    }
+    return backend()->getTag(index);
+}
+
 std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getTag(i); };
     return getEntities<Tag>(f, tagCount(), filter);
@@ -117,6 +131,13 @@ MultiTag Block::createMultiTag(const std::string &name, const std::string &type,
         throw DuplicateName("createMultiTag");
     }
     return backend()->createMultiTag(name, type, positions);
+}
+
+MultiTag Block::getMultiTag(ndsize_t index) const {
+    if (index >= backend()->multiTagCount()) {
+        throw nix::OutOfBounds("Block::getMultiTag: index is out of bounds!");
+    }
+    return backend()->getMultiTag(index);
 }
 
 bool Block::hasMultiTag(const MultiTag &multi_tag) const {
