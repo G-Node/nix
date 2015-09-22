@@ -325,3 +325,10 @@ Property Section::createProperty(const std::string &name, const Value &value) {
     }
     return backend()->createProperty(name, value);
 }
+
+Section Section::getSection(ndsize_t index) const {
+    if (index >= backend()->sectionCount()) {
+        throw OutOfBounds("Section::getSection: index is out of bounds!");
+    }
+    return backend()->getSection(index);
+}
