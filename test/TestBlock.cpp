@@ -85,12 +85,8 @@ void TestBlock::testDefinition() {
 
 
 void TestBlock::testMetadataAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_metadata_access(file, block, section);
-    cerr << "\t... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_metadata_access(file_fs, block_fs, section_fs);
-    cerr << "... done!\n";
 }
 
 
@@ -111,24 +107,20 @@ void TestBlock::test_metadata_access(File &f, Block &b, Section &s) {
 
 
 void TestBlock::testSourceAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_source_access(file, block);
-    cerr << "\t... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_source_access(file_fs, block_fs);
-    cerr << "... done!\n";
 }
 
 void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
 
-    CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
-    CPPUNIT_ASSERT(block.sourceCount() == 0);
-    CPPUNIT_ASSERT(block.sources().size() == 0);
-    CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
-    CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
-    CPPUNIT_ASSERT(b.getSource(b.sourceCount() + 10) == nullptr);
+    CPPUNIT_ASSERT_THROW(b.hasSource(s), UninitializedEntity);
+    CPPUNIT_ASSERT(b.sourceCount() == 0);
+    CPPUNIT_ASSERT(b.sources().size() == 0);
+    CPPUNIT_ASSERT(b.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT(!b.hasSource("invalid_id"));
+    CPPUNIT_ASSERT_THROW(b.getSource(b.sourceCount() + 10), OutOfBounds);
 
     vector<string> ids;
     for (const auto &name : names) {
@@ -164,12 +156,8 @@ void TestBlock::test_source_access(nix::File &f, nix::Block &b) {
 }
 
 void TestBlock::testDataArrayAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_data_array_access(block, Implementation::Hdf5);
-    cerr << "\t... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_data_array_access(block_fs, Implementation::FileSys);
-    cerr << "... done!\n";
 }
 
 void TestBlock::test_data_array_access(Block &b, Implementation impl) {
@@ -197,7 +185,7 @@ void TestBlock::test_data_array_access(Block &b, Implementation impl) {
     //     CPPUNIT_ASSERT_THROW(b.getDataArray(b.dataArrayCount()), nix::hdf5::H5Exception);
 
     CPPUNIT_ASSERT(b.hasDataArray(data_array));
-    CPPUNIT_ASSERT_THROW(block.hasDataArray(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(b.hasDataArray(a), UninitializedEntity);
     CPPUNIT_ASSERT(b.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(b.dataArrays().size() == names.size());
 
@@ -226,20 +214,16 @@ void TestBlock::test_data_array_access(Block &b, Implementation impl) {
 
         b.deleteDataArray(*it);
     }
-    CPPUNIT_ASSERT_THROW(block.deleteDataArray(a), UninitializedEntity);
-    CPPUNIT_ASSERT(block.dataArrayCount() == 0);
-    CPPUNIT_ASSERT(block.dataArrays().size() == 0);
-    CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(b.deleteDataArray(a), UninitializedEntity);
+    CPPUNIT_ASSERT(b.dataArrayCount() == 0);
+    CPPUNIT_ASSERT(b.dataArrays().size() == 0);
+    CPPUNIT_ASSERT(b.getDataArray("invalid_id") == false);
 }
 
 
 void TestBlock::testTagAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_tag_access(block, Implementation::Hdf5);
-    cerr << "\t... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_tag_access(block_fs, Implementation::FileSys);
-    cerr << "... done!\n";
 }
 
 void TestBlock::test_tag_access(Block &b, Implementation impl) {
@@ -255,10 +239,10 @@ void TestBlock::test_tag_access(Block &b, Implementation impl) {
                                          nix::NDSize({ 0 })));
     }
 
-    CPPUNIT_ASSERT(block.tagCount() == 0);
-    CPPUNIT_ASSERT(block.tags().size() == 0);
-    CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(block.hasTag(t), UninitializedEntity);
+    CPPUNIT_ASSERT(b.tagCount() == 0);
+    CPPUNIT_ASSERT(b.tags().size() == 0);
+    CPPUNIT_ASSERT(b.getTag("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(b.hasTag(t), UninitializedEntity);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
@@ -270,15 +254,10 @@ void TestBlock::test_tag_access(Block &b, Implementation impl) {
     }
     CPPUNIT_ASSERT_THROW(b.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
                          DuplicateName);
-    if (impl == Implementation::FileSys) {
-        CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}), EmptyString);
-        CPPUNIT_ASSERT_THROW(b.getTag(b.tagCount()), OutOfBounds);
-    }
-    else if (impl == Implementation::Hdf5) {
-        CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}), nix::hdf5::H5Exception);
-        // CPPUNIT_ASSERT_THROW(b.getTag(b.tagCount()), nix::hdf5::H5Exception);
-    }
 
+    CPPUNIT_ASSERT_THROW(b.createTag("", "segment", {0.0, 2.0, 3.4}), EmptyString);
+    CPPUNIT_ASSERT_THROW(b.getTag(b.tagCount()), OutOfBounds);
+    
     CPPUNIT_ASSERT(b.tagCount() == names.size());
     CPPUNIT_ASSERT(b.tags().size() == names.size());
 
@@ -290,24 +269,20 @@ void TestBlock::test_tag_access(Block &b, Implementation impl) {
         b.deleteTag(*it);
     }
 
-    tag = block.createTag("test", "test", {0.0});
-    CPPUNIT_ASSERT(block.hasTag(tag));
-    CPPUNIT_ASSERT_NO_THROW(block.deleteTag(tag));
-    CPPUNIT_ASSERT_THROW(block.deleteTag(t), UninitializedEntity);
+    tag = b.createTag("test", "test", {0.0});
+    CPPUNIT_ASSERT(b.hasTag(tag));
+    CPPUNIT_ASSERT_NO_THROW(b.deleteTag(tag));
+    CPPUNIT_ASSERT_THROW(b.deleteTag(t), UninitializedEntity);
 
-    CPPUNIT_ASSERT(block.tagCount() == 0);
-    CPPUNIT_ASSERT(block.tags().size() == 0);
-    CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
+    CPPUNIT_ASSERT(b.tagCount() == 0);
+    CPPUNIT_ASSERT(b.tags().size() == 0);
+    CPPUNIT_ASSERT(b.getTag("invalid_id") == false);
 }
 
 
 void TestBlock::testMultiTagAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_multi_tag_access(block, Implementation::Hdf5);
-    cerr << "\t... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_multi_tag_access(block_fs, Implementation::FileSys);
-    cerr << "... done!\n";
 }
 
 void TestBlock::test_multi_tag_access(Block &b, Implementation impl) {
@@ -319,10 +294,10 @@ void TestBlock::test_multi_tag_access(Block &b, Implementation impl) {
                                             DataType::Double,
                                             nix::NDSize({ 3, 4, 2 }));
 
-    CPPUNIT_ASSERT(block.multiTagCount() == 0);
-    CPPUNIT_ASSERT(block.multiTags().size() == 0);
-    CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), UninitializedEntity);
+    CPPUNIT_ASSERT(b.multiTagCount() == 0);
+    CPPUNIT_ASSERT(b.multiTags().size() == 0);
+    CPPUNIT_ASSERT(b.getMultiTag("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(b.hasMultiTag(m), UninitializedEntity);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -333,18 +308,8 @@ void TestBlock::test_multi_tag_access(Block &b, Implementation impl) {
     }
     CPPUNIT_ASSERT_THROW(b.createMultiTag(names[0], "segment", positions),
                          DuplicateName);
-    if (impl == Implementation::FileSys) {
-        CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions), EmptyString);
-        CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), OutOfBounds);
-    }
-    else if (impl == Implementation::Hdf5) {
-        CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions), nix::hdf5::H5Exception);
-        // CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), nix::hdf5::H5Exception);
-    }
-
-    // CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions),
-    //                      EmptyString);
-    //CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(b.createMultiTag("", "segment", positions), EmptyString);
+    CPPUNIT_ASSERT_THROW(b.getMultiTag(b.multiTagCount()), OutOfBounds);
 
     CPPUNIT_ASSERT(b.multiTagCount() == names.size());
     CPPUNIT_ASSERT(b.multiTags().size() == names.size());
@@ -356,13 +321,14 @@ void TestBlock::test_multi_tag_access(Block &b, Implementation impl) {
 
         b.deleteMultiTag(*it);
     }
-    mtag = block.createMultiTag("test", "test", positions);
-    CPPUNIT_ASSERT(block.hasMultiTag(mtag));
-    CPPUNIT_ASSERT_THROW(block.deleteMultiTag(m), UninitializedEntity);
-    CPPUNIT_ASSERT_NO_THROW(block.deleteMultiTag(mtag));
-    CPPUNIT_ASSERT(block.multiTagCount() == 0);
-    CPPUNIT_ASSERT(block.multiTags().size() == 0);
-    CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
+
+    mtag = b.createMultiTag("test", "test", positions);
+    CPPUNIT_ASSERT(b.hasMultiTag(mtag));
+    CPPUNIT_ASSERT_THROW(b.deleteMultiTag(m), UninitializedEntity);
+    CPPUNIT_ASSERT_NO_THROW(b.deleteMultiTag(mtag));
+    CPPUNIT_ASSERT(b.multiTagCount() == 0);
+    CPPUNIT_ASSERT(b.multiTags().size() == 0);
+    CPPUNIT_ASSERT(b.getMultiTag("invalid_id") == false);
 }
 
 
