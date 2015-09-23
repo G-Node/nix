@@ -94,12 +94,8 @@ void TestFile::testUpdatedAt() {
 
 
 void TestFile::testBlockAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_block_access(file_open);
-    cerr << "... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_block_access(file_fs);
-    cerr << "... done!\n";
 }
 
 
@@ -107,11 +103,11 @@ void TestFile::test_block_access(nix::File &f) {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
     Block b;
 
-    CPPUNIT_ASSERT(file_open.blockCount() == 0);
-    CPPUNIT_ASSERT(file_open.blocks().size() == 0);
-    CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
-    CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
-    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), UninitializedEntity);
+    CPPUNIT_ASSERT(f.blockCount() == 0);
+    CPPUNIT_ASSERT(f.blocks().size() == 0);
+    CPPUNIT_ASSERT(f.getBlock("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, f.hasBlock("invalid_id"));
+    CPPUNIT_ASSERT_THROW(f.hasBlock(b), UninitializedEntity);
     
     vector<string> ids;
     for (const auto &name : names) {
@@ -144,7 +140,7 @@ void TestFile::test_block_access(nix::File &f) {
 
         f.deleteBlock(id);
     }
-    CPPUNIT_ASSERT_THROW(f.deleteBlock(b), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(f.deleteBlock(b), UninitializedEntity);
     b = f.createBlock("test","test");
     CPPUNIT_ASSERT_NO_THROW(f.getBlock(0));
     CPPUNIT_ASSERT_THROW(f.getBlock(f.blockCount()), nix::OutOfBounds);
@@ -156,12 +152,8 @@ void TestFile::test_block_access(nix::File &f) {
 
 
 void TestFile::testSectionAccess() {
-    cerr << "\n\t Backend: HDF5\t";
     test_section_access(file_open);
-    cerr << "... done!\n";
-    cerr << "\t Backend: filesystem\t";
     test_section_access(file_fs);
-    cerr << "... done!\n";
 }
 
 
@@ -194,7 +186,7 @@ void TestFile::test_section_access(File &f) {
         f.deleteSection(*it);
     }
 
-    CPPUNIT_ASSERT_THROW(f.deleteSection(s), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(f.deleteSection(s), UninitializedEntity);
     s = f.createSection("test","test");
     CPPUNIT_ASSERT_NO_THROW(f.getSection(0));
     CPPUNIT_ASSERT_THROW(f.getSection(f.sectionCount()), nix::OutOfBounds);

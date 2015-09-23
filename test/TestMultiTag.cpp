@@ -157,11 +157,11 @@ void TestMultiTag::test_create_remove(Block &b, DataArray &p) {
 
     DataArray a;
     MultiTag mtag;
-    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
-    mtag = block.createMultiTag("test", "test", positions);
-    mtag.extents(positions);
+    CPPUNIT_ASSERT_THROW(mtag = b.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = b.createMultiTag("test", "test", p);
+    mtag.extents(p);
     CPPUNIT_ASSERT_THROW(mtag.positions(a), UninitializedEntity);
-    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
+    CPPUNIT_ASSERT(mtag.extents().id() == p.id());
     CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
     CPPUNIT_ASSERT(!mtag.extents());
 }
@@ -289,17 +289,16 @@ void TestMultiTag::test_features(MultiTag &mt, DataArray &pos) {
     DataArray a;
     Feature f;
 
-    CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
+    CPPUNIT_ASSERT(mt.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(mt.hasFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(mt.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(mt.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
     
-    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT_NO_THROW(f = mt.createFeature(pos, nix::LinkType::Indexed));
     CPPUNIT_ASSERT(mt.hasFeature(f));
-    CPPUNIT_ASSERT(tag.featureCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
-    CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT(mt.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(mt.deleteFeature(f));
+    CPPUNIT_ASSERT(mt.featureCount() == 0);
 }
 
 

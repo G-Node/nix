@@ -197,14 +197,8 @@ void TestSection::test_section_access(Section &s, Implementation impl) {
     CPPUNIT_ASSERT_THROW(s.createSection(names[0], "metadata"),
                          DuplicateName);
     CPPUNIT_ASSERT_THROW(s.hasSection(null), runtime_error);
-    if (impl == Implementation::FileSys) {
-        CPPUNIT_ASSERT_THROW(s.getSection(s.sectionCount()), OutOfBounds);
-        CPPUNIT_ASSERT_THROW(s.createSection("", "some type"), EmptyString);
-
-    } else {
-        CPPUNIT_ASSERT_THROW(s.getSection(s.sectionCount()), hdf5::H5Exception);
-        CPPUNIT_ASSERT_THROW(s.createSection("", "some type"), hdf5::H5Exception);
-    }
+    CPPUNIT_ASSERT_THROW(s.getSection(s.sectionCount()), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(s.createSection("", "some type"), EmptyString);
 
     for (auto id : ids) {
         Section child_section = s.getSection(id);
