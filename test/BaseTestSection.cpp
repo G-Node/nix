@@ -155,6 +155,8 @@ void BaseTestSection::testSectionAccess() {
 
     CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
     CPPUNIT_ASSERT_THROW(section.hasSection(null), runtime_error);
     if (impl == Implementation::FileSys) {
         CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);

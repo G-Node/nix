@@ -157,6 +157,7 @@ void BaseTestFile::testSectionAccess() {
 
         file.deleteSection(*it);
     }
+
     CPPUNIT_ASSERT(!file_open.deleteSection(s));
     s = file_open.createSection("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));

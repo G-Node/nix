@@ -97,11 +97,11 @@ void BaseTestMultiTag::testCreateRemove() {
 
     DataArray a;
     MultiTag mtag;
-    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
-    mtag = block.createMultiTag("test", "test", positions);
-    mtag.extents(positions);
+    CPPUNIT_ASSERT_THROW(mtag = b.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = b.createMultiTag("test", "test", p);
+    mtag.extents(p);
     CPPUNIT_ASSERT_THROW(mtag.positions(a), UninitializedEntity);
-    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
+    CPPUNIT_ASSERT(mtag.extents().id() == p.id());
     CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
     CPPUNIT_ASSERT(!mtag.extents());
 }
