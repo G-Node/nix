@@ -8,13 +8,12 @@
 
 #include <nix/file/DimensionFS.hpp>
 
-using namespace std;
 using namespace nix::base;
 
 namespace nix {
 namespace file {
 
-DimensionType dimensionTypeFromStr(const string &str) {
+DimensionType dimensionTypeFromStr(const std::string &str) {
     if (str == "set") {
         return DimensionType::Set;
     } else if (str == "range") {
@@ -22,7 +21,7 @@ DimensionType dimensionTypeFromStr(const string &str) {
     } else if (str == "sample") {
         return DimensionType::Sample;
     } else {
-        throw runtime_error("Not a valid dimension name");
+        throw std::runtime_error("Not a valid dimension name");
     }
 }
 
@@ -53,30 +52,30 @@ std::string dimensionTypeToStr(DimensionType dim) {
     }
 
     if (dimType.empty()) {
-        throw runtime_error("Not a valid dimension type");
+        throw std::runtime_error("Not a valid dimension type");
     }
 
     return dimType;
 }
 
 
-shared_ptr<IDimension> openDimensionFS(const string &loc, size_t index, FileMode mode) {
+std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index, FileMode mode) {
     AttributesFS attr(loc, mode);
-    string type_name;
+    std::string type_name;
     attr.get("dimension_type", type_name);
 
     DimensionType type = dimensionTypeFromStr(type_name);
-    shared_ptr<IDimension> dim;
+    std::shared_ptr<IDimension> dim;
 
     switch (type) {
         case DimensionType::Set:
-            dim = make_shared<SetDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SetDimensionFS>(loc, index, mode);
             break;
         case DimensionType::Range:
-            dim = make_shared<RangeDimensionFS>(loc, index, mode);
+            dim = std::make_shared<RangeDimensionFS>(loc, index, mode);
             break;
         case DimensionType::Sample:
-            dim = make_shared<SampledDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SampledDimensionFS>(loc, index, mode);
             break;
     }
     return dim;
@@ -85,7 +84,7 @@ shared_ptr<IDimension> openDimensionFS(const string &loc, size_t index, FileMode
 
 // Implementation of Dimension
 
-DimensionFS::DimensionFS(const string &loc, size_t index, FileMode mode)
+DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DirectoryWithAttributes(loc + boost::filesystem::path::preferred_separator + util::numToStr(index), mode)
 {
     this->index(index);
@@ -124,11 +123,11 @@ DimensionFS::~DimensionFS() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionFS::SampledDimensionFS(const string &loc, size_t index, FileMode mode)
+SampledDimensionFS::SampledDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode) {
 }
 
-SampledDimensionFS::SampledDimensionFS(const string &loc, size_t index, double sampling_interval, FileMode mode)
+SampledDimensionFS::SampledDimensionFS(const std::string &loc, size_t index, double sampling_interval, FileMode mode)
     : SampledDimensionFS(loc, index, mode)
 {
     setType();
@@ -143,7 +142,7 @@ DimensionType SampledDimensionFS::dimensionType() const {
 
 boost::optional<std::string> SampledDimensionFS::label() const {
     boost::optional<std::string> ret;
-    string label;
+    std::string label;
     if (hasAttr("label")) {
         getAttr("label", label);
         ret = label;
@@ -152,7 +151,7 @@ boost::optional<std::string> SampledDimensionFS::label() const {
 }
 
 
-void SampledDimensionFS::label(const string &label) {
+void SampledDimensionFS::label(const std::string &label) {
     if (label.empty()) {
         throw EmptyString("label");
     } else {
@@ -172,7 +171,7 @@ void SampledDimensionFS::label(const none_t t) {
 
 boost::optional<std::string> SampledDimensionFS::unit() const {
     boost::optional<std::string> ret;
-    string unit;
+    std::string unit;
     if (hasAttr("unit")) {
         getAttr("unit", unit);
         ret = unit;
@@ -181,7 +180,7 @@ boost::optional<std::string> SampledDimensionFS::unit() const {
 }
 
 
-void SampledDimensionFS::unit(const string &unit) {
+void SampledDimensionFS::unit(const std::string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
     } else {
@@ -244,7 +243,7 @@ SampledDimensionFS::~SampledDimensionFS() {}
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
 
-SetDimensionFS::SetDimensionFS(const string &loc, size_t index, FileMode mode)
+SetDimensionFS::SetDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode)
 {
     setType();
@@ -256,14 +255,14 @@ DimensionType SetDimensionFS::dimensionType() const {
 }
 
 
-vector<string> SetDimensionFS::labels() const {
-    vector<string> labels;
+std::vector<std::string> SetDimensionFS::labels() const {
+    std::vector<std::string> labels;
     getAttr("labels", labels);
     return labels;
 }
 
 
-void SetDimensionFS::labels(const vector<string> &labels) {
+void SetDimensionFS::labels(const std::vector<std::string> &labels) {
     setAttr("labels", labels);
 }
 
@@ -279,13 +278,13 @@ SetDimensionFS::~SetDimensionFS() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, FileMode mode)
+RangeDimensionFS::RangeDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode)
 {
 }
 
 
-RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, vector<double> ticks, FileMode mode)
+RangeDimensionFS::RangeDimensionFS(const std::string &loc, size_t index, std::vector<double> ticks, FileMode mode)
     : RangeDimensionFS(loc, index, mode)
 {
     setType();
@@ -293,7 +292,7 @@ RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, vector<doubl
 }
 
 
-RangeDimensionFS::RangeDimensionFS(const string &loc, size_t index, const DataArrayFS &array, FileMode mode)
+RangeDimensionFS::RangeDimensionFS(const std::string &loc, size_t index, const DataArrayFS &array, FileMode mode)
     :RangeDimensionFS(loc, index, mode)
 {
     setType();
@@ -318,7 +317,7 @@ DirectoryWithAttributes RangeDimensionFS::redirectGroup() const {
 
 boost::optional<std::string> RangeDimensionFS::label() const {
     boost::optional<std::string> ret;
-    string label;
+    std::string label;
     DirectoryWithAttributes d = redirectGroup();
     if (d.hasAttr("label")) {
         d.getAttr("label", label);
@@ -328,7 +327,7 @@ boost::optional<std::string> RangeDimensionFS::label() const {
 }
 
 
-void RangeDimensionFS::label(const string &label) {
+void RangeDimensionFS::label(const std::string &label) {
     if (label.empty()) {
         throw EmptyString("label");
     }
@@ -348,7 +347,7 @@ void RangeDimensionFS::label(const none_t t) {
 
 boost::optional<std::string> RangeDimensionFS::unit() const {
     boost::optional<std::string> ret;
-    string unit;
+    std::string unit;
     DirectoryWithAttributes d = redirectGroup();
     if (d.hasAttr("unit")) {
         d.getAttr("unit", unit);
@@ -358,7 +357,7 @@ boost::optional<std::string> RangeDimensionFS::unit() const {
 }
 
 
-void RangeDimensionFS::unit(const string &unit) {
+void RangeDimensionFS::unit(const std::string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
     }
@@ -381,8 +380,8 @@ bool RangeDimensionFS::alias() const {
 }
 
 
-vector<double> RangeDimensionFS::ticks() const {
-    vector<double> ticks;
+std::vector<double> RangeDimensionFS::ticks() const {
+    std::vector<double> ticks;
     /*
     Group g = redirectGroup();
     if (g.hasData("ticks")) {
@@ -399,7 +398,7 @@ vector<double> RangeDimensionFS::ticks() const {
 }
 
 
-void RangeDimensionFS::ticks(const vector<double> &ticks) {
+void RangeDimensionFS::ticks(const std::vector<double> &ticks) {
     /*
     Group g = redirectGroup();
     if (!alias()) {

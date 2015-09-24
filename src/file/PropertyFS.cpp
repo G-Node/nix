@@ -8,25 +8,20 @@
 
 #include <nix/file/PropertyFS.hpp>
 
-#include <nix/util/util.hpp>
-
-#include <iostream>
-
-using namespace std;
-using namespace nix::base;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
-PropertyFS::PropertyFS(const std::shared_ptr<base::IFile> &file, const boost::filesystem::path &loc)
+PropertyFS::PropertyFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc)
     : DirectoryWithAttributes(loc, file->fileMode())
 {
 }
 
 
-PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const boost::filesystem::path &loc, const string &id,
-                       const string &name, const DataType &dataType)
-    : DirectoryWithAttributes(loc / boost::filesystem::path(name), file->fileMode())
+PropertyFS::PropertyFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
+                       const std::string &name, const DataType &dataType)
+    : DirectoryWithAttributes(loc / bfs::path(name), file->fileMode())
 {
     if (name.empty()) {
         throw EmptyString("name");
@@ -43,20 +38,20 @@ PropertyFS::PropertyFS(const std::shared_ptr<IFile> &file, const boost::filesyst
 }
 
 
-string PropertyFS::id() const {
-    string t;
+std::string PropertyFS::id() const {
+    std::string t;
     if (hasAttr("entity_id")) {
         getAttr("entity_id", t);
     }
     else {
-        throw runtime_error("Entity has no id!");
+        throw std::runtime_error("Entity has no id!");
     }
     return t;
 }
 
 
 time_t PropertyFS::updatedAt() const {
-    string t;
+    std::string t;
     getAttr("updated_at", t);
     return util::strToTime(t);
 }
@@ -77,7 +72,7 @@ void PropertyFS::forceUpdatedAt() {
 
 
 time_t PropertyFS::createdAt() const {
-    string t;
+    std::string t;
     getAttr("created_at", t);
     return util::strToTime(t);
 }
@@ -96,8 +91,8 @@ void PropertyFS::forceCreatedAt(time_t t) {
 }
 
 
-string PropertyFS::name() const {
-    string name;
+std::string PropertyFS::name() const {
+    std::string name;
     if (hasAttr("name")) {
         getAttr("name", name);
         return name;
@@ -107,7 +102,7 @@ string PropertyFS::name() const {
 }
 
 
-void PropertyFS::definition(const string &definition) {
+void PropertyFS::definition(const std::string &definition) {
     if (definition.empty()) {
         throw EmptyString("definition");
     } else {
@@ -117,9 +112,9 @@ void PropertyFS::definition(const string &definition) {
 }
 
 
-boost::optional<string> PropertyFS::definition() const {
-    boost::optional<string> ret;
-    string definition;
+boost::optional<std::string> PropertyFS::definition() const {
+    boost::optional<std::string> ret;
+    std::string definition;
     if (hasAttr("definition")) {
         getAttr("definition", definition);
         ret = definition;
@@ -137,13 +132,13 @@ void PropertyFS::definition(const nix::none_t t) {
 
 
 DataType PropertyFS::dataType() const {
-    string dtype;
+    std::string dtype;
     getAttr("data_type", dtype);
     return nix::string_to_data_type(dtype);
 }
 
 
-void PropertyFS::mapping(const string &mapping) {
+void PropertyFS::mapping(const std::string &mapping) {
     if (mapping.empty()) {
         throw EmptyString("mapping");
     }
@@ -152,9 +147,9 @@ void PropertyFS::mapping(const string &mapping) {
 }
 
 
-boost::optional<string> PropertyFS::mapping() const {
-    boost::optional<string> ret;
-    string mapping;
+boost::optional<std::string> PropertyFS::mapping() const {
+    boost::optional<std::string> ret;
+    std::string mapping;
     if (hasAttr("mapping")) {
         getAttr("mapping", mapping);
         ret = mapping;
@@ -171,7 +166,7 @@ void PropertyFS::mapping(const nix::none_t t) {
 }
 
 
-void PropertyFS::unit(const string &unit) {
+void PropertyFS::unit(const std::string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
     }
@@ -180,9 +175,9 @@ void PropertyFS::unit(const string &unit) {
 }
 
 
-boost::optional<string> PropertyFS::unit() const {
+boost::optional<std::string> PropertyFS::unit() const {
     boost::optional<std::string> ret;
-    string unit;
+    std::string unit;
     if (hasAttr("unit")) {
         getAttr("unit", unit);
         ret = unit;
@@ -228,7 +223,7 @@ void PropertyFS::values(const nix::none_t t) {
 }
 
 
-int PropertyFS::compare(const std::shared_ptr<IProperty> &other) const {
+int PropertyFS::compare(const std::shared_ptr<base::IProperty> &other) const {
     int cmp = 0;
     if (!name().empty() && !other->name().empty()) {
         cmp = (name()).compare(other->name());

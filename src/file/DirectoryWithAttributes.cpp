@@ -9,28 +9,26 @@
 #include <iostream>
 #include <nix/file/DirectoryWithAttributes.hpp>
 
-using namespace std;
-
-using namespace boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
-DirectoryWithAttributes::DirectoryWithAttributes(const path &location, FileMode mode)
+DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, FileMode mode)
     : Directory(location, mode) {
     attributes = AttributesFS(location, mode);
 }
 
-DirectoryWithAttributes::DirectoryWithAttributes(const string &location, FileMode mode)
-    : DirectoryWithAttributes(path(location.c_str()), mode)
+DirectoryWithAttributes::DirectoryWithAttributes(const std::string &location, FileMode mode)
+    : DirectoryWithAttributes(bfs::path(location.c_str()), mode)
 {
 }
 
-bool DirectoryWithAttributes::hasAttr(const string &name) const  {
+bool DirectoryWithAttributes::hasAttr(const std::string &name) const  {
     return attributes.has(name);
 }
 
-void DirectoryWithAttributes::removeAttr(const string &name) {
+void DirectoryWithAttributes::removeAttr(const std::string &name) {
     attributes.remove(name);
 }
 
@@ -40,17 +38,17 @@ void DirectoryWithAttributes::removeAll() {
 }
 
 void DirectoryWithAttributes::createLink(const boost::filesystem::path &linker) {
-    vector<string> links;
+    std::vector<std::string> links;
     if (hasAttr("links")) {
         getAttr("links", links);
     }
-    create_directory_symlink(path(location()), linker);
+    create_directory_symlink(bfs::path(location()), linker);
     links.push_back(linker.string());
     setAttr("links", links);
 }
 
 void DirectoryWithAttributes::unlink(const boost::filesystem::path &linker) {
-    vector<string> links, active_links;
+    std::vector<std::string> links, active_links;
     if (hasAttr("links")) {
         getAttr("links", links);
     }

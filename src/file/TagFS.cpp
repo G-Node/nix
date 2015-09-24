@@ -8,49 +8,41 @@
 
 #include <nix/file/TagFS.hpp>
 
-#include <nix/util/util.hpp>
-#include <nix/DataArray.hpp>
-#include <nix/file/DataArrayFS.hpp>
-#include <nix/file/BlockFS.hpp>
-#include <nix/file/FeatureFS.hpp>
-#include <nix/Exception.hpp>
-
-using namespace std;
-using namespace nix::base;
-
 namespace nix {
 namespace file {
 
 
-TagFS::TagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc)
+TagFS::TagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc)
     : BaseTagFS(file, block, loc)
 {
 }
 
 
-TagFS::TagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc, const string &id,
-             const string &type, const string &name, const std::vector<double> &position)
+TagFS::TagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+             const std::string &loc, const std::string &id, const std::string &type, const std::string &name,
+             const std::vector<double> &position)
     : TagFS(file, block, loc, id, type, name, position, util::getTime())
 {
 }
 
 
-TagFS::TagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc, const string &id,
-             const string &type, const string &name, const std::vector<double> &position, const time_t time)
+TagFS::TagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+             const std::string &loc, const std::string &id, const std::string &type, const std::string &name,
+             const std::vector<double> &position, const time_t time)
     : BaseTagFS(file, block, loc, id, type, name, time)
 {
     this->position(position);
 }
 
 
-vector<string> TagFS::units() const {
-    vector<string> units;
+std::vector<std::string> TagFS::units() const {
+    std::vector<std::string> units;
     getAttr("units", units);
     return units;
 }
 
 
-void TagFS::units(const vector<string> &units) {
+void TagFS::units(const std::vector<std::string> &units) {
     setAttr("units", units);
     forceUpdatedAt();
 }
@@ -64,8 +56,8 @@ void TagFS::units(const none_t t) {
 }
 
 
-vector<double> TagFS::position() const {
-    vector<double> position;
+std::vector<double> TagFS::position() const {
+    std::vector<double> position;
     if (hasAttr("position")) {
         getAttr("position", position);
     }
@@ -73,19 +65,19 @@ vector<double> TagFS::position() const {
 }
 
 
-void TagFS::position(const vector<double> &position) {
+void TagFS::position(const std::vector<double> &position) {
     setAttr("position", position);
 }
 
 
-vector<double> TagFS::extent() const {
-    vector<double> extent;
+std::vector<double> TagFS::extent() const {
+    std::vector<double> extent;
     getAttr("extent", extent);
     return extent;
 }
 
 
-void TagFS::extent(const vector<double> &extent) {
+void TagFS::extent(const std::vector<double> &extent) {
     setAttr("extent", extent);
 }
 

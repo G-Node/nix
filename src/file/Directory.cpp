@@ -9,19 +9,17 @@
 #include <iostream>
 #include <nix/file/Directory.hpp>
 
-using namespace std;
-
-using namespace boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
-Directory::Directory(const path &location, FileMode mode)
+Directory::Directory(const bfs::path &location, FileMode mode)
     : loc(location), mode(mode) {
     open_or_create();
 }
 
-Directory::Directory(const string &location, FileMode mode): Directory(path(location.c_str()), mode) {}
+Directory::Directory(const std::string &location, FileMode mode): Directory(bfs::path(location.c_str()), mode) {}
 
 void Directory::open_or_create() {
     if (!exists(loc)) {
@@ -34,7 +32,7 @@ void Directory::open_or_create() {
 }
 
 
-string Directory::location() const {
+std::string Directory::location() const {
     return loc.string();
 }
 
@@ -46,10 +44,10 @@ FileMode Directory::fileMode() const {
 
 ndsize_t Directory::subdirCount() const {
     ndsize_t count = 0;
-    directory_iterator end;
-    directory_iterator di(location().c_str());
+    bfs::directory_iterator end;
+    bfs::directory_iterator di(location().c_str());
     while (di != end) {
-        if (is_directory(*di))
+        if (bfs::is_directory(*di))
             count ++;
         ++di;
     }
@@ -58,38 +56,38 @@ ndsize_t Directory::subdirCount() const {
 
 
 void Directory::removeAll() {
-    path p(location());
-    for (directory_iterator end_it, it(p); it!=end_it; ++it) {
-        remove_all(it->path());
+    bfs::path p(location());
+    for (bfs::directory_iterator end_it, it(p); it!=end_it; ++it) {
+        bfs::remove_all(it->path());
     }
 }
 
 
 boost::filesystem::path Directory::sub_dir_by_index(ndsize_t index) const {
-    path p;
-    vector<path> paths;
-    copy(directory_iterator(loc), directory_iterator(), back_inserter(paths));
-    sort(paths.begin(), paths.end());
+    bfs::path p;
+    std::vector<bfs::path> paths;
+    copy(bfs::directory_iterator(loc), bfs::directory_iterator(), back_inserter(paths));
+    std::sort(paths.begin(), paths.end());
     if (index < paths.size())
         p = paths[index];
     return p;
 }
 
 
-boost::optional<path> Directory::findByNameOrAttribute(const std::string &attribute, const std::string &value) const {
-    boost::optional<path> p;
+boost::optional<bfs::path> Directory::findByNameOrAttribute(const std::string &attribute, const std::string &value) const {
+    boost::optional<bfs::path> p;
     if (hasObject(value)) {
-        p = location() / path(value.c_str());
+        p = location() / bfs::path(value.c_str());
         return p;
     }
-    path attr_path("attributes");
-    directory_iterator end;
-    directory_iterator di(location().c_str());
+    bfs::path attr_path("attributes");
+    bfs::directory_iterator end;
+    bfs::directory_iterator di(location().c_str());
     while (di != end) {
-        path temp = *di;
-        if (is_directory(temp) && exists(temp / attr_path)){
+        bfs::path temp = *di;
+        if (bfs::is_directory(temp) && exists(temp / attr_path)){
             AttributesFS attr(temp);
-            string s;
+            std::string s;
             if (attr.has(attribute)) {
                 attr.get(attribute, s);
                 if (s == value) {
@@ -105,11 +103,11 @@ boost::optional<path> Directory::findByNameOrAttribute(const std::string &attrib
 
 
 bool Directory::hasObject(const std::string &name) const {
-    directory_iterator end;
-    directory_iterator di(location().c_str());
+    bfs::directory_iterator end;
+    bfs::directory_iterator di(location().c_str());
     while (di != end) {
-        path temp = *di;
-        if (is_directory(temp) && temp.filename().string() == name)
+        bfs::path temp = *di;
+        if (bfs::is_directory(temp) && temp.filename().string() == name)
             return true;
         ++di;
     }
@@ -117,16 +115,16 @@ bool Directory::hasObject(const std::string &name) const {
 }
 
 bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, const std::string &name_or_id) const {
-    boost::optional<path> p = findByNameOrAttribute(attribute, name_or_id);
+    boost::optional<bfs::path> p = findByNameOrAttribute(attribute, name_or_id);
     if (p && mode > FileMode::ReadOnly) {
-        path attr_path = "attributes";
-        if (exists(*p / attr_path)) {
+        bfs::path attr_path = "attributes";
+        if (bfs::exists(*p / attr_path)) {
             AttributesFS attr(*p, mode);
             if (attr.has("links")) {
-                vector<string> links;
+                std::vector<std::string> links;
                 attr.get("links", links);
                 for (auto &l :links) {
-                    remove_all(path(l));
+                    bfs::remove_all(bfs::path(l));
                 }
             }
         }
@@ -141,14 +139,14 @@ void Directory::createDirectoryLink(const std::string &target, const std::string
     if (boost::filesystem::exists({target})) {
         boost::filesystem::create_directory_symlink(boost::filesystem::path(target), loc / boost::filesystem::path(name));
     } else {
-        throw runtime_error("Directory::createLink: target does not exist");
+        throw std::runtime_error("Directory::createLink: target does not exist");
     }
 
 }
 
 
 void Directory::renameSubdir(const std::string &old_name, const std::string &new_name) {
-    path o(path(location()) / path(old_name)), n(path(location()) / path(new_name));
+    bfs::path o(bfs::path(location()) / bfs::path(old_name)), n(bfs::path(location()) / bfs::path(new_name));
     if (hasObject(old_name) && ! hasObject(new_name)) {
         rename(o, n);
     }

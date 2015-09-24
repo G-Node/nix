@@ -52,7 +52,7 @@ public:
 
     void renameSubdir(const std::string &old_name, const std::string &new_name);
 
-    void removeAll();
+    virtual void removeAll();
 };
 
 }

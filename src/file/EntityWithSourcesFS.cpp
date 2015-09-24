@@ -14,31 +14,33 @@
 #include <algorithm>
 #include <functional>
 
-using namespace std;
-using namespace nix::base;
-using namespace boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
-EntityWithSourcesFS::EntityWithSourcesFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc)
+EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                                         const std::string &loc)
     : EntityWithMetadataFS(file, loc),
-      sources_dir(loc + path::preferred_separator + "sources", file->fileMode()), entity_block(block)
+      sources_dir(loc + bfs::path::preferred_separator + "sources", file->fileMode()), entity_block(block)
 {
 }
 
 
-EntityWithSourcesFS::EntityWithSourcesFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc, const string &id,
-                                             const string &type, const string &name)
+EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                                         const std::string &loc, const std::string &id, const std::string &type,
+                                         const std::string &name)
     : EntityWithSourcesFS(file, block, loc, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithSourcesFS::EntityWithSourcesFS (const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc, const string &id,
-                                              const string &type, const string &name, time_t time)
+EntityWithSourcesFS::EntityWithSourcesFS (const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                                          const std::string &loc, const std::string &id, const std::string &type,
+                                          const std::string &name, time_t time)
     : EntityWithMetadataFS(file, loc, id, type, name, time),
-      sources_dir(loc + path::preferred_separator + name + path::preferred_separator + "sources", file->fileMode()), entity_block(block)
+      sources_dir(loc + bfs::path::preferred_separator + name + bfs::path::preferred_separator
+                  + "sources", file->fileMode()), entity_block(block)
 {
 }
 
@@ -48,26 +50,26 @@ ndsize_t EntityWithSourcesFS::sourceCount() const {
 }
 
 
-bool EntityWithSourcesFS::hasSource(const string &id) const {
+bool EntityWithSourcesFS::hasSource(const std::string &id) const {
     return !sources_dir.findByNameOrAttribute("entity_id", id)->empty();
 }
 
 
-shared_ptr<ISource> EntityWithSourcesFS::getSource(const string &name_or_id) const {
-    shared_ptr<base::ISource> source;
-    boost::optional<path> path = sources_dir.findByNameOrAttribute("name", name_or_id);
+std::shared_ptr<base::ISource> EntityWithSourcesFS::getSource(const std::string &name_or_id) const {
+    std::shared_ptr<base::ISource> source;
+    boost::optional<bfs::path> path = sources_dir.findByNameOrAttribute("name", name_or_id);
     if (path) {
-        return make_shared<SourceFS>(file(), path->string());
+        return std::make_shared<SourceFS>(file(), path->string());
 
     }
     return source;
 }
 
-shared_ptr<ISource> EntityWithSourcesFS::getSource(const size_t index) const {
-    shared_ptr<base::ISource> source;
-    path p = sources_dir.sub_dir_by_index(index);
+std::shared_ptr<base::ISource> EntityWithSourcesFS::getSource(const size_t index) const {
+    std::shared_ptr<base::ISource> source;
+    bfs::path p = sources_dir.sub_dir_by_index(index);
     if (!p.empty()) {
-        return make_shared<SourceFS>(file(), p.string());
+        return std::make_shared<SourceFS>(file(), p.string());
 
     }
     return source;
@@ -76,13 +78,13 @@ shared_ptr<ISource> EntityWithSourcesFS::getSource(const size_t index) const {
 void EntityWithSourcesFS::sources(const std::vector<Source> &sources) {
     // extract vectors of ids from vectors of new & old sources
     std::vector<std::string> ids_new(sources.size());
-    transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
+    std::transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
     // FIXME: issue #473
     // FIXME: this could go to a front-end like thing
     std::vector<Source> sources_old(static_cast<size_t>(sourceCount()));
     for (size_t i = 0; i < sources_old.size(); i++) sources_old[i] = getSource(i);
     std::vector<std::string> ids_old(sources_old.size());
-    transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
+    std::transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
     // sort them
     std::sort(ids_new.begin(), ids_new.end());
     std::sort(ids_old.begin(), ids_old.end());
@@ -109,7 +111,7 @@ void EntityWithSourcesFS::sources(const std::vector<Source> &sources) {
     }
 }
 
-void EntityWithSourcesFS::addSource(const string &id) {
+void EntityWithSourcesFS::addSource(const std::string &id) {
     if (id.empty())
         throw EmptyString("addSource");
 
@@ -118,12 +120,12 @@ void EntityWithSourcesFS::addSource(const string &id) {
     if (found.empty())
         throw std::runtime_error("EntityWithSourcesFS::addSource: Given source does not exist in this block!");
 
-    auto target = dynamic_pointer_cast<SourceFS>(found.front().impl());
+    auto target = std::dynamic_pointer_cast<SourceFS>(found.front().impl());
     sources_dir.createDirectoryLink(target->location(), target->id());
 }
 
 
-bool EntityWithSourcesFS::removeSource(const string &id) {
+bool EntityWithSourcesFS::removeSource(const std::string &id) {
     bool removed = false;
     if(sources_dir.hasObject(id)) {
         removed = sources_dir.removeObjectByNameOrAttribute("entity_id", id);

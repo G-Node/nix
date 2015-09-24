@@ -7,19 +7,14 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/file/EntityFS.hpp>
-#include <nix/util/util.hpp>
 
-#include <ctime>
-
-using namespace std;
-using namespace nix::base;
-using namespace boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
 
-EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc)
+EntityFS::EntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc)
     : DirectoryWithAttributes(loc, file->fileMode()), entity_file(file)
 {
     setUpdatedAt();
@@ -27,7 +22,7 @@ EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc)
 }
 
 
-EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc, const string &id, time_t time)
+EntityFS::EntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id, time_t time)
     : EntityFS(file, loc)
 {
     setAttr("entity_id", id);
@@ -35,21 +30,21 @@ EntityFS::EntityFS(const shared_ptr<IFile> &file, const path &loc, const string 
 }
 
 
-string EntityFS::id() const {
-    string t;
+std::string EntityFS::id() const {
+    std::string t;
 
     if (hasAttr("entity_id")) {
         getAttr("entity_id", t);
     }
     else {
-        throw runtime_error("Entity has no id!");
+        throw std::runtime_error("Entity has no id!");
     }
     return t;
 }
 
 
 time_t EntityFS::updatedAt() const {
-    string t;
+    std::string t;
     getAttr("updated_at", t);
     return util::strToTime(t);
 }
@@ -70,7 +65,7 @@ void EntityFS::forceUpdatedAt() {
 
 
 time_t EntityFS::createdAt() const {
-    string t;
+    std::string t;
     getAttr("created_at", t);
     return util::strToTime(t);
 }

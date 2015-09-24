@@ -17,7 +17,7 @@
 using namespace std;
 using namespace nix;
 using namespace valid;
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 
 void BaseTestFile::testOpen() {
@@ -41,9 +41,9 @@ void BaseTestFile::testFormat() {
 void BaseTestFile::testLocation() {
     CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
     CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
-    fs::path p = boost::filesystem::current_path();
-    fs::path p_file("test_file");
-    fs::path p_other("other_file");
+    bfs::path p = boost::filesystem::current_path();
+    bfs::path p_file("test_file");
+    bfs::path p_other("other_file");
     CPPUNIT_ASSERT(file_fs.location() ==  (p / p_file).string());
     CPPUNIT_ASSERT(file_other_fs.location() == (p / p_other).string());
 }
