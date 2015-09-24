@@ -40,11 +40,15 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::DataArray data_array;
-    nix::Block block;
-    nix::Tag tag;
+    nix::File file, file_fs;
+    nix::DataArray data_array, data_array_fs;
+    nix::Block block, block_fs;
+    nix::Tag tag, tag_fs;
 
+    void test_link_type(nix::Tag &t, nix::DataArray &da);
+    void test_data(nix::Block &b, nix::Tag &t, nix::DataArray &da);
+    void test_operator(nix::Tag &t, nix::DataArray &da);
+    
 public:
 
     void setUp();

@@ -35,10 +35,11 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Section section;
-    nix::Block block;
+    nix::File file, file_fs;
+    nix::Section section, section_fs;
+    nix::Block block, block_fs;
 
+    void test_metadata_access(nix::File &f, nix::Block &b, nix::Section &s, nix::Section &wrong);
 public:
 
     void setUp();

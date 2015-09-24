@@ -70,12 +70,8 @@ SectionHDF5::SectionHDF5(const shared_ptr<IFile> &file, const shared_ptr<ISectio
 //--------------------------------------------------
 
 void SectionHDF5::repository(const string &repository) {
-    if (repository.empty()) {
-        throw EmptyString("repository");
-    } else {
-        group().setAttr("repository", repository);
-        forceUpdatedAt();
-    }
+    group().setAttr("repository", repository);
+    forceUpdatedAt();
 }
 
 
@@ -98,9 +94,6 @@ void SectionHDF5::repository(const none_t t) {
 
 
 void SectionHDF5::link(const std::string &id) {
-    if (id.empty())
-        throw EmptyString("link");
-
     if (group().hasGroup("link"))
         link(none);
         
@@ -141,12 +134,8 @@ void SectionHDF5::link(const none_t t) {
 
 
 void SectionHDF5::mapping(const string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    } else {
-        group().setAttr("mapping", mapping);
-        forceUpdatedAt();
-    }
+    group().setAttr("mapping", mapping);
+    forceUpdatedAt();
 }
 
 
@@ -217,9 +206,6 @@ shared_ptr<ISection> SectionHDF5::getSection(ndsize_t index) const {
 
 
 shared_ptr<ISection> SectionHDF5::createSection(const string &name, const string &type) {
-    if (hasSection(name)) {
-        throw DuplicateName("createSection");
-    }
     string new_id = util::createId();
     boost::optional<Group> g = section_group(true);
 
@@ -289,9 +275,6 @@ shared_ptr<IProperty> SectionHDF5::getProperty(ndsize_t index) const {
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
-    if (hasProperty(name)) {
-        throw DuplicateName("hasProperty");
-    }
     string new_id = util::createId();
     boost::optional<Group> g = property_group(true);
 
@@ -304,21 +287,15 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Value &value) {
     shared_ptr<IProperty> p = createProperty(name, value.type());
-
     vector<Value> val{value};
     p->values(val);
-
     return p;
 }
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vector<Value> &values) {
-    if (values.size() < 1)
-        throw runtime_error("Trying to create a property without a value!");
-
     shared_ptr<IProperty> p = createProperty(name, values[0].type());
     p->values(values);
-
     return p;
 }
 
@@ -326,7 +303,6 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vect
 bool SectionHDF5::deleteProperty(const string &name_or_id) {
     boost::optional<Group> g = property_group();
     bool deleted = false;
-
     if (g && hasProperty(name_or_id)) {
         g->removeData(getProperty(name_or_id)->name());
         deleted = true;

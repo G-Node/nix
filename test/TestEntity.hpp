@@ -37,12 +37,20 @@ private:
 
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
+    CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testCompare);
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Block block, block_other, block_null;
+    nix::File file, file_fs;
+    nix::Block block, block_other, block_null, block_fs, block_other_fs;
     time_t startup_time;
+
+    void test_type(nix::Block &b);
+    void test_definition(nix::Block &b);
+    void test_created_at(nix::Block &b);
+    void test_operators(nix::Block &b, nix::Block &other, nix::Block &null);
+    void test_compare(nix::Block &b, nix::Block &other);
 
 public:
 
@@ -56,5 +64,6 @@ public:
     void testOperators();
     void testUpdatedAt();
     void testCreatedAt();
+    void testCompare();
 
 };

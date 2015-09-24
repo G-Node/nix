@@ -31,13 +31,13 @@
 class TestTag: public CPPUNIT_NS::TestFixture {
 private:
 
-    nix::File file;
-    nix::Block block;
-    nix::DataArray positions, extents;
-    nix::Tag tag, tag_other, tag_null;
-    nix::Section section;
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+    nix::DataArray positions, positions_fs, extents, extents_fs;
+    nix::Tag tag, tag_fs, tag_other, tag_other_fs, tag_null;
+    nix::Section section, section_fs;
     time_t startup_time;
-    std::vector<nix::DataArray> refs;
+    std::vector<nix::DataArray> refs, refs_fs;
 
     CPPUNIT_TEST_SUITE(TestTag);
 
@@ -59,6 +59,17 @@ private:
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST_SUITE_END ();
+
+    void test_type(nix::Tag &t);
+    void test_definition(nix::Tag &t);
+    void test_create_remove(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_metadata_access(nix::Tag & t, nix::File &f, nix::Section &s);
+    void test_source_access(nix::Tag &t, nix::Block &b);
+    void test_unit(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_references(nix::Tag &t, std::vector<nix::DataArray> &r);
+    void test_features(nix::Tag &t, nix::DataArray &da);
+    void test_extent(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_operators(nix::Tag &t, nix::Tag &other, nix::Tag &null);
 
 public:
 

@@ -99,7 +99,8 @@ void DataArray::appendData(DataType dtype, const void *data, const NDSize &count
 }
 
 void DataArray::unit(const std::string &unit) {
-    if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
+    util::checkEmptyString(unit, "unit");
+    if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
     }
     backend()->unit(unit);
@@ -120,3 +121,9 @@ std::ostream& nix::operator<<(std::ostream &out, const DataArray &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
+
+void DataArray::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+

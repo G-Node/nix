@@ -28,6 +28,13 @@ void TestSource::setUp() {
     source_other = block.createSource("source_two", "channel");
     source_null  = nix::none;
 
+    file_fs = File::open("test_source", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block", "dataset");
+    section_fs = file_fs.createSection("foo_section", "metadata");
+
+    source_fs = block_fs.createSource("source_one", "channel");
+    source_fs_other = block_fs.createSource("source_two", "channel");
+
     // create a DataArray & a MultiTag
     darray = block.createDataArray("DataArray", "dataArray",
                                    DataType::Double, {0, 0});
@@ -51,16 +58,22 @@ void TestSource::testValidate() {
     valid::Result result = validate(source);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
+
+    result = validate(source_fs);
+    CPPUNIT_ASSERT(result.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void TestSource::testId() {
     CPPUNIT_ASSERT(source.id().size() == 36);
+    CPPUNIT_ASSERT(source_fs.id().size() == 36);
 }
 
 
 void TestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
+    CPPUNIT_ASSERT(source_fs.name() == "source_one");
 }
 
 
@@ -69,6 +82,10 @@ void TestSource::testType() {
     string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
+
+    CPPUNIT_ASSERT(source_fs.type() == "channel");
+    source_fs.type(typ);
+    CPPUNIT_ASSERT(source_fs.type() == typ);
 }
 
 
@@ -78,67 +95,94 @@ void TestSource::testDefinition() {
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);
     CPPUNIT_ASSERT(source.definition() == nix::none);
+
+    source_fs.definition(def);
+    CPPUNIT_ASSERT(*source_fs.definition() == def);
+    source_fs.definition(nix::none);
+    CPPUNIT_ASSERT(source_fs.definition() == nix::none);
 }
 
 
 void TestSource::testMetadataAccess() {
-    CPPUNIT_ASSERT(!source.metadata());
+    cerr << "\n\t Backend: HDF5\t";
+    test_metadata_access(file, source, section);
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_metadata_access(file_fs, source_fs, section_fs);
+    cerr << "... done!\n";
+}
 
-    source.metadata(section);
-    CPPUNIT_ASSERT(source.metadata());
+
+void TestSource::test_metadata_access(nix::File &f, nix::Source &src, nix::Section &s) {
+    CPPUNIT_ASSERT(!src.metadata());
+
+    src.metadata(s);
+    CPPUNIT_ASSERT(src.metadata());
 
     // test none-unsetter
-    source.metadata(none);
-    CPPUNIT_ASSERT(!source.metadata());
+    src.metadata(none);
+    CPPUNIT_ASSERT(!src.metadata());
     // test deleter removing link too
-    source.metadata(section);
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!source.metadata());
+    src.metadata(s);
+    f.deleteSection(s.id());
+    CPPUNIT_ASSERT(!src.metadata());
     // re-create section
-    section = file.createSection("foo_section", "metadata");
+    s = f.createSection("foo_section", "metadata");
 }
 
 
 void TestSource::testSourceAccess() {
+    cerr << "\n\t Backend: HDF5\t";
+    test_source_access(file, source);
+    cerr << "... done!\n";
+    cerr << "\t Backend: filesystem\t";
+    test_source_access(file_fs, source_fs);
+    cerr << "... done!\n";
+}
+
+
+void TestSource::test_source_access(nix::File &f, nix::Source &src) {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
-    CPPUNIT_ASSERT(source.sourceCount() == 0);
-    CPPUNIT_ASSERT(source.sources().size() == 0);
-    CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
-    CPPUNIT_ASSERT_EQUAL(false, source.hasSource("invalid_id"));
+    CPPUNIT_ASSERT(src.sourceCount() == 0);
+    CPPUNIT_ASSERT(src.sources().size() == 0);
+    CPPUNIT_ASSERT(src.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, src.hasSource("invalid_id"));
     Source s;
-    CPPUNIT_ASSERT_THROW(source.hasSource(s), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(source.hasSource(s), UninitializedEntity);
 
     vector<string> ids;
     for (const auto &name : names) {
-        Source child_source = source.createSource(name, "channel");
+        Source child_source = src.createSource(name, "channel");
         CPPUNIT_ASSERT(child_source.name() == name);
-        CPPUNIT_ASSERT(source.hasSource(child_source));
-        CPPUNIT_ASSERT(source.hasSource(name));
-
+        CPPUNIT_ASSERT(src.hasSource(child_source));
+        CPPUNIT_ASSERT(src.hasSource(name));
         ids.push_back(child_source.id());
     }
-    CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
+    CPPUNIT_ASSERT_THROW(src.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(src.createSource("", "channel"),
+                         EmptyString);
 
-    CPPUNIT_ASSERT(source.sourceCount() == names.size());
-    CPPUNIT_ASSERT(source.sources().size() == names.size());
+    CPPUNIT_ASSERT(src.sourceCount() == names.size());
+    CPPUNIT_ASSERT(src.sources().size() == names.size());
+    CPPUNIT_ASSERT_THROW(src.getSource(src.sourceCount() + 1), OutOfBounds);
 
     for (const auto &id : ids) {
-        Source child_source = source.getSource(id);
-        CPPUNIT_ASSERT(source.hasSource(id));
+        Source child_source = src.getSource(id);
+        CPPUNIT_ASSERT(src.hasSource(id));
         CPPUNIT_ASSERT(child_source.id() == id);
 
-        source.deleteSource(id);
+        src.deleteSource(id);
     }
     Source s1, s2;
     s1 = source.createSource("name", "type");
-    CPPUNIT_ASSERT_THROW(source.deleteSource(s2), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(source.deleteSource(s2), UninitializedEntity);
     CPPUNIT_ASSERT_NO_THROW(source.deleteSource(s1));
 
-    CPPUNIT_ASSERT(source.sourceCount() == 0);
-    CPPUNIT_ASSERT(source.sources().size() == 0);
-    CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT(src.sourceCount() == 0);
+    CPPUNIT_ASSERT(src.sources().size() == 0);
+    CPPUNIT_ASSERT(src.getSource("invalid_id") == false);
 }
 
 
@@ -275,4 +319,3 @@ void TestSource::testCreatedAt() {
 void TestSource::testUpdatedAt() {
     CPPUNIT_ASSERT(source.updatedAt() >= startup_time);
 }
-

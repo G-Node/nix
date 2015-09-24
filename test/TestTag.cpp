@@ -39,6 +39,18 @@ void TestTag::setUp() {
     tag_null = nix::none;
 
     section = file.createSection("foo_section", "metadata");
+
+    file_fs = File::open("test_tag", FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block", "dataset");
+
+    refs_fs.clear();
+    for (const auto & name : array_names) {
+        refs_fs.push_back(block_fs.createDataArray(name, "reference",
+                                                   DataType::Double, nix::NDSize({ 0 })));
+    }
+    tag_fs = block_fs.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
+    tag_other_fs = block_fs.createTag("tag_two", "test_tag", {0.0, 2.0, 3.4});
+    section_fs = file_fs.createSection("foo_section", "metadata");
 }
 
 
@@ -53,28 +65,45 @@ void TestTag::testValidate() {
     valid::Result result = validate(tag);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
+
+    valid::Result result_fs = validate(tag_fs);
+    CPPUNIT_ASSERT(result_fs.getErrors().size() == 0);
+    CPPUNIT_ASSERT(result_fs.getWarnings().size() == 0);
+
 }
 
 
 void TestTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
+    CPPUNIT_ASSERT(tag_fs.id().size() == 36);
 }
 
 
 void TestTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
+    CPPUNIT_ASSERT(tag_fs.name() == "tag_one");
 }
 
 
 void TestTag::testType() {
-    CPPUNIT_ASSERT(tag.type() == "test_tag");
+    test_type(tag);
+    test_type(tag_fs);
+}
+
+void TestTag::test_type(Tag &t) {
+    CPPUNIT_ASSERT(t.type() == "test_tag");
     std::string type = util::createId();
-    tag.type(type);
-    CPPUNIT_ASSERT(tag.type() == type);
+    t.type(type);
+    CPPUNIT_ASSERT(t.type() == type);
 }
 
 
 void TestTag::testDefinition() {
+    test_definition(tag);
+    test_definition(tag_fs);
+}
+
+void TestTag::test_definition(Tag  &t) {
     std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
@@ -82,44 +111,53 @@ void TestTag::testDefinition() {
     CPPUNIT_ASSERT(tag.definition() == nix::none);
 }
 
-
 void TestTag::testCreateRemove() {
+    test_create_remove(block, refs);
+    test_create_remove(block_fs, refs_fs);
+}
+
+void TestTag::test_create_remove(Block &b, vector<DataArray> &r) {
     std::vector<std::string> ids;
-    ndsize_t count = block.tagCount();
+    ndsize_t count = b.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
 
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
-        Tag st1 = block.createTag(names[i], type, {0.0, 2.0, 3.4});
-        st1.references(refs);
-        Tag st2 = block.getTag(st1.id());
+        Tag st1 = b.createTag(names[i], type, {0.0, 2.0, 3.4});
+        st1.references(r);
+        Tag st2 = b.getTag(st1.id());
         ids.push_back(st1.id());
 
         std::stringstream errmsg;
         errmsg << "Error while accessing tag: st1.id() = " << st1.id()
-                                       << " / st2.id() = " << st2.id();
+        << " / st2.id() = " << st2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), st1.id().compare(st2.id()) == 0);
     }
     std::stringstream errmsg2;
     errmsg2 << "Error creating Tags. Counts do not match!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), block.tagCount() == (count+5));
+    CPPUNIT_ASSERT_MESSAGE(errmsg2.str(), b.tagCount() == (count+5));
 
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
     for (const auto &id : ids) {
-        block.deleteTag(id);
+        b.deleteTag(id);
     }
 
     std::stringstream errmsg1;
     errmsg1 << "Error while removing tags!";
-    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.tagCount() == count);
+    CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), b.tagCount() == count);
 }
 
 
 void TestTag::testExtent() {
-    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
-    st.references(refs);
+    test_extent(block, refs);
+    test_extent(block_fs, refs_fs);
+}
+
+void TestTag::test_extent(Block &b, vector<DataArray> &r) {
+    Tag st = b.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(r);
 
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
@@ -132,10 +170,10 @@ void TestTag::testExtent() {
 
     st.extent(none);
     CPPUNIT_ASSERT(st.extent().size() == 0);
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
-    block.deleteTag(st.id());
+    b.deleteTag(st.id());
 }
 
 
@@ -169,61 +207,75 @@ void TestTag::testPosition() {
 
 
 void TestTag::testMetadataAccess() {
-    CPPUNIT_ASSERT(!tag.metadata());
+    test_metadata_access(tag, file, section);
+    test_metadata_access(tag_fs, file_fs, section_fs);
+}
 
-    tag.metadata(section);
-    CPPUNIT_ASSERT(tag.metadata());
+void TestTag::test_metadata_access(Tag &t, File &f, Section &s) {
+    CPPUNIT_ASSERT(!t.metadata());
+
+    t.metadata(s);
+    CPPUNIT_ASSERT(t.metadata());
     // TODO This test fails due to operator== of Section
-    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
+    CPPUNIT_ASSERT(t.metadata().id() == s.id());
 
     // test none-unsetter
-    tag.metadata(none);
-    CPPUNIT_ASSERT(!tag.metadata());
+    t.metadata(none);
+    CPPUNIT_ASSERT(!t.metadata());
     // test deleter removing link too
-    tag.metadata(section);
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!tag.metadata());
+    t.metadata(s);
+    f.deleteSection(s.id());
+    CPPUNIT_ASSERT(!t.metadata());
     // re-create section
-    section = file.createSection("foo_section", "metadata");
+    s = f.createSection("foo_section", "metadata");
 }
 
 
 void TestTag::testSourceAccess() {
+    test_source_access(tag, block);
+    test_source_access(tag_fs, block_fs);
+}
+
+void TestTag::test_source_access(Tag &t, Block &b) {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
-    CPPUNIT_ASSERT(tag.sources().size() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sources().size() == 0);
 
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        Source child_source = block.createSource(*it,"channel");
-        tag.addSource(child_source);
+        Source child_source = b.createSource(*it,"channel");
+        t.addSource(child_source);
         CPPUNIT_ASSERT(child_source.name() == *it);
         ids.push_back(child_source.id());
     }
 
-    CPPUNIT_ASSERT(tag.sourceCount() == names.size());
-    CPPUNIT_ASSERT(tag.sources().size() == names.size());
+    CPPUNIT_ASSERT(t.sourceCount() == names.size());
+    CPPUNIT_ASSERT(t.sources().size() == names.size());
 
     std::string name = names[0];
-    Source source = tag.getSource(name);
+    Source source = t.getSource(name);
     CPPUNIT_ASSERT(source.name() == name);
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source child_source = tag.getSource(*it);
-        CPPUNIT_ASSERT(tag.hasSource(*it) == true);
+        Source child_source = t.getSource(*it);
+        CPPUNIT_ASSERT(t.hasSource(*it) == true);
         CPPUNIT_ASSERT(child_source.id() == *it);
 
-        tag.removeSource(*it);
-        block.deleteSource(*it);
+        t.removeSource(*it);
+        b.deleteSource(*it);
     }
-
-    CPPUNIT_ASSERT(tag.sourceCount() == 0);
+    CPPUNIT_ASSERT(t.sourceCount() == 0);
 }
 
 
 void TestTag::testUnits() {
-    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
-    st.references(refs);
+    test_unit(block, refs);
+    test_unit(block_fs, refs_fs);
+}
+
+void TestTag::test_unit(Block &b, vector<DataArray> &r) {
+    Tag st = b.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
+    st.references(r);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -240,8 +292,8 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
-    for (auto it = refs.begin(); it != refs.end(); it++) {
-        block.deleteDataArray((*it).id());
+    for (auto it = r.begin(); it != r.end(); it++) {
+        b.deleteDataArray((*it).id());
     }
 
     st.units(insane_units);
@@ -250,41 +302,54 @@ void TestTag::testUnits() {
     CPPUNIT_ASSERT(retrieved_units[0] == "uV");
     CPPUNIT_ASSERT(retrieved_units[1] == "uS");
 
-    block.deleteTag(st.id());
+    b.deleteTag(st.id());
 }
 
 
 void TestTag::testReferences() {
-    CPPUNIT_ASSERT(tag.referenceCount() == 0);
-    for (size_t i = 0; i < refs.size(); ++i) {
-        CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
-        CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
-        CPPUNIT_ASSERT(tag.hasReference(refs[i]));
+    test_references(tag, refs);
+    test_references(tag_fs, refs_fs);
+}
+
+void TestTag::test_references(Tag &t, vector<DataArray> &r) {
+    CPPUNIT_ASSERT(t.referenceCount() == 0);
+    for (size_t i = 0; i < r.size(); ++i) {
+        CPPUNIT_ASSERT(!t.hasReference(r[i]));
+        CPPUNIT_ASSERT_NO_THROW(t.addReference(r[i]));
+        CPPUNIT_ASSERT(t.hasReference(r[i]));
     }
-    CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
-    for (size_t i = 0; i < refs.size(); ++i) {
-        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+    CPPUNIT_ASSERT(t.referenceCount() == r.size());
+    for (size_t i = 0; i < r.size(); ++i) {
+        CPPUNIT_ASSERT_NO_THROW(t.removeReference(r[i]));
     }
-    CPPUNIT_ASSERT(tag.referenceCount() == 0);
+    CPPUNIT_ASSERT(t.referenceCount() == 0);
     DataArray a;
-    CPPUNIT_ASSERT_THROW(tag.hasReference(a), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.addReference(a), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.removeReference(a), std::runtime_error);
+
+    CPPUNIT_ASSERT_THROW(t.hasReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(t.addReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(t.removeReference(a), UninitializedEntity);
 }
 
 
 void TestTag::testFeatures() {
+    test_features(tag, refs[0]);
+    test_features(tag_fs, refs_fs[0]);
+}
+
+void TestTag::test_features(Tag &t, DataArray &da) {
     DataArray a;
     Feature f;
-    CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), std::runtime_error);
-    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), std::runtime_error);
+
+    CPPUNIT_ASSERT(t.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(t.hasFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(t.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(t.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
     
-    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
-    CPPUNIT_ASSERT(tag.featureCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
-    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_NO_THROW(f = t.createFeature(da, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(t.hasFeature(f));
+    CPPUNIT_ASSERT(t.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(t.deleteFeature(f));
+    CPPUNIT_ASSERT(t.featureCount() == 0);
 }
 
 
@@ -355,21 +420,33 @@ void TestTag::testDataAccess() {
 
 
 void TestTag::testOperators() {
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    test_operators(tag, tag_other, tag_null);
+    test_operators(tag_fs, tag_other_fs, tag_null);
+}
 
-    CPPUNIT_ASSERT(tag != false);
-    CPPUNIT_ASSERT(tag != none);
+void TestTag::test_operators(Tag &t, Tag &other, Tag &null) {
+    CPPUNIT_ASSERT(null == false);
+    CPPUNIT_ASSERT(null == none);
 
-    CPPUNIT_ASSERT(tag == tag);
-    CPPUNIT_ASSERT(tag != tag_other);
+    CPPUNIT_ASSERT(t != false);
+    CPPUNIT_ASSERT(t != none);
 
-    tag_other = tag;
-    CPPUNIT_ASSERT(tag == tag_other);
+    CPPUNIT_ASSERT(t == t);
+    CPPUNIT_ASSERT(t != other);
 
-    tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    other = t;
+    CPPUNIT_ASSERT(t == other);
+
+    other = none;
+    CPPUNIT_ASSERT(other == false);
+    CPPUNIT_ASSERT(other == none);
+
+    stringstream str1, str2;
+    str1 <<  "Tag: {name = " << t.name();
+    str1 << ", type = " << t.type();
+    str1 << ", id = " << t.id() << "}";
+    str2 << t;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 

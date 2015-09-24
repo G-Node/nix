@@ -88,19 +88,12 @@ shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id)
 }
 
 shared_ptr<IDataArray>  BaseTagHDF5::getReference(size_t index) const {
-    // check if index valid
-    if(index > referenceCount()) {
-        throw OutOfBounds("No reference at given index", index);
-    }
-
     boost::optional<Group> g = refs_group();
     string id = g ? g->objectName(index) : "";
     return getReference(id);
 }
 
 void BaseTagHDF5::addReference(const std::string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("addReference");
     boost::optional<Group> g = refs_group(true);
 
     if (!block()->hasDataArray(name_or_id))

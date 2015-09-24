@@ -51,10 +51,17 @@ private:
     CPPUNIT_TEST_SUITE_END();
 
     time_t startup_time;
-    nix::File file;
-    nix::Section section;
-    nix::Property property, property_other, property_null;
+    nix::File file, file_fs;
+    nix::Section section, section_fs;
+    nix::Property property, property_other, property_null, property_fs, property_other_fs;
     nix::Value int_dummy, str_dummy, double_dummy;
+
+
+    void test_definition(nix::Property &p);
+    void test_mapping(nix::Property &p);
+    void test_unit(nix::Property &p);
+    void test_operators(nix::Property &p, nix::Property &other, nix::Property &null);
+    void test_created_at(nix::Property &p);
 public:
 
     void setUp();

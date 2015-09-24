@@ -78,9 +78,6 @@ public:
     virtual void values(const boost::none_t t) = 0;
 
 
-    virtual int compare(const std::shared_ptr<IProperty> &other) const = 0;
-
-
     virtual ~IProperty() {}
 };
 

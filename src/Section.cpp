@@ -11,6 +11,7 @@
 #include <list>
 #include <algorithm>
 #include <iterator>
+#include <nix/util/util.hpp>
 
 
 using namespace std;
@@ -47,7 +48,7 @@ Section::Section(shared_ptr<base::ISection> &&ptr)
 
 
 void Section::link(const Section &link) {
-    if (link == none) {
+    if (!link) {
         backend()->link(none);
     } else {
         backend()->link(link.id());
@@ -278,4 +279,60 @@ std::ostream& nix::operator<<(ostream &out, const Section &ent) {
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
     return out;
+}
+
+void Section::repository(const std::string &repository) {
+    util::checkEmptyString(repository, "repository");
+    backend()->repository(repository);
+}
+
+void Section::link(const std::string &id) {
+    util::checkEmptyString(id, "link");
+    backend()->link(id);
+}
+
+void Section::mapping(const std::string &mapping) {
+    util::checkEmptyString(mapping, "mapping");
+    backend()->mapping(mapping);
+}
+
+Section Section::createSection(const std::string &name, const std::string &type) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasSection(name)) {
+        throw DuplicateName("createSection");
+    }
+    return backend()->createSection(name, type);
+}
+
+Property Section::createProperty(const std::string &name, const DataType &dtype) {
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)) {
+        throw DuplicateName("hasProperty");
+    }
+    return backend()->createProperty(name, dtype);
+}
+
+Property Section::createProperty(const std::string &name, const std::vector<Value> &values) {
+    if (values.size() < 1)
+        throw std::runtime_error("Trying to create a property without a value!");
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)) {
+        throw DuplicateName("hasProperty");
+    }
+    return backend()->createProperty(name, values);
+}
+
+Property Section::createProperty(const std::string &name, const Value &value) {
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)){
+        throw DuplicateName("Property with that name already exists!");
+    }
+    return backend()->createProperty(name, value);
+}
+
+Section Section::getSection(ndsize_t index) const {
+    if (index >= backend()->sectionCount()) {
+        throw OutOfBounds("Section::getSection: index is out of bounds!");
+    }
+    return backend()->getSection(index);
 }

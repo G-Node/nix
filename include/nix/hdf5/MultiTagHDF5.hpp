@@ -79,9 +79,6 @@ private:
 
     bool checkDimensions(const DataArray &a, const DataArray &b) const;
 
-
-    bool checkPositionsAndExtents() const;
-
 };
 
 

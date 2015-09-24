@@ -37,10 +37,15 @@ private:
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST(testCheckHeader);
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file_open, file_other, file_null;
-    time_t statup_time;
+    nix::File file_open, file_other, file_null, file_fs, file_other_fs;
+    time_t startup_time;
+
+
+    void test_section_access(nix::File &f);
+    void test_block_access(nix::File &f);
 
 public:
 
@@ -56,4 +61,5 @@ public:
     void testSectionAccess();
     void testOperators();
     void testReopen();
+    void testCheckHeader();
 };

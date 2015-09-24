@@ -15,7 +15,6 @@
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <string>
@@ -176,9 +175,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(ndsize_t index) const {
-        return backend()->getSource(index);
-    }
+    Source getSource(ndsize_t index) const;
 
     /**
      * @brief Returns the number of root sources in this block.
@@ -226,9 +223,7 @@ public:
      *
      * @return The created source object.
      */
-    Source createSource(const std::string &name, const std::string &type) {
-        return backend()->createSource(name, type);
-    }
+    Source createSource(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a root source.
@@ -338,9 +333,7 @@ public:
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
                               nix::DataType      data_type,
-                              const NDSize      &shape) {
-        return backend()->createDataArray(name, type, data_type, shape);
-    }
+                              const NDSize      &shape);
 
     /**
     * @brief Create a new data array associated with this block.
@@ -446,9 +439,7 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(ndsize_t index) const {
-        return backend()->getTag(index);
-    }
+    Tag getTag(ndsize_t index) const;
 
     /**
      * @brief Get tags within this block.
@@ -482,9 +473,7 @@ public:
      * @return The newly created tag.
      */
     Tag createTag(const std::string &name, const std::string &type,
-                              const std::vector<double> &position) {
-        return backend()->createTag(name, type, position);
-    }
+                              const std::vector<double> &position);
 
     /**
      * @brief Deletes a tag from the block.
@@ -555,9 +544,7 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(ndsize_t index) const {
-        return backend()->getMultiTag(index);
-    }
+    MultiTag getMultiTag(ndsize_t index) const;
 
     /**
      * @brief Get multi tags within this block.
@@ -591,9 +578,7 @@ public:
      * @return The newly created tag.
      */
     MultiTag createMultiTag(const std::string &name, const std::string &type,
-                          const DataArray &positions) {
-        return backend()->createMultiTag(name, type, positions);
-    }
+                          const DataArray &positions);
 
     /**
      * @brief Deletes a multi tag from the block.

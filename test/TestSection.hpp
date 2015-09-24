@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -49,9 +49,17 @@ private:
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::Section section, section_other, section_null;
+    nix::File file, file_fs;
+    nix::Section section, section_other, section_null, section_fs, section_fs_other;
     time_t startup_time;
+
+    void test_type(nix::Section &s);
+    void test_definition(nix::Section &s);
+    void test_link(nix::File &f, nix::Section &s, nix::Section &other);
+    void test_repository(nix::Section &s);
+    void test_mapping(nix::Section &s);
+    void test_section_access(nix::Section &s, nix::Implementation impl);
+    void test_operators(nix::Section &s, nix::Section &other, nix::Section &null);
 
 public:
 

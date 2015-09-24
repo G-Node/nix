@@ -26,12 +26,35 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
+#include <nix/None.hpp>
 
 namespace nix {
     
 enum class DimensionType : unsigned int;
 
 namespace util {
+
+/**
+ * @brief Checks name_or_id argument often passed to methods.
+ * Throws exception in case of error.
+ *
+ * @param name_or_id  The string representing an entity name or id,
+ *
+ */
+NIXAPI void checkNameOrId(const std::string &name_or_id);
+
+/**
+ * @brief Helper that checks the entity passed as an argument to a method.
+ * Throws an exception if the entity is not initialized.
+ *
+ * @param entity    The entity
+ */
+template <typename T> void checkEntityInput(const T &entity) {
+    if (!entity || entity == none) {
+        throw UninitializedEntity();
+    }
+}
+
 
 /**
  * @brief Remove blank spaces from the entire string
@@ -66,6 +89,41 @@ NIXAPI std::string nameSanitizer(const std::string &name);
  * @return true if name is legit, false otherwise
  */
 NIXAPI bool nameCheck(const std::string &name);
+
+/**
+ * @brief Checks the given string is valid as an entity name. Will
+ * throw an exception if the name is invalid.
+ *
+ * @param name   The name.
+ */
+NIXAPI void checkEntityName(const std::string &name);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ */
+NIXAPI void checkEntityType(const std::string &str);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ *  @param  field_name   A string stating for which purpose the string should be used.
+ *                       Will be part of the exception message.
+ */
+NIXAPI void checkEmptyString(const std::string &str, const std::string &field_name = "");
+
+/**
+ * @brief Helper that checks the name and the type strings that should be used to
+ * create a new entity.
+ *
+ * @param name  The name string.
+ * @param type  The type string.
+ */
+NIXAPI void checkEntityNameAndType(const std::string &name, const std::string &type);
 
 /**
  * @brief Generates an ID-String.

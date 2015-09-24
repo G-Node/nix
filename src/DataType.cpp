@@ -36,8 +36,6 @@ std::string data_type_to_string(DataType dtype) {
     case DataType::UInt64:   str = "UInt64";   break;
     case DataType::String:   str = "String";   break;
     case DataType::Nothing:  str = "Nothing";  break;
-    case DataType::Date:     str = "Date";     break;
-    case DataType::DateTime: str = "Datetime"; break;
     case DataType::Opaque:   str = "Opaque";   break;
     }
 
@@ -61,8 +59,6 @@ DataType string_to_data_type(const std::string& dtype) {
         {"uint32", DataType::UInt32},
         {"uint64", DataType::UInt64},
         {"string", DataType::String},
-        {"date", DataType::Date},
-        {"datetime", DataType::DateTime},
         {"opaque", DataType::Opaque},
         {"nothing", DataType::Nothing}
     };

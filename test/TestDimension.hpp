@@ -50,12 +50,29 @@ private:
     CPPUNIT_TEST(testRangeDimIndexOf);
     CPPUNIT_TEST(testRangeDimTickAt);
     CPPUNIT_TEST(testRangeDimAxis);
+    CPPUNIT_TEST(testAsDimensionMethods);
 
     CPPUNIT_TEST_SUITE_END ();
 
-    nix::File file;
-    nix::DataArray data_array;
-    nix::Block block;
+    nix::File file, file_fs;
+    nix::DataArray data_array, data_array_fs;
+    nix::Block block, block_fs;
+
+
+    void test_validate(nix::DataArray &array);
+    void test_set_validate(nix::DataArray &array);
+    void test_sample_validate(nix::DataArray &array);
+    void test_range_validate(nix::DataArray &array);
+    void test_index(nix::DataArray & array);
+    void test_sample_dim_label(nix::DataArray &a);
+    void test_sample_dim_offset(nix::DataArray &a);
+    void test_sample_dim_unit(nix::DataArray &a);
+    void test_sample_dim_sampling_interval(nix::DataArray &a);
+    void test_sample_dim_operators(nix::DataArray &a);
+    void test_sample_dim_index_of(nix::DataArray &a);
+    void test_sample_dim_position_at(nix::DataArray &a);
+    void test_sample_dim_axis(nix::DataArray &a);
+    void test_as_dimension(nix::DataArray &da);
 
 public:
 
@@ -86,5 +103,7 @@ public:
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
+
+    void testAsDimensionMethods();
 };
 

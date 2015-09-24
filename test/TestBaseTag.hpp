@@ -31,15 +31,18 @@ class TestBaseTag: public CPPUNIT_NS::TestFixture {
 
 private:
 
-    nix::File file;
-    nix::Block block;
-    std::vector<nix::DataArray> refs;
+    nix::File file, file_fs;
+    nix::Block block, block_fs;
+    std::vector<nix::DataArray> refs, refs_fs;
 
     CPPUNIT_TEST_SUITE(TestBaseTag);
 
     CPPUNIT_TEST(testReferences);
     CPPUNIT_TEST(testFeatures);
     CPPUNIT_TEST_SUITE_END ();
+
+    void test_references(nix::Block &b, std::vector<nix::DataArray> &r);
+    void test_features(nix::Block &b);
 
 public:
 

@@ -121,12 +121,8 @@ string PropertyHDF5::name() const {
 
 
 void PropertyHDF5::definition(const string &definition) {
-    if (definition.empty()) {
-        throw EmptyString("definition");
-    } else {
         dataset().setAttr("definition", definition);
         forceUpdatedAt();
-    }
 }
 
 
@@ -155,9 +151,6 @@ DataType PropertyHDF5::dataType() const {
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    }
     dataset().setAttr("mapping", mapping);
     forceUpdatedAt();
 }
@@ -182,9 +175,6 @@ void PropertyHDF5::mapping(const nix::none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    }
     dataset().setAttr("unit", unit);
     forceUpdatedAt();
 }
@@ -240,18 +230,6 @@ std::vector<Value> PropertyHDF5::values(void) const
 void PropertyHDF5::values(const nix::none_t t) {
     // TODO: rethink if we want two methods for same thing
     deleteValues();
-}
-
-
-int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
-    int cmp = 0;
-    if (!name().empty() && !other->name().empty()) {
-        cmp = (name()).compare(other->name());
-    }
-    if (cmp == 0) {
-        cmp = id().compare(other->id());
-    }
-    return cmp;
 }
 
 

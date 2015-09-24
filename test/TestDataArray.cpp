@@ -37,11 +37,17 @@ void TestDataArray::setUp()
                                    nix::DataType::Double,
                                    nix::NDSize({ 20 }));
     std::vector<double> t;
-    for (size_t i = 0; i < 20; i++) 
+    for (size_t i = 0; i < 20; i++)
         t.push_back(1.3 * i);
     array3.setData(nix::DataType::Double, t.data(), nix::NDSize({ 20 }), nix::NDSize({ 0 }));
     array3.label("label");
     array3.unit("Hz");
+
+    file_fs = nix::File::open("test_DataArray", nix::FileMode::Overwrite, Implementation::FileSys);
+    block_fs = file_fs.createBlock("block_one", "dataset");
+    array1_fs = block_fs.createDataArray("array_one", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
+    array2_fs = block_fs.createDataArray("random", "double", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+
 }
 
 void TestDataArray::tearDown()
@@ -55,37 +61,52 @@ void TestDataArray::testValidate() {
     valid::Result result = validate(array1);
     CPPUNIT_ASSERT(result.getErrors().size() == 1);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
+    //FIXME filesystem
 }
 
 
 void TestDataArray::testId() {
     CPPUNIT_ASSERT(array1.id().size() == 36);
+    CPPUNIT_ASSERT(array1_fs.id().size() == 36);
 }
 
 
 void TestDataArray::testName() {
     CPPUNIT_ASSERT(array1.name() == "array_one");
+    CPPUNIT_ASSERT(array1_fs.name() == "array_one");
 }
 
 
 void TestDataArray::testType() {
-    CPPUNIT_ASSERT(array1.type() == "testdata");
+    test_type(array1);
+    test_type(array1_fs);
+}
+
+
+void TestDataArray::test_type(DataArray &a) {
+    CPPUNIT_ASSERT(a.type() == "testdata");
     std::string typ = nix::util::createId();
-    array1.type(typ);
-    CPPUNIT_ASSERT(array1.type() == typ);
+    a.type(typ);
+    CPPUNIT_ASSERT(a.type() == typ);
 }
 
 
 void TestDataArray::testDefinition() {
-    std::string def = nix::util::createId();
-    array1.definition(def);
-    CPPUNIT_ASSERT(*array1.definition() == def);
-    array1.definition(boost::none);
-    CPPUNIT_ASSERT(array1.definition() == nix::none);
+    test_definition(array1);
+    test_definition(array1_fs);
 }
 
 
-void TestDataArray::testData()
+void TestDataArray::test_definition(DataArray &a) {
+    std::string def = nix::util::createId();
+    a.definition(def);
+    CPPUNIT_ASSERT(*a.definition() == def);
+    a.definition(boost::none);
+    CPPUNIT_ASSERT(a.definition() == nix::none);
+}
+
+
+void TestDataArray::testData() // FIXME for filesystem
 {
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
@@ -274,7 +295,7 @@ void TestDataArray::testData()
 
 }
 
-void TestDataArray::testPolynomial()
+void TestDataArray::testPolynomial() // FIXME test for filesys
 {
     double PI = boost::math::constants::pi<double>();
     boost::array<double, 10> coefficients1;
@@ -358,30 +379,80 @@ void TestDataArray::testPolynomial()
     }
 }
 
+void TestDataArray::testPolynomialSetter() {
+    test_polynomial_setter(array1);
+    test_polynomial_setter(array1_fs);
+}
+
+void TestDataArray::test_polynomial_setter(DataArray &a) {
+    boost::array<double, 10> coefficients1;
+    std::vector<double> coefficients2;
+    for(int i=0; i<10; i++) {
+        coefficients1[i] = i;
+        coefficients2.push_back(i);
+    }
+
+    a.polynomCoefficients(coefficients2);
+    std::vector<double> ret = a.polynomCoefficients();
+    for(size_t i=0; i<ret.size(); i++) {
+        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
+    }
+
+    a.polynomCoefficients(nix::none);
+    CPPUNIT_ASSERT(a.polynomCoefficients().size() == 0);
+
+    a.expansionOrigin(3);
+    boost::optional<double> retval = a.expansionOrigin();
+    CPPUNIT_ASSERT(*retval == 3);
+    a.expansionOrigin(nix::none);
+    CPPUNIT_ASSERT(a.expansionOrigin() == nix::none);
+}
+
+
 void TestDataArray::testLabel()
 {
-    std::string testStr = "somestring";
-
-    array1.label(testStr);
-    CPPUNIT_ASSERT(*array1.label() == testStr);
-    array1.label(boost::none);
-    CPPUNIT_ASSERT(array1.label() == nix::none);
+    test_label(array1);
+    test_label(array1_fs);
 }
+
+
+void TestDataArray::test_label(DataArray &a) {
+    std::string testStr = "somestring";
+    a.label(testStr);
+    CPPUNIT_ASSERT(*a.label() == testStr);
+    a.label(boost::none);
+    CPPUNIT_ASSERT(a.label() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.label(""), EmptyString);
+}
+
 
 void TestDataArray::testUnit()
 {
+    test_unit(array1);
+    test_unit(array1_fs);
+}
+
+
+void TestDataArray::test_unit(nix::DataArray &a) {
     std::string testStr = "somestring";
     std::string validUnit = "mV^2";
-
-    CPPUNIT_ASSERT_THROW(array1.unit(testStr), nix::InvalidUnit);
-    CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
-    CPPUNIT_ASSERT(array1.unit() == validUnit);
-    CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
-    CPPUNIT_ASSERT(array1.unit() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.unit(testStr), nix::InvalidUnit);
+    CPPUNIT_ASSERT_NO_THROW(a.unit(validUnit));
+    CPPUNIT_ASSERT(*a.unit() == validUnit);
+    CPPUNIT_ASSERT_NO_THROW(a.unit(boost::none));
+    CPPUNIT_ASSERT(a.unit() == nix::none);
+    CPPUNIT_ASSERT_THROW(a.unit(""), EmptyString);
 }
+
 
 void TestDataArray::testDimension()
 {
+    test_dimension(array1, array2);
+    test_dimension(array1_fs, array2_fs);
+}
+
+
+void TestDataArray::test_dimension(DataArray &a1, DataArray &a2) {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
     double samplingInterval = boost::math::constants::pi<double>();
@@ -389,39 +460,39 @@ void TestDataArray::testDimension()
     for(size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
-    CPPUNIT_ASSERT_THROW(array2.appendRangeDimension(std::vector<double>{}), nix::InvalidDimension);
-    CPPUNIT_ASSERT_THROW(array2.createRangeDimension(1, std::vector<double>{}), nix::InvalidDimension);
-    dims.push_back(array2.createSampledDimension(1, samplingInterval));
-    dims.push_back(array2.createSetDimension(2));
-    dims.push_back(array2.createRangeDimension(3, ticks));
-    dims.push_back(array2.appendSampledDimension(samplingInterval));
-    dims.push_back(array2.appendSetDimension());
-    dims[3] = array2.createRangeDimension(4, ticks);
+    CPPUNIT_ASSERT_THROW(a2.appendRangeDimension(std::vector<double>{}), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(a2.createRangeDimension(1, std::vector<double>{}), nix::InvalidDimension);
+    dims.push_back(a2.createSampledDimension(1, samplingInterval));
+    dims.push_back(a2.createSetDimension(2));
+    dims.push_back(a2.createRangeDimension(3, ticks));
+    dims.push_back(a2.appendSampledDimension(samplingInterval));
+    dims.push_back(a2.appendSetDimension());
+    dims[3] = a2.createRangeDimension(4, ticks);
 
     // have some explicit dimension types
-    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
-    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
-    nix::SetDimension dim_set = array1.appendSetDimension();
-    CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
-    CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
-    CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
+    nix::RangeDimension dim_range = a1.appendRangeDimension(ticks);
+    nix::SampledDimension dim_sampled = a1.appendSampledDimension(samplingInterval);
+    nix::SetDimension dim_set = a1.appendSetDimension();
+    CPPUNIT_ASSERT(a2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
+    CPPUNIT_ASSERT(a2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(a2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(a2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
+    CPPUNIT_ASSERT(a2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(!dim_range.alias());
-    
-    CPPUNIT_ASSERT(array2.dimensionCount() == 5);
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
+
+    CPPUNIT_ASSERT(a2.dimensionCount() == 5);
+    dims = a2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
     CPPUNIT_ASSERT(dims.size() == 1);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Set; });
+    dims = a2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Set; });
     CPPUNIT_ASSERT(dims.size() == 2);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
-    dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Range; });
+    dims = a2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Range; });
     CPPUNIT_ASSERT(dims.size() == 2);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Range);
-    dims = array2.dimensions();
+    dims = a2.dimensions();
     CPPUNIT_ASSERT(dims.size() == 5);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
@@ -429,16 +500,15 @@ void TestDataArray::testDimension()
     CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[4].dimensionType() == nix::DimensionType::Set);
     // since deleteDimension renumbers indices to be continuous we test that too
-    array2.deleteDimension(5);
-    array2.deleteDimension(4);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
-    dims = array2.dimensions();
-    CPPUNIT_ASSERT(array2.dimensionCount() == 0);
+    a2.deleteDimension(5);
+    a2.deleteDimension(4);
+    a2.deleteDimension(1);
+    a2.deleteDimension(1);
+    a2.deleteDimension(1);
+    dims = a2.dimensions();
+    CPPUNIT_ASSERT(a2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);
 }
-
 
 void TestDataArray::testAliasRangeDimension() {
     nix::Dimension dim = array3.createAliasRangeDimension();
@@ -478,7 +548,7 @@ void TestDataArray::testAliasRangeDimension() {
     rd.ticks(t);
     CPPUNIT_ASSERT(t.size() == t.size());
     CPPUNIT_ASSERT(t.size() == array3.dataExtent().nelms());
-    
+
     DataArray int_array = block.createDataArray("int array", "int_array",
                                                  nix::DataType::Int64,
                                                  nix::NDSize({20}));
@@ -489,7 +559,7 @@ void TestDataArray::testAliasRangeDimension() {
     rd.ticks(t);
     CPPUNIT_ASSERT(t.size() == t.size());
     CPPUNIT_ASSERT(t.size() == int_array.dataExtent().nelms());
-    
+
     std::vector<double> ticks_2 = rd.ticks();
     CPPUNIT_ASSERT(t.size() == ticks_2.size());
 }
@@ -497,10 +567,17 @@ void TestDataArray::testAliasRangeDimension() {
 
 void TestDataArray::testOperator()
 {
-    std::stringstream mystream;
-    mystream << array1;
-
-    array1 = none;
-    CPPUNIT_ASSERT(array1 == false);
-    CPPUNIT_ASSERT(array1 == none);
+    test_operator(array1);
+    test_operator(array1_fs);
 }
+
+
+void TestDataArray::test_operator(DataArray &a) {
+    std::stringstream mystream;
+    mystream << a;
+
+    a = none;
+    CPPUNIT_ASSERT(a == false);
+    CPPUNIT_ASSERT(a == none);
+}
+

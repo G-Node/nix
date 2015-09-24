@@ -69,7 +69,7 @@ void TestValue::testObject() {
     CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
 
     //the rest of the supports_type test are in ValTester::check_basic, below
-    CPPUNIT_ASSERT_EQUAL(false, nix::Value::supports_type(nix::DataType::DateTime));
+    CPPUNIT_ASSERT_EQUAL(false, nix::Value::supports_type(nix::DataType::Opaque));
 }
 
 struct ValTester {
