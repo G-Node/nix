@@ -8,10 +8,8 @@
 
 #include "nix/file/AttributesFS.hpp"
 
-
-using namespace nix::file;
-using namespace boost::filesystem;
-using namespace YAML;
+namespace bfs = boost::filesystem;
+namespace y = YAML;
 
 namespace nix {
 namespace file {
@@ -22,21 +20,21 @@ AttributesFS::AttributesFS() { }
 
 
 AttributesFS::AttributesFS(const std::string &file_path, FileMode mode)
-    : AttributesFS(path(file_path.c_str()), mode)
+    : AttributesFS(bfs::path(file_path.c_str()), mode)
 { }
 
-AttributesFS::AttributesFS(const path &file_path, FileMode mode)
+AttributesFS::AttributesFS(const bfs::path &file_path, FileMode mode)
     : loc(file_path), mode(mode) {
-    if (exists(file_path)) {
+    if (bfs::exists(file_path)) {
         open_or_create();
     }
 }
 
 
 void AttributesFS::open_or_create() {
-    path attr(ATTRIBUTES_FILE);
-    path temp = location() / attr;
-    if (!exists(temp)) {
+    bfs::path attr(ATTRIBUTES_FILE);
+    bfs::path temp = location() / attr;
+    if (!bfs::exists(temp)) {
         if (mode > FileMode::ReadOnly) {
             std::ofstream ofs;
             ofs.open(temp.string(), std::ofstream::out | std::ofstream::app);
@@ -45,7 +43,7 @@ void AttributesFS::open_or_create() {
             throw std::logic_error("Trying to create new attributes in ReadOnly mode!");
         }
     }
-    node = LoadFile(temp.string());
+    node = y::LoadFile(temp.string());
 }
 
 
@@ -57,16 +55,18 @@ bool AttributesFS::has(const std::string &name) {
 
 void AttributesFS::flush() {
     std::ofstream ofs;
-    path temp = location() / path(ATTRIBUTES_FILE);
+    bfs::path temp = location() / bfs::path(ATTRIBUTES_FILE);
     ofs.open(temp.string(), std::ofstream::trunc);
-    if (ofs.is_open())
+    if (ofs.is_open()) {
         ofs << node << std::endl;
-    else
-        std::cerr << "Failure!!!" << std::endl;
+    }
+    else {
+        throw std::runtime_error("Could not write to attributes file!");
+    }
     ofs.close();
 }
 
-path AttributesFS::location() const {
+bfs::path AttributesFS::location() const {
     return loc;
 }
 

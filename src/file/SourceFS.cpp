@@ -10,62 +10,60 @@
 #include <nix/util/util.hpp>
 #include <nix/Source.hpp>
 
-using namespace std;
-using namespace nix::base;
-
+namespace bfs = boost::filesystem;
 namespace nix {
 namespace file {
 
 
-SourceFS::SourceFS(const std::shared_ptr<IFile> &file, const std::string &loc)
+SourceFS::SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
     : EntityWithMetadataFS(file, loc)
 {
     createSubFolders(file);
 }
 
 
-SourceFS::SourceFS(const shared_ptr<IFile> &file, const string &loc, const std::string &id, const string &type, const string &name)
+SourceFS::SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+                   const std::string &type, const std::string &name)
     : SourceFS(file, loc, id, type, name, util::getTime())
 {
 }
 
 
-SourceFS::SourceFS(const shared_ptr<IFile> &file, const string &loc, const std::string &id, const string &type, const string &name, time_t time)
+SourceFS::SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+                   const std::string &type, const std::string &name, time_t time)
     : EntityWithMetadataFS(file, loc, id, type, name, time)
 {
     createSubFolders(file);
 }
 
 
-void SourceFS::createSubFolders(const shared_ptr<IFile> &file) {
-    boost::filesystem::path s("sources"), p(location());
+void SourceFS::createSubFolders(const std::shared_ptr<base::IFile> &file) {
+    bfs::path s("sources"), p(location());
     sources_dir = Directory(p / s, file->fileMode());
 }
 
-bool SourceFS::hasSource(const string &name_or_id) const {
+bool SourceFS::hasSource(const std::string &name_or_id) const {
     return getSource(name_or_id) != nullptr;
 }
 
 
-shared_ptr<ISource> SourceFS::getSource(const string &name_or_id) const {
-    shared_ptr<SourceFS> source;
-    boost::optional<boost::filesystem::path> p = sources_dir.findByNameOrAttribute("entity_id", name_or_id);
+std::shared_ptr<base::ISource> SourceFS::getSource(const std::string &name_or_id) const {
+    std::shared_ptr<SourceFS> source;
+    boost::optional<bfs::path> p = sources_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (p) {
-        source = make_shared<SourceFS>(file(), p->string());
+        source = std::make_shared<SourceFS>(file(), p->string());
     }
 
     return source;
 }
 
 
-shared_ptr<ISource> SourceFS::getSource(ndsize_t index) const {
+std::shared_ptr<base::ISource> SourceFS::getSource(ndsize_t index) const {
     if (index >= sourceCount()) {
         throw OutOfBounds("Trying to access source.source with invalid index.", index);
     }
-    boost::filesystem::path p = sources_dir.sub_dir_by_index(index);
-    shared_ptr<SourceFS> source;
-    source = make_shared<SourceFS>(file(), p.string());
-    return source;
+    bfs::path p = sources_dir.sub_dir_by_index(index);
+    return std::make_shared<SourceFS>(file(), p.string());
 }
 
 
@@ -74,20 +72,19 @@ ndsize_t SourceFS::sourceCount() const {
 }
 
 
-shared_ptr<ISource> SourceFS::createSource(const string &name, const string &type) {
+std::shared_ptr<base::ISource> SourceFS::createSource(const std::string &name, const std::string &type) {
     if (name.empty()) {
         throw EmptyString("name");
     }
     if (hasSource(name)) {
         throw DuplicateName("createSource");
     }
-    string id = util::createId();
-    SourceFS s(file(), sources_dir.location(), id, type, name);
-    return make_shared<SourceFS>(s);
+    std::string id = util::createId();
+    return std::make_shared<SourceFS>(file(), sources_dir.location(), id, type, name);
 }
 
 
-bool SourceFS::deleteSource(const string &name_or_id) {
+bool SourceFS::deleteSource(const std::string &name_or_id) {
     return sources_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 

@@ -8,34 +8,28 @@
 
 #include <nix/file/NamedEntityFS.hpp>
 
-#include <nix/util/util.hpp>
-
-#include <ctime>
-
-using namespace std;
-using namespace nix::base;
-using namespace boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &loc)
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
     : EntityFS(file, loc)
 {
 }
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &loc, const string &id, const string &type,
-                                 const string &name)
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+                             const std::string &type, const std::string &name)
     : NamedEntityFS(file, loc, id, type, name, util::getTime())
 {
 }
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &loc, const string &id, const string &type,
-                                 const string &name, time_t time)
-    : EntityFS(file, (path(loc.c_str()) / path(name.c_str())), id, time)
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+                             const std::string &type, const std::string &name, time_t time)
+    : EntityFS(file, (bfs::path(loc.c_str()) / bfs::path(name.c_str())), id, time)
 {
     this->type(type);
     if (name.empty()) {
@@ -47,7 +41,7 @@ NamedEntityFS::NamedEntityFS(const std::shared_ptr<IFile> &file, const string &l
 }
 
 
-void NamedEntityFS::type(const string &type) {
+void NamedEntityFS::type(const std::string &type) {
     if (type.empty()) {
         throw EmptyString("type");
     } else {
@@ -57,8 +51,8 @@ void NamedEntityFS::type(const string &type) {
 }
 
 
-string NamedEntityFS::type() const {
-    string type;
+std::string NamedEntityFS::type() const {
+    std::string type;
     if (hasAttr("type")) {
         getAttr("type", type);
         return type;
@@ -68,8 +62,8 @@ string NamedEntityFS::type() const {
 }
 
 
-string NamedEntityFS::name() const {
-    string name;
+std::string NamedEntityFS::name() const {
+    std::string name;
     if (hasAttr("name")) {
         getAttr("name", name);
         return name;
@@ -79,7 +73,7 @@ string NamedEntityFS::name() const {
 }
 
 
-void NamedEntityFS::definition(const string &definition) {
+void NamedEntityFS::definition(const std::string &definition) {
     if (definition.empty()) {
         throw EmptyString("definition");
     } else {
@@ -89,9 +83,9 @@ void NamedEntityFS::definition(const string &definition) {
 }
 
 
-boost::optional<string> NamedEntityFS::definition() const {
-    boost::optional<string> ret;
-    string definition;
+boost::optional<std::string> NamedEntityFS::definition() const {
+    boost::optional<std::string> ret;
+    std::string definition;
     if (hasAttr("definition")) {
         getAttr("definition", definition);
         ret = definition;
@@ -108,7 +102,7 @@ void NamedEntityFS::definition(const nix::none_t t) {
 }
 
 
-int NamedEntityFS::compare(const std::shared_ptr<INamedEntity> &other) const {
+int NamedEntityFS::compare(const std::shared_ptr<base::INamedEntity> &other) const {
     int cmp = 0;
     if (!name().empty() && !other->name().empty()) {
         cmp = (name()).compare(other->name());

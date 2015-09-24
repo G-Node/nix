@@ -13,39 +13,39 @@
 #include <nix/file/BlockFS.hpp>
 #include <nix/file/FeatureFS.hpp>
 
-using namespace std;
-using namespace nix::base;
+namespace bfs= boost::filesystem;
 
 namespace nix {
 namespace file {
 
 
-BaseTagFS::BaseTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc)
+BaseTagFS::BaseTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                     const std::string &loc)
     : EntityWithSourcesFS(file, block, loc)
 {
     createSubFolders(file);
 }
 
 
-BaseTagFS::BaseTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
-                     const string &id, const std::string &type, const string &name)
+BaseTagFS::BaseTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                     const std::string &loc, const std::string &id, const std::string &type, const std::string &name)
     : BaseTagFS(file, block, loc, id, type, name, util::getTime())
 {
 }
 
 
-BaseTagFS::BaseTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
-                     const std::string &id, const std::string &type, const string &name, time_t time)
+BaseTagFS::BaseTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                     const std::string &loc, const std::string &id, const std::string &type, const std::string &name, time_t time)
     : EntityWithSourcesFS(file, block, loc, id, type, name, time)
 {
     createSubFolders(file);
 }
 
 
-void BaseTagFS::createSubFolders(const shared_ptr<base::IFile> &file) {
-    boost::filesystem::path refs("references");
-    boost::filesystem::path feats("features");
-    boost::filesystem::path p(location());
+void BaseTagFS::createSubFolders(const std::shared_ptr<base::IFile> &file) {
+    bfs::path refs("references");
+    bfs::path feats("features");
+    bfs::path p(location());
 
     refs_group = Directory(p / refs, file->fileMode());
     feature_group = Directory(p / feats, file->fileMode());
@@ -71,8 +71,8 @@ ndsize_t BaseTagFS::referenceCount() const {
 }
 
 
-shared_ptr<IDataArray>  BaseTagFS::getReference(const std::string &name_or_id) const {
-    shared_ptr<IDataArray> da;
+std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(const std::string &name_or_id) const {
+    std::shared_ptr<base::IDataArray> da;
 
     std::string id = name_or_id;
     if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
@@ -80,21 +80,21 @@ shared_ptr<IDataArray>  BaseTagFS::getReference(const std::string &name_or_id) c
     }
 
     if (hasReference(id)) {
-        boost::optional<boost::filesystem::path> path = refs_group.findByNameOrAttribute("name", name_or_id);
+        boost::optional<bfs::path> path = refs_group.findByNameOrAttribute("name", name_or_id);
         if (path) {
-            return make_shared<DataArrayFS>(file(), block(), path->string());
+            return std::make_shared<DataArrayFS>(file(), block(), path->string());
         }
     }
     return da;
 }
 
 
-shared_ptr<IDataArray>  BaseTagFS::getReference(size_t index) const {
+std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(size_t index) const {
     if(index > referenceCount()) {
         throw OutOfBounds("No reference at given index", index);
     }
-    boost::filesystem::path p = refs_group.sub_dir_by_index(index);
-    return make_shared<DataArrayFS>(file(), block(), p.string());
+    bfs::path p = refs_group.sub_dir_by_index(index);
+    return std::make_shared<DataArrayFS>(file(), block(), p.string());
 }
 
 
@@ -105,7 +105,7 @@ void BaseTagFS::addReference(const std::string &name_or_id) {
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("BaseTagFS::addReference: DataArray not found in block!");
 
-    auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
     refs_group.createDirectoryLink(target->location(), target->id());
 }
 
@@ -123,7 +123,7 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
     std::vector<DataArray> refs_old(static_cast<size_t>(referenceCount()));
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
     std::vector<std::string> names_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
+    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
 
     // sort them
     std::sort(names_new.begin(), names_new.end());
@@ -138,7 +138,7 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
                         std::inserter(names_rem, names_rem.begin()));
 
     // check if all new references exist & add sources
-    auto blck = dynamic_pointer_cast<BlockFS>(block());
+    auto blck = std::dynamic_pointer_cast<BlockFS>(block());
     for (auto name : names_add) {
         if (!blck->hasDataArray(name))
             throw std::runtime_error("One or more data arrays do not exist in this block!");
@@ -155,7 +155,7 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
 // Methods concerning features.
 //--------------------------------------------------
 
-bool BaseTagFS::hasFeature(const string &name_or_id) const {
+bool BaseTagFS::hasFeature(const std::string &name_or_id) const {
     return !feature_group.findByNameOrAttribute("entity_id", name_or_id)->empty();
 }
 
@@ -165,36 +165,36 @@ ndsize_t BaseTagFS::featureCount() const {
 }
 
 
-shared_ptr<IFeature> BaseTagFS::getFeature(const std::string &name_or_id) const {
-    shared_ptr<IFeature> feature;
-    boost::optional<boost::filesystem::path> p = feature_group.findByNameOrAttribute("name", name_or_id);
+std::shared_ptr<base::IFeature> BaseTagFS::getFeature(const std::string &name_or_id) const {
+    std::shared_ptr<base::IFeature> feature;
+    boost::optional<bfs::path> p = feature_group.findByNameOrAttribute("name", name_or_id);
     if (p) {
-        return make_shared<FeatureFS>(file(), block(), p->string());
+        return std::make_shared<FeatureFS>(file(), block(), p->string());
     }
     return feature;
 }
 
 
-shared_ptr<IFeature>  BaseTagFS::getFeature(size_t index) const {
+std::shared_ptr<base::IFeature>  BaseTagFS::getFeature(size_t index) const {
     if (index >= featureCount()) {
         throw OutOfBounds("Trying to access a feature with an invalid index!");
     }
-    boost::filesystem::path id = feature_group.sub_dir_by_index(index);
+    bfs::path id = feature_group.sub_dir_by_index(index);
     return getFeature(id.filename().string());
 }
 
 
-shared_ptr<IFeature>  BaseTagFS::createFeature(const std::string &name_or_id, LinkType link_type) {
+std::shared_ptr<base::IFeature>  BaseTagFS::createFeature(const std::string &name_or_id, LinkType link_type) {
     if(!block()->hasDataArray(name_or_id)) {
         throw std::runtime_error("DataArray not found in Block!");
     }
-    string rep_id = util::createId();
+    std::string rep_id = util::createId();
     DataArray a = block()->getDataArray(name_or_id);
-    return make_shared<FeatureFS>(file(), block(), feature_group.location(), rep_id, a, link_type);
+    return std::make_shared<FeatureFS>(file(), block(), feature_group.location(), rep_id, a, link_type);
 }
 
 
-bool BaseTagFS::deleteFeature(const string &name_or_id) {
+bool BaseTagFS::deleteFeature(const std::string &name_or_id) {
     return feature_group.removeObjectByNameOrAttribute("name", name_or_id);
 }
 

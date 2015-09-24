@@ -10,10 +10,7 @@
 #include <nix/file/BlockFS.hpp>
 #include <nix/file/SectionFS.hpp>
 
-using namespace std;
-using namespace nix;
-
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
@@ -22,7 +19,7 @@ namespace file {
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
 
-FileFS::FileFS(const string &name, FileMode mode)
+FileFS::FileFS(const std::string &name, FileMode mode)
     : DirectoryWithAttributes(name, mode){
     this->mode = mode;
     if (mode == FileMode::Overwrite) {
@@ -36,11 +33,11 @@ FileFS::FileFS(const string &name, FileMode mode)
     }
 }
 
-void FileFS::create_subfolders(const string &loc) {
-    fs::path data("data");
-    fs::path metadata("metadata");
-    fs::path p;
-    p = fs::canonical(loc);
+void FileFS::create_subfolders(const std::string &loc) {
+    bfs::path data("data");
+    bfs::path metadata("metadata");
+    bfs::path p;
+    p = bfs::canonical(loc);
 
     data_dir = Directory(p / data, mode);
     metadata_dir = Directory(p / metadata, mode);
@@ -52,17 +49,17 @@ ndsize_t FileFS::blockCount() const {
 }
 
 bool FileFS::hasBlock(const std::string &name_or_id) const  {
-    boost::optional<fs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<bfs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
     return (bool)path;
 }
 
 
 std::shared_ptr<base::IBlock> FileFS::getBlock(const std::string &name_or_id) const {
-    shared_ptr<BlockFS> block;
-    boost::optional<fs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
+    std::shared_ptr<BlockFS> block;
+    boost::optional<bfs::path> path = data_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
         BlockFS b(file(), path->string());
-        return make_shared<BlockFS>(b);
+        return std::make_shared<BlockFS>(b);
     }
     return block;
 }
@@ -72,9 +69,9 @@ std::shared_ptr<base::IBlock> FileFS::getBlock(ndsize_t index) const {
     if (index >= blockCount()) {
         throw nix::OutOfBounds("Trying to access file.block with invalid index", index);
     }
-    fs::path p = data_dir.sub_dir_by_index(index);
-    shared_ptr<BlockFS> b;
-    b = make_shared<BlockFS>(file(), p.string());
+    bfs::path p = data_dir.sub_dir_by_index(index);
+    std::shared_ptr<BlockFS> b;
+    b = std::make_shared<BlockFS>(file(), p.string());
     return b;
 }
 
@@ -86,9 +83,9 @@ std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const
     if (hasBlock(name)) {
         throw DuplicateName("Block with the given name already exists!");
     }
-    string id = util::createId();
+    std::string id = util::createId();
     BlockFS b(file(), data_dir.location(), id, type, name);
-    return make_shared<BlockFS>(b);
+    return std::make_shared<BlockFS>(b);
 }
 
 
@@ -101,17 +98,17 @@ bool FileFS::deleteBlock(const std::string &name_or_id) {
 //--------------------------------------------------
 
 bool FileFS::hasSection(const std::string &name_or_id) const {
-    boost::optional<fs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<bfs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
     return (bool)path;
 }
 
 
 std::shared_ptr<base::ISection> FileFS::getSection(const std::string &name_or_id) const {
-    shared_ptr<base::ISection> sec;
-    boost::optional<fs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
+    std::shared_ptr<base::ISection> sec;
+    boost::optional<bfs::path> path = metadata_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
         SectionFS s(file(), path->string());
-        return make_shared<SectionFS>(s);
+        return std::make_shared<SectionFS>(s);
     }
     return sec;
 }
@@ -121,10 +118,8 @@ std::shared_ptr<base::ISection> FileFS::getSection(ndsize_t index) const {
     if (index >= sectionCount()) {
         throw OutOfBounds("Trying to access file.section with invalid index.", index);
     }
-    fs::path p = metadata_dir.sub_dir_by_index(index);
-    shared_ptr<SectionFS> sec;
-    sec = make_shared<SectionFS>(file(), p.string());
-    return sec;
+    bfs::path p = metadata_dir.sub_dir_by_index(index);
+    return std::make_shared<SectionFS>(file(), p.string());
 }
 
 
@@ -140,9 +135,9 @@ std::shared_ptr<base::ISection> FileFS::createSection(const std::string &name, c
     if (hasSection(name)) {
         throw DuplicateName("Section with the specified name altready exists!");
     }
-    string id = util::createId();
+    std::string id = util::createId();
     SectionFS s(file(), metadata_dir.location(), id, type, name);
-    return make_shared<SectionFS>(s);
+    return std::make_shared<SectionFS>(s);
 }
 
 
@@ -156,14 +151,14 @@ bool FileFS::deleteSection(const std::string &name_or_id) {
 
 
 std::vector<int> FileFS::version() const {
-    vector<int> version;
+    std::vector<int> version;
     getAttr("version", version);
     return  version;
 }
 
 
 std::string FileFS::format() const {
-    string format;
+    std::string format;
     getAttr("format", format);
     return format;
 }
@@ -175,14 +170,14 @@ std::string FileFS::location() const {
 
 
 time_t FileFS::createdAt() const {
-    string temp_t;
+    std::string temp_t;
     getAttr("created_at", temp_t);
     return util::strToTime(temp_t);
 }
 
 
 time_t FileFS::updatedAt() const {
-    string temp_t;
+    std::string temp_t;
     getAttr("updated_at", temp_t);
     return util::strToTime(temp_t);
 }
@@ -234,8 +229,8 @@ bool FileFS::operator!=(const FileFS &other) const {
 
 bool FileFS::checkHeader() {
     bool check = true;
-    vector<int> version;
-    string str;
+    std::vector<int> version;
+    std::string str;
     // check format
     if (hasAttr("format")) {
         getAttr("format", str);
@@ -258,7 +253,7 @@ bool FileFS::checkHeader() {
 }
 
 std::shared_ptr<base::IFile> FileFS::file() const {
-    return const_pointer_cast<FileFS>(shared_from_this());
+    return std::const_pointer_cast<FileFS>(shared_from_this());
 }
 
 FileMode FileFS::fileMode() const {

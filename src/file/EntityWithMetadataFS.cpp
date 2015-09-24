@@ -16,25 +16,27 @@
 #include <memory>
 #include <nix/file/SectionFS.hpp>
 
-using namespace std;
-using namespace nix::base;
+namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
 
-EntityWithMetadataFS::EntityWithMetadataFS(const shared_ptr<IFile> &file, const string &loc)
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
     : NamedEntityFS(file, loc)
 {
 }
 
 
-EntityWithMetadataFS::EntityWithMetadataFS(const shared_ptr<IFile> &file, const string &loc, const string &id, const string &type, const string &name)
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+                                           const std::string &id, const std::string &type, const std::string &name)
     : EntityWithMetadataFS(file, loc, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataFS::EntityWithMetadataFS(const shared_ptr<IFile> &file, const string &loc, const string &id, const string &type, const string &name, time_t time)
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+                                           const std::string &id, const std::string &type, const std::string &name,
+                                           time_t time)
     : NamedEntityFS(file, loc, id, type, name, time)
 {
 }
@@ -54,18 +56,17 @@ void EntityWithMetadataFS::metadata(const std::string &id) {
     if (found.empty())
         throw std::runtime_error("EntityWithMetadataFS::metadata: Section not found in file!");
 
-    auto target = dynamic_pointer_cast<SectionFS>(found.front().impl());
-    boost::filesystem::path t(target->location()), p(location()), m("metadata");
+    auto target = std::dynamic_pointer_cast<SectionFS>(found.front().impl());
+    bfs::path t(target->location()), p(location()), m("metadata");
     target->createLink(p / m);
-    //boost::filesystem::create_directory_symlink(t, p / m);
 }
 
 
-shared_ptr<ISection> EntityWithMetadataFS::metadata() const {
-    shared_ptr<ISection> sec;
+std::shared_ptr<base::ISection> EntityWithMetadataFS::metadata() const {
+    std::shared_ptr<base::ISection> sec;
     if (hasMetadata()) {
-        boost::filesystem::path p(location()), m("metadata"), other_loc(p/m);
-        auto sec_tmp = make_shared<EntityWithMetadataFS>(file(), other_loc.string());
+        bfs::path p(location()), m("metadata"), other_loc(p/m);
+        auto sec_tmp = std::make_shared<EntityWithMetadataFS>(file(), other_loc.string());
         // re-get above section "sec_tmp": we just got it to have id, parent is missing,
         // findSections will return it with parent!
         auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
@@ -82,19 +83,19 @@ void EntityWithMetadataFS::metadata(const none_t t) {
         throw std::runtime_error("EntityWithMetdata::metadata trying to set metadata in ReadOnly mode.");
     }
     if (hasMetadata()) {
-        boost::filesystem::path p(location()), m("metadata"), other_loc(p/m);
-        auto sec_tmp = make_shared<EntityWithMetadataFS>(file(), other_loc.string());
-        boost::filesystem::path p1(location()), p2("metadata");
+        bfs::path p(location()), m("metadata"), other_loc(p/m);
+        auto sec_tmp = std::make_shared<EntityWithMetadataFS>(file(), other_loc.string());
+        bfs::path p1(location()), p2("metadata");
         sec_tmp->unlink(p1 / p2);
-        boost::filesystem::remove_all(p1/p2);
+        bfs::remove_all(p1/p2);
     }
     forceUpdatedAt();
 }
 
 
 bool EntityWithMetadataFS::hasMetadata() const {
-    boost::filesystem::path p1(location()), p2("metadata");
-    return boost::filesystem::exists(p1/p2);
+    bfs::path p1(location()), p2("metadata");
+    return bfs::exists(p1/p2);
 }
 
 

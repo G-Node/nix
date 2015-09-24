@@ -18,28 +18,29 @@
 
 #include <algorithm>
 
-using namespace std;
-using namespace nix::base;
-
+namespace bfs = boost::filesystem;
 namespace nix {
 namespace file {
 
 
-MultiTagFS::MultiTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc)
+MultiTagFS::MultiTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                       const std::string &loc)
     : BaseTagFS(file, block, loc)
 {
 }
 
 
-MultiTagFS::MultiTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
-                       const string &id, const std::string &type, const string &name, const DataArray &positions)
+MultiTagFS::MultiTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                       const std::string &loc, const std::string &id, const std::string &type, const std::string &name,
+                       const DataArray &positions)
     : MultiTagFS(file, block, loc, id, type, name, positions, util::getTime())
 {
 }
 
 
-MultiTagFS::MultiTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const string &loc,
-                       const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
+MultiTagFS::MultiTagFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                       const std::string &loc, const std::string &id, const std::string &type, const std::string &name,
+                       const DataArray &positions, time_t time)
     : BaseTagFS(file, block, loc, id, type, name, time)
 {
     // TODO: the line below currently throws an exception if positions is
@@ -48,19 +49,19 @@ MultiTagFS::MultiTagFS(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &
 }
 
 
-shared_ptr<IDataArray> MultiTagFS::positions() const {
-    shared_ptr<IDataArray> da;
-    boost::optional<boost::filesystem::path> p = findByNameOrAttribute("name", "positions");
+std::shared_ptr<base::IDataArray> MultiTagFS::positions() const {
+    std::shared_ptr<base::IDataArray> da;
+    boost::optional<bfs::path> p = findByNameOrAttribute("name", "positions");
     if (p) {
         DataArrayFS a(file(), block(), p->string());
-        return make_shared<DataArrayFS>(a);
+        return std::make_shared<DataArrayFS>(a);
     } else {
-        throw runtime_error("MultiTagFS::positions: DataArray not found!");
+        throw std::runtime_error("MultiTagFS::positions: DataArray not found!");
     }
 }
 
 
-void MultiTagFS::positions(const string &name_or_id) {
+void MultiTagFS::positions(const std::string &name_or_id) {
     if (name_or_id.empty())
         throw EmptyString("positions");
     if (!block()->hasDataArray(name_or_id))
@@ -68,8 +69,8 @@ void MultiTagFS::positions(const string &name_or_id) {
     if (hasObject("positions"))
         removeObjectByNameOrAttribute("name", "positions");
 
-    auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
-    boost::filesystem::path p(location()), m("positions");
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    bfs::path p(location()), m("positions");
     target->createLink(p / m);
     forceUpdatedAt();
 }
@@ -82,18 +83,18 @@ bool MultiTagFS::hasPositions() const {
 }
 
 
-shared_ptr<IDataArray>  MultiTagFS::extents() const {
-    shared_ptr<IDataArray> da;
-    boost::optional<boost::filesystem::path> p = findByNameOrAttribute("name", "extents");
+std::shared_ptr<base::IDataArray>  MultiTagFS::extents() const {
+    std::shared_ptr<base::IDataArray> da;
+    boost::optional<bfs::path> p = findByNameOrAttribute("name", "extents");
     if (p) {
         DataArrayFS a(file(), block(), p->string());
-        return make_shared<DataArrayFS>(a);
+        return std::make_shared<DataArrayFS>(a);
     }
     return da;
 }
 
 
-void MultiTagFS::extents(const string &name_or_id) {
+void MultiTagFS::extents(const std::string &name_or_id) {
     if (name_or_id.empty())
         throw EmptyString("extents");
     if (!block()->hasDataArray(name_or_id))
@@ -102,10 +103,10 @@ void MultiTagFS::extents(const string &name_or_id) {
         removeObjectByNameOrAttribute("name", "extents");
     DataArray da = block()->getDataArray(name_or_id);
     if (!checkDimensions(da, positions()))
-        throw runtime_error("MultiTagFS::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+        throw std::runtime_error("MultiTagFS::extents: cannot set Extent because dimensionality of extent and position data do not match!");
 
-    auto target = dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
-    boost::filesystem::path p(location()), m("extents");
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    bfs::path p(location()), m("extents");
     target->createLink(p / m);
     forceUpdatedAt();
 }
@@ -118,14 +119,14 @@ void MultiTagFS::extents(const none_t t) {
 }
 
 
-vector<string> MultiTagFS::units() const {
-    vector<string> units;
+std::vector<std::string> MultiTagFS::units() const {
+    std::vector<std::string> units;
     getAttr("units", units);
     return units;
 }
 
 
-void MultiTagFS::units(const vector<string> &units) {
+void MultiTagFS::units(const std::vector<std::string> &units) {
     setAttr("units", units);
     forceUpdatedAt();
 }
