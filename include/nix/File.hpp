@@ -88,7 +88,7 @@ public:
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     Implementation impl=Implementation::Hdf5);
+                     const std::string &impl="hdf5");
 
     /**
      * @brief Get the number of blocks in in the file.
