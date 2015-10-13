@@ -26,30 +26,21 @@ namespace cli {
     const char *const MODULE_OPTION = "module";
     const char *const INPFILE_OPTION = "input-file";
 
-class NoInputFile : public std::exception {
+class NoInputFile : public std::invalid_argument {
 public:
-    NoInputFile() { }
-    const char *what() const throw() {
-        return "No input file given";
-    }
+    NoInputFile() : std::invalid_argument("No input file given") { }
 };
 
-class FileNotFound : public std::exception {
-    std::string file_name;
+class FileNotFound : public std::invalid_argument {
 public:
-    FileNotFound(std::string file_name) : file_name(file_name) { }
-    const char *what() const throw() {
-        return ("File '" + file_name + "' not found").c_str();
-    }
+    FileNotFound(std::string file_name) :
+            std::invalid_argument("File '" + file_name + "' not found") { }
 };
 
-class FileNotOpen : public std::exception {
-    std::string file_name;
+class FileNotOpen : public std::invalid_argument {
 public:
-    FileNotOpen(std::string file_name) : file_name(file_name) { }
-    const char *what() const throw() {
-        return ("File '" + file_name + "' could not be opened - wrong format?").c_str();
-    }
+    FileNotOpen(std::string file_name) :
+            std::invalid_argument("File '" + file_name + "' could not be opened - wrong format?") { }
 };
 
 } // namespace cli
