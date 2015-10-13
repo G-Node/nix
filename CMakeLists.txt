@@ -79,7 +79,7 @@ endif(DOXYGEN_FOUND)
 ########################################
 # NIX
 
-include_directories(include)
+include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
@@ -229,9 +229,11 @@ if(WIN32)
 endif()
 
 ########################################
+get_directory_property(incdirs INCLUDE_DIRECTORIES)
 
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "INCDIRS: ${incdirs}")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
