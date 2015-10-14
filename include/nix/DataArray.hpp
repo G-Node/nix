@@ -485,12 +485,12 @@ protected:
     void ioRead(DataType dtype,
                 void *data,
                 const NDSize &count,
-                const NDSize &offset) const override;
+                const NDSize &offset) const;
 
     void ioWrite(DataType dtype,
                  const void *data,
                  const NDSize &count,
-                 const NDSize &offset) override;
+                 const NDSize &offset);
 };
 
 } // namespace nix
