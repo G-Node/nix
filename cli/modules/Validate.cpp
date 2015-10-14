@@ -8,7 +8,6 @@
 
 #include <Cli.hpp>
 #include <modules/Validate.hpp>
-#include <Exception.hpp>
 #include <nix/None.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>

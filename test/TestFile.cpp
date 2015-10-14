@@ -32,6 +32,11 @@ void TestFile::tearDown() {
     file_other.close();
 }
 
+void TestFile::testOpen() {
+
+    CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), runtime_error);
+
+}
 
 void TestFile::testValidate() {
     valid::Result result = validate(file_open);
