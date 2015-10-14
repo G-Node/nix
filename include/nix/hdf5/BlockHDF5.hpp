@@ -100,7 +100,7 @@ public:
 
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                      nix::DataType data_type, const NDSize &shape) override;
+                                                      nix::DataType data_type, const NDSize &shape);
 
 
     bool deleteDataArray(const std::string &name_or_id);

@@ -28,18 +28,18 @@ public:
     // the DataIO interface implementation
     virtual void dataExtent(const NDSize &extent);
     virtual NDSize dataExtent() const;
-    virtual DataType dataType() const override;
+    virtual DataType dataType() const;
 
 protected:
     void ioRead(DataType dtype,
                 void *data,
                 const NDSize &count,
-                const NDSize &offset) const override;
+                const NDSize &offset) const;
 
     void ioWrite(DataType dtype,
                  const void *data,
                  const NDSize &count,
-                 const NDSize &offset) override;
+                 const NDSize &offset);
 
 private:
     NDSize transform_coordinates(const NDSize &c, const NDSize &o) const;
