@@ -1,3 +1,13 @@
+nix (1.0.2-2) UNRELEASED; urgency=medium
+
+  * debian/copyright is DEP-5 format now
+  * debian/control
+    - boosted policy to 3.9.6
+    - fixed/extended Vcs fields
+    - adjusted descriptions
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Sat, 17 Oct 2015 10:56:29 -0500
+
 nix (1.0.2-1) trusty; urgency=medium
 
   * Set to version 1.0.2
