@@ -42,7 +42,7 @@ public:
     virtual std::shared_ptr<IDataArray> getReference(const std::string &id) const = 0;
 
 
-    virtual std::shared_ptr<IDataArray> getReference(size_t index) const = 0;
+    virtual std::shared_ptr<IDataArray> getReference(ndsize_t index) const = 0;
 
 
     virtual void addReference(const std::string &id) = 0;
