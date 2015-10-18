@@ -8,14 +8,13 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <type_traits>
-
-#include <boost/multi_array.hpp>
-#include <valarray>
-
 #include <nix/Exception.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/DataType.hpp>
+
+#include <type_traits>
+#include <limits>
+#include <valarray>
 
 #ifndef NIX_HYDRA_H
 #define NIX_HYDRA_H
@@ -54,7 +53,7 @@ struct data_traits {
     }
 
     static void resize(reference value, const NDSize &dims) {
-        if (dims.size() != 0) {
+        if (!(dims.size() == 0 || dims.nelms() == 1)) {
             throw InvalidRank("Cannot resize scalar");
         }
     }
@@ -168,23 +167,29 @@ public:
     }
 
     static const_element_pointer get_data(const_reference value) {
-        return &value[0];
+        return value.data();
     }
 
     static element_pointer get_data(value_type &value) {
-        return &value[0];
+        return value.data();
     }
 
     static void resize(reference value, const NDSize &dims) {
-
-        if (dims.size() != 1) {
-            throw InvalidRank("Cannot change rank of vector"); //FIXME
+        size_t non_singletons = 0;
+        size_t non_singleton_index = 0;
+        for (size_t i = 0; i < dims.size(); ++i) {
+            if (dims[i] > 1) {
+                non_singletons++;
+                non_singleton_index = i;
+            }
+        }
+        if (non_singletons > 1) {
+            throw InvalidRank("Cannot change rank of vector");
         }
 
-        if (dims[0] == value.size())
-            return;
-
-        value.resize(dims[0]);
+        ndsize_t to_resize = dims[non_singleton_index];
+        size_t size = check::fits_in_size_t(to_resize, "Can't resize: data to big for memory");
+        value.resize(size);
     }
 };
 
@@ -226,56 +231,8 @@ public:
             throw InvalidRank("Cannot change rank of valarray");
         }
 
-        if (dims[0] == value.size())
-            return;
-
-        value.resize(dims[0]);
-    }
-};
-
-
-template<typename T, size_t N>
-class data_traits<boost::multi_array<T, N> > {
-public:
-
-    typedef boost::multi_array<T, N> value_type;
-    typedef value_type&              reference;
-    typedef const value_type&        const_reference;
-
-    typedef T        element_type;
-    typedef T*       element_pointer;
-    typedef const T* const_element_pointer;
-
-    static DataType data_type(const_reference val) {
-        return to_data_type<element_type>::value;
-    }
-
-    static NDSize shape(const value_type &value) {
-        NDSize ndsize(N);
-        const size_t *ma_shape = value.shape();
-        std::transform(ma_shape, ma_shape + N, ndsize.data(),
-                       [](NDSize::const_reference val) { return static_cast<T>(val);});
-        return ndsize;
-    }
-
-    static size_t num_elements(const_reference value) {
-        return  value.num_elements();;
-    }
-
-    static const_element_pointer get_data(const value_type& value) {
-        return value.data();
-    }
-
-    static element_pointer get_data(value_type &value) {
-        return value.data();
-    }
-
-    static void resize(reference value, const NDSize &dims) {
-        if (dims.size() != N) {
-            throw InvalidRank("Cannot change rank of multiarray");
-        }
-
-        value.resize(dims);
+        size_t size = check::fits_in_size_t(dims[0], "can't resize: data to big for memory");
+        value.resize(size);
     }
 };
 

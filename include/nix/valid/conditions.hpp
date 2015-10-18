@@ -9,9 +9,6 @@
 #ifndef NIX_CONDITIONS_H
 #define NIX_CONDITIONS_H
 
-#include <string>
-#include <functional>
-
 #include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
@@ -19,15 +16,11 @@
 #include <nix/valid/checks.hpp>
 #include <nix/valid/validator.hpp>
 
+#include <string>
+#include <functional>
+
 namespace nix {
 namespace valid {
-
-    /**
-     * @brief return type of conditions {@link should} & {@link must}
-     * 
-     * Actual condition type, return type of conditions functionals
-     */
-    typedef std::function<Result(void)> condition;
 
     /**
      * @brief creates condition throwing error if check fails
@@ -53,7 +46,7 @@ namespace valid {
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
     must(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
-         const std::string &msg, const std::initializer_list<condition> &subs = {}) {
+         const std::string &msg, const std::vector<condition> &subs = {}) {
         return [parent, get, check, msg, subs] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
@@ -107,7 +100,7 @@ namespace valid {
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
     should(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
-           const std::string &msg, const std::initializer_list<condition> &subs = {}) {
+           const std::string &msg, const std::vector<condition> &subs = {}) {
         return [parent, get, check, msg, subs] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
@@ -161,7 +154,7 @@ namespace valid {
     template<typename TOBJ, typename TBASEOBJ, typename TRET, typename TCHECK>
     condition
     could(const TOBJ &parent, TRET(TBASEOBJ::*get)(void)const, const TCHECK &check,
-          const std::initializer_list<condition> &subs = {}) {
+          const std::vector<condition> &subs = {}) {
         return [parent, get, check, subs] () -> Result {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;

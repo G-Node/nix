@@ -8,6 +8,8 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -26,9 +28,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix.hpp>
-
-#include <nix/hdf5/Group.hpp> //for the hdf5 namespace
 
 class TestValue : public CPPUNIT_NS::TestFixture {
 
@@ -39,15 +38,14 @@ public:
 
     void testObject();
     void testSwap();
+    void testEquals();
 
 private:
-
-    H5::H5File h5file;
-    H5::Group h5group;
 
     CPPUNIT_TEST_SUITE(TestValue);
     CPPUNIT_TEST(testObject);
     CPPUNIT_TEST(testSwap);
+    CPPUNIT_TEST(testEquals);
     CPPUNIT_TEST_SUITE_END ();
 
 };

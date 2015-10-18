@@ -6,6 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
+#include <nix/hdf5/TagHDF5.hpp>
+#include <nix/util/util.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -21,10 +27,6 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
 
-#include <nix.hpp>
-#include <nix/hdf5/TagHDF5.hpp>
-#include <nix/util/util.hpp>
-
 
 class TestTag: public CPPUNIT_NS::TestFixture {
 private:
@@ -35,23 +37,24 @@ private:
     nix::Tag tag, tag_other, tag_null;
     nix::Section section;
     time_t startup_time;
-
+    std::vector<nix::DataArray> refs;
 
     CPPUNIT_TEST_SUITE(TestTag);
-    
+
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
-    
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testCreateRemove);
     CPPUNIT_TEST(testExtent);
     CPPUNIT_TEST(testPosition);
-    CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testDataAccess);
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testUnits);
+    CPPUNIT_TEST(testReferences);
+    CPPUNIT_TEST(testFeatures);
     CPPUNIT_TEST(testCreatedAt);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testOperators);
@@ -61,21 +64,22 @@ public:
 
     void setUp();
     void tearDown();
-    
+
     void testValidate();
-    
+
     void testId();
-    
     void testName();
     void testType();
     void testDefinition();
     void testCreateRemove();
     void testExtent();
     void testPosition();
-    void testReferences();
+    void testDataAccess();
     void testMetadataAccess();
     void testSourceAccess();
     void testUnits();
+    void testReferences();
+    void testFeatures();
     void testOperators();
     void testCreatedAt();
     void testUpdatedAt();

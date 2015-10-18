@@ -6,6 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/util.hpp>
+
+#include <nix/base/IDimensions.hpp>
+
 #include <string>
 #include <cstdlib>
 #include <mutex>
@@ -14,13 +18,10 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/regex.hpp>
-#include <nix/util/util.hpp>
 #include <boost/random.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
-
-#include <nix/base/IDimensions.hpp>
 
 
 using namespace std;
@@ -41,7 +42,8 @@ const map<string, double> PREFIX_FACTORS = {{"y", 1.0e-24}, {"z", 1.0e-21}, {"a"
 
 
 string createId() {
-    static boost::mt19937 ran(std::time(0));
+    typedef boost::mt19937::result_type seed_type;
+    static boost::mt19937 ran(static_cast<seed_type>(std::time(0)));
     static boost::uuids::basic_random_generator<boost::mt19937> gen(&ran);
     boost::uuids::uuid u = gen();
     return boost::uuids::to_string(u);
@@ -71,9 +73,10 @@ time_t getTime() {
 void deblankString(std::string &str) {
     typedef std::string::value_type char_type;
 
+    // c > 0 check is for windows where isblank asserts c > -1 && < 256
     str.erase(std::remove_if(str.begin(),
                              str.end(),
-                             [](char_type c) { return std::isblank(c); }),
+                             [](char_type c) { return c > 0 && std::isblank(c); }),
               str.end());
 }
 
@@ -149,22 +152,56 @@ void splitUnit(const string &combinedUnit, string &prefix, string &unit, string 
 }
 
 
+void invertPower(std::string &unit) {
+    string p, u, power;
+    util::splitUnit(unit, p, u, power);
+    if (power.empty()) {
+        unit = (p + u + "^-1");
+    } else {
+        if (power[0] == '-') {
+            unit = p + u + "^" + power.substr(1);
+        } else {
+            unit = p + u + "^-" + power;
+        }
+    }
+}
+
+
 void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string> &atomicUnits) {
     string s = compoundUnit;
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     boost::regex separator("(\\*|/)");
     boost::match_results<std::string::const_iterator> m;
-
+    string sep;
     while (boost::regex_search(s, m, opt_prefix_and_unit_and_power) && (m.suffix().length() > 0)) {
         string suffix = m.suffix();
-        atomicUnits.push_back(m[0]);
+        util::deblankString(suffix);
+        if (sep == "/") {
+            string unit = m[0];
+            invertPower(unit);
+            atomicUnits.push_back(unit);
+        } else {
+            atomicUnits.push_back(m[0]);
+        }
+        sep = suffix[0];
         s = suffix.substr(1);
     }
-    atomicUnits.push_back(m[0]);
+    if (sep == "/") {
+        string unit = m[0];
+        invertPower(unit);
+        atomicUnits.push_back(unit);
+    } else {
+        atomicUnits.push_back(m[0]);
+    }
 }
 
 
 bool isSIUnit(const string &unit) {
+    return !unit.empty() && (isAtomicSIUnit(unit) || isCompoundSIUnit(unit));
+}
+
+
+bool isAtomicSIUnit(const string &unit) {
     boost::regex opt_prefix_and_unit_and_power(PREFIXES + "?" + UNITS + POWER + "?");
     return boost::regex_match(unit, opt_prefix_and_unit_and_power);
 }
@@ -173,7 +210,7 @@ bool isSIUnit(const string &unit) {
 bool isCompoundSIUnit(const string &unit) {
     string atomic_unit = PREFIXES + "?" + UNITS + POWER + "?";
     boost::regex compound_unit("(" + atomic_unit + "(\\*|/))+"+ atomic_unit);
-    return boost::regex_match(unit, compound_unit);
+    return !unit.empty() && boost::regex_match(unit, compound_unit);
 }
 
 
@@ -264,6 +301,72 @@ double getSIScaling(const string &originUnit, const string &destinationUnit) {
         scaling = pow(scaling, power);
     }
     return scaling;
+}
+
+void applyPolynomial(const std::vector<double> &coefficients,
+                     double origin,
+                     const double *input,
+                     double *output,
+                     size_t n) {
+
+    if (!coefficients.size()) {
+        // if we have no coefficients, i.e no polynomial specified we
+        // should still apply the the origin transformation
+        for (size_t k = 0; k < n; k++) {
+            output[k] = input[k] - origin;
+        }
+
+    } else {
+
+        for (size_t k = 0; k < n; k++) {
+            const double x = input[k] - origin;
+            double value = 0.0;
+            double term = 1.0;
+            for (size_t i = 0; i < coefficients.size(); i++) {
+                value += coefficients[i] * term;
+                term *= x;
+            }
+            output[k] = value;
+        }
+    }
+}
+
+bool looksLikeUUID(const std::string &id) {
+    // we don't want a complete check, just a glance
+    // uuid form is: 8-4-4-4-12 = 36 [8, 13, 18, 23, ]
+    return id.size() == 36 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] =='-';
+}
+
+void checkEntityNameAndType(const std::string &name, const std::string &type) {
+    util::checkEntityName(name);
+    util::checkEntityType(type);
+}
+
+void checkEntityType(const std::string &str) {
+    if (str.empty()) {
+        throw EmptyString("String provided for entity type is empty!");
+    }
+}
+
+void checkEntityName(const std::string &name) {
+    if (name.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
+    if (!nameCheck(name)) {
+        throw InvalidName("String provided for entity name is invalid!");
+    }
+}
+
+void checkEmptyString(const std::string & str, const std::string &field_name) {
+    if (str.empty()) {
+        throw EmptyString("String provided is empty! " + field_name);
+    }
+}
+
+void checkNameOrId(const std::string &name_or_id) {
+    if (name_or_id.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
 }
 
 } // namespace util

@@ -6,9 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <queue>
-
 #include <nix/Source.hpp>
+
+#include <queue>
+#include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
@@ -40,17 +41,23 @@ Source::Source(std::shared_ptr<base::ISource> &&ptr)
 // Methods concerning child sources
 //--------------------------------------------------
 
+Source Source::createSource(const std::string &name, const std::string &type) {
+    util::checkEntityNameAndType(name, type);
+    if(backend()->hasSource(name)) {
+        throw DuplicateName("Source with the given name already exists!");
+    }
+    return backend()->createSource(name, type);
+}
+
 
 bool Source::hasSource(const Source &source) const {
-    if (source == none) {
-        throw std::runtime_error("Source::hasSource: emtpy Source entity given!");
-    }
+    util::checkEntityInput(source);
     return backend()->hasSource(source.id());
 }
 
 
 std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) const {
-    auto f = [this] (size_t i) { return getSource(i); };
+    auto f = [this] (ndsize_t i) { return getSource(i); };
     return getEntities<Source>(f,
                                sourceCount(),
                                filter);
@@ -58,9 +65,7 @@ std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) co
 
 
 bool Source::deleteSource(const Source &source) {
-    if (source == none) {
-        throw std::runtime_error("Source::deleteSource: empty Source entity given!");
-    }
+    util::checkEntityInput(source);
     return backend()->deleteSource(source.id());
 }
 
@@ -114,3 +119,4 @@ std::ostream& nix::operator<<(ostream &out, const Source &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
+

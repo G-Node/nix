@@ -6,11 +6,15 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
 #include <limits>
+#include <vector>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -20,6 +24,8 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
+
+#include <boost/optional.hpp>
 
 // define some tag like class with units- & unit-getter that allows compound units
 struct tag_tmp {
@@ -59,6 +65,7 @@ private:
     nix::DataArray array1;
     nix::DataArray array2;
     nix::DataArray array3;
+    nix::DataArray array4;
     std::vector<nix::DataArray> refs;
     std::vector<double> extent, position;
     nix::DataArray positions;

@@ -8,7 +8,6 @@
 
 #include <Cli.hpp>
 #include <modules/Validate.hpp>
-#include <Exception.hpp>
 #include <nix/None.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
@@ -20,10 +19,8 @@ namespace module {
 const char* Validate::module_name = "validate";
 
 void Validate::load(po::options_description &desc) const {
-    // declare purpose
-    desc.add(po::options_description(std::string(module_name) + 
-                                     ": run validation on given input file\nSupported options"));
-    // declare supported options
+    desc.add(po::options_description("nix-tool " + std::string(module_name) + ":\n\n\t" + 
+                                     "Validates a given nix-file for structural an logical correctness.\n\nSupported options"));
     po::options_description opt;
     opt.add_options()
         (NOWARN_OPTION, "ignore any warnings")
@@ -39,12 +36,14 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
             
     // --help
     if (vm.count(HELP_OPTION)) {
-        out << desc << std::endl;
+        po::options_description temp;
+        load(temp);
+        out << temp << std::endl;
         return out.str();
     }
     // --input-file
     if (vm.count(INPFILE_OPTION)) {
-        for(auto &file_path : vm[INPFILE_OPTION].as< std::vector<std::string> >()) {
+        for (auto &file_path : vm[INPFILE_OPTION].as< std::vector<std::string> >()) {
             // file exists?
             if (!boost::filesystem::exists(file_path)) {
                 throw FileNotFound(file_path);
@@ -58,13 +57,13 @@ std::string Validate::call(const po::variables_map &vm, const po::options_descri
             // save it!
             files.push_back(tmp_file); // ReadOnly, ReadWrite, Overwrite
         }
-        for(auto &nix_file : files) {
+        for (auto &nix_file : files) {
             out << "validating file " << nix_file.location() << std::endl;
             nix::valid::Result res = nix_file.validate();
-            if(vm.count(NOWARN_OPTION)) {
+            if (vm.count(NOWARN_OPTION)) {
                 res = nix::valid::Result(res.getErrors(), boost::none);
             }
-            if(vm.count(NOERR_OPTION)) {
+            if (vm.count(NOERR_OPTION)) {
                 res = nix::valid::Result(boost::none, res.getWarnings());
             }
             out << res;

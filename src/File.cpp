@@ -6,19 +6,19 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/File.hpp>
+#include <nix/util/util.hpp>
+#include <nix/hdf5/FileHDF5.hpp>
 
 #include <nix/valid/validate.hpp>
-
-#include <nix/File.hpp>
-#include <nix/hdf5/FileHDF5.hpp>
 
 using namespace std;
 
 namespace nix {
 
 
-File File::open(const std::string &name, FileMode mode, Implementation impl) {
-    if (impl == Implementation::Hdf5) {
+File File::open(const std::string &name, FileMode mode, const std::string &impl) {
+    if (impl == "hdf5") {
         return File(std::make_shared<hdf5::FileHDF5>(name, mode));
     } else {
         throw runtime_error("Unknown implementation!");
@@ -26,42 +26,54 @@ File File::open(const std::string &name, FileMode mode, Implementation impl) {
 }
 
 
-bool File::hasBlock(const Block &block) const {
-    if (block == none) {
-        throw std::runtime_error("File::hasBlock: Empty Block entity given!");
+Block File::createBlock(const std::string &name, const std::string &type) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasBlock(name)) {
+        throw DuplicateName("Block with the given name already exists!");
     }
+    return backend()->createBlock(name, type);
+}
+
+
+bool File::hasBlock(const Block &block) const {
+    util::checkEntityInput(block);
     return backend()->hasBlock(block.id());
 }
 
 
 bool File::deleteBlock(const Block &block) {
-    if (block == none) {
-        throw std::runtime_error("File::deleteBlock: Empty Block entity given!");
-    }
+    util::checkEntityInput(block);
     return backend()->deleteBlock(block.id());
 }
 
 
 std::vector<Block> File::blocks(const util::Filter<Block>::type &filter) const
 {
-    auto f = [this] (size_t i) { return getBlock(i); };
+    auto f = [this] (ndsize_t i) { return getBlock(i); };
     return getEntities<Block>(f,
                               blockCount(),
                               filter);
 }
 
 
-bool File::hasSection(const Section &section) const {
-    if (section == none) {
-        throw std::runtime_error("File::hasSection: Empty Section entity given!");
+Section File::createSection(const std::string &name, const std::string &type) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasSection(name)) {
+        throw DuplicateName("Section with the given name already exists!");
     }
+    return backend()->createSection(name, type);
+}
+
+
+bool File::hasSection(const Section &section) const {
+    util::checkEntityInput(section);
     return backend()->hasSection(section.id());
 }
 
 
 std::vector<Section> File::sections(const util::Filter<Section>::type &filter) const
 {
-    auto f = [this] (size_t i) { return getSection(i); };
+    auto f = [this] (ndsize_t i) { return getSection(i); };
     return getEntities<Section>(f,
                                 sectionCount(),
                                 filter);
@@ -69,9 +81,7 @@ std::vector<Section> File::sections(const util::Filter<Section>::type &filter) c
 
 
 bool File::deleteSection(const Section &section) {
-    if (section == none) {
-        throw std::runtime_error("File::hasSection: Empty Section entity given!");
-    }
+    util::checkEntityInput(section);
     return deleteSection(section.id());
 }
 

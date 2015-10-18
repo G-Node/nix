@@ -9,14 +9,13 @@
 #ifndef NIX_I_DATA_ARRAY_H
 #define NIX_I_DATA_ARRAY_H
 
-#include <string>
-#include <vector>
-#include <memory>
-
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDimensions.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace base {
@@ -77,7 +76,7 @@ public:
     //--------------------------------------------------
 
 
-    virtual size_t dimensionCount() const = 0;
+    virtual ndsize_t dimensionCount() const = 0;
 
 
     virtual std::shared_ptr<base::IDimension> getDimension(size_t id) const = 0;
@@ -87,6 +86,9 @@ public:
 
 
     virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks) = 0;
+
+
+    virtual std::shared_ptr<base::IRangeDimension> createAliasRangeDimension() = 0;
 
 
     virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval) = 0;

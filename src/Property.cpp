@@ -6,18 +6,16 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/util/util.hpp>
 #include <nix/Property.hpp>
+
+#include <nix/util/util.hpp>
 
 namespace nix {
 
 void Property::unit(const std::string &unit) {
-    if (backend()->valueCount() > 0 && backend()->unit()) {
-        throw std::runtime_error("Cannot change unit of a not-empty property!");
-    }
-
+    util::checkEmptyString(unit, "unit");
     util::deblankString(unit);
-    if (!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
+    if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
         throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
     }
     backend()->unit(unit);
@@ -26,6 +24,27 @@ void Property::unit(const std::string &unit) {
 std::ostream& operator<<(std::ostream &out, const Property &ent) {
     out << "Property: {name = " << ent.name() << "}";
     return out;
+}
+
+int Property::compare(const Property &other) const {
+    int cmp = 0;
+    if (!name().empty() && !other.name().empty()) {
+        cmp = (name()).compare(other.name());
+    }
+    if (cmp == 0) {
+        cmp = id().compare(other.id());
+    }
+    return cmp;
+}
+
+void Property::definition(const std::string &definition) {
+    util::checkEmptyString(definition, "definition");
+    backend()->definition(definition);
+}
+
+void Property::mapping(const std::string &mapping) {
+    util::checkEmptyString(mapping, "mapping");
+        backend()->mapping(mapping);
 }
 
 } // namespace nix

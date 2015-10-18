@@ -9,14 +9,15 @@
 #ifndef NIX_CHECKS_H
 #define NIX_CHECKS_H
 
-#include <boost/optional.hpp>
-#include <boost/any.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
 
 #include <nix/base/IDimensions.hpp>
 
 #include <nix/types.hpp>
+
+#include <boost/optional.hpp>
+#include <boost/any.hpp>
 
 namespace nix {
 namespace valid {
@@ -329,7 +330,7 @@ namespace valid {
      * via "size" the method.
      */
     struct NIXAPI dimEquals {
-        const size_t &value;
+        size_t value;
         
         dimEquals(const size_t &value) : value(value) {}
         
@@ -353,7 +354,7 @@ namespace valid {
      * in given unit vector.
      */
     struct NIXAPI tagRefsHaveUnits {
-        const std::vector<std::string> &units;
+        std::vector<std::string> units;
         
         tagRefsHaveUnits(const std::vector<std::string> &units) : units(units) {}
         
@@ -377,7 +378,7 @@ namespace valid {
      * in a DataArray differs the number of units in the units vector.
      */
     struct NIXAPI tagUnitsMatchRefsUnits {
-        const std::vector<std::string> &units;
+        std::vector<std::string> units;
         
         tagUnitsMatchRefsUnits(const std::vector<std::string> &units) : units(units) {}
         
@@ -392,7 +393,7 @@ namespace valid {
      * which gets passed at construction time and which via operator().
      */
     struct NIXAPI extentsMatchPositions {
-        const boost::any extents;
+        boost::any extents;
         
         extentsMatchPositions(const DataArray &extents) : extents(extents) {}
         
@@ -411,7 +412,7 @@ namespace valid {
      * dimensionality in each of the given referenced DataArrays.
      */
     struct NIXAPI extentsMatchRefs {
-        const std::vector<DataArray> &refs;
+        std::vector<DataArray> refs;
         
         extentsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
 
@@ -430,7 +431,7 @@ namespace valid {
      * same thing.
      */
     struct NIXAPI positionsMatchRefs {
-        const std::vector<DataArray> &refs;
+        std::vector<DataArray> refs;
 
         positionsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
     

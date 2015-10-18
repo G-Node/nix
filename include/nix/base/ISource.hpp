@@ -9,10 +9,11 @@
 #ifndef NIX_I_SOURCE_H
 #define NIX_I_SOURCE_H
 
-#include <string>
-#include <memory>
 
 #include <nix/base/IEntityWithMetadata.hpp>
+
+#include <string>
+#include <memory>
 
 namespace nix {
 namespace base {
@@ -27,22 +28,22 @@ class NIXAPI ISource : virtual public IEntityWithMetadata {
 
 public:
 
-    virtual bool hasSource(const std::string &id) const = 0;
+    virtual bool hasSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISource> getSource(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISource> getSource(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISource> getSource(size_t index) const = 0;
+    virtual std::shared_ptr<ISource> getSource(ndsize_t index) const = 0;
 
 
-    virtual size_t sourceCount() const = 0;
+    virtual ndsize_t sourceCount() const = 0;
 
 
     virtual std::shared_ptr<ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSource(const std::string &id) = 0;
+    virtual bool deleteSource(const std::string &name_or_id) = 0;
 
 
     virtual ~ISource() {}

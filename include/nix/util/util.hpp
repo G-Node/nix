@@ -14,6 +14,9 @@
 #ifndef NIX_UTIL_H
 #define NIX_UTIL_H
 
+#include <nix/Exception.hpp>
+#include <nix/Platform.hpp>
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -23,16 +26,35 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
-
-#include <nix/Exception.hpp>
-#include <nix/Platform.hpp>
-
+#include <nix/None.hpp>
 
 namespace nix {
     
 enum class DimensionType : unsigned int;
 
 namespace util {
+
+/**
+ * @brief Checks name_or_id argument often passed to methods.
+ * Throws exception in case of error.
+ *
+ * @param name_or_id  The string representing an entity name or id,
+ *
+ */
+NIXAPI void checkNameOrId(const std::string &name_or_id);
+
+/**
+ * @brief Helper that checks the entity passed as an argument to a method.
+ * Throws an exception if the entity is not initialized.
+ *
+ * @param entity    The entity
+ */
+template <typename T> void checkEntityInput(const T &entity) {
+    if (!entity || entity == none) {
+        throw UninitializedEntity();
+    }
+}
+
 
 /**
  * @brief Remove blank spaces from the entire string
@@ -67,6 +89,41 @@ NIXAPI std::string nameSanitizer(const std::string &name);
  * @return true if name is legit, false otherwise
  */
 NIXAPI bool nameCheck(const std::string &name);
+
+/**
+ * @brief Checks the given string is valid as an entity name. Will
+ * throw an exception if the name is invalid.
+ *
+ * @param name   The name.
+ */
+NIXAPI void checkEntityName(const std::string &name);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ */
+NIXAPI void checkEntityType(const std::string &str);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ *  @param  field_name   A string stating for which purpose the string should be used.
+ *                       Will be part of the exception message.
+ */
+NIXAPI void checkEmptyString(const std::string &str, const std::string &field_name = "");
+
+/**
+ * @brief Helper that checks the name and the type strings that should be used to
+ * create a new entity.
+ *
+ * @param name  The name string.
+ * @param type  The type string.
+ */
+NIXAPI void checkEntityNameAndType(const std::string &name, const std::string &type);
 
 /**
  * @brief Generates an ID-String.
@@ -131,13 +188,23 @@ std::string toName(const T &entity) {
 NIXAPI std::string unitSanitizer(const std::string &unit);
 
 /**
- * @brief Checks if the passed string represents a valid SI unit.
+ * @brief Checks if the passed string represents a valid SI unit.  The passed
+ * unit may be atomic, e.g. 'V' or a compound unit, e.g. 'J/s'.
  *
  * @param unit  A string that is supposed to represent an SI unit.
  *
  * @return True if a valid SI unit, false otherwise.
  */
 NIXAPI bool isSIUnit(const std::string &unit);
+
+/**
+ * @brief Checks if the passed string represents a valid SI unit.
+ *
+ * @param unit  A string that is supposed to represent an SI unit.
+ *
+ * @return True if a valid SI unit, false otherwise.
+ */
+NIXAPI bool isAtomicSIUnit(const std::string &unit);
 
 /**
  * @brief Checks if the passed string is a valid combination of SI units.
@@ -237,7 +304,8 @@ T convertToSeconds(const std::string &unit, T value) {
     } else if (unit == "s" || unit == "sec") {
         seconds = value;
     } else if (isScalable(unit, "s")) {
-        seconds = value * getSIScaling(unit, "s");
+        double scaled = value * getSIScaling(unit, "s");
+        seconds = static_cast<T>(std::is_integral<T>::value ? std::round(scaled) : scaled);
     } else {
         std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
         seconds = value;
@@ -255,21 +323,24 @@ T convertToSeconds(const std::string &unit, T value) {
  */
 template<typename T>
 T convertToKelvin(const std::string &unit, T value) {
-   T temperature;
+
+   if (unit == "°K" || unit == "K") {
+       return value;
+   }
+
+   double temperature;
    if (unit == "°C" || unit == "C") {
        temperature = value + 273.15;
    } else if (unit == "°F" || unit == "F") {
-       double temp = (value - 32) * 5.0/9 + 273.15;
-       temperature = std::is_integral<T>::value ? std::round(temp) : temp;
-   } else if (unit == "°K" || unit == "K") {
-       temperature = value;
+       temperature = (value - 32) * 5.0/9 + 273.15;
    } else if (isScalable(unit, "K")) {
        temperature = value * getSIScaling(unit, "K");
    } else {
        std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
-       temperature = value;
+       return value;
    }
-   return temperature;
+
+   return static_cast<T>(std::is_integral<T>::value ? std::round(temperature) : temperature);
 }
 
 /**
@@ -289,7 +360,7 @@ std::string numToStr(T number) {
 /**
  * @brief Convert a DimensionType into a string representation.
  *
- * @param number  The DimensionType to convert
+ * @param dtype  The DimensionType to convert
  *
  * @return The string representation of the DimensionType
  */
@@ -330,9 +401,17 @@ T deRef(T var) {
 }
 template<typename R>
 R deRef(boost::optional<R> var) {
-    if(var) return *var;
+    if (var) return *var;
     else return R();
 }
+
+NIXAPI void applyPolynomial(const std::vector<double> &coefficients,
+                            double origin,
+                            const double *input,
+                            double *output,
+                            size_t n);
+
+bool looksLikeUUID(const std::string &id);
 
 } // namespace util
 } // namespace nix

@@ -6,18 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <iostream>
-#include <stdexcept>
-
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/BriefTestProgressListener.h>
-
+#include "TestH5.hpp"
 #include "TestEntity.hpp"
 #include "TestEntityWithMetadata.hpp"
 #include "TestEntityWithSources.hpp"
@@ -28,6 +17,7 @@
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArray.hpp"
+#include "TestBaseTag.hpp"
 #include "TestMultiTag.hpp"
 #include "TestTag.hpp"
 #include "TestValue.hpp"
@@ -42,7 +32,17 @@
 #include "TestValidate.hpp"
 #include "TestReadOnly.hpp"
 
+#include <cppunit/TestFixture.h>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+
 int main(int argc, char* argv[]) {
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccess);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);

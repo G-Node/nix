@@ -8,6 +8,9 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -27,8 +30,6 @@
 #include <boost/math/tools/rational.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix.hpp>
-
 class TestDataArray:public CPPUNIT_NS::TestFixture {
 
 public:
@@ -45,6 +46,7 @@ public:
     void testLabel();
     void testUnit();
     void testDimension();
+    void testAliasRangeDimension();
     void testOperator();
     void testValidate();
 
@@ -61,6 +63,7 @@ private:
     CPPUNIT_TEST(testLabel);
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
+    CPPUNIT_TEST(testAliasRangeDimension);
     CPPUNIT_TEST(testOperator);
     CPPUNIT_TEST(testValidate);
 
@@ -68,6 +71,6 @@ private:
 
     nix::File file;
     nix::Block block;
-    nix::DataArray array1, array2;
+    nix::DataArray array1, array2, array3;
     time_t startup_time;
 };

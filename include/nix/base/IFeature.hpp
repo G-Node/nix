@@ -9,8 +9,11 @@
 #ifndef NIX_I_FEATURE_H
 #define NIX_I_FEATURE_H
 
-
 #include <nix/base/IDataArray.hpp>
+
+#include <string>
+#include <memory>
+
 
 namespace nix {
 
@@ -42,7 +45,7 @@ public:
     virtual LinkType linkType() const = 0;
 
 
-    virtual void data(const std::string &id) = 0;
+    virtual void data(const std::string &name_or_id) = 0;
 
 
     virtual std::shared_ptr<IDataArray> data() const = 0;

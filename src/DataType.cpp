@@ -9,8 +9,11 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/DataType.hpp>
-#include <stdexcept>
+
 #include <string>
+#include <stdexcept>
+#include <map>
+#include <algorithm>
 
 namespace nix {
 
@@ -19,31 +22,74 @@ std::string data_type_to_string(DataType dtype) {
     std::string str;
 
     switch(dtype) {
-
-    case DataType::Bool:    str = "Bool";    break;
-    case DataType::Char:    str = "Char";    break;
-    case DataType::Float:   str = "Float";   break;
-    case DataType::Double:  str = "Double";  break;
-    case DataType::Int8:    str = "Int8";    break;
-    case DataType::Int16:   str = "Int16";   break;
-    case DataType::Int32:   str = "Int32";   break;
-    case DataType::Int64:   str = "Int64";   break;
-    case DataType::UInt8:   str = "UInt8";   break;
-    case DataType::UInt16:  str = "UInt16";  break;
-    case DataType::UInt32:  str = "UInt32";  break;
-    case DataType::UInt64:  str = "UInt64";  break;
-    case DataType::String:  str = "String";  break;
-    case DataType::Nothing: str = "Nothing"; break;
-    default:
-        str = "FIXME";
+    case DataType::Bool:     str = "Bool";     break;
+    case DataType::Char:     str = "Char";     break;
+    case DataType::Float:    str = "Float";    break;
+    case DataType::Double:   str = "Double";   break;
+    case DataType::Int8:     str = "Int8";     break;
+    case DataType::Int16:    str = "Int16";    break;
+    case DataType::Int32:    str = "Int32";    break;
+    case DataType::Int64:    str = "Int64";    break;
+    case DataType::UInt8:    str = "UInt8";    break;
+    case DataType::UInt16:   str = "UInt16";   break;
+    case DataType::UInt32:   str = "UInt32";   break;
+    case DataType::UInt64:   str = "UInt64";   break;
+    case DataType::String:   str = "String";   break;
+    case DataType::Nothing:  str = "Nothing";  break;
+    case DataType::Opaque:   str = "Opaque";   break;
     }
 
     return str;
 }
 
+DataType string_to_data_type(const std::string& dtype) {
+
+    static std::map<std::string, DataType> type_map = {
+        {"bool", DataType::Bool},
+        {"char", DataType::Char},
+        {"float", DataType::Float},
+        {"single", DataType::Float},
+        {"double", DataType::Double},
+        {"int8", DataType::Int8},
+        {"int16", DataType::Int16},
+        {"int32", DataType::Int32},
+        {"int64", DataType::Int64},
+        {"uint8", DataType::UInt8},
+        {"uint16", DataType::UInt16},
+        {"uint32", DataType::UInt32},
+        {"uint64", DataType::UInt64},
+        {"string", DataType::String},
+        {"opaque", DataType::Opaque},
+        {"nothing", DataType::Nothing}
+    };
+
+    std::string dtype_l = dtype;
+    std::transform(dtype_l.begin(), dtype_l.end(), dtype_l.begin(), ::tolower);
+
+    if (type_map.find(dtype_l) == type_map.end()) {
+        throw std::invalid_argument("Unkown DataType");
+    }
+
+    return type_map[dtype_l];
+}
+
+
+bool data_type_is_numeric(DataType dtype) {
+    return (dtype == DataType::UInt8 ||
+            dtype == DataType::UInt16 ||
+            dtype == DataType::UInt32 ||
+            dtype == DataType::UInt64 ||
+            dtype == DataType::Int8 ||
+            dtype == DataType::Int16 ||
+            dtype == DataType::Int32 ||
+            dtype == DataType::Int64 ||
+            dtype == DataType::Float ||
+            dtype == DataType::Double);
+}
+
 
 std::ostream &operator<<(std::ostream &out, const DataType dtype) {
-    out << "DataType::" << data_type_to_string(dtype);
+    out << data_type_to_string(dtype);
     return out;
 }
 

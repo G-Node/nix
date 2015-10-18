@@ -8,6 +8,11 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
+#include <nix/hdf5/Group.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -26,8 +31,6 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-#include <nix.hpp>
-#include <nix/hdf5/Group.hpp>
 
 class TestGroup:public CPPUNIT_NS::TestFixture {
 
@@ -36,11 +39,14 @@ public:
     void setUp();
     void tearDown();
 
+    void testRefCount();
     void testBaseTypes();
     void testMultiArray();
     void testVector();
 
     void testArray();
+
+    void testOpen();
 
     template<typename T>
     static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
@@ -61,10 +67,12 @@ private:
 
     static unsigned int &open_mode();
 
-    H5::H5File h5file;
-    H5::Group h5group;
+    hid_t h5file;
+    hid_t h5group;
 
     CPPUNIT_TEST_SUITE(TestGroup);
+    CPPUNIT_TEST(testRefCount);
+    CPPUNIT_TEST(testOpen);
     CPPUNIT_TEST(testBaseTypes);
     CPPUNIT_TEST(testVector);
     CPPUNIT_TEST(testMultiArray);

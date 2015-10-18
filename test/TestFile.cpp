@@ -6,12 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include "TestFile.hpp"
+
+#include <nix/util/util.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <ctime>
 
-#include "TestFile.hpp"
-#include <nix/util/util.hpp>
-
-#include <nix/valid/validate.hpp>
 
 using namespace std;
 using namespace nix;
@@ -22,7 +23,7 @@ void TestFile::setUp() {
     statup_time = time(NULL);
     file_open = File::open("test_file.h5", FileMode::Overwrite);
     file_other = File::open("test_file_other.h5", FileMode::Overwrite);
-    file_null = NULL;
+    file_null = nix::none;
 }
 
 
@@ -31,6 +32,11 @@ void TestFile::tearDown() {
     file_other.close();
 }
 
+void TestFile::testOpen() {
+
+    CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), runtime_error);
+
+}
 
 void TestFile::testValidate() {
     valid::Result result = validate(file_open);
@@ -71,15 +77,19 @@ void TestFile::testUpdatedAt() {
 
 void TestFile::testBlockAccess() {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
-
+    Block b;
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
-
+    CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
+    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), UninitializedEntity);
+    
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Block bl = file_open.createBlock(*it, "dataset");
-        CPPUNIT_ASSERT(bl.name() == *it);
+    for (const auto &name : names) {
+        Block bl = file_open.createBlock(name, "dataset");
+        CPPUNIT_ASSERT(bl.name() == name);
+        CPPUNIT_ASSERT(file_open.hasBlock(bl));
+        CPPUNIT_ASSERT(file_open.hasBlock(name));
 
         ids.push_back(bl.id());
     }
@@ -89,14 +99,27 @@ void TestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Block bl = file_open.getBlock(*it);
-        CPPUNIT_ASSERT(file_open.hasBlock(*it) == true);
-        CPPUNIT_ASSERT(bl.id() == *it);
+    for (const auto &name : names) {
+        Block bl_name = file_open.getBlock(name);
+        CPPUNIT_ASSERT(bl_name);
 
-        file_open.deleteBlock(*it);
+        Block bl_id = file_open.getBlock(bl_name.id());
+        CPPUNIT_ASSERT(bl_id);
+        CPPUNIT_ASSERT_EQUAL(bl_name.name(), bl_id.name());
     }
+    
+    for (const auto &id: ids) {
+        Block bl = file_open.getBlock(id);
+        CPPUNIT_ASSERT(file_open.hasBlock(id) == true);
+        CPPUNIT_ASSERT(bl.id() == id);
 
+        file_open.deleteBlock(id);
+    }
+    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), UninitializedEntity);
+    b = file_open.createBlock("test","test");
+    CPPUNIT_ASSERT_NO_THROW(file_open.getBlock(0));
+    CPPUNIT_ASSERT_THROW(file_open.getBlock(file_open.blockCount()), nix::OutOfBounds);
+    CPPUNIT_ASSERT(file_open.deleteBlock(b));
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
@@ -105,10 +128,11 @@ void TestFile::testBlockAccess() {
 
 void TestFile::testSectionAccess() {
     vector<string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
-
+    Section s;
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(file_open.hasSection(s), UninitializedEntity);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -130,7 +154,12 @@ void TestFile::testSectionAccess() {
 
         file_open.deleteSection(*it);
     }
-
+    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), UninitializedEntity);
+    s = file_open.createSection("test","test");
+    CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
+    CPPUNIT_ASSERT_THROW(file_open.getSection(file_open.sectionCount()), nix::OutOfBounds);
+    CPPUNIT_ASSERT(file_open.hasSection(s));
+    CPPUNIT_ASSERT(file_open.deleteSection(s));
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);

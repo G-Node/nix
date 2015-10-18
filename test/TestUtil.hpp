@@ -6,6 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -20,9 +23,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
-#include <nix/util/util.hpp>
-
 
 class TestUtil: public CPPUNIT_NS::TestFixture {
 private:
@@ -32,6 +32,7 @@ private:
     CPPUNIT_TEST(testUnitScaling);
     CPPUNIT_TEST(testIsSIUnit);
     CPPUNIT_TEST(testSIUnitSplit);
+    CPPUNIT_TEST(testIsAtomicSIUnit);
     CPPUNIT_TEST(testIsCompoundSIUnit);
     CPPUNIT_TEST(testSplitCompoundUnit);
     CPPUNIT_TEST(testConvertToSeconds);
@@ -45,6 +46,7 @@ public:
     void testUnitScaling();
     void testIsSIUnit();
     void testSIUnitSplit();
+    void testIsAtomicSIUnit();
     void testIsCompoundSIUnit();
     void testSplitCompoundUnit();
     void testPositionToIndex();

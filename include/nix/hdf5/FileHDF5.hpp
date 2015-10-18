@@ -9,12 +9,12 @@
 #ifndef NIX_FILE_HDF5_H
 #define NIX_FILE_HDF5_H
 
+#include <nix/base/IFile.hpp>
+
+#include <nix/hdf5/Group.hpp>
+
 #include <string>
 #include <memory>
-
-#include <nix/base/IFile.hpp>
-#include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/Group.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -23,15 +23,13 @@ namespace hdf5 {
 /**
  * Class that represents a NIX file.
  */
-class FileHDF5 : public base::IFile, public std::enable_shared_from_this<FileHDF5> {
+class FileHDF5 : public BaseHDF5, public base::IFile, public std::enable_shared_from_this<FileHDF5> {
 
 private:
 
-    /* the opened HDF5 file */
-    H5::H5File h5file;
-
     /* groups representing different sections of the file */
     Group root, metadata, data;
+    FileMode mode;
 
 public:
 
@@ -49,55 +47,43 @@ public:
     //--------------------------------------------------
 
 
-    size_t blockCount() const;
+    ndsize_t blockCount() const;
 
 
-    bool hasBlock(const std::string &id) const;
+    bool hasBlock(const std::string &name_or_id) const;
 
 
-    bool hasBlockByName(const std::string &name) const;
+    std::shared_ptr<base::IBlock> getBlock(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IBlock> getBlock(const std::string &id) const;
-
-
-    std::shared_ptr<base::IBlock> getBlock(size_t index) const;
-
-
-    std::shared_ptr<base::IBlock> getBlockByName(const std::string &name) const;
+    std::shared_ptr<base::IBlock> getBlock(ndsize_t index) const;
 
 
     std::shared_ptr<base::IBlock> createBlock(const std::string &name, const std::string &type);
 
 
-    bool deleteBlock(const std::string &id);
+    bool deleteBlock(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
 
-    bool hasSection(const std::string &id) const;
+    bool hasSection(const std::string &name_or_id) const;
 
 
-    bool hasSectionByName(const std::string &name) const;
+    std::shared_ptr<base::ISection> getSection(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISection> getSection(const std::string &id) const;
+    std::shared_ptr<base::ISection> getSection(ndsize_t index) const;
 
 
-    std::shared_ptr<base::ISection> getSection(size_t index) const;
-
-
-    std::shared_ptr<base::ISection> getSectionByName(const std::string &name) const;
-
-
-    size_t sectionCount() const;
+    ndsize_t sectionCount() const;
 
 
     std::shared_ptr<base::ISection> createSection(const std::string &name, const std::string &type);
 
 
-    bool deleteSection(const std::string &id);
+    bool deleteSection(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods for file attribute access.
@@ -135,6 +121,9 @@ public:
 
 
     bool isOpen() const;
+
+
+    FileMode fileMode() const;
 
 
     bool operator==(const FileHDF5 &other) const;

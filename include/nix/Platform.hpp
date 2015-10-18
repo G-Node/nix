@@ -15,6 +15,17 @@
  #define NIXAPI __declspec(dllimport)
  #endif
 #pragma warning(disable: 4250 4251)
+
+ //workaround for missing ssize_t on windows
+ #ifndef ssize_t
+   #ifdef _WIN64
+     #include <BaseTsd.h>
+     typedef SSIZE_T ssize_t;
+   #else
+     //hdf5 defines ssize_t to be int on 32bit Win
+     typedef int ssize_t;
+   #endif
+ #endif
 #else
  #define NIXAPI
 #endif
@@ -23,4 +34,13 @@
 #define NOEXCEPT
 #else
 #define NOEXCEPT noexcept
+#endif
+
+#define NIX_SRC_FILE __FILE__
+#define NIX_SRC_LINE __LINE__
+
+#ifndef _MSC_VER
+#define NIX_SRC_FUNC  __PRETTY_FUNCTION__
+#else
+#define NIX_SRC_FUNC __FUNCSIG__
 #endif

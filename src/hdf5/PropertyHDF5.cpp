@@ -6,17 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <iostream>
-
-#include <nix/util/util.hpp>
 #include <nix/hdf5/PropertyHDF5.hpp>
 
-using namespace std;
-using namespace boost;
+#include <nix/util/util.hpp>
 
-using namespace nix;
-using namespace nix::hdf5;
+#include <iostream>
+
+using namespace std;
+
 using namespace nix::base;
+
+namespace nix {
+namespace hdf5 {
 
 
 
@@ -120,17 +121,13 @@ string PropertyHDF5::name() const {
 
 
 void PropertyHDF5::definition(const string &definition) {
-    if (definition.empty()) {
-        throw EmptyString("definition");
-    } else {
         dataset().setAttr("definition", definition);
         forceUpdatedAt();
-    }
 }
 
 
-optional<string> PropertyHDF5::definition() const {
-    optional<string> ret;
+boost::optional<string> PropertyHDF5::definition() const {
+    boost::optional<string> ret;
     string definition;
     bool have_attr = dataset().getAttr("definition", definition);
     if (have_attr) {
@@ -154,9 +151,6 @@ DataType PropertyHDF5::dataType() const {
 
 
 void PropertyHDF5::mapping(const string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    }
     dataset().setAttr("mapping", mapping);
     forceUpdatedAt();
 }
@@ -181,9 +175,6 @@ void PropertyHDF5::mapping(const nix::none_t t) {
 
 
 void PropertyHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    }
     dataset().setAttr("unit", unit);
     forceUpdatedAt();
 }
@@ -212,7 +203,7 @@ void PropertyHDF5::deleteValues() {
 }
 
 
-size_t PropertyHDF5::valueCount() const {
+ndsize_t PropertyHDF5::valueCount() const {
     NDSize size = dataset().size();
     return size[0];
 }
@@ -224,8 +215,6 @@ void PropertyHDF5::values(const std::vector<Value> &values)
         deleteValues();
         return;
     }
-    DataType dtype = values[0].type();
-    H5::DataType fileType = DataSet::fileTypeForValue(dtype);
     dataset().write(values);
 }
 
@@ -244,17 +233,7 @@ void PropertyHDF5::values(const nix::none_t t) {
 }
 
 
-int PropertyHDF5::compare(const std::shared_ptr<IProperty> &other) const {
-    int cmp = 0;
-    if (!name().empty() && !other->name().empty()) {
-        cmp = (name()).compare(other->name());
-    }
-    if (cmp == 0) {
-        cmp = id().compare(other->id());
-    }
-    return cmp;
-}
-
-
 PropertyHDF5::~PropertyHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

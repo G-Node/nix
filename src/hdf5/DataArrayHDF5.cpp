@@ -9,33 +9,31 @@
 #include <nix/util/util.hpp>
 
 #include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/DataSet.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/hdf5/DimensionHDF5.hpp>
 
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 DataArrayHDF5::DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group)
-    : EntityWithSourcesHDF5(file, block, group)
-{
+        : EntityWithSourcesHDF5(file, block, group) {
     dimension_group = this->group().openOptGroup("dimensions");
 }
-                  
-                  
+
+
 DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
                              const string &id, const string &type, const string &name)
-    : DataArrayHDF5(file, block, group, id, type, name, util::getTime())
-{
+        : DataArrayHDF5(file, block, group, id, type, name, util::getTime()) {
 }
 
 
 DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
                              const string &id, const string &type, const string &name, time_t time)
-    : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
-{
+        : EntityWithSourcesHDF5(file, block, group, id, type, name, time) {
     dimension_group = this->group().openOptGroup("dimensions");
 }
 
@@ -57,13 +55,8 @@ boost::optional<std::string> DataArrayHDF5::label() const {
 
 
 void DataArrayHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    }
-    else {
-        group().setAttr("label", label);
-        forceUpdatedAt();
-    }
+    group().setAttr("label", label);
+    forceUpdatedAt();
 }
 
 
@@ -87,13 +80,8 @@ boost::optional<std::string> DataArrayHDF5::unit() const {
 
 
 void DataArrayHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    }
-    else {
-        group().setAttr("unit", unit);
-        forceUpdatedAt();
-    }
+    group().setAttr("unit", unit);
+    forceUpdatedAt();
 }
 
 
@@ -131,7 +119,7 @@ void DataArrayHDF5::expansionOrigin(const none_t t) {
 }
 
 // TODO use defaults
-vector<double> DataArrayHDF5::polynomCoefficients()const{
+vector<double> DataArrayHDF5::polynomCoefficients() const {
     vector<double> polynom_coefficients;
 
     if (group().hasData("polynom_coefficients")) {
@@ -149,7 +137,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = DataSet::create(group().h5Group(), "polynom_coefficients", coefficients);
+        ds = group().createData("polynom_coefficients", DataType::Double, {coefficients.size()});
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -157,8 +145,8 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
 
 
 void DataArrayHDF5::polynomCoefficients(const none_t t) {
-    if (group().hasAttr("polynom_coefficients")) {
-        group().removeAttr("polynom_coefficients");
+    if (group().hasData("polynom_coefficients")) {
+        group().removeData("polynom_coefficients");
     }
     forceUpdatedAt();
 }
@@ -168,9 +156,13 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 //--------------------------------------------------
 
 
-size_t DataArrayHDF5::dimensionCount() const {
+ndsize_t DataArrayHDF5::dimensionCount() const {
     boost::optional<Group> g = dimension_group();
-    return g ? g->objectCount() : size_t(0);
+	size_t count = 0;
+	if (g) {
+		count = g->objectCount();
+	}
+    return count;
 }
 
 
@@ -202,6 +194,12 @@ std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_
 }
 
 
+std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createAliasRangeDimension() {
+    Group g = createDimensionGroup(1);
+    return make_shared<RangeDimensionHDF5>(g, 1, *this);
+}
+
+
 std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(size_t index, double sampling_interval) {
     Group g = createDimensionGroup(index);
     return make_shared<SampledDimensionHDF5>(g, index, sampling_interval);
@@ -211,7 +209,7 @@ std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(s
 Group DataArrayHDF5::createDimensionGroup(size_t index) {
     boost::optional<Group> g = dimension_group(true);
 
-    size_t dim_max   = dimensionCount() + 1;
+    size_t dim_max = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
         throw new runtime_error("Invalid dimension index: has to be 0 < index <= " + util::numToStr(dim_max));
 
@@ -253,30 +251,29 @@ bool DataArrayHDF5::deleteDimension(size_t index) {
 //--------------------------------------------------
 
 
-DataArrayHDF5::~DataArrayHDF5() {}
+DataArrayHDF5::~DataArrayHDF5() {
+}
 
 
-void DataArrayHDF5::createData(DataType dtype, const NDSize &size)
-{
+void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
     if (group().hasData("data")) {
         throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
     }
 
-    DataSet::create(group().h5Group(), "data", dtype, size);
+    group().createData("data", dtype, size); //FIXME: check if this 2-step creation is needed
     DataSet ds = group().openData("data");
 }
 
-bool DataArrayHDF5::hasData() const
-{
+bool DataArrayHDF5::hasData() const {
     return group().hasData("data");
 }
 
-void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset)
-{
+void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
     DataSet ds;
 
     if (!group().hasData("data")) {
-        ds = DataSet::create(group().h5Group(), "data", dtype, count);
+        //FIXME: this case should actually never be possible, replace with exception?
+        ds = group().createData("data", dtype, count);
     } else {
         ds = group().openData("data");
     }
@@ -292,8 +289,7 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     }
 }
 
-void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const
-{
+void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
     if (!group().hasData("data")) {
         return;
     }
@@ -302,7 +298,9 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
-        fileSel.select(count, offset);
+        // if count.size() == 0, i.e. we want to read a scalar,
+        // we have to supply something that fileSel can make sense of
+        fileSel.select(count ? count : NDSize(offset.size(), 1), offset);
         Selection memSel(DataSpace::create(count, false));
 
         ds.read(dtype, data, fileSel, memSel);
@@ -312,8 +310,7 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
 }
 
-NDSize DataArrayHDF5::dataExtent(void) const
-{
+NDSize DataArrayHDF5::dataExtent(void) const {
     if (!group().hasData("data")) {
         return NDSize{};
     }
@@ -322,8 +319,7 @@ NDSize DataArrayHDF5::dataExtent(void) const
     return ds.size();
 }
 
-void DataArrayHDF5::dataExtent(const NDSize &extent)
-{
+void DataArrayHDF5::dataExtent(const NDSize &extent) {
     if (!group().hasData("data")) {
         throw runtime_error("Data field not found in DataArray!");
     }
@@ -332,8 +328,7 @@ void DataArrayHDF5::dataExtent(const NDSize &extent)
     ds.setExtent(extent);
 }
 
-DataType DataArrayHDF5::dataType(void) const
-{
+DataType DataArrayHDF5::dataType(void) const {
     if (!group().hasData("data")) {
         return DataType::Nothing;
     }
@@ -342,3 +337,5 @@ DataType DataArrayHDF5::dataType(void) const
     return ds.dataType();
 }
 
+} // ns nix::hdf5
+} // ns nix

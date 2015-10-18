@@ -6,12 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include "TestOptionalObligatory.hpp"
+
 #include <ctime>
 #include <typeinfo>
 #include <boost/any.hpp>
 
 #include <nix/util/util.hpp>
-#include "TestOptionalObligatory.hpp"
 
 using namespace std;
 using namespace nix;

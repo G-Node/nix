@@ -9,12 +9,13 @@
 #ifndef I_FILE_H
 #define I_FILE_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/ISection.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/Platform.hpp>
+
+#include <string>
+#include <vector>
+#include <ctime>
 
 namespace nix {
 
@@ -26,14 +27,6 @@ NIXAPI enum class FileMode {
     ReadWrite,
     Overwrite
 };
-
-/**
- * @brief NIX back-end implementations.
- */
-NIXAPI enum class Implementation {
-    Hdf5 = 0
-};
-
 
 namespace base {
 
@@ -47,43 +40,43 @@ class NIXAPI IFile {
 
 public:
 
-    virtual size_t blockCount() const = 0;
+    virtual ndsize_t blockCount() const = 0;
 
 
-    virtual bool hasBlock(const std::string &id) const = 0;
+    virtual bool hasBlock(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IBlock> getBlock(const std::string &id) const = 0;
+    virtual std::shared_ptr<IBlock> getBlock(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<IBlock> getBlock(size_t index) const = 0;
+    virtual std::shared_ptr<IBlock> getBlock(ndsize_t index) const = 0;
 
 
     virtual std::shared_ptr<IBlock> createBlock(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteBlock(const std::string &id) = 0;
+    virtual bool deleteBlock(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning sections
     //--------------------------------------------------
 
-    virtual bool hasSection(const std::string &id) const = 0;
+    virtual bool hasSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(const std::string &id) const = 0;
+    virtual std::shared_ptr<ISection> getSection(const std::string &name_or_id) const = 0;
 
 
-    virtual std::shared_ptr<ISection> getSection(size_t index) const = 0;
+    virtual std::shared_ptr<ISection> getSection(ndsize_t index) const = 0;
 
 
-    virtual size_t sectionCount() const = 0;
+    virtual ndsize_t sectionCount() const = 0;
 
 
     virtual std::shared_ptr<ISection> createSection(const std::string &name, const std::string &type) = 0;
 
 
-    virtual bool deleteSection(const std::string &id) = 0;
+    virtual bool deleteSection(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods for file attribute access.
@@ -120,6 +113,9 @@ public:
 
 
     virtual bool isOpen() const = 0;
+
+
+    virtual FileMode fileMode() const = 0;
 
 
     virtual ~IFile() {}

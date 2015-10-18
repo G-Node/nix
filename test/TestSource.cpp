@@ -6,13 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
-
 #include "TestSource.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
+#include <ctime>
 
 using namespace std;
 using namespace nix;
@@ -27,7 +26,7 @@ void TestSource::setUp() {
 
     source = block.createSource("source_one", "channel");
     source_other = block.createSource("source_two", "channel");
-    source_null  = nullptr;
+    source_null  = nix::none;
 
     // create a DataArray & a MultiTag
     darray = block.createDataArray("DataArray", "dataArray",
@@ -106,11 +105,16 @@ void TestSource::testSourceAccess() {
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
     CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT_EQUAL(false, source.hasSource("invalid_id"));
+    Source s;
+    CPPUNIT_ASSERT_THROW(source.hasSource(s), UninitializedEntity);
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Source child_source = source.createSource(*it, "channel");
-        CPPUNIT_ASSERT(child_source.name() == *it);
+    for (const auto &name : names) {
+        Source child_source = source.createSource(name, "channel");
+        CPPUNIT_ASSERT(child_source.name() == name);
+        CPPUNIT_ASSERT(source.hasSource(child_source));
+        CPPUNIT_ASSERT(source.hasSource(name));
 
         ids.push_back(child_source.id());
     }
@@ -120,13 +124,17 @@ void TestSource::testSourceAccess() {
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source child_source = source.getSource(*it);
-        CPPUNIT_ASSERT(source.hasSource(*it) == true);
-        CPPUNIT_ASSERT(child_source.id() == *it);
+    for (const auto &id : ids) {
+        Source child_source = source.getSource(id);
+        CPPUNIT_ASSERT(source.hasSource(id));
+        CPPUNIT_ASSERT(child_source.id() == id);
 
-        source.deleteSource(*it);
+        source.deleteSource(id);
     }
+    Source s1, s2;
+    s1 = source.createSource("name", "type");
+    CPPUNIT_ASSERT_THROW(source.deleteSource(s2), UninitializedEntity);
+    CPPUNIT_ASSERT_NO_THROW(source.deleteSource(s1));
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);

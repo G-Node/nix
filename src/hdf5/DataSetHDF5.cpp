@@ -6,10 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hdf5/DataSetHDF5.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
+
 #include <iostream>
 #include <cmath>
-
-#include <nix/hdf5/DataSet.hpp>
 
 namespace nix {
 
@@ -27,84 +28,53 @@ struct to_data_type<const char *> {
     static const DataType value = DataType::String;
 };
 
-
 namespace hdf5 {
 
+DataSet::DataSet(hid_t hid)
+        : LocID(hid) {
 
-DataSet::DataSet(H5::DataSet dset)
-    : h5dset(dset)
-{
 }
 
+DataSet::DataSet(const DataSet &other)
+        : LocID(other)  {
 
-DataSet DataSet::create(const H5::CommonFG &parent,
-                        const std::string &name,
-                        DataType dtype,
-                        const NDSize &size)
-{
-    H5::DataType fileType = data_type_to_h5_filetype(dtype);
-    return create(parent, name, fileType, size);
 }
 
-
-DataSet DataSet::create(const H5::CommonFG &parent,
-                        const std::string &name,
-                        const H5::DataType &fileType,
-                        const NDSize &size,
-                        const NDSize &maxsize,
-                        const NDSize &chunks,
-                        bool max_size_unlimited,
-                        bool guess_chunks)
+void DataSet::read(hid_t memType, void *data) const
 {
-    H5::DataSpace space;
-
-    if (size) {
-        if (maxsize) {
-            space = DataSpace::create(size, maxsize);
-        } else {
-            space = DataSpace::create(size, max_size_unlimited);
-        }
-    }
-
-    H5::DSetCreatPropList plcreate = H5::DSetCreatPropList::DEFAULT;
-
-    if (chunks) {
-        int rank = static_cast<int>(chunks.size());
-        plcreate.setChunk(rank, chunks.data());
-    } else if (guess_chunks) {
-        NDSize guessedChunks = DataSet::guessChunking(size, fileType.getSize());
-        plcreate.setChunk(static_cast<int>(guessedChunks.size()), guessedChunks.data());
-    }
-
-    H5::DataSet dset = parent.createDataSet(name, fileType, space);
-    return DataSet(dset);
+    HErr res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    res.check("DataSet::read() IO error");
 }
 
+void DataSet::write(hid_t memType, const void *data)
+{
+    HErr res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    res.check("DataSet::write() IOError");
+}
 
 void DataSet::read(DataType dtype, const NDSize &size, void *data) const
 {
-    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
 
     if (dtype == DataType::String) {
         StringWriter writer(size, static_cast<std::string *>(data));
-        h5dset.read(*writer, memType);
+        read(memType.h5id(), *writer);
         writer.finish();
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(*writer, memType, space);
+        vlenReclaim(memType.h5id(), *writer);
     } else {
-        h5dset.read(data, memType);
+        read(memType.h5id(), data);
     }
 }
 
 
 void DataSet::write(DataType dtype, const NDSize &size, const void *data)
 {
-    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {
         StringReader reader(size, static_cast<const std::string *>(data));
-        h5dset.write(*reader, memType);
+        write(memType.h5id(), *reader);
     } else {
-        h5dset.write(data, memType);
+        write(memType.h5id(), data);
     }
 }
 
@@ -114,18 +84,20 @@ void DataSet::read(DataType        dtype,
                    const Selection &fileSel,
                    const Selection &memSel) const
 {
-    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
 
+    HErr res;
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
-        h5dset.read(*writer, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *writer);
         writer.finish();
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(*writer, memType, memSel.h5space());
+        vlenReclaim(memType.h5id(), *writer);
     } else {
-        h5dset.read(data, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
+
+    res.check("DataSet::read() IO error");
 }
 
 void DataSet::write(DataType         dtype,
@@ -133,61 +105,19 @@ void DataSet::write(DataType         dtype,
                     const Selection &fileSel,
                     const Selection &memSel)
 {
-    H5::DataType memType = data_type_to_h5_memtype(dtype);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    HErr res;
+
     if (dtype == DataType::String) {
         NDSize size = memSel.size();
         StringReader reader(size, static_cast<const std::string *>(data));
-        h5dset.write(*reader, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *reader);
     } else {
-        h5dset.write(data, memType, memSel.h5space(), fileSel.h5space());
+        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
     }
+
+    res.check("DataSet::write(): IO error");
 }
-
-
-bool DataSet::hasAttr(const std::string &name) const {
-    return H5Aexists(h5dset.getId(), name.c_str());
-}
-
-
-void DataSet::removeAttr(const std::string &name) const {
-    h5dset.removeAttr(name);
-}
-
-
-void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
-}
-
-
-void DataSet::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
-}
-
-
-void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void DataSet::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
-}
-
-
-double psize_product(const NDSize &dims)
-{
-    double product = 1;
-    std::for_each(dims.begin(), dims.end(), [&](hsize_t val) {
-        product *= val;
-    });
-
-    return product;
-}
-
 
 #define CHUNK_BASE   16*1024
 #define CHUNK_MIN     8*1024
@@ -275,51 +205,46 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
 
 void DataSet::setExtent(const NDSize &dims)
 {
-    H5::DataSpace space = h5dset.getSpace();
-    size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
+    DataSpace space = getSpace();
 
-    if (rank != dims.size()) {
+    if (space.extent().size() != dims.size()) {
         throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
-    herr_t err = H5Dset_extent(h5dset.getId(), dims.data());
-    if (err < 0) {
-        throw H5::DataSetIException("H5Dset_extent", "Could not set the extent of the DataSet.");
-    }
+    HErr res = H5Dset_extent(hid, dims.data());
+    res.check("DataSet::setExtent(): Could not set the extent of the DataSet.");
+
 }
 
 Selection DataSet::createSelection() const
 {
-    H5::DataSpace space = h5dset.getSpace();
+    DataSpace space = getSpace();
     return Selection(space);
 }
 
 
 NDSize DataSet::size() const
 {
-    H5::DataSpace space = h5dset.getSpace();
-    size_t rank = static_cast<size_t>(space.getSimpleExtentNdims());
-    NDSize dims(rank);
-    space.getSimpleExtentDims (dims.data(), nullptr);
-    return dims;
+    return getSpace().extent();
 }
 
-void DataSet::vlenReclaim(DataType mem_type, void *data, H5::DataSpace *dspace) const
+void DataSet::vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace) const
 {
-    H5::DataType h5MemType = data_type_to_h5_memtype(mem_type);
-
+    HErr res;
     if (dspace != nullptr) {
-        H5::DataSet::vlenReclaim(data, h5MemType, *dspace);
+        res = H5Dvlen_reclaim(mem_type.h5id(), dspace->h5id(), H5P_DEFAULT, data);
     } else {
-        H5::DataSpace space = h5dset.getSpace();
-        H5::DataSet::vlenReclaim(data, h5MemType, space);
+        DataSpace space = getSpace();
+        res = H5Dvlen_reclaim(mem_type.h5id(), space.h5id(), H5P_DEFAULT, data);
     }
+
+    res.check("DataSet::vlenReclaim(): could not reclaim dynamic bufferes");
 }
 
 
 DataType DataSet::dataType(void) const
 {
-    hid_t ftype = H5Dget_type(h5dset.getId());
+    hid_t ftype = H5Dget_type(hid);
     H5T_class_t ftclass = H5Tget_class(ftype);
 
     size_t     size;
@@ -337,6 +262,8 @@ DataType DataSet::dataType(void) const
         sign = H5Tget_sign(vtype);
 
         H5Tclose(vtype);
+    } else if (ftclass == H5T_OPAQUE) {
+      return DataType::Opaque;
     } else {
         size = H5Tget_size(ftype);
         sign = H5Tget_sign(ftype);
@@ -346,6 +273,12 @@ DataType DataSet::dataType(void) const
     H5Tclose(ftype);
 
     return dtype;
+}
+
+DataSpace DataSet::getSpace() const {
+    DataSpace space = H5Dget_space(hid);
+    space.check("DataSet::getSpace(): Could not obtain dataspace");
+    return space;
 }
 
 /* Value related functions */
@@ -364,6 +297,8 @@ struct FileValue  {
     //ctors
     FileValue() {}
     explicit FileValue(const T &vref) : value(vref) { }
+
+    inline T val() const { return value; }
 };
 
 template<>
@@ -379,37 +314,80 @@ struct FileValue<bool>  {
 
     //ctors
     FileValue() {}
-    explicit FileValue(const bool &vref) : value(vref) { }
+    explicit FileValue(const bool &vref) :
+            value(static_cast<unsigned char>(vref ? 1 : 0)) {
+    }
+
+    inline bool val() const { return value > 0; }
 };
 
 //
 
+class CompoundType {
+public:
+
+    explicit CompoundType(size_t size) : strType(H5I_INVALID_HID) {
+        hid = H5Tcreate(H5T_COMPOUND, size);
+        if (hid < 0) {
+            throw H5Exception("Could not create compound type");
+        }
+    }
+
+    void insert(const std::string &name, size_t offset, hid_t memberType) {
+        HErr result = H5Tinsert(hid, name.c_str(), offset, memberType);
+        result.check("CompoundType::insert(): Could not insert member into compound type");
+    }
+
+    void insertString(const std::string &name, size_t offset) {
+        if (strType == H5I_INVALID_HID) {
+            strType = H5Tcopy (H5T_C_S1);
+
+            if (strType < 0) {
+                throw H5Exception("H5Tcopy: Could not copy C_S1 type");
+            }
+
+            HErr status = H5Tset_size (strType, H5T_VARIABLE);
+            status.check("CompoundType::insertString(): H5Tset_size failed");
+        }
+
+        insert(name, offset, strType);
+    }
+
+    void insert(const std::string &name, size_t offset, DataType memberType, bool forMemory) {
+        h5x::DataType h5dt;
+
+        if (forMemory) {
+            h5dt = hdf5::data_type_to_h5_memtype(memberType);
+        } else {
+            h5dt = hdf5::data_type_to_h5_filetype(memberType);
+        }
+
+        insert(name, offset, h5dt.h5id());
+    }
+
+    hid_t h5id() {
+        return hid;
+    }
+
+private:
+    hid_t hid;
+    hid_t strType;
+};
+
 template<typename T>
-H5::DataType h5_type_for_value(bool for_memory)
+h5x::DataType h5_type_for_value(bool for_memory)
 {
     typedef FileValue<T> file_value_t;
+    CompoundType ct(sizeof(file_value_t));
 
-    H5::CompType h5type(sizeof(file_value_t));
+    ct.insert("value", HOFFSET(file_value_t, value), to_data_type<T>::value, for_memory);
+    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), DataType::Double, for_memory);
+    ct.insertString("reference", HOFFSET(file_value_t, reference));
+    ct.insertString("filename", HOFFSET(file_value_t, filename));
+    ct.insertString("encoder", HOFFSET(file_value_t, encoder));
+    ct.insertString("checksum", HOFFSET(file_value_t, checksum));
 
-    DataType dtype = to_data_type<T>::value;
-    if (for_memory) {
-        h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_memtype(dtype));
-    } else {
-        h5type.insertMember("value", HOFFSET(file_value_t, value), hdf5::data_type_to_h5_filetype(dtype));
-    }
-
-    if (for_memory) {
-        h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_memtype(DataType::Double));
-    } else {
-       h5type.insertMember("uncertainty", HOFFSET(file_value_t, uncertainty), hdf5::data_type_to_h5_filetype(DataType::Double));
-    }
-
-    h5type.insertMember("reference", HOFFSET(file_value_t, reference), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("filename", HOFFSET(file_value_t, filename), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("encoder", HOFFSET(file_value_t, encoder), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-    h5type.insertMember("checksum", HOFFSET(file_value_t, checksum), H5::StrType(H5::PredType::C_S1, H5T_VARIABLE));
-
-    return h5type;
+    return ct.h5id();
 }
 
 #if 0 //set to one to check that all supported DataTypes are handled
@@ -417,7 +395,7 @@ H5::DataType h5_type_for_value(bool for_memory)
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 //
-static H5::DataType h5_type_for_value_dtype(DataType dtype, bool for_memory)
+static h5x::DataType h5_type_for_value_dtype(DataType dtype, bool for_memory)
 {
     switch(dtype) {
     case DataType::Bool:   return h5_type_for_value<bool>(for_memory);
@@ -428,35 +406,36 @@ static H5::DataType h5_type_for_value_dtype(DataType dtype, bool for_memory)
     case DataType::Double: return h5_type_for_value<double>(for_memory);
     case DataType::String: return h5_type_for_value<char *>(for_memory);
 #ifndef CHECK_SUPOORTED_VALUES
-    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return H5::DataType{};
+    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return h5x::DataType{};
 #endif
     }
 }
 
-H5::DataType DataSet::fileTypeForValue(DataType dtype)
+h5x::DataType DataSet::fileTypeForValue(DataType dtype)
 {
     return h5_type_for_value_dtype(dtype, false);
 }
 
-H5::DataType DataSet::memTypeForValue(DataType dtype)
+h5x::DataType DataSet::memTypeForValue(DataType dtype)
 {
     return h5_type_for_value_dtype(dtype, true);
 }
 
 template<typename T>
-void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &values)
+void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
 {
-    H5::DataType memType = h5_type_for_value<T>(true);
+    h5x::DataType memType = h5_type_for_value<T>(true);
 
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
 
     fileValues.resize(size);
     values.resize(size);
-    h5ds.read(fileValues.data(), memType);
+
+    h5ds.read(memType.h5id(), fileValues.data());
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
-            Value temp(static_cast<T>(val.value)); //we cast because of the bool specialization
+            Value temp(val.val());
             temp.uncertainty = val.uncertainty;
             temp.reference = val.reference;
             temp.filename = val.filename;
@@ -465,7 +444,7 @@ void do_read_value(const H5::DataSet &h5ds, size_t size, std::vector<Value> &val
             return temp;
         });
 
-    H5::DataSet::vlenReclaim(fileValues.data(), memType, h5ds.getSpace());
+    h5ds.vlenReclaim(memType, fileValues.data());
 }
 
 void DataSet::read(std::vector<Value> &values) const
@@ -478,16 +457,16 @@ void DataSet::read(std::vector<Value> &values) const
     }
 
     assert(shape.size() == 1);
-    size_t nvalues = shape[0];
+    size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
 
     switch (dtype) {
-    case DataType::Bool:   do_read_value<bool>(h5dset, nvalues, values);     break;
-    case DataType::Int32:  do_read_value<int32_t>(h5dset, nvalues, values);  break;
-    case DataType::UInt32: do_read_value<uint32_t>(h5dset, nvalues, values); break;
-    case DataType::Int64:  do_read_value<int64_t>(h5dset, nvalues, values);  break;
-    case DataType::UInt64: do_read_value<uint64_t>(h5dset, nvalues, values); break;
-    case DataType::String: do_read_value<char *>(h5dset, nvalues, values);   break;
-    case DataType::Double: do_read_value<double>(h5dset, nvalues, values);   break;
+    case DataType::Bool:   do_read_value<bool>(*this, nvalues, values);     break;
+    case DataType::Int32:  do_read_value<int32_t>(*this, nvalues, values);  break;
+    case DataType::UInt32: do_read_value<uint32_t>(*this, nvalues, values); break;
+    case DataType::Int64:  do_read_value<int64_t>(*this, nvalues, values);  break;
+    case DataType::UInt64: do_read_value<uint64_t>(*this, nvalues, values); break;
+    case DataType::String: do_read_value<char *>(*this, nvalues, values);   break;
+    case DataType::Double: do_read_value<double>(*this, nvalues, values);   break;
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
@@ -498,7 +477,7 @@ void DataSet::read(std::vector<Value> &values) const
 #define NOT_IMPLEMENTED 1
 
 template<typename T>
-void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
+void do_write_value(DataSet &h5ds, const std::vector<Value> &values)
 {
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
@@ -516,8 +495,8 @@ void do_write_value(const H5::DataSet &h5ds, const std::vector<Value> &values)
             return fileVal;
         });
 
-    H5::DataType memType = h5_type_for_value<T>(true);
-    h5ds.write(fileValues.data(), memType);
+    h5x::DataType memType = h5_type_for_value<T>(true);
+    h5ds.write(memType.h5id(), fileValues.data());
 }
 
 void DataSet::write(const std::vector<Value> &values)
@@ -530,13 +509,13 @@ void DataSet::write(const std::vector<Value> &values)
 
     switch(values[0].type()) {
 
-    case DataType::Bool:   do_write_value<bool>(h5dset, values); break;
-    case DataType::Int32:  do_write_value<int32_t>(h5dset, values); break;
-    case DataType::UInt32: do_write_value<uint32_t>(h5dset, values); break;
-    case DataType::Int64:  do_write_value<int64_t>(h5dset, values); break;
-    case DataType::UInt64: do_write_value<uint64_t>(h5dset, values); break;
-    case DataType::String: do_write_value<const char *>(h5dset, values); break;
-    case DataType::Double: do_write_value<double>(h5dset, values); break;
+    case DataType::Bool:   do_write_value<bool>(*this, values); break;
+    case DataType::Int32:  do_write_value<int32_t>(*this, values); break;
+    case DataType::UInt32: do_write_value<uint32_t>(*this, values); break;
+    case DataType::Int64:  do_write_value<int64_t>(*this, values); break;
+    case DataType::UInt64: do_write_value<uint64_t>(*this, values); break;
+    case DataType::String: do_write_value<const char *>(*this, values); break;
+    case DataType::Double: do_write_value<double>(*this, values); break;
 #ifndef CHECK_SUPOORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif

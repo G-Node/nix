@@ -1,9 +1,18 @@
-#include <ctime>
+// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+//
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted under the terms of the BSD License. See
+// LICENSE file in the root of the Project.
 
-#include <nix/util/util.hpp>
 #include "TestFeature.hpp"
 
+#include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
+
+#include <sstream>
+#include <ctime>
 
 using namespace std;
 using namespace nix;
@@ -47,11 +56,11 @@ void TestFeature::testLinkType(){
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
     rp.linkType(nix::LinkType::Untagged);
+    
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Untagged);
     rp.linkType(nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
 
-    CPPUNIT_ASSERT_THROW(tag.createFeature(data_array, nix::LinkType::Indexed), std::runtime_error);
     rp.linkType(nix::LinkType::Indexed);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Indexed);
 
@@ -60,6 +69,10 @@ void TestFeature::testLinkType(){
 
 
 void TestFeature::testData() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
                                            DataType::Double, nix::NDSize({ 0 }));
@@ -68,12 +81,30 @@ void TestFeature::testData() {
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     block.deleteDataArray(da_2.id());
     // make sure link is gone with deleted data array
-    CPPUNIT_ASSERT_THROW(rp.data(), std::runtime_error);
+    CPPUNIT_ASSERT(rp.data() == nullptr);
     tag.deleteFeature(rp.id());
 }
 
-void TestFeature::testOperator()
-{
+
+void TestFeature::testLinkType2Str() {
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Tagged) == "Tagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Untagged) == "Untagged");
+    CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Indexed) == "Indexed");
+}
+
+
+void TestFeature::testStreamOperator() {
+    stringstream s1, s2, s3;
+    s1 << nix::LinkType::Indexed;
+    CPPUNIT_ASSERT(s1.str() == "LinkType::Indexed");
+    s2 << nix::LinkType::Tagged;
+    CPPUNIT_ASSERT(s2.str() == "LinkType::Tagged");
+    s3 << nix::LinkType::Untagged;
+    CPPUNIT_ASSERT(s3.str() == "LinkType::Untagged");
+}
+
+
+void TestFeature::testOperator() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);

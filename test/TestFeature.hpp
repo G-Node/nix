@@ -6,6 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -21,8 +24,6 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
 
-#include <nix.hpp>
-#include <nix/valid/validate.hpp>
 
 class TestFeature: public CPPUNIT_NS::TestFixture {
 private:
@@ -33,6 +34,8 @@ private:
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testLinkType);
     CPPUNIT_TEST(testData);
+    CPPUNIT_TEST(testLinkType2Str);
+    CPPUNIT_TEST(testStreamOperator);
     CPPUNIT_TEST(testOperator);
 
     CPPUNIT_TEST_SUITE_END ();
@@ -52,6 +55,8 @@ public:
 
     void testLinkType();
     void testData();
+    void testLinkType2Str();
+    void testStreamOperator();
     void testOperator();
 
 };

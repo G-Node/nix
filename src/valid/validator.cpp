@@ -16,9 +16,7 @@ Result validator(const std::vector<condition> &li) {
     Result result = Result();
 
     for (auto &sub : li) {
-         result = result.concat(
-            sub()
-        );
+        result = result.concat(sub());
     }
 
     return result;

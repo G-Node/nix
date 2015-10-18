@@ -9,12 +9,12 @@
 #ifndef NIX_BLOCK_HDF5_H
 #define NIX_BLOCK_HDF5_H
 
+#include <nix/base/IBlock.hpp>
+#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
+
 #include <vector>
 #include <string>
 #include <boost/optional.hpp>
-
-#include <nix/base/IBlock.hpp>
-#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -66,112 +66,88 @@ public:
     // Methods concerning sources
     //--------------------------------------------------
 
-    bool hasSource(const std::string &id) const;
+    bool hasSource(const std::string &name_or_id) const;
 
     
-    bool hasSourceByName(const std::string &name) const;
+    std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ISource> getSource(const std::string &id) const;
+    std::shared_ptr<base::ISource> getSource(ndsize_t index) const;
 
 
-    std::shared_ptr<base::ISource> getSource(size_t index) const;
-
-
-    std::shared_ptr<base::ISource> getSourceByName(const std::string &name) const;
-
-
-    size_t sourceCount() const;
+    ndsize_t sourceCount() const;
 
 
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
-    bool deleteSource(const std::string &id);
+    bool deleteSource(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArrayByName(const std::string &name) const;
+    bool hasDataArray(const std::string &name_or_id) const;
 
 
-    bool hasDataArray(const std::string &id) const;
-
-
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &id) const;
+    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
 
     
-    std::shared_ptr<base::IDataArray> getDataArrayByName(const std::string &name) const;
+    std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
 
 
-    std::shared_ptr<base::IDataArray> getDataArray(size_t index) const;
-
-
-    size_t dataArrayCount() const;
+    ndsize_t dataArrayCount() const;
 
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                      nix::DataType data_type, const NDSize &shape) override;
+                                                      nix::DataType data_type, const NDSize &shape);
 
 
-    bool deleteDataArray(const std::string &id);
+    bool deleteDataArray(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasTag(const std::string &id) const;
+    bool hasTag(const std::string &name_or_id) const;
 
 
-    bool hasTagByName(const std::string &name) const;
+    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ITag> getTag(const std::string &id) const;
+    std::shared_ptr<base::ITag> getTag(ndsize_t index) const;
 
 
-    std::shared_ptr<base::ITag> getTag(size_t index) const;
-
-
-    size_t tagCount() const;
+    ndsize_t tagCount() const;
 
 
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
                                                       const std::vector<double> &position);
 
 
-    bool deleteTag(const std::string &id);
+    bool deleteTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasMultiTag(const std::string &id) const;
+    bool hasMultiTag(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IMultiTag> getMultiTagByName(const std::string &name) const;
+    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::ITag> getTagByName(const std::string &name) const;
+    std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
 
 
-    bool hasMultiTagByName(const std::string &name) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(size_t index) const;
-
-
-    size_t multiTagCount() const;
+    ndsize_t multiTagCount() const;
 
 
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                   const DataArray &positions);
 
 
-    bool deleteMultiTag(const std::string &id);
+    bool deleteMultiTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions

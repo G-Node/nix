@@ -6,10 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
+#include "TestEntity.hpp"
 
 #include <nix/util/util.hpp>
-#include "TestEntity.hpp"
+#include <ctime>
 
 using namespace std;
 using namespace nix;
@@ -29,11 +29,13 @@ void TestEntity::tearDown() {
 
 void TestEntity::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
+    CPPUNIT_ASSERT(util::toId(block).compare(block.id()) == 0);
 }
 
 
 void TestEntity::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
+    CPPUNIT_ASSERT(util::toName(block).compare(block.name()) == 0);
 }
 
 

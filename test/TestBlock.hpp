@@ -6,6 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -21,8 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
-
-#include <nix.hpp>
 
 
 class TestBlock : public CPPUNIT_NS::TestFixture {
@@ -46,6 +47,8 @@ private:
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
+    
+    CPPUNIT_TEST(testCompare);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -75,4 +78,5 @@ public:
     void testUpdatedAt();
     void testCreatedAt();
 
+    void testCompare();
 };

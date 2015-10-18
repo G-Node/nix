@@ -8,13 +8,14 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
+#include "TestProperty.hpp"
+
+#include <nix/util/util.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <ctime>
 #include <iostream>
 
-#include <nix/util/util.hpp>
-#include "TestProperty.hpp"
-
-#include <nix/valid/validate.hpp>
 
 using namespace std;
 using namespace nix;
@@ -30,7 +31,7 @@ void TestProperty::setUp()
     str_dummy = Value("test");
     property = section.createProperty("prop", int_dummy);
     property_other = section.createProperty("other", int_dummy);
-    property_null = nullptr;
+    property_null = nix::none;
 }
 
 
@@ -84,7 +85,7 @@ void TestProperty::testValues()
                                           nix::Value("schoener"),
                                           nix::Value("Goetterfunken") };
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     std::vector<nix::Value> ctrlValues = p1.values();
     for(size_t i = 0; i < ctrlValues.size(); ++i) {
@@ -97,11 +98,11 @@ void TestProperty::testValues()
     strValues.emplace_back("Wir betreten feuertrunken");
 
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     strValues.erase(strValues.begin()+6);
     p1.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
     nix::Property p2 = section.createProperty("toDelete", str_dummy);
     CPPUNIT_ASSERT(p2.valueCount() == 1);
@@ -109,7 +110,7 @@ void TestProperty::testValues()
 
     strValues.clear();
     p2.values(strValues);
-    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), strValues.size());
+    CPPUNIT_ASSERT_EQUAL(p2.valueCount(), static_cast<ndsize_t>(strValues.size()));
     p2.deleteValues();
     CPPUNIT_ASSERT(p2.values().empty() == true);
     p2.values(strValues);
@@ -151,7 +152,7 @@ void TestProperty::testUnit(){
 
     p1.unit(valid_unit);
     CPPUNIT_ASSERT(p1.unit() && *p1.unit() == valid_unit);
-    //    CPPUNIT_ASSERT_THROW(p1.unit(second_unit), runtime_error); why should this fail??
+
     p1.unit(none);
     CPPUNIT_ASSERT(!p1.unit());
     CPPUNIT_ASSERT_NO_THROW(p1.unit(second_unit));
@@ -175,6 +176,10 @@ void TestProperty::testOperators() {
     property_other = none;
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
+    
+    stringstream s;
+    s << property;
+    CPPUNIT_ASSERT(s.str() == "Property: {name = " + property.name() + "}");
 }
 
 

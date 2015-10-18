@@ -7,8 +7,11 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/Group.hpp>
+
 #include <nix/util/util.hpp>
-#include <boost/multi_array.hpp>
+
+#include <nix/hdf5/ExceptionHDF5.hpp>
+
 
 namespace nix {
 namespace hdf5 {
@@ -26,36 +29,14 @@ boost::optional<Group> optGroup::operator() (bool create) const {
     return g;
 }
 
-Group::Group()
-    : h5group()
-{}
+
+Group::Group() : LocID() {}
 
 
-Group::Group(H5::Group h5group)
-    : h5group(h5group)
-{}
+Group::Group(hid_t hid) : LocID(hid) {}
 
 
-Group::Group(const Group &group)
-    : h5group(group.h5group)
-{}
-
-
-Group& Group::operator=(const Group &group)
-{
-    h5group = group.h5group;
-    return *this;
-}
-
-
-bool Group::hasAttr(const std::string &name) const {
-    return H5Aexists(h5group.getId(), name.c_str());
-}
-
-
-void Group::removeAttr(const std::string &name) const {
-    h5group.removeAttr(name);
-}
+Group::Group(const Group &other) : LocID(other) {}
 
 
 bool Group::hasObject(const std::string &name) const {
@@ -63,13 +44,34 @@ bool Group::hasObject(const std::string &name) const {
     if (name.empty()) {
         return false;
     }
-    htri_t res = H5Lexists(h5group.getLocId(), name.c_str(), H5P_DEFAULT);
+
+    HTri res = H5Lexists(hid, name.c_str(), H5P_DEFAULT);
+    return res.check("Group::hasObject(): H5Lexists failed");
+}
+
+bool Group::objectOfType(const std::string &name, H5O_type_t type) const {
+    H5O_info_t info;
+
+    hid_t obj = H5Oopen(hid, name.c_str(), H5P_DEFAULT);
+
+    if (!H5Iis_valid(obj)) {
+        return false;
+    }
+
+    HErr err = H5Oget_info(obj, &info);
+    err.check("Could not obtain object info");
+
+    bool res = info.type == type;
+
+    H5Oclose(obj);
     return res;
 }
 
-
-size_t Group::objectCount() const {
-    return h5group.getNumObjs();
+ndsize_t Group::objectCount() const {
+    hsize_t n_objs;
+    HErr res = H5Gget_num_objs(hid, &n_objs);
+    res.check("Could not get object count");
+    return n_objs;
 }
 
 
@@ -77,7 +79,7 @@ boost::optional<Group> Group::findGroupByAttribute(const std::string &attribute,
     boost::optional<Group> ret;
 
     // look up first direct sub-group that has given attribute with given value
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasGroup(obj_name)) {
             Group group = openGroup(obj_name, false);
@@ -101,11 +103,14 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
     boost::optional<DataSet> ret;
 
     // look up all direct sub-datasets that have the given attribute
-    for (size_t index = 0; index < objectCount(); index++) {
+    for (ndsize_t index = 0; index < objectCount(); index++) {
         std::string obj_name = objectName(index);
         if(hasData(obj_name)) {
-            DataSet dset(h5group.openDataSet(obj_name));
-            if(dset.hasAttr(attribute)) dsets.push_back(dset);
+            DataSet ds = openData(obj_name);
+
+            if (ds.hasAttr(attribute)) {
+                dsets.push_back(ds);
+            }
         }
     }
     // look for first dataset with given attribute set to given value
@@ -120,15 +125,17 @@ boost::optional<DataSet> Group::findDataByAttribute(const std::string &attribute
 }
 
 
-std::string Group::objectName(size_t index) const {
+std::string Group::objectName(ndsize_t index) const {
     // check if index valid
     if(index > objectCount()) {
-        throw OutOfBounds("No object at given index", index);
+		//FIXME: issue #473
+        throw OutOfBounds("No object at given index",
+			              static_cast<size_t>(index));
     }
 
     std::string str_name;
     // check whether name is found by index
-    ssize_t name_len = H5Lget_name_by_idx(h5group.getLocId(),
+    ssize_t name_len = H5Lget_name_by_idx(hid,
                                                   ".",
                                                   H5_INDEX_NAME,
                                                   H5_ITER_NATIVE,
@@ -138,7 +145,7 @@ std::string Group::objectName(size_t index) const {
                                                   H5P_DEFAULT);
     if (name_len > 0) {
         char* name = new char[name_len+1];
-        name_len = H5Lget_name_by_idx(h5group.getLocId(),
+        name_len = H5Lget_name_by_idx(hid,
                                       ".",
                                       H5_INDEX_NAME,
                                       H5_ITER_NATIVE,
@@ -149,7 +156,7 @@ std::string Group::objectName(size_t index) const {
         str_name = name;
         delete [] name;
     } else {
-        throw std::runtime_error("objectName: No object found, H5Lget_name_by_idx returned no name");
+        throw H5Exception("objectName: No object found, H5Lget_name_by_idx returned no name");
     }
 
     return str_name;
@@ -157,125 +164,150 @@ std::string Group::objectName(size_t index) const {
 
 
 bool Group::hasData(const std::string &name) const {
-    if (hasObject(name)) {
-        H5G_stat_t info;
-        h5group.getObjinfo(name, info);
-        if (info.type == H5G_DATASET) {
-            return true;
-        }
-    }
-    return false;
+    return hasObject(name) && objectOfType(name, H5O_TYPE_DATASET);
 }
 
 
 void Group::removeData(const std::string &name) {
-    if (hasData(name))
-        h5group.unlink(name);
+    if (hasData(name)) {
+        HErr res = H5Gunlink(hid, name.c_str());
+        res.check("Group::removeData(): Could not unlink DataSet");
+    }
+}
+
+DataSet Group::createData(const std::string &name,
+        DataType dtype,
+        const NDSize &size) const
+{
+    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
+    return createData(name, fileType, size);
+}
+
+
+DataSet Group::createData(const std::string &name,
+        const h5x::DataType &fileType,
+        const NDSize &size,
+        const NDSize &maxsize,
+        NDSize chunks,
+        bool max_size_unlimited,
+        bool guess_chunks) const
+{
+    DataSpace space;
+
+    if (size) {
+        if (maxsize) {
+            space = DataSpace::create(size, maxsize);
+        } else {
+            space = DataSpace::create(size, max_size_unlimited);
+        }
+    }
+
+    BaseHDF5 dcpl = H5Pcreate(H5P_DATASET_CREATE);
+    dcpl.check("Could not create data creation plist");
+
+    if (!chunks && guess_chunks) {
+        chunks = DataSet::guessChunking(size, fileType.size());
+    }
+
+    if (chunks) {
+        int rank = static_cast<int>(chunks.size());
+        HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
+        res.check("Could not set chunk size on data set creation plist");
+    }
+
+    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    ds.check("Group::createData: Could not create DataSet with name " + name);
+
+    return ds;
 }
 
 
 DataSet Group::openData(const std::string &name) const {
-    H5::DataSet ds5 = h5group.openDataSet(name);
-    return DataSet(ds5);
+    DataSet ds = H5Dopen(hid, name.c_str(), H5P_DEFAULT);
+    ds.check("Group::openData(): Could not open DataSet");
+    return ds;
 }
 
 
 bool Group::hasGroup(const std::string &name) const {
-    if (hasObject(name)) {
-        H5G_stat_t info;
-        h5group.getObjinfo(name, info);
-        if (info.type == H5G_GROUP) {
-            return true;
-        }
-    }
-    return false;
+    return hasObject(name) && objectOfType(name, H5O_TYPE_GROUP);
 }
 
 
 Group Group::openGroup(const std::string &name, bool create) const {
-    if(!util::nameCheck(name)) throw InvalidName("openGroup");
+    check_h5_arg_name(name);
+
     Group g;
+
     if (hasGroup(name)) {
-        g = Group(h5group.openGroup(name));
+        g = Group(H5Gopen(hid, name.c_str(), H5P_DEFAULT));
+        g.check("Group::openGroup(): Could not open group: " + name);
     } else if (create) {
-        g = Group(h5group.createGroup(name));
+        BaseHDF5 gcpl = H5Pcreate(H5P_GROUP_CREATE);
+        gcpl.check("Unable to create group with name '" + name + "'! (H5Pcreate)");
+
+        //we want hdf5 to keep track of the order in which links were created so that
+        //the order for indexed based accessors is stable cf. issue #387
+        HErr res = H5Pset_link_creation_order(gcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+        res.check("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
+
+        g = Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl.h5id(), H5P_DEFAULT));
+        g.check("Unable to create group with name '" + name + "'! (H5Gcreate2)");
+
     } else {
-        throw std::runtime_error("Unable to open group with name '" + name + "'!");
+        throw H5Exception("Unable to open group with name '" + name + "'!");
     }
+
     return g;
 }
 
 
 optGroup Group::openOptGroup(const std::string &name) {
-    if(!util::nameCheck(name)) throw InvalidName("openOptGroup");
+    check_h5_arg_name(name);
     return optGroup(*this, name);
 }
 
 
 void Group::removeGroup(const std::string &name) {
     if (hasGroup(name))
-        h5group.unlink(name);
+        H5Gunlink(hid, name.c_str());
 }
 
 
 void Group::renameGroup(const std::string &old_name, const std::string &new_name) {
-    if(!util::nameCheck(new_name)) throw InvalidName("renameGroup");
+    check_h5_arg_name(new_name);
+
     if (hasGroup(old_name)) {
-        h5group.move(old_name, new_name);
+        H5Gmove(hid, old_name.c_str(), new_name.c_str()); //FIXME: H5Gmove is deprecated
     }
 }
 
 
-bool Group::operator==(const Group &group) const {
-    return h5group.getLocId() == group.h5group.getLocId();
-}
-
-
-bool Group::operator!=(const Group &group) const {
-    return h5group.getLocId() != group.h5group.getLocId();
-}
-
-
-H5::Group Group::h5Group() const {
-    return h5group;
-}
-
-
 Group Group::createLink(const Group &target, const std::string &link_name) {
-    if(!util::nameCheck(link_name)) throw InvalidName("createLink");
-    herr_t error = H5Lcreate_hard(target.h5group.getLocId(), ".", h5group.getLocId(), link_name.c_str(),
-                                  H5L_SAME_LOC, H5L_SAME_LOC);
-    if (error)
-        throw std::runtime_error("Unable to create link " + link_name);
+    check_h5_arg_name(link_name);
 
+    HErr res = H5Lcreate_hard(target.hid, ".", hid, link_name.c_str(),
+                              H5L_SAME_LOC, H5L_SAME_LOC);
+    res.check("Unable to create link " + link_name);
     return openGroup(link_name, false);
 }
 
 // TODO implement some kind of roll-back in order to avoid half renamed links.
 bool Group::renameAllLinks(const std::string &old_name, const std::string &new_name) {
-    if(!util::nameCheck(new_name)) throw InvalidName("renameAllLinks");
+    check_h5_arg_name(new_name);
+
     bool renamed = false;
 
     if (hasGroup(old_name)) {
         std::vector<std::string> links;
 
         Group  group     = openGroup(old_name, false);
-        size_t size      = 128;
-        char *name_read  = new char[size];
+        std::string gname = group.name();
 
-        size_t size_read = H5Iget_name(group.h5group.getId(), name_read, size);
-        while (size_read > 0) {
-
-            if (size_read < size) {
-                H5Ldelete(h5group.getId(), name_read, H5L_SAME_LOC);
-                links.push_back(name_read);
-            } else {
-                delete[] name_read;
-                size = size * 2;
-                name_read = new char[size];
-            }
-
-            size_read = H5Iget_name(group.h5group.getId(), name_read, size);
+        while (! gname.empty()) {
+            deleteLink(gname);
+            links.push_back(gname);
+            gname = group.name();
         }
 
         renamed = links.size() > 0;
@@ -286,10 +318,9 @@ bool Group::renameAllLinks(const std::string &old_name, const std::string &new_n
                 curr_name.replace(curr_name.begin() + pos, curr_name.end(), new_name.begin(), new_name.end());
             }
 
-            herr_t error = H5Lcreate_hard(group.h5group.getLocId(), ".", h5group.getLocId(), curr_name.c_str(),
-                                          H5L_SAME_LOC, H5L_SAME_LOC);
-
-            renamed = renamed && (error >= 0);
+            HErr res = H5Lcreate_hard(group.hid, ".", hid, curr_name.c_str(),
+                                      H5L_SAME_LOC, H5L_SAME_LOC);
+            renamed = renamed && res;
         }
     }
 
@@ -302,22 +333,14 @@ bool Group::removeAllLinks(const std::string &name) {
 
     if (hasGroup(name)) {
         Group  group      = openGroup(name, false);
-        size_t size       = 128;
-        char *name_read   = new char[size];
 
-        size_t size_read  = H5Iget_name(group.h5group.getId(), name_read, size);
-        while (size_read > 0) {
-            if (size_read < size) {
-                H5Ldelete(h5group.getId(), name_read, H5L_SAME_LOC);
-            } else {
-                delete[] name_read;
-                size = size * 2;
-                name_read = new char[size];
-            }
-            size_read = H5Iget_name(group.h5group.getId(), name_read, size);
+        std::string gname = group.name();
+
+        while (! gname.empty()) {
+            deleteLink(gname);
+            gname = group.name();
         }
 
-        delete[] name_read;
         removed = true;
     }
 
@@ -325,33 +348,32 @@ bool Group::removeAllLinks(const std::string &name) {
 }
 
 
-void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data) {
-    attr.read(mem_type, data);
+boost::optional<Group> Group::findGroupByNameOrAttribute(std::string const &attr, std::string const &value) const {
+
+    if (hasObject(value)) {
+        return boost::make_optional(openGroup(value, false));
+    } else if (util::looksLikeUUID(value)) {
+        return findGroupByAttribute(attr, value);
+    } else {
+        return boost::optional<Group>();
+    }
 }
 
 
-void Group::readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data) {
-    StringWriter writer(size, data);
-    attr.read(mem_type, *writer);
-    writer.finish();
-    H5::DataSet::vlenReclaim(*writer, mem_type, attr.getSpace()); //recycle space?
+boost::optional<DataSet> Group::findDataByNameOrAttribute(std::string const &attr, std::string const &value) const {
+
+    if (hasObject(value)) {
+        return boost::make_optional(openData(value));
+    } else if (util::looksLikeUUID(value)) {
+        return findDataByAttribute(attr, value);
+    } else {
+        return boost::optional<DataSet>();
+    }
 }
 
 
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data) {
-    attr.write(mem_type, data);
-}
-
-
-void Group::writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data) {
-    StringReader reader(size, data);
-    attr.write(mem_type, *reader);
-}
-
-
-Group::~Group() {
-    h5group.close();
-}
+Group::~Group()
+{}
 
 } // namespace hdf5
 } // namespace nix

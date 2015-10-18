@@ -9,32 +9,35 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix/hdf5/DataSpace.hpp>
+#include <nix/hdf5/ExceptionHDF5.hpp>
+
 
 namespace nix {
 namespace hdf5 {
-namespace DataSpace {
 
-
-H5::DataSpace create(const NDSize &dims, const NDSize &maxdims)
+DataSpace DataSpace::create(const NDSize &dims, const NDSize &maxdims)
 {
-    H5::DataSpace space;
+    DataSpace space;
 
+    hid_t spaceId;
     if (!dims) {
-        space = H5::DataSpace();
-        return space;
-    }
-
-    int rank = (int) dims.size();
-    if (maxdims) {
-        space = H5::DataSpace(rank, dims.data(), maxdims.data());
+        spaceId = H5Screate(H5S_SCALAR);
     } else {
-        space = H5::DataSpace(rank, dims.data());
+        int rank = (int) dims.size();
+
+        if (maxdims) {
+            spaceId = H5Screate_simple(rank, dims.data(), maxdims.data());
+        } else {
+            spaceId = H5Screate_simple(rank, dims.data(), nullptr);
+        }
     }
 
+    space = DataSpace(spaceId);
+    space.check("Could not create data space");
     return space;
 }
 
-H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited)
+DataSpace DataSpace::create(const NDSize &dims, bool maxdims_unlimited)
 {
 
     if (maxdims_unlimited) {
@@ -46,7 +49,24 @@ H5::DataSpace create(const NDSize &dims, bool maxdims_unlimited)
 
 }
 
+NDSize DataSpace::extent() const {
 
-} //::nix::hdf5::DataSpace
+    int ndims = H5Sget_simple_extent_ndims(hid);
+    if (ndims < 0) {
+        throw H5Exception("DataSet::size(): could not obtain number of dimensions");
+    }
+    size_t rank = static_cast<size_t>(ndims);
+    NDSize dims(rank);
+    int res = H5Sget_simple_extent_dims(hid, dims.data(), nullptr);
+
+    if (res < 0) {
+        throw H5Exception("DataSet::size(): could not obtain extents");
+    }
+
+    return dims;
+}
+
+
+
 } //::nix::hdf5
 } //::nix

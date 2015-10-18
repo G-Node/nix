@@ -11,14 +11,14 @@
 #ifndef NIX_VALUE_H
 #define NIX_VALUE_H
 
+#include <nix/DataType.hpp>
+#include <nix/Platform.hpp>
+#include <nix/None.hpp>
+
 #include <string>
 #include <cstdint>
 #include <stdexcept>
 #include <iostream>
-
-#include <nix/DataType.hpp>
-#include <nix/Platform.hpp>
-#include <nix/None.hpp>
 
 namespace nix {
 
@@ -56,11 +56,11 @@ public:
 
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
-    Value(char *value) : dtype(DataType::Nothing) {
+    explicit Value(char *value) : dtype(DataType::Nothing) {
         set(std::string(value));
     }
 
-    Value(const char *value) : dtype(DataType::Nothing) {
+    explicit Value(const char *value) : dtype(DataType::Nothing) {
         set(std::string(value));
     }
 
@@ -76,6 +76,11 @@ public:
 
     Value(const Value &other) : Value() {
         assign_variant_from(other);
+        uncertainty = other.uncertainty;
+        checksum = other.checksum;
+        encoder = other.encoder;
+        filename = other.filename;
+        reference = other.reference;
     }
 
     Value(Value &&other) NOEXCEPT : Value() {
@@ -121,6 +126,8 @@ public:
     }
 
     void swap(Value &other);
+
+    static bool supports_type(DataType dtype);
 
 private:
 

@@ -9,14 +9,15 @@
 #ifndef NIX_TAG_H
 #define NIX_TAG_H
 
-#include <algorithm>
-
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/ITag.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Feature.hpp>
-
+#include <nix/DataView.hpp>
 #include <nix/Platform.hpp>
+
+#include <algorithm>
+
 
 namespace nix {
 
@@ -215,7 +216,7 @@ public:
      *
      * @return The number of referenced data arrays.
      */
-    size_t referenceCount() const {
+    ndsize_t referenceCount() const {
         return backend()->referenceCount();
     }
 
@@ -237,9 +238,7 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getReference(size_t index) const {
-        return backend()->getReference(index);
-    }
+    DataArray getReference(size_t index) const;
 
     /**
      * @brief Add a DataArray to the list of referenced data of the tag.
@@ -253,9 +252,7 @@ public:
      *
      * @param id        The id of the DataArray to add.
      */
-    void addReference(const std::string &id) {
-        backend()->addReference(id);
-    }
+    void addReference(const std::string &id);
 
     /**
      * @brief Remove a DataArray from the list of referenced data of the tag.
@@ -348,7 +345,7 @@ public:
      *
      * @return The number of features.
      */
-    size_t featureCount() const {
+    ndsize_t featureCount() const {
         return backend()->featureCount();
     }
 
@@ -360,9 +357,7 @@ public:
      * @return The feature with the specified id. If it doesn't exist
      *         an exception will be thrown.
      */
-    Feature getFeature(const std::string &id) const {
-        return backend()->getFeature(id);
-    }
+    Feature getFeature(const std::string &id) const;
 
     /**
      * @brief Retrieves a specific feature from the tag.
@@ -371,9 +366,7 @@ public:
      *
      * @return The feature with the specified index.
      */
-    Feature getFeature(size_t index) const {
-        return backend()->getFeature(index);
-    }
+    Feature getFeature(size_t index) const;
 
     /**
      * @brief Get all Features of this tag.
@@ -429,6 +422,29 @@ public:
      */
     bool deleteFeature(const Feature &feature);
 
+    //--------------------------------------------------
+    // Methods for data retrieval
+    //--------------------------------------------------
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param reference_index The index of the reference of which
+     *                        the data should be returned.
+     *
+     * @return the data
+     */
+    DataView retrieveData(size_t reference_index) const;
+    
+    /**
+     * @brief Returns the data stored in the selected Feature.
+     *
+     * @param feature_index   The index of the requested feature.
+     *
+     * @return The data stored in the Feature.
+     *
+     */
+    DataView retrieveFeatureData(size_t feature_index) const;
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------

@@ -9,15 +9,16 @@
 #ifndef NIX_GROUP_H
 #define NIX_GROUP_H
 
-#include <string>
-
-#include <nix/hdf5/hdf5include.hpp>
-#include <nix/hdf5/DataSet.hpp>
-#include <nix/Hydra.hpp>
+#include <nix/hdf5/LocID.hpp>
+#include <nix/hdf5/DataSetHDF5.hpp>
 #include <nix/hdf5/DataSpace.hpp>
+#include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
 
 #include <boost/optional.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace hdf5 {
@@ -27,36 +28,30 @@ struct optGroup;
 /**
  * TODO documentation
  */
-class NIXAPI Group {
-
-private:
-
-    H5::Group h5group;
+class NIXAPI Group : public LocID {
 
 public:
 
     Group();
 
-    Group(H5::Group h5group);
+    Group(hid_t hid);
 
-    Group(const Group &group);
+    Group(hid_t hid, bool is_copy) : LocID(hid, is_copy) { }
 
-    Group& operator=(const Group &group);
-
-    bool hasAttr(const std::string &name) const;
-    void removeAttr(const std::string &name) const;
-
-    template <typename T>
-    void setAttr(const std::string &name, const T &value) const;
-
-    template <typename T>
-    bool getAttr(const std::string &name, T &value) const;
+    Group(const Group &other);
 
     bool hasObject(const std::string &path) const;
-    size_t objectCount() const;
-    std::string objectName(size_t index) const;
+    ndsize_t objectCount() const;
+    std::string objectName(ndsize_t index) const;
 
     bool hasData(const std::string &name) const;
+
+    DataSet createData(const std::string &name, DataType dtype, const NDSize &size) const;
+
+    DataSet createData(const std::string &name, const h5x::DataType &fileType,
+            const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
+            bool maxSizeUnlimited = true, bool guessChunks = true) const;
+
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
@@ -119,6 +114,32 @@ public:
     boost::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
+    * @brief Look for the first sub-data in the group with the given
+    * name (value). If none cannot be found then search for an attribute that
+    * is set to the given string value and return that if found.
+    * Returns an empty optional otherwise.
+    *
+    * @param attribute The name of the attribute to search.
+    * @param value     The name of the Group or the value of the attribute to look for.
+    *
+    * @return Optional containing the located Group or empty optional otherwise.
+    */
+    boost::optional<Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+
+    /**
+    * @brief Look for the first sub-data in the group with the given
+    * name (value). If none cannot be found then search for an attribute that
+    * is set to the given string value and return that if found.
+    * Returns an empty optional otherwise.
+    *
+    * @param attribute The name of the attribute to search.
+    * @param value     The name of the Group or the value of the attribute to look for.
+    *
+    * @return Optional containing the located Dataset or empty optional otherwise.
+    */
+    boost::optional<DataSet> findDataByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+
+    /**
      * @brief Create a new hard link with the given name inside this group,
      *        that points to the target group.
      *
@@ -151,68 +172,17 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
-    bool operator==(const Group &group) const;
-    bool operator!=(const Group &group) const;
-
-    H5::Group h5Group() const;
     virtual ~Group();
 
-private:
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, void *data);
-    static void readAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, std::string *data);
 
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const void *data);
-    static void writeAttr(const H5::Attribute &attr, H5::DataType mem_type, const NDSize &size, const std::string *data);
+private:
+
+    bool objectOfType(const std::string &name, H5O_type_t type) const;
+
 }; // group Group
 
+
 //template functions
-
-template<typename T> void Group::setAttr(const std::string &name, const T &value) const
-{
-    typedef Hydra<const T> hydra_t;
-
-    const hydra_t hydra(value);
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    H5::Attribute attr;
-
-    if (hasAttr(name)) {
-        attr = h5group.openAttribute(name);
-    } else {
-        H5::DataType fileType = data_type_to_h5_filetype(dtype);
-        H5::DataSpace fileSpace = DataSpace::create(shape, false);
-        attr = h5group.createAttribute(name, fileType, fileSpace);
-    }
-
-    writeAttr(attr, data_type_to_h5_memtype(dtype), shape, hydra.data());
-}
-
-
-
-template<typename T> bool Group::getAttr(const std::string &name, T &value) const
-{
-    if (!hasAttr(name)) {
-        return false;
-    }
-
-    Hydra<T> hydra(value);
-
-    //determine attr's size and resize value accordingly
-    H5::Attribute attr = h5group.openAttribute(name);
-    H5::DataSpace space = attr.getSpace();
-    int rank = space.getSimpleExtentNdims();
-    NDSize dims(static_cast<size_t>(rank));
-    space.getSimpleExtentDims (dims.data(), nullptr);
-    hydra.resize(dims);
-
-    DataType dtype = hydra.element_data_type();
-    H5::DataType mem_type = data_type_to_h5_memtype(dtype);
-
-    readAttr(attr, mem_type, dims, hydra.data());
-
-    return true;
-}
 
 template<typename T>
 void Group::setData(const std::string &name, const T &value)
@@ -223,7 +193,7 @@ void Group::setData(const std::string &name, const T &value)
 
     DataSet ds;
     if (!hasData(name)) {
-        ds = DataSet::create(h5group, name, dtype, shape);
+        ds = createData(name, dtype, shape);
     } else {
         ds = openData(name);
         ds.setExtent(shape);
@@ -231,6 +201,7 @@ void Group::setData(const std::string &name, const T &value)
 
     ds.write(dtype, shape, hydra.data());
 }
+
 
 template<typename T>
 bool Group::getData(const std::string &name, T &value) const
@@ -254,7 +225,7 @@ bool Group::getData(const std::string &name, T &value) const
 
 /**
  * Helper struct that works as a functor like {@link Group::openGroup}:
- * 
+ *
  * Open and eventually create a group with the given name inside
  * this group. If creation is not allowed (bool param is "false") and
  * the group does not exist an error is thrown. If creation is not
@@ -265,7 +236,7 @@ struct NIXAPI optGroup {
     mutable boost::optional<Group> g;
     Group parent;
     std::string g_name;
-    
+
 public:
     optGroup(const Group &parent, const std::string &g_name);
 

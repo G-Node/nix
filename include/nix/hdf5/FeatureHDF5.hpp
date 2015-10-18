@@ -9,12 +9,12 @@
 #ifndef NIX_FEATURE_HDF5_H
 #define NIX_FEATURE_HDF5_H
 
-#include <string>
-#include <vector>
-
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
+
+#include <string>
+#include <vector>
 
 namespace nix {
 namespace hdf5 {
@@ -71,7 +71,7 @@ public:
     LinkType linkType() const;
 
 
-    void data(const std::string &data_array_id);
+    void data(const std::string &name_or_id);
 
 
     std::shared_ptr<base::IDataArray> data() const;

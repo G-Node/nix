@@ -9,13 +9,14 @@
 #ifndef NIX_PROPERTY_H
 #define NIX_PROPERTY_H
 
-#include <stdexcept>
-
 #include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
 
 #include <nix/Platform.hpp>
+
+#include <ostream>
+#include <memory>
 
 namespace nix {
 
@@ -114,9 +115,7 @@ public:
      *
      * @param definition The definition of the property.
      */
-    void definition(const std::string &definition) {
-        backend()->definition(definition);
-    }
+    void definition(const std::string &definition);
 
     /**
      * @brief Getter for the definition of the property.
@@ -146,9 +145,7 @@ public:
      *
      * @param mapping   The mapping information.
      */
-    void mapping(const std::string &mapping) {
-        backend()->mapping(mapping);
-    }
+    void mapping(const std::string &mapping);
 
     /**
      * @brief Getter for the mapping information stored in this Property.
@@ -218,7 +215,7 @@ public:
      *
      * @return The number of values.
      */
-    size_t valueCount() const {
+    ndsize_t valueCount() const {
         return backend()->valueCount();
     }
 
@@ -259,9 +256,7 @@ public:
      * @return > 0 if the property is larger that other, 0 if both are
      * equal, and < 0 otherwise.
      */
-    int compare(const Property &other) const {
-        return backend()->compare(other.impl());
-    }
+    int compare(const Property &other) const;
 
     /**
      * @brief Assignment operator for none.

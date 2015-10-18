@@ -9,11 +9,11 @@
 #ifndef NIX_ENTITY_WITH_METADATA_HDF5_H
 #define NIX_ENTITY_WITH_METADATA_HDF5_H
 
-#include <string>
-#include <memory>
-
 #include <nix/base/ISection.hpp>
 #include <nix/hdf5/NamedEntityHDF5.hpp>
+
+#include <string>
+#include <memory>
 
 namespace nix {
 namespace hdf5 {

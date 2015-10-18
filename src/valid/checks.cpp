@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/valid/checks.hpp>
+
 #include <functional>
 #include <vector>
 #include <string>
@@ -102,13 +103,15 @@ bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
     while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Range) {
             size_t dimIndex = (*it).index() - 1;
+            if (dimIndex >= data.dataExtent().size()) {
+                break;
+            }
             auto dim = (*it).asRangeDimension();
-            mismatch = dim.ticks().size() == data.dataExtent()[dimIndex];
+            mismatch = !(dim.ticks().size() == data.dataExtent()[dimIndex]);
         }
         ++it;
     }
-    
-    return mismatch;
+    return !mismatch;
 }
 
 bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
@@ -117,13 +120,16 @@ bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
     while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Set) {
             size_t dimIndex = (*it).index() - 1;
+            if (dimIndex >= data.dataExtent().size()) {
+                break;
+            }
             auto dim = (*it).asSetDimension();
-            mismatch = dim.labels().size() == data.dataExtent()[dimIndex];
+            mismatch = dim.labels().size() > 0 && !(dim.labels().size() == data.dataExtent()[dimIndex]);
         }
         ++it;
     }
     
-    return mismatch;
+    return !mismatch;
 }
 
 } // namespace valid

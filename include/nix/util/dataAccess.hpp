@@ -15,10 +15,13 @@
 #define NIX_DATAACCESS_H
 
 #include <nix/NDArray.hpp>
+#include <nix/DataView.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
+
+#include <ctime>
 
 namespace nix {
 namespace util {
@@ -100,7 +103,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_
  *
  * @return The data referenced by position and extent.
  */
-NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
+NIXAPI DataView retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -110,7 +113,7 @@ NIXAPI NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t r
  *
  * @return The data referenced by the position.
  */
-NIXAPI NDArray retrieveData(const Tag &tag, size_t reference_index);
+NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
@@ -132,6 +135,27 @@ NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
  * @return True if position and count are in the extent of the data array, false otherwise.
  */
 NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
+
+/**
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested
+ * @param feature_index The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+
+/**
+ * @brief Returns the feature data accosiated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature_index  The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
 
 }
 }

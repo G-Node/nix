@@ -6,8 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/util/util.hpp>
 #include <nix/Dimensions.hpp>
+
+#include <cmath>
+#include <nix/DataArray.hpp>
+#include <nix/util/util.hpp>
 #include <nix/Exception.hpp>
 
 using namespace std;
@@ -146,9 +149,17 @@ SampledDimension::SampledDimension(const SampledDimension &other)
 }
 
 
+void SampledDimension::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+
+
 void SampledDimension::unit(const std::string &unit) {
+    util::checkEmptyString(unit, "unit");
     if (!(util::isSIUnit(unit))) {
-        throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.", "SampledDimension::unit(const string &unit)");
+        throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.",
+                          "SampledDimension::unit(const string &unit)");
     }
     backend()->unit(unit);
 }
@@ -159,6 +170,38 @@ void SampledDimension::samplingInterval(double interval) {
         throw std::runtime_error("SampledDimenion::samplingInterval: Sampling intervals must be larger than 0.0!");
     }
     backend()->samplingInterval(interval);
+}
+
+
+size_t SampledDimension::indexOf(const double position) const {
+    //FIXME: should we use NDSSize::value_type here instead of ssize_t?
+    //FIXME: also, on the smae grounds, should the return not be NDSize::value_type?
+    ssize_t index;
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    index = static_cast<ssize_t>(round(( position - offset) / sampling_interval));
+    if (index < 0) {
+        throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
+    }
+    return static_cast<size_t>(index);
+}
+
+
+double SampledDimension::positionAt(const size_t index) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    return index * sampling_interval + offset;
+}
+
+
+vector<double> SampledDimension::axis(const size_t count, const size_t startIndex) const {
+    vector<double> axis(count);
+    double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    for (size_t i = 0; i < axis.size(); ++i) {
+        axis[i] = (i + startIndex) * sampling_interval + offset;
+    }
+    return axis;
 }
 
 
@@ -243,10 +286,20 @@ RangeDimension::RangeDimension()
 }
 
 
+RangeDimension::RangeDimension(const DataArray &array)
+    : ImplContainer()
+{
+    if (array.dataExtent().size() > 1) {
+        throw InvalidRank("Error creating RangeDimension with DataArray: array must be 1-D!");
+    }
+}
+
+
 RangeDimension::RangeDimension(const std::shared_ptr<IRangeDimension> &p_impl)
     : ImplContainer(p_impl)
 {
 }
+
 
 RangeDimension::RangeDimension(std::shared_ptr<IRangeDimension> &&ptr)
     : ImplContainer(std::move(ptr))
@@ -260,7 +313,13 @@ RangeDimension::RangeDimension(const RangeDimension &other)
 }
 
 
+void RangeDimension::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+
 void RangeDimension::unit(const std::string &unit) {
+    util::checkEmptyString(unit, "unit");
     if (!(util::isSIUnit(unit))) {
         throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
     }
@@ -274,6 +333,38 @@ void RangeDimension::ticks(const std::vector<double> &ticks) {
         throw UnsortedTicks(caller);
     }
     backend()->ticks(ticks);
+}
+
+
+double RangeDimension::tickAt(const size_t index) const {
+    vector<double> ticks = this->ticks();
+    if (index >= ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", index);
+    }
+    return ticks[index];
+}
+
+
+size_t RangeDimension::indexOf(const double position) const {
+    vector<double> ticks = this->ticks();
+    if (position < *ticks.begin()) {
+        return 0;
+    } else if (position > *prev(ticks.end())) {
+        return prev(ticks.end()) - ticks.begin();
+    }
+    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position);
+    return low - ticks.begin();
+}
+
+
+vector<double> RangeDimension::axis(const size_t count, const size_t startIndex) const {
+    vector<double> ticks = this->ticks();
+    if ((startIndex + count) > ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count is invalid, reaches beyond the ticks stored in this dimension.");
+    } 
+    vector<double>::const_iterator first = ticks.begin() + startIndex;
+    vector<double> axis(first, first + count);
+    return axis;
 }
 
 

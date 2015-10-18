@@ -9,16 +9,46 @@
 #ifndef NIX_PSIZE_H
 #define NIX_PSIZE_H
 
+#include <nix/Platform.hpp>
+#include <nix/Exception.hpp>
+
 #include <cstdint>
 #include <stdexcept>
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
-
-#include <nix/Platform.hpp>
+#include <vector>
 
 namespace nix {
 
+//Ideally we would use unit64_t (and int64_t) here to directly specify
+//the size we want, but for now we stick with how the hdf5 library
+//defines hsize_t, otherwise we will run into issues when on plaforms
+// where unit64_t is an incompatible type to the type of hsize_t
+//(e.g. Ubuntu 12.04 LTS Server Edition 64 bit.)
+
+typedef unsigned long long int ndsize_t;
+typedef long long int          ndssize_t;
+
+
+#ifdef _MSC_VER
+// This is a workaround for MVSC that spits out warnings for
+// unsafe operations when using copy_n, fill_n and raw pointers
+// To avoid this we implement the following functions in NDSize.cpp
+// and disable the correspoding warning (C4996) for <algorithm>
+
+NIXAPI void nd_fill(ndsize_t *data, size_t len, ndsize_t value);
+NIXAPI void nd_fill(ndssize_t *data, size_t len, ndssize_t value);
+
+NIXAPI void nd_copy(ndsize_t *source, size_t n, ndsize_t *dest);
+NIXAPI void nd_copy(ndssize_t *source, size_t n, ndssize_t *dest);
+
+#else
+
+#define nd_fill std::fill_n
+#define nd_copy std::copy_n
+
+#endif
 
 template<typename T>
 class NDSizeBase {
@@ -59,7 +89,38 @@ public:
         : rank(args.size())
     {
         allocate();
-        std::transform(args.begin(), args.end(), dims, [](const U& val) { return static_cast<T>(val);});
+
+        #ifdef _MSC_VER
+        //std::transform triggers C4996, see nd_copy, nd_fill above
+        std::vector<U> u = args;
+        for (size_t i = 0; i < rank; i++) {
+            dims[i] = static_cast<T>(u[i]);
+        }
+        #else
+        std::transform(args.begin(), args.end(), dims,
+                       [](const U& val) {
+                           return static_cast<T>(val);
+                       });
+        #endif
+    }
+
+    template<typename U>
+    NDSizeBase(const std::vector<U> &args)
+        : rank(args.size())
+    {
+        allocate();
+
+        #ifdef _MSC_VER
+        //std::transform triggers C4996, see nd_copy, nd_fill above
+        for (size_t i = 0; i < rank; i++) {
+            dims[i] = static_cast<T>(args[i]);
+        }
+        #else
+        std::transform(args.begin(), args.end(), dims,
+                       [](const U& val) {
+                           return static_cast<T>(val);
+                       });
+        #endif
     }
 
     //copy
@@ -67,7 +128,7 @@ public:
         : rank(other.rank), dims(nullptr)
     {
         allocate();
-        std::copy(other.dims, other.dims + rank, dims);
+        nd_copy(other.dims, rank, dims);
     }
 
     //move (not tested due to: http://llvm.org/bugs/show_bug.cgi?id=12208)
@@ -222,21 +283,23 @@ public:
     size_t size() const { return rank; }
 
 
-    size_t nelms() const {
-        size_t product = 1;
-        std::for_each(begin(), end(), [&](T val) {
+    T nelms() const {
+        T product = 1;
+        //TODO: check for "overflow" in calculations
+		std::for_each(begin(), end(), [&](T val) {
             product *= val;
         });
+
         return product;
     }
 
 
-    size_t dot(const NDSizeBase<T> &other) const {
+    T dot(const NDSizeBase<T> &other) const {
         if(size() != other.size()) {
             throw std::out_of_range ("Dimensions do not match"); //fixme: use different exception
         }
 
-        size_t res  = 0;
+        T res  = 0;
         for (size_t i = 0; i < rank; i++) {
             res += dims[i] * other.dims[i];
         }
@@ -252,7 +315,7 @@ public:
 
 
     void fill(T value) {
-        std::fill_n(dims, rank, value);
+        nd_fill(dims, rank, value);
     }
 
 
@@ -403,6 +466,54 @@ inline bool operator!=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
 
 
 template<typename T>
+inline bool operator<(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    if (lhs.size() != rhs.size()) {
+        throw IncompatibleDimensions("size must agree to compare",
+                                     "NDSizeBase < NDSizeBase ");
+    }
+
+    const size_t size = lhs.size();
+    for (size_t i = 0; i < size; i++) {
+        if (lhs[i] >= rhs[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+inline bool operator<=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    if (lhs.size() != rhs.size()) {
+        throw IncompatibleDimensions("size must agree to compare",
+                                     "NDSizeBase < NDSizeBase ");
+    }
+
+    const size_t size = lhs.size();
+    for (size_t i = 0; i < size; i++) {
+        if (lhs[i] > rhs[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename T>
+inline bool operator>(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    return !(lhs <= rhs);
+}
+
+template<typename T>
+inline bool operator>=(const NDSizeBase<T> &lhs, const NDSizeBase<T> &rhs)
+{
+    return !(lhs < rhs);
+}
+
+template<typename T>
 inline std::ostream& operator<<(std::ostream &os, const NDSizeBase<T> &ndsize)
 {
   os << "NDSize {";
@@ -418,17 +529,11 @@ inline std::ostream& operator<<(std::ostream &os, const NDSizeBase<T> &ndsize)
   return os;
 }
 
-/* *****  */
 
-//Ideally we would use unit64_t (and int64_t) here to directly specify
-//the size we want, but for now we stick with how the hdf5 library
-//defines hsize_t, otherwise we will run into issues when on plaforms
-// where unit64_t is an incompatible type to the type of hsize_t
-//(e.g. Ubuntu 12.04 LTS Server Edition 64 bit.)
+typedef NDSizeBase<ndsize_t>  NDSize;
 
-typedef NDSizeBase<unsigned long long int>  NDSize;
+typedef NDSizeBase<ndssize_t> NDSSize;
 
-typedef NDSizeBase<long long int> NDSSize;
 
 } // namespace nix
 

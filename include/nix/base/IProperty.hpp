@@ -9,11 +9,14 @@
 #ifndef NIX_I_PROPERTY_H
 #define NIX_I_PROPERTY_H
 
-#include <string>
-#include <vector>
-
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
+
+#include <nix/NDSize.hpp>
+
+#include <string>
+#include <vector>
+#include <cstdlib>
 
 namespace nix {
 namespace base {
@@ -63,7 +66,7 @@ public:
     virtual void deleteValues() = 0;
 
 
-    virtual size_t valueCount() const = 0;
+    virtual ndsize_t valueCount() const = 0;
 
 
     virtual void values(const std::vector<Value> &values) = 0;
@@ -73,9 +76,6 @@ public:
 
 
     virtual void values(const boost::none_t t) = 0;
-
-
-    virtual int compare(const std::shared_ptr<IProperty> &other) const = 0;
 
 
     virtual ~IProperty() {}

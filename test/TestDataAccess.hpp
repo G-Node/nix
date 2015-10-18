@@ -6,6 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+#include <nix/util/dataAccess.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -20,8 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
-#include <nix/util/dataAccess.hpp>
 
 class TestDataAccess: public CPPUNIT_NS::TestFixture {
 private:
@@ -33,16 +35,19 @@ private:
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
+    CPPUNIT_TEST(testTagFeatureData);
+    CPPUNIT_TEST(testMultiTagFeatureData);
     CPPUNIT_TEST(testMultiTagUnitSupport);
+    CPPUNIT_TEST(testDataView);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
-    nix::DataArray data_array;
-    nix::Tag position_tag, segment_tag;
+    nix::DataArray data_array, alias_array;
+    nix::Tag position_tag, segment_tag, times_tag;
     nix::MultiTag multi_tag;
     nix::Block block;
     nix::SampledDimension sampledDim;
-    nix::RangeDimension rangeDim;
+    nix::RangeDimension rangeDim, aliasDim;
     nix::SetDimension setDim;
 
 public:
@@ -54,6 +59,9 @@ public:
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
+    void testTagFeatureData();
+    void testMultiTagFeatureData();
     void testMultiTagUnitSupport();
+    void testDataView();
 };
 

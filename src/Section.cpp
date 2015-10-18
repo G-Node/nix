@@ -6,11 +6,13 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/Section.hpp>
 
 #include <list>
 #include <algorithm>
+#include <iterator>
+#include <nix/util/util.hpp>
 
-#include <nix/Section.hpp>
 
 using namespace std;
 using namespace nix;
@@ -46,7 +48,7 @@ Section::Section(shared_ptr<base::ISection> &&ptr)
 
 
 void Section::link(const Section &link) {
-    if (link == none) {
+    if (!link) {
         backend()->link(none);
     } else {
         backend()->link(link.id());
@@ -87,7 +89,7 @@ struct SectionCont {
 
 
 std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
-    auto f = [this] (size_t i) { return getSection(i); };
+    auto f = [this] (ndsize_t i) { return getSection(i); };
     return getEntities<Section>(f,
                                 sectionCount(),
                                 filter);
@@ -171,7 +173,7 @@ bool Section::hasProperty(const Property &property) const {
 }
 
 std::vector<Property> Section::properties(const util::Filter<Property>::type &filter) const {
-    auto f = [this] (size_t i) { return getProperty(i); };
+    auto f = [this] (ndsize_t i) { return getProperty(i); };
     return getEntities<Property>(f,
             propertyCount(),
             filter);
@@ -277,4 +279,53 @@ std::ostream& nix::operator<<(ostream &out, const Section &ent) {
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";
     return out;
+}
+
+void Section::repository(const std::string &repository) {
+    util::checkEmptyString(repository, "repository");
+    backend()->repository(repository);
+}
+
+void Section::link(const std::string &id) {
+    util::checkEmptyString(id, "link");
+    backend()->link(id);
+}
+
+void Section::mapping(const std::string &mapping) {
+    util::checkEmptyString(mapping, "mapping");
+    backend()->mapping(mapping);
+}
+
+Section Section::createSection(const std::string &name, const std::string &type) {
+    util::checkEntityNameAndType(name, type);
+    if (backend()->hasSection(name)) {
+        throw DuplicateName("createSection");
+    }
+    return backend()->createSection(name, type);
+}
+
+Property Section::createProperty(const std::string &name, const DataType &dtype) {
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)) {
+        throw DuplicateName("hasProperty");
+    }
+    return backend()->createProperty(name, dtype);
+}
+
+Property Section::createProperty(const std::string &name, const std::vector<Value> &values) {
+    if (values.size() < 1)
+        throw std::runtime_error("Trying to create a property without a value!");
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)) {
+        throw DuplicateName("hasProperty");
+    }
+    return backend()->createProperty(name, values);
+}
+
+Property Section::createProperty(const std::string &name, const Value &value) {
+    util::checkEntityName(name);
+    if (backend()->hasProperty(name)){
+        throw DuplicateName("Property with that name already exists!");
+    }
+    return backend()->createProperty(name, value);
 }

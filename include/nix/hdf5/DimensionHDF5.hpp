@@ -9,13 +9,13 @@
 #ifndef NIX_DIMENSIONS_HDF5_H
 #define NIX_DIMENSIONS_HDF5_H
 
+#include <nix/base/IDimensions.hpp>
+#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/DataArrayHDF5.hpp>
 #include <string>
 #include <iostream>
 #include <ctime>
-
-#include <nix/base/IDimensions.hpp>
-#include <nix/hdf5/Group.hpp>
-
+#include <memory>
 
 namespace nix {
 namespace hdf5 {
@@ -79,7 +79,7 @@ public:
     void label(const std::string &label);
 
 
-    void label(none_t t);
+    void label(const none_t t);
 
 
     boost::optional<std::string> unit() const;
@@ -88,7 +88,7 @@ public:
     void unit(const std::string &unit);
 
 
-    void unit(none_t t);
+    void unit(const none_t t);
 
 
     double samplingInterval() const;
@@ -145,7 +145,13 @@ public:
     RangeDimensionHDF5(const Group &group, size_t index, std::vector<double> ticks);
 
 
+    RangeDimensionHDF5(const Group &group, size_t index, const DataArrayHDF5 &dataArray );
+
+
     DimensionType dimensionType() const;
+
+
+    bool alias() const;
 
 
     boost::optional<std::string> label() const;
@@ -154,7 +160,7 @@ public:
     void label(const std::string &label);
 
 
-    void label(none_t t);
+    void label(const none_t t);
 
 
     boost::optional<std::string> unit() const;
@@ -163,7 +169,7 @@ public:
     void unit(const std::string &unit);
 
 
-    void unit(none_t t);
+    void unit(const none_t t);
 
 
     std::vector<double> ticks() const;
@@ -174,6 +180,9 @@ public:
 
     virtual ~RangeDimensionHDF5();
 
+private:
+
+    Group redirectGroup() const;
 };
 
 

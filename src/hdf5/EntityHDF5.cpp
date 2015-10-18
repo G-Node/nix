@@ -6,15 +6,17 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
-
-#include <nix/util/util.hpp>
 #include <nix/hdf5/EntityHDF5.hpp>
 
+#include <nix/util/util.hpp>
+
+#include <ctime>
+
 using namespace std;
-using namespace nix;
 using namespace nix::base;
-using namespace nix::hdf5;
+
+namespace nix {
+namespace hdf5 {
 
 
 EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group)
@@ -111,3 +113,5 @@ bool EntityHDF5::operator!=(const EntityHDF5 &other) const {
 
 EntityHDF5::~EntityHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

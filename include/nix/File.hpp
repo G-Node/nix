@@ -13,7 +13,6 @@
 #include <nix/base/IFile.hpp>
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
@@ -89,26 +88,26 @@ public:
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     Implementation impl=Implementation::Hdf5);
+                     const std::string &impl="hdf5");
 
     /**
      * @brief Get the number of blocks in in the file.
      *
      * @return The number of blocks.
      */
-    size_t blockCount() const {
+    ndsize_t blockCount() const {
         return backend()->blockCount();
     }
 
     /**
      * @brief Check if a block exists in the file.
      *
-     * @param id    The ID of the block.
+     * @param name_or_id    Name or ID of the block.
      *
      * @return True if the block exists, false otherwise.
      */
-    bool hasBlock(const std::string &id) const {
-        return backend()->hasBlock(id);
+    bool hasBlock(const std::string &name_or_id) const {
+        return backend()->hasBlock(name_or_id);
     }
 
     /**
@@ -123,12 +122,12 @@ public:
     /**
      * @brief Read an existing block from the file.
      *
-     * @param id    The ID of the block.
+     * @param name_or_id    Name or ID of the block.
      *
-     * @return The block with the given id.
+     * @return The block with the given name or id.
      */
-    Block getBlock(const std::string &id) const {
-        return backend()->getBlock(id);
+    Block getBlock(const std::string &name_or_id) const {
+        return backend()->getBlock(name_or_id);
     }
 
     /**
@@ -138,7 +137,10 @@ public:
      *
      * @return The block at the given index.
      */
-    Block getBlock(size_t index) const {
+    Block getBlock(ndsize_t index) const {
+        if (index >= blockCount()) {
+            throw nix::OutOfBounds("Index is out of bounds when calling File::getBlock(index)!");
+        }
         return backend()->getBlock(index);
     }
 
@@ -150,19 +152,17 @@ public:
      *
      * @return The created block.
      */
-    Block createBlock(const std::string &name, const std::string &type) {
-        return backend()->createBlock(name, type);
-    }
+    Block createBlock(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a block from the file.
      *
-     * @param id    The id of the block to delete.
+     * @param name_or_id    Name or id of the block to delete.
      *
      * @return True if the block has been removed, false otherwise.
      */
-    bool deleteBlock(const std::string &id) {
-        return backend()->deleteBlock(id);
+    bool deleteBlock(const std::string &name_or_id) {
+        return backend()->deleteBlock(name_or_id);
     }
 
     /**
@@ -206,12 +206,12 @@ public:
     /**
      * @brief Check if a specific root section exists in the file.
      *
-     * @param id      The ID of the section.
+     * @param name_or_id      Name or ID of the section.
      *
      * @return True if the section exists, false otherwise.
      */
-    bool hasSection(const std::string &id) const {
-        return backend()->hasSection(id);
+    bool hasSection(const std::string &name_or_id) const {
+        return backend()->hasSection(name_or_id);
     }
 
     /**
@@ -224,14 +224,14 @@ public:
     bool hasSection(const Section &section) const;
 
     /**
-     * @brief Get a root section with the given id.
+     * @brief Get a root section with the given name/id.
      *
-     * @param id      The id of the section.
+     * @param name_or_id      Name or id of the section.
      *
-     * @return The section with the specified id.
+     * @return The section with the specified name/id.
      */
-    Section getSection(const std::string &id) const {
-        return backend()->getSection(id);
+    Section getSection(const std::string &name_or_id) const {
+        return backend()->getSection(name_or_id);
     }
 
     /**
@@ -241,7 +241,10 @@ public:
      *
      * @return The section with the specified index.
      */
-    Section getSection(size_t index) const {
+    Section getSection(ndsize_t index) const {
+        if (index >= sectionCount()) {
+            throw nix::OutOfBounds("Index is out of bounds when calling File::getSection(index)!");
+        }
         return backend()->getSection(index);
     }
 
@@ -250,7 +253,7 @@ public:
      *
      * @return size_t   The number of sections.
      */
-    size_t sectionCount() const {
+    ndsize_t sectionCount() const {
         return backend()->sectionCount();
     }
 
@@ -326,19 +329,17 @@ public:
      *
      * @return The created Section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes the Section that is specified with the id.
      *
-     * @param id        The id of the section to delete.
+     * @param name_or_id        Name or id of the section to delete.
      *
      * @return True if the section was deleted, false otherwise.
      */
-    bool deleteSection(const std::string &id) {
-        return backend()->deleteSection(id);
+    bool deleteSection(const std::string &name_or_id) {
+        return backend()->deleteSection(name_or_id);
     }
 
     /**
@@ -452,6 +453,14 @@ public:
         return !isNone() && backend()->isOpen();
     }
 
+    /*
+     * @brief Returns the mode in which the file has been opened.
+     *
+     * @return the FileMode
+     */
+    FileMode fileMode() {
+        return backend()->fileMode();
+    }
     /**
      * @brief Assignment operator for none.
      */

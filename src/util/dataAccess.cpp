@@ -6,6 +6,10 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/util/dataAccess.hpp>
+
+#include <nix/util/util.hpp>
+
 #include <string>
 #include <cstdlib>
 #include <cmath>
@@ -13,29 +17,29 @@
 
 #include <boost/optional.hpp>
 
-#include <nix/util/util.hpp>
-#include <nix/util/dataAccess.hpp>
-
 using namespace std;
 
 namespace nix {
 namespace util {
 
-//TODO maybe a relaxed handling of units would be better, e.g. if none given, take the one from the dimension...
+
 int positionToIndex(double position, const string &unit, const Dimension &dimension) {
+    size_t pos;
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
         SampledDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     } else if (dimension.dimensionType() == nix::DimensionType::Set) {
         SetDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
-        return positionToIndex(position, unit, dim);
+        pos = positionToIndex(position, unit, dim);
     }
+
+    return static_cast<int>(pos); //FIXME: int, really? 
 }
 
 
@@ -43,12 +47,8 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
     size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
-
     if (!dim_unit && unit != "none") {
         throw nix::IncompatibleDimensions("Units of position and SampledDimension must both be given!", "nix::util::positionToIndex");
-    }
-    if ((dimension.offset() && position < *dimension.offset()) || (!dimension.offset() && position < 0.0)) {
-        throw nix::OutOfBounds("Position is out of bounds in SampledDimension.", static_cast<int>(position));
     }
     if (dim_unit && unit != "none") {
         try {
@@ -57,27 +57,27 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
             throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
         }
     }
-    index = static_cast<size_t>(round(position * scaling / dimension.samplingInterval()));
+    index = dimension.indexOf(position * scaling); 
     return index;
 }
 
 
 size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
     size_t index;
-    index = static_cast<size_t>(round(position));
     if (unit.length() > 0 && unit != "none") {
+        // TODO check here for the content
+        // convert unit and the go looking for it, see range dimension
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    if (static_cast<size_t>(index) < dimension.labels().size()){
-        return index;
-    } else {
+    index = static_cast<size_t>(round(position));
+    if (dimension.labels().size() > 0 && index > dimension.labels().size()) {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
     }
+    return index;
 }
 
 
 size_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
-    size_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
@@ -88,29 +88,7 @@ size_t positionToIndex(double position, const string &unit, const RangeDimension
             throw nix::IncompatibleDimensions("Provided units are not scalable!", "nix::util::positionToIndex");
         }
     }
-    vector<double> ticks = dimension.ticks();
-    if (position*scaling < *ticks.begin()) {
-        return 0;
-    } else if (position*scaling > *prev(ticks.end())) {
-        return prev(ticks.end()) - ticks.begin();
-    }
-    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position * scaling);
-    if (*low == position) {
-        return low - ticks.begin();
-    }
-    if (low != ticks.begin() && *low != position * scaling) {
-        double diff_low, diff_before;
-        diff_low = fabs(*low - position);
-        diff_before = fabs(*(std::prev(low)) - position * scaling);
-        if (diff_low < diff_before) {
-            index = low - ticks.begin();
-        } else {
-            index = low - ticks.begin() - 1;
-        }
-        return index;
-    } else {
-        return low - ticks.begin();
-    }
+    return dimension.indexOf(position * scaling);
 }
 
 
@@ -126,9 +104,10 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
     }
     for (size_t i = 0; i < position.size(); ++i) {
         Dimension dim = array.getDimension(i+1);
-        temp_offset[i] = positionToIndex(position[i], i > units.size() ? "none" : units[i], dim);
+        temp_offset[i] = positionToIndex(position[i], i >= units.size() ? "none" : units[i], dim);
         if (i < extent.size()) {
-            temp_count[i] = 1 + positionToIndex(position[i] + extent[i], i > units.size() ? "none" : units[i], dim) - temp_offset[i];
+            ndsize_t c = positionToIndex(position[i] + extent[i], i >= units.size() ? "none" : units[i], dim) - temp_offset[i];
+            temp_count[i] = (c > 1) ? c : 1;
         }
     }
     offset = temp_offset;
@@ -145,54 +124,66 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     if (positions) {
         position_size = positions.dataExtent();
     }
+
     if (extents) {
         extent_size = extents.dataExtent();
     }
+
     if (!positions || index >= position_size[0]) {
         throw nix::OutOfBounds("Index out of bounds of positions!", 0);
     }
+
     if (extents && index >= extent_size[0]) {
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
-    if (position_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in positions do not match dimensionality of data","util::getOffsetAndCount");
+    
+    if (position_size.size() == 1 && dimension_count != 1) {
+        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data", 
+                                          "util::getOffsetAndCount");
     }
-    if (extents && extent_size[1] > dimension_count) {
-        throw nix::IncompatibleDimensions("Number of dimensions in extents do not match dimensionality of data","util::getOffsetAndCount");
+
+    if (position_size.size() > 1 && position_size[1] > dimension_count) {
+        throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
+                                          "util::getOffsetAndCount");
+    }
+    
+    if (extents && extent_size.size() > 1 && extent_size[1] > dimension_count) {
+        throw nix::IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data",
+                                          "util::getOffsetAndCount");
     }
 
     NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
     NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
-    NDArray offset(positions.dataType(), temp_count);
+    vector<double> offset;
     positions.getData(offset, temp_count, temp_offset);
 
     NDSize data_offset(dimension_count, static_cast<size_t>(0));
     NDSize data_count(dimension_count, static_cast<size_t>(1));
     vector<string> units = tag.units();
-
-    for (size_t i = 0; i < offset.num_elements(); ++i) {
+    
+    for (size_t i = 0; i < offset.size(); ++i) {
         Dimension dimension = array.getDimension(i+1);
         string unit = "none";
         if (i <= units.size() && units.size() > 0) {
             unit = units[i];
         }
-        data_offset[i] = positionToIndex(offset.get<double>(i), unit, dimension);
+        data_offset[i] = positionToIndex(offset[i], unit, dimension);
     }
-
+    
     if (extents) {
-        NDArray extent(extents.dataType(), temp_count);
+        vector<double> extent;
         extents.getData(extent, temp_count, temp_offset);
-        for (size_t i = 0; i < offset.num_elements(); ++i) {
+        for (size_t i = 0; i < extent.size(); ++i) {
             Dimension dimension = array.getDimension(i+1);
             string unit = "none";
             if (i <= units.size() && units.size() > 0) {
                 unit = units[i];
             }
-            if (i < extent.num_elements()) {
-                data_count[i] = 1 + positionToIndex(offset.get<double>(i) + extent.get<double>(i), unit, dimension) - data_offset[i];
-            }
+            ndsize_t c = positionToIndex(offset[i] + extent[i], unit, dimension) - data_offset[i];
+            data_count[i] = (c > 1) ? c : 1;
         }
     }
+
     offsets = data_offset;
     counts = data_count;
 }
@@ -219,12 +210,12 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
+DataView retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
 
-    if (refs.size() == 0) {
+    if (refs.size() == 0) { // Do I need this?
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
     if (position_index >= positions.dataExtent()[0] ||
@@ -236,23 +227,29 @@ NDArray retrieveData(const MultiTag &tag, size_t position_index, size_t referenc
     }
 
     size_t dimension_count = refs[reference_index].dimensionCount();
-    if (positions.dataExtent()[1] > dimension_count ||
-        (extents &&extents.dataExtent()[1] > dimension_count)) {
-        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
+    if (positions.dataExtent().size() == 1 && dimension_count != 1) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
+                                          "util::retrieveData");
+    } else if (positions.dataExtent().size() > 1) {
+        if (positions.dataExtent()[1] > dimension_count ||
+            (extents && extents.dataExtent()[1] > dimension_count)) {
+            throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
+                                              "util::retrieveData");
+        }
     }
 
     NDSize offset, count;
     getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
+
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].dataType(), count);
-    refs[reference_index].getData(data, count, offset);
-    return data;
+    DataView io = DataView(refs[reference_index], count, offset);
+    return io;
 }
 
 
-NDArray retrieveData(const Tag &tag, size_t reference_index) {
+DataView retrieveData(const Tag &tag, size_t reference_index) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
     vector<DataArray> refs = tag.references();
@@ -272,10 +269,85 @@ NDArray retrieveData(const Tag &tag, size_t reference_index) {
     if (!positionAndExtentInData(refs[reference_index], offset, count)) {
         throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
-    NDArray data(refs[reference_index].dataType(), count);
-    refs[reference_index].getData(data, count, offset);
-    return data;
+    DataView io = DataView(refs[reference_index], count, offset);
+    return io;
 }
+
+
+DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index > tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    DataArray data = feat.data();
+    if (data == nix::none) {
+        throw nix::UninitializedEntity();
+        //return NDArray(nix::DataType::Float,{0});
+    }
+    if (feat.linkType() == nix::LinkType::Tagged) {
+        NDSize offset, count;
+        getOffsetAndCount(tag, data, offset, count);
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        DataView io = DataView(data, count, offset);
+        return io;
+    }
+    // for untagged and indexed return the full data
+    NDSize offset(data.dataExtent().size(), 0);
+    DataView io = DataView(data, data.dataExtent(), offset);
+    return io;
+}
+
+
+DataView retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+       throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index >= tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    DataArray data = feat.data();
+    if (data == nix::none) {
+        throw nix::UninitializedEntity();
+        //return NDArray(nix::DataType::Float,{0});
+    }
+    if (feat.linkType() == nix::LinkType::Tagged) {
+        NDSize offset, count;
+        getOffsetAndCount(tag, data, position_index, offset, count);
+        
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        DataView io = DataView(data, count, offset);
+        return io;
+    } else if (feat.linkType() == nix::LinkType::Indexed) {
+        //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
+        //For now it will just be a slice across the first dim.
+        if (position_index > data.dataExtent()[0]){
+            throw nix::OutOfBounds("Position is larger than the data stored in the feature.", 0);
+        }
+        NDSize offset(data.dataExtent().size(), 0);
+        offset[0] = position_index;
+        NDSize count(data.dataExtent());
+        count[0] = 1;
+        
+        if (!positionAndExtentInData(data, offset, count)) {
+            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
+        }
+        DataView io = DataView(data, count, offset);
+        return io;
+    }
+    // FIXME is this expected behavior? In the untagged case all data is returned
+    NDSize offset(data.dataExtent().size(), 0);
+    DataView io = DataView(data, data.dataExtent(), offset);
+    return io;
+}
+
 
 } // namespace util
 } // namespace nix

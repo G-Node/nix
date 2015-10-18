@@ -6,6 +6,8 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <iterator>
@@ -21,7 +23,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <nix.hpp>
 
 
 class TestEntityWithSources : public CPPUNIT_NS::TestFixture {
@@ -30,6 +31,7 @@ private:
 
     CPPUNIT_TEST_SUITE(TestEntityWithSources);
     CPPUNIT_TEST(testSourceAccess);
+    CPPUNIT_TEST(testSourceVectorSetter);
     CPPUNIT_TEST_SUITE_END ();
 
     nix::File file;
@@ -41,4 +43,6 @@ public:
     void tearDown();
 
     void testSourceAccess();
+    void testSourceVectorSetter();
+
 };

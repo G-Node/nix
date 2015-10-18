@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <string>
+#include <ostream>
 
 namespace nix {
 namespace valid {

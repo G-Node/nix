@@ -142,9 +142,9 @@ void Value::get(std::string &value) const {
 
 void Value::swap(Value &other) {
     using std::swap;
-
     swap(uncertainty, other.uncertainty);
     swap(reference, other.reference);
+    swap(filename, other.filename);
     swap(encoder, other.encoder);
     swap(checksum, other.checksum);
 
@@ -201,6 +201,24 @@ void Value::assign_variant_from(const Value &other) {
     }
 }
 
+
+bool Value::supports_type(DataType dtype) {
+    switch (dtype) {
+        case DataType::Bool:    // we fall through here ...
+        case DataType::Int32:   // .oO ( what's happening ...
+        case DataType::UInt32:  // ... who am I ...
+        case DataType::Int64:   // ... why am I here ...
+        case DataType::UInt64:  // ... wind, is that a good name ..
+        case DataType::Double:  // ... lets call it tail ...
+        case DataType::String:  // ... round, ... ground, ...
+        case DataType::Nothing: // ... hello ground ...
+            return true;
+
+        default:
+            return false;
+    }
+}
+
 /* operators and functions */
 
 std::ostream& operator<<(std::ostream &out, const Value &value)
@@ -254,6 +272,14 @@ bool operator==(const Value &a, const Value &b)
     if (a.type() != b.type()) {
         return false;
     }
+    bool match = true;
+    match = match & (a.reference == b.reference);
+    match = match & (a.checksum == b.checksum);
+    match = match & (a.uncertainty == b.uncertainty);
+    match = match & (a.filename == b.filename);
+    match = match & (a.encoder == b.encoder);
+    if (!match)
+        return match;
 
     switch(a.type()) {
     case DataType::Nothing: return true;
@@ -267,7 +293,7 @@ bool operator==(const Value &a, const Value &b)
 #ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); return false;
 #endif
-        }
+    }
 }
 
 void swap(Value &a, Value &b)

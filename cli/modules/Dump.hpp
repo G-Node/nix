@@ -9,24 +9,89 @@
 #ifndef CLI_DUMP_H
 #define CLI_DUMP_H
 
+#include <nix/hydra/multiArray.hpp>
+#include <nix.hpp>
+
 #include <nix/base/types.hpp>
 #include <nix/base/Entity.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/EntityWithSources.hpp>
-#include <nix.hpp>
 
 #include <Cli.hpp>
 #include <modules/IModule.hpp>
 
+#include <string>
+#include <fstream>
 #include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 namespace cli {
 namespace module {
+
+const char *const DATA_OPTION = "data";
+const char *const PLOT_OPTION = "plot";
+
+class plot_script {
+private:
+    char* script;
+    static const char* plot_file;
+
+public:
+    template<typename T1, typename T2>
+    plot_script(T1 minval, T2 maxval, size_t nx, size_t ny, std::string file_path) {
+        std::string str_script = (std::string() + 
+            "#!/usr/bin/gnuplot" + "\n\n" +
+            "set terminal x11" + "\n" +
+            "set title \"2D data plot\"" + "\n" +
+            "unset key" + "\n" +
+            "set tic scale 0" + "\n\n" +
+            "# Color runs from white to green" + "\n" +
+            "set palette rgbformula -7,-7,2" + "\n" +
+            "set cbrange [MINVAL:MAXVAL]" + "\n" +
+            "set cblabel \"Score\"" + "\n" +
+            "unset cbtics" + "\n\n" +
+            "set xrange [-0.5:NX.5]" + "\n"
+            "set yrange [-0.5:NY.5]" + "\n\n"
+            "set view map" + "\n"
+            "splot 'FILE' matrix with image" + "\n"
+            "pause -1" + "\n");
+
+        std::ifstream f(plot_file);
+        if (f.good()) {
+            str_script = std::string((std::istreambuf_iterator<char>(f)),
+                                      std::istreambuf_iterator<char>());
+        }
+
+        // round min & max to precision of two digits beyond magnitude of their difference,
+        // if their difference is < 2. Round them to ints otherwise.
+        double multiplier = abs( round(1 / (maxval - minval)) ) * 100;
+        minval = (multiplier != 0) ? round(minval * multiplier) / multiplier : round(minval);
+        maxval = (multiplier != 0) ? round(maxval * multiplier) / multiplier : round(maxval);
+        str_script.replace(str_script.find("MINVAL"), std::string("MINVAL").length(), nix::util::numToStr(minval));
+        str_script.replace(str_script.find("MAXVAL"), std::string("MAXVAL").length(), nix::util::numToStr(maxval));
+        str_script.replace(str_script.find("NX"), std::string("NX").length(), nix::util::numToStr(nx));
+        str_script.replace(str_script.find("NY"), std::string("NY").length(), nix::util::numToStr(ny));
+        str_script.replace(str_script.find("FILE"), std::string("FILE").length(), file_path);
+        
+        script = (char*) malloc (str_script.size());
+        std::strcpy(script, str_script.c_str());
+    }
     
+    std::string str() {
+        return std::string(script);
+    }
+    
+    ~plot_script() {
+        free(script);
+    }
+};
+
 class yamlstream {
     static const char* indent_str;
     static const char* scalar_start;
@@ -113,7 +178,7 @@ class yamlstream {
      *
      * @return self
      */
-    yamlstream& operator[](const int &n_indent);
+    yamlstream& operator[](const size_t n_indent);
     
     /**
      * @brief convert unix epoch time to local time string
@@ -167,12 +232,12 @@ public:
     template<typename T>
     yamlstream& operator<<(const std::vector<T> &t) {
         indent_if();
-        if(t.size()) {
-            sstream << "{";
-            for(auto &el : t) {
+        if (t.size()) {
+            sstream << "[";
+            for (auto &el : t) {
                 sstream << el << ((*t.rbegin()) != el ? ", " : "");            
             }
-            sstream << "}";
+            sstream << "]";
         }
         return *this;
     }
@@ -185,15 +250,7 @@ public:
      * @param t NDSize class
      * @return self
      */
-    yamlstream& operator<<(const nix::NDSize &t) {
-        indent_if();
-        std::vector<double> extent;
-        for(size_t i = 0; i < t.size(); i++) {
-            extent.push_back(t[i]);
-        }
-        (*this) << extent;
-        return *this;
-    }
+    yamlstream& operator<<(const nix::NDSize &t);
     
     /**
      * @brief boost::optional output into stringstream
@@ -238,9 +295,9 @@ public:
     template<typename T>
     yamlstream& operator<<(const nix::base::Entity<T> &entity) {
         (*this)
-        << item() << "id" << scalar_start << entity.id() << scalar_end
-        << item() << "createdAt" << scalar_start << t(entity.createdAt()) << scalar_end
-        << item() << "updatedAt" << scalar_start << t(entity.updatedAt()) << scalar_end;
+        << "id" << scalar_start << "" << entity.id() << scalar_end
+        << "createdAt" << scalar_start << t(entity.createdAt()) << scalar_end
+        << "updatedAt" << scalar_start << t(entity.updatedAt()) << scalar_end;
         
         return *this;
     }
@@ -257,9 +314,9 @@ public:
     yamlstream& operator<<(const nix::base::NamedEntity<T> &namedEntity) {
         (*this)
         << static_cast<nix::base::Entity<T>>(namedEntity)
-        << item() << "name" << scalar_start << namedEntity.name() << scalar_end
-        << item() << "type" << scalar_start << namedEntity.type() << scalar_end
-        << item() << "definition" << scalar_start << namedEntity.definition() << scalar_end;
+        << "name" << scalar_start << namedEntity.name() << scalar_end
+        << "type" << scalar_start << namedEntity.type() << scalar_end
+        << "definition" << scalar_start << namedEntity.definition() << scalar_end;
         
         return *this;
     }
@@ -276,7 +333,7 @@ public:
     yamlstream& operator<<(const nix::base::EntityWithMetadata<T> &entityWithMetadata) {
         (*this)
         << static_cast<nix::base::NamedEntity<T>>(entityWithMetadata)
-        << item() << "metadata"; ++(*this) << entityWithMetadata.metadata(); --(*this);
+        << "metadata"; ++(*this) << entityWithMetadata.metadata(); --(*this);
         
         return *this;
     }
@@ -293,11 +350,21 @@ public:
     yamlstream& operator<<(const nix::base::EntityWithSources<T> &entityWithSources) {
         (*this)
         << static_cast<nix::base::EntityWithMetadata<T>>(entityWithSources)
-        << item() << "sourceCount" << scalar_start << entityWithSources.sourceCount() << scalar_end;
+        << "sourceCount" << scalar_start << entityWithSources.sourceCount() << scalar_end;
         // NOTE: dont output sources as those are handled by derived frontend entity
         
         return *this;
     }
+
+    /**
+     * @brief Value output into stringstream
+     *
+     * Output Value to stringstream.
+     *
+     * @param entity nix value
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Value &value);
 
     /**
      * @brief Property output into stringstream
@@ -308,6 +375,16 @@ public:
      * @return self
      */
     yamlstream& operator<<(const nix::Property &property);
+    
+    /**
+     * @brief Source output into stringstream
+     *
+     * Output Source to stringstream.
+     *
+     * @param entity nix Source
+     * @return self
+     */
+    yamlstream& operator<<(const nix::Source &source);
     
     /**
      * @brief Section output into stringstream

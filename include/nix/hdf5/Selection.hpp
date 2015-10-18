@@ -11,7 +11,6 @@
 
 #include <nix/NDSize.hpp>
 #include <nix/Hydra.hpp>
-#include <nix/hdf5/hdf5include.hpp>
 #include <nix/hdf5/DataSpace.hpp>
 
 #include <nix/Platform.hpp>
@@ -38,26 +37,25 @@ public:
         NotB = H5S_SELECT_NOTB
     };
 
-    Selection() {}
-    Selection(const H5::DataSpace &ds) : space(ds) {}
+    Selection() : space() {}
+    Selection(const DataSpace &ds) : space(ds) {}
     Selection(const Selection &sel) : space(sel.space) {}
     template<typename T> Selection (const T &value);
 
     Selection& operator=(const Selection &other) { space = other.space; return *this; }
 
     void select(const NDSize &count, const NDSize &start, Mode mode = Mode::Set);
-    void select(Preset set);
     void offset(const NDSSize &offset);
 
-    H5::DataSpace& h5space() { return space; }
-    const H5::DataSpace& h5space() const { return space; }
-    bool isValid() const { return space.selectValid(); }
-    void bounds(NDSize &start, NDSize &end) const { space.getSelectBounds(start.data(), end.data()); }
+    DataSpace& h5space() { return space; }
+    const DataSpace& h5space() const { return space; }
+    bool isValid() const;
+    void bounds(NDSize &start, NDSize &end) const;
     NDSize size() const;
-    size_t rank() const {return static_cast<size_t>(space.getSimpleExtentNdims()); }
+    size_t rank() const;
 
 private:
-    H5::DataSpace space;
+    DataSpace space;
 };
 
 template<typename T>

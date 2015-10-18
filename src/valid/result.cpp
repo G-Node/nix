@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/valid/result.hpp>
+
 #include <vector>
 #include <string>
 

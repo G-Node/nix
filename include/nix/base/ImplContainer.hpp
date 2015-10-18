@@ -9,15 +9,16 @@
 #ifndef IMPL_CONTAINER_H
 #define IMPL_CONTAINER_H
 
+#include <nix/Platform.hpp> //for pragma warnings on windows
+#include <nix/None.hpp>
+#include <nix/Exception.hpp>
+#include <nix/NDSize.hpp>
+
 #include <memory>
 #include <vector>
 #include <list>
 #include <functional>
 #include <utility>
-
-#include <nix/Platform.hpp> //for pragma warnings on windows
-#include <nix/None.hpp>
-#include <nix/Exception.hpp>
 
 namespace nix {
 namespace base {
@@ -53,7 +54,7 @@ protected:
     template<typename TENT, typename TFUNC>
     std::vector<TENT> getEntities(
         TFUNC const &getEntity,
-        size_t n,
+        ndsize_t n,
         std::function<bool(TENT)> filter) const
     {
         std::vector<TENT> entities;
@@ -63,7 +64,9 @@ protected:
             return entities;
         }
 
-        for (size_t i = 0; i < n; i++) {
+		const size_t n_max = nix::check::fits_in_size_t(n, "n > sizeof(size_t)");
+
+        for (size_t i = 0; i < n_max; i++) {
             candidate = getEntity(i);
             if (candidate && filter(candidate)) {
                 entities.push_back(candidate);

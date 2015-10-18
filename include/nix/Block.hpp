@@ -9,17 +9,16 @@
 #ifndef NIX_BLOCK_H
 #define NIX_BLOCK_H
 
-#include <string>
-
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/Source.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
-
 #include <nix/Platform.hpp>
 
+#include <string>
+#include <memory>
 
 namespace nix {
 
@@ -138,13 +137,13 @@ public:
     /**
      * @brief Checks if this block has a specific root source.
      *
-     * @param id        The id of the source.
+     * @param name_or_id        Name or id of the source.
      *
      * @return True if a source with the given id exists at the root, false
      *         otherwise.
      */
-    bool hasSource(const std::string &id) const {
-        return backend()->hasSource(id);
+    bool hasSource(const std::string &name_or_id) const {
+        return backend()->hasSource(name_or_id);
     }
 
     /**
@@ -160,13 +159,13 @@ public:
     /**
      * @brief Retrieves a specific root source by its id.
      *
-     * @param id        The id of the source.
+     * @param name_or_id        Name or id of the source.
      *
      * @return The source with the given id. If it doesn't exist an exception
      *         will be thrown.
      */
-    Source getSource(const std::string &id) const {
-        return backend()->getSource(id);
+    Source getSource(const std::string &name_or_id) const {
+        return backend()->getSource(name_or_id);
     }
 
     /**
@@ -176,7 +175,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(size_t index) const {
+    Source getSource(ndsize_t index) const {
         return backend()->getSource(index);
     }
 
@@ -185,7 +184,7 @@ public:
      *
      * @return The number of root sources.
      */
-    size_t sourceCount() const {
+    ndsize_t sourceCount() const {
         return backend()->sourceCount();
     }
 
@@ -226,9 +225,7 @@ public:
      *
      * @return The created source object.
      */
-    Source createSource(const std::string &name, const std::string &type) {
-        return backend()->createSource(name, type);
-    }
+    Source createSource(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a root source.
@@ -236,12 +233,12 @@ public:
      * This will also delete all child sources of this root source from the file.
      * The deletion of a source can't be undone.
      *
-     * @param id        The id of the source to delete.
+     * @param name_or_id        Name or id of the source to delete.
      *
      * @return True if the source was deleted, false otherwise.
      */
-    bool deleteSource(const std::string &id) {
-        return backend()->deleteSource(id);
+    bool deleteSource(const std::string &name_or_id) {
+        return backend()->deleteSource(name_or_id);
     }
 
     /**
@@ -263,12 +260,12 @@ public:
     /**
      * @brief Checks if a specific data array exists in this block.
      *
-     * @param id        The id of a data array.
+     * @param name_or_id        Name or id of a data array.
      *
      * @return True if the data array exists, false otherwise.
      */
-    bool hasDataArray(const std::string &id) const {
-        return backend()->hasDataArray(id);
+    bool hasDataArray(const std::string &name_or_id) const {
+        return backend()->hasDataArray(name_or_id);
     }
 
     /**
@@ -281,15 +278,15 @@ public:
     bool hasDataArray(const DataArray &data_array) const;
 
     /**
-     * @brief Retrieves a specific data array from the block by id.
+     * @brief Retrieves a specific data array from the block by name or id.
      *
-     * @param id        The id of an existing data array.
+     * @param name_or_id        Name or id of an existing data array.
      *
      * @return The data array with the specified id. If this
      *         doesn't exist, an exception will be thrown.
      */
-    DataArray getDataArray(const std::string &id) const {
-        return backend()->getDataArray(id);
+    DataArray getDataArray(const std::string &name_or_id) const {
+        return backend()->getDataArray(name_or_id);
     }
 
     /**
@@ -299,7 +296,7 @@ public:
      *
      * @return The data array at the specified index.
      */
-    DataArray getDataArray(size_t index) const {
+    DataArray getDataArray(ndsize_t index) const {
         return backend()->getDataArray(index);
     }
 
@@ -321,7 +318,7 @@ public:
      *
      * @return The number of data arrays of the block.
      */
-    size_t dataArrayCount() const {
+    ndsize_t dataArrayCount() const {
         return backend()->dataArrayCount();
     }
 
@@ -338,9 +335,7 @@ public:
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
                               nix::DataType      data_type,
-                              const NDSize      &shape) {
-        return backend()->createDataArray(name, type, data_type, shape);
-    }
+                              const NDSize      &shape);
 
     /**
     * @brief Create a new data array associated with this block.
@@ -348,22 +343,28 @@ public:
     * @param name      The name of the data array to create.
     * @param type      The type of the data array.
     * @param data      Data to create array with.
+    * @param data_type A optional nix::DataType indicating the format to store values.
     *
     * Create a data array with shape and type inferred from data. After
     * successful creation, the contents of data will be written to the
-    * data array.
+    * data array. If data_type has been specified the DataArray will be created
+    * with the specified type instead of the type inferred from the data.
     *
     * @return The newly created data array.
     */
     template<typename T>
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
-                              const T &data) {
+                              const T &data,
+                              DataType data_type = DataType::Nothing) {
          const Hydra<const T> hydra(data);
-         DataType dtype = hydra.element_data_type();
+
+         if (data_type == DataType::Nothing) {
+              data_type = hydra.element_data_type();
+         }
 
          const NDSize shape = hydra.shape();
-         DataArray da = createDataArray(name, type, dtype, shape);
+         DataArray da = createDataArray(name, type, data_type, shape);
 
          const NDSize offset(shape.size(), 0);
          da.setData(data, offset);
@@ -377,12 +378,12 @@ public:
      * This deletes a data array and all its dimensions from the block and the file.
      * The deletion can't be undone.
      *
-     * @param id        The id of the data array to delete.
+     * @param name_or_id        Name or id of the data array to delete.
      *
      * @return True if the data array was deleted, false otherwise.
      */
-    bool deleteDataArray(const std::string &id) {
-        return backend()->deleteDataArray(id);
+    bool deleteDataArray(const std::string &name_or_id) {
+        return backend()->deleteDataArray(name_or_id);
     }
 
     /**
@@ -404,12 +405,12 @@ public:
     /**
      * @brief Checks if a specific tag exists in the block.
      *
-     * @param id        The id of a tag.
+     * @param name_or_id        Name or id of a tag.
      *
      * @return True if the tag exists, false otherwise.
      */
-    bool hasTag(const std::string &id) const {
-        return backend()->hasTag(id);
+    bool hasTag(const std::string &name_or_id) const {
+        return backend()->hasTag(name_or_id);
     }
 
     /**
@@ -424,13 +425,13 @@ public:
     /**
      * @brief Retrieves a specific tag from the block by its id.
      *
-     * @param id        The id of the tag.
+     * @param name_or_id        Name or id of the tag.
      *
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    Tag getTag(const std::string &id) const {
-        return backend()->getTag(id);
+    Tag getTag(const std::string &name_or_id) const {
+        return backend()->getTag(name_or_id);
     }
 
     /**
@@ -440,7 +441,7 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(size_t index) const {
+    Tag getTag(ndsize_t index) const {
         return backend()->getTag(index);
     }
 
@@ -462,7 +463,7 @@ public:
      *
      * @return The number of tags.
      */
-    size_t tagCount() const {
+    ndsize_t tagCount() const {
         return backend()->tagCount();
     }
 
@@ -471,14 +472,12 @@ public:
      *
      * @param name      The name of the tag to create.
      * @param type      The type of the tag.
-     * @param refs      A Vector with referenced data array entities.
+     * @param position  The position of the tag.
      *
      * @return The newly created tag.
      */
     Tag createTag(const std::string &name, const std::string &type,
-                              const std::vector<double> &position) {
-        return backend()->createTag(name, type, position);
-    }
+                              const std::vector<double> &position);
 
     /**
      * @brief Deletes a tag from the block.
@@ -486,12 +485,12 @@ public:
      * Deletes a tag with all its features from the block and the file.
      * The deletion can't be undone.
      *
-     * @param id        The id of the tag to remove.
+     * @param name_or_id        Name or id of the tag to remove.
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool deleteTag(const std::string &id) {
-        return backend()->deleteTag(id);
+    bool deleteTag(const std::string &name_or_id) {
+        return backend()->deleteTag(name_or_id);
     }
 
     /**
@@ -513,12 +512,12 @@ public:
     /**
      * @brief Checks if a specific multi tag exists in the block.
      *
-     * @param id        The id of a multi tag.
+     * @param name_or_id        Name or id of a multi tag.
      *
      * @return True if the multi tag exists, false otherwise.
      */
-    bool hasMultiTag(const std::string &id) const {
-        return backend()->hasMultiTag(id);
+    bool hasMultiTag(const std::string &name_or_id) const {
+        return backend()->hasMultiTag(name_or_id);
     }
 
     /**
@@ -533,13 +532,13 @@ public:
     /**
      * @brief Retrieves a specific multi tag from the block by its id.
      *
-     * @param id        The id of the multi tag.
+     * @param name_or_id        Name or id of the multi tag.
      *
      * @return The tag with the specified id. If this tag doesn't exist
      *         an exception will be thrown.
      */
-    MultiTag getMultiTag(const std::string &id) const {
-        return backend()->getMultiTag(id);
+    MultiTag getMultiTag(const std::string &name_or_id) const {
+        return backend()->getMultiTag(name_or_id);
     }
 
     /**
@@ -549,7 +548,7 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(size_t index) const {
+    MultiTag getMultiTag(ndsize_t index) const {
         return backend()->getMultiTag(index);
     }
 
@@ -571,23 +570,21 @@ public:
      *
      * @return The number of multi tags.
      */
-    size_t multiTagCount() const {
+    ndsize_t multiTagCount() const {
         return backend()->multiTagCount();
     }
 
     /**
      * @brief Create a new multi tag associated with this block.
      *
-     * @param name      The name of the multi tag to create.
-     * @param type      The type of the tag.
-     * @param position  The position of the tag.
+     * @param name       The name of the multi tag to create.
+     * @param type       The type of the tag.
+     * @param positions  The positions of the tag.
      *
      * @return The newly created tag.
      */
     MultiTag createMultiTag(const std::string &name, const std::string &type,
-                          const DataArray &positions) {
-        return backend()->createMultiTag(name, type, positions);
-    }
+                          const DataArray &positions);
 
     /**
      * @brief Deletes a multi tag from the block.
@@ -595,12 +592,12 @@ public:
      * Deletes a multi tag and all its features from the block and the file.
      * The deletion can't be undone.
      *
-     * @param id        The id of the tag to remove.
+     * @param name_or_id        Name or id of the tag to remove.
      *
      * @return True if the tag was removed, false otherwise.
      */
-    bool deleteMultiTag(const std::string &id) {
-        return backend()->deleteMultiTag(id);
+    bool deleteMultiTag(const std::string &name_or_id) {
+        return backend()->deleteMultiTag(name_or_id);
     }
 
     /**

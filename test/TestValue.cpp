@@ -11,11 +11,9 @@
 #include "TestValue.hpp"
 
 void TestValue::setUp() {
-    h5file = H5::H5File("test_value.h5", H5F_ACC_TRUNC);
 }
 
 void TestValue::tearDown() {
-    h5file.close();
 }
 
 void TestValue::testObject() {
@@ -69,8 +67,80 @@ void TestValue::testObject() {
 
     v1.set(nix::none); //set v1 to none
     CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
+
+    //the rest of the supports_type test are in ValTester::check_basic, below
+    CPPUNIT_ASSERT_EQUAL(false, nix::Value::supports_type(nix::DataType::Opaque));
 }
 
+struct ValTester {
+
+    virtual void check_basic() const = 0;
+    virtual void check_swap(const ValTester &other) const = 0;
+    virtual void check_to_string() const = 0;
+    virtual bool value_same(const nix::Value &other) const = 0;
+
+    virtual nix::Value theVal() const = 0;
+    virtual nix::DataType type() const = 0;
+
+    virtual ~ValTester() { };
+};
+
+template<typename T>
+struct ValueTester : ValTester {
+    typedef T value_type;
+
+    ValueTester(const T& v) : value(v), dtype(nix::to_data_type<T>::value), val(v) { }
+
+    void check_basic() const override {
+        CPPUNIT_ASSERT(nix::Value::supports_type(dtype));
+        CPPUNIT_ASSERT_EQUAL(dtype, value.type());
+        CPPUNIT_ASSERT_EQUAL(val, value.get<T>());
+    }
+
+    void check_swap(const ValTester &other) const override {
+        nix::Value a = value;
+        nix::Value b = other.theVal();
+
+        a.swap(b);
+
+        CPPUNIT_ASSERT_EQUAL(b.type(), dtype);
+        CPPUNIT_ASSERT_EQUAL(a.type(), other.type());
+
+        CPPUNIT_ASSERT_EQUAL(b.get<T>(), val);
+        CPPUNIT_ASSERT(other.value_same(a));
+
+        CPPUNIT_ASSERT_EQUAL(other.type() == dtype, other.theVal() == value);
+    }
+
+    void check_to_string() const override {
+        std::stringstream val_stream;
+
+        val_stream << val;
+
+        std::stringstream value_stream;
+
+        value_stream << value;
+
+        std::string::size_type pos = val_stream.str().find(value_stream.str());
+        CPPUNIT_ASSERT(pos != std::string::npos);
+    }
+
+    nix::Value theVal() const override {
+        return value;
+    }
+
+    nix::DataType type() const override {
+        return dtype;
+    }
+
+    bool value_same(const nix::Value &other) const override {
+        return other.type() == dtype && other.get<T>() == val;
+    }
+
+    nix::Value    value;
+    nix::DataType dtype;
+    T             val;
+};
 
 void TestValue::testSwap()
 {
@@ -104,6 +174,56 @@ void TestValue::testSwap()
     v4.swap(v2);
     CPPUNIT_ASSERT_EQUAL(v2.get<int>(), 42);
     CPPUNIT_ASSERT_EQUAL(v4.get<std::string>(), checkStr);
+
+    //now lets do that systematically
+
+    std::vector<ValTester *> vals = { new ValueTester<std::string>("String"),
+                                      new ValueTester<uint32_t>(42),
+                                      new ValueTester< int32_t>(42),
+                                      new ValueTester<uint64_t>(42),
+                                      new ValueTester< int64_t>(42),
+                                      new ValueTester< double>(42.0),
+                                      new ValueTester< bool>(true)};
+
+    for (const ValTester *a : vals) {
+        a->check_basic();
+
+        for (const ValTester *b : vals) {
+            a->check_swap(*b);
+        }
+    }
+
+    for (ValTester *vt : vals) {
+        delete vt;
+    }
+}
+
+void TestValue::testEquals() {
+    nix::Value v1("Hallo");
+    nix::Value v2("Welt");
+    v1.reference = "reference";
+    v1.encoder = "encoder";
+    v1.filename = "filename";
+    v1.checksum = "checksum";
+    v1.uncertainty = 20;
+
+    CPPUNIT_ASSERT(v2 != v1);
+    v2 = v1;
+    CPPUNIT_ASSERT(v2 == v1);
+    v2.checksum = "checksum2";
+    CPPUNIT_ASSERT(!(v2 == v1));
+    v2.checksum = "checksum";
+    v2.uncertainty = 10;
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.uncertainty = v1.uncertainty;
+    v2.filename = "another";
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.filename = v1.filename;
+    v2.encoder = "another";
+    CPPUNIT_ASSERT(v2 != v1);
+    v2.encoder = v1.encoder;
+    v2.reference = "another";
+    CPPUNIT_ASSERT(v2 != v1);
 }
 
 

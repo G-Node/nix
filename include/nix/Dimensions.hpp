@@ -13,7 +13,7 @@
 #include <nix/base/IDimensions.hpp>
 
 namespace nix {
-
+class DataArray;
 class Dimension;
 
 /**
@@ -128,9 +128,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Removes the label from a dimension.
@@ -223,6 +221,46 @@ public:
     }
 
     /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data!
+     *
+     * @param position  The position, e.g. a time
+     *
+     * @returns The respective index.
+     */
+    size_t indexOf(const double position) const;
+
+    /**
+     * @brief Returns the position of this dimension at a given index.
+     *
+     * This method returns the position at a given index. Use this method for
+     * example to find the position that relates to a certain index. Note: This
+     * method does not check if the index is the extent of the data!
+     *
+     * @param index  The index.
+     *
+     * @returns The respective position, e.g. a time.
+     */
+    double positionAt(const size_t index) const;
+
+    /**
+     * @brief Returns a vector containing the positions defined by this
+     * dimension
+     *
+     * Returns an axis vector defined by this dimsension.
+     *
+     * @param count        The number of indices
+     * @param startIndex   The start index, default = 0
+     *
+     * @returns A vector of doubles containing the respective dimension.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.
@@ -243,7 +281,19 @@ public:
         ImplContainer::operator=(t);
         return *this;
     }
-
+    
+    /**
+     * @brief Returns the position at the given index
+     *
+     * @see positionAt for more information.
+     *
+     * @param index The index.
+     *
+     * @returns The position at the given index, e.g. the time.
+     */
+    double operator[](const size_t index) {
+        return positionAt(index);
+    }
 };
 
 
@@ -412,6 +462,16 @@ public:
     RangeDimension();
 
     /**
+     * @brief Constructor that sets up the RangeDimension to use the values
+     * stored in the DataArray as ticks.
+     *
+     * This is **only** valid for DataArray that are 1D and contain numeric values!
+     *
+     * @param array   The DataArray.
+     */
+    RangeDimension(const DataArray &array);
+
+    /**
      * @brief Constructor that creates a new dimension from a shared pointer to
      * an implementation instance.
      *
@@ -437,7 +497,16 @@ public:
      * @param other     The dimension to copy.
      */
     RangeDimension(const RangeDimension &other);
-
+    
+    /**
+     *   @brief tells if the RangeDimension uses the contents of a linked DataArray for ticks, 
+     *  i.e. is an alias.
+     *  
+     * @return bool true, if RangeDimension is an alias, false otherwise. 
+     */
+    bool alias() const {
+        return backend()->alias();
+    }
     /**
      * @brief The actual dimension that is described by the dimension descriptor.
      *
@@ -479,9 +548,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Remove the label of the dimension.
@@ -543,6 +610,44 @@ public:
      * @param ticks     The new ticks for the dimension provided as a vector.
      */
     void ticks(const std::vector<double> &ticks);
+    
+    /**
+     * @brief Returns the entry of the range dimension at a given index.
+     *
+     * @param index     The index.
+     *
+     * @return The tick at the given index.
+     *
+     * Method will throw an nix::OutOfBounds Exception if the index is invalid
+     */
+    double tickAt(const size_t index) const;
+
+    /**
+     * @brief Returns the index of the given position
+     *
+     * Method will return the index equal or larger than position
+     * 
+     * @param position    The position.
+     *
+     * @return The index.
+     */
+    size_t indexOf(const double position) const;
+    
+    /**
+     * @brief Returns a vector containing a number of ticks
+     *
+     * The result vector contains a given number of ticks starting from a
+     * starting index 
+     *
+     * @param count       The number of ticks.
+     * @param startIndex  The starting index. Default 0.
+     *
+     * @return vector<double> containing the ticks. 
+     *
+     * Method will throw a nix::OutOfBounds exception if startIndex + count is beyond
+     * the number of ticks.
+     */
+    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
 
     /**
      * @brief Assignment operator.
@@ -564,6 +669,19 @@ public:
     RangeDimension &operator=(const none_t &t) {
         ImplContainer::operator=(t);
         return *this;
+    }
+
+    /**
+     * @brief Returns the position at the given index
+     *
+     * @see positionAt for more information.
+     *
+     * @param index The index.
+     *
+     * @returns The position at the given index, e.g. the time.
+     */
+    double operator[](const size_t index) {
+        return tickAt(index);
     }
 
 };

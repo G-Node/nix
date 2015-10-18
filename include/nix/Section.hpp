@@ -9,16 +9,17 @@
 #ifndef NIX_SECTION_H
 #define NIX_SECTION_H
 
-#include <limits>
-#include <functional>
-#include <string>
-
 #include <nix/util/filter.hpp>
 #include <nix/base/NamedEntity.hpp>
 #include <nix/base/ISection.hpp>
 #include <nix/Property.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
+
+#include <memory>
+#include <functional>
+#include <string>
+#include <cstdlib>
 
 namespace nix {
 
@@ -87,9 +88,7 @@ public:
      *
      * @param repository        URL to the repository.
      */
-    void repository(const std::string &repository) {
-        backend()->repository(repository);
-    }
+    void repository(const std::string &repository);
 
     /**
      * @brief Gets the repository URL.
@@ -117,9 +116,7 @@ public:
      *
      * @param id        The id of the section that should be linked.
      */
-    void link(const std::string &id) {
-        backend()->link(id);
-    }
+    void link(const std::string &id);
 
     /**
      * @brief Establish a link to another section.
@@ -160,9 +157,7 @@ public:
      *
      * @param mapping   The mapping information to this section.
      */
-    void mapping(const std::string &mapping) {
-        backend()->mapping(mapping);
-    }
+    void mapping(const std::string &mapping);
 
     /**
      * @brief Gets the mapping information.
@@ -207,19 +202,19 @@ public:
      *
      * @return The number of child sections.
      */
-    size_t sectionCount() const {
+    ndsize_t sectionCount() const {
         return backend()->sectionCount();
     }
 
     /**
      * @brief Checks whether a section has a certain child section.
      *
-     * @param id        The id of requested section.
+     * @param name_or_id        Name or id of requested section.
      *
      * @return True if the section is a child, false otherwise.
      */
-    bool hasSection(const std::string &id) const {
-        return backend()->hasSection(id);
+    bool hasSection(const std::string &name_or_id) const {
+        return backend()->hasSection(name_or_id);
     }
 
     /**
@@ -232,14 +227,14 @@ public:
     bool hasSection(const Section &section) const;
 
     /**
-     * @brief Get a specific child section by its id.
+     * @brief Get a specific child section by its name or id.
      *
-     * @param id        The id of the child section.
+     * @param name_or_id  The name or the ID of the child section.
      *
      * @return The child section.
      */
-    Section getSection(const std::string &id) const {
-        return backend()->getSection(id);
+    Section getSection(const std::string &name_or_id) const {
+        return backend()->getSection(name_or_id);
     }
 
     /**
@@ -249,7 +244,7 @@ public:
      *
      * @return The specified child section.
      */
-    virtual Section getSection(size_t index) const {
+    virtual Section getSection(ndsize_t index) const {
         return backend()->getSection(index);
     }
 
@@ -299,19 +294,17 @@ public:
      *
      *  @return The new child section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a section from the section.
      *
-     * @param id        The id of the child section to delete.
+     * @param name_or_id        Name or id of the child section to delete.
      *
      * @return True if the section was deleted, false otherwise.
      */
-    bool deleteSection(const std::string &id) {
-        return backend()->deleteSection(id);
+    bool deleteSection(const std::string &name_or_id) {
+        return backend()->deleteSection(name_or_id);
     }
 
     /**
@@ -332,19 +325,19 @@ public:
      *
      * @return The number of Properties
      */
-    size_t propertyCount() const {
+    ndsize_t propertyCount() const {
         return backend()->propertyCount();
     }
 
     /**
-     * @brief Checks if a Property with this id exists in this Section.
+     * @brief Checks if a Property with this name/id exists in this Section.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return True if the property exists, false otherwise.
      */
-    bool hasProperty(const std::string &id) const {
-        return backend()->hasProperty(id);
+    bool hasProperty(const std::string &name_or_id) const {
+        return backend()->hasProperty(name_or_id);
     }
 
     /**
@@ -357,14 +350,14 @@ public:
     bool hasProperty(const Property &property) const;
 
     /**
-     * @brief Gets the Property identified by its id.
+     * @brief Gets the Property identified by its name or id.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return The specified property.
      */
-    Property getProperty(const std::string &id) const {
-        return backend()->getProperty(id);
+    Property getProperty(const std::string &name_or_id) const {
+        return backend()->getProperty(name_or_id);
     }
 
     /**
@@ -374,30 +367,8 @@ public:
      *
      * @return The property.
      */
-    Property getProperty(size_t index) const {
+    Property getProperty(ndsize_t index) const {
         return backend()->getProperty(index);
-    }
-
-    /**
-     * @brief Checks if a property with a certain name exists.
-     *
-     * @param name      The name of the property.
-     *
-     * @return True if a property with the given name exists false otherwise.
-     */
-    bool hasPropertyByName(const std::string &name) const {
-        return backend()->hasPropertyByName(name);
-    }
-
-    /**
-     * @brief Returns a property identified by its name.
-     *
-     * @param name      The name of the property.
-     *
-     * @return The found property.
-     */
-    Property getPropertyByName(const std::string &name) const {
-        return backend()->getPropertyByName(name);
     }
 
     /**
@@ -428,9 +399,7 @@ public:
      *
      * @return The newly created property
      */
-    Property createProperty(const std::string &name, const DataType &dtype) {
-        return backend()->createProperty(name, dtype);
-    }
+    Property createProperty(const std::string &name, const DataType &dtype);
 
     /**
      * @brief Add a new Property to the Section.
@@ -440,9 +409,7 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const Value &value) {
-        return backend()->createProperty(name, value);
-    }
+    Property createProperty(const std::string &name, const Value &value);
 
     /**
      * @brief Add a new Property with values to the Section.
@@ -452,19 +419,17 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const std::vector<Value> &values) {
-        return backend()->createProperty(name, values);
-    }
+    Property createProperty(const std::string &name, const std::vector<Value> &values);
 
     /**
-     * @brief Delete the Property identified by its id.
+     * @brief Delete the Property identified by its name or id.
      *
-     * @param id        The id of the property.
+     * @param name_or_id    Name or id of the property.
      *
      * @return True if the property was deleted, false otherwise.
      */
-    bool deleteProperty(const std::string &id) {
-        return backend()->deleteProperty(id);
+    bool deleteProperty(const std::string &name_or_id) {
+        return backend()->deleteProperty(name_or_id);
     }
 
     /**

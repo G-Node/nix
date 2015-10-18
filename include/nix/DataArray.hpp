@@ -9,7 +9,7 @@
 #ifndef NIX_DATA_ARRAY_H
 #define NIX_DATA_ARRAY_H
 
-#include <boost/multi_array.hpp>
+#include <nix/DataSet.hpp>
 
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/IDataArray.hpp>
@@ -17,6 +17,7 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
+
 
 namespace nix {
 
@@ -63,7 +64,7 @@ namespace nix {
  * bool deleted = da.deleteDataArray(some_id);
  * ~~~
  */
-class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray> {
+class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray>, public DataSet {
 
 public:
 
@@ -140,9 +141,7 @@ public:
      *
      * @param label     The label of the data array.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Deleter for the label attribute.
@@ -274,7 +273,7 @@ public:
      *
      * @return The number of dimensions.
      */
-    size_t dimensionCount() const {
+    ndsize_t dimensionCount() const {
         return backend()->dimensionCount();
     }
 
@@ -305,9 +304,25 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) { 
+        if (ticks.size() == 0) {
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+                                        "DataArray::appendRangeDimension");
+        }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
+    
+    /**
+     * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
+     * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
+     * 
+     * @return The created RangeDimension
+     */
+    RangeDimension appendAliasRangeDimension() {
+        return createAliasRangeDimension();
+    }
+
 
     /**
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
@@ -346,7 +361,32 @@ public:
      * @return The created dimension descriptor.
      */
     RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
+        if (ticks.size() == 0) {
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+                                        "DataArray::createRangeDimension");
+        }
         return backend()->createRangeDimension(id, ticks);
+    }
+
+    /**
+     * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
+     * 
+     * @return The created dimension descriptor.
+     */
+    RangeDimension createAliasRangeDimension() {
+        if (this->dataExtent().size() > 1) {
+            throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (!nix::data_type_is_numeric(this->dataType())) {
+            throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (dimensionCount() > 0) {
+            throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        return backend()->createAliasRangeDimension();
     }
 
     /**
@@ -377,30 +417,21 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    template<typename T> void getData(T &value) const;
-
-    template<typename T> void setData(const T &value);
-
-    template<typename T> void getData(T &value, const NDSize &count, const NDSize &offset) const;
-
-    template<typename T> void getData(T &value, const NDSize &offset) const;
-
-    template<typename T> void setData(const T &value, const NDSize &offset);
-
-    void getData(DataType dtype,
-                 void *data,
-                 const NDSize &count,
-                 const NDSize &offset) const {
+    void getDataDirect(DataType dtype,
+                       void *data,
+                       const NDSize &count,
+                       const NDSize &offset) const {
         backend()->read(dtype, data, count, offset);
     }
 
-    void setData(DataType dtype,
-                 const void *data,
-                 const NDSize &count,
-                 const NDSize &offset)
+    void setDataDirect(DataType dtype,
+                       const void *data,
+                       const NDSize &count,
+                       const NDSize &offset)
     {
         backend()->write(dtype, data, count, offset);
     }
+
 
     /**
      * @brief Get the extent of the data of the DataArray entity.
@@ -429,6 +460,8 @@ public:
         return backend()->dataType();
     }
 
+    void appendData(DataType dtype, const void *data, const NDSize &count, size_t axis);
+
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
@@ -446,71 +479,19 @@ public:
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);
 
+    //
+protected:
+    //implementation of the DataIO interface
+    void ioRead(DataType dtype,
+                void *data,
+                const NDSize &count,
+                const NDSize &offset) const;
 
-    double applyPolynomial(std::vector<double> &coefficients, double origin, double input) const;
-
+    void ioWrite(DataType dtype,
+                 const void *data,
+                 const NDSize &count,
+                 const NDSize &offset);
 };
-
-template<typename T>
-void DataArray::getData(T &value) const
-{
-    Hydra<T> hydra(value);
-
-    NDSize extent = backend()->dataExtent();
-    hydra.resize(extent);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    backend()->read(dtype, hydra.data(), shape, {});
-}
-
-template<typename T>
-void DataArray::setData(const T &value)
-{
-    const Hydra<const T> hydra(value);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    if(!backend()->hasData()) {
-        backend()->createData(dtype, shape);
-    }
-    backend()->dataExtent(shape);
-    backend()->write(dtype, hydra.data(), shape, {});
-}
-
-template<typename T>
-void DataArray::getData(T &value, const NDSize &count, const NDSize &offset) const
-{
-    Hydra<T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    hydra.resize(count);
-    backend()->read(dtype, hydra.data(), count, offset);
-}
-
-template<typename T>
-void DataArray::getData(T &value, const NDSize &offset) const
-{
-    Hydra<T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    NDSize count = hydra.shape();
-    backend()->read(dtype, hydra.data(), count, offset);
-}
-
-
-template<typename T>
-void DataArray::setData(const T &value, const NDSize &offset)
-{
-    const Hydra<const T> hydra(value);
-
-    DataType dtype = hydra.element_data_type();
-    NDSize shape = hydra.shape();
-
-    backend()->write(dtype, hydra.data(), shape, offset);
-}
 
 } // namespace nix
 

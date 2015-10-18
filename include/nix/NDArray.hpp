@@ -10,12 +10,14 @@
 #ifndef NIX_NDARRAY_H
 #define NIX_NDARRAY_H
 
-#include <vector>
-#include <iostream>
 
 #include <nix/Hydra.hpp>
-
+#include <nix/NDSize.hpp>
 #include <nix/Platform.hpp>
+
+#include <vector>
+#include <iostream>
+#include <cstring>
 
 namespace nix {
 
@@ -28,7 +30,7 @@ public:
     NDArray(DataType dtype, NDSize dims);
 
     size_t rank() const { return extends.size(); }
-    size_t num_elements() const { return extends.nelms(); }
+    ndsize_t num_elements() const { return extends.nelms(); }
     NDSize  shape() const { return extends; }
     NDSize  size()const { return extends; }
     DataType dtype() const { return dataType ;}
@@ -38,8 +40,8 @@ public:
     template<typename T> void set(size_t index, T value);
     template<typename T> void set(const NDSize &index, T value);
 
-    byte_type *data() { return &dstore[0]; }
-    const byte_type *data() const { return &dstore[0]; }
+    byte_type *data() { return dstore.data(); }
+    const byte_type *data() const { return dstore.data(); }
 
     void resize(const NDSize &new_size);
 
@@ -62,8 +64,10 @@ private:
 template<typename T>
 const T NDArray::get(size_t index) const
 {
-    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-    return dx[index];
+    T value;
+    const byte_type *offset = dstore.data() + sizeof(T) * index;
+    memcpy(&value, offset, sizeof(T));
+    return value;
 }
 
 
@@ -71,16 +75,15 @@ template<typename T>
 const T NDArray::get(const NDSize &index) const
 {
     size_t pos = sub2index(index);
-    const T *dx = reinterpret_cast<const T *>(&dstore[0]);
-    return dx[pos];
+    return get<T>(pos);
 }
 
 
 template<typename T>
 void NDArray::set(size_t index, T value)
 {
-    T* dx = reinterpret_cast<T *>(&dstore[0]);
-    dx[index] = value;
+    byte_type *offset = dstore.data() + sizeof(T) * index;
+    memcpy(offset, &value, sizeof(T));
 }
 
 
@@ -88,8 +91,7 @@ template<typename T>
 void NDArray::set(const NDSize &index, T value)
 {
     size_t pos = sub2index(index);
-    T* dx = reinterpret_cast<T *>(&dstore[0]);
-    dx[pos] = value;
+    set(pos, value);
 }
 
 /* ****************************************** */
@@ -113,7 +115,7 @@ struct data_traits<NDArray> {
         return value.shape();
     }
 
-    static size_t num_elements(const_reference value) {
+    static ndsize_t num_elements(const_reference value) {
         return value.num_elements();
     }
 

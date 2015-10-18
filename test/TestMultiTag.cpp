@@ -9,14 +9,15 @@
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
 #include "TestMultiTag.hpp"
+
 #include <nix/Exception.hpp>
+#include <nix/valid/validate.hpp>
+
 #include <sstream>
 #include <ctime>
 
-#include <nix/valid/validate.hpp>
 
 using namespace nix;
-using namespace nix::hdf5;
 using namespace valid;
 
 
@@ -46,7 +47,7 @@ void TestMultiTag::setUp() {
 
     tag = block.createMultiTag("tag_one", "test_tag", positions);
     tag_other = block.createMultiTag("tag_two", "test_tag", positions);
-    tag_null = nullptr;
+    tag_null = nix::none;
 
     section = file.createSection("foo_section", "metadata");
 }
@@ -95,7 +96,8 @@ void TestMultiTag::testDefinition() {
 
 void TestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
-    size_t count = block.multiTagCount();
+	//issue #473
+	ndsize_t count = static_cast<size_t>(block.multiTagCount());
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";
@@ -119,6 +121,16 @@ void TestMultiTag::testCreateRemove() {
     std::stringstream errmsg1;
     errmsg1 << "Error while removing multiTags!";
     CPPUNIT_ASSERT_MESSAGE(errmsg1.str(), block.multiTagCount() == count);
+
+    DataArray a;
+    MultiTag mtag;
+    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = block.createMultiTag("test", "test", positions);
+    mtag.extents(positions);
+    CPPUNIT_ASSERT_THROW(mtag.positions(a), UninitializedEntity);
+    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
+    CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
+    CPPUNIT_ASSERT(!mtag.extents());
 }
 
 void TestMultiTag::testUnits() {
@@ -149,7 +161,7 @@ void TestMultiTag::testUnits() {
     block.deleteMultiTag(dt.id());
 }
 
-//TODO Constraints on References are not tested yet.
+//TODO merge this test into TestBaseTag::testReferences
 
 void TestMultiTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
@@ -159,23 +171,35 @@ void TestMultiTag::testReferences(){
     DataArray da_2 = block.createDataArray("TestReference 2", "Reference",
                                            DataType::Double,
                                            NDSize({ 0 }));
-
+    DataArray a;
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(dt.hasReference(a), UninitializedEntity);
 
     std::stringstream counterrmsg;
     counterrmsg << "TestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
-
+    
     dt.addReference(da_1);
     dt.addReference(da_2);
+    CPPUNIT_ASSERT_THROW(dt.addReference(a), UninitializedEntity);
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 2);
+    CPPUNIT_ASSERT(dt.hasReference(da_1));
+    CPPUNIT_ASSERT(dt.hasReference(da_2));
+
+    std::stringstream haserrmsg;
+    haserrmsg << "TestMultiTag::testReference: Has method did not work!";
+    CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.id()));
+    CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.name()));
 
     DataArray ref1 = dt.getReference(da_1.id());
     std::stringstream retrieveerrmsg;
     retrieveerrmsg << "TestMultiTag::testReference: Retrieval did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
+    DataArray ref2 = dt.getReference(da_1.name());
+    retrieveerrmsg << "TestMultiTag::testReference: Retrieval by name did not work!";
+    CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref2.id() == da_1.id());
 
     std::vector<DataArray> arrays = dt.references();
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);
@@ -189,10 +213,15 @@ void TestMultiTag::testReferences(){
     delReferrmsg << "TestMultiTag::testReference: removeReference did not work!";
     dt.removeReference(da_1.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
-    dt.removeReference(da_2.id());
+    dt.removeReference("NONEXISTENT");
+    CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
+    dt.removeReference(da_2.name());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 0);
-
-
+    dt.addReference(da_1);
+    CPPUNIT_ASSERT(dt.referenceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(dt.removeReference(da_1));
+    CPPUNIT_ASSERT(dt.referenceCount() == 0);
+    
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
     block.deleteDataArray(da_1.id());
@@ -202,6 +231,21 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
     block.deleteMultiTag(dt.id());
+}
+
+
+void TestMultiTag::testFeatures() {
+    DataArray a;
+    Feature f;
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
+    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
+    
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.featureCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.featureCount() == 0);
 }
 
 
@@ -277,12 +321,107 @@ void TestMultiTag::testPositionExtents() {
 }
 
 
+void TestMultiTag::testDataAccess() {
+    DataArray data_array = block.createDataArray("dimensionTest",
+                                       "test",
+                                       DataType::Double,
+                                       NDSize({0, 0, 0}));
+    double samplingInterval = 1.0;
+    std::vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
+    std::string unit = "ms";
+
+    typedef boost::multi_array<double, 3> array_type;
+    typedef array_type::index index;
+    array_type data(boost::extents[2][10][5]);
+    int value;
+    for(index i = 0; i != 2; ++i) {
+        value = 0;
+        for(index j = 0; j != 10; ++j) {
+            for(index k = 0; k != 5; ++k) {
+                data[i][j][k] = value++;
+            }
+        }
+    }
+    data_array.setData(data);
+
+    SetDimension setDim = data_array.appendSetDimension();
+    std::vector<std::string> labels = {"label_a", "label_b"};
+    setDim.labels(labels);
+
+    SampledDimension sampledDim = data_array.appendSampledDimension(samplingInterval);
+    sampledDim.unit(unit);
+
+    RangeDimension rangeDim = data_array.appendRangeDimension(ticks);
+    rangeDim.unit(unit);
+
+    typedef boost::multi_array<double, 2> position_type;
+    position_type event_positions(boost::extents[2][3]);
+    position_type event_extents(boost::extents[2][3]);
+    event_positions[0][0] = 0.0;
+    event_positions[0][1] = 3.0;
+    event_positions[0][2] = 3.4;
+
+    event_extents[0][0] = 0.0;
+    event_extents[0][1] = 6.0;
+    event_extents[0][2] = 2.3;
+
+    event_positions[1][0] = 0.0;
+    event_positions[1][1] = 8.0;
+    event_positions[1][2] = 2.3;
+
+    event_extents[1][0] = 0.0;
+    event_extents[1][1] = 3.0;
+    event_extents[1][2] = 2.0;
+
+    std::vector<std::string> event_labels = {"event 1", "event 2"};
+    std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};
+
+    DataArray event_array = block.createDataArray("positions", "test",
+                                                  DataType::Double, NDSize({ 0, 0 }));
+    event_array.setData(event_positions);
+    SetDimension event_set_dim;
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(event_labels);
+    event_set_dim = event_array.appendSetDimension();
+    event_set_dim.labels(dim_labels);
+
+    DataArray extent_array = block.createDataArray("extents", "test",
+                                                   DataType::Double, NDSize({ 0, 0 }));
+    extent_array.setData(event_extents);
+    SetDimension extent_set_dim;
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(event_labels);
+    extent_set_dim = extent_array.appendSetDimension();
+    extent_set_dim.labels(dim_labels);
+
+    MultiTag multi_tag = block.createMultiTag("multi_tag", "events", event_array);
+    multi_tag.extents(extent_array);
+    multi_tag.addReference(data_array);
+
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(-1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(10, 0), nix::OutOfBounds);
+
+    DataView ret_data = multi_tag.retrieveData(0, 0);
+    NDSize data_size = ret_data.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
+
+    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);
+    
+    block.deleteMultiTag(multi_tag);
+    block.deleteDataArray(data_array);
+    block.deleteDataArray(event_array);
+    block.deleteDataArray(event_array);
+}
+
+
 void TestMultiTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
-    // TODO This test fails due to operator== of Section
-    // CPPUNIT_ASSERT(tag.metadata() == section);
+    CPPUNIT_ASSERT(tag.metadata().id() == section.id());
     
     // test none-unsetter
     tag.metadata(none);
@@ -311,6 +450,10 @@ void TestMultiTag::testSourceAccess(){
 
     CPPUNIT_ASSERT(tag.sourceCount() == names.size());
     CPPUNIT_ASSERT(tag.sources().size() == names.size());
+
+    std::string name = names[0];
+    Source source = tag.getSource(name);
+    CPPUNIT_ASSERT(source.name() == name);
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source child_source = tag.getSource(*it);

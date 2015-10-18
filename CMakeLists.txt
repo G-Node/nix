@@ -4,9 +4,9 @@
 cmake_minimum_required (VERSION 2.8.10)
 project (nix CXX)
 
-set(VERSION_MAJOR 0)
-set(VERSION_MINOR 10)
-set(VERSION_PATCH 5)
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 0)
+set(VERSION_PATCH 2)
 
 set(VERSION_ABI   1)
 
@@ -32,24 +32,33 @@ if(NOT WIN32)
   endif()
 endif()
 
+
+set(CMAKE_MACOSX_RPATH 1)
+
 #########################################
 # HDF-5
-# FIND_PACKAGE (HDF5 NAMES hdf5)
-find_package (HDF5 REQUIRED COMPONENTS C CXX)
+if(WIN32)
+  set(HDF5_USE_STATIC_LIBS OFF)
+  find_package (HDF5 NO_MODULE)
+else()
+  set(HDF5_USE_STATIC_LIBS OFF)
+  find_package (HDF5 REQUIRED COMPONENTS C)
+endif()
 include_directories (${HDF5_INCLUDE_DIR})
-set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES} ${HDF5_CXX_LIBRARIES})
+set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 
 
 ########################################
 # Boost
 if(WIN32)
   set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_USE_STATIC_RUNTIME OFF)
 else()
   set(Boost_USE_STATIC_LIBS OFF)
 endif()
 
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
+
 find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
@@ -66,9 +75,11 @@ if(DOXYGEN_FOUND)
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
-########################################
 
-include_directories(include)
+########################################
+# NIX
+
+include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
@@ -80,14 +91,6 @@ set_target_properties(nix PROPERTIES
 
 if(WIN32)
   set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
-	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
-	                 COMMENT "Copying HDF5 C DLL")
-  ADD_CUSTOM_COMMAND(TARGET nix POST_BUILD
-	                 COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${HDF5_INCLUDE_DIR}/../bin/hdf5_cpp.dll"
-	                         "$<TARGET_FILE_DIR:nix>"
-	                 COMMENT "Copying HDF5 CXX DLL")
 endif()
 
 
@@ -98,9 +101,6 @@ if(NIX_FRAMEWORK)
                         PUBLIC_HEADER "${nix_INCLUDES}")
 endif()
 
-#IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#  set(CMAKE_VERBOSE_MAKEFILE TRUE)
-#endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   add_executable(playground EXCLUDE_FROM_ALL main.cpp)
@@ -108,7 +108,8 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
 endif()
 
 
-######## static analysis
+########################################
+# static analysis
 find_program(CLANG_CHECK clang-check)
 if(CLANG_CHECK)
   MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
@@ -132,7 +133,9 @@ if(NOT WIN32)
   set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
 target_link_libraries(nix-tool nix)
+set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 message(STATUS "CLI executable added")
+
 
 ########################################
 # Tests
@@ -162,15 +165,21 @@ endforeach(test)
 include(CTest)
 
 
+add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
+target_link_libraries(nix-bench nix)
+if(NOT WIN32)
+  set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+endif()
+
+
 ########################################
 # Install
 
-install(TARGETS nix
+install(TARGETS nix nix-tool
         LIBRARY DESTINATION lib
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION include)
-
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
@@ -178,13 +187,35 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
 
 
 ########################################
-
 # CPack for Win
-
 if(WIN32)
+  
+  install(TARGETS nix
+		  ARCHIVE
+		  DESTINATION lib
+		  COMPONENT libraries)
+  file(GLOB NIX_LICENSE "LICENSE*")
+  install(FILES ${NIX_LICENSE}
+		  DESTINATION ./
+		  COMPONENT libraries)
+		  
+  file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
+  install(FILES ${HDF5_DLLS}
+		  DESTINATION bin
+		  COMPONENT libraries)
+  file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
+  install(FILES ${HDF5_COPYING}
+		  DESTINATION ./
+		  COMPONENT libraries)
+		  
+  install(TARGETS nix-tool
+		  RUNTIME
+		  DESTINATION bin
+		  COMPONENT applications)
+		  
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
-  set(CPACK_PACKAGE_VENDOR "CMake.org")
+  set(CPACK_PACKAGE_VENDOR "g-node.org")
   set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
   set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
   set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
@@ -198,9 +229,11 @@ if(WIN32)
 endif()
 
 ########################################
+get_directory_property(incdirs INCLUDE_DIRECTORIES)
 
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "INCDIRS: ${incdirs}")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")

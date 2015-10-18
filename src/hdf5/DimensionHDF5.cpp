@@ -6,18 +6,16 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#include <nix/hdf5/DimensionHDF5.hpp>
 #include <nix/util/util.hpp>
 
-#include <nix/hdf5/DimensionHDF5.hpp>
-#include <nix/hdf5/DataSet.hpp>
-
 using namespace std;
-using namespace nix;
-using namespace nix::hdf5;
 using namespace nix::base;
 
+namespace nix {
+namespace hdf5 {
 
-DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
+DimensionType dimensionTypeFromStr(const string &str) {
     if (str == "set") {
         return DimensionType::Set;
     } else if (str == "range") {
@@ -30,7 +28,7 @@ DimensionType nix::hdf5::dimensionTypeFromStr(const string &str) {
 }
 
 
-std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
+std::string dimensionTypeToStr(DimensionType dim) {
 
     //The way this switch + string.empty() checking is
     // done here might seem a bit convoluted, but the
@@ -63,7 +61,7 @@ std::string nix::hdf5::dimensionTypeToStr(DimensionType dim) {
 }
 
 
-shared_ptr<IDimension> nix::hdf5::openDimensionHDF5(const Group &group, size_t index) {
+shared_ptr<IDimension> openDimensionHDF5(const Group &group, size_t index) {
     string type_name;
     group.getAttr("dimension_type", type_name);
 
@@ -146,12 +144,8 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    } else {
-        group.setAttr("label", label);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -175,12 +169,8 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        group.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -262,8 +252,8 @@ void SetDimensionHDF5::labels(const vector<string> &labels) {
 }
 
 void SetDimensionHDF5::labels(const none_t t) {
-    if (group.hasAttr("offset")) {
-        group.removeAttr("offset");
+    if (group.hasData("labels")) {
+        group.removeData("labels");
     }
 }
 
@@ -287,15 +277,36 @@ RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<
 }
 
 
+RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const DataArrayHDF5 &array)
+    :RangeDimensionHDF5(group, index)
+{
+    setType();
+    this->group.createLink(array.group(), array.id());
+}
+
+
 DimensionType RangeDimensionHDF5::dimensionType() const {
     return DimensionType::Range;
+}
+
+
+Group RangeDimensionHDF5::redirectGroup() const {
+    Group g;
+    if (alias()) {
+        string group_name = group.objectName(0);
+        g = group.openGroup(group_name, false);
+    } else {
+        g = group;
+    }
+    return g;
 }
 
 
 boost::optional<std::string> RangeDimensionHDF5::label() const {
     boost::optional<std::string> ret;
     string label;
-    bool have_attr = group.getAttr("label", label);
+    Group g = redirectGroup();
+    bool have_attr = g.getAttr("label", label);
     if (have_attr) {
         ret = label;
     }
@@ -304,18 +315,16 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    } else {
-        group.setAttr("label", label);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    Group g = redirectGroup();
+    g.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
 void RangeDimensionHDF5::label(const none_t t) {
-    if (group.hasAttr("label")) {
-        group.removeAttr("label");
+    Group g = redirectGroup();
+    if (g.hasAttr("label")) {
+        g.removeAttr("label");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
@@ -324,7 +333,8 @@ void RangeDimensionHDF5::label(const none_t t) {
 boost::optional<std::string> RangeDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    bool have_attr = group.getAttr("unit", unit);
+    Group g = redirectGroup();
+    bool have_attr = g.getAttr("unit", unit);
     if (have_attr) {
         ret = unit;
     }
@@ -333,28 +343,34 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        group.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    Group g = redirectGroup();
+    g.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
 void RangeDimensionHDF5::unit(const none_t t) {
-    if (group.hasAttr("unit")) {
-        group.removeAttr("unit");
+    Group g = redirectGroup();
+    if (g.hasAttr("unit")) {
+        g.removeAttr("unit");
     }
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
+bool RangeDimensionHDF5::alias() const {
+    return group.objectCount() > 0 && !group.hasData("ticks");
+}
+
+
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
-
-    if (group.hasData("ticks")) {
-        group.getData("ticks", ticks);
+    Group g = redirectGroup();
+    if (g.hasData("ticks")) {
+        g.getData("ticks", ticks);
+        return ticks;
+    } else if (g.hasData("data")) {
+        g.getData("data", ticks);
         return ticks;
     } else {
         throw MissingAttr("ticks");
@@ -363,8 +379,20 @@ vector<double> RangeDimensionHDF5::ticks() const {
 
 
 void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
-    group.setData("ticks", ticks);
+    Group g = redirectGroup();
+    if (!alias()) {
+        g.setData("ticks", ticks);
+    } else if (g.hasData("data")) {
+        NDSize extent(1, ticks.size());
+        DataSet ds = g.openData("data");
+        ds.setExtent(extent);
+        ds.write(nix::DataType::Double, extent, ticks.data());
+    } else {
+        throw MissingAttr("ticks");
+    }
 }
 
 RangeDimensionHDF5::~RangeDimensionHDF5() {}
 
+} // ns nix::hdf5
+} // ns nix

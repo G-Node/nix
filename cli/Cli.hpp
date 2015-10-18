@@ -18,13 +18,31 @@
 #include <string>
 #include <utility>
 #include <unordered_map>
+#include <stdexcept>
 
 namespace cli {
     
     const char *const HELP_OPTION = "help";
     const char *const MODULE_OPTION = "module";
     const char *const INPFILE_OPTION = "input-file";
-    
+
+class NoInputFile : public std::invalid_argument {
+public:
+    NoInputFile() : std::invalid_argument("No input file given") { }
+};
+
+class FileNotFound : public std::invalid_argument {
+public:
+    FileNotFound(std::string file_name) :
+            std::invalid_argument("File '" + file_name + "' not found") { }
+};
+
+class FileNotOpen : public std::invalid_argument {
+public:
+    FileNotOpen(std::string file_name) :
+            std::invalid_argument("File '" + file_name + "' could not be opened - wrong format?") { }
+};
+
 } // namespace cli
 
 #endif

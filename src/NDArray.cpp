@@ -19,7 +19,9 @@ NDArray::NDArray(DataType dtype, NDSize dims) : dataType(dtype), extends(dims) {
 
 void NDArray::allocate_space() {
     size_t type_size = data_type_to_size(dataType);
-    dstore.resize(extends.nelms() * type_size);
+	ndsize_t bytes = extends.nelms() * type_size;
+	size_t alloc_size = check::fits_in_size_t(bytes, "Cannot allocate storage (exceeds memory)");
+    dstore.resize(alloc_size);
 
     calc_strides();
 }
@@ -45,8 +47,9 @@ void NDArray::calc_strides() {
 
 
 size_t NDArray::sub2index(const NDSize &sub) const {
-    size_t index = strides.dot(sub);
-    return index;
+    ndsize_t pos = strides.dot(sub);
+    size_t idx = check::fits_in_size_t(pos, "index does not fit into memory");
+    return idx;
 }
 
 } // namespace nix

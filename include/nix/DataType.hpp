@@ -11,10 +11,17 @@
 #ifndef NIX_DATATYPE_H
 #define NIX_DATATYPE_H
 
+#include <nix/Platform.hpp>
+
 #include <cstdint>
 #include <ostream>
 
-#include <nix/Platform.hpp>
+namespace std {
+#if !defined(WIN32) && __cplusplus < 201300L
+template<bool B, class T = void>
+using enable_if_t = typename std::enable_if<B, T>::type;
+#endif
+}
 
 namespace nix {
 
@@ -38,135 +45,132 @@ NIXAPI enum class DataType {
     UInt32,
     UInt64,
     String,
-    Date,
-    DateTime,
+    Opaque,
 
     Nothing = -1
 };
 
+// helper functions
+template<typename T>
+using is_true_numeric = std::integral_constant<bool,
+        std::is_integral<T>::value &&
+        !(std::is_same<T, bool>::value ||
+          std::is_same<T, char>::value)
+>;
+
+template<typename T, bool SIGN, size_t SIZE>
+using is_integer_with_sign_and_size = std::integral_constant<bool,
+        is_true_numeric<T>::value &&
+        std::is_signed<T>::value == SIGN &&
+        sizeof(T) == SIZE
+>;
+
+
+
 /**
  * @brief Determine if a type is a valid data type.
  */
-template<typename T>
+template<typename T, class Enable = void>
 struct to_data_type {
     static const bool is_valid = false;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<bool> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<std::is_same<T, bool>::value>> {
     static const bool is_valid = true;
     static const DataType value = DataType::Bool;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<char> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<std::is_same<T, char>::value>> {
     static const bool is_valid = true;
     static const DataType value = DataType::Char;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<float> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        std::is_floating_point<T>::value && sizeof(T) == 4>
+> {
     static const bool is_valid = true;
     static const DataType value = DataType::Float;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- *
- * @internal
- */
-template<>
-struct to_data_type<double> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        std::is_floating_point<T>::value && sizeof(T) == 8>
+> {
     static const bool is_valid = true;
     static const DataType value = DataType::Double;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<int8_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, true, 1>::value
+> > {
     static const bool is_valid = true;
     static const DataType value = DataType::Int8;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<uint8_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, false, 1>::value
+> > {
     static const bool is_valid = true;
     static const DataType value = DataType::UInt8;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<int16_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, true, 2>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::Int16;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<uint16_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, false, 2>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::UInt16;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<int32_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, true, 4>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::Int32;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<uint32_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, false, 4>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::UInt32;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<int64_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, true, 8>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::Int64;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<uint64_t> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        is_integer_with_sign_and_size<T, false, 8>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::UInt64;
 };
 
-/**
- * @brief Determine if a type is a valid data type.
- */
-template<>
-struct to_data_type<std::string> {
+template<typename T>
+struct to_data_type<T, typename std::enable_if_t<
+        std::is_same<T, std::string>::value
+>> {
     static const bool is_valid = true;
     static const DataType value = DataType::String;
 };
@@ -188,6 +192,24 @@ NIXAPI size_t data_type_to_size(DataType dtype);
  * @return A human readable name for the given type.
  */
 NIXAPI std::string data_type_to_string(DataType dtype);
+
+/**
+* @brief Yield a data type from a string representation.
+*
+* @param dtype         The string-like data type.
+*
+* @return The DataType matching the provided string.
+*/
+NIXAPI DataType string_to_data_type(const std::string& dtype);
+
+/**
+* @brief Determines whether a DataType is numeric.
+*
+* @param dtype      The data type
+*
+* @return True when dtype represents a numeric data type, false otherwise
+*/
+NIXAPI bool data_type_is_numeric(DataType dtype);
 
 /**
  * @brief Output operator for data type.

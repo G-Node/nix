@@ -6,17 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 //
-// Authors: Christian Kellner <kellner@bio.lmu.de>, Jan Grewe <jan.grewe@g-node.org>
+// Authors: Christian Kellner <kellner@bio.lmu.de>
+//          Jan Grewe <jan.grewe@g-node.org>
 
 //TODO convenience methods for accessing dimensionality and shape of data
 
 #ifndef NIX_DATA_ARRAY_HDF5_H
 #define NIX_DATA_ARRAY_HDF5_H
 
-#include <boost/multi_array.hpp>
-
 #include <nix/base/IDataArray.hpp>
 #include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+
+#include <boost/multi_array.hpp>
 
 namespace nix {
 namespace hdf5 {
@@ -95,7 +96,7 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    size_t dimensionCount() const;
+    ndsize_t dimensionCount() const;
 
 
     std::shared_ptr<base::IDimension> getDimension(size_t id) const;
@@ -105,6 +106,9 @@ public:
 
 
     std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks);
+
+
+    std::shared_ptr<base::IRangeDimension> createAliasRangeDimension();
 
 
     std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval);

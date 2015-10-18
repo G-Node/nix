@@ -6,13 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <ctime>
+#include "TestBlock.hpp"
 
 #include <nix/util/util.hpp>
-#include "TestBlock.hpp"
 
 #include <nix/valid/validate.hpp>
 #include <nix/Exception.hpp>
+
+#include <ctime>
 
 using namespace std;
 using namespace nix;
@@ -27,7 +28,7 @@ void TestBlock::setUp() {
 
     block = file.createBlock("block_one", "dataset");
     block_other = file.createBlock("block_two", "dataset");
-    block_null  = nullptr;
+    block_null  = nix::none;
 }
 
 
@@ -88,15 +89,20 @@ void TestBlock::testMetadataAccess() {
 
 void TestBlock::testSourceAccess() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-
+    Source s;
+    CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
+    CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
+
 
     vector<string> ids;
-    for (auto it = names.begin(); it != names.end(); it++) {
-        Source src = block.createSource(*it, "channel");
-        CPPUNIT_ASSERT(src.name() == *it);
+    for (const auto &name : names) {
+        Source src = block.createSource(name, "channel");
+        CPPUNIT_ASSERT(src.name() == name);
+        CPPUNIT_ASSERT(block.hasSource(name));
+        CPPUNIT_ASSERT(block.hasSource(src));
 
         ids.push_back(src.id());
     }
@@ -107,13 +113,16 @@ void TestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == names.size());
 
 
-    for (auto it = ids.begin(); it != ids.end(); it++) {
-        Source src = block.getSource(*it);
-        CPPUNIT_ASSERT(block.hasSource(*it) == true);
-        CPPUNIT_ASSERT(src.id() == *it);
-
-        block.deleteSource(*it);
+    for (const auto &id : ids) {
+        Source src = block.getSource(id);
+        CPPUNIT_ASSERT(block.hasSource(id) == true);
+        CPPUNIT_ASSERT(src.id() == id);
+        block.deleteSource(id);
     }
+    
+    s = block.createSource("test", "test");
+    CPPUNIT_ASSERT(block.sourceCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteSource(s));
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
@@ -124,17 +133,16 @@ void TestBlock::testSourceAccess() {
 void TestBlock::testDataArrayAccess() {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
+    DataArray data_array, a;
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-
+    
     vector<string> ids;
     for (const auto &name : names) {
-        DataArray data_array = block.createDataArray(name,
-                                                     "channel",
-                                                     DataType::Double,
-                                                     nix::NDSize({ 0 }));
+        data_array = block.createDataArray(name, "channel",
+                                           DataType::Double, nix::NDSize({ 0 }));
         CPPUNIT_ASSERT(data_array.name() == name);
         CPPUNIT_ASSERT(data_array.type() == "channel");
 
@@ -142,9 +150,19 @@ void TestBlock::testDataArrayAccess() {
     }
     CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
                          DuplicateName);
-
+    CPPUNIT_ASSERT(block.hasDataArray(data_array));
+    CPPUNIT_ASSERT_THROW(block.hasDataArray(a), UninitializedEntity);
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
+
+    for (const auto &name : names) {
+        DataArray da_name = block.getDataArray(name);
+        CPPUNIT_ASSERT(da_name);
+
+        DataArray da_id = block.getDataArray(da_name.id());
+        CPPUNIT_ASSERT(da_id);
+        CPPUNIT_ASSERT_EQUAL(da_name.name(), da_id.name());
+    }
 
     vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
     CPPUNIT_ASSERT_EQUAL(names.size(), filteredArrays.size());
@@ -163,7 +181,7 @@ void TestBlock::testDataArrayAccess() {
 
         block.deleteDataArray(*it);
     }
-
+    CPPUNIT_ASSERT_THROW(block.deleteDataArray(a), UninitializedEntity);
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
@@ -176,6 +194,7 @@ void TestBlock::testTagAccess() {
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
     vector<DataArray> refs;
+    Tag tag, t;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name,
                                              "reference",
@@ -186,13 +205,14 @@ void TestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
     CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(block.hasTag(t), UninitializedEntity);
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
-        Tag tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
+        tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
         tag.references(refs);
         CPPUNIT_ASSERT(tag.name() == *it);
-
+        CPPUNIT_ASSERT(block.hasTag(tag));
         ids.push_back(tag.id());
     }
     CPPUNIT_ASSERT_THROW(block.createTag(names[0], "segment", {0.0, 2.0, 3.4}),
@@ -202,12 +222,17 @@ void TestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); ++it) {
-        Tag tag = block.getTag(*it);
+        tag = block.getTag(*it);
         CPPUNIT_ASSERT(block.hasTag(*it) == true);
         CPPUNIT_ASSERT(tag.id() == *it);
 
         block.deleteTag(*it);
     }
+    
+    tag = block.createTag("test", "test", {0.0});
+    CPPUNIT_ASSERT(block.hasTag(tag));
+    CPPUNIT_ASSERT_NO_THROW(block.deleteTag(tag));
+    CPPUNIT_ASSERT_THROW(block.deleteTag(t), UninitializedEntity);
 
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
@@ -217,6 +242,7 @@ void TestBlock::testTagAccess() {
 
 void TestBlock::testMultiTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    MultiTag mtag, m;
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
     DataArray positions = block.createDataArray("array_one",
@@ -235,13 +261,13 @@ void TestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
-
+    CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), UninitializedEntity);
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
-        MultiTag tag = block.createMultiTag(*it, "segment", positions);
-        CPPUNIT_ASSERT(tag.name() == *it);
-
-        ids.push_back(tag.id());
+        mtag = block.createMultiTag(*it, "segment", positions);
+        CPPUNIT_ASSERT(mtag.name() == *it);
+        CPPUNIT_ASSERT(block.hasMultiTag(mtag));
+        ids.push_back(mtag.id());
     }
     CPPUNIT_ASSERT_THROW(block.createMultiTag(names[0], "segment", positions),
                          DuplicateName);
@@ -250,13 +276,16 @@ void TestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTags().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
-        MultiTag tag = block.getMultiTag(*it);
+        mtag = block.getMultiTag(*it);
         CPPUNIT_ASSERT(block.hasMultiTag(*it) == true);
-        CPPUNIT_ASSERT(tag.id() == *it);
+        CPPUNIT_ASSERT(mtag.id() == *it);
 
         block.deleteMultiTag(*it);
     }
-
+    mtag = block.createMultiTag("test", "test", positions);
+    CPPUNIT_ASSERT(block.hasMultiTag(mtag));
+    CPPUNIT_ASSERT_THROW(block.deleteMultiTag(m), UninitializedEntity);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteMultiTag(mtag));
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
@@ -292,4 +321,13 @@ void TestBlock::testCreatedAt() {
 
 void TestBlock::testUpdatedAt() {
     CPPUNIT_ASSERT(block.updatedAt() >= startup_time);
+}
+
+
+void TestBlock::testCompare() {
+    string other_name = block_other.name();
+    string block_name = block.name();
+        
+    CPPUNIT_ASSERT(block.compare(block) == 0);
+    CPPUNIT_ASSERT(block.compare(block_other) ==  block_name.compare(other_name));
 }
