@@ -65,7 +65,7 @@ public:
     virtual std::shared_ptr<IFeature> getFeature(const std::string &id) const = 0;
 
 
-    virtual std::shared_ptr<IFeature> getFeature(size_t index) const = 0;
+    virtual std::shared_ptr<IFeature> getFeature(ndsize_t index) const = 0;
 
 
     virtual std::shared_ptr<IFeature> createFeature(const std::string &data_array_id, LinkType link_type) = 0;
