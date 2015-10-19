@@ -156,13 +156,11 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 //--------------------------------------------------
 
 
-size_t DataArrayHDF5::dimensionCount() const {
+ndsize_t DataArrayHDF5::dimensionCount() const {
     boost::optional<Group> g = dimension_group();
 	size_t count = 0;
 	if (g) {
-		ndsize_t objs = g->objectCount();
-		//FIXME: issue 473
-		count = static_cast<size_t>(objs);
+		count = g->objectCount();
 	}
     return count;
 }

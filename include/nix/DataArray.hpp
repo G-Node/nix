@@ -273,7 +273,7 @@ public:
      *
      * @return The number of dimensions.
      */
-    size_t dimensionCount() const {
+    ndsize_t dimensionCount() const {
         return backend()->dimensionCount();
     }
 

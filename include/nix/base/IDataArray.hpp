@@ -76,7 +76,7 @@ public:
     //--------------------------------------------------
 
 
-    virtual size_t dimensionCount() const = 0;
+    virtual ndsize_t dimensionCount() const = 0;
 
 
     virtual std::shared_ptr<base::IDimension> getDimension(size_t id) const = 0;

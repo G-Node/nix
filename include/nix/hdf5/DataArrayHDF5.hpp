@@ -96,7 +96,7 @@ public:
     // Methods concerning dimensions
     //--------------------------------------------------
 
-    size_t dimensionCount() const;
+    ndsize_t dimensionCount() const;
 
 
     std::shared_ptr<base::IDimension> getDimension(size_t id) const;
