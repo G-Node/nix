@@ -119,7 +119,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
-    size_t dimension_count = array.dimensionCount();
+    ndsize_t dimension_count = array.dimensionCount();
 
     if (positions) {
         position_size = positions.dataExtent();
@@ -157,8 +157,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     vector<double> offset;
     positions.getData(offset, temp_count, temp_offset);
 
-    NDSize data_offset(dimension_count, static_cast<size_t>(0));
-    NDSize data_count(dimension_count, static_cast<size_t>(1));
+    NDSize data_offset(dimension_count, static_cast<ndsize_t>(0));
+    NDSize data_count(dimension_count, static_cast<ndsize_t>(1));
     vector<string> units = tag.units();
     
     for (size_t i = 0; i < offset.size(); ++i) {
@@ -226,7 +226,7 @@ DataView retrieveData(const MultiTag &tag, size_t position_index, size_t referen
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
 
-    size_t dimension_count = refs[reference_index].dimensionCount();
+    ndsize_t dimension_count = refs[reference_index].dimensionCount();
     if (positions.dataExtent().size() == 1 && dimension_count != 1) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
                                           "util::retrieveData");
@@ -259,7 +259,7 @@ DataView retrieveData(const Tag &tag, size_t reference_index) {
     if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
-    size_t dimension_count = refs[reference_index].dimensionCount();
+    ndsize_t dimension_count = refs[reference_index].dimensionCount();
     if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
     }
