@@ -95,7 +95,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -360,7 +360,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -515,7 +515,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -782,7 +782,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
