@@ -158,7 +158,7 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 
 ndsize_t DataArrayHDF5::dimensionCount() const {
     boost::optional<Group> g = dimension_group();
-	size_t count = 0;
+	ndsize_t count = 0;
 	if (g) {
 		count = g->objectCount();
 	}
@@ -166,7 +166,7 @@ ndsize_t DataArrayHDF5::dimensionCount() const {
 }
 
 
-shared_ptr<IDimension> DataArrayHDF5::getDimension(size_t index) const {
+shared_ptr<IDimension> DataArrayHDF5::getDimension(ndsize_t index) const {
     shared_ptr<IDimension> dim;
     boost::optional<Group> g = dimension_group();
 
@@ -182,13 +182,13 @@ shared_ptr<IDimension> DataArrayHDF5::getDimension(size_t index) const {
 }
 
 
-std::shared_ptr<base::ISetDimension> DataArrayHDF5::createSetDimension(size_t index) {
+std::shared_ptr<base::ISetDimension> DataArrayHDF5::createSetDimension(ndsize_t index) {
     Group g = createDimensionGroup(index);
     return make_shared<SetDimensionHDF5>(g, index);
 }
 
 
-std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(size_t index, const std::vector<double> &ticks) {
+std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(ndsize_t index, const std::vector<double> &ticks) {
     Group g = createDimensionGroup(index);
     return make_shared<RangeDimensionHDF5>(g, index, ticks);
 }
@@ -200,16 +200,16 @@ std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createAliasRangeDimension(
 }
 
 
-std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(size_t index, double sampling_interval) {
+std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(ndsize_t index, double sampling_interval) {
     Group g = createDimensionGroup(index);
     return make_shared<SampledDimensionHDF5>(g, index, sampling_interval);
 }
 
 
-Group DataArrayHDF5::createDimensionGroup(size_t index) {
+Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
     boost::optional<Group> g = dimension_group(true);
 
-    size_t dim_max = dimensionCount() + 1;
+    ndsize_t dim_max = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
         throw new runtime_error("Invalid dimension index: has to be 0 < index <= " + util::numToStr(dim_max));
 
@@ -222,9 +222,9 @@ Group DataArrayHDF5::createDimensionGroup(size_t index) {
 }
 
 
-bool DataArrayHDF5::deleteDimension(size_t index) {
+bool DataArrayHDF5::deleteDimension(ndsize_t index) {
     bool deleted = false;
-    size_t dim_count = dimensionCount();
+    ndsize_t dim_count = dimensionCount();
     string str_id = util::numToStr(index);
     boost::optional<Group> g = dimension_group();
 
