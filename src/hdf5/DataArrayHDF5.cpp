@@ -235,7 +235,7 @@ bool DataArrayHDF5::deleteDimension(ndsize_t index) {
         }
 
         if (deleted && index < dim_count) {
-            for (size_t old_id = index + 1; old_id <= dim_count; old_id++) {
+            for (ndsize_t old_id = index + 1; old_id <= dim_count; old_id++) {
                 string str_old_id = util::numToStr(old_id);
                 string str_new_id = util::numToStr(old_id - 1);
                 g->renameGroup(str_old_id, str_new_id);

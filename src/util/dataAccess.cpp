@@ -157,8 +157,9 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
     vector<double> offset;
     positions.getData(offset, temp_count, temp_offset);
 
-    NDSize data_offset(dimension_count, static_cast<ndsize_t>(0));
-    NDSize data_count(dimension_count, static_cast<ndsize_t>(1));
+    size_t dc_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
+    NDSize data_offset(dc_sizet, static_cast<ndsize_t>(0));
+    NDSize data_count(dc_sizet, static_cast<ndsize_t>(1));
     vector<string> units = tag.units();
     
     for (size_t i = 0; i < offset.size(); ++i) {
