@@ -25,7 +25,6 @@
 #include <boost/math/constants/constants.hpp>
 
 
-
 class TestReadOnly : public CPPUNIT_NS::TestFixture {
 
 private:
@@ -38,7 +37,7 @@ private:
 
     std::string section_id, block_id, tag_id, mtag_id, property_id, 
                 feature_id, data_array_id;
-    size_t dim_index, dim_sampled_index, dim_range_index, dim_set_index;
+    nix::ndsize_t dim_index, dim_sampled_index, dim_range_index, dim_set_index;
     std::stringstream s;
 
     time_t startup_time;

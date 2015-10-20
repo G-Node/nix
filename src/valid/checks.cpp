@@ -102,12 +102,13 @@ bool dimTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
     auto it = dims.begin();
     while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Range) {
-            size_t dimIndex = (*it).index() - 1;
+            ndsize_t dimIndex = (*it).index() - 1;
             if (dimIndex >= data.dataExtent().size()) {
                 break;
             }
             auto dim = (*it).asRangeDimension();
-            mismatch = !(dim.ticks().size() == data.dataExtent()[dimIndex]);
+            size_t idx = check::fits_in_size_t(dimIndex, "Cannot check ticks: dimension bigger than size_t.");
+            mismatch = !(dim.ticks().size() == data.dataExtent()[idx]);
         }
         ++it;
     }
@@ -119,12 +120,13 @@ bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
     auto it = dims.begin();
     while (!mismatch && it != dims.end()) {
         if ((*it).dimensionType() == DimensionType::Set) {
-            size_t dimIndex = (*it).index() - 1;
+            ndsize_t dimIndex = (*it).index() - 1;
             if (dimIndex >= data.dataExtent().size()) {
                 break;
             }
             auto dim = (*it).asSetDimension();
-            mismatch = dim.labels().size() > 0 && !(dim.labels().size() == data.dataExtent()[dimIndex]);
+            size_t idx = check::fits_in_size_t(dimIndex, "Cannot check labels: dimension bigger than size_t.");
+            mismatch = dim.labels().size() > 0 && !(dim.labels().size() == data.dataExtent()[idx]);
         }
         ++it;
     }
