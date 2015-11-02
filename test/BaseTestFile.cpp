@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestFile.hpp"
+#include "BaseTestFile.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -19,50 +19,37 @@ using namespace nix;
 using namespace valid;
 
 
-void TestFile::setUp() {
-    statup_time = time(NULL);
-    file_open = File::open("test_file.h5", FileMode::Overwrite);
-    file_other = File::open("test_file_other.h5", FileMode::Overwrite);
-    file_null = nix::none;
-}
-
-
-void TestFile::tearDown() {
-    file_open.close();
-    file_other.close();
-}
-
-void TestFile::testOpen() {
+void BaseTestFile::testOpen() {
 
     CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), runtime_error);
 
 }
 
-void TestFile::testValidate() {
+void BaseTestFile::testValidate() {
     valid::Result result = validate(file_open);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
 }
 
 
-void TestFile::testFormat() {
+void BaseTestFile::testFormat() {
     CPPUNIT_ASSERT(file_open.format() == "nix");
 }
 
 
-void TestFile::testLocation() {
+void BaseTestFile::testLocation() {
     CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
     CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
 }
 
 
-void TestFile::testVersion() {
+void BaseTestFile::testVersion() {
     vector<int> version{1, 0, 0};
     CPPUNIT_ASSERT(file_open.version() == version);
 }
 
 
-void TestFile::testCreatedAt() {
+void BaseTestFile::testCreatedAt() {
     CPPUNIT_ASSERT(file_open.createdAt() >= statup_time);
     time_t past_time = time(NULL) - 10000000;
     file_open.forceCreatedAt(past_time);
@@ -70,12 +57,12 @@ void TestFile::testCreatedAt() {
 }
 
 
-void TestFile::testUpdatedAt() {
+void BaseTestFile::testUpdatedAt() {
     CPPUNIT_ASSERT(file_open.updatedAt() >= statup_time);
 }
 
 
-void TestFile::testBlockAccess() {
+void BaseTestFile::testBlockAccess() {
     vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
     Block b;
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
@@ -126,7 +113,7 @@ void TestFile::testBlockAccess() {
 }
 
 
-void TestFile::testSectionAccess() {
+void BaseTestFile::testSectionAccess() {
     vector<string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
     Section s;
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
@@ -166,7 +153,7 @@ void TestFile::testSectionAccess() {
 }
 
 
-void TestFile::testOperators(){
+void BaseTestFile::testOperators(){
     CPPUNIT_ASSERT(file_null == false);
     CPPUNIT_ASSERT(file_null == none);
 
@@ -184,7 +171,7 @@ void TestFile::testOperators(){
     CPPUNIT_ASSERT(file_null == none);
 }
 
-void TestFile::testReopen() {
+void BaseTestFile::testReopen() {
     //file_open is currently open
     Block b = file_open.createBlock("a", "a");
     b = none;

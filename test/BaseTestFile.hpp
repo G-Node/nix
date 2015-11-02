@@ -23,30 +23,15 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestFile: public CPPUNIT_NS::TestFixture {
-private:
+class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
-    CPPUNIT_TEST_SUITE(TestFile);
-    CPPUNIT_TEST(testOpen);
-    CPPUNIT_TEST(testValidate);
-    CPPUNIT_TEST(testFormat);
-    CPPUNIT_TEST(testLocation);
-    CPPUNIT_TEST(testVersion);
-    CPPUNIT_TEST(testCreatedAt);
-    CPPUNIT_TEST(testUpdatedAt);
-    CPPUNIT_TEST(testBlockAccess);
-    CPPUNIT_TEST(testSectionAccess);
-    CPPUNIT_TEST(testOperators);
-    CPPUNIT_TEST(testReopen);
-    CPPUNIT_TEST_SUITE_END ();
+protected:
 
     nix::File file_open, file_other, file_null;
     time_t statup_time;
 
 public:
 
-    void setUp();
-    void tearDown();
     void testOpen();
     void testValidate();
     void testFormat();
@@ -58,4 +43,5 @@ public:
     void testSectionAccess();
     void testOperators();
     void testReopen();
+
 };
