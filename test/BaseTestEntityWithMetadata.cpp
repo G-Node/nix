@@ -6,14 +6,14 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestEntityWithMetadata.hpp"
+#include "BaseTestEntityWithMetadata.hpp"
 #include <nix/util/util.hpp>
 
 using namespace std;
 using namespace nix;
 
 
-void TestEntityWithMetadata::setUp() {
+void BaseTestEntityWithMetadata::setUp() {
     file = File::open("test_block.h5", FileMode::Overwrite);
 
     section = file.createSection("foo_section", "metadata");
@@ -22,12 +22,12 @@ void TestEntityWithMetadata::setUp() {
 }
 
 
-void TestEntityWithMetadata::tearDown() {
+void BaseTestEntityWithMetadata::tearDown() {
     file.close();
 }
 
 
-void TestEntityWithMetadata::testMetadataAccess() {
+void BaseTestEntityWithMetadata::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
 
     block.metadata(section);

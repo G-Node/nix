@@ -25,11 +25,11 @@
 
 
 
-class TestEntityWithMetadata: public CPPUNIT_NS::TestFixture {
+class BaseTestEntityWithMetadata : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestEntityWithMetadata);
+    CPPUNIT_TEST_SUITE(BaseTestEntityWithMetadata);
 
     CPPUNIT_TEST(testMetadataAccess);
 
