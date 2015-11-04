@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "TestDataArray.hpp"
+#include "BaseTestDataArray.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -18,7 +18,7 @@
 using namespace nix;
 using namespace valid;
 
-void TestDataArray::setUp()
+void BaseTestDataArray::setUp()
 {
     startup_time = time(NULL);
     file = nix::File::open("test_DataArray.h5", nix::FileMode::Overwrite);
@@ -44,13 +44,13 @@ void TestDataArray::setUp()
     array3.unit("Hz");
 }
 
-void TestDataArray::tearDown()
+void BaseTestDataArray::tearDown()
 {
     file.close();
 }
 
 
-void TestDataArray::testValidate() {
+void BaseTestDataArray::testValidate() {
     // dims are not equal data dims: 1 warning
     valid::Result result = validate(array1);
     CPPUNIT_ASSERT(result.getErrors().size() == 1);
@@ -58,17 +58,17 @@ void TestDataArray::testValidate() {
 }
 
 
-void TestDataArray::testId() {
+void BaseTestDataArray::testId() {
     CPPUNIT_ASSERT(array1.id().size() == 36);
 }
 
 
-void TestDataArray::testName() {
+void BaseTestDataArray::testName() {
     CPPUNIT_ASSERT(array1.name() == "array_one");
 }
 
 
-void TestDataArray::testType() {
+void BaseTestDataArray::testType() {
     CPPUNIT_ASSERT(array1.type() == "testdata");
     std::string typ = nix::util::createId();
     array1.type(typ);
@@ -76,7 +76,7 @@ void TestDataArray::testType() {
 }
 
 
-void TestDataArray::testDefinition() {
+void BaseTestDataArray::testDefinition() {
     std::string def = nix::util::createId();
     array1.definition(def);
     CPPUNIT_ASSERT(*array1.definition() == def);
@@ -85,7 +85,7 @@ void TestDataArray::testDefinition() {
 }
 
 
-void TestDataArray::testData()
+void BaseTestDataArray::testData()
 {
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
@@ -274,7 +274,7 @@ void TestDataArray::testData()
 
 }
 
-void TestDataArray::testPolynomial()
+void BaseTestDataArray::testPolynomial()
 {
     double PI = boost::math::constants::pi<double>();
     boost::array<double, 10> coefficients1;
@@ -358,7 +358,7 @@ void TestDataArray::testPolynomial()
     }
 }
 
-void TestDataArray::testLabel()
+void BaseTestDataArray::testLabel()
 {
     std::string testStr = "somestring";
 
@@ -368,7 +368,7 @@ void TestDataArray::testLabel()
     CPPUNIT_ASSERT(array1.label() == nix::none);
 }
 
-void TestDataArray::testUnit()
+void BaseTestDataArray::testUnit()
 {
     std::string testStr = "somestring";
     std::string validUnit = "mV^2";
@@ -380,7 +380,7 @@ void TestDataArray::testUnit()
     CPPUNIT_ASSERT(array1.unit() == nix::none);
 }
 
-void TestDataArray::testDimension()
+void BaseTestDataArray::testDimension()
 {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
@@ -440,7 +440,7 @@ void TestDataArray::testDimension()
 }
 
 
-void TestDataArray::testAliasRangeDimension() {
+void BaseTestDataArray::testAliasRangeDimension() {
     nix::Dimension dim = array3.createAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
     CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
@@ -495,7 +495,7 @@ void TestDataArray::testAliasRangeDimension() {
 }
 
 
-void TestDataArray::testOperator()
+void BaseTestDataArray::testOperator()
 {
     std::stringstream mystream;
     mystream << array1;

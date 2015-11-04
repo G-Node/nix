@@ -30,7 +30,7 @@
 #include <boost/math/tools/rational.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-class TestDataArray:public CPPUNIT_NS::TestFixture {
+class BaseTestDataArray : public CPPUNIT_NS::TestFixture {
 
 public:
 
@@ -52,7 +52,7 @@ public:
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestDataArray);
+    CPPUNIT_TEST_SUITE(BaseTestDataArray);
 
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testType);

@@ -16,7 +16,7 @@
 #include "TestSection.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
-#include "TestDataArray.hpp"
+#include "BaseTestDataArray.hpp"
 #include "TestBaseTagHDF5.hpp"
 #include "TestMultiTag.hpp"
 #include "TestTag.hpp"
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
+    CPPUNIT_TEST_SUITE_REGISTRATION(BaseTestDataArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTag);
