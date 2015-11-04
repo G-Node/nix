@@ -6,25 +6,20 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestEntityWithMetadata.hpp"
+#include <iostream>
+
 #include <nix/util/util.hpp>
+#include "BaseTestEntityWithMetadata.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
-
-
-void BaseTestEntityWithMetadata::setUp() {
-    file = File::open("test_block.h5", FileMode::Overwrite);
-
-    section = file.createSection("foo_section", "metadata");
-
-    block = file.createBlock("block_one", "dataset");
-}
-
-
-void BaseTestEntityWithMetadata::tearDown() {
-    file.close();
-}
 
 
 void BaseTestEntityWithMetadata::testMetadataAccess() {
@@ -43,9 +38,3 @@ void BaseTestEntityWithMetadata::testMetadataAccess() {
     // re-create section
     section = file.createSection("foo_section", "metadata");
 }
-
-
-
-
-
-
