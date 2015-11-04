@@ -8,46 +8,31 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "BaseTestDataArray.hpp"
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include <limits>
+
+#include <boost/math/constants/constants.hpp>
+#include <boost/math/tools/rational.hpp>
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
+#include <nix/hydra/multiArray.hpp>
 
-#include <cstdint>
+#include "BaseTestDataArray.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace nix;
 using namespace valid;
-
-void BaseTestDataArray::setUp()
-{
-    startup_time = time(NULL);
-    file = nix::File::open("test_DataArray.h5", nix::FileMode::Overwrite);
-
-    block = file.createBlock("block_one", "dataset");
-    array1 = block.createDataArray("array_one",
-                                   "testdata",
-                                   nix::DataType::Double,
-                                   nix::NDSize({ 0, 0, 0 }));
-    array2 = block.createDataArray("random",
-                                   "double",
-                                   nix::DataType::Double,
-                                   nix::NDSize({ 20, 20 }));
-    array3 = block.createDataArray("one_d",
-                                   "double",
-                                   nix::DataType::Double,
-                                   nix::NDSize({ 20 }));
-    std::vector<double> t;
-    for (size_t i = 0; i < 20; i++) 
-        t.push_back(1.3 * i);
-    array3.setData(nix::DataType::Double, t.data(), nix::NDSize({ 20 }), nix::NDSize({ 0 }));
-    array3.label("label");
-    array3.unit("Hz");
-}
-
-void BaseTestDataArray::tearDown()
-{
-    file.close();
-}
 
 
 void BaseTestDataArray::testValidate() {

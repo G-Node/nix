@@ -8,35 +8,23 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hydra/multiArray.hpp>
+#ifndef NIX_BASETESTDATAARRAY_HPP
+#define NIX_BASETESTDATAARRAY_HPP
+
 #include <nix.hpp>
 
-#include <iostream>
-#include <sstream>
-#include <iterator>
-#include <stdexcept>
-#include <limits>
-
 #include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/BriefTestProgressListener.h>
 
-#include <boost/math/constants/constants.hpp>
-#include <boost/math/tools/rational.hpp>
-#include <boost/iterator/zip_iterator.hpp>
 
 class BaseTestDataArray : public CPPUNIT_NS::TestFixture {
 
+protected:
+    nix::File file;
+    nix::Block block;
+    nix::DataArray array1, array2, array3;
+    time_t startup_time;
+
 public:
-
-    void setUp();
-    void tearDown();
-
     void testId();
     void testType();
     void testName();
@@ -49,28 +37,6 @@ public:
     void testAliasRangeDimension();
     void testOperator();
     void testValidate();
-
-private:
-
-    CPPUNIT_TEST_SUITE(BaseTestDataArray);
-
-    CPPUNIT_TEST(testId);
-    CPPUNIT_TEST(testType);
-    CPPUNIT_TEST(testName);
-    CPPUNIT_TEST(testDefinition);
-    CPPUNIT_TEST(testData);
-    CPPUNIT_TEST(testPolynomial);
-    CPPUNIT_TEST(testLabel);
-    CPPUNIT_TEST(testUnit);
-    CPPUNIT_TEST(testDimension);
-    CPPUNIT_TEST(testAliasRangeDimension);
-    CPPUNIT_TEST(testOperator);
-    CPPUNIT_TEST(testValidate);
-
-    CPPUNIT_TEST_SUITE_END ();
-
-    nix::File file;
-    nix::Block block;
-    nix::DataArray array1, array2, array3;
-    time_t startup_time;
 };
+
+#endif // NIX_BASETESTDATAARRAY_HPP
