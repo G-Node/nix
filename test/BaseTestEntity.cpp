@@ -6,25 +6,22 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestEntity.hpp"
+#include <ctime>
+#include <iostream>
+#include <iterator>
 
 #include <nix/util/util.hpp>
-#include <ctime>
+#include "BaseTestEntity.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
-
-
-void BaseTestEntity::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_block.h5", FileMode::Overwrite);
-    block = file.createBlock("block_one", "dataset");
-}
-
-
-void BaseTestEntity::tearDown() {
-    file.close();
-}
 
 
 void BaseTestEntity::testId() {

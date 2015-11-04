@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include "TestH5.hpp"
-#include "BaseTestEntity.hpp"
+#include "TestEntityHDF5.hpp"
 #include "TestEntityWithMetadata.hpp"
 #include "TestEntityWithSources.hpp"
 #include "TestFileHDF5.hpp"
@@ -34,7 +34,7 @@
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
-    CPPUNIT_TEST_SUITE_REGISTRATION(BaseTestEntity);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFileHDF5);
