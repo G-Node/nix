@@ -9,7 +9,7 @@
 #include <limits>
 #include <sstream>
 
-#include "TestDimension.hpp"
+#include "BaseTestDimension.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -19,7 +19,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestDimension::setUp() {
+void BaseTestDimension::setUp() {
     file = File::open("test_dimension.h5", FileMode::Overwrite);
     block = file.createBlock("dimensionTest","test");
     data_array = block.createDataArray("dimensionTest", "Test",
@@ -27,13 +27,13 @@ void TestDimension::setUp() {
 }
 
 
-void TestDimension::tearDown() {
+void BaseTestDimension::tearDown() {
     file.deleteBlock(block.id());
     file.close();
 }
 
 
-void TestDimension::testValidate() {
+void BaseTestDimension::testValidate() {
     Dimension d = data_array.appendSetDimension();
     
     valid::Result result = validate(d);
@@ -42,7 +42,7 @@ void TestDimension::testValidate() {
 }
 
 
-void TestDimension::testSetValidate() {
+void BaseTestDimension::testSetValidate() {
     SetDimension d = data_array.appendSetDimension();
     
     valid::Result result = validate(d);
@@ -51,7 +51,7 @@ void TestDimension::testSetValidate() {
 }
 
 
-void TestDimension::testRangeValidate() {
+void BaseTestDimension::testRangeValidate() {
     std::vector<double> ticks;
     for (size_t i = 0; i < 5; i++) {
         ticks.push_back(i * boost::math::constants::pi<double>());
@@ -65,7 +65,7 @@ void TestDimension::testRangeValidate() {
 }
 
 
-void TestDimension::testSampleValidate() {
+void BaseTestDimension::testSampleValidate() {
     double samplingInterval = boost::math::constants::pi<double>();
     
     SampledDimension d = data_array.appendSampledDimension(samplingInterval);
@@ -76,7 +76,7 @@ void TestDimension::testSampleValidate() {
 }
 
 
-void TestDimension::testIndex() {
+void BaseTestDimension::testIndex() {
     Dimension sd = data_array.appendSetDimension();
     CPPUNIT_ASSERT(data_array.dimensionCount() == 1 && sd.index() == 1);
     data_array.deleteDimension(sd.index());
@@ -84,7 +84,7 @@ void TestDimension::testIndex() {
 }
 
 
-void TestDimension::testSampledDimLabel() {
+void BaseTestDimension::testSampledDimLabel() {
     std::string label = "aLabel";
     std::string other_label = "anotherLabel";
     double samplingInterval = boost::math::constants::pi<double>();
@@ -105,7 +105,7 @@ void TestDimension::testSampledDimLabel() {
 }
 
 
-void TestDimension::testSampledDimUnit() {
+void BaseTestDimension::testSampledDimUnit() {
     std::string invalidUnit = "invalidunit";
     std::string validUnit = "mV^2";
     double samplingInterval = boost::math::constants::pi<double>();
@@ -125,7 +125,7 @@ void TestDimension::testSampledDimUnit() {
 }
 
 
-void TestDimension::testSampledDimSamplingInterval() {
+void BaseTestDimension::testSampledDimSamplingInterval() {
     double impossible_sampling_interval = -1.0;
     double invalid_sampling_interval = 0.0;
     double samplingInterval = boost::math::constants::pi<double>();
@@ -145,7 +145,7 @@ void TestDimension::testSampledDimSamplingInterval() {
 }
 
 
-void TestDimension::testSampledDimOffset() {
+void BaseTestDimension::testSampledDimOffset() {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
@@ -163,7 +163,7 @@ void TestDimension::testSampledDimOffset() {
 }
 
 
-void TestDimension::testSampledDimIndexOf() {
+void BaseTestDimension::testSampledDimIndexOf() {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
@@ -192,7 +192,7 @@ void TestDimension::testSampledDimIndexOf() {
 }
 
 
-void TestDimension::testSampledDimPositionAt() {
+void BaseTestDimension::testSampledDimPositionAt() {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
@@ -218,7 +218,7 @@ void TestDimension::testSampledDimPositionAt() {
 }
 
 
-void TestDimension::testSampledDimAxis() {
+void BaseTestDimension::testSampledDimAxis() {
     double offset = 1.0;
     double samplingInterval = boost::math::constants::pi<double>();
 
@@ -251,7 +251,7 @@ void TestDimension::testSampledDimAxis() {
 }
 
 
-void TestDimension::testSampledDimOperators() {
+void BaseTestDimension::testSampledDimOperators() {
     double samplingInterval = boost::math::constants::pi<double>();
 
     Dimension d = data_array.appendSampledDimension(samplingInterval);
@@ -295,7 +295,7 @@ void TestDimension::testSampledDimOperators() {
 }
 
 
-void TestDimension::testSetDimLabels() {
+void BaseTestDimension::testSetDimLabels() {
     std::vector<std::string> labels = {"label_a", "label_b","label_c","label_d","label_e"};
     std::vector<std::string> new_labels = {"new label_a", "new label_b","new label_c"};
 
@@ -327,7 +327,7 @@ void TestDimension::testSetDimLabels() {
 }
 
 
-void TestDimension::testRangeDimLabel() {
+void BaseTestDimension::testRangeDimLabel() {
     std::string label = "aLabel";
     std::string other_label = "anotherLabel";
     std::vector<double> ticks;
@@ -351,7 +351,7 @@ void TestDimension::testRangeDimLabel() {
 }
 
 
-void TestDimension::testRangeDimUnit() {
+void BaseTestDimension::testRangeDimUnit() {
     std::string invalidUnit = "invalidunit";
     std::string validUnit = "ms";
 
@@ -374,7 +374,7 @@ void TestDimension::testRangeDimUnit() {
 }
 
 
-void TestDimension::testRangeTicks() {
+void BaseTestDimension::testRangeTicks() {
     std::vector<double> ticks = {1.0, 2.0, 3.4, 42.0};
     std::vector<double> new_ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     std::vector<double> unordered_ticks = {-20.0, -100.0, 10.0, -10.0, 0.0};
@@ -403,7 +403,7 @@ void TestDimension::testRangeTicks() {
     data_array.deleteDimension(d.index());
 }
 
-void TestDimension::testRangeDimIndexOf() {
+void BaseTestDimension::testRangeDimIndexOf() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
    
@@ -421,7 +421,7 @@ void TestDimension::testRangeDimIndexOf() {
     data_array.deleteDimension(d.index());
 }
 
-void TestDimension::testRangeDimTickAt() {
+void BaseTestDimension::testRangeDimTickAt() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
    
@@ -440,7 +440,7 @@ void TestDimension::testRangeDimTickAt() {
     data_array.deleteDimension(d.index());
 }
 
-void TestDimension::testRangeDimAxis() {
+void BaseTestDimension::testRangeDimAxis() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
    

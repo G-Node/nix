@@ -25,7 +25,7 @@
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
 #include "TestImplContainer.hpp"
-#include "TestDimension.hpp"
+#include "BaseTestDimension.hpp"
 #include "TestFeature.hpp"
 #include "TestDataAccessHDF5.hpp"
 #include "TestOptionalObligatory.hpp"

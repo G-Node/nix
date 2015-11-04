@@ -23,10 +23,10 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
 
-class TestDimension: public CPPUNIT_NS::TestFixture {
+class BaseTestDimension : public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestDimension);
+    CPPUNIT_TEST_SUITE(BaseTestDimension);
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testSetValidate);
