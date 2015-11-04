@@ -1,45 +1,35 @@
-// Copyright © 2014 German Neuroinformatics Node (G-Node)
+// Copyright © 2015 Adrian Stoewer <adrian.stoewer@rz.ifi.lmu.de>
+//                  Jan Grewe <jan.grewe@g-node.org>
+//                  German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
-//
-// Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "TestBaseTag.hpp"
+#include <nix/hdf5/BaseTagHDF5.hpp>
+#include <nix/util/util.hpp>
 
-#include <nix/Exception.hpp>
-#include <sstream>
+#include <iterator>
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <boost/math/constants/constants.hpp>
+
+#include "BaseTestBaseTag.hpp"
 
 using namespace nix;
 using namespace valid;
 using namespace std;
 
-void TestBaseTag::setUp() {
-    file = File::open("test_multiTag.h5", FileMode::Overwrite);
-    block = file.createBlock("block", "dataset");
-
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-            "data_array_d", "data_array_e" };
-
-    refs.clear();
-    for (const auto & name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                DataType::Double, nix::NDSize({ 0 })));
-    }
-}
-
-
-void TestBaseTag::tearDown() {
-    file.deleteBlock(block.id());
-    file.close();
-}
-
 //TODO Constraints on References are not tested yet.
 
-void TestBaseTag::testReferences() {
+void BaseTestBaseTag::testReferences() {
     DataArray da_1 = block.createDataArray("TestReference 1","Reference",
             DataType::Double, nix::NDSize({ 0 }));
     DataArray da_2 = block.createDataArray("TestReference 2","Reference",
@@ -99,7 +89,7 @@ void TestBaseTag::testReferences() {
 }
 
 
-void TestBaseTag::testFeatures() {
+void BaseTestBaseTag::testFeatures() {
     Tag st = block.createTag("TestTag", "tag", {10.0});
     DataArray da1 = block.createDataArray("featureArray1", "test", nix::DataType::Double, {1});
     DataArray da2 = block.createDataArray("featureArray2", "test", nix::DataType::Double, {1});
