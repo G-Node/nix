@@ -8,29 +8,27 @@
 
 #include <limits>
 #include <sstream>
-
-#include "BaseTestDimension.hpp"
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
+#include "BaseTestDimension.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <boost/math/constants/constants.hpp>
+
+
 using namespace std;
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestDimension::setUp() {
-    file = File::open("test_dimension.h5", FileMode::Overwrite);
-    block = file.createBlock("dimensionTest","test");
-    data_array = block.createDataArray("dimensionTest", "Test",
-                                       DataType::Double, NDSize({ 0 }));
-}
-
-
-void BaseTestDimension::tearDown() {
-    file.deleteBlock(block.id());
-    file.close();
-}
 
 
 void BaseTestDimension::testValidate() {

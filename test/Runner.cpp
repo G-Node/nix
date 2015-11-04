@@ -25,7 +25,7 @@
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
 #include "TestImplContainer.hpp"
-#include "BaseTestDimension.hpp"
+#include "TestDimensionHDF5.hpp"
 #include "TestFeature.hpp"
 #include "TestDataAccessHDF5.hpp"
 #include "TestOptionalObligatory.hpp"
@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimensionHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
