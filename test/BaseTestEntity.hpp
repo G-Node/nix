@@ -24,11 +24,11 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestEntity : public CPPUNIT_NS::TestFixture {
+class BaseTestEntity : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestEntity);
+    CPPUNIT_TEST_SUITE(BaseTestEntity);
 
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testType);

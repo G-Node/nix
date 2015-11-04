@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestEntity.hpp"
+#include "BaseTestEntity.hpp"
 
 #include <nix/util/util.hpp>
 #include <ctime>
@@ -15,31 +15,31 @@ using namespace std;
 using namespace nix;
 
 
-void TestEntity::setUp() {
+void BaseTestEntity::setUp() {
     startup_time = time(NULL);
     file = File::open("test_block.h5", FileMode::Overwrite);
     block = file.createBlock("block_one", "dataset");
 }
 
 
-void TestEntity::tearDown() {
+void BaseTestEntity::tearDown() {
     file.close();
 }
 
 
-void TestEntity::testId() {
+void BaseTestEntity::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
     CPPUNIT_ASSERT(util::toId(block).compare(block.id()) == 0);
 }
 
 
-void TestEntity::testName() {
+void BaseTestEntity::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
     CPPUNIT_ASSERT(util::toName(block).compare(block.name()) == 0);
 }
 
 
-void TestEntity::testType() {
+void BaseTestEntity::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
     string typ = util::createId();
     block.type(typ);
@@ -47,7 +47,7 @@ void TestEntity::testType() {
 }
 
 
-void TestEntity::testDefinition() {
+void BaseTestEntity::testDefinition() {
     string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
@@ -56,7 +56,7 @@ void TestEntity::testDefinition() {
 }
 
 
-void TestEntity::testCreatedAt() {
+void BaseTestEntity::testCreatedAt() {
     CPPUNIT_ASSERT(block.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     block.forceCreatedAt(past_time);
@@ -64,7 +64,7 @@ void TestEntity::testCreatedAt() {
 }
 
 
-void TestEntity::testUpdatedAt() {
+void BaseTestEntity::testUpdatedAt() {
     CPPUNIT_ASSERT(block.updatedAt() >= startup_time);
 }
 
