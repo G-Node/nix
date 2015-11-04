@@ -6,55 +6,43 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestBlock.hpp"
+#include "BaseTestBlock.hpp"
 
-#include <nix/util/util.hpp>
+#include <iterator>
+#include <boost/math/constants/constants.hpp>
 
-#include <nix/valid/validate.hpp>
-#include <nix/Exception.hpp>
+#include <nix/hydra/multiArray.hpp>
 
-#include <ctime>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
 using namespace valid;
 
 
-void TestBlock::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_block.h5", FileMode::Overwrite);
-
-    section = file.createSection("foo_section", "metadata");
-
-    block = file.createBlock("block_one", "dataset");
-    block_other = file.createBlock("block_two", "dataset");
-    block_null  = nix::none;
-}
-
-
-void TestBlock::tearDown() {
-    file.close();
-}
-
-
-void TestBlock::testValidate() {
+void BaseTestBlock::testValidate() {
     valid::Result result = validate(block);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestBlock::testId() {
+void BaseTestBlock::testId() {
     CPPUNIT_ASSERT(block.id().size() == 36);
 }
 
 
-void TestBlock::testName() {
+void BaseTestBlock::testName() {
     CPPUNIT_ASSERT(block.name() == "block_one");
 }
 
 
-void TestBlock::testType() {
+void BaseTestBlock::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
     string typ = util::createId();
     block.type(typ);
@@ -62,14 +50,14 @@ void TestBlock::testType() {
 }
 
 
-void TestBlock::testDefinition() {
+void BaseTestBlock::testDefinition() {
     string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
 }
 
 
-void TestBlock::testMetadataAccess() {
+void BaseTestBlock::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
 
     block.metadata(section);
@@ -87,7 +75,7 @@ void TestBlock::testMetadataAccess() {
 }
 
 
-void TestBlock::testSourceAccess() {
+void BaseTestBlock::testSourceAccess() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
     CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
@@ -130,7 +118,7 @@ void TestBlock::testSourceAccess() {
 }
 
 
-void TestBlock::testDataArrayAccess() {
+void BaseTestBlock::testDataArrayAccess() {
     vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
     DataArray data_array, a;
@@ -189,7 +177,7 @@ void TestBlock::testDataArrayAccess() {
 }
 
 
-void TestBlock::testTagAccess() {
+void BaseTestBlock::testTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
@@ -240,7 +228,7 @@ void TestBlock::testTagAccess() {
 }
 
 
-void TestBlock::testMultiTagAccess() {
+void BaseTestBlock::testMultiTagAccess() {
     vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     MultiTag mtag, m;
     // create a valid positions data array below
@@ -292,7 +280,7 @@ void TestBlock::testMultiTagAccess() {
 }
 
 
-void TestBlock::testOperators() {
+void BaseTestBlock::testOperators() {
     CPPUNIT_ASSERT(block_null == false);
     CPPUNIT_ASSERT(block_null == none);
 
@@ -311,7 +299,7 @@ void TestBlock::testOperators() {
 }
 
 
-void TestBlock::testCreatedAt() {
+void BaseTestBlock::testCreatedAt() {
     CPPUNIT_ASSERT(block.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     block.forceCreatedAt(past_time);
@@ -319,12 +307,12 @@ void TestBlock::testCreatedAt() {
 }
 
 
-void TestBlock::testUpdatedAt() {
+void BaseTestBlock::testUpdatedAt() {
     CPPUNIT_ASSERT(block.updatedAt() >= startup_time);
 }
 
 
-void TestBlock::testCompare() {
+void BaseTestBlock::testCompare() {
     string other_name = block_other.name();
     string block_name = block.name();
         
