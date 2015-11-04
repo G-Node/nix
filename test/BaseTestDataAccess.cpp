@@ -6,132 +6,28 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestDataAccess.hpp"
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
 
-#include <nix/DataView.hpp>
+#include <nix/hydra/multiArray.hpp>
+#include <nix/util/dataAccess.hpp>
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+
+#include "BaseTestDataAccess.hpp"
 
 using namespace std;
 using namespace nix;
 
-void TestDataAccess::setUp() {
-    file = File::open("test_dataAccess.h5", FileMode::Overwrite);
-    block = file.createBlock("dimensionTest","test");
-    data_array = block.createDataArray("dimensionTest",
-                                       "test",
-                                       DataType::Double,
-                                       NDSize({0, 0, 0}));
-    double samplingInterval = 1.0;
-    vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
-    string unit = "ms";
 
-    typedef boost::multi_array<double, 3> array_type;
-    typedef array_type::index index;
-    array_type data(boost::extents[2][10][5]);
-    int value;
-    for(index i = 0; i != 2; ++i) {
-        value = 0;
-        for(index j = 0; j != 10; ++j) {
-            for(index k = 0; k != 5; ++k) {
-                data[i][j][k] = value++;
-            }
-        }
-    }
-    data_array.setData(data);
-
-    setDim = data_array.appendSetDimension();
-    std::vector<std::string> labels = {"label_a", "label_b"};
-    setDim.labels(labels);
-
-    sampledDim = data_array.appendSampledDimension(samplingInterval);
-    sampledDim.unit(unit);
-
-    rangeDim = data_array.appendRangeDimension(ticks);
-    rangeDim.unit(unit);
-
-    vector<DataArray> refs;
-    refs.push_back(data_array);
-    vector<double> position {0.0, 2.0, 3.4};
-    vector<double> extent {0.0, 6.0, 2.3};
-    vector<string> units {"none", "ms", "ms"};
-
-    position_tag = block.createTag("position tag", "event", position);
-    position_tag.references(refs);
-    position_tag.units(units);
-
-    segment_tag = block.createTag("region tag", "segment", position);
-    segment_tag.references(refs);
-    segment_tag.extent(extent);
-    segment_tag.units(units);
-
-    //setup multiTag
-    typedef boost::multi_array<double, 2> position_type;
-    position_type event_positions(boost::extents[2][3]);
-    position_type event_extents(boost::extents[2][3]);
-    event_positions[0][0] = 0.0;
-    event_positions[0][1] = 3.0;
-    event_positions[0][2] = 3.4;
-
-    event_extents[0][0] = 0.0;
-    event_extents[0][1] = 6.0;
-    event_extents[0][2] = 2.3;
-
-    event_positions[1][0] = 0.0;
-    event_positions[1][1] = 8.0;
-    event_positions[1][2] = 2.3;
-
-    event_extents[1][0] = 0.0;
-    event_extents[1][1] = 3.0;
-    event_extents[1][2] = 2.0;
-
-    std::vector<std::string> event_labels = {"event 1", "event 2"};
-    std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};
-
-    DataArray event_array = block.createDataArray("positions", "test",
-                                                  DataType::Double, NDSize({ 0, 0 }));
-    event_array.setData(event_positions);
-    SetDimension event_set_dim;
-    event_set_dim = event_array.appendSetDimension();
-    event_set_dim.labels(event_labels);
-    event_set_dim = event_array.appendSetDimension();
-    event_set_dim.labels(dim_labels);
-
-    DataArray extent_array = block.createDataArray("extents", "test",
-                                                   DataType::Double, NDSize({ 0, 0 }));
-    extent_array.setData(event_extents);
-    SetDimension extent_set_dim;
-    extent_set_dim = extent_array.appendSetDimension();
-    extent_set_dim.labels(event_labels);
-    extent_set_dim = extent_array.appendSetDimension();
-    extent_set_dim.labels(dim_labels);
-
-    multi_tag = block.createMultiTag("multi_tag", "events", event_array);
-    multi_tag.extents(extent_array);
-    multi_tag.addReference(data_array);
-
-    alias_array = block.createDataArray("alias array", "event times", 
-                                        DataType::Double, NDSize({ 100 }));
-    vector<double> times(100);
-    for (size_t i = 0; i < 100; i++) {
-        times[i] = 1.3 * i;
-    }
-    alias_array.setData(times, NDSize({ 0 }));
-    alias_array.unit("ms");
-    alias_array.label("time");
-    aliasDim = alias_array.appendAliasRangeDimension();
-    vector<double> segment_time({4.5});
-    times_tag = block.createTag("stimulus on", "segment", vector<double>({4.5}));
-    times_tag.extent(vector<double>({100.0}));
-    times_tag.units(vector<string>({"ms"}));
-    times_tag.addReference(alias_array);
-}
-
-
-void TestDataAccess::tearDown() {
-    file.close();
-}
-
-
-void TestDataAccess::testPositionToIndexRangeDimension() {
+void BaseTestDataAccess::testPositionToIndexRangeDimension() {
     string unit = "ms";
     string invalid_unit = "kV";
     string scaled_unit = "s";
@@ -148,7 +44,7 @@ void TestDataAccess::testPositionToIndexRangeDimension() {
 }
 
 
-void TestDataAccess::testPositionToIndexSampledDimension() {
+void BaseTestDataAccess::testPositionToIndexSampledDimension() {
     string unit = "ms";
     string invalid_unit = "kV";
     string scaled_unit = "s";
@@ -160,7 +56,7 @@ void TestDataAccess::testPositionToIndexSampledDimension() {
 }
 
 
-void TestDataAccess::testPositionToIndexSetDimension() {
+void BaseTestDataAccess::testPositionToIndexSetDimension() {
     string unit = "ms";
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
@@ -171,7 +67,7 @@ void TestDataAccess::testPositionToIndexSetDimension() {
 }
 
 
-void TestDataAccess::testOffsetAndCount() {
+void BaseTestDataAccess::testOffsetAndCount() {
     NDSize offsets, counts;
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
 
@@ -219,7 +115,7 @@ void TestDataAccess::testOffsetAndCount() {
 }
 
 
-void TestDataAccess::testPositionInData() {
+void BaseTestDataAccess::testPositionInData() {
     NDSize offsets, counts;
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
     CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
@@ -230,7 +126,7 @@ void TestDataAccess::testPositionInData() {
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
 
-void TestDataAccess::testRetrieveData() {
+void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, -1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, 1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, -1, 0), nix::OutOfBounds);
@@ -261,7 +157,7 @@ void TestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size[0] == 77);
 }
 
-void TestDataAccess::testTagFeatureData() {
+void BaseTestDataAccess::testTagFeatureData() {
     DataArray number_feat = block.createDataArray("number feature", "test", nix::DataType::Double, {1});
     vector<double> number = {10.0};
     number_feat.setData(number);
@@ -307,7 +203,7 @@ void TestDataAccess::testTagFeatureData() {
 }
 
 
-void TestDataAccess::testMultiTagFeatureData() {
+void BaseTestDataAccess::testMultiTagFeatureData() {
     DataArray index_data = block.createDataArray("indexed feature data", "test", nix::DataType::Double, {10, 10});
     SampledDimension dim1 = index_data.appendSampledDimension(1.0);
     dim1.unit("ms");
@@ -421,7 +317,7 @@ void TestDataAccess::testMultiTagFeatureData() {
 }
 
 
-void TestDataAccess::testMultiTagUnitSupport() {
+void BaseTestDataAccess::testMultiTagUnitSupport() {
     vector<string> valid_units{"none","ms","s"};
     vector<string> invalid_units{"mV", "Ohm", "muV"};
 
@@ -436,7 +332,7 @@ void TestDataAccess::testMultiTagUnitSupport() {
 
 }
 
-void TestDataAccess::testDataView() {
+void BaseTestDataAccess::testDataView() {
 
     NDSize zcount = {2, 5, 2};
     NDSize zoffset = {0, 5, 2};

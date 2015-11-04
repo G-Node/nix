@@ -27,7 +27,7 @@
 #include "TestImplContainer.hpp"
 #include "TestDimension.hpp"
 #include "TestFeature.hpp"
-#include "TestDataAccess.hpp"
+#include "TestDataAccessHDF5.hpp"
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
 #include "TestReadOnly.hpp"
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccess);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTag);
