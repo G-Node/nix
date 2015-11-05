@@ -28,11 +28,11 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 
-class TestProperty : public CPPUNIT_NS::TestFixture {
+class BaseTestProperty : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestProperty);
+    CPPUNIT_TEST_SUITE(BaseTestProperty);
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);

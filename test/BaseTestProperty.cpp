@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "TestProperty.hpp"
+#include "BaseTestProperty.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -22,7 +22,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestProperty::setUp()
+void BaseTestProperty::setUp()
 {
     startup_time = time(NULL);
     file = nix::File::open("test_property.h5", nix::FileMode::Overwrite);
@@ -35,13 +35,13 @@ void TestProperty::setUp()
 }
 
 
-void TestProperty::tearDown()
+void BaseTestProperty::tearDown()
 {
     file.close();
 }
 
 
-void TestProperty::testValidate() {
+void BaseTestProperty::testValidate() {
     // values are set but unit is missing: 1 warning
     valid::Result result = validate(property);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
@@ -49,17 +49,17 @@ void TestProperty::testValidate() {
 }
 
 
-void TestProperty::testId() {
+void BaseTestProperty::testId() {
     CPPUNIT_ASSERT(property.id().size() == 36);
 }
 
 
-void TestProperty::testName() {
+void BaseTestProperty::testName() {
     CPPUNIT_ASSERT(property.name() == "prop");
 }
 
 
-void TestProperty::testDefinition() {
+void BaseTestProperty::testDefinition() {
     string def = "some_str";
     property.definition(def);
     CPPUNIT_ASSERT(*property.definition() == def);
@@ -68,7 +68,7 @@ void TestProperty::testDefinition() {
 }
 
 
-void TestProperty::testMapping() {
+void BaseTestProperty::testMapping() {
     string map = "some_str";
     property.mapping(map);
     CPPUNIT_ASSERT(*property.mapping() == map);
@@ -77,7 +77,7 @@ void TestProperty::testMapping() {
 }
 
 
-void TestProperty::testValues()
+void BaseTestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");
     nix::Property p1 = section.createProperty("strProperty", str_dummy);
@@ -119,7 +119,7 @@ void TestProperty::testValues()
 }
 
 
-void TestProperty::testDataType() {
+void BaseTestProperty::testDataType() {
     nix::Section section = file.createSection("Area51", "Boolean");
     std::vector<nix::Value> strValues = { nix::Value("Freude"),
                                           nix::Value("schoener"),
@@ -137,7 +137,7 @@ void TestProperty::testDataType() {
 }
 
 
-void TestProperty::testUnit(){
+void BaseTestProperty::testUnit(){
     nix::Section section = file.createSection("testSection", "test");
     nix::Value v(22.2);
     v.uncertainty = 1.2;
@@ -160,7 +160,7 @@ void TestProperty::testUnit(){
 }
 
 
-void TestProperty::testOperators() {
+void BaseTestProperty::testOperators() {
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
 
@@ -183,7 +183,7 @@ void TestProperty::testOperators() {
 }
 
 
-void TestProperty::testCreatedAt() {
+void BaseTestProperty::testCreatedAt() {
     CPPUNIT_ASSERT(property.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     property.forceCreatedAt(past_time);
@@ -191,7 +191,7 @@ void TestProperty::testCreatedAt() {
 }
 
 
-void TestProperty::testUpdatedAt() {
+void BaseTestProperty::testUpdatedAt() {
     CPPUNIT_ASSERT(property.updatedAt() >= startup_time);
 }
 
