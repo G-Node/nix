@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestEntityWithSources.hpp"
+#include "BaseTestEntityWithSources.hpp"
 
 #include <nix/util/util.hpp>
 
@@ -15,20 +15,20 @@
 using namespace std;
 using namespace nix;
 
-void TestEntityWithSources::setUp() {
+void BaseTestEntityWithSources::setUp() {
     file = File::open("test_entity_sources.h5", FileMode::Overwrite);
 
     block = file.createBlock("block_one", "dataset");
 }
 
 
-void TestEntityWithSources::tearDown() {
+void BaseTestEntityWithSources::tearDown() {
     file.deleteBlock(block);
     file.close();
 }
 
 
-void TestEntityWithSources::testSourceAccess() {
+void BaseTestEntityWithSources::testSourceAccess() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
@@ -63,7 +63,7 @@ void TestEntityWithSources::testSourceAccess() {
 }
 
 
-void TestEntityWithSources::testSourceVectorSetter() {
+void BaseTestEntityWithSources::testSourceVectorSetter() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     vector<Source> sources;
     DataArray da = block.createDataArray("Test","test", nix::DataType::Double, nix::NDSize {0,0});

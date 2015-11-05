@@ -25,11 +25,11 @@
 
 
 
-class TestEntityWithSources : public CPPUNIT_NS::TestFixture {
+class BaseTestEntityWithSources : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestEntityWithSources);
+    CPPUNIT_TEST_SUITE(BaseTestEntityWithSources);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testSourceVectorSetter);
     CPPUNIT_TEST_SUITE_END ();
