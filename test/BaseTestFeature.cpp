@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestFeature.hpp"
+#include "BaseTestFeature.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -19,7 +19,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestFeature::setUp() {
+void BaseTestFeature::setUp() {
     file = File::open("test_feature.h5", FileMode::Overwrite);
     block = file.createBlock("featureTest","test");
 
@@ -30,13 +30,13 @@ void TestFeature::setUp() {
 }
 
 
-void TestFeature::tearDown() {
+void BaseTestFeature::tearDown() {
     file.deleteBlock(block.id());
     file.close();
 }
 
 
-void TestFeature::testValidate() {
+void BaseTestFeature::testValidate() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     
     valid::Result result = validate(rp);
@@ -45,14 +45,14 @@ void TestFeature::testValidate() {
 }
 
 
-void TestFeature::testId() {
+void BaseTestFeature::testId() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.id().size() == 36);
     tag.deleteFeature(rp.id());
 }
 
 
-void TestFeature::testLinkType(){
+void BaseTestFeature::testLinkType(){
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.linkType() == nix::LinkType::Tagged);
     rp.linkType(nix::LinkType::Untagged);
@@ -68,7 +68,7 @@ void TestFeature::testLinkType(){
 }
 
 
-void TestFeature::testData() {
+void BaseTestFeature::testData() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
@@ -86,14 +86,14 @@ void TestFeature::testData() {
 }
 
 
-void TestFeature::testLinkType2Str() {
+void BaseTestFeature::testLinkType2Str() {
     CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Tagged) == "Tagged");
     CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Untagged) == "Untagged");
     CPPUNIT_ASSERT(link_type_to_string(nix::LinkType::Indexed) == "Indexed");
 }
 
 
-void TestFeature::testStreamOperator() {
+void BaseTestFeature::testStreamOperator() {
     stringstream s1, s2, s3;
     s1 << nix::LinkType::Indexed;
     CPPUNIT_ASSERT(s1.str() == "LinkType::Indexed");
@@ -104,7 +104,7 @@ void TestFeature::testStreamOperator() {
 }
 
 
-void TestFeature::testOperator() {
+void BaseTestFeature::testOperator() {
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
 
     CPPUNIT_ASSERT(rp != none);
