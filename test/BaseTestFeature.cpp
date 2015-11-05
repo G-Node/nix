@@ -6,34 +6,29 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestFeature.hpp"
+
+#include <sstream>
+#include <ctime>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
-#include <sstream>
-#include <ctime>
+#include "BaseTestFeature.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <boost/math/constants/constants.hpp>
 
 using namespace std;
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestFeature::setUp() {
-    file = File::open("test_feature.h5", FileMode::Overwrite);
-    block = file.createBlock("featureTest","test");
-
-    data_array = block.createDataArray("featureTest", "Test",
-                                       DataType::Double, nix::NDSize({ 0 }));
-    
-    tag = block.createTag("featureTest", "Test", {0.0, 2.0, 3.4});
-}
-
-
-void BaseTestFeature::tearDown() {
-    file.deleteBlock(block.id());
-    file.close();
-}
 
 
 void BaseTestFeature::testValidate() {
