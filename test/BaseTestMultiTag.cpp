@@ -8,56 +8,29 @@
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "BaseTestMultiTag.hpp"
-
-#include <nix/Exception.hpp>
-#include <nix/valid/validate.hpp>
 
 #include <sstream>
 #include <ctime>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
+
+#include <nix/Exception.hpp>
+#include <nix/hydra/multiArray.hpp>
+#include <nix/valid/validate.hpp>
+
+#include "BaseTestMultiTag.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestMultiTag::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_multiTag.h5", FileMode::Overwrite);
-    block = file.createBlock("block", "dataset");
-
-    positions = block.createDataArray("positions_DataArray", "dataArray",
-                                      DataType::Double, NDSize({ 0, 0 }));
-    extents = block.createDataArray("extents_DataArray", "dataArray",
-                                    DataType::Double, NDSize({ 0, 0 }));
-
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        A[i][i] = 100.0*i;
-    }
-    positions.setData(A);
-
-    array_type B(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        B[i][i] = 100.0*i;
-    }
-    extents.setData(B);
-
-    tag = block.createMultiTag("tag_one", "test_tag", positions);
-    tag_other = block.createMultiTag("tag_two", "test_tag", positions);
-    tag_null = nix::none;
-
-    section = file.createSection("foo_section", "metadata");
-}
-
-
-void BaseTestMultiTag::tearDown(){
-    file.deleteBlock(block.id());
-    file.deleteSection(section.id());
-    file.close();
-}
 
 
 void BaseTestMultiTag::testValidate() {

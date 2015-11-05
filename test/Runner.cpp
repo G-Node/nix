@@ -18,7 +18,7 @@
 #include "TestGroup.hpp"
 #include "TestDataArrayHDF5.hpp"
 #include "TestBaseTagHDF5.hpp"
-#include "BaseTestMultiTag.hpp"
+#include "TestMultiTagHDF5.hpp"
 #include "TestTag.hpp"
 #include "TestValue.hpp"
 #include "TestProperty.hpp"
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
-    CPPUNIT_TEST_SUITE_REGISTRATION(BaseTestMultiTag);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTag);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
