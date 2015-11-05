@@ -6,31 +6,18 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hydra/multiArray.hpp>
+#ifndef NIX_BASETESTTAG_HPP
+#define NIX_BASETESTTAG_HPP
+
+
 #include <nix.hpp>
 
-#include <nix/hdf5/TagHDF5.hpp>
-#include <nix/util/util.hpp>
-
-#include <iostream>
-#include <sstream>
-#include <iterator>
-#include <stdexcept>
-
 #include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/BriefTestProgressListener.h>
-#include <boost/math/constants/constants.hpp>
 
 
 class BaseTestTag : public CPPUNIT_NS::TestFixture {
-private:
 
+protected:
     nix::File file;
     nix::Block block;
     nix::DataArray positions, extents;
@@ -39,32 +26,7 @@ private:
     time_t startup_time;
     std::vector<nix::DataArray> refs;
 
-    CPPUNIT_TEST_SUITE(BaseTestTag);
-
-    CPPUNIT_TEST(testValidate);
-    CPPUNIT_TEST(testId);
-    CPPUNIT_TEST(testName);
-    CPPUNIT_TEST(testType);
-    CPPUNIT_TEST(testDefinition);
-    CPPUNIT_TEST(testCreateRemove);
-    CPPUNIT_TEST(testExtent);
-    CPPUNIT_TEST(testPosition);
-    CPPUNIT_TEST(testDataAccess);
-    CPPUNIT_TEST(testMetadataAccess);
-    CPPUNIT_TEST(testSourceAccess);
-    CPPUNIT_TEST(testUnits);
-    CPPUNIT_TEST(testReferences);
-    CPPUNIT_TEST(testFeatures);
-    CPPUNIT_TEST(testCreatedAt);
-    CPPUNIT_TEST(testUpdatedAt);
-    CPPUNIT_TEST(testOperators);
-    CPPUNIT_TEST_SUITE_END ();
-
 public:
-
-    void setUp();
-    void tearDown();
-
     void testValidate();
 
     void testId();
@@ -84,3 +46,5 @@ public:
     void testCreatedAt();
     void testUpdatedAt();
 };
+
+#endif // NIX_BASETESTTAG_HPP

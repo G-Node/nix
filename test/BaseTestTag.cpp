@@ -8,45 +8,27 @@
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "BaseTestTag.hpp"
-
-#include <nix/NDSize.hpp>
-#include <nix/Exception.hpp>
-#include <nix/valid/validate.hpp>
-
 #include <sstream>
 #include <ctime>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
+
+#include "BaseTestTag.hpp"
+#include <nix/hydra/multiArray.hpp>
+#include <nix/hdf5/TagHDF5.hpp>
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+#include <boost/math/constants/constants.hpp>
 
 using namespace nix;
 using namespace valid;
 using namespace std;
-
-void BaseTestTag::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_multiTag.h5", FileMode::Overwrite);
-    block = file.createBlock("block", "dataset");
-
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
-                                   "data_array_d", "data_array_e" };
-    refs.clear();
-    for (const auto & name : array_names) {
-        refs.push_back(block.createDataArray(name, "reference",
-                                             DataType::Double, nix::NDSize({ 0 })));
-    }
-
-    tag = block.createTag("tag_one", "test_tag", {0.0, 2.0, 3.4});
-    tag_other = block.createTag("tag_two", "test_tag", {0.0, 2.0, 3.4});
-    tag_null = nix::none;
-
-    section = file.createSection("foo_section", "metadata");
-}
-
-
-void BaseTestTag::tearDown() {
-    file.deleteBlock(block.id());
-    file.deleteSection(section.id());
-    file.close();
-}
 
 
 void BaseTestTag::testValidate() {
