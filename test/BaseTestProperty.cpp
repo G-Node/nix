@@ -8,37 +8,31 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "BaseTestProperty.hpp"
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include <limits>
+
+#include <boost/math/constants/constants.hpp>
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
-#include <ctime>
-#include <iostream>
+#include "BaseTestProperty.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 
-using namespace std;
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestProperty::setUp()
-{
-    startup_time = time(NULL);
-    file = nix::File::open("test_property.h5", nix::FileMode::Overwrite);
-    section = file.createSection("cool section", "metadata");
-    int_dummy = Value(10);
-    str_dummy = Value("test");
-    property = section.createProperty("prop", int_dummy);
-    property_other = section.createProperty("other", int_dummy);
-    property_null = nix::none;
-}
-
-
-void BaseTestProperty::tearDown()
-{
-    file.close();
-}
 
 
 void BaseTestProperty::testValidate() {
@@ -60,7 +54,7 @@ void BaseTestProperty::testName() {
 
 
 void BaseTestProperty::testDefinition() {
-    string def = "some_str";
+    std::string def = "some_str";
     property.definition(def);
     CPPUNIT_ASSERT(*property.definition() == def);
     property.definition(nix::none);
@@ -69,7 +63,7 @@ void BaseTestProperty::testDefinition() {
 
 
 void BaseTestProperty::testMapping() {
-    string map = "some_str";
+    std::string map = "some_str";
     property.mapping(map);
     CPPUNIT_ASSERT(*property.mapping() == map);
     property.mapping(boost::none);
@@ -177,7 +171,7 @@ void BaseTestProperty::testOperators() {
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
     
-    stringstream s;
+    std::stringstream s;
     s << property;
     CPPUNIT_ASSERT(s.str() == "Property: {name = " + property.name() + "}");
 }
