@@ -6,45 +6,28 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestSource.hpp"
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
-#include <ctime>
+#include "BaseTestSource.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
+
 
 using namespace std;
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestSource::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_source.h5", FileMode::Overwrite);
-    block = file.createBlock("block", "dataset");
-    section = file.createSection("foo_section", "metadata");
-
-    source = block.createSource("source_one", "channel");
-    source_other = block.createSource("source_two", "channel");
-    source_null  = nix::none;
-
-    // create a DataArray & a MultiTag
-    darray = block.createDataArray("DataArray", "dataArray",
-                                   DataType::Double, {0, 0});
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    for(index i = 0; i < 5; ++i){
-        A[i][i] = 100.0*i;
-    }
-    darray.setData(A);
-    mtag = block.createMultiTag("tag_one", "test_tag", darray);
-}
-
-
-void BaseTestSource::tearDown() {
-    file.close();
-}
 
 
 void BaseTestSource::testValidate() {
