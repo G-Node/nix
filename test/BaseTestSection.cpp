@@ -6,30 +6,27 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestSection.hpp"
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
 
-#include <ctime>
+#include "BaseTestSection.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
 using namespace valid;
-
-
-void BaseTestSection::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_section.h5", FileMode::Overwrite);
-
-    section = file.createSection("section", "metadata");
-    section_other = file.createSection("other_section", "metadata");
-    section_null  = nullptr;
-}
-
-void BaseTestSection::tearDown() {
-    file.close();
-}
 
 
 void BaseTestSection::testValidate() {

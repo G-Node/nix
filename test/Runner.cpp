@@ -13,7 +13,7 @@
 #include "TestFileHDF5.hpp"
 #include "TestBlockHDF5.hpp"
 #include "TestSource.hpp"
-#include "BaseTestSection.hpp"
+#include "TestSectionHDF5.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
 #include "TestDataArrayHDF5.hpp"
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFileHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlockHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
-    CPPUNIT_TEST_SUITE_REGISTRATION(BaseTestSection);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
