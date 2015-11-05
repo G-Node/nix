@@ -28,7 +28,7 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestMultiTag: public CPPUNIT_NS::TestFixture {
+class BaseTestMultiTag : public CPPUNIT_NS::TestFixture {
 private:
 
     nix::File file;
@@ -39,7 +39,7 @@ private:
     time_t startup_time;
 
 
-    CPPUNIT_TEST_SUITE(TestMultiTag);
+    CPPUNIT_TEST_SUITE(BaseTestMultiTag);
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testName);

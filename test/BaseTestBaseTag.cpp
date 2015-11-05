@@ -41,7 +41,7 @@ void BaseTestBaseTag::testReferences() {
     CPPUNIT_ASSERT_THROW(st.getReference(42), nix::OutOfBounds);
 
     std::stringstream counterrmsg;
-    counterrmsg << "TestMultiTag::testReference: Counts do not match!";
+    counterrmsg << "BaseTestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), st.referenceCount() == 5);
 
     st.addReference(da_1.id());

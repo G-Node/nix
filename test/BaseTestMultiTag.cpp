@@ -8,7 +8,7 @@
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "TestMultiTag.hpp"
+#include "BaseTestMultiTag.hpp"
 
 #include <nix/Exception.hpp>
 #include <nix/valid/validate.hpp>
@@ -21,7 +21,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestMultiTag::setUp() {
+void BaseTestMultiTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_multiTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
@@ -53,31 +53,31 @@ void TestMultiTag::setUp() {
 }
 
 
-void TestMultiTag::tearDown(){
+void BaseTestMultiTag::tearDown(){
     file.deleteBlock(block.id());
     file.deleteSection(section.id());
     file.close();
 }
 
 
-void TestMultiTag::testValidate() {
+void BaseTestMultiTag::testValidate() {
     valid::Result result = validate(tag);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestMultiTag::testId() {
+void BaseTestMultiTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
 }
 
 
-void TestMultiTag::testName() {
+void BaseTestMultiTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
 }
 
 
-void TestMultiTag::testType() {
+void BaseTestMultiTag::testType() {
     CPPUNIT_ASSERT(tag.type() == "test_tag");
     std::string type = util::createId();
     tag.type(type);
@@ -85,7 +85,7 @@ void TestMultiTag::testType() {
 }
 
 
-void TestMultiTag::testDefinition() {
+void BaseTestMultiTag::testDefinition() {
     std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
@@ -94,7 +94,7 @@ void TestMultiTag::testDefinition() {
 }
 
 
-void TestMultiTag::testCreateRemove() {
+void BaseTestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
 	//issue #473
 	ndsize_t count = static_cast<size_t>(block.multiTagCount());
@@ -133,7 +133,7 @@ void TestMultiTag::testCreateRemove() {
     CPPUNIT_ASSERT(!mtag.extents());
 }
 
-void TestMultiTag::testUnits() {
+void BaseTestMultiTag::testUnits() {
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
@@ -163,7 +163,7 @@ void TestMultiTag::testUnits() {
 
 //TODO merge this test into TestBaseTag::testReferences
 
-void TestMultiTag::testReferences(){
+void BaseTestMultiTag::testReferences(){
     DataArray da_1 = block.createDataArray("TestReference 1",
                                            "Reference",
                                            DataType::Double,
@@ -178,7 +178,7 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT_THROW(dt.hasReference(a), UninitializedEntity);
 
     std::stringstream counterrmsg;
-    counterrmsg << "TestMultiTag::testReference: Counts do not match!";
+    counterrmsg << "BaseTestMultiTag::testReference: Counts do not match!";
     CPPUNIT_ASSERT_MESSAGE(counterrmsg.str(), dt.referenceCount() == 0);
     
     dt.addReference(da_1);
@@ -189,28 +189,28 @@ void TestMultiTag::testReferences(){
     CPPUNIT_ASSERT(dt.hasReference(da_2));
 
     std::stringstream haserrmsg;
-    haserrmsg << "TestMultiTag::testReference: Has method did not work!";
+    haserrmsg << "BaseTestMultiTag::testReference: Has method did not work!";
     CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.id()));
     CPPUNIT_ASSERT_MESSAGE(haserrmsg.str(), dt.hasReference(da_1.name()));
 
     DataArray ref1 = dt.getReference(da_1.id());
     std::stringstream retrieveerrmsg;
-    retrieveerrmsg << "TestMultiTag::testReference: Retrieval did not work!";
+    retrieveerrmsg << "BaseTestMultiTag::testReference: Retrieval did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref1.id() == da_1.id());
     DataArray ref2 = dt.getReference(da_1.name());
-    retrieveerrmsg << "TestMultiTag::testReference: Retrieval by name did not work!";
+    retrieveerrmsg << "BaseTestMultiTag::testReference: Retrieval by name did not work!";
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), ref2.id() == da_1.id());
 
     std::vector<DataArray> arrays = dt.references();
     CPPUNIT_ASSERT_MESSAGE(retrieveerrmsg.str(), arrays.size() == 2);
 
     std::stringstream hasReferrmsg;
-    hasReferrmsg << "TestMultiTag::testReference: hadReference did not work!";
+    hasReferrmsg << "BaseTestMultiTag::testReference: hadReference did not work!";
     CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_1.id()));
     CPPUNIT_ASSERT_MESSAGE(hasReferrmsg.str(), dt.hasReference(da_2.id()));
 
     std::stringstream delReferrmsg;
-    delReferrmsg << "TestMultiTag::testReference: removeReference did not work!";
+    delReferrmsg << "BaseTestMultiTag::testReference: removeReference did not work!";
     dt.removeReference(da_1.id());
     CPPUNIT_ASSERT_MESSAGE(delReferrmsg.str(), dt.referenceCount() == 1);
     dt.removeReference("NONEXISTENT");
@@ -234,7 +234,7 @@ void TestMultiTag::testReferences(){
 }
 
 
-void TestMultiTag::testFeatures() {
+void BaseTestMultiTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -249,7 +249,7 @@ void TestMultiTag::testFeatures() {
 }
 
 
-void TestMultiTag::testExtents(){
+void BaseTestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
 
     typedef boost::multi_array<double, 2> array_type;
@@ -269,7 +269,7 @@ void TestMultiTag::testExtents(){
 }
 
 
-void TestMultiTag::testPositions() {
+void BaseTestMultiTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions("wrong_data_array_id"), std::runtime_error);
 
     tag.positions(positions);
@@ -291,7 +291,7 @@ void TestMultiTag::testPositions() {
 }
 
 
-void TestMultiTag::testPositionExtents() {
+void BaseTestMultiTag::testPositionExtents() {
     tag.extents(extents);
     CPPUNIT_ASSERT(tag.extents().id() == extents.id());
     block.deleteDataArray(extents.id());
@@ -321,7 +321,7 @@ void TestMultiTag::testPositionExtents() {
 }
 
 
-void TestMultiTag::testDataAccess() {
+void BaseTestMultiTag::testDataAccess() {
     DataArray data_array = block.createDataArray("dimensionTest",
                                        "test",
                                        DataType::Double,
@@ -417,7 +417,7 @@ void TestMultiTag::testDataAccess() {
 }
 
 
-void TestMultiTag::testMetadataAccess() {
+void BaseTestMultiTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
@@ -435,7 +435,7 @@ void TestMultiTag::testMetadataAccess() {
 }
 
 
-void TestMultiTag::testSourceAccess(){
+void BaseTestMultiTag::testSourceAccess(){
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
     CPPUNIT_ASSERT(tag.sources().size() == 0);
@@ -468,7 +468,7 @@ void TestMultiTag::testSourceAccess(){
     CPPUNIT_ASSERT(tag.sources().size() == 0);
 }
 
-void TestMultiTag::testOperators() {
+void BaseTestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
 
@@ -487,7 +487,7 @@ void TestMultiTag::testOperators() {
 }
 
 
-void TestMultiTag::testCreatedAt() {
+void BaseTestMultiTag::testCreatedAt() {
     CPPUNIT_ASSERT(tag.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     tag.forceCreatedAt(past_time);
@@ -495,6 +495,6 @@ void TestMultiTag::testCreatedAt() {
 }
 
 
-void TestMultiTag::testUpdatedAt() {
+void BaseTestMultiTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
