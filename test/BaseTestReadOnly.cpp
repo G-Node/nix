@@ -6,22 +6,29 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestReadOnly.hpp"
+
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include <limits>
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
-#include <nix/Exception.hpp>
 
-#include <ctime>
+#include "BaseTestReadOnly.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <boost/math/constants/constants.hpp>
 
 using namespace std;
 using namespace nix;
 using namespace valid;
 
 
-void BaseTestReadOnly::setUp() {
+void BaseTestReadOnly::setUp(nix::File &file) {
     startup_time = time(NULL);
-    File file = File::open("test_read_only.h5", FileMode::Overwrite);
     std::vector<nix::Value> values = { nix::Value(1.0),
                                        nix::Value(2.0),
                                        nix::Value(-99.99) };
@@ -43,7 +50,7 @@ void BaseTestReadOnly::setUp() {
     MultiTag mtag = block.createMultiTag("tag_one", "test_tag", positions);
     Feature feature = tag.createFeature(data_array, nix::LinkType::Tagged);
     Property property = section.createProperty("doubleProperty", values);
-    
+
     section_id = section.id(); feature_id = feature.id(); tag_id = tag.id();
     mtag_id = mtag.id(); property_id = property.id(); block_id = block.id();
     data_array_id = data_array.id(); dim_index = dim.index();
@@ -51,10 +58,6 @@ void BaseTestReadOnly::setUp() {
     dim_set_index = dim_set.index();
 
     file.close();
-}
-
-
-void BaseTestReadOnly::tearDown() {
 }
 
 
@@ -73,6 +76,7 @@ void BaseTestReadOnly::testRead() {
     Feature feature = tag.getFeature(feature_id);
     Property property = section.getProperty(property_id);
 
+    // TODO use assertions here
     s << block.id() << block.name();
     s << data_array.id() << data_array.name();
     s << tag.id() << tag.name();

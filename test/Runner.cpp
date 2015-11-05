@@ -30,7 +30,7 @@
 #include "TestDataAccessHDF5.hpp"
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
-#include "BaseTestReadOnly.hpp"
+#include "TestReadOnlyHDF5.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
-    CPPUNIT_TEST_SUITE_REGISTRATION(BaseTestReadOnly);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
