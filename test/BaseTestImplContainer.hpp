@@ -24,11 +24,11 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestImplContainer : public CPPUNIT_NS::TestFixture {
+class BaseTestImplContainer : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestImplContainer);
+    CPPUNIT_TEST_SUITE(BaseTestImplContainer);
 
     CPPUNIT_TEST(testBool);
     CPPUNIT_TEST(testNone);
