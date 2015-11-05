@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestSection.hpp"
+#include "BaseTestSection.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -18,7 +18,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestSection::setUp() {
+void BaseTestSection::setUp() {
     startup_time = time(NULL);
     file = File::open("test_section.h5", FileMode::Overwrite);
 
@@ -27,29 +27,29 @@ void TestSection::setUp() {
     section_null  = nullptr;
 }
 
-void TestSection::tearDown() {
+void BaseTestSection::tearDown() {
     file.close();
 }
 
 
-void TestSection::testValidate() {
+void BaseTestSection::testValidate() {
     valid::Result result = validate(section);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestSection::testId() {
+void BaseTestSection::testId() {
     CPPUNIT_ASSERT(section.id().size() == 36);
 }
 
 
-void TestSection::testName() {
+void BaseTestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
 }
 
 
-void TestSection::testType() {
+void BaseTestSection::testType() {
     CPPUNIT_ASSERT(section.type() == "metadata");
     string typ = util::createId();
     section.type(typ);
@@ -57,7 +57,7 @@ void TestSection::testType() {
 }
 
 
-void TestSection::testDefinition() {
+void BaseTestSection::testDefinition() {
     string def = util::createId();
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
@@ -66,7 +66,7 @@ void TestSection::testDefinition() {
 }
 
 
-void TestSection::testParent() {
+void BaseTestSection::testParent() {
     CPPUNIT_ASSERT(section.parent() == nullptr);
 
     Section child = section.createSection("child", "section");
@@ -77,7 +77,7 @@ void TestSection::testParent() {
 }
 
 
-void TestSection::testRepository() {
+void BaseTestSection::testRepository() {
     CPPUNIT_ASSERT(!section.repository());
     string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
@@ -87,7 +87,7 @@ void TestSection::testRepository() {
 }
 
 
-void TestSection::testLink() {
+void BaseTestSection::testLink() {
     CPPUNIT_ASSERT(!section.link());
 
     section.link(section_other);
@@ -106,7 +106,7 @@ void TestSection::testLink() {
 }
 
 
-void TestSection::testMapping() {
+void BaseTestSection::testMapping() {
     CPPUNIT_ASSERT(!section.mapping());
     string map = "http://foo.bar/" + util::createId();
     section.mapping(map);
@@ -116,7 +116,7 @@ void TestSection::testMapping() {
 }
 
 
-void TestSection::testSectionAccess() {
+void BaseTestSection::testSectionAccess() {
     vector<string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -153,7 +153,7 @@ void TestSection::testSectionAccess() {
 }
 
 
-void TestSection::testFindSection() {
+void BaseTestSection::testFindSection() {
     // prepare
     Section l1n1 = section.createSection("l1n1", "typ1");
     Section l1n2 = section.createSection("l1n2", "typ2");
@@ -185,7 +185,7 @@ void TestSection::testFindSection() {
     CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
 }
 
-void TestSection::testFindRelated() {
+void BaseTestSection::testFindRelated() {
     /* We create the following tree:
      * 
      * section---l1n1---l2n1---l3n1------------
@@ -269,7 +269,7 @@ void TestSection::testFindRelated() {
 }
 
 
-void TestSection::testPropertyAccess() {
+void BaseTestSection::testPropertyAccess() {
     vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -338,7 +338,7 @@ void TestSection::testPropertyAccess() {
 }
 
 
-void TestSection::testOperators() {
+void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);
 
@@ -357,7 +357,7 @@ void TestSection::testOperators() {
 }
 
 
-void TestSection::testCreatedAt() {
+void BaseTestSection::testCreatedAt() {
     CPPUNIT_ASSERT(section.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     section.forceCreatedAt(past_time);
@@ -365,6 +365,6 @@ void TestSection::testCreatedAt() {
 }
 
 
-void TestSection::testUpdatedAt() {
+void BaseTestSection::testUpdatedAt() {
     CPPUNIT_ASSERT(section.updatedAt() >= startup_time);
 }

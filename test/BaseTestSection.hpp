@@ -23,10 +23,10 @@
 #include <cppunit/BriefTestProgressListener.h>
 
 
-class TestSection: public CPPUNIT_NS::TestFixture {
+class BaseTestSection : public CPPUNIT_NS::TestFixture {
 private:
 
-    CPPUNIT_TEST_SUITE(TestSection);
+    CPPUNIT_TEST_SUITE(BaseTestSection);
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
