@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestSource.hpp"
+#include "BaseTestSource.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -18,7 +18,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestSource::setUp() {
+void BaseTestSource::setUp() {
     startup_time = time(NULL);
     file = File::open("test_source.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
@@ -42,29 +42,29 @@ void TestSource::setUp() {
 }
 
 
-void TestSource::tearDown() {
+void BaseTestSource::tearDown() {
     file.close();
 }
 
 
-void TestSource::testValidate() {
+void BaseTestSource::testValidate() {
     valid::Result result = validate(source);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestSource::testId() {
+void BaseTestSource::testId() {
     CPPUNIT_ASSERT(source.id().size() == 36);
 }
 
 
-void TestSource::testName() {
+void BaseTestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
 }
 
 
-void TestSource::testType() {
+void BaseTestSource::testType() {
     CPPUNIT_ASSERT(source.type() == "channel");
     string typ = util::createId();
     source.type(typ);
@@ -72,7 +72,7 @@ void TestSource::testType() {
 }
 
 
-void TestSource::testDefinition() {
+void BaseTestSource::testDefinition() {
     string def = util::createId();
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
@@ -81,7 +81,7 @@ void TestSource::testDefinition() {
 }
 
 
-void TestSource::testMetadataAccess() {
+void BaseTestSource::testMetadataAccess() {
     CPPUNIT_ASSERT(!source.metadata());
 
     source.metadata(section);
@@ -99,7 +99,7 @@ void TestSource::testMetadataAccess() {
 }
 
 
-void TestSource::testSourceAccess() {
+void BaseTestSource::testSourceAccess() {
     vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
@@ -142,7 +142,7 @@ void TestSource::testSourceAccess() {
 }
 
 
-void TestSource::testFindSource() {
+void BaseTestSource::testFindSource() {
     /* We create the following tree:
      * 
      * source---l1n1---l2n1---l3n1
@@ -245,7 +245,7 @@ void TestSource::testFindSource() {
 }
 
 
-void TestSource::testOperators() {
+void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);
 
@@ -264,7 +264,7 @@ void TestSource::testOperators() {
 }
 
 
-void TestSource::testCreatedAt() {
+void BaseTestSource::testCreatedAt() {
     CPPUNIT_ASSERT(source.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     source.forceCreatedAt(past_time);
@@ -272,7 +272,7 @@ void TestSource::testCreatedAt() {
 }
 
 
-void TestSource::testUpdatedAt() {
+void BaseTestSource::testUpdatedAt() {
     CPPUNIT_ASSERT(source.updatedAt() >= startup_time);
 }
 
