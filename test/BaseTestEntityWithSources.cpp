@@ -8,24 +8,17 @@
 
 #include "BaseTestEntityWithSources.hpp"
 
-#include <nix/util/util.hpp>
+#include <iterator>
 
-#include <ctime>
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
-
-void BaseTestEntityWithSources::setUp() {
-    file = File::open("test_entity_sources.h5", FileMode::Overwrite);
-
-    block = file.createBlock("block_one", "dataset");
-}
-
-
-void BaseTestEntityWithSources::tearDown() {
-    file.deleteBlock(block);
-    file.close();
-}
 
 
 void BaseTestEntityWithSources::testSourceAccess() {
