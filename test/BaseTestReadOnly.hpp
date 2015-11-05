@@ -25,11 +25,11 @@
 #include <boost/math/constants/constants.hpp>
 
 
-class TestReadOnly : public CPPUNIT_NS::TestFixture {
+class BaseTestReadOnly : public CPPUNIT_NS::TestFixture {
 
 private:
 
-    CPPUNIT_TEST_SUITE(TestReadOnly);
+    CPPUNIT_TEST_SUITE(BaseTestReadOnly);
 
     CPPUNIT_TEST(testRead);
 

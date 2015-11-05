@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestReadOnly.hpp"
+#include "BaseTestReadOnly.hpp"
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
@@ -19,7 +19,7 @@ using namespace nix;
 using namespace valid;
 
 
-void TestReadOnly::setUp() {
+void BaseTestReadOnly::setUp() {
     startup_time = time(NULL);
     File file = File::open("test_read_only.h5", FileMode::Overwrite);
     std::vector<nix::Value> values = { nix::Value(1.0),
@@ -54,11 +54,11 @@ void TestReadOnly::setUp() {
 }
 
 
-void TestReadOnly::tearDown() {
+void BaseTestReadOnly::tearDown() {
 }
 
 
-void TestReadOnly::testRead() {
+void BaseTestReadOnly::testRead() {
     File file = File::open("test_read_only.h5", FileMode::ReadOnly);
 
     Section section = file.getSection(section_id);
