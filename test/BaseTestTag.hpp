@@ -28,7 +28,7 @@
 #include <boost/math/constants/constants.hpp>
 
 
-class TestTag: public CPPUNIT_NS::TestFixture {
+class BaseTestTag : public CPPUNIT_NS::TestFixture {
 private:
 
     nix::File file;
@@ -39,7 +39,7 @@ private:
     time_t startup_time;
     std::vector<nix::DataArray> refs;
 
-    CPPUNIT_TEST_SUITE(TestTag);
+    CPPUNIT_TEST_SUITE(BaseTestTag);
 
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);

@@ -8,7 +8,7 @@
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
 
-#include "TestTag.hpp"
+#include "BaseTestTag.hpp"
 
 #include <nix/NDSize.hpp>
 #include <nix/Exception.hpp>
@@ -21,7 +21,7 @@ using namespace nix;
 using namespace valid;
 using namespace std;
 
-void TestTag::setUp() {
+void BaseTestTag::setUp() {
     startup_time = time(NULL);
     file = File::open("test_multiTag.h5", FileMode::Overwrite);
     block = file.createBlock("block", "dataset");
@@ -42,31 +42,31 @@ void TestTag::setUp() {
 }
 
 
-void TestTag::tearDown() {
+void BaseTestTag::tearDown() {
     file.deleteBlock(block.id());
     file.deleteSection(section.id());
     file.close();
 }
 
 
-void TestTag::testValidate() {
+void BaseTestTag::testValidate() {
     valid::Result result = validate(tag);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
-void TestTag::testId() {
+void BaseTestTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
 }
 
 
-void TestTag::testName() {
+void BaseTestTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
 }
 
 
-void TestTag::testType() {
+void BaseTestTag::testType() {
     CPPUNIT_ASSERT(tag.type() == "test_tag");
     std::string type = util::createId();
     tag.type(type);
@@ -74,7 +74,7 @@ void TestTag::testType() {
 }
 
 
-void TestTag::testDefinition() {
+void BaseTestTag::testDefinition() {
     std::string def = util::createId();
     tag.definition(def);
     CPPUNIT_ASSERT(*tag.definition() == def);
@@ -83,7 +83,7 @@ void TestTag::testDefinition() {
 }
 
 
-void TestTag::testCreateRemove() {
+void BaseTestTag::testCreateRemove() {
     std::vector<std::string> ids;
     ndsize_t count = block.tagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
@@ -117,7 +117,7 @@ void TestTag::testCreateRemove() {
 }
 
 
-void TestTag::testExtent() {
+void BaseTestTag::testExtent() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 
@@ -139,7 +139,7 @@ void TestTag::testExtent() {
 }
 
 
-void TestTag::testPosition() {
+void BaseTestTag::testPosition() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 
@@ -168,7 +168,7 @@ void TestTag::testPosition() {
 }
 
 
-void TestTag::testMetadataAccess() {
+void BaseTestTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
 
     tag.metadata(section);
@@ -188,7 +188,7 @@ void TestTag::testMetadataAccess() {
 }
 
 
-void TestTag::testSourceAccess() {
+void BaseTestTag::testSourceAccess() {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
     CPPUNIT_ASSERT(tag.sources().size() == 0);
@@ -221,7 +221,7 @@ void TestTag::testSourceAccess() {
 }
 
 
-void TestTag::testUnits() {
+void BaseTestTag::testUnits() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
 
@@ -254,7 +254,7 @@ void TestTag::testUnits() {
 }
 
 
-void TestTag::testReferences() {
+void BaseTestTag::testReferences() {
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
     for (size_t i = 0; i < refs.size(); ++i) {
         CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
@@ -273,7 +273,7 @@ void TestTag::testReferences() {
 }
 
 
-void TestTag::testFeatures() {
+void BaseTestTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -288,7 +288,7 @@ void TestTag::testFeatures() {
 }
 
 
-void TestTag::testDataAccess() {
+void BaseTestTag::testDataAccess() {
     double samplingInterval = 1.0;
     vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
     string unit = "ms";
@@ -354,7 +354,7 @@ void TestTag::testDataAccess() {
 }
 
 
-void TestTag::testOperators() {
+void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
 
@@ -373,7 +373,7 @@ void TestTag::testOperators() {
 }
 
 
-void TestTag::testCreatedAt() {
+void BaseTestTag::testCreatedAt() {
     CPPUNIT_ASSERT(tag.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     tag.forceCreatedAt(past_time);
@@ -381,6 +381,6 @@ void TestTag::testCreatedAt() {
 }
 
 
-void TestTag::testUpdatedAt() {
+void BaseTestTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
