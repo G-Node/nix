@@ -6,48 +6,26 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
+#ifndef NIX_BASETESTIMPLCONTAINER_HPP
+#define NIX_BASETESTIMPLCONTAINER_HPP
+
 #include <nix.hpp>
 
-#include <iostream>
-#include <sstream>
-#include <iterator>
-#include <stdexcept>
-#include <limits>
-
 #include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/BriefTestProgressListener.h>
 
 
 class BaseTestImplContainer : public CPPUNIT_NS::TestFixture {
 
-private:
-
-    CPPUNIT_TEST_SUITE(BaseTestImplContainer);
-
-    CPPUNIT_TEST(testBool);
-    CPPUNIT_TEST(testNone);
-    CPPUNIT_TEST(testisNone);
-    CPPUNIT_TEST(testAccess);
-
-    CPPUNIT_TEST_SUITE_END ();
-
+protected:
     nix::File file;
     nix::Section section, empty_section;
     time_t startup_time;
 
 public:
-
-    void setUp();
-    void tearDown();
-
     void testBool();
     void testNone();
     void testisNone();
     void testAccess();
 };
+
+#endif // NIX_BASETESTIMPLCONTAINER_HPP

@@ -6,25 +6,25 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseTestImplContainer.hpp"
+#include <ctime>
+#include <iostream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+#include <limits>
 
 #include <nix/util/util.hpp>
-#include <ctime>
+#include "BaseTestImplContainer.hpp"
+
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/BriefTestProgressListener.h>
 
 using namespace std;
 using namespace nix;
-
-void BaseTestImplContainer::setUp() {
-    startup_time = time(NULL);
-    file = File::open("test_implcontainer.h5", FileMode::Overwrite);
-
-    section = file.createSection("foo_section", "metadata");
-}
-
-
-void BaseTestImplContainer::tearDown() {
-    file.close();
-}
 
 
 void BaseTestImplContainer::testBool() {
