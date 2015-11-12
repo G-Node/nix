@@ -24,7 +24,7 @@ private:
     time_t startup_time;
 
 public:
-    void setUp(nix::File &file);
+    void init(nix::File &file);
     void testRead();
 
 };

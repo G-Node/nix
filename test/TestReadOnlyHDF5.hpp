@@ -20,7 +20,7 @@ class TestReadOnlyHDF5 : public BaseTestReadOnly {
 public:
     void setUp() {
         nix::File file = nix::File::open("test_read_only.h5", nix::FileMode::Overwrite);
-        BaseTestReadOnly::setUp(file);
+        init(file);
     }
 
     void tearDown() {}

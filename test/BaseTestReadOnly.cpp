@@ -27,7 +27,7 @@ using namespace nix;
 using namespace valid;
 
 
-void BaseTestReadOnly::setUp(nix::File &file) {
+void BaseTestReadOnly::init(nix::File &file) {
     startup_time = time(NULL);
     std::vector<nix::Value> values = { nix::Value(1.0),
                                        nix::Value(2.0),
