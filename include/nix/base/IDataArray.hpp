@@ -79,22 +79,22 @@ public:
     virtual ndsize_t dimensionCount() const = 0;
 
 
-    virtual std::shared_ptr<base::IDimension> getDimension(size_t id) const = 0;
+    virtual std::shared_ptr<base::IDimension> getDimension(ndsize_t id) const = 0;
 
 
-    virtual std::shared_ptr<base::ISetDimension> createSetDimension(size_t id) = 0;
+    virtual std::shared_ptr<base::ISetDimension> createSetDimension(ndsize_t id) = 0;
 
 
-    virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks) = 0;
+    virtual std::shared_ptr<base::IRangeDimension> createRangeDimension(ndsize_t id, const std::vector<double> &ticks) = 0;
 
 
     virtual std::shared_ptr<base::IRangeDimension> createAliasRangeDimension() = 0;
 
 
-    virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval) = 0;
+    virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval) = 0;
 
 
-    virtual bool deleteDimension(size_t id) = 0;
+    virtual bool deleteDimension(ndsize_t id) = 0;
 
 
     //--------------------------------------------------

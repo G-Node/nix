@@ -87,7 +87,7 @@ shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id)
     return da;
 }
 
-shared_ptr<IDataArray>  BaseTagHDF5::getReference(size_t index) const {
+shared_ptr<IDataArray>  BaseTagHDF5::getReference(ndsize_t index) const {
     boost::optional<Group> g = refs_group();
     string id = g ? g->objectName(index) : "";
     return getReference(id);
@@ -186,7 +186,7 @@ shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id) cons
 }
 
 
-shared_ptr<IFeature>  BaseTagHDF5::getFeature(size_t index) const {
+shared_ptr<IFeature>  BaseTagHDF5::getFeature(ndsize_t index) const {
     boost::optional<Group> g = feature_group();
     string id = g->objectName(index);
     return getFeature(id);

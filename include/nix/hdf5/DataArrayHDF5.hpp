@@ -99,22 +99,22 @@ public:
     ndsize_t dimensionCount() const;
 
 
-    std::shared_ptr<base::IDimension> getDimension(size_t id) const;
+    std::shared_ptr<base::IDimension> getDimension(ndsize_t id) const;
 
 
-    std::shared_ptr<base::ISetDimension> createSetDimension(size_t id);
+    std::shared_ptr<base::ISetDimension> createSetDimension(ndsize_t id);
 
 
-    std::shared_ptr<base::IRangeDimension> createRangeDimension(size_t id, const std::vector<double> &ticks);
+    std::shared_ptr<base::IRangeDimension> createRangeDimension(ndsize_t id, const std::vector<double> &ticks);
 
 
     std::shared_ptr<base::IRangeDimension> createAliasRangeDimension();
 
 
-    std::shared_ptr<base::ISampledDimension> createSampledDimension(size_t id, double sampling_interval);
+    std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval);
 
 
-    bool deleteDimension(size_t id);
+    bool deleteDimension(ndsize_t id);
 
     //--------------------------------------------------
     // Other methods and functions
@@ -151,7 +151,7 @@ public:
 private:
 
     // small helper for handling dimension groups
-    Group createDimensionGroup(size_t index);
+    Group createDimensionGroup(ndsize_t index);
 };
 
 
