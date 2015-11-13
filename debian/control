@@ -5,7 +5,7 @@ Uploaders: Jan Grewe <jan.grewe@g-node.org>,
            Christian Kellner <christian@kellner.me>
 Section: science
 Priority: optional
-Standards-Version: 3.9.5
+Standards-Version: 3.9.6
 Build-Depends: debhelper (>= 9),
                libboost-dev (>=1.49),
                libboost-date-time-dev (>=1.49),
@@ -16,15 +16,16 @@ Build-Depends: debhelper (>= 9),
                libhdf5-dev (>=1.8),
                cmake (>=2.8.10),
                libcppunit-dev (>=1.12)
-Vcs-Git: git://github.com/G-Node/pandora.git
-Homepage: https://www.github.com/g-node/pandora
+Vcs-Git: git://github.com/G-Node/nix.git -b debian
+Vcs-Browser: http://github.com/G-Node/nix.git
+Homepage: https://www.github.com/g-node/nix
 
 Package: libnix1
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: IO-libray for nix data files. 
+Description: IO-libray for nix data files -- shared libraries
  Neuroscience information exchange - data model for annotated (neuroscience)
- data. For more information visit https://github.com/G-Node/pandora
+ data. For more information visit https://github.com/G-Node/nix
  .
  This package contains the shared libraries.
 
@@ -32,12 +33,15 @@ Package: libnix-dev
 Section: libdevel
 Priority: optional
 Architecture: any
-Depends: libnix1 (=${binary:Version}), ${misc:Depends}, libhdf5-dev (>=1.8), libboost-date-time-dev (>=1.49)
-Description: IO-libray for nix data files.
+Depends: libnix1 (=${binary:Version}),
+ libhdf5-dev (>=1.8),
+ libboost-date-time-dev (>=1.49),
+ ${misc:Depends},
+Description: IO-libray for nix data files -- development files
  Neuroscience information exchange - data model for annotated (neuroscience)
- data. For more information visit https://github.com/G-Node/pandora
+ data. For more information visit https://github.com/G-Node/nix
  .
- This package contains the development libraries and header files needed 
+ This package contains the development libraries and header files needed
  by programs that want to compile with nix.
 
 Package: libnix1-dbg
@@ -45,10 +49,9 @@ Section: debug
 Priority: extra
 Architecture: any
 Depends: libnix1 (=${binary:Version}), ${misc:Depends}, libhdf5-dev (>=1.8), libboost-date-time-dev (>=1.49)
-Description: IO-libray for nix data files.
+Description: IO-libray for nix data files -- debug files
  Neuroscience information exchange - data model for annotated (neuroscience)
  data. For more information visit https://github.com/G-Node/nix
  .
  This package contains the debugging symbols that are needed
  to debug programs that link against libnix1
-
