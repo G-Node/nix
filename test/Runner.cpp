@@ -7,66 +7,57 @@
 // LICENSE file in the root of the Project.
 
 #include "TestH5.hpp"
-#include "TestEntity.hpp"
-#include "TestEntityWithMetadata.hpp"
-#include "TestEntityWithSources.hpp"
-#include "TestFile.hpp"
-#include "TestBlock.hpp"
-#include "TestSource.hpp"
-#include "TestSection.hpp"
+#include "TestEntityHDF5.hpp"
+#include "TestEntityWithMetadataHDF5.hpp"
+#include "TestEntityWithSourcesHDF5.hpp"
+#include "TestFileHDF5.hpp"
+#include "TestBlockHDF5.hpp"
+#include "TestSourceHDF5.hpp"
+#include "TestSectionHDF5.hpp"
 #include "TestDataSet.hpp"
 #include "TestGroup.hpp"
-#include "TestDataArray.hpp"
-#include "TestBaseTag.hpp"
-#include "TestMultiTag.hpp"
-#include "TestTag.hpp"
+#include "TestDataArrayHDF5.hpp"
+#include "TestBaseTagHDF5.hpp"
+#include "TestMultiTagHDF5.hpp"
+#include "TestTagHDF5.hpp"
 #include "TestValue.hpp"
-#include "TestProperty.hpp"
+#include "TestPropertyHDF5.hpp"
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
-#include "TestImplContainer.hpp"
-#include "TestDimension.hpp"
-#include "TestFeature.hpp"
-#include "TestDataAccess.hpp"
+#include "TestImplContainerHDF5.hpp"
+#include "TestDimensionHDF5.hpp"
+#include "TestFeatureHDF5.hpp"
+#include "TestDataAccessHDF5.hpp"
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
-#include "TestReadOnly.hpp"
-
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/TestResult.h>
-#include <cppunit/TestResultCollector.h>
-#include <cppunit/TestRunner.h>
-#include <cppunit/BriefTestProgressListener.h>
+#include "TestReadOnlyHDF5.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntity);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadata);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSources);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestFile);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestBlock);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestSource);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestSection);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadataHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSourcesHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestBlockHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccess);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArray);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTag);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTag);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestTag);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestProperty);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainer);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimension);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestFeature);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainerHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimensionHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnly);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
