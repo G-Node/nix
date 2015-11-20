@@ -23,21 +23,21 @@ namespace nix {
 namespace hdf5 {
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : BaseTagHDF5(file, block, group)
 {
 }
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<double> &position)
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group, const string &id,
+                 const string &type, const string &name, const std::vector<double> &position)
     : TagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<double> &position, const time_t time)
+TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group, const string &id,
+                 const string &type, const string &name, const std::vector<double> &position, const time_t time)
     : BaseTagHDF5(file, block, group, id, type, name, time)
 {
     this->position(position);

@@ -25,20 +25,20 @@ namespace nix {
 namespace hdf5 {
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : BaseTagHDF5(file, block, group)
 {
 }
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const string &id, const std::string &type, const string &name, const DataArray &positions)
     : MultiTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
     : BaseTagHDF5(file, block, group, id, type, name, time)
 {
@@ -53,7 +53,7 @@ shared_ptr<IDataArray> MultiTagHDF5::positions() const {
     bool error = false;
 
     if (group().hasGroup("positions")) {
-        Group other_group = group().openGroup("positions", false);
+        H5Group other_group = group().openGroup("positions", false);
         da = make_shared<DataArrayHDF5>(file(), block(), other_group);
         if (!block()->hasDataArray(da->id())) 
             error = true;
@@ -94,7 +94,7 @@ shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
     bool error = false;
 
     if (group().hasGroup("extents")) {
-        Group other_group = group().openGroup("extents", false);
+        H5Group other_group = group().openGroup("extents", false);
         da = make_shared<DataArrayHDF5>(file(), block(), other_group);
         if (!block()->hasDataArray(da->id())) 
             error = true;

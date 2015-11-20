@@ -32,19 +32,19 @@ public:
     /**
     * Standard constructor for existing Tag
     */
-    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
+    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
 
     /**
     * Standard constructor for new Tag
     */
-    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
-            const std::string &type, const std::string &name);
+    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group, const std::string &id,
+                const std::string &type, const std::string &name);
 
     /**
     * Standard constructor for new Tag that preserves the creation time.
     */
-    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group, const std::string &id,
-            const std::string &type, const std::string &name, const time_t time);
+    BaseTagHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group, const std::string &id,
+                const std::string &type, const std::string &name, const time_t time);
 
     //--------------------------------------------------
     // Methods concerning references.

@@ -25,7 +25,7 @@ namespace nix {
 namespace hdf5 {
 
 
-BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
         : EntityWithSourcesHDF5(file, block, group)
 {
     feature_group = this->group().openOptGroup("features");
@@ -33,14 +33,14 @@ BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock>
 }
 
 
-BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
         const string &id, const std::string &type, const string &name)
         : BaseTagHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+BaseTagHDF5::BaseTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
         const std::string &id, const std::string &type, const string &name, time_t time)
         : EntityWithSourcesHDF5(file, block, group, id, type, name, time)
 {
@@ -64,14 +64,14 @@ bool BaseTagHDF5::hasReference(const std::string &name_or_id) const {
 
 
 ndsize_t BaseTagHDF5::referenceCount() const {
-    boost::optional<Group> g = refs_group();
+    boost::optional<H5Group> g = refs_group();
     return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id) const {
     shared_ptr<IDataArray> da;
-    boost::optional<Group> g = refs_group();
+    boost::optional<H5Group> g = refs_group();
 
     std::string id = name_or_id;
 
@@ -80,7 +80,7 @@ shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id)
     }
 
     if (g && hasReference(id)) {
-        Group group = g->openGroup(id);
+        H5Group group = g->openGroup(id);
         da = make_shared<DataArrayHDF5>(file(), block(), group);
     }
 
@@ -88,13 +88,13 @@ shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_or_id)
 }
 
 shared_ptr<IDataArray>  BaseTagHDF5::getReference(ndsize_t index) const {
-    boost::optional<Group> g = refs_group();
+    boost::optional<H5Group> g = refs_group();
     string id = g ? g->objectName(index) : "";
     return getReference(id);
 }
 
 void BaseTagHDF5::addReference(const std::string &name_or_id) {
-    boost::optional<Group> g = refs_group(true);
+    boost::optional<H5Group> g = refs_group(true);
 
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("BaseTagHDF5::addReference: DataArray not found in block!");
@@ -106,7 +106,7 @@ void BaseTagHDF5::addReference(const std::string &name_or_id) {
 
 
 bool BaseTagHDF5::removeReference(const std::string &name_or_id) {
-    boost::optional<Group> g = refs_group();
+    boost::optional<H5Group> g = refs_group();
     bool removed = false;
 
     if (g && hasReference(name_or_id)) {
@@ -167,17 +167,17 @@ bool BaseTagHDF5::hasFeature(const string &name_or_id) const {
 
 
 ndsize_t BaseTagHDF5::featureCount() const {
-    boost::optional<Group> g = feature_group();
+    boost::optional<H5Group> g = feature_group();
     return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id) const {
     shared_ptr<FeatureHDF5> feature;
-    boost::optional<Group> g = feature_group();
+    boost::optional<H5Group> g = feature_group();
 
     if (g) {
-        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             feature = make_shared<FeatureHDF5>(file(), block(), group.get());
     }
@@ -187,7 +187,7 @@ shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id) cons
 
 
 shared_ptr<IFeature>  BaseTagHDF5::getFeature(ndsize_t index) const {
-    boost::optional<Group> g = feature_group();
+    boost::optional<H5Group> g = feature_group();
     string id = g->objectName(index);
     return getFeature(id);
 }
@@ -198,16 +198,16 @@ shared_ptr<IFeature>  BaseTagHDF5::createFeature(const std::string &name_or_id, 
         throw std::runtime_error("DataArray not found in Block!");
     }
     string rep_id = util::createId();
-    boost::optional<Group> g = feature_group(true);
+    boost::optional<H5Group> g = feature_group(true);
 
-    Group group = g->openGroup(rep_id, true);
+    H5Group group = g->openGroup(rep_id, true);
     DataArray data = block()->getDataArray(name_or_id);
     return make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 
 
 bool BaseTagHDF5::deleteFeature(const string &name_or_id) {
-    boost::optional<Group> g = feature_group();
+    boost::optional<H5Group> g = feature_group();
     bool deleted = false;
 
     if (g && hasFeature(name_or_id)) {

@@ -11,7 +11,7 @@
 #include <nix/hydra/multiArray.hpp>
 #include <nix.hpp>
 
-#include <nix/hdf5/Group.hpp>
+#include "nix/hdf5/H5Group.hpp"
 
 #include <iostream>
 #include <sstream>

@@ -49,7 +49,7 @@ void TestDataSet::setUp() {
     }
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
-    h5group = nix::hdf5::Group(g);
+    h5group = nix::hdf5::H5Group(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -375,7 +375,7 @@ void TestDataSet::testSelection() {
 /* helper functions vor testValueIO */
 
 template<typename T>
-void test_val_generic(nix::hdf5::Group &h5group, const T &test_value, std::string name)
+void test_val_generic(nix::hdf5::H5Group &h5group, const T &test_value, std::string name)
 {
     namespace h5x = nix::hdf5::h5x;
 

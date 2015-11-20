@@ -19,19 +19,19 @@ namespace nix {
 namespace hdf5 {
 
 
-DataArrayHDF5::DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group)
+DataArrayHDF5::DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group)
         : EntityWithSourcesHDF5(file, block, group) {
     dimension_group = this->group().openOptGroup("dimensions");
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                              const string &id, const string &type, const string &name)
         : DataArrayHDF5(file, block, group, id, type, name, util::getTime()) {
 }
 
 
-DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                              const string &id, const string &type, const string &name, time_t time)
         : EntityWithSourcesHDF5(file, block, group, id, type, name, time) {
     dimension_group = this->group().openOptGroup("dimensions");
@@ -157,7 +157,7 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 
 
 ndsize_t DataArrayHDF5::dimensionCount() const {
-    boost::optional<Group> g = dimension_group();
+    boost::optional<H5Group> g = dimension_group();
 	ndsize_t count = 0;
 	if (g) {
 		count = g->objectCount();
@@ -168,12 +168,12 @@ ndsize_t DataArrayHDF5::dimensionCount() const {
 
 shared_ptr<IDimension> DataArrayHDF5::getDimension(ndsize_t index) const {
     shared_ptr<IDimension> dim;
-    boost::optional<Group> g = dimension_group();
+    boost::optional<H5Group> g = dimension_group();
 
     if (g) {
         string str_id = util::numToStr(index);
         if (g->hasGroup(str_id)) {
-            Group group = g->openGroup(str_id, false);
+            H5Group group = g->openGroup(str_id, false);
             dim = openDimensionHDF5(group, index);
         }
     }
@@ -183,31 +183,31 @@ shared_ptr<IDimension> DataArrayHDF5::getDimension(ndsize_t index) const {
 
 
 std::shared_ptr<base::ISetDimension> DataArrayHDF5::createSetDimension(ndsize_t index) {
-    Group g = createDimensionGroup(index);
+    H5Group g = createDimensionGroup(index);
     return make_shared<SetDimensionHDF5>(g, index);
 }
 
 
 std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createRangeDimension(ndsize_t index, const std::vector<double> &ticks) {
-    Group g = createDimensionGroup(index);
+    H5Group g = createDimensionGroup(index);
     return make_shared<RangeDimensionHDF5>(g, index, ticks);
 }
 
 
 std::shared_ptr<base::IRangeDimension> DataArrayHDF5::createAliasRangeDimension() {
-    Group g = createDimensionGroup(1);
+    H5Group g = createDimensionGroup(1);
     return make_shared<RangeDimensionHDF5>(g, 1, *this);
 }
 
 
 std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(ndsize_t index, double sampling_interval) {
-    Group g = createDimensionGroup(index);
+    H5Group g = createDimensionGroup(index);
     return make_shared<SampledDimensionHDF5>(g, index, sampling_interval);
 }
 
 
-Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
-    boost::optional<Group> g = dimension_group(true);
+H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
+    boost::optional<H5Group> g = dimension_group(true);
 
     ndsize_t dim_max = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
@@ -226,7 +226,7 @@ bool DataArrayHDF5::deleteDimension(ndsize_t index) {
     bool deleted = false;
     ndsize_t dim_count = dimensionCount();
     string str_id = util::numToStr(index);
-    boost::optional<Group> g = dimension_group();
+    boost::optional<H5Group> g = dimension_group();
 
     if (g) {
         if (g->hasGroup(str_id)) {

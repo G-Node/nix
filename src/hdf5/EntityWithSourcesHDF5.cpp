@@ -20,21 +20,21 @@ using namespace nix::base;
 namespace nix {
 namespace hdf5 {
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : EntityWithMetadataHDF5(file, group), entity_block(block)
 {
     sources_refs = this->group().openOptGroup("sources");
 }
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
+EntityWithSourcesHDF5::EntityWithSourcesHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group, const string &id,
                                              const string &type, const string &name)
     : EntityWithSourcesHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
+EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group, const string &id,
                                               const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block)
 {
@@ -43,7 +43,7 @@ EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const shared_ptr<IFile> &file, con
 
 
 ndsize_t EntityWithSourcesHDF5::sourceCount() const {
-    boost::optional<Group> g = sources_refs();
+    boost::optional<H5Group> g = sources_refs();
     return g ? g->objectCount() : size_t(0);
 }
 
@@ -55,7 +55,7 @@ bool EntityWithSourcesHDF5::hasSource(const string &id) const {
 
 shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &name_or_id) const {
     shared_ptr<SourceHDF5> source;
-    boost::optional<Group> g = sources_refs();
+    boost::optional<H5Group> g = sources_refs();
 
     std::string id = name_or_id;
 
@@ -68,7 +68,7 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &name_or_id) c
     }
 
     if (g && hasSource(id)) {
-        Group group = g->openGroup(id);
+        H5Group group = g->openGroup(id);
         source = make_shared<SourceHDF5>(file(), group);
     }
 
@@ -76,7 +76,7 @@ shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const string &name_or_id) c
 }
 
 shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) const {
-    boost::optional<Group> g = sources_refs();
+    boost::optional<H5Group> g = sources_refs();
     string id = g ? g->objectName(index) : "";
     return getSource(id);
 }
@@ -119,7 +119,7 @@ void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
 void EntityWithSourcesHDF5::addSource(const string &id) {
     if (id.empty())
         throw EmptyString("addSource");
-    boost::optional<Group> g = sources_refs(true);
+    boost::optional<H5Group> g = sources_refs(true);
 
     Block tmp(entity_block);
     auto found = tmp.findSources(util::IdFilter<Source>(id));
@@ -133,7 +133,7 @@ void EntityWithSourcesHDF5::addSource(const string &id) {
 
 
 bool EntityWithSourcesHDF5::removeSource(const string &id) {
-    boost::optional<Group> g = sources_refs();
+    boost::optional<H5Group> g = sources_refs();
     bool removed = false;
 
     if (g) {
