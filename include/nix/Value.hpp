@@ -36,14 +36,8 @@ private:
         int32_t     v_int32;
         uint64_t    v_uint64;
         int64_t     v_int64;
-#ifndef _WIN32
-        std::string v_string;
-#endif
+        char *      v_string;
     };
-
-#ifdef _WIN32
-    std::string v_string;
-#endif
 
 public:
     double uncertainty = 0.0;
@@ -152,7 +146,7 @@ private:
 template<>
 inline const char * Value::get<const char *>() const {
     check_argument_type(DataType::String);
-    return v_string.c_str();
+    return v_string;
 }
 
 

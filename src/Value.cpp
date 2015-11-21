@@ -11,15 +11,15 @@
 #include <nix/Value.hpp>
 
 #include <cassert>
+#include <cstdlib>
 
 namespace nix {
 
 void Value::maybe_deallocte_string() {
-#ifndef _WIN32
     if (dtype == DataType::String) {
-        v_string.~basic_string();
+        std::free(v_string);
+        dtype = DataType::Nothing;
     }
-#endif
 }
 
 /**************/
@@ -76,16 +76,20 @@ void Value::set(double value) {
 
 void Value::set(const std::string &value) {
 
-#ifndef _WIN32
-    //If the active member is not a string
-    //we have to inialize the string object
-    if (dtype != DataType::String) {
-        new (&v_string) std::string();
-    }
-#endif
+    size_t len = value.length();
+    size_t len_plus_null = len + 1;
+    void *data;
 
-    dtype = DataType::String;
-    v_string = value;
+    if (dtype != DataType::String) {
+        dtype = DataType::String;
+        data = std::malloc(len_plus_null);
+    } else {
+        data = std::realloc(v_string, len_plus_null);
+    }
+
+    std::memcpy(data, value.c_str(), len);
+    v_string = static_cast<char *>(data);
+    v_string[len] = '\0';
 }
 
 /**************/
@@ -192,7 +196,7 @@ void Value::assign_variant_from(const Value &other) {
     case DataType::Int64:   set(other.v_int64);  break;
     case DataType::UInt64:  set(other.v_uint64); break;
     case DataType::Double:  set(other.v_double); break;
-    case DataType::String:  set(other.v_string); break;
+    case DataType::String:  set(std::string(other.v_string)); break;
     case DataType::Nothing: set(none);           break;
 
 #ifndef CHECK_SUPPORTED_VALUES
