@@ -12,7 +12,7 @@
 #include <nix/base/IFile.hpp>
 
 #include <nix/base/IEntity.hpp>
-#include "H5Group.hpp"
+#include <nix/hdf5/H5Group.hpp>
 
 #include <string>
 #include <memory>
