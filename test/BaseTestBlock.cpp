@@ -280,6 +280,48 @@ void BaseTestBlock::testMultiTagAccess() {
 }
 
 
+
+void BaseTestBlock::testGroupAccess() {
+    vector<string> names = { "group_a", "group_b", "group_c", "group_d", "group_e" };
+    Group g;
+    CPPUNIT_ASSERT_THROW(block.hasGroup(g), UninitializedEntity);
+    CPPUNIT_ASSERT(block.groupCount() == 0);
+    CPPUNIT_ASSERT(block.groups().size() == 0);
+    CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
+    CPPUNIT_ASSERT(!block.hasGroup("invalid_id"));
+
+    vector<string> ids;
+    for (const auto &name : names) {
+        Group gr = block.createGroup(name, "group");
+        CPPUNIT_ASSERT(gr.name() == name);
+        CPPUNIT_ASSERT(block.hasGroup(name));
+        CPPUNIT_ASSERT(block.hasGroup(gr));
+
+        ids.push_back(gr.id());
+    }
+    CPPUNIT_ASSERT_THROW(block.createGroup(names[0], "group"),
+                         DuplicateName);
+
+    CPPUNIT_ASSERT(block.groupCount() == names.size());
+    CPPUNIT_ASSERT(block.groups().size() == names.size());
+
+    for (const auto &id : ids) {
+        Group gr = block.getGroup(id);
+        CPPUNIT_ASSERT(block.hasGroup(id) == true);
+        CPPUNIT_ASSERT(gr.id() == id);
+        block.deleteGroup(id);
+    }
+
+    g = block.createGroup("test", "test");
+    CPPUNIT_ASSERT(block.groupCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteGroup(g));
+
+    CPPUNIT_ASSERT(block.groupCount() == 0);
+    CPPUNIT_ASSERT(block.groups().size() == 0);
+    CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
+}
+
+
 void BaseTestBlock::testOperators() {
     CPPUNIT_ASSERT(block_null == false);
     CPPUNIT_ASSERT(block_null == none);
