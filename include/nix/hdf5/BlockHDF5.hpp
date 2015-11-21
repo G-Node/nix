@@ -27,7 +27,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    optGroup data_array_group, tag_group, multi_tag_group, source_group;
+    optGroup data_array_group, tag_group, multi_tag_group, source_group, groups_group;
 
 public:
 
@@ -148,6 +148,27 @@ public:
 
 
     bool deleteMultiTag(const std::string &name_or_id);
+
+    //--------------------------------------------------
+    // Methods concerning groups.
+    //--------------------------------------------------
+
+    bool hasGroup(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const;
+
+
+    ndsize_t groupCount() const;
+
+
+    std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type);
+
+
+    bool deleteGroup(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions

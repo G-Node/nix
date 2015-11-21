@@ -15,6 +15,7 @@
 #include <nix/DataArray.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
+#include <nix/Group.hpp>
 #include <nix/Platform.hpp>
 
 #include <string>
@@ -611,6 +612,110 @@ public:
     * @return True if the tag was removed, false otherwise.
     */
     bool deleteMultiTag(const MultiTag &multi_tag);
+
+    //--------------------------------------------------
+    // Methods concerning groups
+    //--------------------------------------------------
+    /**
+    * @brief Checks if a specific group exists in the block.
+    *
+    * @param name_or_id        Name or id of a group.
+    *
+    * @return True if the group exists, false otherwise.
+    */
+    bool hasGroup(const std::string &name_or_id) const {
+        return backend()->hasGroup(name_or_id);
+    }
+
+    /**
+    * @brief Checks if a specific group exists in the block.
+    *
+    * @param group          The group to check.
+    *
+    * @return True if the group exists, false otherwise.
+    */
+    bool hasGroup(const Group &group) const;
+
+    /**
+     * @brief Retrieves a specific group from the block by its id.
+     *
+     * @param name_or_id        Name or id of the group.
+     *
+     * @return The group with the specified id. If this tag doesn't exist
+     *         an exception will be thrown.
+     */
+    Group getGroup(const std::string &name_or_id) const {
+        return backend()->getGroup(name_or_id);
+    }
+
+    /**
+     * @brief Retrieves a specific group by index.
+     *
+     * @param index     The index of the group.
+     *
+     * @return The group at the specified index.
+     */
+    Group getGroup(ndsize_t index) const {
+        return backend()->getGroup(index);
+    }
+
+    /**
+     * @brief Get groups within this block.
+     *
+     * The parameter filter can be used to filter groups by various
+     * criteria. By default a filter is used that accepts all groups.
+     *
+     * @param filter    A filter function.
+     *
+     * @return A vector that contains all filtered groups.
+     */
+    std::vector<Group> groups(const util::AcceptAll<Group>::type &filter
+    = util::AcceptAll<Group>()) const;
+
+    /**
+     * @brief Returns the number of groups associated with this block.
+     *
+     * @return The number of groups.
+     */
+    ndsize_t groupCount() const {
+        return backend()->groupCount();
+    }
+
+    /**
+     * @brief Create a new group associated with this block.
+     *
+     * @param name       The name of the group to create.
+     * @param type       The type of the tag.
+     *
+     * @return The newly created group.
+     */
+    Group createGroup(const std::string &name, const std::string &type);
+
+    /**
+     * @brief Deletes a Group from the block.
+     *
+     * Deletes a group and all its features from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param name_or_id        Name or id of the group to remove.
+     *
+     * @return True if the group was removed, false otherwise.
+     */
+    bool deleteGroup(const std::string &name_or_id) {
+        return backend()->deleteGroup(name_or_id);
+    }
+
+    /**
+    * @brief Deletes a group from the block.
+    *
+    * Deletes a group and all its features from the block and the file.
+    * The deletion can't be undone.
+    *
+    * @param Group  The group to remove.
+    *
+    * @return True if the group was removed, false otherwise.
+    */
+    bool deleteGroup(const Group &multi_tag);
 
     //------------------------------------------------------
     // Operators and other functions

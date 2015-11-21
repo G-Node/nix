@@ -14,6 +14,7 @@
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/MultiTagHDF5.hpp>
+#include <nix/hdf5/GroupHDF5.hpp>
 
 #include <boost/range/irange.hpp>
 
@@ -30,6 +31,7 @@ BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &gr
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
     source_group = this->group().openOptGroup("sources");
+    groups_group = this->group().openOptGroup("groups");
 }
 
 BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, const string &type, const string &name)
@@ -43,6 +45,7 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
     source_group = this->group().openOptGroup("sources");
+    groups_group = this->group().openOptGroup("groups");
 }
 
 
@@ -296,6 +299,60 @@ bool BlockHDF5::deleteMultiTag(const std::string &name_or_id) {
         deleted = g->removeAllLinks(getMultiTag(name_or_id)->name());
     }
 
+    return deleted;
+}
+
+//--------------------------------------------------
+// Methods related to Groups
+//--------------------------------------------------
+
+shared_ptr<IGroup> BlockHDF5::createGroup(const std::string &name, const std::string &type) {
+    string id = util::createId();
+    boost::optional<H5Group> g = groups_group(true);
+
+    H5Group group = g->openGroup(name);
+    return make_shared<GroupHDF5>(file(), block(), group, id, type, name);
+}
+
+
+    bool BlockHDF5::hasGroup(const string &name_or_id) const {
+    return getGroup(name_or_id) != nullptr;
+}
+
+
+shared_ptr<IGroup> BlockHDF5::getGroup(const string &name_or_id) const {
+    shared_ptr<GroupHDF5> group;
+    boost::optional<H5Group> g = groups_group();
+
+    if (g) {
+        boost::optional<H5Group> h5g = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        if (h5g)
+            group = make_shared<GroupHDF5>(file(), block(), *h5g);
+    }
+    return group;
+}
+
+
+shared_ptr<IGroup> BlockHDF5::getGroup(ndsize_t index) const {
+    boost::optional<H5Group> g = groups_group();
+    string name = g ? g->objectName(index) : "";
+    return getGroup(name);
+}
+
+
+ndsize_t BlockHDF5::groupCount() const {
+    boost::optional<H5Group> g = groups_group();
+    return g ? g->objectCount() : size_t(0);
+}
+
+
+bool BlockHDF5::deleteGroup(const std::string &name_or_id) {
+    boost::optional<H5Group> g = groups_group();
+    bool deleted = false;
+
+    if (hasGroup(name_or_id) && g) {
+        deleted = g->removeAllLinks(getGroup(name_or_id)->name());
+    }
     return deleted;
 }
 
