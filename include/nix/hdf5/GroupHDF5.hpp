@@ -44,10 +44,29 @@ public:
               const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 
-    bool hasDataArray(const std::string &name_or_id) const;
+    //--------------------------------------------------
+    // Methods concerning data arrays.
+    //--------------------------------------------------
+
+    virtual bool hasDataArray(const std::string &name_or_id) const;
 
 
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
+    virtual ndsize_t dataArrayCount() const;
+
+
+    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
+
+
+    virtual std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
+
+
+    virtual void addDataArray(const std::string &name_or_id);
+
+
+    virtual bool removeDataArray(const std::string &name_or_id);
+
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+    virtual void dataArrays(const std::vector<DataArray> &data_arrays);
 
 };
 }

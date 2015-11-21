@@ -30,12 +30,35 @@ class NIXAPI IGroup : virtual public IEntityWithSources {
 
 public:
 
-virtual bool hasDataArray(const std::string &name_or_id) const = 0;
-/**
-* @brief Destructor
-*/
-virtual ~IGroup() {}
+    //--------------------------------------------------
+    // Methods concerning data arrays.
+    //--------------------------------------------------
 
+    virtual bool hasDataArray(const std::string &id) const = 0;
+
+
+    virtual ndsize_t dataArrayCount() const = 0;
+
+
+    virtual std::shared_ptr<IDataArray> getDataArray(const std::string &id) const = 0;
+
+
+    virtual std::shared_ptr<IDataArray> getDataArray(ndsize_t index) const = 0;
+
+
+    virtual void addDataArray(const std::string &id) = 0;
+
+
+    virtual bool removeDataArray(const std::string &id) = 0;
+
+
+    virtual void dataArrays(const std::vector<DataArray> &references) = 0;
+
+
+    /**
+    * @brief Destructor
+    */
+    virtual ~IGroup() {}
 };
 
 } // namespace base
