@@ -31,10 +31,11 @@ protected:
     nix::File file;
     nix::Group g, g2;
     nix::Block block;
-    nix::DataArray array1, array2, array3;
+    nix::DataArray positions_array;
     time_t startup_time;
     std::vector<nix::DataArray> arrays;
     std::vector<nix::Tag> tags;
+    std::vector<nix::MultiTag> mtags;
 
 public:
     void testId();
@@ -45,7 +46,7 @@ public:
 
     void testDataArrays();
     void testTags();
-    // void testMultiTags();
+    void testMultiTags();
 };
 
 

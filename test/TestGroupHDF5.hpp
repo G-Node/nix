@@ -23,6 +23,7 @@ class TestGroupHDF5 : public BaseTestGroup {
 
     CPPUNIT_TEST(testDataArrays);
     CPPUNIT_TEST(testTags);
+    CPPUNIT_TEST(testMultiTags);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -33,6 +34,7 @@ public:
         block = file.createBlock("test_block", "group_test");
         g = block.createGroup("group one", "group");
         g2 = block.createGroup("group other", "group");
+        positions_array = block.createDataArray("positions", "nix.events", nix::DataType::Double, nix::NDSize{0.0});
         std::vector<std::string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                                  "data_array_d", "data_array_e" };
         arrays.clear();
@@ -40,11 +42,19 @@ public:
             arrays.push_back(block.createDataArray(name, "reference",
                                                  nix::DataType::Double, nix::NDSize({ 0 })));
         }
+        std::vector<std::string> tag_names = { "tag_a", "tag_b", "tag_c",
+                                                 "tag_d", "tag_e" };
         tags.clear();
-        for (const auto & name : array_names) {
+        for (const auto & name : tag_names) {
             tags.push_back(block.createTag(name, "tag", std::vector<double>{ 0.0 }));
         }
 
+        std::vector<std::string> mtag_names = { "mtag_a", "mtag_b", "mtag_c",
+                                               "mtag_d", "mtag_e" };
+        mtags.clear();
+        for (const auto & name : mtag_names) {
+            mtags.push_back(block.createMultiTag(name, "mtag", positions_array));
+        }
     }
 
     void tearDown() {

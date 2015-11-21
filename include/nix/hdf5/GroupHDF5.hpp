@@ -89,9 +89,32 @@ public:
 
     virtual bool removeTag(const std::string &name_or_id);
 
-    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+
     virtual void tags(const std::vector<Tag> &tags);
 
+    //--------------------------------------------------
+    // Methods concerning multi tags.
+    //--------------------------------------------------
+
+    virtual bool hasMultiTag(const std::string &name_or_id) const;
+
+
+    virtual ndsize_t multiTagCount() const;
+
+
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
+
+
+    virtual std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
+
+
+    virtual void addMultiTag(const std::string &name_or_id);
+
+
+    virtual bool removeMultiTag(const std::string &name_or_id);
+
+
+    virtual void multiTags(const std::vector<MultiTag> &multi_tags);
 };
 }
 }

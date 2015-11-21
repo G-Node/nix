@@ -53,7 +53,7 @@ std::vector<DataArray> Group::dataArrays(const util::Filter<DataArray>::type &fi
 
 bool Group::hasTag(const Tag &tag) const {
     util::checkEntityInput(tag);
-    return backend()->hasDataArray(tag.id());
+    return backend()->hasTag(tag.id());
 }
 
 
@@ -88,6 +88,42 @@ std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
     return getEntities<Tag>(f, tagCount(), filter);
 }
 
+bool Group::hasMultiTag(const MultiTag &multi_tag) const {
+    util::checkEntityInput(multi_tag);
+    return backend()->hasDataArray(multi_tag.id());
+}
+
+
+MultiTag Group::getMultiTag(size_t index) const {
+    if(index >= backend()->multiTagCount()) {
+        throw OutOfBounds("No multi tag at given index", index);
+    }
+    return backend()->getMultiTag(index);
+}
+
+
+void Group::addMultiTag(const MultiTag &multi_tag) {
+    util::checkEntityInput(multi_tag);
+    backend()->addMultiTag(multi_tag.id());
+}
+
+
+void Group::addMultiTag(const std::string &id) {
+    util::checkNameOrId(id);
+    backend()->addMultiTag(id);
+}
+
+
+bool Group::removeMultiTag(const MultiTag &multi_tag) {
+    util::checkEntityInput(multi_tag);
+    return backend()->removeMultiTag(multi_tag.id());
+}
+
+
+std::vector<MultiTag> Group::multiTags(const util::Filter<MultiTag>::type &filter) const {
+    auto f = [this] (size_t i) { return getMultiTag(i); };
+    return getEntities<MultiTag>(f, multiTagCount(), filter);
+}
 
 
 std::ostream& nix::operator<<(std::ostream &out, const Group &ent) {

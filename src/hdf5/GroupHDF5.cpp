@@ -53,12 +53,12 @@ bool GroupHDF5::hasDataArray(const string &name_or_id) const {
     if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
         id = block()->getDataArray(name_or_id)->id();
     }
-    return data_array_group() ? data_array_group()->hasGroup(id) : false;
+    return data_array_group(false) ? data_array_group(false)->hasGroup(id) : false;
 }
 
 
 ndsize_t GroupHDF5::dataArrayCount() const {
-    boost::optional<H5Group> g = data_array_group();
+    boost::optional<H5Group> g = data_array_group(false);
     return g ? g->objectCount() : size_t(0);
 }
 
@@ -76,7 +76,7 @@ void GroupHDF5::addDataArray(const std::string &name_or_id) {
 
 std::shared_ptr<base::IDataArray> GroupHDF5::getDataArray(const string &name_or_id) const {
     shared_ptr<IDataArray> da;
-    boost::optional<H5Group> g = data_array_group();
+    boost::optional<H5Group> g = data_array_group(false);
     std::string id = name_or_id;
     if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
         id = block()->getDataArray(name_or_id)->id();
@@ -91,14 +91,14 @@ std::shared_ptr<base::IDataArray> GroupHDF5::getDataArray(const string &name_or_
 
 
 shared_ptr<IDataArray>  GroupHDF5::getDataArray(ndsize_t index) const {
-    boost::optional<H5Group> g = data_array_group();
+    boost::optional<H5Group> g = data_array_group(false);
     string id = g ? g->objectName(index) : "";
     return getDataArray(id);
 }
 
 
 bool GroupHDF5::removeDataArray(const std::string &name_or_id) {
-    boost::optional<H5Group> g = data_array_group();
+    boost::optional<H5Group> g = data_array_group(false);
     bool removed = false;
 
     if (g && hasDataArray(name_or_id)) {
@@ -148,17 +148,18 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
     }
 }
 
+
 bool GroupHDF5::hasTag(const string &name_or_id) const {
     std::string id = name_or_id;
     if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
         id = block()->getTag(name_or_id)->id();
     }
-    return tag_group() ? tag_group()->hasGroup(id) : false;
+    return tag_group(false) ? tag_group(false)->hasGroup(id) : false;
 }
 
 
 ndsize_t GroupHDF5::tagCount() const {
-    boost::optional<H5Group> g = tag_group();
+    boost::optional<H5Group> g = tag_group(false);
     return g ? g->objectCount() : size_t(0);
 }
 
@@ -176,7 +177,7 @@ void GroupHDF5::addTag(const std::string &name_or_id) {
 
 std::shared_ptr<base::ITag> GroupHDF5::getTag(const string &name_or_id) const {
     shared_ptr<ITag> da;
-    boost::optional<H5Group> g = tag_group();
+    boost::optional<H5Group> g = tag_group(false);
     std::string id = name_or_id;
     if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
         id = block()->getTag(name_or_id)->id();
@@ -191,14 +192,14 @@ std::shared_ptr<base::ITag> GroupHDF5::getTag(const string &name_or_id) const {
 
 
 shared_ptr<ITag>  GroupHDF5::getTag(ndsize_t index) const {
-    boost::optional<H5Group> g = tag_group();
+    boost::optional<H5Group> g = tag_group(false);
     string id = g ? g->objectName(index) : "";
     return getTag(id);
 }
 
 
 bool GroupHDF5::removeTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = tag_group();
+    boost::optional<H5Group> g = tag_group(false);
     bool removed = false;
 
     if (g && hasTag(name_or_id)) {
@@ -245,6 +246,106 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
     for (auto name : names_rem) {
         if (!blck->hasTag(name))
             removeTag(blck->getTag(name)->id());
+    }
+}
+
+
+bool GroupHDF5::hasMultiTag(const string &name_or_id) const {
+    std::string id = name_or_id;
+    if (!util::looksLikeUUID(name_or_id) && block()->hasMultiTag(name_or_id)) {
+        id = block()->getMultiTag(name_or_id)->id();
+    }
+    return multi_tag_group(false) ? multi_tag_group(false)->hasGroup(id) : false;
+}
+
+
+ndsize_t GroupHDF5::multiTagCount() const {
+    boost::optional<H5Group> g = multi_tag_group(false);
+    return g ? g->objectCount() : size_t(0);
+}
+
+
+void GroupHDF5::addMultiTag(const std::string &name_or_id) {
+    boost::optional<H5Group> g = multi_tag_group(true);
+
+    if (!block()->hasMultiTag(name_or_id))
+        throw std::runtime_error("GroupHDF5::addMultiTag: MultiTag not found in block!");
+
+    auto target = dynamic_pointer_cast<MultiTagHDF5>(block()->getMultiTag(name_or_id));
+    g->createLink(target->group(), target->id());
+}
+
+
+std::shared_ptr<base::IMultiTag> GroupHDF5::getMultiTag(const string &name_or_id) const {
+    shared_ptr<IMultiTag> da;
+    boost::optional<H5Group> g = multi_tag_group(false);
+    std::string id = name_or_id;
+    if (!util::looksLikeUUID(name_or_id) && block()->hasMultiTag(name_or_id)) {
+        id = block()->getMultiTag(name_or_id)->id();
+    }
+
+    if (g && hasMultiTag(id)) {
+        H5Group h5g = g->openGroup(id);
+        da = make_shared<MultiTagHDF5>(file(), block(), h5g);
+    }
+    return da;
+}
+
+
+shared_ptr<IMultiTag>  GroupHDF5::getMultiTag(ndsize_t index) const {
+    boost::optional<H5Group> g = multi_tag_group(false);
+    string id = g ? g->objectName(index) : "";
+    return getMultiTag(id);
+}
+
+
+bool GroupHDF5::removeMultiTag(const std::string &name_or_id) {
+    boost::optional<H5Group> g = multi_tag_group(false);
+    bool removed = false;
+
+    if (g && hasMultiTag(name_or_id)) {
+        shared_ptr<IMultiTag> mtag = getMultiTag(name_or_id);
+
+        g->removeGroup(mtag->id());
+        removed = true;
+    }
+    return removed;
+}
+
+
+void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
+    // extract vectors of names from vectors of new & old references
+    std::vector<std::string> names_new(multi_tags.size());
+    transform(multi_tags.begin(), multi_tags.end(), names_new.begin(), util::toName<MultiTag>);
+    //FIXME: issue 473
+    std::vector<MultiTag> refs_old(static_cast<size_t>(multiTagCount()));
+    for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getMultiTag(i);
+    std::vector<std::string> names_old(refs_old.size());
+    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<MultiTag>);
+
+    // sort them
+    std::sort(names_new.begin(), names_new.end());
+    std::sort(names_new.begin(), names_new.end());
+
+    // get names only in names_new (add), names only in names_old (remove) & ignore rest
+    std::vector<std::string> names_add;
+    std::vector<std::string> names_rem;
+    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
+                        std::inserter(names_add, names_add.begin()));
+    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
+                        std::inserter(names_rem, names_rem.begin()));
+
+    // check if all new tags exist & add them
+    auto blck = dynamic_pointer_cast<BlockHDF5>(block());
+    for (auto name : names_add) {
+        if (!blck->hasMultiTag(name))
+            throw std::runtime_error("One or more MultiTag do not exist in this block!");
+        addMultiTag(blck->getMultiTag(name)->id());
+    }
+    // remove references
+    for (auto name : names_rem) {
+        if (!blck->hasMultiTag(name))
+            removeMultiTag(blck->getMultiTag(name)->id());
     }
 }
 

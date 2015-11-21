@@ -17,6 +17,7 @@
 #include <nix/base/IMultiTag.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/Tag.hpp>
+#include <nix/MultiTag.hpp>
 
 
 namespace nix {
@@ -79,6 +80,29 @@ public:
 
     virtual void tags(const std::vector<Tag> &tags) = 0;
 
+    //--------------------------------------------------
+    // Methods concerning multi tags.
+    //--------------------------------------------------
+
+    virtual bool hasMultiTag(const std::string &id) const = 0;
+
+
+    virtual ndsize_t multiTagCount() const = 0;
+
+
+    virtual std::shared_ptr<IMultiTag> getMultiTag(const std::string &id) const = 0;
+
+
+    virtual std::shared_ptr<IMultiTag> getMultiTag(ndsize_t index) const = 0;
+
+
+    virtual void addMultiTag(const std::string &id) = 0;
+
+
+    virtual bool removeMultiTag(const std::string &id) = 0;
+
+
+    virtual void multiTags(const std::vector<MultiTag> &tags) = 0;
 
     /**
     * @brief Destructor

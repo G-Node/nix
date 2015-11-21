@@ -155,3 +155,48 @@ void BaseTestGroup::testTags() {
     }
     block.deleteGroup(g.id());
 }
+
+
+void BaseTestGroup::testMultiTags() {
+    MultiTag tag_1 = block.createMultiTag("TestTag 1","tag", positions_array);
+    MultiTag tag_2 = block.createMultiTag("TestTag 2","tag", positions_array);
+
+    Group g = block.createGroup("test group", "group");
+    CPPUNIT_ASSERT_THROW(g.getMultiTag(42), nix::OutOfBounds);
+    CPPUNIT_ASSERT(g.multiTagCount() == 0);
+
+    g.multiTags(mtags);
+    CPPUNIT_ASSERT(g.multiTagCount() == mtags.size());
+    g.addMultiTag(tag_1);
+    g.addMultiTag(tag_2);
+    CPPUNIT_ASSERT(g.multiTagCount() == mtags.size() + 2);
+
+    MultiTag t1 = g.getMultiTag(tag_1.id());
+    CPPUNIT_ASSERT(t1.id() == tag_1.id());
+    MultiTag t2 = g.getMultiTag(tag_1.name());
+    CPPUNIT_ASSERT(t2.id() == tag_1.id());
+    std::vector<MultiTag> all_tags = g.multiTags();
+    CPPUNIT_ASSERT(all_tags.size() == mtags.size() + 2);
+    CPPUNIT_ASSERT(g.hasMultiTag(tag_1.id()));
+    CPPUNIT_ASSERT(g.hasMultiTag(tag_2.id()));
+
+    g.removeMultiTag(tag_1.id());
+    CPPUNIT_ASSERT(g.multiTagCount() == mtags.size() + 1);
+    g.removeMultiTag(tag_2.id());
+    CPPUNIT_ASSERT(g.multiTagCount() == mtags.size());
+
+    // delete tags
+    std::vector<std::string> ids;
+    block.deleteMultiTag(tag_1.id());
+    block.deleteMultiTag(tag_2.id());
+    for (auto it = mtags.begin(); it != mtags.end(); it++) {
+        ids.push_back((*it).id());
+        block.deleteMultiTag((*it).id());
+    }
+    // check if references are gone too!
+    CPPUNIT_ASSERT(g.multiTagCount() == 0);
+    for (auto ref_id : ids) {
+        CPPUNIT_ASSERT(!g.hasMultiTag(ref_id));
+    }
+    block.deleteGroup(g.id());
+}

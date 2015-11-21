@@ -330,6 +330,135 @@ public:
         backend()->tags(tags);
     }
 
+    //--------------------------------------------------
+    // Methods concerning multi tags.
+    //--------------------------------------------------
+
+    /**
+     * @brief Checks whether a MultiTag is referenced by the group.
+     *
+     * @param id        The id of the MultiTag to check.
+     *
+     * @return True if the MultiTag is referenced, false otherwise.
+     */
+    bool hasMultiTag(const std::string &id) const {
+        return backend()->hasMultiTag(id);
+    }
+
+    /**
+     * @brief Checks whether a MultiTag is referenced by the group.
+     *
+     * @param tag      The MultiTag to check.
+     *
+     * @return True if the MultiTag is referenced, false otherwise.
+     */
+    bool hasMultiTag(const MultiTag &tag) const;
+
+    /**
+     * @brief Gets the number of referenced MultiTag entities of the group.
+     *
+     * @return The number of referenced MultiTags.
+     */
+    ndsize_t multiTagCount() const {
+        return backend()->multiTagCount();
+    }
+
+    /**
+     * @brief Gets a specific referenced MultiTag from the group.
+     *
+     * @param id        The id of the referenced MultiTag.
+     *
+     * @return The referenced MultiTag.
+     */
+    MultiTag getMultiTag(const std::string &id) const {
+        return backend()->getMultiTag(id);
+    }
+
+    /**
+     * @brief Gets a referenced MultiTag by its index.
+     *
+     * @param index     The index of the MultiTag.
+     *
+     * @return The referenced MultiTag.
+     */
+    MultiTag getMultiTag(size_t index) const;
+
+    /**
+     * @brief Add a MultiTag to the list of referenced tags of the group.
+     *
+     * @param mutlti_tag The MultiTag to add.
+     */
+    void addMultiTag(const MultiTag &multi_tag);
+
+    /**
+     * @brief Add a MultiTag to the list of referenced tags of the group.
+     *
+     * @param id        The id of the MultiTag to add.
+     */
+    void addMultiTag(const std::string &id);
+
+    /**
+     * @brief Remove a MultiTag from the list of referenced tags of the group.
+     *
+     * This method just removes the association between the tag and the
+     * group, the tag itself will not be removed from the file.
+     *
+     * @param mulit_tag     The MultiTag to remove.
+     *
+     * @returns True if the MultiTag was removed, false otherwise.
+     */
+    bool removeMultiTag(const MultiTag &mulit_tag);
+
+    /**
+     * @brief Remove a MultiTag from the list of referenced tags of the group.
+     *
+     * This method just removes the association between the tag and the
+     * group, the MultiTag itself will not be removed from the file.
+     *
+     * @param id        The id of the MultiTag to remove.
+     *
+     * @returns True if the MultiTag was removed, false otherwise.
+     */
+    bool removeMultiTag(const std::string &id) {
+        return backend()->removeMultiTag(id);
+    }
+
+    /**
+     * @brief Get referenced MultiTag associated with this group.
+     *
+     * The parameter filter can be used to filter MultiTag by various
+     * criteria.
+     *
+     * @param filter    A filter function.
+     *
+     * @return A vector containing the matching tags.
+     */
+    std::vector<MultiTag> multiTags(const util::Filter<MultiTag>::type &filter) const;
+
+    /**
+     * @brief Get all referenced MultiTags associated with this group.
+     *
+     * Always uses filter that accepts all MultiTags.
+     *
+     * @return The filtered MultiTags as a vector
+     */
+    std::vector<MultiTag> multiTags() const
+    {
+        return multiTags(util::AcceptAll<MultiTag>());
+    }
+
+    /**
+     * @brief Sets all referenced MultiTag entities.
+     *
+     * Previously referenced MultiTags, that are not in the passed vector
+     * will be removed.
+     *
+     * @param mulit_tags    All MultiTags.
+     */
+    void multiTags(const std::vector<MultiTag> &multi_tags) {
+        backend()->multiTags(multi_tags);
+    }
+
 
     /**
      * @brief Assignment operator for none.
