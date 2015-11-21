@@ -16,6 +16,7 @@
 #include <nix/base/ITag.hpp>
 #include <nix/base/IMultiTag.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/Tag.hpp>
 
 
 namespace nix {
@@ -52,7 +53,31 @@ public:
     virtual bool removeDataArray(const std::string &id) = 0;
 
 
-    virtual void dataArrays(const std::vector<DataArray> &references) = 0;
+    virtual void dataArrays(const std::vector<DataArray> &data_arrays) = 0;
+
+    //--------------------------------------------------
+    // Methods concerning tags.
+    //--------------------------------------------------
+
+    virtual bool hasTag(const std::string &id) const = 0;
+
+
+    virtual ndsize_t tagCount() const = 0;
+
+
+    virtual std::shared_ptr<ITag> getTag(const std::string &id) const = 0;
+
+
+    virtual std::shared_ptr<ITag> getTag(ndsize_t index) const = 0;
+
+
+    virtual void addTag(const std::string &id) = 0;
+
+
+    virtual bool removeTag(const std::string &id) = 0;
+
+
+    virtual void tags(const std::vector<Tag> &tags) = 0;
 
 
     /**

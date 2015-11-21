@@ -22,6 +22,7 @@ class TestGroupHDF5 : public BaseTestGroup {
     CPPUNIT_TEST(testOperators);
 
     CPPUNIT_TEST(testDataArrays);
+    CPPUNIT_TEST(testTags);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -39,6 +40,11 @@ public:
             arrays.push_back(block.createDataArray(name, "reference",
                                                  nix::DataType::Double, nix::NDSize({ 0 })));
         }
+        tags.clear();
+        for (const auto & name : array_names) {
+            tags.push_back(block.createTag(name, "tag", std::vector<double>{ 0.0 }));
+        }
+
     }
 
     void tearDown() {

@@ -34,6 +34,7 @@ protected:
     nix::DataArray array1, array2, array3;
     time_t startup_time;
     std::vector<nix::DataArray> arrays;
+    std::vector<nix::Tag> tags;
 
 public:
     void testId();
@@ -43,7 +44,7 @@ public:
     void testOperators();
 
     void testDataArrays();
-    // void testTags();
+    void testTags();
     // void testMultiTags();
 };
 

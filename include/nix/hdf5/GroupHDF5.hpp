@@ -68,6 +68,30 @@ public:
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual void dataArrays(const std::vector<DataArray> &data_arrays);
 
+    //--------------------------------------------------
+    // Methods concerning tags.
+    //--------------------------------------------------
+
+    virtual bool hasTag(const std::string &name_or_id) const;
+
+
+    virtual ndsize_t tagCount() const;
+
+
+    virtual std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
+
+
+    virtual std::shared_ptr<base::ITag> getTag(ndsize_t index) const;
+
+
+    virtual void addTag(const std::string &name_or_id);
+
+
+    virtual bool removeTag(const std::string &name_or_id);
+
+    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
+    virtual void tags(const std::vector<Tag> &tags);
+
 };
 }
 }

@@ -148,5 +148,105 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
     }
 }
 
+bool GroupHDF5::hasTag(const string &name_or_id) const {
+    std::string id = name_or_id;
+    if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
+        id = block()->getTag(name_or_id)->id();
+    }
+    return tag_group() ? tag_group()->hasGroup(id) : false;
+}
+
+
+ndsize_t GroupHDF5::tagCount() const {
+    boost::optional<H5Group> g = tag_group();
+    return g ? g->objectCount() : size_t(0);
+}
+
+
+void GroupHDF5::addTag(const std::string &name_or_id) {
+    boost::optional<H5Group> g = tag_group(true);
+
+    if (!block()->hasTag(name_or_id))
+        throw std::runtime_error("GroupHDF5::addTag: Tag not found in block!");
+
+    auto target = dynamic_pointer_cast<TagHDF5>(block()->getTag(name_or_id));
+    g->createLink(target->group(), target->id());
+}
+
+
+std::shared_ptr<base::ITag> GroupHDF5::getTag(const string &name_or_id) const {
+    shared_ptr<ITag> da;
+    boost::optional<H5Group> g = tag_group();
+    std::string id = name_or_id;
+    if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
+        id = block()->getTag(name_or_id)->id();
+    }
+
+    if (g && hasTag(id)) {
+        H5Group h5g = g->openGroup(id);
+        da = make_shared<TagHDF5>(file(), block(), h5g);
+    }
+    return da;
+}
+
+
+shared_ptr<ITag>  GroupHDF5::getTag(ndsize_t index) const {
+    boost::optional<H5Group> g = tag_group();
+    string id = g ? g->objectName(index) : "";
+    return getTag(id);
+}
+
+
+bool GroupHDF5::removeTag(const std::string &name_or_id) {
+    boost::optional<H5Group> g = tag_group();
+    bool removed = false;
+
+    if (g && hasTag(name_or_id)) {
+        shared_ptr<ITag> tag = getTag(name_or_id);
+
+        g->removeGroup(tag->id());
+        removed = true;
+    }
+    return removed;
+}
+
+
+void GroupHDF5::tags(const std::vector<Tag> &tags) {
+
+    // extract vectors of names from vectors of new & old references
+    std::vector<std::string> names_new(tags.size());
+    transform(tags.begin(), tags.end(), names_new.begin(), util::toName<Tag>);
+    //FIXME: issue 473
+    std::vector<Tag> refs_old(static_cast<size_t>(tagCount()));
+    for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getTag(i);
+    std::vector<std::string> names_old(refs_old.size());
+    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<Tag>);
+
+    // sort them
+    std::sort(names_new.begin(), names_new.end());
+    std::sort(names_new.begin(), names_new.end());
+
+    // get names only in names_new (add), names only in names_old (remove) & ignore rest
+    std::vector<std::string> names_add;
+    std::vector<std::string> names_rem;
+    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
+                        std::inserter(names_add, names_add.begin()));
+    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
+                        std::inserter(names_rem, names_rem.begin()));
+
+    // check if all new tags exist & add them
+    auto blck = dynamic_pointer_cast<BlockHDF5>(block());
+    for (auto name : names_add) {
+        if (!blck->hasTag(name))
+            throw std::runtime_error("One or more tags do not exist in this block!");
+        addTag(blck->getTag(name)->id());
+    }
+    // remove references
+    for (auto name : names_rem) {
+        if (!blck->hasTag(name))
+            removeTag(blck->getTag(name)->id());
+    }
+}
+
 } // hdf5
 } // nix

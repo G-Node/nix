@@ -73,7 +73,7 @@ public:
     }
 
     //--------------------------------------------------
-    // Methods concerning references.
+    // Methods concerning data arrays.
     //--------------------------------------------------
     // TODO syntactic sugar for creating dataArrays, tags, multiTags
     /**
@@ -200,6 +200,136 @@ public:
     void dataArrays(const std::vector<DataArray> &data_arrays) {
         backend()->dataArrays(data_arrays);
     }
+
+    //--------------------------------------------------
+    // Methods concerning tags.
+    //--------------------------------------------------
+
+    /**
+     * @brief Checks whether a Tag is referenced by the group.
+     *
+     * @param id        The id of the Tag to check.
+     *
+     * @return True if the tag is referenced, false otherwise.
+     */
+    bool hasTag(const std::string &id) const {
+        return backend()->hasTag(id);
+    }
+
+    /**
+     * @brief Checks whether a Tag is referenced by the group.
+     *
+     * @param tag      The Tagto check.
+     *
+     * @return True if the tag is referenced, false otherwise.
+     */
+    bool hasTag(const Tag &tag) const;
+
+    /**
+     * @brief Gets the number of referenced Tag entities of the tag.
+     *
+     * @return The number of referenced tags.
+     */
+    ndsize_t tagCount() const {
+        return backend()->tagCount();
+    }
+
+    /**
+     * @brief Gets a specific referenced Tag from the tag.
+     *
+     * @param id        The id of the referenced Tag.
+     *
+     * @return The referenced tag.
+     */
+    Tag getTag(const std::string &id) const {
+        return backend()->getTag(id);
+    }
+
+    /**
+     * @brief Gets a referenced Tag by its index.
+     *
+     * @param index     The index of the Tag.
+     *
+     * @return The referenced tag.
+     */
+    Tag getTag(size_t index) const;
+
+    /**
+     * @brief Add a Tag to the list of referenced data of the group.
+     *
+     * @param data_array The Tag to add.
+     */
+    void addTag(const Tag &tag);
+
+    /**
+     * @brief Add a Tag to the list of referenced data of the group.
+     *
+     * @param id        The id of the Tag to add.
+     */
+    void addTag(const std::string &id);
+
+    /**
+     * @brief Remove a Tag from the list of referenced tags of the group.
+     *
+     * This method just removes the association between the tag  and the
+     * group, the tag itself will not be removed from the file.
+     *
+     * @param tag     The Tag to remove.
+     *
+     * @returns True if the Tag was removed, false otherwise.
+     */
+    bool removeTag(const Tag &tag);
+
+    /**
+     * @brief Remove a Tag from the list of referenced tags of the group.
+     *
+     * This method just removes the association between the tag and the
+     * group, the tag itself will not be removed from the file.
+     *
+     * @param id        The id of the Tag to remove.
+     *
+     * @returns True if the Tag was removed, false otherwise.
+     */
+    bool removeTag(const std::string &id) {
+        return backend()->removeTag(id);
+    }
+
+    /**
+     * @brief Get referenced tag associated with this group.
+     *
+     * The parameter filter can be used to filter tags by various
+     * criteria.
+     *
+     * @param filter    A filter function.
+     *
+     * @return A vector containing the matching tags.
+     */
+    std::vector<Tag> tags(const util::Filter<Tag>::type &filter) const;
+
+    /**
+     * @brief Get all referenced tags associated with this group.
+     *
+     * Always uses filter that accepts all tags.
+     *
+     * @return The filtered Tags as a vector
+     */
+    std::vector<Tag> tags() const
+    {
+        return tags(util::AcceptAll<Tag>());
+    }
+
+    /**
+     * @brief Sets all referenced Tag entities.
+     *
+     * Previously referenced tags, that are not in the passed vector
+     * will be removed.
+     *
+     * @param tags    All tags.
+     */
+    void tags(const std::vector<Tag> &tags) {
+        backend()->tags(tags);
+    }
+
 
     /**
      * @brief Assignment operator for none.

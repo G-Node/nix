@@ -51,6 +51,45 @@ std::vector<DataArray> Group::dataArrays(const util::Filter<DataArray>::type &fi
 }
 
 
+bool Group::hasTag(const Tag &tag) const {
+    util::checkEntityInput(tag);
+    return backend()->hasDataArray(tag.id());
+}
+
+
+Tag Group::getTag(size_t index) const {
+    if(index >= backend()->tagCount()) {
+        throw OutOfBounds("No tag at given index", index);
+    }
+    return backend()->getTag(index);
+}
+
+
+void Group::addTag(const Tag &tag) {
+    util::checkEntityInput(tag);
+    backend()->addTag(tag.id());
+}
+
+
+void Group::addTag(const std::string &id) {
+    util::checkNameOrId(id);
+    backend()->addTag(id);
+}
+
+
+bool Group::removeTag(const Tag &tag) {
+    util::checkEntityInput(tag);
+    return backend()->removeTag(tag.id());
+}
+
+
+std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
+    auto f = [this] (size_t i) { return getTag(i); };
+    return getEntities<Tag>(f, tagCount(), filter);
+}
+
+
+
 std::ostream& nix::operator<<(std::ostream &out, const Group &ent) {
     out << "Group: {name = " << ent.name();
     out << ", type = " << ent.type();

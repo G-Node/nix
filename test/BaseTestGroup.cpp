@@ -110,3 +110,48 @@ void BaseTestGroup::testDataArrays() {
     }
     block.deleteGroup(g.id());
 }
+
+
+void BaseTestGroup::testTags() {
+    Tag tag_1 = block.createTag("TestTag 1","tag", std::vector<double>{0.0});
+    Tag tag_2 = block.createTag("TestTag 2","tag", std::vector<double>{1.0});
+
+    Group g = block.createGroup("test group", "group");
+    CPPUNIT_ASSERT_THROW(g.getTag(42), nix::OutOfBounds);
+    CPPUNIT_ASSERT(g.tagCount() == 0);
+
+    g.tags(tags);
+    CPPUNIT_ASSERT(g.tagCount() == tags.size());
+    g.addTag(tag_1);
+    g.addTag(tag_2);
+    CPPUNIT_ASSERT(g.tagCount() == tags.size() + 2);
+
+    Tag t1 = g.getTag(tag_1.id());
+    CPPUNIT_ASSERT(t1.id() == tag_1.id());
+    Tag t2 = g.getTag(tag_1.name());
+    CPPUNIT_ASSERT(t2.id() == tag_1.id());
+    std::vector<Tag> all_tags = g.tags();
+    CPPUNIT_ASSERT(all_tags.size() == tags.size() + 2);
+    CPPUNIT_ASSERT(g.hasTag(tag_1.id()));
+    CPPUNIT_ASSERT(g.hasTag(tag_2.id()));
+
+    g.removeTag(tag_1.id());
+    CPPUNIT_ASSERT(g.tagCount() == tags.size() + 1);
+    g.removeTag(tag_2.id());
+    CPPUNIT_ASSERT(g.tagCount() == tags.size());
+
+    // delete tags
+    std::vector<std::string> ids;
+    block.deleteTag(tag_1.id());
+    block.deleteTag(tag_2.id());
+    for (auto it = tags.begin(); it != tags.end(); it++) {
+        ids.push_back((*it).id());
+        block.deleteTag((*it).id());
+    }
+    // check if references are gone too!
+    CPPUNIT_ASSERT(g.tagCount() == 0);
+    for (auto ref_id : ids) {
+        CPPUNIT_ASSERT(!g.hasTag(ref_id));
+    }
+    block.deleteGroup(g.id());
+}
