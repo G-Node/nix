@@ -32,6 +32,13 @@ public:
         block = file.createBlock("test_block", "group_test");
         g = block.createGroup("group one", "group");
         g2 = block.createGroup("group other", "group");
+        std::vector<std::string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+                                                 "data_array_d", "data_array_e" };
+        arrays.clear();
+        for (const auto & name : array_names) {
+            arrays.push_back(block.createDataArray(name, "reference",
+                                                 nix::DataType::Double, nix::NDSize({ 0 })));
+        }
     }
 
     void tearDown() {

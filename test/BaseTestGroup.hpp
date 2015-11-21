@@ -33,6 +33,7 @@ protected:
     nix::Block block;
     nix::DataArray array1, array2, array3;
     time_t startup_time;
+    std::vector<nix::DataArray> arrays;
 
 public:
     void testId();
