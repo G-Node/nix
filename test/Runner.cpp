@@ -15,7 +15,7 @@
 #include "TestSourceHDF5.hpp"
 #include "TestSectionHDF5.hpp"
 #include "TestDataSet.hpp"
-#include "TestGroup.hpp"
+#include "TestH5Group.hpp"
 #include "TestDataArrayHDF5.hpp"
 #include "TestBaseTagHDF5.hpp"
 #include "TestMultiTagHDF5.hpp"
@@ -31,6 +31,7 @@
 #include "TestOptionalObligatory.hpp"
 #include "TestValidate.hpp"
 #include "TestReadOnlyHDF5.hpp"
+#include "TestGroupHDF5.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -42,7 +43,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
-    CPPUNIT_TEST_SUITE_REGISTRATION(TestGroup);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestH5Group);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
@@ -58,6 +59,8 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
+
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
