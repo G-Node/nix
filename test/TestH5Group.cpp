@@ -8,19 +8,19 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "TestGroup.hpp"
+#include "TestH5Group.hpp"
 
 #include "RefTester.hpp"
 
 #include <nix/hdf5/FileHDF5.hpp>
 
-unsigned int & TestGroup::open_mode()
+unsigned int &TestH5Group::open_mode()
 {
     static unsigned int openMode = H5F_ACC_TRUNC;
     return openMode;
 }
 
-void TestGroup::setUp() {
+void TestH5Group::setUp() {
     unsigned int &openMode = open_mode();
 
     if (openMode == H5F_ACC_TRUNC) {
@@ -40,12 +40,12 @@ void TestGroup::setUp() {
     openMode = H5F_ACC_RDWR;
 }
 
-void TestGroup::tearDown() {
+void TestH5Group::tearDown() {
     H5Fclose(h5file);
     H5Oclose(h5group);
 }
 
-void TestGroup::testBaseTypes() {
+void TestH5Group::testBaseTypes() {
     nix::hdf5::H5Group group(h5group, true);
 
     //int
@@ -74,7 +74,7 @@ void TestGroup::testBaseTypes() {
     CPPUNIT_ASSERT_EQUAL(testStr, retString);
 }
 
-void TestGroup::testMultiArray() {
+void TestH5Group::testMultiArray() {
     nix::hdf5::H5Group group(h5group, true);
     //arrays
     typedef boost::multi_array<double, 3> array_type;
@@ -126,7 +126,7 @@ void TestGroup::testMultiArray() {
     CPPUNIT_ASSERT_EQUAL(errors, 0);
 }
 
-void TestGroup::testVector() {
+void TestH5Group::testVector() {
     nix::hdf5::H5Group group(h5group, true);
 
     std::vector<int> iv;
@@ -153,7 +153,7 @@ void TestGroup::testVector() {
     assert_vectors_equal(sv, tsv);
 }
 
-void TestGroup::testArray() {
+void TestH5Group::testArray() {
 
     nix::hdf5::H5Group group(h5group, true);
     int ia1d[5] = {1, 2, 3, 4, 5};
@@ -178,7 +178,7 @@ void TestGroup::testArray() {
 #endif
 }
 
-void TestGroup::testOpen() {
+void TestH5Group::testOpen() {
     nix::hdf5::H5Group root(h5group, true);
 
     nix::hdf5::H5Group g = root.openGroup("name_a", true);
@@ -203,7 +203,7 @@ void TestGroup::testOpen() {
 
 }
 
-void TestGroup::testRefCount() {
+void TestH5Group::testRefCount() {
 
     hid_t ha = H5Gopen2(h5file, "/", H5P_DEFAULT);
     test_refcounting<nix::hdf5::H5Group>(h5group, ha);
