@@ -10,6 +10,8 @@
 
 #include "TestValue.hpp"
 
+#include <cstring>
+
 void TestValue::setUp() {
 }
 
@@ -52,11 +54,18 @@ void TestValue::testObject() {
     CPPUNIT_ASSERT_EQUAL(sVal.get<std::string>(), strc);
     CPPUNIT_ASSERT_THROW(sVal.get<bool>(), std::invalid_argument);
 
+    const char long_string[] = "When shall we three meet again"
+                               "In thunder, lightning, or in rain?";
+
+    sVal.set(long_string);
 
     nix::Value v1 = sVal; //copy constructor
     CPPUNIT_ASSERT_EQUAL(sVal, v1); // check ==
     CPPUNIT_ASSERT(v1 != dVal);
 
+    CPPUNIT_ASSERT_EQUAL(v1.get<std::string>(), std::string(long_string));
+
+    v1.set(long_string, strc.length()); // strc, long_string share this prefix
     CPPUNIT_ASSERT_EQUAL(v1.get<std::string>(), strc);
 
     v1 = dVal; //assignment op (copy)
