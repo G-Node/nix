@@ -226,7 +226,7 @@ bool H5Group::getData(const std::string &name, T &value) const
 /**
  * Helper struct that works as a functor like {@link H5Group::openGroup}:
  *
- * Open and eventually create a group with the given name inside
+ * Open and optionally create a group with the given name inside
  * this group. If creation is not allowed (bool param is "false") and
  * the group does not exist an error is thrown. If creation is not
  * allowed (bool param is "false") and the group does not exist an
@@ -243,7 +243,7 @@ public:
     optGroup(){};
 
     /**
-     * @brief Open and eventually create a group with the given name
+     * @brief Open and optionally create a group with the given name
      *        inside this group. If creation is not allowed (bool
      *        param is "false") and the group does not exist an unset
      *        optional is returned.
