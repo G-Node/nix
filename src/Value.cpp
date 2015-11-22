@@ -75,8 +75,11 @@ void Value::set(double value) {
 }
 
 void Value::set(const std::string &value) {
+    set(value.c_str(), value.length());
+}
 
-    const size_t len = value.length();
+void Value::set(const char *value, const size_t len) {
+
     const size_t len_plus_null = len + 1;
     void *data;
 
@@ -87,7 +90,7 @@ void Value::set(const std::string &value) {
         data = std::realloc(v_string, len_plus_null);
     }
 
-    std::memcpy(data, value.c_str(), len);
+    std::memcpy(data, value, len);
     v_string = static_cast<char *>(data);
     v_string[len] = '\0';
 }

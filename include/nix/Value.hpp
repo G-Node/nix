@@ -97,6 +97,7 @@ public:
     void set(int64_t value);
     void set(uint64_t value);
     void set(double value);
+    void set(const char *value, const size_t len);
     void set(const std::string &value);
 
     template<typename T>
