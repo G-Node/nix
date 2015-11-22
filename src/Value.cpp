@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <cstring>
 
 namespace nix {
 
