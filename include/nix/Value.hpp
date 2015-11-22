@@ -51,11 +51,11 @@ public:
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
     explicit Value(char *value) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value);
     }
 
     explicit Value(const char *value) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value);
     }
 
     template<typename T>

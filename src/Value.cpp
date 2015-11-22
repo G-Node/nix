@@ -203,7 +203,7 @@ void Value::assign_variant_from(const Value &other) {
     case DataType::Int64:   set(other.v_int64);  break;
     case DataType::UInt64:  set(other.v_uint64); break;
     case DataType::Double:  set(other.v_double); break;
-    case DataType::String:  set(std::string(other.v_string)); break;
+    case DataType::String:  set(other.v_string); break;
     case DataType::Nothing: set(none);           break;
 
 #ifndef CHECK_SUPPORTED_VALUES
