@@ -90,7 +90,7 @@ std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
 
 bool Group::hasMultiTag(const MultiTag &multi_tag) const {
     util::checkEntityInput(multi_tag);
-    return backend()->hasDataArray(multi_tag.id());
+    return backend()->hasMultiTag(multi_tag.id());
 }
 
 
