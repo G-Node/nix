@@ -114,12 +114,12 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
 
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(data_arrays.size());
-    transform(data_arrays.begin(), data_arrays.end(), names_new.begin(), util::toName<DataArray>);
-    //FIXME: issue 473
+    std::transform(data_arrays.begin(), data_arrays.end(), names_new.begin(), util::toName<DataArray>);
+
     std::vector<DataArray> refs_old(static_cast<size_t>(dataArrayCount()));
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getDataArray(i);
     std::vector<std::string> names_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
+    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
 
     // sort them
     std::sort(names_new.begin(), names_new.end());
@@ -215,12 +215,12 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
 
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(tags.size());
-    transform(tags.begin(), tags.end(), names_new.begin(), util::toName<Tag>);
-    //FIXME: issue 473
+    std::transform(tags.begin(), tags.end(), names_new.begin(), util::toName<Tag>);
+
     std::vector<Tag> refs_old(static_cast<size_t>(tagCount()));
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getTag(i);
     std::vector<std::string> names_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<Tag>);
+    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<Tag>);
 
     // sort them
     std::sort(names_new.begin(), names_new.end());
@@ -315,12 +315,11 @@ bool GroupHDF5::removeMultiTag(const std::string &name_or_id) {
 void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(multi_tags.size());
-    transform(multi_tags.begin(), multi_tags.end(), names_new.begin(), util::toName<MultiTag>);
-    //FIXME: issue 473
+    std::transform(multi_tags.begin(), multi_tags.end(), names_new.begin(), util::toName<MultiTag>);
     std::vector<MultiTag> refs_old(static_cast<size_t>(multiTagCount()));
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getMultiTag(i);
     std::vector<std::string> names_old(refs_old.size());
-    transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<MultiTag>);
+    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<MultiTag>);
 
     // sort them
     std::sort(names_new.begin(), names_new.end());

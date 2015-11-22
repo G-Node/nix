@@ -126,7 +126,6 @@ boost::optional<DataSet> H5Group::findDataByAttribute(const std::string &attribu
 std::string H5Group::objectName(ndsize_t index) const {
     // check if index valid
     if(index > objectCount()) {
-		//FIXME: issue #473
         throw OutOfBounds("No object at given index",
 			              static_cast<size_t>(index));
     }
