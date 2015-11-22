@@ -76,8 +76,8 @@ void Value::set(double value) {
 
 void Value::set(const std::string &value) {
 
-    size_t len = value.length();
-    size_t len_plus_null = len + 1;
+    const size_t len = value.length();
+    const size_t len_plus_null = len + 1;
     void *data;
 
     if (dtype != DataType::String) {
