@@ -65,7 +65,7 @@ public:
 
     template<size_t N>
     explicit Value(const char (&value)[N]) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value, N);
     }
 
     Value(const Value &other) : Value() {
