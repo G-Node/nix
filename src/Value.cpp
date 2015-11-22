@@ -95,6 +95,10 @@ void Value::set(const char *value, const size_t len) {
     v_string[len] = '\0';
 }
 
+void Value::set(const char *value) {
+    set(value, value == nullptr ? 0 : std::strlen(value));
+}
+
 /**************/
 /* getters */
 
