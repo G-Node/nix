@@ -36,14 +36,8 @@ private:
         int32_t     v_int32;
         uint64_t    v_uint64;
         int64_t     v_int64;
-#ifndef _WIN32
-        std::string v_string;
-#endif
+        char *      v_string;
     };
-
-#ifdef _WIN32
-    std::string v_string;
-#endif
 
 public:
     double uncertainty = 0.0;
@@ -57,11 +51,11 @@ public:
     Value() : dtype(DataType::Nothing), v_bool(false) { }
 
     explicit Value(char *value) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value);
     }
 
     explicit Value(const char *value) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value);
     }
 
     template<typename T>
@@ -71,7 +65,7 @@ public:
 
     template<size_t N>
     explicit Value(const char (&value)[N]) : dtype(DataType::Nothing) {
-        set(std::string(value));
+        set(value, N);
     }
 
     Value(const Value &other) : Value() {
@@ -103,6 +97,8 @@ public:
     void set(int64_t value);
     void set(uint64_t value);
     void set(double value);
+    void set(const char *value, const size_t len);
+    void set(const char *value);
     void set(const std::string &value);
 
     template<typename T>
@@ -152,7 +148,7 @@ private:
 template<>
 inline const char * Value::get<const char *>() const {
     check_argument_type(DataType::String);
-    return v_string.c_str();
+    return v_string;
 }
 
 
