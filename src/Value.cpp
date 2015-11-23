@@ -11,15 +11,16 @@
 #include <nix/Value.hpp>
 
 #include <cassert>
+#include <cstdlib>
+#include <cstring>
 
 namespace nix {
 
 void Value::maybe_deallocte_string() {
-#ifndef _WIN32
     if (dtype == DataType::String) {
-        v_string.~basic_string();
+        std::free(v_string);
+        dtype = DataType::Nothing;
     }
-#endif
 }
 
 /**************/
@@ -75,17 +76,28 @@ void Value::set(double value) {
 }
 
 void Value::set(const std::string &value) {
+    set(value.c_str(), value.length());
+}
 
-#ifndef _WIN32
-    //If the active member is not a string
-    //we have to inialize the string object
+void Value::set(const char *value, const size_t len) {
+
+    const size_t len_plus_null = len + 1;
+    void *data;
+
     if (dtype != DataType::String) {
-        new (&v_string) std::string();
+        dtype = DataType::String;
+        data = std::malloc(len_plus_null);
+    } else {
+        data = std::realloc(v_string, len_plus_null);
     }
-#endif
 
-    dtype = DataType::String;
-    v_string = value;
+    std::memcpy(data, value, len);
+    v_string = static_cast<char *>(data);
+    v_string[len] = '\0';
+}
+
+void Value::set(const char *value) {
+    set(value, value == nullptr ? 0 : std::strlen(value));
 }
 
 /**************/
