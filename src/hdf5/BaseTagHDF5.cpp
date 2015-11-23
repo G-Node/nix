@@ -120,7 +120,8 @@ void BaseTagHDF5::references(const std::vector<DataArray> &refs_new) {
     std::vector<std::string> names_new(refs_new.size());
     std::transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
 
-    std::vector<DataArray> refs_old(static_cast<size_t>(referenceCount()));
+    size_t ref_count = nix::check::fits_in_size_t(referenceCount(), "refrenceCount() failed; count > size_t.");
+    std::vector<DataArray> refs_old(ref_count);
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
     std::vector<std::string> names_old(refs_old.size());
     std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);

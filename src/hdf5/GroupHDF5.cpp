@@ -7,16 +7,11 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/GroupHDF5.hpp>
-
-#include <nix/util/util.hpp>
 #include <nix/Block.hpp>
-#include <nix/hdf5/SourceHDF5.hpp>
-#include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/TagHDF5.hpp>
 #include <nix/hdf5/MultiTagHDF5.hpp>
-
-#include <boost/range/irange.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
+#include <boost/range/irange.hpp>
 
 using namespace nix::base;
 
@@ -116,7 +111,8 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
     std::vector<std::string> names_new(data_arrays.size());
     std::transform(data_arrays.begin(), data_arrays.end(), names_new.begin(), util::toName<DataArray>);
 
-    std::vector<DataArray> refs_old(static_cast<size_t>(dataArrayCount()));
+    size_t array_count = nix::check::fits_in_size_t(dataArrayCount(), "dataArrayCount() failed; count > size_t.");
+    std::vector<DataArray> refs_old(array_count);
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getDataArray(i);
     std::vector<std::string> names_old(refs_old.size());
     std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
@@ -217,7 +213,8 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
     std::vector<std::string> names_new(tags.size());
     std::transform(tags.begin(), tags.end(), names_new.begin(), util::toName<Tag>);
 
-    std::vector<Tag> refs_old(static_cast<size_t>(tagCount()));
+    size_t tag_count = nix::check::fits_in_size_t(tagCount(), "tagCount() failed; count > size_t.");
+    std::vector<Tag> refs_old(tag_count);
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getTag(i);
     std::vector<std::string> names_old(refs_old.size());
     std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<Tag>);
@@ -316,7 +313,9 @@ void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(multi_tags.size());
     std::transform(multi_tags.begin(), multi_tags.end(), names_new.begin(), util::toName<MultiTag>);
-    std::vector<MultiTag> refs_old(static_cast<size_t>(multiTagCount()));
+
+    size_t mtag_count = nix::check::fits_in_size_t(multiTagCount(), "multiTagCount() failed; count > size_t.");
+    std::vector<MultiTag> refs_old(mtag_count);
     for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getMultiTag(i);
     std::vector<std::string> names_old(refs_old.size());
     std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<MultiTag>);
