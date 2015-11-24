@@ -17,7 +17,7 @@
 #include <ostream>
 
 namespace std {
-#if !defined(WIN32) && __cplusplus < 201300L
+#if !defined(_WIN32) && __cplusplus < 201300L
 template<bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 #endif
