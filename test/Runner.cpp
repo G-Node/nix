@@ -20,6 +20,7 @@
 #include "TestBaseTagHDF5.hpp"
 #include "TestMultiTagHDF5.hpp"
 #include "TestTagHDF5.hpp"
+#include "TestVariant.hpp"
 #include "TestValue.hpp"
 #include "TestPropertyHDF5.hpp"
 #include "TestNDArray.hpp"
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTagHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestVariant);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
