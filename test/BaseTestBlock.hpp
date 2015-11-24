@@ -34,6 +34,7 @@ public:
     void testDataArrayAccess();
     void testTagAccess();
     void testMultiTagAccess();
+    void testGroupAccess();
 
     void testOperators();
     void testUpdatedAt();

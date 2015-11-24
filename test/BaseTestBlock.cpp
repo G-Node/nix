@@ -20,7 +20,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -44,14 +43,14 @@ void BaseTestBlock::testName() {
 
 void BaseTestBlock::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
-    string typ = util::createId();
+    std::string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
 }
 
 
 void BaseTestBlock::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
 }
@@ -76,7 +75,7 @@ void BaseTestBlock::testMetadataAccess() {
 
 
 void BaseTestBlock::testSourceAccess() {
-    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
     CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
     CPPUNIT_ASSERT(block.sourceCount() == 0);
@@ -85,7 +84,7 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
 
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (const auto &name : names) {
         Source src = block.createSource(name, "channel");
         CPPUNIT_ASSERT(src.name() == name);
@@ -119,15 +118,15 @@ void BaseTestBlock::testSourceAccess() {
 
 
 void BaseTestBlock::testDataArrayAccess() {
-    vector<string> names = { "data_array_a", "data_array_b", "data_array_c",
+    std::vector<std::string> names = { "data_array_a", "data_array_b", "data_array_c",
                              "data_array_d", "data_array_e" };
     DataArray data_array, a;
 
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
-    
-    vector<string> ids;
+
+    std::vector<std::string> ids;
     for (const auto &name : names) {
         data_array = block.createDataArray(name, "channel",
                                            DataType::Double, nix::NDSize({ 0 }));
@@ -152,7 +151,7 @@ void BaseTestBlock::testDataArrayAccess() {
         CPPUNIT_ASSERT_EQUAL(da_name.name(), da_id.name());
     }
 
-    vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
+    std::vector<DataArray> filteredArrays = block.dataArrays(util::TypeFilter<DataArray>("channel"));
     CPPUNIT_ASSERT_EQUAL(names.size(), filteredArrays.size());
 
     filteredArrays = block.dataArrays(util::NameFilter<DataArray>("data_array_c"));
@@ -178,10 +177,10 @@ void BaseTestBlock::testDataArrayAccess() {
 
 
 void BaseTestBlock::testTagAccess() {
-    vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
-    vector<string> array_names = { "data_array_a", "data_array_b", "data_array_c",
+    std::vector<std::string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    std::vector<std::string> array_names = { "data_array_a", "data_array_b", "data_array_c",
                                    "data_array_d", "data_array_e" };
-    vector<DataArray> refs;
+    std::vector<DataArray> refs;
     Tag tag, t;
     for (const auto &name : array_names) {
         refs.push_back(block.createDataArray(name,
@@ -195,7 +194,7 @@ void BaseTestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
     CPPUNIT_ASSERT_THROW(block.hasTag(t), UninitializedEntity);
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
         tag = block.createTag(*it, "segment", {0.0, 2.0, 3.4});
         tag.references(refs);
@@ -229,7 +228,7 @@ void BaseTestBlock::testTagAccess() {
 
 
 void BaseTestBlock::testMultiTagAccess() {
-    vector<string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
+    std::vector<std::string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     MultiTag mtag, m;
     // create a valid positions data array below
     typedef boost::multi_array<double, 3>::index index;
@@ -250,7 +249,7 @@ void BaseTestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
     CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), UninitializedEntity);
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         mtag = block.createMultiTag(*it, "segment", positions);
         CPPUNIT_ASSERT(mtag.name() == *it);
@@ -280,6 +279,48 @@ void BaseTestBlock::testMultiTagAccess() {
 }
 
 
+
+void BaseTestBlock::testGroupAccess() {
+    std::vector<std::string> names = { "group_a", "group_b", "group_c", "group_d", "group_e" };
+    Group g;
+    CPPUNIT_ASSERT_THROW(block.hasGroup(g), UninitializedEntity);
+    CPPUNIT_ASSERT(block.groupCount() == 0);
+    CPPUNIT_ASSERT(block.groups().size() == 0);
+    CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
+    CPPUNIT_ASSERT(!block.hasGroup("invalid_id"));
+
+    std::vector<std::string> ids;
+    for (const auto &name : names) {
+        Group gr = block.createGroup(name, "group");
+        CPPUNIT_ASSERT(gr.name() == name);
+        CPPUNIT_ASSERT(block.hasGroup(name));
+        CPPUNIT_ASSERT(block.hasGroup(gr));
+
+        ids.push_back(gr.id());
+    }
+    CPPUNIT_ASSERT_THROW(block.createGroup(names[0], "group"),
+                         DuplicateName);
+
+    CPPUNIT_ASSERT(block.groupCount() == names.size());
+    CPPUNIT_ASSERT(block.groups().size() == names.size());
+
+    for (const auto &id : ids) {
+        Group gr = block.getGroup(id);
+        CPPUNIT_ASSERT(block.hasGroup(id) == true);
+        CPPUNIT_ASSERT(gr.id() == id);
+        block.deleteGroup(id);
+    }
+
+    g = block.createGroup("test", "test");
+    CPPUNIT_ASSERT(block.groupCount() == 1);
+    CPPUNIT_ASSERT_NO_THROW(block.deleteGroup(g));
+
+    CPPUNIT_ASSERT(block.groupCount() == 0);
+    CPPUNIT_ASSERT(block.groups().size() == 0);
+    CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
+}
+
+
 void BaseTestBlock::testOperators() {
     CPPUNIT_ASSERT(block_null == false);
     CPPUNIT_ASSERT(block_null == none);
@@ -296,6 +337,9 @@ void BaseTestBlock::testOperators() {
     block_other = none;
     CPPUNIT_ASSERT(block_null == false);
     CPPUNIT_ASSERT(block_null == none);
+
+    std::stringstream str;
+    str << block;
 }
 
 
@@ -313,8 +357,8 @@ void BaseTestBlock::testUpdatedAt() {
 
 
 void BaseTestBlock::testCompare() {
-    string other_name = block_other.name();
-    string block_name = block.name();
+    std::string other_name = block_other.name();
+    std::string block_name = block.name();
         
     CPPUNIT_ASSERT(block.compare(block) == 0);
     CPPUNIT_ASSERT(block.compare(block_other) ==  block_name.compare(other_name));

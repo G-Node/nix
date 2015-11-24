@@ -28,17 +28,17 @@ struct optGroup;
 /**
  * TODO documentation
  */
-class NIXAPI Group : public LocID {
+class NIXAPI H5Group : public LocID {
 
 public:
 
-    Group();
+    H5Group();
 
-    Group(hid_t hid);
+    H5Group(hid_t hid);
 
-    Group(hid_t hid, bool is_copy) : LocID(hid, is_copy) { }
+    H5Group(hid_t hid, bool is_copy) : LocID(hid, is_copy) { }
 
-    Group(const Group &other);
+    H5Group(const H5Group &other);
 
     bool hasObject(const std::string &path) const;
     ndsize_t objectCount() const;
@@ -73,7 +73,7 @@ public:
      *
      * @return The opened group.
      */
-    Group openGroup(const std::string &name, bool create = true) const;
+    H5Group openGroup(const std::string &name, bool create = true) const;
 
     /**
      * @brief Create an {@link optGroup} functor that can be used to
@@ -99,7 +99,7 @@ public:
      *
      * @return The name of the first group object found.
      */
-    boost::optional<Group> findGroupByAttribute(const std::string &attribute, const std::string &value) const;
+    boost::optional<H5Group> findGroupByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
      * @brief Look for the first sub-data in the group with the given
@@ -120,11 +120,11 @@ public:
     * Returns an empty optional otherwise.
     *
     * @param attribute The name of the attribute to search.
-    * @param value     The name of the Group or the value of the attribute to look for.
+    * @param value     The name of the H5Group or the value of the attribute to look for.
     *
-    * @return Optional containing the located Group or empty optional otherwise.
+    * @return Optional containing the located H5Group or empty optional otherwise.
     */
-    boost::optional<Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+    boost::optional<H5Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
 
     /**
     * @brief Look for the first sub-data in the group with the given
@@ -133,7 +133,7 @@ public:
     * Returns an empty optional otherwise.
     *
     * @param attribute The name of the attribute to search.
-    * @param value     The name of the Group or the value of the attribute to look for.
+    * @param value     The name of the H5Group or the value of the attribute to look for.
     *
     * @return Optional containing the located Dataset or empty optional otherwise.
     */
@@ -148,7 +148,7 @@ public:
      *
      * @return The linked group.
      */
-    Group createLink(const Group &target, const std::string &link_name);
+    H5Group createLink(const H5Group &target, const std::string &link_name);
 
     /**
      * @brief Renames all links of the object defined by the old name.
@@ -172,20 +172,20 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
-    virtual ~Group();
+    virtual ~H5Group();
 
 
 private:
 
     bool objectOfType(const std::string &name, H5O_type_t type) const;
 
-}; // group Group
+}; // group H5Group
 
 
 //template functions
 
 template<typename T>
-void Group::setData(const std::string &name, const T &value)
+void H5Group::setData(const std::string &name, const T &value)
 {
     const Hydra<const T> hydra(value);
     DataType dtype = hydra.element_data_type();
@@ -204,7 +204,7 @@ void Group::setData(const std::string &name, const T &value)
 
 
 template<typename T>
-bool Group::getData(const std::string &name, T &value) const
+bool H5Group::getData(const std::string &name, T &value) const
 {
     if (!hasData(name)) {
         return false;
@@ -224,26 +224,26 @@ bool Group::getData(const std::string &name, T &value) const
 
 
 /**
- * Helper struct that works as a functor like {@link Group::openGroup}:
+ * Helper struct that works as a functor like {@link H5Group::openGroup}:
  *
- * Open and eventually create a group with the given name inside
+ * Open and optionally create a group with the given name inside
  * this group. If creation is not allowed (bool param is "false") and
  * the group does not exist an error is thrown. If creation is not
  * allowed (bool param is "false") and the group does not exist an
  * unset optional is returned.
  */
 struct NIXAPI optGroup {
-    mutable boost::optional<Group> g;
-    Group parent;
+    mutable boost::optional<H5Group> g;
+    H5Group parent;
     std::string g_name;
 
 public:
-    optGroup(const Group &parent, const std::string &g_name);
+    optGroup(const H5Group &parent, const std::string &g_name);
 
     optGroup(){};
 
     /**
-     * @brief Open and eventually create a group with the given name
+     * @brief Open and optionally create a group with the given name
      *        inside this group. If creation is not allowed (bool
      *        param is "false") and the group does not exist an unset
      *        optional is returned.
@@ -252,7 +252,7 @@ public:
      *
      * @return An optional with the opened group or unset.
      */
-    boost::optional<Group> operator() (bool create = false) const;
+    boost::optional<H5Group> operator() (bool create = false) const;
 };
 
 

@@ -21,19 +21,19 @@ using namespace nix::base;
 namespace nix {
 namespace hdf5 {
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const H5Group &group)
     : NamedEntityHDF5(file, group)
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, const string &type, const string &name)
     : EntityWithMetadataHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, const string &type, const string &name, time_t time)
+EntityWithMetadataHDF5::EntityWithMetadataHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, const string &type, const string &name, time_t time)
     : NamedEntityHDF5(file, group, id, type, name, time)
 {
 }
@@ -61,7 +61,7 @@ shared_ptr<ISection> EntityWithMetadataHDF5::metadata() const {
     shared_ptr<ISection> sec;
 
     if (group().hasGroup("metadata")) {
-        Group other_group = group().openGroup("metadata", false);
+        H5Group other_group = group().openGroup("metadata", false);
         auto sec_tmp = make_shared<EntityWithMetadataHDF5>(file(), other_group);
         // re-get above section "sec_tmp": we just got it to have id, parent is missing, 
         // findSections will return it with parent!

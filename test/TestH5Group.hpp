@@ -11,7 +11,7 @@
 #include <nix/hydra/multiArray.hpp>
 #include <nix.hpp>
 
-#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/H5Group.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -32,7 +32,7 @@
 #include <boost/iterator/zip_iterator.hpp>
 
 
-class TestGroup:public CPPUNIT_NS::TestFixture {
+class TestH5Group : public CPPUNIT_NS::TestFixture {
 
 public:
 
@@ -70,7 +70,7 @@ private:
     hid_t h5file;
     hid_t h5group;
 
-    CPPUNIT_TEST_SUITE(TestGroup);
+    CPPUNIT_TEST_SUITE(TestH5Group);
     CPPUNIT_TEST(testRefCount);
     CPPUNIT_TEST(testOpen);
     CPPUNIT_TEST(testBaseTypes);

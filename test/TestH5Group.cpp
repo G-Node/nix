@@ -8,19 +8,19 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "TestGroup.hpp"
+#include "TestH5Group.hpp"
 
 #include "RefTester.hpp"
 
 #include <nix/hdf5/FileHDF5.hpp>
 
-unsigned int & TestGroup::open_mode()
+unsigned int &TestH5Group::open_mode()
 {
     static unsigned int openMode = H5F_ACC_TRUNC;
     return openMode;
 }
 
-void TestGroup::setUp() {
+void TestH5Group::setUp() {
     unsigned int &openMode = open_mode();
 
     if (openMode == H5F_ACC_TRUNC) {
@@ -40,13 +40,13 @@ void TestGroup::setUp() {
     openMode = H5F_ACC_RDWR;
 }
 
-void TestGroup::tearDown() {
+void TestH5Group::tearDown() {
     H5Fclose(h5file);
     H5Oclose(h5group);
 }
 
-void TestGroup::testBaseTypes() {
-    nix::hdf5::Group group(h5group, true);
+void TestH5Group::testBaseTypes() {
+    nix::hdf5::H5Group group(h5group, true);
 
     //int
     //attr
@@ -74,8 +74,8 @@ void TestGroup::testBaseTypes() {
     CPPUNIT_ASSERT_EQUAL(testStr, retString);
 }
 
-void TestGroup::testMultiArray() {
-    nix::hdf5::Group group(h5group, true);
+void TestH5Group::testMultiArray() {
+    nix::hdf5::H5Group group(h5group, true);
     //arrays
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
@@ -126,8 +126,8 @@ void TestGroup::testMultiArray() {
     CPPUNIT_ASSERT_EQUAL(errors, 0);
 }
 
-void TestGroup::testVector() {
-    nix::hdf5::Group group(h5group, true);
+void TestH5Group::testVector() {
+    nix::hdf5::H5Group group(h5group, true);
 
     std::vector<int> iv;
     iv.push_back(7);
@@ -153,9 +153,9 @@ void TestGroup::testVector() {
     assert_vectors_equal(sv, tsv);
 }
 
-void TestGroup::testArray() {
+void TestH5Group::testArray() {
 
-    nix::hdf5::Group group(h5group, true);
+    nix::hdf5::H5Group group(h5group, true);
     int ia1d[5] = {1, 2, 3, 4, 5};
 
     group.setAttr("t_intarray1d", ia1d);
@@ -178,10 +178,10 @@ void TestGroup::testArray() {
 #endif
 }
 
-void TestGroup::testOpen() {
-    nix::hdf5::Group root(h5group, true);
+void TestH5Group::testOpen() {
+    nix::hdf5::H5Group root(h5group, true);
 
-    nix::hdf5::Group g = root.openGroup("name_a", true);
+    nix::hdf5::H5Group g = root.openGroup("name_a", true);
     std::string uuid = nix::util::createId();
     g.setAttr("entity_id", uuid);
 
@@ -189,13 +189,13 @@ void TestGroup::testOpen() {
 
     std::string idout;
 
-    boost::optional<nix::hdf5::Group> a = root.findGroupByNameOrAttribute("entity_id", "name_a");
+    boost::optional<nix::hdf5::H5Group> a = root.findGroupByNameOrAttribute("entity_id", "name_a");
     CPPUNIT_ASSERT(a);
     CPPUNIT_ASSERT(a->hasAttr("entity_id"));
     a->getAttr("entity_id", idout);
     CPPUNIT_ASSERT_EQUAL(uuid, idout);
 
-    boost::optional<nix::hdf5::Group> b = root.findGroupByNameOrAttribute("entity_id", uuid);
+    boost::optional<nix::hdf5::H5Group> b = root.findGroupByNameOrAttribute("entity_id", uuid);
     CPPUNIT_ASSERT(b);
     CPPUNIT_ASSERT(b->hasAttr("entity_id"));
     b->getAttr("entity_id", idout);
@@ -203,9 +203,9 @@ void TestGroup::testOpen() {
 
 }
 
-void TestGroup::testRefCount() {
+void TestH5Group::testRefCount() {
 
     hid_t ha = H5Gopen2(h5file, "/", H5P_DEFAULT);
-    test_refcounting<nix::hdf5::Group>(h5group, ha);
+    test_refcounting<nix::hdf5::H5Group>(h5group, ha);
     H5Gclose(ha);
 }

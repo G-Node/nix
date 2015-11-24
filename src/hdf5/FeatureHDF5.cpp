@@ -38,19 +38,19 @@ LinkType linkTypeFromString(const string &str) {
 }
 
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : EntityHDF5(file, group), block(block)
 {
 }
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
@@ -87,7 +87,7 @@ shared_ptr<IDataArray> FeatureHDF5::data() const {
     shared_ptr<IDataArray> da;
 
     if (group().hasGroup("data")) {
-        Group other_group = group().openGroup("data", false);
+        H5Group other_group = group().openGroup("data", false);
         da = make_shared<DataArrayHDF5>(file(), block, other_group);
         if (!block->hasDataArray(da->id())) {
             throw std::runtime_error("FeatureHDF5::data: DataArray not found!");

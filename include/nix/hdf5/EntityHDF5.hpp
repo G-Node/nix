@@ -12,7 +12,7 @@
 #include <nix/base/IFile.hpp>
 
 #include <nix/base/IEntity.hpp>
-#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/H5Group.hpp>
 
 #include <string>
 #include <memory>
@@ -29,14 +29,14 @@ class EntityHDF5 : virtual public base::IEntity {
 private:
 
     std::shared_ptr<base::IFile>  entity_file;
-    Group                         entity_group;
+    H5Group entity_group;
 
 public:
 
-    EntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group);
 
 
-    EntityHDF5(const std::shared_ptr<base::IFile> &file, const Group &group, const std::string &id, time_t time);
+    EntityHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, time_t time);
 
 
     std::string id() const;
@@ -66,7 +66,7 @@ public:
     bool operator!=(const EntityHDF5 &other) const;
 
 
-    Group group() const;
+    H5Group group() const;
 
 
     virtual ~EntityHDF5();

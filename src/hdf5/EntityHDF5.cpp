@@ -19,7 +19,7 @@ namespace nix {
 namespace hdf5 {
 
 
-EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group)
+EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const H5Group &group)
     : entity_file(file), entity_group(group)
 {
     setUpdatedAt();
@@ -27,7 +27,7 @@ EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group)
 }
 
 
-EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const Group &group, const string &id, time_t time)
+EntityHDF5::EntityHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, time_t time)
     : entity_file(file), entity_group(group)
 {
     group.setAttr("entity_id", id);
@@ -91,7 +91,7 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
-Group EntityHDF5::group() const {
+H5Group EntityHDF5::group() const {
     return entity_group;
 }
 
