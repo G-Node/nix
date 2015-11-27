@@ -76,7 +76,7 @@ void BaseTestFeature::testData() {
     CPPUNIT_ASSERT(rp.data().id() == da_2.id());
     block.deleteDataArray(da_2.id());
     // make sure link is gone with deleted data array
-    CPPUNIT_ASSERT(rp.data() == nullptr);
+    CPPUNIT_ASSERT(rp.data() == nix::none);
     tag.deleteFeature(rp.id());
 }
 

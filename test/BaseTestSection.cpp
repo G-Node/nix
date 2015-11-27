@@ -64,13 +64,13 @@ void BaseTestSection::testDefinition() {
 
 
 void BaseTestSection::testParent() {
-    CPPUNIT_ASSERT(section.parent() == nullptr);
+    CPPUNIT_ASSERT(section.parent() == nix::none);
 
     Section child = section.createSection("child", "section");
-    CPPUNIT_ASSERT(child.parent() != nullptr);
+    CPPUNIT_ASSERT(child.parent() != nix::none);
     CPPUNIT_ASSERT(child.parent().id() == section.id());
 
-    CPPUNIT_ASSERT(child.parent().parent() == nullptr);
+    CPPUNIT_ASSERT(child.parent().parent() == nix::none);
 }
 
 
