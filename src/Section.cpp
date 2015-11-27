@@ -190,7 +190,7 @@ vector<Property> Section::inheritedProperties() const {
 
     vector<Property> own = properties();
 
-    if (link() == nullptr)
+    if (link() == none)
         return own;
 
     const vector<Property> linked = link().properties();
@@ -241,7 +241,7 @@ vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter
     vector<Section> results;
     Section p = parent();
 
-    if (p != nullptr) {
+    if (p != none) {
         results = p.findSections(filter,1);
         if (results.size() > 0) {
             return results;
@@ -255,7 +255,7 @@ vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter
 vector<Section> Section::findSideways(const std::function<bool(Section)> &filter, const string &caller_id) const{
     vector<Section> results;
     Section p = parent();
-    if (p != nullptr) {
+    if (p != none) {
         results = p.findSections(filter,1);
         if (results.size() > 0) {
 
