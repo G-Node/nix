@@ -28,7 +28,6 @@
 
 using namespace nix;
 using namespace valid;
-using namespace std;
 
 
 void BaseTestTag::testValidate() {
@@ -203,8 +202,6 @@ void BaseTestTag::testSourceAccess() {
 void BaseTestTag::testUnits() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
-    Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
-    st.references(refs);
 
     std::vector<std::string> valid_units = {"mV", "cm", "m^2"};
     std::vector<std::string> invalid_units = {"mV", "haha", "qm^2"};
@@ -221,7 +218,7 @@ void BaseTestTag::testUnits() {
     CPPUNIT_ASSERT(st.units().size() == 0);
     CPPUNIT_ASSERT_THROW(st.units(invalid_units), nix::InvalidUnit);
     CPPUNIT_ASSERT(st.units().size() == 0);
-    for (auto it = r.begin(); it != r.end(); it++) {
+    for (auto it = refs.begin(); it != refs.end(); it++) {
         block.deleteDataArray((*it).id());
     }
 
@@ -263,7 +260,7 @@ void BaseTestTag::testFeatures() {
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
-    CPPUNIT_ASSERT(t.hasFeature(f));
+    CPPUNIT_ASSERT(tag.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -272,20 +269,20 @@ void BaseTestTag::testFeatures() {
 
 void BaseTestTag::testDataAccess() {
     double samplingInterval = 1.0;
-    vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
-    string unit = "ms";
+    std::vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
+    std::string unit = "ms";
     SampledDimension sampledDim;
     RangeDimension rangeDim;
     SetDimension setDim;
-    vector<double> position {0.0, 2.0, 3.4};
-    vector<double> extent {0.0, 6.0, 2.3};
-    vector<string> units {"none", "ms", "ms"};
+    std::vector<double> position {0.0, 2.0, 3.4};
+    std::vector<double> extent {0.0, 6.0, 2.3};
+    std::vector<std::string> units {"none", "ms", "ms"};
 
     DataArray data_array = block.createDataArray("dimensionTest",
                                                  "test",
                                                  DataType::Double,
                                                  NDSize({0, 0, 0}));
-    vector<DataArray> reference;
+    std::vector<DataArray> reference;
     reference.push_back(data_array);
 
     typedef boost::multi_array<double, 3> array_type;
@@ -350,11 +347,11 @@ void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag_other == false);
     CPPUNIT_ASSERT(tag_other == none);
 
-    stringstream str1, str2;
-    str1 <<  "Tag: {name = " << t.name();
-    str1 << ", type = " << t.type();
-    str1 << ", id = " << t.id() << "}";
-    str2 << t;
+    std::stringstream str1, str2;
+    str1 <<  "Tag: {name = " << tag.name();
+    str1 << ", type = " << tag.type();
+    str1 << ", id = " << tag.id() << "}";
+    str2 << tag;
     CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 

@@ -24,8 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -34,55 +32,40 @@ void BaseTestSource::testValidate() {
     valid::Result result = validate(source);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
-
-    result = validate(source_fs);
-    CPPUNIT_ASSERT(result.getErrors().size() == 0);
-    CPPUNIT_ASSERT(result.getWarnings().size() == 0);
 }
 
 
 void BaseTestSource::testId() {
     CPPUNIT_ASSERT(source.id().size() == 36);
-    CPPUNIT_ASSERT(source_fs.id().size() == 36);
 }
 
 
 void BaseTestSource::testName() {
     CPPUNIT_ASSERT(source.name() == "source_one");
-    CPPUNIT_ASSERT(source_fs.name() == "source_one");
 }
 
 
 void BaseTestSource::testType() {
     CPPUNIT_ASSERT(source.type() == "channel");
-    string typ = util::createId();
+    std::string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
-
-    CPPUNIT_ASSERT(source_fs.type() == "channel");
-    source_fs.type(typ);
-    CPPUNIT_ASSERT(source_fs.type() == typ);
 }
 
 
 void BaseTestSource::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);
     CPPUNIT_ASSERT(source.definition() == nix::none);
-
-    source_fs.definition(def);
-    CPPUNIT_ASSERT(*source_fs.definition() == def);
-    source_fs.definition(nix::none);
-    CPPUNIT_ASSERT(source_fs.definition() == nix::none);
 }
 
 
 void BaseTestSource::testMetadataAccess() {
     CPPUNIT_ASSERT(!source.metadata());
 
-    source.metadata(s);
+    source.metadata(section);
     CPPUNIT_ASSERT(source.metadata());
 
     // test none-unsetter
@@ -98,7 +81,7 @@ void BaseTestSource::testMetadataAccess() {
 
 
 void BaseTestSource::testSourceAccess() {
-    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
@@ -107,7 +90,7 @@ void BaseTestSource::testSourceAccess() {
     Source s;
     CPPUNIT_ASSERT(!source.hasSource(s));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (const auto &name : names) {
         Source child_source = source.createSource(name, "channel");
         CPPUNIT_ASSERT(child_source.name() == name);
@@ -117,8 +100,7 @@ void BaseTestSource::testSourceAccess() {
     }
     CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
                          DuplicateName);
-    CPPUNIT_ASSERT_THROW(src.createSource("", "channel"),
-                         EmptyString);
+    CPPUNIT_ASSERT_THROW(source.createSource("", "channel"), EmptyString);
 
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());

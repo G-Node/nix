@@ -25,9 +25,9 @@ using namespace nix;
 void BaseTestEntityWithMetadata::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
 
-    block.metadata(sec);
+    block.metadata(section);
     CPPUNIT_ASSERT(block.metadata());
-    CPPUNIT_ASSERT(block.metadata().id() == sec.id());
+    CPPUNIT_ASSERT(block.metadata().id() == section.id());
 
     CPPUNIT_ASSERT_THROW(block.metadata(wrong.id()), runtime_error);
     CPPUNIT_ASSERT_THROW(block.metadata(""), EmptyString);
@@ -35,10 +35,10 @@ void BaseTestEntityWithMetadata::testMetadataAccess() {
     block.metadata(none);
     CPPUNIT_ASSERT(!block.metadata());
     // test deleter removing link too
-    block.metadata(sec);
-    f.deleteSection(sec.id());
+    block.metadata(section);
+    file.deleteSection(section.id());
     CPPUNIT_ASSERT(!block.metadata());
     // re-create section
-    sec = f.createSection("foo_section", "metadata");
-    f.deleteSection(sec);
+    section = file.createSection("foo_section", "metadata");
+    file.deleteSection(section);
 }

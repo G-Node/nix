@@ -27,6 +27,7 @@ class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
 protected:
     nix::File file_open, file_other, file_null;
+    nix::Block block;
     time_t startup_time;
 
 public:

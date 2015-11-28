@@ -41,13 +41,11 @@ void BaseTestMultiTag::testValidate() {
 
 void BaseTestMultiTag::testId() {
     CPPUNIT_ASSERT(tag.id().size() == 36);
-    CPPUNIT_ASSERT(tag_fs.id().size() == 36);
 }
 
 
 void BaseTestMultiTag::testName() {
     CPPUNIT_ASSERT(tag.name() == "tag_one");
-    CPPUNIT_ASSERT(tag_fs.name() == "tag_one");
 }
 
 
@@ -57,6 +55,7 @@ void BaseTestMultiTag::testType() {
     tag.type(type);
     CPPUNIT_ASSERT(tag.type() == type);
 }
+
 
 void BaseTestMultiTag::testDefinition() {
     std::string def = util::createId();
@@ -97,14 +96,15 @@ void BaseTestMultiTag::testCreateRemove() {
 
     DataArray a;
     MultiTag mtag;
-    CPPUNIT_ASSERT_THROW(mtag = b.createMultiTag("test", "test", a), nix::UninitializedEntity);
-    mtag = b.createMultiTag("test", "test", p);
-    mtag.extents(p);
+    CPPUNIT_ASSERT_THROW(mtag = block.createMultiTag("test", "test", a), nix::UninitializedEntity);
+    mtag = block.createMultiTag("test", "test", positions);
+    mtag.extents(positions);
     CPPUNIT_ASSERT_THROW(mtag.positions(a), UninitializedEntity);
-    CPPUNIT_ASSERT(mtag.extents().id() == p.id());
+    CPPUNIT_ASSERT(mtag.extents().id() == positions.id());
     CPPUNIT_ASSERT_NO_THROW(mtag.extents(a));
     CPPUNIT_ASSERT(!mtag.extents());
 }
+
 
 void BaseTestMultiTag::testUnits() {
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
@@ -145,7 +145,7 @@ void BaseTestMultiTag::testReferences(){
                                            DataType::Double,
                                            NDSize({ 0 }));
     DataArray a;
-    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", pos);
+    MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
     CPPUNIT_ASSERT(!dt.hasReference(a));
@@ -199,13 +199,13 @@ void BaseTestMultiTag::testReferences(){
 
     // delete data arrays
     std::vector<std::string> ids = {da_1.id(), da_2.id()};
-    b.deleteDataArray(da_1.id());
-    b.deleteDataArray(da_2.id());
+    block.deleteDataArray(da_1.id());
+    block.deleteDataArray(da_2.id());
     // check if references are gone too!
     CPPUNIT_ASSERT(dt.referenceCount() == 0);
     CPPUNIT_ASSERT(!dt.hasReference(ids[0]));
     CPPUNIT_ASSERT(!dt.hasReference(ids[1]));
-    b.deleteMultiTag(dt.id());
+    block.deleteMultiTag(dt.id());
 }
 
 
@@ -229,7 +229,7 @@ void BaseTestMultiTag::testFeatures() {
 void BaseTestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
     CPPUNIT_ASSERT_THROW(tag.extents(""), EmptyString);
-    CPPUNIT_ASSERT_THROW(tag.extents(wrongArray), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(tag.extents(wrong_array), std::runtime_error);
 
     DataArray a = block.createDataArray("name", "type", DataType::Double, {0,0});
     block.deleteDataArray(a);
@@ -445,8 +445,6 @@ void BaseTestMultiTag::testSourceAccess(){
 void BaseTestMultiTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
-    CPPUNIT_ASSERT(null == false);
-    CPPUNIT_ASSERT(null == none);
 
     CPPUNIT_ASSERT(tag != false);
     CPPUNIT_ASSERT(tag != none);

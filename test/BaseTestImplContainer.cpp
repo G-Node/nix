@@ -23,7 +23,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 
 

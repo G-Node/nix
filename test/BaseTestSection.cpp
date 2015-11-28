@@ -24,7 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -38,36 +37,30 @@ void BaseTestSection::testValidate() {
 
 void BaseTestSection::testId() {
     CPPUNIT_ASSERT(section.id().size() == 36);
-    CPPUNIT_ASSERT(section_fs.id().size() == 36);
 }
 
 
 void BaseTestSection::testName() {
     CPPUNIT_ASSERT(section.name() == "section");
-    CPPUNIT_ASSERT(section_fs.name() == "section_fs");
 }
 
 
 void BaseTestSection::testType() {
     CPPUNIT_ASSERT(section.type() == "metadata");
-    string typ = util::createId();
+    std::string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
 }
 
 
 void BaseTestSection::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
     section.definition(nix::none);
     CPPUNIT_ASSERT(section.definition() == nix::none);
-
-    section_fs.definition(def);
-    CPPUNIT_ASSERT(*section_fs.definition() == def);
-    section_fs.definition(nix::none);
-    CPPUNIT_ASSERT(section_fs.definition() == nix::none);
 }
+
 
 void BaseTestSection::testParent() {
     CPPUNIT_ASSERT(section.parent() == nix::none);
@@ -82,7 +75,7 @@ void BaseTestSection::testParent() {
 
 void BaseTestSection::testRepository() {
     CPPUNIT_ASSERT(!section.repository());
-    string rep = "http://foo.bar/" + util::createId();
+    std::string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
@@ -109,11 +102,11 @@ void BaseTestSection::testLink() {
 
     // test id setter and resetter
     CPPUNIT_ASSERT_THROW(section.link(""), EmptyString);
-    CPPUNIT_ASSERT_THROW(section.link("invalid id"), runtime_error);
+    CPPUNIT_ASSERT_THROW(section.link("invalid id"), std::runtime_error);
 
     section.link(section.id());
     CPPUNIT_ASSERT(section.link().id() == section.id());
-    section.link(other.id());
+    section.link(section_other.id());
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
     // test deleter removing link too
     section.link(section);
@@ -124,7 +117,7 @@ void BaseTestSection::testLink() {
 
 void BaseTestSection::testMapping() {
     CPPUNIT_ASSERT(!section.mapping());
-    string map = "http://foo.bar/" + util::createId();
+    std::string map = "http://foo.bar/" + util::createId();
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
@@ -134,7 +127,7 @@ void BaseTestSection::testMapping() {
 
 
 void BaseTestSection::testSectionAccess() {
-    vector<string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
+    std::vector<std::string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
     Section null;
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -142,30 +135,22 @@ void BaseTestSection::testSectionAccess() {
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, section.hasSection("invalid_id"));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto name : names) {
         Section child_section = section.createSection(name, "metadata");
         CPPUNIT_ASSERT(child_section.name() == name);
         CPPUNIT_ASSERT_EQUAL(true, section.hasSection(name));
 
-        idsection.push_back(child_section.id());
+        ids.push_back(child_section.id());
     }
-    CPPUNIT_ASSERT(section.sectionCount() == namesection.size());
-    CPPUNIT_ASSERT(section.sections().size() == namesection.size());
+    CPPUNIT_ASSERT(section.sectionCount() == names.size());
+    CPPUNIT_ASSERT(section.sections().size() == names.size());
 
     CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
                          DuplicateName);
     CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
     CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
-    CPPUNIT_ASSERT_THROW(section.hasSection(null), runtime_error);
-    if (impl == Implementation::FileSys) {
-        CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
-        CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
-
-    } else {
-        CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), hdf5::H5Exception);
-        CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), hdf5::H5Exception);
-    }
+    CPPUNIT_ASSERT_THROW(section.hasSection(null), std::runtime_error);
 
     for (auto id : ids) {
         Section child_section = section.getSection(id);
@@ -175,7 +160,7 @@ void BaseTestSection::testSectionAccess() {
         section.deleteSection(id);
     }
     Section s2 = section.createSection("a name", "a type");
-    CPPUNIT_ASSERT_THROW(section.deleteSection(null), runtime_error);
+    CPPUNIT_ASSERT_THROW(section.deleteSection(null), std::runtime_error);
     CPPUNIT_ASSERT_NO_THROW(section.deleteSection(s2));
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
@@ -246,13 +231,13 @@ void BaseTestSection::testFindRelated() {
     l4n1.link(l4n2.id());
     section_other.link(l3n3.id());
 
-    string t1 = "t1";
-    string t3 = "t3";
-    string t4 = "t4";
-    string typ2 = "typ2";
-    string typ1 = "typ1";
+    std::string t1 = "t1";
+    std::string t3 = "t3";
+    std::string t4 = "t4";
+    std::string typ2 = "typ2";
+    std::string typ1 = "typ1";
 
-    vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
+    std::vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
     CPPUNIT_ASSERT(related.size() == 1);
     related = l1n1.findRelated(util::TypeFilter<Section>(t3));
     CPPUNIT_ASSERT(related.size() == 2);
@@ -305,7 +290,7 @@ void BaseTestSection::testFindRelated() {
 
 
 void BaseTestSection::testPropertyAccess() {
-    vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
+    std::vector<std::string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
@@ -331,7 +316,7 @@ void BaseTestSection::testPropertyAccess() {
     section.deleteProperty(prop);
     CPPUNIT_ASSERT(section.propertyCount() == 0);
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto name : names) {
         prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
@@ -365,78 +350,13 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
 
-    vector<Value> values;
+    std::vector<Value> values;
     values.push_back(Value(10));
     values.push_back(Value(100));
     section.createProperty("another test", values);
     CPPUNIT_ASSERT(section.propertyCount() == 1);
     prop = section.getProperty("another test");
     CPPUNIT_ASSERT(prop.valueCount() == 2);
-
-    // Filesystem checks
-    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
-    CPPUNIT_ASSERT(section_fs.properties().size() == 0);
-    CPPUNIT_ASSERT(section_fs.getProperty("invalid_id") == false);
-    CPPUNIT_ASSERT_EQUAL(false, section_fs.hasProperty("invalid_id"));
-
-    p = section_fs.createProperty("empty_prop", DataType::Double);
-    CPPUNIT_ASSERT(section_fs.propertyCount() == 1);
-    CPPUNIT_ASSERT(section_fs.hasProperty(p));
-    CPPUNIT_ASSERT(section_fs.hasProperty("empty_prop"));
-    prop = section_fs.getProperty("empty_prop");
-    CPPUNIT_ASSERT(prop.valueCount() == 0);
-    CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
-    section_fs.deleteProperty(p.id());
-    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
-
-    /*
-    Value dummy(10);
-    prop = section.createProperty("single value", dummy);
-    CPPUNIT_ASSERT(section.hasProperty("single value"));
-    CPPUNIT_ASSERT(section.propertyCount() == 1);
-    section.deleteProperty(prop.id());
-    CPPUNIT_ASSERT(section.propertyCount() == 0);
-    */ // values are not yet supported in filesys backend
-    ids.clear();
-    for (auto name : names) {
-        prop = section_fs.createProperty(name, dummy);
-        CPPUNIT_ASSERT(prop.name() == name);
-        CPPUNIT_ASSERT(section_fs.hasProperty(name));
-
-        Property prop_copy = section_fs.getProperty(name);
-        CPPUNIT_ASSERT(prop_copy.id() == prop.id());
-        ids.push_back(prop.id());
-    }
-    CPPUNIT_ASSERT_THROW(section_fs.createProperty(names[0], dummy),
-                         DuplicateName);
-
-    CPPUNIT_ASSERT(section_fs.propertyCount() == names.size());
-    CPPUNIT_ASSERT(section_fs.properties().size() == names.size());
-    section_fs_other.createProperty("some_prop", dummy);
-    section_fs_other.link(section_fs);
-    CPPUNIT_ASSERT(section_fs_other.propertyCount() == 1);
-    CPPUNIT_ASSERT(section_fs_other.inheritedProperties().size() == names.size() + 1);
-
-    for (auto id : ids) {
-        Property prop = section_fs.getProperty(id);
-        CPPUNIT_ASSERT(section_fs.hasProperty(id));
-        CPPUNIT_ASSERT(prop.id() == id);
-
-        section_fs.deleteProperty(id);
-    }
-
-    CPPUNIT_ASSERT(section_fs.propertyCount() == 0);
-    CPPUNIT_ASSERT(section_fs.properties().size() == 0);
-    CPPUNIT_ASSERT(section_fs.getProperty("invalid_id") == false);
-    /*
-    vector<Value> values;
-    values.push_back(Value(10));
-    values.push_back(Value(100));
-    section.createProperty("another test", values);
-    CPPUNIT_ASSERT(section.propertyCount() == 1);
-    prop = section.getProperty("another test");
-    CPPUNIT_ASSERT(prop.valueCount() == 2);
-    */ //FIXME Values are not supported yet
 }
 
 
@@ -450,14 +370,14 @@ void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section == section);
     CPPUNIT_ASSERT(section != section_other);
 
-    sectionother = section;
+    section_other = section;
     CPPUNIT_ASSERT(section == section_other);
 
     section_other = none;
     CPPUNIT_ASSERT(section_other == false);
     CPPUNIT_ASSERT(section_other == none);
 
-    stringstream str1, str2;
+    std::stringstream str1, str2;
     str1 <<  "Section: {name = " << section.name();
     str1 << ", type = " << section.type();
     str1 << ", id = " << section.id() << "}";
@@ -472,14 +392,9 @@ void BaseTestSection::testCreatedAt() {
     time_t past_time = time(NULL) - 10000000;
     section.forceCreatedAt(past_time);
     CPPUNIT_ASSERT(section.createdAt() == past_time);
-
-    CPPUNIT_ASSERT(section_fs.createdAt() >= startup_time);
-    section_fs.forceCreatedAt(past_time);
-    CPPUNIT_ASSERT(section_fs.createdAt() == past_time);
 }
 
 
 void BaseTestSection::testUpdatedAt() {
     CPPUNIT_ASSERT(section.updatedAt() >= startup_time);
-    CPPUNIT_ASSERT(section_fs.updatedAt() >= startup_time);
 }

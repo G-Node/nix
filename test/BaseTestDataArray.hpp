@@ -31,6 +31,7 @@ public:
     void testDefinition();
     void testData();
     void testPolynomial();
+    void testPolynomialSetter();
     void testLabel();
     void testUnit();
     void testDimension();

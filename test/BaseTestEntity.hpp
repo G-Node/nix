@@ -18,7 +18,7 @@ class BaseTestEntity : public CPPUNIT_NS::TestFixture {
 
 protected:
     nix::File file;
-    nix::Block block;
+    nix::Block block, block_other, block_null;
     time_t startup_time;
 
 public:
@@ -30,6 +30,7 @@ public:
     void testCreatedAt();
     void testIsValidEntity();
 
+    void testOperators();
 };
 
 #endif // NIX_BASETESTENTITY_HPP

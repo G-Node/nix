@@ -26,7 +26,6 @@
 #include <cppunit/BriefTestProgressListener.h>
 #include <boost/math/constants/constants.hpp>
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -85,7 +84,7 @@ void BaseTestFeature::testData() {
     // make sure link is gone with deleted data array
     CPPUNIT_ASSERT(rp.data() == nix::none);
     CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
-    CPPUNIT_ASSERT_THROW(rp.data("worng_id"), runtime_error);
+    CPPUNIT_ASSERT_THROW(rp.data("worng_id"), std::runtime_error);
     tag.deleteFeature(rp.id());
 }
 
@@ -98,7 +97,7 @@ void BaseTestFeature::testLinkType2Str() {
 
 
 void BaseTestFeature::testStreamOperator() {
-    stringstream s1, s2, s3;
+    std::stringstream s1, s2, s3;
     s1 << nix::LinkType::Indexed;
     CPPUNIT_ASSERT(s1.str() == "LinkType::Indexed");
     s2 << nix::LinkType::Tagged;

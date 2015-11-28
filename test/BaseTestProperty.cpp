@@ -45,13 +45,11 @@ void BaseTestProperty::testValidate() {
 
 void BaseTestProperty::testId() {
     CPPUNIT_ASSERT(property.id().size() == 36);
-    CPPUNIT_ASSERT(property_fs.id().size() == 36);
 }
 
 
 void BaseTestProperty::testName() {
     CPPUNIT_ASSERT(property.name() == "prop");
-    CPPUNIT_ASSERT(property_fs.name() == "test_prop");
 }
 
 
@@ -66,8 +64,8 @@ void BaseTestProperty::testDefinition() {
 
 
 void BaseTestProperty::testMapping() {
-    string map = "some_str";
-    CPPUNIT_ASSERT_THROW(porperty.mapping(""), EmptyString);
+    std::string map = "some_str";
+    CPPUNIT_ASSERT_THROW(property.mapping(""), EmptyString);
     property.mapping(map);
     CPPUNIT_ASSERT(*property.mapping() == map);
     property.mapping(boost::none);
@@ -167,11 +165,11 @@ void BaseTestProperty::testOperators() {
     CPPUNIT_ASSERT(property != false);
     CPPUNIT_ASSERT(property != none);
 
-    CPPUNIT_ASSERT(property == pproperty);
+    CPPUNIT_ASSERT(property == property);
     CPPUNIT_ASSERT(property != property_other);
     CPPUNIT_ASSERT(property.compare(property_other) != 0);
 
-    property_other = p;
+    property_other = property;
     CPPUNIT_ASSERT(property == property_other);
     CPPUNIT_ASSERT(property.compare(property_other) == 0);
 
@@ -195,16 +193,9 @@ void BaseTestProperty::testCreatedAt() {
     CPPUNIT_ASSERT(property.createdAt() == past_time);
 }
 
-void TestProperty::test_created_at(Property &p) {
-    CPPUNIT_ASSERT(property.createdAt() >= startup_time);
-    time_t past_time = time(NULL) - 10000000;
-    property.forceCreatedAt(past_time);
-    CPPUNIT_ASSERT(property.createdAt() == past_time);
-}
 
 void BaseTestProperty::testUpdatedAt() {
     CPPUNIT_ASSERT(property.updatedAt() >= startup_time);
-    CPPUNIT_ASSERT(property_fs.updatedAt() >= startup_time);
 }
 
 void BaseTestProperty::testIsValidEntity() {

@@ -40,7 +40,6 @@ void BaseTestDataArray::testValidate() {
     valid::Result result = validate(array1);
     CPPUNIT_ASSERT(result.getErrors().size() == 1);
     CPPUNIT_ASSERT(result.getWarnings().size() == 0);
-    //FIXME filesystem
 }
 
 
@@ -259,6 +258,7 @@ void BaseTestDataArray::testData() {
 
 }
 
+
 void BaseTestDataArray::testPolynomial() {
     double PI = boost::math::constants::pi<double>();
     boost::array<double, 10> coefficients1;
@@ -293,9 +293,7 @@ void BaseTestDataArray::testPolynomial() {
     CPPUNIT_ASSERT(array2.expansionOrigin() == nix::none);
 
     //test IO with a polynomial set
-    nix::DataArray dap = block.createDataArray("polyio",
-                                               "double",
-                                               nix::DataType::Double,
+    nix::DataArray dap = block.createDataArray("polyio", "double", nix::DataType::Double,
                                                nix::NDSize({2, 3}));
 
     std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
@@ -342,13 +340,14 @@ void BaseTestDataArray::testPolynomial() {
     }
 }
 
+
 void BaseTestDataArray::testLabel() {
     std::string testStr = "somestring";
     array1.label(testStr);
     CPPUNIT_ASSERT(*array1.label() == testStr);
     array1.label(boost::none);
     CPPUNIT_ASSERT(array1.label() == nix::none);
-    CPPUNIT_ASSERT_THROW(a.label(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(array1.label(""), EmptyString);
 }
 
 
@@ -447,6 +446,7 @@ void BaseTestDataArray::testDimension() {
     CPPUNIT_ASSERT(dims.size() == 0);
 }
 
+
 void BaseTestDataArray::testAliasRangeDimension() {
     nix::Dimension dim = array3.createAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
@@ -502,7 +502,7 @@ void BaseTestDataArray::testAliasRangeDimension() {
 }
 
 
-void BaseTestDataArray::testOperator()
+void BaseTestDataArray::testOperator() {
     std::stringstream mystream;
     mystream << array1;
 
