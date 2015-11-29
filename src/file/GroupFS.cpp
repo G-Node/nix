@@ -306,7 +306,7 @@ std::shared_ptr<base::IMultiTag>  GroupFS::getMultiTag(ndsize_t index) const {
 
 
 bool GroupFS::removeMultiTag(const std::string &name_or_id) {
-    multi_tag_group.removeObjectByNameOrAttribute("name", name_or_id);
+    return multi_tag_group.removeObjectByNameOrAttribute("name", name_or_id);
 }
 
 

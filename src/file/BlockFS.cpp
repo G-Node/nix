@@ -255,18 +255,12 @@ bool BlockFS::deleteMultiTag(const std::string &name_or_id) {
     return multi_tag_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
-
-std::shared_ptr<base::IBlock> BlockFS::block() const {
-    return std::const_pointer_cast<BlockFS>(shared_from_this());
-}
-
-
 //--------------------------------------------------
 // Methods concerning groups.
 //--------------------------------------------------
 
 bool BlockFS::hasGroup(const std::string &name_or_id) const {
-    return getGroup(name_or_id) != nix::none;
+    return getGroup(name_or_id) != nullptr;
 }
 
 
