@@ -89,7 +89,7 @@ std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(const std::string &na
 }
 
 
-std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(size_t index) const {
+std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(ndsize_t index) const {
     if(index > referenceCount()) {
         throw OutOfBounds("No reference at given index", index);
     }
@@ -179,7 +179,7 @@ std::shared_ptr<base::IFeature> BaseTagFS::getFeature(const std::string &name_or
 }
 
 
-std::shared_ptr<base::IFeature>  BaseTagFS::getFeature(size_t index) const {
+std::shared_ptr<base::IFeature>  BaseTagFS::getFeature(ndsize_t index) const {
     if (index >= featureCount()) {
         throw OutOfBounds("Trying to access a feature with an invalid index!");
     }

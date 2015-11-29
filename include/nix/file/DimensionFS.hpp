@@ -38,7 +38,7 @@ public:
     DimensionFS(const std::string &loc, size_t index, FileMode mode);
 
 
-    size_t index() const;
+    ndsize_t index() const;
 
 
     bool operator==(const DimensionFS &other) const;

@@ -61,7 +61,7 @@ public:
     virtual std::shared_ptr<base::IDataArray> getReference(const std::string &name_or_id) const;
 
 
-    virtual std::shared_ptr<base::IDataArray> getReference(size_t index) const;
+    virtual std::shared_ptr<base::IDataArray> getReference(ndsize_t index) const;
 
 
     virtual void addReference(const std::string &name_or_id);
@@ -85,7 +85,7 @@ public:
     virtual std::shared_ptr<base::IFeature> getFeature(const std::string &name_or_id) const;
 
 
-    virtual std::shared_ptr<base::IFeature> getFeature(size_t index) const;
+    virtual std::shared_ptr<base::IFeature> getFeature(ndsize_t index) const;
 
 
     virtual std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type);

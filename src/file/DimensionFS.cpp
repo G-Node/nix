@@ -94,7 +94,7 @@ void DimensionFS::index(size_t index) {
     setAttr("index", index);
 }
 
-size_t DimensionFS::index() const {
+ndsize_t DimensionFS::index() const {
     size_t idx;
     if (!hasAttr("index"))
         throw MissingAttr("MissingAttr index in Dimension");

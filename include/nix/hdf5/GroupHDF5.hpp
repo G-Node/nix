@@ -5,8 +5,6 @@
 #ifndef NIX_GROUPHDF5_HPP
 #define NIX_GROUPHDF5_HPP
 
-#include <nix/hdf5/GroupHDF5.hpp>
-
 #include <nix/util/util.hpp>
 #include <nix/Group.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>

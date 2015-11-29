@@ -155,12 +155,12 @@ void DataArrayFS::polynomCoefficients(const none_t t) {
 //--------------------------------------------------
 
 
-size_t DataArrayFS::dimensionCount() const {
+ndsize_t DataArrayFS::dimensionCount() const {
     return dimensions.subdirCount();
 }
 
 
-std::shared_ptr<base::IDimension> DataArrayFS::getDimension(size_t index) const {
+std::shared_ptr<base::IDimension> DataArrayFS::getDimension(ndsize_t index) const {
     std::shared_ptr<base::IDimension> dim;
     boost::optional<bfs::path> p = dimensions.findByNameOrAttribute("index", util::numToStr(index));
     if (p) {
@@ -170,13 +170,13 @@ std::shared_ptr<base::IDimension> DataArrayFS::getDimension(size_t index) const 
 }
 
 
-std::shared_ptr<base::ISetDimension> DataArrayFS::createSetDimension(size_t index) {
+std::shared_ptr<base::ISetDimension> DataArrayFS::createSetDimension(ndsize_t index) {
     SetDimensionFS dim(dimensions.location(), index, fileMode());
     return std::make_shared<SetDimensionFS>(dim);
 }
 
 
-std::shared_ptr<base::IRangeDimension> DataArrayFS::createRangeDimension(size_t index, const std::vector<double> &ticks) {
+std::shared_ptr<base::IRangeDimension> DataArrayFS::createRangeDimension(ndsize_t index, const std::vector<double> &ticks) {
     RangeDimensionFS dim(dimensions.location(), index, ticks, fileMode());
     return std::make_shared<RangeDimensionFS>(dim);
 }
@@ -188,7 +188,7 @@ std::shared_ptr<base::IRangeDimension> DataArrayFS::createAliasRangeDimension() 
 }
 
 
-std::shared_ptr<base::ISampledDimension> DataArrayFS::createSampledDimension(size_t index, double sampling_interval) {
+std::shared_ptr<base::ISampledDimension> DataArrayFS::createSampledDimension(ndsize_t index, double sampling_interval) {
     SampledDimensionFS dim(dimensions.location(), index, sampling_interval, fileMode());
     return std::make_shared<SampledDimensionFS>(dim);
 }
@@ -210,7 +210,7 @@ Group DataArrayFS::createDimensionGroup(size_t index) {
 }
 */
 
-bool DataArrayFS::deleteDimension(size_t index) {
+bool DataArrayFS::deleteDimension(ndsize_t index) {
     bool deleted = false;
     size_t dim_count = dimensionCount();
     std::string str_id = util::numToStr(index);
