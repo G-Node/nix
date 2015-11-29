@@ -5,6 +5,8 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+#ifndef NIX_BASETESTFILE_HPP
+#define NIX_BASETESTFILE_HPP
 
 #include <nix.hpp>
 
@@ -22,7 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#pragma once
 
 class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
@@ -48,3 +49,5 @@ public:
     void testCompare();
 
 };
+
+#endif // NIX_BASETESTFILE_HPP

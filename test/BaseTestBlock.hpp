@@ -13,7 +13,6 @@
 
 #include <cppunit/TestFixture.h>
 
-#pragma once
 
 class BaseTestBlock : public CPPUNIT_NS::TestFixture {
 

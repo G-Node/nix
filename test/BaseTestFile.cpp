@@ -195,4 +195,3 @@ void BaseTestFile::testCheckHeader() {
     attr.set("version", version);
     CPPUNIT_ASSERT_THROW(File::open("test_file", FileMode::ReadWrite, Implementation::FileSys), std::runtime_error);
 }
-*/

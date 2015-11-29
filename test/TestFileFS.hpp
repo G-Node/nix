@@ -12,18 +12,20 @@ namespace bfs = boost::filesystem;
 
 class TestFileFS: public BaseTestFile {
 
-CPPUNIT_TEST_SUITE(TestFileFS);
-        CPPUNIT_TEST(testOpen);
-        CPPUNIT_TEST(testValidate);
-        CPPUNIT_TEST(testFormat);
-        CPPUNIT_TEST(testLocation);
-        CPPUNIT_TEST(testVersion);
-        CPPUNIT_TEST(testCreatedAt);
-        CPPUNIT_TEST(testUpdatedAt);
-        CPPUNIT_TEST(testBlockAccess);
-        CPPUNIT_TEST(testSectionAccess);
-        CPPUNIT_TEST(testOperators);
-        CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST_SUITE(TestFileFS);
+    CPPUNIT_TEST(testOpen);
+    CPPUNIT_TEST(testValidate);
+    CPPUNIT_TEST(testFormat);
+    CPPUNIT_TEST(testLocation);
+    CPPUNIT_TEST(testVersion);
+    CPPUNIT_TEST(testCreatedAt);
+    CPPUNIT_TEST(testUpdatedAt);
+    CPPUNIT_TEST(testBlockAccess);
+    CPPUNIT_TEST(testSectionAccess);
+    CPPUNIT_TEST(testOperators);
+    CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST(testCheckHeader);
+
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -50,6 +52,18 @@ public:
         CPPUNIT_ASSERT(file_other.location() == (p / p_other).string());
     }
 
+
+    void testCheckHeader() {
+        nix::file::AttributesFS attr(file_open.location(), file_open.fileMode());
+        std::string frmt("xin");
+        attr.set("format", frmt);
+        CPPUNIT_ASSERT_THROW(nix::File::open("test_file", nix::FileMode::ReadWrite, "file"), std::runtime_error);
+        attr.set("format", "nix");
+
+        std::vector<int> version{2, 0, 0};
+        attr.set("version", version);
+        CPPUNIT_ASSERT_THROW(nix::File::open("test_file", nix::FileMode::ReadWrite, "file"), std::runtime_error);
+    }
 };
 
 #endif //NIX_TESTFILEFS_HPP
