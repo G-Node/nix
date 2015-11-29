@@ -26,7 +26,7 @@ class TestFileHDF5: public BaseTestFile {
 public:
 
     void setUp() {
-        statup_time = time(NULL);
+        startup_time = time(NULL);
         file_open = nix::File::open("test_file.h5", nix::FileMode::Overwrite);
         file_other = nix::File::open("test_file_other.h5", nix::FileMode::Overwrite);
         file_null = nix::none;

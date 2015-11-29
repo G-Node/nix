@@ -32,7 +32,6 @@
 #include "TestValidate.hpp"
 #include "TestReadOnlyHDF5.hpp"
 #include "TestGroupHDF5.hpp"
-#include "TestFileSysAttributes.hpp"
 #include "TestAttributesFS.hpp"
 
 int main(int argc, char* argv[]) {

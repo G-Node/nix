@@ -21,6 +21,7 @@ public:
     void setUp() {
         file = nix::File::open("test_block.h5", nix::FileMode::Overwrite);
         section = file.createSection("foo_section", "metadata");
+        wrong = file.createSection("bar_section", "metadata");
         block = file.createBlock("block_one", "dataset");
     }
 

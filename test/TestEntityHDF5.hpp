@@ -32,6 +32,8 @@ public:
         startup_time = time(NULL);
         file = nix::File::open("test_block.h5", nix::FileMode::Overwrite);
         block = file.createBlock("block_one", "dataset");
+        block_other = file.createBlock("block_other", "dataset");
+        block_null = nix::none;
     }
 
     void tearDown() {

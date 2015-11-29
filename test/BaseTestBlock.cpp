@@ -80,7 +80,7 @@ void BaseTestBlock::testSourceAccess() {
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasSource("invalid_id"));
-    CPPUNIT_ASSERT(block.getSource(block.sourceCount() + 10) == nullptr);
+    CPPUNIT_ASSERT_THROW(block.getSource(block.sourceCount() + 10), OutOfBounds);
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -160,7 +160,7 @@ void BaseTestBlock::testDataArrayAccess() {
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         CPPUNIT_ASSERT(block.hasDataArray(*it));
-        CPPUNIT_ASSERT(data_array.id() == *it);
+        CPPUNIT_ASSERT(block.getDataArray(*it).id() == *it);
         block.deleteDataArray(*it);
     }
     CPPUNIT_ASSERT(!block.deleteDataArray(a));

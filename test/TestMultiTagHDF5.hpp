@@ -46,6 +46,9 @@ public:
         extents = block.createDataArray("extents_DataArray", "dataArray",
                                         nix::DataType::Double, nix::NDSize({ 0, 0 }));
 
+        wrong_array = block.createDataArray("wrong_extents", "dataArray",
+                                            nix::DataType::Double, nix::NDSize({0, 0, 0}));
+
         typedef boost::multi_array<double, 2> array_type;
         typedef array_type::index index;
         array_type A(boost::extents[5][5]);
