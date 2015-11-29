@@ -119,9 +119,13 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
     // extract vectors of names from vectors of new & old references
     std::vector<std::string> names_new(refs_new.size());
     transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
-    //FIXME: issue 473
-    std::vector<DataArray> refs_old(static_cast<size_t>(referenceCount()));
-    for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
+
+    size_t count = nix::check::fits_in_size_t(referenceCount(), "referenceCount() failed! count > than size_t!");
+    std::vector<DataArray> refs_old(count);
+    for (size_t i = 0; i < refs_old.size(); i++){
+        refs_old[i] = getReference(i);
+    }
+
     std::vector<std::string> names_old(refs_old.size());
     std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
 
