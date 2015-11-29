@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -13,6 +13,7 @@
 
 #include <cppunit/TestFixture.h>
 
+#pragma once
 
 class BaseTestBlock : public CPPUNIT_NS::TestFixture {
 

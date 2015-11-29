@@ -44,11 +44,13 @@ void nix::file::BlockFS::createSubFolders(const std::shared_ptr<base::IFile> &fi
     bfs::path multi_tags("multi_tags");
     bfs::path sources("sources");
     bfs::path p(location());
+    bfs::path groups("groups");
 
     data_array_dir = Directory(p / data_arrays, file->fileMode());
     tag_dir = Directory(p / tags, file->fileMode());
     multi_tag_dir = Directory(p / multi_tags, file->fileMode());
     source_dir = Directory(p / sources, file->fileMode());
+    group_dir = Directory(p / groups, file->fileMode());
 }
 
 //--------------------------------------------------
