@@ -29,7 +29,7 @@ class BlockFS : virtual public base::IBlock, public EntityWithMetadataFS,
                 public std::enable_shared_from_this<BlockFS> {
 
 private:
-    Directory data_array_dir, tag_dir, multi_tag_dir, source_dir;
+    Directory data_array_dir, tag_dir, multi_tag_dir, source_dir, group_dir;
 
     void createSubFolders(const std::shared_ptr<base::IFile> &file);
 
@@ -152,6 +152,27 @@ public:
 
 
     bool deleteMultiTag(const std::string &name_or_id);
+
+    //--------------------------------------------------
+    // Methods concerning groups.
+    //--------------------------------------------------
+
+    bool hasGroup(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const;
+
+
+    ndsize_t groupCount() const;
+
+
+    std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type);
+
+
+    bool deleteGroup(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions

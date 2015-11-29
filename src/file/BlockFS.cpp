@@ -8,6 +8,7 @@
 
 #include <nix/file/BlockFS.hpp>
 #include <nix/file/MultiTagFS.hpp>
+#include <nix/file/GroupFS.hpp>
 
 namespace bfs = boost::filesystem;
 
@@ -259,6 +260,60 @@ std::shared_ptr<base::IBlock> BlockFS::block() const {
     return std::const_pointer_cast<BlockFS>(shared_from_this());
 }
 
+
+//--------------------------------------------------
+// Methods concerning groups.
+//--------------------------------------------------
+
+bool BlockFS::hasGroup(const std::string &name_or_id) const {
+    return getGroup(name_or_id) != nix::none;
+}
+
+
+ndsize_t BlockFS::groupCount() const {
+    return group_dir.subdirCount();
+}
+
+
+std::shared_ptr<base::IGroup> BlockFS::getGroup(const std::string &name_or_id) const {
+    std::shared_ptr<base::IGroup> g;
+    boost::optional<bfs::path> path = group_dir.findByNameOrAttribute("entity_id", name_or_id);
+    if (path) {
+        return std::make_shared<GroupFS>(file(), block(), path->string());
+    }
+    return g;
+}
+
+
+std::shared_ptr<base::IGroup> BlockFS::getGroup(ndsize_t index) const {
+    if (index >= groupCount()) {
+        throw OutOfBounds("Trying to access block.group with invalid index.", index);
+    }
+    bfs::path p = group_dir.sub_dir_by_index(index);
+    return std::make_shared<GroupFS>(file(), block(), p.string());
+}
+
+
+std::shared_ptr<base::IGroup> BlockFS::createGroup(const std::string &name, const std::string &type) {
+    if (name.empty()) {
+        throw EmptyString("Block::createGroup empty name provided!");
+    }
+    if (hasGroup(name)) {
+        throw DuplicateName("Block::createGroup: an entity with the same name already exists!");
+    }
+    std::string id = util::createId();
+    return std::make_shared<GroupFS>(file(), block(), group_dir.location(), id, type, name);
+}
+
+
+bool BlockFS::deleteGroup(const std::string &name_or_id) {
+    return group_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
+}
+
+
+std::shared_ptr<base::IBlock> BlockFS::block() const {
+    return std::const_pointer_cast<BlockFS>(shared_from_this());
+}
 
 BlockFS::~BlockFS() {
 }
