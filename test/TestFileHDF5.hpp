@@ -38,6 +38,11 @@ public:
         file_other.close();
     }
 
+    void testLocation() {
+        CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
+        CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
+    }
+
 };
 
 #endif //NIX_TESTFILEHDF5_HPP_H

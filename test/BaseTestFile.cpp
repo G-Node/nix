@@ -36,20 +36,6 @@ void BaseTestFile::testFormat() {
 }
 
 
-void BaseTestFile::testLocation() {
-    CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
-    CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
-    /*
-    // TODO this will not work with the filesystem...
-    bfs::path p = boost::filesystem::current_path();
-    bfs::path p_file("test_file");
-    bfs::path p_other("other_file");
-    CPPUNIT_ASSERT(file_fs.location() ==  (p / p_file).string());
-    CPPUNIT_ASSERT(file_other_fs.location() == (p / p_other).string());
-    */
-}
-
-
 void BaseTestFile::testVersion() {
     std::vector<int> version{1, 0, 0};
     CPPUNIT_ASSERT(file_open.version() == version);
