@@ -33,6 +33,7 @@
 #include "TestReadOnlyHDF5.hpp"
 #include "TestGroupHDF5.hpp"
 #include "TestAttributesFS.hpp"
+#include "TestFileFS.hpp"
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -62,6 +63,8 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestAttributesFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileFS);
+
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
