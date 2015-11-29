@@ -22,6 +22,7 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
+#pragma once
 
 class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
@@ -35,7 +36,7 @@ public:
     void testOpen();
     void testValidate();
     void testFormat();
-    void testLocation();
+    virtual void testLocation() = 0;
     void testVersion();
     void testCreatedAt();
     void testUpdatedAt();
