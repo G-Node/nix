@@ -35,6 +35,8 @@
 #include "TestAttributesFS.hpp"
 #include "TestFileFS.hpp"
 #include "TestBlockFS.hpp"
+#include "TestEntityFS.hpp"
+
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -66,6 +68,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestAttributesFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFileFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlockFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityFS);
 
 
     CPPUNIT_NS::TestResult testresult;
