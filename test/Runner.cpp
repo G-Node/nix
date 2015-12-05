@@ -38,6 +38,7 @@
 #include "TestEntityFS.hpp"
 #include "TestEntityWithMetadataFS.hpp"
 #include "TestEntityWithSourcesFS.hpp"
+#include "TestFeatureFS.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -73,6 +74,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadataFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSourcesFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureFS);
 
 
     CPPUNIT_NS::TestResult testresult;
