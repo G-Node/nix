@@ -42,6 +42,7 @@
 #include "TestGroupFS.hpp"
 #include "TestMultiTagFS.hpp"
 #include "TestPropertyFS.hpp"
+#include "TestDataArrayFS.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -81,6 +82,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayFS);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
