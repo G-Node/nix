@@ -62,6 +62,13 @@ bool Section::hasSection(const Section &section) const {
     if (section == none || !section.isValidEntity()) {
         return false;
     }
+    std::string id;
+
+    try {
+        id = section.id();
+    } catch (...) {
+        return false;
+    }
     return backend()->hasSection(section.id());
 }
 

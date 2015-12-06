@@ -41,6 +41,9 @@ public:
 
     void createLink(const boost::filesystem::path &linker);
 
+    /**
+     * Removes the linker from the list of links onto this entity.
+     */
     void unlink(const boost::filesystem::path &linker);
 };
 

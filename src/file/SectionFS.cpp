@@ -102,18 +102,17 @@ void SectionFS::repository(const none_t t) {
 
 
 void SectionFS::link(const std::string &id) {
-    if (id.empty())
-        throw EmptyString("link");
     bfs::path p(location()), l("link");
 
-    if (bfs::exists(p / l))
+    if (bfs::exists(p / l)) {
         link(none);
+    }
 
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
-    if (found.empty())
+    if (found.empty()) {
         throw std::runtime_error("SectionFS::link: Section not found in file!");
-
+    }
     auto target = std::dynamic_pointer_cast<SectionFS>(found.front().impl());
     target->createLink(p / l);
     forceUpdatedAt();
@@ -227,14 +226,28 @@ std::shared_ptr<base::ISection> SectionFS::createSection(const std::string &name
 
 
 bool SectionFS::deleteSection(const std::string &name_or_id) {
-    return subsection_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
+    bool success = true;
+    Section s = getSection(name_or_id);
+    success = SectionFS::removeSubsections(s);
+    if (success) {
+        success = success && subsection_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
+    }
+    return success;
 }
 
+
+bool SectionFS::removeSubsections(Section &section) {
+    bool success = true;
+    std::vector<Section> secs = section.sections();
+    for(auto &s : secs) {
+        success = success  && section.deleteSection(s.name());
+    }
+    return success;
+}
 
 //--------------------------------------------------
 // Methods for property access
 //--------------------------------------------------
-
 
 ndsize_t SectionFS::propertyCount() const {
     return property_dir.subdirCount();

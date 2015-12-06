@@ -37,21 +37,22 @@ void DirectoryWithAttributes::removeAll() {
     attributes = AttributesFS(location(), fileMode());
 }
 
-void DirectoryWithAttributes::createLink(const boost::filesystem::path &linker) {
+void DirectoryWithAttributes::createLink(const bfs::path &linker) {
     std::vector<std::string> links;
     if (hasAttr("links")) {
         getAttr("links", links);
     }
-    create_directory_symlink(bfs::path(location()), linker);
+    bfs::create_directory_symlink(bfs::path(location()), linker);
     links.push_back(linker.string());
     setAttr("links", links);
 }
 
-void DirectoryWithAttributes::unlink(const boost::filesystem::path &linker) {
+void DirectoryWithAttributes::unlink(const bfs::path &linker) {
     std::vector<std::string> links, active_links;
     if (hasAttr("links")) {
         getAttr("links", links);
     }
+
     for (auto &l : links) {
         if (l != linker.string()) {
             active_links.push_back(l);

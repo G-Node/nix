@@ -29,8 +29,9 @@ private:
     std::shared_ptr<base::ISection> parent_section;
 
     void createSubFolders(const std::shared_ptr<base::IFile> &file);
-public:
+    bool removeSubsections(Section &section);
 
+public:
     /**
      * Standard constructor for existing entity
      */
@@ -106,11 +107,9 @@ public:
 
     std::shared_ptr<base::ISection> parent() const;
 
-
     //--------------------------------------------------
     // Methods for child section access
     //--------------------------------------------------
-
 
     ndsize_t sectionCount() const;
 
