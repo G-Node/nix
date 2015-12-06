@@ -225,6 +225,7 @@ void BaseTestSection::testFindRelated() {
     Section l4n1 = l3n2.createSection("l4n1", "typ2");
     Section l4n2 = l3n3.createSection("l4n2", "typ2");
     Section l5n1 = l4n1.createSection("l5n1", "typ2");
+
     l2n1.link(l2n2.id());
     l3n1.link(l5n1.id());
     l3n2.link(l3n3.id());
@@ -261,14 +262,18 @@ void BaseTestSection::testFindRelated() {
      *                   
      */
     l1n1.deleteSection(l2n2.id());
+
     CPPUNIT_ASSERT(section.findSections().size() == 4);
+
     // test that all (horizontal) links are gone too:
     CPPUNIT_ASSERT(!l2n1.link());
     CPPUNIT_ASSERT(!l3n1.link());
     CPPUNIT_ASSERT(!l3n2.link());
     CPPUNIT_ASSERT(!l4n1.link());
+
     CPPUNIT_ASSERT(!section_other.link());
     CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
+
     /* Extend the tree to:
      * 
      * section---l1n1---l2n1---l3n1
@@ -283,7 +288,6 @@ void BaseTestSection::testFindRelated() {
     file.deleteSection(section.id());
     CPPUNIT_ASSERT(section_other.findSections().size() == 1);
     CPPUNIT_ASSERT(!section_other.link());
-
     // re-create section
     section = file.createSection("section", "metadata");
 }
@@ -302,7 +306,6 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.hasProperty(p));
     CPPUNIT_ASSERT(section.hasProperty("empty_prop"));
     Property prop = section.getProperty("empty_prop");
-    CPPUNIT_ASSERT(prop.valueCount() == 0);
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
     section.deleteProperty(p.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -349,14 +352,6 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
-
-    std::vector<Value> values;
-    values.push_back(Value(10));
-    values.push_back(Value(100));
-    section.createProperty("another test", values);
-    CPPUNIT_ASSERT(section.propertyCount() == 1);
-    prop = section.getProperty("another test");
-    CPPUNIT_ASSERT(prop.valueCount() == 2);
 }
 
 

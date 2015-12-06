@@ -43,6 +43,7 @@
 #include "TestMultiTagFS.hpp"
 #include "TestPropertyFS.hpp"
 #include "TestDataArrayFS.hpp"
+#include "TestSectionFS.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -83,6 +84,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionFS);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
