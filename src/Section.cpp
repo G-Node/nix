@@ -63,13 +63,12 @@ bool Section::hasSection(const Section &section) const {
         return false;
     }
     std::string id;
-
     try {
         id = section.id();
     } catch (...) {
         return false;
     }
-    return backend()->hasSection(section.id());
+    return backend()->hasSection(id);
 }
 
 
