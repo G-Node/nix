@@ -44,6 +44,7 @@
 #include "TestPropertyFS.hpp"
 #include "TestDataArrayFS.hpp"
 #include "TestSectionFS.hpp"
+#include "TestSourceFS.hpp"
 
 
 int main(int argc, char* argv[]) {
@@ -85,6 +86,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceFS);
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
