@@ -20,8 +20,8 @@ class TestTagFS : public BaseTestTag {
     CPPUNIT_TEST(testType);
     CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testCreateRemove);
-    // CPPUNIT_TEST(testExtent);
-    // CPPUNIT_TEST(testPosition);
+    CPPUNIT_TEST(testExtent);
+    CPPUNIT_TEST(testPosition);
     // CPPUNIT_TEST(testDataAccess);
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
