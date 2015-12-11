@@ -189,3 +189,9 @@ void BaseTestProperty::testUpdatedAt() {
     CPPUNIT_ASSERT(property.updatedAt() >= startup_time);
 }
 
+void BaseTestProperty::testIsValidEntity() {
+    Property p = section.createProperty("testProperty", DataType::Double);
+    CPPUNIT_ASSERT(p.isValidEntity());
+    section.deleteProperty(p.name());
+    CPPUNIT_ASSERT(!p.isValidEntity());
+}

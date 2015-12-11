@@ -66,5 +66,12 @@ void BaseTestEntity::testUpdatedAt() {
 }
 
 
+void BaseTestEntity::testIsValidEntity() {
+    CPPUNIT_ASSERT(block.isValidEntity());
+    Source s  = block.createSource("test", "test");
+    CPPUNIT_ASSERT(s.isValidEntity());
+    block.deleteSource(s.name());
+    CPPUNIT_ASSERT(!s.isValidEntity());
+}
 
 

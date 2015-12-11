@@ -34,6 +34,7 @@ public:
     void testDataType();
     void testValues();
     void testUnit();
+    void testIsValidEntity();
 
     void testOperators();
     void testUpdatedAt();
