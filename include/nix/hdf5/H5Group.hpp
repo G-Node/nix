@@ -172,6 +172,8 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
+    bool isReferenced() const;
+
     virtual ~H5Group();
 
 

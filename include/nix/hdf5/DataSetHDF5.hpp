@@ -69,6 +69,8 @@ public:
     DataType dataType(void) const;
 
     DataSpace getSpace() const;
+
+    bool isReferenced() const;
 };
 
 
