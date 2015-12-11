@@ -523,11 +523,6 @@ void DataSet::write(const std::vector<Value> &values)
 
 }
 
-bool DataSet::isReferenced() const {
-    H5O_info_t oInfo;
-    H5Oget_info(hid, &oInfo);
-    return oInfo.rc > 0;
-}
 
 } // namespace hdf5
 } // namespace nix
