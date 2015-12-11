@@ -91,6 +91,11 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
+bool EntityHDF5::isValidEntity() {
+    return group().isReferenced();
+}
+
+
 H5Group EntityHDF5::group() const {
     return entity_group;
 }

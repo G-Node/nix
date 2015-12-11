@@ -122,6 +122,12 @@ public:
     }
 
     /**
+     *
+     */
+    bool isValidEntity() {
+        return ImplContainer<T>::backend()->isValidEntity();
+    }
+    /**
      * @brief Destructor
      */
     virtual ~Entity() {}

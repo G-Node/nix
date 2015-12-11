@@ -233,6 +233,11 @@ void PropertyHDF5::values(const nix::none_t t) {
 }
 
 
+bool PropertyHDF5::isValidEntity() {
+    return dataset().isReferenced();
+}
+
+
 PropertyHDF5::~PropertyHDF5() {}
 
 } // ns nix::hdf5

@@ -115,7 +115,10 @@ public:
 
 
     void values(const boost::none_t t);
-    
+
+
+    bool isValidEntity();
+
 
     bool operator==(const PropertyHDF5 &other) const; //FIXME: not implemented
 
