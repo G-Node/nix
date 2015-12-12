@@ -368,12 +368,6 @@ boost::optional<DataSet> H5Group::findDataByNameOrAttribute(std::string const &a
     }
 }
 
-bool H5Group::isReferenced() const {
-    H5O_info_t oinfo;
-    H5Oget_info(hid, &oinfo);
-    return oinfo.rc > 0;
-}
-
 
 H5Group::~H5Group()
 {}

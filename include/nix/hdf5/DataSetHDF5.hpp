@@ -70,7 +70,6 @@ public:
 
     DataSpace getSpace() const;
 
-    bool isReferenced() const;
 };
 
 

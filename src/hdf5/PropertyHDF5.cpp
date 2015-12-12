@@ -234,7 +234,7 @@ void PropertyHDF5::values(const nix::none_t t) {
 
 
 bool PropertyHDF5::isValidEntity() {
-    return dataset().isReferenced();
+    return dataset().referenceCount() > 0;
 }
 
 
