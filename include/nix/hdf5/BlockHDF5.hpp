@@ -178,7 +178,7 @@ public:
     virtual ~BlockHDF5();
 
 
-    std::shared_ptr<IBlock> block() const;
+    std::shared_ptr<base::IBlock> block() const;
 
 };
 

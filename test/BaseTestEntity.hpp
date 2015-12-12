@@ -28,6 +28,8 @@ public:
     void testDefinition();
     void testUpdatedAt();
     void testCreatedAt();
+    void testIsValidEntity();
+
 };
 
 #endif // NIX_BASETESTENTITY_HPP

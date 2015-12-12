@@ -28,7 +28,7 @@ class TestPropertyHDF5 : public BaseTestProperty {
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
-
+    CPPUNIT_TEST(testIsValidEntity);
     CPPUNIT_TEST_SUITE_END();
 
 public:
