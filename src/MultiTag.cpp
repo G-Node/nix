@@ -16,7 +16,9 @@ namespace nix {
 
 
 void MultiTag::positions(const DataArray &positions) {
-    util::checkEntityInput(positions);
+    if (!util::checkEntityInput(positions) || !positions.isValidEntity()){
+        throw UninitializedEntity();
+    }
     backend()->positions(positions.id());
 }
 
@@ -30,8 +32,9 @@ void MultiTag::positions(const std::string &name_or_id) {
 void MultiTag::extents(const DataArray &extents) {
     if (extents == none) {
         backend()->extents(none);
-    }
-    else {
+    } else if(!extents.isValidEntity()) {
+        throw UninitializedEntity();
+    } else {
         backend()->extents(extents.id());
     }
 }
@@ -59,7 +62,9 @@ void MultiTag::units(const std::vector<std::string> &units) {
 
 
 bool MultiTag::hasReference(const DataArray &reference) const {
-    util::checkEntityInput(reference);
+    if(!util::checkEntityInput(reference, false) || !reference.isValidEntity()) {
+        return false;
+    }
     return backend()->hasReference(reference.id());
 }
 
@@ -73,22 +78,24 @@ DataArray MultiTag::getReference(size_t index) const {
 
 
 void MultiTag::addReference(const DataArray &reference) {
-    util::checkEntityInput(reference);
+    if(!util::checkEntityInput(reference) || !reference.isValidEntity()) {
+        throw UninitializedEntity();
+    }
     backend()->addReference(reference.id());
 }
 
 
 bool MultiTag::removeReference(const DataArray &reference) {
-    util::checkEntityInput(reference);
+    if (!util::checkEntityInput(reference) || !reference.isValidEntity()) {
+        return false;
+    }
     return backend()->removeReference(reference.id());
 }
 
 
 std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
-    return getEntities<DataArray>(f,
-                                  referenceCount(),
-                                  filter);
+    return getEntities<DataArray>(f, referenceCount(), filter);
 }
 
 
@@ -98,21 +105,23 @@ DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) c
 
 
 bool MultiTag::hasFeature(const Feature &feature) const {
-    util::checkEntityInput(feature);
+    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+        return false;
+    }
     return backend()->hasFeature(feature.id());
 }
 
 
 std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
-    return getEntities<Feature>(f,
-                                featureCount(),
-                                filter);
+    return getEntities<Feature>(f, featureCount(), filter);
 }
 
 
 bool MultiTag::deleteFeature(const Feature &feature) {
-    util::checkEntityInput(feature);
+    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+        return false;
+    }
     return backend()->deleteFeature(feature.id());
 }
 
