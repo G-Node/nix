@@ -68,6 +68,13 @@ void BaseTestFeature::testData() {
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
     CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
+    a = block.createDataArray("Test", "array", DataType::Double, {0, 0});
+    f = tag.createFeature(a, nix::LinkType::Untagged);
+    f.data(a.name());
+    block.deleteDataArray(a);
+    CPPUNIT_ASSERT_THROW(f.data(a), UninitializedEntity);
+
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     DataArray da_2 = block.createDataArray("array2", "Test",
                                            DataType::Double, nix::NDSize({ 0 }));
