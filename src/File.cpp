@@ -36,13 +36,17 @@ Block File::createBlock(const std::string &name, const std::string &type) {
 
 
 bool File::hasBlock(const Block &block) const {
-    util::checkEntityInput(block);
+    if(!util::checkEntityInput(block, false) || !block.isValidEntity()) {
+        return false;
+    }
     return backend()->hasBlock(block.id());
 }
 
 
 bool File::deleteBlock(const Block &block) {
-    util::checkEntityInput(block);
+    if(!util::checkEntityInput(block, false) || !block.isValidEntity()) {
+        return false;
+    }
     return backend()->deleteBlock(block.id());
 }
 
@@ -50,9 +54,7 @@ bool File::deleteBlock(const Block &block) {
 std::vector<Block> File::blocks(const util::Filter<Block>::type &filter) const
 {
     auto f = [this] (ndsize_t i) { return getBlock(i); };
-    return getEntities<Block>(f,
-                              blockCount(),
-                              filter);
+    return getEntities<Block>(f, blockCount(), filter);
 }
 
 
@@ -66,7 +68,9 @@ Section File::createSection(const std::string &name, const std::string &type) {
 
 
 bool File::hasSection(const Section &section) const {
-    util::checkEntityInput(section);
+    if(!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+        return false;
+    }
     return backend()->hasSection(section.id());
 }
 
@@ -74,28 +78,25 @@ bool File::hasSection(const Section &section) const {
 std::vector<Section> File::sections(const util::Filter<Section>::type &filter) const
 {
     auto f = [this] (ndsize_t i) { return getSection(i); };
-    return getEntities<Section>(f,
-                                sectionCount(),
-                                filter);
+    return getEntities<Section>(f, sectionCount(), filter);
 }
 
 
 bool File::deleteSection(const Section &section) {
-    util::checkEntityInput(section);
+    if(!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+        return false;
+    }
     return deleteSection(section.id());
 }
 
 
 vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
-
     vector<Section> results;
-
     vector<Section> roots = sections();
     for (auto root : roots) {
         vector<Section> secs = root.findSections(filter, max_depth);
         results.insert(results.end(), secs.begin(), secs.end());
     }
-
     return results;
 }
 
