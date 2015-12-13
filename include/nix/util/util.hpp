@@ -45,14 +45,22 @@ NIXAPI void checkNameOrId(const std::string &name_or_id);
 
 /**
  * @brief Helper that checks the entity passed as an argument to a method.
- * Throws an exception if the entity is not initialized.
+ * If wanted it throws an exception if the entity is not initialized.
  *
  * @param entity    The entity
+ * @param raise_exception   bool defines whether an exception should be thrown, default true
+ *
+ * @return true if entity is intialized, false otherwise
  */
-template <typename T> void checkEntityInput(const T &entity) {
+template <typename T> bool checkEntityInput(const T &entity, bool raise_exception = true) {
     if (!entity || entity == none) {
-        throw UninitializedEntity();
+        if (raise_exception) {
+            throw UninitializedEntity();
+        } else {
+            return false;
+        }
     }
+    return true;
 }
 
 
