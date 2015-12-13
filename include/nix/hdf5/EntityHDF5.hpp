@@ -60,7 +60,7 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    bool isValidEntity();
+    bool isValidEntity() const;
 
 
     bool operator==(const EntityHDF5 &other) const;

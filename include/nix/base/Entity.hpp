@@ -124,7 +124,7 @@ public:
     /**
      *
      */
-    bool isValidEntity() {
+    bool isValidEntity() const {
         return ImplContainer<T>::backend()->isValidEntity();
     }
     /**

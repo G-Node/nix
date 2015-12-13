@@ -233,7 +233,7 @@ void PropertyHDF5::values(const nix::none_t t) {
 }
 
 
-bool PropertyHDF5::isValidEntity() {
+bool PropertyHDF5::isValidEntity() const {
     return dataset().referenceCount() > 0;
 }
 
