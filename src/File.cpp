@@ -12,8 +12,6 @@
 
 #include <nix/valid/validate.hpp>
 
-using namespace std;
-
 namespace nix {
 
 
@@ -21,7 +19,7 @@ File File::open(const std::string &name, FileMode mode, const std::string &impl)
     if (impl == "hdf5") {
         return File(std::make_shared<hdf5::FileHDF5>(name, mode));
     } else {
-        throw runtime_error("Unknown implementation!");
+        throw std::runtime_error("Unknown implementation!");
     }
 }
 
@@ -90,11 +88,11 @@ bool File::deleteSection(const Section &section) {
 }
 
 
-vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
-    vector<Section> results;
-    vector<Section> roots = sections();
+std::vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
+    std::vector<Section> results;
+    std::vector<Section> roots = sections();
     for (auto root : roots) {
-        vector<Section> secs = root.findSections(filter, max_depth);
+        std::vector<Section> secs = root.findSections(filter, max_depth);
         results.insert(results.end(), secs.begin(), secs.end());
     }
     return results;

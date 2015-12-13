@@ -11,7 +11,6 @@
 #include <queue>
 #include <nix/util/util.hpp>
 
-using namespace std;
 using namespace nix;
 
 Source::Source()
@@ -113,7 +112,7 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 
 
-std::ostream& nix::operator<<(ostream &out, const Source &ent) {
+std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();
     out << ", id = " << ent.id() << "}";

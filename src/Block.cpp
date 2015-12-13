@@ -9,8 +9,6 @@
 #include <nix/Block.hpp>
 #include <nix/util/util.hpp>
 
-using namespace std;
-
 namespace nix {
 
 Source Block::createSource(const std::string &name, const std::string &type){
@@ -23,9 +21,9 @@ Source Block::createSource(const std::string &name, const std::string &type){
 
 std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
         size_t max_depth) const {
-    const vector<Source> probes = sources();
-    vector<Source> matches;
-    vector<Source> result;
+    const std::vector<Source> probes = sources();
+    std::vector<Source> matches;
+    std::vector<Source> result;
 
     for (auto &probe : probes) {
         matches = probe.findSources(filter, max_depth);

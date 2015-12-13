@@ -11,8 +11,6 @@
 #include <nix/util/util.hpp>
 #include <nix/util/dataAccess.hpp>
 
-
-using namespace std;
 using namespace nix;
 
 
