@@ -50,21 +50,23 @@ Source Source::createSource(const std::string &name, const std::string &type) {
 
 
 bool Source::hasSource(const Source &source) const {
-    util::checkEntityInput(source);
+    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+        return  false;
+    }
     return backend()->hasSource(source.id());
 }
 
 
 std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getSource(i); };
-    return getEntities<Source>(f,
-                               sourceCount(),
-                               filter);
+    return getEntities<Source>(f, sourceCount(), filter);
 }
 
 
 bool Source::deleteSource(const Source &source) {
-    util::checkEntityInput(source);
+    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+        return  false;
+    }
     return backend()->deleteSource(source.id());
 }
 
