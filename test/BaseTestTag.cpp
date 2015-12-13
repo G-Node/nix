@@ -245,13 +245,13 @@ void BaseTestTag::testReferences() {
     }
     CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
     for (size_t i = 0; i < refs.size(); ++i) {
-        CPPUNIT_ASSERT_NO_THROW(tag.removeReference(refs[i]));
+        CPPUNIT_ASSERT(tag.removeReference(refs[i]));
     }
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
     DataArray a;
-    CPPUNIT_ASSERT_THROW(tag.hasReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT(!tag.hasReference(a));
     CPPUNIT_ASSERT_THROW(tag.addReference(a), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(tag.removeReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT(!tag.removeReference(a));
 }
 
 
@@ -259,13 +259,12 @@ void BaseTestTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT(!tag.hasFeature(f));
+    CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
-    
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
 }
 
