@@ -42,7 +42,7 @@ void Group::addDataArray(const std::string &id) {
 
 
 bool Group::removeDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array, false) || !data_array.isValidEntity()) {
         return false;
     }
     return backend()->removeDataArray(data_array.id());

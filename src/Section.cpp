@@ -67,8 +67,8 @@ bool Section::hasSection(const Section &section) const {
 
 
 bool Section::deleteSection(const Section &section) {
-    if (section == none || !section.isValidEntity()) {
-        throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
+    if (!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+        return false;
     }
     return backend()->deleteSection(section.id());
 }
@@ -177,7 +177,7 @@ std::vector<Property> Section::properties(const util::Filter<Property>::type &fi
 
 bool Section::deleteProperty(const Property &property) {
     if (property == none || !property.isValidEntity()) {
-        throw std::runtime_error("Section::deleteProperty: Empty or invalid Property entity given!");
+        return false;
     }
     return backend()->deleteProperty(property.id());
 }
