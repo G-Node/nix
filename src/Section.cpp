@@ -61,15 +61,15 @@ void Section::link(const Section &link) {
 
 
 bool Section::hasSection(const Section &section) const {
-    if (section == none) {
-        throw std::runtime_error("Section::hasSection: Empty Section entity given!");
+    if (section == none || !section.isValidEntity()) {
+        return false;
     }
     return backend()->hasSection(section.id());
 }
 
 
 bool Section::deleteSection(const Section &section) {
-    if (section == none) {
+    if (section == none || !section.isValidEntity()) {
         throw std::runtime_error("Section::deleteSection: Empty Section entity given!");
     }
     return backend()->deleteSection(section.id());
@@ -90,9 +90,7 @@ struct SectionCont {
 
 std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getSection(i); };
-    return getEntities<Section>(f,
-                                sectionCount(),
-                                filter);
+    return getEntities<Section>(f, sectionCount(), filter);
 }
 
 
@@ -166,8 +164,8 @@ std::vector<Section> Section::findRelated(const util::Filter<Section>::type &fil
 //-----------------------------------------------------
 
 bool Section::hasProperty(const Property &property) const {
-    if (property == none) {
-        throw std::runtime_error("Section::hasProperty: Empty Property entity given!");
+    if (property == none || !property.isValidEntity()) {
+        return false;
     }
     return backend()->hasProperty(property.id());
 }
@@ -180,8 +178,8 @@ std::vector<Property> Section::properties(const util::Filter<Property>::type &fi
 }
 
 bool Section::deleteProperty(const Property &property) {
-    if (property == none) {
-        throw std::runtime_error("Section::deleteProperty: Empty Property entity given!");
+    if (property == none || !property.isValidEntity()) {
+        throw std::runtime_error("Section::deleteProperty: Empty or invalid Property entity given!");
     }
     return backend()->deleteProperty(property.id());
 }
