@@ -32,7 +32,8 @@ before_install:
     fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     brew update;
-    brew install cmake boost cppunit homebrew/science/hdf5 yaml-cpp;
+    brew install cmake boost cppunit homebrew/science/hdf5;
+    brew install yaml-cpp --HEAD;
     brew --env;
     fi
   - if [ "$CXX" == "g++" ]; then
