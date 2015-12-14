@@ -53,7 +53,7 @@ NIXAPI void checkNameOrId(const std::string &name_or_id);
  * @return true if entity is intialized, false otherwise
  */
 template <typename T> bool checkEntityInput(const T &entity, bool raise_exception = true) {
-    if (!entity || entity == none) {
+    if (!entity || entity == none || !entity.isValidEntity()) {
         if (raise_exception) {
             throw UninitializedEntity();
         } else {
