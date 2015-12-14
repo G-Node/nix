@@ -77,7 +77,7 @@ void BaseTestBlock::testMetadataAccess() {
 void BaseTestBlock::testSourceAccess() {
     std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
     Source s;
-    CPPUNIT_ASSERT_THROW(block.hasSource(s), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.hasSource(s));
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
     CPPUNIT_ASSERT(block.getSource("invalid_id") == false);
@@ -138,7 +138,7 @@ void BaseTestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT_THROW(block.createDataArray(names[0], "channel", DataType::Double, nix::NDSize({ 0 })),
                          DuplicateName);
     CPPUNIT_ASSERT(block.hasDataArray(data_array));
-    CPPUNIT_ASSERT_THROW(block.hasDataArray(a), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.hasDataArray(a));
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
 
@@ -168,7 +168,7 @@ void BaseTestBlock::testDataArrayAccess() {
 
         block.deleteDataArray(*it);
     }
-    CPPUNIT_ASSERT_THROW(block.deleteDataArray(a), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.deleteDataArray(a));
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
@@ -192,7 +192,7 @@ void BaseTestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
     CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(block.hasTag(t), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.hasTag(t));
 
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
@@ -218,8 +218,8 @@ void BaseTestBlock::testTagAccess() {
     
     tag = block.createTag("test", "test", {0.0});
     CPPUNIT_ASSERT(block.hasTag(tag));
-    CPPUNIT_ASSERT_NO_THROW(block.deleteTag(tag));
-    CPPUNIT_ASSERT_THROW(block.deleteTag(t), UninitializedEntity);
+    CPPUNIT_ASSERT(block.deleteTag(tag));
+    CPPUNIT_ASSERT(!block.deleteTag(t));
 
     CPPUNIT_ASSERT(block.tagCount() == 0);
     CPPUNIT_ASSERT(block.tags().size() == 0);
@@ -248,7 +248,7 @@ void BaseTestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(block.hasMultiTag(m), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.hasMultiTag(m));
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         mtag = block.createMultiTag(*it, "segment", positions);
@@ -271,8 +271,8 @@ void BaseTestBlock::testMultiTagAccess() {
     }
     mtag = block.createMultiTag("test", "test", positions);
     CPPUNIT_ASSERT(block.hasMultiTag(mtag));
-    CPPUNIT_ASSERT_THROW(block.deleteMultiTag(m), UninitializedEntity);
-    CPPUNIT_ASSERT_NO_THROW(block.deleteMultiTag(mtag));
+    CPPUNIT_ASSERT(!block.deleteMultiTag(m));
+    CPPUNIT_ASSERT(block.deleteMultiTag(mtag));
     CPPUNIT_ASSERT(block.multiTagCount() == 0);
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
@@ -283,7 +283,7 @@ void BaseTestBlock::testMultiTagAccess() {
 void BaseTestBlock::testGroupAccess() {
     std::vector<std::string> names = { "group_a", "group_b", "group_c", "group_d", "group_e" };
     Group g;
-    CPPUNIT_ASSERT_THROW(block.hasGroup(g), UninitializedEntity);
+    CPPUNIT_ASSERT(!block.hasGroup(g));
     CPPUNIT_ASSERT(block.groupCount() == 0);
     CPPUNIT_ASSERT(block.groups().size() == 0);
     CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
@@ -313,7 +313,7 @@ void BaseTestBlock::testGroupAccess() {
 
     g = block.createGroup("test", "test");
     CPPUNIT_ASSERT(block.groupCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(block.deleteGroup(g));
+    CPPUNIT_ASSERT(block.deleteGroup(g));
 
     CPPUNIT_ASSERT(block.groupCount() == 0);
     CPPUNIT_ASSERT(block.groups().size() == 0);

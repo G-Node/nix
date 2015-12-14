@@ -13,6 +13,9 @@ namespace nix {
 
 void Feature::data(const DataArray &data) {
     util::checkEntityInput(data);
+    if (!data.isValidEntity()) {
+        throw UninitializedEntity();
+    }
     backend()->data(data.id());
 }
 

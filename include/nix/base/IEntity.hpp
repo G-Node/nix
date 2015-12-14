@@ -46,7 +46,7 @@ public:
 
     virtual void forceCreatedAt(time_t t) = 0;
 
-    virtual  bool isValidEntity() = 0;
+    virtual  bool isValidEntity() const = 0;
 
     virtual ~IEntity() {}
 };

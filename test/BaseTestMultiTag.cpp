@@ -148,7 +148,7 @@ void BaseTestMultiTag::testReferences(){
     MultiTag dt = block.createMultiTag("TestMultiTag1", "Tag", positions);
 
     CPPUNIT_ASSERT_THROW(dt.getReference(42), OutOfBounds);
-    CPPUNIT_ASSERT_THROW(dt.hasReference(a), UninitializedEntity);
+    CPPUNIT_ASSERT(!dt.hasReference(a));
 
     std::stringstream counterrmsg;
     counterrmsg << "BaseTestMultiTag::testReference: Counts do not match!";
@@ -211,20 +211,22 @@ void BaseTestMultiTag::testFeatures() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT(tag.featureCount() == 0);
-    CPPUNIT_ASSERT_THROW(tag.hasFeature(f), UninitializedEntity);
-    CPPUNIT_ASSERT_THROW(tag.deleteFeature(f), UninitializedEntity);
+    CPPUNIT_ASSERT(!tag.hasFeature(f));
+    CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
     
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
-    CPPUNIT_ASSERT_NO_THROW(tag.deleteFeature(f));
+    CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
 }
 
 
 void BaseTestMultiTag::testExtents(){
     CPPUNIT_ASSERT_THROW(tag.extents("wrong_data_array_id"), std::runtime_error);
-
+    DataArray a = block.createDataArray("name", "type", DataType::Double, {0,0});
+    block.deleteDataArray(a);
+    CPPUNIT_ASSERT_THROW(tag.extents(a), UninitializedEntity);
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[5][5]);

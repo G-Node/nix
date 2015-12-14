@@ -90,7 +90,7 @@ void BaseTestSource::testSourceAccess() {
     CPPUNIT_ASSERT(source.getSource("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, source.hasSource("invalid_id"));
     Source s;
-    CPPUNIT_ASSERT_THROW(source.hasSource(s), UninitializedEntity);
+    CPPUNIT_ASSERT(!source.hasSource(s));
 
     vector<string> ids;
     for (const auto &name : names) {
@@ -116,7 +116,7 @@ void BaseTestSource::testSourceAccess() {
     }
     Source s1, s2;
     s1 = source.createSource("name", "type");
-    CPPUNIT_ASSERT_THROW(source.deleteSource(s2), UninitializedEntity);
+    CPPUNIT_ASSERT(!source.deleteSource(s2));
     CPPUNIT_ASSERT_NO_THROW(source.deleteSource(s1));
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);

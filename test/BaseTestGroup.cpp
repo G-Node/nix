@@ -123,6 +123,13 @@ void BaseTestGroup::testDataArrays() {
     for (auto ref_id : ids) {
         CPPUNIT_ASSERT(!g.hasDataArray(ref_id));
     }
+
+    DataArray a;
+    CPPUNIT_ASSERT(!g.hasDataArray(a));
+    CPPUNIT_ASSERT(!g.removeDataArray(a));
+    a = block.createDataArray("Test", "test", DataType::Double, {0,0});
+    block.deleteDataArray(a);
+    CPPUNIT_ASSERT_THROW(g.addDataArray(a), UninitializedEntity);
     block.deleteGroup(g.id());
     file.deleteBlock(b);
 }
@@ -180,6 +187,12 @@ void BaseTestGroup::testTags() {
     for (auto ref_id : ids) {
         CPPUNIT_ASSERT(!g.hasTag(ref_id));
     }
+
+    Tag tt;
+    CPPUNIT_ASSERT(!g.removeTag(tt));
+    CPPUNIT_ASSERT(!g.hasTag(tt));
+    CPPUNIT_ASSERT_THROW(g.addTag(tt), UninitializedEntity);
+
     block.deleteGroup(g.id());
     file.deleteBlock(b);
 }
@@ -238,6 +251,12 @@ void BaseTestGroup::testMultiTags() {
     for (auto ref_id : ids) {
         CPPUNIT_ASSERT(!g.hasMultiTag(ref_id));
     }
+
+    MultiTag mt;
+    CPPUNIT_ASSERT_THROW(g.addMultiTag(mt), UninitializedEntity);
+    CPPUNIT_ASSERT(!g.hasMultiTag(mt));
+    CPPUNIT_ASSERT(!g.removeMultiTag(mt));
+
     block.deleteGroup(g.id());
     file.deleteBlock(b);
 }

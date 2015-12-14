@@ -138,15 +138,18 @@ void BaseTestSection::testSectionAccess() {
     for (auto id : ids) {
         Section child_section = section.getSection(id);
         CPPUNIT_ASSERT(section.hasSection(id));
+        CPPUNIT_ASSERT(section.hasSection(child_section));
         CPPUNIT_ASSERT_EQUAL(id, child_section.id());
-
         section.deleteSection(id);
-
     }
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
+
+    Section s = section.createSection("Test", "test");
+    CPPUNIT_ASSERT(section.deleteSection(s));
+    CPPUNIT_ASSERT(!section.deleteSection(s));
 }
 
 
@@ -283,12 +286,14 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
     section.deleteProperty(p.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
+    CPPUNIT_ASSERT(!section.hasProperty(p));
+    CPPUNIT_ASSERT(!section.deleteProperty(p));
 
     Value dummy(10);
     prop = section.createProperty("single value", dummy);
     CPPUNIT_ASSERT(section.hasProperty("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
-    section.deleteProperty(prop.id());
+    section.deleteProperty(prop);
     CPPUNIT_ASSERT(section.propertyCount() == 0);
 
     vector<string> ids;

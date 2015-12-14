@@ -11,8 +11,6 @@
 #include <nix/util/util.hpp>
 #include <nix/util/dataAccess.hpp>
 
-
-using namespace std;
 using namespace nix;
 
 
@@ -32,7 +30,9 @@ void Tag::units(const std::vector<std::string> &units) {
 
 
 bool Tag::hasReference(const DataArray &reference) const {
-    util::checkEntityInput(reference);
+    if (!util::checkEntityInput(reference, false)) {
+        return false;
+    }
     return backend()->hasReference(reference.id());
 }
 
@@ -46,7 +46,9 @@ DataArray Tag::getReference(size_t index) const {
 
 
 void Tag::addReference(const DataArray &reference) {
-    util::checkEntityInput(reference);
+    if (!util::checkEntityInput(reference, false)) {
+        throw UninitializedEntity();
+    }
     backend()->addReference(reference.id());
 }
 
@@ -58,30 +60,30 @@ void Tag::addReference(const std::string &id) {
 
 
 bool Tag::removeReference(const DataArray &reference) {
-    util::checkEntityInput(reference);
+    if (!util::checkEntityInput(reference, false)) {
+        return false;
+    }
     return backend()->removeReference(reference.id());
 }
 
 
 std::vector<DataArray> Tag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
-    return getEntities<DataArray>(f,
-                                  referenceCount(),
-                                  filter);
+    return getEntities<DataArray>(f, referenceCount(), filter);
 }
 
 
 bool Tag::hasFeature(const Feature &feature) const {
-    util::checkEntityInput(feature);
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
+    }
     return backend()->hasFeature(feature.id());
 }
 
 
 std::vector<Feature> Tag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
-    return getEntities<Feature>(f,
-                                featureCount(),
-                                filter);
+    return getEntities<Feature>(f, featureCount(), filter);
 }
 
 
@@ -100,13 +102,17 @@ Feature Tag::getFeature(size_t index) const {
 
 
 Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
-    util::checkEntityInput(data);
+    if (!util::checkEntityInput(data)) {
+        throw UninitializedEntity();
+    }
     return backend()->createFeature(data.id(), link_type);
 }
 
 
 bool Tag::deleteFeature(const Feature &feature) {
-    util::checkEntityInput(feature);
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
+    }
     return backend()->deleteFeature(feature.id());
 }
 

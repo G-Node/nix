@@ -91,7 +91,7 @@ void EntityHDF5::forceCreatedAt(time_t t) {
 }
 
 
-bool EntityHDF5::isValidEntity() {
+bool EntityHDF5::isValidEntity() const {
     return group().referenceCount() > 0;
 }
 

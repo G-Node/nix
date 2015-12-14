@@ -69,8 +69,8 @@ void BaseTestFile::testBlockAccess() {
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
-    CPPUNIT_ASSERT_THROW(file_open.hasBlock(b), UninitializedEntity);
-    
+    CPPUNIT_ASSERT(!file_open.hasBlock(b));
+
     vector<string> ids;
     for (const auto &name : names) {
         Block bl = file_open.createBlock(name, "dataset");
@@ -82,7 +82,6 @@ void BaseTestFile::testBlockAccess() {
     }
     CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
                          DuplicateName);
-
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
 
@@ -94,7 +93,7 @@ void BaseTestFile::testBlockAccess() {
         CPPUNIT_ASSERT(bl_id);
         CPPUNIT_ASSERT_EQUAL(bl_name.name(), bl_id.name());
     }
-    
+
     for (const auto &id: ids) {
         Block bl = file_open.getBlock(id);
         CPPUNIT_ASSERT(file_open.hasBlock(id) == true);
@@ -102,7 +101,8 @@ void BaseTestFile::testBlockAccess() {
 
         file_open.deleteBlock(id);
     }
-    CPPUNIT_ASSERT_THROW(file_open.deleteBlock(b), UninitializedEntity);
+
+    CPPUNIT_ASSERT(!file_open.deleteBlock(b));
     b = file_open.createBlock("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getBlock(0));
     CPPUNIT_ASSERT_THROW(file_open.getBlock(file_open.blockCount()), nix::OutOfBounds);
@@ -119,7 +119,7 @@ void BaseTestFile::testSectionAccess() {
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
-    CPPUNIT_ASSERT_THROW(file_open.hasSection(s), UninitializedEntity);
+    CPPUNIT_ASSERT(!file_open.hasSection(s));
 
     vector<string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
@@ -141,7 +141,7 @@ void BaseTestFile::testSectionAccess() {
 
         file_open.deleteSection(*it);
     }
-    CPPUNIT_ASSERT_THROW(file_open.deleteSection(s), UninitializedEntity);
+    CPPUNIT_ASSERT(!file_open.deleteSection(s));
     s = file_open.createSection("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
     CPPUNIT_ASSERT_THROW(file_open.getSection(file_open.sectionCount()), nix::OutOfBounds);
