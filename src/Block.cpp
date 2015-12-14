@@ -34,7 +34,7 @@ std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
 }
 
 bool Block::hasSource(const Source &source) const {
-    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+    if (!util::checkEntityInput(source, false)) {
         return false;
     }
     return backend()->hasSource(source.id());
@@ -46,7 +46,7 @@ std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) con
 }
 
 bool Block::deleteSource(const Source &source) {
-    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+    if (!util::checkEntityInput(source, false)) {
         return false;
     }
     return backend()->deleteSource(source.id());
@@ -62,7 +62,7 @@ DataArray Block::createDataArray(const std::string &name, const std::string &typ
 }
 
 bool Block::hasDataArray(const DataArray &data_array) const {
-    if (!util::checkEntityInput(data_array, false) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
     return backend()->hasDataArray(data_array.id());
@@ -74,7 +74,7 @@ std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type 
 }
 
 bool Block::deleteDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array, false) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
     return backend()->deleteDataArray(data_array.id());
@@ -89,7 +89,7 @@ Tag Block::createTag(const std::string &name, const std::string &type, const std
 }
 
 bool Block::hasTag(const Tag &tag) const {
-    if (!util::checkEntityInput(tag, false) || !tag.isValidEntity()) {
+    if (!util::checkEntityInput(tag, false)) {
         return false;
     }
     return backend()->hasTag(tag.id());
@@ -101,7 +101,7 @@ std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
 }
 
 bool Block::deleteTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false) || !tag.isValidEntity()) {
+    if (!util::checkEntityInput(tag, false)) {
         return false;
     }
     return backend()->deleteTag(tag.id());
@@ -120,7 +120,7 @@ MultiTag Block::createMultiTag(const std::string &name, const std::string &type,
 }
 
 bool Block::hasMultiTag(const MultiTag &multi_tag) const {
-    if (!util::checkEntityInput(multi_tag, false) || !multi_tag.isValidEntity()) {
+    if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
     return backend()->hasMultiTag(multi_tag.id());
@@ -132,7 +132,7 @@ std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &fi
 }
 
 bool Block::deleteMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag, false) || !multi_tag.isValidEntity()) {
+    if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
     return backend()->deleteMultiTag(multi_tag.id());
@@ -147,7 +147,7 @@ Group Block::createGroup(const std::string &name, const std::string &type) {
 }
 
 bool Block::hasGroup(const Group &group) const {
-    if (!util::checkEntityInput(group, false) || !group.isValidEntity()) {
+    if (!util::checkEntityInput(group, false)) {
         return false;
     }
     return backend()->hasGroup(group.id());
@@ -159,7 +159,7 @@ std::vector<Group> Block::groups(const util::AcceptAll<Group>::type &filter) con
 }
 
 bool Block::deleteGroup(const Group &group) {
-    if (!util::checkEntityInput(group, false) || !group.isValidEntity()) {
+    if (!util::checkEntityInput(group, false)) {
         return false;
     }
     return backend()->deleteGroup(group.id());

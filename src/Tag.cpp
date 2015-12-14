@@ -30,7 +30,7 @@ void Tag::units(const std::vector<std::string> &units) {
 
 
 bool Tag::hasReference(const DataArray &reference) const {
-    if (!util::checkEntityInput(reference, false) || !reference.isValidEntity()) {
+    if (!util::checkEntityInput(reference, false)) {
         return false;
     }
     return backend()->hasReference(reference.id());
@@ -46,7 +46,7 @@ DataArray Tag::getReference(size_t index) const {
 
 
 void Tag::addReference(const DataArray &reference) {
-    if (!util::checkEntityInput(reference, false) || !reference.isValidEntity()) {
+    if (!util::checkEntityInput(reference, false)) {
         throw UninitializedEntity();
     }
     backend()->addReference(reference.id());
@@ -60,7 +60,7 @@ void Tag::addReference(const std::string &id) {
 
 
 bool Tag::removeReference(const DataArray &reference) {
-    if (!util::checkEntityInput(reference, false) || !reference.isValidEntity()) {
+    if (!util::checkEntityInput(reference, false)) {
         return false;
     }
     return backend()->removeReference(reference.id());
@@ -74,7 +74,7 @@ std::vector<DataArray> Tag::references(const util::Filter<DataArray>::type &filt
 
 
 bool Tag::hasFeature(const Feature &feature) const {
-    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+    if (!util::checkEntityInput(feature, false)) {
         return false;
     }
     return backend()->hasFeature(feature.id());
@@ -102,7 +102,7 @@ Feature Tag::getFeature(size_t index) const {
 
 
 Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
-    if (!util::checkEntityInput(data) || !data.isValidEntity()) {
+    if (!util::checkEntityInput(data)) {
         throw UninitializedEntity();
     }
     return backend()->createFeature(data.id(), link_type);
@@ -110,7 +110,7 @@ Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
 
 
 bool Tag::deleteFeature(const Feature &feature) {
-    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+    if (!util::checkEntityInput(feature, false)) {
         return false;
     }
     return backend()->deleteFeature(feature.id());
