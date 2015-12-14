@@ -50,7 +50,7 @@ Source Source::createSource(const std::string &name, const std::string &type) {
 
 
 bool Source::hasSource(const Source &source) const {
-    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+    if (!util::checkEntityInput(source, false)) {
         return  false;
     }
     return backend()->hasSource(source.id());
@@ -64,7 +64,7 @@ std::vector<Source> Source::sources(const util::Filter<Source>::type &filter) co
 
 
 bool Source::deleteSource(const Source &source) {
-    if (!util::checkEntityInput(source, false) || !source.isValidEntity()) {
+    if (!util::checkEntityInput(source, false)) {
         return  false;
     }
     return backend()->deleteSource(source.id());

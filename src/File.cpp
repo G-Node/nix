@@ -34,7 +34,7 @@ Block File::createBlock(const std::string &name, const std::string &type) {
 
 
 bool File::hasBlock(const Block &block) const {
-    if(!util::checkEntityInput(block, false) || !block.isValidEntity()) {
+    if(!util::checkEntityInput(block, false)) {
         return false;
     }
     return backend()->hasBlock(block.id());
@@ -42,7 +42,7 @@ bool File::hasBlock(const Block &block) const {
 
 
 bool File::deleteBlock(const Block &block) {
-    if(!util::checkEntityInput(block, false) || !block.isValidEntity()) {
+    if(!util::checkEntityInput(block, false)) {
         return false;
     }
     return backend()->deleteBlock(block.id());
@@ -66,7 +66,7 @@ Section File::createSection(const std::string &name, const std::string &type) {
 
 
 bool File::hasSection(const Section &section) const {
-    if(!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+    if(!util::checkEntityInput(section, false)) {
         return false;
     }
     return backend()->hasSection(section.id());
@@ -81,7 +81,7 @@ std::vector<Section> File::sections(const util::Filter<Section>::type &filter) c
 
 
 bool File::deleteSection(const Section &section) {
-    if(!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+    if(!util::checkEntityInput(section, false)) {
         return false;
     }
     return deleteSection(section.id());

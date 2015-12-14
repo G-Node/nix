@@ -67,7 +67,7 @@ bool Section::hasSection(const Section &section) const {
 
 
 bool Section::deleteSection(const Section &section) {
-    if (!util::checkEntityInput(section, false) || !section.isValidEntity()) {
+    if (!util::checkEntityInput(section, false)) {
         return false;
     }
     return backend()->deleteSection(section.id());

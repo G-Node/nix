@@ -16,7 +16,7 @@ namespace nix {
 
 
 void MultiTag::positions(const DataArray &positions) {
-    if (!util::checkEntityInput(positions) || !positions.isValidEntity()){
+    if (!util::checkEntityInput(positions)) {
         throw UninitializedEntity();
     }
     backend()->positions(positions.id());
@@ -62,7 +62,7 @@ void MultiTag::units(const std::vector<std::string> &units) {
 
 
 bool MultiTag::hasReference(const DataArray &reference) const {
-    if(!util::checkEntityInput(reference, false) || !reference.isValidEntity()) {
+    if(!util::checkEntityInput(reference, false)) {
         return false;
     }
     return backend()->hasReference(reference.id());
@@ -78,7 +78,7 @@ DataArray MultiTag::getReference(size_t index) const {
 
 
 void MultiTag::addReference(const DataArray &reference) {
-    if(!util::checkEntityInput(reference) || !reference.isValidEntity()) {
+    if(!util::checkEntityInput(reference)) {
         throw UninitializedEntity();
     }
     backend()->addReference(reference.id());
@@ -86,7 +86,7 @@ void MultiTag::addReference(const DataArray &reference) {
 
 
 bool MultiTag::removeReference(const DataArray &reference) {
-    if (!util::checkEntityInput(reference) || !reference.isValidEntity()) {
+    if (!util::checkEntityInput(reference)) {
         return false;
     }
     return backend()->removeReference(reference.id());
@@ -105,7 +105,7 @@ DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) c
 
 
 bool MultiTag::hasFeature(const Feature &feature) const {
-    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+    if (!util::checkEntityInput(feature, false)) {
         return false;
     }
     return backend()->hasFeature(feature.id());
@@ -119,7 +119,7 @@ std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filte
 
 
 bool MultiTag::deleteFeature(const Feature &feature) {
-    if (!util::checkEntityInput(feature, false) || !feature.isValidEntity()) {
+    if (!util::checkEntityInput(feature, false)) {
         return false;
     }
     return backend()->deleteFeature(feature.id());

@@ -12,7 +12,7 @@
 using namespace nix;
 
 bool Group::hasDataArray(const DataArray &data_array) const {
-    if (!util::checkEntityInput(data_array, false) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
     return backend()->hasDataArray(data_array.id());
@@ -28,7 +28,7 @@ DataArray Group::getDataArray(size_t index) const {
 
 
 void Group::addDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array)) {
         throw UninitializedEntity();
     }
     backend()->addDataArray(data_array.id());
@@ -42,7 +42,7 @@ void Group::addDataArray(const std::string &id) {
 
 
 bool Group::removeDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array, false) || !data_array.isValidEntity()) {
+    if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
     return backend()->removeDataArray(data_array.id());
@@ -58,7 +58,7 @@ std::vector<DataArray> Group::dataArrays(const util::Filter<DataArray>::type &fi
 
 
 bool Group::hasTag(const Tag &tag) const {
-    if (!util::checkEntityInput(tag, false) || !tag.isValidEntity()) {
+    if (!util::checkEntityInput(tag, false)) {
         return false;
     }
     return backend()->hasTag(tag.id());
@@ -74,7 +74,7 @@ Tag Group::getTag(size_t index) const {
 
 
 void Group::addTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false) || !tag.isValidEntity()) {
+    if (!util::checkEntityInput(tag, false)) {
         throw UninitializedEntity();
     }
     backend()->addTag(tag.id());
@@ -88,7 +88,7 @@ void Group::addTag(const std::string &id) {
 
 
 bool Group::removeTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false) || !tag.isValidEntity()) {
+    if (!util::checkEntityInput(tag, false)) {
         return false;
     }
     return backend()->removeTag(tag.id());
@@ -101,7 +101,7 @@ std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
 }
 
 bool Group::hasMultiTag(const MultiTag &multi_tag) const {
-    if (!util::checkEntityInput(multi_tag, false) || !multi_tag.isValidEntity()) {
+    if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
     return backend()->hasMultiTag(multi_tag.id());
@@ -117,7 +117,7 @@ MultiTag Group::getMultiTag(size_t index) const {
 
 
 void Group::addMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag) || !multi_tag.isValidEntity()) {
+    if (!util::checkEntityInput(multi_tag)) {
         throw UninitializedEntity();
     }
     backend()->addMultiTag(multi_tag.id());
@@ -131,7 +131,7 @@ void Group::addMultiTag(const std::string &id) {
 
 
 bool Group::removeMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag, false) || !multi_tag.isValidEntity()) {
+    if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
     return backend()->removeMultiTag(multi_tag.id());
