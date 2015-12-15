@@ -59,13 +59,7 @@ void Section::link(const Section &link) {
 
 
 bool Section::hasSection(const Section &section) const {
-    if (section == none || !section.isValidEntity()) {
-        return false;
-    }
-    std::string id;
-    try {
-        id = section.id();
-    } catch (...) {
+    if (!util::checkEntityInput(section, false)) {
         return false;
     }
     return backend()->hasSection(id);
