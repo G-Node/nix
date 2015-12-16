@@ -62,7 +62,7 @@ bool Section::hasSection(const Section &section) const {
     if (!util::checkEntityInput(section, false)) {
         return false;
     }
-    return backend()->hasSection(id);
+    return backend()->hasSection(section.id());
 }
 
 
