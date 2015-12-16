@@ -104,7 +104,6 @@ void TestUtil::testIsCompoundSIUnit() {
     CPPUNIT_ASSERT(!util::isCompoundSIUnit(unit_4));
 }
 
-
 void TestUtil::testSplitCompoundUnit() {
     string unit = "mV/cm^2*kg*V";
     string unit_2 = "mOhm/m";
@@ -124,7 +123,6 @@ void TestUtil::testSplitCompoundUnit() {
     CPPUNIT_ASSERT(atomic_units_3.size() == 1);
     CPPUNIT_ASSERT(atomic_units_3[0] == unit_3);
 }
-
 
 void TestUtil::testConvertToSeconds() {
     string unit_min = "min";
@@ -171,4 +169,33 @@ void TestUtil::testConvertToKelvin() {
 void TestUtil::testUnitSanitizer() {
     std::string unit = " mul/µs ";
     CPPUNIT_ASSERT(util::unitSanitizer(unit) == "ul/us");
+}
+
+void TestUtil::testDimTypeToStr() {
+    std::string r("Range");
+    std::string set("Set");
+    std::string sam("Sample");
+    CPPUNIT_ASSERT(r.compare(util::dimTypeToStr(nix::DimensionType::Range)) == 0);
+    CPPUNIT_ASSERT(set.compare(util::dimTypeToStr(nix::DimensionType::Set)) == 0);
+    CPPUNIT_ASSERT(sam.compare(util::dimTypeToStr(nix::DimensionType::Sample)) == 0);
+}
+
+void TestUtil::testChecks() {
+    CPPUNIT_ASSERT_THROW(util::checkEntityName("invalid/entity/name"), InvalidName);
+    CPPUNIT_ASSERT_THROW(util::checkEntityName(""), EmptyString);
+    CPPUNIT_ASSERT_NO_THROW(util::checkEntityName("valid name"));
+
+    CPPUNIT_ASSERT_THROW(util::checkEntityType(""), EmptyString);
+    CPPUNIT_ASSERT_NO_THROW(util::checkEntityType("valid type"));
+}
+
+void TestUtil::testStringVectors() {
+    std::vector<std::string> vec_a{"", "A", "b", "", "C"};
+    std::vector<std::string> vec_b{"", "D", "E", "F", "G"};
+    std::vector<std::string> vec_c{"", "H", "E", "", "J"};
+    std::vector<std::string> vec_d{"", "", "C"};
+
+    CPPUNIT_ASSERT(!util::isSetAtSamePos(vec_a, vec_b));
+    CPPUNIT_ASSERT(util::isSetAtSamePos(vec_a, vec_c));
+    CPPUNIT_ASSERT(!util::isSetAtSamePos(vec_a, vec_d));
 }
