@@ -9,7 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix.hpp>
-#include <nix/hdf5/Group.hpp>
+#include "nix/hdf5/H5Group.hpp"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -38,7 +38,7 @@ public:
 
 private:
     hid_t h5file;
-    nix::hdf5::Group h5group;
+    nix::hdf5::H5Group h5group;
 
     CPPUNIT_TEST_SUITE(TestH5);
     CPPUNIT_TEST(testBase);

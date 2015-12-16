@@ -49,7 +49,7 @@ void TestDataSet::setUp() {
     }
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
-    h5group = nix::hdf5::Group(g);
+    h5group = nix::hdf5::H5Group(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -188,7 +188,6 @@ void TestDataSet::testDataType() {
     const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
-        std::cerr << _types[i].name << std::endl;
         hdf5::DataSet ds = h5group.createData(_types[i].name, _types[i].dtype, dims);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }
@@ -248,8 +247,6 @@ void TestDataSet::testDataTypeIsNumeric() {
             {true, nix::DataType::Double},
             {false, nix::DataType::String},
             {false, nix::DataType::Nothing},
-            {false, nix::DataType::Date},
-            {false, nix::DataType::DateTime},
             {false, nix::DataType::Opaque}
     };
 
@@ -377,7 +374,7 @@ void TestDataSet::testSelection() {
 /* helper functions vor testValueIO */
 
 template<typename T>
-void test_val_generic(nix::hdf5::Group &h5group, const T &test_value, std::string name)
+void test_val_generic(nix::hdf5::H5Group &h5group, const T &test_value, std::string name)
 {
     namespace h5x = nix::hdf5::h5x;
 

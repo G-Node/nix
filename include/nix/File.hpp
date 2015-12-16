@@ -13,7 +13,6 @@
 #include <nix/base/IFile.hpp>
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
-
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
@@ -89,7 +88,7 @@ public:
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     Implementation impl=Implementation::Hdf5);
+                     const std::string &impl="hdf5");
 
     /**
      * @brief Get the number of blocks in in the file.
@@ -153,9 +152,7 @@ public:
      *
      * @return The created block.
      */
-    Block createBlock(const std::string &name, const std::string &type) {
-        return backend()->createBlock(name, type);
-    }
+    Block createBlock(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a block from the file.
@@ -332,9 +329,7 @@ public:
      *
      * @return The created Section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes the Section that is specified with the id.
@@ -458,6 +453,14 @@ public:
         return !isNone() && backend()->isOpen();
     }
 
+    /*
+     * @brief Returns the mode in which the file has been opened.
+     *
+     * @return the FileMode
+     */
+    FileMode fileMode() {
+        return backend()->fileMode();
+    }
     /**
      * @brief Assignment operator for none.
      */

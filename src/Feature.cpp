@@ -7,16 +7,16 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/Feature.hpp>
+#include <nix/util/util.hpp>
 
 namespace nix {
 
 void Feature::data(const DataArray &data) {
-    if (data == none) {
-        throw std::runtime_error("Empty data entity (DataArray) given");
+    util::checkEntityInput(data);
+    if (!data.isValidEntity()) {
+        throw UninitializedEntity();
     }
-    else {
-        backend()->data(data.id());
-    }
+    backend()->data(data.id());
 }
 
 std::string link_type_to_string(LinkType ltype) {
@@ -37,6 +37,11 @@ std::string link_type_to_string(LinkType ltype) {
 std::ostream &operator<<(std::ostream &out, const LinkType ltype) {
     out << "LinkType::" << link_type_to_string(ltype);
     return out;
+}
+
+void Feature::data(const std::string &name_or_id) {
+    util::checkNameOrId(name_or_id);
+    backend()->data(name_or_id);
 }
 
 }

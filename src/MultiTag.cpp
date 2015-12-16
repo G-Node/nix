@@ -16,22 +16,33 @@ namespace nix {
 
 
 void MultiTag::positions(const DataArray &positions) {
-    if (positions == none) {
-        throw std::runtime_error("Empty positions entity (DataArray) given");
+    if (!util::checkEntityInput(positions)) {
+        throw UninitializedEntity();
     }
-    else {
-        backend()->positions(positions.id());
-    }
+    backend()->positions(positions.id());
+}
+
+
+void MultiTag::positions(const std::string &name_or_id) {
+    util::checkNameOrId(name_or_id);
+    backend()->positions(name_or_id);
 }
 
 
 void MultiTag::extents(const DataArray &extents) {
     if (extents == none) {
         backend()->extents(none);
-    }
-    else {
+    } else if(!extents.isValidEntity()) {
+        throw UninitializedEntity();
+    } else {
         backend()->extents(extents.id());
     }
+}
+
+
+void MultiTag::extents(const std::string &name_or_id) {
+    util::checkNameOrId(name_or_id);
+    backend()->extents(name_or_id);
 }
 
 
@@ -51,24 +62,32 @@ void MultiTag::units(const std::vector<std::string> &units) {
 
 
 bool MultiTag::hasReference(const DataArray &reference) const {
-    if (reference == none) {
-        throw std::runtime_error("MultiTag::hasReference: Empty DataArray entity given!");
+    if(!util::checkEntityInput(reference, false)) {
+        return false;
     }
     return backend()->hasReference(reference.id());
 }
 
 
+DataArray MultiTag::getReference(size_t index) const {
+    if(index >= backend()->referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
+    }
+    return backend()->getReference(index);
+}
+
+
 void MultiTag::addReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("MultiTag::addReference: Empty DataArray entity given!");
+    if(!util::checkEntityInput(reference)) {
+        throw UninitializedEntity();
     }
     backend()->addReference(reference.id());
 }
 
 
 bool MultiTag::removeReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("MultiTag::removeReference: Empty DataArray reference given!");
+    if (!util::checkEntityInput(reference)) {
+        return false;
     }
     return backend()->removeReference(reference.id());
 }
@@ -76,9 +95,7 @@ bool MultiTag::removeReference(const DataArray &reference) {
 
 std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
-    return getEntities<DataArray>(f,
-                                  referenceCount(),
-                                  filter);
+    return getEntities<DataArray>(f, referenceCount(), filter);
 }
 
 
@@ -88,8 +105,8 @@ DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) c
 
 
 bool MultiTag::hasFeature(const Feature &feature) const {
-    if (feature == none) {
-        throw std::runtime_error("MultiTag::hasFeature: Empty feature given!");
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
     }
     return backend()->hasFeature(feature.id());
 }
@@ -97,15 +114,13 @@ bool MultiTag::hasFeature(const Feature &feature) const {
 
 std::vector<Feature> MultiTag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
-    return getEntities<Feature>(f,
-                                featureCount(),
-                                filter);
+    return getEntities<Feature>(f, featureCount(), filter);
 }
 
 
 bool MultiTag::deleteFeature(const Feature &feature) {
-    if (feature == none) {
-        throw std::runtime_error("MultiTag::deleteFeature: Empty Feature entity given!");
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
     }
     return backend()->deleteFeature(feature.id());
 }

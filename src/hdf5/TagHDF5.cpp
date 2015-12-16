@@ -7,51 +7,48 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/hdf5/TagHDF5.hpp>
-
 #include <nix/util/util.hpp>
-#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
-#include <nix/hdf5/DataSetHDF5.hpp>
-#include <nix/Exception.hpp>
 
-using namespace std;
 using namespace nix::base;
 
 namespace nix {
 namespace hdf5 {
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+TagHDF5::TagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group)
     : BaseTagHDF5(file, block, group)
 {
 }
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<double> &position)
+TagHDF5::TagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group,
+                 const std::string &id, const std::string &type, const std::string &name,
+                 const std::vector<double> &position)
     : TagHDF5(file, block, group, id, type, name, position, util::getTime())
 {
 }
 
 
-TagHDF5::TagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group, const string &id,
-                             const string &type, const string &name, const std::vector<double> &position, const time_t time)
+TagHDF5::TagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group,
+                 const std::string &id, const std::string &type, const std::string &name,
+                 const std::vector<double> &position, const time_t time)
     : BaseTagHDF5(file, block, group, id, type, name, time)
 {
     this->position(position);
 }
 
 
-vector<string> TagHDF5::units() const {
-    vector<string> units;
+std::vector<std::string> TagHDF5::units() const {
+    std::vector<std::string> units;
     group().getData("units", units);
     return units;
 }
 
 
-void TagHDF5::units(const vector<string> &units) {
+void TagHDF5::units(const std::vector<std::string> &units) {
     group().setData("units", units);
     forceUpdatedAt();
 }
@@ -65,8 +62,8 @@ void TagHDF5::units(const none_t t) {
 }
 
 
-vector<double> TagHDF5::position() const {
-    vector<double> position;
+std::vector<double> TagHDF5::position() const {
+    std::vector<double> position;
 
     if (group().hasData("position")) {
         group().getData("position", position);
@@ -76,19 +73,19 @@ vector<double> TagHDF5::position() const {
 }
 
 
-void TagHDF5::position(const vector<double> &position) {
+void TagHDF5::position(const std::vector<double> &position) {
     group().setData("position", position);
 }
 
 
-vector<double> TagHDF5::extent() const {
-    vector<double> extent;
+std::vector<double> TagHDF5::extent() const {
+    std::vector<double> extent;
     group().getData("extent", extent);
     return extent;
 }
 
 
-void TagHDF5::extent(const vector<double> &extent) {
+void TagHDF5::extent(const std::vector<double> &extent) {
     group().setData("extent", extent);
 }
 

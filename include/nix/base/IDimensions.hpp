@@ -16,6 +16,7 @@
 #include <ostream>
 
 #include <boost/optional.hpp>
+#include <nix/NDSize.hpp>
 
 namespace nix {
 
@@ -45,7 +46,7 @@ protected:
 
 public:
 
-    virtual size_t index() const = 0;
+    virtual ndsize_t index() const = 0;
 
 
     virtual DimensionType dimensionType() const = 0;

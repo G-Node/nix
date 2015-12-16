@@ -61,7 +61,7 @@ std::string dimensionTypeToStr(DimensionType dim) {
 }
 
 
-shared_ptr<IDimension> openDimensionHDF5(const Group &group, size_t index) {
+shared_ptr<IDimension> openDimensionHDF5(const H5Group &group, ndsize_t index) {
     string type_name;
     group.getAttr("dimension_type", type_name);
 
@@ -86,7 +86,7 @@ shared_ptr<IDimension> openDimensionHDF5(const Group &group, size_t index) {
 
 // Implementation of Dimension
 
-DimensionHDF5::DimensionHDF5(const Group &group, size_t index)
+DimensionHDF5::DimensionHDF5(const H5Group &group, ndsize_t index)
     : group(group), dim_index(index)
 {
 }
@@ -114,12 +114,12 @@ DimensionHDF5::~DimensionHDF5() {}
 // Implementation of SampledDimension
 //--------------------------------------------------------------
 
-SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index)
+SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
 }
 
-SampledDimensionHDF5::SampledDimensionHDF5(const Group &group, size_t index, double sampling_interval)
+SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index, double sampling_interval)
     : SampledDimensionHDF5(group, index)
 {
     setType();
@@ -144,12 +144,8 @@ boost::optional<std::string> SampledDimensionHDF5::label() const {
 
 
 void SampledDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    } else {
-        group.setAttr("label", label);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -173,12 +169,8 @@ boost::optional<std::string> SampledDimensionHDF5::unit() const {
 
 
 void SampledDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        group.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    group.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
@@ -235,7 +227,7 @@ SampledDimensionHDF5::~SampledDimensionHDF5() {}
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
 
-SetDimensionHDF5::SetDimensionHDF5(const Group &group, size_t index)
+SetDimensionHDF5::SetDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
     setType();
@@ -271,13 +263,13 @@ SetDimensionHDF5::~SetDimensionHDF5() {}
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
-RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index)
+RangeDimensionHDF5::RangeDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
 }
 
 
-RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<double> ticks)
+RangeDimensionHDF5::RangeDimensionHDF5(const H5Group &group, ndsize_t index, vector<double> ticks)
     : RangeDimensionHDF5(group, index)
 {
     setType();
@@ -285,7 +277,7 @@ RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, vector<
 }
 
 
-RangeDimensionHDF5::RangeDimensionHDF5(const Group &group, size_t index, const DataArrayHDF5 &array)
+RangeDimensionHDF5::RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &array)
     :RangeDimensionHDF5(group, index)
 {
     setType();
@@ -298,8 +290,8 @@ DimensionType RangeDimensionHDF5::dimensionType() const {
 }
 
 
-Group RangeDimensionHDF5::redirectGroup() const {
-    Group g;
+H5Group RangeDimensionHDF5::redirectGroup() const {
+    H5Group g;
     if (alias()) {
         string group_name = group.objectName(0);
         g = group.openGroup(group_name, false);
@@ -313,7 +305,7 @@ Group RangeDimensionHDF5::redirectGroup() const {
 boost::optional<std::string> RangeDimensionHDF5::label() const {
     boost::optional<std::string> ret;
     string label;
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     bool have_attr = g.getAttr("label", label);
     if (have_attr) {
         ret = label;
@@ -323,17 +315,14 @@ boost::optional<std::string> RangeDimensionHDF5::label() const {
 
 
 void RangeDimensionHDF5::label(const string &label) {
-    if (label.empty()) {
-        throw EmptyString("label");
-    }
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     g.setAttr("label", label);
     // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
 void RangeDimensionHDF5::label(const none_t t) {
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     if (g.hasAttr("label")) {
         g.removeAttr("label");
     }
@@ -344,7 +333,7 @@ void RangeDimensionHDF5::label(const none_t t) {
 boost::optional<std::string> RangeDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
     string unit;
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     bool have_attr = g.getAttr("unit", unit);
     if (have_attr) {
         ret = unit;
@@ -354,18 +343,14 @@ boost::optional<std::string> RangeDimensionHDF5::unit() const {
 
 
 void RangeDimensionHDF5::unit(const string &unit) {
-    if (unit.empty()) {
-        throw EmptyString("unit");
-    } else {
-        Group g = redirectGroup();
-        g.setAttr("unit", unit);
-        // NOTE: forceUpdatedAt() not possible since not reachable from here
-    }
+    H5Group g = redirectGroup();
+    g.setAttr("unit", unit);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
 }
 
 
 void RangeDimensionHDF5::unit(const none_t t) {
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     if (g.hasAttr("unit")) {
         g.removeAttr("unit");
     }
@@ -380,7 +365,7 @@ bool RangeDimensionHDF5::alias() const {
 
 vector<double> RangeDimensionHDF5::ticks() const {
     vector<double> ticks;
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     if (g.hasData("ticks")) {
         g.getData("ticks", ticks);
         return ticks;
@@ -394,7 +379,7 @@ vector<double> RangeDimensionHDF5::ticks() const {
 
 
 void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
-    Group g = redirectGroup();
+    H5Group g = redirectGroup();
     if (!alias()) {
         g.setData("ticks", ticks);
     } else if (g.hasData("data")) {

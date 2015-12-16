@@ -50,18 +50,18 @@ public:
     /**
      * Standard constructor for existing Feature
      */
-    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
+    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
 
     /**
      * Standard constructor for new Feature
      */
-    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
+    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                 const std::string &id, DataArray data, LinkType link_type);
 
     /**
      * Standard constructor for new Feature with time
      */
-    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
+    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                 const std::string &id, DataArray data, LinkType link_type, time_t time);
 
 

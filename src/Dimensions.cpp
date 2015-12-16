@@ -149,7 +149,14 @@ SampledDimension::SampledDimension(const SampledDimension &other)
 }
 
 
+void SampledDimension::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+
+
 void SampledDimension::unit(const std::string &unit) {
+    util::checkEmptyString(unit, "unit");
     if (!(util::isSIUnit(unit))) {
         throw InvalidUnit("Unit is not a SI unit. Note: so far, only atomic SI units are supported.",
                           "SampledDimension::unit(const string &unit)");
@@ -306,7 +313,13 @@ RangeDimension::RangeDimension(const RangeDimension &other)
 }
 
 
+void RangeDimension::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+
 void RangeDimension::unit(const std::string &unit) {
+    util::checkEmptyString(unit, "unit");
     if (!(util::isSIUnit(unit))) {
         throw InvalidUnit("Unit is not an atomic SI. Note: So far composite units are not supported", "RangeDimension::unit(const string &unit)");
     }

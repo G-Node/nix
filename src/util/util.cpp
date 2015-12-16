@@ -197,7 +197,7 @@ void splitCompoundUnit(const std::string &compoundUnit, std::vector<std::string>
 
 
 bool isSIUnit(const string &unit) {
-    return isAtomicSIUnit(unit) || isCompoundSIUnit(unit);
+    return !unit.empty() && (isAtomicSIUnit(unit) || isCompoundSIUnit(unit));
 }
 
 
@@ -210,7 +210,7 @@ bool isAtomicSIUnit(const string &unit) {
 bool isCompoundSIUnit(const string &unit) {
     string atomic_unit = PREFIXES + "?" + UNITS + POWER + "?";
     boost::regex compound_unit("(" + atomic_unit + "(\\*|/))+"+ atomic_unit);
-    return boost::regex_match(unit, compound_unit);
+    return !unit.empty() && boost::regex_match(unit, compound_unit);
 }
 
 
@@ -335,6 +335,38 @@ bool looksLikeUUID(const std::string &id) {
     // we don't want a complete check, just a glance
     // uuid form is: 8-4-4-4-12 = 36 [8, 13, 18, 23, ]
     return id.size() == 36 && id[8] == '-' && id[13] == '-' && id[18] == '-' && id[23] =='-';
+}
+
+void checkEntityNameAndType(const std::string &name, const std::string &type) {
+    util::checkEntityName(name);
+    util::checkEntityType(type);
+}
+
+void checkEntityType(const std::string &str) {
+    if (str.empty()) {
+        throw EmptyString("String provided for entity type is empty!");
+    }
+}
+
+void checkEntityName(const std::string &name) {
+    if (name.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
+    if (!nameCheck(name)) {
+        throw InvalidName("String provided for entity name is invalid!");
+    }
+}
+
+void checkEmptyString(const std::string & str, const std::string &field_name) {
+    if (str.empty()) {
+        throw EmptyString("String provided is empty! " + field_name);
+    }
+}
+
+void checkNameOrId(const std::string &name_or_id) {
+    if (name_or_id.empty()) {
+        throw EmptyString("String provided for entity name is empty!");
+    }
 }
 
 } // namespace util

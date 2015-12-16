@@ -19,7 +19,6 @@
 #endif
 
 #include <modules/Dump.hpp>
-#include <Exception.hpp>
 #include <limits>
 #include <cstddef>
 

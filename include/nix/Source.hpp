@@ -172,9 +172,7 @@ public:
      *
      * @return The created source object.
      */
-    Source createSource(const std::string &name, const std::string &type) {
-        return backend()->createSource(name, type);
-    }
+    Source createSource(const std::string &name, const std::string &type);
 
     /**
      * @brief Delete a root source and all its child sources from

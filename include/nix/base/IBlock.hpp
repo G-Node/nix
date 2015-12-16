@@ -14,6 +14,7 @@
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/ITag.hpp>
 #include <nix/base/IMultiTag.hpp>
+#include <nix/base/IGroup.hpp>
 #include <nix/NDSize.hpp>
 
 #include <string>
@@ -112,14 +113,34 @@ public:
 
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
-                                                          const DataArray &positions) = 0;
+                                                            const DataArray &positions) = 0;
 
 
     virtual bool deleteMultiTag(const std::string &name_or_id) = 0;
 
+    //--------------------------------------------------
+    // Methods concerning groups.
+    //--------------------------------------------------
+
+    virtual bool hasGroup(const std::string &name_or_id) const = 0;
+
+
+    virtual std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const = 0;
+
+
+    virtual std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const = 0;
+
+
+    virtual ndsize_t groupCount() const = 0;
+
+
+    virtual std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type) = 0;
+
+
+    virtual bool deleteGroup(const std::string &name_or_id) = 0;
+
 
     virtual ~IBlock() {}
-
 };
 
 } // namespace base

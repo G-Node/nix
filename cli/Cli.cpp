@@ -24,7 +24,6 @@ namespace po = boost::program_options;
 #include <nix.hpp>
 
 #include <Cli.hpp>
-#include <Exception.hpp>
 #include <modules/IModule.hpp>
 #include <modules/Validate.hpp>
 #include <modules/Dump.hpp>

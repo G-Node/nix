@@ -26,12 +26,44 @@
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
+#include <nix/None.hpp>
 
 namespace nix {
     
 enum class DimensionType : unsigned int;
 
 namespace util {
+
+/**
+ * @brief Checks name_or_id argument often passed to methods.
+ * Throws exception in case of error.
+ *
+ * @param name_or_id  The string representing an entity name or id,
+ *
+ */
+NIXAPI void checkNameOrId(const std::string &name_or_id);
+
+/**
+ * @brief Helper that checks the entity passed as an argument to a method.
+ * If wanted it throws an exception if the entity is not initialized.
+ *
+ * @param entity    The entity
+ * @param raise_exception   bool defines whether an exception should be thrown, default true
+ *
+ * @return true if entity is intialized, false otherwise
+ */
+template <typename T> bool checkEntityInput(const T &entity, bool raise_exception = true) {
+    if (entity && entity.isValidEntity()) {
+        return true;
+    }
+
+    if (raise_exception) {
+        throw UninitializedEntity();
+    }
+
+    return false;
+}
+
 
 /**
  * @brief Remove blank spaces from the entire string
@@ -66,6 +98,41 @@ NIXAPI std::string nameSanitizer(const std::string &name);
  * @return true if name is legit, false otherwise
  */
 NIXAPI bool nameCheck(const std::string &name);
+
+/**
+ * @brief Checks the given string is valid as an entity name. Will
+ * throw an exception if the name is invalid.
+ *
+ * @param name   The name.
+ */
+NIXAPI void checkEntityName(const std::string &name);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ */
+NIXAPI void checkEntityType(const std::string &str);
+
+/**
+ *  @brief Tiny helper that throws nix::EmptyString exception
+ *  if the passed string is indeed empty.
+ *
+ *  @param  str   The string.
+ *  @param  field_name   A string stating for which purpose the string should be used.
+ *                       Will be part of the exception message.
+ */
+NIXAPI void checkEmptyString(const std::string &str, const std::string &field_name = "");
+
+/**
+ * @brief Helper that checks the name and the type strings that should be used to
+ * create a new entity.
+ *
+ * @param name  The name string.
+ * @param type  The type string.
+ */
+NIXAPI void checkEntityNameAndType(const std::string &name, const std::string &type);
 
 /**
  * @brief Generates an ID-String.
@@ -193,7 +260,7 @@ NIXAPI bool isScalable(const std::vector<std::string> &unitsA, const std::vector
  * 
  * @param stringsB A vector of unit strings.
  *
- * @return True if the units are scalable version of the same unit.
+ * @return True if all corresponding elements of the vectors are empty or non-empty string.
  */
 NIXAPI bool isSetAtSamePos(const std::vector<std::string> &stringsA, const std::vector<std::string> &stringsB);
 

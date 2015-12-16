@@ -141,9 +141,7 @@ public:
      *
      * @param label     The label of the data array.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Deleter for the label attribute.
@@ -275,7 +273,7 @@ public:
      *
      * @return The number of dimensions.
      */
-    size_t dimensionCount() const {
+    ndsize_t dimensionCount() const {
         return backend()->dimensionCount();
     }
 
@@ -286,7 +284,7 @@ public:
      *
      * @return The dimension object.
      */
-    Dimension getDimension(size_t id) const {
+    Dimension getDimension(ndsize_t id) const {
         return backend()->getDimension(id);
     }
 
@@ -347,7 +345,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    SetDimension createSetDimension(size_t id) {
+    SetDimension createSetDimension(ndsize_t id) {
         return backend()->createSetDimension(id);
     }
 
@@ -362,7 +360,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    RangeDimension createRangeDimension(size_t id, const std::vector<double> &ticks) {
+    RangeDimension createRangeDimension(ndsize_t id, const std::vector<double> &ticks) {
         if (ticks.size() == 0) {
             throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
                                         "DataArray::createRangeDimension");
@@ -402,7 +400,7 @@ public:
      *
      * @return The created dimension descriptor.
      */
-    SampledDimension createSampledDimension(size_t id, double sampling_interval) {
+    SampledDimension createSampledDimension(ndsize_t id, double sampling_interval) {
         return backend()->createSampledDimension(id, sampling_interval);
     }
 
@@ -411,7 +409,7 @@ public:
      *
      * @param id        The index of the dimension. Must be a value > 0 and < `dimensionCount + 1`.
      */
-    bool deleteDimension(size_t id) {
+    bool deleteDimension(ndsize_t id) {
         return backend()->deleteDimension(id);
     }
 
@@ -487,12 +485,12 @@ protected:
     void ioRead(DataType dtype,
                 void *data,
                 const NDSize &count,
-                const NDSize &offset) const override;
+                const NDSize &offset) const;
 
     void ioWrite(DataType dtype,
                  const void *data,
                  const NDSize &count,
-                 const NDSize &offset) override;
+                 const NDSize &offset);
 };
 
 } // namespace nix

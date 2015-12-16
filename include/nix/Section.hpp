@@ -88,9 +88,7 @@ public:
      *
      * @param repository        URL to the repository.
      */
-    void repository(const std::string &repository) {
-        backend()->repository(repository);
-    }
+    void repository(const std::string &repository);
 
     /**
      * @brief Gets the repository URL.
@@ -118,9 +116,7 @@ public:
      *
      * @param id        The id of the section that should be linked.
      */
-    void link(const std::string &id) {
-        backend()->link(id);
-    }
+    void link(const std::string &id);
 
     /**
      * @brief Establish a link to another section.
@@ -161,9 +157,7 @@ public:
      *
      * @param mapping   The mapping information to this section.
      */
-    void mapping(const std::string &mapping) {
-        backend()->mapping(mapping);
-    }
+    void mapping(const std::string &mapping);
 
     /**
      * @brief Gets the mapping information.
@@ -250,9 +244,7 @@ public:
      *
      * @return The specified child section.
      */
-    virtual Section getSection(ndsize_t index) const {
-        return backend()->getSection(index);
-    }
+    virtual Section getSection(ndsize_t index) const;
 
     /**
      * @brief Get all direct child sections of the section.
@@ -300,9 +292,7 @@ public:
      *
      *  @return The new child section.
      */
-    Section createSection(const std::string &name, const std::string &type) {
-        return backend()->createSection(name, type);
-    }
+    Section createSection(const std::string &name, const std::string &type);
 
     /**
      * @brief Deletes a section from the section.
@@ -407,9 +397,7 @@ public:
      *
      * @return The newly created property
      */
-    Property createProperty(const std::string &name, const DataType &dtype) {
-        return backend()->createProperty(name, dtype);
-    }
+    Property createProperty(const std::string &name, const DataType &dtype);
 
     /**
      * @brief Add a new Property to the Section.
@@ -419,9 +407,7 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const Value &value) {
-        return backend()->createProperty(name, value);
-    }
+    Property createProperty(const std::string &name, const Value &value);
 
     /**
      * @brief Add a new Property with values to the Section.
@@ -431,9 +417,7 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const std::vector<Value> &values) {
-        return backend()->createProperty(name, values);
-    }
+    Property createProperty(const std::string &name, const std::vector<Value> &values);
 
     /**
      * @brief Delete the Property identified by its name or id.

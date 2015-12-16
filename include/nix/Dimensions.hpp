@@ -95,7 +95,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -128,9 +128,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Removes the label from a dimension.
@@ -362,7 +360,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -517,7 +515,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 
@@ -550,9 +548,7 @@ public:
      *
      * @param label     The label of the dimension.
      */
-    void label(const std::string &label) {
-        backend()->label(label);
-    }
+    void label(const std::string &label);
 
     /**
      * @brief Remove the label of the dimension.
@@ -786,7 +782,7 @@ public:
      *
      * @return The dimension index of the dimension.
      */
-    size_t index() const {
+    ndsize_t index() const {
         return backend()->index();
     }
 

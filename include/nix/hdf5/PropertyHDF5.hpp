@@ -117,7 +117,7 @@ public:
     void values(const boost::none_t t);
 
 
-    int compare(const std::shared_ptr<IProperty> &other) const;
+    bool isValidEntity() const;
 
 
     bool operator==(const PropertyHDF5 &other) const; //FIXME: not implemented

@@ -38,19 +38,19 @@ LinkType linkTypeFromString(const string &str) {
 }
 
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : EntityHDF5(file, group), block(block)
 {
 }
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const string &id, DataArray data, LinkType link_type)
     : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
 {
 }
 
 
-FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
                          const string &id, DataArray data, LinkType link_type, time_t time)
     : EntityHDF5(file, group, id, time), block(block)
 {
@@ -69,12 +69,12 @@ void FeatureHDF5::linkType(LinkType link_type) {
 
 
 void FeatureHDF5::data(const std::string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("data(id)");
-    if (!block->hasDataArray(name_or_id))
+    if (!block->hasDataArray(name_or_id)) {
         throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
-    if (group().hasGroup("data"))
+    }
+    if (group().hasGroup("data")) {
         group().removeGroup("data");
+    }
     
     auto target = dynamic_pointer_cast<DataArrayHDF5>(block->getDataArray(name_or_id));
 
@@ -85,20 +85,14 @@ void FeatureHDF5::data(const std::string &name_or_id) {
 
 shared_ptr<IDataArray> FeatureHDF5::data() const {
     shared_ptr<IDataArray> da;
-    bool error = false;
 
     if (group().hasGroup("data")) {
-        Group other_group = group().openGroup("data", false);
+        H5Group other_group = group().openGroup("data", false);
         da = make_shared<DataArrayHDF5>(file(), block, other_group);
-        if (!block->hasDataArray(da->id())) error = true;
+        if (!block->hasDataArray(da->id())) {
+            throw std::runtime_error("FeatureHDF5::data: DataArray not found!");
+        }
     }
-    else error = true;
-    
-    // NOTE: we check that link exists in both places, here & in entity
-    // if error = true it was missing in one of the two
-    if (error) 
-        throw std::runtime_error("FeatureHDF5::data: DataArray not found!");
-
     return da;
 }
 

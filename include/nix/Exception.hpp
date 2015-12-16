@@ -59,7 +59,7 @@ class UninitializedEntity : public std::exception {
 public:
     UninitializedEntity() { }
     const char *what() const NOEXCEPT {
-        return "The Entity being accessed is uninitialized.";
+        return "The Entity being accessed is uninitialized or empty.";
     }
 };
 

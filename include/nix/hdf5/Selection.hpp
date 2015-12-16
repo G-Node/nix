@@ -15,9 +15,6 @@
 
 #include <nix/Platform.hpp>
 
-#include <hdf5.h>
-
-
 namespace nix {
 namespace hdf5 {
 

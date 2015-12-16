@@ -28,14 +28,6 @@ NIXAPI enum class FileMode {
     Overwrite
 };
 
-/**
- * @brief NIX back-end implementations.
- */
-NIXAPI enum class Implementation {
-    Hdf5 = 0
-};
-
-
 namespace base {
 
 
@@ -121,6 +113,9 @@ public:
 
 
     virtual bool isOpen() const = 0;
+
+
+    virtual FileMode fileMode() const = 0;
 
 
     virtual ~IFile() {}

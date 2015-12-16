@@ -114,9 +114,7 @@ public:
      *
      * @param name_or_id      Name or id of the DataArray that defines the positions for this tag.
      */
-    void positions(const std::string &name_or_id) {
-        backend()->positions(name_or_id);
-    }
+    void positions(const std::string &name_or_id);
 
     /**
      * @brief Setter for the positions of the tag.
@@ -158,9 +156,7 @@ public:
      *
      * @param name_or_id        Name or id of the DataArray that defines the extents of the tag.
      */
-    void extents(const std::string &name_or_id) {
-        backend()->extents(name_or_id);
-    }
+    void extents(const std::string &name_or_id);
 
     /**
      * @brief Deleter for the reference to the extents DataArray.
@@ -258,9 +254,7 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getReference(size_t index) const {
-        return backend()->getReference(index);
-    }
+    DataArray getReference(size_t index) const;
 
     /**
      * @brief Add a new DataArray to the list of referenced data.

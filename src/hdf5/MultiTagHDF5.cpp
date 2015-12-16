@@ -10,36 +10,32 @@
 
 #include <nix/NDArray.hpp>
 #include <nix/util/util.hpp>
-#include <nix/DataArray.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <nix/hdf5/BlockHDF5.hpp>
 #include <nix/hdf5/FeatureHDF5.hpp>
-#include <nix/Exception.hpp>
 
-#include <algorithm>
-
-using namespace std;
 using namespace nix::base;
 
 namespace nix {
 namespace hdf5 {
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group)
+MultiTagHDF5::MultiTagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group)
     : BaseTagHDF5(file, block, group)
 {
 }
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
-                         const string &id, const std::string &type, const string &name, const DataArray &positions)
+MultiTagHDF5::MultiTagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group,
+                           const std::string &id, const std::string &type, const std::string &name, const DataArray &positions)
     : MultiTagHDF5(file, block, group, id, type, name, positions, util::getTime())
 {
 }
 
 
-MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const Group &group,
-                         const std::string &id, const std::string &type, const string &name, const DataArray &positions, time_t time)
+MultiTagHDF5::MultiTagHDF5(const std::shared_ptr<IFile> &file, const std::shared_ptr<IBlock> &block, const H5Group &group,
+                           const std::string &id, const std::string &type, const std::string &name,
+                           const DataArray &positions, time_t time)
     : BaseTagHDF5(file, block, group, id, type, name, time)
 {
     // TODO: the line below currently throws an exception if positions is
@@ -48,13 +44,13 @@ MultiTagHDF5::MultiTagHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBloc
 }
 
 
-shared_ptr<IDataArray> MultiTagHDF5::positions() const {
-    shared_ptr<IDataArray> da;
+std::shared_ptr<IDataArray> MultiTagHDF5::positions() const {
+    std::shared_ptr<IDataArray> da;
     bool error = false;
 
     if (group().hasGroup("positions")) {
-        Group other_group = group().openGroup("positions", false);
-        da = make_shared<DataArrayHDF5>(file(), block(), other_group);
+        H5Group other_group = group().openGroup("positions", false);
+        da = std::make_shared<DataArrayHDF5>(file(), block(), other_group);
         if (!block()->hasDataArray(da->id())) 
             error = true;
     }
@@ -69,15 +65,13 @@ shared_ptr<IDataArray> MultiTagHDF5::positions() const {
 }
 
 
-void MultiTagHDF5::positions(const string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("positions");
+void MultiTagHDF5::positions(const std::string &name_or_id) {
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
         group().removeGroup("positions");
     
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
 
     group().createLink(target->group(), "positions");
     forceUpdatedAt();
@@ -91,13 +85,13 @@ bool MultiTagHDF5::hasPositions() const {
 }
 
 
-shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
-    shared_ptr<IDataArray> da;
+std::shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
+    std::shared_ptr<IDataArray> da;
     bool error = false;
 
     if (group().hasGroup("extents")) {
-        Group other_group = group().openGroup("extents", false);
-        da = make_shared<DataArrayHDF5>(file(), block(), other_group);
+        H5Group other_group = group().openGroup("extents", false);
+        da = std::make_shared<DataArrayHDF5>(file(), block(), other_group);
         if (!block()->hasDataArray(da->id())) 
             error = true;
     }
@@ -110,9 +104,7 @@ shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
 }
 
 
-void MultiTagHDF5::extents(const string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("extents");
+void MultiTagHDF5::extents(const std::string &name_or_id) {
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("MultiTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))
@@ -120,8 +112,8 @@ void MultiTagHDF5::extents(const string &name_or_id) {
 
     auto da = block()->getDataArray(name_or_id);
     if (!checkDimensions(da, positions()))
-        throw runtime_error("MultiTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(da);
+        throw std::runtime_error("MultiTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
+    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(da);
 
     group().createLink(target->group(), "extents");
     forceUpdatedAt();
@@ -135,14 +127,14 @@ void MultiTagHDF5::extents(const none_t t) {
 }
 
 
-vector<string> MultiTagHDF5::units() const {
-    vector<string> units;
+std::vector<std::string> MultiTagHDF5::units() const {
+    std::vector<std::string> units;
     group().getData("units", units);
     return units;
 }
 
 
-void MultiTagHDF5::units(const vector<string> &units) {
+void MultiTagHDF5::units(const std::vector<std::string> &units) {
     group().setData("units", units);
     forceUpdatedAt();
 }
@@ -158,19 +150,6 @@ void MultiTagHDF5::units(const none_t t) {
 
 bool MultiTagHDF5::checkDimensions(const DataArray &a, const DataArray &b)const {
     return a.dataExtent() == b.dataExtent();
-}
-
-
-bool MultiTagHDF5::checkPositionsAndExtents() const {
-    bool valid = true;
-
-    if (hasPositions() && extents()) {
-        DataArray pos = positions();
-        DataArray ext = extents();
-        return checkDimensions(pos, ext);
-    }
-
-    return valid;
 }
 
 

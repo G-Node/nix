@@ -523,5 +523,6 @@ void DataSet::write(const std::vector<Value> &values)
 
 }
 
+
 } // namespace hdf5
 } // namespace nix

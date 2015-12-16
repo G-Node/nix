@@ -64,6 +64,15 @@ find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesy
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
+########################################
+# Yaml-cpp
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+
+set(YAMLCPP_STATIC_LIBRARY FALSE)
+find_package(YamlCpp REQUIRED)
+include_directories(${YAMLCPP_INCLUDE_DIRS})
+set (LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
 
 ########################################
 # Doxygen
@@ -79,7 +88,7 @@ endif(DOXYGEN_FOUND)
 ########################################
 # NIX
 
-include_directories(include)
+include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
@@ -147,7 +156,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 find_package(CppUnit)
 include_directories(${CPPUNIT_INCLUDE_DIR})
 
-file(GLOB Tests_SOURCES "test/Test*.cpp")
+file(GLOB Tests_SOURCES "test/*Test*.cpp")
 
 add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
 if(NOT WIN32)
@@ -155,7 +164,8 @@ if(NOT WIN32)
 endif()
 target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
-foreach(test ${Tests_SOURCES})
+file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+foreach(test ${Real_Test_HEADERS})
   get_filename_component(TestFileName ${test} NAME_WE)
   string(REPLACE "Test" "" TestName ${TestFileName})
   message(STATUS " Test added: ${TestName}")
@@ -229,11 +239,14 @@ if(WIN32)
 endif()
 
 ########################################
+get_directory_property(incdirs INCLUDE_DIRECTORIES)
 
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "INCDIRS: ${incdirs}")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
+MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
 MESSAGE(STATUS "===============================")

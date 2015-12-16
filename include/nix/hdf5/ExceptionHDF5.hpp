@@ -13,6 +13,16 @@
 
 #include <nix/Platform.hpp>
 
+
+// The single include point of HDF5
+//
+// A bit of a hack, but we directly include 
+// hdf5's H5version.h to bypass any potetional
+// H5_USE_16_API defines set in H5pubconf.h
+// especially on old hdf5 versions (ubuntu precise)
+#undef H5_USE_16_API
+#include <H5version.h>
+
 #include <hdf5.h>
 
 #include <stdexcept>

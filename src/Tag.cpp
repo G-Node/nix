@@ -11,8 +11,6 @@
 #include <nix/util/util.hpp>
 #include <nix/util/dataAccess.hpp>
 
-
-using namespace std;
 using namespace nix;
 
 
@@ -32,24 +30,38 @@ void Tag::units(const std::vector<std::string> &units) {
 
 
 bool Tag::hasReference(const DataArray &reference) const {
-    if (reference == none) {
-        throw std::runtime_error("Tag::hasReference: Emty DataArray entity given!");
+    if (!util::checkEntityInput(reference, false)) {
+        return false;
     }
     return backend()->hasReference(reference.id());
 }
 
 
+DataArray Tag::getReference(size_t index) const {
+    if(index >= backend()->referenceCount()) {
+        throw OutOfBounds("No reference at given index", index);
+    }
+    return backend()->getReference(index);
+}
+
+
 void Tag::addReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("Tag::addReference: Empty DataArray entity given!");
+    if (!util::checkEntityInput(reference, false)) {
+        throw UninitializedEntity();
     }
     backend()->addReference(reference.id());
 }
 
 
+void Tag::addReference(const std::string &id) {
+    util::checkNameOrId(id);
+    backend()->addReference(id);
+}
+
+
 bool Tag::removeReference(const DataArray &reference) {
-    if (reference == none) {
-        throw std::runtime_error("Tag::removeReference: Empty DataArray entity given!");
+    if (!util::checkEntityInput(reference, false)) {
+        return false;
     }
     return backend()->removeReference(reference.id());
 }
@@ -57,14 +69,13 @@ bool Tag::removeReference(const DataArray &reference) {
 
 std::vector<DataArray> Tag::references(const util::Filter<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getReference(i); };
-    return getEntities<DataArray>(f,
-                                  referenceCount(),
-                                  filter);
+    return getEntities<DataArray>(f, referenceCount(), filter);
 }
 
+
 bool Tag::hasFeature(const Feature &feature) const {
-    if (feature == none) {
-        throw std::runtime_error("Tag::hasFeature: Empty DataArray entity given!");
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
     }
     return backend()->hasFeature(feature.id());
 }
@@ -72,34 +83,49 @@ bool Tag::hasFeature(const Feature &feature) const {
 
 std::vector<Feature> Tag::features(const util::Filter<Feature>::type &filter) const {
     auto f = [this] (size_t i) { return getFeature(i); };
-    return getEntities<Feature>(f,
-                                featureCount(),
-                                filter);
+    return getEntities<Feature>(f, featureCount(), filter);
+}
+
+
+Feature Tag::getFeature(const std::string &id) const {
+    util::checkNameOrId(id);
+    return backend()->getFeature(id);
+}
+
+
+Feature Tag::getFeature(size_t index) const {
+    if (index >= backend()->featureCount()) {
+        throw OutOfBounds("No feature at given index", index);
+    }
+    return backend()->getFeature(index);
 }
 
 
 Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
-    if (data == none) {
-        throw std::runtime_error("Tag::createFeature: Empty DataArray entity given!");
+    if (!util::checkEntityInput(data)) {
+        throw UninitializedEntity();
     }
     return backend()->createFeature(data.id(), link_type);
 }
 
 
 bool Tag::deleteFeature(const Feature &feature) {
-    if (feature == none) {
-        throw std::runtime_error("Tag::deleteFeature: Empty Feature entity given!");
+    if (!util::checkEntityInput(feature, false)) {
+        return false;
     }
     return backend()->deleteFeature(feature.id());
 }
+
 
 DataView Tag::retrieveData(size_t reference_index) const {
     return util::retrieveData(*this, reference_index);
 }
 
+
 DataView Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }
+
 
 std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
     out << "Tag: {name = " << ent.name();
@@ -107,4 +133,3 @@ std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
     out << ", id = " << ent.id() << "}";
     return out;
 }
-
