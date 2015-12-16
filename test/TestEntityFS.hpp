@@ -23,6 +23,7 @@ class TestEntityFS : public BaseTestEntity {
     CPPUNIT_TEST(testUpdatedAt);
     CPPUNIT_TEST(testCreatedAt);
 
+    CPPUNIT_TEST(testIsValidEntity);
     CPPUNIT_TEST_SUITE_END ();
 
 public:

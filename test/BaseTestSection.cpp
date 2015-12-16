@@ -150,7 +150,7 @@ void BaseTestSection::testSectionAccess() {
                          DuplicateName);
     CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
     CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
-    CPPUNIT_ASSERT_THROW(section.hasSection(null), std::runtime_error);
+    CPPUNIT_ASSERT(!section.hasSection(null));
 
     for (auto id : ids) {
         Section child_section = section.getSection(id);
@@ -160,8 +160,8 @@ void BaseTestSection::testSectionAccess() {
         section.deleteSection(id);
     }
     Section s2 = section.createSection("a name", "a type");
-    CPPUNIT_ASSERT_THROW(section.deleteSection(null), std::runtime_error);
-    CPPUNIT_ASSERT_NO_THROW(section.deleteSection(s2));
+    CPPUNIT_ASSERT(!section.deleteSection(null));
+    CPPUNIT_ASSERT(section.deleteSection(s2));
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
