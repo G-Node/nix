@@ -141,7 +141,6 @@ void Directory::createDirectoryLink(const std::string &target, const std::string
     } else {
         throw std::runtime_error("Directory::createLink: target does not exist");
     }
-
 }
 
 
@@ -150,6 +149,11 @@ void Directory::renameSubdir(const std::string &old_name, const std::string &new
     if (hasObject(old_name) && ! hasObject(new_name)) {
         rename(o, n);
     }
+}
+
+
+bool Directory::isValid() const {
+    return bfs::exists(location());
 }
 
 } // nix::file

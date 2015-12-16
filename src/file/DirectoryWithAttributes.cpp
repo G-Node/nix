@@ -61,5 +61,13 @@ void DirectoryWithAttributes::unlink(const bfs::path &linker) {
     setAttr("links", active_links);
 }
 
+
+bool DirectoryWithAttributes::isValid() const {
+    bfs::path attr_path = "attributes";
+    return  bfs::exists(location()) && 
+            bfs::exists(location() / attr_path);
+}
+
+
 } // nix::file
 } // nix

@@ -45,6 +45,8 @@ public:
      * Removes the linker from the list of links onto this entity.
      */
     void unlink(const boost::filesystem::path &linker);
+
+    bool isValid() const;
 };
 
 

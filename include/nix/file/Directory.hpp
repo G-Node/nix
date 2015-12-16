@@ -52,6 +52,8 @@ public:
 
     void renameSubdir(const std::string &old_name, const std::string &new_name);
 
+    bool isValid() const;
+
     virtual void removeAll();
 };
 
