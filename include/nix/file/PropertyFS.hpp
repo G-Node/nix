@@ -103,6 +103,9 @@ public:
     void values(const boost::none_t t);
 
 
+    bool isValidEntity() const;
+
+
     int compare(const std::shared_ptr<IProperty> &other) const;
 
 

@@ -56,6 +56,9 @@ public:
 
 
     void forceCreatedAt(time_t t);
+    
+
+    bool isValidEntity() const;
 
 
     bool operator==(const EntityFS &other) const;

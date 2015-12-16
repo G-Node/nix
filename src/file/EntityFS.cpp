@@ -89,6 +89,12 @@ string EntityFS::location() const {
 }
 */
 
+
+bool EntityFS::isValidEntity() const {
+    return isValid();
+}
+
+
 std::shared_ptr<base::IFile> EntityFS::file() const {
     return entity_file;
 }

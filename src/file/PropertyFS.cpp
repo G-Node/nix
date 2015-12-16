@@ -223,6 +223,11 @@ void PropertyFS::values(const nix::none_t t) {
 }
 
 
+bool PropertyFS::isValidEntity() const {
+    return isValid();
+}
+
+
 int PropertyFS::compare(const std::shared_ptr<base::IProperty> &other) const {
     int cmp = 0;
     if (!name().empty() && !other->name().empty()) {
