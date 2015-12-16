@@ -68,7 +68,7 @@ void BaseTestMultiTag::testDefinition() {
 
 void BaseTestMultiTag::testCreateRemove() {
     std::vector<std::string> ids;
-    ndsize_t count = b.multiTagCount();
+    ndsize_t count = block.multiTagCount();
     const char *names[5] = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
     for (int i = 0; i < 5; i++) {
         std::string type = "Event";

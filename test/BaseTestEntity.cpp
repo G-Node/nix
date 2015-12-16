@@ -74,9 +74,9 @@ void BaseTestEntity::testIsValidEntity() {
 }
 
 
-void TestEntity::testOperators() {
-    CPPUNIT_ASSERT(null == false);
-    CPPUNIT_ASSERT(null == none);
+void BaseTestEntity::testOperators() {
+    CPPUNIT_ASSERT(block_null == false);
+    CPPUNIT_ASSERT(block_null == none);
 
     CPPUNIT_ASSERT(block != false);
     CPPUNIT_ASSERT(block != none);
