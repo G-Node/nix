@@ -90,18 +90,12 @@ std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(const std::string &na
 
 
 std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(ndsize_t index) const {
-    if(index > referenceCount()) {
-        throw OutOfBounds("No reference at given index", index);
-    }
     bfs::path p = refs_group.sub_dir_by_index(index);
     return std::make_shared<DataArrayFS>(file(), block(), p.string());
 }
 
 
 void BaseTagFS::addReference(const std::string &name_or_id) {
-    if (name_or_id.empty())
-        throw EmptyString("addReference");
-
     if (!block()->hasDataArray(name_or_id))
         throw std::runtime_error("BaseTagFS::addReference: DataArray not found in block!");
 
@@ -180,9 +174,6 @@ std::shared_ptr<base::IFeature> BaseTagFS::getFeature(const std::string &name_or
 
 
 std::shared_ptr<base::IFeature>  BaseTagFS::getFeature(ndsize_t index) const {
-    if (index >= featureCount()) {
-        throw OutOfBounds("Trying to access a feature with an invalid index!");
-    }
     bfs::path id = feature_group.sub_dir_by_index(index);
     return getFeature(id.filename().string());
 }

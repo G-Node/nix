@@ -95,7 +95,7 @@ void BaseTestBaseTag::testFeatures() {
 
     CPPUNIT_ASSERT_THROW(st.createFeature("wrong_id", nix::LinkType::Tagged), std::runtime_error);
     int failures = 0;
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 10; i++) {
         vector<string> ids;
         Feature f1 = st.createFeature(da1, nix::LinkType::Untagged);
         ids.push_back(f1.id());
