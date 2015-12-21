@@ -51,28 +51,39 @@ as well as the build tool CMake (>= 2.8.9). Further nix depends on the following
 _Instructions_
 
 ```bash
-# install dependencies
+# 1 install dependencies
 sudo apt-get install libboost-all-dev libhdf5-serial-dev libcppunit-dev cmake build-essential
 
 **Note:** If the standard version of the boost libraries in your distribution is less than 1.49, 
 # manually install a version larger than 1.49 from the launchad (https://launchpad.net/~boost-latest/+archive/ubuntu/ppa)
 
-# clone NIX
+# 2 clone NIX
 git clone https://github.com/G-Node/nix
 cd nix
 
-# make a build dir and build nix
+# 3 make a build dir and build nix
 mkdir build
 cd build
 cmake ..
 make all
 
-# run the unit tests
+# 4 run the unit tests
 ctest
 
-# install
+# 5 install
 sudo make install
 ```
+
+In case building nix fails because libboost-*** libraries are not found try the following:
+
+```bash
+# 3 make a build dir and build nix
+mkdir build
+cd build
+cmake -DBoost_NO_BOOST_CMAKE=TRUE ..
+make all
+```
+
 
 **NIX with Docker**
 
