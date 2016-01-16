@@ -130,7 +130,7 @@ struct VariantTester : ValTester {
 
         Variant_stream << Variant;
 
-        std::string::size_type pos = val_stream.str().find(Variant_stream.str());
+        std::string::size_type pos = Variant_stream.str().find(val_stream.str());
         CPPUNIT_ASSERT(pos != std::string::npos);
     }
 
@@ -196,6 +196,7 @@ void TestVariant::testSwap()
 
     for (const ValTester *a : vals) {
         a->check_basic();
+        a->check_to_string();
 
         for (const ValTester *b : vals) {
             a->check_swap(*b);

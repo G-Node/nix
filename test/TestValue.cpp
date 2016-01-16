@@ -130,7 +130,7 @@ struct ValueTester : ValTester {
 
         value_stream << value;
 
-        std::string::size_type pos = val_stream.str().find(value_stream.str());
+        std::string::size_type pos = value_stream.str().find(val_stream.str());
         CPPUNIT_ASSERT(pos != std::string::npos);
     }
 
@@ -196,6 +196,7 @@ void TestValue::testSwap()
 
     for (const ValTester *a : vals) {
         a->check_basic();
+        a->check_to_string();
 
         for (const ValTester *b : vals) {
             a->check_swap(*b);
