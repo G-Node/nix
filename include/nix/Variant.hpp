@@ -138,6 +138,16 @@ inline const char *Variant::get<const char *>() const {
     return v_string;
 }
 
+template<>
+inline const none_t Variant::get<>() const {
+    return nix::none;
+}
+
+template<>
+inline void Variant::swap_helper<none_t>(Variant &other) {
+    assign_variant_from(other);
+    other.set(nix::none);
+}
 
 NIXAPI std::ostream &operator<<(std::ostream &out, const Variant &value);
 NIXAPI bool operator==(const Variant &a, const Variant &b);
