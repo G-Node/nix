@@ -64,11 +64,18 @@ public:
     }
 
     Variant(Variant &&other) NOEXCEPT : Variant() {
-        swap(other);
+        if (other.dtype == DataType::String) {
+            v_string = other.v_string;
+            dtype = DataType::String;
+            other.dtype = DataType::Nothing;
+            other.v_string = nullptr;
+        } else {
+            assign_variant_from(other);
+        }
     }
 
     Variant &operator=(Variant other) {
-        swap(other);
+        assign_variant_from(other);
         return *this;
     }
 
