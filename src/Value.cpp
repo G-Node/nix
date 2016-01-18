@@ -23,7 +23,7 @@ namespace nix {
 void Value::swap(Value &other) {
     using std::swap;
 
-    Variant::swap(other);
+    swap(data, other.data);
 
     swap(uncertainty, other.uncertainty);
     swap(reference, other.reference);
@@ -80,18 +80,18 @@ std::ostream& operator<<(std::ostream &out, const Value &value)
     return out;
 }
 
-bool operator==(const Value &a, const Value &b)
+bool Value::operator==(const Value &other) const
 {
 
-    bool match = static_cast<const Variant &>(a) == static_cast<const Variant &>(b);
+    bool match = data == other.data;
     if (!match)
         return match;
 
-    match = match & (a.reference == b.reference);
-    match = match & (a.checksum == b.checksum);
-    match = match & (a.uncertainty == b.uncertainty);
-    match = match & (a.filename == b.filename);
-    match = match & (a.encoder == b.encoder);
+    match = match & (reference == other.reference);
+    match = match & (checksum == other.checksum);
+    match = match & (uncertainty == other.uncertainty);
+    match = match & (filename == other.filename);
+    match = match & (encoder == other.encoder);
 
     return match;
 }
