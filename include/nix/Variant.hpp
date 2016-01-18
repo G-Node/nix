@@ -64,11 +64,18 @@ public:
     }
 
     Variant(Variant &&other) NOEXCEPT : Variant() {
-        swap(other);
+        if (other.dtype == DataType::String) {
+            v_string = other.v_string;
+            dtype = DataType::String;
+            other.dtype = DataType::Nothing;
+            other.v_string = nullptr;
+        } else {
+            assign_variant_from(other);
+        }
     }
 
     Variant &operator=(Variant other) {
-        swap(other);
+        assign_variant_from(other);
         return *this;
     }
 
@@ -113,13 +120,6 @@ public:
 
 private:
 
-    template<typename T>
-    void swap_helper(Variant &other) {
-        T temp = get<T>();
-        assign_variant_from(other);
-        other.set(temp);
-    }
-
     void assign_variant_from(const Variant &other);
 
     void maybe_deallocte_string();
@@ -143,11 +143,6 @@ inline const none_t Variant::get<>() const {
     return nix::none;
 }
 
-template<>
-inline void Variant::swap_helper<none_t>(Variant &other) {
-    assign_variant_from(other);
-    other.set(nix::none);
-}
 
 NIXAPI std::ostream &operator<<(std::ostream &out, const Variant &value);
 NIXAPI bool operator==(const Variant &a, const Variant &b);

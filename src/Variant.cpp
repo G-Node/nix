@@ -153,42 +153,9 @@ void Variant::get(std::string &value) const {
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 
 void Variant::swap(Variant &other) {
-    using std::swap;
-
-    //now for the variant members
-    if (dtype == other.dtype) {
-        switch(dtype) {
-            case DataType::Nothing: /* nothing to do, literally */ break;
-            case DataType::Bool:   swap(v_bool, other.v_bool);     break;
-            case DataType::Int32:  swap(v_int32, other.v_int32);   break;
-            case DataType::UInt32: swap(v_uint32, other.v_uint32); break;
-            case DataType::Int64:  swap(v_int64, other.v_int64);   break;
-            case DataType::UInt64: swap(v_uint64, other.v_uint64); break;
-            case DataType::Double: swap(v_double, other.v_double); break;
-            case DataType::String: swap(v_string, other.v_string); break;
-#ifndef CHECK_SUPPORTED_VALUES
-            default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
-#endif
-        }
-
-        swap(dtype, other.dtype);
-
-    } else {
-
-        switch(dtype) {
-            case DataType::Nothing: swap_helper<none_t>(other);     break;
-            case DataType::Bool:    swap_helper<bool>(other);        break;
-            case DataType::Int32:   swap_helper<int32_t>(other);     break;
-            case DataType::UInt32:  swap_helper<uint32_t>(other);    break;
-            case DataType::Int64:   swap_helper<int64_t>(other);     break;
-            case DataType::UInt64:  swap_helper<uint64_t>(other);    break;
-            case DataType::Double:  swap_helper<double>(other);      break;
-            case DataType::String:  swap_helper<std::string>(other); break;
-#ifndef CHECK_SUPPORTED_VALUES
-            default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
-#endif
-        }
-    }
+    Variant tmp(std::move(*this));
+    assign_variant_from(other);
+    other = std::move(tmp);
 }
 
 void Variant::assign_variant_from(const Variant &other) {
