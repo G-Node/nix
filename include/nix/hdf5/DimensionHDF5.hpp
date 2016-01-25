@@ -10,7 +10,7 @@
 #define NIX_DIMENSIONS_HDF5_H
 
 #include <nix/base/IDimensions.hpp>
-#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/H5Group.hpp>
 #include <nix/hdf5/DataArrayHDF5.hpp>
 #include <string>
 #include <iostream>
@@ -27,19 +27,19 @@ DimensionType dimensionTypeFromStr(const std::string &str);
 std::string dimensionTypeToStr(DimensionType dim);
 
 
-std::shared_ptr<base::IDimension> openDimensionHDF5(const Group &group, ndsize_t index);
+std::shared_ptr<base::IDimension> openDimensionHDF5(const H5Group &group, ndsize_t index);
 
 
 class DimensionHDF5 : virtual public base::IDimension {
 
 protected:
 
-    Group group;
+    H5Group group;
     ndsize_t dim_index;
 
 public:
 
-    DimensionHDF5(const Group &group, ndsize_t index);
+    DimensionHDF5(const H5Group &group, ndsize_t index);
 
 
     ndsize_t index() const { return dim_index; }
@@ -64,10 +64,10 @@ class SampledDimensionHDF5 : virtual public base::ISampledDimension, public Dime
 
 public:
 
-    SampledDimensionHDF5(const Group &group, ndsize_t index);
+    SampledDimensionHDF5(const H5Group &group, ndsize_t index);
 
 
-    SampledDimensionHDF5(const Group &group, ndsize_t index, double sampling_interval);
+    SampledDimensionHDF5(const H5Group &group, ndsize_t index, double sampling_interval);
 
 
     DimensionType dimensionType() const;
@@ -115,7 +115,7 @@ class SetDimensionHDF5 : virtual public base::ISetDimension, public DimensionHDF
 
 public:
 
-    SetDimensionHDF5(const Group &group, ndsize_t index);
+    SetDimensionHDF5(const H5Group &group, ndsize_t index);
 
 
     DimensionType dimensionType() const;
@@ -139,13 +139,13 @@ class RangeDimensionHDF5 : virtual public base::IRangeDimension, public Dimensio
 
 public:
 
-    RangeDimensionHDF5(const Group &group, ndsize_t index);
+    RangeDimensionHDF5(const H5Group &group, ndsize_t index);
 
 
-    RangeDimensionHDF5(const Group &group, ndsize_t index, std::vector<double> ticks);
+    RangeDimensionHDF5(const H5Group &group, ndsize_t index, std::vector<double> ticks);
 
 
-    RangeDimensionHDF5(const Group &group, ndsize_t index, const DataArrayHDF5 &dataArray );
+    RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &dataArray );
 
 
     DimensionType dimensionType() const;
@@ -182,7 +182,7 @@ public:
 
 private:
 
-    Group redirectGroup() const;
+    H5Group redirectGroup() const;
 };
 
 

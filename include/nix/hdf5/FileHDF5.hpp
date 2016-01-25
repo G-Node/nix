@@ -10,8 +10,7 @@
 #define NIX_FILE_HDF5_H
 
 #include <nix/base/IFile.hpp>
-
-#include <nix/hdf5/Group.hpp>
+#include <nix/hdf5/H5Group.hpp>
 
 #include <string>
 #include <memory>
@@ -28,7 +27,7 @@ class FileHDF5 : public BaseHDF5, public base::IFile, public std::enable_shared_
 private:
 
     /* groups representing different sections of the file */
-    Group root, metadata, data;
+    H5Group root, metadata, data;
     FileMode mode;
 
 public:

@@ -69,6 +69,7 @@ public:
     DataType dataType(void) const;
 
     DataSpace getSpace() const;
+
 };
 
 

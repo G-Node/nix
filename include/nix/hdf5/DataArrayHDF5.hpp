@@ -37,18 +37,18 @@ public:
     /**
      * Standard constructor for existing DataArrays
      */
-    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group);
+    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
                   
     /**
      * Standard constructor for new DataArrays
      */
-    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
+    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                   const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new DataArrays that preserves the creation time.
      */
-    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const Group &group,
+    DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                   const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
@@ -151,7 +151,7 @@ public:
 private:
 
     // small helper for handling dimension groups
-    Group createDimensionGroup(ndsize_t index);
+    H5Group createDimensionGroup(ndsize_t index);
 };
 
 

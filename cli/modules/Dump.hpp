@@ -70,7 +70,7 @@ public:
 
         // round min & max to precision of two digits beyond magnitude of their difference,
         // if their difference is < 2. Round them to ints otherwise.
-        double multiplier = abs( round(1 / (maxval - minval)) ) * 100;
+        double multiplier = std::abs(round(1 / (maxval - minval))) * 100;
         minval = (multiplier != 0) ? round(minval * multiplier) / multiplier : round(minval);
         maxval = (multiplier != 0) ? round(maxval * multiplier) / multiplier : round(maxval);
         str_script.replace(str_script.find("MINVAL"), std::string("MINVAL").length(), nix::util::numToStr(minval));

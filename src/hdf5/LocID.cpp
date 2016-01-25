@@ -53,6 +53,14 @@ void LocID::deleteLink(std::string name, hid_t plist) {
     HErr res = H5Ldelete(hid, name.c_str(), plist);
     res.check("LocIDL::deleteLink: Could not delete link: " + name);
 }
+
+
+unsigned int LocID::referenceCount() const {
+    H5O_info_t oInfo;
+    HErr res = H5Oget_info(hid, &oInfo);
+    res.check("LocID:referenceCount: Coud not get object info");
+    return oInfo.rc;
+}
 } // nix::hdf5
 
 } // nix::

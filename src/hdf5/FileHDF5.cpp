@@ -71,7 +71,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
         throw H5Exception("Could not open/create file");
     }
 
-    root = Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
     root.check("Could not root group");
 
     metadata = root.openGroup("metadata");
@@ -98,7 +98,7 @@ bool FileHDF5::hasBlock(const std::string &name_or_id) const {
 shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &name_or_id) const {
     shared_ptr<BlockHDF5> block;
 
-    boost::optional<Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<H5Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         block = make_shared<BlockHDF5>(file(), *group);
 
@@ -114,7 +114,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(ndsize_t index) const {
 
 shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string &type) {
     string id = util::createId();
-    Group group = data.openGroup(name, true);
+    H5Group group = data.openGroup(name, true);
     return make_shared<BlockHDF5>(file(), group, id, type, name);
 }
 
@@ -149,7 +149,7 @@ bool FileHDF5::hasSection(const std::string &name_or_id) const {
 shared_ptr<base::ISection> FileHDF5::getSection(const std::string &name_or_id) const {
     shared_ptr<SectionHDF5> sec;
 
-    boost::optional<Group> group = metadata.findGroupByNameOrAttribute("entity_id", name_or_id);
+    boost::optional<H5Group> group = metadata.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         sec = make_shared<SectionHDF5>(file(), *group);
 
@@ -166,7 +166,7 @@ shared_ptr<base::ISection> FileHDF5::getSection(ndsize_t index) const{
 shared_ptr<base::ISection> FileHDF5::createSection(const string &name, const  string &type) {
     string id = util::createId();
 
-    Group group = metadata.openGroup(name, true);
+    H5Group group = metadata.openGroup(name, true);
     return make_shared<SectionHDF5>(file(), group, id, type, name);
 }
 

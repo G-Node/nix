@@ -9,7 +9,7 @@
 #include <nix/hydra/multiArray.hpp>
 #include <nix.hpp>
 
-#include <nix/hdf5/Group.hpp>
+#include "nix/hdf5/H5Group.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -50,7 +50,7 @@ private:
     static unsigned int &open_mode();
 
     hid_t h5file;
-    nix::hdf5::Group h5group;
+    nix::hdf5::H5Group h5group;
 
     CPPUNIT_TEST_SUITE(TestDataSet);
     CPPUNIT_TEST(testNDSize);

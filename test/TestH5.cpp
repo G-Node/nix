@@ -48,7 +48,7 @@ void TestH5::setUp() {
     }
 
     CPPUNIT_ASSERT(H5Iis_valid(g));
-    h5group = nix::hdf5::Group(g);
+    h5group = nix::hdf5::H5Group(g);
 
     openMode = H5F_ACC_RDWR;
 }
@@ -62,7 +62,7 @@ void TestH5::tearDown() {
 void TestH5::testBase() {
     CPPUNIT_ASSERT(h5group.isValid());
 
-    nix::hdf5::Group g_invalid{};
+    nix::hdf5::H5Group g_invalid{};
     CPPUNIT_ASSERT_EQUAL(false, g_invalid.isValid());
     CPPUNIT_ASSERT_THROW(g_invalid.check("Error"), nix::hdf5::H5Exception);
 

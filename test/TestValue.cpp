@@ -10,6 +10,8 @@
 
 #include "TestValue.hpp"
 
+#include <cstring>
+
 void TestValue::setUp() {
 }
 
@@ -52,11 +54,18 @@ void TestValue::testObject() {
     CPPUNIT_ASSERT_EQUAL(sVal.get<std::string>(), strc);
     CPPUNIT_ASSERT_THROW(sVal.get<bool>(), std::invalid_argument);
 
+    const char long_string[] = "When shall we three meet again"
+                               "In thunder, lightning, or in rain?";
+
+    sVal.set(long_string);
 
     nix::Value v1 = sVal; //copy constructor
-    CPPUNIT_ASSERT_EQUAL(v1, sVal); // check ==
+    CPPUNIT_ASSERT_EQUAL(sVal, v1); // check ==
     CPPUNIT_ASSERT(v1 != dVal);
 
+    CPPUNIT_ASSERT_EQUAL(v1.get<std::string>(), std::string(long_string));
+
+    v1.set(long_string, strc.length()); // strc, long_string share this prefix
     CPPUNIT_ASSERT_EQUAL(v1.get<std::string>(), strc);
 
     v1 = dVal; //assignment op (copy)
@@ -121,7 +130,7 @@ struct ValueTester : ValTester {
 
         value_stream << value;
 
-        std::string::size_type pos = val_stream.str().find(value_stream.str());
+        std::string::size_type pos = value_stream.str().find(val_stream.str());
         CPPUNIT_ASSERT(pos != std::string::npos);
     }
 
@@ -187,6 +196,7 @@ void TestValue::testSwap()
 
     for (const ValTester *a : vals) {
         a->check_basic();
+        a->check_to_string();
 
         for (const ValTester *b : vals) {
             a->check_swap(*b);

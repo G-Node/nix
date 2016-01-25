@@ -17,20 +17,20 @@ namespace nix {
 namespace hdf5 {
 
 
-SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, const Group &group)
+SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, const H5Group &group)
     : EntityWithMetadataHDF5(file, group)
 {
     source_group = this->group().openOptGroup("sources");
 }
     
     
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const Group &group, const std::string &id, const string &type, const string &name)
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const H5Group &group, const std::string &id, const string &type, const string &name)
     : SourceHDF5(file, group, id, type, name, util::getTime())
 {
 }
 
 
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const Group &group, const std::string &id, const string &type, const string &name, time_t time)
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const H5Group &group, const std::string &id, const string &type, const string &name, time_t time)
     : EntityWithMetadataHDF5(file, group, id, type, name, time)
 {
     source_group = this->group().openOptGroup("sources");
@@ -44,10 +44,10 @@ bool SourceHDF5::hasSource(const string &name_or_id) const {
 
 shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
     shared_ptr<SourceHDF5> source;
-    boost::optional<Group> g = source_group();
+    boost::optional<H5Group> g = source_group();
 
     if (g) {
-        boost::optional<Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             source = make_shared<SourceHDF5>(file(), *group);
     }
@@ -57,29 +57,29 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
 
 
 shared_ptr<ISource> SourceHDF5::getSource(ndsize_t index) const {
-    boost::optional<Group> g = source_group();
+    boost::optional<H5Group> g = source_group();
     string name = g ? g->objectName(index) : "";
     return getSource(name);
 }
 
 
 ndsize_t SourceHDF5::sourceCount() const {
-    boost::optional<Group> g = source_group(false);
+    boost::optional<H5Group> g = source_group(false);
     return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId();
-    boost::optional<Group> g = source_group(true);
+    boost::optional<H5Group> g = source_group(true);
 
-    Group group = g->openGroup(name, true);
+    H5Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), group, id, type, name);
 }
 
 
 bool SourceHDF5::deleteSource(const string &name_or_id) {
-    boost::optional<Group> g = source_group();
+    boost::optional<H5Group> g = source_group();
     bool deleted = false;
     
     if(g) {
