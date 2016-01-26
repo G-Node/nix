@@ -1,0 +1,27 @@
+var namespacenix_1_1base =
+[
+    [ "Entity", "d3/ddd/classnix_1_1base_1_1_entity.html", "d3/ddd/classnix_1_1base_1_1_entity" ],
+    [ "EntityWithMetadata", "da/d7e/classnix_1_1base_1_1_entity_with_metadata.html", "da/d7e/classnix_1_1base_1_1_entity_with_metadata" ],
+    [ "EntityWithSources", "d1/db6/classnix_1_1base_1_1_entity_with_sources.html", "d1/db6/classnix_1_1base_1_1_entity_with_sources" ],
+    [ "IBaseTag", "d0/d4b/classnix_1_1base_1_1_i_base_tag.html", "d0/d4b/classnix_1_1base_1_1_i_base_tag" ],
+    [ "IBlock", "d4/d00/classnix_1_1base_1_1_i_block.html", "d4/d00/classnix_1_1base_1_1_i_block" ],
+    [ "IDataArray", "de/db6/classnix_1_1base_1_1_i_data_array.html", "de/db6/classnix_1_1base_1_1_i_data_array" ],
+    [ "IDimension", "d9/dee/classnix_1_1base_1_1_i_dimension.html", "d9/dee/classnix_1_1base_1_1_i_dimension" ],
+    [ "ISampledDimension", "d5/d63/classnix_1_1base_1_1_i_sampled_dimension.html", "d5/d63/classnix_1_1base_1_1_i_sampled_dimension" ],
+    [ "ISetDimension", "d5/d6a/classnix_1_1base_1_1_i_set_dimension.html", "d5/d6a/classnix_1_1base_1_1_i_set_dimension" ],
+    [ "IRangeDimension", "d3/d31/classnix_1_1base_1_1_i_range_dimension.html", "d3/d31/classnix_1_1base_1_1_i_range_dimension" ],
+    [ "IEntity", "d8/d51/classnix_1_1base_1_1_i_entity.html", "d8/d51/classnix_1_1base_1_1_i_entity" ],
+    [ "IEntityWithMetadata", "de/d76/classnix_1_1base_1_1_i_entity_with_metadata.html", "de/d76/classnix_1_1base_1_1_i_entity_with_metadata" ],
+    [ "IEntityWithSources", "d9/d8d/classnix_1_1base_1_1_i_entity_with_sources.html", "d9/d8d/classnix_1_1base_1_1_i_entity_with_sources" ],
+    [ "IFeature", "d1/dbc/classnix_1_1base_1_1_i_feature.html", "d1/dbc/classnix_1_1base_1_1_i_feature" ],
+    [ "IFile", "d3/d02/classnix_1_1base_1_1_i_file.html", "d3/d02/classnix_1_1base_1_1_i_file" ],
+    [ "IGroup", "df/d3a/classnix_1_1base_1_1_i_group.html", "df/d3a/classnix_1_1base_1_1_i_group" ],
+    [ "ImplContainer", "d6/d24/classnix_1_1base_1_1_impl_container.html", "d6/d24/classnix_1_1base_1_1_impl_container" ],
+    [ "IMultiTag", "d5/d1c/classnix_1_1base_1_1_i_multi_tag.html", "d5/d1c/classnix_1_1base_1_1_i_multi_tag" ],
+    [ "INamedEntity", "d3/d61/classnix_1_1base_1_1_i_named_entity.html", "d3/d61/classnix_1_1base_1_1_i_named_entity" ],
+    [ "IProperty", "d6/dba/classnix_1_1base_1_1_i_property.html", "d6/dba/classnix_1_1base_1_1_i_property" ],
+    [ "ISection", "da/ddb/classnix_1_1base_1_1_i_section.html", "da/ddb/classnix_1_1base_1_1_i_section" ],
+    [ "ISource", "d7/da6/classnix_1_1base_1_1_i_source.html", "d7/da6/classnix_1_1base_1_1_i_source" ],
+    [ "ITag", "dc/de8/classnix_1_1base_1_1_i_tag.html", "dc/de8/classnix_1_1base_1_1_i_tag" ],
+    [ "NamedEntity", "df/da6/classnix_1_1base_1_1_named_entity.html", "df/da6/classnix_1_1base_1_1_named_entity" ]
+];
