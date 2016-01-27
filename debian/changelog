@@ -1,3 +1,9 @@
+nix (1.1.0-5) xenial; urgency=medium
+
+  * Set to version 1.1.0
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Tue, 27 Jan 2016 09:45:18 +0100
+
 nix (1.1.0-4) trusty; urgency=medium
 
   * Set to version 1.1.0
