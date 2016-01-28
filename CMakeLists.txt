@@ -140,31 +140,34 @@ message(STATUS "CLI executable added")
 ########################################
 # Tests
 
+include(CTest)
 enable_testing()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+if(BUILD_TESTING)
 
-find_package(CppUnit)
-include_directories(${CPPUNIT_INCLUDE_DIR})
+  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-file(GLOB Tests_SOURCES "test/*Test*.cpp")
+  find_package(CppUnit)
+  include_directories(${CPPUNIT_INCLUDE_DIR})
 
-add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-if(NOT WIN32)
-  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  file(GLOB Tests_SOURCES "test/*Test*.cpp")
+
+  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  if(NOT WIN32)
+      set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+
+  file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+  foreach(test ${Real_Test_HEADERS})
+      get_filename_component(TestFileName ${test} NAME_WE)
+      string(REPLACE "Test" "" TestName ${TestFileName})
+      message(STATUS " Test added: ${TestName}")
+      add_test(${TestName} TestRunner ${TestName})
+  endforeach(test)
+
+
 endif()
-target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
-file(GLOB Real_Test_HEADERS "test/Test*.hpp")
-foreach(test ${Real_Test_HEADERS})
-  get_filename_component(TestFileName ${test} NAME_WE)
-  string(REPLACE "Test" "" TestName ${TestFileName})
-  message(STATUS " Test added: ${TestName}")
-  add_test(${TestName} TestRunner ${TestName})
-endforeach(test)
-
-include(CTest)
-
 
 add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
 target_link_libraries(nix-bench nix)
