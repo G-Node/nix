@@ -26,10 +26,6 @@ void Value::swap(Value &other) {
     swap(data, other.data);
 
     swap(uncertainty, other.uncertainty);
-    swap(reference, other.reference);
-    swap(filename, other.filename);
-    swap(encoder, other.encoder);
-    swap(checksum, other.checksum);
 }
 
 /* operators and functions */
@@ -75,7 +71,6 @@ std::ostream& operator<<(std::ostream &out, const Value &value)
         break;
     }
 
-
     out << "}";
     return out;
 }
@@ -87,11 +82,7 @@ bool Value::operator==(const Value &other) const
     if (!match)
         return match;
 
-    match = match & (reference == other.reference);
-    match = match & (checksum == other.checksum);
     match = match & (uncertainty == other.uncertainty);
-    match = match & (filename == other.filename);
-    match = match & (encoder == other.encoder);
 
     return match;
 }

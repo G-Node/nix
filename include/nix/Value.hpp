@@ -29,12 +29,6 @@ private:
 public:
     double uncertainty = 0.0;
 
-    std::string reference;
-    std::string filename;
-    std::string encoder;
-    std::string checksum;
-
-
     Value() : data() { }
 
     explicit Value(char *value) : data(value) { }
@@ -49,10 +43,6 @@ public:
 
     Value(const Value &other) : data(other.data) {
         uncertainty = other.uncertainty;
-        checksum = other.checksum;
-        encoder = other.encoder;
-        filename = other.filename;
-        reference = other.reference;
     }
 
     Value(Value &&other) NOEXCEPT : data() {
