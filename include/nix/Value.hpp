@@ -22,7 +22,10 @@ namespace nix {
 /**
  * @brief Class that corresponds to the odML Value.
  */
-class NIXAPI Value : public Variant {
+class NIXAPI Value {
+private:
+    Variant data;
+
 public:
     double uncertainty = 0.0;
 
@@ -32,19 +35,19 @@ public:
     std::string checksum;
 
 
-    Value() : Variant() { }
+    Value() : data() { }
 
-    explicit Value(char *value) : Variant(value) { }
+    explicit Value(char *value) : data(value) { }
 
-    explicit Value(const char *value) : Variant(value) { }
+    explicit Value(const char *value) : data(value) { }
 
     template<typename T>
-    explicit Value(const T &value) : Variant(value) { }
+    explicit Value(const T &value) : data(value) { }
 
     template<size_t N>
-    explicit Value(const char (&value)[N]) : Variant(value) { }
+    explicit Value(const char (&value)[N]) : data(value) { }
 
-    Value(const Value &other) : Variant(static_cast<const Variant &>(other)) {
+    Value(const Value &other) : data(other.data) {
         uncertainty = other.uncertainty;
         checksum = other.checksum;
         encoder = other.encoder;
@@ -52,7 +55,7 @@ public:
         reference = other.reference;
     }
 
-    Value(Value &&other) NOEXCEPT : Value() {
+    Value(Value &&other) NOEXCEPT : data() {
         swap(other);
     }
 
@@ -61,18 +64,61 @@ public:
         return *this;
     }
 
+    void set(none_t) { data.set(nix::none); }
+    void set(bool value) { data.set(value); }
+    void set(int32_t value) { data.set(value); }
+    void set(uint32_t value) { data.set(value); }
+    void set(int64_t value) { data.set(value); }
+    void set(uint64_t value) { data.set(value); }
+    void set(double value) { data.set(value); }
+    void set(const char *value, const size_t len) { data.set(value, len); }
+    void set(const char *value) { data.set(value); }
+    void set(const std::string &value) { data.set(value); }
+
+    template<typename T>
+    T get() const {
+        T temp;
+        get(temp);
+        return temp;
+    }
+
+    void get(none_t &tag) const { data.get(tag); }
+    void get(bool &out) const { data.get(out); }
+    void get(int32_t &value) const { data.get(value); }
+    void get(uint32_t &value) const { data.get(value); }
+    void get(int64_t &value) const { data.get(value); }
+    void get(uint64_t &value) const { data.get(value); }
+    void get(double &value) const { data.get(value); }
+    void get(std::string &value) const { data.get(value); }
+
+    DataType type() const {
+        return data.type();
+    }
+
+    static bool supports_type(DataType dtype) {
+        // that is true for now, but will change 
+        return Variant::supports_type(dtype);
+    }
+
     void swap(Value &other);
 
+    bool operator ==(Value const& other) const;
 };
 
 
 NIXAPI std::ostream& operator<<(std::ostream &out, const Value &value);
-NIXAPI bool operator==(const Value &a, const Value &b);
 inline bool operator!=(const Value &a, const Value &b) { return !(a == b); }
 NIXAPI void swap(Value &a, Value &b);
 
+template<>
+inline const char *Value::get<const char *>() const {
+    return data.get<const char*>();
+}
 
-
+template<>
+inline const none_t Value::get<>() const {
+    return data.get<none_t>();
+}
 
 } // namespace nix
 
