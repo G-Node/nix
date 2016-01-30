@@ -96,17 +96,21 @@ Further instructions on how to use the images are on the Docker repository. Furt
 Getting Started (MacOS X)
 -------------------------
 
-The easiest way to get NIX is via [homebrew](http://brew.sh). We provide a tap with the formula.
-Currently only using git master is supported. The following commands should do the trick:
+The easiest way to get NIX is via [homebrew](http://brew.sh).
+We are included in [homebrew science](http://brew.sh/homebrew-science/) as `nixio`.
+Install nix, including missing dependencies, with:
 
 ```shell
-# tap into g-node's homebrew tap
-brew tap g-node/data
+brew install homebrew/science/nixio
 
-# install nix including missing dependencies
-# replace 'install', with 'reinstall' to upgrade
-# an existing installation
-brew install --HEAD nix
+# OR: tap into homebrew-science
+brew tap homebrew/science
+brew install nixio
+
+# If you want the latest development version:
+# NB: replace 'install', with 'reinstall' to upgrade
+#     an existing installation
+brew install --HEAD nixio
 ```
 
 Getting Started (Windows)
