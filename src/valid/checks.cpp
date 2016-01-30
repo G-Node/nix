@@ -97,8 +97,6 @@ bool extentsMatchRefs::operator()(const std::vector<double> &extents) const {
 
 
 bool positionsMatchRefs::operator()(const DataArray &positions) const {
-    std::cerr << "check_positions!" << std::endl;
-
     extentsMatchRefs alias = extentsMatchRefs(refs);
     
     return alias(positions);
