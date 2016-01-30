@@ -139,7 +139,7 @@ inline const char *Variant::get<const char *>() const {
 }
 
 template<>
-inline const none_t Variant::get<>() const {
+inline none_t Variant::get<none_t>() const {
     return nix::none;
 }
 
