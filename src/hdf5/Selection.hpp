@@ -11,7 +11,7 @@
 
 #include <nix/NDSize.hpp>
 #include <nix/Hydra.hpp>
-#include <nix/hdf5/DataSpace.hpp>
+#include "DataSpace.hpp"
 
 #include <nix/Platform.hpp>
 

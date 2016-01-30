@@ -9,9 +9,9 @@
 #ifndef NIX_GROUP_H
 #define NIX_GROUP_H
 
-#include <nix/hdf5/LocID.hpp>
-#include <nix/hdf5/DataSetHDF5.hpp>
-#include <nix/hdf5/DataSpace.hpp>
+#include "LocID.hpp"
+#include "DataSetHDF5.hpp"
+#include "DataSpace.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
 

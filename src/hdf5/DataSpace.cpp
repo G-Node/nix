@@ -8,8 +8,8 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/DataSpace.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+#include "DataSpace.hpp"
+#include "ExceptionHDF5.hpp"
 
 
 namespace nix {

@@ -10,7 +10,7 @@
 #ifndef NIX_BASETAG_HDF5_H
 #define NIX_BASETAG_HDF5_H
 
-#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include "EntityWithSourcesHDF5.hpp"
 #include <nix/base/IBaseTag.hpp>
 
 namespace nix {

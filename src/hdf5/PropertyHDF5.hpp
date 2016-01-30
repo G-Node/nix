@@ -12,7 +12,7 @@
 #include <nix/base/IFile.hpp>
 #include <nix/base/IEntity.hpp>
 #include <nix/base/IProperty.hpp>
-#include <nix/hdf5/NamedEntityHDF5.hpp>
+#include "NamedEntityHDF5.hpp"
 
 #include <string>
 #include <memory>

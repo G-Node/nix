@@ -10,7 +10,7 @@
 #define NIX_DATA_TYPE_HDF5_H
 
 #include <nix/DataType.hpp>
-#include <nix/hdf5/BaseHDF5.hpp>
+#include "BaseHDF5.hpp"
 
 #include <nix/Platform.hpp>
 

@@ -11,7 +11,7 @@
 #include <nix/NDSize.hpp>
 #include <nix/Platform.hpp>
 
-#include <nix/hdf5/BaseHDF5.hpp>
+#include "BaseHDF5.hpp"
 
 #ifndef NIX_DATASPACE_H
 #define NIX_DATASPACE_H

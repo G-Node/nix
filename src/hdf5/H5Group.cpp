@@ -6,9 +6,9 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/H5Group.hpp>
+#include "H5Group.hpp"
 #include <nix/util/util.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+#include "ExceptionHDF5.hpp"
 
 
 namespace nix {

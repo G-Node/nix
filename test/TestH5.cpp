@@ -10,8 +10,8 @@
 
 #include "TestH5.hpp"
 
-#include <nix/hdf5/FileHDF5.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+#include "hdf5/FileHDF5.hpp"
+#include "hdf5/ExceptionHDF5.hpp"
 
 #include "RefTester.hpp"
 

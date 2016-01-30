@@ -8,9 +8,9 @@
 
 #include <nix/util/util.hpp>
 
-#include <nix/hdf5/DataArrayHDF5.hpp>
-#include <nix/hdf5/DataSetHDF5.hpp>
-#include <nix/hdf5/DimensionHDF5.hpp>
+#include "DataArrayHDF5.hpp"
+#include "DataSetHDF5.hpp"
+#include "DimensionHDF5.hpp"
 
 using namespace std;
 using namespace nix::base;

@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/LocID.hpp>
+#include "LocID.hpp"
 
 namespace nix {
 

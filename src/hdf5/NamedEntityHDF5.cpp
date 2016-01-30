@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/NamedEntityHDF5.hpp>
+#include "NamedEntityHDF5.hpp"
 
 #include <nix/util/util.hpp>
 

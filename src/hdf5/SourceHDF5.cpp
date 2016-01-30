@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix/util/util.hpp>
-#include <nix/hdf5/SourceHDF5.hpp>
+#include "SourceHDF5.hpp"
 #include <nix/Source.hpp>
 
 using namespace std;

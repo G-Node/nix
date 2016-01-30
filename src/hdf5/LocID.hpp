@@ -11,10 +11,10 @@
 #ifndef NIX_LOCATION_H5_H
 #define NIX_LOCATION_H5_H
 
-#include <nix/hdf5/BaseHDF5.hpp>
-#include <nix/hdf5/Attribute.hpp>
+#include "BaseHDF5.hpp"
+#include "Attribute.hpp"
 #include <nix/Hydra.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
+#include "DataTypeHDF5.hpp"
 
 namespace nix {
 namespace hdf5 {

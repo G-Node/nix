@@ -9,10 +9,10 @@
 #ifndef NIX_DATASET_H
 #define NIX_DATASET_H
 
-#include <nix/hdf5/Selection.hpp>
-#include <nix/hdf5/DataSpace.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
-#include <nix/hdf5/LocID.hpp>
+#include "Selection.hpp"
+#include "DataSpace.hpp"
+#include "DataTypeHDF5.hpp"
+#include "LocID.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Value.hpp>
 

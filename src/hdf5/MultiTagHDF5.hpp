@@ -12,7 +12,7 @@
 #define NIX_MULTI_TAG_HDF5_H
 
 #include <nix/base/IMultiTag.hpp>
-#include <nix/hdf5/BaseTagHDF5.hpp>
+#include "BaseTagHDF5.hpp"
 
 #include <string>
 #include <vector>

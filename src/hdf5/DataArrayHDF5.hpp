@@ -15,7 +15,7 @@
 #define NIX_DATA_ARRAY_HDF5_H
 
 #include <nix/base/IDataArray.hpp>
-#include <nix/hdf5/EntityWithSourcesHDF5.hpp>
+#include "EntityWithSourcesHDF5.hpp"
 
 #include <boost/multi_array.hpp>
 

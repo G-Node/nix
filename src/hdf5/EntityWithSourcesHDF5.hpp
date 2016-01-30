@@ -11,8 +11,8 @@
 
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IEntityWithSources.hpp>
-#include <nix/hdf5/SourceHDF5.hpp>
-#include <nix/hdf5/EntityWithMetadataHDF5.hpp>
+#include "SourceHDF5.hpp"
+#include "EntityWithMetadataHDF5.hpp"
 
 namespace nix {
 namespace hdf5 {

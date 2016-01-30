@@ -11,7 +11,7 @@
 
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IFeature.hpp>
-#include <nix/hdf5/EntityHDF5.hpp>
+#include "EntityHDF5.hpp"
 
 #include <string>
 #include <vector>

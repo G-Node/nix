@@ -10,7 +10,7 @@
 #define NIX_ENTITY_WITH_METADATA_HDF5_H
 
 #include <nix/base/ISection.hpp>
-#include <nix/hdf5/NamedEntityHDF5.hpp>
+#include "NamedEntityHDF5.hpp"
 
 #include <string>
 #include <memory>

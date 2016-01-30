@@ -9,7 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include <nix.hpp>
-#include "nix/hdf5/H5Group.hpp"
+#include "hdf5/H5Group.hpp"
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>

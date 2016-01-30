@@ -8,8 +8,8 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/Attribute.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
+#include "Attribute.hpp"
+#include "DataTypeHDF5.hpp"
 
 namespace nix {
 namespace hdf5 {

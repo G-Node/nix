@@ -10,7 +10,7 @@
 #ifndef NIX_TAG_HDF5_H
 #define NIX_TAG_HDF5_H
 
-#include <nix/hdf5/BaseTagHDF5.hpp>
+#include "BaseTagHDF5.hpp"
 #include <nix/base/ITag.hpp>
 
 namespace nix {
