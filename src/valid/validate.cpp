@@ -156,11 +156,6 @@ Result validate(const MultiTag &multi_tag) {
     Result result_base = validate_entity_with_sources(multi_tag);
     Result result = validator({
         must(multi_tag, &MultiTag::positions, notFalse(), "positions are not set!"),
-        // since extents & positions DataArray stores a vector of position / extent vectors it has to be 2-dim
-        could(multi_tag, &MultiTag::positions, notFalse(), {
-            must(multi_tag, &MultiTag::positions, dimEquals(2), "dimensionality of positions DataArray must be two!") }),
-        could(multi_tag, &MultiTag::extents, notFalse(), {
-            must(multi_tag, &MultiTag::extents, dimEquals(2), "dimensionality of extents DataArray must be two!") }),
         // check units for validity
         could(multi_tag, &MultiTag::units, notEmpty(), {
             must(multi_tag, &MultiTag::units, isValidUnit(), "Some of the units in tag are invalid: not an atomic SI. Note: So far composite SI units are not supported!"),
