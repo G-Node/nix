@@ -14,7 +14,7 @@
 #include "H5Object.hpp"
 #include "Attribute.hpp"
 #include <nix/Hydra.hpp>
-#include "DataTypeHDF5.hpp"
+#include "H5DataType.hpp"
 
 namespace nix {
 namespace hdf5 {

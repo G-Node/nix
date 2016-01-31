@@ -11,7 +11,7 @@
 
 #include "Selection.hpp"
 #include "DataSpace.hpp"
-#include "DataTypeHDF5.hpp"
+#include "H5DataType.hpp"
 #include "LocID.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Value.hpp>

@@ -9,7 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include "Attribute.hpp"
-#include "DataTypeHDF5.hpp"
+#include "H5DataType.hpp"
 
 namespace nix {
 namespace hdf5 {
