@@ -68,6 +68,10 @@ bool extentsMatchPositions::operator()(const std::vector<double> &positions) con
 
 
 bool extentsMatchRefs::operator()(const DataArray &extents) const {
+    // we need to check if there are enough coordinates in the positions or extents to point into the references.
+    // In case the referenced data is 1-d, positions and extents may be vectors as well. If data is n-d, however,
+    // position and extent must be 2-d with the first d the number of points and the second the coordinates for each
+    // point. In this case the second dim of the positions/extents must have n entries.
     bool mismatch = false;
     auto extExtent = extents.dataExtent();
     auto it = refs.begin();
