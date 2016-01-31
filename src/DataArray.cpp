@@ -9,7 +9,7 @@
 #include <nix/DataArray.hpp>
 
 #include <nix/util/util.hpp>
-#include "hdf5/DataTypeHDF5.hpp"
+#include "hdf5/h5x/DataTypeHDF5.hpp"
 
 #include <cstring>
 

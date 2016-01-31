@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "hdf5/BaseHDF5.hpp"
+#include "hdf5/h5x/BaseHDF5.hpp"
 
 struct RefTester {
     RefTester(hid_t id) : obj(id) {

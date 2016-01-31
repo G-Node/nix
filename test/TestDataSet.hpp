@@ -9,7 +9,7 @@
 #include <nix/hydra/multiArray.hpp>
 #include <nix.hpp>
 
-#include "hdf5/H5Group.hpp"
+#include "hdf5/h5x/H5Group.hpp"
 
 #include <iostream>
 #include <sstream>

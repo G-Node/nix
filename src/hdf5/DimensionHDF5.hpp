@@ -10,7 +10,7 @@
 #define NIX_DIMENSIONS_HDF5_H
 
 #include <nix/base/IDimensions.hpp>
-#include "H5Group.hpp"
+#include "h5x/H5Group.hpp"
 #include "DataArrayHDF5.hpp"
 #include <string>
 #include <iostream>

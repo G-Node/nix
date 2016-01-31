@@ -9,7 +9,7 @@
 #include <nix/util/util.hpp>
 
 #include "DataArrayHDF5.hpp"
-#include "DataSetHDF5.hpp"
+#include "h5x/DataSetHDF5.hpp"
 #include "DimensionHDF5.hpp"
 
 using namespace std;

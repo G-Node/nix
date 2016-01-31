@@ -8,12 +8,12 @@
 
 #include "TestDataSet.hpp"
 
-#include "hdf5/DataSetHDF5.hpp"
+#include "hdf5/h5x/DataSetHDF5.hpp"
 #include <nix/NDArray.hpp>
 
 #include <type_traits>
 
-#include "hdf5/Selection.hpp"
+#include "hdf5/h5x/Selection.hpp"
 #include <nix/DataType.hpp>
 
 #include <string.h>
