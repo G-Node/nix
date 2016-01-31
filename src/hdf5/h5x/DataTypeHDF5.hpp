@@ -10,7 +10,7 @@
 #define NIX_DATA_TYPE_HDF5_H
 
 #include <nix/DataType.hpp>
-#include "BaseHDF5.hpp"
+#include "H5Object.hpp"
 
 #include <nix/Platform.hpp>
 
@@ -19,13 +19,13 @@ namespace hdf5 {
 
 namespace h5x {
 
-class NIXAPI DataType : public hdf5::BaseHDF5 {
+class NIXAPI DataType : public hdf5::H5Object {
 
 public:
-    DataType() : BaseHDF5() { }
-    DataType(hid_t hid) : BaseHDF5(hid, false) { }
-    DataType(hid_t hid, bool is_copy) : BaseHDF5(hid, is_copy) { }
-    DataType(const DataType &other) : BaseHDF5(other) { }
+    DataType() : H5Object() { }
+    DataType(hid_t hid) : H5Object(hid, false) { }
+    DataType(hid_t hid, bool is_copy) : H5Object(hid, is_copy) { }
+    DataType(const DataType &other) : H5Object(other) { }
 
 
     //Basically the same as DataType(hid_t, true)

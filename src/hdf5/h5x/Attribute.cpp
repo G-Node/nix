@@ -15,13 +15,13 @@ namespace nix {
 namespace hdf5 {
 
 
-Attribute::Attribute() : BaseHDF5() {
+Attribute::Attribute() : H5Object() {
 }
 
-Attribute::Attribute(hid_t hid) : BaseHDF5(hid) {
+Attribute::Attribute(hid_t hid) : H5Object(hid) {
 }
 
-Attribute::Attribute(const Attribute &other) : BaseHDF5(other) {
+Attribute::Attribute(const Attribute &other) : H5Object(other) {
 }
 
 

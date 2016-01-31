@@ -22,7 +22,7 @@ namespace hdf5 {
 /**
  * Class that represents a NIX file.
  */
-class FileHDF5 : public BaseHDF5, public base::IFile, public std::enable_shared_from_this<FileHDF5> {
+class FileHDF5 : public H5Object, public base::IFile, public std::enable_shared_from_this<FileHDF5> {
 
 private:
 

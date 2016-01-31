@@ -91,7 +91,7 @@ private:
 };
 
 
-class NIXAPI BaseHDF5 {
+class NIXAPI H5Object {
 
 protected:
 
@@ -99,27 +99,27 @@ protected:
 
 public:
 
-    BaseHDF5() : hid(H5I_INVALID_HID) { }
+    H5Object() : hid(H5I_INVALID_HID) { }
 
-    BaseHDF5(hid_t hid) : BaseHDF5(hid, false) { };
+    H5Object(hid_t hid) : H5Object(hid, false) { };
 
-    BaseHDF5(hid_t hid, bool is_copy) : hid(hid) {
+    H5Object(hid_t hid, bool is_copy) : hid(hid) {
         if (is_copy) {
             inc();
         }
     }
 
-    BaseHDF5(const BaseHDF5 &other);
+    H5Object(const H5Object &other);
 
-    BaseHDF5(BaseHDF5 &&other);
+    H5Object(H5Object &&other);
 
-    BaseHDF5& operator=(const BaseHDF5 &other);
+    H5Object & operator=(const H5Object &other);
 
-    BaseHDF5& operator=(BaseHDF5 &&other);
+    H5Object & operator=(H5Object &&other);
 
-    bool operator==(const BaseHDF5 &other) const;
+    bool operator==(const H5Object &other) const;
 
-    bool operator!=(const BaseHDF5 &other) const;
+    bool operator!=(const H5Object &other) const;
 
     //NB: use the following functions with caution
     hid_t h5id() const; //no refcount increase
@@ -138,7 +138,7 @@ public:
 
     virtual void close();
 
-    virtual ~BaseHDF5();
+    virtual ~H5Object();
 
 protected:
 

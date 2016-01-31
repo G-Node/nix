@@ -199,7 +199,7 @@ DataSet H5Group::createData(const std::string &name,
         }
     }
 
-    BaseHDF5 dcpl = H5Pcreate(H5P_DATASET_CREATE);
+    H5Object dcpl = H5Pcreate(H5P_DATASET_CREATE);
     dcpl.check("Could not create data creation plist");
 
     if (!chunks && guess_chunks) {
@@ -240,7 +240,7 @@ H5Group H5Group::openGroup(const std::string &name, bool create) const {
         g = H5Group(H5Gopen(hid, name.c_str(), H5P_DEFAULT));
         g.check("H5Group::openGroup(): Could not open group: " + name);
     } else if (create) {
-        BaseHDF5 gcpl = H5Pcreate(H5P_GROUP_CREATE);
+        H5Object gcpl = H5Pcreate(H5P_GROUP_CREATE);
         gcpl.check("Unable to create group with name '" + name + "'! (H5Pcreate)");
 
         //we want hdf5 to keep track of the order in which links were created so that

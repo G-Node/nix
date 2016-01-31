@@ -19,7 +19,7 @@ namespace nix {
 namespace hdf5 {
 
 
-class NIXAPI Attribute : public BaseHDF5 {
+class NIXAPI Attribute : public H5Object {
 public:
     Attribute();
     Attribute(hid_t hid);

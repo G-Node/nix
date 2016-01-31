@@ -11,7 +11,7 @@
 #include <nix/NDSize.hpp>
 #include <nix/Platform.hpp>
 
-#include "BaseHDF5.hpp"
+#include "H5Object.hpp"
 
 #ifndef NIX_DATASPACE_H
 #define NIX_DATASPACE_H
@@ -19,12 +19,12 @@
 namespace nix {
 namespace hdf5 {
 
-class NIXAPI DataSpace : public BaseHDF5 {
+class NIXAPI DataSpace : public H5Object {
 public:
 
-    DataSpace() : BaseHDF5(H5S_ALL) { }
-    DataSpace(hid_t space) : BaseHDF5(space) { }
-    DataSpace(const DataSpace &other) : BaseHDF5(other) { }
+    DataSpace() : H5Object(H5S_ALL) { }
+    DataSpace(hid_t space) : H5Object(space) { }
+    DataSpace(const DataSpace &other) : H5Object(other) { }
 
     NDSize extent() const;
 

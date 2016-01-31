@@ -14,13 +14,13 @@ namespace nix {
 
 namespace hdf5 {
 
-LocID::LocID() : BaseHDF5() {}
+LocID::LocID() : H5Object() {}
 
 
-LocID::LocID(hid_t hid) : BaseHDF5(hid) {}
+LocID::LocID(hid_t hid) : H5Object(hid) {}
 
 
-LocID::LocID(const LocID &other) : BaseHDF5(other) {}
+LocID::LocID(const LocID &other) : H5Object(other) {}
 
 
 bool LocID::hasAttr(const std::string &name) const {

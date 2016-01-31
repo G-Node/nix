@@ -11,7 +11,7 @@
 #ifndef NIX_LOCATION_H5_H
 #define NIX_LOCATION_H5_H
 
-#include "BaseHDF5.hpp"
+#include "H5Object.hpp"
 #include "Attribute.hpp"
 #include <nix/Hydra.hpp>
 #include "DataTypeHDF5.hpp"
@@ -19,13 +19,13 @@
 namespace nix {
 namespace hdf5 {
 
-class NIXAPI LocID : public BaseHDF5 {
+class NIXAPI LocID : public H5Object {
 public:
     LocID();
 
     LocID(hid_t hid);
 
-    LocID(hid_t hid, bool is_copy) : BaseHDF5(hid, is_copy) { }
+    LocID(hid_t hid, bool is_copy) : H5Object(hid, is_copy) { }
 
     LocID(const LocID &other);
 

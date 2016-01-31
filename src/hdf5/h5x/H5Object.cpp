@@ -6,7 +6,7 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "BaseHDF5.hpp"
+#include "H5Object.hpp"
 #include "ExceptionHDF5.hpp"
 
 
@@ -14,19 +14,19 @@ namespace nix {
 namespace hdf5 {
 
 
-BaseHDF5::BaseHDF5(const BaseHDF5 &other)
+H5Object::H5Object(const H5Object &other)
     : hid(other.hid)
 {
     inc();
 }
 
 
-BaseHDF5::BaseHDF5(BaseHDF5 &&other) : hid(other.hid) {
+H5Object::H5Object(H5Object &&other) : hid(other.hid) {
     other.invalidate();
 }
 
 
-BaseHDF5& BaseHDF5::operator=(const BaseHDF5 &other) {
+H5Object &H5Object::operator=(const H5Object &other) {
     if (hid != other.hid) {
         dec();
         hid = other.hid;
@@ -36,14 +36,14 @@ BaseHDF5& BaseHDF5::operator=(const BaseHDF5 &other) {
 }
 
 
-BaseHDF5& BaseHDF5::operator=(BaseHDF5 &&other) {
+H5Object &H5Object::operator=(H5Object &&other) {
     hid = other.hid;
     other.invalidate();
     return *this;
 }
 
 
-bool BaseHDF5::operator==(const BaseHDF5 &other) const {
+bool H5Object::operator==(const H5Object &other) const {
     if (H5Iis_valid(hid) && H5Iis_valid(other.hid))
         return hid == other.hid;
     else
@@ -51,17 +51,17 @@ bool BaseHDF5::operator==(const BaseHDF5 &other) const {
 }
 
 
-bool BaseHDF5::operator!=(const BaseHDF5 &other) const {
+bool H5Object::operator!=(const H5Object &other) const {
     return !(*this == other);
 }
 
 
-hid_t BaseHDF5::h5id() const {
+hid_t H5Object::h5id() const {
     return hid;
 }
 
 
-int BaseHDF5::refCount() const {
+int H5Object::refCount() const {
     if (H5Iis_valid(hid)) {
         return H5Iget_ref(hid);
     } else {
@@ -69,13 +69,13 @@ int BaseHDF5::refCount() const {
     }
 }
 
-bool BaseHDF5::isValid() const {
+bool H5Object::isValid() const {
     HTri res = H5Iis_valid(hid);
-    res.check("BaseHDF5::isValid() failed");
+    res.check("H5Object::isValid() failed");
     return res.result();
 }
 
-std::string BaseHDF5::name() const {
+std::string H5Object::name() const {
     if (! H5Iis_valid(hid)) {
         //maybe throw an exception?
         return "";
@@ -99,32 +99,32 @@ std::string BaseHDF5::name() const {
 }
 
 
-void BaseHDF5::close() {
+void H5Object::close() {
     dec();
     invalidate();
 }
 
 
-BaseHDF5::~BaseHDF5() {
+H5Object::~H5Object() {
     close();
 }
 
 
-void BaseHDF5::inc() const {
+void H5Object::inc() const {
     if (H5Iis_valid(hid)) {
         H5Iinc_ref(hid);
     }
 }
 
 
-void BaseHDF5::dec() const {
+void H5Object::dec() const {
     if (H5Iis_valid(hid)) {
         H5Idec_ref(hid);
     }
 }
 
 
-void BaseHDF5::invalidate() {
+void H5Object::invalidate() {
     hid = H5I_INVALID_HID;
 }
 
