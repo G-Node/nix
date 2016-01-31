@@ -8,58 +8,58 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "TestValue.hpp"
+#include "TestVariant.hpp"
 
 #include <cstring>
 
-void TestValue::setUp() {
+void TestVariant::setUp() {
 }
 
-void TestValue::tearDown() {
+void TestVariant::tearDown() {
 }
 
-void TestValue::testObject() {
+void TestVariant::testObject() {
 
-    nix::Value boolVal(true);
+    nix::Variant boolVal(true);
     CPPUNIT_ASSERT_EQUAL(boolVal.get<bool>(), true);
     CPPUNIT_ASSERT_THROW(boolVal.get<int32_t>(), std::invalid_argument);
 
     const int32_t i32c = 42;
-    nix::Value i32Val(i32c);
+    nix::Variant i32Val(i32c);
     CPPUNIT_ASSERT_EQUAL(i32Val.get<int32_t>(), i32c);
     CPPUNIT_ASSERT_THROW(i32Val.get<bool>(), std::invalid_argument);
 
     const uint32_t ui32c = 42U;
-    nix::Value ui32Val(ui32c);
+    nix::Variant ui32Val(ui32c);
     CPPUNIT_ASSERT_EQUAL(ui32Val.get<uint32_t>(), ui32c);
     CPPUNIT_ASSERT_THROW(ui32Val.get<bool>(), std::invalid_argument);
 
     const int64_t i64c = 42;
-    nix::Value i64Val(i64c);
+    nix::Variant i64Val(i64c);
     CPPUNIT_ASSERT_EQUAL(i64Val.get<int64_t>(), i64c);
     CPPUNIT_ASSERT_THROW(i64Val.get<bool>(), std::invalid_argument);
 
     const uint64_t ui64c = 42U;
-    nix::Value ui64Val(ui64c);
+    nix::Variant ui64Val(ui64c);
     CPPUNIT_ASSERT_EQUAL(ui64Val.get<uint64_t>(), ui64c);
     CPPUNIT_ASSERT_THROW(ui64Val.get<bool>(), std::invalid_argument);
 
     const double dc = 2.71828;
-    nix::Value dVal(dc);
+    nix::Variant dVal(dc);
     CPPUNIT_ASSERT_EQUAL(dVal.get<double>(), dc);
     CPPUNIT_ASSERT_THROW(dVal.get<bool>(), std::invalid_argument);
 
     const std::string strc = "When shall we three meet again";
-    nix::Value sVal(strc);
+    nix::Variant sVal(strc);
     CPPUNIT_ASSERT_EQUAL(sVal.get<std::string>(), strc);
     CPPUNIT_ASSERT_THROW(sVal.get<bool>(), std::invalid_argument);
 
     const char long_string[] = "When shall we three meet again"
-                               "In thunder, lightning, or in rain?";
+            "In thunder, lightning, or in rain?";
 
     sVal.set(long_string);
 
-    nix::Value v1 = sVal; //copy constructor
+    nix::Variant v1 = sVal; //copy constructor
     CPPUNIT_ASSERT_EQUAL(sVal, v1); // check ==
     CPPUNIT_ASSERT(v1 != dVal);
 
@@ -71,14 +71,14 @@ void TestValue::testObject() {
     v1 = dVal; //assignment op (copy)
     CPPUNIT_ASSERT_EQUAL(v1.get<double>(), dc);
 
-    v1 = nix::Value(31337); //assignment op (move)
+    v1 = nix::Variant(31337); //assignment op (move)
     CPPUNIT_ASSERT_EQUAL(v1.get<int>(), 31337);
 
     v1.set(nix::none); //set v1 to none
     CPPUNIT_ASSERT_EQUAL(v1.type(), nix::DataType::Nothing);
 
     //the rest of the supports_type test are in ValTester::check_basic, below
-    CPPUNIT_ASSERT_EQUAL(false, nix::Value::supports_type(nix::DataType::Opaque));
+    CPPUNIT_ASSERT_EQUAL(false, nix::Variant::supports_type(nix::DataType::Opaque));
 }
 
 struct ValTester {
@@ -86,29 +86,29 @@ struct ValTester {
     virtual void check_basic() const = 0;
     virtual void check_swap(const ValTester &other) const = 0;
     virtual void check_to_string() const = 0;
-    virtual bool value_same(const nix::Value &other) const = 0;
+    virtual bool Variant_same(const nix::Variant &other) const = 0;
 
-    virtual nix::Value theVal() const = 0;
+    virtual nix::Variant theVal() const = 0;
     virtual nix::DataType type() const = 0;
 
     virtual ~ValTester() { };
 };
 
 template<typename T>
-struct ValueTester : ValTester {
-    typedef T value_type;
+struct VariantTester : ValTester {
+    typedef T Variant_type;
 
-    ValueTester(const T& v) : value(v), dtype(nix::to_data_type<T>::value), val(v) { }
+    VariantTester(const T& v) : Variant(v), dtype(nix::to_data_type<T>::value), val(v) { }
 
     void check_basic() const override {
-        CPPUNIT_ASSERT(nix::Value::supports_type(dtype));
-        CPPUNIT_ASSERT_EQUAL(dtype, value.type());
-        CPPUNIT_ASSERT_EQUAL(val, value.get<T>());
+        CPPUNIT_ASSERT(nix::Variant::supports_type(dtype));
+        CPPUNIT_ASSERT_EQUAL(dtype, Variant.type());
+        CPPUNIT_ASSERT_EQUAL(val, Variant.get<T>());
     }
 
     void check_swap(const ValTester &other) const override {
-        nix::Value a = value;
-        nix::Value b = other.theVal();
+        nix::Variant a = Variant;
+        nix::Variant b = other.theVal();
 
         a.swap(b);
 
@@ -116,9 +116,9 @@ struct ValueTester : ValTester {
         CPPUNIT_ASSERT_EQUAL(a.type(), other.type());
 
         CPPUNIT_ASSERT_EQUAL(b.get<T>(), val);
-        CPPUNIT_ASSERT(other.value_same(a));
+        CPPUNIT_ASSERT(other.Variant_same(a));
 
-        CPPUNIT_ASSERT_EQUAL(other.type() == dtype, other.theVal() == value);
+        CPPUNIT_ASSERT_EQUAL(other.type() == dtype, other.theVal() == Variant);
     }
 
     void check_to_string() const override {
@@ -126,37 +126,37 @@ struct ValueTester : ValTester {
 
         val_stream << val;
 
-        std::stringstream value_stream;
+        std::stringstream Variant_stream;
 
-        value_stream << value;
+        Variant_stream << Variant;
 
-        std::string::size_type pos = value_stream.str().find(val_stream.str());
+        std::string::size_type pos = Variant_stream.str().find(val_stream.str());
         CPPUNIT_ASSERT(pos != std::string::npos);
     }
 
-    nix::Value theVal() const override {
-        return value;
+    nix::Variant theVal() const override {
+        return Variant;
     }
 
     nix::DataType type() const override {
         return dtype;
     }
 
-    bool value_same(const nix::Value &other) const override {
+    bool Variant_same(const nix::Variant &other) const override {
         return other.type() == dtype && other.get<T>() == val;
     }
 
-    nix::Value    value;
+    nix::Variant    Variant;
     nix::DataType dtype;
     T             val;
 };
 
-void TestValue::testSwap()
+void TestVariant::testSwap()
 {
     using std::swap;
 
-    nix::Value v1("Hallo");
-    nix::Value v2("Welt");
+    nix::Variant v1("Hallo");
+    nix::Variant v2("Welt");
 
     v1.swap(v2);
 
@@ -170,8 +170,8 @@ void TestValue::testSwap()
     CPPUNIT_ASSERT_EQUAL(v2.get<std::string>(), std::string("Welt"));
 
     //lets swap a int32_t with a Nothing
-    nix::Value v3(42);
-    nix::Value v4;
+    nix::Variant v3(42);
+    nix::Variant v4;
 
     v4.swap(v3);
 
@@ -186,13 +186,13 @@ void TestValue::testSwap()
 
     //now lets do that systematically
 
-    std::vector<ValTester *> vals = { new ValueTester<std::string>("String"),
-                                      new ValueTester<uint32_t>(42),
-                                      new ValueTester< int32_t>(42),
-                                      new ValueTester<uint64_t>(42),
-                                      new ValueTester< int64_t>(42),
-                                      new ValueTester< double>(42.0),
-                                      new ValueTester< bool>(true)};
+    std::vector<ValTester *> vals = { new VariantTester<std::string>("String"),
+                                      new VariantTester<uint32_t>(42),
+                                      new VariantTester< int32_t>(42),
+                                      new VariantTester<uint64_t>(42),
+                                      new VariantTester< int64_t>(42),
+                                      new VariantTester< double>(42.0),
+                                      new VariantTester< bool>(true)};
 
     for (const ValTester *a : vals) {
         a->check_basic();
@@ -208,32 +208,13 @@ void TestValue::testSwap()
     }
 }
 
-void TestValue::testEquals() {
-    nix::Value v1("Hallo");
-    nix::Value v2("Welt");
-    v1.reference = "reference";
-    v1.encoder = "encoder";
-    v1.filename = "filename";
-    v1.checksum = "checksum";
-    v1.uncertainty = 20;
+void TestVariant::testEquals() {
+    nix::Variant v1("Hallo");
+    nix::Variant v2("Welt");
 
     CPPUNIT_ASSERT(v2 != v1);
     v2 = v1;
     CPPUNIT_ASSERT(v2 == v1);
-    v2.checksum = "checksum2";
-    CPPUNIT_ASSERT(!(v2 == v1));
-    v2.checksum = "checksum";
-    v2.uncertainty = 10;
-    CPPUNIT_ASSERT(v2 != v1);
-    v2.uncertainty = v1.uncertainty;
-    v2.filename = "another";
-    CPPUNIT_ASSERT(v2 != v1);
-    v2.filename = v1.filename;
-    v2.encoder = "another";
-    CPPUNIT_ASSERT(v2 != v1);
-    v2.encoder = v1.encoder;
-    v2.reference = "another";
-    CPPUNIT_ASSERT(v2 != v1);
 }
 
 

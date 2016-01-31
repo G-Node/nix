@@ -51,28 +51,39 @@ as well as the build tool CMake (>= 2.8.9). Further nix depends on the following
 _Instructions_
 
 ```bash
-# install dependencies
+# 1 install dependencies
 sudo apt-get install libboost-all-dev libhdf5-serial-dev libcppunit-dev cmake build-essential
 
 **Note:** If the standard version of the boost libraries in your distribution is less than 1.49, 
 # manually install a version larger than 1.49 from the launchad (https://launchpad.net/~boost-latest/+archive/ubuntu/ppa)
 
-# clone NIX
+# 2 clone NIX
 git clone https://github.com/G-Node/nix
 cd nix
 
-# make a build dir and build nix
+# 3 make a build dir and build nix
 mkdir build
 cd build
 cmake ..
 make all
 
-# run the unit tests
+# 4 run the unit tests
 ctest
 
-# install
+# 5 install
 sudo make install
 ```
+
+In case building nix fails because libboost-*** libraries are not found try the following:
+
+```bash
+# 3 make a build dir and build nix
+mkdir build
+cd build
+cmake -DBoost_NO_BOOST_CMAKE=TRUE ..
+make all
+```
+
 
 **NIX with Docker**
 
@@ -85,17 +96,21 @@ Further instructions on how to use the images are on the Docker repository. Furt
 Getting Started (MacOS X)
 -------------------------
 
-The easiest way to get NIX is via [homebrew](http://brew.sh). We provide a tap with the formula.
-Currently only using git master is supported. The following commands should do the trick:
+The easiest way to get NIX is via [homebrew](http://brew.sh).
+We are included in [homebrew science](http://brew.sh/homebrew-science/) as `nixio`.
+Install nix, including missing dependencies, with:
 
 ```shell
-# tap into g-node's homebrew tap
-brew tap g-node/data
+brew install homebrew/science/nixio
 
-# install nix including missing dependencies
-# replace 'install', with 'reinstall' to upgrade
-# an existing installation
-brew install --HEAD nix
+# OR: tap into homebrew-science
+brew tap homebrew/science
+brew install nixio
+
+# If you want the latest development version:
+# NB: replace 'install', with 'reinstall' to upgrade
+#     an existing installation
+brew install --HEAD nixio
 ```
 
 Getting Started (Windows)
