@@ -10,7 +10,7 @@
 #define NIX_GROUP_H
 
 #include "LocID.hpp"
-#include "DataSetHDF5.hpp"
+#include "H5DataSet.hpp"
 #include "DataSpace.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>

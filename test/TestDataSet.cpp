@@ -8,7 +8,7 @@
 
 #include "TestDataSet.hpp"
 
-#include "hdf5/h5x/DataSetHDF5.hpp"
+#include "hdf5/h5x/H5DataSet.hpp"
 #include <nix/NDArray.hpp>
 
 #include <type_traits>
