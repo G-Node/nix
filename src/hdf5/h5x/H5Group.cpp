@@ -8,7 +8,7 @@
 
 #include "H5Group.hpp"
 #include <nix/util/util.hpp>
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 
 
 namespace nix {

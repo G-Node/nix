@@ -14,7 +14,7 @@
 
 #include <nix/Platform.hpp>
 #include <nix/Hydra.hpp>
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 
 #include <string>
 #include <boost/optional.hpp>

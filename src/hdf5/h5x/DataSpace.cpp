@@ -9,7 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include "DataSpace.hpp"
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 
 
 namespace nix {

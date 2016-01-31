@@ -8,7 +8,7 @@
 
 #include "Selection.hpp"
 
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 
 namespace nix {
 namespace hdf5 {

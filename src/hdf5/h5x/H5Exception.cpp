@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 #include <nix/Exception.hpp>
 #include <nix/util/util.hpp>
 

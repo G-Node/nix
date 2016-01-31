@@ -11,7 +11,7 @@
 #include "TestH5.hpp"
 
 #include "hdf5/FileHDF5.hpp"
-#include "hdf5/h5x/ExceptionHDF5.hpp"
+#include "hdf5/h5x/H5Exception.hpp"
 
 #include "RefTester.hpp"
 

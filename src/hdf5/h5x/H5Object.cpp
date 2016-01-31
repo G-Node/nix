@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include "H5Object.hpp"
-#include "ExceptionHDF5.hpp"
+#include "H5Exception.hpp"
 
 
 namespace nix {

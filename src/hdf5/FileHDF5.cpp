@@ -11,7 +11,7 @@
 #include <nix/util/util.hpp>
 #include "BlockHDF5.hpp"
 #include "SectionHDF5.hpp"
-#include "h5x/ExceptionHDF5.hpp"
+#include "h5x/H5Exception.hpp"
 
 #include <fstream>
 #include <vector>
