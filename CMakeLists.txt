@@ -92,6 +92,25 @@ include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
+# This is for tests
+include_directories(${CMAKE_SOURCE_DIR}/backend)
+
+# HDF5 backend
+file(GLOB_RECURSE backend_h5_SOURCES backend/hdf5/*.cpp)
+file(GLOB_RECURSE backend_h5_INCLUDES backend/hdf5/*.hpp)
+
+list(APPEND nix_SOURCES ${backend_h5_SOURCES})
+list(APPEND nix_INCLUDES ${backend_h5_INCLUDES})
+
+# FS backend
+file(GLOB_RECURSE backend_fs_SOURCES backend/fs/*.cpp)
+file(GLOB_RECURSE backend_fs_INCLUDES backend/fs/*.hpp)
+
+list(APPEND nix_SOURCES ${backend_fs_SOURCES})
+list(APPEND nix_INCLUDES ${backend_fs_INCLUDES})
+
+### LIBRARY
+
 add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
 set_target_properties(nix PROPERTIES

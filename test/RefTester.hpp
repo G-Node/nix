@@ -8,7 +8,7 @@
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
-#include <nix/hdf5/BaseHDF5.hpp>
+#include "hdf5/h5x/H5Object.hpp"
 
 struct RefTester {
     RefTester(hid_t id) : obj(id) {
@@ -19,17 +19,17 @@ struct RefTester {
         }
     }
 
-    void inc_check(nix::hdf5::BaseHDF5* wrapped = nullptr) {
+    void inc_check(nix::hdf5::H5Object* wrapped = nullptr) {
         ref++;
         check(wrapped);
     }
 
-    void dec_check(nix::hdf5::BaseHDF5* wrapped = nullptr) {
+    void dec_check(nix::hdf5::H5Object* wrapped = nullptr) {
         ref--;
         check(wrapped);
     }
 
-    void check(nix::hdf5::BaseHDF5* wrapped = nullptr) {
+    void check(nix::hdf5::H5Object* wrapped = nullptr) {
         CPPUNIT_ASSERT_EQUAL(H5Iget_ref(obj), ref);
         if (wrapped) {
             CPPUNIT_ASSERT_EQUAL(obj, wrapped->h5id());
