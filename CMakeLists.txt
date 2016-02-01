@@ -91,22 +91,25 @@ include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
+### BACKENDS
+set(backends "hdf5")
+
+option(BUILD_FS_BACKEND "Build fileystem backend" ON)
+if(BUILD_FS_BACKEND)
+  list(APPEND backends "fs")
+  add_definitions(-DENABLE_FS_BACKEND=1)
+endif()
+
 # This is for tests
 include_directories(${CMAKE_SOURCE_DIR}/backend)
 
-# HDF5 backend
-file(GLOB_RECURSE backend_h5_SOURCES backend/hdf5/*.cpp)
-file(GLOB_RECURSE backend_h5_INCLUDES backend/hdf5/*.hpp)
+foreach(backend ${backends})
+  file(GLOB_RECURSE backend_SOURCES "backend/${backend}/*.cpp")
+  file(GLOB_RECURSE backend_INCLUDES "backend/${backend}/*.hpp")
 
-list(APPEND nix_SOURCES ${backend_h5_SOURCES})
-list(APPEND nix_INCLUDES ${backend_h5_INCLUDES})
-
-# FS backend
-file(GLOB_RECURSE backend_fs_SOURCES backend/fs/*.cpp)
-file(GLOB_RECURSE backend_fs_INCLUDES backend/fs/*.hpp)
-
-list(APPEND nix_SOURCES ${backend_fs_SOURCES})
-list(APPEND nix_INCLUDES ${backend_fs_INCLUDES})
+  list(APPEND nix_SOURCES ${backend_SOURCES})
+  list(APPEND nix_INCLUDES ${backend_INCLUDES})
+endforeach()
 
 ### LIBRARY
 
@@ -177,26 +180,17 @@ if(BUILD_TESTING)
   include_directories(${CMAKE_SOURCE_DIR}/test)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
-
-  file(GLOB Test_H5_SOURCES "test/hdf5/*Test*.cpp")
-  list(APPEND Tests_SOURCES ${Test_H5_SOURCES})
-
-  file(GLOB Test_FS_SOURCES "test/fs/*Test*.cpp")
-  list(APPEND Tests_SOURCES ${Test_FS_SOURCES})
-
-  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-  if(NOT WIN32)
-      set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-  endif()
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
   file(GLOB Real_Test_HEADERS "test/Test*.hpp")
 
-  file(GLOB Test_H5_HEADERS "test/hdf5/Test*.hpp")
-  list(APPEND Real_Test_HEADERS ${Test_H5_HEADERS})
+  foreach(thebackend ${backends})
+    set(thebackend_TEST_HEADERS)
+    file(GLOB thebackend_TEST_HEADERS "test/${thebackend}/Test*.hpp")
+    list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
 
-  file(GLOB Test_FS_HEADERS "test/fs/Test*.hpp")
-  list(APPEND Real_Test_HEADERS ${Test_FS_HEADERS})
+    set(thebackend_TEST_SOURCES)
+    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.cpp")
+    list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
+  endforeach()
 
   foreach(test ${Real_Test_HEADERS})
       get_filename_component(TestFileName ${test} NAME_WE)
@@ -204,6 +198,12 @@ if(BUILD_TESTING)
       message(STATUS " Test added: ${TestName}")
       add_test(${TestName} TestRunner ${TestName})
   endforeach(test)
+
+  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 endif()
 
@@ -281,4 +281,6 @@ MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
 MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")

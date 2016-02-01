@@ -36,6 +36,7 @@
 #include "hdf5/TestReadOnlyHDF5.hpp"
 #include "hdf5/TestGroupHDF5.hpp"
 
+#ifdef ENABLE_FS_BACKEND
 #include "fs/TestAttributesFS.hpp"
 #include "fs/TestFileFS.hpp"
 #include "fs/TestBlockFS.hpp"
@@ -51,7 +52,7 @@
 #include "fs/TestSourceFS.hpp"
 #include "fs/TestTagFS.hpp"
 #include "fs/TestBaseTagFS.hpp"
-
+#endif
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -81,6 +82,8 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
+
+#ifdef ENABLE_FS_BACKEND
     CPPUNIT_TEST_SUITE_REGISTRATION(TestAttributesFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFileFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBlockFS);
@@ -96,6 +99,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTagFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagFS);
+#endif
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;
