@@ -177,8 +177,12 @@ if(BUILD_TESTING)
 
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/test)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
+
+  file(GLOB Test_FS_SOURCES "test/fs/*Test*.cpp")
+  list(APPEND Tests_SOURCES ${Test_FS_SOURCES})
 
   add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
   if(NOT WIN32)
@@ -187,13 +191,15 @@ if(BUILD_TESTING)
   target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
   file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+  file(GLOB Test_FS_HEADERS "test/fs/Test*.hpp")
+  list(APPEND Real_Test_HEADERS ${Test_FS_HEADERS})
+
   foreach(test ${Real_Test_HEADERS})
       get_filename_component(TestFileName ${test} NAME_WE)
       string(REPLACE "Test" "" TestName ${TestFileName})
       message(STATUS " Test added: ${TestName}")
       add_test(${TestName} TestRunner ${TestName})
   endforeach(test)
-
 
 endif()
 
