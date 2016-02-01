@@ -83,6 +83,9 @@ include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
+# This is for tests
+include_directories(${CMAKE_SOURCE_DIR}/backend)
+
 # HDF5 backend
 file(GLOB_RECURSE backend_h5_SOURCES backend/hdf5/*.cpp)
 file(GLOB_RECURSE backend_h5_INCLUDES backend/hdf5/*.hpp)
@@ -158,7 +161,6 @@ if(BUILD_TESTING)
 
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
-  include_directories(${CMAKE_SOURCE_DIR}/backend)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
 
