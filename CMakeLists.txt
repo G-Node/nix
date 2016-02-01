@@ -34,6 +34,7 @@ endif()
 
 
 set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 #########################################
 # HDF-5
@@ -66,8 +67,6 @@ set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
 ########################################
 # Yaml-cpp
-
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 set(YAMLCPP_STATIC_LIBRARY FALSE)
 find_package(YamlCpp REQUIRED)
@@ -172,8 +171,6 @@ include(CTest)
 enable_testing()
 
 if(BUILD_TESTING)
-
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
