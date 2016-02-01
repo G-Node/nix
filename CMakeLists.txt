@@ -181,6 +181,9 @@ if(BUILD_TESTING)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
 
+  file(GLOB Test_H5_SOURCES "test/hdf5/*Test*.cpp")
+  list(APPEND Tests_SOURCES ${Test_H5_SOURCES})
+
   file(GLOB Test_FS_SOURCES "test/fs/*Test*.cpp")
   list(APPEND Tests_SOURCES ${Test_FS_SOURCES})
 
@@ -191,6 +194,10 @@ if(BUILD_TESTING)
   target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
   file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+
+  file(GLOB Test_H5_HEADERS "test/hdf5/Test*.hpp")
+  list(APPEND Real_Test_HEADERS ${Test_H5_HEADERS})
+
   file(GLOB Test_FS_HEADERS "test/fs/Test*.hpp")
   list(APPEND Real_Test_HEADERS ${Test_FS_HEADERS})
 
