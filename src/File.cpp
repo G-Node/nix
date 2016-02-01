@@ -8,7 +8,7 @@
 
 #include <nix/File.hpp>
 #include <nix/util/util.hpp>
-#include <nix/hdf5/FileHDF5.hpp>
+#include "hdf5/FileHDF5.hpp"
 
 #include <nix/valid/validate.hpp>
 

@@ -149,6 +149,7 @@ if(BUILD_TESTING)
 
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/src)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
 

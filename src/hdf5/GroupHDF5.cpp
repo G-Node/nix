@@ -6,11 +6,11 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/GroupHDF5.hpp>
+#include "GroupHDF5.hpp"
 #include <nix/Block.hpp>
-#include <nix/hdf5/TagHDF5.hpp>
-#include <nix/hdf5/MultiTagHDF5.hpp>
-#include <nix/hdf5/BlockHDF5.hpp>
+#include "TagHDF5.hpp"
+#include "MultiTagHDF5.hpp"
+#include "BlockHDF5.hpp"
 #include <boost/range/irange.hpp>
 
 using namespace nix::base;

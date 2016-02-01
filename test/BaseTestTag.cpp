@@ -16,7 +16,6 @@
 
 #include "BaseTestTag.hpp"
 #include <nix/hydra/multiArray.hpp>
-#include <nix/hdf5/TagHDF5.hpp>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/CompilerOutputter.h>

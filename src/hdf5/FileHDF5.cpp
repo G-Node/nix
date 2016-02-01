@@ -6,12 +6,12 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include <nix/hdf5/FileHDF5.hpp>
+#include "FileHDF5.hpp"
 
 #include <nix/util/util.hpp>
-#include <nix/hdf5/BlockHDF5.hpp>
-#include <nix/hdf5/SectionHDF5.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+#include "BlockHDF5.hpp"
+#include "SectionHDF5.hpp"
+#include "h5x/H5Exception.hpp"
 
 #include <fstream>
 #include <vector>
@@ -54,7 +54,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     this->mode = mode;
     //we want hdf5 to keep track of the order in which links were created so that
     //the order for indexed based accessors is stable cf. issue #387
-    BaseHDF5 fcpl = H5Pcreate(H5P_FILE_CREATE);
+    H5Object fcpl = H5Pcreate(H5P_FILE_CREATE);
     fcpl.check("Could not create file creation plist");
     HErr res = H5Pset_link_creation_order(fcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
@@ -307,7 +307,7 @@ void FileHDF5::close() {
         }
     }
 
-    BaseHDF5::close();
+    H5Object::close();
 }
 
 
