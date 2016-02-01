@@ -12,7 +12,7 @@
 
 #include "RefTester.hpp"
 
-#include <nix/hdf5/FileHDF5.hpp>
+#include "hdf5/FileHDF5.hpp"
 
 unsigned int &TestH5Group::open_mode()
 {

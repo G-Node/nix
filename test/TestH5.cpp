@@ -10,8 +10,8 @@
 
 #include "TestH5.hpp"
 
-#include <nix/hdf5/FileHDF5.hpp>
-#include <nix/hdf5/ExceptionHDF5.hpp>
+#include "hdf5/FileHDF5.hpp"
+#include "hdf5/h5x/H5Exception.hpp"
 
 #include "RefTester.hpp"
 
@@ -115,14 +115,14 @@ void TestH5::testBase() {
     nix::hdf5::HErr herr_default;
     CPPUNIT_ASSERT_EQUAL(true, herr_default.isError());
 
-    //check BaseHDF5
+    //check H5Object
     hid_t gcpl = H5Pcreate(H5P_GROUP_CREATE);
     hid_t dcpl = H5Pcreate(H5P_DATASET_CREATE);
 
     CPPUNIT_ASSERT(gcpl > 0);
     CPPUNIT_ASSERT(dcpl > 0);
 
-    test_refcounting<nix::hdf5::BaseHDF5>(gcpl, dcpl);
+    test_refcounting<nix::hdf5::H5Object>(gcpl, dcpl);
 
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gcpl));
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(dcpl));
@@ -134,7 +134,7 @@ void TestH5::testBase() {
     CPPUNIT_ASSERT(ga > 0);
     CPPUNIT_ASSERT(gb > 0);
 
-    test_refcounting<nix::hdf5::BaseHDF5>(ga, gb);
+    test_refcounting<nix::hdf5::H5Object>(ga, gb);
 
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ga));
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gb));

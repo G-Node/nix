@@ -7,7 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include <nix.hpp>
-#include "nix/file/AttributesFS.hpp"
+#include "fs/AttributesFS.hpp"
 
 #include <iostream>
 #include <sstream>
