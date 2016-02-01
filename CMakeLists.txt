@@ -83,6 +83,15 @@ include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
+# HDF5 backend
+file(GLOB_RECURSE backend_h5_SOURCES backend/hdf5/*.cpp)
+file(GLOB_RECURSE backend_h5_INCLUDES backend/hdf5/*.hpp)
+
+list(APPEND nix_SOURCES ${backend_h5_SOURCES})
+list(APPEND nix_INCLUDES ${backend_h5_INCLUDES})
+
+### LIBRARY
+
 add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
 set_target_properties(nix PROPERTIES
@@ -149,7 +158,7 @@ if(BUILD_TESTING)
 
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
-  include_directories(${CMAKE_SOURCE_DIR}/src)
+  include_directories(${CMAKE_SOURCE_DIR}/backend)
 
   file(GLOB Tests_SOURCES "test/*Test*.cpp")
 
