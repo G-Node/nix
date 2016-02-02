@@ -34,6 +34,8 @@ class DimensionFS : virtual public base::IDimension, public DirectoryWithAttribu
 
 
 public:
+    DimensionFS(const std::string &loc, FileMode mode);
+
 
     DimensionFS(const std::string &loc, size_t index, FileMode mode);
 
@@ -61,6 +63,9 @@ protected:
 class SampledDimensionFS : virtual public base::ISampledDimension, public DimensionFS {
 
 public:
+
+    SampledDimensionFS(const std::string &loc, FileMode mode);
+
 
     SampledDimensionFS(const std::string &loc, size_t index, FileMode mode);
 
@@ -112,6 +117,8 @@ public:
 class SetDimensionFS : virtual public base::ISetDimension, public DimensionFS {
 
 public:
+    SetDimensionFS(const std::string &loc, FileMode mode);
+
 
     SetDimensionFS(const std::string &loc, size_t index, FileMode mode);
 
@@ -136,6 +143,8 @@ public:
 class RangeDimensionFS : virtual public base::IRangeDimension, public DimensionFS {
 
 public:
+    RangeDimensionFS(const std::string &loc, FileMode mode);
+
 
     RangeDimensionFS(const std::string &loc, size_t index, FileMode mode);
 
