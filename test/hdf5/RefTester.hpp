@@ -49,6 +49,7 @@ void test_refcounting(hid_t a_id, hid_t b_id) {
 
     T obj_invalid{};
     CPPUNIT_ASSERT_EQUAL(H5I_INVALID_HID, obj_invalid.h5id());
+    CPPUNIT_ASSERT_EQUAL(-1, obj_invalid.refCount());
 
     T wa_copy(a_id, true); // +1
     a_tst.inc_check(&wa_copy);
@@ -83,6 +84,7 @@ void test_refcounting(hid_t a_id, hid_t b_id) {
 
     a_tst.check(&wa_copy);
     a_tst.check(&wa_owner);
+    CPPUNIT_ASSERT(wa_copy == wa_owner);
 
     //now with two objects ...
 
@@ -90,6 +92,8 @@ void test_refcounting(hid_t a_id, hid_t b_id) {
 
     T wb_copy(b_id, true); // + 1
     b_tst.inc_check(&wb_copy);
+
+    CPPUNIT_ASSERT(wa_copy != wb_copy);
 
     // copy-assignment ctor
     wa_copy = wb_copy; // + 1 b, - 1 a
