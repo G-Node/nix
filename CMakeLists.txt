@@ -86,7 +86,7 @@ file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 ### BACKENDS
 set(backends "hdf5")
 
-option(BUILD_FS_BACKEND "Build fileystem backend" ON)
+option(BUILD_FS_BACKEND "Build fileystem backend" OFF)
 if(BUILD_FS_BACKEND)
   # Yaml-cpp
   set(YAMLCPP_STATIC_LIBRARY FALSE)
