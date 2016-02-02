@@ -93,7 +93,7 @@ Feature Tag::getFeature(const std::string &id) const {
 }
 
 
-Feature Tag::getFeature(size_t index) const {
+Feature Tag::getFeature(ndsize_t index) const {
     if (index >= backend()->featureCount()) {
         throw OutOfBounds("No feature at given index", index);
     }
