@@ -310,7 +310,7 @@ DirectoryWithAttributes RangeDimensionFS::redirectGroup() const {
     if (alias()) {
         return DirectoryWithAttributes(l / boost::filesystem::path("data"), fileMode());
     } else {
-        return DirectoryWithAttributes(l);
+        return DirectoryWithAttributes(l, fileMode());
     }
 }
 
