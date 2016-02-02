@@ -360,10 +360,32 @@ void BaseTestDataAccess::testDataView() {
                 CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
                                              data[i][j][k],
                                              std::numeric_limits<double>::epsilon());
+                data[i][j][k] = 0.0;
             }
         }
     }
 
+    io.setData(data, {0, 0, 0});
+    data_array.getData(ref);
+
+    for(size_t i = 0; i < zcount[0]; ++i) {
+        for(size_t j = 0; j < zcount[1]; ++j) {
+            for(size_t k = 0; k < zcount[2]; ++k) {
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
+                                             0.0,
+                                             std::numeric_limits<double>::epsilon());
+            }
+        }
+    }
+
+
     double val = 0.0;
     CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3}), OutOfBounds);
+
+    array_type r2d2(boost::extents[3][3][3]);
+    CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3}, {}), OutOfBounds);
+
+    CPPUNIT_ASSERT_THROW(io.dataExtent(zcount), std::runtime_error);
+
+
 }
