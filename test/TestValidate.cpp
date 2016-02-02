@@ -233,6 +233,33 @@ void TestValidate::setInvalid() {
 }
 
 void TestValidate::test() {
+
+    // test result class
+    valid::Result res;
+    CPPUNIT_ASSERT_EQUAL(false, res.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.ok());
+
+    valid::Message w1("0xWARN", "You have been warned!");
+    valid::Message e1("0xERR", "Told you so!");
+
+    res.addWarning(w1);
+    CPPUNIT_ASSERT_EQUAL(false, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.hasWarnings());
+
+    res.addError(e1);
+    CPPUNIT_ASSERT_EQUAL(true, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.hasWarnings());
+
+    std::stringstream out;
+    out << res;
+    std::string outs = out.str();
+
+    CPPUNIT_ASSERT(outs.find("0xWARN") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("0xERR") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("You have been warned!") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("Told you so!") != std::string::npos);
+
     // dummy class to test empty checks
     class fooC {
     public:
@@ -362,4 +389,5 @@ void TestValidate::test() {
     // std::cout << myResult;
     // lets leave the file clean & valid
     setValid();
+
 }
