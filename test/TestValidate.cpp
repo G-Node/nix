@@ -264,8 +264,9 @@ void TestValidate::test() {
     });
     // have debug info
     // std::cout << myResult;
-    CPPUNIT_ASSERT(myResult.hasWarnings() == false);
-    CPPUNIT_ASSERT(myResult.hasErrors() == false);
+    CPPUNIT_ASSERT_EQUAL(true, myResult.ok());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasErrors());
  
     // failure cases----------------------------------------------------
     // -----------------------------------------------------------------
@@ -316,8 +317,8 @@ void TestValidate::test() {
     });
     // have debug info
     // std::cout << myResult;
-    CPPUNIT_ASSERT(myResult.hasWarnings() == false);
-    CPPUNIT_ASSERT(myResult.hasErrors() == false);
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasErrors());
     
     myResult = file.validate();
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
