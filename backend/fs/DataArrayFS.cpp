@@ -164,7 +164,7 @@ std::shared_ptr<base::IDimension> DataArrayFS::getDimension(ndsize_t index) cons
     std::shared_ptr<base::IDimension> dim;
     boost::optional<bfs::path> p = dimensions.findByNameOrAttribute("index", util::numToStr(index));
     if (p) {
-        dim = openDimensionFS(p->string(), index, fileMode());
+        dim = openDimensionFS(p->string(), fileMode());
     }
     return dim;
 }
@@ -212,6 +212,8 @@ Group DataArrayFS::createDimensionGroup(size_t index) {
 
 bool DataArrayFS::deleteDimension(ndsize_t index) {
     bool deleted = false;
+    if (fileMode() == FileMode::ReadOnly)
+        return deleted;
     size_t dim_count = dimensionCount();
     std::string str_id = util::numToStr(index);
     if (dimensions.hasObject(str_id)) {
@@ -221,6 +223,10 @@ bool DataArrayFS::deleteDimension(ndsize_t index) {
             for (size_t old_id = index + 1; old_id <= dim_count; old_id++) {
                 std::string str_old_id = util::numToStr(old_id);
                 std::string str_new_id = util::numToStr(old_id - 1);
+                std::string temp_path = this->location() + bfs::path::preferred_separator + "dimensions" +
+                    bfs::path::preferred_separator + str_old_id;
+                AttributesFS attr(temp_path, this->fileMode());
+                attr.set("index", old_id - 1);
                 dimensions.renameSubdir(str_old_id, str_new_id);
             }
         }

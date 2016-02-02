@@ -52,6 +52,7 @@
 #include "fs/TestSourceFS.hpp"
 #include "fs/TestTagFS.hpp"
 #include "fs/TestBaseTagFS.hpp"
+#include "fs/TestDimensionFS.hpp"
 #endif
 
 int main(int argc, char* argv[]) {
@@ -99,6 +100,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTagFS);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimensionFS);
 #endif
 
     CPPUNIT_NS::TestResult testresult;

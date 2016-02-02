@@ -59,7 +59,7 @@ std::string dimensionTypeToStr(DimensionType dim) {
 }
 
 
-std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index, FileMode mode) {
+std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, FileMode mode) {
     AttributesFS attr(loc, mode);
     std::string type_name;
     attr.get("dimension_type", type_name);
@@ -69,13 +69,13 @@ std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index
 
     switch (type) {
         case DimensionType::Set:
-            dim = std::make_shared<SetDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SetDimensionFS>(loc, mode);
             break;
         case DimensionType::Range:
-            dim = std::make_shared<RangeDimensionFS>(loc, index, mode);
+            dim = std::make_shared<RangeDimensionFS>(loc, mode);
             break;
         case DimensionType::Sample:
-            dim = std::make_shared<SampledDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SampledDimensionFS>(loc, mode);
             break;
     }
     return dim;
@@ -83,6 +83,11 @@ std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index
 
 
 // Implementation of Dimension
+DimensionFS::DimensionFS(const std::string &loc, FileMode mode)
+    : DirectoryWithAttributes(loc, mode)
+{
+}
+
 
 DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DirectoryWithAttributes(loc + boost::filesystem::path::preferred_separator + util::numToStr(index), mode)
@@ -122,6 +127,11 @@ DimensionFS::~DimensionFS() {}
 //--------------------------------------------------------------
 // Implementation of SampledDimension
 //--------------------------------------------------------------
+
+SampledDimensionFS::SampledDimensionFS(const std::string &loc, FileMode mode)
+    : DimensionFS(loc, mode)
+{
+}
 
 SampledDimensionFS::SampledDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode) {
@@ -242,6 +252,11 @@ SampledDimensionFS::~SampledDimensionFS() {}
 //--------------------------------------------------------------
 // Implementation of SetDimensionHDF5
 //--------------------------------------------------------------
+SetDimensionFS::SetDimensionFS(const std::string &loc, FileMode mode)
+    : DimensionFS(loc, mode)
+{
+}
+
 
 SetDimensionFS::SetDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode)
@@ -277,6 +292,11 @@ SetDimensionFS::~SetDimensionFS() {}
 //--------------------------------------------------------------
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
+RangeDimensionFS::RangeDimensionFS(const std::string &loc, FileMode mode)
+    : DimensionFS(loc, mode)
+{
+}
+
 
 RangeDimensionFS::RangeDimensionFS(const std::string &loc, size_t index, FileMode mode)
     : DimensionFS(loc, index, mode)
@@ -310,7 +330,7 @@ DirectoryWithAttributes RangeDimensionFS::redirectGroup() const {
     if (alias()) {
         return DirectoryWithAttributes(l / boost::filesystem::path("data"), fileMode());
     } else {
-        return DirectoryWithAttributes(l);
+        return DirectoryWithAttributes(l, fileMode());
     }
 }
 
