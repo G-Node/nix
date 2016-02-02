@@ -242,12 +242,10 @@ void BaseTestDimension::testSampledDimAxis() {
 
 void BaseTestDimension::testSampledDimOperators() {
     double samplingInterval = boost::math::constants::pi<double>();
-
     Dimension d = data_array.appendSampledDimension(samplingInterval);
     Dimension d2 = data_array.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
     CPPUNIT_ASSERT(d2.dimensionType() == DimensionType::Sample);
-
     SampledDimension sd1, sd2, sd3;
     sd1 = d;
     sd2 = d2;
@@ -255,15 +253,12 @@ void BaseTestDimension::testSampledDimOperators() {
     CPPUNIT_ASSERT(sd1.index() == d.index() && sd2.index() == d2.index());
     CPPUNIT_ASSERT(sd1 != sd2);
     CPPUNIT_ASSERT(sd1 != sd3);
-
-    data_array.deleteDimension(d.index());
     data_array.deleteDimension(d2.index());
-
+    data_array.deleteDimension(d.index());
     Dimension dim = data_array.appendSampledDimension(samplingInterval);
     SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
     RangeDimension range = data_array.appendRangeDimension(std::vector<double>({1, 2}));
     SetDimension set = data_array.appendSetDimension();
-
     std::stringstream s_stream, r_stream, set_stream;
     s_stream << sampled.dimensionType();
     r_stream << range.dimensionType();
@@ -271,7 +266,6 @@ void BaseTestDimension::testSampledDimOperators() {
     CPPUNIT_ASSERT(s_stream.str() == "Sample");
     CPPUNIT_ASSERT(set_stream.str() == "Set");
     CPPUNIT_ASSERT(r_stream.str() == "Range");
-
     CPPUNIT_ASSERT(d != none);
     CPPUNIT_ASSERT(sampled != none);
     CPPUNIT_ASSERT(range != none);
