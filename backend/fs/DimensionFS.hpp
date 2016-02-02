@@ -27,7 +27,7 @@ DimensionType dimensionTypeFromStr(const std::string &str);
 std::string dimensionTypeToStr(DimensionType dim);
 
 
-std::shared_ptr<base::IDimension> openDimensionFS(const std::string &loc, size_t index, FileMode mode);
+std::shared_ptr<base::IDimension> openDimensionFS(const std::string &loc, FileMode mode);
 
 
 class DimensionFS : virtual public base::IDimension, public DirectoryWithAttributes {

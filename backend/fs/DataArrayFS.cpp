@@ -164,7 +164,7 @@ std::shared_ptr<base::IDimension> DataArrayFS::getDimension(ndsize_t index) cons
     std::shared_ptr<base::IDimension> dim;
     boost::optional<bfs::path> p = dimensions.findByNameOrAttribute("index", util::numToStr(index));
     if (p) {
-        dim = openDimensionFS(p->string(), index, fileMode());
+        dim = openDimensionFS(p->string(), fileMode());
     }
     return dim;
 }

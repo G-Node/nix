@@ -59,7 +59,7 @@ std::string dimensionTypeToStr(DimensionType dim) {
 }
 
 
-std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index, FileMode mode) {
+std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, FileMode mode) {
     AttributesFS attr(loc, mode);
     std::string type_name;
     attr.get("dimension_type", type_name);
@@ -69,13 +69,13 @@ std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, size_t index
 
     switch (type) {
         case DimensionType::Set:
-            dim = std::make_shared<SetDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SetDimensionFS>(loc, mode);
             break;
         case DimensionType::Range:
-            dim = std::make_shared<RangeDimensionFS>(loc, index, mode);
+            dim = std::make_shared<RangeDimensionFS>(loc, mode);
             break;
         case DimensionType::Sample:
-            dim = std::make_shared<SampledDimensionFS>(loc, index, mode);
+            dim = std::make_shared<SampledDimensionFS>(loc, mode);
             break;
     }
     return dim;
