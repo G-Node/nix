@@ -66,14 +66,6 @@ include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
 ########################################
-# Yaml-cpp
-
-set(YAMLCPP_STATIC_LIBRARY FALSE)
-find_package(YamlCpp REQUIRED)
-include_directories(${YAMLCPP_INCLUDE_DIRS})
-set (LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
-
-########################################
 # Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -96,6 +88,12 @@ set(backends "hdf5")
 
 option(BUILD_FS_BACKEND "Build fileystem backend" ON)
 if(BUILD_FS_BACKEND)
+  # Yaml-cpp
+  set(YAMLCPP_STATIC_LIBRARY FALSE)
+  find_package(YamlCpp REQUIRED)
+  include_directories(${YAMLCPP_INCLUDE_DIRS})
+  set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
+
   list(APPEND backends "fs")
   add_definitions(-DENABLE_FS_BACKEND=1)
 endif()
