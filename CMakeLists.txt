@@ -179,7 +179,7 @@ if(BUILD_TESTING)
   include_directories(${CPPUNIT_INCLUDE_DIR})
   include_directories(${CMAKE_SOURCE_DIR}/test)
 
-  file(GLOB Tests_SOURCES "test/*Test*.cpp")
+  file(GLOB Tests_SOURCES "test/*Test*.[ch]pp")
   file(GLOB Real_Test_HEADERS "test/Test*.hpp")
 
   foreach(thebackend ${backends})
@@ -188,7 +188,7 @@ if(BUILD_TESTING)
     list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
 
     set(thebackend_TEST_SOURCES)
-    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.cpp")
+    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.[ch]pp")
     list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
   endforeach()
 
