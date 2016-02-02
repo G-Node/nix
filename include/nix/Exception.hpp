@@ -12,6 +12,7 @@
 #define NIX_EXCEPTION_H
 
 #include <nix/Platform.hpp>
+#include <nix/types.hpp>
 
 #include <limits>
 #include <type_traits>
@@ -24,7 +25,7 @@ namespace nix {
 
 class OutOfBounds : public std::out_of_range {
 public:
-    OutOfBounds(const std::string &what_arg, size_t where) :
+    OutOfBounds(const std::string &what_arg, ndsize_t where) :
             out_of_range(make_message(what_arg, where)), index(where) {
 
     }
@@ -32,11 +33,11 @@ public:
     OutOfBounds(const std::string &what_arg) :
             out_of_range(what_arg), index(0) { }
 
-    size_t where(void) const {
+    ndsize_t where(void) const {
         return index;
     }
 
-    static std::string make_message(const std::string &str, size_t where) {
+    static std::string make_message(const std::string &str, ndsize_t where) {
             std::stringstream sstream(str);
 
             sstream << " [at index: " << where << "]";
@@ -44,7 +45,7 @@ public:
     }
 
 private:
-    size_t index;
+    ndsize_t index;
 };
 
 
