@@ -20,7 +20,7 @@ class BaseTestMultiTag : public CPPUNIT_NS::TestFixture {
 protected:
     nix::File file;
     nix::Block block;
-    nix::DataArray positions, extents;
+    nix::DataArray positions, extents, wrong_array;
     nix::MultiTag tag, tag_other, tag_null;
     nix::Section section;
     time_t startup_time;

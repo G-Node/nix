@@ -38,6 +38,9 @@ private:
     CPPUNIT_TEST(testConvertToSeconds);
     CPPUNIT_TEST(testConvertToKelvin);
     CPPUNIT_TEST(testUnitSanitizer);
+    CPPUNIT_TEST(testDimTypeToStr);
+    CPPUNIT_TEST(testChecks);
+    CPPUNIT_TEST(testStringVectors);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
@@ -53,5 +56,8 @@ public:
     void testConvertToSeconds();
     void testConvertToKelvin();
     void testUnitSanitizer();
+    void testDimTypeToStr();
+    void testChecks();
+    void testStringVectors();
 };
 

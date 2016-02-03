@@ -10,6 +10,10 @@
 #include <nix/util/util.hpp>
 #include "hdf5/FileHDF5.hpp"
 
+#ifdef ENABLE_FS_BACKEND
+#include "fs/FileFS.hpp"
+#endif
+
 #include <nix/valid/validate.hpp>
 
 namespace nix {
@@ -18,7 +22,13 @@ namespace nix {
 File File::open(const std::string &name, FileMode mode, const std::string &impl) {
     if (impl == "hdf5") {
         return File(std::make_shared<hdf5::FileHDF5>(name, mode));
-    } else {
+    }
+#ifdef  ENABLE_FS_BACKEND
+    else if (impl == "file") {
+        return File(std::make_shared<file::FileFS>(name, mode));
+    }
+#endif
+    else {
         throw std::runtime_error("Unknown implementation!");
     }
 }

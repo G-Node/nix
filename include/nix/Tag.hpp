@@ -366,7 +366,7 @@ public:
      *
      * @return The feature with the specified index.
      */
-    Feature getFeature(size_t index) const;
+    Feature getFeature(ndsize_t index) const;
 
     /**
      * @brief Get all Features of this tag.

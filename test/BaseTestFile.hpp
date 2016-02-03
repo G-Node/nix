@@ -5,6 +5,8 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+#ifndef NIX_BASETESTFILE_HPP
+#define NIX_BASETESTFILE_HPP
 
 #include <nix.hpp>
 
@@ -26,16 +28,16 @@
 class BaseTestFile : public CPPUNIT_NS::TestFixture {
 
 protected:
-
     nix::File file_open, file_other, file_null;
-    time_t statup_time;
+    nix::Block block;
+    time_t startup_time;
 
 public:
 
     void testOpen();
     void testValidate();
     void testFormat();
-    void testLocation();
+    virtual void testLocation() = 0;
     void testVersion();
     void testCreatedAt();
     void testUpdatedAt();
@@ -43,5 +45,9 @@ public:
     void testSectionAccess();
     void testOperators();
     void testReopen();
+    void testCheckHeader();
+    void testCompare();
 
 };
+
+#endif // NIX_BASETESTFILE_HPP

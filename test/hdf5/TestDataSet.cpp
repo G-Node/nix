@@ -188,7 +188,6 @@ void TestDataSet::testDataType() {
     const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
-        std::cerr << _types[i].name << std::endl;
         hdf5::DataSet ds = h5group.createData(_types[i].name, _types[i].dtype, dims);
         CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
     }

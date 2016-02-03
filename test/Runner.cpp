@@ -6,33 +6,54 @@
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
 
-#include "TestH5.hpp"
-#include "TestEntityHDF5.hpp"
-#include "TestEntityWithMetadataHDF5.hpp"
-#include "TestEntityWithSourcesHDF5.hpp"
-#include "TestFileHDF5.hpp"
-#include "TestBlockHDF5.hpp"
-#include "TestSourceHDF5.hpp"
-#include "TestSectionHDF5.hpp"
-#include "TestDataSet.hpp"
-#include "TestH5Group.hpp"
-#include "TestDataArrayHDF5.hpp"
-#include "TestBaseTagHDF5.hpp"
-#include "TestMultiTagHDF5.hpp"
-#include "TestTagHDF5.hpp"
-#include "TestVariant.hpp"
-#include "TestValue.hpp"
-#include "TestPropertyHDF5.hpp"
 #include "TestNDArray.hpp"
 #include "TestUtil.hpp"
-#include "TestImplContainerHDF5.hpp"
-#include "TestDimensionHDF5.hpp"
-#include "TestFeatureHDF5.hpp"
-#include "TestDataAccessHDF5.hpp"
+#include "TestVariant.hpp"
+#include "TestValue.hpp"
 #include "TestOptionalObligatory.hpp"
+
 #include "TestValidate.hpp"
-#include "TestReadOnlyHDF5.hpp"
-#include "TestGroupHDF5.hpp"
+
+#include "hdf5/TestH5.hpp"
+#include "hdf5/TestEntityHDF5.hpp"
+#include "hdf5/TestEntityWithMetadataHDF5.hpp"
+#include "hdf5/TestEntityWithSourcesHDF5.hpp"
+#include "hdf5/TestFileHDF5.hpp"
+#include "hdf5/TestBlockHDF5.hpp"
+#include "hdf5/TestSourceHDF5.hpp"
+#include "hdf5/TestSectionHDF5.hpp"
+#include "hdf5/TestDataSet.hpp"
+#include "hdf5/TestH5Group.hpp"
+#include "hdf5/TestDataArrayHDF5.hpp"
+#include "hdf5/TestBaseTagHDF5.hpp"
+#include "hdf5/TestMultiTagHDF5.hpp"
+#include "hdf5/TestTagHDF5.hpp"
+#include "hdf5/TestPropertyHDF5.hpp"
+#include "hdf5/TestImplContainerHDF5.hpp"
+#include "hdf5/TestDimensionHDF5.hpp"
+#include "hdf5/TestFeatureHDF5.hpp"
+#include "hdf5/TestDataAccessHDF5.hpp"
+#include "hdf5/TestReadOnlyHDF5.hpp"
+#include "hdf5/TestGroupHDF5.hpp"
+
+#ifdef ENABLE_FS_BACKEND
+#include "fs/TestAttributesFS.hpp"
+#include "fs/TestFileFS.hpp"
+#include "fs/TestBlockFS.hpp"
+#include "fs/TestEntityFS.hpp"
+#include "fs/TestEntityWithMetadataFS.hpp"
+#include "fs/TestEntityWithSourcesFS.hpp"
+#include "fs/TestFeatureFS.hpp"
+#include "fs/TestGroupFS.hpp"
+#include "fs/TestMultiTagFS.hpp"
+#include "fs/TestPropertyFS.hpp"
+#include "fs/TestDataArrayFS.hpp"
+#include "fs/TestSectionFS.hpp"
+#include "fs/TestSourceFS.hpp"
+#include "fs/TestTagFS.hpp"
+#include "fs/TestBaseTagFS.hpp"
+#include "fs/TestDimensionFS.hpp"
+#endif
 
 int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5);
@@ -63,6 +84,24 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
 
+#ifdef ENABLE_FS_BACKEND
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestAttributesFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFileFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestBlockFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithMetadataFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestEntityWithSourcesFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestTagFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagFS);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDimensionFS);
+#endif
 
     CPPUNIT_NS::TestResult testresult;
     CPPUNIT_NS::TestResultCollector collectedresults;

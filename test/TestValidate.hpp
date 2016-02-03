@@ -53,9 +53,7 @@ class TestValidate : public CPPUNIT_NS::TestFixture {
 private:
 
     CPPUNIT_TEST_SUITE(TestValidate);
-
     CPPUNIT_TEST(test);
-
     CPPUNIT_TEST_SUITE_END ();
 
     time_t startup_time;

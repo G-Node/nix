@@ -23,14 +23,13 @@
 
 #include "BaseTestDataAccess.hpp"
 
-using namespace std;
 using namespace nix;
 
 
 void BaseTestDataAccess::testPositionToIndexRangeDimension() {
-    string unit = "ms";
-    string invalid_unit = "kV";
-    string scaled_unit = "s";
+    std::string unit = "ms";
+    std::string invalid_unit = "kV";
+    std::string scaled_unit = "s";
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT(util::positionToIndex(1.0, unit, rangeDim) == 0);
@@ -45,9 +44,9 @@ void BaseTestDataAccess::testPositionToIndexRangeDimension() {
 
 
 void BaseTestDataAccess::testPositionToIndexSampledDimension() {
-    string unit = "ms";
-    string invalid_unit = "kV";
-    string scaled_unit = "s";
+    std::string unit = "ms";
+    std::string invalid_unit = "kV";
+    std::string scaled_unit = "s";
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(-1.0, unit, sampledDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.005, invalid_unit, sampledDim), nix::IncompatibleDimensions);
@@ -57,7 +56,7 @@ void BaseTestDataAccess::testPositionToIndexSampledDimension() {
 
 
 void BaseTestDataAccess::testPositionToIndexSetDimension() {
-    string unit = "ms";
+    std::string unit = "ms";
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, setDim), nix::IncompatibleDimensions);
@@ -76,7 +75,7 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
-    position_tag.units(vector<string>());
+    position_tag.units(std::vector<std::string>());
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
 
     CPPUNIT_ASSERT(position_tag.units().size() == 0);
@@ -91,7 +90,7 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
     
-    segment_tag.units(vector<string>());
+    segment_tag.units(std::vector<std::string>());
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
@@ -126,6 +125,8 @@ void BaseTestDataAccess::testPositionInData() {
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
 
+
+
 void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, -1), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, 1), nix::OutOfBounds);
@@ -151,7 +152,7 @@ void BaseTestDataAccess::testRetrieveData() {
 
     DataView times_view = util::retrieveData(times_tag, 0);
     data_size = times_view.dataExtent();
-    vector<double> times(data_size.size());
+    std::vector<double> times(data_size.size());
     times_view.getData(times);
     CPPUNIT_ASSERT(data_size.size() == 1);
     CPPUNIT_ASSERT(data_size[0] == 77);
@@ -159,14 +160,14 @@ void BaseTestDataAccess::testRetrieveData() {
 
 void BaseTestDataAccess::testTagFeatureData() {
     DataArray number_feat = block.createDataArray("number feature", "test", nix::DataType::Double, {1});
-    vector<double> number = {10.0};
+    std::vector<double> number = {10.0};
     number_feat.setData(number);
     DataArray ramp_feat = block.createDataArray("ramp feature", "test", nix::DataType::Double, {10});
     ramp_feat.label("voltage");
     ramp_feat.unit("mV");
     SampledDimension dim = ramp_feat.appendSampledDimension(1.0);
     dim.unit("ms");
-    vector<double> ramp_data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
+    std::vector<double> ramp_data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
     ramp_feat.setData(ramp_data);
 
     Tag pos_tag = block.createTag("feature test", "test", {5.0});
@@ -318,8 +319,8 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
 
 void BaseTestDataAccess::testMultiTagUnitSupport() {
-    vector<string> valid_units{"none","ms","s"};
-    vector<string> invalid_units{"mV", "Ohm", "muV"};
+    std::vector<std::string> valid_units{"none","ms","s"};
+    std::vector<std::string> invalid_units{"mV", "Ohm", "muV"};
 
     MultiTag testTag = block.createMultiTag("test", "testTag", multi_tag.positions());
     testTag.units(valid_units);
@@ -329,11 +330,10 @@ void BaseTestDataAccess::testMultiTagUnitSupport() {
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, 0, 0));
     testTag.units(invalid_units);
     CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, 0, 0), nix::IncompatibleDimensions);
-
 }
 
-void BaseTestDataAccess::testDataView() {
 
+void BaseTestDataAccess::testDataView() {
     NDSize zcount = {2, 5, 2};
     NDSize zoffset = {0, 5, 2};
 
@@ -360,10 +360,32 @@ void BaseTestDataAccess::testDataView() {
                 CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
                                              data[i][j][k],
                                              std::numeric_limits<double>::epsilon());
+                data[i][j][k] = 0.0;
             }
         }
     }
 
+    io.setData(data, {0, 0, 0});
+    data_array.getData(ref);
+
+    for(size_t i = 0; i < zcount[0]; ++i) {
+        for(size_t j = 0; j < zcount[1]; ++j) {
+            for(size_t k = 0; k < zcount[2]; ++k) {
+                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
+                                             0.0,
+                                             std::numeric_limits<double>::epsilon());
+            }
+        }
+    }
+
+
     double val = 0.0;
     CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3}), OutOfBounds);
+
+    array_type r2d2(boost::extents[3][3][3]);
+    CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3}, {}), OutOfBounds);
+
+    CPPUNIT_ASSERT_THROW(io.dataExtent(zcount), std::runtime_error);
+
+
 }

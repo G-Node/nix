@@ -45,6 +45,8 @@ public:
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
+
+    void testAsDimensionMethods();
 };
 
 #endif //NIX_BASETESTDIMENSION_HPP

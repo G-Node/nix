@@ -101,18 +101,6 @@ public:
     Result(const std::vector<Message> & errs, none_t t);
 
     /**
-     * @brief Non-vector standard ctor.
-     * 
-     * Non-vector standard ctor that expects an error msg as 1st
-     * parameter and a warning msg as 2nd parameter
-     *
-     * @param err Vector of error messages
-     * @param warn Vector of warning messages
-     */
-    Result( const Message &err,
-            const Message &warn);
-
-    /**
      * @brief Non-vector only warnings ctor.
      * 
      * Non-vector only warnings ctor that takes boost::none as 1st
@@ -133,18 +121,6 @@ public:
      * @param t boost::none
      */
     Result(const Message &err, none_t t);
-
-    /**
-     * @brief Neither errors nor warnings ctor.
-     * 
-     * Neither errors nor warnings ctor that takes boost::none for
-     * both parameters - equivalent to using the standard ctor without
-     * arguments
-     *
-     * @param t boost::none
-     * @param u boost::none
-     */
-    Result(none_t t, none_t u);
 
     /**
      * @brief Returns the warnings vector.

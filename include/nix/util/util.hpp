@@ -260,7 +260,7 @@ NIXAPI bool isScalable(const std::vector<std::string> &unitsA, const std::vector
  * 
  * @param stringsB A vector of unit strings.
  *
- * @return True if the units are scalable version of the same unit.
+ * @return True if all corresponding elements of the vectors are empty or non-empty string.
  */
 NIXAPI bool isSetAtSamePos(const std::vector<std::string> &stringsA, const std::vector<std::string> &stringsB);
 

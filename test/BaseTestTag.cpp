@@ -27,7 +27,6 @@
 
 using namespace nix;
 using namespace valid;
-using namespace std;
 
 
 void BaseTestTag::testValidate() {
@@ -78,7 +77,7 @@ void BaseTestTag::testCreateRemove() {
 
         std::stringstream errmsg;
         errmsg << "Error while accessing tag: st1.id() = " << st1.id()
-                                       << " / st2.id() = " << st2.id();
+        << " / st2.id() = " << st2.id();
         CPPUNIT_ASSERT_MESSAGE(errmsg.str(), st1.id().compare(st2.id()) == 0);
     }
     std::stringstream errmsg2;
@@ -101,7 +100,6 @@ void BaseTestTag::testCreateRemove() {
 void BaseTestTag::testExtent() {
     Tag st = block.createTag("TestTag1", "Tag", {0.0, 2.0, 3.4});
     st.references(refs);
-
     std::vector<double> extent = {1.0, 2.0, 3.0};
     st.extent(extent);
 
@@ -151,7 +149,6 @@ void BaseTestTag::testPosition() {
 
 void BaseTestTag::testMetadataAccess() {
     CPPUNIT_ASSERT(!tag.metadata());
-
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
     // TODO This test fails due to operator== of Section
@@ -197,7 +194,6 @@ void BaseTestTag::testSourceAccess() {
         tag.removeSource(*it);
         block.deleteSource(*it);
     }
-
     CPPUNIT_ASSERT(tag.sourceCount() == 0);
 }
 
@@ -257,11 +253,14 @@ void BaseTestTag::testReferences() {
 void BaseTestTag::testFeatures() {
     DataArray a;
     Feature f;
+
     CPPUNIT_ASSERT(tag.featureCount() == 0);
     CPPUNIT_ASSERT(!tag.hasFeature(f));
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), UninitializedEntity);
-    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(refs[0], nix::LinkType::Indexed));
+    DataArray da = block.createDataArray("feature", "test", DataType::Double, NDSize({0, 0}));
+    CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(da, nix::LinkType::Indexed));
+    CPPUNIT_ASSERT(tag.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -270,20 +269,20 @@ void BaseTestTag::testFeatures() {
 
 void BaseTestTag::testDataAccess() {
     double samplingInterval = 1.0;
-    vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
-    string unit = "ms";
+    std::vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
+    std::string unit = "ms";
     SampledDimension sampledDim;
     RangeDimension rangeDim;
     SetDimension setDim;
-    vector<double> position {0.0, 2.0, 3.4};
-    vector<double> extent {0.0, 6.0, 2.3};
-    vector<string> units {"none", "ms", "ms"};
+    std::vector<double> position {0.0, 2.0, 3.4};
+    std::vector<double> extent {0.0, 6.0, 2.3};
+    std::vector<std::string> units {"none", "ms", "ms"};
 
     DataArray data_array = block.createDataArray("dimensionTest",
                                                  "test",
                                                  DataType::Double,
                                                  NDSize({0, 0, 0}));
-    vector<DataArray> reference;
+    std::vector<DataArray> reference;
     reference.push_back(data_array);
 
     typedef boost::multi_array<double, 3> array_type;
@@ -338,9 +337,6 @@ void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag_null == false);
     CPPUNIT_ASSERT(tag_null == none);
 
-    CPPUNIT_ASSERT(tag != false);
-    CPPUNIT_ASSERT(tag != none);
-
     CPPUNIT_ASSERT(tag == tag);
     CPPUNIT_ASSERT(tag != tag_other);
 
@@ -348,8 +344,15 @@ void BaseTestTag::testOperators() {
     CPPUNIT_ASSERT(tag == tag_other);
 
     tag_other = none;
-    CPPUNIT_ASSERT(tag_null == false);
-    CPPUNIT_ASSERT(tag_null == none);
+    CPPUNIT_ASSERT(tag_other == false);
+    CPPUNIT_ASSERT(tag_other == none);
+
+    std::stringstream str1, str2;
+    str1 <<  "Tag: {name = " << tag.name();
+    str1 << ", type = " << tag.type();
+    str1 << ", id = " << tag.id() << "}";
+    str2 << tag;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
 }
 
 

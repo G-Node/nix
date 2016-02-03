@@ -244,9 +244,7 @@ public:
      *
      * @return The specified child section.
      */
-    virtual Section getSection(ndsize_t index) const {
-        return backend()->getSection(index);
-    }
+    virtual Section getSection(ndsize_t index) const;
 
     /**
      * @brief Get all direct child sections of the section.

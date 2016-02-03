@@ -10,20 +10,18 @@
 
 #include <nix/util/util.hpp>
 #include <nix/valid/validate.hpp>
-
 #include <ctime>
+#include <boost/filesystem.hpp>
 
-
-using namespace std;
 using namespace nix;
 using namespace valid;
+namespace bfs = boost::filesystem;
 
 
 void BaseTestFile::testOpen() {
-
-    CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), runtime_error);
-
+    CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), std::runtime_error);
 }
+
 
 void BaseTestFile::testValidate() {
     valid::Result result = validate(file_open);
@@ -37,20 +35,14 @@ void BaseTestFile::testFormat() {
 }
 
 
-void BaseTestFile::testLocation() {
-    CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
-    CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
-}
-
-
 void BaseTestFile::testVersion() {
-    vector<int> version{1, 0, 0};
+    std::vector<int> version{1, 0, 0};
     CPPUNIT_ASSERT(file_open.version() == version);
 }
 
 
 void BaseTestFile::testCreatedAt() {
-    CPPUNIT_ASSERT(file_open.createdAt() >= statup_time);
+    CPPUNIT_ASSERT(file_open.createdAt() >= startup_time);
     time_t past_time = time(NULL) - 10000000;
     file_open.forceCreatedAt(past_time);
     CPPUNIT_ASSERT(file_open.createdAt() == past_time);
@@ -58,20 +50,24 @@ void BaseTestFile::testCreatedAt() {
 
 
 void BaseTestFile::testUpdatedAt() {
-    CPPUNIT_ASSERT(file_open.updatedAt() >= statup_time);
+    CPPUNIT_ASSERT(file_open.updatedAt() >= startup_time);
+    time_t now = time(NULL);
+    file_open.forceUpdatedAt();
+    CPPUNIT_ASSERT(file_open.updatedAt() >= now);
 }
 
 
 void BaseTestFile::testBlockAccess() {
-    vector<string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
+    std::vector<std::string> names = { "block_a", "block_b", "block_c", "block_d", "block_e" };
     Block b;
+
     CPPUNIT_ASSERT(file_open.blockCount() == 0);
     CPPUNIT_ASSERT(file_open.blocks().size() == 0);
     CPPUNIT_ASSERT(file_open.getBlock("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, file_open.hasBlock("invalid_id"));
     CPPUNIT_ASSERT(!file_open.hasBlock(b));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (const auto &name : names) {
         Block bl = file_open.createBlock(name, "dataset");
         CPPUNIT_ASSERT(bl.name() == name);
@@ -80,8 +76,9 @@ void BaseTestFile::testBlockAccess() {
 
         ids.push_back(bl.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"),
-                         DuplicateName);
+
+    CPPUNIT_ASSERT_THROW(file_open.createBlock(names[0], "dataset"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(file_open.createBlock("", "dataset"), EmptyString);
     CPPUNIT_ASSERT(file_open.blockCount() == names.size());
     CPPUNIT_ASSERT(file_open.blocks().size() == names.size());
 
@@ -96,7 +93,7 @@ void BaseTestFile::testBlockAccess() {
 
     for (const auto &id: ids) {
         Block bl = file_open.getBlock(id);
-        CPPUNIT_ASSERT(file_open.hasBlock(id) == true);
+        CPPUNIT_ASSERT(file_open.hasBlock(id));
         CPPUNIT_ASSERT(bl.id() == id);
 
         file_open.deleteBlock(id);
@@ -114,33 +111,34 @@ void BaseTestFile::testBlockAccess() {
 
 
 void BaseTestFile::testSectionAccess() {
-    vector<string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
+    std::vector<std::string> names = {"section_a", "section_b", "section_c", "section_d", "section_e" };
     Section s;
     CPPUNIT_ASSERT(file_open.sectionCount() == 0);
     CPPUNIT_ASSERT(file_open.sections().size() == 0);
     CPPUNIT_ASSERT(file_open.getSection("invalid_id") == false);
     CPPUNIT_ASSERT(!file_open.hasSection(s));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         Section sec = file_open.createSection(*it, "root section");
         CPPUNIT_ASSERT(sec.name() == *it);
 
         ids.push_back(sec.id());
     }
-    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"),
-                         DuplicateName);
+    CPPUNIT_ASSERT_THROW(file_open.createSection(names[0], "root section"), DuplicateName);
+    CPPUNIT_ASSERT_THROW(file_open.createSection("", "root section"), EmptyString);
 
     CPPUNIT_ASSERT(file_open.sectionCount() == names.size());
     CPPUNIT_ASSERT(file_open.sections().size() == names.size());
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Section sec = file_open.getSection(*it);
-        CPPUNIT_ASSERT(file_open.hasSection(*it) == true);
+        CPPUNIT_ASSERT(file_open.hasSection(*it));
         CPPUNIT_ASSERT(sec.id() == *it);
 
         file_open.deleteSection(*it);
     }
+
     CPPUNIT_ASSERT(!file_open.deleteSection(s));
     s = file_open.createSection("test","test");
     CPPUNIT_ASSERT_NO_THROW(file_open.getSection(0));
@@ -171,13 +169,14 @@ void BaseTestFile::testOperators(){
     CPPUNIT_ASSERT(file_null == none);
 }
 
+
 void BaseTestFile::testReopen() {
-    //file_open is currently open
     Block b = file_open.createBlock("a", "a");
     b = none;
     file_open.close();
 
     file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
-}
 
+    CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
+}

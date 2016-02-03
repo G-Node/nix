@@ -82,7 +82,13 @@ public:
      * @return True if the source is associated with this entity, false otherwise.
      */
     bool hasSource(const Source &source) const {
-        return EntityWithMetadata<T>::backend()->hasSource(source.id());
+        std::string id;
+        try {
+            id = source.id();
+        } catch (...) {
+            return false;
+        }
+        return EntityWithMetadata<T>::backend()->hasSource(id);
     }
 
     /**

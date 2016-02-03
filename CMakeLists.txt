@@ -34,6 +34,7 @@ endif()
 
 
 set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 #########################################
 # HDF-5
@@ -64,7 +65,6 @@ find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesy
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
-
 ########################################
 # Doxygen
 find_package(Doxygen)
@@ -83,15 +83,31 @@ include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 
+### BACKENDS
+set(backends "hdf5")
+
+option(BUILD_FS_BACKEND "Build fileystem backend" OFF)
+if(BUILD_FS_BACKEND)
+  # Yaml-cpp
+  set(YAMLCPP_STATIC_LIBRARY FALSE)
+  find_package(YamlCpp REQUIRED)
+  include_directories(${YAMLCPP_INCLUDE_DIRS})
+  set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
+
+  list(APPEND backends "fs")
+  add_definitions(-DENABLE_FS_BACKEND=1)
+endif()
+
 # This is for tests
 include_directories(${CMAKE_SOURCE_DIR}/backend)
 
-# HDF5 backend
-file(GLOB_RECURSE backend_h5_SOURCES backend/hdf5/*.cpp)
-file(GLOB_RECURSE backend_h5_INCLUDES backend/hdf5/*.hpp)
+foreach(backend ${backends})
+  file(GLOB_RECURSE backend_SOURCES "backend/${backend}/*.cpp")
+  file(GLOB_RECURSE backend_INCLUDES "backend/${backend}/*.hpp")
 
-list(APPEND nix_SOURCES ${backend_h5_SOURCES})
-list(APPEND nix_INCLUDES ${backend_h5_INCLUDES})
+  list(APPEND nix_SOURCES ${backend_SOURCES})
+  list(APPEND nix_INCLUDES ${backend_INCLUDES})
+endforeach()
 
 ### LIBRARY
 
@@ -157,20 +173,23 @@ enable_testing()
 
 if(BUILD_TESTING)
 
-  set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/test)
 
-  file(GLOB Tests_SOURCES "test/*Test*.cpp")
-
-  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-  if(NOT WIN32)
-      set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-  endif()
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
+  file(GLOB Tests_SOURCES "test/*Test*.[ch]pp")
   file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+
+  foreach(thebackend ${backends})
+    set(thebackend_TEST_HEADERS)
+    file(GLOB thebackend_TEST_HEADERS "test/${thebackend}/Test*.hpp")
+    list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
+
+    set(thebackend_TEST_SOURCES)
+    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.[ch]pp")
+    list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
+  endforeach()
+
   foreach(test ${Real_Test_HEADERS})
       get_filename_component(TestFileName ${test} NAME_WE)
       string(REPLACE "Test" "" TestName ${TestFileName})
@@ -178,6 +197,11 @@ if(BUILD_TESTING)
       add_test(${TestName} TestRunner ${TestName})
   endforeach(test)
 
+  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
 endif()
 
@@ -254,4 +278,7 @@ MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
+MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")

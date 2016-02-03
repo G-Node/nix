@@ -25,7 +25,7 @@ set(CTEST_COVERAGE_COMMAND ${GCOV})
   set(COVERAGE_EXTRA_FLAGS "-l -p")
 
 ctest_start(Continuous)
-ctest_configure()
+ctest_configure(OPTIONS -DBUILD_FS_BACKEND=$ENV{FS_BACKEND})
 ctest_build()
 
 if(CLANG_CHECK AND $ENV{CXX} MATCHES "clang")
