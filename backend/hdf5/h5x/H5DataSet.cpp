@@ -254,7 +254,7 @@ DataType DataSet::dataType(void) const
         //if it is a compound data type then it must be a
         //a property dataset, we can handle that
         int nmems = H5Tget_nmembers(ftype);
-        assert(nmems == 6);
+        assert(nmems == 2);
         hid_t vtype = H5Tget_member_type(ftype, 0);
 
         ftclass = H5Tget_class(vtype);
@@ -289,10 +289,6 @@ struct FileValue  {
     T       value;
 
     double  uncertainty;
-    char   *reference;
-    char   *filename;
-    char   *encoder;
-    char   *checksum;
 
     //ctors
     FileValue() {}
@@ -305,12 +301,7 @@ template<>
 struct FileValue<bool>  {
 
     unsigned char value;
-
     double  uncertainty;
-    char   *reference;
-    char   *filename;
-    char   *encoder;
-    char   *checksum;
 
     //ctors
     FileValue() {}
@@ -382,10 +373,6 @@ h5x::DataType h5_type_for_value(bool for_memory)
 
     ct.insert("value", HOFFSET(file_value_t, value), to_data_type<T>::value, for_memory);
     ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), DataType::Double, for_memory);
-    ct.insertString("reference", HOFFSET(file_value_t, reference));
-    ct.insertString("filename", HOFFSET(file_value_t, filename));
-    ct.insertString("encoder", HOFFSET(file_value_t, encoder));
-    ct.insertString("checksum", HOFFSET(file_value_t, checksum));
 
     return ct.h5id();
 }
@@ -437,10 +424,6 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
             Value temp(val.val());
             temp.uncertainty = val.uncertainty;
-            temp.reference = val.reference;
-            temp.filename = val.filename;
-            temp.encoder = val.encoder;
-            temp.checksum = val.checksum;
             return temp;
         });
 
@@ -487,10 +470,6 @@ void do_write_value(DataSet &h5ds, const std::vector<Value> &values)
     std::transform(values.begin(), values.end(), fileValues.begin(), [](const Value &val) {
             file_value_t fileVal(val.get<T>());
             fileVal.uncertainty = val.uncertainty;
-            fileVal.reference = const_cast<char *>(val.reference.c_str());
-            fileVal.filename = const_cast<char *>(val.filename.c_str());
-            fileVal.encoder = const_cast<char *>(val.encoder.c_str());
-            fileVal.checksum = const_cast<char *>(val.checksum.c_str());
 
             return fileVal;
         });
