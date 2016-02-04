@@ -86,6 +86,10 @@ DataType DataType::member_type(unsigned int index) const {
 }
 
 
+void DataType::insert(const std::string &name, size_t offset, const DataType &dtype) {
+    HErr res = H5Tinsert(hid, name.c_str(), offset, dtype.hid);
+    res.check("DataType::insert(): H5Tinsert failed.");
+}
 
 } // h5x
 

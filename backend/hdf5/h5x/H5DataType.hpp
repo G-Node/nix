@@ -49,6 +49,8 @@ public:
     H5T_class_t member_class(unsigned int index) const;
     std::string member_name(unsigned int index) const;
     size_t member_offset(unsigned int index) const;
+
+    void insert(const std::string &name, size_t offset, const DataType &dtype);
 };
 
 }
