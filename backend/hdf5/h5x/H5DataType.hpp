@@ -33,6 +33,7 @@ public:
     // to read
     static DataType copy(hid_t);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
+    static DataType makeCompound(size_t size);
 
     H5T_class_t class_t() const;
 

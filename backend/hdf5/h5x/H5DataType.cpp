@@ -33,6 +33,13 @@ DataType DataType::makeStrType(size_t size) {
     return str_type;
 }
 
+
+DataType DataType::makeCompound(size_t size) {
+    DataType res = H5Tcreate(H5T_COMPOUND, size);
+    res.check("Could not create compound type");
+    return res;
+}
+
 H5T_class_t DataType::class_t() const {
     return H5Tget_class(hid);
 }
