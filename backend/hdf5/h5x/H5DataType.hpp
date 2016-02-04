@@ -34,6 +34,7 @@ public:
     static DataType copy(hid_t);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
 
+    H5T_class_t class_t() const;
 
     void size(size_t);
     size_t size() const;

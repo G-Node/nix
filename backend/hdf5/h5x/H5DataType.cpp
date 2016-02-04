@@ -30,6 +30,9 @@ DataType DataType::makeStrType(size_t size) {
     return str_type;
 }
 
+H5T_class_t DataType::class_t() const {
+    return H5Tget_class(hid);
+}
 
 void DataType::size(size_t t) {
     HErr res = H5Tset_size(hid, t);
@@ -48,6 +51,9 @@ bool DataType::isVariableString() const {
 }
 } // h5x
 
+bool DataType::isCompound() const {
+    return class_t() == H5T_COMPOUND;
+}
 
 
 
