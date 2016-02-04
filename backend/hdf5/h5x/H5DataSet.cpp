@@ -244,8 +244,10 @@ void DataSet::vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace)
 
 DataType DataSet::dataType(void) const
 {
-    hid_t ftype = H5Dget_type(hid);
-    H5T_class_t ftclass = H5Tget_class(ftype);
+    h5x::DataType ftype = H5Dget_type(hid);
+    ftype.check("DataSet::dataType(): H5Dget_type failed");
+
+    H5T_class_t ftclass = ftype.class_t();
 
     size_t     size;
     H5T_sign_t sign;
@@ -253,25 +255,22 @@ DataType DataSet::dataType(void) const
     if (ftclass == H5T_COMPOUND) {
         //if it is a compound data type then it must be a
         //a property dataset, we can handle that
-        int nmems = H5Tget_nmembers(ftype);
+        int nmems = ftype.member_count();
         assert(nmems == 6);
-        hid_t vtype = H5Tget_member_type(ftype, 0);
+        h5x::DataType vtype = ftype.member_type(0);
 
-        ftclass = H5Tget_class(vtype);
-        size = H5Tget_size(vtype);
-        sign = H5Tget_sign(vtype);
+        ftclass = vtype.class_t();
+        size = vtype.size();
+        sign = vtype.sign();
 
-        H5Tclose(vtype);
     } else if (ftclass == H5T_OPAQUE) {
-      return DataType::Opaque;
+        return DataType::Opaque;
     } else {
-        size = H5Tget_size(ftype);
-        sign = H5Tget_sign(ftype);
+        size = ftype.size();
+        sign = ftype.sign();
     }
 
     DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
-    H5Tclose(ftype);
-
     return dtype;
 }
 
