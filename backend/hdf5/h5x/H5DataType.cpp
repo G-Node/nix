@@ -175,6 +175,15 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
     throw std::invalid_argument("DataType not handled!"); //FIXME
 }
 
+
+h5x::DataType data_type_to_h5(DataType dtype, bool for_memory) {
+    if (for_memory) {
+        return data_type_to_h5_memtype(dtype);
+    } else {
+        return data_type_to_h5_filetype(dtype);
+    }
+}
+
 #define NOT_IMPLEMENTED false
 
 DataType
