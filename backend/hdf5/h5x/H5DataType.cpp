@@ -12,6 +12,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
+#include <string>
+#include <memory>
+#include <cstdlib>
 
 namespace nix {
 namespace hdf5 {
@@ -43,18 +46,48 @@ size_t DataType::size() const {
     return H5Tget_size(hid); //FIXME: throw on 0?
 }
 
-
 bool DataType::isVariableString() const {
     HTri res = H5Tis_variable_str(hid);
     res.check("DataType::isVariableString(): H5Tis_variable_str failed");
     return res.result();
 }
-} // h5x
 
 bool DataType::isCompound() const {
     return class_t() == H5T_COMPOUND;
 }
 
+unsigned int DataType::member_count() const {
+    int res = H5Tget_nmembers(hid);
+    if (res < 0) {
+        throw H5Exception("DataType::member_count(): H5Tget_nmembers faild");
+    }
+    return static_cast<unsigned  int>(res);
+}
+
+H5T_class_t DataType::member_class(unsigned int index) const {
+    return H5Tget_member_class(hid, index);
+}
+
+std::string DataType::member_name(unsigned int index) const {
+    char *data = H5Tget_member_name(hid, index);
+    std::string res(data);
+    std::free(data);
+    return res;
+}
+
+size_t DataType::member_offset(unsigned int index) const {
+    return H5Tget_member_offset(hid, index);
+}
+
+DataType DataType::member_type(unsigned int index) const {
+    h5x::DataType res = H5Tget_member_type(hid, index);
+    res.check("DataType::member_type(): H5Tget_member_type failed");
+    return res;
+}
+
+
+
+} // h5x
 
 
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {

@@ -40,6 +40,15 @@ public:
     size_t size() const;
 
     bool isVariableString() const;
+
+    // Compound type related
+    bool isCompound() const;
+    unsigned int member_count() const;
+    DataType member_type(unsigned int index) const;
+
+    H5T_class_t member_class(unsigned int index) const;
+    std::string member_name(unsigned int index) const;
+    size_t member_offset(unsigned int index) const;
 };
 
 }
