@@ -46,6 +46,16 @@ size_t DataType::size() const {
     return H5Tget_size(hid); //FIXME: throw on 0?
 }
 
+void DataType::sign(H5T_sign_t sign) {
+    HErr res = H5Tset_sign(hid, sign);
+    res.check("DataType::sign(): H5Tset_sign failed");
+}
+
+H5T_sign_t DataType::sign() const {
+    H5T_sign_t res = H5Tget_sign(hid);
+    return res;
+}
+
 bool DataType::isVariableString() const {
     HTri res = H5Tis_variable_str(hid);
     res.check("DataType::isVariableString(): H5Tis_variable_str failed");

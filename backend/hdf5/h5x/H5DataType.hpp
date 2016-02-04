@@ -39,6 +39,9 @@ public:
     void size(size_t);
     size_t size() const;
 
+    void sign(H5T_sign_t sign);
+    H5T_sign_t sign() const;
+
     bool isVariableString() const;
 
     // Compound type related
