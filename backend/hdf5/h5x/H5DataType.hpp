@@ -33,21 +33,37 @@ public:
     // to read
     static DataType copy(hid_t);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
+    static DataType makeCompound(size_t size);
 
+    H5T_class_t class_t() const;
 
     void size(size_t);
     size_t size() const;
 
+    void sign(H5T_sign_t sign);
+    H5T_sign_t sign() const;
+
     bool isVariableString() const;
+
+    // Compound type related
+    bool isCompound() const;
+    unsigned int member_count() const;
+    DataType member_type(unsigned int index) const;
+
+    H5T_class_t member_class(unsigned int index) const;
+    std::string member_name(unsigned int index) const;
+    size_t member_offset(unsigned int index) const;
+
+    void insert(const std::string &name, size_t offset, const DataType &dtype);
 };
 
 }
 
 
 NIXAPI h5x::DataType data_type_to_h5_filetype(DataType dtype);
-
-
 NIXAPI h5x::DataType data_type_to_h5_memtype(DataType dtype);
+NIXAPI h5x::DataType data_type_to_h5(DataType dtype, bool for_memory);
+
 
 NIXAPI DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
 

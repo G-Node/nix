@@ -244,8 +244,10 @@ void DataSet::vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace)
 
 DataType DataSet::dataType(void) const
 {
-    hid_t ftype = H5Dget_type(hid);
-    H5T_class_t ftclass = H5Tget_class(ftype);
+    h5x::DataType ftype = H5Dget_type(hid);
+    ftype.check("DataSet::dataType(): H5Dget_type failed");
+
+    H5T_class_t ftclass = ftype.class_t();
 
     size_t     size;
     H5T_sign_t sign;
@@ -253,25 +255,22 @@ DataType DataSet::dataType(void) const
     if (ftclass == H5T_COMPOUND) {
         //if it is a compound data type then it must be a
         //a property dataset, we can handle that
-        int nmems = H5Tget_nmembers(ftype);
+        int nmems = ftype.member_count();
         assert(nmems == 6);
-        hid_t vtype = H5Tget_member_type(ftype, 0);
+        h5x::DataType vtype = ftype.member_type(0);
 
-        ftclass = H5Tget_class(vtype);
-        size = H5Tget_size(vtype);
-        sign = H5Tget_sign(vtype);
+        ftclass = vtype.class_t();
+        size = vtype.size();
+        sign = vtype.sign();
 
-        H5Tclose(vtype);
     } else if (ftclass == H5T_OPAQUE) {
-      return DataType::Opaque;
+        return DataType::Opaque;
     } else {
-        size = H5Tget_size(ftype);
-        sign = H5Tget_sign(ftype);
+        size = ftype.size();
+        sign = ftype.sign();
     }
 
     DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
-    H5Tclose(ftype);
-
     return dtype;
 }
 
@@ -323,71 +322,25 @@ struct FileValue<bool>  {
 
 //
 
-class CompoundType {
-public:
-
-    explicit CompoundType(size_t size) : strType(H5I_INVALID_HID) {
-        hid = H5Tcreate(H5T_COMPOUND, size);
-        if (hid < 0) {
-            throw H5Exception("Could not create compound type");
-        }
-    }
-
-    void insert(const std::string &name, size_t offset, hid_t memberType) {
-        HErr result = H5Tinsert(hid, name.c_str(), offset, memberType);
-        result.check("CompoundType::insert(): Could not insert member into compound type");
-    }
-
-    void insertString(const std::string &name, size_t offset) {
-        if (strType == H5I_INVALID_HID) {
-            strType = H5Tcopy (H5T_C_S1);
-
-            if (strType < 0) {
-                throw H5Exception("H5Tcopy: Could not copy C_S1 type");
-            }
-
-            HErr status = H5Tset_size (strType, H5T_VARIABLE);
-            status.check("CompoundType::insertString(): H5Tset_size failed");
-        }
-
-        insert(name, offset, strType);
-    }
-
-    void insert(const std::string &name, size_t offset, DataType memberType, bool forMemory) {
-        h5x::DataType h5dt;
-
-        if (forMemory) {
-            h5dt = hdf5::data_type_to_h5_memtype(memberType);
-        } else {
-            h5dt = hdf5::data_type_to_h5_filetype(memberType);
-        }
-
-        insert(name, offset, h5dt.h5id());
-    }
-
-    hid_t h5id() {
-        return hid;
-    }
-
-private:
-    hid_t hid;
-    hid_t strType;
-};
-
 template<typename T>
 h5x::DataType h5_type_for_value(bool for_memory)
 {
     typedef FileValue<T> file_value_t;
-    CompoundType ct(sizeof(file_value_t));
 
-    ct.insert("value", HOFFSET(file_value_t, value), to_data_type<T>::value, for_memory);
-    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), DataType::Double, for_memory);
-    ct.insertString("reference", HOFFSET(file_value_t, reference));
-    ct.insertString("filename", HOFFSET(file_value_t, filename));
-    ct.insertString("encoder", HOFFSET(file_value_t, encoder));
-    ct.insertString("checksum", HOFFSET(file_value_t, checksum));
+    h5x::DataType ct = h5x::DataType::makeCompound(sizeof(file_value_t));
+    h5x::DataType strType = h5x::DataType::makeStrType();
 
-    return ct.h5id();
+    h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
+    h5x::DataType double_type = data_type_to_h5(DataType::Double, for_memory);
+
+    ct.insert("value", HOFFSET(file_value_t, value), value_type);
+    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), double_type);
+    ct.insert("reference", HOFFSET(file_value_t, reference), strType);
+    ct.insert("filename", HOFFSET(file_value_t, filename), strType);
+    ct.insert("encoder", HOFFSET(file_value_t, encoder), strType);
+    ct.insert("checksum", HOFFSET(file_value_t, checksum), strType);
+
+    return ct;
 }
 
 #if 0 //set to one to check that all supported DataTypes are handled

@@ -12,6 +12,9 @@
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
+#include <string>
+#include <memory>
+#include <cstdlib>
 
 namespace nix {
 namespace hdf5 {
@@ -31,6 +34,16 @@ DataType DataType::makeStrType(size_t size) {
 }
 
 
+DataType DataType::makeCompound(size_t size) {
+    DataType res = H5Tcreate(H5T_COMPOUND, size);
+    res.check("Could not create compound type");
+    return res;
+}
+
+H5T_class_t DataType::class_t() const {
+    return H5Tget_class(hid);
+}
+
 void DataType::size(size_t t) {
     HErr res = H5Tset_size(hid, t);
     res.check("DataType::size: Could not set size");
@@ -40,15 +53,62 @@ size_t DataType::size() const {
     return H5Tget_size(hid); //FIXME: throw on 0?
 }
 
+void DataType::sign(H5T_sign_t sign) {
+    HErr res = H5Tset_sign(hid, sign);
+    res.check("DataType::sign(): H5Tset_sign failed");
+}
+
+H5T_sign_t DataType::sign() const {
+    H5T_sign_t res = H5Tget_sign(hid);
+    return res;
+}
 
 bool DataType::isVariableString() const {
     HTri res = H5Tis_variable_str(hid);
     res.check("DataType::isVariableString(): H5Tis_variable_str failed");
     return res.result();
 }
+
+bool DataType::isCompound() const {
+    return class_t() == H5T_COMPOUND;
+}
+
+unsigned int DataType::member_count() const {
+    int res = H5Tget_nmembers(hid);
+    if (res < 0) {
+        throw H5Exception("DataType::member_count(): H5Tget_nmembers faild");
+    }
+    return static_cast<unsigned  int>(res);
+}
+
+H5T_class_t DataType::member_class(unsigned int index) const {
+    return H5Tget_member_class(hid, index);
+}
+
+std::string DataType::member_name(unsigned int index) const {
+    char *data = H5Tget_member_name(hid, index);
+    std::string res(data);
+    std::free(data);
+    return res;
+}
+
+size_t DataType::member_offset(unsigned int index) const {
+    return H5Tget_member_offset(hid, index);
+}
+
+DataType DataType::member_type(unsigned int index) const {
+    h5x::DataType res = H5Tget_member_type(hid, index);
+    res.check("DataType::member_type(): H5Tget_member_type failed");
+    return res;
+}
+
+
+void DataType::insert(const std::string &name, size_t offset, const DataType &dtype) {
+    HErr res = H5Tinsert(hid, name.c_str(), offset, dtype.hid);
+    res.check("DataType::insert(): H5Tinsert failed.");
+}
+
 } // h5x
-
-
 
 
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
@@ -113,6 +173,15 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
     }
 
     throw std::invalid_argument("DataType not handled!"); //FIXME
+}
+
+
+h5x::DataType data_type_to_h5(DataType dtype, bool for_memory) {
+    if (for_memory) {
+        return data_type_to_h5_memtype(dtype);
+    } else {
+        return data_type_to_h5_filetype(dtype);
+    }
 }
 
 #define NOT_IMPLEMENTED false
