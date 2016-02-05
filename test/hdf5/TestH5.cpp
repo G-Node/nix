@@ -178,14 +178,40 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(t_int));
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(t_dbl));
 
-    H5Tclose(t_int);
-    H5Tclose(t_dbl);
-    
+    h5x::DataType dt_int(t_int, false); // take ownership
+    h5x::DataType dt_dbl(t_dbl, false);
+
+    CPPUNIT_ASSERT_EQUAL(true, dt_int.isValid());
+    CPPUNIT_ASSERT_EQUAL(H5Tget_class(t_int), dt_int.class_t());
+    CPPUNIT_ASSERT_EQUAL(false, dt_int.isCompound());
+
+    CPPUNIT_ASSERT_EQUAL(H5T_SGN_2, dt_int.sign());
+
     h5x::DataType v_str = h5x::DataType::makeStrType();
     CPPUNIT_ASSERT_EQUAL(true, v_str.isVariableString());
 
     h5x::DataType str_255 = h5x::DataType::makeStrType(255);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_255.size());
+
+    struct TestStruct {
+        double d;
+        int i;
+    };
+
+    h5x::DataType cmpd = h5x::DataType::makeCompound(sizeof(TestStruct));
+
+    cmpd.insert("d", offsetof(TestStruct, d), dt_dbl);
+    cmpd.insert("i", offsetof(TestStruct, i), dt_int);
+
+    CPPUNIT_ASSERT_EQUAL(true, cmpd.isCompound());
+    CPPUNIT_ASSERT_EQUAL(cmpd.size(), cmpd.size());
+    CPPUNIT_ASSERT_EQUAL(2U, cmpd.member_count());
+    CPPUNIT_ASSERT_EQUAL(std::string("d"), cmpd.member_name(0));
+    CPPUNIT_ASSERT_EQUAL(std::string("i"), cmpd.member_name(1));
+    CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, d), cmpd.member_offset(0));
+    CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, i), cmpd.member_offset(1));
+    CPPUNIT_ASSERT_EQUAL(H5T_FLOAT, cmpd.member_class(0));
+    CPPUNIT_ASSERT_EQUAL(H5T_INTEGER, cmpd.member_class(1));
 
 }
 
