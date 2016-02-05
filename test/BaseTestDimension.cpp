@@ -246,6 +246,8 @@ void BaseTestDimension::testSampledDimOperators() {
     Dimension d2 = data_array.appendSampledDimension(samplingInterval);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Sample);
     CPPUNIT_ASSERT(d2.dimensionType() == DimensionType::Sample);
+    CPPUNIT_ASSERT_THROW(d.asRangeDimension(), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(d.asSetDimension(), nix::IncompatibleDimensions);
     SampledDimension sd1, sd2, sd3;
     sd1 = d;
     sd2 = d2;
@@ -255,7 +257,8 @@ void BaseTestDimension::testSampledDimOperators() {
     CPPUNIT_ASSERT(sd1 != sd3);
     data_array.deleteDimension(d2.index());
     data_array.deleteDimension(d.index());
-    Dimension dim = data_array.appendSampledDimension(samplingInterval);
+    Dimension dim = data_array.appendSetDimension();
+    CPPUNIT_ASSERT_THROW(dim.asSampledDimension(), IncompatibleDimensions);
     SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
     RangeDimension range = data_array.appendRangeDimension(std::vector<double>({1, 2}));
     SetDimension set = data_array.appendSetDimension();
@@ -270,6 +273,17 @@ void BaseTestDimension::testSampledDimOperators() {
     CPPUNIT_ASSERT(sampled != none);
     CPPUNIT_ASSERT(range != none);
     CPPUNIT_ASSERT(set != none);
+
+    SampledDimension sd4;
+    CPPUNIT_ASSERT_THROW(sd4 = range, nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(sd4 = sampled);
+    RangeDimension rd;
+    CPPUNIT_ASSERT_THROW(rd = sampled, nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(rd = range);
+    SetDimension st;
+    CPPUNIT_ASSERT_THROW(st = sampled, nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(st = set);
+
     d = none; sampled = none; range = none; set = none;
     CPPUNIT_ASSERT(d == none);
     CPPUNIT_ASSERT(sampled == none);
