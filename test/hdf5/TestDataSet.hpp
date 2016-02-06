@@ -32,7 +32,6 @@ class TestDataSet:public CPPUNIT_NS::TestFixture {
 public:
 
     void setUp();
-    void testNDSize();
     void testChunkGuessing();
     void testDataType();
     void testDataTypeFromString();
@@ -53,7 +52,6 @@ private:
     nix::hdf5::H5Group h5group;
 
     CPPUNIT_TEST_SUITE(TestDataSet);
-    CPPUNIT_TEST(testNDSize);
     CPPUNIT_TEST(testChunkGuessing);
     CPPUNIT_TEST(testDataType);
     CPPUNIT_TEST(testDataTypeFromString);

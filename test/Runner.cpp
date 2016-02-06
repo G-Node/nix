@@ -7,6 +7,7 @@
 // LICENSE file in the root of the Project.
 
 #include "TestNDArray.hpp"
+#include "TestNDSize.hpp"
 #include "TestUtil.hpp"
 #include "TestVariant.hpp"
 #include "TestValue.hpp"
@@ -75,6 +76,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValue);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestPropertyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestNDArray);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestNDSize);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestUtil);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestImplContainerHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDimensionHDF5);
