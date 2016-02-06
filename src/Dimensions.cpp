@@ -222,8 +222,8 @@ SampledDimension& SampledDimension::operator=(const Dimension &other) {
     if (other.dimensionType() == DimensionType::Sample && impl() != tmp) {
         std::swap(impl(), tmp);
     } else {
-        throw nix::IncompatibleDimensions("Cannot assign other Dimension to SampleDimension.",
-                                          "SampleDimension::operator=");
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a SampledDimension", "SampledDimension::operator=");
     }
     return *this;
 }
@@ -273,8 +273,8 @@ SetDimension& SetDimension::operator=(const Dimension &other) {
     if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
         std::swap(impl(), tmp);
     } else {
-        throw nix::IncompatibleDimensions("Cannot assing other dimension to SetDimension.",
-                                          "SetDimension::operator=");
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a SetDimension", "SetDimension::operator=");
     }
 
     return *this;
@@ -390,8 +390,8 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
     if (other.dimensionType() == DimensionType::Range && impl() != tmp) {
         std::swap(impl(), tmp);
     } else {
-        throw nix::IncompatibleDimensions("Can not assign other Dimension to a RangeDimension",
-                                          "RangeDimension::operator =");
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a RangeDimension", "RangeDimension::operator=");
     }
 
     return *this;
