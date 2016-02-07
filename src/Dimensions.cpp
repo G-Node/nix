@@ -219,11 +219,12 @@ SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
 SampledDimension& SampledDimension::operator=(const Dimension &other) {
     shared_ptr<ISampledDimension> tmp(dynamic_pointer_cast<ISampledDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Sample && impl() != tmp) {
-        std::swap(impl(), tmp);
-    } else {
+    if (other.dimensionType() != DimensionType::Sample) {
         throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
                                           + " to a SampledDimension", "SampledDimension::operator=");
+    }
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
     return *this;
 }
@@ -270,11 +271,12 @@ SetDimension& SetDimension::operator=(const SetDimension &other) {
 SetDimension& SetDimension::operator=(const Dimension &other) {
     shared_ptr<ISetDimension> tmp(dynamic_pointer_cast<ISetDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
-        std::swap(impl(), tmp);
-    } else {
+    if (other.dimensionType() != DimensionType::Set) {
         throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
                                           + " to a SetDimension", "SetDimension::operator=");
+    }
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
@@ -387,11 +389,12 @@ RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
 RangeDimension& RangeDimension::operator=(const Dimension &other) {
     shared_ptr<IRangeDimension> tmp(dynamic_pointer_cast<IRangeDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Range && impl() != tmp) {
-        std::swap(impl(), tmp);
-    } else {
+    if (other.dimensionType() != DimensionType::Range) {
         throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
                                           + " to a RangeDimension", "RangeDimension::operator=");
+    }
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
     }
 
     return *this;
