@@ -42,9 +42,6 @@ public:
     void read(DataType dtype, void *data, const Selection &fileSel, const Selection &memSel) const;
     void write(DataType dtype, const void *data, const Selection &fileSel, const Selection &memSel);
 
-    void read(std::vector<Value> &values) const;
-    void write(const std::vector<Value> &values);
-
     template<typename T> void read(T &value, bool resize = false) const;
     template<typename T> void read(T &value, const Selection &fileSel, bool resize = false) const;
     template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel) const;
@@ -62,9 +59,6 @@ public:
     NDSize size() const;
 
     void vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
-
-    static h5x::DataType fileTypeForValue(DataType dtype);
-    static h5x::DataType memTypeForValue(DataType dtype);
 
     DataType dataType(void) const;
 

@@ -273,50 +273,6 @@ void TestDataSet::testSelection() {
             CPPUNIT_ASSERT_EQUAL(A[i][j], C[i][j]);
 }
 
-/* helper functions vor testValueIO */
-
-template<typename T>
-void test_val_generic(nix::hdf5::H5Group &h5group, const T &test_value, std::string name)
-{
-    namespace h5x = nix::hdf5::h5x;
-
-    std::vector<nix::Value> values = {nix::Value(test_value), nix::Value(test_value)};
-
-    nix::NDSize size = {1};
-    h5x::DataType fileType = nix::hdf5::DataSet::fileTypeForValue(values[0].type());
-
-    nix::hdf5::DataSet ds = h5group.createData(name, fileType, size);
-
-    nix::DataType dt = nix::to_data_type<T>::value;
-    CPPUNIT_ASSERT_EQUAL(ds.dataType(), dt);
-
-    ds.write(values);
-    std::vector<nix::Value> checkValues;
-
-    ds.read(checkValues);
-
-    CPPUNIT_ASSERT_EQUAL(values.size(), checkValues.size());
-
-    for (size_t i = 0; i < values.size(); ++i) {
-        CPPUNIT_ASSERT_EQUAL(values[i].get<T>(), checkValues[i].get<T>());
-    }
-
-}
-
-void TestDataSet::testValueIO() {
-
-    test_val_generic(h5group, true,  "boolValue");
-    test_val_generic(h5group, 42.0,  "doubleValue");
-    test_val_generic(h5group, uint32_t(42), "uint32Value");
-    test_val_generic(h5group,  int32_t(42),  "int32Value");
-    test_val_generic(h5group, uint64_t(42), "uint64Value");
-    test_val_generic(h5group,  int64_t(42),  "int64Value");
-
-    test_val_generic(h5group, std::string("String Value"), "stringValue");
-
-}
-
-
 void TestDataSet::testNDArrayIO()
 {
     nix::NDSize dims({5, 5});
