@@ -123,12 +123,30 @@ void BaseTestProperty::testDataType() {
     std::vector<nix::Value> doubleValues = { nix::Value(1.0),
                                              nix::Value(2.0),
                                              nix::Value(-99.99) };
+    std::vector<nix::Value> intValues = {nix::Value(int32_t(1)), nix::Value(int32_t(2)), nix::Value(int32_t(3))};
+    std::vector<nix::Value> uintValues = {nix::Value(uint32_t(1)), nix::Value(uint32_t(2)), nix::Value(uint32_t(3))};
+    std::vector<nix::Value> int64Values = {nix::Value(int64_t(1)), nix::Value(int64_t(2)), nix::Value(int64_t(3))};
+    std::vector<nix::Value> uint64Values = {nix::Value(uint64_t(1)), nix::Value(uint64_t(2)), nix::Value(uint64_t(3))};
+    std::vector<nix::Value> boolValues = {nix::Value(true), nix::Value(false), nix::Value(true)};
+
+
     nix::Property p1 = section.createProperty("strProperty", strValues);
     nix::Property p2 = section.createProperty("doubleProperty", doubleValues);
+    nix::Property p3 = section.createProperty("int32Property", intValues);
+    nix::Property p4 = section.createProperty("uint32Property", uintValues);
+    nix::Property p5 = section.createProperty("int64Property", int64Values);
+    nix::Property p6 = section.createProperty("uint64Property", uint64Values);
+    nix::Property p7 = section.createProperty("boolProperty", boolValues);
+
 
     CPPUNIT_ASSERT(p1.dataType() == DataType::String);
     CPPUNIT_ASSERT(p2.dataType() == DataType::Double);
-
+    CPPUNIT_ASSERT(p3.dataType() == DataType::Int32);
+    CPPUNIT_ASSERT(p4.dataType() == DataType::UInt32);
+    CPPUNIT_ASSERT(p5.dataType() == DataType::Int64);
+    CPPUNIT_ASSERT(p6.dataType() == DataType::UInt64);
+    CPPUNIT_ASSERT(p7.dataType() == DataType::Bool);
+    
     file.deleteSection(section.id());
 }
 
