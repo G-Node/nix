@@ -125,6 +125,7 @@ public:
 
     bool operator!=(const PropertyHDF5 &other) const; //FIXME: not implemented
 
+    static h5x::DataType fileTypeForValue(DataType dtype);
 
     virtual ~PropertyHDF5();
 

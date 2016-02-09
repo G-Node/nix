@@ -278,7 +278,7 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
     string new_id = util::createId();
     boost::optional<H5Group> g = property_group(true);
 
-    h5x::DataType fileType = DataSet::fileTypeForValue(dtype);
+    h5x::DataType fileType = PropertyHDF5::fileTypeForValue(dtype);
     DataSet dataset = g->createData(name, fileType, {0});
 
     return make_shared<PropertyHDF5>(file(), dataset, new_id, name);
