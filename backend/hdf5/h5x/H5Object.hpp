@@ -136,6 +136,8 @@ public:
 
     std::string name() const;
 
+    H5I_type_t type() const;
+
     virtual void close();
 
     virtual ~H5Object();

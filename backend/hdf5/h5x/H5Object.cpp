@@ -99,6 +99,10 @@ std::string H5Object::name() const {
 }
 
 
+H5I_type_t H5Object::type() const {
+    return H5Iget_type(hid);
+}
+
 void H5Object::close() {
     dec();
     invalidate();
