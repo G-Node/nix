@@ -64,6 +64,7 @@ void TestH5::testBase() {
 
     nix::hdf5::H5Group g_invalid{};
     CPPUNIT_ASSERT_EQUAL(false, g_invalid.isValid());
+    CPPUNIT_ASSERT_EQUAL(H5I_BADID, g_invalid.type());
     CPPUNIT_ASSERT_THROW(g_invalid.check("Error"), nix::hdf5::H5Exception);
 
     // check check, heh
@@ -181,6 +182,8 @@ void TestH5::testDataType() {
     h5x::DataType dt_int(t_int, false); // take ownership
     h5x::DataType dt_dbl(t_dbl, false);
 
+    CPPUNIT_ASSERT_NO_THROW(dt_int.check("Should not be thrown!"));
+    CPPUNIT_ASSERT_EQUAL(H5I_DATATYPE, dt_int.type());
     CPPUNIT_ASSERT_EQUAL(true, dt_int.isValid());
     CPPUNIT_ASSERT_EQUAL(H5Tget_class(t_int), dt_int.class_t());
     CPPUNIT_ASSERT_EQUAL(false, dt_int.isCompound());
@@ -212,6 +215,14 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, i), cmpd.member_offset(1));
     CPPUNIT_ASSERT_EQUAL(H5T_FLOAT, cmpd.member_class(0));
     CPPUNIT_ASSERT_EQUAL(H5T_INTEGER, cmpd.member_class(1));
+
+    {
+        CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
+        h5x::DataType nativeDouble = H5T_NATIVE_DOUBLE;
+        CPPUNIT_ASSERT_NO_THROW(nativeDouble.check("Oh noes!"));
+        CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
+    }
+    CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
 
 }
 
