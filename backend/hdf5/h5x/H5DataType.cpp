@@ -211,5 +211,34 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
     return DataType::Nothing;
 }
 
-} // namespace hdf4
+
+DataType data_type_from_h5(const h5x::DataType &dtype) {
+
+    H5T_class_t ftclass = dtype.class_t();
+
+    size_t     size;
+    H5T_sign_t sign;
+
+    if (ftclass == H5T_COMPOUND) {
+        //if it is a compound data type then it must be a
+        //a property dataset, we can handle that
+        int nmems = dtype.member_count();
+        assert(nmems == 6);
+        h5x::DataType vtype = dtype.member_type(0);
+
+        ftclass = vtype.class_t();
+        size = vtype.size();
+        sign = vtype.sign();
+
+    } else if (ftclass == H5T_OPAQUE) {
+        return DataType::Opaque;
+    } else {
+        size = dtype.size();
+        sign = dtype.sign();
+    }
+
+    return data_type_from_h5(ftclass, size, sign);
+}
+
+} // namespace hdf5
 } // namespace nix
