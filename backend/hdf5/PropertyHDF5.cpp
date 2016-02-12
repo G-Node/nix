@@ -161,7 +161,8 @@ void PropertyHDF5::definition(const nix::none_t t) {
 
 
 DataType PropertyHDF5::dataType() const {
-    return this->dataset().dataType();
+    const h5x::DataType dtype = dataset().dataType();
+    return data_type_from_h5(dtype);
 }
 
 
@@ -410,7 +411,7 @@ std::vector<Value> PropertyHDF5::values(void) const
     std::vector<Value> values;
 
     DataSet dset = dataset();
-    DataType dtype = dset.dataType();
+    DataType dtype = data_type_from_h5(dset.dataType());
     NDSize shape = dset.size();
 
     if (shape.size() < 1 || shape[0] < 1) {

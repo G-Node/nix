@@ -91,7 +91,9 @@ void TestDataSet::testDataType() {
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
         hdf5::DataSet ds = h5group.createData(_types[i].name, _types[i].dtype, dims);
-        CPPUNIT_ASSERT_EQUAL(ds.dataType(), _types[i].dtype);
+        nix::hdf5::h5x::DataType h5dtype = ds.dataType();
+        nix::DataType nixdtype = nix::hdf5::data_type_from_h5(h5dtype);
+        CPPUNIT_ASSERT_EQUAL(_types[i].dtype, nixdtype);
     }
 
 }

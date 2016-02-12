@@ -334,7 +334,8 @@ DataType DataArrayHDF5::dataType(void) const {
     }
 
     DataSet ds = group().openData("data");
-    return ds.dataType();
+    const h5x::DataType dtype = ds.dataType();
+    return data_type_from_h5(dtype);
 }
 
 } // ns nix::hdf5

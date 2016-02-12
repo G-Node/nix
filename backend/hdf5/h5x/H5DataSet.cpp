@@ -227,12 +227,11 @@ void DataSet::vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace)
 }
 
 
-DataType DataSet::dataType(void) const
+h5x::DataType DataSet::dataType(void) const
 {
     h5x::DataType ftype = H5Dget_type(hid);
     ftype.check("DataSet::dataType(): H5Dget_type failed");
-    
-    return data_type_from_h5(ftype);
+    return ftype;
 }
 
 DataSpace DataSet::getSpace() const {
