@@ -227,36 +227,11 @@ void DataSet::vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace)
 }
 
 
-DataType DataSet::dataType(void) const
+h5x::DataType DataSet::dataType(void) const
 {
     h5x::DataType ftype = H5Dget_type(hid);
     ftype.check("DataSet::dataType(): H5Dget_type failed");
-
-    H5T_class_t ftclass = ftype.class_t();
-
-    size_t     size;
-    H5T_sign_t sign;
-
-    if (ftclass == H5T_COMPOUND) {
-        //if it is a compound data type then it must be a
-        //a property dataset, we can handle that
-        int nmems = ftype.member_count();
-        assert(nmems == 6);
-        h5x::DataType vtype = ftype.member_type(0);
-
-        ftclass = vtype.class_t();
-        size = vtype.size();
-        sign = vtype.sign();
-
-    } else if (ftclass == H5T_OPAQUE) {
-        return DataType::Opaque;
-    } else {
-        size = ftype.size();
-        sign = ftype.sign();
-    }
-
-    DataType dtype = nix::hdf5::data_type_from_h5(ftclass, size, sign);
-    return dtype;
+    return ftype;
 }
 
 DataSpace DataSet::getSpace() const {

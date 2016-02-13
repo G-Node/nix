@@ -60,7 +60,7 @@ public:
 
     void vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
 
-    DataType dataType(void) const;
+    h5x::DataType dataType(void) const;
 
     DataSpace getSpace() const;
 

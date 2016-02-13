@@ -66,6 +66,7 @@ NIXAPI h5x::DataType data_type_to_h5(DataType dtype, bool for_memory);
 
 
 NIXAPI DataType data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign);
+NIXAPI DataType data_type_from_h5(const h5x::DataType &dtype);
 
 } // namespace hdf5
 } // namespace nix
