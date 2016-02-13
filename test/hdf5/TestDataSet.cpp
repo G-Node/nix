@@ -57,12 +57,12 @@ void TestDataSet::setUp() {
 
 void TestDataSet::testChunkGuessing() {
 
-    CPPUNIT_ASSERT_THROW(hdf5::DataSet::guessChunking(NDSize{}, DataType::Double),
+    CPPUNIT_ASSERT_THROW(hdf5::DataSet::guessChunking(NDSize{}, H5T_NATIVE_DOUBLE),
                          InvalidRank);
 
     NDSize dims({1024, 1024});
 
-    NDSize chunks = hdf5::DataSet::guessChunking(dims, DataType::Double);
+    NDSize chunks = hdf5::DataSet::guessChunking(dims, hdf5::h5x::DataType(H5T_NATIVE_DOUBLE));
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
 }

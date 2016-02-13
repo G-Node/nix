@@ -118,9 +118,9 @@ void DataSet::write(DataType         dtype,
  *
  * @return An (maybe not at all optimal) guess for chunk size
  */
-NDSize DataSet::guessChunking(NDSize dims, DataType dtype)
+NDSize DataSet::guessChunking(NDSize dims, const h5x::DataType &dtype)
 {
-    const size_t type_size = data_type_to_size(dtype);
+    const size_t type_size = dtype.size();
     NDSize chunks = guessChunking(dims, type_size);
     return chunks;
 }
