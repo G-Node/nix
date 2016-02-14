@@ -269,14 +269,12 @@ bool DataArrayHDF5::hasData() const {
 }
 
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
-    DataSet ds;
 
     if (!group().hasData("data")) {
-        //FIXME: this case should actually never be possible, replace with exception?
-        ds = group().createData("data", dtype, count);
-    } else {
-        ds = group().openData("data");
+        throw ConsistencyError("DataArray with missing h5df DataSet");
     }
+
+    DataSet ds = group().openData("data");
 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
