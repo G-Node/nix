@@ -20,6 +20,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <vector>
 
 namespace nix {
 
@@ -114,13 +115,16 @@ public:
             std::invalid_argument("InvalidDimension: " + what + " evoked at: " + where) { }
 };
 
+class ConsistencyError: public std::runtime_error {
+public:
+    ConsistencyError(const std::string &what) : runtime_error("ConsistencyError: " + what){ }
+};
 
-class MissingAttr: public std::runtime_error {
+    class MissingAttr: public std::runtime_error {
 public:
     MissingAttr(const std::string &name):
             std::runtime_error("MissingAttribute: Obligatory attribute " + name + " is not set!") { }
 };
-
 
 namespace check {
 
