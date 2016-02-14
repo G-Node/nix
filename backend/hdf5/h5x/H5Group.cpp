@@ -172,14 +172,6 @@ void H5Group::removeData(const std::string &name) {
     }
 }
 
-DataSet H5Group::createData(const std::string &name,
-                            DataType dtype,
-                            const NDSize &size) const
-{
-    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-    return createData(name, fileType, size);
-}
-
 
 DataSet H5Group::createData(const std::string &name,
                             const h5x::DataType &fileType,

@@ -90,7 +90,8 @@ void TestDataSet::testDataType() {
     const NDSize dims({5, 5});
 
     for (size_t i = 0; i < (sizeof(_types)/sizeof(_type_info)); i++) {
-        hdf5::DataSet ds = h5group.createData(_types[i].name, _types[i].dtype, dims);
+        nix::hdf5::h5x::DataType fileType = nix::hdf5::data_type_to_h5_filetype(_types[i].dtype);
+        hdf5::DataSet ds = h5group.createData(_types[i].name, fileType, dims);
         nix::hdf5::h5x::DataType h5dtype = ds.dataType();
         nix::DataType nixdtype = nix::hdf5::data_type_from_h5(h5dtype);
         CPPUNIT_ASSERT_EQUAL(_types[i].dtype, nixdtype);
@@ -165,10 +166,10 @@ void TestDataSet::testDataTypeIsNumeric() {
 void TestDataSet::testBasic() {
     NDSize dims({4, 6});
 
-    hdf5::DataSet dsZero = h5group.createData("dsZero", DataType::Double, nix::NDSize({ 0, 0 }));
+    hdf5::DataSet dsZero = h5group.createData("dsZero", H5T_NATIVE_DOUBLE, nix::NDSize({ 0, 0 }));
     CPPUNIT_ASSERT_EQUAL(dsZero.size(), (NDSize{0, 0}));
 
-    hdf5::DataSet ds = h5group.createData("dsDouble", DataType::Double, dims);
+    hdf5::DataSet ds = h5group.createData("dsDouble", H5T_NATIVE_DOUBLE, dims);
 
     test_refcounting<hdf5::DataSet>(dsZero.h5id(), ds.h5id());
 
@@ -229,7 +230,7 @@ void TestDataSet::testBasic() {
 void TestDataSet::testSelection() {
     NDSize dims({15, 15});
 
-    hdf5::DataSet ds = h5group.createData("dsDoubleSelection", DataType::Double, dims);
+    hdf5::DataSet ds = h5group.createData("dsDoubleSelection", H5T_NATIVE_DOUBLE, dims);
 
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
@@ -285,7 +286,7 @@ void TestDataSet::testNDArrayIO()
         for(size_t j = 0; j != 5; ++j)
             A.set<double>(nix::NDSize({ i, j }), values++);
 
-    hdf5::DataSet ds = h5group.createData("NArray5x5", nix::DataType::Double, dims);
+    hdf5::DataSet ds = h5group.createData("NArray5x5", H5T_NATIVE_DOUBLE, dims);
     ds.write(A);
 
     nix::NDArray Atest(nix::DataType::Double, dims);
@@ -306,7 +307,7 @@ void TestDataSet::testNDArrayIO()
             for(size_t k = 0; k != dims[2]; ++k)
                 B.set<double>(nix::NDSize({ i, j, k }), values++);
 
-    ds = h5group.createData("NDArray3x4x5", nix::DataType::Double, dims);
+    ds = h5group.createData("NDArray3x4x5", H5T_NATIVE_DOUBLE, dims);
     ds.write(B);
 
     nix::NDArray Btest(nix::DataType::Double, dims);
@@ -325,7 +326,7 @@ void TestDataSet::testValArrayIO() {
     std::valarray<double> va_double(10);
     std::iota(std::begin(va_double), std::end(va_double), 0);
 
-    hdf5::DataSet ds = h5group.createData("ValArrayd10", nix::DataType::Double, NDSize{10});
+    hdf5::DataSet ds = h5group.createData("ValArrayd10", H5T_NATIVE_DOUBLE, NDSize{10});
     ds.write(va_double);
 
     std::valarray<double> va_double1{};
@@ -343,7 +344,7 @@ void TestDataSet::testOpaqueIO() {
     std::iota(std::begin(bytes), std::end(bytes), 0);
     NDSize size = {sizeof(bytes)};
 
-    hdf5::DataSet ds = h5group.createData("OpaqueB10", DataType::Opaque, size);
+    hdf5::DataSet ds = h5group.createData("OpaqueB10", H5T_NATIVE_OPAQUE, size);
     ds.write(DataType::Opaque, size, bytes);
 
     char bytes_read[10];

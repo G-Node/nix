@@ -137,7 +137,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = group().createData("polynom_coefficients", DataType::Double, {coefficients.size()});
+        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()});
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -260,7 +260,8 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
         throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }
 
-    group().createData("data", dtype, size);
+    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
+    group().createData("data", fileType, size);
 }
 
 bool DataArrayHDF5::hasData() const {
