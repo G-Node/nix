@@ -137,7 +137,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = group().createData("polynom_coefficients", DataType::Double, {coefficients.size()});
+        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()});
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -257,11 +257,11 @@ DataArrayHDF5::~DataArrayHDF5() {
 
 void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
     if (group().hasData("data")) {
-        throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
+        throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }
 
-    group().createData("data", dtype, size); //FIXME: check if this 2-step creation is needed
-    DataSet ds = group().openData("data");
+    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
+    group().createData("data", fileType, size);
 }
 
 bool DataArrayHDF5::hasData() const {
@@ -269,14 +269,12 @@ bool DataArrayHDF5::hasData() const {
 }
 
 void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count, const NDSize &offset) {
-    DataSet ds;
 
     if (!group().hasData("data")) {
-        //FIXME: this case should actually never be possible, replace with exception?
-        ds = group().createData("data", dtype, count);
-    } else {
-        ds = group().openData("data");
+        throw ConsistencyError("DataArray with missing h5df DataSet");
     }
+
+    DataSet ds = group().openData("data");
 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();

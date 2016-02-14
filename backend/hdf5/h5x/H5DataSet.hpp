@@ -50,7 +50,7 @@ public:
     template<typename T> void write(const T &value, const Selection &fileSel);
     template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
-    static NDSize guessChunking(NDSize dims, DataType dtype);
+    static NDSize guessChunking(NDSize dims, const h5x::DataType &dtype);
 
     static NDSize guessChunking(NDSize dims, size_t element_size);
 

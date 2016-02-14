@@ -46,8 +46,6 @@ public:
 
     bool hasData(const std::string &name) const;
 
-    DataSet createData(const std::string &name, DataType dtype, const NDSize &size) const;
-
     DataSet createData(const std::string &name, const h5x::DataType &fileType,
             const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
             bool maxSizeUnlimited = true, bool guessChunks = true) const;
@@ -194,7 +192,8 @@ void H5Group::setData(const std::string &name, const T &value)
 
     DataSet ds;
     if (!hasData(name)) {
-        ds = createData(name, dtype, shape);
+        h5x::DataType fileType = data_type_to_h5_filetype(dtype);
+        ds = createData(name, fileType, shape);
     } else {
         ds = openData(name);
         ds.setExtent(shape);

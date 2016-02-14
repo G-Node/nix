@@ -133,13 +133,13 @@ std::string H5Group::objectName(ndsize_t index) const {
     std::string str_name;
     // check whether name is found by index
     ssize_t name_len = H5Lget_name_by_idx(hid,
-                                                  ".",
-                                                  H5_INDEX_NAME,
-                                                  H5_ITER_NATIVE,
-                                                  (hsize_t) index,
-                                                  NULL,
-                                                  0,
-                                                  H5P_DEFAULT);
+                                          ".",
+                                          H5_INDEX_NAME,
+                                          H5_ITER_NATIVE,
+                                          (hsize_t) index,
+                                          NULL,
+                                          0,
+                                          H5P_DEFAULT);
     if (name_len > 0) {
         char* name = new char[name_len+1];
         name_len = H5Lget_name_by_idx(hid,
@@ -170,14 +170,6 @@ void H5Group::removeData(const std::string &name) {
         HErr res = H5Gunlink(hid, name.c_str());
         res.check("H5Group::removeData(): Could not unlink DataSet");
     }
-}
-
-DataSet H5Group::createData(const std::string &name,
-                            DataType dtype,
-                            const NDSize &size) const
-{
-    h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-    return createData(name, fileType, size);
 }
 
 
