@@ -257,7 +257,7 @@ DataArrayHDF5::~DataArrayHDF5() {
 
 void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
     if (group().hasData("data")) {
-        throw new std::runtime_error("DataArray alread exists"); //TODO: FIXME, better exception
+        throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }
 
     group().createData("data", dtype, size); //FIXME: check if this 2-step creation is needed
