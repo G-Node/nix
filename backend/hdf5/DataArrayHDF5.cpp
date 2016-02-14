@@ -260,8 +260,7 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
         throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }
 
-    group().createData("data", dtype, size); //FIXME: check if this 2-step creation is needed
-    DataSet ds = group().openData("data");
+    group().createData("data", dtype, size);
 }
 
 bool DataArrayHDF5::hasData() const {
