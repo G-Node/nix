@@ -36,10 +36,10 @@ public:
     void read(hid_t memType, void *data) const;
     void write(hid_t memType, const void *data);
 
-    void read(DataType dtype, const NDSize &size, void *data) const;
+    void read(h5x::DataType memType, const NDSize &size, void *data) const;
     void write(DataType dtype, const NDSize &size, const void *data);
 
-    void read(DataType dtype, void *data, const Selection &fileSel, const Selection &memSel) const;
+    void read(h5x::DataType memType, void *data, const Selection &fileSel, const Selection &memSel) const;
     void write(DataType dtype, const void *data, const Selection &fileSel, const Selection &memSel);
 
     template<typename T> void read(T &value, bool resize = false) const;
@@ -84,8 +84,8 @@ template<typename T> void DataSet::read(T &value, bool resize) const
     }
 
     DataType dtype = hydra.element_data_type();
-    NDSize size = hydra.shape();
-    read(dtype, size, hydra.data());
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    read(memType, hydra.shape(), hydra.data());
 }
 
 /**
@@ -122,7 +122,8 @@ template<typename T> void DataSet::read(T &value, const Selection &fileSel, cons
     Hydra<T> hydra(value);
 
     DataType dtype = hydra.element_data_type();
-    this->read(dtype, hydra.data(), fileSel, memSel);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    this->read(memType, hydra.data(), fileSel, memSel);
 }
 
 /* ************************************************************************* */

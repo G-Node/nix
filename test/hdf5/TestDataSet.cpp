@@ -344,11 +344,13 @@ void TestDataSet::testOpaqueIO() {
     std::iota(std::begin(bytes), std::end(bytes), 0);
     NDSize size = {sizeof(bytes)};
 
-    hdf5::DataSet ds = h5group.createData("OpaqueB10", H5T_NATIVE_OPAQUE, size);
+    const hdf5::h5x::DataType opaque(H5T_NATIVE_OPAQUE);
+
+    hdf5::DataSet ds = h5group.createData("OpaqueB10", opaque, size);
     ds.write(DataType::Opaque, size, bytes);
 
     char bytes_read[10];
-    ds.read(DataType::Opaque, size, bytes_read);
+    ds.read(opaque, size, bytes_read);
 
     CPPUNIT_ASSERT(memcmp(bytes, bytes_read, sizeof(bytes)) == 0);
 }

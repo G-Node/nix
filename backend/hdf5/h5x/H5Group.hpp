@@ -214,10 +214,11 @@ bool H5Group::getData(const std::string &name, T &value) const
     DataSet ds = openData(name);
 
     DataType dtype = hydra.element_data_type();
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
     NDSize shape = ds.size();
-
     hydra.resize(shape);
-    ds.read(dtype, shape, hydra.data());
+
+    ds.read(memType, shape, hydra.data());
 
     return true;
 }

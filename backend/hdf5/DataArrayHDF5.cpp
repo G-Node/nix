@@ -293,6 +293,7 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
     }
 
     DataSet ds = group().openData("data");
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
 
     if (offset.size()) {
         Selection fileSel = ds.createSelection();
@@ -301,9 +302,9 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
         fileSel.select(count ? count : NDSize(offset.size(), 1), offset);
         Selection memSel(DataSpace::create(count, false));
 
-        ds.read(dtype, data, fileSel, memSel);
+        ds.read(memType, data, fileSel, memSel);
     } else {
-        ds.read(dtype, count, data);
+        ds.read(memType, count, data);
     }
 
 }

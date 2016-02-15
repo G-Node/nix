@@ -37,11 +37,9 @@ void DataSet::write(hid_t memType, const void *data)
     res.check("DataSet::write() IOError");
 }
 
-void DataSet::read(DataType dtype, const NDSize &size, void *data) const
+void DataSet::read(h5x::DataType memType, const NDSize &size, void *data) const
 {
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-
-    if (dtype == DataType::String) {
+    if (memType.isVariableString()) {
         StringWriter writer(size, static_cast<std::string *>(data));
         read(memType.h5id(), *writer);
         writer.finish();
@@ -64,15 +62,13 @@ void DataSet::write(DataType dtype, const NDSize &size, const void *data)
 }
 
 
-void DataSet::read(DataType        dtype,
+void DataSet::read(h5x::DataType    memType,
                    void            *data,
                    const Selection &fileSel,
                    const Selection &memSel) const
 {
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-
     HErr res;
-    if (dtype == DataType::String) {
+    if (memType.isVariableString()) {
         NDSize size = memSel.size();
         StringWriter writer(size, static_cast<std::string *>(data));
         res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *writer);
