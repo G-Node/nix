@@ -322,7 +322,7 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
     fileValues.resize(size);
     values.resize(size);
 
-    h5ds.read(memType.h5id(), fileValues.data());
+    h5ds.read(fileValues.data(), memType, H5S_ALL, H5S_ALL);
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
         Value temp(val.val());

@@ -25,9 +25,9 @@ DataSet::DataSet(const DataSet &other)
 
 }
 
-void DataSet::read(hid_t memType, void *data) const
+void DataSet::read(void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace) const
 {
-    HErr res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    HErr res = H5Dread(hid, memType.h5id(), memSpace.h5id(), fileSpace.h5id(), H5P_DEFAULT, data);
     res.check("DataSet::read() IO error");
 }
 
@@ -41,11 +41,11 @@ void DataSet::read(h5x::DataType memType, const NDSize &size, void *data) const
 {
     if (memType.isVariableString()) {
         StringWriter writer(size, static_cast<std::string *>(data));
-        read(memType.h5id(), *writer);
+        read(*writer, memType, H5S_ALL, H5S_ALL);
         writer.finish();
         vlenReclaim(memType.h5id(), *writer);
     } else {
-        read(memType.h5id(), data);
+        read(data, memType, H5S_ALL, H5S_ALL);
     }
 }
 

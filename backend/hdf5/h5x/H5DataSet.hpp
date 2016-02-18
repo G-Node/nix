@@ -33,7 +33,7 @@ public:
 
     DataSet(const DataSet &other);
 
-    void read(hid_t memType, void *data) const;
+    void read(void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace) const;
     void write(hid_t memType, const void *data);
 
     void read(h5x::DataType memType, const NDSize &size, void *data) const;
