@@ -291,7 +291,7 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
     if (!group().hasData("data")) {
-        return;
+        throw ConsistencyError("DataArray with missing h5df DataSet");
     }
 
     DataSet ds = group().openData("data");
