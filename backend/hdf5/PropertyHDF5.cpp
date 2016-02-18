@@ -360,7 +360,7 @@ void do_write_value(DataSet &h5ds, const std::vector<Value> &values)
     });
 
     h5x::DataType memType = h5_type_for_value<T>(true);
-    h5ds.write(memType.h5id(), fileValues.data());
+    h5ds.write(fileValues.data(), memType, H5S_ALL, H5S_ALL);
 }
 
 // value public API

@@ -31,9 +31,9 @@ void DataSet::read(void *data, const h5x::DataType &memType, const DataSpace &me
     res.check("DataSet::read() IO error");
 }
 
-void DataSet::write(hid_t memType, const void *data)
+void DataSet::write(const void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace)
 {
-    HErr res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    HErr res = H5Dwrite(hid, memType.h5id(), memSpace.h5id(), fileSpace.h5id(), H5P_DEFAULT, data);
     res.check("DataSet::write() IOError");
 }
 
@@ -55,9 +55,9 @@ void DataSet::write(DataType dtype, const NDSize &size, const void *data)
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
     if (dtype == DataType::String) {
         StringReader reader(size, static_cast<const std::string *>(data));
-        write(memType.h5id(), *reader);
+        write(*reader, memType, H5S_ALL, H5S_ALL);
     } else {
-        write(memType.h5id(), data);
+        write(data, memType, H5S_ALL, H5S_ALL);
     }
 }
 
