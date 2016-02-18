@@ -31,6 +31,8 @@ public:
     static DataSpace create(const NDSize &dims, const NDSize &maxdims = {});
     static DataSpace create(const NDSize &dims, bool maxdims_unlimited);
 
+    void hyperslab(const NDSize &count, const NDSize &start, H5S_seloper_t op = H5S_SELECT_SET);
+
 };
 
 } //::nix::hdf5

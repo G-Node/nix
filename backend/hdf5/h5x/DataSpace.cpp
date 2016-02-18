@@ -67,6 +67,10 @@ NDSize DataSpace::extent() const {
 }
 
 
+void DataSpace::hyperslab(const NDSize &count, const NDSize &start, H5S_seloper_t op) {
+    HErr status = H5Sselect_hyperslab(hid, op, start.data(), nullptr, count.data(), nullptr);
+    status.check("DataSpace::hyperslab(): H5Sselect_hyperslab() failed!");
+}
 
 } //::nix::hdf5
 } //::nix
