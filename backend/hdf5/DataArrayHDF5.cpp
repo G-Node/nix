@@ -276,15 +276,17 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
 
     DataSet ds = group().openData("data");
 
-    if (offset.size()) {
-        Selection fileSel = ds.createSelection();
-        fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, false));
+    DataSpace fileSpace = ds.getSpace();
+    DataSpace memSpace = DataSpace::create(count, false);
 
-        ds.write(dtype, data, fileSel, memSel);
-    } else {
-        ds.write(dtype, count, data);
+    if (offset && count) {
+        fileSpace.hyperslab(count, offset);
+    } else if (offset && !count) {
+        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
     }
+
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    ds.write(data, memType, memSpace, fileSpace);
 }
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
