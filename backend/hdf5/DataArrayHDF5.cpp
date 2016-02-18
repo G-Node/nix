@@ -295,20 +295,18 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
     }
 
     DataSet ds = group().openData("data");
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
 
-    if (offset.size()) {
-        Selection fileSel = ds.createSelection();
-        // if count.size() == 0, i.e. we want to read a scalar,
-        // we have to supply something that fileSel can make sense of
-        fileSel.select(count ? count : NDSize(offset.size(), 1), offset);
-        Selection memSel(DataSpace::create(count, false));
+    DataSpace memSpace = DataSpace::create(count, false);
+    DataSpace fileSpace = ds.getSpace();
 
-        ds.read(memType, data, fileSel, memSel);
-    } else {
-        ds.read(memType, count, data);
+    if (offset && count) {
+        fileSpace.hyperslab(count, offset);
+    } else if (offset && !count) {
+        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
     }
 
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    ds.read(data, memType, memSpace, fileSpace);
 }
 
 NDSize DataArrayHDF5::dataExtent(void) const {
