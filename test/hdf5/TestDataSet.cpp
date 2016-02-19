@@ -226,56 +226,6 @@ void TestDataSet::testBasic() {
 }
 
 
-
-void TestDataSet::testSelection() {
-    NDSize dims({15, 15});
-
-    hdf5::DataSet ds = h5group.createData("dsDoubleSelection", H5T_NATIVE_DOUBLE, dims);
-
-    typedef boost::multi_array<double, 2> array_type;
-    typedef array_type::index index;
-    array_type A(boost::extents[5][5]);
-    int values = 1;
-    for(index i = 0; i != 5; ++i)
-        for(index j = 0; j != 5; ++j)
-            A[i][j] = values++;
-
-    hdf5::Selection memSelection(A);
-    hdf5::Selection fileSelection = ds.createSelection();
-
-    NDSize fileCount(dims.size());
-    NDSize fileStart(dims.size());
-    fileCount.fill(5ULL);
-    fileStart.fill(5ULL);
-    fileSelection.select(fileCount, fileStart);
-
-    NDSize boundsStart(dims.size());
-    NDSize boundsEnd(dims.size());
-
-    fileSelection.bounds(boundsStart, boundsEnd);
-    NDSize boundsSize = fileSelection.size();
-
-    ds.write(A, fileSelection, memSelection);
-
-    array_type B(boost::extents[5][5]);
-    ds.read(B, fileSelection); //NB: no mem-selection
-
-    for(index i = 0; i != 5; ++i)
-        for(index j = 0; j != 5; ++j)
-            CPPUNIT_ASSERT_EQUAL(A[i][j], B[i][j]);
-
-    NDSSize offset(dims.size(), 5);
-    fileSelection.offset(offset);
-    ds.write(A, fileSelection);
-
-    array_type C(boost::extents[5][5]);
-    ds.read(C, fileSelection, true);
-
-    for(index i = 0; i != 5; ++i)
-        for(index j = 0; j != 5; ++j)
-            CPPUNIT_ASSERT_EQUAL(A[i][j], C[i][j]);
-}
-
 void TestDataSet::testNDArrayIO()
 {
     nix::NDSize dims({5, 5});

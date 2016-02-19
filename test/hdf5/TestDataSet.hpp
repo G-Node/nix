@@ -37,7 +37,6 @@ public:
     void testDataTypeFromString();
     void testDataTypeIsNumeric();
     void testBasic();
-    void testSelection();
     void testNDArrayIO();
     void testValArrayIO();
     void testOpaqueIO();
@@ -56,7 +55,6 @@ private:
     CPPUNIT_TEST(testDataTypeFromString);
     CPPUNIT_TEST(testDataTypeIsNumeric);
     CPPUNIT_TEST(testBasic);
-    CPPUNIT_TEST(testSelection);
     CPPUNIT_TEST(testNDArrayIO);
     CPPUNIT_TEST(testValArrayIO);
     CPPUNIT_TEST(testOpaqueIO);
