@@ -62,44 +62,6 @@ void DataSet::write(DataType dtype, const NDSize &size, const void *data)
 }
 
 
-void DataSet::read(h5x::DataType    memType,
-                   void            *data,
-                   const Selection &fileSel,
-                   const Selection &memSel) const
-{
-    HErr res;
-    if (memType.isVariableString()) {
-        NDSize size = memSel.size();
-        StringWriter writer(size, static_cast<std::string *>(data));
-        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *writer);
-        writer.finish();
-        vlenReclaim(memType.h5id(), *writer);
-    } else {
-        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
-    }
-
-    res.check("DataSet::read() IO error");
-}
-
-void DataSet::write(DataType         dtype,
-                    const void      *data,
-                    const Selection &fileSel,
-                    const Selection &memSel)
-{
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    HErr res;
-
-    if (dtype == DataType::String) {
-        NDSize size = memSel.size();
-        StringReader reader(size, static_cast<const std::string *>(data));
-        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *reader);
-    } else {
-        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
-    }
-
-    res.check("DataSet::write(): IO error");
-}
-
 #define CHUNK_BASE   16*1024
 #define CHUNK_MIN     8*1024
 #define CHUNK_MAX  1024*1024

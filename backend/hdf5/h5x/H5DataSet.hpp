@@ -38,10 +38,7 @@ public:
 
     void read(h5x::DataType memType, const NDSize &size, void *data) const;
     void write(DataType dtype, const NDSize &size, const void *data);
-
-    void read(h5x::DataType memType, void *data, const Selection &fileSel, const Selection &memSel) const;
-    void write(DataType dtype, const void *data, const Selection &fileSel, const Selection &memSel);
-
+    
     template<typename T> void read(T &value, bool resize = false) const;
     template<typename T> void write(const T &value);
 
