@@ -39,9 +39,8 @@ void DataSet::write(const void *data, const h5x::DataType &memType, const DataSp
 
 void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset) const
 {
-    DataSpace fileSpace = getSpace();
-    fileSpace.hyperslab(count, offset.size() ? offset : NDSize(count.size(), 0));
-    DataSpace memSpace = DataSpace::create(count, false);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
 
     if (memType.isVariableString()) {
         StringWriter writer(count, static_cast<std::string *>(data));
@@ -56,9 +55,8 @@ void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const
 
 void DataSet::write(const void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset)
 {
-    DataSpace fileSpace = getSpace();
-    fileSpace.hyperslab(count, offset.size() ? offset : NDSize(count.size(), 0));
-    DataSpace memSpace = DataSpace::create(count, false);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
 
     if (memType.isVariableString()) {
         StringReader reader(count, static_cast<const std::string *>(data));
@@ -199,6 +197,21 @@ DataSpace DataSet::getSpace() const {
     return space;
 }
 
+
+std::tuple<DataSpace, DataSpace> DataSet::offsetCount2DataSpaces(const NDSize &count,
+                                                                 const NDSize &offset) const
+{
+    DataSpace fileSpace = getSpace();
+    DataSpace memSpace = DataSpace::create(count, false);
+
+    if (offset && count) {
+        fileSpace.hyperslab(count, offset);
+    } else if (offset && !count) {
+        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
+    }
+
+    return std::tuple<DataSpace, DataSpace>(memSpace, fileSpace);
+}
 
 } // namespace hdf5
 } // namespace nix

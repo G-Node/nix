@@ -17,6 +17,8 @@
 
 #include <nix/Platform.hpp>
 
+#include <tuple>
+
 namespace nix {
 namespace hdf5 {
 
@@ -54,6 +56,8 @@ public:
 
     DataSpace getSpace() const;
 
+private:
+    std::tuple<DataSpace, DataSpace> offsetCount2DataSpaces(const NDSize &count, const NDSize &offset) const;
 };
 
 
