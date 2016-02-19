@@ -299,7 +299,7 @@ void TestDataSet::testOpaqueIO() {
     ds.write(DataType::Opaque, size, bytes);
 
     char bytes_read[10];
-    ds.read(opaque, size, bytes_read);
+    ds.read(bytes_read, opaque, size);
 
     CPPUNIT_ASSERT(memcmp(bytes, bytes_read, sizeof(bytes)) == 0);
 }

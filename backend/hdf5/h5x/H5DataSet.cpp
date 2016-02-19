@@ -37,15 +37,19 @@ void DataSet::write(const void *data, const h5x::DataType &memType, const DataSp
     res.check("DataSet::write() IOError");
 }
 
-void DataSet::read(h5x::DataType memType, const NDSize &size, void *data) const
+void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset) const
 {
+    DataSpace fileSpace = getSpace();
+    fileSpace.hyperslab(count, offset.size() ? offset : NDSize(count.size(), 0));
+    DataSpace memSpace = DataSpace::create(count, false);
+
     if (memType.isVariableString()) {
-        StringWriter writer(size, static_cast<std::string *>(data));
-        read(*writer, memType, H5S_ALL, H5S_ALL);
+        StringWriter writer(count, static_cast<std::string *>(data));
+        read(*writer, memType, memSpace, fileSpace);
         writer.finish();
         vlenReclaim(memType.h5id(), *writer);
     } else {
-        read(data, memType, H5S_ALL, H5S_ALL);
+        read(data, memType, memSpace, fileSpace);
     }
 }
 

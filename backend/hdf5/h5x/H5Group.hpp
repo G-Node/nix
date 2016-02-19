@@ -218,7 +218,7 @@ bool H5Group::getData(const std::string &name, T &value) const
     NDSize shape = ds.size();
     hydra.resize(shape);
 
-    ds.read(memType, shape, hydra.data());
+    ds.read(hydra.data(), memType, shape);
 
     return true;
 }
