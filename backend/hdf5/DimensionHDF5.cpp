@@ -386,7 +386,7 @@ void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
         NDSize extent(1, ticks.size());
         DataSet ds = g.openData("data");
         ds.setExtent(extent);
-        ds.write(nix::DataType::Double, extent, ticks.data());
+        ds.write(ticks);
     } else {
         throw MissingAttr("ticks");
     }

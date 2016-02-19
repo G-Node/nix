@@ -296,7 +296,7 @@ void TestDataSet::testOpaqueIO() {
     const hdf5::h5x::DataType opaque(H5T_NATIVE_OPAQUE);
 
     hdf5::DataSet ds = h5group.createData("OpaqueB10", opaque, size);
-    ds.write(DataType::Opaque, size, bytes);
+    ds.write(bytes, opaque, size);
 
     char bytes_read[10];
     ds.read(bytes_read, opaque, size);

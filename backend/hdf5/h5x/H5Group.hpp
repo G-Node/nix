@@ -199,7 +199,8 @@ void H5Group::setData(const std::string &name, const T &value)
         ds.setExtent(shape);
     }
 
-    ds.write(dtype, shape, hydra.data());
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    ds.write(hydra.data(), memType, shape);
 }
 
 

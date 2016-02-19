@@ -54,14 +54,17 @@ void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const
 }
 
 
-void DataSet::write(DataType dtype, const NDSize &size, const void *data)
+void DataSet::write(const void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset)
 {
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    if (dtype == DataType::String) {
-        StringReader reader(size, static_cast<const std::string *>(data));
-        write(*reader, memType, H5S_ALL, H5S_ALL);
+    DataSpace fileSpace = getSpace();
+    fileSpace.hyperslab(count, offset.size() ? offset : NDSize(count.size(), 0));
+    DataSpace memSpace = DataSpace::create(count, false);
+
+    if (memType.isVariableString()) {
+        StringReader reader(count, static_cast<const std::string *>(data));
+        write(*reader, memType, memSpace, fileSpace);
     } else {
-        write(data, memType, H5S_ALL, H5S_ALL);
+        write(data, memType, memSpace, fileSpace);
     }
 }
 

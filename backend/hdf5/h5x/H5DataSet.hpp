@@ -36,7 +36,7 @@ public:
     void write(const void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace);
 
     void read(void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset=NDSize{}) const;
-    void write(DataType dtype, const NDSize &size, const void *data);
+    void write(const void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset=NDSize{});
 
     template<typename T> void read(T &value, bool resize = false) const;
     template<typename T> void write(const T &value);
@@ -92,8 +92,9 @@ template<typename T> void DataSet::write(const T &value)
     const Hydra<const T> hydra(value);
 
     DataType dtype = hydra.element_data_type();
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
     NDSize size = hydra.shape();
-    write(dtype, size, hydra.data());
+    write(hydra.data(), memType, size);
 }
 
 } // namespace hdf5
