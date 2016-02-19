@@ -275,18 +275,8 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     }
 
     DataSet ds = group().openData("data");
-
-    DataSpace fileSpace = ds.getSpace();
-    DataSpace memSpace = DataSpace::create(count, false);
-
-    if (offset && count) {
-        fileSpace.hyperslab(count, offset);
-    } else if (offset && !count) {
-        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
-    }
-
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.write(data, memType, memSpace, fileSpace);
+    ds.write(data, memType, count, offset);
 }
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
@@ -295,18 +285,8 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
     }
 
     DataSet ds = group().openData("data");
-
-    DataSpace memSpace = DataSpace::create(count, false);
-    DataSpace fileSpace = ds.getSpace();
-
-    if (offset && count) {
-        fileSpace.hyperslab(count, offset);
-    } else if (offset && !count) {
-        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
-    }
-
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.read(data, memType, memSpace, fileSpace);
+    ds.read(data, memType, count, offset);
 }
 
 NDSize DataArrayHDF5::dataExtent(void) const {
