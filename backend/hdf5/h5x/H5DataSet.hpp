@@ -9,7 +9,6 @@
 #ifndef NIX_DATASET_H
 #define NIX_DATASET_H
 
-#include "Selection.hpp"
 #include "DataSpace.hpp"
 #include "H5DataType.hpp"
 #include "LocID.hpp"
@@ -17,6 +16,8 @@
 #include <nix/Value.hpp>
 
 #include <nix/Platform.hpp>
+
+#include <tuple>
 
 namespace nix {
 namespace hdf5 {
@@ -33,29 +34,20 @@ public:
 
     DataSet(const DataSet &other);
 
-    void read(hid_t memType, void *data) const;
-    void write(hid_t memType, const void *data);
+    void read(void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace) const;
+    void write(const void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace);
 
-    void read(DataType dtype, const NDSize &size, void *data) const;
-    void write(DataType dtype, const NDSize &size, const void *data);
-
-    void read(DataType dtype, void *data, const Selection &fileSel, const Selection &memSel) const;
-    void write(DataType dtype, const void *data, const Selection &fileSel, const Selection &memSel);
+    void read(void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset=NDSize{}) const;
+    void write(const void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset=NDSize{});
 
     template<typename T> void read(T &value, bool resize = false) const;
-    template<typename T> void read(T &value, const Selection &fileSel, bool resize = false) const;
-    template<typename T> void read(T &value, const Selection &fileSel, const Selection &memSel) const;
-
     template<typename T> void write(const T &value);
-    template<typename T> void write(const T &value, const Selection &fileSel);
-    template<typename T> void write(const T &value, const Selection &fileSel, const Selection &memSel);
 
     static NDSize guessChunking(NDSize dims, const h5x::DataType &dtype);
 
     static NDSize guessChunking(NDSize dims, size_t element_size);
 
     void setExtent(const NDSize &dims);
-    Selection createSelection() const;
     NDSize size() const;
 
     void vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
@@ -64,6 +56,8 @@ public:
 
     DataSpace getSpace() const;
 
+private:
+    std::tuple<DataSpace, DataSpace> offsetCount2DataSpaces(const NDSize &count, const NDSize &offset) const;
 };
 
 
@@ -84,46 +78,10 @@ template<typename T> void DataSet::read(T &value, bool resize) const
     }
 
     DataType dtype = hydra.element_data_type();
-    NDSize size = hydra.shape();
-    read(dtype, size, hydra.data());
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    read(hydra.data(), memType, hydra.shape());
 }
 
-/**
- * Read *selected* data from a DataSet into memory
- *
- * NB: Since this function assumes that whole variable is being read into,
- * the number of selected elements in fileSel and the size of the variable value
- * must be the same
- *
- * @param value    Reference to a variable to store the data in
- * @param fileSel  Selection to indicate which subspace of the DataSet to read
- * @param resize   Resize variable to fit the size of the Selection
- */
-template<typename T> void DataSet::read(T &value, const Selection &fileSel, bool resize) const
-{
-    if (resize) {
-        Hydra<T> hydra(value);
-        NDSize fsize = fileSel.size();
-        hydra.resize(fsize);
-    }
-
-    read(value, fileSel, Selection(value));
-}
-
-/**
- * Read *selected* data from a DataSet into *selected part* of memory
- *
- * @param value    Reference to a variable to store the data in
- * @param fileSel  Selection to indicate which subspace of the DataSet to read
- * @param memSel   Selection to indicate which subspace of the memory to read into
- */
-template<typename T> void DataSet::read(T &value, const Selection &fileSel, const Selection &memSel) const
-{
-    Hydra<T> hydra(value);
-
-    DataType dtype = hydra.element_data_type();
-    this->read(dtype, hydra.data(), fileSel, memSel);
-}
 
 /* ************************************************************************* */
 
@@ -138,38 +96,10 @@ template<typename T> void DataSet::write(const T &value)
     const Hydra<const T> hydra(value);
 
     DataType dtype = hydra.element_data_type();
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
     NDSize size = hydra.shape();
-    write(dtype, size, hydra.data());
+    write(hydra.data(), memType, size);
 }
-
-/**
- * Write all memory stored in the variable value into a *selected* subspace of the DataSet
- *
- * NB: Size of the DataSet and the variable must be the same
- * @param value    Reference to a variable to read the data from
- * @param fileSel    Selection to indicate into which subspace of value to read data from
- */
-template<typename T> void DataSet::write(const T &value, const Selection &fileSel)
-{
-    write(value, fileSel, Selection(value));
-}
-
-/**
- * Write a *selected part* of memory stored in the variable value into a *selected* subspace of the DataSet
- *
- * NB: Size of the DataSet and the variable must be the same
- * @param value    Reference to a variable to read the data from
- * @param fileSel  Selection to indicate into which subspace of value to read data from
- * @param memSel   Selection to indicate into which subspace of the DataSpace to write to
- */
-template<typename T> void DataSet::write(const T &value, const Selection &fileSel, const Selection &memSel)
-{
-    const Hydra<const T> hydra(value);
-    DataType dtype = hydra.element_data_type();
-
-    this->write(dtype, hydra.data(), fileSel, memSel);
-}
-
 
 } // namespace hdf5
 } // namespace nix

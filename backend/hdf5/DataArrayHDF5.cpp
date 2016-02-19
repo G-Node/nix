@@ -275,37 +275,18 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
     }
 
     DataSet ds = group().openData("data");
-
-    if (offset.size()) {
-        Selection fileSel = ds.createSelection();
-        fileSel.select(count, offset);
-        Selection memSel(DataSpace::create(count, false));
-
-        ds.write(dtype, data, fileSel, memSel);
-    } else {
-        ds.write(dtype, count, data);
-    }
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    ds.write(data, memType, count, offset);
 }
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
     if (!group().hasData("data")) {
-        return;
+        throw ConsistencyError("DataArray with missing h5df DataSet");
     }
 
     DataSet ds = group().openData("data");
-
-    if (offset.size()) {
-        Selection fileSel = ds.createSelection();
-        // if count.size() == 0, i.e. we want to read a scalar,
-        // we have to supply something that fileSel can make sense of
-        fileSel.select(count ? count : NDSize(offset.size(), 1), offset);
-        Selection memSel(DataSpace::create(count, false));
-
-        ds.read(dtype, data, fileSel, memSel);
-    } else {
-        ds.read(dtype, count, data);
-    }
-
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    ds.read(data, memType, count, offset);
 }
 
 NDSize DataArrayHDF5::dataExtent(void) const {

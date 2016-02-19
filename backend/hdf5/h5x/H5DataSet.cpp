@@ -25,84 +25,47 @@ DataSet::DataSet(const DataSet &other)
 
 }
 
-void DataSet::read(hid_t memType, void *data) const
+void DataSet::read(void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace) const
 {
-    HErr res = H5Dread(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    HErr res = H5Dread(hid, memType.h5id(), memSpace.h5id(), fileSpace.h5id(), H5P_DEFAULT, data);
     res.check("DataSet::read() IO error");
 }
 
-void DataSet::write(hid_t memType, const void *data)
+void DataSet::write(const void *data, const h5x::DataType &memType, const DataSpace &memSpace, const DataSpace &fileSpace)
 {
-    HErr res = H5Dwrite(hid, memType, H5S_ALL, H5S_ALL, H5P_DEFAULT, data);
+    HErr res = H5Dwrite(hid, memType.h5id(), memSpace.h5id(), fileSpace.h5id(), H5P_DEFAULT, data);
     res.check("DataSet::write() IOError");
 }
 
-void DataSet::read(DataType dtype, const NDSize &size, void *data) const
+void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset) const
 {
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
 
-    if (dtype == DataType::String) {
-        StringWriter writer(size, static_cast<std::string *>(data));
-        read(memType.h5id(), *writer);
+    if (memType.isVariableString()) {
+        StringWriter writer(count, static_cast<std::string *>(data));
+        read(*writer, memType, memSpace, fileSpace);
         writer.finish();
         vlenReclaim(memType.h5id(), *writer);
     } else {
-        read(memType.h5id(), data);
+        read(data, memType, memSpace, fileSpace);
     }
 }
 
 
-void DataSet::write(DataType dtype, const NDSize &size, const void *data)
+void DataSet::write(const void *data, h5x::DataType memType, const NDSize &count, const NDSize &offset)
 {
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    if (dtype == DataType::String) {
-        StringReader reader(size, static_cast<const std::string *>(data));
-        write(memType.h5id(), *reader);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
+
+    if (memType.isVariableString()) {
+        StringReader reader(count, static_cast<const std::string *>(data));
+        write(*reader, memType, memSpace, fileSpace);
     } else {
-        write(memType.h5id(), data);
+        write(data, memType, memSpace, fileSpace);
     }
 }
 
-
-void DataSet::read(DataType        dtype,
-                   void            *data,
-                   const Selection &fileSel,
-                   const Selection &memSel) const
-{
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-
-    HErr res;
-    if (dtype == DataType::String) {
-        NDSize size = memSel.size();
-        StringWriter writer(size, static_cast<std::string *>(data));
-        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *writer);
-        writer.finish();
-        vlenReclaim(memType.h5id(), *writer);
-    } else {
-        res = H5Dread(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
-    }
-
-    res.check("DataSet::read() IO error");
-}
-
-void DataSet::write(DataType         dtype,
-                    const void      *data,
-                    const Selection &fileSel,
-                    const Selection &memSel)
-{
-    h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    HErr res;
-
-    if (dtype == DataType::String) {
-        NDSize size = memSel.size();
-        StringReader reader(size, static_cast<const std::string *>(data));
-        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, *reader);
-    } else {
-        res = H5Dwrite(hid, memType.h5id(), memSel.h5space().h5id(), fileSel.h5space().h5id(), H5P_DEFAULT, data);
-    }
-
-    res.check("DataSet::write(): IO error");
-}
 
 #define CHUNK_BASE   16*1024
 #define CHUNK_MIN     8*1024
@@ -201,12 +164,6 @@ void DataSet::setExtent(const NDSize &dims)
 
 }
 
-Selection DataSet::createSelection() const
-{
-    DataSpace space = getSpace();
-    return Selection(space);
-}
-
 
 NDSize DataSet::size() const
 {
@@ -240,6 +197,21 @@ DataSpace DataSet::getSpace() const {
     return space;
 }
 
+
+std::tuple<DataSpace, DataSpace> DataSet::offsetCount2DataSpaces(const NDSize &count,
+                                                                 const NDSize &offset) const
+{
+    DataSpace fileSpace = getSpace();
+    DataSpace memSpace = DataSpace::create(count, false);
+
+    if (offset && count) {
+        fileSpace.hyperslab(count, offset);
+    } else if (offset && !count) {
+        fileSpace.hyperslab(NDSize(offset.size(), 1), offset);
+    }
+
+    return std::tuple<DataSpace, DataSpace>(memSpace, fileSpace);
+}
 
 } // namespace hdf5
 } // namespace nix
