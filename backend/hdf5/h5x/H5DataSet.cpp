@@ -159,12 +159,6 @@ void DataSet::setExtent(const NDSize &dims)
 
 }
 
-Selection DataSet::createSelection() const
-{
-    DataSpace space = getSpace();
-    return Selection(space);
-}
-
 
 NDSize DataSet::size() const
 {

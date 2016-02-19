@@ -13,7 +13,6 @@
 
 #include <type_traits>
 
-#include "hdf5/h5x/Selection.hpp"
 #include <nix/DataType.hpp>
 
 #include <string.h>

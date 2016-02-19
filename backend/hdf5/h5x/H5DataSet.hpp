@@ -9,7 +9,6 @@
 #ifndef NIX_DATASET_H
 #define NIX_DATASET_H
 
-#include "Selection.hpp"
 #include "DataSpace.hpp"
 #include "H5DataType.hpp"
 #include "LocID.hpp"
@@ -38,7 +37,7 @@ public:
 
     void read(h5x::DataType memType, const NDSize &size, void *data) const;
     void write(DataType dtype, const NDSize &size, const void *data);
-    
+
     template<typename T> void read(T &value, bool resize = false) const;
     template<typename T> void write(const T &value);
 
@@ -47,7 +46,6 @@ public:
     static NDSize guessChunking(NDSize dims, size_t element_size);
 
     void setExtent(const NDSize &dims);
-    Selection createSelection() const;
     NDSize size() const;
 
     void vlenReclaim(h5x::DataType mem_type, void *data, DataSpace *dspace = nullptr) const;
