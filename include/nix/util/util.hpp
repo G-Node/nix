@@ -316,7 +316,8 @@ T convertToSeconds(const std::string &unit, T value) {
         double scaled = value * getSIScaling(unit, "s");
         seconds = static_cast<T>(std::is_integral<T>::value ? std::round(scaled) : scaled);
     } else {
-        std::cerr <<  "[nix::util::convertToSeconds] Warning: given unit is not supported!" << std::endl;
+        std::cerr << "[nix::util::convertToSeconds]";
+        std::cerr << " Warning: given unit [" + unit + "] is not supported!" << std::endl;
         seconds = value;
     }
     return seconds;
@@ -345,7 +346,9 @@ T convertToKelvin(const std::string &unit, T value) {
    } else if (isScalable(unit, "K")) {
        temperature = value * getSIScaling(unit, "K");
    } else {
-       std::cerr << "[nix::util::convertToKelvin] Warning: given unit is not supported" << std::endl;
+
+       std::cerr << "[nix::util::convertToKelvin]" << std::endl;
+       std::cerr << " Warning: given unit [" + unit + "] is not supported!" << std::endl;
        return value;
    }
 
