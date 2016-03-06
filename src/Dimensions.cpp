@@ -175,7 +175,7 @@ void SampledDimension::samplingInterval(double interval) {
 
 size_t SampledDimension::indexOf(const double position) const {
     //FIXME: should we use NDSSize::value_type here instead of ssize_t?
-    //FIXME: also, on the smae grounds, should the return not be NDSize::value_type?
+    //FIXME: also, on the same grounds, should the return not be NDSize::value_type?
     ssize_t index;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
