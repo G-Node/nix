@@ -10,10 +10,10 @@ Dependencies
   - ***Visual Studio 2013 Express***
     - Download link: http://www.visualstudio.com/en-us/downloads/download-visual-studio-vs.aspx
     - The required edition is "Visual Studio Express 2013 for Windows Desktop" (the download is free, but registration is needed)
-    - From now on exectue commands (marked with "`>`") from the "Developer Command Prompt for VS2013" found as explained here: http://msdn.microsoft.com/en-us/library/ms229859.aspx
+    - From now on execute commands (marked with "`>`") from the "Developer Command Prompt for VS2013" found as explained here: http://msdn.microsoft.com/en-us/library/ms229859.aspx
     - Expressions inside brackets "`< >`" are to be replaced (together with brackets) by a value: "`<A>`" => "`15`" if A was 15.
     <br><br>Extra stuff<br>
-    - If you want a "Developer Command Prompt" inside the "Visual Studio->Tools" menu (oldschool way) do the following:
+    - If you want a "Developer Command Prompt" inside the "Visual Studio->Tools" menu (old school way) do the following:
       - Open "Tools->External Tools" and click "Add"
       - Make :three::two:`Title` = `Command Prompt 32`, `Command` = `C:\Windows\System32\cmd.exe`, `Arguments` = `/K "<VSPATH>\VC\bin\vcvars32.bat"` or :six::four:`Title` = `Command Prompt 64`, `Command` = `C:\Windows\SysWOW64\cmd.exe`, `Arguments` = `/K "<VSPATH>\VC\bin\x86_amd64\vcvarsx86_amd64.bat"`<br><br>
   - ***CMake***
@@ -64,7 +64,7 @@ Dependencies
   - Now try to build the solution at least once: ignore the errors you get, we just need a part to build which should work!
   - Add cppunit include dir to global PATH, e.g.: `C:\Users\B\opt\cppunit\include`
   <br><br>Troubleshooting - If you get into trouble try this<br>
-  - If you get errors about "Multibyte Character Set" being used, try the following measures: 
+  - If you get errors about "Multibyte Character Set" being used, try the following measures:
     - Download and install "Multibyte MFC Library for Visual Studio 2013" from: https://www.microsoft.com/en-us/download/details.aspx?id=40770
     - If still getting errors (even after reboot): Mark all projects in solution (on the right), right click them, select properties and make sure "Configuration Properties -> General -> Character Set" is set to "Use Unicode Character set"
 
@@ -86,4 +86,3 @@ Dependencies
      C:\Users\B\opt\boost.\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=64 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
    ```
   and execute it as admin with `runas` command.
-
