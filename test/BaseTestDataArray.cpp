@@ -274,7 +274,7 @@ void BaseTestDataArray::testPolynomial() {
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
     //evalutate_polynomial from boost might use a different algorithm
-    //therefore we raise the allowed detlta to 10e-10
+    //therefore we raise the allowed delta to 10e-10
     CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, 10e-10);
 
     array2.polynomCoefficients(coefficients2);
