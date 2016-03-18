@@ -8,7 +8,7 @@ About NIX
 -------------
 
 The *NIX* project (previously called Pandora) started as an initiative of the Electrophysiology Task Force which is part
-of the INCF Datasharing Program. As such the project aims to develop standardized methods and models for storing
+of the INCF Data sharing Program. As such the project aims to develop standardized methods and models for storing
 electrophysiology and other neuroscience data together with their metadata in one common file format based on HDF5.
 
 [See the wiki for more information](https://github.com/G-Node/nix/wiki)
@@ -26,10 +26,10 @@ Getting Started (Linux)
 You can get a ready to install package for Ubuntu "trusty". You have to add & install the following software source to your system:
 
 ```
-deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
-deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main 
+deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
+deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
 ```
-by executing 
+by executing
 
 ```
 sudo add-apt-repository ppa:gnode/nix
@@ -54,7 +54,7 @@ _Instructions_
 # 1 install dependencies
 sudo apt-get install libboost-all-dev libhdf5-serial-dev libcppunit-dev cmake build-essential
 
-**Note:** If the standard version of the boost libraries in your distribution is less than 1.49, 
+**Note:** If the standard version of the boost libraries in your distribution is less than 1.49,
 # manually install a version larger than 1.49 from the launchad (https://launchpad.net/~boost-latest/+archive/ubuntu/ppa)
 
 # 2 clone NIX
@@ -87,10 +87,10 @@ make all
 
 **NIX with Docker**
 
-To develop with NIX inside the [Linux Container](https://linuxcontainers.org/) system [Docker](https://www.docker.com/) 
-you can use the images available under the [balint42/nix](https://registry.hub.docker.com/u/balint42/nix/) repository 
+To develop with NIX inside the [Linux Container](https://linuxcontainers.org/) system [Docker](https://www.docker.com/)
+you can use the images available under the [balint42/nix](https://registry.hub.docker.com/u/balint42/nix/) repository
 on the public [Docker Hub](https://hub.docker.com/).
-Further instructions on how to use the images are on the Docker repository. Further instructions for Docker can be found 
+Further instructions on how to use the images are on the Docker repository. Further instructions for Docker can be found
 [on their site](http://docs.docker.com/).
 
 Getting Started (MacOS X)
