@@ -87,6 +87,13 @@ public:
 };
 
 
+class InvalidFile: public std::invalid_argument {
+public:
+    InvalidFile(const std::string &caller):
+        std::invalid_argument("Invalid file - file is not a nix file. (" + caller + ")") { }
+};
+
+
 class UnsortedTicks: public std::invalid_argument {
 public:
     UnsortedTicks(const std::string &caller):
