@@ -140,7 +140,16 @@ private:
     // check for existence
     bool fileExists(const std::string &name) const;
 
-    // check if the header of the file is valid
+
+    void createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl);
+
+
+    void openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl);
+
+
+    void openRoot();
+
+
     bool checkHeader() const;
 
 

@@ -58,31 +58,22 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     fcpl.check("Could not create file creation plist");
     HErr res = H5Pset_link_creation_order(fcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
-
     unsigned int h5mode =  map_file_mode(mode);
 
-    if (h5mode & H5F_ACC_TRUNC) {
-        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+    if (fileExists(name)) {
+        openExisting(name, h5mode, fcpl);
     } else {
-        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+        createNew(name, h5mode, fcpl);
     }
-
     if (!H5Iis_valid(hid)) {
         throw H5Exception("Could not open/create file");
     }
-
-    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-    root.check("Could not root group");
 
     metadata = root.openGroup("metadata");
     data = root.openGroup("data");
 
     setCreatedAt();
     setUpdatedAt();
-
-    if (!checkHeader()) {
-        throw std::runtime_error("Invalid file header: either file format or file version not correct");
-    }
 }
 
 //--------------------------------------------------
@@ -359,6 +350,37 @@ bool FileHDF5::createHeader() const {
     }
     return true;
 }
+
+
+void FileHDF5::createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
+    hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root.check("Could not open root group");
+    createHeader();
+}
+
+
+void FileHDF5::openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
+    if (h5mode == H5F_ACC_TRUNC) {
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+        openRoot();
+        createHeader();
+    } else {
+        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+        openRoot();
+    }
+    if (!checkHeader()) {
+        throw nix::InvalidFile("FileHDF5::open_existing!");
+    };
+}
+
+
+void FileHDF5::openRoot() {
+    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root.check("Could not open root group");
+}
+
+
 bool FileHDF5::fileExists(const string &name) const {
     ifstream f(name.c_str());
     if (f) {
