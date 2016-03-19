@@ -23,11 +23,6 @@ namespace nix {
 namespace hdf5 {
 
 
-// Format definition
-#define FILE_VERSION std::vector<int>{1, 0, 0}
-#define FILE_FORMAT  std::string("nix")
-
-
 static unsigned int map_file_mode(FileMode mode) {
     switch (mode) {
         case FileMode::ReadWrite:
