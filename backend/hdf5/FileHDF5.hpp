@@ -143,6 +143,8 @@ private:
     // check if the header of the file is valid
     bool checkHeader() const;
 
+
+    bool createHeader() const;
 };
 
 

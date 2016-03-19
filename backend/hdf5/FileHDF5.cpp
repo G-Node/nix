@@ -336,7 +336,7 @@ bool FileHDF5::checkHeader() const {
             check = false;
         }
     } else {
-        root.setAttr("format", FILE_FORMAT);
+        check = false;
     }
     // check version
     if (root.hasAttr("version")) {
@@ -344,12 +344,21 @@ bool FileHDF5::checkHeader() const {
             check = false;
         }
     } else {
-        root.setAttr("version", FILE_VERSION);
+        check = false;
     }
     return check;
 }
 
 
+bool FileHDF5::createHeader() const {
+    try {
+        root.setAttr("format", FILE_FORMAT);
+        root.setAttr("version", FILE_VERSION);
+    } catch (int e){
+        return false;
+    }
+    return true;
+}
 bool FileHDF5::fileExists(const string &name) const {
     ifstream f(name.c_str());
     if (f) {
