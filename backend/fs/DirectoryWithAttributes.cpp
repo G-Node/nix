@@ -14,13 +14,19 @@ namespace bfs = boost::filesystem;
 namespace nix {
 namespace file {
 
-DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, FileMode mode)
+DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, FileMode mode, bool checkHeader)
     : Directory(location, mode) {
+    if (checkHeader && mode < FileMode::ReadWrite) {
+        std::cerr << "checkHeader" << std::endl;
+        if (!bfs::exists(location / bfs::path("attributes"))) {
+           throw nix::InvalidFile("DirectoryWithAttributes");
+        }
+    }
     attributes = AttributesFS(location, mode);
 }
 
-DirectoryWithAttributes::DirectoryWithAttributes(const std::string &location, FileMode mode)
-    : DirectoryWithAttributes(bfs::path(location.c_str()), mode)
+DirectoryWithAttributes::DirectoryWithAttributes(const std::string &location, FileMode mode, bool checkHeader)
+    : DirectoryWithAttributes(bfs::path(location.c_str()), mode, checkHeader)
 {
 }
 

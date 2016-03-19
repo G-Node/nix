@@ -20,7 +20,7 @@ namespace file {
 #define FILE_FORMAT  std::string("nix")
 
 FileFS::FileFS(const std::string &name, FileMode mode)
-    : DirectoryWithAttributes(name, mode){
+    : DirectoryWithAttributes(name, mode, true){
     this->mode = mode;
     if (mode == FileMode::Overwrite) {
         removeAll();
