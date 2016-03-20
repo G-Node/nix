@@ -25,6 +25,7 @@ class TestFileFS: public BaseTestFile {
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testReopen);
     CPPUNIT_TEST(testCheckHeader);
+    CPPUNIT_TEST(testNonNix);
 
     CPPUNIT_TEST_SUITE_END ();
 
@@ -63,6 +64,20 @@ public:
         std::vector<int> version{2, 0, 0};
         attr.set("version", version);
         CPPUNIT_ASSERT_THROW(nix::File::open("test_file", nix::FileMode::ReadWrite, "file"), std::runtime_error);
+    }
+
+    void testNonNix() {
+        bfs::path p("non-nix");
+        bfs::path pa("non-nix_with_wrong_attributes");
+        bfs::create_directory(p);
+        bfs::create_directory(pa);
+        std::ofstream ofs;
+        ofs.open("non-nix_with_wrong_attributes/attributes", std::ofstream::out | std::ofstream::app);
+        ofs.close();
+        CPPUNIT_ASSERT_THROW(nix::File::open(p.string(), nix::FileMode::ReadOnly, "file"), nix::InvalidFile);
+        CPPUNIT_ASSERT_THROW(nix::File::open(pa.string(), nix::FileMode::ReadOnly, "file"), nix::InvalidFile);
+        bfs::remove_all(p);
+        bfs::remove_all(pa);
     }
 };
 
