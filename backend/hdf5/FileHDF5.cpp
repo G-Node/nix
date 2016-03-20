@@ -316,7 +316,6 @@ bool FileHDF5::checkHeader() const {
     bool check = true;
     vector<int> version;
     string str;
-    // check format
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
             check = false;
@@ -324,7 +323,6 @@ bool FileHDF5::checkHeader() const {
     } else {
         check = false;
     }
-    // check version
     if (root.hasAttr("version")) {
         if (!root.getAttr("version", version) || version != FILE_VERSION) {
             check = false;
@@ -336,14 +334,13 @@ bool FileHDF5::checkHeader() const {
 }
 
 
-bool FileHDF5::createHeader() const {
+void FileHDF5::createHeader() const {
     try {
         root.setAttr("format", FILE_FORMAT);
         root.setAttr("version", FILE_VERSION);
-    } catch ( ... ){
-        return false;
+    } catch ( ... ) {
+        throw H5Exception("Could not open/create file");
     }
-    return true;
 }
 
 

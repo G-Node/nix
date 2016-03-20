@@ -153,7 +153,7 @@ private:
     bool checkHeader() const;
 
 
-    bool createHeader() const;
+    void createHeader() const;
 };
 
 
