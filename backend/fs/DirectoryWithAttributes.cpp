@@ -17,7 +17,6 @@ namespace file {
 DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, FileMode mode, bool checkHeader)
     : Directory(location, mode) {
     if (checkHeader && mode < FileMode::ReadWrite) {
-        std::cerr << "checkHeader" << std::endl;
         if (!bfs::exists(location / bfs::path("attributes"))) {
            throw nix::InvalidFile("DirectoryWithAttributes");
         } else {
@@ -41,7 +40,8 @@ DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, File
             } else {
                 check = false;
             }
-            throw nix::InvalidFile("DirectoryWithAttributes");
+            if (!check)
+                throw nix::InvalidFile("DirectoryWithAttributes");
         }
     }
     attributes = AttributesFS(location, mode);
