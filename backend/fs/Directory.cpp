@@ -128,7 +128,7 @@ bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, cons
                 }
             }
         }
-        uintmax_t ret = remove_all(*p);
+        uintmax_t ret = bfs::remove_all(*p);
         return ret > 0;
     }
     return false;
