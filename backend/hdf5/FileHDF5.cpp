@@ -340,7 +340,7 @@ bool FileHDF5::createHeader() const {
     try {
         root.setAttr("format", FILE_FORMAT);
         root.setAttr("version", FILE_VERSION);
-    } catch (int e){
+    } catch ( ... ){
         return false;
     }
     return true;
