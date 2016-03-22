@@ -25,9 +25,10 @@ private:
     mutable AttributesFS attributes;
 
 public:
-    DirectoryWithAttributes (const boost::filesystem::path &location, FileMode mode = FileMode::ReadOnly);
+    DirectoryWithAttributes (const boost::filesystem::path &location, FileMode mode = FileMode::ReadOnly,
+                             bool checkHeader = false);
 
-    DirectoryWithAttributes (const std::string &location, FileMode mode = FileMode::ReadOnly);
+    DirectoryWithAttributes (const std::string &location, FileMode mode = FileMode::ReadOnly, bool checkHeader = false);
 
     template <typename T> void setAttr(const std::string &name, const T &value);
 

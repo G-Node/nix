@@ -23,11 +23,6 @@ namespace nix {
 namespace hdf5 {
 
 
-// Format definition
-#define FILE_VERSION std::vector<int>{1, 0, 0}
-#define FILE_FORMAT  std::string("nix")
-
-
 static unsigned int map_file_mode(FileMode mode) {
     switch (mode) {
         case FileMode::ReadWrite:
@@ -58,31 +53,22 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     fcpl.check("Could not create file creation plist");
     HErr res = H5Pset_link_creation_order(fcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
-
     unsigned int h5mode =  map_file_mode(mode);
 
-    if (h5mode & H5F_ACC_TRUNC) {
-        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+    if (fileExists(name)) {
+        openExisting(name, h5mode, fcpl);
     } else {
-        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+        createNew(name, h5mode, fcpl);
     }
-
     if (!H5Iis_valid(hid)) {
         throw H5Exception("Could not open/create file");
     }
-
-    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-    root.check("Could not root group");
 
     metadata = root.openGroup("metadata");
     data = root.openGroup("data");
 
     setCreatedAt();
     setUpdatedAt();
-
-    if (!checkHeader()) {
-        throw std::runtime_error("Invalid file header: either file format or file version not correct");
-    }
 }
 
 //--------------------------------------------------
@@ -330,23 +316,60 @@ bool FileHDF5::checkHeader() const {
     bool check = true;
     vector<int> version;
     string str;
-    // check format
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
             check = false;
         }
     } else {
-        root.setAttr("format", FILE_FORMAT);
+        check = false;
     }
-    // check version
     if (root.hasAttr("version")) {
         if (!root.getAttr("version", version) || version != FILE_VERSION) {
             check = false;
         }
     } else {
-        root.setAttr("version", FILE_VERSION);
+        check = false;
     }
     return check;
+}
+
+
+void FileHDF5::createHeader() const {
+    try {
+        root.setAttr("format", FILE_FORMAT);
+        root.setAttr("version", FILE_VERSION);
+    } catch ( ... ) {
+        throw H5Exception("Could not open/create file");
+    }
+}
+
+
+void FileHDF5::createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
+    hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root.check("Could not open root group");
+    createHeader();
+}
+
+
+void FileHDF5::openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
+    if (h5mode == H5F_ACC_TRUNC) {
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+        openRoot();
+        createHeader();
+    } else {
+        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+        openRoot();
+    }
+    if (!checkHeader()) {
+        throw nix::InvalidFile("FileHDF5::open_existing!");
+    };
+}
+
+
+void FileHDF5::openRoot() {
+    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+    root.check("Could not open root group");
 }
 
 

@@ -28,6 +28,10 @@ NIXAPI enum class FileMode {
     Overwrite
 };
 
+
+#define FILE_VERSION std::vector<int>{1, 0, 0}
+#define FILE_FORMAT  std::string("nix")
+
 namespace base {
 
 
