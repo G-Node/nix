@@ -48,7 +48,7 @@ void test_refcounting(hid_t a_id, hid_t b_id) {
     RefTester b_tst = b_id;
 
     T obj_invalid{};
-    CPPUNIT_ASSERT_EQUAL(H5I_INVALID_HID, obj_invalid.h5id());
+    CPPUNIT_ASSERT_EQUAL(static_cast<hid_t>(H5I_INVALID_HID), obj_invalid.h5id());
     CPPUNIT_ASSERT_EQUAL(-1, obj_invalid.refCount());
 
     T wa_copy(a_id, true); // +1
