@@ -101,7 +101,7 @@ public:
     void forceCreatedAt(time_t t);
 
 
-    void close() override;
+    void close();
 
 
     bool isOpen() const;
