@@ -134,8 +134,8 @@ std::string H5Group::objectName(ndsize_t index) const {
     // check whether name is found by index
     ssize_t name_len = H5Lget_name_by_idx(hid,
                                           ".",
-                                          H5_INDEX_NAME,
-                                          H5_ITER_NATIVE,
+                                          H5_INDEX_CRT_ORDER,
+                                          H5_ITER_INC,
                                           (hsize_t) index,
                                           NULL,
                                           0,
@@ -144,8 +144,8 @@ std::string H5Group::objectName(ndsize_t index) const {
         char* name = new char[name_len+1];
         name_len = H5Lget_name_by_idx(hid,
                                       ".",
-                                      H5_INDEX_NAME,
-                                      H5_ITER_NATIVE,
+                                      H5_INDEX_CRT_ORDER,
+                                      H5_ITER_INC,
                                       (hsize_t) index,
                                       name,
                                       name_len+1,
