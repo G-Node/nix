@@ -48,6 +48,8 @@ public:
 
     void testOpen();
 
+    void testIterOrder();
+
     template<typename T>
     static void assert_vectors_equal(std::vector<T> &a, std::vector<T> &b) {
 
@@ -77,5 +79,6 @@ private:
     CPPUNIT_TEST(testVector);
     CPPUNIT_TEST(testMultiArray);
     CPPUNIT_TEST(testArray);
+    CPPUNIT_TEST(testIterOrder);
     CPPUNIT_TEST_SUITE_END ();
 };

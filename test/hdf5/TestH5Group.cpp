@@ -215,3 +215,19 @@ void TestH5Group::testRefCount() {
     test_refcounting<nix::hdf5::H5Group>(h5group, ha);
     H5Gclose(ha);
 }
+
+void TestH5Group::testIterOrder() {
+    nix::ndsize_t N = 12;
+    nix::hdf5::H5Group root(h5group, true);
+    nix::hdf5::H5Group itergroup = root.openGroup("itertest", true);
+
+    for (nix::ndsize_t idx = 0; idx < N; idx++) {
+        itergroup.openGroup(std::to_string(idx), true);
+    }
+
+    std::string name;
+    for (nix::ndsize_t idx = 0; idx < N; idx++) {
+        name = itergroup.objectName(idx);
+        CPPUNIT_ASSERT_EQUAL(name, std::to_string(idx));
+    }
+}
