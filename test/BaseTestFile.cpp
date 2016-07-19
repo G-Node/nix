@@ -19,6 +19,7 @@ namespace bfs = boost::filesystem;
 
 
 void BaseTestFile::testOpen() {
+    CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::ReadOnly), std::runtime_error);
     CPPUNIT_ASSERT_THROW(File::open("dummy", FileMode::Overwrite, "grewe"), std::runtime_error);
 }
 
