@@ -22,17 +22,23 @@ unsigned int &TestH5Group::open_mode()
 
 void TestH5Group::setUp() {
     unsigned int &openMode = open_mode();
+    nix::hdf5::H5Object fcpl = H5Pcreate(H5P_FILE_CREATE);
+    nix::hdf5::HErr fres = H5Pset_link_creation_order(fcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+    fres.check("Unable to create file in H5Group test (H5Pset_link_creation_order failed.)");
 
     if (openMode == H5F_ACC_TRUNC) {
-        h5file = H5Fcreate("test_group.h5", openMode, H5P_DEFAULT, H5P_DEFAULT);
+        h5file = H5Fcreate("test_group.h5", openMode, fcpl.h5id(), H5P_DEFAULT);
     } else {
         h5file = H5Fopen("test_group.h5", openMode, H5P_DEFAULT);
     }
 
     CPPUNIT_ASSERT(H5Iis_valid(h5file));
 
+    nix::hdf5::H5Object gcpl = H5Pcreate(H5P_GROUP_CREATE);
+    nix::hdf5::HErr gres = H5Pset_link_creation_order(gcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
+    gres.check("Unable to create group in H5Group test (H5Pset_link_creation_order failed).");
     if (openMode == H5F_ACC_TRUNC) {
-        h5group = H5Gcreate2(h5file, "tstGroup", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+        h5group = H5Gcreate2(h5file, "tstGroup", H5P_DEFAULT, gcpl.h5id(), H5P_DEFAULT);
     } else {
         h5group = H5Gopen2(h5file, "tstGroup", H5P_DEFAULT);
     }
