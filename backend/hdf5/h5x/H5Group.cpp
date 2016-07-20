@@ -132,20 +132,34 @@ std::string H5Group::objectName(ndsize_t index) const {
 
     std::string str_name;
     // check whether name is found by index
+    H5_index_t index_type = H5_INDEX_CRT_ORDER;
+    H5_iter_order_t order = H5_ITER_INC;
     ssize_t name_len = H5Lget_name_by_idx(hid,
                                           ".",
-                                          H5_INDEX_NAME,
-                                          H5_ITER_NATIVE,
+                                          index_type,
+                                          order,
                                           (hsize_t) index,
                                           NULL,
                                           0,
                                           H5P_DEFAULT);
+    if (name_len < 0) {
+        index_type = H5_INDEX_NAME;
+        order = H5_ITER_NATIVE;
+        name_len = H5Lget_name_by_idx(hid,
+                                      ".",
+                                      index_type,
+                                      order,
+                                      (hsize_t) index,
+                                      NULL,
+                                      0,
+                                      H5P_DEFAULT);
+    }
     if (name_len > 0) {
         char* name = new char[name_len+1];
         name_len = H5Lget_name_by_idx(hid,
                                       ".",
-                                      H5_INDEX_NAME,
-                                      H5_ITER_NATIVE,
+                                      index_type,
+                                      order,
                                       (hsize_t) index,
                                       name,
                                       name_len+1,
