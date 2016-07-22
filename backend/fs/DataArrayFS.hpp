@@ -116,7 +116,7 @@ public:
     std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval);
 
 
-    bool deleteDimension(ndsize_t id);
+    bool deleteDimensions();
 
     //--------------------------------------------------
     // Other methods and functions

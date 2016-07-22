@@ -405,12 +405,12 @@ public:
     }
 
     /**
-     * @brief Remove a dimension descriptor at a specified index.
+     * @brief Remove all dimension descriptors of the {@link nix::DataArray}.
      *
-     * @param id        The index of the dimension. Must be a value > 0 and < `dimensionCount + 1`.
+     * @return bool indicating if operation succeeded.
      */
-    bool deleteDimension(ndsize_t id) {
-        return backend()->deleteDimension(id);
+    bool deleteDimensions() {
+        return backend()->deleteDimensions();
     }
 
     //--------------------------------------------------

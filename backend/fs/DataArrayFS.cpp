@@ -210,28 +210,15 @@ Group DataArrayFS::createDimensionGroup(size_t index) {
 }
 */
 
-bool DataArrayFS::deleteDimension(ndsize_t index) {
-    bool deleted = false;
-    if (fileMode() == FileMode::ReadOnly)
-        return deleted;
-    size_t dim_count = dimensionCount();
-    std::string str_id = util::numToStr(index);
-    if (dimensions.hasObject(str_id)) {
-            deleted = dimensions.removeObjectByNameOrAttribute("entity_id", str_id);
-        }
-        if (deleted && index < dim_count) {
-            for (size_t old_id = index + 1; old_id <= dim_count; old_id++) {
-                std::string str_old_id = util::numToStr(old_id);
-                std::string str_new_id = util::numToStr(old_id - 1);
-                std::string temp_path = this->location() + bfs::path::preferred_separator + "dimensions" +
-                    bfs::path::preferred_separator + str_old_id;
-                AttributesFS attr(temp_path, this->fileMode());
-                attr.set("index", old_id - 1);
-                dimensions.renameSubdir(str_old_id, str_new_id);
-            }
-        }
-    return deleted;
+bool DataArrayFS::deleteDimensions() {
+    if (fileMode() != FileMode::ReadOnly) {
+        this->dimensions.removeAll();
+        return true;
+    } else {
+        return false;
+    }
 }
+
 
 //--------------------------------------------------
 // Other methods and functions
