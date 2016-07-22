@@ -436,11 +436,7 @@ void BaseTestDataArray::testDimension() {
     CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT(dims[4].dimensionType() == nix::DimensionType::Set);
     // since deleteDimension renumbers indices to be continuous we test that too
-    array2.deleteDimension(5);
-    array2.deleteDimension(4);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
+    array2.deleteDimensions();
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);
