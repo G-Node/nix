@@ -320,7 +320,19 @@ public:
      * @return The created RangeDimension
      */
     RangeDimension appendAliasRangeDimension() {
-        return createAliasRangeDimension();
+        if (this->dataExtent().size() > 1) {
+            throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (!nix::data_type_is_numeric(this->dataType())) {
+            throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        if (dimensionCount() > 0) {
+            throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
+                                        "DataArray::createAliasRangeDimension");
+        }
+        return backend()->createAliasRangeDimension();
     }
 
 
@@ -344,9 +356,10 @@ public:
      * @param id        The index of the dimension. Must be a value > 0 and <= `dimensionCount + 1`.
      *
      * @return The created dimension descriptor.
+     * @deprecated This function is deprecated and ignores the id argument!
      */
     SetDimension createSetDimension(ndsize_t id) {
-        return backend()->createSetDimension(id);
+        return appendSetDimension();
     }
 
     /**
@@ -359,34 +372,20 @@ public:
      * @param ticks     Vector with {@link nix::RangeDimension::ticks}.
      *
      * @return The created dimension descriptor.
+     * @deprecated This function is deprecated and ignores the id argument!
      */
     RangeDimension createRangeDimension(ndsize_t id, const std::vector<double> &ticks) {
-        if (ticks.size() == 0) {
-            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
-                                        "DataArray::createRangeDimension");
-        }
-        return backend()->createRangeDimension(id, ticks);
+        return appendRangeDimension(ticks);
     }
 
     /**
      * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
      * 
      * @return The created dimension descriptor.
+     * @deprecated This function is deprecated and will be removed. Use appendAliasRangeDimension instead!
      */
     RangeDimension createAliasRangeDimension() {
-        if (this->dataExtent().size() > 1) {
-            throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
-        }
-        if (!nix::data_type_is_numeric(this->dataType())) {
-            throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
-        }
-        if (dimensionCount() > 0) {
-            throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
-                                        "DataArray::createAliasRangeDimension");
-        }
-        return backend()->createAliasRangeDimension();
+        return appendAliasRangeDimension();
     }
 
     /**
@@ -399,9 +398,10 @@ public:
      * @param sampling_interval  The sampling interval of the dimension.
      *
      * @return The created dimension descriptor.
+     * @deprecated This function is deprecated and ignores the id argument!
      */
     SampledDimension createSampledDimension(ndsize_t id, double sampling_interval) {
-        return backend()->createSampledDimension(id, sampling_interval);
+        return appendSampledDimension(sampling_interval);
     }
 
     /**
