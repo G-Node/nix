@@ -35,6 +35,7 @@ class TestDimensionFS : public BaseTestDimension {
     // CPPUNIT_TEST(testRangeDimIndexOf);
     // CPPUNIT_TEST(testRangeDimTickAt);
     // CPPUNIT_TEST(testRangeDimAxis);
+    CPPUNIT_TEST(testAsDimensionMethods);
     CPPUNIT_TEST_SUITE_END ();
 
 public:

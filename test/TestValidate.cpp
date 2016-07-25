@@ -334,7 +334,6 @@ void TestValidate::test() {
     CPPUNIT_ASSERT_EQUAL(false, myResult.hasErrors());
     
     myResult = file.validate();
-    std::cerr << myResult << std::endl;
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getErrors().size());
     // entity failure cases---------------------------------------------
