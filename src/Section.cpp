@@ -11,6 +11,8 @@
 #include <list>
 #include <algorithm>
 #include <iterator>
+#include <nix/Block.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/util/util.hpp>
 
 using namespace nix;
@@ -331,4 +333,13 @@ Section Section::getSection(ndsize_t index) const {
         throw OutOfBounds("Section::getSection: index is out of bounds!");
     }
     return backend()->getSection(index);
+}
+
+
+std::vector<nix::DataArray> Section::referringDataArrays(const nix::Block & block) const {
+    std::vector<nix::DataArray> arrays;
+    if (block) {
+        arrays = block.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
+    }
+    return arrays;
 }

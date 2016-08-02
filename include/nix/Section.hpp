@@ -23,6 +23,8 @@
 
 namespace nix {
 
+class Block;
+class DataArray;
 
 class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
@@ -442,6 +444,8 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+    std::vector<nix::DataArray> referringDataArrays(const nix::Block & block) const;
 
     /**
      * @brief Assignment operator for none.
