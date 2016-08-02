@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <iterator>
 #include <nix/Block.hpp>
+#include <nix/File.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/util/util.hpp>
 
@@ -336,10 +337,12 @@ Section Section::getSection(ndsize_t index) const {
 }
 
 
-std::vector<nix::DataArray> Section::referringDataArrays(const nix::Block & block) const {
+std::vector<nix::DataArray> Section::referringDataArrays() const {
     std::vector<nix::DataArray> arrays;
-    if (block) {
-        arrays = block.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::DataArray> temp = b.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
+        arrays.insert(arrays.end(), temp.begin(), temp.end());
     }
     return arrays;
 }
