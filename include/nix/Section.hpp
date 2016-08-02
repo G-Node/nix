@@ -15,7 +15,7 @@
 #include <nix/Property.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
-
+#include <nix/types.hpp>
 #include <memory>
 #include <functional>
 #include <string>
@@ -23,8 +23,6 @@
 
 namespace nix {
 
-class Block;
-class DataArray;
 
 class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
