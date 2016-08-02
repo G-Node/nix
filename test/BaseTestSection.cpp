@@ -411,6 +411,36 @@ void BaseTestSection::testReferringTags() {
 }
 
 
+void BaseTestSection::testReferringMultiTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+    DataArray positions = b.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    DataArray positions2 = b2.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = b.createMultiTag(name, "some tag", positions);
+        nix::MultiTag t2 = b2.createMultiTag(name, "some tag", positions2);
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags().size() == 10);
+}
+
+
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);

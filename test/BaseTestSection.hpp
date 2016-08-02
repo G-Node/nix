@@ -38,6 +38,9 @@ public:
     void testPropertyAccess();
     void testReferringData();
     void testReferringTags();
+    void testReferringMultiTags();
+    //void testReferringSources();
+    //void testReferringBlocks();
 
     void testOperators();
     void testUpdatedAt();
