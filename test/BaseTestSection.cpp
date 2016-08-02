@@ -355,6 +355,29 @@ void BaseTestSection::testPropertyAccess() {
 }
 
 
+void BaseTestSection::testReferringData() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b;
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    b = file.createBlock("test_block", "test");
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = b.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        if (i % 2 == 0) {
+            da.metadata(ref_sec);
+        }
+
+    }
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 5);
+
+
+}
+
+
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);

@@ -36,6 +36,7 @@ public:
     void testFindSection();
     void testFindRelated();
     void testPropertyAccess();
+    void testReferringData();
 
     void testOperators();
     void testUpdatedAt();
