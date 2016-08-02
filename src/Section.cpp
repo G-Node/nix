@@ -341,8 +341,17 @@ std::vector<nix::DataArray> Section::referringDataArrays() const {
     std::vector<nix::DataArray> arrays;
     nix::File f = backend()->parentFile();
     for (auto b : f.blocks()) {
-        std::vector<nix::DataArray> temp = b.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
+        std::vector<nix::DataArray> temp = referringDataArrays(b);
         arrays.insert(arrays.end(), temp.begin(), temp.end());
+    }
+    return arrays;
+}
+
+
+std::vector<nix::DataArray> Section::referringDataArrays(const Block &b) const {
+    std::vector<nix::DataArray> arrays;
+    if (b) {
+        arrays = b.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
     }
     return arrays;
 }

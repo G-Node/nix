@@ -443,8 +443,9 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
-    std::vector<nix::DataArray> referringDataArrays() const;
+    std::vector<nix::DataArray> referringDataArrays(const nix::Block &b) const;
 
+    std::vector<nix::DataArray> referringDataArrays() const;
     /**
      * @brief Assignment operator for none.
      */

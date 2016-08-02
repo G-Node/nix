@@ -358,23 +358,28 @@ void BaseTestSection::testPropertyAccess() {
 void BaseTestSection::testReferringData() {
     nix::Section ref_sec = file.createSection("referrenced", "test");
 
-    nix::Block b;
+    nix::Block b, b2;
     CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
-    b = file.createBlock("test_block", "test");
-    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
 
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
 
     for (int i = 0; i < 10; i++) {
         std::string name = "data_array_" + nix::util::numToStr(i);
         nix::DataArray da = b.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        nix::DataArray da2 = b2.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 10, 10 }));
         if (i % 2 == 0) {
             da.metadata(ref_sec);
+        } else {
+            da2.metadata(ref_sec);
         }
-
     }
     CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 5);
-
-
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays().size() == 10);
 }
 
 
