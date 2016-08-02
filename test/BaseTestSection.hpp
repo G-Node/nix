@@ -37,6 +37,7 @@ public:
     void testFindRelated();
     void testPropertyAccess();
     void testReferringData();
+    void testReferringTags();
 
     void testOperators();
     void testUpdatedAt();

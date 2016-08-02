@@ -383,6 +383,34 @@ void BaseTestSection::testReferringData() {
 }
 
 
+void BaseTestSection::testReferringTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = b.createTag(name, "some tag", {1.});
+        nix::Tag t2 = b2.createTag(name, "some tag", {1.});
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags().size() == 10);
+}
+
+
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);

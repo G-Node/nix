@@ -445,7 +445,16 @@ public:
 
     std::vector<nix::DataArray> referringDataArrays(const nix::Block &b) const;
 
+
     std::vector<nix::DataArray> referringDataArrays() const;
+
+
+    std::vector<nix::Tag> referringTags() const;
+
+
+    std::vector<nix::Tag> referringTags(const nix::Block &b) const;
+
+
     /**
      * @brief Assignment operator for none.
      */

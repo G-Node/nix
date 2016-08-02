@@ -355,3 +355,23 @@ std::vector<nix::DataArray> Section::referringDataArrays(const Block &b) const {
     }
     return arrays;
 }
+
+
+std::vector<nix::Tag> Section::referringTags() const {
+    std::vector<nix::Tag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Tag> temp = referringTags(b);
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::Tag> Section::referringTags(const Block &b) const {
+    std::vector<nix::Tag> tags;
+    if (b) {
+        tags = b.tags(nix::util::MetadataFilter<nix::Tag>(id()));
+    }
+    return tags;
+}
