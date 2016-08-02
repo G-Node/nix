@@ -311,6 +311,9 @@ bool SectionFS::deleteProperty(const std::string &name_or_id) {
     return property_dir.removeObjectByNameOrAttribute("entity_id", name_or_id);
 }
 
+std::shared_ptr<base::IFile> SectionFS::parentFile() const {
+    return file();
+}
 
 SectionFS::~SectionFS() {}
 
