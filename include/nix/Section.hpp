@@ -461,6 +461,11 @@ public:
     std::vector<nix::MultiTag> referringMultiTags(const nix::Block &b) const;
 
 
+    std::vector<nix::Source> referringSources() const;
+
+
+    std::vector<nix::Source> referringSources(const nix::Block &b) const;
+
     /**
      * @brief Assignment operator for none.
      */

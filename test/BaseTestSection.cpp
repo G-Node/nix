@@ -441,6 +441,36 @@ void BaseTestSection::testReferringMultiTags() {
 }
 
 
+void BaseTestSection::testReferringSources() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "src_" + nix::util::numToStr(i);
+        nix::Source s = b.createSource(name, "some src");
+        nix::Source s2 = b2.createSource(name, "some src");
+        nix::Source s3 = s2.createSource(name + "_child", "child_source");
+        if (i % 2 == 0) {
+            s.metadata(ref_sec);
+        } else {
+            s3.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources().size() == 10);
+}
+
+
+
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);

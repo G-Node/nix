@@ -39,7 +39,7 @@ public:
     void testReferringData();
     void testReferringTags();
     void testReferringMultiTags();
-    //void testReferringSources();
+    void testReferringSources();
     //void testReferringBlocks();
 
     void testOperators();

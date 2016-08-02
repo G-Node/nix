@@ -395,3 +395,23 @@ std::vector<nix::MultiTag> Section::referringMultiTags(const Block &b) const {
     }
     return tags;
 }
+
+
+std::vector<nix::Source> Section::referringSources() const {
+    std::vector<nix::Source> srcs;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Source> temp = referringSources(b);
+        srcs.insert(srcs.end(), temp.begin(), temp.end());
+    }
+    return srcs;
+}
+
+
+std::vector<nix::Source> Section::referringSources(const Block &b) const {
+    std::vector<nix::Source> srcs;
+    if (b) {
+        srcs = b.findSources(nix::util::MetadataFilter<nix::Source>(id()));
+    }
+    return srcs;
+}
