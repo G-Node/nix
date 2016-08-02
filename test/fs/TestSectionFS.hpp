@@ -33,6 +33,7 @@ class TestSectionFS : public BaseTestSection {
     CPPUNIT_TEST(testReferringTags);
     CPPUNIT_TEST(testReferringMultiTags);
     CPPUNIT_TEST(testReferringSources);
+    CPPUNIT_TEST(testReferringBlocks);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);

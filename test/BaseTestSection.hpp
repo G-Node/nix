@@ -40,7 +40,7 @@ public:
     void testReferringTags();
     void testReferringMultiTags();
     void testReferringSources();
-    //void testReferringBlocks();
+    void testReferringBlocks();
 
     void testOperators();
     void testUpdatedAt();

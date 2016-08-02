@@ -466,6 +466,9 @@ public:
 
     std::vector<nix::Source> referringSources(const nix::Block &b) const;
 
+
+    std::vector<nix::Block> referringBlocks() const;
+
     /**
      * @brief Assignment operator for none.
      */

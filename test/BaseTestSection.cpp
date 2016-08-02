@@ -470,6 +470,19 @@ void BaseTestSection::testReferringSources() {
 }
 
 
+void BaseTestSection::testReferringBlocks() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+    for (int i = 0; i < 10; i++) {
+        std::string name = "block_" + nix::util::numToStr(i);
+        nix::Block b = file.createBlock(name, "some blck");
+        nix::Block b2 = file.createBlock(name + "_scnd", "test");
+        if (i % 2 == 0) {
+            b.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringBlocks().size() == 5);
+}
+
 
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
