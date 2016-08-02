@@ -131,7 +131,12 @@ struct MetadataFilter : public Filter<T> {
     {}
 
     virtual bool operator()(const T &e) {
-        return e.metadata().id() == sec_id;
+        if (e.metadata()) {
+            return e.metadata().id() == sec_id;
+        } else {
+            return false;
+        }
+
     }
 };
 
