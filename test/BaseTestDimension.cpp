@@ -69,7 +69,7 @@ void BaseTestDimension::testSampleValidate() {
 void BaseTestDimension::testIndex() {
     Dimension sd = data_array.appendSetDimension();
     CPPUNIT_ASSERT(data_array.dimensionCount() == 1 && sd.index() == 1);
-    data_array.deleteDimension(sd.index());
+    data_array.deleteDimensions();
     CPPUNIT_ASSERT(data_array.dimensionCount() == 0);
 }
 
@@ -91,7 +91,7 @@ void BaseTestDimension::testSampledDimLabel() {
     CPPUNIT_ASSERT_NO_THROW(sd.label(none));
     CPPUNIT_ASSERT(sd.label() == none);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -110,7 +110,7 @@ void BaseTestDimension::testSampledDimUnit() {
     CPPUNIT_ASSERT(*(sd.unit()) == validUnit);
     CPPUNIT_ASSERT_NO_THROW(sd.unit(boost::none));
     CPPUNIT_ASSERT(sd.unit() == boost::none);
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -130,7 +130,7 @@ void BaseTestDimension::testSampledDimSamplingInterval() {
     CPPUNIT_ASSERT_NO_THROW(sd.samplingInterval(samplingInterval));
     CPPUNIT_ASSERT(sd.samplingInterval() == samplingInterval);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -148,7 +148,7 @@ void BaseTestDimension::testSampledDimOffset() {
     CPPUNIT_ASSERT_NO_THROW(sd.offset(boost::none));
     CPPUNIT_ASSERT(sd.offset() == boost::none);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -177,7 +177,7 @@ void BaseTestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
     CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -203,7 +203,7 @@ void BaseTestDimension::testSampledDimPositionAt() {
         sd[200],
         std::numeric_limits<double>::round_error());
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -236,7 +236,7 @@ void BaseTestDimension::testSampledDimAxis() {
         axis.back(),
         std::numeric_limits<double>::round_error());
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -255,8 +255,7 @@ void BaseTestDimension::testSampledDimOperators() {
     CPPUNIT_ASSERT(sd1.index() == d.index() && sd2.index() == d2.index());
     CPPUNIT_ASSERT(sd1 != sd2);
     CPPUNIT_ASSERT(sd1 != sd3);
-    data_array.deleteDimension(d2.index());
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
     Dimension dim = data_array.appendSetDimension();
     CPPUNIT_ASSERT_THROW(dim.asSampledDimension(), IncompatibleDimensions);
     SampledDimension sampled = data_array.appendSampledDimension(samplingInterval);
@@ -320,7 +319,7 @@ void BaseTestDimension::testSetDimLabels() {
     retrieved_labels = sd.labels();
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), retrieved_labels.size());
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -344,7 +343,7 @@ void BaseTestDimension::testRangeDimLabel() {
     rd.label(none);
     CPPUNIT_ASSERT(rd.label() == none);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -367,7 +366,7 @@ void BaseTestDimension::testRangeDimUnit() {
     CPPUNIT_ASSERT_NO_THROW(rd.unit(none));
     CPPUNIT_ASSERT(rd.unit() == none);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -399,7 +398,7 @@ void BaseTestDimension::testRangeTicks() {
         CPPUNIT_ASSERT(new_ticks[i] == retrieved_ticks[i]);
     }
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -418,7 +417,7 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(rd.indexOf(257.28) == 4);
     CPPUNIT_ASSERT(rd.indexOf(-257.28) == 0);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -438,7 +437,7 @@ void BaseTestDimension::testRangeDimTickAt() {
     CPPUNIT_ASSERT(rd[4] == 100.);
     CPPUNIT_ASSERT_THROW(rd[10], OutOfBounds);
 
-    data_array.deleteDimension(d.index());
+    data_array.deleteDimensions();
 }
 
 
@@ -478,7 +477,7 @@ void BaseTestDimension::testAsDimensionMethods() {
     sa_str << x.dimensionType();
     CPPUNIT_ASSERT(sa_str.str() == "Range");
 
-    data_array.deleteDimension(1);
+    data_array.deleteDimensions();
     d = data_array.appendSampledDimension(0.1);
     CPPUNIT_ASSERT_THROW(d.asRangeDimension(), IncompatibleDimensions);
     CPPUNIT_ASSERT_THROW(d.asSetDimension(), IncompatibleDimensions);
@@ -488,7 +487,7 @@ void BaseTestDimension::testAsDimensionMethods() {
     range_str << x.dimensionType();
     CPPUNIT_ASSERT(range_str.str() == "Sample");
 
-    data_array.deleteDimension(1);
+    data_array.deleteDimensions();
     d = data_array.appendSetDimension();
     CPPUNIT_ASSERT_THROW(d.asRangeDimension(), IncompatibleDimensions);
     CPPUNIT_ASSERT_THROW(d.asSampledDimension(), IncompatibleDimensions);

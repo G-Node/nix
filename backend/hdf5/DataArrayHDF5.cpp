@@ -222,29 +222,18 @@ H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
 }
 
 
-bool DataArrayHDF5::deleteDimension(ndsize_t index) {
-    bool deleted = false;
-    ndsize_t dim_count = dimensionCount();
-    string str_id = util::numToStr(index);
+bool DataArrayHDF5::deleteDimensions() {
+    string dim_id;
     boost::optional<H5Group> g = dimension_group();
-
-    if (g) {
-        if (g->hasGroup(str_id)) {
-            g->removeGroup(str_id);
-            deleted = true;
-        }
-
-        if (deleted && index < dim_count) {
-            for (ndsize_t old_id = index + 1; old_id <= dim_count; old_id++) {
-                string str_old_id = util::numToStr(old_id);
-                string str_new_id = util::numToStr(old_id - 1);
-                g->renameGroup(str_old_id, str_new_id);
-            }
+    for (ndsize_t i = dimensionCount(); i > 0; --i) {
+        dim_id = util::numToStr(i);
+        if (g->hasGroup(dim_id)) {
+            g->removeGroup(dim_id);
         }
     }
-
-    return deleted;
+    return true;
 }
+
 
 //--------------------------------------------------
 // Other methods and functions
