@@ -2,7 +2,7 @@
 # NIX CMake
 
 cmake_minimum_required (VERSION 2.8.10)
-project (nix CXX)
+project (nix C CXX)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 1)
