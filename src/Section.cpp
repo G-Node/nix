@@ -417,7 +417,7 @@ std::vector<nix::Source> Section::referringSources(const Block &b) const {
 }
 
 
-std::vector<nix::Block> Section::   referringBlocks() const {
+std::vector<nix::Block> Section::referringBlocks() const {
     nix::File f = backend()->parentFile();
     return f.blocks(nix::util::MetadataFilter<nix::Block>(id()));
 }
