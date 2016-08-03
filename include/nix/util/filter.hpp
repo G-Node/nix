@@ -121,14 +121,17 @@ struct NameFilter : public Filter<T> {
 
 };
 
+
 template<typename T>
 struct MetadataFilter : public Filter<T> {
 
     const std::string sec_id;
 
+
     MetadataFilter(const std::string &section_id)
         : sec_id(section_id)
     {}
+
 
     virtual bool operator()(const T &e) {
         if (e.metadata()) {
@@ -140,6 +143,27 @@ struct MetadataFilter : public Filter<T> {
     }
 };
 
+
+template<typename T>
+struct SourceFilter : public Filter<T> {
+
+    const std::string src_id;
+
+
+    SourceFilter(const std::string &src_id)
+        : src_id(src_id)
+    {}
+
+
+    virtual bool operator() (const T &ent) {
+        if (ent.source()) {
+            return ent.source().id() == src_id;
+        } else {
+            return false;
+        }
+    }
+
+};
 
 } // namespace util
 } // namespace nix
