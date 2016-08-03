@@ -29,6 +29,11 @@ class TestSectionFS : public BaseTestSection {
     CPPUNIT_TEST(testFindSection);
     CPPUNIT_TEST(testFindRelated);
     CPPUNIT_TEST(testPropertyAccess);
+    CPPUNIT_TEST(testReferringData);
+    CPPUNIT_TEST(testReferringTags);
+    CPPUNIT_TEST(testReferringMultiTags);
+    CPPUNIT_TEST(testReferringSources);
+    CPPUNIT_TEST(testReferringBlocks);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);

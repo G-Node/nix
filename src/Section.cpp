@@ -11,6 +11,9 @@
 #include <list>
 #include <algorithm>
 #include <iterator>
+#include <nix/Block.hpp>
+#include <nix/File.hpp>
+#include <nix/DataArray.hpp>
 #include <nix/util/util.hpp>
 
 using namespace nix;
@@ -331,4 +334,90 @@ Section Section::getSection(ndsize_t index) const {
         throw OutOfBounds("Section::getSection: index is out of bounds!");
     }
     return backend()->getSection(index);
+}
+
+
+std::vector<nix::DataArray> Section::referringDataArrays() const {
+    std::vector<nix::DataArray> arrays;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::DataArray> temp = referringDataArrays(b);
+        arrays.insert(arrays.end(), temp.begin(), temp.end());
+    }
+    return arrays;
+}
+
+
+std::vector<nix::DataArray> Section::referringDataArrays(const Block &b) const {
+    std::vector<nix::DataArray> arrays;
+    if (b) {
+        arrays = b.dataArrays(nix::util::MetadataFilter<nix::DataArray>(id()));
+    }
+    return arrays;
+}
+
+
+std::vector<nix::Tag> Section::referringTags() const {
+    std::vector<nix::Tag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Tag> temp = referringTags(b);
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::Tag> Section::referringTags(const Block &b) const {
+    std::vector<nix::Tag> tags;
+    if (b) {
+        tags = b.tags(nix::util::MetadataFilter<nix::Tag>(id()));
+    }
+    return tags;
+}
+
+
+std::vector<nix::MultiTag> Section::referringMultiTags() const {
+    std::vector<nix::MultiTag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::MultiTag> temp = referringMultiTags(b);
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::MultiTag> Section::referringMultiTags(const Block &b) const {
+    std::vector<nix::MultiTag> tags;
+    if (b) {
+        tags = b.multiTags(nix::util::MetadataFilter<nix::MultiTag>(id()));
+    }
+    return tags;
+}
+
+
+std::vector<nix::Source> Section::referringSources() const {
+    std::vector<nix::Source> srcs;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Source> temp = referringSources(b);
+        srcs.insert(srcs.end(), temp.begin(), temp.end());
+    }
+    return srcs;
+}
+
+
+std::vector<nix::Source> Section::referringSources(const Block &b) const {
+    std::vector<nix::Source> srcs;
+    if (b) {
+        srcs = b.findSources(nix::util::MetadataFilter<nix::Source>(id()));
+    }
+    return srcs;
+}
+
+
+std::vector<nix::Block> Section::referringBlocks() const {
+    nix::File f = backend()->parentFile();
+    return f.blocks(nix::util::MetadataFilter<nix::Block>(id()));
 }

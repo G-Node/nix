@@ -121,6 +121,25 @@ struct NameFilter : public Filter<T> {
 
 };
 
+template<typename T>
+struct MetadataFilter : public Filter<T> {
+
+    const std::string sec_id;
+
+    MetadataFilter(const std::string &section_id)
+        : sec_id(section_id)
+    {}
+
+    virtual bool operator()(const T &e) {
+        if (e.metadata()) {
+            return e.metadata().id() == sec_id;
+        } else {
+            return false;
+        }
+
+    }
+};
+
 
 } // namespace util
 } // namespace nix

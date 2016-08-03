@@ -158,6 +158,9 @@ public:
     // Ohter methods and operators
     //--------------------------------------------------
 
+    std::shared_ptr<base::IFile> parentFile() const;
+
+
     virtual ~SectionHDF5();
 
 };

@@ -312,6 +312,10 @@ bool SectionHDF5::deleteProperty(const string &name_or_id) {
 }
 
 
+shared_ptr<IFile> SectionHDF5::parentFile() const {
+    return file();
+}
+
 SectionHDF5::~SectionHDF5() {}
 
 } // ns nix::hdf5

@@ -355,6 +355,135 @@ void BaseTestSection::testPropertyAccess() {
 }
 
 
+void BaseTestSection::testReferringData() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = b.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        nix::DataArray da2 = b2.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 10, 10 }));
+        if (i % 2 == 0) {
+            da.metadata(ref_sec);
+        } else {
+            da2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays().size() == 10);
+}
+
+
+void BaseTestSection::testReferringTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = b.createTag(name, "some tag", {1.});
+        nix::Tag t2 = b2.createTag(name, "some tag", {1.});
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags().size() == 10);
+}
+
+
+void BaseTestSection::testReferringMultiTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+    DataArray positions = b.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    DataArray positions2 = b2.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = b.createMultiTag(name, "some tag", positions);
+        nix::MultiTag t2 = b2.createMultiTag(name, "some tag", positions2);
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags().size() == 10);
+}
+
+
+void BaseTestSection::testReferringSources() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "src_" + nix::util::numToStr(i);
+        nix::Source s = b.createSource(name, "some src");
+        nix::Source s2 = b2.createSource(name, "some src");
+        nix::Source s3 = s2.createSource(name + "_child", "child_source");
+        if (i % 2 == 0) {
+            s.metadata(ref_sec);
+        } else {
+            s3.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources().size() == 10);
+}
+
+
+void BaseTestSection::testReferringBlocks() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+    for (int i = 0; i < 10; i++) {
+        std::string name = "block_" + nix::util::numToStr(i);
+        nix::Block b = file.createBlock(name, "some blck");
+        nix::Block b2 = file.createBlock(name + "_scnd", "test");
+        if (i % 2 == 0) {
+            b.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringBlocks().size() == 5);
+}
+
+
 void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section_null == false);
     CPPUNIT_ASSERT(section_null == none);

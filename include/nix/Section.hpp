@@ -15,7 +15,7 @@
 #include <nix/Property.hpp>
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
-
+#include <nix/types.hpp>
 #include <memory>
 #include <functional>
 #include <string>
@@ -442,6 +442,83 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+    /**
+     * @brief Find the DataArrays that refer to this Section in the metadata field.
+     *
+     * @param b The Block in which the search should be performed.
+     * @return Vector of DataArrays.
+     */
+    std::vector<nix::DataArray> referringDataArrays(const nix::Block &b) const;
+
+    /**
+     * @brief Find the DataArrays that refer to this Section in the metadata field.
+     * Search is performed in the whole file.
+     *
+     * @return Vector of DataArrays.
+     */
+    std::vector<nix::DataArray> referringDataArrays() const;
+
+
+    /**
+     * @brief Find the Tags that refer to this Section in the metadata field.
+     * Search is performed in the whole file.
+     *
+     * @return std::vector of Tags.
+     */
+    std::vector<nix::Tag> referringTags() const;
+
+
+    /**
+     * @brief Find the Tags that refer to this Section in the metadata field.
+     *
+     * @param b The Block in which the search should be performed.
+     * @return std::vector of Tags.
+     */
+    std::vector<nix::Tag> referringTags(const nix::Block &b) const;
+
+
+    /**
+     * @brief Find the DataArrays that refer to this Section in the metadata field.
+     * Search is performed in the whole file.
+     *
+     * @return std::vector of MultiTags.
+     */
+    std::vector<nix::MultiTag> referringMultiTags() const;
+
+
+    /**
+     * @brief Find the MultiTags that refer to this Section in the metadata field.
+     *
+     * @param b The Block in which the search should be performed.
+     * @return std::vector of MultiTags.
+     */
+    std::vector<nix::MultiTag> referringMultiTags(const nix::Block &b) const;
+
+
+    /**
+     * @brief Find the Sources that refer to this Section in the metadata field.
+     *
+     * @param b The Block in which the search should be performed.
+     * @return std::vector of Sources.
+     */
+    std::vector<nix::Source> referringSources() const;
+
+
+    /**
+     * @brief Find the Sources that refer to this Section in the metadata field.
+     * Search is performed in the whole file.
+     *
+     * @return std::vector of Sources.
+     */
+    std::vector<nix::Source> referringSources(const nix::Block &b) const;
+
+    /**
+     * @brief Find the Blocks that refer to this Section in the metadata field.
+     *
+     * @return std::vector of Blocks.
+     */
+    std::vector<nix::Block> referringBlocks() const;
 
     /**
      * @brief Assignment operator for none.
