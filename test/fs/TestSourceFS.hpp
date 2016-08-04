@@ -24,6 +24,7 @@ class TestSourceFS : public BaseTestSource {
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testFindSource);
+    CPPUNIT_TEST(testReferringDataArrays);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);

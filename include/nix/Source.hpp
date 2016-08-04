@@ -10,6 +10,7 @@
 #define NIX_SOURCE_H
 
 #include <nix/util/filter.hpp>
+#include <nix/types.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
@@ -199,6 +200,11 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+    std::vector<nix::DataArray> referringDataArrays() const;
+
+
+    std::vector<nix::DataArray> referringDataArrays(const nix::Block &block) const;
 
     /**
      * @brief Assignment operator for none.

@@ -9,6 +9,7 @@
 #include <nix/Source.hpp>
 
 #include <queue>
+#include <nix/File.hpp>
 #include <nix/util/util.hpp>
 
 using namespace nix;
@@ -114,6 +115,24 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 
 
+std::vector<nix::DataArray> Source::referringDataArrays() const {
+    std::vector<nix::DataArray> arrays;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::DataArray> temp = referringDataArrays(b);
+        arrays.insert(arrays.end(), temp.begin(), temp.end());
+    }
+    return arrays;
+}
+
+
+std::vector<nix::DataArray> Source::referringDataArrays(const nix::Block & block) const {
+    std::vector<nix::DataArray> arrays;
+    if (block) {
+        arrays = block.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
+    }
+    return arrays;
+}
 std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();

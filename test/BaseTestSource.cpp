@@ -227,6 +227,22 @@ void BaseTestSource::testFindSource() {
 }
 
 
+void BaseTestSource::testReferringDataArrays() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringDataArrays(block).size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = block.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        if (i % 2 == 0) {
+            da.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringDataArrays(block).size() == 5);
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
 void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);

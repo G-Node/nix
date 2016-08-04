@@ -35,6 +35,7 @@ public:
     void testMetadataAccess();
     void testSourceAccess();
     void testFindSource();
+    void testReferringDataArrays();
 
     void testOperators();
     void testUpdatedAt();
