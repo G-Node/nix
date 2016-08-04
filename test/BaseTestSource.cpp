@@ -229,7 +229,7 @@ void BaseTestSource::testFindSource() {
 
 void BaseTestSource::testReferringDataArrays() {
     nix::Source ref_src = block.createSource("referrenced", "test");
-    CPPUNIT_ASSERT(ref_src.referringDataArrays(block).size() == 0);
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 0);
     for (int i = 0; i < 10; i++) {
         std::string name = "data_array_" + nix::util::numToStr(i);
         nix::DataArray da = block.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
@@ -237,7 +237,6 @@ void BaseTestSource::testReferringDataArrays() {
             da.addSource(ref_src);
         }
     }
-    CPPUNIT_ASSERT(ref_src.referringDataArrays(block).size() == 5);
     CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 5);
     block.deleteSource(ref_src);
 }
@@ -245,7 +244,7 @@ void BaseTestSource::testReferringDataArrays() {
 
 void BaseTestSource::testReferringMultiTags() {
     nix::Source ref_src = block.createSource("referrenced", "test");
-    CPPUNIT_ASSERT(ref_src.referringMultiTags(block).size() == 0);
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 0);
     DataArray positions = block.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
     for (int i = 0; i < 10; i++) {
         std::string name = "tag_" + nix::util::numToStr(i);
@@ -254,7 +253,6 @@ void BaseTestSource::testReferringMultiTags() {
             t.addSource(ref_src);
         }
     }
-    CPPUNIT_ASSERT(ref_src.referringMultiTags(block).size() == 5);
     CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 5);
     block.deleteSource(ref_src);
     block.deleteDataArray(positions);
@@ -263,7 +261,7 @@ void BaseTestSource::testReferringMultiTags() {
 
 void BaseTestSource::testReferringTags() {
     nix::Source ref_src = block.createSource("referrenced", "test");
-    CPPUNIT_ASSERT(ref_src.referringTags(block).size() == 0);
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 0);
     for (int i = 0; i < 10; i++) {
         std::string name = "tag_" + nix::util::numToStr(i);
         nix::Tag t = block.createTag(name, "some_tag", {1.});
@@ -271,7 +269,6 @@ void BaseTestSource::testReferringTags() {
             t.addSource(ref_src);
         }
     }
-    CPPUNIT_ASSERT(ref_src.referringTags(block).size() == 5);
     CPPUNIT_ASSERT(ref_src.referringTags().size() == 5);
     block.deleteSource(ref_src);
 }

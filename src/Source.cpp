@@ -119,17 +119,8 @@ std::vector<nix::DataArray> Source::referringDataArrays() const {
     std::vector<nix::DataArray> arrays;
     nix::File f = backend()->parentFile();
     for (auto b : f.blocks()) {
-        std::vector<nix::DataArray> temp = referringDataArrays(b);
+        std::vector<nix::DataArray> temp = b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
         arrays.insert(arrays.end(), temp.begin(), temp.end());
-    }
-    return arrays;
-}
-
-
-std::vector<nix::DataArray> Source::referringDataArrays(const nix::Block & block) const {
-    std::vector<nix::DataArray> arrays;
-    if (block) {
-        arrays = block.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
     }
     return arrays;
 }
@@ -139,17 +130,8 @@ std::vector<nix::Tag> Source::referringTags() const {
     std::vector<nix::Tag> tags;
     nix::File f = backend()->parentFile();
     for (auto b : f.blocks()) {
-        std::vector<nix::Tag> temp = referringTags(b);
+        std::vector<nix::Tag> temp = b.tags(nix::util::SourceFilter<nix::Tag>(id()));
         tags.insert(tags.end(), temp.begin(), temp.end());
-    }
-    return tags;
-}
-
-
-std::vector<nix::Tag> Source::referringTags(const Block &b) const {
-    std::vector<nix::Tag> tags;
-    if (b) {
-        tags = b.tags(nix::util::SourceFilter<nix::Tag>(id()));
     }
     return tags;
 }
@@ -159,17 +141,8 @@ std::vector<nix::MultiTag> Source::referringMultiTags() const {
     std::vector<nix::MultiTag> tags;
     nix::File f = backend()->parentFile();
     for (auto b : f.blocks()) {
-        std::vector<nix::MultiTag> temp = referringMultiTags(b);
+        std::vector<nix::MultiTag> temp =  b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
         tags.insert(tags.end(), temp.begin(), temp.end());
-    }
-    return tags;
-}
-
-
-std::vector<nix::MultiTag> Source::referringMultiTags(const Block &b) const {
-    std::vector<nix::MultiTag> tags;
-    if (b) {
-        tags = b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
     }
     return tags;
 }

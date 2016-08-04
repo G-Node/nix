@@ -201,22 +201,28 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
+    /**
+     * Returns all DataArrays that refer to this Source.
+     *
+     * @return std::vector of DataArrays.
+     */
     std::vector<nix::DataArray> referringDataArrays() const;
 
 
-    std::vector<nix::DataArray> referringDataArrays(const nix::Block &block) const;
-
-
+    /**
+     * Returns all Tags that refer to this Source.
+     *
+     * @return std::vector of Tags.
+     */
     std::vector<nix::Tag> referringTags() const;
 
 
-    std::vector<nix::Tag> referringTags(const nix::Block &block) const;
-
-
+    /**
+     * Returns all MultiTags that refer to this Source.
+     *
+     * @return std::vector of MultiTags.
+     */
     std::vector<nix::MultiTag> referringMultiTags() const;
-
-
-    std::vector<nix::MultiTag> referringMultiTags(const nix::Block &block) const;
 
 
     /**
