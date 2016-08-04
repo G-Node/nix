@@ -14,7 +14,7 @@
 #include <vector>
 #include <unordered_set>
 #include <string>
-
+#include <iostream>
 namespace nix {
 namespace util {
 
@@ -156,11 +156,7 @@ struct SourceFilter : public Filter<T> {
 
 
     virtual bool operator() (const T &ent) {
-        if (ent.source()) {
-            return ent.source().id() == src_id;
-        } else {
-            return false;
-        }
+        return ent.hasSource(src_id);
     }
 
 };
