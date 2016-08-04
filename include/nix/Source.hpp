@@ -213,6 +213,12 @@ public:
     std::vector<nix::Tag> referringTags(const nix::Block &block) const;
 
 
+    std::vector<nix::MultiTag> referringMultiTags() const;
+
+
+    std::vector<nix::MultiTag> referringMultiTags(const nix::Block &block) const;
+
+
     /**
      * @brief Assignment operator for none.
      */

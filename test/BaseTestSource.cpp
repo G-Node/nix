@@ -243,6 +243,24 @@ void BaseTestSource::testReferringDataArrays() {
 }
 
 
+void BaseTestSource::testReferringMultiTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringMultiTags(block).size() == 0);
+    DataArray positions = block.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = block.createMultiTag(name, "some tag", positions);
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringMultiTags(block).size() == 5);
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 5);
+    block.deleteSource(ref_src);
+    block.deleteDataArray(positions);
+}
+
+
 void BaseTestSource::testReferringTags() {
     nix::Source ref_src = block.createSource("referrenced", "test");
     CPPUNIT_ASSERT(ref_src.referringTags(block).size() == 0);

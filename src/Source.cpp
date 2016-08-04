@@ -155,6 +155,26 @@ std::vector<nix::Tag> Source::referringTags(const Block &b) const {
 }
 
 
+std::vector<nix::MultiTag> Source::referringMultiTags() const {
+    std::vector<nix::MultiTag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::MultiTag> temp = referringMultiTags(b);
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::MultiTag> Source::referringMultiTags(const Block &b) const {
+    std::vector<nix::MultiTag> tags;
+    if (b) {
+        tags = b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
+    }
+    return tags;
+}
+
+
 std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();
