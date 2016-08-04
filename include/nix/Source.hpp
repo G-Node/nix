@@ -206,6 +206,13 @@ public:
 
     std::vector<nix::DataArray> referringDataArrays(const nix::Block &block) const;
 
+
+    std::vector<nix::Tag> referringTags() const;
+
+
+    std::vector<nix::Tag> referringTags(const nix::Block &block) const;
+
+
     /**
      * @brief Assignment operator for none.
      */

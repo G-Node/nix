@@ -243,6 +243,22 @@ void BaseTestSource::testReferringDataArrays() {
 }
 
 
+void BaseTestSource::testReferringTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringTags(block).size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = block.createTag(name, "some_tag", {1.});
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringTags(block).size() == 5);
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
 void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);

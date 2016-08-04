@@ -133,6 +133,28 @@ std::vector<nix::DataArray> Source::referringDataArrays(const nix::Block & block
     }
     return arrays;
 }
+
+
+std::vector<nix::Tag> Source::referringTags() const {
+    std::vector<nix::Tag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Tag> temp = referringTags(b);
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::Tag> Source::referringTags(const Block &b) const {
+    std::vector<nix::Tag> tags;
+    if (b) {
+        tags = b.tags(nix::util::SourceFilter<nix::Tag>(id()));
+    }
+    return tags;
+}
+
+
 std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {
     out << "Source: {name = " << ent.name();
     out << ", type = " << ent.type();

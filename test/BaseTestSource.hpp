@@ -36,6 +36,7 @@ public:
     void testSourceAccess();
     void testFindSource();
     void testReferringDataArrays();
+    void testReferringTags();
 
     void testOperators();
     void testUpdatedAt();
