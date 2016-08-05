@@ -52,10 +52,7 @@ ndsize_t EntityWithSourcesFS::sourceCount() const {
 
 bool EntityWithSourcesFS::hasSource(const std::string &id) const {
     boost::optional<bfs::path> p = sources_dir.findByNameOrAttribute("entity_id", id);
-    if (p)
-        return true;
-    else
-        return false;
+    return p ? true : false;
 }
 
 
