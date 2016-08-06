@@ -35,6 +35,9 @@ public:
     void testMetadataAccess();
     void testSourceAccess();
     void testFindSource();
+    void testReferringDataArrays();
+    void testReferringMultiTags();
+    void testReferringTags();
 
     void testOperators();
     void testUpdatedAt();

@@ -89,6 +89,11 @@ bool SourceFS::deleteSource(const std::string &name_or_id) {
 }
 
 
+std::shared_ptr<base::IFile> SourceFS::parentFile() const {
+    return file();
+}
+
+
 SourceFS::~SourceFS() {}
 
 } // ns nix::file

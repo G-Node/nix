@@ -9,6 +9,7 @@
 #include <nix/Source.hpp>
 
 #include <queue>
+#include <nix/File.hpp>
 #include <nix/util/util.hpp>
 
 using namespace nix;
@@ -112,6 +113,39 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+
+
+std::vector<nix::DataArray> Source::referringDataArrays() const {
+    std::vector<nix::DataArray> arrays;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::DataArray> temp = b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
+        arrays.insert(arrays.end(), temp.begin(), temp.end());
+    }
+    return arrays;
+}
+
+
+std::vector<nix::Tag> Source::referringTags() const {
+    std::vector<nix::Tag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::Tag> temp = b.tags(nix::util::SourceFilter<nix::Tag>(id()));
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
+
+
+std::vector<nix::MultiTag> Source::referringMultiTags() const {
+    std::vector<nix::MultiTag> tags;
+    nix::File f = backend()->parentFile();
+    for (auto b : f.blocks()) {
+        std::vector<nix::MultiTag> temp =  b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
+        tags.insert(tags.end(), temp.begin(), temp.end());
+    }
+    return tags;
+}
 
 
 std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {

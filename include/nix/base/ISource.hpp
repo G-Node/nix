@@ -46,6 +46,9 @@ public:
     virtual bool deleteSource(const std::string &name_or_id) = 0;
 
 
+    virtual std::shared_ptr<IFile> parentFile() const = 0;
+
+
     virtual ~ISource() {}
 
 };

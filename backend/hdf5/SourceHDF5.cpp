@@ -100,6 +100,11 @@ bool SourceHDF5::deleteSource(const string &name_or_id) {
 }
 
 
+shared_ptr<IFile> SourceHDF5::parentFile() const {
+    return file();
+}
+
+
 SourceHDF5::~SourceHDF5() {}
 
 } // ns nix::hdf5

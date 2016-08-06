@@ -227,6 +227,53 @@ void BaseTestSource::testFindSource() {
 }
 
 
+void BaseTestSource::testReferringDataArrays() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = block.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        if (i % 2 == 0) {
+            da.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
+void BaseTestSource::testReferringMultiTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 0);
+    DataArray positions = block.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = block.createMultiTag(name, "some tag", positions);
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 5);
+    block.deleteSource(ref_src);
+    block.deleteDataArray(positions);
+}
+
+
+void BaseTestSource::testReferringTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = block.createTag(name, "some_tag", {1.});
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
 void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);

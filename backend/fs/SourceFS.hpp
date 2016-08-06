@@ -73,6 +73,8 @@ public:
     // Other methods and functions
     //--------------------------------------------------
 
+    std::shared_ptr<base::IFile> parentFile() const;
+
 
     virtual ~SourceFS();
 };

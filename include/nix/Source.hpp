@@ -10,6 +10,7 @@
 #define NIX_SOURCE_H
 
 #include <nix/util/filter.hpp>
+#include <nix/types.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 
@@ -199,6 +200,30 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
+
+    /**
+     * Returns all DataArrays that refer to this Source.
+     *
+     * @return std::vector of DataArrays.
+     */
+    std::vector<nix::DataArray> referringDataArrays() const;
+
+
+    /**
+     * Returns all Tags that refer to this Source.
+     *
+     * @return std::vector of Tags.
+     */
+    std::vector<nix::Tag> referringTags() const;
+
+
+    /**
+     * Returns all MultiTags that refer to this Source.
+     *
+     * @return std::vector of MultiTags.
+     */
+    std::vector<nix::MultiTag> referringMultiTags() const;
+
 
     /**
      * @brief Assignment operator for none.
