@@ -27,6 +27,7 @@ class SourceHDF5 : virtual public base::ISource, public EntityWithMetadataHDF5  
 private:
 
     optGroup source_group;
+    std::shared_ptr<base::IBlock> entity_block;
 
 public:
 
@@ -34,19 +35,19 @@ public:
     /**
      * Standard constructor for existing Source
      */
-    SourceHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group);
+    SourceHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
 
     /**
      * Default constructor.
      */
-    SourceHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type,
-               const std::string &name);
+    SourceHDF5(const std::shared_ptr<base::IFile> &file,  const std::shared_ptr<base::IBlock> &block,
+               const H5Group &group, const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Default constructor that preserves the creation time.
      */
-    SourceHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type,
-               const std::string &name, time_t time);
+    SourceHDF5(const std::shared_ptr<base::IFile> &file,  const std::shared_ptr<base::IBlock> &block,
+               const H5Group &group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Methods concerning child sources

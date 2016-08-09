@@ -66,7 +66,7 @@ shared_ptr<ISource> BlockHDF5::getSource(const string &name_or_id) const {
     if (g) {
         boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
-            source = make_shared<SourceHDF5>(file(), *group);
+            source = make_shared<SourceHDF5>(file(), block(), *group);
     }
 
     return source;
@@ -91,7 +91,7 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
     boost::optional<H5Group> g = source_group(true);
 
     H5Group group = g->openGroup(name, true);
-    return make_shared<SourceHDF5>(file(), group, id, type, name);
+    return make_shared<SourceHDF5>(file(), block(), group, id, type, name);
 }
 
 
