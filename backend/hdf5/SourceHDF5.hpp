@@ -78,6 +78,8 @@ public:
     std::shared_ptr<base::IFile> parentFile() const;
 
 
+    std::shared_ptr<base::IBlock> parentBlock() const;
+
     virtual ~SourceHDF5();
 };
 

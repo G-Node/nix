@@ -105,6 +105,10 @@ shared_ptr<IFile> SourceHDF5::parentFile() const {
 }
 
 
+std::shared_ptr<base::IBlock> SourceHDF5::parentBlock() const {
+    return entity_block;
+}
+
 SourceHDF5::~SourceHDF5() {}
 
 } // ns nix::hdf5
