@@ -117,7 +117,7 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 nix::Source Source::parentSource() const {
     nix::Source s;
     nix::Block b = backend()->parentBlock();
-    std::vector<nix::Source> srcs = b.sources(nix::util::SourceFilter<nix::Source>(id()));
+    std::vector<nix::Source> srcs = b.findSources(nix::util::SourceFilter<nix::Source>(id()));
     return (srcs.size() > 0) ? srcs[0] : s;
 }
 
