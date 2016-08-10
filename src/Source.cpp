@@ -114,6 +114,13 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 // Operators and other functions
 //------------------------------------------------------
 
+nix::Source Source::parentSource() const {
+    nix::Source s;
+    nix::Block b = backend()->parentBlock();
+    std::vector<nix::Source> srcs = b.sources(nix::util::SourceFilter<nix::Source>(id()));
+    return (srcs.size() > 0) ? srcs[0] : s;
+}
+
 
 std::vector<nix::DataArray> Source::referringDataArrays() const {
     nix::File f = backend()->parentFile();
