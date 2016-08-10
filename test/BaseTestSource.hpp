@@ -38,6 +38,7 @@ public:
     void testReferringDataArrays();
     void testReferringMultiTags();
     void testReferringTags();
+    void testParentSource();
 
     void testOperators();
     void testUpdatedAt();

@@ -274,6 +274,15 @@ void BaseTestSource::testReferringTags() {
 }
 
 
+void BaseTestSource::testParentSource() {
+    nix::Source child_source  = source.createSource("child", "test");
+    nix::Source grandchild_source = child_source.createSource("grand_child", "test");
+    CPPUNIT_ASSERT(child_source.parentSource().id() == source.id());
+    CPPUNIT_ASSERT(grandchild_source.parentSource().id() == child_source.id());
+    CPPUNIT_ASSERT(!source.parentSource());
+}
+
+
 void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);
