@@ -123,21 +123,18 @@ nix::Source Source::parentSource() const {
 
 
 std::vector<nix::DataArray> Source::referringDataArrays() const {
-    nix::File f = backend()->parentFile();
     nix::Block b = backend()->parentBlock();
     return b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
 }
 
 
 std::vector<nix::Tag> Source::referringTags() const {
-    nix::File f = backend()->parentFile();
     nix::Block b = backend()->parentBlock();
     return b.tags(nix::util::SourceFilter<nix::Tag>(id()));
 }
 
 
 std::vector<nix::MultiTag> Source::referringMultiTags() const {
-    nix::File f = backend()->parentFile();
     nix::Block b = backend()->parentBlock();
     return b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
 }
