@@ -66,7 +66,7 @@ std::shared_ptr<base::ISource> BlockFS::getSource(const std::string &name_or_id)
     std::shared_ptr<base::ISource> source;
     boost::optional<bfs::path> path = source_dir.findByNameOrAttribute("entity_id", name_or_id);
     if (path) {
-        return std::make_shared<SourceFS>(file(), path->string());
+        return std::make_shared<SourceFS>(file(), block(), path->string());
     }
     return source;
 }
@@ -82,7 +82,7 @@ std::shared_ptr<base::ISource> BlockFS::getSource(ndsize_t index) const {
         throw OutOfBounds("Trying to access block.source with invalid index.", index);
     }
     bfs::path p = source_dir.sub_dir_by_index(index);
-    return std::make_shared<SourceFS>(file(), p.string());
+    return std::make_shared<SourceFS>(file(), block(), p.string());
 }
 
 
@@ -94,7 +94,7 @@ std::shared_ptr<base::ISource> BlockFS::createSource(const std::string &name, co
         throw DuplicateName("createSource");
     }
     std::string id = util::createId();
-    return std::make_shared<SourceFS>(file(), source_dir.location(), id, type, name);
+    return std::make_shared<SourceFS>(file(), block(), source_dir.location(), id, type, name);
 }
 
 

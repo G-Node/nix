@@ -60,7 +60,7 @@ std::shared_ptr<base::ISource> EntityWithSourcesFS::getSource(const std::string 
     std::shared_ptr<base::ISource> source;
     boost::optional<bfs::path> path = sources_dir.findByNameOrAttribute("name", name_or_id);
     if (path) {
-        return std::make_shared<SourceFS>(file(), path->string());
+        return std::make_shared<SourceFS>(file(), entity_block, path->string());
 
     }
     return source;
@@ -70,7 +70,7 @@ std::shared_ptr<base::ISource> EntityWithSourcesFS::getSource(const size_t index
     std::shared_ptr<base::ISource> source;
     bfs::path p = sources_dir.sub_dir_by_index(index);
     if (!p.empty()) {
-        return std::make_shared<SourceFS>(file(), p.string());
+        return std::make_shared<SourceFS>(file(), entity_block, p.string());
 
     }
     return source;

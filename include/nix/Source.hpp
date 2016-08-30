@@ -202,6 +202,14 @@ public:
     //--------------------------------------------------
 
     /**
+     * @brief Returns the parent Source of this Source. Method performs a search,
+     * may thus not be the most efficient way.
+     *
+     * @return The parent Source if there is any, an empty Source otherwise.
+     */
+    nix::Source parentSource() const;
+
+    /**
      * Returns all DataArrays that refer to this Source.
      *
      * @return std::vector of DataArrays.

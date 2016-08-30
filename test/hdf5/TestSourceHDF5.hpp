@@ -28,6 +28,7 @@ class TestSourceHDF5 : public BaseTestSource {
     CPPUNIT_TEST(testReferringDataArrays);
     CPPUNIT_TEST(testReferringMultiTags);
     CPPUNIT_TEST(testReferringTags);
+    CPPUNIT_TEST(testParentSource);
 
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testUpdatedAt);

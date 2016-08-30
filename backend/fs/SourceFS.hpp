@@ -25,7 +25,7 @@ class SourceFS : virtual public base::ISource, public EntityWithMetadataFS  {
 
 private:
     Directory sources_dir;
-
+    std::shared_ptr<base::IBlock> parent_block;
     void createSubFolders(const std::shared_ptr<base::IFile> &file);
 
 public:
@@ -33,19 +33,19 @@ public:
     /**
      * Standard constructor for existing Source
      */
-    SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc);
+    SourceFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
 
     /**
      * Default constructor.
      */
-    SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, const std::string &type,
-               const std::string &name);
+    SourceFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+             const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Default constructor that preserves the creation time.
      */
-    SourceFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, const std::string &type,
-               const std::string &name, time_t time);
+    SourceFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+             const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
     // Methods concerning child sources
@@ -76,6 +76,7 @@ public:
     std::shared_ptr<base::IFile> parentFile() const;
 
 
+    std::shared_ptr<base::IBlock> parentBlock() const;
     virtual ~SourceFS();
 };
 

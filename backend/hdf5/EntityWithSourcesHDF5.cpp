@@ -71,7 +71,7 @@ std::shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const std::string &nam
 
     if (g && hasSource(id)) {
         H5Group group = g->openGroup(id);
-        source = std::make_shared<SourceHDF5>(file(), group);
+        source = std::make_shared<SourceHDF5>(file(), entity_block, group);
     }
 
     return source;

@@ -17,21 +17,21 @@ namespace nix {
 namespace hdf5 {
 
 
-SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file, const H5Group &group)
-    : EntityWithMetadataHDF5(file, group)
+SourceHDF5::SourceHDF5(const std::shared_ptr<IFile> &file,  const std::shared_ptr<IBlock> &block, const H5Group &group)
+    : EntityWithMetadataHDF5(file, group), entity_block(block)
 {
     source_group = this->group().openOptGroup("sources");
 }
     
     
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const H5Group &group, const std::string &id, const string &type, const string &name)
-    : SourceHDF5(file, group, id, type, name, util::getTime())
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file,  const std::shared_ptr<IBlock> &block, const H5Group &group, const std::string &id, const string &type, const string &name)
+    : SourceHDF5(file, block, group, id, type, name, util::getTime())
 {
 }
 
 
-SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file, const H5Group &group, const std::string &id, const string &type, const string &name, time_t time)
-    : EntityWithMetadataHDF5(file, group, id, type, name, time)
+SourceHDF5::SourceHDF5(const shared_ptr<IFile> &file,  const std::shared_ptr<IBlock> &block, const H5Group &group, const std::string &id, const string &type, const string &name, time_t time)
+    : EntityWithMetadataHDF5(file, group, id, type, name, time), entity_block(block)
 {
     source_group = this->group().openOptGroup("sources");
 }
@@ -49,7 +49,7 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
     if (g) {
         boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
-            source = make_shared<SourceHDF5>(file(), *group);
+            source = make_shared<SourceHDF5>(file(), parentBlock(), *group);
     }
 
     return source;
@@ -74,7 +74,7 @@ shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &t
     boost::optional<H5Group> g = source_group(true);
 
     H5Group group = g->openGroup(name, true);
-    return make_shared<SourceHDF5>(file(), group, id, type, name);
+    return make_shared<SourceHDF5>(file(), parentBlock(), group, id, type, name);
 }
 
 
@@ -104,6 +104,10 @@ shared_ptr<IFile> SourceHDF5::parentFile() const {
     return file();
 }
 
+
+std::shared_ptr<base::IBlock> SourceHDF5::parentBlock() const {
+    return entity_block;
+}
 
 SourceHDF5::~SourceHDF5() {}
 

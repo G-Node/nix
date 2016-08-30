@@ -114,37 +114,29 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 // Operators and other functions
 //------------------------------------------------------
 
+nix::Source Source::parentSource() const {
+    nix::Source s;
+    nix::Block b = backend()->parentBlock();
+    std::vector<nix::Source> srcs = b.findSources(nix::util::SourceFilter<nix::Source>(id()));
+    return (srcs.size() > 0) ? srcs[0] : s;
+}
+
 
 std::vector<nix::DataArray> Source::referringDataArrays() const {
-    std::vector<nix::DataArray> arrays;
-    nix::File f = backend()->parentFile();
-    for (auto b : f.blocks()) {
-        std::vector<nix::DataArray> temp = b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
-        arrays.insert(arrays.end(), temp.begin(), temp.end());
-    }
-    return arrays;
+    nix::Block b = backend()->parentBlock();
+    return b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
 }
 
 
 std::vector<nix::Tag> Source::referringTags() const {
-    std::vector<nix::Tag> tags;
-    nix::File f = backend()->parentFile();
-    for (auto b : f.blocks()) {
-        std::vector<nix::Tag> temp = b.tags(nix::util::SourceFilter<nix::Tag>(id()));
-        tags.insert(tags.end(), temp.begin(), temp.end());
-    }
-    return tags;
+    nix::Block b = backend()->parentBlock();
+    return b.tags(nix::util::SourceFilter<nix::Tag>(id()));
 }
 
 
 std::vector<nix::MultiTag> Source::referringMultiTags() const {
-    std::vector<nix::MultiTag> tags;
-    nix::File f = backend()->parentFile();
-    for (auto b : f.blocks()) {
-        std::vector<nix::MultiTag> temp =  b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
-        tags.insert(tags.end(), temp.begin(), temp.end());
-    }
-    return tags;
+    nix::Block b = backend()->parentBlock();
+    return b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
 }
 
 
