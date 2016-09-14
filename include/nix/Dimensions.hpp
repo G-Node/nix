@@ -245,7 +245,7 @@ public:
      *
      * @returns The respective position, e.g. a time.
      */
-    double positionAt(const size_t index) const;
+    double positionAt(const ndsize_t index) const;
 
     /**
      * @brief Returns a vector containing the positions defined by this
@@ -258,7 +258,7 @@ public:
      *
      * @returns A vector of doubles containing the respective dimension.
      */
-    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
+    std::vector<double> axis(const ndsize_t count, const ndsize_t startIndex = 0) const;
 
     /**
      * @brief Assignment operator.
@@ -291,7 +291,7 @@ public:
      *
      * @returns The position at the given index, e.g. the time.
      */
-    double operator[](const size_t index) {
+    double operator[](const ndsize_t index) {
         return positionAt(index);
     }
 };
@@ -620,7 +620,7 @@ public:
      *
      * Method will throw an nix::OutOfBounds Exception if the index is invalid
      */
-    double tickAt(const size_t index) const;
+    double tickAt(const ndsize_t index) const;
 
     /**
      * @brief Returns the index of the given position
@@ -647,7 +647,7 @@ public:
      * Method will throw a nix::OutOfBounds exception if startIndex + count is beyond
      * the number of ticks.
      */
-    std::vector<double> axis(const size_t count, const size_t startIndex = 0) const;
+    std::vector<double> axis(const ndsize_t count, const ndsize_t startIndex = 0) const;
 
     /**
      * @brief Assignment operator.
@@ -680,7 +680,7 @@ public:
      *
      * @returns The position at the given index, e.g. the time.
      */
-    double operator[](const size_t index) {
+    double operator[](const ndsize_t index) {
         return tickAt(index);
     }
 
