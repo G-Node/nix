@@ -189,24 +189,21 @@ size_t SampledDimension::indexOf(const double position) const {
 
 double SampledDimension::positionAt(const ndsize_t index) const {
 
-    size_t idx = check::fits_in_size_t(index, "Position index exceeds memory (size larger than current system supports)");
-
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    return idx * sampling_interval + offset;
+    return index * sampling_interval + offset;
 }
 
 
 vector<double> SampledDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
 
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
-    size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
 
     vector<double> axis(cnt);
     double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     for (size_t i = 0; i < axis.size(); ++i) {
-        axis[i] = (i + idx) * sampling_interval + offset;
+        axis[i] = (static_cast<double>(i) + startIndex) * sampling_interval + offset;
     }
     return axis;
 }
@@ -378,11 +375,18 @@ vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIn
 
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
     size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
-
+ 
     vector<double> ticks = this->ticks();
-    if ((idx + cnt) > ticks.size()) {
-        throw nix::OutOfBounds("RangeDimension::axis: Count is invalid, reaches beyond the ticks stored in this dimension.");
-    } 
+
+    size_t end;
+    if (nix_safe_add(cnt, idx, &end)) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex > ndsize_t");
+    }
+
+    if (end > ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex is invalid, reaches beyond the ticks stored in this dimension.");
+    }
+
     vector<double>::const_iterator first = ticks.begin() + idx;
     vector<double> axis(first, first + cnt);
     return axis;
