@@ -19,6 +19,8 @@
 #include <initializer_list>
 #include <iostream>
 #include <vector>
+#include <type_traits>
+
 
 namespace nix {
 
@@ -527,7 +529,19 @@ inline std::ostream& operator<<(std::ostream &os, const NDSizeBase<T> &ndsize)
 typedef NDSizeBase<ndsize_t>  NDSize;
 
 typedef NDSizeBase<ndssize_t> NDSSize;
+#if 0 // __has_builtin(__builtin_add_overflow)
+#define nix_safe_add __builtin_add_overflow
+#else
 
+template<typename T>
+inline typename std::enable_if<std::is_unsigned<T>::value, bool>::type
+nix_safe_add(T a, T b, T *out)
+{
+    *out = a + b;
+    return *out < a;
+}
+
+#endif //__has_builtin
 
 } // namespace nix
 
