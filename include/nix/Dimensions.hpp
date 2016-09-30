@@ -232,7 +232,7 @@ public:
      *
      * @returns The respective index.
      */
-    size_t indexOf(const double position) const;
+    ndsize_t indexOf(const double position) const;
 
     /**
      * @brief Returns the position of this dimension at a given index.
@@ -631,7 +631,7 @@ public:
      *
      * @return The index.
      */
-    size_t indexOf(const double position) const;
+    ndsize_t indexOf(const double position) const;
     
     /**
      * @brief Returns a vector containing a number of ticks
