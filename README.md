@@ -13,7 +13,7 @@ The *NIX* data model allows to store fully annotated scientific data, i.e. the d
 [See the wiki for more information](https://github.com/G-Node/nix/wiki)
 
 
-The current implementations store the actual data using the [HDF5](www.hdfgroup.org) file format as a storage backend.
+The current implementations store the actual data using the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
 
 The NIX ecosystem
@@ -25,17 +25,17 @@ In this repository you find the C++ library for reading and writing NIX files.
 
 In addition to the C++ implementations we provide bindings in various languages:
 
-- [Python bindings: *nixpy*](https://github.com/g-node/nixpy)
-- [Matlab: *nix-mx*](https://github.com/g-node/nix-mx)
-- [Java: *nix-java*](https://github.com/g-node/nix-java)
+- [Python bindings: *nixpy*](https://github.com/g-node/nixpy "Python library either as bindigs or using h5py")
+- [Matlab: *nix-mx*](https://github.com/g-node/nix-mx "Matlab language bindings, requires the C++ library")
+- [Java: *nix-java*](https://github.com/g-node/nix-java "Java language bindings, requires the C++ library")
 
 **Tools**
 
-[nixView](https://github.com/bendalab/nixview)
+- Basic viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
 **Tutorial and examples**
 
-We have assembled a set of
+- We have assembled a set of
  [tutorials](http://g-node.github.io/nixpy/tutorial.html) and
  [demos](https://github.com/g-node/nix-demo) using the python language
  bindings.
