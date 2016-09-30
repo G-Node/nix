@@ -23,8 +23,8 @@ namespace nix {
 namespace util {
 
 
-int positionToIndex(double position, const string &unit, const Dimension &dimension) {
-    size_t pos;
+ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
+    ndsize_t pos;
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
         SampledDimension dim;
         dim = dimension;
@@ -39,12 +39,12 @@ int positionToIndex(double position, const string &unit, const Dimension &dimens
         pos = positionToIndex(position, unit, dim);
     }
 
-    return static_cast<int>(pos); //FIXME: int, really? 
+    return pos;
 }
 
 
-size_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
-    size_t index;
+ndsize_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
+    ndsize_t index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
     if (!dim_unit && unit != "none") {
@@ -62,14 +62,14 @@ size_t positionToIndex(double position, const string &unit, const SampledDimensi
 }
 
 
-size_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
-    size_t index;
+ndsize_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
+    ndsize_t index;
     if (unit.length() > 0 && unit != "none") {
         // TODO check here for the content
         // convert unit and the go looking for it, see range dimension
         throw nix::IncompatibleDimensions("Cannot apply a position with unit to a SetDimension", "nix::util::positionToIndex");
     }
-    index = static_cast<size_t>(round(position));
+    index = static_cast<ndsize_t>(round(position));
     if (dimension.labels().size() > 0 && index > dimension.labels().size()) {
         throw nix::OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
     }
@@ -77,7 +77,7 @@ size_t positionToIndex(double position, const string &unit, const SetDimension &
 }
 
 
-size_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
+ndsize_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
 
@@ -115,7 +115,7 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
 }
 
 
-void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts) {
+void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
@@ -152,7 +152,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index
                                           "util::getOffsetAndCount");
     }
 
-    NDSize temp_offset = NDSize{static_cast<NDSize::value_type>(index), static_cast<NDSize::value_type>(0)};
+    NDSize temp_offset = NDSize{index, static_cast<NDSize::value_type>(0)};
     NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
     vector<double> offset;
     positions.getData(offset, temp_count, temp_offset);
@@ -211,7 +211,7 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-DataView retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index) {
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
@@ -304,7 +304,7 @@ DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index) {
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index) {
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
     }

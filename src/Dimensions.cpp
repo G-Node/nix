@@ -173,17 +173,15 @@ void SampledDimension::samplingInterval(double interval) {
 }
 
 
-size_t SampledDimension::indexOf(const double position) const {
-    //FIXME: should we use NDSSize::value_type here instead of ssize_t?
-    //FIXME: also, on the same grounds, should the return not be NDSize::value_type?
-    ssize_t index;
+ndsize_t SampledDimension::indexOf(const double position) const {
+    ndssize_t index;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    index = static_cast<ssize_t>(round(( position - offset) / sampling_interval));
+    index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
     if (index < 0) {
         throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
     }
-    return static_cast<size_t>(index);
+    return static_cast<ndsize_t>(index);
 }
 
 
@@ -359,7 +357,7 @@ double RangeDimension::tickAt(const ndsize_t index) const {
 }
 
 
-size_t RangeDimension::indexOf(const double position) const {
+ndsize_t RangeDimension::indexOf(const double position) const {
     vector<double> ticks = this->ticks();
     if (position < *ticks.begin()) {
         return 0;
