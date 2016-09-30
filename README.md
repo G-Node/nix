@@ -39,7 +39,7 @@ We provide bindings in various languages:
 
 **Tools**
 
-- Basic viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
+- Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
 **Tutorial and examples**
 
