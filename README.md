@@ -22,31 +22,33 @@ The NIX ecosystem
 In this repository you find the C++ library for reading and writing NIX files.
 
 **Language bindings**
+
 In addition to the C++ implementations we provide bindings in various languages:
 
 - [Python bindings: *nixpy*](https://github.com/g-node/nixpy)
 - [Matlab: *nix-mx*](https://github.com/g-node/nix-mx)
 - [Java: *nix-java*](https://github.com/g-node/nix-java)
 
-**Viewer for *NIX* files**
+**Tools**
+
 [nixView](https://github.com/bendalab/nixview)
 
 **Tutorial and examples**
-[nix demos](https://github.com/g-node/nix-demo)
 
-We have assembled a set of tutorial
- [here](http://g-node.github.io/nixpy/tutorial.html) using the python
- language bindings.
+We have assembled a set of
+ [tutorials](http://g-node.github.io/nixpy/tutorial.html) and
+ [demos](https://github.com/g-node/nix-demo) using the python language
+ bindings.
 
 
 Getting Started 
 ---------------
 
-Installation instructions can be found:
+Platform specific installation instructions can be found:
 
--[Linux](https://github.com/G-Node/nix/blob/master/install_linux.md)
--[macOS](https://github.com/G-Node/nix/blob/master/install_mac.md)
--[Windows](https://github.com/G-Node/nix/blob/master/install_win.md)
+- [Linux](https://github.com/G-Node/nix/blob/master/install_linux.md)
+- [macOS](https://github.com/G-Node/nix/blob/master/install_mac.md)
+- [Windows](https://github.com/G-Node/nix/blob/master/install_win.md)
 
 
 NIX API Documentation
