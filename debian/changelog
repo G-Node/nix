@@ -1,3 +1,13 @@
+nix (1.2.0)  trusty; urgency medium
+
+ * Set to version 1.2.0
+ * Dimensions are no longer treated as a stack. Removing them is only possible at once.
+ * Added inverse search from metadata to data entities
+ * Ready for hdf5 version 1.10
+ * safety checks to avoid integer overflow
+
+ -- Jan Grewe <jan.grewe@g-node.org> Sat, 01 Oct 2016 18:18:00 +0100
+ 
 nix (1.1.0-5) xenial; urgency=medium
 
   * Set to version 1.1.0
