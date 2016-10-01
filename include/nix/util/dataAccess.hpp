@@ -42,7 +42,7 @@ namespace util {
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI size_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
+NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
 /**
  * @brief Converts a position given in a unit into an index according to the dimension descriptor.
@@ -60,7 +60,7 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Se
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI size_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
+NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
 
 /**
  * @brief Converts a position given in a unit into an index according to the dimension descriptor.
@@ -78,7 +78,7 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Sa
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI size_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
+NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 /**
  * @brief Returns the offsets and element counts associated with position and extent of a Tag and
@@ -92,7 +92,7 @@ NIXAPI size_t positionToIndex(double position, const std::string &unit, const Ra
 NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
 
 
-NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_t index, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -103,7 +103,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, size_
  *
  * @return The data referenced by position and extent.
  */
-NIXAPI DataView retrieveData(const MultiTag &tag, size_t position_index, size_t reference_index);
+NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -155,7 +155,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, size_t position_index, size_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index=0);
 
 }
 }
