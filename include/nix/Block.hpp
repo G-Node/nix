@@ -176,9 +176,7 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(ndsize_t index) const {
-        return backend()->getSource(index);
-    }
+    Source getSource(ndsize_t index) const;
 
     /**
      * @brief Returns the number of root sources in this block.
@@ -442,9 +440,7 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(ndsize_t index) const {
-        return backend()->getTag(index);
-    }
+    Tag getTag(ndsize_t index) const;
 
     /**
      * @brief Get tags within this block.
@@ -549,9 +545,7 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(ndsize_t index) const {
-        return backend()->getMultiTag(index);
-    }
+    MultiTag getMultiTag(ndsize_t index) const;
 
     /**
      * @brief Get multi tags within this block.

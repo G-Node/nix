@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013 - 2015, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -24,7 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -48,14 +47,14 @@ void BaseTestSection::testName() {
 
 void BaseTestSection::testType() {
     CPPUNIT_ASSERT(section.type() == "metadata");
-    string typ = util::createId();
+    std::string typ = util::createId();
     section.type(typ);
     CPPUNIT_ASSERT(section.type() == typ);
 }
 
 
 void BaseTestSection::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     section.definition(def);
     CPPUNIT_ASSERT(*section.definition() == def);
     section.definition(nix::none);
@@ -76,11 +75,12 @@ void BaseTestSection::testParent() {
 
 void BaseTestSection::testRepository() {
     CPPUNIT_ASSERT(!section.repository());
-    string rep = "http://foo.bar/" + util::createId();
+    std::string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
     section.repository(boost::none);
     CPPUNIT_ASSERT(!section.repository());
+    CPPUNIT_ASSERT_THROW(section.repository(""), EmptyString);
 }
 
 
@@ -94,34 +94,48 @@ void BaseTestSection::testLink() {
     // test none-unsetter
     section.link(none);
     CPPUNIT_ASSERT(!section.link());
+    section.link(section_other);
+    CPPUNIT_ASSERT(section.link());
+    Section null;
+    section.link(null);
+    CPPUNIT_ASSERT(!section.link());
+
+    // test id setter and resetter
+    CPPUNIT_ASSERT_THROW(section.link(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(section.link("invalid id"), std::runtime_error);
+
+    section.link(section.id());
+    CPPUNIT_ASSERT(section.link().id() == section.id());
+    section.link(section_other.id());
+    CPPUNIT_ASSERT(section.link().id() == section_other.id());
     // test deleter removing link too
     section.link(section);
     file.deleteSection(section.id());
     CPPUNIT_ASSERT(!section.link());
-    // re-create section
-    section = file.createSection("foo_section", "metadata");
 }
 
 
 void BaseTestSection::testMapping() {
     CPPUNIT_ASSERT(!section.mapping());
-    string map = "http://foo.bar/" + util::createId();
+    std::string map = "http://foo.bar/" + util::createId();
     section.mapping(map);
     CPPUNIT_ASSERT(section.mapping() == map);
     section.mapping(boost::none);
     CPPUNIT_ASSERT(!section.mapping());
+    CPPUNIT_ASSERT_THROW(section.mapping(""), EmptyString);
 }
 
 
 void BaseTestSection::testSectionAccess() {
-    vector<string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
+    std::vector<std::string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
+    Section null;
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
     CPPUNIT_ASSERT(section.getSection("invalid_id") == false);
     CPPUNIT_ASSERT_EQUAL(false, section.hasSection("invalid_id"));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto name : names) {
         Section child_section = section.createSection(name, "metadata");
         CPPUNIT_ASSERT(child_section.name() == name);
@@ -129,11 +143,14 @@ void BaseTestSection::testSectionAccess() {
 
         ids.push_back(child_section.id());
     }
-    CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
-                         DuplicateName);
-
     CPPUNIT_ASSERT(section.sectionCount() == names.size());
     CPPUNIT_ASSERT(section.sections().size() == names.size());
+
+    CPPUNIT_ASSERT_THROW(section.createSection(names[0], "metadata"),
+                         DuplicateName);
+    CPPUNIT_ASSERT_THROW(section.getSection(section.sectionCount()), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(section.createSection("", "some type"), EmptyString);
+    CPPUNIT_ASSERT(!section.hasSection(null));
 
     for (auto id : ids) {
         Section child_section = section.getSection(id);
@@ -142,6 +159,9 @@ void BaseTestSection::testSectionAccess() {
         CPPUNIT_ASSERT_EQUAL(id, child_section.id());
         section.deleteSection(id);
     }
+    Section s2 = section.createSection("a name", "a type");
+    CPPUNIT_ASSERT(!section.deleteSection(null));
+    CPPUNIT_ASSERT(section.deleteSection(s2));
 
     CPPUNIT_ASSERT(section.sectionCount() == 0);
     CPPUNIT_ASSERT(section.sections().size() == 0);
@@ -205,19 +225,20 @@ void BaseTestSection::testFindRelated() {
     Section l4n1 = l3n2.createSection("l4n1", "typ2");
     Section l4n2 = l3n3.createSection("l4n2", "typ2");
     Section l5n1 = l4n1.createSection("l5n1", "typ2");
+
     l2n1.link(l2n2.id());
     l3n1.link(l5n1.id());
     l3n2.link(l3n3.id());
     l4n1.link(l4n2.id());
     section_other.link(l3n3.id());
 
-    string t1 = "t1";
-    string t3 = "t3";
-    string t4 = "t4";
-    string typ2 = "typ2";
-    string typ1 = "typ1";
+    std::string t1 = "t1";
+    std::string t3 = "t3";
+    std::string t4 = "t4";
+    std::string typ2 = "typ2";
+    std::string typ1 = "typ1";
 
-    vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
+    std::vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
     CPPUNIT_ASSERT(related.size() == 1);
     related = l1n1.findRelated(util::TypeFilter<Section>(t3));
     CPPUNIT_ASSERT(related.size() == 2);
@@ -241,14 +262,18 @@ void BaseTestSection::testFindRelated() {
      *                   
      */
     l1n1.deleteSection(l2n2.id());
+
     CPPUNIT_ASSERT(section.findSections().size() == 4);
+
     // test that all (horizontal) links are gone too:
     CPPUNIT_ASSERT(!l2n1.link());
     CPPUNIT_ASSERT(!l3n1.link());
     CPPUNIT_ASSERT(!l3n2.link());
     CPPUNIT_ASSERT(!l4n1.link());
+
     CPPUNIT_ASSERT(!section_other.link());
     CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
+
     /* Extend the tree to:
      * 
      * section---l1n1---l2n1---l3n1
@@ -263,14 +288,13 @@ void BaseTestSection::testFindRelated() {
     file.deleteSection(section.id());
     CPPUNIT_ASSERT(section_other.findSections().size() == 1);
     CPPUNIT_ASSERT(!section_other.link());
-
     // re-create section
     section = file.createSection("section", "metadata");
 }
 
 
 void BaseTestSection::testPropertyAccess() {
-    vector<string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
+    std::vector<std::string> names = { "property_a", "property_b", "property_c", "property_d", "property_e" };
 
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
@@ -282,7 +306,6 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.hasProperty(p));
     CPPUNIT_ASSERT(section.hasProperty("empty_prop"));
     Property prop = section.getProperty("empty_prop");
-    CPPUNIT_ASSERT(prop.valueCount() == 0);
     CPPUNIT_ASSERT(prop.dataType() == nix::DataType::Double);
     section.deleteProperty(p.id());
     CPPUNIT_ASSERT(section.propertyCount() == 0);
@@ -296,7 +319,7 @@ void BaseTestSection::testPropertyAccess() {
     section.deleteProperty(prop);
     CPPUNIT_ASSERT(section.propertyCount() == 0);
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto name : names) {
         prop = section.createProperty(name, dummy);
         CPPUNIT_ASSERT(prop.name() == name);
@@ -329,14 +352,135 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(section.propertyCount() == 0);
     CPPUNIT_ASSERT(section.properties().size() == 0);
     CPPUNIT_ASSERT(section.getProperty("invalid_id") == false);
+}
 
-    vector<Value> values;
-    values.push_back(Value(10));
-    values.push_back(Value(100));
-    section.createProperty("another test", values);
-    CPPUNIT_ASSERT(section.propertyCount() == 1);
-    prop = section.getProperty("another test");
-    CPPUNIT_ASSERT(prop.valueCount() == 2);
+
+void BaseTestSection::testReferringData() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = b.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        nix::DataArray da2 = b2.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 10, 10 }));
+        if (i % 2 == 0) {
+            da.metadata(ref_sec);
+        } else {
+            da2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringDataArrays().size() == 10);
+}
+
+
+void BaseTestSection::testReferringTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = b.createTag(name, "some tag", {1.});
+        nix::Tag t2 = b2.createTag(name, "some tag", {1.});
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringTags().size() == 10);
+}
+
+
+void BaseTestSection::testReferringMultiTags() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 0);
+    DataArray positions = b.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    DataArray positions2 = b2.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = b.createMultiTag(name, "some tag", positions);
+        nix::MultiTag t2 = b2.createMultiTag(name, "some tag", positions2);
+        if (i % 2 == 0) {
+            t.metadata(ref_sec);
+        } else {
+            t2.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringMultiTags().size() == 10);
+}
+
+
+void BaseTestSection::testReferringSources() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+
+    nix::Block b, b2;
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    b = file.createBlock("test_block", "test");
+    b2 = file.createBlock("test_block2", "test");
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 0);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 0);
+
+    for (int i = 0; i < 10; i++) {
+        std::string name = "src_" + nix::util::numToStr(i);
+        nix::Source s = b.createSource(name, "some src");
+        nix::Source s2 = b2.createSource(name, "some src");
+        nix::Source s3 = s2.createSource(name + "_child", "child_source");
+        if (i % 2 == 0) {
+            s.metadata(ref_sec);
+        } else {
+            s3.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringSources(b).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources(b2).size() == 5);
+    CPPUNIT_ASSERT(ref_sec.referringSources().size() == 10);
+}
+
+
+void BaseTestSection::testReferringBlocks() {
+    nix::Section ref_sec = file.createSection("referrenced", "test");
+    for (int i = 0; i < 10; i++) {
+        std::string name = "block_" + nix::util::numToStr(i);
+        nix::Block b = file.createBlock(name, "some blck");
+        nix::Block b2 = file.createBlock(name + "_scnd", "test");
+        if (i % 2 == 0) {
+            b.metadata(ref_sec);
+        }
+    }
+    CPPUNIT_ASSERT(ref_sec.referringBlocks().size() == 5);
 }
 
 
@@ -354,8 +498,16 @@ void BaseTestSection::testOperators() {
     CPPUNIT_ASSERT(section == section_other);
 
     section_other = none;
-    CPPUNIT_ASSERT(section_null == false);
-    CPPUNIT_ASSERT(section_null == none);
+    CPPUNIT_ASSERT(section_other == false);
+    CPPUNIT_ASSERT(section_other == none);
+
+    std::stringstream str1, str2;
+    str1 <<  "Section: {name = " << section.name();
+    str1 << ", type = " << section.type();
+    str1 << ", id = " << section.id() << "}";
+    str2 << section;
+    CPPUNIT_ASSERT(str1.str() == str2.str());
+
 }
 
 

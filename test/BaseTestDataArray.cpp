@@ -70,8 +70,7 @@ void BaseTestDataArray::testDefinition() {
 }
 
 
-void BaseTestDataArray::testData()
-{
+void BaseTestDataArray::testData() {
     typedef boost::multi_array<double, 3> array_type;
     typedef array_type::index index;
     array_type A(boost::extents[3][4][2]);
@@ -259,8 +258,8 @@ void BaseTestDataArray::testData()
 
 }
 
-void BaseTestDataArray::testPolynomial()
-{
+
+void BaseTestDataArray::testPolynomial() {
     double PI = boost::math::constants::pi<double>();
     boost::array<double, 10> coefficients1;
     std::vector<double> coefficients2;
@@ -275,7 +274,7 @@ void BaseTestDataArray::testPolynomial()
     double res2 = boost::math::tools::evaluate_polynomial(coefficients1, PI);
 
     //evalutate_polynomial from boost might use a different algorithm
-    //therefore we raise the allowed detlta to 10e-10
+    //therefore we raise the allowed delta to 10e-10
     CPPUNIT_ASSERT_DOUBLES_EQUAL(res1, res2, 10e-10);
 
     array2.polynomCoefficients(coefficients2);
@@ -294,9 +293,7 @@ void BaseTestDataArray::testPolynomial()
     CPPUNIT_ASSERT(array2.expansionOrigin() == nix::none);
 
     //test IO with a polynomial set
-    nix::DataArray dap = block.createDataArray("polyio",
-                                               "double",
-                                               nix::DataType::Double,
+    nix::DataArray dap = block.createDataArray("polyio", "double", nix::DataType::Double,
                                                nix::NDSize({2, 3}));
 
     std::vector<double> dv = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
@@ -343,30 +340,55 @@ void BaseTestDataArray::testPolynomial()
     }
 }
 
-void BaseTestDataArray::testLabel()
-{
-    std::string testStr = "somestring";
 
+void BaseTestDataArray::testLabel() {
+    std::string testStr = "somestring";
     array1.label(testStr);
     CPPUNIT_ASSERT(*array1.label() == testStr);
     array1.label(boost::none);
     CPPUNIT_ASSERT(array1.label() == nix::none);
+    CPPUNIT_ASSERT_THROW(array1.label(""), EmptyString);
 }
 
-void BaseTestDataArray::testUnit()
-{
+
+void BaseTestDataArray::testPolynomialSetter() {
+    boost::array<double, 10> coefficients1;
+    std::vector<double> coefficients2;
+    for(int i=0; i<10; i++) {
+        coefficients1[i] = i;
+        coefficients2.push_back(i);
+    }
+
+    array1.polynomCoefficients(coefficients2);
+    std::vector<double> ret = array1.polynomCoefficients();
+    for(size_t i=0; i<ret.size(); i++) {
+        CPPUNIT_ASSERT(ret[i] == coefficients2[i]);
+    }
+
+    array1.polynomCoefficients(nix::none);
+    CPPUNIT_ASSERT(array1.polynomCoefficients().size() == 0);
+
+    array1.expansionOrigin(3);
+    boost::optional<double> retval = array1.expansionOrigin();
+    CPPUNIT_ASSERT(*retval == 3);
+    array1.expansionOrigin(nix::none);
+    CPPUNIT_ASSERT(array1.expansionOrigin() == nix::none);
+}
+
+
+void BaseTestDataArray::testUnit() {
     std::string testStr = "somestring";
     std::string validUnit = "mV^2";
-
     CPPUNIT_ASSERT_THROW(array1.unit(testStr), nix::InvalidUnit);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
-    CPPUNIT_ASSERT(array1.unit() == validUnit);
+    CPPUNIT_ASSERT(*array1.unit() == validUnit);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
     CPPUNIT_ASSERT(array1.unit() == nix::none);
+    CPPUNIT_ASSERT_THROW(array1.unit(""), EmptyString);
 }
 
-void BaseTestDataArray::testDimension()
-{
+
+void BaseTestDataArray::testDimension() {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
     double samplingInterval = boost::math::constants::pi<double>();
@@ -375,13 +397,10 @@ void BaseTestDataArray::testDimension()
         ticks.push_back(i * boost::math::constants::pi<double>());
     }
     CPPUNIT_ASSERT_THROW(array2.appendRangeDimension(std::vector<double>{}), nix::InvalidDimension);
-    CPPUNIT_ASSERT_THROW(array2.createRangeDimension(1, std::vector<double>{}), nix::InvalidDimension);
-    dims.push_back(array2.createSampledDimension(1, samplingInterval));
-    dims.push_back(array2.createSetDimension(2));
-    dims.push_back(array2.createRangeDimension(3, ticks));
     dims.push_back(array2.appendSampledDimension(samplingInterval));
     dims.push_back(array2.appendSetDimension());
-    dims[3] = array2.createRangeDimension(4, ticks);
+    dims.push_back(array2.appendRangeDimension(ticks));
+    dims.push_back(array2.appendSetDimension());
 
     // have some explicit dimension types
     nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
@@ -390,11 +409,10 @@ void BaseTestDataArray::testDimension()
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(array2.getDimension(dims[4].index()).dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(array2.getDimension(dims[3].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(!dim_range.alias());
-    
-    CPPUNIT_ASSERT(array2.dimensionCount() == 5);
+
+    CPPUNIT_ASSERT(array2.dimensionCount() == 4);
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Sample; });
     CPPUNIT_ASSERT(dims.size() == 1);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
@@ -403,22 +421,16 @@ void BaseTestDataArray::testDimension()
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
     dims = array2.dimensions([](nix::Dimension dim) { return dim.dimensionType() == nix::DimensionType::Range; });
-    CPPUNIT_ASSERT(dims.size() == 2);
+    CPPUNIT_ASSERT(dims.size() == 1);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Range);
     dims = array2.dimensions();
-    CPPUNIT_ASSERT(dims.size() == 5);
+    CPPUNIT_ASSERT(dims.size() == 4);
     CPPUNIT_ASSERT(dims[0].dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(dims[1].dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(dims[2].dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT(dims[4].dimensionType() == nix::DimensionType::Set);
+    CPPUNIT_ASSERT(dims[3].dimensionType() == nix::DimensionType::Set);
     // since deleteDimension renumbers indices to be continuous we test that too
-    array2.deleteDimension(5);
-    array2.deleteDimension(4);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
-    array2.deleteDimension(1);
+    array2.deleteDimensions();
     dims = array2.dimensions();
     CPPUNIT_ASSERT(array2.dimensionCount() == 0);
     CPPUNIT_ASSERT(dims.size() == 0);
@@ -429,14 +441,14 @@ void BaseTestDataArray::testAliasRangeDimension() {
     nix::Dimension dim = array3.createAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
     CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
-    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
-    CPPUNIT_ASSERT_THROW(array2.createAliasRangeDimension(), nix::InvalidDimension);
-    CPPUNIT_ASSERT_THROW(array3.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array2.appendAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array2.appendAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
     CPPUNIT_ASSERT_THROW(array3.appendAliasRangeDimension(), nix::InvalidDimension);
     DataArray bool_array = block.createDataArray("string array", "string_array",
                                                  nix::DataType::Bool,
                                                  nix::NDSize({20}));
-    CPPUNIT_ASSERT_THROW(bool_array.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(bool_array.appendAliasRangeDimension(), nix::InvalidDimension);
     nix::RangeDimension rd;
     rd = dim;
     CPPUNIT_ASSERT(rd.alias());
@@ -463,7 +475,7 @@ void BaseTestDataArray::testAliasRangeDimension() {
     rd.ticks(t);
     CPPUNIT_ASSERT(t.size() == t.size());
     CPPUNIT_ASSERT(t.size() == array3.dataExtent().nelms());
-    
+
     DataArray int_array = block.createDataArray("int array", "int_array",
                                                  nix::DataType::Int64,
                                                  nix::NDSize({20}));
@@ -474,14 +486,13 @@ void BaseTestDataArray::testAliasRangeDimension() {
     rd.ticks(t);
     CPPUNIT_ASSERT(t.size() == t.size());
     CPPUNIT_ASSERT(t.size() == int_array.dataExtent().nelms());
-    
+
     std::vector<double> ticks_2 = rd.ticks();
     CPPUNIT_ASSERT(t.size() == ticks_2.size());
 }
 
 
-void BaseTestDataArray::testOperator()
-{
+void BaseTestDataArray::testOperator() {
     std::stringstream mystream;
     mystream << array1;
 

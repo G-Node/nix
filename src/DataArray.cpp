@@ -9,7 +9,7 @@
 #include <nix/DataArray.hpp>
 
 #include <nix/util/util.hpp>
-#include <nix/hdf5/DataTypeHDF5.hpp>
+#include "hdf5/h5x/H5DataType.hpp"
 
 #include <cstring>
 
@@ -32,7 +32,7 @@ void DataArray::ioRead(DataType dtype, void *data, const NDSize &count, const ND
     if (poly.size() || opt_origin) {
         size_t data_esize = data_type_to_size(dtype);
         size_t nelms = check::fits_in_size_t(count.nelms(),
-			"Cannot apply polynom or oirign transform. Buffer needed exceeds memory.");
+			"Cannot apply polynom or origin transform. Buffer needed exceeds memory.");
         std::vector<double> tmp;
         double *read_buffer;
 

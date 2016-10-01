@@ -2,7 +2,7 @@
 # NIX CMake
 
 cmake_minimum_required (VERSION 2.8.10)
-project (nix CXX)
+project (nix C CXX)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 1)
@@ -14,6 +14,7 @@ set(VERSION_ABI   1)
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wunreachable-code")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef") # boost + clang
 
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
@@ -34,6 +35,7 @@ endif()
 
 
 set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 #########################################
 # HDF-5
@@ -64,7 +66,6 @@ find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesy
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
 
-
 ########################################
 # Doxygen
 find_package(Doxygen)
@@ -82,6 +83,34 @@ endif(DOXYGEN_FOUND)
 include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
+
+### BACKENDS
+set(backends "hdf5")
+
+option(BUILD_FS_BACKEND "Build fileystem backend" OFF)
+if(BUILD_FS_BACKEND)
+  # Yaml-cpp
+  set(YAMLCPP_STATIC_LIBRARY FALSE)
+  find_package(YamlCpp REQUIRED)
+  include_directories(${YAMLCPP_INCLUDE_DIRS})
+  set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
+
+  list(APPEND backends "fs")
+  add_definitions(-DENABLE_FS_BACKEND=1)
+endif()
+
+# This is for tests
+include_directories(${CMAKE_SOURCE_DIR}/backend)
+
+foreach(backend ${backends})
+  file(GLOB_RECURSE backend_SOURCES "backend/${backend}/*.cpp")
+  file(GLOB_RECURSE backend_INCLUDES "backend/${backend}/*.hpp")
+
+  list(APPEND nix_SOURCES ${backend_SOURCES})
+  list(APPEND nix_INCLUDES ${backend_INCLUDES})
+endforeach()
+
+### LIBRARY
 
 add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
@@ -140,31 +169,42 @@ message(STATUS "CLI executable added")
 ########################################
 # Tests
 
+include(CTest)
 enable_testing()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
+if(BUILD_TESTING)
 
-find_package(CppUnit)
-include_directories(${CPPUNIT_INCLUDE_DIR})
+  find_package(CppUnit)
+  include_directories(${CPPUNIT_INCLUDE_DIR})
+  include_directories(${CMAKE_SOURCE_DIR}/test)
 
-file(GLOB Tests_SOURCES "test/*Test*.cpp")
+  file(GLOB Tests_SOURCES "test/*Test*.[ch]pp")
+  file(GLOB Real_Test_HEADERS "test/Test*.hpp")
 
-add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-if(NOT WIN32)
-  set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  foreach(thebackend ${backends})
+    set(thebackend_TEST_HEADERS)
+    file(GLOB thebackend_TEST_HEADERS "test/${thebackend}/Test*.hpp")
+    list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
+
+    set(thebackend_TEST_SOURCES)
+    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.[ch]pp")
+    list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
+  endforeach()
+
+  foreach(test ${Real_Test_HEADERS})
+      get_filename_component(TestFileName ${test} NAME_WE)
+      string(REPLACE "Test" "" TestName ${TestFileName})
+      message(STATUS " Test added: ${TestName}")
+      add_test(${TestName} TestRunner ${TestName})
+  endforeach(test)
+
+  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+
 endif()
-target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
-
-file(GLOB Real_Test_HEADERS "test/Test*.hpp")
-foreach(test ${Real_Test_HEADERS})
-  get_filename_component(TestFileName ${test} NAME_WE)
-  string(REPLACE "Test" "" TestName ${TestFileName})
-  message(STATUS " Test added: ${TestName}")
-  add_test(${TestName} TestRunner ${TestName})
-endforeach(test)
-
-include(CTest)
-
 
 add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
 target_link_libraries(nix-bench nix)
@@ -239,4 +279,7 @@ MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
+MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")

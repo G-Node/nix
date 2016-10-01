@@ -14,7 +14,7 @@
 #include <vector>
 #include <unordered_set>
 #include <string>
-
+#include <iostream>
 namespace nix {
 namespace util {
 
@@ -121,6 +121,45 @@ struct NameFilter : public Filter<T> {
 
 };
 
+
+template<typename T>
+struct MetadataFilter : public Filter<T> {
+
+    const std::string sec_id;
+
+
+    MetadataFilter(const std::string &section_id)
+        : sec_id(section_id)
+    {}
+
+
+    virtual bool operator()(const T &e) {
+        if (e.metadata()) {
+            return e.metadata().id() == sec_id;
+        } else {
+            return false;
+        }
+
+    }
+};
+
+
+template<typename T>
+struct SourceFilter : public Filter<T> {
+
+    const std::string src_id;
+
+
+    SourceFilter(const std::string &src_id)
+        : src_id(src_id)
+    {}
+
+
+    virtual bool operator() (const T &ent) {
+        return ent.hasSource(src_id);
+    }
+
+};
 
 } // namespace util
 } // namespace nix

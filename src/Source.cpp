@@ -9,6 +9,7 @@
 #include <nix/Source.hpp>
 
 #include <queue>
+#include <nix/File.hpp>
 #include <nix/util/util.hpp>
 
 using namespace nix;
@@ -112,6 +113,31 @@ std::vector<Source> Source::findSources(const util::Filter<Source>::type &filter
 //------------------------------------------------------
 // Operators and other functions
 //------------------------------------------------------
+
+nix::Source Source::parentSource() const {
+    nix::Source s;
+    nix::Block b = backend()->parentBlock();
+    std::vector<nix::Source> srcs = b.findSources(nix::util::SourceFilter<nix::Source>(id()));
+    return (srcs.size() > 0) ? srcs[0] : s;
+}
+
+
+std::vector<nix::DataArray> Source::referringDataArrays() const {
+    nix::Block b = backend()->parentBlock();
+    return b.dataArrays(nix::util::SourceFilter<nix::DataArray>(id()));
+}
+
+
+std::vector<nix::Tag> Source::referringTags() const {
+    nix::Block b = backend()->parentBlock();
+    return b.tags(nix::util::SourceFilter<nix::Tag>(id()));
+}
+
+
+std::vector<nix::MultiTag> Source::referringMultiTags() const {
+    nix::Block b = backend()->parentBlock();
+    return b.multiTags(nix::util::SourceFilter<nix::MultiTag>(id()));
+}
 
 
 std::ostream& nix::operator<<(std::ostream &out, const Source &ent) {

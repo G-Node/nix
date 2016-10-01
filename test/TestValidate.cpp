@@ -80,9 +80,7 @@ void TestValidate::setValid() {
         }
     }
     array4.setData(sin_array);
-    for (ndsize_t i = array4.dimensionCount(); i > 0 ; --i) {
-        array4.deleteDimension(i);
-    }
+    array4.deleteDimensions();
     array4.appendSampledDimension(1.);
     array4.appendSetDimension();
     // fill array1 & array2
@@ -96,9 +94,7 @@ void TestValidate::setValid() {
                 A[i][j][k] = values++;
     array1.setData(A);
     array2.setData(A);
-    for (ndsize_t i = array2.dimensionCount(); i > 0; --i) {
-        array2.deleteDimension(i);
-    }
+    array2.deleteDimensions();
     dim_range1 = array2.appendRangeDimension({1, 2, 3});
     dim_range2 = array2.appendRangeDimension({1, 2, 3, 4});
     dim_range3 = array2.appendRangeDimension({1, 2});
@@ -129,14 +125,10 @@ void TestValidate::setValid() {
     extents.setData(C);
     
     // ensure correct dimension descriptors for positions
-    for (ndsize_t i = positions.dimensionCount(); i > 0; --i) {
-        positions.deleteDimension(i);
-    }
+    positions.deleteDimensions();
     positions.appendSetDimension();
     positions.appendSetDimension();
-    for (ndsize_t i = extents.dimensionCount(); i > 0; --i) {
-        extents.deleteDimension(i);
-    }
+    extents.deleteDimensions();
     extents.appendSetDimension();
     extents.appendSetDimension();
 
@@ -220,19 +212,40 @@ void TestValidate::setInvalid() {
     // fill tag_tmp
     units_tmp = tag_tmp(invalid_units);
     // remove dimension descriptors from array4, position and extents
-    for (ndsize_t i = array4.dimensionCount(); i > 0; --i) {
-        array4.deleteDimension(i);
-    }
-    for (ndsize_t i = positions.dimensionCount(); i > 0; --i) {
-        positions.deleteDimension(i);
-    }
-    for (ndsize_t i = extents.dimensionCount(); i > 0; --i) {
-        extents.deleteDimension(i);
-    }
+    array4.deleteDimensions();
+    positions.deleteDimensions();
+    extents.deleteDimensions();
     return;
 }
 
 void TestValidate::test() {
+
+    // test result class
+    valid::Result res;
+    CPPUNIT_ASSERT_EQUAL(false, res.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.ok());
+
+    valid::Message w1("0xWARN", "You have been warned!");
+    valid::Message e1("0xERR", "Told you so!");
+
+    res.addWarning(w1);
+    CPPUNIT_ASSERT_EQUAL(false, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.hasWarnings());
+
+    res.addError(e1);
+    CPPUNIT_ASSERT_EQUAL(true, res.hasErrors());
+    CPPUNIT_ASSERT_EQUAL(true, res.hasWarnings());
+
+    std::stringstream out;
+    out << res;
+    std::string outs = out.str();
+
+    CPPUNIT_ASSERT(outs.find("0xWARN") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("0xERR") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("You have been warned!") != std::string::npos);
+    CPPUNIT_ASSERT(outs.find("Told you so!") != std::string::npos);
+
     // dummy class to test empty checks
     class fooC {
     public:
@@ -264,8 +277,9 @@ void TestValidate::test() {
     });
     // have debug info
     // std::cout << myResult;
-    CPPUNIT_ASSERT(myResult.hasWarnings() == false);
-    CPPUNIT_ASSERT(myResult.hasErrors() == false);
+    CPPUNIT_ASSERT_EQUAL(true, myResult.ok());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasErrors());
  
     // failure cases----------------------------------------------------
     // -----------------------------------------------------------------
@@ -316,8 +330,8 @@ void TestValidate::test() {
     });
     // have debug info
     // std::cout << myResult;
-    CPPUNIT_ASSERT(myResult.hasWarnings() == false);
-    CPPUNIT_ASSERT(myResult.hasErrors() == false);
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasWarnings());
+    CPPUNIT_ASSERT_EQUAL(false, myResult.hasErrors());
     
     myResult = file.validate();
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
@@ -361,4 +375,5 @@ void TestValidate::test() {
     // std::cout << myResult;
     // lets leave the file clean & valid
     setValid();
+
 }

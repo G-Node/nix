@@ -31,17 +31,11 @@ Result::Result(none_t t, const std::vector<Message> &warns)
 Result::Result(const std::vector<Message> &errs, none_t t)
     : Result(errs, std::vector<Message>()) {}
 
-Result::Result(const Message &err, const Message &warn)
-    : Result(std::vector<Message> {err}, std::vector<Message> {warn}) {}
-
 Result::Result(none_t t, const Message &warn)
     : Result(std::vector<Message>(), std::vector<Message> {warn}) {}
 
 Result::Result(const Message &err, none_t t)
     : Result(std::vector<Message> {err}, std::vector<Message>()) {}
-
-Result::Result(none_t t, none_t u)
-    : Result(std::vector<Message>(), std::vector<Message>()) {}
 
 void Result::setPrefixes(std::vector<Message> &errs, std::vector<Message> &warns) const {
     for (auto &err : errs) {

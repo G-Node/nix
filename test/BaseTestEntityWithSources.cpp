@@ -17,17 +17,16 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 
 
 void BaseTestEntityWithSources::testSourceAccess() {
-    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
     CPPUNIT_ASSERT(block.sourceCount() == 0);
     CPPUNIT_ASSERT(block.sources().size() == 0);
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         Source src = block.createSource(*it, "channel");
         CPPUNIT_ASSERT(src.name() == *it);
@@ -41,7 +40,6 @@ void BaseTestEntityWithSources::testSourceAccess() {
 
     CPPUNIT_ASSERT(block.sourceCount() == names.size());
     CPPUNIT_ASSERT(block.sources().size() == names.size());
-
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         Source src = block.getSource(*it);
@@ -57,8 +55,8 @@ void BaseTestEntityWithSources::testSourceAccess() {
 
 
 void BaseTestEntityWithSources::testSourceVectorSetter() {
-    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
-    vector<Source> sources;
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<Source> sources;
     DataArray da = block.createDataArray("Test","test", nix::DataType::Double, nix::NDSize {0,0});
     for (auto it = names.begin(); it != names.end(); it++) {
         sources.push_back(block.createSource(*it, "channel"));
@@ -78,9 +76,10 @@ void BaseTestEntityWithSources::testSourceVectorSetter() {
     sources.push_back(block.createSource("source_g", "channel"));
     da.sources(sources);
     CPPUNIT_ASSERT(da.sourceCount() == sources.size());
-    CPPUNIT_ASSERT(block.sourceCount() == (sources.size() + names.size())); 
+    CPPUNIT_ASSERT(block.sourceCount() == (sources.size() + names.size()));
+    CPPUNIT_ASSERT_THROW(da.addSource(""), EmptyString);
 
-    vector<Source> deleter;
+    std::vector<Source> deleter;
     da.sources(deleter);
     CPPUNIT_ASSERT(da.sourceCount() == 0);
 }

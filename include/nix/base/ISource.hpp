@@ -11,13 +11,13 @@
 
 
 #include <nix/base/IEntityWithMetadata.hpp>
-
 #include <string>
 #include <memory>
 
 namespace nix {
 namespace base {
 
+class IBlock;
 
 /**
  * @brief Interface for implementations of the Source entity.
@@ -44,6 +44,12 @@ public:
 
 
     virtual bool deleteSource(const std::string &name_or_id) = 0;
+
+
+    virtual std::shared_ptr<IFile> parentFile() const = 0;
+
+
+    virtual std::shared_ptr<IBlock> parentBlock() const = 0;
 
 
     virtual ~ISource() {}

@@ -123,7 +123,7 @@ size_t data_type_to_size(DataType dtype) {
             return sizeof(char *);
 
         default:
-            throw std::invalid_argument("Unkown DataType");
+            throw std::invalid_argument("Unknown DataType");
     }
 }
 

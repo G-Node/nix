@@ -12,6 +12,7 @@
 #define NIX_EXCEPTION_H
 
 #include <nix/Platform.hpp>
+#include <nix/types.hpp>
 
 #include <limits>
 #include <type_traits>
@@ -19,12 +20,13 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <vector>
 
 namespace nix {
 
 class OutOfBounds : public std::out_of_range {
 public:
-    OutOfBounds(const std::string &what_arg, size_t where) :
+    OutOfBounds(const std::string &what_arg, ndsize_t where) :
             out_of_range(make_message(what_arg, where)), index(where) {
 
     }
@@ -32,11 +34,11 @@ public:
     OutOfBounds(const std::string &what_arg) :
             out_of_range(what_arg), index(0) { }
 
-    size_t where(void) const {
+    ndsize_t where(void) const {
         return index;
     }
 
-    static std::string make_message(const std::string &str, size_t where) {
+    static std::string make_message(const std::string &str, ndsize_t where) {
             std::stringstream sstream(str);
 
             sstream << " [at index: " << where << "]";
@@ -44,7 +46,7 @@ public:
     }
 
 private:
-    size_t index;
+    ndsize_t index;
 };
 
 
@@ -85,6 +87,13 @@ public:
 };
 
 
+class InvalidFile: public std::invalid_argument {
+public:
+    InvalidFile(const std::string &caller):
+        std::invalid_argument("Invalid file - file is not a nix file. (" + caller + ")") { }
+};
+
+
 class UnsortedTicks: public std::invalid_argument {
 public:
     UnsortedTicks(const std::string &caller):
@@ -113,13 +122,16 @@ public:
             std::invalid_argument("InvalidDimension: " + what + " evoked at: " + where) { }
 };
 
+class ConsistencyError: public std::runtime_error {
+public:
+    ConsistencyError(const std::string &what) : runtime_error("ConsistencyError: " + what){ }
+};
 
-class MissingAttr: public std::runtime_error {
+    class MissingAttr: public std::runtime_error {
 public:
     MissingAttr(const std::string &name):
             std::runtime_error("MissingAttribute: Obligatory attribute " + name + " is not set!") { }
 };
-
 
 namespace check {
 

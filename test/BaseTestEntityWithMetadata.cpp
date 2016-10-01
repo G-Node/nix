@@ -18,7 +18,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 
 
@@ -27,7 +26,10 @@ void BaseTestEntityWithMetadata::testMetadataAccess() {
 
     block.metadata(section);
     CPPUNIT_ASSERT(block.metadata());
-    
+    CPPUNIT_ASSERT(block.metadata().id() == section.id());
+
+    CPPUNIT_ASSERT_THROW(block.metadata("wrong id"), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(block.metadata(""), EmptyString);
     // test none-unsetter
     block.metadata(none);
     CPPUNIT_ASSERT(!block.metadata());
@@ -37,4 +39,5 @@ void BaseTestEntityWithMetadata::testMetadataAccess() {
     CPPUNIT_ASSERT(!block.metadata());
     // re-create section
     section = file.createSection("foo_section", "metadata");
+    file.deleteSection(section);
 }

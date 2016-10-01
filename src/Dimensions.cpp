@@ -175,7 +175,7 @@ void SampledDimension::samplingInterval(double interval) {
 
 size_t SampledDimension::indexOf(const double position) const {
     //FIXME: should we use NDSSize::value_type here instead of ssize_t?
-    //FIXME: also, on the smae grounds, should the return not be NDSize::value_type?
+    //FIXME: also, on the same grounds, should the return not be NDSize::value_type?
     ssize_t index;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
@@ -187,19 +187,23 @@ size_t SampledDimension::indexOf(const double position) const {
 }
 
 
-double SampledDimension::positionAt(const size_t index) const {
+double SampledDimension::positionAt(const ndsize_t index) const {
+
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     return index * sampling_interval + offset;
 }
 
 
-vector<double> SampledDimension::axis(const size_t count, const size_t startIndex) const {
-    vector<double> axis(count);
+vector<double> SampledDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
+
+    size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
+
+    vector<double> axis(cnt);
     double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     for (size_t i = 0; i < axis.size(); ++i) {
-        axis[i] = (i + startIndex) * sampling_interval + offset;
+        axis[i] = (static_cast<double>(i) + startIndex) * sampling_interval + offset;
     }
     return axis;
 }
@@ -219,10 +223,13 @@ SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
 SampledDimension& SampledDimension::operator=(const Dimension &other) {
     shared_ptr<ISampledDimension> tmp(dynamic_pointer_cast<ISampledDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Sample && impl() != tmp) {
+    if (other.dimensionType() != DimensionType::Sample) {
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a SampledDimension", "SampledDimension::operator=");
+    }
+    if (impl() != tmp) {
         std::swap(impl(), tmp);
     }
-
     return *this;
 }
 
@@ -268,7 +275,11 @@ SetDimension& SetDimension::operator=(const SetDimension &other) {
 SetDimension& SetDimension::operator=(const Dimension &other) {
     shared_ptr<ISetDimension> tmp(dynamic_pointer_cast<ISetDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Set && impl() != tmp) {
+    if (other.dimensionType() != DimensionType::Set) {
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a SetDimension", "SetDimension::operator=");
+    }
+    if (impl() != tmp) {
         std::swap(impl(), tmp);
     }
 
@@ -336,12 +347,15 @@ void RangeDimension::ticks(const std::vector<double> &ticks) {
 }
 
 
-double RangeDimension::tickAt(const size_t index) const {
+double RangeDimension::tickAt(const ndsize_t index) const {
+
+    size_t idx = check::fits_in_size_t(index, "Tick index exceeds memory (size larger than current system supports)");
+
     vector<double> ticks = this->ticks();
-    if (index >= ticks.size()) {
-        throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", index);
+    if (idx >= ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", idx);
     }
-    return ticks[index];
+    return ticks[idx];
 }
 
 
@@ -357,13 +371,24 @@ size_t RangeDimension::indexOf(const double position) const {
 }
 
 
-vector<double> RangeDimension::axis(const size_t count, const size_t startIndex) const {
+vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
+
+    size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
+    size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
+ 
     vector<double> ticks = this->ticks();
-    if ((startIndex + count) > ticks.size()) {
-        throw nix::OutOfBounds("RangeDimension::axis: Count is invalid, reaches beyond the ticks stored in this dimension.");
-    } 
-    vector<double>::const_iterator first = ticks.begin() + startIndex;
-    vector<double> axis(first, first + count);
+
+    size_t end;
+    if (nix_safe_add(cnt, idx, &end)) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex > ndsize_t");
+    }
+
+    if (end > ticks.size()) {
+        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex is invalid, reaches beyond the ticks stored in this dimension.");
+    }
+
+    vector<double>::const_iterator first = ticks.begin() + idx;
+    vector<double> axis(first, first + cnt);
     return axis;
 }
 
@@ -382,7 +407,11 @@ RangeDimension& RangeDimension::operator=(const RangeDimension &other) {
 RangeDimension& RangeDimension::operator=(const Dimension &other) {
     shared_ptr<IRangeDimension> tmp(dynamic_pointer_cast<IRangeDimension>(other.impl()));
 
-    if (other.dimensionType() == DimensionType::Range && impl() != tmp) {
+    if (other.dimensionType() != DimensionType::Range) {
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a RangeDimension", "RangeDimension::operator=");
+    }
+    if (impl() != tmp) {
         std::swap(impl(), tmp);
     }
 

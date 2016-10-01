@@ -24,8 +24,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-
-using namespace std;
 using namespace nix;
 using namespace valid;
 
@@ -49,14 +47,14 @@ void BaseTestSource::testName() {
 
 void BaseTestSource::testType() {
     CPPUNIT_ASSERT(source.type() == "channel");
-    string typ = util::createId();
+    std::string typ = util::createId();
     source.type(typ);
     CPPUNIT_ASSERT(source.type() == typ);
 }
 
 
 void BaseTestSource::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     source.definition(def);
     CPPUNIT_ASSERT(*source.definition() == def);
     source.definition(nix::none);
@@ -83,7 +81,7 @@ void BaseTestSource::testMetadataAccess() {
 
 
 void BaseTestSource::testSourceAccess() {
-    vector<string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
 
     CPPUNIT_ASSERT(source.sourceCount() == 0);
     CPPUNIT_ASSERT(source.sources().size() == 0);
@@ -92,20 +90,21 @@ void BaseTestSource::testSourceAccess() {
     Source s;
     CPPUNIT_ASSERT(!source.hasSource(s));
 
-    vector<string> ids;
+    std::vector<std::string> ids;
     for (const auto &name : names) {
         Source child_source = source.createSource(name, "channel");
         CPPUNIT_ASSERT(child_source.name() == name);
         CPPUNIT_ASSERT(source.hasSource(child_source));
         CPPUNIT_ASSERT(source.hasSource(name));
-
         ids.push_back(child_source.id());
     }
     CPPUNIT_ASSERT_THROW(source.createSource(names[0], "channel"),
                          DuplicateName);
+    CPPUNIT_ASSERT_THROW(source.createSource("", "channel"), EmptyString);
 
     CPPUNIT_ASSERT(source.sourceCount() == names.size());
     CPPUNIT_ASSERT(source.sources().size() == names.size());
+    CPPUNIT_ASSERT_THROW(source.getSource(source.sourceCount() + 1), OutOfBounds);
 
     for (const auto &id : ids) {
         Source child_source = source.getSource(id);
@@ -228,6 +227,62 @@ void BaseTestSource::testFindSource() {
 }
 
 
+void BaseTestSource::testReferringDataArrays() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "data_array_" + nix::util::numToStr(i);
+        nix::DataArray da = block.createDataArray(name, "analog signal", nix::DataType::Double, nix::NDSize({ 20, 20 }));
+        if (i % 2 == 0) {
+            da.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringDataArrays().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
+void BaseTestSource::testReferringMultiTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 0);
+    DataArray positions = block.createDataArray("positions", "positions", nix::DataType::Double, nix::NDSize({ 20, 1 }));
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::MultiTag t = block.createMultiTag(name, "some tag", positions);
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringMultiTags().size() == 5);
+    block.deleteSource(ref_src);
+    block.deleteDataArray(positions);
+}
+
+
+void BaseTestSource::testReferringTags() {
+    nix::Source ref_src = block.createSource("referrenced", "test");
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 0);
+    for (int i = 0; i < 10; i++) {
+        std::string name = "tag_" + nix::util::numToStr(i);
+        nix::Tag t = block.createTag(name, "some_tag", {1.});
+        if (i % 2 == 0) {
+            t.addSource(ref_src);
+        }
+    }
+    CPPUNIT_ASSERT(ref_src.referringTags().size() == 5);
+    block.deleteSource(ref_src);
+}
+
+
+void BaseTestSource::testParentSource() {
+    nix::Source child_source  = source.createSource("child", "test");
+    nix::Source grandchild_source = child_source.createSource("grand_child", "test");
+    CPPUNIT_ASSERT(child_source.parentSource().id() == source.id());
+    CPPUNIT_ASSERT(grandchild_source.parentSource().id() == child_source.id());
+    CPPUNIT_ASSERT(!source.parentSource());
+}
+
+
 void BaseTestSource::testOperators() {
     CPPUNIT_ASSERT(source_null == false);
     CPPUNIT_ASSERT(source_null == none);
@@ -258,4 +313,3 @@ void BaseTestSource::testCreatedAt() {
 void BaseTestSource::testUpdatedAt() {
     CPPUNIT_ASSERT(source.updatedAt() >= startup_time);
 }
-

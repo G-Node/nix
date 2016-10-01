@@ -18,7 +18,7 @@ class BaseTestEntityWithMetadata : public CPPUNIT_NS::TestFixture {
 
 protected:
     nix::File file;
-    nix::Section section;
+    nix::Section section, wrong;
     nix::Block block;
 
 public:

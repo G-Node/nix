@@ -20,7 +20,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-using namespace std;
 using namespace nix;
 
 
@@ -38,14 +37,14 @@ void BaseTestEntity::testName() {
 
 void BaseTestEntity::testType() {
     CPPUNIT_ASSERT(block.type() == "dataset");
-    string typ = util::createId();
+    std::string typ = util::createId();
     block.type(typ);
     CPPUNIT_ASSERT(block.type() == typ);
 }
 
 
 void BaseTestEntity::testDefinition() {
-    string def = util::createId();
+    std::string def = util::createId();
     block.definition(def);
     CPPUNIT_ASSERT(*block.definition() == def);
     block.definition(nix::none);
@@ -75,3 +74,16 @@ void BaseTestEntity::testIsValidEntity() {
 }
 
 
+void BaseTestEntity::testOperators() {
+    CPPUNIT_ASSERT(block_null == false);
+    CPPUNIT_ASSERT(block_null == none);
+
+    CPPUNIT_ASSERT(block != false);
+    CPPUNIT_ASSERT(block != none);
+
+    CPPUNIT_ASSERT(block == block);
+    CPPUNIT_ASSERT(block != block_other);
+
+    block_other = block;
+    CPPUNIT_ASSERT(block_other == block);
+}

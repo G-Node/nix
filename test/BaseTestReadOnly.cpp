@@ -22,7 +22,6 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <boost/math/constants/constants.hpp>
 
-using namespace std;
 using namespace nix;
 using namespace valid;
 
