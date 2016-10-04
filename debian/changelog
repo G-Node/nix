@@ -1,4 +1,10 @@
-nix (1.2.0)  trusty; urgency medium
+nix (1.2.0-1)  xenial; urgency=medium
+
+ * Set to version 1.2.0
+
+ -- Jan Grewe <jan.grewe@g-node.org> Tue, 04 Oct 2016 15:12:00 +0100
+
+nix (1.2.0)  trusty; urgency=medium
 
  * Set to version 1.2.0
  * Dimensions are no longer treated as a stack. Removing them is only possible at once.
