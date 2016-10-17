@@ -203,11 +203,20 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
     // See data_type_to_h5_filetype for the reason why the switch is structured
     // in the way it is.
 
+    hid_t boolenumtype = H5Tcreate(H5T_ENUM, sizeof(bool));
+    typedef enum {
+        FALSE = 0,
+        TRUE
+    } boolean;
+    boolean f = boolean::FALSE;
+    boolean t = boolean::TRUE;
+    H5Tenum_insert(boolenumtype, "FALSE", &f);
+    H5Tenum_insert(boolenumtype, "TRUE", &t);
     switch(dtype) {
         //special case the bool
         //we treat them as bit fields for now, since hdf5 has no bool support
         //as of 1.8.12
-        case DataType::Bool:   return h5x::DataType::copy(H5T_NATIVE_B8);
+        case DataType::Bool:   return h5x::DataType::copy(boolenumtype);
         case DataType::Int8:   return h5x::DataType::copy(H5T_NATIVE_INT8);
         case DataType::Int16:  return h5x::DataType::copy(H5T_NATIVE_INT16);
         case DataType::Int32:  return h5x::DataType::copy(H5T_NATIVE_INT32);
