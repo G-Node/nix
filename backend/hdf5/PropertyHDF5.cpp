@@ -241,27 +241,6 @@ struct FileValue  {
     inline T val() const { return value; }
 };
 
-template<>
-struct FileValue<bool>  {
-
-    unsigned char value;
-
-    double  uncertainty;
-    char   *reference;
-    char   *filename;
-    char   *encoder;
-    char   *checksum;
-
-    //ctors
-    FileValue() {}
-    explicit FileValue(const bool &vref) :
-            value(static_cast<unsigned char>(vref ? 1 : 0)) {
-    }
-
-    inline bool val() const { return value > 0; }
-};
-
-
 //
 
 template<typename T>
