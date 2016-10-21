@@ -163,10 +163,29 @@ bool DataType::enum_equal(const DataType &other) {
 
 } // h5x
 
+hid_t make_file_booltype() {
+    hid_t booltype = H5Tenum_create(H5T_NATIVE_INT8);
+    static const int8_t f = 0;
+    static const int8_t t = 1;
+    H5Tenum_insert(booltype, "FALSE", &f);
+    H5Tenum_insert(booltype, "TRUE", &t);
+    return booltype;
+}
+
+hid_t make_mem_booltype() {
+    hid_t booltype = H5Tcreate(H5T_ENUM, sizeof(bool));
+    bool f = false, t = true;
+    H5Tenum_insert(booltype, "TRUE", &t);
+    H5Tenum_insert(booltype, "FALSE", &f);
+    return booltype;
+}
+
+static const hid_t boolfiletype = make_file_booltype();
+static const hid_t boolmemtype = make_mem_booltype();
 
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
-   /* The switch is structred in a way in order to get
+   /* The switch is structured in a way in order to get
       warnings from the compiler when not all cases are
       handled and throw an exception if one of the not
       handled cases actually appears (i.e., we have no
@@ -175,7 +194,7 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
     switch (dtype) {
 
-        case DataType::Bool:   return h5x::DataType::copy(H5T_STD_B8LE);
+        case DataType::Bool:   return h5x::DataType::copy(boolfiletype);
         case DataType::Int8:   return h5x::DataType::copy(H5T_STD_I8LE);
         case DataType::Int16:  return h5x::DataType::copy(H5T_STD_I16LE);
         case DataType::Int32:  return h5x::DataType::copy(H5T_STD_I32LE);
@@ -197,26 +216,13 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
     throw std::invalid_argument("Unkown DataType"); //FIXME
 }
 
-
 h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
     // See data_type_to_h5_filetype for the reason why the switch is structured
     // in the way it is.
 
-    hid_t boolenumtype = H5Tcreate(H5T_ENUM, sizeof(bool));
-    typedef enum {
-        FALSE = 0,
-        TRUE
-    } boolean;
-    boolean f = boolean::FALSE;
-    boolean t = boolean::TRUE;
-    H5Tenum_insert(boolenumtype, "FALSE", &f);
-    H5Tenum_insert(boolenumtype, "TRUE", &t);
     switch(dtype) {
-        //special case the bool
-        //we treat them as bit fields for now, since hdf5 has no bool support
-        //as of 1.8.12
-        case DataType::Bool:   return h5x::DataType::copy(boolenumtype);
+        case DataType::Bool:   return h5x::DataType::copy(boolmemtype);
         case DataType::Int8:   return h5x::DataType::copy(H5T_NATIVE_INT8);
         case DataType::Int16:  return h5x::DataType::copy(H5T_NATIVE_INT16);
         case DataType::Int32:  return h5x::DataType::copy(H5T_NATIVE_INT32);
