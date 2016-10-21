@@ -224,7 +224,7 @@ PropertyHDF5::~PropertyHDF5() {}
 /* Value related functions */
 
 template<typename T>
-struct FileValue  {
+struct __attribute__((packed)) FileValue  {
 
     T       value;
 
