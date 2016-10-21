@@ -272,6 +272,10 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
         switch (vsize) {
         case 1: return DataType::Bool;
         }
+    } else if (vclass == H5T_ENUM) {
+        switch (vsize) {
+            case 1: return DataType::Bool;
+        }
     }
 
     std::cerr << "FIXME: Not implemented " << vclass << " " << vsize << " " << vsign << " " << std::endl;
