@@ -45,6 +45,12 @@ DataType DataType::makeCompound(size_t size) {
     return res;
 }
 
+DataType DataType::makeEnum(const DataType &base) {
+    DataType res = H5Tenum_create(base.h5id());
+    res.check("Could not create enum type");
+    return res;
+}
+
 H5T_class_t DataType::class_t() const {
     return H5Tget_class(hid);
 }
