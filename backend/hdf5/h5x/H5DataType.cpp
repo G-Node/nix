@@ -26,6 +26,12 @@ DataType DataType::copy(hid_t source) {
     return hi_copy;
 }
 
+DataType DataType::make(H5T_class_t klass, size_t size) {
+    DataType dt = H5Tcreate(klass, size);
+    dt.check("Could not create datatype");
+    return dt;
+}
+
 DataType DataType::makeStrType(size_t size) {
     DataType str_type = H5Tcopy(H5T_C_S1);
     str_type.check("Could not create string type");
@@ -33,10 +39,15 @@ DataType DataType::makeStrType(size_t size) {
     return str_type;
 }
 
-
 DataType DataType::makeCompound(size_t size) {
     DataType res = H5Tcreate(H5T_COMPOUND, size);
     res.check("Could not create compound type");
+    return res;
+}
+
+DataType DataType::makeEnum(const DataType &base) {
+    DataType res = H5Tenum_create(base.h5id());
+    res.check("Could not create enum type");
     return res;
 }
 
@@ -92,6 +103,17 @@ std::string DataType::member_name(unsigned int index) const {
     return res;
 }
 
+std::vector<std::string> DataType::member_names() const {
+    unsigned int c = member_count();
+    std::vector<std::string> names;
+
+    for (unsigned int i = 0; i < c; i++) {
+        names.emplace_back(member_name(i));
+    }
+
+    return names;
+}
+
 size_t DataType::member_offset(unsigned int index) const {
     return H5Tget_member_offset(hid, index);
 }
@@ -106,6 +128,37 @@ DataType DataType::member_type(unsigned int index) const {
 void DataType::insert(const std::string &name, size_t offset, const DataType &dtype) {
     HErr res = H5Tinsert(hid, name.c_str(), offset, dtype.hid);
     res.check("DataType::insert(): H5Tinsert failed.");
+}
+
+void DataType::insert(const std::string &name, void *value) {
+    HErr res = H5Tenum_insert(hid, name.c_str(), value);
+    res.check("DataType::insert(): H5Tenum_insert failed.");
+}
+
+void DataType::enum_valueof(const std::string &name, void *value) {
+    HErr res = H5Tenum_valueof(hid, name.c_str(), value);
+    res.check("DataType::enum_valueof(): H5Tenum_valueof failed");
+}
+
+bool DataType::enum_equal(const DataType &other) {
+    if (class_t() != H5T_ENUM || other.class_t() != H5T_ENUM) {
+        return false;
+    }
+
+    std::vector<std::string> a_names = this->member_names();
+    std::vector<std::string> b_names = other.member_names();
+
+    if (a_names.size() != b_names.size()) {
+        return false;
+    }
+
+    std::sort(std::begin(a_names), std::end(a_names));
+    std::sort(std::begin(b_names), std::end(b_names));
+
+
+    return std::equal(std::begin(a_names),
+                      std::end(a_names),
+                      std::begin(b_names));
 }
 
 } // h5x

@@ -14,6 +14,9 @@
 
 #include <nix/Platform.hpp>
 
+#include <type_traits>
+#include <vector>
+
 namespace nix {
 namespace hdf5 {
 
@@ -32,8 +35,11 @@ public:
     // but more explicit, so it is easier in the code
     // to read
     static DataType copy(hid_t);
+
+    static DataType make(H5T_class_t klass, size_t size);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
     static DataType makeCompound(size_t size);
+    static DataType makeEnum(const DataType &base);
 
     H5T_class_t class_t() const;
 
@@ -52,9 +58,19 @@ public:
 
     H5T_class_t member_class(unsigned int index) const;
     std::string member_name(unsigned int index) const;
+    std::vector<std::string> member_names() const;
     size_t member_offset(unsigned int index) const;
 
     void insert(const std::string &name, size_t offset, const DataType &dtype);
+    void insert(const std::string &name, void *value);
+
+    template<typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    void insert(const std::string &name, T value) {
+        this->insert(name, &value);
+    }
+
+    void enum_valueof(const std::string &name, void *value);
+    bool enum_equal(const DataType &other);
 };
 
 }
