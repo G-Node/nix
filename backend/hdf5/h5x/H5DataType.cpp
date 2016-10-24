@@ -119,6 +119,11 @@ void DataType::insert(const std::string &name, size_t offset, const DataType &dt
     res.check("DataType::insert(): H5Tinsert failed.");
 }
 
+void DataType::insert(const std::string &name, void *value) {
+    HErr res = H5Tenum_insert(hid, name.c_str(), value);
+    res.check("DataType::insert(): H5Tenum_insert failed.");
+}
+
 } // h5x
 
 

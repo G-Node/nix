@@ -234,6 +234,12 @@ void TestH5::testDataType() {
     h5x::DataType etib = h5x::DataType::makeEnum(H5T_STD_I8LE);
     CPPUNIT_ASSERT_EQUAL(etib.class_t(), H5T_ENUM);
     CPPUNIT_ASSERT_EQUAL(etib.size(), h5x::DataType(H5T_STD_I8LE).size());
+
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 0U);
+    bool b = true;
+    etib.insert("TRUE", &b);
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 1U);
+
 }
 
 void TestH5::testDataSpace() {
