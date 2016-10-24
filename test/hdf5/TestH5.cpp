@@ -242,6 +242,13 @@ void TestH5::testDataType() {
     etib.insert("FALSE", false);
     CPPUNIT_ASSERT_EQUAL(etib.member_count(), 2U);
 
+    std::vector<std::string> nms = etib.member_names();
+    auto rt = std::find(std::begin(nms), std::end(nms), "TRUE");
+    auto rf = std::find(std::begin(nms), std::end(nms), "FALSE");
+
+    CPPUNIT_ASSERT(rt != std::end(nms));
+    CPPUNIT_ASSERT(rf != std::end(nms));
+
     b = false;
     etib.enum_valueof("TRUE", &b);
     CPPUNIT_ASSERT_EQUAL(true, b);
