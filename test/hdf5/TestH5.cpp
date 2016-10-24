@@ -245,6 +245,19 @@ void TestH5::testDataType() {
     b = false;
     etib.enum_valueof("TRUE", &b);
     CPPUNIT_ASSERT_EQUAL(true, b);
+
+    h5x::DataType etnb = h5x::DataType::make(H5T_ENUM, sizeof(bool));
+    CPPUNIT_ASSERT_EQUAL(etnb.class_t(), H5T_ENUM);
+    etnb.insert("FALSE", false);
+    etnb.insert("TRUE", true);
+
+    CPPUNIT_ASSERT(etnb.enum_equal(etib));
+    CPPUNIT_ASSERT(etib.enum_equal(etnb));
+
+    h5x::DataType etlb = h5x::DataType::make(H5T_ENUM, sizeof(unsigned long));
+    etlb.insert("FALSE", 0UL);
+    etlb.insert("TRUE", 1UL);
+    CPPUNIT_ASSERT(etlb.enum_equal(etib));
 }
 
 void TestH5::testDataSpace() {

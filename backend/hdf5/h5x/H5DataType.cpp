@@ -129,6 +129,34 @@ void DataType::enum_valueof(const std::string &name, void *value) {
     res.check("DataType::enum_valueof(): H5Tenum_valueof failed");
 }
 
+bool DataType::enum_equal(const DataType &other) {
+    if (class_t() != H5T_ENUM || other.class_t() != H5T_ENUM) {
+        return false;
+    }
+
+    //TODO: add std::vector<string> member_nameS();
+    //      sort both vectors, compare both vectors
+    unsigned int count = member_count();
+    if (count != other.member_count()) {
+        return false;
+    }
+
+    for (unsigned int i = 0; i < count; i++) {
+        std::string a_name = member_name(i);
+
+        bool found = false;
+        for (unsigned int j = 0; !found && j < count; j++) {
+            std::string b_name = other.member_name(j);
+            found = a_name == b_name;
+        }
+
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 } // h5x
 

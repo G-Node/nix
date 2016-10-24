@@ -68,8 +68,8 @@ public:
     }
 
     void enum_valueof(const std::string &name, void *value);
+    bool enum_equal(const DataType &other);
 };
-    
 
 }
 
