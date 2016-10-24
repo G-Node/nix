@@ -66,7 +66,10 @@ public:
     void insert(const std::string &name, T value) {
         this->insert(name, &value);
     }
+
+    void enum_valueof(const std::string &name, void *value);
 };
+    
 
 }
 
