@@ -223,8 +223,11 @@ PropertyHDF5::~PropertyHDF5() {}
 
 /* Value related functions */
 
+#ifdef _MSC_VER
+#pragma pack(push,1)
+#endif
 template<typename T>
-struct __attribute__((packed)) FileValue  {
+struct PACKED FileValue  {
 
     T       value;
 
@@ -240,6 +243,9 @@ struct __attribute__((packed)) FileValue  {
 
     inline T val() const { return value; }
 };
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
 
 //
 
