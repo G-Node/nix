@@ -196,6 +196,10 @@ void TestH5::testDataType() {
     h5x::DataType str_255 = h5x::DataType::makeStrType(255);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_255.size());
 
+    h5x::DataType otype = h5x::DataType::make(H5T_OPAQUE, 42);
+    CPPUNIT_ASSERT_EQUAL(H5T_OPAQUE, otype.class_t());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(42), otype.size());
+
     struct TestStruct {
         double d;
         int i;

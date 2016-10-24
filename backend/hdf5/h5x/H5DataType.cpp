@@ -26,13 +26,18 @@ DataType DataType::copy(hid_t source) {
     return hi_copy;
 }
 
+DataType DataType::make(H5T_class_t klass, size_t size) {
+    DataType dt = H5Tcreate(klass, size);
+    dt.check("Could not create datatype");
+    return dt;
+}
+
 DataType DataType::makeStrType(size_t size) {
     DataType str_type = H5Tcopy(H5T_C_S1);
     str_type.check("Could not create string type");
     str_type.size(size);
     return str_type;
 }
-
 
 DataType DataType::makeCompound(size_t size) {
     DataType res = H5Tcreate(H5T_COMPOUND, size);
