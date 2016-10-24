@@ -124,6 +124,12 @@ void DataType::insert(const std::string &name, void *value) {
     res.check("DataType::insert(): H5Tenum_insert failed.");
 }
 
+void DataType::enum_valueof(const std::string &name, void *value) {
+    HErr res = H5Tenum_valueof(hid, name.c_str(), value);
+    res.check("DataType::enum_valueof(): H5Tenum_valueof failed");
+}
+
+
 } // h5x
 
 

@@ -242,6 +242,9 @@ void TestH5::testDataType() {
     etib.insert("FALSE", false);
     CPPUNIT_ASSERT_EQUAL(etib.member_count(), 2U);
 
+    b = false;
+    etib.enum_valueof("TRUE", &b);
+    CPPUNIT_ASSERT_EQUAL(true, b);
 }
 
 void TestH5::testDataSpace() {
