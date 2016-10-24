@@ -14,6 +14,8 @@
 
 #include <nix/Platform.hpp>
 
+#include <type_traits>
+
 namespace nix {
 namespace hdf5 {
 
@@ -60,6 +62,10 @@ public:
     void insert(const std::string &name, size_t offset, const DataType &dtype);
     void insert(const std::string &name, void *value);
 
+    template<typename T, typename = std::enable_if_t<!std::is_pointer<T>::value>>
+    void insert(const std::string &name, T value) {
+        this->insert(name, &value);
+    }
 };
 
 }

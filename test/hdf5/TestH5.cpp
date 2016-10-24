@@ -239,6 +239,8 @@ void TestH5::testDataType() {
     bool b = true;
     etib.insert("TRUE", &b);
     CPPUNIT_ASSERT_EQUAL(etib.member_count(), 1U);
+    etib.insert("FALSE", false);
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 2U);
 
 }
 
