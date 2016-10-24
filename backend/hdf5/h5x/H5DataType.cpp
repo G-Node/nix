@@ -145,28 +145,20 @@ bool DataType::enum_equal(const DataType &other) {
         return false;
     }
 
-    //TODO: add std::vector<string> member_nameS();
-    //      sort both vectors, compare both vectors
-    unsigned int count = member_count();
-    if (count != other.member_count()) {
+    std::vector<std::string> a_names = this->member_names();
+    std::vector<std::string> b_names = other.member_names();
+
+    if (a_names.size() != b_names.size()) {
         return false;
     }
 
-    for (unsigned int i = 0; i < count; i++) {
-        std::string a_name = member_name(i);
+    std::sort(std::begin(a_names), std::end(a_names));
+    std::sort(std::begin(b_names), std::end(b_names));
 
-        bool found = false;
-        for (unsigned int j = 0; !found && j < count; j++) {
-            std::string b_name = other.member_name(j);
-            found = a_name == b_name;
-        }
 
-        if (!found) {
-            return false;
-        }
-    }
-
-    return true;
+    return std::equal(std::begin(a_names),
+                      std::end(a_names),
+                      std::begin(b_names));
 }
 
 } // h5x
