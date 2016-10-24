@@ -94,7 +94,7 @@ void TestNDSize::testAll() {
     CPPUNIT_ASSERT_EQUAL(static_cast<NDSize::value_type>(25), dp);
 
     //comparison tests
-    CPPUNIT_ASSERT_THROW(f < s, IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(static_cast<void>(f < s), IncompatibleDimensions);
 
     NDSize t({4, 5});
     NDSize u({4, 4});
