@@ -32,6 +32,8 @@ public:
     // but more explicit, so it is easier in the code
     // to read
     static DataType copy(hid_t);
+
+    static DataType make(H5T_class_t klass, size_t size);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
     static DataType makeCompound(size_t size);
 
