@@ -36,6 +36,7 @@ public:
     static DataType make(H5T_class_t klass, size_t size);
     static DataType makeStrType(size_t size = H5T_VARIABLE);
     static DataType makeCompound(size_t size);
+    static DataType makeEnum(const DataType &base);
 
     H5T_class_t class_t() const;
 

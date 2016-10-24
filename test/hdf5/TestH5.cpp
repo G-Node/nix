@@ -228,6 +228,12 @@ void TestH5::testDataType() {
     }
     CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
 
+
+    // enum test
+    //  enum type int bool
+    h5x::DataType etib = h5x::DataType::makeEnum(H5T_STD_I8LE);
+    CPPUNIT_ASSERT_EQUAL(etib.class_t(), H5T_ENUM);
+    CPPUNIT_ASSERT_EQUAL(etib.size(), h5x::DataType(H5T_STD_I8LE).size());
 }
 
 void TestH5::testDataSpace() {
