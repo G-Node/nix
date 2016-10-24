@@ -58,6 +58,8 @@ public:
     size_t member_offset(unsigned int index) const;
 
     void insert(const std::string &name, size_t offset, const DataType &dtype);
+    void insert(const std::string &name, void *value);
+
 };
 
 }
