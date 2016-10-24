@@ -103,6 +103,17 @@ std::string DataType::member_name(unsigned int index) const {
     return res;
 }
 
+std::vector<std::string> DataType::member_names() const {
+    unsigned int c = member_count();
+    std::vector<std::string> names;
+
+    for (unsigned int i = 0; i < c; i++) {
+        names.emplace_back(member_name(i));
+    }
+
+    return names;
+}
+
 size_t DataType::member_offset(unsigned int index) const {
     return H5Tget_member_offset(hid, index);
 }

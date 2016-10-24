@@ -15,6 +15,7 @@
 #include <nix/Platform.hpp>
 
 #include <type_traits>
+#include <vector>
 
 namespace nix {
 namespace hdf5 {
@@ -57,6 +58,7 @@ public:
 
     H5T_class_t member_class(unsigned int index) const;
     std::string member_name(unsigned int index) const;
+    std::vector<std::string> member_names() const;
     size_t member_offset(unsigned int index) const;
 
     void insert(const std::string &name, size_t offset, const DataType &dtype);
