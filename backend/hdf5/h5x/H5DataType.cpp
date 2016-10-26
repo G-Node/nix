@@ -163,25 +163,23 @@ bool DataType::enum_equal(const DataType &other) {
 
 } // h5x
 
-hid_t make_file_booltype() {
-    hid_t booltype = H5Tenum_create(H5T_NATIVE_INT8);
-    static const int8_t f = 0;
-    static const int8_t t = 1;
-    H5Tenum_insert(booltype, "FALSE", &f);
-    H5Tenum_insert(booltype, "TRUE", &t);
+
+h5x::DataType make_file_booltype() {
+    h5x::DataType booltype = h5x::DataType::makeEnum(H5T_NATIVE_INT8);
+    booltype.insert("FALSE", 0UL);
+    booltype.insert("TRUE", 1UL);
     return booltype;
 }
 
-hid_t make_mem_booltype() {
-    hid_t booltype = H5Tcreate(H5T_ENUM, sizeof(bool));
-    bool f = false, t = true;
-    H5Tenum_insert(booltype, "TRUE", &t);
-    H5Tenum_insert(booltype, "FALSE", &f);
+h5x::DataType make_mem_booltype() {
+    h5x::DataType booltype = h5x::DataType::make(H5T_ENUM, sizeof(bool));
+    booltype.insert("FALSE", false);
+    booltype.insert("TRUE", true);
     return booltype;
 }
 
-static const hid_t boolfiletype = make_file_booltype();
-static const hid_t boolmemtype = make_mem_booltype();
+static const h5x::DataType boolfiletype = make_file_booltype();
+static const h5x::DataType boolmemtype = make_mem_booltype();
 
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
@@ -194,7 +192,7 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
     switch (dtype) {
 
-        case DataType::Bool:   return h5x::DataType::copy(boolfiletype);
+        case DataType::Bool:   return boolfiletype;
         case DataType::Int8:   return h5x::DataType::copy(H5T_STD_I8LE);
         case DataType::Int16:  return h5x::DataType::copy(H5T_STD_I16LE);
         case DataType::Int32:  return h5x::DataType::copy(H5T_STD_I32LE);
@@ -222,7 +220,7 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
     // in the way it is.
 
     switch(dtype) {
-        case DataType::Bool:   return h5x::DataType::copy(boolmemtype);
+        case DataType::Bool:   return boolmemtype;
         case DataType::Int8:   return h5x::DataType::copy(H5T_NATIVE_INT8);
         case DataType::Int16:  return h5x::DataType::copy(H5T_NATIVE_INT16);
         case DataType::Int32:  return h5x::DataType::copy(H5T_NATIVE_INT32);
