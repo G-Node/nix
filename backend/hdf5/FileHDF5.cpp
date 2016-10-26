@@ -56,10 +56,24 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     unsigned int h5mode =  map_file_mode(mode);
 
     if (fileExists(name)) {
-        openExisting(name, h5mode, fcpl);
+        if (h5mode == H5F_ACC_TRUNC) {
+            hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+            openRoot();
+            createHeader();
+        } else {
+            hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
+            openRoot();
+        }
+        if (!checkHeader()) {
+            throw nix::InvalidFile("FileHDF5::open_existing!");
+        };
     } else {
-        createNew(name, h5mode, fcpl);
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
+        root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
+        root.check("Could not open root group");
+        createHeader();
     }
+
     if (!H5Iis_valid(hid)) {
         throw H5Exception("Could not open/create file");
     }
@@ -342,31 +356,7 @@ void FileHDF5::createHeader() const {
         throw H5Exception("Could not open/create file");
     }
 }
-
-
-void FileHDF5::createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
-    hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-    root.check("Could not open root group");
-    createHeader();
-}
-
-
-void FileHDF5::openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
-    if (h5mode == H5F_ACC_TRUNC) {
-        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-        openRoot();
-        createHeader();
-    } else {
-        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
-        openRoot();
-    }
-    if (!checkHeader()) {
-        throw nix::InvalidFile("FileHDF5::open_existing!");
-    };
-}
-
-
+    
 void FileHDF5::openRoot() {
     root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
     root.check("Could not open root group");
