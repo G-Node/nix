@@ -55,27 +55,29 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
     unsigned int h5mode =  map_file_mode(mode);
 
+    bool is_create = false;
     if (fileExists(name)) {
         if (h5mode == H5F_ACC_TRUNC) {
             hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-            openRoot();
-            createHeader();
+            is_create = true;
         } else {
             hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
-            openRoot();
         }
-        if (!checkHeader()) {
-            throw nix::InvalidFile("FileHDF5::open_existing!");
-        };
     } else {
         hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-        root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-        root.check("Could not open root group");
-        createHeader();
+        is_create = true;
     }
 
     if (!H5Iis_valid(hid)) {
         throw H5Exception("Could not open/create file");
+    }
+
+    openRoot();
+
+    if (is_create) {
+        createHeader();
+    } else if (!checkHeader()) {
+        throw nix::InvalidFile("FileHDF5::open_existing!");
     }
 
     metadata = root.openGroup("metadata");
