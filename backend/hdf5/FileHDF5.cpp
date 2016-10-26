@@ -55,17 +55,12 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
     unsigned int h5mode =  map_file_mode(mode);
 
-    bool is_create = false;
-    if (fileExists(name)) {
-        if (h5mode == H5F_ACC_TRUNC) {
-            hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-            is_create = true;
-        } else {
-            hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
-        }
-    } else {
+    bool is_create = !fileExists(name) || h5mode == H5F_ACC_TRUNC;
+
+    if (is_create) {
         hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-        is_create = true;
+    } else {
+        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
     }
 
     if (!H5Iis_valid(hid)) {
