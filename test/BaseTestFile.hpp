@@ -38,7 +38,7 @@ public:
     void testValidate();
     void testFormat();
     virtual void testLocation() = 0;
-    void testVersion();
+    virtual void testVersion();
     void testCreatedAt();
     void testUpdatedAt();
     void testBlockAccess();
