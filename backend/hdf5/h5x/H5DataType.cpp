@@ -268,7 +268,7 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
         return DataType::String;
     } else if (vclass == H5T_BITFIELD) {
         switch (vsize) {
-        case 1: return DataType::Bool;
+            case 1: return DataType::Bool;
         }
     } else if (vclass == H5T_ENUM) {
         switch (vsize) {
@@ -279,6 +279,12 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
     std::cerr << "FIXME: Not implemented " << vclass << " " << vsize << " " << vsign << " " << std::endl;
     assert(NOT_IMPLEMENTED);
     return DataType::Nothing;
+}
+
+void check_bool_enum(h5x::DataType type) {
+    assert(type.member_count() == 2);
+    assert(type.member_name(0) == "FALSE");
+    assert(type.member_name(1) == "TRUE");
 }
 
 
@@ -300,6 +306,13 @@ DataType data_type_from_h5(const h5x::DataType &dtype) {
         size = vtype.size();
         sign = vtype.sign();
 
+        if (ftclass == H5T_ENUM) {
+            check_bool_enum(vtype);
+            return DataType::Bool;
+        }
+    } else if (ftclass == H5T_ENUM) {
+        check_bool_enum(dtype);
+        return DataType::Bool;
     } else if (ftclass == H5T_OPAQUE) {
         return DataType::Opaque;
     } else {
