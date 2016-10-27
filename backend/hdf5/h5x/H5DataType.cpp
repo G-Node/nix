@@ -140,7 +140,7 @@ void DataType::enum_valueof(const std::string &name, void *value) {
     res.check("DataType::enum_valueof(): H5Tenum_valueof failed");
 }
 
-bool DataType::enum_equal(const DataType &other) {
+bool DataType::enum_equal(const DataType &other) const {
     if (class_t() != H5T_ENUM || other.class_t() != H5T_ENUM) {
         return false;
     }
@@ -281,13 +281,6 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
     return DataType::Nothing;
 }
 
-void check_bool_enum(h5x::DataType type) {
-    assert(type.member_count() == 2);
-    assert(type.member_name(0) == "FALSE");
-    assert(type.member_name(1) == "TRUE");
-}
-
-
 DataType data_type_from_h5(const h5x::DataType &dtype) {
 
     H5T_class_t ftclass = dtype.class_t();
@@ -307,11 +300,15 @@ DataType data_type_from_h5(const h5x::DataType &dtype) {
         sign = vtype.sign();
 
         if (ftclass == H5T_ENUM) {
-            check_bool_enum(vtype);
+            if (!boolfiletype.enum_equal(vtype)) {
+                return DataType::Nothing;
+            }
             return DataType::Bool;
         }
     } else if (ftclass == H5T_ENUM) {
-        check_bool_enum(dtype);
+        if (!boolfiletype.enum_equal(dtype)) {
+            return DataType::Nothing;
+        }
         return DataType::Bool;
     } else if (ftclass == H5T_OPAQUE) {
         return DataType::Opaque;
