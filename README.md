@@ -4,7 +4,7 @@
 
 --
 
-![nix_logo](https://github.com/g-node/nix/blob/master/nix_logo.png "NIX")
+![nix_logo](docs/nix_logo.png "NIX")
 
 About NIX
 ---------
