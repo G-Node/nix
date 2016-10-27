@@ -292,7 +292,7 @@ h5x::DataType h5_type_for_value(bool for_memory)
 
 h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
 {
-    const bool for_memory = true;
+    const bool for_memory = false;
 
     switch(dtype) {
         case DataType::Bool:   return h5_type_for_value<bool>(for_memory);
