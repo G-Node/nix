@@ -1,0 +1,31 @@
+version: 1.2.{build}
+branches:
+  only:
+  - master
+  - 1.2
+image: Visual Studio 2014 CTP4
+shallow_clone: true
+environment:
+  matrix:
+  - PLATFORM: x64
+    CONFIGURATION: Release
+  - PLATFORM: x86
+    CONFIGURATION: Release
+install:
+- cmd: >-
+    choco install nsis.install -version 2.49 -y
+
+    if not exist C:\deps.zip appveyor DownloadFile https://projects.g-node.org/nix/nix-dependencies-windows-20160121.zip -FileName C:\deps.zip
+
+    if not exist C:\deps 7z x -y C:\deps.zip -oC:\deps > NUL:
+build_script:
+- cmd: >-
+    c:\deps\nixenv.bat
+
+    ctest -VV --output-on-failure -S .appveyor.ctest
+
+    cmake --build .\build --config %CONFIGURATION% --target PACKAGE
+test_script:
+- cmd: 
+artifacts:
+- path: build\*.exe
