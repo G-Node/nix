@@ -32,8 +32,10 @@
 
 #ifdef _MSC_VER
 #define NOEXCEPT
+#define PACKED
 #else
 #define NOEXCEPT noexcept
+#define PACKED __attribute__((packed))
 #endif
 
 #define NIX_SRC_FILE __FILE__

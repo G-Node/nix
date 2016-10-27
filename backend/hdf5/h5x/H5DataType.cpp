@@ -140,7 +140,7 @@ void DataType::enum_valueof(const std::string &name, void *value) {
     res.check("DataType::enum_valueof(): H5Tenum_valueof failed");
 }
 
-bool DataType::enum_equal(const DataType &other) {
+bool DataType::enum_equal(const DataType &other) const {
     if (class_t() != H5T_ENUM || other.class_t() != H5T_ENUM) {
         return false;
     }
@@ -164,9 +164,26 @@ bool DataType::enum_equal(const DataType &other) {
 } // h5x
 
 
+h5x::DataType make_file_booltype() {
+    h5x::DataType booltype = h5x::DataType::makeEnum(H5T_NATIVE_INT8);
+    booltype.insert("FALSE", 0UL);
+    booltype.insert("TRUE", 1UL);
+    return booltype;
+}
+
+h5x::DataType make_mem_booltype() {
+    h5x::DataType booltype = h5x::DataType::make(H5T_ENUM, sizeof(bool));
+    booltype.insert("FALSE", false);
+    booltype.insert("TRUE", true);
+    return booltype;
+}
+
+static const h5x::DataType boolfiletype = make_file_booltype();
+static const h5x::DataType boolmemtype = make_mem_booltype();
+
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
-   /* The switch is structred in a way in order to get
+   /* The switch is structured in a way in order to get
       warnings from the compiler when not all cases are
       handled and throw an exception if one of the not
       handled cases actually appears (i.e., we have no
@@ -175,7 +192,7 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
     switch (dtype) {
 
-        case DataType::Bool:   return h5x::DataType::copy(H5T_STD_B8LE);
+        case DataType::Bool:   return boolfiletype;
         case DataType::Int8:   return h5x::DataType::copy(H5T_STD_I8LE);
         case DataType::Int16:  return h5x::DataType::copy(H5T_STD_I16LE);
         case DataType::Int32:  return h5x::DataType::copy(H5T_STD_I32LE);
@@ -197,17 +214,13 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
     throw std::invalid_argument("Unkown DataType"); //FIXME
 }
 
-
 h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
     // See data_type_to_h5_filetype for the reason why the switch is structured
     // in the way it is.
 
     switch(dtype) {
-        //special case the bool
-        //we treat them as bit fields for now, since hdf5 has no bool support
-        //as of 1.8.12
-        case DataType::Bool:   return h5x::DataType::copy(H5T_NATIVE_B8);
+        case DataType::Bool:   return boolmemtype;
         case DataType::Int8:   return h5x::DataType::copy(H5T_NATIVE_INT8);
         case DataType::Int16:  return h5x::DataType::copy(H5T_NATIVE_INT16);
         case DataType::Int32:  return h5x::DataType::copy(H5T_NATIVE_INT32);
@@ -255,7 +268,11 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
         return DataType::String;
     } else if (vclass == H5T_BITFIELD) {
         switch (vsize) {
-        case 1: return DataType::Bool;
+            case 1: return DataType::Bool;
+        }
+    } else if (vclass == H5T_ENUM) {
+        switch (vsize) {
+            case 1: return DataType::Bool;
         }
     }
 
@@ -283,6 +300,17 @@ DataType data_type_from_h5(const h5x::DataType &dtype) {
         size = vtype.size();
         sign = vtype.sign();
 
+        if (ftclass == H5T_ENUM) {
+            if (!boolfiletype.enum_equal(vtype)) {
+                return DataType::Nothing;
+            }
+            return DataType::Bool;
+        }
+    } else if (ftclass == H5T_ENUM) {
+        if (!boolfiletype.enum_equal(dtype)) {
+            return DataType::Nothing;
+        }
+        return DataType::Bool;
     } else if (ftclass == H5T_OPAQUE) {
         return DataType::Opaque;
     } else {

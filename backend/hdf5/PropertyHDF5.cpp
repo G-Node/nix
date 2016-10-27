@@ -223,8 +223,11 @@ PropertyHDF5::~PropertyHDF5() {}
 
 /* Value related functions */
 
+#ifdef _MSC_VER
+#pragma pack(push,1)
+#endif
 template<typename T>
-struct FileValue  {
+struct PACKED FileValue  {
 
     T       value;
 
@@ -240,27 +243,9 @@ struct FileValue  {
 
     inline T val() const { return value; }
 };
-
-template<>
-struct FileValue<bool>  {
-
-    unsigned char value;
-
-    double  uncertainty;
-    char   *reference;
-    char   *filename;
-    char   *encoder;
-    char   *checksum;
-
-    //ctors
-    FileValue() {}
-    explicit FileValue(const bool &vref) :
-            value(static_cast<unsigned char>(vref ? 1 : 0)) {
-    }
-
-    inline bool val() const { return value > 0; }
-};
-
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
 
 //
 
@@ -292,7 +277,7 @@ h5x::DataType h5_type_for_value(bool for_memory)
 
 h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
 {
-    const bool for_memory = true;
+    const bool for_memory = false;
 
     switch(dtype) {
         case DataType::Bool:   return h5_type_for_value<bool>(for_memory);
