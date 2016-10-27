@@ -14,9 +14,10 @@ each other.
 
 ## file format versioning scheme
 
-The file format is versioned with a triplet of integers, that carry
-semantics and can and must be used libraries that are about to open
-NIX files to determine if it indeed can read or write the file.
+The file format is versioned with a triplet of integers, that carries
+semantics, thus can and indeed *must* be used libraries that want to
+open NIX files to determine if the version of the file is compatible
+with the library version (i.e. the file can be read or written to).
 
 The meaning of the individual numbers are as follows:
 
@@ -34,9 +35,9 @@ the two critical scenarios that might occur:
    2. An old library (OL) wants to open a file that is newer (NF)
 
 
-If all components but the last, **Z** match, it means for the
-for the scenarios *1* and *2* that the library must be able to
-**read** but **not write** the file. (The addition of the Group
+If all components but the last, i.e **Z**, match, it means for the
+scenarios *1* and *2* that the library must be able to **read**
+but **not write** the file. (The addition of the Group
 entity or the DataFrame entity would be such a change.)
 
 If X matches but **Y** is different, (1.) a new library (*NL*) must be
