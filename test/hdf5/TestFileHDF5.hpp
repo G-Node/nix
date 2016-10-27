@@ -25,7 +25,10 @@ class TestFileHDF5: public BaseTestFile {
 
 public:
 
-    void setUp() {
+
+    void testVersion() override;
+
+    void setUp() override {
         startup_time = time(NULL);
         file_open = nix::File::open("test_file.h5", nix::FileMode::Overwrite);
         file_other = nix::File::open("test_file_other.h5", nix::FileMode::Overwrite);
@@ -33,12 +36,12 @@ public:
     }
 
 
-    void tearDown() {
+    void tearDown() override {
         file_open.close();
         file_other.close();
     }
 
-    void testLocation() {
+    void testLocation() override {
         CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
         CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
     }

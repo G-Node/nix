@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2013-2016 German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -9,6 +9,7 @@
 #include <nix/types.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/Version.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/Block.hpp>
 #include <nix/DataArray.hpp>
