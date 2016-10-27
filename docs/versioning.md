@@ -15,7 +15,7 @@ each other.
 ## file format versioning scheme
 
 The file format is versioned with a triplet of integers, that carries
-semantics, thus can and indeed *must* be used libraries that want to
+semantics, thus can and indeed *must* be used by libraries that want to
 open NIX files to determine if the version of the file is compatible
 with the library version (i.e. the file can be read or written to).
 
