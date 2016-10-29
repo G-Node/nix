@@ -52,6 +52,8 @@ public:
     virtual DataType dataType() const  = 0;
 
 
+    virtual ~DataSet() {}
+
 protected:
     virtual void ioRead(DataType dtype,
                         void *data,
