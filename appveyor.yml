@@ -26,6 +26,7 @@ build_script:
 
     cmake --build .\build --config %CONFIGURATION% --target PACKAGE
 test_script:
-- cmd: 
+- cmd:
 artifacts:
 - path: build\*.exe
+
