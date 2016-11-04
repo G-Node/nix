@@ -17,7 +17,7 @@
 #include <string>
 #include <memory>
 
-#define HDF5_FF_VERSION nix::FormatVersion({1, 0, 0})
+#define HDF5_FF_VERSION nix::FormatVersion({1, 1, 0})
 
 namespace nix {
 namespace hdf5 {
