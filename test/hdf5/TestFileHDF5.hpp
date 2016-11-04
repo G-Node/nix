@@ -12,6 +12,7 @@ class TestFileHDF5: public BaseTestFile {
     CPPUNIT_TEST_SUITE(TestFileHDF5);
     CPPUNIT_TEST(testOpen);
     CPPUNIT_TEST(testValidate);
+    CPPUNIT_TEST(testLibVersion);
     CPPUNIT_TEST(testFormat);
     CPPUNIT_TEST(testLocation);
     CPPUNIT_TEST(testVersion);

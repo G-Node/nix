@@ -36,6 +36,12 @@ void BaseTestFile::testFormat() {
 }
 
 
+void BaseTestFile::testLibVersion() {
+    std::vector<int> v = File::libraryVersion();
+    CPPUNIT_ASSERT(v.size() == 3);
+}
+
+
 void BaseTestFile::testVersion() {
     std::vector<int> version{1, 0, 0};
     CPPUNIT_ASSERT(file_open.version() == version);
