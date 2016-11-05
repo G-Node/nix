@@ -16,8 +16,7 @@
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
-
-#define NIX_LIB_VERSION std::vector<int>({1, 3, 0})
+#include "version.h"
 
 namespace nix {
 
@@ -85,7 +84,7 @@ public:
      * @return the version as a vector<int>
      */
     static std::vector<int> libraryVersion() {
-        return NIX_LIB_VERSION;
+        return std::vector<int>{VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH};
     }
 
     /**
