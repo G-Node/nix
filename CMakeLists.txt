@@ -5,7 +5,7 @@ cmake_minimum_required (VERSION 2.8.10)
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 2)
+set(VERSION_MINOR 3)
 set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
@@ -114,12 +114,12 @@ endforeach()
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/version.h.in"
-  "${PROJECT_BINARY_DIR}/version.h"
+  "include/nix/libversion.hpp"
   )
  
 # add the binary tree to the search path for include files
 # so that we will find version.h
-include_directories("${PROJECT_BINARY_DIR}")
+include_directories("${PROJECT_BINARY_DIR}/include/nix")
 
 
 ### LIBRARY

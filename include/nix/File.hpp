@@ -16,7 +16,7 @@
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
-#include "version.h"
+#include "libversion.hpp"
 
 namespace nix {
 
