@@ -10,7 +10,6 @@ set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
 
-
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wunreachable-code")
@@ -109,6 +108,19 @@ foreach(backend ${backends})
   list(APPEND nix_SOURCES ${backend_SOURCES})
   list(APPEND nix_INCLUDES ${backend_INCLUDES})
 endforeach()
+
+
+### AUTO-GENERATED VERSION HEADER
+
+configure_file (
+  "${PROJECT_SOURCE_DIR}/version.h.in"
+  "${PROJECT_BINARY_DIR}/version.h"
+  )
+ 
+# add the binary tree to the search path for include files
+# so that we will find version.h
+include_directories("${PROJECT_BINARY_DIR}")
+
 
 ### LIBRARY
 
