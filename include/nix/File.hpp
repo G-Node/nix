@@ -16,7 +16,6 @@
 #include <nix/Platform.hpp>
 
 #include <nix/valid/validate.hpp>
-#include "libversion.hpp"
 
 namespace nix {
 
@@ -76,15 +75,6 @@ public:
     File(std::shared_ptr<base::IFile> &&ptr)
         : ImplContainer(std::move(ptr))
     {
-    }
-
-    /**
-     * @brief Returns the version of the library.
-     * 
-     * @return the version as a vector<int>
-     */
-    static std::vector<int> libraryVersion() {
-        return std::vector<int>{VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH};
     }
 
     /**

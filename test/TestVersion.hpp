@@ -38,11 +38,13 @@ public:
     void tearDown();
 
     void testFormatVersion();
+    void testAPIVersion();
 
 private:
 
     CPPUNIT_TEST_SUITE(TestVersion);
     CPPUNIT_TEST(testFormatVersion);
+    CPPUNIT_TEST(testAPIVersion);
     CPPUNIT_TEST_SUITE_END ();
 
 };

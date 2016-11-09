@@ -37,7 +37,6 @@ public:
     void testOpen();
     void testValidate();
     void testFormat();
-    void testLibVersion();
     virtual void testLocation() = 0;
     virtual void testVersion();
     void testCreatedAt();

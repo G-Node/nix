@@ -62,3 +62,8 @@ void TestVersion::testFormatVersion() {
     }
 
 }
+
+void TestVersion::testAPIVersion() {
+    std::vector<int> v = nix::apiVersion();
+    CPPUNIT_ASSERT(v.size() == 3);
+}
