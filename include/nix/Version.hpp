@@ -4,6 +4,8 @@
 #include <initializer_list>
 #include <apiversion.hpp>
 
+#include <nix/Platform.hpp>
+
 #ifndef NIX_VERSION_HPP
 #define NIX_VERSION_HPP
 
@@ -13,7 +15,7 @@ namespace nix {
  * 
  * @return the version as a vector<int> in the order major, minor, patch
  */
-std::vector<int> apiVersion();
+NIXAPI std::vector<int> apiVersion();
 
     
 class FormatVersion {

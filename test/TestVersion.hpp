@@ -16,6 +16,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <limits>
+#include <vector>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
