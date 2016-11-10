@@ -79,9 +79,19 @@ endif(DOXYGEN_FOUND)
 ########################################
 # NIX
 
+### AUTO-GENERATED VERSION HEADER
+configure_file (
+  "${PROJECT_SOURCE_DIR}/version.h.in"
+  "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp"
+  )
+ 
+include_directories("${PROJECT_BINARY_DIR}/include")
+
+### scan files
 include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
+list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 
 ### BACKENDS
 set(backends "hdf5")
@@ -108,18 +118,6 @@ foreach(backend ${backends})
   list(APPEND nix_SOURCES ${backend_SOURCES})
   list(APPEND nix_INCLUDES ${backend_INCLUDES})
 endforeach()
-
-
-### AUTO-GENERATED VERSION HEADER
-
-configure_file (
-  "${PROJECT_SOURCE_DIR}/version.h.in"
-  "include/apiversion.hpp"
-  )
- 
-# add the binary tree to the search path for include files
-# so that we will find version.h
-include_directories("${PROJECT_BINARY_DIR}/include")
 
 
 ### LIBRARY

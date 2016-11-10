@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <initializer_list>
-#include <apiversion.hpp>
+#include <nix/nixversion.hpp>
 
 #include <nix/Platform.hpp>
 
