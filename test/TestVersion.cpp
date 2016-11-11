@@ -10,6 +10,7 @@
 
 #include "TestVersion.hpp"
 
+
 void TestVersion::setUp() {
 }
 
@@ -61,4 +62,9 @@ void TestVersion::testFormatVersion() {
         CPPUNIT_ASSERT_EQUAL(t.BcanReadA,  t.b.canRead(t.a));
     }
 
+}
+
+void TestVersion::testAPIVersion() {
+    std::vector<int> v = nix::apiVersion();
+    CPPUNIT_ASSERT(v.size() == 3);
 }

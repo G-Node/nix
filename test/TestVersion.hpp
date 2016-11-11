@@ -16,6 +16,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <limits>
+#include <vector>
 
 #include <cppunit/TestFixture.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -38,11 +39,13 @@ public:
     void tearDown();
 
     void testFormatVersion();
+    void testAPIVersion();
 
 private:
 
     CPPUNIT_TEST_SUITE(TestVersion);
     CPPUNIT_TEST(testFormatVersion);
+    CPPUNIT_TEST(testAPIVersion);
     CPPUNIT_TEST_SUITE_END ();
 
 };

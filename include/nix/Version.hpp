@@ -2,12 +2,22 @@
 #include <vector>
 #include <stdexcept>
 #include <initializer_list>
+#include <nix/nixversion.hpp>
+
+#include <nix/Platform.hpp>
 
 #ifndef NIX_VERSION_HPP
 #define NIX_VERSION_HPP
 
 namespace nix {
+/**
+ * @brief Returns the version of the library.
+ * 
+ * @return the version as a vector<int> in the order major, minor, patch
+ */
+NIXAPI std::vector<int> apiVersion();
 
+    
 class FormatVersion {
 public:
 
