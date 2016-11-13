@@ -9,16 +9,12 @@
 
 #include "H5DataType.hpp"
 
-#include <stdexcept>
-#include <iostream>
-#include <cassert>
-#include <string>
 #include <memory>
-#include <cstdlib>
 
 namespace nix {
 namespace hdf5 {
 namespace h5x {
+
 
 DataType DataType::copy(hid_t source) {
     DataType hi_copy = H5Tcopy(source);
@@ -163,6 +159,11 @@ bool DataType::enum_equal(const DataType &other) const {
 
 } // h5x
 
+static herr_t bitfield2bool(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
+                            size_t nl, size_t buf_stride, size_t bkg_stride, void *buf_i,
+                            void *bkg_i, hid_t dxpl) {
+    return 0;
+}
 
 h5x::DataType make_file_booltype() {
     h5x::DataType booltype = h5x::DataType::makeEnum(H5T_NATIVE_INT8);
@@ -175,6 +176,8 @@ h5x::DataType make_mem_booltype() {
     h5x::DataType booltype = h5x::DataType::make(H5T_ENUM, sizeof(bool));
     booltype.insert("FALSE", false);
     booltype.insert("TRUE", true);
+    // Register converter for old-style boolean (bitfield)
+    H5Tregister(H5T_PERS_SOFT, "bitfield2bool", H5T_STD_B8LE, booltype.h5id(), bitfield2bool);
     return booltype;
 }
 
@@ -213,6 +216,7 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
     throw std::invalid_argument("Unkown DataType"); //FIXME
 }
+
 
 h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
