@@ -13,6 +13,7 @@
 #include "SectionHDF5.hpp"
 #include "h5x/H5Exception.hpp"
 
+
 #include <fstream>
 #include <vector>
 #include <ctime>
@@ -22,6 +23,7 @@ using namespace std;
 namespace nix {
 namespace hdf5 {
 
+static FormatVersion my_version = HDF5_FF_VERSION;
 
 static unsigned int map_file_mode(FileMode mode) {
     switch (mode) {
@@ -55,13 +57,24 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     res.check("Unable to create file (H5Pset_link_creation_order failed.)");
     unsigned int h5mode =  map_file_mode(mode);
 
-    if (fileExists(name)) {
-        openExisting(name, h5mode, fcpl);
+    bool is_create = !fileExists(name) || h5mode == H5F_ACC_TRUNC;
+
+    if (is_create) {
+        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
     } else {
-        createNew(name, h5mode, fcpl);
+        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
     }
+
     if (!H5Iis_valid(hid)) {
         throw H5Exception("Could not open/create file");
+    }
+
+    openRoot();
+
+    if (is_create) {
+        createHeader();
+    } else if (!checkHeader(mode)) {
+        throw nix::InvalidFile("FileHDF5::open_existing!");
     }
 
     metadata = root.openGroup("metadata");
@@ -312,9 +325,9 @@ shared_ptr<base::IFile> FileHDF5::file() const {
 }
 
 
-bool FileHDF5::checkHeader() const {
+bool FileHDF5::checkHeader(FileMode mode) const {
     bool check = true;
-    vector<int> version;
+    vector<int> vv;
     string str;
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
@@ -324,8 +337,16 @@ bool FileHDF5::checkHeader() const {
         check = false;
     }
     if (root.hasAttr("version")) {
-        if (!root.getAttr("version", version) || version != FILE_VERSION) {
+        if (!root.getAttr("version", vv)) {
             check = false;
+        } else {
+            FormatVersion ver = FormatVersion(vv);
+
+            if (mode == FileMode::ReadWrite) {
+                check = my_version.canWrite(ver);
+            } else {
+                check = my_version.canRead(ver);
+            }
         }
     } else {
         check = false;
@@ -337,36 +358,12 @@ bool FileHDF5::checkHeader() const {
 void FileHDF5::createHeader() const {
     try {
         root.setAttr("format", FILE_FORMAT);
-        root.setAttr("version", FILE_VERSION);
+        root.setAttr("version", std::vector<int>{my_version.x(), my_version.y(), my_version.z()});
     } catch ( ... ) {
         throw H5Exception("Could not open/create file");
     }
 }
-
-
-void FileHDF5::createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
-    hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-    root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
-    root.check("Could not open root group");
-    createHeader();
-}
-
-
-void FileHDF5::openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl) {
-    if (h5mode == H5F_ACC_TRUNC) {
-        hid = H5Fcreate(name.c_str(), h5mode, fcpl.h5id(), H5P_DEFAULT);
-        openRoot();
-        createHeader();
-    } else {
-        hid = H5Fopen(name.c_str(), h5mode, H5P_DEFAULT);
-        openRoot();
-    }
-    if (!checkHeader()) {
-        throw nix::InvalidFile("FileHDF5::open_existing!");
-    };
-}
-
-
+    
 void FileHDF5::openRoot() {
     root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
     root.check("Could not open root group");

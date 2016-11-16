@@ -10,14 +10,17 @@
 #define NIX_FILE_HDF5_H
 
 #include <nix/base/IFile.hpp>
+#include <nix/Version.hpp>
+
 #include "h5x/H5Group.hpp"
 
 #include <string>
 #include <memory>
 
+#define HDF5_FF_VERSION nix::FormatVersion({1, 1, 0})
+
 namespace nix {
 namespace hdf5 {
-
 
 /**
  * Class that represents a NIX file.
@@ -141,16 +144,10 @@ private:
     bool fileExists(const std::string &name) const;
 
 
-    void createNew(const std::string &name, unsigned int h5mode, const H5Object &fcpl);
-
-
-    void openExisting(const std::string &name, unsigned int h5mode, const H5Object &fcpl);
-
-
     void openRoot();
 
 
-    bool checkHeader() const;
+    bool checkHeader(FileMode mode) const;
 
 
     void createHeader() const;

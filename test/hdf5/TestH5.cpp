@@ -196,6 +196,10 @@ void TestH5::testDataType() {
     h5x::DataType str_255 = h5x::DataType::makeStrType(255);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_255.size());
 
+    h5x::DataType otype = h5x::DataType::make(H5T_OPAQUE, 42);
+    CPPUNIT_ASSERT_EQUAL(H5T_OPAQUE, otype.class_t());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(42), otype.size());
+
     struct TestStruct {
         double d;
         int i;
@@ -224,6 +228,43 @@ void TestH5::testDataType() {
     }
     CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
 
+
+    // enum test
+    //  enum type int bool
+    h5x::DataType etib = h5x::DataType::makeEnum(H5T_STD_I8LE);
+    CPPUNIT_ASSERT_EQUAL(etib.class_t(), H5T_ENUM);
+    CPPUNIT_ASSERT_EQUAL(etib.size(), h5x::DataType(H5T_STD_I8LE).size());
+
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 0U);
+    bool b = true;
+    etib.insert("TRUE", &b);
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 1U);
+    etib.insert("FALSE", false);
+    CPPUNIT_ASSERT_EQUAL(etib.member_count(), 2U);
+
+    std::vector<std::string> nms = etib.member_names();
+    auto rt = std::find(std::begin(nms), std::end(nms), "TRUE");
+    auto rf = std::find(std::begin(nms), std::end(nms), "FALSE");
+
+    CPPUNIT_ASSERT(rt != std::end(nms));
+    CPPUNIT_ASSERT(rf != std::end(nms));
+
+    b = false;
+    etib.enum_valueof("TRUE", &b);
+    CPPUNIT_ASSERT_EQUAL(true, b);
+
+    h5x::DataType etnb = h5x::DataType::make(H5T_ENUM, sizeof(bool));
+    CPPUNIT_ASSERT_EQUAL(etnb.class_t(), H5T_ENUM);
+    etnb.insert("FALSE", false);
+    etnb.insert("TRUE", true);
+
+    CPPUNIT_ASSERT(etnb.enum_equal(etib));
+    CPPUNIT_ASSERT(etib.enum_equal(etnb));
+
+    h5x::DataType etlb = h5x::DataType::make(H5T_ENUM, sizeof(unsigned long));
+    etlb.insert("FALSE", 0UL);
+    etlb.insert("TRUE", 1UL);
+    CPPUNIT_ASSERT(etlb.enum_equal(etib));
 }
 
 void TestH5::testDataSpace() {

@@ -11,6 +11,7 @@
 #include "TestUtil.hpp"
 #include "TestVariant.hpp"
 #include "TestValue.hpp"
+#include "TestVersion.hpp"
 #include "TestOptionalObligatory.hpp"
 
 #include "TestValidate.hpp"
@@ -83,6 +84,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestFeatureHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestOptionalObligatory);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestValidate);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestVersion);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestReadOnlyHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestGroupHDF5);
 

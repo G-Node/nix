@@ -5,11 +5,10 @@ cmake_minimum_required (VERSION 2.8.10)
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 1)
+set(VERSION_MINOR 3)
 set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
-
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
@@ -80,9 +79,19 @@ endif(DOXYGEN_FOUND)
 ########################################
 # NIX
 
+### AUTO-GENERATED VERSION HEADER
+configure_file (
+  "${PROJECT_SOURCE_DIR}/version.h.in"
+  "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp"
+  )
+ 
+include_directories("${PROJECT_BINARY_DIR}/include")
+
+### scan files
 include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
+list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 
 ### BACKENDS
 set(backends "hdf5")
@@ -109,6 +118,7 @@ foreach(backend ${backends})
   list(APPEND nix_SOURCES ${backend_SOURCES})
   list(APPEND nix_INCLUDES ${backend_INCLUDES})
 endforeach()
+
 
 ### LIBRARY
 

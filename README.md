@@ -4,7 +4,7 @@
 
 --
 
-![nix_logo](https://github.com/g-node/nix/blob/master/nix_logo.png "NIX")
+![nix_logo](docs/nix_logo.png "NIX")
 
 About NIX
 ---------
@@ -54,9 +54,9 @@ Getting Started
 
 Platform specific installation instructions can be found:
 
-- [Linux](https://github.com/G-Node/nix/blob/master/install_linux.md)
-- [macOS](https://github.com/G-Node/nix/blob/master/install_mac.md)
-- [Windows](https://github.com/G-Node/nix/blob/master/install_win.md)
+- [Linux](docs/install_linux.md)
+- [macOS](docs/install_mac.md)
+- [Windows](docs/install_win.md)
 
 
 NIX API Documentation
