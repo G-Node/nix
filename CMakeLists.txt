@@ -6,7 +6,7 @@ project (nix C CXX)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 3)
-set(VERSION_PATCH 0)
+set(VERSION_PATCH 1)
 
 set(VERSION_ABI   1)
 
