@@ -20,6 +20,7 @@
 #include <iterator>
 #include <stdexcept>
 #include <limits>
+#include <cstring>
 
 
 unsigned int & TestH5::open_mode()
@@ -265,6 +266,34 @@ void TestH5::testDataType() {
     etlb.insert("FALSE", 0UL);
     etlb.insert("TRUE", 1UL);
     CPPUNIT_ASSERT(etlb.enum_equal(etib));
+
+    h5x::DataType blt = nix::hdf5::data_type_to_h5_memtype(nix::DataType::Bool);
+
+    struct ConverTest {
+        char input;
+        bool output;
+    } cttests[] = {
+        {0, false},
+        {1, true},
+        {2, true}
+    };
+
+    char buf[sizeof(bool)];
+
+    for (size_t i = 0; i < (sizeof(cttests)/sizeof(ConverTest)); i++) {
+        ConverTest tt = cttests[i];
+
+        buf[0] = tt.input;
+        nix::hdf5::HErr res = H5Tconvert(H5T_STD_B8LE, blt.h5id(), 1, buf, nullptr, H5P_DEFAULT);
+        CPPUNIT_ASSERT(!res.isError());
+        memcpy(&b, buf, sizeof(bool));
+        bool lvout = tt.output;
+
+        int eq = memcmp(&buf, &lvout, sizeof(bool));
+        CPPUNIT_ASSERT_EQUAL(0, eq);
+    }
+
+    //const bool lvfalse = 0;
 }
 
 void TestH5::testDataSpace() {
