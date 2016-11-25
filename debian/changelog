@@ -1,11 +1,18 @@
+nix (1.3.1-1) xenial; urgency=medium
+
+ * Set version to 1.3.1
+
+ -- Jan Grewe <jan.grewe@g-node.org> Fri, 25 Nov 2016 08:40:00 +0100
+
 nix (1.3.1-0) trusty; urgency=medium
+
  * Fix error of missing header
  * Improve bitfield2bool conversion
  * Version set to 1.3.1
 
- -- Jan Grewe <jan.grewe@g-node.org> Sat, 19 Nov 2016 11:13:00 + 0100
+ -- Jan Grewe <jan.grewe@g-node.org> Fri, 25 Nov 2016 08:33:00 +0100
 
-nix (1.3.0-1)  xenial; urgency=medium
+nix (1.3.0-1) xenial; urgency=medium
 
  * Set to version 1.3.0
 
