@@ -35,6 +35,7 @@ protected:
 public:
 
     void testOpen();
+    void testFlush();
     void testValidate();
     void testFormat();
     virtual void testLocation() = 0;
