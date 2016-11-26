@@ -44,6 +44,9 @@ class NIXAPI IFile {
 
 public:
 
+    virtual bool flush() = 0;
+
+
     virtual ndsize_t blockCount() const = 0;
 
 

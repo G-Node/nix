@@ -31,6 +31,9 @@ public:
     FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
 
 
+    bool flush() { return true; };
+
+
     ndsize_t blockCount() const;
 
 

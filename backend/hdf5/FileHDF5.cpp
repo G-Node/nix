@@ -39,7 +39,6 @@ static unsigned int map_file_mode(FileMode mode) {
         default:
             return H5F_ACC_DEFAULT;
     }
-
 }
 
 
@@ -83,6 +82,12 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
     setCreatedAt();
     setUpdatedAt();
 }
+
+
+bool FileHDF5::flush() {
+    HErr err = H5Fflush(hid, H5F_SCOPE_GLOBAL);
+    return !err.isError();
+}        
 
 //--------------------------------------------------
 // Methods concerning blocks
