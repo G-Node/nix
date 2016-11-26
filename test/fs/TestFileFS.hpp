@@ -14,6 +14,7 @@ class TestFileFS: public BaseTestFile {
 
     CPPUNIT_TEST_SUITE(TestFileFS);
     CPPUNIT_TEST(testOpen);
+    CPPUNIT_TEST(testFlush);
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testFormat);
     CPPUNIT_TEST(testLocation);

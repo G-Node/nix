@@ -48,6 +48,8 @@ public:
     // Methods concerning blocks
     //--------------------------------------------------
 
+    bool flush();
+    
 
     ndsize_t blockCount() const;
 

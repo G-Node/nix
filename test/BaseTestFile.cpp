@@ -24,6 +24,14 @@ void BaseTestFile::testOpen() {
 }
 
 
+void BaseTestFile::testFlush() {
+    CPPUNIT_ASSERT(file_open.flush());
+    for (int i = 0; i < 10; ++i) {
+        file_open.createBlock("test_" + nix::util::numToStr(i), "test");
+        CPPUNIT_ASSERT(file_open.flush());
+    }
+}
+
 void BaseTestFile::testValidate() {
     valid::Result result = validate(file_open);
     CPPUNIT_ASSERT(result.getErrors().size() == 0);
