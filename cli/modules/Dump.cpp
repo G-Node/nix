@@ -541,7 +541,7 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
                 throw FileNotFound(file_path);
             }
             // try to open!
-            tmp_file = nix::File::open(file_path, nix::FileMode::ReadWrite);
+            tmp_file = nix::File::open(file_path, nix::FileMode::ReadOnly);
             // file opened?
             if (!tmp_file.isOpen()) {
                 throw FileNotOpen(file_path);
