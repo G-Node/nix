@@ -39,6 +39,11 @@ File File::open(const std::string &name, FileMode mode, const std::string &impl)
 }
 
 
+bool File::flush() {
+    return backend()->flush();
+}
+
+    
 Block File::createBlock(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
     if (backend()->hasBlock(name)) {

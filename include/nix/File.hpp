@@ -91,6 +91,13 @@ public:
                      const std::string &impl="hdf5");
 
     /**
+     * @brief Persists all cached changes to the backend.
+     *
+     */
+    bool flush();
+
+    
+    /**
      * @brief Get the number of blocks in in the file.
      *
      * @return The number of blocks.

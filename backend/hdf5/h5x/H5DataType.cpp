@@ -10,6 +10,7 @@
 #include "H5DataType.hpp"
 
 #include <memory>
+#include <cstring>
 
 namespace nix {
 namespace hdf5 {
@@ -158,12 +159,12 @@ bool DataType::enum_equal(const DataType &other) const {
 }
 
 } // h5x
-
-static herr_t bitfield2bool(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata,
-                            size_t nl, size_t buf_stride, size_t bkg_stride, void *buf_i,
-                            void *bkg_i, hid_t dxpl) {
-    return 0;
-}
+static herr_t bitfield2bool(hid_t src_id,
+                            hid_t dst_id,
+                            H5T_cdata_t *cdata,
+                            size_t nl, size_t buf_stride, size_t bkg_stride,
+                            void *buf_i,
+                            void *bkg_i, hid_t dxpl);
 
 h5x::DataType make_file_booltype() {
     h5x::DataType booltype = h5x::DataType::makeEnum(H5T_NATIVE_INT8);
@@ -183,6 +184,50 @@ h5x::DataType make_mem_booltype() {
 
 static const h5x::DataType boolfiletype = make_file_booltype();
 static const h5x::DataType boolmemtype = make_mem_booltype();
+
+
+static herr_t bitfield2bool(hid_t src_id,
+                            hid_t dst_id,
+                            H5T_cdata_t *cdata,
+                            size_t nl,
+                            size_t buf_stride,
+                            size_t bkg_stride,
+                            void *buf_i,
+                            void *bkg_i,
+                            hid_t dxpl) {
+
+    // document for what this function should to at:
+    // https://support.hdfgroup.org/HDF5/doc/H5.user/Datatypes.html#Datatypes-DataConversion
+
+    switch (cdata->command) {
+    case H5T_CONV_INIT: {
+        cdata->need_bkg = H5T_BKG_NO;
+        HTri s_eq = H5Tequal(src_id, H5T_STD_B8LE);
+        HTri d_eq = H5Tequal(dst_id, boolmemtype.h5id());
+        if (s_eq.isError() || d_eq.isError() ||
+            !(s_eq.result() && d_eq.result())) {
+            return -1;
+        }
+        return 0;
+    }
+    case H5T_CONV_FREE:
+        return 0; //Nothing to do
+    case H5T_CONV_CONV:
+        break;
+    }
+
+    if (nl != 1) {
+        //we don't support more then 1 element
+        //since this should never occur in NIX
+        return -1;
+    }
+
+    //alias via char is fine
+    char *buf = static_cast<char *>(buf_i);
+    bool val = buf[0] != 0; // any nonzero value is true
+    memcpy(buf, &val, sizeof(bool));
+    return 0;
+}
 
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
