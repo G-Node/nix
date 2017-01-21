@@ -2,6 +2,12 @@
 # NIX CMake
 
 cmake_minimum_required (VERSION 2.8.10)
+
+# Defaults
+SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
+SET(LIB_INSTALL_DIR "lib" CACHE PATH "Library install directory")
+SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "Include install directory")
+
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
@@ -226,15 +232,15 @@ endif()
 # Install
 
 install(TARGETS nix nix-tool
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
-install(DIRECTORY include/ DESTINATION include)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
+install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
-install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 
 ########################################
@@ -293,4 +299,8 @@ MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")
-
+MESSAGE(STATUS "INSTALL:")
+MESSAGE(STATUS " PREFIX: ${CMAKE_INSTALL_PREFIX}")
+MESSAGE(STATUS " INCLUDE DIR: ${LIB_INSTALL_DIR}")
+MESSAGE(STATUS " LIBRARY DIR: ${INCLUDE_INSTALL_DIR}")
+MESSAGE(STATUS "===============================")
