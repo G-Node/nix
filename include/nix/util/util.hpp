@@ -23,6 +23,7 @@
 #include <vector>
 #include <cmath>
 #include <type_traits>
+#include <iterator>
 
 #include <boost/optional.hpp>
 #include <boost/none_t.hpp>
