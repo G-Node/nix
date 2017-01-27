@@ -22,7 +22,7 @@ namespace nix {
 /**
  * @brief File open modes
  */
-NIXAPI enum class FileMode {
+enum class FileMode {
     ReadOnly = 0,
     ReadWrite,
     Overwrite

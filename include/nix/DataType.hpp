@@ -31,7 +31,7 @@ namespace nix {
  * Those data types are used by {@link nix::DataArray} and {@link nix::Property}
  * in order to indicate of what type the stored data of value is.
  */
-NIXAPI enum class DataType {
+enum class DataType {
     Bool,
     Char,
     Float,
