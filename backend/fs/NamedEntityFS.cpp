@@ -19,10 +19,21 @@ NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs
 {
 }
 
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
+	: NamedEntityFS(file, bfs::path(loc))
+{
+}
+
 
 NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
                              const std::string &type, const std::string &name)
     : NamedEntityFS(file, loc, id, type, name, util::getTime())
+{
+}
+
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+	const std::string &type, const std::string &name)
+	: NamedEntityFS(file, bfs::path(loc), id, type, name)
 {
 }
 
@@ -38,6 +49,13 @@ NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs
         setAttr("name", name);
         forceUpdatedAt();
     }
+}
+
+
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+	const std::string &type, const std::string &name, time_t time)
+	: NamedEntityFS(file, bfs::path(loc), id, type, name, time)
+{
 }
 
 
