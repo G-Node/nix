@@ -101,12 +101,12 @@ list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 ### BACKENDS
 set(backends "hdf5")
 
-option(BUILD_FS_BACKEND "Build fileystem backend" OFF)
+option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
 if(BUILD_FS_BACKEND)
   # Yaml-cpp
   set(YAMLCPP_STATIC_LIBRARY FALSE)
   find_package(YamlCpp REQUIRED)
-  include_directories(${YAMLCPP_INCLUDE_DIRS})
+  include_directories(${YAMLCPP_INCLUDE_DIR})
   set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
 
   list(APPEND backends "fs")
