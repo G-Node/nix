@@ -42,18 +42,24 @@ public:
      * Standard constructor for existing DataArrays
      */
     DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc);
+	DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
 
     /**
      * Standard constructor for new DataArrays
      */
-    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
                 const std::string &id, const std::string &type, const std::string &name);
+	DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+				const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new DataArrays that preserves the creation time.
      */
-    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
-                const std::string &id, const std::string &type, const std::string &name, time_t time);
+    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
+				const std::string &id, const std::string &type, const std::string &name, time_t time);
+	DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+				const std::string &id, const std::string &type, const std::string &name, time_t time);
+
 
     //--------------------------------------------------
     // Element getters and setters

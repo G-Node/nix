@@ -21,18 +21,32 @@ DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::sh
       dimensions(bfs::path(loc).append("/dimensions"), file->fileMode()) {
 }
 
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+	const std::string &loc) : DataArrayFS(file, block, bfs::path(loc)){
+}
+
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                         const std::string &loc, const std::string &id, const std::string &type, const std::string &name)
+                         const bfs::path &loc, const std::string &id, const std::string &type, const std::string &name)
     : DataArrayFS(file, block, loc, id, type, name, util::getTime()) {
+}
+
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+	const std::string &loc, const std::string &id, const std::string &type, const std::string &name) : DataArrayFS(file, block, bfs::path(loc), id, type, name) {
 }
 
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
                          const std::string &loc, const std::string &id, const std::string &type,
                          const std::string &name, time_t time)
-    : EntityWithSourcesFS(file, block, loc, id, type, name, time),
-      dimensions(bfs::path(loc).append("/" + name + "/" + "dimensions"), file->fileMode()) {
+    : DataArrayFS(file, block, bfs::path(loc), id, type, name, time) {
+}
+
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+	const bfs::path &loc, const std::string &id, const std::string &type,
+	const std::string &name, time_t time)
+	: EntityWithSourcesFS(file, block, loc, id, type, name, time),
+	dimensions(bfs::path(loc).append("/" + name + "/" + "dimensions"), file->fileMode()) {
 }
 
 //--------------------------------------------------

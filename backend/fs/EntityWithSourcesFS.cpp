@@ -26,11 +26,24 @@ EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &fil
 {
 }
 
+EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+										 const std::string &loc)
+	: EntityWithSourcesFS(file, block, bfs::path(loc))
+{
+}
+
 
 EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
                                          const bfs::path &loc, const std::string &id, const std::string &type,
                                          const std::string &name)
     : EntityWithSourcesFS(file, block, loc, id, type, name, util::getTime())
+{
+}
+
+EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+										 const std::string &loc, const std::string &id, const std::string &type,
+										 const std::string &name)
+	: EntityWithSourcesFS(file, block, bfs::path(loc), id, type, name) 
 {
 }
 
@@ -41,6 +54,13 @@ EntityWithSourcesFS::EntityWithSourcesFS (const std::shared_ptr<base::IFile> &fi
     : EntityWithMetadataFS(file, loc, id, type, name, time),
       sources_dir(bfs::path(loc).append("/" + name + "/" + "sources"),
                   file->fileMode()), entity_block(block)
+{
+}
+
+EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+										 const std::string &loc, const std::string &id, const std::string &type,
+										 const std::string &name, time_t time)
+	: EntityWithSourcesFS(file, block, bfs::path(loc), id, type, name, time)
 {
 }
 

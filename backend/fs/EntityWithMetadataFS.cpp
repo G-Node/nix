@@ -26,6 +26,11 @@ EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &f
 {
 }
 
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
+	: EntityWithMetadataFS(file, bfs::path(loc)) 
+{
+}
+
 
 EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc,
                                            const std::string &id, const std::string &type, const std::string &name)
@@ -33,11 +38,24 @@ EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &f
 {
 }
 
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+										   const std::string &id, const std::string &type, const std::string &name)
+	: EntityWithMetadataFS(file, bfs::path(loc), id, type, name) 
+{
+}
 
 EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc,
                                            const std::string &id, const std::string &type, const std::string &name,
                                            time_t time)
     : NamedEntityFS(file, loc, id, type, name, time)
+{
+}
+
+
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+										   const std::string &id, const std::string &type, const std::string &name,
+										   time_t time)
+	: EntityWithMetadataFS(file, bfs::path(loc), id, type, name, time) 
 {
 }
 
