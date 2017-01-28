@@ -12,16 +12,13 @@
 #include "hdf5/h5x/H5DataSet.hpp" // FIXME
 #include "DimensionFS.hpp"
 
-namespace bfs = boost::filesystem;
-
 namespace nix {
 namespace file {
 
-
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                         const std::string &loc)
+                         const bfs::path &loc)
     : EntityWithSourcesFS(file, block, loc),
-      dimensions(loc + bfs::path::preferred_separator + "dimensions", file->fileMode()) {
+      dimensions(bfs::path(loc).append("/dimensions"), file->fileMode()) {
 }
 
 
@@ -35,7 +32,7 @@ DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::sh
                          const std::string &loc, const std::string &id, const std::string &type,
                          const std::string &name, time_t time)
     : EntityWithSourcesFS(file, block, loc, id, type, name, time),
-      dimensions(loc + bfs::path::preferred_separator  + name + bfs::path::preferred_separator + "dimensions", file->fileMode()) {
+      dimensions(bfs::path(loc).append("/" + name + "/" + "dimensions"), file->fileMode()) {
 }
 
 //--------------------------------------------------

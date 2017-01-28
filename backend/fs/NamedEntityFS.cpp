@@ -14,20 +14,20 @@ namespace nix {
 namespace file {
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc)
     : EntityFS(file, loc)
 {
 }
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
                              const std::string &type, const std::string &name)
     : NamedEntityFS(file, loc, id, type, name, util::getTime())
 {
 }
 
 
-NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+NamedEntityFS::NamedEntityFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
                              const std::string &type, const std::string &name, time_t time)
     : EntityFS(file, (bfs::path(loc.c_str()) / bfs::path(name.c_str())), id, time)
 {

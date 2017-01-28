@@ -21,20 +21,20 @@ namespace bfs = boost::filesystem;
 namespace nix {
 namespace file {
 
-EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc)
     : NamedEntityFS(file, loc)
 {
 }
 
 
-EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc,
                                            const std::string &id, const std::string &type, const std::string &name)
     : EntityWithMetadataFS(file, loc, id, type, name, util::getTime())
 {
 }
 
 
-EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc,
+EntityWithMetadataFS::EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc,
                                            const std::string &id, const std::string &type, const std::string &name,
                                            time_t time)
     : NamedEntityFS(file, loc, id, type, name, time)

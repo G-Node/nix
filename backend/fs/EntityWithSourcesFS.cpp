@@ -20,15 +20,15 @@ namespace nix {
 namespace file {
 
 EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                                         const std::string &loc)
+                                         const bfs::path &loc)
     : EntityWithMetadataFS(file, loc),
-      sources_dir(loc + bfs::path::preferred_separator + "sources", file->fileMode()), entity_block(block)
+      sources_dir(bfs::path(loc).append("/sources"), file->fileMode()), entity_block(block)
 {
 }
 
 
 EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                                         const std::string &loc, const std::string &id, const std::string &type,
+                                         const bfs::path &loc, const std::string &id, const std::string &type,
                                          const std::string &name)
     : EntityWithSourcesFS(file, block, loc, id, type, name, util::getTime())
 {
@@ -36,11 +36,11 @@ EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &fil
 
 
 EntityWithSourcesFS::EntityWithSourcesFS (const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                                          const std::string &loc, const std::string &id, const std::string &type,
+                                          const bfs::path &loc, const std::string &id, const std::string &type,
                                           const std::string &name, time_t time)
     : EntityWithMetadataFS(file, loc, id, type, name, time),
-      sources_dir(loc + bfs::path::preferred_separator + name + bfs::path::preferred_separator
-                  + "sources", file->fileMode()), entity_block(block)
+      sources_dir(bfs::path(loc).append("/" + name + "/" + "sources"),
+                  file->fileMode()), entity_block(block)
 {
 }
 

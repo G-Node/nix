@@ -20,6 +20,8 @@
 #include <boost/multi_array.hpp>
 #include "Directory.hpp"
 
+namespace bfs = boost::filesystem;
+
 namespace nix {
 namespace file {
 
@@ -39,7 +41,7 @@ public:
     /**
      * Standard constructor for existing DataArrays
      */
-    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
+    DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc);
 
     /**
      * Standard constructor for new DataArrays
