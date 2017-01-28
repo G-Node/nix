@@ -15,6 +15,8 @@
 #include <string>
 #include <memory>
 
+namespace bfs = boost::filesystem;
+
 namespace nix {
 namespace file {
 
@@ -28,18 +30,18 @@ public:
     /**
      * Standard constructor for existing entity
      */
-    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc);
+    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc);
 
     /**
      * Standard constructor for new entity
      */
-    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
                          const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+    EntityWithMetadataFS(const std::shared_ptr<base::IFile> &file, const bfs::path &loc, const std::string &id,
                          const std::string &type, const std::string &name, time_t time);
 
 

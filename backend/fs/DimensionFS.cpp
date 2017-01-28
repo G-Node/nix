@@ -90,7 +90,7 @@ DimensionFS::DimensionFS(const std::string &loc, FileMode mode)
 
 
 DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode)
-    : DirectoryWithAttributes(loc + boost::filesystem::path::preferred_separator + util::numToStr(index), mode)
+    : DirectoryWithAttributes(bfs::path(loc).append("/" + util::numToStr(index)), mode)
 {
     this->index(index);
 }

@@ -14,6 +14,8 @@
 #include "SourceFS.hpp"
 #include "EntityWithMetadataFS.hpp"
 
+namespace bfs = boost::filesystem;
+
 namespace nix {
 namespace file {
 
@@ -32,18 +34,18 @@ public:
     /**
      * Standard constructor for existing entity.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc);
 
     /**
      * Standard constructor for new entity.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
                           const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
                           const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     ndsize_t sourceCount() const;
