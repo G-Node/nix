@@ -229,6 +229,23 @@ static herr_t bitfield2bool(hid_t src_id,
     return 0;
 }
 
+h5x::DataType make_file_booltype() {
+    h5x::DataType booltype = h5x::DataType::makeEnum(H5T_NATIVE_INT8);
+    booltype.insert("FALSE", 0UL);
+    booltype.insert("TRUE", 1UL);
+    return booltype;
+}
+
+h5x::DataType make_mem_booltype() {
+    h5x::DataType booltype = h5x::DataType::make(H5T_ENUM, sizeof(bool));
+    booltype.insert("FALSE", false);
+    booltype.insert("TRUE", true);
+    return booltype;
+}
+
+static const h5x::DataType boolfiletype = make_file_booltype();
+static const h5x::DataType boolmemtype = make_mem_booltype();
+
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
    /* The switch is structured in a way in order to get
@@ -261,7 +278,6 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
     throw std::invalid_argument("Unkown DataType"); //FIXME
 }
-
 
 h5x::DataType data_type_to_h5_memtype(DataType dtype) {
 
@@ -329,7 +345,6 @@ data_type_from_h5(H5T_class_t vclass, size_t vsize, H5T_sign_t vsign)
     assert(NOT_IMPLEMENTED);
     return DataType::Nothing;
 }
-
 
 DataType data_type_from_h5(const h5x::DataType &dtype) {
 
