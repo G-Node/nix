@@ -2,12 +2,16 @@
 #include <vector>
 #include <stdexcept>
 #include <initializer_list>
-#include <nix/nixversion.hpp>
 
 #include <nix/Platform.hpp>
 
 #ifndef NIX_VERSION_HPP
 #define NIX_VERSION_HPP
+
+/* include this from within the include guards because
+ * it is a private include and does itself not have guards  */
+#include <nix/nixversion.hpp>
+
 
 namespace nix {
 /**
