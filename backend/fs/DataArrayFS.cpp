@@ -18,7 +18,7 @@ namespace file {
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
                          const bfs::path &loc)
     : EntityWithSourcesFS(file, block, loc),
-      dimensions(bfs::path(loc).append("/dimensions"), file->fileMode()) {
+      dimensions(bfs::path(loc) / bfs::path("dimensions"), file->fileMode()) {
 }
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
@@ -46,7 +46,7 @@ DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::sh
 	const bfs::path &loc, const std::string &id, const std::string &type,
 	const std::string &name, time_t time)
 	: EntityWithSourcesFS(file, block, loc, id, type, name, time),
-	dimensions(bfs::path(loc).append("/" + name + "/" + "dimensions"), file->fileMode()) {
+	dimensions(bfs::path(loc) / bfs::path(name + "/" + "dimensions"), file->fileMode()) {
 }
 
 //--------------------------------------------------

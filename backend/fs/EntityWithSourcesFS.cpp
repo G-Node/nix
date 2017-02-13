@@ -22,7 +22,7 @@ namespace file {
 EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
                                          const bfs::path &loc)
     : EntityWithMetadataFS(file, loc),
-      sources_dir(bfs::path(loc).append("/sources"), file->fileMode()), entity_block(block)
+      sources_dir(bfs::path(loc) / bfs::path("sources"), file->fileMode()), entity_block(block)
 {
 }
 
@@ -52,7 +52,7 @@ EntityWithSourcesFS::EntityWithSourcesFS (const std::shared_ptr<base::IFile> &fi
                                           const bfs::path &loc, const std::string &id, const std::string &type,
                                           const std::string &name, time_t time)
     : EntityWithMetadataFS(file, loc, id, type, name, time),
-      sources_dir(bfs::path(loc).append("/" + name + "/" + "sources"),
+      sources_dir(bfs::path(loc) / bfs::path(name + "/" + "sources"),
                   file->fileMode()), entity_block(block)
 {
 }

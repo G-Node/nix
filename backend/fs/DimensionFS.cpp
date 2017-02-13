@@ -94,7 +94,7 @@ DimensionFS::DimensionFS(const bfs::path &loc, FileMode mode)
 }
 
 DimensionFS::DimensionFS(const bfs::path &loc, size_t index, FileMode mode)
-    : DirectoryWithAttributes(bfs::path(loc).append("/" + util::numToStr(index)), mode)
+    : DirectoryWithAttributes(bfs::path(loc) / bfs::path(util::numToStr(index)), mode)
 {
     this->index(index);
 }
