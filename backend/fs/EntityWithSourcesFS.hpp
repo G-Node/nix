@@ -14,10 +14,10 @@
 #include "SourceFS.hpp"
 #include "EntityWithMetadataFS.hpp"
 
-namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
+namespace bfs = boost::filesystem;
 
 
 /**
