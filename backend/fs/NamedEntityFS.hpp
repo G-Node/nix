@@ -15,10 +15,10 @@
 #include <string>
 #include <memory>
 
-namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
+namespace bfs = boost::filesystem;
 
 
 /**

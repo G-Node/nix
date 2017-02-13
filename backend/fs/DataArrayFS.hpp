@@ -20,10 +20,10 @@
 #include <boost/multi_array.hpp>
 #include "Directory.hpp"
 
-namespace bfs = boost::filesystem;
 
 namespace nix {
 namespace file {
+namespace bfs = boost::filesystem;
 
 
 class DataArrayFS : virtual public base::IDataArray,  public EntityWithSourcesFS {
