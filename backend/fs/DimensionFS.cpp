@@ -84,15 +84,23 @@ std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, FileMode mod
 
 // Implementation of Dimension
 DimensionFS::DimensionFS(const std::string &loc, FileMode mode)
-    : DirectoryWithAttributes(loc, mode)
+    : DimensionFS(bfs::path(loc), mode)
 {
 }
 
+DimensionFS::DimensionFS(const bfs::path &loc, FileMode mode)
+	: DirectoryWithAttributes(loc, mode)
+{
+}
 
-DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode)
-    : DirectoryWithAttributes(loc + boost::filesystem::path::preferred_separator + util::numToStr(index), mode)
+DimensionFS::DimensionFS(const bfs::path &loc, size_t index, FileMode mode)
+    : DirectoryWithAttributes(bfs::path(loc).append("/" + util::numToStr(index)), mode)
 {
     this->index(index);
+}
+
+DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode) 
+	: DimensionFS(bfs::path(loc), index, mode) {
 }
 
 void DimensionFS::index(size_t index) {
