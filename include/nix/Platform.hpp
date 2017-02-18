@@ -14,7 +14,7 @@
  #else
  #define NIXAPI __declspec(dllimport)
  #endif
-#pragma warning(disable: 4250 4251)
+#pragma warning(disable: 4250 4251 4275)
 
  //workaround for missing ssize_t on windows
  #ifndef ssize_t
