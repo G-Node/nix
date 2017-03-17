@@ -34,6 +34,12 @@ would stick to the following development workflow:
    Merge conflicts or errors reported by travis should be resolved by the original author before the request is merged.
 
 
+Google Summer of Code contributors
+----------------------------------
+
+Please see the corresponding [Google Summer of Code](GSoC.md) file if you are interested in contributing as part of the GSoC programme.
+
+
 The issue tracker
 -----------------
 
