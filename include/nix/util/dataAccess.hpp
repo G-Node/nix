@@ -94,6 +94,18 @@ NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &of
 
 NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
 
+
+/**
+ * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The index of the position.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by position and extent.
+ */
+NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+    
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *

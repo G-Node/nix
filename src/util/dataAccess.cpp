@@ -212,22 +212,29 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 
 
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index) {
-    DataArray positions = tag.positions();
-    DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
 
     if (refs.size() == 0) { // Do I need this?
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
-    if (position_index >= positions.dataExtent()[0] ||
-        (extents && position_index >= extents.dataExtent()[0])) {
-        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
-    }
     if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
 
-    ndsize_t dimension_count = refs[reference_index].dimensionCount();
+    return retrieveData(tag, position_index, refs[reference_index]);
+}
+
+
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array) {
+    DataArray positions = tag.positions();
+    DataArray extents = tag.extents();
+
+    if (position_index >= positions.dataExtent()[0] ||
+        (extents && position_index >= extents.dataExtent()[0])) {
+        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
+    }
+
+    ndsize_t dimension_count = array.dimensionCount();
     if (positions.dataExtent().size() == 1 && dimension_count != 1) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
                                           "util::retrieveData");
@@ -240,12 +247,12 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t refer
     }
 
     NDSize offset, count;
-    getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
+    getOffsetAndCount(tag, array, position_index, offset, count);
 
-    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
+    if (!positionAndExtentInData(array, offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    DataView io = DataView(refs[reference_index], count, offset);
+    DataView io = DataView(array, count, offset);
     return io;
 }
 
