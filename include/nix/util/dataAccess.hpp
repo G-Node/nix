@@ -116,6 +116,17 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_
 NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
 
 /**
+ * @brief Retrieve the data referenced by the given position and extent of the Tag.
+ *
+ * @param tag                   The multi tag.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the position.
+ */
+NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
+
+    
+/**
  * @brief Checks whether a given position is in the extent of the given DataArray.
  *
  * @param data          The data array.
