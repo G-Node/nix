@@ -261,6 +261,8 @@ void BaseTestTag::testFeatures() {
     DataArray da = block.createDataArray("feature", "test", DataType::Double, NDSize({0, 0}));
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(da, nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.hasFeature(f));
+    CPPUNIT_ASSERT(tag.hasFeature(da.name()));
+    CPPUNIT_ASSERT(tag.hasFeature(da.id()));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);

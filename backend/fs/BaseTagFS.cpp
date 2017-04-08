@@ -154,7 +154,8 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
 //--------------------------------------------------
 
 bool BaseTagFS::hasFeature(const std::string &name_or_id) const {
-    return !feature_group.findByNameOrAttribute("entity_id", name_or_id)->empty();
+    return getFeature(name_or_id) != nullptr;
+    //!feature_group.findByNameOrAttribute("entity_id", name_or_id)->empty();
 }
 
 
@@ -168,6 +169,16 @@ std::shared_ptr<base::IFeature> BaseTagFS::getFeature(const std::string &name_or
     boost::optional<bfs::path> p = feature_group.findByNameOrAttribute("name", name_or_id);
     if (p) {
         return std::make_shared<FeatureFS>(file(), block(), p->string());
+    } else {
+        for (ndsize_t i = 0; i < feature_group.subdirCount(); i++) {
+            bfs::path dir = feature_group.sub_dir_by_index(i);
+            std::shared_ptr<base::IFeature> feat = std::make_shared<FeatureFS>(file(), block(), dir.string());
+            std::shared_ptr<base::IDataArray> da = feat->data();
+            if (da->name() == name_or_id || da->id() == name_or_id) {
+                feature = std::make_shared<FeatureFS>(file(), block(), dir.string());
+                break;
+            }
+        }
     }
     return feature;
 }
