@@ -235,7 +235,10 @@ void BaseTestTag::testReferences() {
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
     for (size_t i = 0; i < refs.size(); ++i) {
         CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
+        CPPUNIT_ASSERT(!tag.hasReference(refs[i].name()));
         CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i].name()));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i].id()));
         CPPUNIT_ASSERT(tag.hasReference(refs[i]));
     }
     CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
