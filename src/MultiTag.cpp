@@ -104,6 +104,16 @@ DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) c
 }
 
 
+DataView MultiTag::retrieveData(size_t position_index, const std::string &name_or_id) const {
+    nix::DataArray array = backend()->getReference(name_or_id);
+    if (array) {
+        return util::retrieveData(*this, position_index, array);
+    } else {
+        throw nix::OutOfBounds("There is no DataArray with the specified name or id!", 0);
+    }
+}
+
+
 bool MultiTag::hasFeature(const Feature &feature) const {
     if (!util::checkEntityInput(feature, false)) {
         return false;
