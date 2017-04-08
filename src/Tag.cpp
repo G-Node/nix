@@ -122,6 +122,16 @@ DataView Tag::retrieveData(size_t reference_index) const {
 }
 
 
+DataView Tag::retrieveData(const std::string &name_or_id) const {
+    nix::DataArray array = backend()->getReference(name_or_id);
+    if (array) {
+        return util::retrieveData(*this, array);
+    } else {
+        throw nix::OutOfBounds("There is no data array with the specified name or id!", 0);
+    }
+}
+
+
 DataView Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }

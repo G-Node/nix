@@ -435,6 +435,15 @@ public:
      * @return the data
      */
     DataView retrieveData(size_t reference_index) const;
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param name_or_id      Name or id of the referenced dataArray.
+     *
+     * @return the data
+     */
+    DataView retrieveData(const std::string &name_or_id) const; 
     
     /**
      * @brief Returns the data stored in the selected Feature.

@@ -328,6 +328,11 @@ void BaseTestTag::testDataAccess() {
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
 
+    retrieved_data = position_tag.retrieveData(data_array.name());
+    data_size = retrieved_data.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
+
     retrieved_data = segment_tag.retrieveData( 0);
     data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
