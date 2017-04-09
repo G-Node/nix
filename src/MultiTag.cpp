@@ -140,6 +140,16 @@ DataView MultiTag::retrieveFeatureData(size_t position_index, size_t feature_ind
     return util::retrieveFeatureData(*this, position_index, feature_index);
 }
 
+
+DataView MultiTag::retrieveFeatureData(size_t position_index, const std::string &name_or_id) const {
+    nix::Feature feature = backend()->getFeature(name_or_id);
+    if (feature) {
+        return util::retrieveFeatureData(*this, position_index, feature);
+    } else {
+        throw nix::OutOfBounds("There is no Feature with the specified name or id!", 0);
+    }
+}
+
 std::ostream& operator<<(std::ostream &out, const MultiTag &ent) {
     out << "MultiTag: {name = " << ent.name();
     out << ", type = " << ent.type();
