@@ -137,6 +137,16 @@ DataView Tag::retrieveFeatureData(size_t feature_index) const {
 }
 
 
+DataView Tag::retrieveFeatureData(const std::string &name_or_id) const {
+    nix::Feature feature = backend()->getFeature(name_or_id);
+    if (feature) {
+        return util::retrieveFeatureData(*this, feature);
+    } else {
+        throw nix::OutOfBounds("There is no Feature with the specified name or id!", 0);
+    }
+}
+
+
 std::ostream &nix::operator<<(std::ostream &out, const Tag &ent) {
     out << "Tag: {name = " << ent.name();
     out << ", type = " << ent.type();

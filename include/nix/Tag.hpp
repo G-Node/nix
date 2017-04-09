@@ -454,6 +454,18 @@ public:
      *
      */
     DataView retrieveFeatureData(size_t feature_index) const;
+
+    /**
+     * @brief Returns the data stored in the selected Feature.
+     *
+     * @param name_or_id     The name or id of the feature or the DataArray stored
+     *                       in the feature.
+     *
+     * @return The data stored in the Feature.
+     *
+     */
+    DataView retrieveFeatureData(const std::string &name_or_id) const;
+
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
