@@ -185,6 +185,16 @@ void BaseTestDataAccess::testTagFeatureData() {
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data2.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
+
+    data1 = util::retrieveFeatureData(pos_tag, f1);
+    data2 = util::retrieveFeatureData(pos_tag, f2);
+    data3 = util::retrieveFeatureData(pos_tag, f3);
+
+    CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
+    CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
+    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 1);
+    CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
+    
     // make tag pointing to a slice
     pos_tag.extent({2.0});
     data1 = util::retrieveFeatureData(pos_tag, 0);
@@ -299,6 +309,10 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(sum == total);
     // tagged feature
     data_view = util::retrieveFeatureData(multi_tag, 0, 1);
+    data_size = data_view.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+
+    data_view = util::retrieveFeatureData(multi_tag, 0, tagged_feature);
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 

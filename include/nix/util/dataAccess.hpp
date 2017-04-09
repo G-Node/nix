@@ -170,7 +170,17 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
 NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
 
 /**
- * @brief Returns the feature data accosiated with the given MuliTag's position.
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested.
+ * @param feature       The Feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
+    
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
  *
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
@@ -179,6 +189,17 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  * @return The associated data.
  */
 NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index=0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature        The feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
 
 }
 }

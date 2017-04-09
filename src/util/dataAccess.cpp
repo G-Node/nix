@@ -287,20 +287,13 @@ DataView retrieveData(const Tag &tag, const DataArray &array) {
 }        
 
 
-DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
-    if (tag.featureCount() == 0) {
-        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
-    }
-    if (feature_index > tag.featureCount()) {
-        throw nix::OutOfBounds("Feature index out of bounds.", 0);
-    }
-    Feature feat = tag.getFeature(feature_index);
-    DataArray data = feat.data();
+DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
+    DataArray data = feature.data();
     if (data == nix::none) {
         throw nix::UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
-    if (feat.linkType() == nix::LinkType::Tagged) {
+    if (feature.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
         getOffsetAndCount(tag, data, offset, count);
         if (!positionAndExtentInData(data, offset, count)) {
@@ -316,6 +309,18 @@ DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
 }
 
 
+DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index > tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    return retrieveFeatureData(tag, feat);
+}
+
+
 DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index) {
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
@@ -324,12 +329,16 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_
         throw nix::OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
-    DataArray data = feat.data();
+    return retrieveFeatureData(tag, position_index, feat);
+}
+
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+    DataArray data = feature.data();
     if (data == nix::none) {
         throw nix::UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
-    if (feat.linkType() == nix::LinkType::Tagged) {
+    if (feature.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
         getOffsetAndCount(tag, data, position_index, offset, count);
         
@@ -338,7 +347,7 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_
         }
         DataView io = DataView(data, count, offset);
         return io;
-    } else if (feat.linkType() == nix::LinkType::Indexed) {
+    } else if (feature.linkType() == nix::LinkType::Indexed) {
         //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
         if (position_index > data.dataExtent()[0]){
