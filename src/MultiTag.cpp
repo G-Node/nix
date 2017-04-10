@@ -104,6 +104,16 @@ DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) c
 }
 
 
+DataView MultiTag::retrieveData(size_t position_index, const std::string &name_or_id) const {
+    nix::DataArray array = backend()->getReference(name_or_id);
+    if (array) {
+        return util::retrieveData(*this, position_index, array);
+    } else {
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
+    }
+}
+
+
 bool MultiTag::hasFeature(const Feature &feature) const {
     if (!util::checkEntityInput(feature, false)) {
         return false;
@@ -128,6 +138,16 @@ bool MultiTag::deleteFeature(const Feature &feature) {
 
 DataView MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
     return util::retrieveFeatureData(*this, position_index, feature_index);
+}
+
+
+DataView MultiTag::retrieveFeatureData(size_t position_index, const std::string &name_or_id) const {
+    nix::Feature feature = backend()->getFeature(name_or_id);
+    if (feature) {
+        return util::retrieveFeatureData(*this, position_index, feature);
+    } else {
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at MultiTag::retrieveFeatureData");
+    }
 }
 
 std::ostream& operator<<(std::ostream &out, const MultiTag &ent) {

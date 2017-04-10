@@ -235,7 +235,10 @@ void BaseTestTag::testReferences() {
     CPPUNIT_ASSERT(tag.referenceCount() == 0);
     for (size_t i = 0; i < refs.size(); ++i) {
         CPPUNIT_ASSERT(!tag.hasReference(refs[i]));
+        CPPUNIT_ASSERT(!tag.hasReference(refs[i].name()));
         CPPUNIT_ASSERT_NO_THROW(tag.addReference(refs[i]));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i].name()));
+        CPPUNIT_ASSERT(tag.hasReference(refs[i].id()));
         CPPUNIT_ASSERT(tag.hasReference(refs[i]));
     }
     CPPUNIT_ASSERT(tag.referenceCount() == refs.size());
@@ -261,6 +264,8 @@ void BaseTestTag::testFeatures() {
     DataArray da = block.createDataArray("feature", "test", DataType::Double, NDSize({0, 0}));
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(da, nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.hasFeature(f));
+    CPPUNIT_ASSERT(tag.hasFeature(da.name()));
+    CPPUNIT_ASSERT(tag.hasFeature(da.id()));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
     CPPUNIT_ASSERT(tag.deleteFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 0);
@@ -320,6 +325,13 @@ void BaseTestTag::testDataAccess() {
 
     DataView retrieved_data = position_tag.retrieveData(0);
     NDSize data_size = retrieved_data.dataExtent();
+    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
+
+    CPPUNIT_ASSERT_THROW(position_tag.retrieveData("invalid name"), std::invalid_argument);
+
+    retrieved_data = position_tag.retrieveData(data_array.name());
+    data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
 

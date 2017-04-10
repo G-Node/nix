@@ -172,11 +172,21 @@ std::shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id)
     boost::optional<H5Group> g = feature_group(false);
 
     if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("name", name_or_id);
         if (group)
             feature = std::make_shared<FeatureHDF5>(file(), block(), group.get());
+        else {
+            for (ndsize_t i = 0; i < g->objectCount(); i++) {
+                H5Group gr = g->openGroup(g->objectName(i), false);
+                std::shared_ptr<FeatureHDF5> feat = std::make_shared<FeatureHDF5>(file(), block(), gr);
+                std::shared_ptr<base::IDataArray> da = feat->data();
+                if (da->name() == name_or_id || da->id() == name_or_id) {
+                    feature = std::make_shared<FeatureHDF5>(file(), block(), gr);
+                    break;
+                }
+            }
+        }
     }
-
     return feature;
 }
 
