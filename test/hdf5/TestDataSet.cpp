@@ -55,16 +55,31 @@ void TestDataSet::setUp() {
 
 
 void TestDataSet::testChunkGuessing() {
-
     CPPUNIT_ASSERT_THROW(hdf5::DataSet::guessChunking(NDSize{}, H5T_NATIVE_DOUBLE),
                          InvalidRank);
-
+    ndsize_t chunk_max = 1024 * 1024;
+    ndsize_t chunk_min = 8 * 1024;
+    
     NDSize dims({1024, 1024});
-
     NDSize chunks = hdf5::DataSet::guessChunking(dims, hdf5::h5x::DataType(H5T_NATIVE_DOUBLE));
     CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
     CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
+
+    NDSize max_chunk_dims({512, 512, 512});
+    chunks = hdf5::DataSet::guessChunking(max_chunk_dims, hdf5::h5x::DataType(H5T_NATIVE_DOUBLE));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) <= chunk_max);
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) >= chunk_min);
+    
+    NDSize ones_dims({1, 1, 1});
+    chunks = hdf5::DataSet::guessChunking(ones_dims, hdf5::h5x::DataType(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= chunk_min);  
+
+    NDSize ones_dims_2({1});
+    chunks = hdf5::DataSet::guessChunking(ones_dims_2, hdf5::h5x::DataType(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= chunk_min);
+    CPPUNIT_ASSERT_EQUAL(chunks[0], 1024ULL);
 }
+
 
 void TestDataSet::testDataType() {
     static struct _type_info {
