@@ -109,7 +109,7 @@ DataView MultiTag::retrieveData(size_t position_index, const std::string &name_o
     if (array) {
         return util::retrieveData(*this, position_index, array);
     } else {
-        throw nix::OutOfBounds("There is no DataArray with the specified name or id!", 0);
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
     }
 }
 
@@ -146,7 +146,7 @@ DataView MultiTag::retrieveFeatureData(size_t position_index, const std::string 
     if (feature) {
         return util::retrieveFeatureData(*this, position_index, feature);
     } else {
-        throw nix::OutOfBounds("There is no Feature with the specified name or id!", 0);
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at MultiTag::retrieveFeatureData");
     }
 }
 

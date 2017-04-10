@@ -127,7 +127,7 @@ DataView Tag::retrieveData(const std::string &name_or_id) const {
     if (array) {
         return util::retrieveData(*this, array);
     } else {
-        throw nix::OutOfBounds("There is no data array with the specified name or id!", 0);
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::retrieveData");
     }
 }
 
@@ -142,7 +142,7 @@ DataView Tag::retrieveFeatureData(const std::string &name_or_id) const {
     if (feature) {
         return util::retrieveFeatureData(*this, feature);
     } else {
-        throw nix::OutOfBounds("There is no Feature with the specified name or id!", 0);
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::retrieveFeatureData");
     }
 }
 

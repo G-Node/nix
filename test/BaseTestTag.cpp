@@ -328,6 +328,8 @@ void BaseTestTag::testDataAccess() {
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
 
+    CPPUNIT_ASSERT_THROW(position_tag.retrieveData("invalid name"), std::invalid_argument);
+
     retrieved_data = position_tag.retrieveData(data_array.name());
     data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
