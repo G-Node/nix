@@ -57,27 +57,36 @@ void TestDataSet::setUp() {
 void TestDataSet::testChunkGuessing() {
     CPPUNIT_ASSERT_THROW(hdf5::DataSet::guessChunking(NDSize{}, H5T_NATIVE_DOUBLE),
                          InvalidRank);
-    ndsize_t chunk_max = 1024 * 1024;
-    ndsize_t chunk_min = 8 * 1024;
+    std::tuple<ndsize_t, ndsize_t> min_max = hdf5::DataSet::getChunkBounds();
     
     NDSize dims({1024, 1024});
     NDSize chunks = hdf5::DataSet::guessChunking(dims, hdf5::h5x::DataType(H5T_NATIVE_DOUBLE));
-    CPPUNIT_ASSERT_EQUAL(chunks[0], 64ULL);
-    CPPUNIT_ASSERT_EQUAL(chunks[1], 64ULL);
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) >= std::get<0>(min_max));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) <= std::get<1>(min_max));
 
     NDSize max_chunk_dims({512, 512, 512});
     chunks = hdf5::DataSet::guessChunking(max_chunk_dims, hdf5::h5x::DataType(H5T_NATIVE_DOUBLE));
-    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) <= chunk_max);
-    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) >= chunk_min);
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) <= std::get<1>(min_max));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_DOUBLE).size()) >= std::get<0>(min_max));
     
     NDSize ones_dims({1, 1, 1});
     chunks = hdf5::DataSet::guessChunking(ones_dims, hdf5::h5x::DataType(H5T_NATIVE_INT));
-    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= chunk_min);  
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= std::get<0>(min_max));  
 
     NDSize ones_dims_2({1});
     chunks = hdf5::DataSet::guessChunking(ones_dims_2, hdf5::h5x::DataType(H5T_NATIVE_INT));
-    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= chunk_min);
-    CPPUNIT_ASSERT_EQUAL(chunks[0], 1024ULL);
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= std::get<0>(min_max));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) <= std::get<1>(min_max));
+
+    NDSize zero_dims({0});
+    chunks = hdf5::DataSet::guessChunking(zero_dims, hdf5::h5x::DataType(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= std::get<0>(min_max));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) <= std::get<1>(min_max));
+
+    NDSize zero_dims_2({0, 0});
+    chunks = hdf5::DataSet::guessChunking(zero_dims_2, hdf5::h5x::DataType(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) >= std::get<0>(min_max));
+    CPPUNIT_ASSERT((chunks.nelms() * hdf5::h5x::DataType(H5T_NATIVE_INT).size()) <= std::get<1>(min_max));
 }
 
 
