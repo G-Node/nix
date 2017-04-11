@@ -47,6 +47,12 @@ public:
 
     static NDSize guessChunking(NDSize dims, size_t element_size);
 
+    /**
+     * @brief returns the minimum and maximum chunk sizes
+     * 
+     */
+    static std::tuple<ndsize_t, ndsize_t> getChunkBounds();
+
     void setExtent(const NDSize &dims);
     NDSize size() const;
 

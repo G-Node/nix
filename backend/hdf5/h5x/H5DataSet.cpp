@@ -161,6 +161,12 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     return chunks;
 }
 
+std::tuple<ndsize_t, ndsize_t> DataSet::getChunkBounds()
+{
+    return std::make_tuple(CHUNK_MIN, CHUNK_MAX);
+}
+
+
 void DataSet::setExtent(const NDSize &dims)
 {
     DataSpace space = getSpace();
