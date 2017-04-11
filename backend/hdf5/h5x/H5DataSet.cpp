@@ -128,6 +128,16 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     else if (target_size < CHUNK_MIN)
         target_size = CHUNK_MIN;
 
+    // Make sure we have at least the target size in bytes
+    // by spreading it equally across dimensions, if not
+    if (chunks.nelms() * element_size < target_size) {
+        double sz = static_cast<double>(chunks.size());
+        double es = std::ceil(target_size / element_size / sz);
+        for (size_t i = 0; i < chunks.size(); i++) {
+            chunks[i] = static_cast<ndsize_t>(es);
+        }
+    }
+
     size_t i = 0;
     while (true) {
         double csize = static_cast<double>(chunks.nelms());
@@ -150,6 +160,12 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     }
     return chunks;
 }
+
+std::tuple<ndsize_t, ndsize_t> DataSet::getChunkBounds()
+{
+    return std::make_tuple(CHUNK_MIN, CHUNK_MAX);
+}
+
 
 void DataSet::setExtent(const NDSize &dims)
 {
