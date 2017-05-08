@@ -133,13 +133,13 @@ void BaseTagHDF5::references(const std::vector<DataArray> &refs_new) {
                         std::inserter(rem, rem.begin()), cmp);
 
     auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
-    for (auto da : add) {
+    for (const auto &da : add) {
         DataArray a = blck->getDataArray(da.name());
         if (!a || a.id() != da.id())
             throw std::runtime_error("One or more data arrays do not exist in this block!");
         addReference(a.id());
     }
-    for (auto da : rem) {
+    for (const auto &da : rem) {
         removeReference(da.id());
     }
 }

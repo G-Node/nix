@@ -125,14 +125,14 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
                         std::inserter(rem, rem.begin()), cmp);
 
     auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
-    for (auto da : add) {
+    for (const auto &da : add) {
         DataArray a = blck->getDataArray(da.name());
         if (!a || a.id() != da.id())
             throw std::runtime_error("One or more data arrays do not exist in this block!");
         addDataArray(a.id());
     }
 
-    for (auto da : rem) {
+    for (const auto &da : rem) {
         removeDataArray(da.id());
     }
 }
@@ -221,14 +221,14 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
                         std::inserter(rem, rem.begin()), cmp);
 
     auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
-    for (auto t : add) {
+    for (const auto &t : add) {
         Tag tag = blck->getTag(t.name());
         if (!tag || tag.id() != t.id())
             throw std::runtime_error("One or more data tags do not exist in this block!");
         addTag(t.id());
     }
 
-    for (auto t : rem) {
+    for (const auto &t : rem) {
         removeTag(t.id());
     }
 }
@@ -317,14 +317,14 @@ void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
                         std::inserter(rem, rem.begin()), cmp);
 
     auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
-    for (auto t : add) {
+    for (const auto &t : add) {
         MultiTag tag = blck->getMultiTag(t.name());
         if (!tag || tag.id() != t.id())
             throw std::runtime_error("One or more data multiTags do not exist in this block!");
         addMultiTag(t.id());
     }
 
-    for (auto t : rem) {
+    for (const auto &t : rem) {
         removeMultiTag(t.id());
     }
 }
