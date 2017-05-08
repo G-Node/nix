@@ -33,7 +33,8 @@ bool Tag::hasReference(const DataArray &reference) const {
     if (!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->hasReference(reference.id());
+    DataArray da = backend()->getReference(reference.name());
+    return da && da.id() == reference.id();
 }
 
 
@@ -49,7 +50,7 @@ void Tag::addReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference, false)) {
         throw UninitializedEntity();
     }
-    backend()->addReference(reference.id());
+    backend()->addReference(reference.name());
 }
 
 
@@ -63,7 +64,7 @@ bool Tag::removeReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->removeReference(reference.id());
+    return backend()->removeReference(reference.name());
 }
 
 
