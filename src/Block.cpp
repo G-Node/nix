@@ -57,7 +57,7 @@ bool Block::deleteSource(const Source &source) {
     if (!util::checkEntityInput(source, false)) {
         return false;
     }
-    return backend()->deleteSource(source.id());
+    return backend()->deleteSource(source.name());
 }
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
@@ -86,7 +86,7 @@ bool Block::deleteDataArray(const DataArray &data_array) {
     if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
-    return backend()->deleteDataArray(data_array.id());
+    return backend()->deleteDataArray(data_array.name());
 }
 
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
@@ -121,7 +121,7 @@ bool Block::deleteTag(const Tag &tag) {
     if (!util::checkEntityInput(tag, false)) {
         return false;
     }
-    return backend()->deleteTag(tag.id());
+    return backend()->deleteTag(tag.name());
 }
 
 MultiTag Block::createMultiTag(const std::string &name, const std::string &type, const DataArray &positions) {
@@ -160,7 +160,7 @@ bool Block::deleteMultiTag(const MultiTag &multi_tag) {
     if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
-    return backend()->deleteMultiTag(multi_tag.id());
+    return backend()->deleteMultiTag(multi_tag.name());
 }
 
 Group Block::createGroup(const std::string &name, const std::string &type) {
@@ -188,7 +188,7 @@ bool Block::deleteGroup(const Group &group) {
     if (!util::checkEntityInput(group, false)) {
         return false;
     }
-    return backend()->deleteGroup(group.id());
+    return backend()->deleteGroup(group.name());
 }
 
 std::ostream &operator<<(std::ostream &out, const Block &ent) {
