@@ -108,7 +108,10 @@ int main(int argc, char* argv[]) {
             out << (*it).second->call(vm, desc);
         }
         else {
-            out << std::endl << "Nix command line tool " <<  "\n\n";
+            nix::FormatVersion myVersion{nix::apiVersion()};
+
+            out << std::endl << "Nix command line tool " << std::endl;
+            out << "\tNix version: " << myVersion << std::endl << std::endl;
             out << "\tUse the modules of this tool to dump nix-file contents as yaml to std out\n";
             out << "\tor validate the nix file to detect structural and/or logical errors.\n\n";
             out << "\tUsage: ./nix-tool module [--help] [[module args] input-file] \n\n";
