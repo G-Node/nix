@@ -37,7 +37,8 @@ bool Block::hasSource(const Source &source) const {
     if (!util::checkEntityInput(source, false)) {
         return false;
     }
-    return backend()->hasSource(source.id());
+    Source s = backend()->getSource(source.name());
+    return s && s.id() == source.id();
 }
 
 Source Block::getSource(ndsize_t index) const {
@@ -56,7 +57,7 @@ bool Block::deleteSource(const Source &source) {
     if (!util::checkEntityInput(source, false)) {
         return false;
     }
-    return backend()->deleteSource(source.id());
+    return backend()->deleteSource(source.name());
 }
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
@@ -72,7 +73,8 @@ bool Block::hasDataArray(const DataArray &data_array) const {
     if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
-    return backend()->hasDataArray(data_array.id());
+    DataArray da = backend()->getDataArray(data_array.name());
+    return  da && da.id() == data_array.id();
 }
 
 std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type &filter) const {
@@ -84,7 +86,7 @@ bool Block::deleteDataArray(const DataArray &data_array) {
     if (!util::checkEntityInput(data_array, false)) {
         return false;
     }
-    return backend()->deleteDataArray(data_array.id());
+    return backend()->deleteDataArray(data_array.name());
 }
 
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
@@ -99,7 +101,8 @@ bool Block::hasTag(const Tag &tag) const {
     if (!util::checkEntityInput(tag, false)) {
         return false;
     }
-    return backend()->hasTag(tag.id());
+    Tag t = backend()->getTag(tag.name());
+    return  t && t.id() == tag.id();
 }
 
 Tag Block::getTag(ndsize_t index) const {
@@ -118,7 +121,7 @@ bool Block::deleteTag(const Tag &tag) {
     if (!util::checkEntityInput(tag, false)) {
         return false;
     }
-    return backend()->deleteTag(tag.id());
+    return backend()->deleteTag(tag.name());
 }
 
 MultiTag Block::createMultiTag(const std::string &name, const std::string &type, const DataArray &positions) {
@@ -144,7 +147,8 @@ bool Block::hasMultiTag(const MultiTag &multi_tag) const {
     if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
-    return backend()->hasMultiTag(multi_tag.id());
+    MultiTag mt = backend()->getMultiTag(multi_tag.name());
+    return mt && mt.id() == multi_tag.id();
 }
 
 std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &filter) const {
@@ -156,7 +160,7 @@ bool Block::deleteMultiTag(const MultiTag &multi_tag) {
     if (!util::checkEntityInput(multi_tag, false)) {
         return false;
     }
-    return backend()->deleteMultiTag(multi_tag.id());
+    return backend()->deleteMultiTag(multi_tag.name());
 }
 
 Group Block::createGroup(const std::string &name, const std::string &type) {
@@ -171,7 +175,8 @@ bool Block::hasGroup(const Group &group) const {
     if (!util::checkEntityInput(group, false)) {
         return false;
     }
-    return backend()->hasGroup(group.id());
+    Group g = backend()->getGroup(group.name());
+    return g && g.id() == group.id();
 }
 
 std::vector<Group> Block::groups(const util::AcceptAll<Group>::type &filter) const {
@@ -183,7 +188,7 @@ bool Block::deleteGroup(const Group &group) {
     if (!util::checkEntityInput(group, false)) {
         return false;
     }
-    return backend()->deleteGroup(group.id());
+    return backend()->deleteGroup(group.name());
 }
 
 std::ostream &operator<<(std::ostream &out, const Block &ent) {

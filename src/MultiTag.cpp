@@ -65,7 +65,8 @@ bool MultiTag::hasReference(const DataArray &reference) const {
     if(!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->hasReference(reference.id());
+    DataArray da = backend()->getReference(reference.name());
+    return da && da.id() == reference.id();
 }
 
 
@@ -81,7 +82,7 @@ void MultiTag::addReference(const DataArray &reference) {
     if(!util::checkEntityInput(reference)) {
         throw UninitializedEntity();
     }
-    backend()->addReference(reference.id());
+    backend()->addReference(reference.name());
 }
 
 
@@ -89,7 +90,7 @@ bool MultiTag::removeReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference)) {
         return false;
     }
-    return backend()->removeReference(reference.id());
+    return backend()->removeReference(reference.name());
 }
 
 

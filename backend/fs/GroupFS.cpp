@@ -115,41 +115,33 @@ bool GroupFS::removeDataArray(const std::string &name_or_id) {
 
 
 void GroupFS::dataArrays(const std::vector<DataArray> &data_arrays) {
-    // extract vectors of names from vectors of new & old references
-    std::vector<std::string> names_new(data_arrays.size());
-    transform(data_arrays.begin(), data_arrays.end(), names_new.begin(), util::toName<DataArray>);
+    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
+    std::vector<DataArray> new_arrays(data_arrays);
+    size_t array_count = nix::check::fits_in_size_t(dataArrayCount(), "dataArrayCount() failed; count > size_t.");
 
-    size_t count = nix::check::fits_in_size_t(dataArrayCount(), "dataArrayCount failed! count > than size_t!");
-    std::vector<DataArray> refs_old(count);
-    for (size_t i = 0; i < refs_old.size(); i++){
-        refs_old[i] = getDataArray(i);
+    std::vector<DataArray> old_arrays(array_count);
+    for (size_t i = 0; i < old_arrays.size(); i++) {
+        old_arrays[i] = getDataArray(i);
     }
-    std::vector<std::string> names_old(refs_old.size());
-    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
+    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
+    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
+    std::vector<DataArray> add;
+    std::vector<DataArray> rem;
+    
+    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
+                        std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
+                        std::inserter(rem, rem.begin()), cmp);
 
-    // sort them
-    std::sort(names_new.begin(), names_new.end());
-    std::sort(names_new.begin(), names_new.end());
-
-    // get names only in names_new (add), names only in names_old (remove) & ignore rest
-    std::vector<std::string> names_add;
-    std::vector<std::string> names_rem;
-    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
-                        std::inserter(names_add, names_add.begin()));
-    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
-                        std::inserter(names_rem, names_rem.begin()));
-
-    // check if all new references exist & add sources
     auto blck = std::dynamic_pointer_cast<BlockFS>(block());
-    for (auto name : names_add) {
-        if (!blck->hasDataArray(name))
+    for (const auto &da : add) {
+        DataArray a = blck->getDataArray(da.name());
+        if (!a || a.id() != da.id())
             throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addDataArray(blck->getDataArray(name)->id());
+        addDataArray(a.id());
     }
-    // remove references
-    for (auto name : names_rem) {
-        if (!blck->hasDataArray(name))
-            removeDataArray(blck->getDataArray(name)->id());
+    for (const auto &da : rem) {
+        removeDataArray(da.id());
     }
 }
 
@@ -213,41 +205,33 @@ bool GroupFS::removeTag(const std::string &name_or_id) {
 
 
 void GroupFS::tags(const std::vector<Tag> &tags) {
-    // extract vectors of names from vectors of new & old references
-    std::vector<std::string> names_new(tags.size());
-    transform(tags.begin(), tags.end(), names_new.begin(), util::toName<Tag>);
-
-    size_t count = nix::check::fits_in_size_t(tagCount(), "tagCount() failed! count > than size_t!");
-    std::vector<Tag> refs_old(count);
-    for (size_t i = 0; i < refs_old.size(); i++){
-        refs_old[i] = getTag(i);
+    auto cmp = [](const Tag &a, const Tag& b) { return a.name() < b.name(); };
+    
+    std::vector<Tag> new_tags(tags); 
+    size_t tag_count = nix::check::fits_in_size_t(tagCount(), "tagCount() failed; count > size_t.");
+    std::vector<Tag> old_tags(tag_count);
+    for (size_t i = 0; i < old_tags.size(); i++) {
+        old_tags[i] = getTag(i);
     }
-    std::vector<std::string> names_old(refs_old.size());
-    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<Tag>);
+    std::sort(new_tags.begin(), new_tags.end(), cmp);
+    std::sort(old_tags.begin(), old_tags.end(), cmp);
+    std::vector<Tag> add;
+    std::vector<Tag> rem;
+    
+    std::set_difference(new_tags.begin(), new_tags.end(), old_tags.begin(), old_tags.end(),
+                        std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
+                        std::inserter(rem, rem.begin()), cmp);
 
-    // sort them
-    std::sort(names_new.begin(), names_new.end());
-    std::sort(names_new.begin(), names_new.end());
-
-    // get names only in names_new (add), names only in names_old (remove) & ignore rest
-    std::vector<std::string> names_add;
-    std::vector<std::string> names_rem;
-    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
-                        std::inserter(names_add, names_add.begin()));
-    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
-                        std::inserter(names_rem, names_rem.begin()));
-
-    // check if all new references exist & add sources
     auto blck = std::dynamic_pointer_cast<BlockFS>(block());
-    for (auto name : names_add) {
-        if (!blck->hasTag(name))
+    for (const auto &t : add) {
+        Tag tag = blck->getTag(t.name());
+        if (!tag || tag.id() != t.id())
             throw std::runtime_error("One or more tags do not exist in this block!");
-        addTag(blck->getTag(name)->id());
+        addTag(t.id());
     }
-    // remove references
-    for (auto name : names_rem) {
-        if (!blck->hasTag(name))
-            removeTag(blck->getTag(name)->id());
+    for (const auto &t : rem) {
+        removeTag(t.id());
     }
 }
 
@@ -311,41 +295,32 @@ bool GroupFS::removeMultiTag(const std::string &name_or_id) {
 
 
 void GroupFS::multiTags(const std::vector<MultiTag> &multi_tags) {
-    // extract vectors of names from vectors of new & old references
-    std::vector<std::string> names_new(multi_tags.size());
-    transform(multi_tags.begin(), multi_tags.end(), names_new.begin(), util::toName<MultiTag>);
-
-    size_t count = nix::check::fits_in_size_t(multiTagCount(), "multiTagCount() failed! count > than size_t!");
-    std::vector<MultiTag> refs_old(count);
-    for (size_t i = 0; i < refs_old.size(); i++){
-        refs_old[i] = getMultiTag(i);
+    auto cmp = [](const MultiTag &a, const MultiTag& b) { return a.name() < b.name(); };
+    std::vector<MultiTag> new_tags(multi_tags); 
+    size_t tag_count = nix::check::fits_in_size_t(multiTagCount(), "multiTagCount() failed; count > size_t.");
+    std::vector<MultiTag> old_tags(tag_count);
+    for (size_t i = 0; i < old_tags.size(); i++) {
+        old_tags[i] = getMultiTag(i);
     }
-    std::vector<std::string> names_old(refs_old.size());
-    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<MultiTag>);
+    std::sort(new_tags.begin(), new_tags.end(), cmp);
+    std::sort(old_tags.begin(), old_tags.end(), cmp);
+    std::vector<MultiTag> add;
+    std::vector<MultiTag> rem;
+    
+    std::set_difference(new_tags.begin(), new_tags.end(), old_tags.begin(), old_tags.end(),
+                        std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
+                        std::inserter(rem, rem.begin()), cmp);
 
-    // sort them
-    std::sort(names_new.begin(), names_new.end());
-    std::sort(names_new.begin(), names_new.end());
-
-    // get names only in names_new (add), names only in names_old (remove) & ignore rest
-    std::vector<std::string> names_add;
-    std::vector<std::string> names_rem;
-    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
-                        std::inserter(names_add, names_add.begin()));
-    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
-                        std::inserter(names_rem, names_rem.begin()));
-
-    // check if all new references exist & add sources
     auto blck = std::dynamic_pointer_cast<BlockFS>(block());
-    for (auto name : names_add) {
-        if (!blck->hasMultiTag(name))
-            throw std::runtime_error("One or more multiTags do not exist in this block!");
-        addMultiTag(blck->getMultiTag(name)->id());
+    for (const auto &t : add) {
+        MultiTag tag = blck->getMultiTag(t.name());
+        if (!tag || tag.id() != t.id())
+            throw std::runtime_error("One or more data multiTags do not exist in this block!");
+        addMultiTag(t.id());
     }
-    // remove references
-    for (auto name : names_rem) {
-        if (!blck->hasMultiTag(name))
-            removeMultiTag(blck->getMultiTag(name)->id());
+    for (const auto &t : rem) {
+        removeMultiTag(t.id());
     }
 }
 

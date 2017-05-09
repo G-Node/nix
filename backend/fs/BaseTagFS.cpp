@@ -110,42 +110,32 @@ bool BaseTagFS::removeReference(const std::string &name_or_id) {
 
 
 void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
-    // extract vectors of names from vectors of new & old references
-    std::vector<std::string> names_new(refs_new.size());
-    transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
-
-    size_t count = nix::check::fits_in_size_t(referenceCount(), "referenceCount() failed! count > than size_t!");
-    std::vector<DataArray> refs_old(count);
-    for (size_t i = 0; i < refs_old.size(); i++){
-        refs_old[i] = getReference(i);
+    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
+    std::vector<DataArray> new_arrays(refs_new);
+    size_t ref_count = nix::check::fits_in_size_t(referenceCount(), "referenceCount() failed; count > size_t.");
+    std::vector<DataArray> old_arrays(ref_count);
+    for (size_t i = 0; i < old_arrays.size(); i++) {
+        old_arrays[i] = getReference(i);
     }
+    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
+    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
+    std::vector<DataArray> add;
+    std::vector<DataArray> rem;
+    
+    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
+                        std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
+                        std::inserter(rem, rem.begin()), cmp);
 
-    std::vector<std::string> names_old(refs_old.size());
-    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
-
-    // sort them
-    std::sort(names_new.begin(), names_new.end());
-    std::sort(names_new.begin(), names_new.end());
-
-    // get names only in names_new (add), names only in names_old (remove) & ignore rest
-    std::vector<std::string> names_add;
-    std::vector<std::string> names_rem;
-    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
-                        std::inserter(names_add, names_add.begin()));
-    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
-                        std::inserter(names_rem, names_rem.begin()));
-
-    // check if all new references exist & add sources
     auto blck = std::dynamic_pointer_cast<BlockFS>(block());
-    for (auto name : names_add) {
-        if (!blck->hasDataArray(name))
+    for (const auto &da : add) {
+        DataArray a = blck->getDataArray(da.name());
+        if (!a || a.id() != da.id())
             throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(blck->getDataArray(name)->id());
+        addReference(a.id());
     }
-    // remove references
-    for (auto name : names_rem) {
-        if (!blck->hasDataArray(name))
-            removeReference(blck->getDataArray(name)->id());
+    for (const auto &da : rem) {
+        removeReference(da.id());
     }
 }
 
