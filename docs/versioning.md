@@ -49,3 +49,19 @@ If **X** is different there is no backwards or forwards compatibility and
 the version number must match between file and library for it to open the
 file. (Changing where the metadata is rooted or something along the lines
 would be such a change)
+
+## Library and API versioning scheme
+
+The NIX library is versioned with a triplet of integers (like the file format).
+The meaning of each integer in the version triplet defines that version's
+compatibility with either code or files created with other versions.
+Specifically, a change in each number `X`, `Y`, or `Z` signifies the following:
+
+```
+X.Y.Z
+    ^---- minor (non-breaking) change
+  ^------ API change
+^-------- file format change
+```
+
+
