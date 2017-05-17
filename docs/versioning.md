@@ -60,8 +60,47 @@ Specifically, a change in each number `X`, `Y`, or `Z` signifies the following:
 ```
 X.Y.Z
     ^---- minor (non-breaking) change
-  ^------ API change
-^-------- file format change
+  ^------ API change or minor file format revision
+^-------- Major API and file format change
 ```
 
+### Minor changes
 
+A change in `Z` (minor change) signifies that the library has been updated but
+neither the API nor the file format has been affected.  This may signify bug
+fixes, optimisations, or minor changes in the code that do not have any effect
+on how programs are written against NIX or how the NIX files are structured.
+For example, any program written against NIX 1.3.0 should not require changes
+to work against 1.3.1. Similarly, files created with the program written in
+1.3.0 will be readable and writable with 1.3.1.
+
+### API and small file format changes
+
+A change in `Y` signifies that either the API has changed or the file format
+has had a minor revision. A change in the API indicates that programs written
+for older versions of NIX may not work with the newer version (depending on
+whether the program uses functions that have changed or not). When an API
+change occurs, the binding libraries need to be updated to reflect the changes
+and therefore a change in `Y` in NIX should be accompanied by a respective
+change in the binding library versions.
+
+Small changes in the file format are also reflected by changing the `Y` value
+of the version. This occurs when the file format version's `Y` value is
+increased.
+
+### Major API and file format changes
+
+A change in `X` signifies that major changes have been made to both the API,
+the library, and the file format.  Such major changes make all aspects of NIX
+incompatible with older versions.  Essentially, this kind of change means that
+both the library and the file format have been redesigned and neither files
+created with older version of NIX, nor programs written against older versions
+of NIX will work with the new library.
+
+### Bindings
+
+Bindings for other languages (Python, Java, Matlab) should work for all
+versions that share the same API. Therefore, any bindings version should work
+with any NIX version as long as `X` and `Y` match. Differences in the `Z` value
+should not be considered when checking if a given binding library works against
+a given NIX version.
