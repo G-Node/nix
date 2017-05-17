@@ -35,17 +35,17 @@ the two critical scenarios that might occur:
    2. An old library (OL) wants to open a file that is newer (NF)
 
 
-If all components but the last, i.e **Z**, match, it means for the
+If all components but the last, i.e `Z`, match, it means for the
 scenarios *1* and *2* that the library must be able to **read**
 but **not write** the file. (The addition of the Group
 entity or the DataFrame entity would be such a change.)
 
-If X matches but **Y** is different, (1.) a new library (*NL*) must be
+If `X` matches but `Y` is different, (1.) a new library (*NL*) must be
 able to read the old file (*OF*), but (2.) an old library *OL* must not
 read or write a new file *NF*. (To change the way booleans are stored
 would be such a change)
 
-If **X** is different there is no backwards or forwards compatibility and
+If `X` is different there is no backwards or forwards compatibility and
 the version number must match between file and library for it to open the
 file. (Changing where the metadata is rooted or something along the lines
 would be such a change)
