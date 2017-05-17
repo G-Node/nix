@@ -54,48 +54,43 @@ would be such a change)
 
 The NIX library is versioned with a triplet of integers (like the file format).
 The meaning of each integer in the version triplet defines that version's
-compatibility with either code or files created with other versions.
-Specifically, a change in each number `X`, `Y`, or `Z` signifies the following:
+compatibility with code written against other versions. Specifically, a change
+in each number `X`, `Y`, or `Z` signifies the following:
 
 ```
 X.Y.Z
     ^---- minor (non-breaking) change
-  ^------ API change or minor file format revision
-^-------- Major API and file format change
+  ^------ API change
+^-------- Major API
 ```
 
 ### Minor changes
 
 A change in `Z` (minor change) signifies that the library has been updated but
-neither the API nor the file format has been affected.  This may signify bug
-fixes, optimisations, or minor changes in the code that do not have any effect
-on how programs are written against NIX or how the NIX files are structured.
-For example, any program written against NIX 1.3.0 should not require changes
-to work against 1.3.1. Similarly, files created with the program written in
-1.3.0 will be readable and writable with 1.3.1.
+the API has not been affected. This may signify bug fixes, optimisations, or
+minor changes in the code that do not have any effect on how programs are
+written against NIX. For example, any program written against NIX 1.3.0 should
+not require changes to work against 1.3.1.
 
-### API and small file format changes
+### API changes
 
-A change in `Y` signifies that either the API has changed or the file format
-has had a minor revision. A change in the API indicates that programs written
-for older versions of NIX may not work with the newer version (depending on
-whether the program uses functions that have changed or not). When an API
-change occurs, the binding libraries need to be updated to reflect the changes
-and therefore a change in `Y` in NIX should be accompanied by a respective
-change in the binding library versions.
+A change in `Y` signifies that the API has changed. A change in the API
+means that programs written for older versions of NIX may not work with the
+newer version (depending on whether the program uses functions that have
+changed or not). When an API change occurs, the binding libraries need to be
+updated to reflect the changes and therefore a change in `Y` in NIX should be
+accompanied by a respective change in the binding library versions.
 
-Small changes in the file format are also reflected by changing the `Y` value
-of the version. This occurs when the file format version's `Y` value is
-increased.
+### Major API changes
 
-### Major API and file format changes
+A change in `X` signifies that major changes have been made to the API and the
+library. Such major changes make all aspects of NIX incompatible with older
+versions. Essentially, this kind of change means that both the library and the
+file format have been redesigned.
 
-A change in `X` signifies that major changes have been made to both the API,
-the library, and the file format.  Such major changes make all aspects of NIX
-incompatible with older versions.  Essentially, this kind of change means that
-both the library and the file format have been redesigned and neither files
-created with older version of NIX, nor programs written against older versions
-of NIX will work with the new library.
+Changing the `X` value of the library version is accompanied by the same change
+in the file format version.  In other words, when the file format version
+changes to version `2`, the library will also be changed to version `2`.
 
 ### Bindings
 
