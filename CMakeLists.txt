@@ -51,7 +51,7 @@ else()
   set(HDF5_USE_STATIC_LIBS OFF)
   find_package (HDF5 REQUIRED COMPONENTS C)
 endif()
-include_directories (${HDF5_INCLUDE_DIR})
+include_directories (${HDF5_INCLUDE_DIRS})
 set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 
 
