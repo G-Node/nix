@@ -18,6 +18,7 @@
 #include <nix/NDSize.hpp>
 #include <nix/Tag.hpp>
 #include <nix/MultiTag.hpp>
+#include <nix/ObjectType.hpp>
 
 
 namespace nix {
@@ -111,6 +112,13 @@ public:
 };
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IGroup> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Group;
+};
+
 } // namespace nix
 
 #endif //NIX_IGROUP_HPP

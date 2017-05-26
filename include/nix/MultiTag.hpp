@@ -14,6 +14,7 @@
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
 #include <nix/DataView.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <algorithm>
 #include <memory>
@@ -509,6 +510,11 @@ public:
 
 };
 
+template<>
+struct objectToType<nix::MultiTag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::MultiTag;
+};
 
 } // namespace nix
 

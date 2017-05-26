@@ -16,6 +16,7 @@
 #include <nix/base/IMultiTag.hpp>
 #include <nix/base/IGroup.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/Identity.hpp>
 
 #include <string>
 #include <vector>
@@ -144,6 +145,12 @@ public:
 };
 
 } // namespace base
+
+template<>
+struct objectToType<base::IBlock> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Block;
+};
 } // namespace nix
 
 

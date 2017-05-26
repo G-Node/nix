@@ -13,6 +13,7 @@
 #include <nix/base/IDimensions.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <string>
 #include <vector>
@@ -163,6 +164,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IDataArray> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::DataArray;
+};
+
 } // namespace nix
 
 #endif // NIX_I_DATA_ARRAY_H

@@ -13,6 +13,7 @@
 #include <nix/base/IGroup.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
 
 
 namespace nix {
@@ -472,6 +473,12 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Group &ent);
+};
+
+template<>
+struct objectToType<nix::Group> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Group;
 };
 
 } // namespace nix

@@ -11,6 +11,7 @@
 
 #include <string>
 #include <nix/base/NamedEntity.hpp>
+#include <nix/ObjectType.hpp>
 
 namespace nix {
 
@@ -19,20 +20,25 @@ public:
     Identity(std::string name, std::string id)
         : myName(std::move(name)), myId(std::move(id)) { }
 
+    Identity(std::string name, std::string id, ObjectType type)
+        : myName(std::move(name)), myId(std::move(id)), myType(type) { }
+
     template<typename T>
     Identity(const base::NamedEntity<T> &e)
-        : myName(e.name()), myId(e.id()) { }
+        : myName(e.name()), myId(e.id()), myType(objectToType<T>::value) { }
 
     template<typename T>
     Identity(const base::Entity<T> &e)
-        : myName(""), myId(e.id()) { }
+        : myName(""), myId(e.id()), myType(objectToType<T>::value) { }
 
-    const std::string & id() const { return myId; };
-    const std::string & name() const { return myName; };
+    const std::string & id() const { return myId; }
+    const std::string & name() const { return myName; }
+    const ObjectType type() const { return myType; }
 
-private:
-     std::string myName;
-     std::string myId;
+ private:
+    std::string myName;
+    std::string myId;
+    ObjectType  myType;
 };
 
 } //nix::

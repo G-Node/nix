@@ -16,6 +16,8 @@
 #include <nix/DataType.hpp>
 #include <nix/Platform.hpp>
 #include <nix/types.hpp>
+#include <nix/ObjectType.hpp>
+
 #include <memory>
 #include <functional>
 #include <string>
@@ -544,6 +546,11 @@ private:
     size_t tree_depth() const;
 };
 
+template<>
+struct objectToType<nix::Section> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Section;
+};
 
 } // namespace nix
 

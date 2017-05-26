@@ -835,6 +835,27 @@ public:
 
 };
 
+template<>
+struct objectToType<nix::SetDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::SetDimension;
+};
+
+
+template<>
+struct objectToType<nix::SampledDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::SampledDimension;
+};
+
+
+
+template<>
+struct objectToType<nix::RangeDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::RangeDimension;
+};
+
 } // namespace nix
 
 #endif // NIX_DIMENSIONS_H

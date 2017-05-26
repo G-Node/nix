@@ -728,6 +728,11 @@ public:
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Block &ent);
 
+
+template<>
+struct objectToType<Block> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Block;
 };
 
 }
