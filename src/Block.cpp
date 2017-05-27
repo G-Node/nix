@@ -93,37 +93,15 @@ MultiTag Block::createMultiTag(const std::string &name, const std::string &type,
     if(!positions.isValidEntity()) {
         throw UninitializedEntity();
     }
-    if (backend()->hasMultiTag(name)) {
+    if (hasMultiTag(name)) {
         throw DuplicateName("createMultiTag");
     }
     return backend()->createMultiTag(name, type, positions);
 }
 
-MultiTag Block::getMultiTag(ndsize_t index) const {
-    if (index >= backend()->multiTagCount()) {
-        throw nix::OutOfBounds("Block::getMultiTag: index is out of bounds!");
-    }
-    return backend()->getMultiTag(index);
-}
-
-bool Block::hasMultiTag(const MultiTag &multi_tag) const {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    MultiTag mt = backend()->getMultiTag(multi_tag.name());
-    return mt && mt.id() == multi_tag.id();
-}
-
 std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f, multiTagCount(), filter);
-}
-
-bool Block::deleteMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    return backend()->deleteMultiTag(multi_tag.name());
 }
 
 Group Block::createGroup(const std::string &name, const std::string &type) {

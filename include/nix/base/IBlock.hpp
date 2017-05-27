@@ -102,24 +102,9 @@ public:
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    virtual bool hasMultiTag(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const = 0;
-
-
-    virtual ndsize_t multiTagCount() const = 0;
-
-
     // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
     virtual std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                             const DataArray &positions) = 0;
-
-
-    virtual bool deleteMultiTag(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning groups.

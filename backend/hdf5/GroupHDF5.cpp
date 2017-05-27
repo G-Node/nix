@@ -223,10 +223,7 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
 
 
 bool GroupHDF5::hasMultiTag(const std::string &name_or_id) const {
-    std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasMultiTag(name_or_id)) {
-        id = block()->getMultiTag(name_or_id)->id();
-    }
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::MultiTag});
     return multi_tag_group(false) ? multi_tag_group(false)->hasGroup(id) : false;
 }
 
@@ -239,11 +236,12 @@ ndsize_t GroupHDF5::multiTagCount() const {
 
 void GroupHDF5::addMultiTag(const std::string &name_or_id) {
     boost::optional<H5Group> g = multi_tag_group(true);
+    std::shared_ptr<IMultiTag> tag = block()->getEntity<IMultiTag>(name_or_id);
 
-    if (!block()->hasMultiTag(name_or_id))
+    if (!tag)
         throw std::runtime_error("GroupHDF5::addMultiTag: MultiTag not found in block!");
 
-    auto target = std::dynamic_pointer_cast<MultiTagHDF5>(block()->getMultiTag(name_or_id));
+    auto target = std::dynamic_pointer_cast<MultiTagHDF5>(tag);
     g->createLink(target->group(), target->id());
 }
 
@@ -251,10 +249,7 @@ void GroupHDF5::addMultiTag(const std::string &name_or_id) {
 std::shared_ptr<base::IMultiTag> GroupHDF5::getMultiTag(const std::string &name_or_id) const {
     std::shared_ptr<IMultiTag> da;
     boost::optional<H5Group> g = multi_tag_group(false);
-    std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasMultiTag(name_or_id)) {
-        id = block()->getMultiTag(name_or_id)->id();
-    }
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::MultiTag});
 
     if (g && hasMultiTag(id)) {
         H5Group h5g = g->openGroup(id);
@@ -304,9 +299,8 @@ void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
     std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
                         std::inserter(rem, rem.begin()), cmp);
 
-    auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
     for (const auto &t : add) {
-        MultiTag tag = blck->getMultiTag(t.name());
+        MultiTag tag = block()->getEntity<IMultiTag>(t);
         if (!tag || tag.id() != t.id())
             throw std::runtime_error("One or more data multiTags do not exist in this block!");
         addMultiTag(t.id());

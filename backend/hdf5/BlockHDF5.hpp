@@ -126,23 +126,8 @@ public:
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
-
-
-    ndsize_t multiTagCount() const;
-
-
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                   const DataArray &positions);
-
-
-    bool deleteMultiTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning groups.

@@ -65,6 +65,10 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
         p = tag_group();
         break;
 
+    case ObjectType::MultiTag:
+        p = multi_tag_group();
+        break;
+
     //TODO
     default:
        p = boost::optional<H5Group>();
@@ -149,6 +153,14 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
         shared_ptr<TagHDF5> tag;
         if (eg) {
             tag = make_shared<TagHDF5>(file(), block(), *eg);
+        }
+        return tag;
+    }
+
+    case ObjectType::MultiTag: {
+        shared_ptr<MultiTagHDF5> tag;
+        if (eg) {
+            tag = make_shared<MultiTagHDF5>(file(), block(), *eg);
         }
         return tag;
     }
@@ -295,51 +307,6 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
 
     H5Group group = g->openGroup(name);
     return make_shared<MultiTagHDF5>(file(), block(), group, id, type, name, positions);
-}
-
-
-bool BlockHDF5::hasMultiTag(const string &name_or_id) const {
-    return getMultiTag(name_or_id) != nullptr;
-}
-
-
-shared_ptr<IMultiTag> BlockHDF5::getMultiTag(const string &name_or_id) const {
-    shared_ptr<MultiTagHDF5> mtag;
-    boost::optional<H5Group> g = multi_tag_group();
-
-    if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group)
-            mtag = make_shared<MultiTagHDF5>(file(), block(), *group);
-    }
-
-    return mtag;
-}
-
-
-shared_ptr<IMultiTag> BlockHDF5::getMultiTag(ndsize_t index) const {
-    boost::optional<H5Group> g = multi_tag_group();
-    string name = g ? g->objectName(index) : "";
-    return getMultiTag(name);
-}
-
-
-ndsize_t BlockHDF5::multiTagCount() const {
-    boost::optional<H5Group> g = multi_tag_group();
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-bool BlockHDF5::deleteMultiTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = multi_tag_group();
-    bool deleted = false;
-
-    if (hasMultiTag(name_or_id) && g) {
-        // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getMultiTag(name_or_id)->name());
-    }
-
-    return deleted;
 }
 
 //--------------------------------------------------

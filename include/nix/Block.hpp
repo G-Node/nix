@@ -545,7 +545,7 @@ public:
      * @return True if the multi tag exists, false otherwise.
      */
     bool hasMultiTag(const std::string &name_or_id) const {
-        return backend()->hasMultiTag(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -555,7 +555,12 @@ public:
     *
     * @return True if the multi tag exists, false otherwise.
     */
-    bool hasMultiTag(const MultiTag &multi_tag) const;
+    bool hasMultiTag(const MultiTag &multi_tag) const {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(multi_tag);
+    }
 
     /**
      * @brief Retrieves a specific multi tag from the block by its id.
@@ -566,7 +571,7 @@ public:
      *         an exception will be thrown.
      */
     MultiTag getMultiTag(const std::string &name_or_id) const {
-        return backend()->getMultiTag(name_or_id);
+        return backend()->getEntity<base::IMultiTag>(name_or_id);
     }
 
     /**
@@ -576,7 +581,12 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(ndsize_t index) const;
+    MultiTag getMultiTag(ndsize_t index) const {
+        if (index >= multiTagCount()) {
+            throw OutOfBounds("Block::getMultiTag: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IMultiTag>(index);
+    }
 
     /**
      * @brief Get multi tags within this block.
@@ -597,7 +607,7 @@ public:
      * @return The number of multi tags.
      */
     ndsize_t multiTagCount() const {
-        return backend()->multiTagCount();
+        return backend()->entityCount(ObjectType::MultiTag);
     }
 
     /**
@@ -623,7 +633,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteMultiTag(const std::string &name_or_id) {
-        return backend()->deleteMultiTag(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -636,7 +646,12 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteMultiTag(const MultiTag &multi_tag);
+    bool deleteMultiTag(const MultiTag &multi_tag) {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(multi_tag);
+    }
 
     //--------------------------------------------------
     // Methods concerning groups
