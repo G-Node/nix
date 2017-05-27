@@ -92,7 +92,7 @@ public:
 
     bool hasSource(const std::string &name_or_id) const;
 
-    
+
     std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
@@ -111,23 +111,9 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArray(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
-
-    
-    std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
-
-
-    ndsize_t dataArrayCount() const;
-
-
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
                                                       nix::DataType data_type, const NDSize &shape);
 
-
-    bool deleteDataArray(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning tags.

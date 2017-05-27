@@ -300,38 +300,6 @@ bool BlockHDF5::deleteTag(const std::string &name_or_id) {
 //--------------------------------------------------
 
 
-bool BlockHDF5::hasDataArray(const string &name_or_id) const {
-    return getDataArray(name_or_id) != nullptr;
-}
-
-
-shared_ptr<IDataArray> BlockHDF5::getDataArray(const string &name_or_id) const {
-    shared_ptr<DataArrayHDF5> da;
-    boost::optional<H5Group> g = data_array_group();
-
-    if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group)
-            da = make_shared<DataArrayHDF5>(file(), block(), *group);
-    }
-
-    return da;
-}
-
-
-shared_ptr<IDataArray> BlockHDF5::getDataArray(ndsize_t index) const {
-    boost::optional<H5Group> g = data_array_group();
-    string name = g ? g->objectName(index) : "";
-    return getDataArray(name);
-}
-
-
-ndsize_t BlockHDF5::dataArrayCount() const {
-    boost::optional<H5Group> g = data_array_group();
-    return g ? g->objectCount() : size_t(0);
-}
-
-
 shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
@@ -346,20 +314,6 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     da->createData(data_type, shape);
     return da;
 }
-
-
-bool BlockHDF5::deleteDataArray(const string &name_or_id) {
-    bool deleted = false;
-    boost::optional<H5Group> g = data_array_group();
-
-    if (hasDataArray(name_or_id) && g) {
-        // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getDataArray(name_or_id)->name());
-    }
-
-    return deleted;
-}
-
 
 //--------------------------------------------------
 // Methods related to MultiTag

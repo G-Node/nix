@@ -87,23 +87,9 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    virtual bool hasDataArray(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const = 0;
-
-
-    virtual ndsize_t dataArrayCount() const = 0;
-
-
     virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
                                                               nix::DataType data_type, const NDSize &shape) = 0;
 
-
-    virtual bool deleteDataArray(const std::string &name_or_id) = 0;
 
     //--------------------------------------------------
     // Methods concerning tags.

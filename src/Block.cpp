@@ -63,7 +63,7 @@ bool Block::deleteSource(const Source &source) {
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
                                  const NDSize &shape) {
     util::checkEntityNameAndType(name, type);
-    if (backend()->hasDataArray(name)){
+    if (hasDataArray(name)){
         throw DuplicateName("create DataArray");
     }
     return backend()->createDataArray(name, type, data_type, shape);

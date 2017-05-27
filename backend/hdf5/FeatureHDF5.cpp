@@ -69,14 +69,15 @@ void FeatureHDF5::linkType(LinkType link_type) {
 
 
 void FeatureHDF5::data(const std::string &name_or_id) {
-    if (!block->hasDataArray(name_or_id)) {
+    std::shared_ptr<IDataArray> ida = block->getEntity<IDataArray>(name_or_id);
+    if (!ida) {
         throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
     }
     if (group().hasGroup("data")) {
         group().removeGroup("data");
     }
-    
-    auto target = dynamic_pointer_cast<DataArrayHDF5>(block->getDataArray(name_or_id));
+
+    auto target = dynamic_pointer_cast<DataArrayHDF5>(ida);
 
     group().createLink(target->group(), "data");
     forceUpdatedAt();
@@ -89,7 +90,7 @@ shared_ptr<IDataArray> FeatureHDF5::data() const {
     if (group().hasGroup("data")) {
         H5Group other_group = group().openGroup("data", false);
         da = make_shared<DataArrayHDF5>(file(), block, other_group);
-        if (!block->hasDataArray(da->id())) {
+        if (!block->hasEntity(da)) {
             throw std::runtime_error("FeatureHDF5::data: DataArray not found!");
         }
     }

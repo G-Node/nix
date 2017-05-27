@@ -51,14 +51,14 @@ std::shared_ptr<IDataArray> MultiTagHDF5::positions() const {
     if (group().hasGroup("positions")) {
         H5Group other_group = group().openGroup("positions", false);
         da = std::make_shared<DataArrayHDF5>(file(), block(), other_group);
-        if (!block()->hasDataArray(da->id())) 
+        if (!block()->getEntity(da))
             error = true;
     }
     else error = true;
-    
+
     // NOTE: we check that link exists in both places, here & in entity
     // if error = true it was missing in one of the two
-    if (error) 
+    if (error)
         throw std::runtime_error("MultiTagHDF5::positions: DataArray not found!");
 
     return da;
@@ -66,12 +66,13 @@ std::shared_ptr<IDataArray> MultiTagHDF5::positions() const {
 
 
 void MultiTagHDF5::positions(const std::string &name_or_id) {
-    if (!block()->hasDataArray(name_or_id))
+    std::shared_ptr<IDataArray> ida = block()->getEntity<IDataArray>(name_or_id);
+    if (!ida)
         throw std::runtime_error("MultiTagHDF5::positions: DataArray not found in block!");
     if (group().hasGroup("positions"))
         group().removeGroup("positions");
-    
-    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
+
+    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(ida);
 
     group().createLink(target->group(), "positions");
     forceUpdatedAt();
@@ -79,7 +80,7 @@ void MultiTagHDF5::positions(const std::string &name_or_id) {
 
 
 bool MultiTagHDF5::hasPositions() const {
-    // NOTE: other than in positions getter here we do not check that the 
+    // NOTE: other than in positions getter here we do not check that the
     // positions DataArray also exists in block - we just say it does here
     return group().hasGroup("positions");
 }
@@ -92,12 +93,12 @@ std::shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
     if (group().hasGroup("extents")) {
         H5Group other_group = group().openGroup("extents", false);
         da = std::make_shared<DataArrayHDF5>(file(), block(), other_group);
-        if (!block()->hasDataArray(da->id())) 
+        if (!block()->hasEntity(da))
             error = true;
     }
-    
+
     // NOTE: we check that link exists in parent entity: if error, it was missing there
-    if (error) 
+    if (error)
         throw std::runtime_error("MultiTagHDF5::extents: DataArray not found!");
 
     return da;
@@ -105,15 +106,16 @@ std::shared_ptr<IDataArray>  MultiTagHDF5::extents() const {
 
 
 void MultiTagHDF5::extents(const std::string &name_or_id) {
-    if (!block()->hasDataArray(name_or_id))
+    std::shared_ptr<IDataArray> ida = block()->getEntity<IDataArray>(name_or_id);
+
+    if (!ida)
         throw std::runtime_error("MultiTagHDF5::extents: DataArray not found in block!");
     if (group().hasGroup("extents"))
         group().removeGroup("extents");
 
-    auto da = block()->getDataArray(name_or_id);
-    if (!checkDimensions(da, positions()))
+    if (!checkDimensions(ida, positions()))
         throw std::runtime_error("MultiTagHDF5::extents: cannot set Extent because dimensionality of extent and position data do not match!");
-    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(da);
+    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(ida);
 
     group().createLink(target->group(), "extents");
     forceUpdatedAt();

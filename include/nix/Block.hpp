@@ -304,6 +304,9 @@ public:
      * @return The data array at the specified index.
      */
     DataArray getDataArray(ndsize_t index) const {
+        if (index >= dataArrayCount()) {
+            throw OutOfBounds("Block::getDataArray: index is out of bounds!");
+        }
         return getEntity<base::IDataArray>(index);
     }
 
