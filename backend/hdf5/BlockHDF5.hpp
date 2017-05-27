@@ -62,6 +62,29 @@ public:
      */
     BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
+
+private:
+    // Helper methods for generic entity related methods below
+    boost::optional<H5Group> groupForObjectType(ObjectType ot) const;
+
+    boost::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
+
+public:
+    //--------------------------------------------------
+    // Generic entity methods
+    //--------------------------------------------------
+
+    bool hasEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const;
+
+    ndsize_t entityCount(ObjectType type) const;
+
+    bool removeEntity(const nix::Identity &ident);
+
+
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------

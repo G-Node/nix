@@ -53,6 +53,108 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
 // Methods concerning sources
 //--------------------------------------------------
 
+boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
+    boost::optional<H5Group> p;
+
+    switch (type) {
+    case ObjectType::DataArray:
+        p = data_array_group();
+        break;
+
+    //TODO
+    default:
+       p = boost::optional<H5Group>();
+    }
+
+    return p;
+}
+
+boost::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) const {
+    boost::optional<H5Group> p = groupForObjectType(ident.type());
+
+    if (!p) {
+        return p;
+    }
+
+    boost::optional<H5Group> g;
+    const std::string &iname = ident.name();
+    const std::string &iid = ident.id();
+
+    bool haveName = !iname.empty();
+    bool haveId = !iid.empty();
+
+    if (!haveName && !haveId) {
+        return g;
+    }
+
+    std::string needle = haveName ? iname : iid;
+    bool foundNeedle = p->hasObject(needle);
+
+    if (foundNeedle) {
+        g = boost::make_optional(p->openGroup(needle, false));
+    } else if (haveId) {
+        g = p->findGroupByAttribute("entity_id", iid);
+    }
+
+    if (g && haveName && haveId) {
+        std::string eid;
+        g->getAttr("entity_id", eid);
+
+        if (eid != iid) {
+            return boost::optional<H5Group>();
+        }
+    }
+
+    return g;
+}
+
+bool BlockHDF5::hasEntity(const nix::Identity &ident) const {
+    boost::optional<H5Group> p = findEntityGroup(ident);
+    return !!p;
+}
+
+std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) const {
+    boost::optional<H5Group> eg = findEntityGroup(ident);
+
+    switch (ident.type()) {
+    case ObjectType::DataArray:
+        shared_ptr<DataArrayHDF5> da;
+        if (eg) {
+            da = make_shared<DataArrayHDF5>(file(), block(), *eg);
+        }
+        return da;
+    }
+
+    return std::shared_ptr<base::IEntity>();
+}
+
+std::shared_ptr<base::IEntity>BlockHDF5::getEntity(ObjectType type, ndsize_t index) const {
+    boost::optional<H5Group> eg = groupForObjectType(type);
+    string name = eg ? eg->objectName(index) : "";
+    return getEntity({name, "", type});
+}
+
+ndsize_t BlockHDF5::entityCount(ObjectType type) const {
+    boost::optional<H5Group> g = groupForObjectType(type);
+    return g ? g->objectCount() : ndsize_t(0);
+}
+
+bool BlockHDF5::removeEntity(const nix::Identity &ident) {
+    boost::optional<H5Group> p = groupForObjectType(ident.type());
+    boost::optional<H5Group> eg = findEntityGroup(ident);
+
+    if (!p || !eg) {
+        return false;
+    }
+
+    // we get first "entity" link by name, but delete all others whatever their name with it
+    std::string name;
+    eg->getAttr("name", name);
+
+    return p->removeAllLinks(name);
+}
+
+//
 
 bool BlockHDF5::hasSource(const string &name_or_id) const {
     return getSource(name_or_id) != nullptr;
