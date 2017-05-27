@@ -110,22 +110,7 @@ public:
     // Methods concerning groups.
     //--------------------------------------------------
 
-    virtual bool hasGroup(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const = 0;
-
-
-    virtual ndsize_t groupCount() const = 0;
-
-
     virtual std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type) = 0;
-
-
-    virtual bool deleteGroup(const std::string &name_or_id) = 0;
 
 
     virtual ~IBlock() {}

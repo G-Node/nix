@@ -106,18 +106,10 @@ std::vector<MultiTag> Block::multiTags(const util::AcceptAll<MultiTag>::type &fi
 
 Group Block::createGroup(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
-    if (backend()->hasGroup(name)) {
+    if (hasGroup(name)) {
         throw DuplicateName("createGroup");
     }
     return backend()->createGroup(name, type);
-}
-
-bool Block::hasGroup(const Group &group) const {
-    if (!util::checkEntityInput(group, false)) {
-        return false;
-    }
-    Group g = backend()->getGroup(group.name());
-    return g && g.id() == group.id();
 }
 
 std::vector<Group> Block::groups(const util::AcceptAll<Group>::type &filter) const {
@@ -125,12 +117,6 @@ std::vector<Group> Block::groups(const util::AcceptAll<Group>::type &filter) con
     return getEntities<Group>(f, groupCount(), filter);
 }
 
-bool Block::deleteGroup(const Group &group) {
-    if (!util::checkEntityInput(group, false)) {
-        return false;
-    }
-    return backend()->deleteGroup(group.name());
-}
 
 std::ostream &operator<<(std::ostream &out, const Block &ent) {
     out << "Block: {name = " << ent.name();

@@ -664,7 +664,7 @@ public:
     * @return True if the group exists, false otherwise.
     */
     bool hasGroup(const std::string &name_or_id) const {
-        return backend()->hasGroup(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Group});
     }
 
     /**
@@ -674,7 +674,12 @@ public:
     *
     * @return True if the group exists, false otherwise.
     */
-    bool hasGroup(const Group &group) const;
+    bool hasGroup(const Group &group) const {
+        if (!util::checkEntityInput(group, false)) {
+            return false;
+        }
+        return backend()->hasEntity(group);
+    }
 
     /**
      * @brief Retrieves a specific group from the block by its id.
@@ -685,7 +690,7 @@ public:
      *         an exception will be thrown.
      */
     Group getGroup(const std::string &name_or_id) const {
-        return backend()->getGroup(name_or_id);
+        return backend()->getEntity<base::IGroup>(name_or_id);
     }
 
     /**
@@ -696,7 +701,10 @@ public:
      * @return The group at the specified index.
      */
     Group getGroup(ndsize_t index) const {
-        return backend()->getGroup(index);
+        if (index >= groupCount()) {
+            throw OutOfBounds("Block::getGroup: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IGroup>(index);
     }
 
     /**
@@ -718,7 +726,7 @@ public:
      * @return The number of groups.
      */
     ndsize_t groupCount() const {
-        return backend()->groupCount();
+        return backend()->entityCount(ObjectType::Group);
     }
 
     /**
@@ -742,7 +750,7 @@ public:
      * @return True if the group was removed, false otherwise.
      */
     bool deleteGroup(const std::string &name_or_id) {
-        return backend()->deleteGroup(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::Group});
     }
 
     /**
@@ -755,7 +763,12 @@ public:
     *
     * @return True if the group was removed, false otherwise.
     */
-    bool deleteGroup(const Group &multi_tag);
+    bool deleteGroup(const Group &group) {
+        if (!util::checkEntityInput(group, false)) {
+            return false;
+        }
+        return backend()->removeEntity(group);
+    }
 
     //------------------------------------------------------
     // Operators and other functions

@@ -69,6 +69,10 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
         p = multi_tag_group();
         break;
 
+    case ObjectType::Group:
+        p = groups_group();
+        break;
+
     //TODO
     default:
        p = boost::optional<H5Group>();
@@ -163,6 +167,14 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
             tag = make_shared<MultiTagHDF5>(file(), block(), *eg);
         }
         return tag;
+    }
+
+    case ObjectType::Group: {
+        shared_ptr<GroupHDF5> groups;
+        if (eg) {
+            groups = make_shared<GroupHDF5>(file(), block(), *eg);
+        }
+        return groups;
     }
 
     }
@@ -319,48 +331,6 @@ shared_ptr<IGroup> BlockHDF5::createGroup(const std::string &name, const std::st
 
     H5Group group = g->openGroup(name);
     return make_shared<GroupHDF5>(file(), block(), group, id, type, name);
-}
-
-
-    bool BlockHDF5::hasGroup(const string &name_or_id) const {
-    return getGroup(name_or_id) != nullptr;
-}
-
-
-shared_ptr<IGroup> BlockHDF5::getGroup(const string &name_or_id) const {
-    shared_ptr<GroupHDF5> group;
-    boost::optional<H5Group> g = groups_group();
-
-    if (g) {
-        boost::optional<H5Group> h5g = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (h5g)
-            group = make_shared<GroupHDF5>(file(), block(), *h5g);
-    }
-    return group;
-}
-
-
-shared_ptr<IGroup> BlockHDF5::getGroup(ndsize_t index) const {
-    boost::optional<H5Group> g = groups_group();
-    string name = g ? g->objectName(index) : "";
-    return getGroup(name);
-}
-
-
-ndsize_t BlockHDF5::groupCount() const {
-    boost::optional<H5Group> g = groups_group();
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-bool BlockHDF5::deleteGroup(const std::string &name_or_id) {
-    boost::optional<H5Group> g = groups_group();
-    bool deleted = false;
-
-    if (hasGroup(name_or_id) && g) {
-        deleted = g->removeAllLinks(getGroup(name_or_id)->name());
-    }
-    return deleted;
 }
 
 
