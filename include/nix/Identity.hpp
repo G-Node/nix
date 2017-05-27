@@ -33,6 +33,10 @@ public:
     Identity(const base::Entity<T> &e)
         : myName(""), myId(e.id()), myType(objectToType<T>::value) { }
 
+    template<typename T>
+    Identity(const std::shared_ptr<T> &e)
+        : myName(e->name()), myId(e->id()), myType(objectToType<T>::value) { }
+
     const std::string & id() const { return myId; }
     const std::string & name() const { return myName; }
     const ObjectType type() const { return myType; }
