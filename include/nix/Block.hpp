@@ -425,7 +425,7 @@ public:
      * @return True if the tag exists, false otherwise.
      */
     bool hasTag(const std::string &name_or_id) const {
-        return backend()->hasTag(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -435,7 +435,12 @@ public:
     *
     * @return True if the tag exists, false otherwise.
     */
-    bool hasTag(const Tag &tag) const;
+    bool hasTag(const Tag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
 
     /**
      * @brief Retrieves a specific tag from the block by its id.
@@ -446,7 +451,7 @@ public:
      *         an exception will be thrown.
      */
     Tag getTag(const std::string &name_or_id) const {
-        return backend()->getTag(name_or_id);
+        return backend()->getEntity<base::ITag>(name_or_id);
     }
 
     /**
@@ -456,7 +461,12 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(ndsize_t index) const;
+    Tag getTag(ndsize_t index) const {
+        if (index >= tagCount()) {
+            throw OutOfBounds("Block::getTag: index is out of bounds!");
+        }
+        return backend()->getEntity<base::ITag>(index);
+    }
 
     /**
      * @brief Get tags within this block.
@@ -477,7 +487,7 @@ public:
      * @return The number of tags.
      */
     ndsize_t tagCount() const {
-        return backend()->tagCount();
+        return backend()->entityCount(ObjectType::Tag);
     }
 
     /**
@@ -503,7 +513,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteTag(const std::string &name_or_id) {
-        return backend()->deleteTag(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -516,7 +526,12 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteTag(const Tag &tag);
+    bool deleteTag(const Tag &tag) {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(tag);
+    }
 
     //--------------------------------------------------
     // Methods concerning multi tags.

@@ -119,23 +119,8 @@ public:
     // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(ndsize_t index) const;
-
-
-    ndsize_t tagCount() const;
-
-
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
                                                       const std::vector<double> &position);
-
-
-    bool deleteTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning multi tags.

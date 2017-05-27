@@ -133,10 +133,7 @@ void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
 
 
 bool GroupHDF5::hasTag(const std::string &name_or_id) const {
-    std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
-        id = block()->getTag(name_or_id)->id();
-    }
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::Tag});
     return tag_group(false) ? tag_group(false)->hasGroup(id) : false;
 }
 
@@ -149,11 +146,12 @@ ndsize_t GroupHDF5::tagCount() const {
 
 void GroupHDF5::addTag(const std::string &name_or_id) {
     boost::optional<H5Group> g = tag_group(true);
+    std::shared_ptr<ITag> tag = block()->getEntity<ITag>(name_or_id);
 
-    if (!block()->hasTag(name_or_id))
+    if (!tag)
         throw std::runtime_error("GroupHDF5::addTag: Tag not found in block!");
 
-    auto target = std::dynamic_pointer_cast<TagHDF5>(block()->getTag(name_or_id));
+    auto target = std::dynamic_pointer_cast<TagHDF5>(tag);
     g->createLink(target->group(), target->id());
 }
 
@@ -161,10 +159,7 @@ void GroupHDF5::addTag(const std::string &name_or_id) {
 std::shared_ptr<base::ITag> GroupHDF5::getTag(const std::string &name_or_id) const {
     std::shared_ptr<ITag> da;
     boost::optional<H5Group> g = tag_group(false);
-    std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasTag(name_or_id)) {
-        id = block()->getTag(name_or_id)->id();
-    }
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::Tag});
 
     if (g && hasTag(id)) {
         H5Group h5g = g->openGroup(id);
@@ -214,9 +209,8 @@ void GroupHDF5::tags(const std::vector<Tag> &tags) {
     std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
                         std::inserter(rem, rem.begin()), cmp);
 
-    auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
     for (const auto &t : add) {
-        Tag tag = blck->getTag(t.name());
+        Tag tag = block()->getEntity<ITag>(t);
         if (!tag || tag.id() != t.id())
             throw std::runtime_error("One or more data tags do not exist in this block!");
         addTag(t.id());

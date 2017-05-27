@@ -61,6 +61,10 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
         p = data_array_group();
         break;
 
+    case ObjectType::Tag:
+        p = tag_group();
+        break;
+
     //TODO
     default:
        p = boost::optional<H5Group>();
@@ -133,12 +137,22 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
     boost::optional<H5Group> eg = findEntityGroup(ident);
 
     switch (ident.type()) {
-    case ObjectType::DataArray:
+    case ObjectType::DataArray: {
         shared_ptr<DataArrayHDF5> da;
         if (eg) {
             da = make_shared<DataArrayHDF5>(file(), block(), *eg);
         }
         return da;
+    }
+
+    case ObjectType::Tag: {
+        shared_ptr<TagHDF5> tag;
+        if (eg) {
+            tag = make_shared<TagHDF5>(file(), block(), *eg);
+        }
+        return tag;
+    }
+
     }
 
     return std::shared_ptr<base::IEntity>();
@@ -248,52 +262,6 @@ shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string
     H5Group group = g->openGroup(name);
     return make_shared<TagHDF5>(file(), block(), group, id, type, name, position);
 }
-
-
-bool BlockHDF5::hasTag(const string &name_or_id) const {
-    return getTag(name_or_id) != nullptr;
-}
-
-
-shared_ptr<ITag> BlockHDF5::getTag(const string &name_or_id) const {
-    shared_ptr<TagHDF5> tag;
-    boost::optional<H5Group> g = tag_group();
-
-    if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group)
-            tag = make_shared<TagHDF5>(file(), block(), *group);
-    }
-
-    return tag;
-}
-
-
-shared_ptr<ITag> BlockHDF5::getTag(ndsize_t index) const {
-    boost::optional<H5Group> g = tag_group();
-    string name = g ? g->objectName(index) : "";
-    return getTag(name);
-}
-
-
-ndsize_t BlockHDF5::tagCount() const {
-    boost::optional<H5Group> g = tag_group();
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-bool BlockHDF5::deleteTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = tag_group();
-    bool deleted = false;
-
-    if (hasTag(name_or_id) && g) {
-        // we get first "entity" link by name, but delete all others whatever their name with it
-        deleted = g->removeAllLinks(getTag(name_or_id)->name());
-    }
-
-    return deleted;
-}
-
 
 //--------------------------------------------------
 // Methods related to DataArray

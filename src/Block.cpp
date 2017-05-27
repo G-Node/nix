@@ -76,37 +76,15 @@ std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type 
 
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
     util::checkEntityNameAndType(name, type);
-    if (backend()->hasTag(name)){
+    if (hasTag(name)){
         throw DuplicateName("create Tag");
     }
     return backend()->createTag(name, type, position);
 }
 
-bool Block::hasTag(const Tag &tag) const {
-    if (!util::checkEntityInput(tag, false)) {
-        return false;
-    }
-    Tag t = backend()->getTag(tag.name());
-    return  t && t.id() == tag.id();
-}
-
-Tag Block::getTag(ndsize_t index) const {
-    if (index >= backend()->tagCount()) {
-        throw nix::OutOfBounds("Block::getTag: Index is out of Bounds!");
-    }
-    return backend()->getTag(index);
-}
-
 std::vector<Tag> Block::tags(const util::Filter<Tag>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getTag(i); };
     return getEntities<Tag>(f, tagCount(), filter);
-}
-
-bool Block::deleteTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false)) {
-        return false;
-    }
-    return backend()->deleteTag(tag.name());
 }
 
 MultiTag Block::createMultiTag(const std::string &name, const std::string &type, const DataArray &positions) {
