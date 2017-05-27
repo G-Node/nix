@@ -13,7 +13,7 @@ namespace nix {
 
 Source Block::createSource(const std::string &name, const std::string &type){
     util::checkEntityNameAndType(name, type);
-    if (backend()->hasSource(name)) {
+    if (hasSource(name)) {
         throw DuplicateName("createSource");
     }
     return backend()->createSource(name, type);
@@ -31,21 +31,6 @@ std::vector<Source> Block::findSources(const util::Filter<Source>::type &filter,
     }
 
     return result;
-}
-
-bool Block::hasSource(const Source &source) const {
-    if (!util::checkEntityInput(source, false)) {
-        return false;
-    }
-    Source s = backend()->getSource(source.name());
-    return s && s.id() == source.id();
-}
-
-Source Block::getSource(ndsize_t index) const {
-    if (index >= backend()->sourceCount()) {
-        throw OutOfBounds("Block::getSource: index is out of bounds!");
-    }
-    return backend()->getSource(index);
 }
 
 std::vector<Source> Block::sources(const util::Filter<Source>::type &filter) const {

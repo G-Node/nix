@@ -146,7 +146,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const std::string &name_or_id) const {
-        return backend()->hasSource(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Source});
     }
 
     /**
@@ -157,7 +157,12 @@ public:
      * @return True if the source exists at the root, false
      *         otherwise.
      */
-    bool hasSource(const Source &source) const;
+    bool hasSource(const Source &source) const {
+        if (!util::checkEntityInput(source, false)) {
+            return false;
+        }
+        return backend()->hasEntity(source);
+    }
 
     /**
      * @brief Retrieves a specific root source by its id.
@@ -168,7 +173,7 @@ public:
      *         will be thrown.
      */
     Source getSource(const std::string &name_or_id) const {
-        return backend()->getSource(name_or_id);
+        return backend()->getEntity<base::ISource>(name_or_id);
     }
 
     /**
@@ -178,7 +183,12 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(ndsize_t index) const;
+    Source getSource(ndsize_t index) const {
+        if (index >= sourceCount()) {
+            throw OutOfBounds("Block::getSource: index is out of bounds!");
+        }
+        return backend()->getEntity<base::ISource>(index);
+    }
 
     /**
      * @brief Returns the number of root sources in this block.
@@ -186,7 +196,7 @@ public:
      * @return The number of root sources.
      */
     ndsize_t sourceCount() const {
-        return backend()->sourceCount();
+        return backend()->entityCount(ObjectType::Source);
     }
 
     /**

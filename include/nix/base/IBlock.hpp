@@ -66,18 +66,6 @@ public:
 
     //--------------------------------------------------
 
-    virtual bool hasSource(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const = 0;
-
-
-    virtual std::shared_ptr<base::ISource> getSource(ndsize_t index) const = 0;
-
-
-    virtual ndsize_t sourceCount() const = 0;
-
-
     virtual std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type) = 0;
 
 

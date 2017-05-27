@@ -73,7 +73,10 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
         p = groups_group();
         break;
 
-    //TODO
+    case ObjectType::Source:
+        p = source_group();
+        break;
+
     default:
        p = boost::optional<H5Group>();
     }
@@ -177,6 +180,16 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
         return groups;
     }
 
+    case ObjectType::Source: {
+        shared_ptr<SourceHDF5> source;
+        if (eg) {
+           source = make_shared<SourceHDF5>(file(), block(), *eg);
+        }
+        return source;
+    }
+
+    default:
+        return std::shared_ptr<base::IEntity>();
     }
 
     return std::shared_ptr<base::IEntity>();
@@ -201,6 +214,16 @@ bool BlockHDF5::removeEntity(const nix::Identity &ident) {
         return false;
     }
 
+    //for source we recursively remove sub-sources
+    if (ident.type() == ObjectType::Source) {
+        std::shared_ptr<ISource> isource = make_shared<SourceHDF5>(file(), block(), *eg);
+        Source source = isource;
+        // loop through all child sources and call deleteSource on them
+        for (auto &child : source.sources()) {
+            source.deleteSource(child.id());
+        }
+    }
+
     // we get first "entity" link by name, but delete all others whatever their name with it
     std::string name;
     eg->getAttr("name", name);
@@ -209,38 +232,6 @@ bool BlockHDF5::removeEntity(const nix::Identity &ident) {
 }
 
 //
-
-bool BlockHDF5::hasSource(const string &name_or_id) const {
-    return getSource(name_or_id) != nullptr;
-}
-
-
-shared_ptr<ISource> BlockHDF5::getSource(const string &name_or_id) const {
-    shared_ptr<SourceHDF5> source;
-    boost::optional<H5Group> g = source_group();
-
-    if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
-        if (group)
-            source = make_shared<SourceHDF5>(file(), block(), *group);
-    }
-
-    return source;
-}
-
-
-shared_ptr<ISource> BlockHDF5::getSource(ndsize_t index) const {
-    boost::optional<H5Group> g = source_group();
-    string name = g ? g->objectName(index) : "";
-    return getSource(name);
-}
-
-
-ndsize_t BlockHDF5::sourceCount() const {
-    boost::optional<H5Group> g = source_group();
-    return g ? g->objectCount() : size_t(0);
-}
-
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
     string id = util::createId();
@@ -257,9 +248,10 @@ bool BlockHDF5::deleteSource(const string &name_or_id) {
 
     if (g) {
         // call deleteSource on sources to trigger recursive call to all sub-sources
-        if (hasSource(name_or_id)) {
+        std::shared_ptr<base::ISource> isource = block()->getEntity<base::ISource>(name_or_id);
+        if (isource) {
             // get instance of source about to get deleted
-            Source source = getSource(name_or_id);
+            Source source = isource;
             // loop through all child sources and call deleteSource on them
             for (auto &child : source.sources()) {
                 source.deleteSource(child.id());

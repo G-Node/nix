@@ -90,18 +90,6 @@ public:
     // Methods concerning sources
     //--------------------------------------------------
 
-    bool hasSource(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ISource> getSource(ndsize_t index) const;
-
-
-    ndsize_t sourceCount() const;
-
-
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
@@ -132,18 +120,6 @@ public:
     //--------------------------------------------------
     // Methods concerning groups.
     //--------------------------------------------------
-
-    bool hasGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const;
-
-
-    ndsize_t groupCount() const;
-
 
     std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type);
 
