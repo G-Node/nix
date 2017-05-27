@@ -292,7 +292,7 @@ public:
      *         doesn't exist, an exception will be thrown.
      */
     DataArray getDataArray(const std::string &name_or_id) const {
-        return getEntity<base::IDataArray>(name_or_id);
+        return backend()->getEntity<base::IDataArray>(name_or_id);
     }
 
 
@@ -307,7 +307,7 @@ public:
         if (index >= dataArrayCount()) {
             throw OutOfBounds("Block::getDataArray: index is out of bounds!");
         }
-        return getEntity<base::IDataArray>(index);
+        return backend()->getEntity<base::IDataArray>(index);
     }
 
     /**
@@ -743,19 +743,6 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Block &ent);
-
- private:
-    template<typename T>
-    std::shared_ptr<T> getEntity(const std::string &name_or_id) const {
-        ObjectType ot = objectToType<T>::value;
-        return std::dynamic_pointer_cast<T>(backend()->getEntity({name_or_id, ot}));
-    }
-
-    template<typename T>
-    std::shared_ptr<T> getEntity(ndsize_t index) const {
-        ObjectType ot = objectToType<T>::value;
-        return std::dynamic_pointer_cast<T>(backend()->getEntity(ot, index));
-    }
 };
 
 template<>
