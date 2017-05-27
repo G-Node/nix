@@ -108,6 +108,22 @@ boost::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) 
     return g;
 }
 
+std::string BlockHDF5::resolveEntityId(const nix::Identity &ident) const {
+    if (!ident.id().empty()) {
+        return ident.id();
+    }
+
+    boost::optional<H5Group> g = findEntityGroup(ident);
+    if (!g) {
+        return "";
+    }
+
+     std::string eid = "";
+     g->getAttr("entity_id", eid);
+
+     return eid;
+}
+
 bool BlockHDF5::hasEntity(const nix::Identity &ident) const {
     boost::optional<H5Group> p = findEntityGroup(ident);
     return !!p;

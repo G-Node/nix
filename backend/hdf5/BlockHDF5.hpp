@@ -73,6 +73,7 @@ public:
     //--------------------------------------------------
     // Generic entity methods
     //--------------------------------------------------
+    std::string resolveEntityId(const nix::Identity &ident) const;
 
     bool hasEntity(const nix::Identity &ident) const;
 

@@ -34,6 +34,9 @@ class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
 
+
+    virtual std::string resolveEntityId(const nix::Identity &ident) const = 0;
+
     virtual bool hasEntity(const nix::Identity &ident) const = 0;
 
     virtual std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const = 0;
