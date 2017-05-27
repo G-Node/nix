@@ -69,24 +69,9 @@ DataArray Block::createDataArray(const std::string &name, const std::string &typ
     return backend()->createDataArray(name, type, data_type, shape);
 }
 
-bool Block::hasDataArray(const DataArray &data_array) const {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
-    }
-    DataArray da = backend()->getDataArray(data_array.name());
-    return  da && da.id() == data_array.id();
-}
-
 std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type &filter) const {
     auto f = [this] (size_t i) { return getDataArray(i); };
     return getEntities<DataArray>(f, dataArrayCount(), filter);
-}
-
-bool Block::deleteDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
-    }
-    return backend()->deleteDataArray(data_array.name());
 }
 
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {

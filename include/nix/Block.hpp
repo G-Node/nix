@@ -18,6 +18,8 @@
 #include <nix/Group.hpp>
 #include <nix/Platform.hpp>
 
+#include <nix/util/util.hpp>
+
 #include <string>
 #include <memory>
 
@@ -264,7 +266,7 @@ public:
      * @return True if the data array exists, false otherwise.
      */
     bool hasDataArray(const std::string &name_or_id) const {
-        return backend()->hasDataArray(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -274,7 +276,12 @@ public:
     *
     * @return True if the data array exists, false otherwise.
     */
-    bool hasDataArray(const DataArray &data_array) const;
+    bool hasDataArray(const DataArray &data_array) const {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->hasEntity(data_array);
+    }
 
     /**
      * @brief Retrieves a specific data array from the block by name or id.
@@ -285,8 +292,9 @@ public:
      *         doesn't exist, an exception will be thrown.
      */
     DataArray getDataArray(const std::string &name_or_id) const {
-        return backend()->getDataArray(name_or_id);
+        return getEntity<base::IDataArray>(name_or_id);
     }
+
 
     /**
      * @brief Retrieves a data array by index.
@@ -296,7 +304,7 @@ public:
      * @return The data array at the specified index.
      */
     DataArray getDataArray(ndsize_t index) const {
-        return backend()->getDataArray(index);
+        return getEntity<base::IDataArray>(index);
     }
 
     /**
@@ -318,7 +326,7 @@ public:
      * @return The number of data arrays of the block.
      */
     ndsize_t dataArrayCount() const {
-        return backend()->dataArrayCount();
+        return backend()->entityCount(ObjectType::DataArray);
     }
 
     /**
@@ -382,7 +390,7 @@ public:
      * @return True if the data array was deleted, false otherwise.
      */
     bool deleteDataArray(const std::string &name_or_id) {
-        return backend()->deleteDataArray(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -395,7 +403,12 @@ public:
     *
     * @return True if the data array was deleted, false otherwise.
     */
-    bool deleteDataArray(const DataArray &data_array);
+    bool deleteDataArray(const DataArray &data_array) {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->removeEntity(data_array);
+    }
 
     //--------------------------------------------------
     // Methods concerning tags.
@@ -728,6 +741,19 @@ public:
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Block &ent);
 
+ private:
+    template<typename T>
+    std::shared_ptr<T> getEntity(const std::string &name_or_id) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(backend()->getEntity({name_or_id, ot}));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(ndsize_t index) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(backend()->getEntity(ot, index));
+    }
+};
 
 template<>
 struct objectToType<Block> {
