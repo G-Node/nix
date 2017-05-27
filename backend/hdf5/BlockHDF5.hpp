@@ -90,6 +90,18 @@ public:
     // Methods concerning sources
     //--------------------------------------------------
 
+    bool hasSource(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
+
+
+    std::shared_ptr<base::ISource> getSource(ndsize_t index) const;
+
+
+    ndsize_t sourceCount() const;
+
+
     std::shared_ptr<base::ISource> createSource(const std::string &name, const std::string &type);
 
 
