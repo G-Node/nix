@@ -17,6 +17,8 @@ namespace nix {
 
 class NIXAPI Identity {
 public:
+    Identity(const std::string &name_or_id, ObjectType type);
+
     Identity(std::string name, std::string id)
         : myName(std::move(name)), myId(std::move(id)) { }
 
