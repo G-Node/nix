@@ -47,6 +47,23 @@ public:
 
     virtual bool removeEntity(const nix::Identity &ident) = 0;
 
+    template<typename T>
+    std::shared_ptr<T> getEntity(const nix::Identity &ident) const {
+        return std::dynamic_pointer_cast<T>(this->getEntity(ident));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(const std::string &name_or_id) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity({name_or_id, ot}));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(ndsize_t index) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity(ot, index));
+    }
+
     //--------------------------------------------------
 
     virtual bool hasSource(const std::string &name_or_id) const = 0;
