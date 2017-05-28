@@ -191,6 +191,7 @@ template<>
 struct objectToType<nix::Feature> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Feature;
+    typedef nix::base::IFeature backendType;
 };
 
 } // namespace nix

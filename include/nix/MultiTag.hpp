@@ -514,6 +514,7 @@ template<>
 struct objectToType<nix::MultiTag> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::MultiTag;
+    typedef nix::base::IMultiTag backendType;
 };
 
 } // namespace nix

@@ -253,6 +253,7 @@ template<>
 struct objectToType<nix::Source> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Source;
+    typedef nix::base::ISource backendType;
 };
 
 } // namespace nix

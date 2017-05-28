@@ -479,6 +479,7 @@ template<>
 struct objectToType<nix::Group> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Group;
+    typedef nix::base::IGroup backendType;
 };
 
 } // namespace nix

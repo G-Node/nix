@@ -491,6 +491,7 @@ template<>
 struct objectToType<nix::Tag> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Tag;
+    typedef nix::base::ITag backendType;
 };
 
 

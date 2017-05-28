@@ -802,6 +802,7 @@ template<>
 struct objectToType<Block> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Block;
+    typedef nix::base::IBlock backendType;
 };
 
 }

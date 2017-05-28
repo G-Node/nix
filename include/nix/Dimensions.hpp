@@ -839,6 +839,7 @@ template<>
 struct objectToType<nix::SetDimension> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::SetDimension;
+    typedef nix::base::ISetDimension backendType;
 };
 
 
@@ -846,6 +847,7 @@ template<>
 struct objectToType<nix::SampledDimension> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::SampledDimension;
+    typedef nix::base::ISampledDimension backendType;
 };
 
 
@@ -854,6 +856,7 @@ template<>
 struct objectToType<nix::RangeDimension> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::RangeDimension;
+    typedef nix::base::IRangeDimension backendType;
 };
 
 } // namespace nix

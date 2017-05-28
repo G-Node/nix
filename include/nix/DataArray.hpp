@@ -498,6 +498,7 @@ template<>
 struct objectToType<nix::DataArray> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::DataArray;
+    typedef nix::base::IDataArray backendType;
 };
 
 

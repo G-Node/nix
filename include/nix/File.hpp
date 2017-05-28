@@ -489,6 +489,7 @@ template<>
 struct objectToType<nix::File> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::File;
+    typedef nix::base::IFile backendType;
 };
 
 

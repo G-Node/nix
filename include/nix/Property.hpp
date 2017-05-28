@@ -283,6 +283,7 @@ template<>
 struct objectToType<nix::Property> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Property;
+    typedef nix::base::IProperty backendType;
 };
 
 

@@ -550,6 +550,7 @@ template<>
 struct objectToType<nix::Section> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::Section;
+    typedef nix::base::ISection backendType;
 };
 
 } // namespace nix
