@@ -123,6 +123,7 @@ void BaseTestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(block.dataArrayCount() == 0);
     CPPUNIT_ASSERT(block.dataArrays().size() == 0);
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
+    CPPUNIT_ASSERT_THROW(block.getDataArray(block.dataArrayCount() + 10), OutOfBounds);
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -139,6 +140,7 @@ void BaseTestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(!block.hasDataArray(a));
     CPPUNIT_ASSERT(block.dataArrayCount() == names.size());
     CPPUNIT_ASSERT(block.dataArrays().size() == names.size());
+    CPPUNIT_ASSERT_THROW(block.getDataArray(block.dataArrayCount() + 10), OutOfBounds);
 
     for (const auto &name : names) {
         DataArray da_name = block.getDataArray(name);
@@ -187,6 +189,7 @@ void BaseTestBlock::testTagAccess() {
     CPPUNIT_ASSERT(block.tags().size() == 0);
     CPPUNIT_ASSERT(block.getTag("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasTag(t));
+    CPPUNIT_ASSERT_THROW(block.getTag(block.tagCount() + 10), OutOfBounds);
 
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); ++it) {
@@ -201,6 +204,7 @@ void BaseTestBlock::testTagAccess() {
 
     CPPUNIT_ASSERT(block.tagCount() == names.size());
     CPPUNIT_ASSERT(block.tags().size() == names.size());
+    CPPUNIT_ASSERT_THROW(block.getTag(block.tagCount() + 10), OutOfBounds);
 
     for (auto it = ids.begin(); it != ids.end(); ++it) {
         tag = block.getTag(*it);
@@ -232,6 +236,8 @@ void BaseTestBlock::testMultiTagAccess() {
     CPPUNIT_ASSERT(block.multiTags().size() == 0);
     CPPUNIT_ASSERT(block.getMultiTag("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasMultiTag(m));
+    CPPUNIT_ASSERT_THROW(block.getMultiTag(block.multiTagCount() + 10), OutOfBounds);
+
     std::vector<std::string> ids;
     for (auto it = names.begin(); it != names.end(); it++) {
         mtag = block.createMultiTag(*it, "segment", positions);
@@ -244,6 +250,7 @@ void BaseTestBlock::testMultiTagAccess() {
 
     CPPUNIT_ASSERT(block.multiTagCount() == names.size());
     CPPUNIT_ASSERT(block.multiTags().size() == names.size());
+    CPPUNIT_ASSERT_THROW(block.getMultiTag(block.multiTagCount() + 10), OutOfBounds);
 
     for (auto it = ids.begin(); it != ids.end(); it++) {
         mtag = block.getMultiTag(*it);
@@ -270,6 +277,7 @@ void BaseTestBlock::testGroupAccess() {
     CPPUNIT_ASSERT(block.groups().size() == 0);
     CPPUNIT_ASSERT(block.getGroup("invalid_id") == false);
     CPPUNIT_ASSERT(!block.hasGroup("invalid_id"));
+    CPPUNIT_ASSERT_THROW(block.getGroup(block.groupCount() + 10), OutOfBounds);
 
     std::vector<std::string> ids;
     for (const auto &name : names) {
@@ -285,6 +293,7 @@ void BaseTestBlock::testGroupAccess() {
 
     CPPUNIT_ASSERT(block.groupCount() == names.size());
     CPPUNIT_ASSERT(block.groups().size() == names.size());
+    CPPUNIT_ASSERT_THROW(block.getGroup(block.groupCount() + 10), OutOfBounds);
 
     for (const auto &id : ids) {
         Group gr = block.getGroup(id);
@@ -341,7 +350,7 @@ void BaseTestBlock::testUpdatedAt() {
 void BaseTestBlock::testCompare() {
     std::string other_name = block_other.name();
     std::string block_name = block.name();
-        
+
     CPPUNIT_ASSERT(block.compare(block) == 0);
     CPPUNIT_ASSERT(block.compare(block_other) ==  block_name.compare(other_name));
 }
