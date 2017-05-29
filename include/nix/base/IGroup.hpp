@@ -19,6 +19,7 @@
 #include <nix/Tag.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/ObjectType.hpp>
+#include <nix/Identity.hpp>
 
 
 namespace nix {
@@ -33,29 +34,40 @@ class NIXAPI IGroup : virtual public IEntityWithSources {
 
 public:
 
+    virtual bool hasEntity(const nix::Identity &ident) const = 0;
+
+    virtual std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const = 0;
+
+    virtual std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const = 0;
+
+    virtual ndsize_t entityCount(ObjectType type) const = 0;
+
+    virtual bool removeEntity(const nix::Identity &ident) = 0;
+
+    virtual void addEntity(const nix::Identity &ident) = 0;
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(const nix::Identity &ident) const {
+        return std::dynamic_pointer_cast<T>(this->getEntity(ident));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(const std::string &name_or_id) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity({name_or_id, ot}));
+    }
+
+    template<typename T>
+    std::shared_ptr<T> getEntity(ndsize_t index) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity(ot, index));
+    }
+
     //--------------------------------------------------
     // Methods concerning data arrays.
     //--------------------------------------------------
 
-    virtual bool hasDataArray(const std::string &id) const = 0;
-
-
-    virtual ndsize_t dataArrayCount() const = 0;
-
-
-    virtual std::shared_ptr<IDataArray> getDataArray(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<IDataArray> getDataArray(ndsize_t index) const = 0;
-
-
-    virtual void addDataArray(const std::string &id) = 0;
-
-
-    virtual bool removeDataArray(const std::string &id) = 0;
-
-
-    virtual void dataArrays(const std::vector<DataArray> &data_arrays) = 0;
+    //virtual void dataArrays(const std::vector<DataArray> &data_arrays) = 0;
 
     //--------------------------------------------------
     // Methods concerning tags.
