@@ -115,7 +115,8 @@ public:
     /**
      * @brief Gets a specific referenced DataArray from the tag.
      *
-     * @param id        The id of the referenced DataArray.
+     * @param name_or_id           The name or id of the referenced
+     *                             DataArray (using the id is faster).
      *
      * @return The referenced data array.
      */
@@ -150,7 +151,7 @@ public:
     /**
      * @brief Add a DataArray to the list of referenced data of the group.
      *
-     * @param id        The id of the DataArray to add.
+     * @param name_or_id        The name or id of the DataArray to add.
      */
     void addDataArray(const std::string &name_or_id) {
         backend()->addEntity({name_or_id, ObjectType::DataArray});
@@ -177,7 +178,8 @@ public:
      * This method just removes the association between the data array and the
      * tag, the data array itself will not be removed from the file.
      *
-     * @param id        The id of the DataArray to remove.
+     * @param name_or_id        The name or the id of the DataArray to
+     *                          remove. (using the id is faster)
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
@@ -217,9 +219,7 @@ public:
      *
      * @param data_arrays    All referenced arrays.
      */
-    void dataArrays(const std::vector<DataArray> &data_arrays) {
-        backend()->dataArrays(data_arrays);
-    }
+    void dataArrays(const std::vector<DataArray> &data_arrays);
 
     //--------------------------------------------------
     // Methods concerning tags.

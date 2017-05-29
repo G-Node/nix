@@ -11,13 +11,29 @@
 
 using namespace nix;
 
+void Group::dataArrays(const std::vector<DataArray> &data_arrays) {
+    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
 
+    std::vector<DataArray> new_arrays(data_arrays);
+    size_t array_count = nix::check::fits_in_size_t(dataArrayCount(), "dataArrayCount() failed; count > size_t.");
+    std::vector<DataArray> old_arrays(array_count);
 
+    for (size_t i = 0; i < old_arrays.size(); i++) {//check if this can be replaced
+        old_arrays[i] = getDataArray(i);
     }
-    }
-    backend()->addDataArray(data_array.id());
-}
+    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
+    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
+    std::vector<DataArray> add;
+    std::vector<DataArray> rem;
 
+    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(),
+                        old_arrays.end(), std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(),
+                        new_arrays.end(), std::inserter(rem, rem.begin()), cmp);
+
+    for (const auto &da : add) {
+        addDataArray(da);
+    }
 
     for (const auto &da : rem) {
         removeDataArray(da);
