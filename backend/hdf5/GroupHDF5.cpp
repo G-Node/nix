@@ -11,6 +11,7 @@
 #include "TagHDF5.hpp"
 #include "MultiTagHDF5.hpp"
 #include "BlockHDF5.hpp"
+#include "DataArrayHDF5.hpp"
 #include <boost/range/irange.hpp>
 
 using namespace nix::base;
@@ -18,119 +19,148 @@ using namespace nix::base;
 namespace nix {
 namespace hdf5 {
 
-GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                     const H5Group &h5group)  : EntityWithSourcesHDF5(file, block, h5group) {
+boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type) const {
+    boost::optional<H5Group> p;
+
+    switch (type) {
+    case ObjectType::DataArray:
+        p = data_array_group(true);
+        break;
+
+        //TODO
+    default:
+        p = boost::optional<H5Group>();
+    }
+
+    return p;
+}
+
+
+boost::optional<H5Group> GroupHDF5::findEntityGroup(const nix::Identity &ident) const {
+    boost::optional<H5Group> p = groupForObjectType(ident.type());
+    if (!p) {
+        return p;
+    }
+
+    boost::optional<H5Group> g;
+    const std::string &iname = ident.name();
+    const std::string &iid = ident.id();
+
+    bool haveName = !iname.empty();
+    bool haveId = !iid.empty();
+
+    if (!haveName && !haveId) {
+        return g;
+    }
+    std::string needle = haveId ? iid : iname;
+    bool foundNeedle = p->hasObject(needle);
+
+    if (foundNeedle) {
+        g = boost::make_optional(p->openGroup(needle, false));
+    } else if (haveName) {
+        g = p->findGroupByAttribute("name", iname);
+    }
+
+    if (g && haveName && haveId) {
+        std::string ename;
+        g->getAttr("name", ename);
+
+        if (ename != iname) {
+            return boost::optional<H5Group>();
+        }
+    }
+
+    return g;
+}
+
+
+GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
+                     const std::shared_ptr<base::IBlock> &block,
+                     const H5Group &h5group)
+    : EntityWithSourcesHDF5(file, block, h5group) {
     data_array_group = this->group().openOptGroup("data_arrays");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
 }
 
 
-GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                     const H5Group &h5group, const std::string &id, const std::string &type,
-                     const std::string &name) : GroupHDF5(file, block, h5group, id, type, name, util::getTime())  {
+GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
+                     const std::shared_ptr<base::IBlock> &block,
+                     const H5Group &h5group, const std::string &id,
+                     const std::string &type, const std::string &name)
+    : GroupHDF5(file, block, h5group, id, type, name, util::getTime())  {
 
 }
 
 
-GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                     const H5Group &h5group, const std::string &id, const std::string &type, const std::string &name,
-                     time_t time): EntityWithSourcesHDF5(file, block, h5group, id, type, name, time) {
+GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
+                     const std::shared_ptr<base::IBlock> &block,
+                     const H5Group &h5group, const std::string &id,
+                     const std::string &type, const std::string &name,
+                     time_t time)
+    : EntityWithSourcesHDF5(file, block, h5group, id, type, name, time) {
     data_array_group = this->group().openOptGroup("data_arrays");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
 }
 
-
-bool GroupHDF5::hasDataArray(const std::string &name_or_id) const {
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
-    return data_array_group(false) ? data_array_group(false)->hasGroup(id) : false;
+bool GroupHDF5::hasEntity(const nix::Identity &ident) const {
+    boost::optional<H5Group> p = findEntityGroup(ident);
+    return !!p;
 }
 
-
-ndsize_t GroupHDF5::dataArrayCount() const {
-    boost::optional<H5Group> g = data_array_group(false);
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-void GroupHDF5::addDataArray(const std::string &name_or_id) {
-    boost::optional<H5Group> g = data_array_group(true);
-    std::shared_ptr<IDataArray> ida = block()->getEntity<IDataArray>(name_or_id);
-
-    if (!ida)
-        throw std::runtime_error("GroupHDF5::addDataArray: DataArray not found in block!");
-
-    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(ida);
-    g->createLink(target->group(), target->id());
-}
-
-
-std::shared_ptr<base::IDataArray> GroupHDF5::getDataArray(const std::string &name_or_id) const {
-    std::shared_ptr<IDataArray> da;
-    boost::optional<H5Group> g = data_array_group(false);
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
-
-    if (g && hasDataArray(id)) {
-        H5Group h5g = g->openGroup(id);
-        da = std::make_shared<DataArrayHDF5>(file(), block(), h5g);
-    }
-    return da;
-}
-
-
-std::shared_ptr<IDataArray>  GroupHDF5::getDataArray(ndsize_t index) const {
-    boost::optional<H5Group> g = data_array_group(false);
-    std::string id = g ? g->objectName(index) : "";
-    return getDataArray(id);
-}
-
-
-bool GroupHDF5::removeDataArray(const std::string &name_or_id) {
-    boost::optional<H5Group> g = data_array_group(false);
-    bool removed = false;
-
-    if (g && hasDataArray(name_or_id)) {
-        std::shared_ptr<IDataArray> data_array = getDataArray(name_or_id);
-
-        g->removeGroup(data_array->id());
-        removed = true;
-    }
-    return removed;
-}
-
-
-void GroupHDF5::dataArrays(const std::vector<DataArray> &data_arrays) {
-    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
-
-    std::vector<DataArray> new_arrays(data_arrays);
-    size_t array_count = nix::check::fits_in_size_t(dataArrayCount(), "dataArrayCount() failed; count > size_t.");
-    std::vector<DataArray> old_arrays(array_count);
-    for (size_t i = 0; i < old_arrays.size(); i++) {
-        old_arrays[i] = getDataArray(i);
-    }
-    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
-    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
-    std::vector<DataArray> add;
-    std::vector<DataArray> rem;
-
-    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
-                        std::inserter(add, add.begin()), cmp);
-    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
-                        std::inserter(rem, rem.begin()), cmp);
-
-    for (const auto &da : add) {
-        DataArray a = block()->getEntity<base::IDataArray>(da);
-        if (!a)
-            throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addDataArray(a.id());
+std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) const {
+    boost::optional<H5Group> eg = findEntityGroup(ident);
+    switch (ident.type()) {
+    case ObjectType::DataArray:
+        std::shared_ptr<DataArrayHDF5> da;
+        if (eg) {
+            da = std::make_shared<DataArrayHDF5>(file(), block(), *eg);
+        }
+        return da;
     }
 
-    for (const auto &da : rem) {
-        removeDataArray(da.id());
-    }
+    return std::shared_ptr<base::IEntity>();
 }
 
+std::shared_ptr<base::IEntity>GroupHDF5::getEntity(ObjectType type, ndsize_t index) const {
+    boost::optional<H5Group> eg = groupForObjectType(type);
+    std::string name = eg ? eg->objectName(index) : "";
+    return getEntity({name, "", type});
+}
+
+
+ndsize_t GroupHDF5::entityCount(ObjectType type) const {
+    boost::optional<H5Group> g = groupForObjectType(type);
+    return g ? g->objectCount() : ndsize_t(0);
+}
+
+
+bool GroupHDF5::removeEntity(const nix::Identity &ident) {
+    boost::optional<H5Group> p = groupForObjectType(ident.type());
+    boost::optional<H5Group> eg = findEntityGroup(ident);
+
+    if (!p || !eg) {
+        return false;
+    }
+
+    std::string eid;
+    eg->getAttr("entity_id", eid);
+
+    p->removeGroup(eid);
+    return true;
+}
+
+
+void GroupHDF5::addEntity(const nix::Identity &ident) {
+    boost::optional<H5Group> p = groupForObjectType(ident.type());
+    if(!block()->hasEntity(ident)) {
+        throw std::runtime_error("Entity do not exist in this block!");
+    }
+
+    auto target = std::dynamic_pointer_cast<EntityHDF5>(block()->getEntity(ident));
+    p->createLink(target->group(), target->id());
+}
 
 bool GroupHDF5::hasTag(const std::string &name_or_id) const {
     std::string id = block()->resolveEntityId({name_or_id, ObjectType::Tag});

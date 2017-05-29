@@ -23,7 +23,28 @@ private:
 
     optGroup data_array_group, tag_group, multi_tag_group;
 
+
+    // Helper methods for generic entity related methods below
+    boost::optional<H5Group> groupForObjectType(ObjectType ot) const;
+
+    boost::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
+
 public:
+
+    //--------------------------------------------------
+    // Generic entity methods
+    //--------------------------------------------------
+    bool hasEntity(const nix::Identity &ident) const ;
+
+    std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const;
+
+    ndsize_t entityCount(ObjectType type) const;
+
+    bool removeEntity(const nix::Identity &ident);
+
+    void addEntity(const nix::Identity &ident);
     /**
      * Standard constructor for existing Group
      */
@@ -40,31 +61,6 @@ public:
      */
     GroupHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &h5group,
               const std::string &id, const std::string &type, const std::string &name, time_t time);
-
-
-    //--------------------------------------------------
-    // Methods concerning data arrays.
-    //--------------------------------------------------
-
-    virtual bool hasDataArray(const std::string &name_or_id) const;
-
-
-    virtual ndsize_t dataArrayCount() const;
-
-
-    virtual std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
-
-
-    virtual std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
-
-
-    virtual void addDataArray(const std::string &name_or_id);
-
-
-    virtual bool removeDataArray(const std::string &name_or_id);
-
-    // TODO evaluate if DataArray can be replaced by shared_ptr<IDataArray>
-    virtual void dataArrays(const std::vector<DataArray> &data_arrays);
 
     //--------------------------------------------------
     // Methods concerning tags.
