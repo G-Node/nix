@@ -11,41 +11,17 @@
 
 using namespace nix;
 
-bool Group::hasDataArray(const DataArray &data_array) const {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
+
+
     }
-    return backend()->hasDataArray(data_array.id());
-}
-
-
-DataArray Group::getDataArray(size_t index) const {
-    if(index >= backend()->dataArrayCount()) {
-        throw OutOfBounds("No dataArray at given index", index);
-    }
-    return backend()->getDataArray(index);
-}
-
-
-void Group::addDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array)) {
-        throw UninitializedEntity();
     }
     backend()->addDataArray(data_array.id());
 }
 
 
-void Group::addDataArray(const std::string &id) {
-    util::checkNameOrId(id);
-    backend()->addDataArray(id);
-}
-
-
-bool Group::removeDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
+    for (const auto &da : rem) {
+        removeDataArray(da);
     }
-    return backend()->removeDataArray(data_array.id());
 }
 
 

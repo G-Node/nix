@@ -14,6 +14,7 @@
 #include <nix/DataArray.hpp>
 #include <nix/Platform.hpp>
 #include <nix/ObjectType.hpp>
+#include <nix/util/util.hpp>
 
 
 namespace nix {
@@ -84,8 +85,8 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasDataArray(const std::string &id) const {
-        return backend()->hasDataArray(id);
+    bool hasDataArray(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -95,7 +96,12 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasDataArray(const DataArray &data_array) const;
+    bool hasDataArray(const DataArray &data_array) const {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->hasEntity(data_array);
+    }
 
     /**
      * @brief Gets the number of referenced DataArray entities of the tag.
@@ -103,7 +109,7 @@ public:
      * @return The number of referenced data arrays.
      */
     ndsize_t dataArrayCount() const {
-        return backend()->dataArrayCount();
+        return backend()->entityCount(ObjectType::DataArray);
     }
 
     /**
@@ -113,8 +119,8 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getDataArray(const std::string &id) const {
-        return backend()->getDataArray(id);
+    DataArray getDataArray(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IDataArray>(name_or_id);
     }
 
     /**
@@ -124,22 +130,31 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getDataArray(size_t index) const;
+    DataArray getDataArray(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::DataArray)) {
+            throw OutOfBounds("No DataArray at given index", index);
+        }
+        return backend()->getEntity<base::IDataArray>(index);
+    }
 
     /**
      * @brief Add a DataArray to the list of referenced data of the group.
      *
      * @param data_array The DataArray to add.
      */
-    void addDataArray(const DataArray &data_array);
-
+    void addDataArray(const DataArray &data_array) {
+        if (util::checkEntityInput(data_array, true)) {
+            backend()->addEntity(data_array);
+        }
+    }
     /**
      * @brief Add a DataArray to the list of referenced data of the group.
      *
      * @param id        The id of the DataArray to add.
      */
-    void addDataArray(const std::string &id);
-
+    void addDataArray(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::DataArray});
+    }
     /**
      * @brief Remove a DataArray from the list of referenced data of the group.
      *
@@ -150,8 +165,12 @@ public:
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeDataArray(const DataArray &data_array);
-
+    bool removeDataArray(const DataArray &data_array) {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->removeEntity(data_array);
+    }
     /**
      * @brief Remove a DataArray from the list of referenced data of the group.
      *
@@ -162,8 +181,8 @@ public:
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeDataArray(const std::string &id) {
-        return backend()->removeDataArray(id);
+    bool removeDataArray(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
