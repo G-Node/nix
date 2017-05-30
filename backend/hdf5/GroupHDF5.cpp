@@ -29,6 +29,9 @@ boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type) const {
     case ObjectType::Tag:
         p = tag_group(true);
         break;
+    case ObjectType::MultiTag:
+        p = multi_tag_group(true);
+        break;
         //TODO
     default:
         p = boost::optional<H5Group>();
@@ -129,8 +132,16 @@ std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) 
         }
         return t;
     }
+    case ObjectType::MultiTag: {
+        std::shared_ptr<MultiTagHDF5> t;
+        if (eg) {
+            t = std::make_shared<MultiTagHDF5>(file(), block(), *eg);
+        }
+        return t;
     }
-    return std::shared_ptr<base::IEntity>();
+    default:
+        return std::shared_ptr<base::IEntity>();
+    }
 }
 
 std::shared_ptr<base::IEntity>GroupHDF5::getEntity(ObjectType type, ndsize_t index) const {
@@ -170,96 +181,6 @@ void GroupHDF5::addEntity(const nix::Identity &ident) {
 
     auto target = std::dynamic_pointer_cast<EntityHDF5>(block()->getEntity(ident));
     p->createLink(target->group(), target->id());
-}
-
-
-bool GroupHDF5::hasMultiTag(const std::string &name_or_id) const {
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::MultiTag});
-    return multi_tag_group(false) ? multi_tag_group(false)->hasGroup(id) : false;
-}
-
-
-ndsize_t GroupHDF5::multiTagCount() const {
-    boost::optional<H5Group> g = multi_tag_group(false);
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-void GroupHDF5::addMultiTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = multi_tag_group(true);
-    std::shared_ptr<IMultiTag> tag = block()->getEntity<IMultiTag>(name_or_id);
-
-    if (!tag)
-        throw std::runtime_error("GroupHDF5::addMultiTag: MultiTag not found in block!");
-
-    auto target = std::dynamic_pointer_cast<MultiTagHDF5>(tag);
-    g->createLink(target->group(), target->id());
-}
-
-
-std::shared_ptr<base::IMultiTag> GroupHDF5::getMultiTag(const std::string &name_or_id) const {
-    std::shared_ptr<IMultiTag> da;
-    boost::optional<H5Group> g = multi_tag_group(false);
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::MultiTag});
-
-    if (g && hasMultiTag(id)) {
-        H5Group h5g = g->openGroup(id);
-        da = std::make_shared<MultiTagHDF5>(file(), block(), h5g);
-    }
-    return da;
-}
-
-
-std::shared_ptr<IMultiTag>  GroupHDF5::getMultiTag(ndsize_t index) const {
-    boost::optional<H5Group> g = multi_tag_group(false);
-    std::string id = g ? g->objectName(index) : "";
-    return getMultiTag(id);
-}
-
-
-bool GroupHDF5::removeMultiTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = multi_tag_group(false);
-    bool removed = false;
-
-    if (g && hasMultiTag(name_or_id)) {
-        std::shared_ptr<IMultiTag> mtag = getMultiTag(name_or_id);
-
-        g->removeGroup(mtag->id());
-        removed = true;
-    }
-    return removed;
-}
-
-
-void GroupHDF5::multiTags(const std::vector<MultiTag> &multi_tags) {
-    auto cmp = [](const MultiTag &a, const MultiTag& b) { return a.name() < b.name(); };
-
-    std::vector<MultiTag> new_tags(multi_tags);
-    size_t tag_count = nix::check::fits_in_size_t(multiTagCount(), "multiTagCount() failed; count > size_t.");
-    std::vector<MultiTag> old_tags(tag_count);
-    for (size_t i = 0; i < old_tags.size(); i++) {
-        old_tags[i] = getMultiTag(i);
-    }
-    std::sort(new_tags.begin(), new_tags.end(), cmp);
-    std::sort(old_tags.begin(), old_tags.end(), cmp);
-    std::vector<MultiTag> add;
-    std::vector<MultiTag> rem;
-
-    std::set_difference(new_tags.begin(), new_tags.end(), old_tags.begin(), old_tags.end(),
-                        std::inserter(add, add.begin()), cmp);
-    std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
-                        std::inserter(rem, rem.begin()), cmp);
-
-    for (const auto &t : add) {
-        MultiTag tag = block()->getEntity<IMultiTag>(t);
-        if (!tag || tag.id() != t.id())
-            throw std::runtime_error("One or more data multiTags do not exist in this block!");
-        addMultiTag(t.id());
-    }
-
-    for (const auto &t : rem) {
-        removeMultiTag(t.id());
-    }
 }
 
 } // hdf5

@@ -61,29 +61,6 @@ public:
      */
     GroupHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &h5group,
               const std::string &id, const std::string &type, const std::string &name, time_t time);
-    //--------------------------------------------------
-    // Methods concerning multi tags.
-    //--------------------------------------------------
-
-    virtual bool hasMultiTag(const std::string &name_or_id) const;
-
-
-    virtual ndsize_t multiTagCount() const;
-
-
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
-
-
-    virtual std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
-
-
-    virtual void addMultiTag(const std::string &name_or_id);
-
-
-    virtual bool removeMultiTag(const std::string &name_or_id);
-
-
-    virtual void multiTags(const std::vector<MultiTag> &multi_tags);
 };
 }
 }
