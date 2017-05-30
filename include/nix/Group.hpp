@@ -354,8 +354,7 @@ public:
      *
      * @return The filtered Tags as a vector
      */
-    std::vector<Tag> tags() const
-    {
+    std::vector<Tag> tags() const {
         return tags(util::AcceptAll<Tag>());
     }
 
@@ -375,12 +374,12 @@ public:
     /**
      * @brief Checks whether a MultiTag is referenced by the group.
      *
-     * @param id        The id of the MultiTag to check.
+     * @param name or id        The name or id of the MultiTag to check.
      *
      * @return True if the MultiTag is referenced, false otherwise.
      */
-    bool hasMultiTag(const std::string &id) const {
-        return backend()->hasMultiTag(id);
+    bool hasMultiTag(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -390,7 +389,13 @@ public:
      *
      * @return True if the MultiTag is referenced, false otherwise.
      */
-    bool hasMultiTag(const MultiTag &tag) const;
+    bool hasMultiTag(const MultiTag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
+
 
     /**
      * @brief Gets the number of referenced MultiTag entities of the group.
@@ -398,18 +403,18 @@ public:
      * @return The number of referenced MultiTags.
      */
     ndsize_t multiTagCount() const {
-        return backend()->multiTagCount();
+        return backend()->entityCount(ObjectType::MultiTag);
     }
 
     /**
      * @brief Gets a specific referenced MultiTag from the group.
      *
-     * @param id        The id of the referenced MultiTag.
+     * @param name_or_id        The name or id of the referenced MultiTag.
      *
      * @return The referenced MultiTag.
      */
-    MultiTag getMultiTag(const std::string &id) const {
-        return backend()->getMultiTag(id);
+    MultiTag getMultiTag(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IMultiTag>(name_or_id);
     }
 
     /**
@@ -419,21 +424,32 @@ public:
      *
      * @return The referenced MultiTag.
      */
-    MultiTag getMultiTag(size_t index) const;
+    MultiTag getMultiTag(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::MultiTag)) {
+            throw OutOfBounds("No MultiTag at given index", index);
+        }
+        return backend()->getEntity<base::IMultiTag>(index);
+    }
 
     /**
      * @brief Add a MultiTag to the list of referenced tags of the group.
      *
      * @param mutlti_tag The MultiTag to add.
      */
-    void addMultiTag(const MultiTag &multi_tag);
+    void addMultiTag(const MultiTag &multi_tag) {
+        if (util::checkEntityInput(multi_tag, true)) {
+            backend()->addEntity(multi_tag);
+        }
+    }
 
     /**
      * @brief Add a MultiTag to the list of referenced tags of the group.
      *
-     * @param id        The id of the MultiTag to add.
+     * @param name_or_id    The name or id  of the MultiTag to add.
      */
-    void addMultiTag(const std::string &id);
+    void addMultiTag(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::MultiTag});
+    }
 
     /**
      * @brief Remove a MultiTag from the list of referenced tags of the group.
@@ -445,7 +461,12 @@ public:
      *
      * @returns True if the MultiTag was removed, false otherwise.
      */
-    bool removeMultiTag(const MultiTag &mulit_tag);
+    bool removeMultiTag(const MultiTag &multi_tag) {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(multi_tag);
+    }
 
     /**
      * @brief Remove a MultiTag from the list of referenced tags of the group.
@@ -453,12 +474,12 @@ public:
      * This method just removes the association between the tag and the
      * group, the MultiTag itself will not be removed from the file.
      *
-     * @param id        The id of the MultiTag to remove.
+     * @param name_or_id      The name or the id of the MultiTag to remove.
      *
      * @returns True if the MultiTag was removed, false otherwise.
      */
-    bool removeMultiTag(const std::string &id) {
-        return backend()->removeMultiTag(id);
+    bool removeMultiTag(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -480,8 +501,7 @@ public:
      *
      * @return The filtered MultiTags as a vector
      */
-    std::vector<MultiTag> multiTags() const
-    {
+    std::vector<MultiTag> multiTags() const {
         return multiTags(util::AcceptAll<MultiTag>());
     }
 
@@ -493,9 +513,7 @@ public:
      *
      * @param mulit_tags    All MultiTags.
      */
-    void multiTags(const std::vector<MultiTag> &multi_tags) {
-        backend()->multiTags(multi_tags);
-    }
+    void multiTags(const std::vector<MultiTag> &multi_tags);
 
 
     /**

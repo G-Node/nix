@@ -84,47 +84,39 @@ std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
 }
 
 
-bool Group::hasMultiTag(const MultiTag &multi_tag) const {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    return backend()->hasMultiTag(multi_tag.id());
-}
-
-
-MultiTag Group::getMultiTag(size_t index) const {
-    if(index >= backend()->multiTagCount()) {
-        throw OutOfBounds("No multi tag at given index", index);
-    }
-    return backend()->getMultiTag(index);
-}
-
-
-void Group::addMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag)) {
-        throw UninitializedEntity();
-    }
-    backend()->addMultiTag(multi_tag.id());
-}
-
-
-void Group::addMultiTag(const std::string &id) {
-    util::checkNameOrId(id);
-    backend()->addMultiTag(id);
-}
-
-
-bool Group::removeMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    return backend()->removeMultiTag(multi_tag.id());
-}
-
-
 std::vector<MultiTag> Group::multiTags(const util::Filter<MultiTag>::type &filter) const {
     auto f = [this] (size_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f, multiTagCount(), filter);
+}
+
+
+void Group::multiTags(const std::vector<MultiTag> &tags) {
+    auto cmp = [](const MultiTag &a, const MultiTag& b) { return a.name() < b.name(); };
+
+    std::vector<MultiTag> new_tags(tags);
+    size_t tag_count = nix::check::fits_in_size_t(multiTagCount(), "multiTagCount() failed; count > size_t.");
+    std::vector<MultiTag> old_tags(tag_count);
+
+    for (size_t i = 0; i < old_tags.size(); i++) {//check if this can be replaced
+        old_tags[i] = getMultiTag(i);
+    }
+    std::sort(new_tags.begin(), new_tags.end(), cmp);
+    std::sort(old_tags.begin(), old_tags.end(), cmp);
+    std::vector<MultiTag> add;
+    std::vector<MultiTag> rem;
+
+    std::set_difference(new_tags.begin(), new_tags.end(), old_tags.begin(),
+                        old_tags.end(), std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(),
+                        new_tags.end(), std::inserter(rem, rem.begin()), cmp);
+
+    for (const auto &t : add) {
+        addMultiTag(t);
+    }
+
+    for (const auto &t : rem) {
+        removeMultiTag(t);
+    }
 }
 
 
