@@ -228,12 +228,12 @@ public:
     /**
      * @brief Checks whether a Tag is referenced by the group.
      *
-     * @param id        The id of the Tag to check.
+     * @param name_or_id      The name or id of the Tag to check.
      *
      * @return True if the tag is referenced, false otherwise.
      */
-    bool hasTag(const std::string &id) const {
-        return backend()->hasTag(id);
+    bool hasTag(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -243,7 +243,12 @@ public:
      *
      * @return True if the tag is referenced, false otherwise.
      */
-    bool hasTag(const Tag &tag) const;
+    bool hasTag(const Tag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
 
     /**
      * @brief Gets the number of referenced Tag entities of the tag.
@@ -251,18 +256,18 @@ public:
      * @return The number of referenced tags.
      */
     ndsize_t tagCount() const {
-        return backend()->tagCount();
+        return backend()->entityCount(ObjectType::Tag);
     }
 
     /**
      * @brief Gets a specific referenced Tag from the tag.
      *
-     * @param id        The id of the referenced Tag.
+     * @param name_or_id      The name or id of the referenced Tag.
      *
      * @return The referenced tag.
      */
-    Tag getTag(const std::string &id) const {
-        return backend()->getTag(id);
+    Tag getTag(const std::string &name_or_id) const {
+        return backend()->getEntity<base::ITag>(name_or_id);
     }
 
     /**
@@ -272,21 +277,32 @@ public:
      *
      * @return The referenced tag.
      */
-    Tag getTag(size_t index) const;
+    Tag getTag(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::Tag)) {
+            throw OutOfBounds("No Tag at given index", index);
+        }
+        return backend()->getEntity<base::ITag>(index);
+    }
 
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
      * @param data_array The Tag to add.
      */
-    void addTag(const Tag &tag);
+    void addTag(const Tag &tag) {
+        if (util::checkEntityInput(tag, true)) {
+            backend()->addEntity(tag);
+        }
+    }
 
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
-     * @param id        The id of the Tag to add.
+     * @param name_or_id        The name or id of the Tag to add.
      */
-    void addTag(const std::string &id);
+    void addTag(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::Tag});
+    }
 
     /**
      * @brief Remove a Tag from the list of referenced tags of the group.
@@ -298,7 +314,12 @@ public:
      *
      * @returns True if the Tag was removed, false otherwise.
      */
-    bool removeTag(const Tag &tag);
+    bool removeTag(const Tag &tag) {
+          if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(tag);
+    }
 
     /**
      * @brief Remove a Tag from the list of referenced tags of the group.
@@ -306,12 +327,12 @@ public:
      * This method just removes the association between the tag and the
      * group, the tag itself will not be removed from the file.
      *
-     * @param id        The id of the Tag to remove.
+     * @param name_or_id        The name or id of the Tag to remove.
      *
      * @returns True if the Tag was removed, false otherwise.
      */
-    bool removeTag(const std::string &id) {
-        return backend()->removeTag(id);
+    bool removeTag(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -346,10 +367,7 @@ public:
      *
      * @param tags    All tags.
      */
-    void tags(const std::vector<Tag> &tags) {
-        backend()->tags(tags);
-    }
-
+    void tags(const std::vector<Tag> &tags);
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
