@@ -26,7 +26,9 @@ boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type) const {
     case ObjectType::DataArray:
         p = data_array_group(true);
         break;
-
+    case ObjectType::Tag:
+        p = tag_group(true);
+        break;
         //TODO
     default:
         p = boost::optional<H5Group>();
@@ -111,15 +113,23 @@ bool GroupHDF5::hasEntity(const nix::Identity &ident) const {
 
 std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) const {
     boost::optional<H5Group> eg = findEntityGroup(ident);
+
     switch (ident.type()) {
-    case ObjectType::DataArray:
+    case ObjectType::DataArray: {
         std::shared_ptr<DataArrayHDF5> da;
         if (eg) {
             da = std::make_shared<DataArrayHDF5>(file(), block(), *eg);
         }
         return da;
     }
-
+    case ObjectType::Tag: {
+        std::shared_ptr<TagHDF5> t;
+        if (eg) {
+            t = std::make_shared<TagHDF5>(file(), block(), *eg);
+        }
+        return t;
+    }
+    }
     return std::shared_ptr<base::IEntity>();
 }
 
@@ -160,95 +170,6 @@ void GroupHDF5::addEntity(const nix::Identity &ident) {
 
     auto target = std::dynamic_pointer_cast<EntityHDF5>(block()->getEntity(ident));
     p->createLink(target->group(), target->id());
-}
-
-bool GroupHDF5::hasTag(const std::string &name_or_id) const {
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::Tag});
-    return tag_group(false) ? tag_group(false)->hasGroup(id) : false;
-}
-
-
-ndsize_t GroupHDF5::tagCount() const {
-    boost::optional<H5Group> g = tag_group(false);
-    return g ? g->objectCount() : size_t(0);
-}
-
-
-void GroupHDF5::addTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = tag_group(true);
-    std::shared_ptr<ITag> tag = block()->getEntity<ITag>(name_or_id);
-
-    if (!tag)
-        throw std::runtime_error("GroupHDF5::addTag: Tag not found in block!");
-
-    auto target = std::dynamic_pointer_cast<TagHDF5>(tag);
-    g->createLink(target->group(), target->id());
-}
-
-
-std::shared_ptr<base::ITag> GroupHDF5::getTag(const std::string &name_or_id) const {
-    std::shared_ptr<ITag> da;
-    boost::optional<H5Group> g = tag_group(false);
-    std::string id = block()->resolveEntityId({name_or_id, ObjectType::Tag});
-
-    if (g && hasTag(id)) {
-        H5Group h5g = g->openGroup(id);
-        da = std::make_shared<TagHDF5>(file(), block(), h5g);
-    }
-    return da;
-}
-
-
-std::shared_ptr<ITag>  GroupHDF5::getTag(ndsize_t index) const {
-    boost::optional<H5Group> g = tag_group(false);
-    std::string id = g ? g->objectName(index) : "";
-    return getTag(id);
-}
-
-
-bool GroupHDF5::removeTag(const std::string &name_or_id) {
-    boost::optional<H5Group> g = tag_group(false);
-    bool removed = false;
-
-    if (g && hasTag(name_or_id)) {
-        std::shared_ptr<ITag> tag = getTag(name_or_id);
-
-        g->removeGroup(tag->id());
-        removed = true;
-    }
-    return removed;
-}
-
-
-void GroupHDF5::tags(const std::vector<Tag> &tags) {
-    auto cmp = [](const Tag &a, const Tag& b) { return a.name() < b.name(); };
-
-    std::vector<Tag> new_tags(tags);
-    size_t tag_count = nix::check::fits_in_size_t(tagCount(), "tagCount() failed; count > size_t.");
-    std::vector<Tag> old_tags(tag_count);
-    for (size_t i = 0; i < old_tags.size(); i++) {
-        old_tags[i] = getTag(i);
-    }
-    std::sort(new_tags.begin(), new_tags.end(), cmp);
-    std::sort(old_tags.begin(), old_tags.end(), cmp);
-    std::vector<Tag> add;
-    std::vector<Tag> rem;
-
-    std::set_difference(new_tags.begin(), new_tags.end(), old_tags.begin(), old_tags.end(),
-                        std::inserter(add, add.begin()), cmp);
-    std::set_difference(old_tags.begin(), old_tags.end(), new_tags.begin(), new_tags.end(),
-                        std::inserter(rem, rem.begin()), cmp);
-
-    for (const auto &t : add) {
-        Tag tag = block()->getEntity<ITag>(t);
-        if (!tag || tag.id() != t.id())
-            throw std::runtime_error("One or more data tags do not exist in this block!");
-        addTag(t.id());
-    }
-
-    for (const auto &t : rem) {
-        removeTag(t.id());
-    }
 }
 
 
