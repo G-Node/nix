@@ -63,30 +63,6 @@ public:
         return std::dynamic_pointer_cast<T>(this->getEntity(ot, index));
     }
 
-    //--------------------------------------------------
-    // Methods concerning multi tags.
-    //--------------------------------------------------
-
-    virtual bool hasMultiTag(const std::string &id) const = 0;
-
-
-    virtual ndsize_t multiTagCount() const = 0;
-
-
-    virtual std::shared_ptr<IMultiTag> getMultiTag(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<IMultiTag> getMultiTag(ndsize_t index) const = 0;
-
-
-    virtual void addMultiTag(const std::string &id) = 0;
-
-
-    virtual bool removeMultiTag(const std::string &id) = 0;
-
-
-    virtual void multiTags(const std::vector<MultiTag> &tags) = 0;
-
     /**
     * @brief Destructor
     */
