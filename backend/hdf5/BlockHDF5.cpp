@@ -50,7 +50,7 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
 
 
 //--------------------------------------------------
-// Methods concerning sources
+// Generic access methods
 //--------------------------------------------------
 
 boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
@@ -231,7 +231,10 @@ bool BlockHDF5::removeEntity(const nix::Identity &ident) {
     return p->removeAllLinks(name);
 }
 
-//
+
+//--------------------------------------------------
+// Methods concerning sources
+//--------------------------------------------------
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
     string id = util::createId();
