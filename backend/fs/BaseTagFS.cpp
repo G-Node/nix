@@ -58,8 +58,8 @@ void BaseTagFS::createSubFolders(const std::shared_ptr<base::IFile> &file) {
 bool BaseTagFS::hasReference(const std::string &name_or_id) const {
     std::string id = name_or_id;
 
-    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
-        id = block()->getDataArray(name_or_id)->id();
+    if (!util::looksLikeUUID(name_or_id) && block()->hasEntity({name_or_id, ObjectType::DataArray})) {
+        id = block()->getEntity({name_or_id, ObjectType::DataArray})->id();
     }
 
     return refs_group.hasObject(id);
@@ -75,8 +75,8 @@ std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(const std::string &na
     std::shared_ptr<base::IDataArray> da;
 
     std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
-        id = block()->getDataArray(name_or_id)->id();
+    if (!util::looksLikeUUID(name_or_id) && block()->hasEntity({name_or_id, ObjectType::DataArray})) {
+        id = block()->getEntity({name_or_id, ObjectType::DataArray})->id();
     }
 
     if (hasReference(id)) {
@@ -96,10 +96,10 @@ std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(ndsize_t index) const
 
 
 void BaseTagFS::addReference(const std::string &name_or_id) {
-    if (!block()->hasDataArray(name_or_id))
+    if (!block()->hasEntity({name_or_id, ObjectType::DataArray}))
         throw std::runtime_error("BaseTagFS::addReference: DataArray not found in block!");
 
-    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     refs_group.createDirectoryLink(target->location(), target->id());
 }
 
@@ -121,7 +121,7 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
     std::sort(old_arrays.begin(), old_arrays.end(), cmp);
     std::vector<DataArray> add;
     std::vector<DataArray> rem;
-    
+
     std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
                         std::inserter(add, add.begin()), cmp);
     std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
@@ -129,10 +129,10 @@ void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
 
     auto blck = std::dynamic_pointer_cast<BlockFS>(block());
     for (const auto &da : add) {
-        DataArray a = blck->getDataArray(da.name());
-        if (!a || a.id() != da.id())
+        auto a = std::dynamic_pointer_cast<DataArrayFS>(blck->getEntity(da));
+        if (!a)
             throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(a.id());
+        addReference(a->id());
     }
     for (const auto &da : rem) {
         removeReference(da.id());
@@ -180,11 +180,11 @@ std::shared_ptr<base::IFeature>  BaseTagFS::getFeature(ndsize_t index) const {
 
 
 std::shared_ptr<base::IFeature>  BaseTagFS::createFeature(const std::string &name_or_id, LinkType link_type) {
-    if(!block()->hasDataArray(name_or_id)) {
+    if(!block()->hasEntity({name_or_id, ObjectType::DataArray})) {
         throw std::runtime_error("DataArray not found in Block!");
     }
     std::string rep_id = util::createId();
-    DataArray a = block()->getDataArray(name_or_id);
+    DataArray a = std::dynamic_pointer_cast<base::IDataArray>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     return std::make_shared<FeatureFS>(file(), block(), feature_group.location(), rep_id, a, link_type);
 }
 

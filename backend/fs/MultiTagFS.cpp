@@ -64,12 +64,12 @@ std::shared_ptr<base::IDataArray> MultiTagFS::positions() const {
 void MultiTagFS::positions(const std::string &name_or_id) {
     if (name_or_id.empty())
         throw EmptyString("positions");
-    if (!block()->hasDataArray(name_or_id))
+    if (!block()->hasEntity({name_or_id, ObjectType::DataArray}))
         throw std::runtime_error("MultiTagFS::positions: DataArray not found in block!");
     if (hasObject("positions"))
         removeObjectByNameOrAttribute("name", "positions");
 
-    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     bfs::path p(location()), m("positions");
     target->createLink(p / m);
     forceUpdatedAt();
@@ -97,15 +97,15 @@ std::shared_ptr<base::IDataArray>  MultiTagFS::extents() const {
 void MultiTagFS::extents(const std::string &name_or_id) {
     if (name_or_id.empty())
         throw EmptyString("extents");
-    if (!block()->hasDataArray(name_or_id))
+    if (!block()->hasEntity({name_or_id, ObjectType::DataArray}))
         throw std::runtime_error("MultiTagFS::extents: DataArray not found in block!");
     if (hasObject("extents"))
         removeObjectByNameOrAttribute("name", "extents");
-    DataArray da = block()->getDataArray(name_or_id);
+    DataArray da = std::dynamic_pointer_cast<base::IDataArray>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     if (!checkDimensions(da, positions()))
         throw std::runtime_error("MultiTagFS::extents: cannot set Extent because dimensionality of extent and position data do not match!");
 
-    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     bfs::path p(location()), m("extents");
     target->createLink(p / m);
     forceUpdatedAt();
