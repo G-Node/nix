@@ -56,12 +56,7 @@ void BaseTagFS::createSubFolders(const std::shared_ptr<base::IFile> &file) {
 //--------------------------------------------------
 
 bool BaseTagFS::hasReference(const std::string &name_or_id) const {
-    std::string id = name_or_id;
-
-    if (!util::looksLikeUUID(name_or_id) && block()->hasEntity({name_or_id, ObjectType::DataArray})) {
-        id = block()->getEntity({name_or_id, ObjectType::DataArray})->id();
-    }
-
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
     return refs_group.hasObject(id);
 }
 
@@ -74,10 +69,7 @@ ndsize_t BaseTagFS::referenceCount() const {
 std::shared_ptr<base::IDataArray>  BaseTagFS::getReference(const std::string &name_or_id) const {
     std::shared_ptr<base::IDataArray> da;
 
-    std::string id = name_or_id;
-    if (!util::looksLikeUUID(name_or_id) && block()->hasEntity({name_or_id, ObjectType::DataArray})) {
-        id = block()->getEntity({name_or_id, ObjectType::DataArray})->id();
-    }
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
 
     if (hasReference(id)) {
         boost::optional<bfs::path> path = refs_group.findByNameOrAttribute("name", name_or_id);
