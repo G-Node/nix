@@ -528,6 +528,10 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Group &ent);
+
+ private:
+    template<typename T>
+    void replaceEntities(const std::vector<T> &entitties);
 };
 
 template<>
