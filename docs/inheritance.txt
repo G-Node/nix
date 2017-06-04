@@ -1,0 +1,39 @@
+Backend Interfaces
+------------------
+  IEntity
+    INamedEntity
+      IEntityWithMetadata
+        IEntityWithSources
+          IFile
+          IBlock
+          IGroup
+          ...
+
+Backend Implementation
+----------------------
+  EntityHDF5                    : *IEntity
+    NamedEntityHDF5             :   *INamedEnity$
+      EntityWithMetadataHDF5    :     *IEntityWithMetadata
+        EntityWithSourceHDF5    :       *IEntityWithSources
+          FileHDF5  : H5Object  :         *IFile
+          BlockHDF5             :         *IBlock
+
+Diamond Pattern:
+  $ NamedEntityHdf5 : [ EntityHDF5<> : IEntity# ]
+        INamedEnity : [                IEntity# ]
+
+Frontend
+--------
+ImplContainer<T> { shared_ptr<T> impl_ptr; }
+  Entity<T>
+    NamedEntity<T>
+      EntityWithMetadata<T>
+        EntityWouthSources<T>
+          File<IFile>
+          Block<IBlock>
+          Group<IGroup>
+          ...
+
+ImplContainer holds the specific backend implementation of the corresponding
+interface, i.e FileHDF5 for the IFile:
+  ImplContainer<IFile> { shared_ptr<IFile = FileHDF5> impl_ptr }

@@ -33,6 +33,10 @@ private:
 
     void createSubFolders(const std::shared_ptr<base::IFile> &file);
 
+    // Helper methods for generic entity related methods below
+    boost::optional<Directory> groupForObjectType(ObjectType ot) const;
+
+    boost::optional<boost::filesystem::path> findEntityGroup(const nix::Identity &ident) const;
 public:
 
     /**
@@ -67,6 +71,23 @@ public:
     BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     //--------------------------------------------------
+    // Generic entity methods
+    //--------------------------------------------------
+    std::string resolveEntityId(const nix::Identity &ident) const;
+
+    bool hasEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const;
+
+    ndsize_t entityCount(ObjectType type) const;
+
+    bool removeEntity(const nix::Identity &ident);
+
+    void addEntity(const nix::Identity &ident);
+
+    //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------
 
@@ -91,96 +112,34 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArray(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
-
-
-    ndsize_t dataArrayCount() const;
-
-
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
                                                       nix::DataType data_type, const NDSize &shape);
-
-
-    bool deleteDataArray(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(ndsize_t index) const;
-
-
-    ndsize_t tagCount() const;
-
-
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
                                           const std::vector<double> &position);
-
-
-    bool deleteTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
-
-
-    ndsize_t multiTagCount() const;
-
-
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                     const DataArray &positions);
-
-
-    bool deleteMultiTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning groups.
     //--------------------------------------------------
 
-    bool hasGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const;
-
-
-    ndsize_t groupCount() const;
-
-
     std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type);
-
-
-    bool deleteGroup(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
 
-
     virtual ~BlockFS();
-
 
     std::shared_ptr<base::IBlock> block() const;
 

@@ -18,6 +18,8 @@
 #include <nix/Group.hpp>
 #include <nix/Platform.hpp>
 
+#include <nix/util/util.hpp>
+
 #include <string>
 #include <memory>
 
@@ -144,7 +146,7 @@ public:
      *         otherwise.
      */
     bool hasSource(const std::string &name_or_id) const {
-        return backend()->hasSource(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Source});
     }
 
     /**
@@ -155,7 +157,12 @@ public:
      * @return True if the source exists at the root, false
      *         otherwise.
      */
-    bool hasSource(const Source &source) const;
+    bool hasSource(const Source &source) const {
+        if (!util::checkEntityInput(source, false)) {
+            return false;
+        }
+        return backend()->hasEntity(source);
+    }
 
     /**
      * @brief Retrieves a specific root source by its id.
@@ -166,7 +173,7 @@ public:
      *         will be thrown.
      */
     Source getSource(const std::string &name_or_id) const {
-        return backend()->getSource(name_or_id);
+        return backend()->getEntity<base::ISource>(name_or_id);
     }
 
     /**
@@ -176,7 +183,12 @@ public:
      *
      * @return The source at the specified index.
      */
-    Source getSource(ndsize_t index) const;
+    Source getSource(ndsize_t index) const {
+        if (index >= sourceCount()) {
+            throw OutOfBounds("Block::getSource: index is out of bounds!");
+        }
+        return backend()->getEntity<base::ISource>(index);
+    }
 
     /**
      * @brief Returns the number of root sources in this block.
@@ -184,7 +196,7 @@ public:
      * @return The number of root sources.
      */
     ndsize_t sourceCount() const {
-        return backend()->sourceCount();
+        return backend()->entityCount(ObjectType::Source);
     }
 
     /**
@@ -264,7 +276,7 @@ public:
      * @return True if the data array exists, false otherwise.
      */
     bool hasDataArray(const std::string &name_or_id) const {
-        return backend()->hasDataArray(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -274,7 +286,12 @@ public:
     *
     * @return True if the data array exists, false otherwise.
     */
-    bool hasDataArray(const DataArray &data_array) const;
+    bool hasDataArray(const DataArray &data_array) const {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->hasEntity(data_array);
+    }
 
     /**
      * @brief Retrieves a specific data array from the block by name or id.
@@ -285,8 +302,9 @@ public:
      *         doesn't exist, an exception will be thrown.
      */
     DataArray getDataArray(const std::string &name_or_id) const {
-        return backend()->getDataArray(name_or_id);
+        return backend()->getEntity<base::IDataArray>(name_or_id);
     }
+
 
     /**
      * @brief Retrieves a data array by index.
@@ -296,7 +314,10 @@ public:
      * @return The data array at the specified index.
      */
     DataArray getDataArray(ndsize_t index) const {
-        return backend()->getDataArray(index);
+        if (index >= dataArrayCount()) {
+            throw OutOfBounds("Block::getDataArray: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IDataArray>(index);
     }
 
     /**
@@ -318,7 +339,7 @@ public:
      * @return The number of data arrays of the block.
      */
     ndsize_t dataArrayCount() const {
-        return backend()->dataArrayCount();
+        return backend()->entityCount(ObjectType::DataArray);
     }
 
     /**
@@ -382,7 +403,7 @@ public:
      * @return True if the data array was deleted, false otherwise.
      */
     bool deleteDataArray(const std::string &name_or_id) {
-        return backend()->deleteDataArray(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -395,7 +416,12 @@ public:
     *
     * @return True if the data array was deleted, false otherwise.
     */
-    bool deleteDataArray(const DataArray &data_array);
+    bool deleteDataArray(const DataArray &data_array) {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->removeEntity(data_array);
+    }
 
     //--------------------------------------------------
     // Methods concerning tags.
@@ -409,7 +435,7 @@ public:
      * @return True if the tag exists, false otherwise.
      */
     bool hasTag(const std::string &name_or_id) const {
-        return backend()->hasTag(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -419,7 +445,12 @@ public:
     *
     * @return True if the tag exists, false otherwise.
     */
-    bool hasTag(const Tag &tag) const;
+    bool hasTag(const Tag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
 
     /**
      * @brief Retrieves a specific tag from the block by its id.
@@ -430,7 +461,7 @@ public:
      *         an exception will be thrown.
      */
     Tag getTag(const std::string &name_or_id) const {
-        return backend()->getTag(name_or_id);
+        return backend()->getEntity<base::ITag>(name_or_id);
     }
 
     /**
@@ -440,7 +471,12 @@ public:
      *
      * @return The tag at the specified index.
      */
-    Tag getTag(ndsize_t index) const;
+    Tag getTag(ndsize_t index) const {
+        if (index >= tagCount()) {
+            throw OutOfBounds("Block::getTag: index is out of bounds!");
+        }
+        return backend()->getEntity<base::ITag>(index);
+    }
 
     /**
      * @brief Get tags within this block.
@@ -461,7 +497,7 @@ public:
      * @return The number of tags.
      */
     ndsize_t tagCount() const {
-        return backend()->tagCount();
+        return backend()->entityCount(ObjectType::Tag);
     }
 
     /**
@@ -487,7 +523,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteTag(const std::string &name_or_id) {
-        return backend()->deleteTag(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -500,7 +536,12 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteTag(const Tag &tag);
+    bool deleteTag(const Tag &tag) {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(tag);
+    }
 
     //--------------------------------------------------
     // Methods concerning multi tags.
@@ -514,7 +555,7 @@ public:
      * @return True if the multi tag exists, false otherwise.
      */
     bool hasMultiTag(const std::string &name_or_id) const {
-        return backend()->hasMultiTag(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -524,7 +565,12 @@ public:
     *
     * @return True if the multi tag exists, false otherwise.
     */
-    bool hasMultiTag(const MultiTag &multi_tag) const;
+    bool hasMultiTag(const MultiTag &multi_tag) const {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(multi_tag);
+    }
 
     /**
      * @brief Retrieves a specific multi tag from the block by its id.
@@ -535,7 +581,7 @@ public:
      *         an exception will be thrown.
      */
     MultiTag getMultiTag(const std::string &name_or_id) const {
-        return backend()->getMultiTag(name_or_id);
+        return backend()->getEntity<base::IMultiTag>(name_or_id);
     }
 
     /**
@@ -545,7 +591,12 @@ public:
      *
      * @return The multi tag at the specified index.
      */
-    MultiTag getMultiTag(ndsize_t index) const;
+    MultiTag getMultiTag(ndsize_t index) const {
+        if (index >= multiTagCount()) {
+            throw OutOfBounds("Block::getMultiTag: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IMultiTag>(index);
+    }
 
     /**
      * @brief Get multi tags within this block.
@@ -566,7 +617,7 @@ public:
      * @return The number of multi tags.
      */
     ndsize_t multiTagCount() const {
-        return backend()->multiTagCount();
+        return backend()->entityCount(ObjectType::MultiTag);
     }
 
     /**
@@ -592,7 +643,7 @@ public:
      * @return True if the tag was removed, false otherwise.
      */
     bool deleteMultiTag(const std::string &name_or_id) {
-        return backend()->deleteMultiTag(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -605,7 +656,12 @@ public:
     *
     * @return True if the tag was removed, false otherwise.
     */
-    bool deleteMultiTag(const MultiTag &multi_tag);
+    bool deleteMultiTag(const MultiTag &multi_tag) {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(multi_tag);
+    }
 
     //--------------------------------------------------
     // Methods concerning groups
@@ -618,7 +674,7 @@ public:
     * @return True if the group exists, false otherwise.
     */
     bool hasGroup(const std::string &name_or_id) const {
-        return backend()->hasGroup(name_or_id);
+        return backend()->hasEntity({name_or_id, ObjectType::Group});
     }
 
     /**
@@ -628,7 +684,12 @@ public:
     *
     * @return True if the group exists, false otherwise.
     */
-    bool hasGroup(const Group &group) const;
+    bool hasGroup(const Group &group) const {
+        if (!util::checkEntityInput(group, false)) {
+            return false;
+        }
+        return backend()->hasEntity(group);
+    }
 
     /**
      * @brief Retrieves a specific group from the block by its id.
@@ -639,7 +700,7 @@ public:
      *         an exception will be thrown.
      */
     Group getGroup(const std::string &name_or_id) const {
-        return backend()->getGroup(name_or_id);
+        return backend()->getEntity<base::IGroup>(name_or_id);
     }
 
     /**
@@ -650,7 +711,10 @@ public:
      * @return The group at the specified index.
      */
     Group getGroup(ndsize_t index) const {
-        return backend()->getGroup(index);
+        if (index >= groupCount()) {
+            throw OutOfBounds("Block::getGroup: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IGroup>(index);
     }
 
     /**
@@ -672,7 +736,7 @@ public:
      * @return The number of groups.
      */
     ndsize_t groupCount() const {
-        return backend()->groupCount();
+        return backend()->entityCount(ObjectType::Group);
     }
 
     /**
@@ -696,7 +760,7 @@ public:
      * @return True if the group was removed, false otherwise.
      */
     bool deleteGroup(const std::string &name_or_id) {
-        return backend()->deleteGroup(name_or_id);
+        return backend()->removeEntity({name_or_id, ObjectType::Group});
     }
 
     /**
@@ -709,7 +773,12 @@ public:
     *
     * @return True if the group was removed, false otherwise.
     */
-    bool deleteGroup(const Group &multi_tag);
+    bool deleteGroup(const Group &group) {
+        if (!util::checkEntityInput(group, false)) {
+            return false;
+        }
+        return backend()->removeEntity(group);
+    }
 
     //------------------------------------------------------
     // Operators and other functions
@@ -727,7 +796,13 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Block &ent);
+};
 
+template<>
+struct objectToType<Block> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Block;
+    typedef nix::base::IBlock backendType;
 };
 
 }

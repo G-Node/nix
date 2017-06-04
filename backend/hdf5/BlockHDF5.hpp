@@ -62,13 +62,37 @@ public:
      */
     BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
+
+private:
+    // Helper methods for generic entity related methods below
+    boost::optional<H5Group> groupForObjectType(ObjectType ot) const;
+
+    boost::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
+
+public:
+    //--------------------------------------------------
+    // Generic entity methods
+    //--------------------------------------------------
+    std::string resolveEntityId(const nix::Identity &ident) const;
+
+    bool hasEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const;
+
+    std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const;
+
+    ndsize_t entityCount(ObjectType type) const;
+
+    bool removeEntity(const nix::Identity &ident);
+
+
     //--------------------------------------------------
     // Methods concerning sources
     //--------------------------------------------------
 
     bool hasSource(const std::string &name_or_id) const;
 
-    
+
     std::shared_ptr<base::ISource> getSource(const std::string &name_or_id) const;
 
 
@@ -87,83 +111,27 @@ public:
     // Methods concerning data arrays
     //--------------------------------------------------
 
-    bool hasDataArray(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IDataArray> getDataArray(const std::string &name_or_id) const;
-
-    
-    std::shared_ptr<base::IDataArray> getDataArray(ndsize_t index) const;
-
-
-    ndsize_t dataArrayCount() const;
-
-
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
                                                       nix::DataType data_type, const NDSize &shape);
 
-
-    bool deleteDataArray(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
-    bool hasTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::ITag> getTag(ndsize_t index) const;
-
-
-    ndsize_t tagCount() const;
-
-
     std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
                                                       const std::vector<double> &position);
-
-
-    bool deleteTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
 
-    bool hasMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IMultiTag> getMultiTag(ndsize_t index) const;
-
-
-    ndsize_t multiTagCount() const;
-
-
     std::shared_ptr<base::IMultiTag> createMultiTag(const std::string &name, const std::string &type,
                                                   const DataArray &positions);
-
-
-    bool deleteMultiTag(const std::string &name_or_id);
 
     //--------------------------------------------------
     // Methods concerning groups.
     //--------------------------------------------------
-
-    bool hasGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(const std::string &name_or_id) const;
-
-
-    std::shared_ptr<base::IGroup> getGroup(ndsize_t index) const;
-
-
-    ndsize_t groupCount() const;
-
 
     std::shared_ptr<base::IGroup> createGroup(const std::string &name, const std::string &type);
 

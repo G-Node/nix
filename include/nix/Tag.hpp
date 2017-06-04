@@ -15,6 +15,7 @@
 #include <nix/Feature.hpp>
 #include <nix/DataView.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <algorithm>
 
@@ -483,6 +484,14 @@ public:
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const Tag &ent);
 
+};
+
+
+template<>
+struct objectToType<nix::Tag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Tag;
+    typedef nix::base::ITag backendType;
 };
 
 

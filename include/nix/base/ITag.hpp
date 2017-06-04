@@ -13,6 +13,7 @@
 #include <nix/base/IDataArray.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/base/IBaseTag.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <string>
 #include <vector>
@@ -62,6 +63,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::ITag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Tag;
+};
+
 } // namespace nix
 
 #endif // NIX_I_TAG_H

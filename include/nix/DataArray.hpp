@@ -493,6 +493,15 @@ protected:
                  const NDSize &offset);
 };
 
+
+template<>
+struct objectToType<nix::DataArray> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::DataArray;
+    typedef nix::base::IDataArray backendType;
+};
+
+
 } // namespace nix
 
 #endif // NIX_DATA_ARRAY_H

@@ -10,6 +10,7 @@
 #define NIX_I_FEATURE_H
 
 #include <nix/base/IDataArray.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <string>
 #include <memory>
@@ -57,6 +58,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IFeature> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Feature;
+};
+
 } // namespace nix
 
 #endif // NIX_I_FEATURE_H

@@ -69,11 +69,11 @@ void FeatureFS::linkType(LinkType link_type) {
 void FeatureFS::data(const std::string &name_or_id) {
     if (name_or_id.empty())
         throw EmptyString("data(id)");
-    if (!block->hasDataArray(name_or_id))
+    if (!block->hasEntity({name_or_id, ObjectType::DataArray}))
         throw std::runtime_error("FeatureFS::data: DataArray not found in block!");
     if (hasObject("data"))
         removeObjectByNameOrAttribute("name", "data");
-    auto target = std::dynamic_pointer_cast<DataArrayFS>(block->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayFS>(block->getEntity({name_or_id, ObjectType::DataArray}));
     bfs::path p(location()), m("data");
     target->createLink(p / m);
     forceUpdatedAt();

@@ -18,6 +18,8 @@
 #include <nix/NDSize.hpp>
 #include <nix/Tag.hpp>
 #include <nix/MultiTag.hpp>
+#include <nix/ObjectType.hpp>
+#include <nix/Identity.hpp>
 
 
 namespace nix {
@@ -32,77 +34,34 @@ class NIXAPI IGroup : virtual public IEntityWithSources {
 
 public:
 
-    //--------------------------------------------------
-    // Methods concerning data arrays.
-    //--------------------------------------------------
+    virtual bool hasEntity(const nix::Identity &ident) const = 0;
 
-    virtual bool hasDataArray(const std::string &id) const = 0;
+    virtual std::shared_ptr<base::IEntity> getEntity(const nix::Identity &ident) const = 0;
 
+    virtual std::shared_ptr<base::IEntity> getEntity(ObjectType type, ndsize_t index) const = 0;
 
-    virtual ndsize_t dataArrayCount() const = 0;
+    virtual ndsize_t entityCount(ObjectType type) const = 0;
 
+    virtual bool removeEntity(const nix::Identity &ident) = 0;
 
-    virtual std::shared_ptr<IDataArray> getDataArray(const std::string &id) const = 0;
+    virtual void addEntity(const nix::Identity &ident) = 0;
 
+    template<typename T>
+    std::shared_ptr<T> getEntity(const nix::Identity &ident) const {
+        return std::dynamic_pointer_cast<T>(this->getEntity(ident));
+    }
 
-    virtual std::shared_ptr<IDataArray> getDataArray(ndsize_t index) const = 0;
+    template<typename T>
+    std::shared_ptr<T> getEntity(const std::string &name_or_id) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity({name_or_id, ot}));
+    }
 
-
-    virtual void addDataArray(const std::string &id) = 0;
-
-
-    virtual bool removeDataArray(const std::string &id) = 0;
-
-
-    virtual void dataArrays(const std::vector<DataArray> &data_arrays) = 0;
-
-    //--------------------------------------------------
-    // Methods concerning tags.
-    //--------------------------------------------------
-
-    virtual bool hasTag(const std::string &id) const = 0;
-
-
-    virtual ndsize_t tagCount() const = 0;
-
-
-    virtual std::shared_ptr<ITag> getTag(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<ITag> getTag(ndsize_t index) const = 0;
-
-
-    virtual void addTag(const std::string &id) = 0;
-
-
-    virtual bool removeTag(const std::string &id) = 0;
-
-
-    virtual void tags(const std::vector<Tag> &tags) = 0;
-
-    //--------------------------------------------------
-    // Methods concerning multi tags.
-    //--------------------------------------------------
-
-    virtual bool hasMultiTag(const std::string &id) const = 0;
-
-
-    virtual ndsize_t multiTagCount() const = 0;
-
-
-    virtual std::shared_ptr<IMultiTag> getMultiTag(const std::string &id) const = 0;
-
-
-    virtual std::shared_ptr<IMultiTag> getMultiTag(ndsize_t index) const = 0;
-
-
-    virtual void addMultiTag(const std::string &id) = 0;
-
-
-    virtual bool removeMultiTag(const std::string &id) = 0;
-
-
-    virtual void multiTags(const std::vector<MultiTag> &tags) = 0;
+    template<typename T>
+    std::shared_ptr<T> getEntity(ndsize_t index) const {
+        ObjectType ot = objectToType<T>::value;
+        return std::dynamic_pointer_cast<T>(this->getEntity(ot, index));
+    }
 
     /**
     * @brief Destructor
@@ -111,6 +70,13 @@ public:
 };
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IGroup> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Group;
+};
+
 } // namespace nix
 
 #endif //NIX_IGROUP_HPP

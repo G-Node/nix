@@ -12,6 +12,7 @@
 #include <nix/base/ISection.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <string>
 #include <vector>
@@ -131,6 +132,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IFile> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::File;
+};
+
 } // namespace nix
 
 #endif

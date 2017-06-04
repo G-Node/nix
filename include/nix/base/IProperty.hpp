@@ -11,6 +11,7 @@
 
 #include <nix/Value.hpp>
 #include <nix/base/INamedEntity.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <nix/NDSize.hpp>
 
@@ -83,6 +84,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IProperty> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Property;
+};
+
 } // namespace nix
 
 #endif // NIX_I_PROPERTY_H

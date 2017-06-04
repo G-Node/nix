@@ -17,6 +17,7 @@
 
 #include <boost/optional.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/ObjectType.hpp>
 
 namespace nix {
 
@@ -169,6 +170,26 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::ISetDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::SetDimension;
+};
+
+template<>
+struct objectToType<nix::base::ISampledDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::SampledDimension;
+};
+
+
+template<>
+struct objectToType<nix::base::IRangeDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::RangeDimension;
+};
+
 } // namespace nix
 
 #endif // NIX_I_DIMENSIONS_H
