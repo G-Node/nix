@@ -1,3 +1,9 @@
+nix (1.4.0-2) xenial; urgency=medium
+
+  * version bump to 1.4.0
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Tue, 06 Jun 2017 11:16:04 +0100
+
 nix (1.4.0-1) trusty; urgency=medium
 
   * improved performance when adding entities to groups, or appending references and features
