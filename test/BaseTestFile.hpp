@@ -34,6 +34,8 @@ protected:
 
 public:
 
+    virtual nix::File openFile(const std::string &name, nix::FileMode mode) = 0;
+
     void testOpen();
     void testFlush();
     void testValidate();

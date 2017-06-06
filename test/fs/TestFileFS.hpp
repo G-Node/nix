@@ -46,6 +46,9 @@ public:
         file_other.close();
     }
 
+    nix::File openFile(const std::string &name, nix::FileMode mode) {
+        return nix::File::open(name, mode, "file");
+    }
 
     void testLocation() {
         bfs::path p = boost::filesystem::current_path();

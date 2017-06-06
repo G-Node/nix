@@ -184,7 +184,7 @@ void BaseTestFile::testReopen() {
     b = none;
     file_open.close();
 
-    file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
+    file_open = openFile("test_file_b", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
 
     CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
@@ -192,12 +192,16 @@ void BaseTestFile::testReopen() {
 
 
 void BaseTestFile::testReopenReadOnly() {
-    Block b = file_open.createBlock("a", "a");
-    b = none;
-    file_open.close();
+    nix::File fd = openFile("test_file_ro", FileMode::Overwrite);
 
-    file_open = nix::File::open("test_file_ro.h5", FileMode::ReadOnly);
-    b = file_open.getBlock("b");
+    Block b = fd.createBlock("a", "a");
+    b = none;
+    fd.close();
+    fd = none;
+
+    fd = openFile("test_file_ro", FileMode::ReadOnly);
+    b = fd.getBlock("a");
 
     CPPUNIT_ASSERT(b.dataArrayCount() == 0);
+    fd.close();
 }
