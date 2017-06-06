@@ -17,15 +17,21 @@
 class BaseTestReadOnly : public CPPUNIT_NS::TestFixture {
 
 private:
-    std::string section_id, block_id, tag_id, mtag_id, property_id, 
-                feature_id, data_array_id;
+    std::string section_id, block_id, tag_id, mtag_id, property_id,
+                 feature_id, data_array_id, group_id;
     nix::ndsize_t dim_index, dim_sampled_index, dim_range_index, dim_set_index;
     std::stringstream s;
     time_t startup_time;
 
+protected:
+    virtual nix::File openFile(const std::string &name, nix::FileMode mode) = 0;
+
 public:
-    void init(nix::File &file);
+    void setUp();
+    void tearDown() {}
+
     void testRead();
+
 
 };
 
