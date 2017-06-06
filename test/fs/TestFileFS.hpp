@@ -25,6 +25,7 @@ class TestFileFS: public BaseTestFile {
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST(testReopenReadOnly);
     CPPUNIT_TEST(testCheckHeader);
     CPPUNIT_TEST(testNonNix);
 
