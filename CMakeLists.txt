@@ -11,8 +11,8 @@ SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "Include install directory")
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 3)
-set(VERSION_PATCH 2)
+set(VERSION_MINOR 4)
+set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
 
@@ -246,7 +246,7 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfi
 ########################################
 # CPack for Win
 if(WIN32)
-  
+
   install(TARGETS nix
 		  ARCHIVE
 		  DESTINATION lib
@@ -255,7 +255,7 @@ if(WIN32)
   install(FILES ${NIX_LICENSE}
 		  DESTINATION ./
 		  COMPONENT libraries)
-		  
+
   file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
   install(FILES ${HDF5_DLLS}
 		  DESTINATION bin
@@ -264,12 +264,12 @@ if(WIN32)
   install(FILES ${HDF5_COPYING}
 		  DESTINATION ./
 		  COMPONENT libraries)
-		  
+
   install(TARGETS nix-tool
 		  RUNTIME
 		  DESTINATION bin
 		  COMPONENT applications)
-		  
+
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
   set(CPACK_PACKAGE_VENDOR "g-node.org")
