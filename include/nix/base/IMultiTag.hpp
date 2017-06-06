@@ -14,6 +14,7 @@
 #include <nix/base/IFeature.hpp>
 #include <nix/base/IBaseTag.hpp>
 #include <nix/None.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <vector>
 #include <string>
@@ -71,6 +72,13 @@ public:
 };
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::IMultiTag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::MultiTag;
+};
+
 } // namespace nix
 
 #endif // NIX_I_MULTI_TAG_H

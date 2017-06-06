@@ -33,7 +33,8 @@ bool Tag::hasReference(const DataArray &reference) const {
     if (!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->hasReference(reference.id());
+    DataArray da = backend()->getReference(reference.name());
+    return da && da.id() == reference.id();
 }
 
 
@@ -49,7 +50,7 @@ void Tag::addReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference, false)) {
         throw UninitializedEntity();
     }
-    backend()->addReference(reference.id());
+    backend()->addReference(reference.name());
 }
 
 
@@ -63,7 +64,7 @@ bool Tag::removeReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->removeReference(reference.id());
+    return backend()->removeReference(reference.name());
 }
 
 
@@ -122,8 +123,28 @@ DataView Tag::retrieveData(size_t reference_index) const {
 }
 
 
+DataView Tag::retrieveData(const std::string &name_or_id) const {
+    nix::DataArray array = backend()->getReference(name_or_id);
+    if (array) {
+        return util::retrieveData(*this, array);
+    } else {
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::retrieveData");
+    }
+}
+
+
 DataView Tag::retrieveFeatureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
+}
+
+
+DataView Tag::retrieveFeatureData(const std::string &name_or_id) const {
+    nix::Feature feature = backend()->getFeature(name_or_id);
+    if (feature) {
+        return util::retrieveFeatureData(*this, feature);
+    } else {
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::retrieveFeatureData");
+    }
 }
 
 

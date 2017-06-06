@@ -212,22 +212,29 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 
 
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index) {
-    DataArray positions = tag.positions();
-    DataArray extents = tag.extents();
     vector<DataArray> refs = tag.references();
 
     if (refs.size() == 0) { // Do I need this?
         throw nix::OutOfBounds("There are no references in this tag!", 0);
     }
-    if (position_index >= positions.dataExtent()[0] ||
-        (extents && position_index >= extents.dataExtent()[0])) {
-        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
-    }
     if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
 
-    ndsize_t dimension_count = refs[reference_index].dimensionCount();
+    return retrieveData(tag, position_index, refs[reference_index]);
+}
+
+
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array) {
+    DataArray positions = tag.positions();
+    DataArray extents = tag.extents();
+
+    if (position_index >= positions.dataExtent()[0] ||
+        (extents && position_index >= extents.dataExtent()[0])) {
+        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
+    }
+
+    ndsize_t dimension_count = array.dimensionCount();
     if (positions.dataExtent().size() == 1 && dimension_count != 1) {
         throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
                                           "util::retrieveData");
@@ -240,19 +247,17 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t refer
     }
 
     NDSize offset, count;
-    getOffsetAndCount(tag, refs[reference_index], position_index, offset, count);
+    getOffsetAndCount(tag, array, position_index, offset, count);
 
-    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
+    if (!positionAndExtentInData(array, offset, count)) {
         throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
     }
-    DataView io = DataView(refs[reference_index], count, offset);
+    DataView io = DataView(array, count, offset);
     return io;
 }
 
 
 DataView retrieveData(const Tag &tag, size_t reference_index) {
-    vector<double> positions = tag.position();
-    vector<double> extents = tag.extent();
     vector<DataArray> refs = tag.references();
     if (refs.size() == 0) {
         throw nix::OutOfBounds("There are no references in this tag!", 0);
@@ -260,35 +265,35 @@ DataView retrieveData(const Tag &tag, size_t reference_index) {
     if (!(reference_index < tag.referenceCount())) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
-    ndsize_t dimension_count = refs[reference_index].dimensionCount();
-    if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
-        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data","util::retrieveData");
-    }
-
-    NDSize offset, count;
-    getOffsetAndCount(tag, refs[reference_index], offset, count);
-    if (!positionAndExtentInData(refs[reference_index], offset, count)) {
-        throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
-    }
-    DataView io = DataView(refs[reference_index], count, offset);
-    return io;
+    return retrieveData(tag, refs[reference_index]);
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
-    if (tag.featureCount() == 0) {
-        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+DataView retrieveData(const Tag &tag, const DataArray &array) {
+    vector<double> positions = tag.position();
+    vector<double> extents = tag.extent();
+    ndsize_t dimension_count = array.dimensionCount();
+    if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
+        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data", "util::retrieveData");
     }
-    if (feature_index > tag.featureCount()) {
-        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+
+    NDSize offset, count;
+    getOffsetAndCount(tag, array, offset, count);
+    if (!positionAndExtentInData(array, offset, count)) {
+        throw nix::OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
-    Feature feat = tag.getFeature(feature_index);
-    DataArray data = feat.data();
+    DataView io = DataView(array, count, offset);
+    return io;
+}        
+
+
+DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
+    DataArray data = feature.data();
     if (data == nix::none) {
         throw nix::UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
-    if (feat.linkType() == nix::LinkType::Tagged) {
+    if (feature.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
         getOffsetAndCount(tag, data, offset, count);
         if (!positionAndExtentInData(data, offset, count)) {
@@ -304,6 +309,18 @@ DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
 }
 
 
+DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
+    if (tag.featureCount() == 0) {
+        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
+    }
+    if (feature_index > tag.featureCount()) {
+        throw nix::OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feature_index);
+    return retrieveFeatureData(tag, feat);
+}
+
+
 DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index) {
     if (tag.featureCount() == 0) {
        throw nix::OutOfBounds("There are no features associated with this tag!", 0);
@@ -312,12 +329,16 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_
         throw nix::OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
-    DataArray data = feat.data();
+    return retrieveFeatureData(tag, position_index, feat);
+}
+
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+    DataArray data = feature.data();
     if (data == nix::none) {
         throw nix::UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
-    if (feat.linkType() == nix::LinkType::Tagged) {
+    if (feature.linkType() == nix::LinkType::Tagged) {
         NDSize offset, count;
         getOffsetAndCount(tag, data, position_index, offset, count);
         
@@ -326,7 +347,7 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_
         }
         DataView io = DataView(data, count, offset);
         return io;
-    } else if (feat.linkType() == nix::LinkType::Indexed) {
+    } else if (feature.linkType() == nix::LinkType::Indexed) {
         //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
         if (position_index > data.dataExtent()[0]){

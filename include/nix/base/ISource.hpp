@@ -11,6 +11,8 @@
 
 
 #include <nix/base/IEntityWithMetadata.hpp>
+#include <nix/ObjectType.hpp>
+
 #include <string>
 #include <memory>
 
@@ -58,6 +60,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::ISource> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Source;
+};
+
 } // namespace nix
 
 #endif // NIX_I_SOURCE_H

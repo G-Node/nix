@@ -16,6 +16,7 @@
 #include <nix/DataType.hpp>
 #include <nix/Value.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <string>
 #include <vector>
@@ -127,6 +128,13 @@ public:
 
 
 } // namespace base
+
+template<>
+struct objectToType<nix::base::ISection> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Section;
+};
+
 } // namespace nix
 
 #endif // NIX_I_SECTION_H

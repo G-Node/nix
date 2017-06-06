@@ -14,6 +14,7 @@
 #include <nix/Block.hpp>
 #include <nix/Section.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <nix/valid/validate.hpp>
 
@@ -482,6 +483,13 @@ public:
 
     valid::Result validate() const;
 
+};
+
+template<>
+struct objectToType<nix::File> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::File;
+    typedef nix::base::IFile backendType;
 };
 
 

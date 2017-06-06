@@ -14,6 +14,7 @@
 #include <nix/Feature.hpp>
 #include <nix/Platform.hpp>
 #include <nix/DataView.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <algorithm>
 #include <memory>
@@ -345,6 +346,17 @@ public:
      */
     DataView retrieveData(size_t position_index, size_t reference_index) const;
 
+     /**
+     * @brief Retrieves the data slice tagged by a certain position and extent
+     *        of a certain reference.  
+     *
+     * @param position_index      The index of the requested position.
+     * @param name_or_id          The name or id of the requested DataArray.
+     *
+     * @return the requested data.
+     */
+    DataView retrieveData(size_t position_index, const std::string &name_or_id) const;
+
     //--------------------------------------------------
     // Methods concerning features.
     //--------------------------------------------------
@@ -467,6 +479,18 @@ public:
      * @return The data
      */
     DataView retrieveFeatureData(size_t position_index, size_t feature_index) const;
+
+    /**
+     * @brief Retrieves the data stored in a feature related to a certain
+     *        position of this tag.
+     *
+     * @param position_index The index of the requested position.
+     * @param name_or_id     The name or id of the feature that is requested.
+     *
+     * @return The data
+     */
+    DataView retrieveFeatureData(size_t position_index, const std::string &name_or_id) const;
+
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------
@@ -486,6 +510,12 @@ public:
 
 };
 
+template<>
+struct objectToType<nix::MultiTag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::MultiTag;
+    typedef nix::base::IMultiTag backendType;
+};
 
 } // namespace nix
 

@@ -12,30 +12,41 @@
 #include "hdf5/h5x/H5DataSet.hpp" // FIXME
 #include "DimensionFS.hpp"
 
-namespace bfs = boost::filesystem;
-
 namespace nix {
 namespace file {
 
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+                         const bfs::path &loc)
+    : EntityWithSourcesFS(file, block, loc),
+      dimensions(bfs::path(loc) / bfs::path("dimensions"), file->fileMode()) {
+}
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                         const std::string &loc)
-    : EntityWithSourcesFS(file, block, loc),
-      dimensions(loc + bfs::path::preferred_separator + "dimensions", file->fileMode()) {
+	const std::string &loc) : DataArrayFS(file, block, bfs::path(loc)){
 }
 
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
-                         const std::string &loc, const std::string &id, const std::string &type, const std::string &name)
+                         const bfs::path &loc, const std::string &id, const std::string &type, const std::string &name)
     : DataArrayFS(file, block, loc, id, type, name, util::getTime()) {
+}
+
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+	const std::string &loc, const std::string &id, const std::string &type, const std::string &name) : DataArrayFS(file, block, bfs::path(loc), id, type, name) {
 }
 
 
 DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
                          const std::string &loc, const std::string &id, const std::string &type,
                          const std::string &name, time_t time)
-    : EntityWithSourcesFS(file, block, loc, id, type, name, time),
-      dimensions(loc + bfs::path::preferred_separator  + name + bfs::path::preferred_separator + "dimensions", file->fileMode()) {
+    : DataArrayFS(file, block, bfs::path(loc), id, type, name, time) {
+}
+
+DataArrayFS::DataArrayFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
+	const bfs::path &loc, const std::string &id, const std::string &type,
+	const std::string &name, time_t time)
+	: EntityWithSourcesFS(file, block, loc, id, type, name, time),
+	dimensions(bfs::path(loc) / bfs::path(name + "/" + "dimensions"), file->fileMode()) {
 }
 
 //--------------------------------------------------

@@ -11,41 +11,46 @@
 
 using namespace nix;
 
-bool Group::hasDataArray(const DataArray &data_array) const {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
+template<typename T>
+void Group::replaceEntities(const std::vector<T> &entities)
+{
+    base::IGroup *ig = backend();
+    ObjectType ot = objectToType<T>::value;
+
+    auto cmp = [](const T &a, const T& b) { return a.name() < b.name(); };
+
+    std::vector<T> new_arrays(entities);
+
+    ndsize_t current = ig->entityCount(ot);
+    size_t count = nix::check::fits_in_size_t(current, "entityCount() failed; count > size_t.");
+    std::vector<T> old_arrays(count);
+
+    //check if this can be replaced
+    for (size_t i = 0; i < old_arrays.size(); i++) {
+        old_arrays[i] = ig->getEntity<typename objectToType<T>::backendType>(i);
     }
-    return backend()->hasDataArray(data_array.id());
+
+    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
+    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
+    std::vector<T> add;
+    std::vector<T> rem;
+
+    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(),
+                        old_arrays.end(), std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(),
+                        new_arrays.end(), std::inserter(rem, rem.begin()), cmp);
+
+    for (const auto &e : add) {
+        ig->addEntity(e);
+    }
+
+    for (const auto &e : rem) {
+        ig->removeEntity(e);
+    }
 }
 
-
-DataArray Group::getDataArray(size_t index) const {
-    if(index >= backend()->dataArrayCount()) {
-        throw OutOfBounds("No dataArray at given index", index);
-    }
-    return backend()->getDataArray(index);
-}
-
-
-void Group::addDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array)) {
-        throw UninitializedEntity();
-    }
-    backend()->addDataArray(data_array.id());
-}
-
-
-void Group::addDataArray(const std::string &id) {
-    util::checkNameOrId(id);
-    backend()->addDataArray(id);
-}
-
-
-bool Group::removeDataArray(const DataArray &data_array) {
-    if (!util::checkEntityInput(data_array, false)) {
-        return false;
-    }
-    return backend()->removeDataArray(data_array.id());
+void Group::dataArrays(const std::vector<DataArray> &data_arrays) {
+    replaceEntities(data_arrays);
 }
 
 
@@ -57,90 +62,24 @@ std::vector<DataArray> Group::dataArrays(const util::Filter<DataArray>::type &fi
 }
 
 
-bool Group::hasTag(const Tag &tag) const {
-    if (!util::checkEntityInput(tag, false)) {
-        return false;
-    }
-    return backend()->hasTag(tag.id());
+void Group::tags(const std::vector<Tag> &tags) {
+    replaceEntities(tags);
 }
-
-
-Tag Group::getTag(size_t index) const {
-    if(index >= backend()->tagCount()) {
-        throw OutOfBounds("No tag at given index", index);
-    }
-    return backend()->getTag(index);
-}
-
-
-void Group::addTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false)) {
-        throw UninitializedEntity();
-    }
-    backend()->addTag(tag.id());
-}
-
-
-void Group::addTag(const std::string &id) {
-    util::checkNameOrId(id);
-    backend()->addTag(id);
-}
-
-
-bool Group::removeTag(const Tag &tag) {
-    if (!util::checkEntityInput(tag, false)) {
-        return false;
-    }
-    return backend()->removeTag(tag.id());
-}
-
 
 std::vector<Tag> Group::tags(const util::Filter<Tag>::type &filter) const {
     auto f = [this] (size_t i) { return getTag(i); };
     return getEntities<Tag>(f, tagCount(), filter);
 }
 
-bool Group::hasMultiTag(const MultiTag &multi_tag) const {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    return backend()->hasMultiTag(multi_tag.id());
-}
-
-
-MultiTag Group::getMultiTag(size_t index) const {
-    if(index >= backend()->multiTagCount()) {
-        throw OutOfBounds("No multi tag at given index", index);
-    }
-    return backend()->getMultiTag(index);
-}
-
-
-void Group::addMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag)) {
-        throw UninitializedEntity();
-    }
-    backend()->addMultiTag(multi_tag.id());
-}
-
-
-void Group::addMultiTag(const std::string &id) {
-    util::checkNameOrId(id);
-    backend()->addMultiTag(id);
-}
-
-
-bool Group::removeMultiTag(const MultiTag &multi_tag) {
-    if (!util::checkEntityInput(multi_tag, false)) {
-        return false;
-    }
-    return backend()->removeMultiTag(multi_tag.id());
-}
-
 
 std::vector<MultiTag> Group::multiTags(const util::Filter<MultiTag>::type &filter) const {
     auto f = [this] (size_t i) { return getMultiTag(i); };
     return getEntities<MultiTag>(f, multiTagCount(), filter);
+}
+
+
+void Group::multiTags(const std::vector<MultiTag> &tags) {
+    replaceEntities(tags);
 }
 
 

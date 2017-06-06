@@ -65,7 +65,8 @@ bool MultiTag::hasReference(const DataArray &reference) const {
     if(!util::checkEntityInput(reference, false)) {
         return false;
     }
-    return backend()->hasReference(reference.id());
+    DataArray da = backend()->getReference(reference.name());
+    return da && da.id() == reference.id();
 }
 
 
@@ -81,7 +82,7 @@ void MultiTag::addReference(const DataArray &reference) {
     if(!util::checkEntityInput(reference)) {
         throw UninitializedEntity();
     }
-    backend()->addReference(reference.id());
+    backend()->addReference(reference.name());
 }
 
 
@@ -89,7 +90,7 @@ bool MultiTag::removeReference(const DataArray &reference) {
     if (!util::checkEntityInput(reference)) {
         return false;
     }
-    return backend()->removeReference(reference.id());
+    return backend()->removeReference(reference.name());
 }
 
 
@@ -101,6 +102,16 @@ std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type 
 
 DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
     return util::retrieveData(*this, position_index, reference_index);
+}
+
+
+DataView MultiTag::retrieveData(size_t position_index, const std::string &name_or_id) const {
+    nix::DataArray array = backend()->getReference(name_or_id);
+    if (array) {
+        return util::retrieveData(*this, position_index, array);
+    } else {
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
+    }
 }
 
 
@@ -128,6 +139,16 @@ bool MultiTag::deleteFeature(const Feature &feature) {
 
 DataView MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
     return util::retrieveFeatureData(*this, position_index, feature_index);
+}
+
+
+DataView MultiTag::retrieveFeatureData(size_t position_index, const std::string &name_or_id) const {
+    nix::Feature feature = backend()->getFeature(name_or_id);
+    if (feature) {
+        return util::retrieveFeatureData(*this, position_index, feature);
+    } else {
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at MultiTag::retrieveFeatureData");
+    }
 }
 
 std::ostream& operator<<(std::ostream &out, const MultiTag &ent) {

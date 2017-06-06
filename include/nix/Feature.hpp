@@ -12,6 +12,7 @@
 #include <nix/base/Entity.hpp>
 #include <nix/base/IFeature.hpp>
 #include <nix/DataArray.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <nix/Platform.hpp>
 
@@ -184,6 +185,14 @@ NIXAPI std::string link_type_to_string(LinkType ltype);
  * @return The output stream.
  */
 NIXAPI std::ostream& operator<<(std::ostream &out, const LinkType ltype);
+
+
+template<>
+struct objectToType<nix::Feature> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Feature;
+    typedef nix::base::IFeature backendType;
+};
 
 } // namespace nix
 

@@ -227,7 +227,7 @@ PropertyHDF5::~PropertyHDF5() {}
 #pragma pack(push,1)
 #endif
 template<typename T>
-struct PACKED FileValue  {
+struct NIX_PACKED FileValue  {
 
     T       value;
 

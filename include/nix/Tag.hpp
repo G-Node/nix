@@ -15,6 +15,7 @@
 #include <nix/Feature.hpp>
 #include <nix/DataView.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <algorithm>
 
@@ -435,6 +436,15 @@ public:
      * @return the data
      */
     DataView retrieveData(size_t reference_index) const;
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param name_or_id      Name or id of the referenced dataArray.
+     *
+     * @return the data
+     */
+    DataView retrieveData(const std::string &name_or_id) const; 
     
     /**
      * @brief Returns the data stored in the selected Feature.
@@ -445,6 +455,18 @@ public:
      *
      */
     DataView retrieveFeatureData(size_t feature_index) const;
+
+    /**
+     * @brief Returns the data stored in the selected Feature.
+     *
+     * @param name_or_id     The name or id of the feature or the DataArray stored
+     *                       in the feature.
+     *
+     * @return The data stored in the Feature.
+     *
+     */
+    DataView retrieveFeatureData(const std::string &name_or_id) const;
+
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
@@ -462,6 +484,14 @@ public:
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const Tag &ent);
 
+};
+
+
+template<>
+struct objectToType<nix::Tag> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Tag;
+    typedef nix::base::ITag backendType;
 };
 
 

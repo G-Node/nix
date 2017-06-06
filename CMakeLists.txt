@@ -2,11 +2,17 @@
 # NIX CMake
 
 cmake_minimum_required (VERSION 2.8.10)
+
+# Defaults
+SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
+SET(LIB_INSTALL_DIR "lib" CACHE PATH "Library install directory")
+SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "Include install directory")
+
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 3)
-set(VERSION_PATCH 1)
+set(VERSION_MINOR 4)
+set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
 
@@ -45,7 +51,7 @@ else()
   set(HDF5_USE_STATIC_LIBS OFF)
   find_package (HDF5 REQUIRED COMPONENTS C)
 endif()
-include_directories (${HDF5_INCLUDE_DIR})
+include_directories (${HDF5_INCLUDE_DIRS})
 set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 
 
@@ -95,12 +101,12 @@ list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 ### BACKENDS
 set(backends "hdf5")
 
-option(BUILD_FS_BACKEND "Build fileystem backend" OFF)
+option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
 if(BUILD_FS_BACKEND)
   # Yaml-cpp
   set(YAMLCPP_STATIC_LIBRARY FALSE)
   find_package(YamlCpp REQUIRED)
-  include_directories(${YAMLCPP_INCLUDE_DIRS})
+  include_directories(${YAMLCPP_INCLUDE_DIR})
   set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
 
   list(APPEND backends "fs")
@@ -226,21 +232,21 @@ endif()
 # Install
 
 install(TARGETS nix nix-tool
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
-install(DIRECTORY include/ DESTINATION include)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION include)
+install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
-install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 
 ########################################
 # CPack for Win
 if(WIN32)
-  
+
   install(TARGETS nix
 		  ARCHIVE
 		  DESTINATION lib
@@ -249,7 +255,7 @@ if(WIN32)
   install(FILES ${NIX_LICENSE}
 		  DESTINATION ./
 		  COMPONENT libraries)
-		  
+
   file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
   install(FILES ${HDF5_DLLS}
 		  DESTINATION bin
@@ -258,12 +264,12 @@ if(WIN32)
   install(FILES ${HDF5_COPYING}
 		  DESTINATION ./
 		  COMPONENT libraries)
-		  
+
   install(TARGETS nix-tool
 		  RUNTIME
 		  DESTINATION bin
 		  COMPONENT applications)
-		  
+
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
   set(CPACK_PACKAGE_VENDOR "g-node.org")
@@ -293,4 +299,8 @@ MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")
-
+MESSAGE(STATUS "INSTALL:")
+MESSAGE(STATUS " PREFIX: ${CMAKE_INSTALL_PREFIX}")
+MESSAGE(STATUS " INCLUDE DIR: ${LIB_INSTALL_DIR}")
+MESSAGE(STATUS " LIBRARY DIR: ${INCLUDE_INSTALL_DIR}")
+MESSAGE(STATUS "===============================")

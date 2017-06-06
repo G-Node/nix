@@ -94,6 +94,18 @@ NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &of
 
 NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
 
+
+/**
+ * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The index of the position.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by position and extent.
+ */
+NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+    
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
@@ -115,6 +127,17 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_
  */
 NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
 
+/**
+ * @brief Retrieve the data referenced by the given position and extent of the Tag.
+ *
+ * @param tag                   The multi tag.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the position.
+ */
+NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
+
+    
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
  *
@@ -147,7 +170,17 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
 NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
 
 /**
- * @brief Returns the feature data accosiated with the given MuliTag's position.
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested.
+ * @param feature       The Feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
+    
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
  *
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
@@ -156,6 +189,17 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  * @return The associated data.
  */
 NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index=0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature        The feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
 
 }
 }

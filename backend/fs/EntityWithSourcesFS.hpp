@@ -14,8 +14,10 @@
 #include "SourceFS.hpp"
 #include "EntityWithMetadataFS.hpp"
 
+
 namespace nix {
 namespace file {
+namespace bfs = boost::filesystem;
 
 
 /**
@@ -32,19 +34,24 @@ public:
     /**
      * Standard constructor for existing entity.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc);
+	EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc);
 
     /**
      * Standard constructor for new entity.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
-                          const std::string &id, const std::string &type, const std::string &name);
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
+                        const std::string &id, const std::string &type, const std::string &name);
+	EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+						const std::string &id, const std::string &type, const std::string &name);
 
     /**
      * Standard constructor for new entity that preserves the creation time.
      */
-    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
-                          const std::string &id, const std::string &type, const std::string &name, time_t time);
+    EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const bfs::path &loc,
+                        const std::string &id, const std::string &type, const std::string &name, time_t time);
+	EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const std::string &loc,
+						const std::string &id, const std::string &type, const std::string &name, time_t time);
 
     ndsize_t sourceCount() const;
 

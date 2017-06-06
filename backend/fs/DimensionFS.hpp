@@ -35,9 +35,11 @@ class DimensionFS : virtual public base::IDimension, public DirectoryWithAttribu
 
 public:
     DimensionFS(const std::string &loc, FileMode mode);
+	DimensionFS(const bfs::path &loc, FileMode mode);
 
 
     DimensionFS(const std::string &loc, size_t index, FileMode mode);
+	DimensionFS(const bfs::path &loc, size_t index, FileMode mode);
 
 
     ndsize_t index() const;

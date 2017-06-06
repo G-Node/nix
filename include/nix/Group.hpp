@@ -13,6 +13,8 @@
 #include <nix/base/IGroup.hpp>
 #include <nix/DataArray.hpp>
 #include <nix/Platform.hpp>
+#include <nix/ObjectType.hpp>
+#include <nix/util/util.hpp>
 
 
 namespace nix {
@@ -83,8 +85,8 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasDataArray(const std::string &id) const {
-        return backend()->hasDataArray(id);
+    bool hasDataArray(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -94,7 +96,12 @@ public:
      *
      * @return True if the data array is referenced, false otherwise.
      */
-    bool hasDataArray(const DataArray &data_array) const;
+    bool hasDataArray(const DataArray &data_array) const {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->hasEntity(data_array);
+    }
 
     /**
      * @brief Gets the number of referenced DataArray entities of the tag.
@@ -102,18 +109,19 @@ public:
      * @return The number of referenced data arrays.
      */
     ndsize_t dataArrayCount() const {
-        return backend()->dataArrayCount();
+        return backend()->entityCount(ObjectType::DataArray);
     }
 
     /**
      * @brief Gets a specific referenced DataArray from the tag.
      *
-     * @param id        The id of the referenced DataArray.
+     * @param name_or_id           The name or id of the referenced
+     *                             DataArray (using the id is faster).
      *
      * @return The referenced data array.
      */
-    DataArray getDataArray(const std::string &id) const {
-        return backend()->getDataArray(id);
+    DataArray getDataArray(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IDataArray>(name_or_id);
     }
 
     /**
@@ -123,22 +131,31 @@ public:
      *
      * @return The referenced data array.
      */
-    DataArray getDataArray(size_t index) const;
+    DataArray getDataArray(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::DataArray)) {
+            throw OutOfBounds("No DataArray at given index", index);
+        }
+        return backend()->getEntity<base::IDataArray>(index);
+    }
 
     /**
      * @brief Add a DataArray to the list of referenced data of the group.
      *
      * @param data_array The DataArray to add.
      */
-    void addDataArray(const DataArray &data_array);
-
+    void addDataArray(const DataArray &data_array) {
+        if (util::checkEntityInput(data_array, true)) {
+            backend()->addEntity(data_array);
+        }
+    }
     /**
      * @brief Add a DataArray to the list of referenced data of the group.
      *
-     * @param id        The id of the DataArray to add.
+     * @param name_or_id        The name or id of the DataArray to add.
      */
-    void addDataArray(const std::string &id);
-
+    void addDataArray(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::DataArray});
+    }
     /**
      * @brief Remove a DataArray from the list of referenced data of the group.
      *
@@ -149,20 +166,25 @@ public:
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeDataArray(const DataArray &data_array);
-
+    bool removeDataArray(const DataArray &data_array) {
+        if (!util::checkEntityInput(data_array, false)) {
+            return false;
+        }
+        return backend()->removeEntity(data_array);
+    }
     /**
      * @brief Remove a DataArray from the list of referenced data of the group.
      *
      * This method just removes the association between the data array and the
      * tag, the data array itself will not be removed from the file.
      *
-     * @param id        The id of the DataArray to remove.
+     * @param name_or_id        The name or the id of the DataArray to
+     *                          remove. (using the id is faster)
      *
      * @returns True if the DataArray was removed, false otherwise.
      */
-    bool removeDataArray(const std::string &id) {
-        return backend()->removeDataArray(id);
+    bool removeDataArray(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::DataArray});
     }
 
     /**
@@ -197,9 +219,7 @@ public:
      *
      * @param data_arrays    All referenced arrays.
      */
-    void dataArrays(const std::vector<DataArray> &data_arrays) {
-        backend()->dataArrays(data_arrays);
-    }
+    void dataArrays(const std::vector<DataArray> &data_arrays);
 
     //--------------------------------------------------
     // Methods concerning tags.
@@ -208,12 +228,12 @@ public:
     /**
      * @brief Checks whether a Tag is referenced by the group.
      *
-     * @param id        The id of the Tag to check.
+     * @param name_or_id      The name or id of the Tag to check.
      *
      * @return True if the tag is referenced, false otherwise.
      */
-    bool hasTag(const std::string &id) const {
-        return backend()->hasTag(id);
+    bool hasTag(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -223,7 +243,12 @@ public:
      *
      * @return True if the tag is referenced, false otherwise.
      */
-    bool hasTag(const Tag &tag) const;
+    bool hasTag(const Tag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
 
     /**
      * @brief Gets the number of referenced Tag entities of the tag.
@@ -231,18 +256,18 @@ public:
      * @return The number of referenced tags.
      */
     ndsize_t tagCount() const {
-        return backend()->tagCount();
+        return backend()->entityCount(ObjectType::Tag);
     }
 
     /**
      * @brief Gets a specific referenced Tag from the tag.
      *
-     * @param id        The id of the referenced Tag.
+     * @param name_or_id      The name or id of the referenced Tag.
      *
      * @return The referenced tag.
      */
-    Tag getTag(const std::string &id) const {
-        return backend()->getTag(id);
+    Tag getTag(const std::string &name_or_id) const {
+        return backend()->getEntity<base::ITag>(name_or_id);
     }
 
     /**
@@ -252,21 +277,32 @@ public:
      *
      * @return The referenced tag.
      */
-    Tag getTag(size_t index) const;
+    Tag getTag(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::Tag)) {
+            throw OutOfBounds("No Tag at given index", index);
+        }
+        return backend()->getEntity<base::ITag>(index);
+    }
 
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
      * @param data_array The Tag to add.
      */
-    void addTag(const Tag &tag);
+    void addTag(const Tag &tag) {
+        if (util::checkEntityInput(tag, true)) {
+            backend()->addEntity(tag);
+        }
+    }
 
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
-     * @param id        The id of the Tag to add.
+     * @param name_or_id        The name or id of the Tag to add.
      */
-    void addTag(const std::string &id);
+    void addTag(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::Tag});
+    }
 
     /**
      * @brief Remove a Tag from the list of referenced tags of the group.
@@ -278,7 +314,12 @@ public:
      *
      * @returns True if the Tag was removed, false otherwise.
      */
-    bool removeTag(const Tag &tag);
+    bool removeTag(const Tag &tag) {
+          if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(tag);
+    }
 
     /**
      * @brief Remove a Tag from the list of referenced tags of the group.
@@ -286,12 +327,12 @@ public:
      * This method just removes the association between the tag and the
      * group, the tag itself will not be removed from the file.
      *
-     * @param id        The id of the Tag to remove.
+     * @param name_or_id        The name or id of the Tag to remove.
      *
      * @returns True if the Tag was removed, false otherwise.
      */
-    bool removeTag(const std::string &id) {
-        return backend()->removeTag(id);
+    bool removeTag(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::Tag});
     }
 
     /**
@@ -313,8 +354,7 @@ public:
      *
      * @return The filtered Tags as a vector
      */
-    std::vector<Tag> tags() const
-    {
+    std::vector<Tag> tags() const {
         return tags(util::AcceptAll<Tag>());
     }
 
@@ -326,10 +366,7 @@ public:
      *
      * @param tags    All tags.
      */
-    void tags(const std::vector<Tag> &tags) {
-        backend()->tags(tags);
-    }
-
+    void tags(const std::vector<Tag> &tags);
     //--------------------------------------------------
     // Methods concerning multi tags.
     //--------------------------------------------------
@@ -337,12 +374,12 @@ public:
     /**
      * @brief Checks whether a MultiTag is referenced by the group.
      *
-     * @param id        The id of the MultiTag to check.
+     * @param name or id        The name or id of the MultiTag to check.
      *
      * @return True if the MultiTag is referenced, false otherwise.
      */
-    bool hasMultiTag(const std::string &id) const {
-        return backend()->hasMultiTag(id);
+    bool hasMultiTag(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -352,7 +389,13 @@ public:
      *
      * @return True if the MultiTag is referenced, false otherwise.
      */
-    bool hasMultiTag(const MultiTag &tag) const;
+    bool hasMultiTag(const MultiTag &tag) const {
+        if (!util::checkEntityInput(tag, false)) {
+            return false;
+        }
+        return backend()->hasEntity(tag);
+    }
+
 
     /**
      * @brief Gets the number of referenced MultiTag entities of the group.
@@ -360,18 +403,18 @@ public:
      * @return The number of referenced MultiTags.
      */
     ndsize_t multiTagCount() const {
-        return backend()->multiTagCount();
+        return backend()->entityCount(ObjectType::MultiTag);
     }
 
     /**
      * @brief Gets a specific referenced MultiTag from the group.
      *
-     * @param id        The id of the referenced MultiTag.
+     * @param name_or_id        The name or id of the referenced MultiTag.
      *
      * @return The referenced MultiTag.
      */
-    MultiTag getMultiTag(const std::string &id) const {
-        return backend()->getMultiTag(id);
+    MultiTag getMultiTag(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IMultiTag>(name_or_id);
     }
 
     /**
@@ -381,21 +424,32 @@ public:
      *
      * @return The referenced MultiTag.
      */
-    MultiTag getMultiTag(size_t index) const;
+    MultiTag getMultiTag(size_t index) const {
+        if (index >= backend()->entityCount(ObjectType::MultiTag)) {
+            throw OutOfBounds("No MultiTag at given index", index);
+        }
+        return backend()->getEntity<base::IMultiTag>(index);
+    }
 
     /**
      * @brief Add a MultiTag to the list of referenced tags of the group.
      *
      * @param mutlti_tag The MultiTag to add.
      */
-    void addMultiTag(const MultiTag &multi_tag);
+    void addMultiTag(const MultiTag &multi_tag) {
+        if (util::checkEntityInput(multi_tag, true)) {
+            backend()->addEntity(multi_tag);
+        }
+    }
 
     /**
      * @brief Add a MultiTag to the list of referenced tags of the group.
      *
-     * @param id        The id of the MultiTag to add.
+     * @param name_or_id    The name or id  of the MultiTag to add.
      */
-    void addMultiTag(const std::string &id);
+    void addMultiTag(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::MultiTag});
+    }
 
     /**
      * @brief Remove a MultiTag from the list of referenced tags of the group.
@@ -407,7 +461,12 @@ public:
      *
      * @returns True if the MultiTag was removed, false otherwise.
      */
-    bool removeMultiTag(const MultiTag &mulit_tag);
+    bool removeMultiTag(const MultiTag &multi_tag) {
+        if (!util::checkEntityInput(multi_tag, false)) {
+            return false;
+        }
+        return backend()->removeEntity(multi_tag);
+    }
 
     /**
      * @brief Remove a MultiTag from the list of referenced tags of the group.
@@ -415,12 +474,12 @@ public:
      * This method just removes the association between the tag and the
      * group, the MultiTag itself will not be removed from the file.
      *
-     * @param id        The id of the MultiTag to remove.
+     * @param name_or_id      The name or the id of the MultiTag to remove.
      *
      * @returns True if the MultiTag was removed, false otherwise.
      */
-    bool removeMultiTag(const std::string &id) {
-        return backend()->removeMultiTag(id);
+    bool removeMultiTag(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::MultiTag});
     }
 
     /**
@@ -442,8 +501,7 @@ public:
      *
      * @return The filtered MultiTags as a vector
      */
-    std::vector<MultiTag> multiTags() const
-    {
+    std::vector<MultiTag> multiTags() const {
         return multiTags(util::AcceptAll<MultiTag>());
     }
 
@@ -455,9 +513,7 @@ public:
      *
      * @param mulit_tags    All MultiTags.
      */
-    void multiTags(const std::vector<MultiTag> &multi_tags) {
-        backend()->multiTags(multi_tags);
-    }
+    void multiTags(const std::vector<MultiTag> &multi_tags);
 
 
     /**
@@ -472,6 +528,17 @@ public:
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Group &ent);
+
+ private:
+    template<typename T>
+    void replaceEntities(const std::vector<T> &entitties);
+};
+
+template<>
+struct objectToType<nix::Group> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Group;
+    typedef nix::base::IGroup backendType;
 };
 
 } // namespace nix

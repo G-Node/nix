@@ -13,6 +13,7 @@
 #include <nix/types.hpp>
 #include <nix/base/EntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <nix/Platform.hpp>
 
@@ -248,6 +249,12 @@ public:
 
 };
 
+template<>
+struct objectToType<nix::Source> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Source;
+    typedef nix::base::ISource backendType;
+};
 
 } // namespace nix
 

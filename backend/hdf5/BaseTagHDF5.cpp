@@ -47,12 +47,7 @@ BaseTagHDF5::BaseTagHDF5(const std::shared_ptr<IFile> &file, const std::shared_p
 //--------------------------------------------------
 
 bool BaseTagHDF5::hasReference(const std::string &name_or_id) const {
-    std::string id = name_or_id;
-
-    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
-        id = block()->getDataArray(name_or_id)->id();
-    }
-
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
     return refs_group(false) ? refs_group(false)->hasGroup(id) : false;
 }
 
@@ -67,12 +62,7 @@ std::shared_ptr<IDataArray>  BaseTagHDF5::getReference(const std::string &name_o
     std::shared_ptr<IDataArray> da;
     boost::optional<H5Group> g = refs_group(false);
 
-    std::string id = name_or_id;
-
-    if (!util::looksLikeUUID(name_or_id) && block()->hasDataArray(name_or_id)) {
-        id = block()->getDataArray(name_or_id)->id();
-    }
-
+    std::string id = block()->resolveEntityId({name_or_id, ObjectType::DataArray});
     if (g && hasReference(id)) {
         H5Group group = g->openGroup(id);
         da = std::make_shared<DataArrayHDF5>(file(), block(), group);
@@ -90,10 +80,10 @@ std::shared_ptr<IDataArray>  BaseTagHDF5::getReference(ndsize_t index) const {
 void BaseTagHDF5::addReference(const std::string &name_or_id) {
     boost::optional<H5Group> g = refs_group(true);
 
-    if (!block()->hasDataArray(name_or_id))
+    if (!block()->hasEntity({name_or_id, ObjectType::DataArray}))
         throw std::runtime_error("BaseTagHDF5::addReference: DataArray not found in block!");
 
-    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(block()->getDataArray(name_or_id));
+    auto target = std::dynamic_pointer_cast<DataArrayHDF5>(block()->getEntity({name_or_id, ObjectType::DataArray}));
 
     g->createLink(target->group(), target->id());
 }
@@ -115,40 +105,32 @@ bool BaseTagHDF5::removeReference(const std::string &name_or_id) {
 
 
 void BaseTagHDF5::references(const std::vector<DataArray> &refs_new) {
-
-    // extract vectors of names from vectors of new & old references
-    std::vector<std::string> names_new(refs_new.size());
-    std::transform(refs_new.begin(), refs_new.end(), names_new.begin(), util::toName<DataArray>);
-
-    size_t ref_count = nix::check::fits_in_size_t(referenceCount(), "refrenceCount() failed; count > size_t.");
-    std::vector<DataArray> refs_old(ref_count);
-    for (size_t i = 0; i < refs_old.size(); i++) refs_old[i] = getReference(i);
-    std::vector<std::string> names_old(refs_old.size());
-    std::transform(refs_old.begin(), refs_old.end(), names_old.begin(), util::toName<DataArray>);
-
-    // sort them
-    std::sort(names_new.begin(), names_new.end());
-    std::sort(names_new.begin(), names_new.end());
-
-    // get names only in names_new (add), names only in names_old (remove) & ignore rest
-    std::vector<std::string> names_add;
-    std::vector<std::string> names_rem;
-    std::set_difference(names_new.begin(), names_new.end(), names_old.begin(), names_old.end(),
-            std::inserter(names_add, names_add.begin()));
-    std::set_difference(names_old.begin(), names_old.end(), names_new.begin(), names_new.end(),
-            std::inserter(names_rem, names_rem.begin()));
-
-    // check if all new references exist & add sources
-    auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
-    for (auto name : names_add) {
-        if (!blck->hasDataArray(name))
-            throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(blck->getDataArray(name)->id());
+    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
+    std::vector<DataArray> new_arrays(refs_new);
+    size_t ref_count = nix::check::fits_in_size_t(referenceCount(), "referenceCount() failed; count > size_t.");
+    std::vector<DataArray> old_arrays(ref_count);
+    for (size_t i = 0; i < old_arrays.size(); i++) {
+        old_arrays[i] = getReference(i);
     }
-    // remove references
-    for (auto name : names_rem) {
-        if (!blck->hasDataArray(name))
-            removeReference(blck->getDataArray(name)->id());
+    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
+    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
+    std::vector<DataArray> add;
+    std::vector<DataArray> rem;
+
+    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
+                        std::inserter(add, add.begin()), cmp);
+    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
+                        std::inserter(rem, rem.begin()), cmp);
+
+    auto blck = std::dynamic_pointer_cast<BlockHDF5>(block());
+    for (const auto &da : add) {
+        DataArray a = std::dynamic_pointer_cast<IDataArray>(blck->getEntity(da));
+        if (!a)
+            throw std::runtime_error("One or more data arrays do not exist in this block!");
+        addReference(a.id());
+    }
+    for (const auto &da : rem) {
+        removeReference(da.id());
     }
 }
 
@@ -172,11 +154,21 @@ std::shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id)
     boost::optional<H5Group> g = feature_group(false);
 
     if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("name", name_or_id);
         if (group)
             feature = std::make_shared<FeatureHDF5>(file(), block(), group.get());
+        else {
+            for (ndsize_t i = 0; i < g->objectCount(); i++) {
+                H5Group gr = g->openGroup(g->objectName(i), false);
+                std::shared_ptr<FeatureHDF5> feat = std::make_shared<FeatureHDF5>(file(), block(), gr);
+                std::shared_ptr<base::IDataArray> da = feat->data();
+                if (da->name() == name_or_id || da->id() == name_or_id) {
+                    feature = std::make_shared<FeatureHDF5>(file(), block(), gr);
+                    break;
+                }
+            }
+        }
     }
-
     return feature;
 }
 
@@ -189,14 +181,14 @@ std::shared_ptr<IFeature>  BaseTagHDF5::getFeature(ndsize_t index) const {
 
 
 std::shared_ptr<IFeature>  BaseTagHDF5::createFeature(const std::string &name_or_id, LinkType link_type) {
-    if(!block()->hasDataArray(name_or_id)) {
+    if(!block()->hasEntity({name_or_id, ObjectType::DataArray})) {
         throw std::runtime_error("DataArray not found in Block!");
     }
     std::string rep_id = util::createId();
     boost::optional<H5Group> g = feature_group(true);
 
     H5Group group = g->openGroup(rep_id, true);
-    DataArray data = block()->getDataArray(name_or_id);
+    DataArray data = std::dynamic_pointer_cast<IDataArray>(block()->getEntity({name_or_id, ObjectType::DataArray}));
     return std::make_shared<FeatureHDF5>(file(), block(), group, rep_id, data, link_type);
 }
 

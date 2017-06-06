@@ -12,6 +12,7 @@
 #include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/Value.hpp>
+#include <nix/ObjectType.hpp>
 
 #include <nix/Platform.hpp>
 
@@ -276,6 +277,13 @@ public:
      */
     virtual ~Property() {}
 
+};
+
+template<>
+struct objectToType<nix::Property> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::Property;
+    typedef nix::base::IProperty backendType;
 };
 
 
