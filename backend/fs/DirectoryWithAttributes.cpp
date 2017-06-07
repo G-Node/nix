@@ -20,31 +20,21 @@ DirectoryWithAttributes::DirectoryWithAttributes(const bfs::path &location, File
         if (!bfs::exists(location / bfs::path("attributes"))) {
            throw nix::InvalidFile("DirectoryWithAttributes");
         } else {
-            AttributesFS a(location, mode);
+            attributes = AttributesFS(location, mode);
             bool check = true;
             std::vector<int> version;
             std::string str;
-            if (a.has("format"))  {
-                getAttr("format", str);
-                if (str != FILE_FORMAT) {
-                    check = false;
-                }
-            } else {
-                check = false;
-            }
-            if (a.has("version")) {
-                getAttr("version", version);
-                if (version != FILE_VERSION) {
-                    check = false;
-                }
-            } else {
-                check = false;
-            }
-            if (!check)
+            getAttr("format", str);
+            check = str == FILE_FORMAT;
+            getAttr("version", version);
+            check = check && version == FILE_VERSION;
+            if (!check) {
                 throw nix::InvalidFile("DirectoryWithAttributes");
+            }
         }
+    } else {
+        attributes = AttributesFS(location, mode);
     }
-    attributes = AttributesFS(location, mode);
 }
 
 DirectoryWithAttributes::DirectoryWithAttributes(const std::string &location, FileMode mode, bool checkHeader)
@@ -92,7 +82,7 @@ void DirectoryWithAttributes::unlink(const bfs::path &linker) {
 
 bool DirectoryWithAttributes::isValid() const {
     bfs::path attr_path = "attributes";
-    return  bfs::exists(location()) && 
+    return  bfs::exists(location()) &&
             bfs::exists(location() / attr_path);
 }
 
