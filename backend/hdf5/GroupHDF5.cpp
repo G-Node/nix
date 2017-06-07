@@ -19,22 +19,22 @@ using namespace nix::base;
 namespace nix {
 namespace hdf5 {
 
-boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type) const {
+boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type, bool create) const {
     boost::optional<H5Group> p;
 
     switch (type) {
     case ObjectType::DataArray:
-        p = data_array_group(true);
+        p = data_array_group(create);
         break;
     case ObjectType::Tag:
-        p = tag_group(true);
+        p = tag_group(create);
         break;
     case ObjectType::MultiTag:
-        p = multi_tag_group(true);
+        p = multi_tag_group(create);
         break;
         //TODO
     default:
-        p = boost::optional<H5Group>();
+        p = boost::optional<H5Group>(create);
     }
 
     return p;
@@ -174,9 +174,9 @@ bool GroupHDF5::removeEntity(const nix::Identity &ident) {
 
 
 void GroupHDF5::addEntity(const nix::Identity &ident) {
-    boost::optional<H5Group> p = groupForObjectType(ident.type());
+    boost::optional<H5Group> p = groupForObjectType(ident.type(), true);
     if(!block()->hasEntity(ident)) {
-        throw std::runtime_error("Entity do not exist in this block!");
+        throw std::runtime_error("Entity does not exist in this block!");
     }
 
     auto target = std::dynamic_pointer_cast<EntityHDF5>(block()->getEntity(ident));
