@@ -24,9 +24,8 @@ build_script:
 
     ctest -VV --output-on-failure -S .appveyor.ctest
 
-    cmake --build .\build --config %CONFIGURATION% --target PACKAGE
-test_script:
-- cmd:
+after_build:
+- cmd: cmake --build .\build --config %CONFIGURATION% --target PACKAGE
+
 artifacts:
 - path: build\*.exe
-

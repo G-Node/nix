@@ -25,7 +25,7 @@ private:
 
 
     // Helper methods for generic entity related methods below
-    boost::optional<H5Group> groupForObjectType(ObjectType ot) const;
+    boost::optional<H5Group> groupForObjectType(ObjectType ot, bool create = false) const;
 
     boost::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
 

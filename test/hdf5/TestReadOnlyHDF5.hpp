@@ -17,13 +17,10 @@ class TestReadOnlyHDF5 : public BaseTestReadOnly {
     CPPUNIT_TEST(testRead);
     CPPUNIT_TEST_SUITE_END ();
 
-public:
-    void setUp() {
-        nix::File file = nix::File::open("test_read_only.h5", nix::FileMode::Overwrite);
-        init(file);
+protected:
+    nix::File openFile(const std::string &name, nix::FileMode mode) override {
+        return nix::File::open(name + ".h5", mode);
     }
-
-    void tearDown() {}
 
 };
 

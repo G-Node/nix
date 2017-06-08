@@ -53,32 +53,32 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
 // Generic access methods
 //--------------------------------------------------
 
-boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
+boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool create) const {
     boost::optional<H5Group> p;
 
     switch (type) {
     case ObjectType::DataArray:
-        p = data_array_group();
+        p = data_array_group(create);
         break;
 
     case ObjectType::Tag:
-        p = tag_group();
+        p = tag_group(create);
         break;
 
     case ObjectType::MultiTag:
-        p = multi_tag_group();
+        p = multi_tag_group(create);
         break;
 
     case ObjectType::Group:
-        p = groups_group();
+        p = groups_group(create);
         break;
 
     case ObjectType::Source:
-        p = source_group();
+        p = source_group(create);
         break;
 
     default:
-       p = boost::optional<H5Group>();
+       p = boost::optional<H5Group>(create);
     }
 
     return p;

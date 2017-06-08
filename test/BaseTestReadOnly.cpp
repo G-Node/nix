@@ -26,7 +26,8 @@ using namespace nix;
 using namespace valid;
 
 
-void BaseTestReadOnly::init(nix::File &file) {
+void BaseTestReadOnly::setUp() {
+    nix::File file = openFile("test_read_only", FileMode::Overwrite);
     startup_time = time(NULL);
     std::vector<nix::Value> values = { nix::Value(1.0),
                                        nix::Value(2.0),
@@ -50,18 +51,21 @@ void BaseTestReadOnly::init(nix::File &file) {
     Feature feature = tag.createFeature(data_array, nix::LinkType::Tagged);
     Property property = section.createProperty("doubleProperty", values);
 
+    Group g = block.createGroup("g", "empty");
+
     section_id = section.id(); feature_id = feature.id(); tag_id = tag.id();
     mtag_id = mtag.id(); property_id = property.id(); block_id = block.id();
     data_array_id = data_array.id(); dim_index = dim.index();
     dim_sampled_index = dim_sampled.index(); dim_range_index = dim_range.index();
     dim_set_index = dim_set.index();
+    group_id = g.id();
 
     file.close();
 }
 
 
 void BaseTestReadOnly::testRead() {
-    File file = File::open("test_read_only.h5", FileMode::ReadOnly);
+    File file = openFile("test_read_only", FileMode::ReadOnly);
 
     Section section = file.getSection(section_id);
     Block block = file.getBlock(block_id);
@@ -74,6 +78,7 @@ void BaseTestReadOnly::testRead() {
     MultiTag mtag = block.getMultiTag(mtag_id);
     Feature feature = tag.getFeature(feature_id);
     Property property = section.getProperty(property_id);
+    Group group = block.getGroup(group_id);
 
     // TODO use assertions here
     s << block.id() << block.name();
@@ -86,6 +91,8 @@ void BaseTestReadOnly::testRead() {
     s << dim_sampled.index();
     s << dim_range.index();
     s << dim_set.index();
-    
+
+    CPPUNIT_ASSERT_EQUAL(ndsize_t(0), group.dataArrayCount());
+
     file.close();
 }
