@@ -23,6 +23,7 @@ protected:
 public:
     void testSourceAccess();
     void testSourceVectorSetter();
+    void testSourceOrder();
 
 };
 

@@ -16,6 +16,7 @@ class TestEntityWithSourcesHDF5 : public BaseTestEntityWithSources {
     CPPUNIT_TEST_SUITE(TestEntityWithSourcesHDF5);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testSourceVectorSetter);
+    CPPUNIT_TEST(testSourceOrder);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
