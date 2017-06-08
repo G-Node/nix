@@ -48,6 +48,7 @@ public:
     void testSectionAccess();
     void testOperators();
     void testReopen();
+    void testReopenReadOnly();
     void testCheckHeader();
     void testCompare();
 

@@ -189,3 +189,19 @@ void BaseTestFile::testReopen() {
 
     CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
 }
+
+
+void BaseTestFile::testReopenReadOnly() {
+    nix::File fd = openFile("test_file_ro", FileMode::Overwrite);
+
+    Block b = fd.createBlock("a", "a");
+    b = none;
+    fd.close();
+    fd = none;
+
+    fd = openFile("test_file_ro", FileMode::ReadOnly);
+    b = fd.getBlock("a");
+
+    CPPUNIT_ASSERT(b.dataArrayCount() == 0);
+    fd.close();
+}
