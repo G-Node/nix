@@ -9,6 +9,8 @@
 #include "BaseTestEntityWithSources.hpp"
 
 #include <iterator>
+#include <random>
+#include <algorithm>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/CompilerOutputter.h>
@@ -89,6 +91,11 @@ void BaseTestEntityWithSources::testSourceOrder() {
     std::vector<Source> sources;
     Group append_group = block.createGroup("ag", "test");
     Group set_group = block.createGroup("sg", "test");
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::shuffle(names.begin(), names.end(), gen);
 
     for (auto it = names.begin(); it != names.end(); it++) {
         sources.push_back(block.createSource(*it, "channel"));
