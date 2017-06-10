@@ -9,6 +9,8 @@
 #include "BaseTestEntityWithSources.hpp"
 
 #include <iterator>
+#include <random>
+#include <algorithm>
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/CompilerOutputter.h>
@@ -82,4 +84,35 @@ void BaseTestEntityWithSources::testSourceVectorSetter() {
     std::vector<Source> deleter;
     da.sources(deleter);
     CPPUNIT_ASSERT(da.sourceCount() == 0);
+}
+
+void BaseTestEntityWithSources::testSourceOrder() {
+    std::vector<std::string> names = { "source_a", "source_b", "source_c", "source_d", "source_e" };
+    std::vector<Source> sources;
+    Group append_group = block.createGroup("ag", "test");
+    Group set_group = block.createGroup("sg", "test");
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
+    std::shuffle(names.begin(), names.end(), gen);
+
+    for (auto it = names.begin(); it != names.end(); it++) {
+        sources.push_back(block.createSource(*it, "channel"));
+    }
+
+    // append each source in order
+    for (auto src : block.sources()) {
+        append_group.addSource(src);
+    }
+
+    // use the vector setter
+    set_group.sources(sources);
+
+    for (size_t idx = 0; idx < sources.size(); ++idx) {
+        CPPUNIT_ASSERT(sources[idx].name() == append_group.getSource(idx).name());
+        CPPUNIT_ASSERT(sources[idx].name() == set_group.getSource(idx).name());
+    }
+
+    sources.clear();
 }
