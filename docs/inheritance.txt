@@ -1,22 +1,42 @@
 Backend Interfaces
 ------------------
+  IFile
+
+  IDimension
+    ISampledDimension
+    ISetDimension
+    IRangeDimension
+
   IEntity
+    IFeature
+    IProperty
+
     INamedEntity
+      ISection
+
       IEntityWithMetadata
-        IEntityWithSources
-          IFile
           IBlock
+          ISource
+
+        IEntityWithSources
           IGroup
-          ...
+          IDataArray
+
+          IBaseTag
+            ITag
+            IMultiTag
+
 
 Backend Implementation
 ----------------------
+  FileHDF5          : H5Object  : *IFile
   EntityHDF5                    : *IEntity
     NamedEntityHDF5             :   *INamedEnity$
       EntityWithMetadataHDF5    :     *IEntityWithMetadata
+        BlockHDF5               :       *IBlock
         EntityWithSourceHDF5    :       *IEntityWithSources
-          FileHDF5  : H5Object  :         *IFile
-          BlockHDF5             :         *IBlock
+           GroupHDF5            :         *IGroup
+           ...
 
 Diamond Pattern:
   $ NamedEntityHdf5 : [ EntityHDF5<> : IEntity# ]
@@ -25,14 +45,29 @@ Diamond Pattern:
 Frontend
 --------
 ImplContainer<T> { shared_ptr<T> impl_ptr; }
+  File<IFile>
+
+  SampleDimension
+  SetDimension
+  RangeDimension
+
   Entity<T>
+    Feature<IFeature>
+    Property<IProperty>
+
     NamedEntity<T>
+      Section<ISection>
+
       EntityWithMetadata<T>
+        Block<IBlock>
+        Source<ISource>
+
         EntityWouthSources<T>
-          File<IFile>
-          Block<IBlock>
           Group<IGroup>
-          ...
+          DataArray<IDataArray>
+
+          MultiTag<IMultiTag>
+          Tag<ITag>
 
 ImplContainer holds the specific backend implementation of the corresponding
 interface, i.e FileHDF5 for the IFile:
