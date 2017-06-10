@@ -43,7 +43,7 @@ EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &fil
 EntityWithSourcesFS::EntityWithSourcesFS(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block,
 										 const std::string &loc, const std::string &id, const std::string &type,
 										 const std::string &name)
-	: EntityWithSourcesFS(file, block, bfs::path(loc), id, type, name) 
+	: EntityWithSourcesFS(file, block, bfs::path(loc), id, type, name)
 {
 }
 
@@ -97,38 +97,13 @@ std::shared_ptr<base::ISource> EntityWithSourcesFS::getSource(const size_t index
 }
 
 void EntityWithSourcesFS::sources(const std::vector<Source> &sources) {
-    // extract vectors of ids from vectors of new & old sources
-    std::vector<std::string> ids_new(sources.size());
-    std::transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
-    // FIXME: issue #473
-    // FIXME: this could go to a front-end like thing
-    std::vector<Source> sources_old(static_cast<size_t>(sourceCount()));
-    for (size_t i = 0; i < sources_old.size(); i++) sources_old[i] = getSource(i);
-    std::vector<std::string> ids_old(sources_old.size());
-    std::transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
-    // sort them
-    std::sort(ids_new.begin(), ids_new.end());
-    std::sort(ids_old.begin(), ids_old.end());
-    // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
-    std::vector<std::string> ids_add;
-    std::vector<std::string> ids_rem;
-    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(),
-                        std::inserter(ids_add, ids_add.begin()));
-    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(),
-                        std::inserter(ids_rem, ids_rem.begin()));
-
-    // check if all new sources exist
-    Block tmp(entity_block);
-    auto found = tmp.findSources(util::IdsFilter<Source>(ids_add));
-    if (ids_add.size() != found.size())
-        throw std::runtime_error("One or more sources do not exist in this block!");
-    // add sources
-    for (auto id : ids_add) {
-        addSource(id);
+    while (sourceCount() > 0) {
+        removeSource(getSource(0)->id());
     }
-    // remove sources
-    for (auto id : ids_rem) {
-        removeSource(id);
+    for (const auto &src : sources) {
+        if (block()->hasEntity(src) ) {
+            addSource(src.id());
+        }
     }
 }
 
@@ -164,4 +139,3 @@ EntityWithSourcesFS::~EntityWithSourcesFS() {}
 
 } // ns nix::file
 } // ns nix
-
