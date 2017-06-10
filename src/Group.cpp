@@ -17,35 +17,12 @@ void Group::replaceEntities(const std::vector<T> &entities)
     base::IGroup *ig = backend();
     ObjectType ot = objectToType<T>::value;
 
-    auto cmp = [](const T &a, const T& b) { return a.name() < b.name(); };
-
-    std::vector<T> new_arrays(entities);
-
-    ndsize_t current = ig->entityCount(ot);
-    size_t count = nix::check::fits_in_size_t(current, "entityCount() failed; count > size_t.");
-    std::vector<T> old_arrays(count);
-
-    //check if this can be replaced
-    for (size_t i = 0; i < old_arrays.size(); i++) {
-        old_arrays[i] = ig->getEntity<typename objectToType<T>::backendType>(i);
+    while (ig->entityCount(ot) > 0) {
+        ig->removeEntity(ig->getEntity<typename objectToType<T>::backendType>(0));
     }
 
-    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
-    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
-    std::vector<T> add;
-    std::vector<T> rem;
-
-    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(),
-                        old_arrays.end(), std::inserter(add, add.begin()), cmp);
-    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(),
-                        new_arrays.end(), std::inserter(rem, rem.begin()), cmp);
-
-    for (const auto &e : add) {
+    for (const auto &e : entities) {
         ig->addEntity(e);
-    }
-
-    for (const auto &e : rem) {
-        ig->removeEntity(e);
     }
 }
 
