@@ -41,6 +41,10 @@ public:
         file_other.close();
     }
 
+    nix::File openFile(const std::string &name, nix::FileMode mode) override {
+        return nix::File::open(name + ".h5", mode);
+    }
+
     void testLocation() override {
         CPPUNIT_ASSERT(file_open.location() == "test_file.h5");
         CPPUNIT_ASSERT(file_other.location() == "test_file_other.h5");
