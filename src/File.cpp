@@ -43,7 +43,7 @@ bool File::flush() {
     return backend()->flush();
 }
 
-    
+
 Block File::createBlock(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
     if (backend()->hasBlock(name)) {
@@ -112,6 +112,8 @@ std::vector<Section> File::findSections(const util::Filter<Section>::type &filte
     std::vector<Section> results;
     std::vector<Section> roots = sections();
     for (auto root : roots) {
+        if (filter(root))
+            results.push_back(root);
         std::vector<Section> secs = root.findSections(filter, max_depth);
         results.insert(results.end(), secs.begin(), secs.end());
     }
