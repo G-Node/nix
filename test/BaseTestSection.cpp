@@ -192,10 +192,10 @@ void BaseTestSection::testFindSection() {
     Section l3n4 = l2n5.createSection("l3n4", "typ2");
 
     // test depth limit
-    CPPUNIT_ASSERT(section.findSections().size() == 14);
-    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 2).size() == 10);
-    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 1).size() == 4);
-    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 0).size() == 1);
+    CPPUNIT_ASSERT(section.findSections().size() == 13);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 2).size() == 9);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 1).size() == 3);
+    CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 0).size() == 0);
 
     // test filter
     auto filter_typ1 = util::TypeFilter<Section>("typ1");
@@ -207,7 +207,7 @@ void BaseTestSection::testFindSection() {
 
 void BaseTestSection::testFindRelated() {
     /* We create the following tree:
-     * 
+     *
      * section---l1n1---l2n1---l3n1------------
      *            |      |                    |
      *            ------l2n2---l3n2---l4n1---l5n1
@@ -256,14 +256,14 @@ void BaseTestSection::testFindRelated() {
     CPPUNIT_ASSERT(related.size() == 0);
 
     /* Chop the tree to:
-     * 
+     *
      * section---l1n1---l2n1---l3n1
      * section_other
-     *                   
+     *
      */
     l1n1.deleteSection(l2n2.id());
 
-    CPPUNIT_ASSERT(section.findSections().size() == 4);
+    CPPUNIT_ASSERT(section.findSections().size() == 3);
 
     // test that all (horizontal) links are gone too:
     CPPUNIT_ASSERT(!l2n1.link());
@@ -275,18 +275,18 @@ void BaseTestSection::testFindRelated() {
     CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
 
     /* Extend the tree to:
-     * 
+     *
      * section---l1n1---l2n1---l3n1
      * section_other-----|
-     * 
+     *
      * and then chop it down to:
-     * 
+     *
      * section_other
-     *                   
+     *
      */
     section_other.link(l2n1.id());
     file.deleteSection(section.id());
-    CPPUNIT_ASSERT(section_other.findSections().size() == 1);
+    CPPUNIT_ASSERT(section_other.findSections().size() == 0);
     CPPUNIT_ASSERT(!section_other.link());
     // re-create section
     section = file.createSection("section", "metadata");
