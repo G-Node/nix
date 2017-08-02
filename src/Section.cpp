@@ -96,29 +96,26 @@ std::vector<Section> Section::sections(const util::Filter<Section>::type &filter
 
 
 std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
-                                           size_t max_depth) const
-{
+                                           size_t max_depth) const {
     std::vector<Section>  results;
     std::list<SectionCont> todo;
+    bool first_iter = true;
 
-    todo.push_back(SectionCont(*this));
-
-    while (todo.size() > 0)
-    {
-        SectionCont current = todo.front();
-        todo.pop_front();
-
-        bool filter_ok = filter(current.entity);
-        if (filter_ok) {
-            results.push_back(current.entity);
+    SectionCont current(*this);
+    while (todo.size() > 0 || first_iter) {
+        if(!first_iter) {
+            current = todo.front();
+            todo.pop_front();
+            if (filter(current.entity)) {
+                results.push_back(current.entity);
+            }
+        } else {
+            first_iter = false;
         }
-
         if (current.depth < max_depth) {
-            std::vector<Section> children = current.entity.sections();
             size_t next_depth = current.depth + 1;
-
-            for (auto it = children.begin(); it != children.end(); ++it) {
-                todo.push_back(SectionCont(*it, next_depth));
+            for (auto s : current.entity.sections()) {
+                todo.push_back(SectionCont(s, next_depth));
             }
         }
     }
