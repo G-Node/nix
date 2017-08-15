@@ -114,7 +114,7 @@ std::vector<Section> Section::findSections(const util::Filter<Section>::type &fi
         }
         if (current.depth < max_depth) {
             size_t next_depth = current.depth + 1;
-            for (auto s : current.entity.sections()) {
+            for (const auto &s : current.entity.sections()) {
                 todo.push_back(SectionCont(s, next_depth));
             }
         }
