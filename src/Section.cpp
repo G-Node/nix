@@ -83,32 +83,36 @@ std::vector<Section> Section::sections(const util::Filter<Section>::type &filter
 }
 
 
+void addChildrenIfNotMaxDepth(std::tuple<Section, size_t>& current,
+                              std::list<std::tuple<Section, size_t>> &todo,
+                              size_t max_depth) {
+    if (std::get<1>(current) < max_depth) {
+        size_t next_depth = std::get<1>(current) + 1;
+        for (const auto &s : std::get<0>(current).sections()) {
+            todo.push_back(std::make_tuple(s, next_depth));
+        }
+    }
+}
+
+
 std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
                                            size_t max_depth) const {
     std::vector<Section> results;
     std::list<std::tuple<Section, size_t>> todo;
-    bool first_iter = true;
     std::tuple<Section, size_t> current = std::make_tuple(*this, 0);
+    addChildrenIfNotMaxDepth(current, todo, max_depth);
 
-    while (todo.size() > 0 || first_iter) {
-        if(!first_iter) {
-            current = todo.front();
-            todo.pop_front();
-            if (filter(std::get<0>(current))) {
-                results.push_back(std::get<0>(current));
-            }
-        } else {
-            first_iter = false;
+    while (todo.size() > 0) {
+        current = todo.front();
+        todo.pop_front();
+        if (filter(std::get<0>(current))) {
+            results.push_back(std::get<0>(current));
         }
-        if (std::get<1>(current) < max_depth) {
-            size_t next_depth = std::get<1>(current) + 1;
-            for (const auto &s : std::get<0>(current).sections()) {
-                todo.push_back(std::make_tuple(s, next_depth));
-            }
-        }
+        addChildrenIfNotMaxDepth(current, todo, max_depth);
     }
     return results;
 }
+
 
 static inline auto erase_section_with_id(std::vector<Section> &sections, const std::string &my_id)
     -> decltype(sections.size())
