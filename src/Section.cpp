@@ -76,18 +76,6 @@ bool Section::deleteSection(const Section &section) {
     return backend()->deleteSection(section.id());
 }
 
-/*
- * Helper struct for {@link findSections}.
- */
-struct SectionCont {
-    SectionCont(Section s, size_t d = 0)
-    : entity(s), depth(d)
-    {}
-
-    Section entity;
-    size_t depth;
-};
-
 
 std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getSection(i); };
@@ -97,29 +85,28 @@ std::vector<Section> Section::sections(const util::Filter<Section>::type &filter
 
 std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
                                            size_t max_depth) const {
-    std::vector<Section>  results;
-    std::list<SectionCont> todo;
+    std::vector<Section> results;
+    std::list<std::tuple<Section, size_t>> todo;
     bool first_iter = true;
+    std::tuple<Section, size_t> current = std::make_tuple(*this, 0);
 
-    SectionCont current(*this);
     while (todo.size() > 0 || first_iter) {
         if(!first_iter) {
             current = todo.front();
             todo.pop_front();
-            if (filter(current.entity)) {
-                results.push_back(current.entity);
+            if (filter(std::get<0>(current))) {
+                results.push_back(std::get<0>(current));
             }
         } else {
             first_iter = false;
         }
-        if (current.depth < max_depth) {
-            size_t next_depth = current.depth + 1;
-            for (const auto &s : current.entity.sections()) {
-                todo.push_back(SectionCont(s, next_depth));
+        if (std::get<1>(current) < max_depth) {
+            size_t next_depth = std::get<1>(current) + 1;
+            for (const auto &s : std::get<0>(current).sections()) {
+                todo.push_back(std::make_tuple(s, next_depth));
             }
         }
     }
-
     return results;
 }
 
