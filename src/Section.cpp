@@ -89,7 +89,7 @@ void addChildrenIfNotMaxDepth(std::tuple<Section, size_t>& current,
     if (std::get<1>(current) < max_depth) {
         size_t next_depth = std::get<1>(current) + 1;
         for (const auto &s : std::get<0>(current).sections()) {
-            todo.push_back(std::make_tuple(s, next_depth));
+            todo.emplace_back(s, next_depth);
         }
     }
 }
