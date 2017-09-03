@@ -294,7 +294,7 @@ void BaseTestSection::testFindRelated() {
                       |-- l3n4 [t1]
                            |-- l4n3 [t3]
     */
-    Section l1n1 = file.createSection("L1N1", "t1");
+    Section l1n1 = section.createSection("L1N1", "t1");
 
     Section l2n1 = l1n1.createSection("L2N1", "t2");
     Section l2n2 = l1n1.createSection("L2N2", "t3");
@@ -332,9 +332,9 @@ void BaseTestSection::testFindRelated() {
     CPPUNIT_ASSERT(results.size() == 2);
     CPPUNIT_ASSERT(findSectionsInVector(results, {"L4N1", "L4N2"}));
     // ----------- l2n1 -------------
-    results = l2n1.findRelated(nix::util::TypeFilter<nix::Section>("t1")); //fails
-    //    CPPUNIT_ASSERT(results.size() == 1);
-    // CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
+    results = l2n1.findRelated(nix::util::TypeFilter<nix::Section>("t1"));
+    CPPUNIT_ASSERT(results.size() == 1);
+    CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
 
     results = l2n1.findRelated(nix::util::TypeFilter<nix::Section>("t2"));
     CPPUNIT_ASSERT(results.size() == 1);
@@ -353,7 +353,7 @@ void BaseTestSection::testFindRelated() {
     CPPUNIT_ASSERT(findSectionsInVector(results, {"L4N1"}));
 
     // ----------- l2n2 -------------
-    results = l2n2.findRelated(nix::util::TypeFilter<nix::Section>("t3")); //fails
+    results = l2n2.findRelated(nix::util::TypeFilter<nix::Section>("t3"));
     CPPUNIT_ASSERT(results.size() == 1);
     CPPUNIT_ASSERT(findSectionsInVector(results, {"L2N4"}));
 
@@ -362,10 +362,10 @@ void BaseTestSection::testFindRelated() {
     CPPUNIT_ASSERT(findSectionsInVector(results, {"L2N1", "L2N3"}));
 
     results = l2n2.findRelated(nix::util::TypeFilter<nix::Section>("t4"));
-    //CPPUNIT_ASSERT(results.size() == 0); // fails finds L5N1?!
+    CPPUNIT_ASSERT(results.size() == 0);
 
     results = l2n2.findRelated(nix::util::TypeFilter<nix::Section>("t5"));
-    //CPPUNIT_ASSERT(results.size() == 0); // fails finds L4N2!?
+    CPPUNIT_ASSERT(results.size() == 0);
 
     // ----------- l2n4 -------------
     results = l2n4.findRelated(nix::util::TypeFilter<nix::Section>("t1"));
@@ -390,8 +390,8 @@ void BaseTestSection::testFindRelated() {
 
     // ----------- l3n1 -------------
     results = l3n1.findRelated(nix::util::TypeFilter<nix::Section>("t1"));
-    // CPPUNIT_ASSERT(results.size() == 1);
-    // CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
+    CPPUNIT_ASSERT(results.size() == 1);
+    CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
 
     results = l3n1.findRelated(nix::util::TypeFilter<nix::Section>("t2"));
     CPPUNIT_ASSERT(results.size() == 1);
@@ -410,15 +410,12 @@ void BaseTestSection::testFindRelated() {
 
     // ----------- l4n1 --------------
     results = l4n1.findRelated(nix::util::TypeFilter<nix::Section>("t1"));
-    //fails! not found if absolute parent since this is no longer in found list!
-    //    CPPUNIT_ASSERT(results.size() == 1);
-    // CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
+    CPPUNIT_ASSERT(results.size() == 1);
+    CPPUNIT_ASSERT(findSectionsInVector(results, {"L1N1"}));
 
     results = l4n1.findRelated(nix::util::TypeFilter<nix::Section>("t2"));
-    // fails! probably also since this is not in result set, will then only be found if parent is checked...
-    // CPPUNIT_ASSERT(results.size() == 1);
-    // CPPUNIT_ASSERT(findSectionsInVector(results, {"L2N1"}));
-
+    CPPUNIT_ASSERT(results.size() == 1);
+    CPPUNIT_ASSERT(findSectionsInVector(results, {"L2N1"}));
     section.deleteSection(l1n1);
 }
 
