@@ -110,8 +110,65 @@ void BaseTestSection::testLink() {
     CPPUNIT_ASSERT(section.link().id() == section_other.id());
     // test deleter removing link too
     section.link(section);
+     /* We create the following tree:
+     *
+     * section---l1n1---l2n1---l3n1------------
+     *            |      |                    |
+     *            ------l2n2---l3n2---l4n1---l5n1
+     *                   |      |      |
+     *                   ------l3n3---l4n2
+     * section_other------------|
+     */
+    Section l1n1 = section.createSection("l1n1", "typ1");
+
+    Section l2n1 = l1n1.createSection("l2n1", "t1");
+    Section l2n2 = l1n1.createSection("l2n2", "t2");
+    Section l3n1 = l2n1.createSection("l3n1", "t3");
+    Section l3n2 = l2n2.createSection("l3n2", "t3");
+    Section l3n3 = l2n2.createSection("l3n3", "t4");
+    Section l4n1 = l3n2.createSection("l4n1", "typ2");
+    Section l4n2 = l3n3.createSection("l4n2", "typ2");
+    Section l5n1 = l4n1.createSection("l5n1", "typ2");
+
+    l2n1.link(l2n2.id());
+    l3n1.link(l5n1.id());
+    l3n2.link(l3n3.id());
+    l4n1.link(l4n2.id());
+    section_other.link(l3n3.id());
+    /* Chop the tree to:
+     *
+     * section---l1n1---l2n1---l3n1
+     * section_other
+     *
+     */
+    l1n1.deleteSection(l2n2.id());
+    CPPUNIT_ASSERT(section.findSections().size() == 3);
+
+    // test that all (horizontal) links are gone too:
+    CPPUNIT_ASSERT(!l2n1.link());
+    CPPUNIT_ASSERT(!l3n1.link());
+    CPPUNIT_ASSERT(!l3n2.link());
+    CPPUNIT_ASSERT(!l4n1.link());
+
+    CPPUNIT_ASSERT(!section_other.link());
+    CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
+
+    /* Extend the tree to:
+     *
+     * section---l1n1---l2n1---l3n1
+     * section_other-----|
+     *
+     * and then chop it down to:
+     *
+     * section_other
+     *
+     */
+    section_other.link(l2n1.id());
     file.deleteSection(section.id());
-    CPPUNIT_ASSERT(!section.link());
+    CPPUNIT_ASSERT(section_other.findSections().size() == 0);
+    CPPUNIT_ASSERT(!section_other.link());
+    // re-create section
+    section = file.createSection("section", "metadata");
 }
 
 
@@ -205,91 +262,9 @@ void BaseTestSection::testFindSection() {
     CPPUNIT_ASSERT(section.findSections(filter_typ2).size() == 8);
 }
 
-void BaseTestSection::testFindRelated() {
-    /* We create the following tree:
-     *
-     * section---l1n1---l2n1---l3n1------------
-     *            |      |                    |
-     *            ------l2n2---l3n2---l4n1---l5n1
-     *                   |      |      |
-     *                   ------l3n3---l4n2
-     * section_other------------|
-     */
-    Section l1n1 = section.createSection("l1n1", "typ1");
 
-    Section l2n1 = l1n1.createSection("l2n1", "t1");
-    Section l2n2 = l1n1.createSection("l2n2", "t2");
-    Section l3n1 = l2n1.createSection("l3n1", "t3");
-    Section l3n2 = l2n2.createSection("l3n2", "t3");
-    Section l3n3 = l2n2.createSection("l3n3", "t4");
-    Section l4n1 = l3n2.createSection("l4n1", "typ2");
-    Section l4n2 = l3n3.createSection("l4n2", "typ2");
-    Section l5n1 = l4n1.createSection("l5n1", "typ2");
 
-    l2n1.link(l2n2.id());
-    l3n1.link(l5n1.id());
-    l3n2.link(l3n3.id());
-    l4n1.link(l4n2.id());
-    section_other.link(l3n3.id());
 
-    std::string t1 = "t1";
-    std::string t3 = "t3";
-    std::string t4 = "t4";
-    std::string typ2 = "typ2";
-    std::string typ1 = "typ1";
-
-    std::vector<Section> related = l1n1.findRelated(util::TypeFilter<Section>(t1));
-    CPPUNIT_ASSERT(related.size() == 1);
-    related = l1n1.findRelated(util::TypeFilter<Section>(t3));
-    CPPUNIT_ASSERT(related.size() == 2);
-    related = l1n1.findRelated(util::TypeFilter<Section>(t4));
-    CPPUNIT_ASSERT(related.size() == 1);
-    related = l1n1.findRelated(util::TypeFilter<Section>(typ2));
-    CPPUNIT_ASSERT(related.size() == 2);
-    related = l4n1.findRelated(util::TypeFilter<Section>(typ1));
-    CPPUNIT_ASSERT(related.size() == 1);
-    related = l4n1.findRelated(util::TypeFilter<Section>(t1));
-    CPPUNIT_ASSERT(related.size() == 1);
-    related = l3n2.findRelated(util::TypeFilter<Section>(t1));
-    CPPUNIT_ASSERT(related.size() == 1);
-    related = l3n2.findRelated(util::TypeFilter<Section>(t3));
-    CPPUNIT_ASSERT(related.size() == 0);
-
-    /* Chop the tree to:
-     *
-     * section---l1n1---l2n1---l3n1
-     * section_other
-     *
-     */
-    l1n1.deleteSection(l2n2.id());
-
-    CPPUNIT_ASSERT(section.findSections().size() == 3);
-
-    // test that all (horizontal) links are gone too:
-    CPPUNIT_ASSERT(!l2n1.link());
-    CPPUNIT_ASSERT(!l3n1.link());
-    CPPUNIT_ASSERT(!l3n2.link());
-    CPPUNIT_ASSERT(!l4n1.link());
-
-    CPPUNIT_ASSERT(!section_other.link());
-    CPPUNIT_ASSERT(!l1n1.hasSection(l2n2));
-
-    /* Extend the tree to:
-     *
-     * section---l1n1---l2n1---l3n1
-     * section_other-----|
-     *
-     * and then chop it down to:
-     *
-     * section_other
-     *
-     */
-    section_other.link(l2n1.id());
-    file.deleteSection(section.id());
-    CPPUNIT_ASSERT(section_other.findSections().size() == 0);
-    CPPUNIT_ASSERT(!section_other.link());
-    // re-create section
-    section = file.createSection("section", "metadata");
 }
 
 
