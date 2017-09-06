@@ -127,6 +127,7 @@ static inline auto erase_section_with_id(std::vector<Section> &sections, const s
     return sections.size();
 }
 
+
 std::vector<Section> Section::findRelated(const util::Filter<Section>::type &filter) const
 {
     std::vector<Section> results = findDownstream(filter);
@@ -134,13 +135,11 @@ std::vector<Section> Section::findRelated(const util::Filter<Section>::type &fil
 
     //This checking of results can be removed if we decide not to include this in findSection
     auto results_size = erase_section_with_id(results, my_id);
-
     if (results_size == 0) {
-        results = findUpstream(filter);
+        results = findAmongParents(filter);
     }
-    //This checking of results can be removed if we decide not to include this in findSection
-    results_size = erase_section_with_id(results, my_id);
 
+    results_size = erase_section_with_id(results, my_id);
     if (results_size == 0) {
         results = findSideways(filter, id());
     }
@@ -174,7 +173,6 @@ bool Section::deleteProperty(const Property &property) {
 }
 
 std::vector<Property> Section::inheritedProperties() const {
-
     std::vector<Property> own = properties();
 
     if (link() == none)
@@ -212,7 +210,7 @@ size_t Section::tree_depth() const{
 }
 
 
-std::vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const{
+std::vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const {
     std::vector<Section> results;
     size_t max_depth = tree_depth();
     size_t actual_depth = 1;
@@ -224,18 +222,18 @@ std::vector<Section> Section::findDownstream(const std::function<bool(Section)> 
 }
 
 
-std::vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter) const{
+std::vector<Section> Section::findAmongParents(const std::function<bool(Section)> &filter) const {
     std::vector<Section> results;
     Section p = parent();
-
-    if (p != none) {
-        results = p.findSections(filter,1);
-        if (results.size() > 0) {
-            return results;
-        }
-        return p.findUpstream(filter);
+    if (p == none) {
+        return results;
     }
-    return results;
+    if (filter(p)) {
+        results.push_back(p);
+        return results;
+    } else {
+        return p.findAmongParents(filter);
+    }
 }
 
 
