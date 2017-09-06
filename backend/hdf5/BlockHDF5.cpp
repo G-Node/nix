@@ -290,7 +290,8 @@ shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string
 shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
-                                                  const NDSize &shape) {
+                                                  const NDSize &shape,
+                                                  bool compression) {
     string id = util::createId();
     boost::optional<H5Group> g = data_array_group(true);
 
@@ -298,7 +299,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
     // now create the actual H5::DataSet
-    da->createData(data_type, shape);
+    da->createData(data_type, shape, compression);
     return da;
 }
 

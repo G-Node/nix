@@ -193,7 +193,8 @@ DataSet H5Group::createData(const std::string &name,
                             const NDSize &maxsize,
                             NDSize chunks,
                             bool max_size_unlimited,
-                            bool guess_chunks) const
+                            bool guess_chunks,
+                            bool compression) const
 {
     DataSpace space;
 
@@ -217,8 +218,12 @@ DataSet H5Group::createData(const std::string &name,
         HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
         res.check("Could not set chunk size on data set creation plist");
     }
-
-    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    DataSet ds;
+    if (compression) {
+         HErr status = H5Pset_deflate (dcpl.h5id(), 6);
+         status.check("Could not set compression!");
+    }
+    ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
     ds.check("H5Group::createData: Could not create DataSet with name " + name);
 
     return ds;

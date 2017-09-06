@@ -112,7 +112,7 @@ public:
     //--------------------------------------------------
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                      nix::DataType data_type, const NDSize &shape);
+                                                      nix::DataType data_type, const NDSize &shape, bool compression);
 
 
     //--------------------------------------------------

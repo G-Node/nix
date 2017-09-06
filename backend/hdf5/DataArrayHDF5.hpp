@@ -38,7 +38,7 @@ public:
      * Standard constructor for existing DataArrays
      */
     DataArrayHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
-                  
+
     /**
      * Standard constructor for new DataArrays
      */
@@ -83,7 +83,7 @@ public:
     void expansionOrigin(const none_t t);
 
 
-    void polynomCoefficients(const std::vector<double> &polynom_coefficients);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients, bool compression);
 
 
     std::vector<double> polynomCoefficients() const;
@@ -128,7 +128,7 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    virtual void createData(DataType dtype, const NDSize &size);
+    virtual void createData(DataType dtype, const NDSize &size, bool compression);
 
 
     bool hasData() const;
