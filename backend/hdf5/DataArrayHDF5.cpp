@@ -137,7 +137,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients, bool
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-         ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()}, {}, {}, true, true, compression);
+        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()}, {}, {}, true, true, compression);
     }
     ds.write(coefficients);
     forceUpdatedAt();

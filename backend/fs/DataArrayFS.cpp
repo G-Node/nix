@@ -148,7 +148,7 @@ std::vector<double> DataArrayFS::polynomCoefficients() const {
 }
 
 
-void DataArrayFS::polynomCoefficients(const std::vector<double> &coefficients) {
+void DataArrayFS::polynomCoefficients(const std::vector<double> &coefficients, bool compression) {
     setAttr("polynom_coefficients", coefficients);
     forceUpdatedAt();
 }
@@ -239,8 +239,7 @@ bool DataArrayFS::deleteDimensions() {
 DataArrayFS::~DataArrayFS() {
 }
 
-
-void DataArrayFS::createData(DataType dtype, const NDSize &size) {
+void DataArrayFS::createData(DataType dtype, const NDSize &size, bool compression) {
     setDtype(dtype);
     dataExtent(size);
     /*

@@ -250,7 +250,7 @@ bool BlockFS::deleteSource(const std::string &name_or_id) {
 //--------------------------------------------------
 
 std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &name, const std::string &type,
-                                                           nix::DataType data_type, const NDSize &shape) {
+                                                           nix::DataType data_type, const NDSize &shape, bool compression) {
     if (name.empty()) {
         throw EmptyString("Block::createDataArray empty name provided!");
     }
@@ -259,7 +259,7 @@ std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &na
     }
     std::string id = util::createId();
     DataArrayFS da(file(), block(), data_array_dir.location(), id, type, name);
-    da.createData(data_type, shape);
+    da.createData(data_type, shape, compression);
     return std::make_shared<DataArrayFS>(da);
 }
 
