@@ -76,7 +76,8 @@ public:
     //--------------------------------------------------
 
     virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                              nix::DataType data_type, const NDSize &shape) = 0;
+                                                              nix::DataType data_type, const NDSize &shape,
+                                                              bool compression) = 0;
 
 
     //--------------------------------------------------

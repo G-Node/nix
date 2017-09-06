@@ -217,8 +217,8 @@ public:
      *
      * @param polynom_coefficients      The new polynom coefficients for the calibration.
      */
-    void polynomCoefficients(const std::vector<double> &polynom_coefficients) {
-        backend()->polynomCoefficients(polynom_coefficients);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients, bool compression = false) {
+        backend()->polynomCoefficients(polynom_coefficients, compression);
     }
 
     /**
@@ -304,19 +304,19 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) { 
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
         if (ticks.size() == 0) {
-            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!",
                                         "DataArray::appendRangeDimension");
         }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
-    
+
     /**
      * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
      * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
      * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
-     * 
+     *
      * @return The created RangeDimension
      */
     RangeDimension appendAliasRangeDimension() {
@@ -380,7 +380,7 @@ public:
 
     /**
      * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
-     * 
+     *
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and will be removed. Use appendAliasRangeDimension instead!
      */
