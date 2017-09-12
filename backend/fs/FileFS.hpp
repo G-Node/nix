@@ -23,12 +23,13 @@ class FileFS : public base::IFile, public DirectoryWithAttributes, public std::e
 
 private:
     Directory data_dir, metadata_dir;
+    bool compr;
     FileMode mode;
 
     void create_subfolders(const std::string &loc);
 
 public:
-    FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite);
+    FileFS(const std::string &name, const FileMode mode = FileMode::ReadWrite, bool compression = true);
 
 
     bool flush() { return true; };
@@ -111,6 +112,9 @@ public:
 
 
     FileMode fileMode() const;
+
+
+    bool compression() const;
 
 
     bool operator==(const FileFS &other) const;

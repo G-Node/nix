@@ -30,6 +30,7 @@ class FileHDF5 : public H5Object, public base::IFile, public std::enable_shared_
 private:
 
     /* groups representing different sections of the file */
+    bool compr;
     H5Group root, metadata, data;
     FileMode mode;
 
@@ -42,14 +43,14 @@ public:
      * @param prefix  The prefix used for IDs.
      * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
      */
-    FileHDF5(const std::string &name, const FileMode mode = FileMode::ReadWrite);
+    FileHDF5(const std::string &name, const FileMode mode = FileMode::ReadWrite, bool compression = true);
 
     //--------------------------------------------------
     // Methods concerning blocks
     //--------------------------------------------------
 
     bool flush();
-    
+
 
     ndsize_t blockCount() const;
 
@@ -128,6 +129,9 @@ public:
 
 
     FileMode fileMode() const;
+
+
+    bool compression() const;
 
 
     bool operator==(const FileHDF5 &other) const;

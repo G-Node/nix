@@ -16,9 +16,10 @@ namespace nix {
 namespace file {
 
 
-FileFS::FileFS(const std::string &name, FileMode mode)
-    : DirectoryWithAttributes(name, mode, true){
+    FileFS::FileFS(const std::string &name, FileMode mode, bool compression)
+    : DirectoryWithAttributes(name, mode, true) {
     this->mode = mode;
+    this->compr = compression;
     if (mode == FileMode::Overwrite) {
         removeAll();
     }
@@ -255,6 +256,10 @@ std::shared_ptr<base::IFile> FileFS::file() const {
 
 FileMode FileFS::fileMode() const {
     return mode;
+}
+
+bool FileFS::compression() const {
+    return compr;
 }
 
 FileFS::~FileFS() {}

@@ -126,6 +126,9 @@ public:
     virtual FileMode fileMode() const = 0;
 
 
+    virtual bool compression() const = 0;
+
+
     virtual ~IFile() {}
 
 };

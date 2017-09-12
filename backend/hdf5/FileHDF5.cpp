@@ -42,12 +42,12 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-FileHDF5::FileHDF5(const string &name, FileMode mode)
-{
+    FileHDF5::FileHDF5(const string &name, FileMode mode, bool compression) {
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
     this->mode = mode;
+    this->compr = compression;
     //we want hdf5 to keep track of the order in which links were created so that
     //the order for indexed based accessors is stable cf. issue #387
     H5Object fcpl = H5Pcreate(H5P_FILE_CREATE);
@@ -87,7 +87,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode)
 bool FileHDF5::flush() {
     HErr err = H5Fflush(hid, H5F_SCOPE_GLOBAL);
     return !err.isError();
-}        
+}
 
 //--------------------------------------------------
 // Methods concerning blocks
@@ -302,7 +302,7 @@ void FileHDF5::close() {
             throw H5Exception("FileHDF5::close(): Could not get objs");
         }
     }
-    
+
     for (auto obj : objs) {
         int ref_count = H5Iget_ref(obj);
 
@@ -324,6 +324,10 @@ FileMode FileHDF5::fileMode() const {
     return mode;
 }
 
+
+bool FileHDF5::compression() const {
+     return compr;
+}
 
 shared_ptr<base::IFile> FileHDF5::file() const {
     return  const_pointer_cast<FileHDF5>(shared_from_this());
@@ -368,7 +372,7 @@ void FileHDF5::createHeader() const {
         throw H5Exception("Could not open/create file");
     }
 }
-    
+
 void FileHDF5::openRoot() {
     root = H5Group(H5Gopen2(hid, "/", H5P_DEFAULT));
     root.check("Could not open root group");
@@ -402,6 +406,3 @@ FileHDF5::~FileHDF5() {
 
 } // ns nix::hdf5
 } // ns nix
-
-
-
