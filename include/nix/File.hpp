@@ -97,7 +97,7 @@ public:
      */
     bool flush();
 
-    
+
     /**
      * @brief Get the number of blocks in in the file.
      *
@@ -277,7 +277,7 @@ public:
      * @return A vector of filtered Section entities.
      */
     std::vector<Section> sections(const util::Filter<Section>::type &filter) const;
-    
+
 
     /**
      * @brief Get all root sections within this file.
@@ -291,7 +291,7 @@ public:
     {
         return sections(util::AcceptAll<Section>());
     }
-    
+
 
     /**
      * @brief Get all sections in this file recursively.
@@ -323,9 +323,8 @@ public:
      *
      * @return A vector containing the matching sections.
      */
-    std::vector<Section> findSections(size_t max_depth = std::numeric_limits<size_t>::max()) const
-    {
-        return findSections(util::AcceptAll<Section>());
+    std::vector<Section> findSections(size_t max_depth = std::numeric_limits<size_t>::max()) const {
+        return findSections(util::AcceptAll<Section>(), max_depth);
     }
 
 

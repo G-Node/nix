@@ -111,10 +111,13 @@ bool File::deleteSection(const Section &section) {
 std::vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
     std::vector<Section> results;
     std::vector<Section> roots = sections();
+    if (max_depth == 0) {
+        return results;
+    }
     for (auto root : roots) {
         if (filter(root))
             results.push_back(root);
-        std::vector<Section> secs = root.findSections(filter, max_depth);
+        std::vector<Section> secs = root.findSections(filter, max_depth - 1);
         results.insert(results.end(), secs.begin(), secs.end());
     }
     return results;

@@ -231,7 +231,26 @@ void BaseTestSection::testSectionAccess() {
 
 
 void BaseTestSection::testFindSection() {
-    // prepare
+    /* prepare
+   |--- section_other [metadata]
+   |
+   |--- section [metadata]
+         |--- l1n1 [t1]
+         |     |--- l2n1 [t1]
+         |     |     |--- l3n1 [t1]
+         |     |--- l2n2 [t2]
+         |     |--- l2n3 [t2]
+         |           |--- l3n2 [t2]
+         |           |--- l3n3 [t2]
+         |
+         |--- l1n2 [t2]
+         |
+         |--- l1n3 [t3]
+               |--- l2n4 [t2]
+               |--- l2n5 [t2]
+               |--- l2n6 [t3]
+                     |-- l3n4 [t2]
+    */
     Section l1n1 = section.createSection("l1n1", "typ1");
     Section l1n2 = section.createSection("l1n2", "typ2");
     Section l1n3 = section.createSection("l1n3", "typ3");
@@ -253,6 +272,14 @@ void BaseTestSection::testFindSection() {
     CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 2).size() == 9);
     CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 1).size() == 3);
     CPPUNIT_ASSERT(section.findSections(util::AcceptAll<Section>(), 0).size() == 0);
+
+    // test file::findSections with depth
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 0).size() == 0);
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 1).size() == 2);
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 2).size() == 5);
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 3).size() == 11);
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 4).size() == 15);
+    CPPUNIT_ASSERT(file.findSections(util::AcceptAll<Section>(), 5).size() == 15);
 
     // test filter
     auto filter_typ1 = util::TypeFilter<Section>("typ1");
