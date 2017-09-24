@@ -13,6 +13,7 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/Platform.hpp>
 #include <nix/ObjectType.hpp>
+#include <nix/Compression.hpp>
 
 #include <string>
 #include <vector>
@@ -29,14 +30,6 @@ enum class FileMode {
     Overwrite
 };
 
-/**
- * @brief Data Compression modes
- */
-enum class Compression {
-     None = 0,
-     DeflateNormal,
-     Auto = DeflateNormal
-};
 
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
