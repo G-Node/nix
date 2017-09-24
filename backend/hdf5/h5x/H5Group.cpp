@@ -190,11 +190,11 @@ void H5Group::removeData(const std::string &name) {
 DataSet H5Group::createData(const std::string &name,
                             const h5x::DataType &fileType,
                             const NDSize &size,
+                            const Compression &compression,
                             const NDSize &maxsize,
                             NDSize chunks,
                             bool max_size_unlimited,
-                            bool guess_chunks,
-                            const Compression &compression) const
+                            bool guess_chunks) const
 {
     DataSpace space;
 

@@ -137,7 +137,7 @@ void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients, cons
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()}, {}, {}, true, true, compression);
+        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()}, compression);
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -249,7 +249,7 @@ void DataArrayHDF5::createData(DataType dtype, const NDSize &size, const Compres
     }
 
     h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-    group().createData("data", fileType, size, {}, {}, true, true, compression);
+    group().createData("data", fileType, size, compression);
 }
 
 bool DataArrayHDF5::hasData() const {

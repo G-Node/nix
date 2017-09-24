@@ -48,15 +48,15 @@ public:
     bool hasData(const std::string &name) const;
 
     DataSet createData(const std::string &name, const h5x::DataType &fileType,
-                       const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
-                       bool maxSizeUnlimited = true, bool guessChunks = true,
-                       const Compression &compression = Compression::Auto) const;
+                       const NDSize &size,  const Compression &compression = Compression::Auto,
+                       const NDSize &maxsize = {}, NDSize chunks = {},
+                       bool maxSizeUnlimited = true, bool guessChunks = true) const;
 
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
     template<typename T>
-         void setData(const std::string &name, const T &value, const Compression &compression = Compression::Auto);
+    void setData(const std::string &name, const T &value, const Compression &compression = Compression::Auto);
     template<typename T>
     bool getData(const std::string &name, T &value) const;
 
@@ -195,7 +195,7 @@ void H5Group::setData(const std::string &name, const T &value, const Compression
     DataSet ds;
     if (!hasData(name)) {
         h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-        ds = createData(name, fileType, shape, {}, {}, true, true, compression);
+        ds = createData(name, fileType, shape, compression);
     } else {
         ds = openData(name);
         ds.setExtent(shape);
