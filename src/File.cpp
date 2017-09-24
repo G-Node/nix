@@ -25,6 +25,9 @@ File File::open(const std::string &name, FileMode mode, const std::string &impl,
     if (mode == nix::FileMode::ReadOnly && !bfs::exists({name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }
+    if (compression == Compression::Auto) {
+         compression = Compression::None;
+    }
     if (impl == "hdf5") {
          return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression));
     }

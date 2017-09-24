@@ -1,4 +1,4 @@
-// Copyright (c) 2013, German Neuroinformatics Node (G-Node)
+// Copyright (c) 2017, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
 //
@@ -16,7 +16,7 @@ namespace nix {
 enum class Compression {
     None = 0,
     DeflateNormal,
-    Auto = DeflateNormal
+    Auto
 };
 }
 

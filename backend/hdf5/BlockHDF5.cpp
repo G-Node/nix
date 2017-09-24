@@ -301,7 +301,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
     // now create the actual H5::DataSet
-    da->createData(data_type, shape, compression);
+    da->createData(data_type, shape, compression == Compression::Auto ? compr : compression);
     return da;
 }
 
