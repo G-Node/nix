@@ -131,7 +131,7 @@ vector<double> DataArrayHDF5::polynomCoefficients() const {
 }
 
 
-void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients, bool compression) {
+void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients, const Compression &compression) {
     DataSet ds;
     if (group().hasData("polynom_coefficients")) {
         ds = group().openData("polynom_coefficients");
@@ -243,7 +243,7 @@ bool DataArrayHDF5::deleteDimensions() {
 DataArrayHDF5::~DataArrayHDF5() {
 }
 
-void DataArrayHDF5::createData(DataType dtype, const NDSize &size, bool compression) {
+void DataArrayHDF5::createData(DataType dtype, const NDSize &size, const Compression &compression) {
     if (group().hasData("data")) {
         throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }

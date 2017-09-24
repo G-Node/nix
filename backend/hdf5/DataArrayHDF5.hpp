@@ -83,7 +83,7 @@ public:
     void expansionOrigin(const none_t t);
 
 
-    void polynomCoefficients(const std::vector<double> &polynom_coefficients, bool compression);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients, const Compression &compression);
 
 
     std::vector<double> polynomCoefficients() const;
@@ -128,7 +128,7 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    virtual void createData(DataType dtype, const NDSize &size, bool compression);
+    virtual void createData(DataType dtype, const NDSize &size, const Compression &compression);
 
 
     bool hasData() const;
@@ -143,7 +143,7 @@ public:
     NDSize dataExtent(void) const;
 
 
-    void   dataExtent(const NDSize &extent);
+    void dataExtent(const NDSize &extent);
 
 
     DataType dataType(void) const;

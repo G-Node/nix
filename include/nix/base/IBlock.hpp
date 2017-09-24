@@ -15,6 +15,7 @@
 #include <nix/base/ITag.hpp>
 #include <nix/base/IMultiTag.hpp>
 #include <nix/base/IGroup.hpp>
+#include <nix/Compression.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/Identity.hpp>
 
@@ -33,7 +34,6 @@ namespace base {
 class NIXAPI IBlock : virtual public base::IEntityWithMetadata {
 
 public:
-
 
     virtual std::string resolveEntityId(const nix::Identity &ident) const = 0;
 
@@ -76,8 +76,8 @@ public:
     //--------------------------------------------------
 
     virtual std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                              nix::DataType data_type, const NDSize &shape,
-                                                              bool compression) = 0;
+                                                              DataType data_type, const NDSize &shape,
+                                                              const Compression &compression) = 0;
 
 
     //--------------------------------------------------
@@ -85,7 +85,7 @@ public:
     //--------------------------------------------------
 
     virtual std::shared_ptr<base::ITag> createTag(const std::string &name, const std::string &type,
-                                                              const std::vector<double> &position) = 0;
+                                                  const std::vector<double> &position) = 0;
 
     //--------------------------------------------------
     // Methods concerning multi tags.

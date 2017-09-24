@@ -16,6 +16,7 @@
 
 #include <nix/base/IDataArray.hpp>
 #include "EntityWithSourcesFS.hpp"
+#include <nix/Compression.hpp>
 
 #include <boost/multi_array.hpp>
 #include "Directory.hpp"
@@ -93,7 +94,8 @@ public:
     void expansionOrigin(const none_t t);
 
 
-    void polynomCoefficients(const std::vector<double> &polynom_coefficients, bool compression = false);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients,
+                             const Compression &compression = Compression::None);
 
 
     std::vector<double> polynomCoefficients() const;
@@ -138,7 +140,7 @@ public:
     // Methods concerning data access.
     //--------------------------------------------------
 
-    virtual void createData(DataType dtype, const NDSize &size, bool compression);
+    virtual void createData(DataType dtype, const NDSize &size, const Compression &compression);
 
 
     bool hasData() const;

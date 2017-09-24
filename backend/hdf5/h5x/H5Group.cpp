@@ -194,7 +194,7 @@ DataSet H5Group::createData(const std::string &name,
                             NDSize chunks,
                             bool max_size_unlimited,
                             bool guess_chunks,
-                            bool compression) const
+                            const Compression &compression) const
 {
     DataSpace space;
 
@@ -219,7 +219,7 @@ DataSet H5Group::createData(const std::string &name,
         res.check("Could not set chunk size on data set creation plist");
     }
     DataSet ds;
-    if (compression) {
+    if (compression == Compression::DeflateNormal) {
          HErr status = H5Pset_deflate (dcpl.h5id(), 6);
          status.check("Could not set compression!");
     }

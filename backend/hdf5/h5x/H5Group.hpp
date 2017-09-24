@@ -14,6 +14,7 @@
 #include "DataSpace.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
+#include <nix/Compression.hpp>
 
 #include <boost/optional.hpp>
 
@@ -47,14 +48,15 @@ public:
     bool hasData(const std::string &name) const;
 
     DataSet createData(const std::string &name, const h5x::DataType &fileType,
-            const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
-            bool maxSizeUnlimited = true, bool guessChunks = true, bool compression = true) const;
+                       const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
+                       bool maxSizeUnlimited = true, bool guessChunks = true,
+                       const Compression &compression = Compression::Auto) const;
 
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
     template<typename T>
-    void setData(const std::string &name, const T &value, bool compression = true);
+         void setData(const std::string &name, const T &value, const Compression &compression = Compression::Auto);
     template<typename T>
     bool getData(const std::string &name, T &value) const;
 
@@ -184,7 +186,7 @@ private:
 //template functions
 
 template<typename T>
-void H5Group::setData(const std::string &name, const T &value, bool compression)
+void H5Group::setData(const std::string &name, const T &value, const Compression &compression)
 {
     const Hydra<const T> hydra(value);
     DataType dtype = hydra.element_data_type();

@@ -46,7 +46,7 @@ bool Block::deleteSource(const Source &source) {
 }
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
-                                 const NDSize &shape, bool compression) {
+                                 const NDSize &shape, const Compression &compression) {
     util::checkEntityNameAndType(name, type);
     if (hasDataArray(name)){
         throw DuplicateName("create DataArray");

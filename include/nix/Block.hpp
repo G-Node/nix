@@ -349,7 +349,7 @@ public:
     * @param type         The type of the data array.
     * @param data_type    A nix::DataType indicating the format to store values.
     * @param shape        A NDSize holding the extent of the array to create.
-    * @param compression  En-/disable dataset compression, default true.
+    * @param compression  En-/disable dataset compression, default nix::Compression::Auto.
     *
     * @return The newly created data array.
     */
@@ -357,7 +357,7 @@ public:
                               const std::string &type,
                               nix::DataType      data_type,
                               const NDSize      &shape,
-                              bool compression = true);
+                              const Compression &compression=Compression::Auto);
 
     /**
     * @brief Create a new data array associated with this block.
@@ -366,7 +366,7 @@ public:
     * @param type      The type of the data array.
     * @param data      Data to create array with.
     * @param data_type A optional nix::DataType indicating the format to store values.
-    * @param compression  En-/disable dataset compression, default true.
+    * @param compression  En-/disable dataset compression, default nix::Compression::Auto.
     *
     * Create a data array with shape and type inferred from data. After
     * successful creation, the contents of data will be written to the
@@ -379,8 +379,8 @@ public:
     DataArray createDataArray(const std::string &name,
                               const std::string &type,
                               const T &data,
-                              DataType data_type = DataType::Nothing,
-                              bool compression = true) {
+                              DataType data_type=DataType::Nothing,
+                              const Compression &compression=Compression::Auto) {
          const Hydra<const T> hydra(data);
 
          if (data_type == DataType::Nothing) {

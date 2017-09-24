@@ -293,7 +293,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
                                                   const NDSize &shape,
-                                                  bool compression) {
+                                                  const Compression &compression) {
     string id = util::createId();
     boost::optional<H5Group> g = data_array_group(true);
 
