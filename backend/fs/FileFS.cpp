@@ -82,7 +82,7 @@ std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const
         throw DuplicateName("Block with the given name already exists!");
     }
     std::string id = util::createId();
-    BlockFS b(file(), data_dir.location(), id, type, name);
+    BlockFS b(file(), data_dir.location(), id, type, name, this->compression());
     return std::make_shared<BlockFS>(b);
 }
 

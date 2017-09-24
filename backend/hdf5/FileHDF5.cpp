@@ -119,7 +119,7 @@ shared_ptr<base::IBlock> FileHDF5::getBlock(ndsize_t index) const {
 shared_ptr<base::IBlock> FileHDF5::createBlock(const string &name, const string &type) {
     string id = util::createId();
     H5Group group = data.openGroup(name, true);
-    return make_shared<BlockHDF5>(file(), group, id, type, name);
+    return make_shared<BlockHDF5>(file(), group, id, type, name, compr);
 }
 
 

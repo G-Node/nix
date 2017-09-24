@@ -23,16 +23,16 @@ BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &lo
 
 
 BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
-                 const std::string &type, const std::string &name)
-    : EntityWithMetadataFS(file, loc, id, type, name)
+                 const std::string &type, const std::string &name, const Compression &compression)
+     : EntityWithMetadataFS(file, loc, id, type, name), compr(compression)
 {
     createSubFolders(file);
 }
 
 
 BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
-                 const std::string &type, const std::string &name, time_t time)
-    : EntityWithMetadataFS(file, loc, id, type, name, time)
+                 const std::string &type, const std::string &name, time_t time, const Compression &compression)
+     : EntityWithMetadataFS(file, loc, id, type, name, time), compr(compression)
 {
     createSubFolders(file);
 }

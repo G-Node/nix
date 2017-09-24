@@ -28,7 +28,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 private:
 
     optGroup data_array_group, tag_group, multi_tag_group, source_group, groups_group;
-
+    Compression compr;
 public:
 
     /**
@@ -48,7 +48,8 @@ public:
      * @param type      The type of this block.
      * @param name      The name of this block.
      */
-    BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type, const std::string &name);
+    BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id,
+              const std::string &type, const std::string &name, const Compression &compression);
 
     /**
      * Standard constructor for a new Block.
@@ -60,7 +61,8 @@ public:
      * @param name      The name of this block.
      * @param time      The creation time of this block.
      */
-    BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id, const std::string &type, const std::string &name, time_t time);
+    BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group, const std::string &id,
+              const std::string &type, const std::string &name, time_t time, const Compression &compression);
 
 
 private:
