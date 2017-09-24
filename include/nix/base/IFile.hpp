@@ -29,6 +29,14 @@ enum class FileMode {
     Overwrite
 };
 
+/**
+ * @brief Data Compression modes
+ */
+enum class Compression {
+     None = 0,
+     DeflateNormal,
+     Auto = DeflateNormal
+};
 
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
