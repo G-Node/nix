@@ -16,7 +16,7 @@ namespace nix {
 namespace file {
 
 
-    FileFS::FileFS(const std::string &name, FileMode mode, bool compression)
+    FileFS::FileFS(const std::string &name, FileMode mode, Compression compression)
     : DirectoryWithAttributes(name, mode, true) {
     this->mode = mode;
     this->compr = compression;
@@ -258,7 +258,7 @@ FileMode FileFS::fileMode() const {
     return mode;
 }
 
-bool FileFS::compression() const {
+Compression FileFS::compression() const {
     return compr;
 }
 

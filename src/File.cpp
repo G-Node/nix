@@ -21,7 +21,7 @@ namespace bfs = boost::filesystem;
 
 namespace nix {
 
-File File::open(const std::string &name, FileMode mode, const std::string &impl, bool compression) {
+File File::open(const std::string &name, FileMode mode, const std::string &impl, Compression compression) {
     if (mode == nix::FileMode::ReadOnly && !bfs::exists({name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }

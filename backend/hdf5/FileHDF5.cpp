@@ -42,7 +42,7 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-    FileHDF5::FileHDF5(const string &name, FileMode mode, bool compression) {
+    FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression) {
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
@@ -325,7 +325,7 @@ FileMode FileHDF5::fileMode() const {
 }
 
 
-bool FileHDF5::compression() const {
+Compression FileHDF5::compression() const {
      return compr;
 }
 
