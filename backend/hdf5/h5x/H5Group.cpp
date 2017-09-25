@@ -219,9 +219,19 @@ DataSet H5Group::createData(const std::string &name,
         res.check("Could not set chunk size on data set creation plist");
     }
     DataSet ds;
-    if (compression == Compression::DeflateNormal) {
-         HErr status = H5Pset_deflate (dcpl.h5id(), 6);
-         status.check("Could not set compression!");
+    switch (compression) {
+        case Compression::None :
+            break;
+        case Compression::Auto :
+            break;
+        case Compression::DeflateNormal : {
+            HErr status = H5Pset_deflate (dcpl.h5id(), 6);
+            status.check("Could not set compression!");
+            break;
+        }
+        default : {
+            throw std::invalid_argument("Invalid compression flag!");
+        }
     }
     ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
     ds.check("H5Group::createData: Could not create DataSet with name " + name);
