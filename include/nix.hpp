@@ -22,6 +22,4 @@
 #include <nix/Tag.hpp>
 #include <nix/Source.hpp>
 #include <nix/Value.hpp>
-
-
-
+#include <nix/Compression.hpp>

@@ -81,15 +81,17 @@ public:
     /**
      * @brief Opens a file.
      *
-     * @param name      The name/path of the file.
-     * @param mode      The open mode.
-     * @param impl      The back-end implementation the should be used to open the file.
-     *                  (currently only hdf5)
+     * @param name          The name/path of the file.
+     * @param mode          The open mode.
+     * @param impl          The back-end implementation to be used to open the file.
+     *                      (currently only hdf5)
+     * @param compresssion  The compression mode, defaults to Compression::None (can be
+     *                      overridden upon DataArray creation)
      *
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     const std::string &impl="hdf5");
+                     const std::string &impl="hdf5", Compression compression=Compression::Auto);
 
     /**
      * @brief Persists all cached changes to the backend.
@@ -468,6 +470,17 @@ public:
     FileMode fileMode() {
         return backend()->fileMode();
     }
+
+    /*
+    * @brief Returns the default choice for compressing datasets.
+    * This choice can be made during file opening.
+    *
+    * @return true if dataset compression is selected as default.
+    */
+    Compression compression() const {
+        return backend()->compression();
+    }
+
     /**
      * @brief Assignment operator for none.
      */

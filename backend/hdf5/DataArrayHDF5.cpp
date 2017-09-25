@@ -131,13 +131,13 @@ vector<double> DataArrayHDF5::polynomCoefficients() const {
 }
 
 
-void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients) {
+void DataArrayHDF5::polynomCoefficients(const vector<double> &coefficients, const Compression &compression) {
     DataSet ds;
     if (group().hasData("polynom_coefficients")) {
         ds = group().openData("polynom_coefficients");
         ds.setExtent({coefficients.size()});
     } else {
-        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()});
+        ds = group().createData("polynom_coefficients", H5T_NATIVE_DOUBLE, {coefficients.size()}, compression);
     }
     ds.write(coefficients);
     forceUpdatedAt();
@@ -243,14 +243,13 @@ bool DataArrayHDF5::deleteDimensions() {
 DataArrayHDF5::~DataArrayHDF5() {
 }
 
-
-void DataArrayHDF5::createData(DataType dtype, const NDSize &size) {
+void DataArrayHDF5::createData(DataType dtype, const NDSize &size, const Compression &compression) {
     if (group().hasData("data")) {
         throw ConsistencyError("DataArray's hdf5 data group already exists!");
     }
 
     h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-    group().createData("data", fileType, size);
+    group().createData("data", fileType, size, compression);
 }
 
 bool DataArrayHDF5::hasData() const {
