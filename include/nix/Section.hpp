@@ -553,6 +553,8 @@ struct objectToType<nix::Section> {
     typedef nix::base::ISection backendType;
 };
 
+NIXAPI std::ostream& operator<<(std::ostream &out, const Section &ent);
+
 } // namespace nix
 
 #endif // NIX_SECTION_H
