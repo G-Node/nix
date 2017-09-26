@@ -502,6 +502,7 @@ struct objectToType<nix::DataArray> {
     typedef nix::base::IDataArray backendType;
 };
 
+NIXAPI std::ostream& operator<<(std::ostream &out, const DataArray &ent);
 
 } // namespace nix
 
