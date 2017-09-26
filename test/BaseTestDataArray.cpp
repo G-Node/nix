@@ -159,7 +159,7 @@ void BaseTestDataArray::testData() {
             D[i][j] = 42.0;
 
 
-        array2.setData(D, nix::NDSize({ 20, 20 }));
+    array2.setData(D, nix::NDSize({ 20, 20 }));
 
     array2D_type E(boost::extents[1][1]);
     array2.getData(E, nix::NDSize({ 5, 5 }), nix::NDSize({ 20, 20 }));
