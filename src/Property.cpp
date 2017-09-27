@@ -13,12 +13,12 @@
 namespace nix {
 
 void Property::unit(const std::string &unit) {
-    util::checkEmptyString(unit, "unit");
-    util::deblankString(unit);
-    if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
-        throw InvalidUnit("Unit is not SI or composite of SI units.", "Property::unit(const string &unit)");
+    std::string dblnk_unit = util::deblankString(unit);
+    if (dblnk_unit.empty()) {
+        this->unit(nix::none);
+        return;
     }
-    backend()->unit(unit);
+    backend()->unit(dblnk_unit);
 }
 
 std::ostream& operator<<(std::ostream &out, const Property &ent) {
@@ -48,4 +48,3 @@ void Property::mapping(const std::string &mapping) {
 }
 
 } // namespace nix
-
