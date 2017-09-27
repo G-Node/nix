@@ -12,6 +12,7 @@
 #include <nix/base/IEntityWithMetadata.hpp>
 #include <nix/base/ISource.hpp>
 #include <nix/base/IDataArray.hpp>
+#include <nix/base/IDataFrame.hpp>
 #include <nix/base/ITag.hpp>
 #include <nix/base/IMultiTag.hpp>
 #include <nix/base/IGroup.hpp>
@@ -79,6 +80,13 @@ public:
                                                               DataType data_type, const NDSize &shape,
                                                               const Compression &compression) = 0;
 
+    //--------------------------------------------------
+    // Methods concerning data frame
+    //--------------------------------------------------
+
+    virtual std::shared_ptr<base::IDataFrame> createDataFrame(const std::string &name,
+                                                              const std::string &type,
+                                                              const std::vector<Column> &cols) = 0;
 
     //--------------------------------------------------
     // Methods concerning tags.

@@ -27,7 +27,7 @@ class BlockHDF5 : virtual public base::IBlock, public EntityWithMetadataHDF5,
 
 private:
 
-    optGroup data_array_group, tag_group, multi_tag_group, source_group, groups_group;
+    optGroup data_array_group, data_frame_group, tag_group, multi_tag_group, source_group, groups_group;
     Compression compr;
 public:
 
@@ -117,6 +117,13 @@ public:
                                                       nix::DataType data_type, const NDSize &shape,
                                                       const Compression &compression);
 
+    //--------------------------------------------------
+    // Methods concerning DataFrames
+    //--------------------------------------------------
+
+    std::shared_ptr<base::IDataFrame> createDataFrame(const std::string &name,
+                                                      const std::string &type,
+                                                      const std::vector<Column> &cols);
 
     //--------------------------------------------------
     // Methods concerning tags.

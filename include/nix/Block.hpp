@@ -13,6 +13,7 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/Source.hpp>
 #include <nix/DataArray.hpp>
+#include <nix/DataFrame.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Tag.hpp>
 #include <nix/Group.hpp>
@@ -425,6 +426,14 @@ public:
             return false;
         }
         return backend()->removeEntity(data_array);
+    }
+
+    //--------------------------------------------------
+    // Methods concerning DataFrames
+    //--------------------------------------------------
+
+    DataFrame createDataFrame(const std::string &name, const std::string &type, const std::vector<Column> &cols) {
+        return backend()->createDataFrame(name, type, cols);
     }
 
     //--------------------------------------------------

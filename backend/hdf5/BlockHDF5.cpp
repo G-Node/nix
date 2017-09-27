@@ -12,6 +12,7 @@
 #include <nix/Block.hpp>
 #include "SourceHDF5.hpp"
 #include "DataArrayHDF5.hpp"
+#include "DataFrameHDF5.hpp"
 #include "TagHDF5.hpp"
 #include "MultiTagHDF5.hpp"
 #include "GroupHDF5.hpp"
@@ -28,6 +29,7 @@ namespace hdf5 {
 BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group)
         : EntityWithMetadataHDF5(file, group) {
     data_array_group = this->group().openOptGroup("data_arrays");
+    data_frame_group = this->group().openOptGroup("data_frames");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
     source_group = this->group().openOptGroup("sources");
@@ -44,6 +46,7 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
                      const string &type, const string &name, time_t time, const Compression &compression)
      : EntityWithMetadataHDF5(file, group, id, type, name, time), compr(compression) {
     data_array_group = this->group().openOptGroup("data_arrays");
+    data_frame_group = this->group().openOptGroup("data_frames");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
     source_group = this->group().openOptGroup("sources");
@@ -61,6 +64,10 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool cre
     switch (type) {
     case ObjectType::DataArray:
         p = data_array_group(create);
+        break;
+
+    case ObjectType::DataFrame:
+        p = data_frame_group(create);
         break;
 
     case ObjectType::Tag:
@@ -156,6 +163,14 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
             da = make_shared<DataArrayHDF5>(file(), block(), *eg);
         }
         return da;
+    }
+
+    case ObjectType::DataFrame: {
+        shared_ptr<DataFrameHDF5> df;
+        if (eg) {
+            df = make_shared<DataFrameHDF5>(file(), block(), *eg);
+        }
+        return df;
     }
 
     case ObjectType::Tag: {
@@ -303,6 +318,23 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     // now create the actual H5::DataSet
     da->createData(data_type, shape, compression == Compression::Auto ? compr : compression);
     return da;
+}
+
+//--------------------------------------------------
+// Methods related to DataFrame
+//--------------------------------------------------
+
+std::shared_ptr<IDataFrame> BlockHDF5::createDataFrame(const std::string &name,
+                                                       const std::string &type,
+                                                       const std::vector<Column> &cols) {
+
+    string id = util::createId();
+    boost::optional<H5Group> g = data_frame_group(true);
+    H5Group group = g->openGroup(name, true);
+
+    auto df = make_shared<DataFrameHDF5>(file(), block(), group, id, type, name);
+    df->createData(cols);
+    return df;
 }
 
 //--------------------------------------------------
