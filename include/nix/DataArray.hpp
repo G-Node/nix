@@ -17,6 +17,7 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/util/util.hpp>
 
 
 namespace nix {
@@ -323,15 +324,22 @@ public:
     RangeDimension appendAliasRangeDimension() {
         if (this->dataExtent().size() > 1) {
             throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
         }
         if (!nix::data_type_is_numeric(this->dataType())) {
             throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
         }
         if (dimensionCount() > 0) {
             throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
+        }
+        if (this->unit()) {
+            std::string unit = *this->unit();
+            if(!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
+                throw nix:: InvalidUnit("AliasRangeDimensions are only allowed when SI or composites of SI units are used.",
+                                        "DataArray::appendAliasRangeDimension");
+            }
         }
         return backend()->createAliasRangeDimension();
     }

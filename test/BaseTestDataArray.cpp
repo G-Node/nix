@@ -379,12 +379,21 @@ void BaseTestDataArray::testPolynomialSetter() {
 void BaseTestDataArray::testUnit() {
     std::string testStr = "somestring";
     std::string validUnit = "mV^2";
-    CPPUNIT_ASSERT_THROW(array1.unit(testStr), nix::InvalidUnit);
+
     CPPUNIT_ASSERT_NO_THROW(array1.unit(validUnit));
     CPPUNIT_ASSERT(*array1.unit() == validUnit);
-    CPPUNIT_ASSERT_NO_THROW(array1.unit(boost::none));
+    CPPUNIT_ASSERT_NO_THROW(array1.unit(nix::none));
     CPPUNIT_ASSERT(array1.unit() == nix::none);
-    CPPUNIT_ASSERT_THROW(array1.unit(""), EmptyString);
+    CPPUNIT_ASSERT_THROW(array1.unit(""), nix::EmptyString);
+
+    array1.unit(nix::none);
+    CPPUNIT_ASSERT_NO_THROW(array1.unit(testStr));
+    CPPUNIT_ASSERT_THROW(array1.createAliasRangeDimension(), nix::InvalidDimension);
+
+    nix::Dimension dim = array3.createAliasRangeDimension();
+    CPPUNIT_ASSERT_NO_THROW(array3.unit(validUnit));
+    array3.unit(nix::none);
+    CPPUNIT_ASSERT_THROW(array3.unit(testStr), nix::InvalidUnit);
 }
 
 
