@@ -107,6 +107,10 @@ struct MemRef {
     char *data;
 
     MemRef() : data(NULL) {}
+    MemRef(size_t size) : data(NULL) {
+        data = static_cast<char *>(std::malloc(sizeof(Variant)));
+    }
+
     MemRef(const Variant &v, char *mem = NULL) : data(NULL) {
         if (mem == NULL) {
             mem = data = static_cast<char *>(std::malloc(sizeof(Variant)));
@@ -158,7 +162,49 @@ struct MemRef {
         default:
             throw "FIXME";
         };
+    }
 
+    Variant copy(DataType dtype) {
+
+        switch (dtype) {
+        case DataType::Bool:
+            bool b;
+            std::memcpy(&b, data, sizeof(b));
+            return Variant(b);
+
+        case DataType::Double:
+            double d;
+            std::memcpy(&d, data, sizeof(d));
+            return Variant(d);
+
+        case DataType::UInt32:
+            uint32_t ui32;
+            std::memcpy(&ui32, data, sizeof(ui32));
+            return Variant(ui32);
+
+        case DataType::Int32:
+            int32_t i32;
+            std::memcpy(&i32, data, sizeof(i32));
+            return Variant(i32);
+
+        case DataType::UInt64:
+            uint64_t ui64;
+            std::memcpy(&ui64, data, sizeof(ui64));
+            return Variant(ui64);
+
+        case DataType::Int64:
+            int64_t i64;
+            std::memcpy(&i64, data, sizeof(i64));
+            return Variant(i64);
+
+        case DataType::String:
+            char **str;
+            std::memcpy(&str, data, sizeof(char **));
+            return Variant(str);
+
+        default:
+            throw "FIXME";
+        };
     }
 
     ~MemRef() {
@@ -216,6 +262,24 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
     ds.write(base, ct, NDSize{1}, NDSize{row});
 
     std::free(base);
+}
+
+Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
+    DataSet ds = group().openData("data");
+
+    h5x::DataType dtype = ds.dataType();
+    h5x::DataType coltype = dtype.member_type(col);
+
+    DataType memtype = data_type_from_h5(coltype);
+    h5x::DataType mtype = data_type_to_h5_memtype(memtype);
+    h5x::DataType ctype = h5x::DataType::makeCompound(mtype.size());
+    const std::string &name = dtype.member_name(col);
+    ctype.insert(name, 0, mtype);
+
+    MemRef r{sizeof(Variant)};
+    ds.read(r.data, ctype, NDSize{1}, NDSize{row});
+
+    return r.copy(memtype);
 }
 
 }

@@ -39,6 +39,8 @@ public:
     virtual std::vector<Column> columns() const = 0;
     virtual void writeCell(ndsize_t row, ndsize_t col, const Variant &v) = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
+
+    virtual Variant readCell(ndsize_t row, ndsize_t col) = 0;
 };
 
 }

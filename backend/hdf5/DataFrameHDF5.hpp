@@ -50,6 +50,8 @@ public:
     void writeCell(ndsize_t row, ndsize_t col, const Variant &v);
     void writeRow(ndsize_t row, const std::vector<Variant> &v);
 
+    Variant readCell(ndsize_t row, ndsize_t col);
+
 
 };
 

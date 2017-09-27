@@ -57,6 +57,10 @@ public:
         return backend()->writeCell(row, col, v);
     }
 
+    Variant readCell(ndsize_t row, ndsize_t col) {
+        return backend()->readCell(row, col);
+    }
+
 };
 
 
