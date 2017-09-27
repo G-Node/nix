@@ -37,8 +37,24 @@ public:
         : EntityWithSources(std::move(ptr))
         {}
 
+    ndsize_t rows() const {
+        return backend()->rows();
+    }
+
+    void rows(ndsize_t n) {
+        return backend()->rows(n);
+    }
+
     std::vector<Column> columns() const {
         return backend()->columns();
+    }
+
+    void writeRow(ndsize_t row, const std::vector<Variant> &v) {
+        return backend()->writeRow(row, v);
+    }
+
+    void writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
+        return backend()->writeCell(row, col, v);
     }
 
 };

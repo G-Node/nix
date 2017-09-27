@@ -15,6 +15,8 @@
 
 #include "h5x/H5DataSet.hpp"
 
+#include <cstring>
+
 namespace nix {
 namespace hdf5 {
 
@@ -56,7 +58,7 @@ void DataFrameHDF5::createData(const std::vector<Column> &cols) {
         ct.insert(cols[i].name, offset[i], dtypes[i]);
     }
 
-    DataSet ds = group().createData("data", ct, nix::NDSize({0}), Compression::None);
+    DataSet ds = group().createData("data", ct, {0}, Compression::None);
 
     std::vector<std::string> units(cols.size());
 
@@ -86,6 +88,134 @@ std::vector<Column> DataFrameHDF5::columns() const {
     }
 
     return cols;
+}
+
+ndsize_t DataFrameHDF5::rows() const {
+    DataSet ds = group().openData("data");
+    NDSize s = ds.size();
+
+    //assert size
+    return s[0];
+}
+
+void DataFrameHDF5::rows(ndsize_t n) {
+    DataSet ds = group().openData("data");
+    ds.setExtent({n});
+}
+
+struct MemRef {
+    char *data;
+
+    MemRef() : data(NULL) {}
+    MemRef(const Variant &v, char *mem = NULL) : data(NULL) {
+        if (mem == NULL) {
+            mem = data = static_cast<char *>(std::malloc(sizeof(Variant)));
+        }
+
+        switch (v.type()) {
+        case DataType::Bool:
+            bool b;
+            v.get(b);
+            std::memcpy(mem, &b, sizeof(b));
+            break;
+
+        case DataType::Double:
+            double d;
+            v.get(d);
+            std::memcpy(mem, &d, sizeof(d));
+            break;
+
+        case DataType::UInt32:
+            uint32_t ui32;
+            v.get(ui32);
+            std::memcpy(mem, &ui32, sizeof(ui32));
+            break;
+
+        case DataType::Int32:
+            int32_t i32;
+            v.get(i32);
+            std::memcpy(mem, &i32, sizeof(i32));
+            break;
+
+        case DataType::UInt64:
+            uint64_t ui64;
+            v.get(ui64);
+            std::memcpy(mem, &ui64, sizeof(ui64));
+            break;
+
+        case DataType::Int64:
+            int64_t i64;
+            v.get(i64);
+            std::memcpy(mem, &i64, sizeof(i64));
+            break;
+
+        case DataType::String:
+            char *str;
+            str = const_cast<char *>(v.get<const char *>());
+            std::memcpy(mem, &str, sizeof(char *));
+            break;
+
+        default:
+            throw "FIXME";
+        };
+
+    }
+
+    ~MemRef() {
+        std::free(data);
+    }
+};
+
+void DataFrameHDF5::writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
+
+    DataSet ds = group().openData("data");
+
+    h5x::DataType dtype = ds.dataType();
+    h5x::DataType mtype = data_type_to_h5_memtype(v.type());
+
+    h5x::DataType ctype = h5x::DataType::makeCompound(mtype.size());
+    const std::string &name = dtype.member_name(col);
+    ctype.insert(name, 0, mtype);
+
+    MemRef r = MemRef(v);
+    ds.write(r.data, ctype, NDSize{1}, NDSize{row});
+}
+
+void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
+    DataSet ds = group().openData("data");
+
+    std::vector<size_t> offset(vals.size());
+    std::vector<h5x::DataType> dtypes(vals.size());
+
+    //Just use the upper limit
+    size_t s = sizeof(nix::Variant) * vals.size();
+    char *base = static_cast<char *>(std::malloc(s));
+
+    s = 0;
+    for (size_t i = 0; i < vals.size(); i++) {
+        h5x::DataType ft = data_type_to_h5_memtype(vals[i].type());
+        char *ptr = base + s;
+
+        dtypes[i] = ft;
+        offset[i] = s;
+        s += ft.size();
+
+        // This will actually copy the data
+        MemRef(vals[i], ptr);
+
+    }
+
+    h5x::DataType ct = h5x::DataType::makeCompound(s);
+
+    h5x::DataType dfile = ds.dataType();
+    for (size_t i = 0; i < vals.size(); i++) {
+        std::string name = dfile.member_name(i);
+        ct.insert(name, offset[i], dtypes[i]);
+    }
+
+    ds.write(base, ct, NDSize{1}, NDSize{row});
+
+    std::free(base);
 }
 
 }

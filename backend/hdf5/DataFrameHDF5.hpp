@@ -12,6 +12,7 @@
 #define NIX_DATA_FRAME_HDF5_H
 
 
+#include <nix/NDSize.hpp>
 #include <nix/base/IDataFrame.hpp>
 #include "EntityWithSourcesHDF5.hpp"
 
@@ -43,6 +44,11 @@ public:
     void createData(const std::vector<Column> &cols);
 
     std::vector<Column> columns() const override;
+    ndsize_t rows() const;
+    void rows(ndsize_t n);
+
+    void writeCell(ndsize_t row, ndsize_t col, const Variant &v);
+    void writeRow(ndsize_t row, const std::vector<Variant> &v);
 
 
 };

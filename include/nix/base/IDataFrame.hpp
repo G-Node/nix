@@ -12,6 +12,7 @@
 #define NIX_I_DATA_FRAME_H
 
 #include <nix/base/IEntityWithSources.hpp>
+#include <nix/NDSize.hpp>
 
 #include <string>
 #include <vector>
@@ -32,9 +33,12 @@ namespace base {
 class NIXAPI IDataFrame : virtual public base::IEntityWithSources {
 public:
 
+    virtual nix::ndsize_t rows() const = 0;
+    virtual void rows(nix::ndsize_t n) = 0;
 
     virtual std::vector<Column> columns() const = 0;
-
+    virtual void writeCell(ndsize_t row, ndsize_t col, const Variant &v) = 0;
+    virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
 };
 
 }
