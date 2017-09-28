@@ -69,6 +69,21 @@ public:
         return backend()->readRow(row);
     }
 
+    template<typename T>
+        void writeColumn(ndsize_t col,
+                         ndsize_t offset,
+                         std::vector<T> vals,
+                         ndsize_t count = 0) {
+        DataType dt = to_data_type<T>::value;
+
+        if (count == 0)
+            count = vals.size();
+        else if (count > vals.size())
+            throw OutOfBounds("bla");
+
+        backend()->writeColumn(col, offset, count, dt, (char *) vals.data());
+    }
+
 };
 
 

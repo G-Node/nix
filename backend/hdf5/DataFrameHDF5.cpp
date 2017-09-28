@@ -369,5 +369,23 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
     return j.copyData();
 }
 
+void DataFrameHDF5::writeColumn(ndsize_t col,
+                                ndsize_t offset,
+                                ndsize_t count,
+                                DataType dtype,
+                                const char *data) {
+    DataSet ds = group().openData("data");
+    h5x::DataType dts = ds.dataType();
+    h5x::DataType memtype = data_type_to_h5_memtype(dtype);
+    size_t ms = memtype.size();
+    std::string name = dts.member_name(static_cast<unsigned>(col));
+
+    h5x::DataType ct = h5x::DataType::makeCompound(ms);
+    ct.insert(name, 0, memtype);
+
+    ds.write(data, ct, NDSize{count}, NDSize{offset});
+}
+
+
 }
 }

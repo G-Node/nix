@@ -80,6 +80,12 @@ public:
 
     virtual Variant readCell(ndsize_t row, ndsize_t col) = 0;
     virtual std::vector<Variant> readRow(ndsize_t row) = 0;
+
+    virtual void writeColumn(ndsize_t col,
+                             ndsize_t offset,
+                             ndsize_t count,
+                             DataType dtype,
+                             const char *data) = 0;
 };
 
 }

@@ -54,6 +54,11 @@ public:
     Variant readCell(ndsize_t row, ndsize_t col);
     std::vector<Variant> readRow(ndsize_t row);
 
+    void writeColumn(ndsize_t col,
+                     ndsize_t offset,
+                     ndsize_t count,
+                     DataType dtype,
+                     const char *data);
 
 };
 
