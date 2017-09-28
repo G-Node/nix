@@ -16,6 +16,8 @@
 #include "h5x/H5DataSet.hpp"
 
 #include <cstring>
+#include <numeric>
+#include <algorithm>
 
 namespace nix {
 namespace hdf5 {
@@ -103,18 +105,76 @@ void DataFrameHDF5::rows(ndsize_t n) {
     ds.setExtent({n});
 }
 
-struct MemRef {
-    char *data;
+struct Janus {
 
-    MemRef() : data(NULL) {}
-    MemRef(size_t size) : data(NULL) {
-        data = static_cast<char *>(std::malloc(sizeof(Variant)));
+    explicit Janus(const std::vector<Cell> &cells) {
+
+        std::vector<h5x::DataType> dtypes(cells.size());
+
+        std::transform(cells.cbegin(), cells.cend(), dtypes.begin(),
+                       [](const Cell &c){
+                           return data_type_to_h5_memtype(c.value.type());
+                       });
+
+        std::vector<size_t> sizes(cells.size());
+        std::transform(dtypes.cbegin(), dtypes.cend(), sizes.begin(),
+                       [](const h5x::DataType &t) {
+                           return t.size();
+                       });
+
+        size_t ms = std::accumulate(sizes.cbegin(), sizes.cend(),
+                                    size_t(0),
+                                    [](size_t size, size_t s) {
+                                        return size + s;
+                                    });
+
+        data = new char[ms];
+        dtype = h5x::DataType::makeCompound(ms);
+
+        size_t offset = 0;
+        for (size_t i = 0; i < cells.size(); i++) {
+            const Cell &c = cells[i];
+            const h5x::DataType &t = dtypes[i];
+            const size_t s = sizes[i];
+            dtype.insert(c.name, offset, t);
+
+            copyValue(offset, c.value);
+
+            offset += s;
+        }
     }
 
-    MemRef(const Variant &v, char *mem = NULL) : data(NULL) {
-        if (mem == NULL) {
-            mem = data = static_cast<char *>(std::malloc(sizeof(Variant)));
+    explicit Janus(const h5x::DataType &dst, const std::vector<unsigned> &cols) {
+
+        std::vector<h5x::DataType> dtypes(cols.size());
+
+        std::transform(cols.cbegin(), cols.cend(), dtypes.begin(),
+                       [&dst](const unsigned &c){
+                           return dst.member_type(c);
+                       });
+
+
+        size_t ms = std::accumulate(dtypes.cbegin(), dtypes.cend(), size_t(0),
+                                    [&dst](size_t size, h5x::DataType dt) {
+                                        return size + dt.size();
+                                    });
+
+        dtype = h5x::DataType::makeCompound(ms);
+        data = new char[ms];
+
+        size_t offset = 0;
+        for (size_t i = 0; i < cols.size(); i++) {
+            unsigned n = cols[i];
+            const std::string &name = dst.member_name(n);
+            DataType nix_type = data_type_from_h5(dtypes[i]);
+            dtype.insert(name, offset, data_type_to_h5_memtype(nix_type));
+            offset += dtypes[i].size();
         }
+
+    }
+
+    void copyValue(size_t offset, const Variant &v) {
+        char *mem = data + offset;
 
         switch (v.type()) {
         case DataType::Bool:
@@ -160,126 +220,153 @@ struct MemRef {
             break;
 
         default:
-            throw "FIXME";
+            throw std::invalid_argument("Unhandled DataType");
         };
     }
 
-    Variant copy(DataType dtype) {
+    Variant copyData(size_t offset, DataType data_type) {
+        char *mem = data + offset;
 
-        switch (dtype) {
+        switch (data_type) {
         case DataType::Bool:
             bool b;
-            std::memcpy(&b, data, sizeof(b));
+            std::memcpy(&b, mem, sizeof(b));
             return Variant(b);
 
         case DataType::Double:
             double d;
-            std::memcpy(&d, data, sizeof(d));
+            std::memcpy(&d, mem, sizeof(d));
             return Variant(d);
 
         case DataType::UInt32:
             uint32_t ui32;
-            std::memcpy(&ui32, data, sizeof(ui32));
+            std::memcpy(&ui32, mem, sizeof(ui32));
             return Variant(ui32);
 
         case DataType::Int32:
             int32_t i32;
-            std::memcpy(&i32, data, sizeof(i32));
+            std::memcpy(&i32, mem, sizeof(i32));
             return Variant(i32);
 
         case DataType::UInt64:
             uint64_t ui64;
-            std::memcpy(&ui64, data, sizeof(ui64));
+            std::memcpy(&ui64, mem, sizeof(ui64));
             return Variant(ui64);
 
         case DataType::Int64:
             int64_t i64;
-            std::memcpy(&i64, data, sizeof(i64));
+            std::memcpy(&i64, mem, sizeof(i64));
             return Variant(i64);
 
         case DataType::String:
-            char **str;
-            std::memcpy(&str, data, sizeof(char **));
+            char *str;
+            std::memcpy(&str, mem, sizeof(char *));
             return Variant(str);
 
         default:
-            throw "FIXME";
+            throw std::invalid_argument("Unhandled DataType");
         };
     }
 
-    ~MemRef() {
-        std::free(data);
+    std::vector<Variant> copyData() {
+        unsigned n = dtype.member_count();
+
+        std::vector<Variant> res(n);
+
+        unsigned i = 0;
+        std::generate(res.begin(), res.end(),
+                      [&i, this](){
+                          size_t offset = dtype.member_offset(i);
+                          h5x::DataType dt = dtype.member_type(i);
+                          DataType nt = data_type_from_h5(dt);
+                          i++;
+
+                          return copyData(offset, nt);
+                      });
+        return res;
     }
+
+    static std::vector<Cell> resolveIndex(const h5x::DataType ct,
+                                          const ndsize_t col,
+                                          const Variant &v) {
+        return {Cell{ct.member_name(col), v}};
+
+    }
+
+    static std::vector<Cell> resolveIndex(const h5x::DataType ct,
+                                          const std::vector<Cell> &cells) {
+
+        std::vector<Cell> res;
+
+        std::transform(cells.cbegin(), cells.cend(), std::back_inserter(res),
+                       [&ct](const Cell &c) {
+                           if (c.haveName()) {
+                               return c;
+                           }
+
+                           return Cell(ct.member_name(c.col), c.value);
+
+                       });
+        return res;
+    }
+
+    ~Janus() {
+        delete[] data;
+    }
+
+    char *data;
+    h5x::DataType dtype;
 };
 
 void DataFrameHDF5::writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
-
     DataSet ds = group().openData("data");
+    Janus j{Janus::resolveIndex(ds.dataType(), col, v)};
 
-    h5x::DataType dtype = ds.dataType();
-    h5x::DataType mtype = data_type_to_h5_memtype(v.type());
+    ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
+}
 
-    h5x::DataType ctype = h5x::DataType::makeCompound(mtype.size());
-    const std::string &name = dtype.member_name(col);
-    ctype.insert(name, 0, mtype);
+void DataFrameHDF5::writeCells(ndsize_t row, const std::vector<Cell> &cells) {
+    DataSet ds = group().openData("data");
+    Janus j{Janus::resolveIndex(ds.dataType(), cells)};
 
-    MemRef r = MemRef(v);
-    ds.write(r.data, ctype, NDSize{1}, NDSize{row});
+    ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
 
 void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
     DataSet ds = group().openData("data");
+    h5x::DataType dt = ds.dataType();
+    std::vector<Cell> cells;
 
-    std::vector<size_t> offset(vals.size());
-    std::vector<h5x::DataType> dtypes(vals.size());
+    size_t i = 0;
+    std::transform(vals.cbegin(), vals.cend(), std::back_inserter(cells),
+                   [&dt, &i](const Variant &v) {
+                       return Cell{dt.member_name(i++), v};
+                   });
 
-    //Just use the upper limit
-    size_t s = sizeof(nix::Variant) * vals.size();
-    char *base = static_cast<char *>(std::malloc(s));
+    Janus j{cells};
 
-    s = 0;
-    for (size_t i = 0; i < vals.size(); i++) {
-        h5x::DataType ft = data_type_to_h5_memtype(vals[i].type());
-        char *ptr = base + s;
-
-        dtypes[i] = ft;
-        offset[i] = s;
-        s += ft.size();
-
-        // This will actually copy the data
-        MemRef(vals[i], ptr);
-
-    }
-
-    h5x::DataType ct = h5x::DataType::makeCompound(s);
-
-    h5x::DataType dfile = ds.dataType();
-    for (size_t i = 0; i < vals.size(); i++) {
-        std::string name = dfile.member_name(i);
-        ct.insert(name, offset[i], dtypes[i]);
-    }
-
-    ds.write(base, ct, NDSize{1}, NDSize{row});
-
-    std::free(base);
+    ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
 
 Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
     DataSet ds = group().openData("data");
 
-    h5x::DataType dtype = ds.dataType();
-    h5x::DataType coltype = dtype.member_type(col);
+    Janus j{ds.dataType(), {(unsigned) col}};
+    ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
+    std::vector<Variant> res = j.copyData();
+    return res[0];
+}
 
-    DataType memtype = data_type_from_h5(coltype);
-    h5x::DataType mtype = data_type_to_h5_memtype(memtype);
-    h5x::DataType ctype = h5x::DataType::makeCompound(mtype.size());
-    const std::string &name = dtype.member_name(col);
-    ctype.insert(name, 0, mtype);
+std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
+    DataSet ds = group().openData("data");
+    h5x::DataType dts = ds.dataType();
 
-    MemRef r{sizeof(Variant)};
-    ds.read(r.data, ctype, NDSize{1}, NDSize{row});
+    std::vector<unsigned> cols(dts.member_count());
+    std::iota(cols.begin(), cols.end(), 0);
 
-    return r.copy(memtype);
+    Janus j{dts, cols};
+    ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
+    return j.copyData();
 }
 
 }

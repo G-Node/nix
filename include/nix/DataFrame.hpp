@@ -57,8 +57,16 @@ public:
         return backend()->writeCell(row, col, v);
     }
 
+    void writeCells(ndsize_t row, const std::vector<Cell> &cells) {
+        return backend()->writeCells(row, cells);
+    }
+
     Variant readCell(ndsize_t row, ndsize_t col) {
         return backend()->readCell(row, col);
+    }
+
+    std::vector<Variant> readRow(ndsize_t row) {
+        return backend()->readRow(row);
     }
 
 };

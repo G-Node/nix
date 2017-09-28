@@ -48,9 +48,11 @@ public:
     void rows(ndsize_t n);
 
     void writeCell(ndsize_t row, ndsize_t col, const Variant &v);
+    void writeCells(ndsize_t row, const std::vector<Cell> &cells);
     void writeRow(ndsize_t row, const std::vector<Variant> &v);
 
     Variant readCell(ndsize_t row, ndsize_t col);
+    std::vector<Variant> readRow(ndsize_t row);
 
 
 };

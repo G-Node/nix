@@ -28,6 +28,43 @@ class NIXAPI Column {
 };
 
 
+struct Cell {
+
+    Cell(const std::string &name, const Variant &value) :
+        col(-1), name(name), value(value)
+    {}
+
+    Cell(ndsize_t col, const Variant &value) :
+        col(col), value(value)
+    {}
+
+    Cell(const std::string &name, const char *str) :
+        col(-1), name(name), value(Variant(str))
+    {}
+
+    template<typename T>
+    Cell(const std::string &name, const T &value) :
+        col(-1), name(name), value(Variant{value})
+    {}
+
+    template<typename T>
+    Cell(ndsize_t col, const T &value) :
+        col(col), value(Variant{value})
+    {}
+
+    Cell(const Cell &other) :
+        col(other.col), name(other.name), value(other.value)
+    {}
+
+    bool haveName() const { return !name.empty(); }
+    bool haveIndex() const { return col > -1; }
+
+    const ndssize_t col;
+    const std::string name;
+    const Variant value;
+};
+
+
 namespace base {
 
 class NIXAPI IDataFrame : virtual public base::IEntityWithSources {
@@ -38,9 +75,11 @@ public:
 
     virtual std::vector<Column> columns() const = 0;
     virtual void writeCell(ndsize_t row, ndsize_t col, const Variant &v) = 0;
+    virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
 
     virtual Variant readCell(ndsize_t row, ndsize_t col) = 0;
+    virtual std::vector<Variant> readRow(ndsize_t row) = 0;
 };
 
 }
