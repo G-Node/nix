@@ -86,6 +86,12 @@ public:
                              ndsize_t count,
                              DataType dtype,
                              const char *data) = 0;
+
+    virtual void readColumn(ndsize_t col,
+                            ndsize_t offset,
+                            ndsize_t count,
+                            DataType dtype,
+                            void *data) = 0;
 };
 
 }

@@ -60,6 +60,12 @@ public:
                      DataType dtype,
                      const char *data);
 
+    void readColumn(ndsize_t col,
+                    ndsize_t offset,
+                    ndsize_t count,
+                    DataType dtype,
+                    void *data);
+
 };
 
 

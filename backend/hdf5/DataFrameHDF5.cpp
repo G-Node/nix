@@ -155,7 +155,7 @@ struct Janus {
 
 
         size_t ms = std::accumulate(dtypes.cbegin(), dtypes.cend(), size_t(0),
-                                    [&dst](size_t size, h5x::DataType dt) {
+                                    [&dst](size_t size, const h5x::DataType &dt) {
                                         return size + dt.size();
                                     });
 
@@ -350,8 +350,9 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
 
 Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
     DataSet ds = group().openData("data");
+    h5x::DataType dtype = ds.dataType();
 
-    Janus j{ds.dataType(), {(unsigned) col}};
+    Janus j{dtype, {(unsigned) col}};
     ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
     std::vector<Variant> res = j.copyData();
     return res[0];
@@ -366,6 +367,7 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
 
     Janus j{dts, cols};
     ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
+    //TODO: reclaim vlan data
     return j.copyData();
 }
 
@@ -386,6 +388,23 @@ void DataFrameHDF5::writeColumn(ndsize_t col,
     ds.write(data, ct, NDSize{count}, NDSize{offset});
 }
 
+void DataFrameHDF5::readColumn(ndsize_t col,
+                               ndsize_t offset,
+                               ndsize_t count,
+                               DataType dtype,
+                               void *data) {
+    DataSet ds = group().openData("data");
+    h5x::DataType dts = ds.dataType();
+    h5x::DataType memtype = data_type_to_h5_memtype(dtype);
+    std::string name = dts.member_name(static_cast<unsigned>(col));
+
+    size_t ms = memtype.size();
+    h5x::DataType ct = h5x::DataType::makeCompound(ms);
+    ct.insert(name, 0, memtype);
+
+    ds.read(data, ct, NDSize{count}, NDSize{offset});
+
+}
 
 }
 }
