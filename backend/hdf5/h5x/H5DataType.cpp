@@ -115,6 +115,15 @@ size_t DataType::member_offset(unsigned int index) const {
     return H5Tget_member_offset(hid, index);
 }
 
+unsigned int DataType::member_index(const std::string &name) const {
+    int res = H5Tget_member_index(hid, name.c_str());
+    if (res < 0) {
+        throw H5Exception("DataType::member_index(): H5Tget_member_index failed");
+    }
+
+    return static_cast<unsigned>(res);
+}
+
 DataType DataType::member_type(unsigned int index) const {
     h5x::DataType res = H5Tget_member_type(hid, index);
     res.check("DataType::member_type(): H5Tget_member_type failed");

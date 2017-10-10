@@ -60,6 +60,7 @@ public:
     std::string member_name(unsigned int index) const;
     std::vector<std::string> member_names() const;
     size_t member_offset(unsigned int index) const;
+    unsigned int member_index(const std::string &name) const;
 
     void insert(const std::string &name, size_t offset, const DataType &dtype);
     void insert(const std::string &name, void *value);
