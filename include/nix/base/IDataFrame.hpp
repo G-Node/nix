@@ -74,6 +74,10 @@ public:
     virtual void rows(nix::ndsize_t n) = 0;
 
     virtual std::vector<Column> columns() const = 0;
+
+    virtual std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const = 0;
+    virtual std::vector<std::string> colToName(const std::vector<unsigned> &cols) const = 0;
+
     virtual void writeCell(ndsize_t row, ndsize_t col, const Variant &v) = 0;
     virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;

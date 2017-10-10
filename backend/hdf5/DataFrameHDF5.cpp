@@ -92,6 +92,32 @@ std::vector<Column> DataFrameHDF5::columns() const {
     return cols;
 }
 
+std::vector<unsigned> DataFrameHDF5::nameToCol(const std::vector<std::string> &names) const {
+    DataSet ds = group().openData("data");
+    h5x::DataType dtype = ds.dataType();
+
+    std::vector<unsigned> cols(names.size());
+
+    for (size_t i = 0; i < names.size(); i++) {
+        cols[i] = dtype.member_index(names[i]);
+    }
+
+    return cols;
+}
+
+std::vector<std::string> DataFrameHDF5::colToName(const std::vector<unsigned> &cols) const {
+    DataSet ds = group().openData("data");
+    h5x::DataType dtype = ds.dataType();
+
+    std::vector<std::string> names(cols.size());
+
+    for (size_t i = 0; i < cols.size(); i++) {
+        names[i] = dtype.member_name(cols[i]);
+    }
+
+    return names;
+}
+
 ndsize_t DataFrameHDF5::rows() const {
     DataSet ds = group().openData("data");
     NDSize s = ds.size();

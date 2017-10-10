@@ -44,6 +44,10 @@ public:
     void createData(const std::vector<Column> &cols);
 
     std::vector<Column> columns() const override;
+
+    std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const;
+    std::vector<std::string> colToName(const std::vector<unsigned> &cols) const;
+
     ndsize_t rows() const;
     void rows(ndsize_t n);
 

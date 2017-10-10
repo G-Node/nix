@@ -47,6 +47,14 @@ public:
         return backend()->rows(n);
     }
 
+    virtual std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const {
+        return backend()->nameToCol(names);
+    }
+
+    virtual std::vector<std::string> colToName(const std::vector<unsigned> &cols) const {
+        return backend()->colToName(cols);
+    }
+
     std::vector<Column> columns() const {
         return backend()->columns();
     }
