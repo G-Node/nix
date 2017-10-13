@@ -146,7 +146,7 @@ void BaseTestProperty::testDataType() {
     CPPUNIT_ASSERT(p5.dataType() == DataType::Int64);
     CPPUNIT_ASSERT(p6.dataType() == DataType::UInt64);
     CPPUNIT_ASSERT(p7.dataType() == DataType::Bool);
-    
+
     file.deleteSection(section.id());
 }
 
@@ -158,14 +158,10 @@ void BaseTestProperty::testUnit(){
     std::vector<Value> values = {v};
     nix::Property p1 = section.createProperty("testProperty", int_dummy);
 
-    std::string inv_unit = "invalid unit";
     std::string valid_unit = "mV*cm^-2";
     std::string second_unit = "mV";
 
-    CPPUNIT_ASSERT_THROW(property.unit(""), nix::EmptyString);
-    CPPUNIT_ASSERT_THROW(property.unit(inv_unit), nix::InvalidUnit);
     CPPUNIT_ASSERT(!property.unit());
-
     property.unit(valid_unit);
     CPPUNIT_ASSERT(property.unit() && *property.unit() == valid_unit);
 
@@ -173,6 +169,13 @@ void BaseTestProperty::testUnit(){
     CPPUNIT_ASSERT(!property.unit());
     CPPUNIT_ASSERT_NO_THROW(property.unit(second_unit));
     CPPUNIT_ASSERT(property.unit() && *property.unit() == second_unit);
+
+    property.unit("  ");
+    CPPUNIT_ASSERT(!property.unit());
+
+    property.unit(second_unit);
+    property.unit("");
+    CPPUNIT_ASSERT(!property.unit());
 }
 
 
@@ -197,7 +200,7 @@ void BaseTestProperty::testOperators() {
 
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);
-    
+
     std::stringstream s;
     s << property;
     CPPUNIT_ASSERT(s.str() == "Property: {name = " + property.name() + "}");
