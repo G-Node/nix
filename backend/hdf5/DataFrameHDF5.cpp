@@ -240,9 +240,9 @@ struct Janus {
             break;
 
         case DataType::String:
-            char *str;
-            str = const_cast<char *>(v.get<const char *>());
-            std::memcpy(mem, &str, sizeof(char *));
+            const char *str;
+            str = v.get<const char *>();
+            std::memcpy(mem, &str, sizeof(str));
             break;
 
         default:
@@ -285,8 +285,8 @@ struct Janus {
             return Variant(i64);
 
         case DataType::String:
-            char *str;
-            std::memcpy(&str, mem, sizeof(char *));
+            const char *str;
+            std::memcpy(&str, mem, sizeof(str));
             return Variant(str);
 
         default:
