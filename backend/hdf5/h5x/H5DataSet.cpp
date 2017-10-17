@@ -41,15 +41,7 @@ void DataSet::read(void *data, h5x::DataType memType, const NDSize &count, const
 {
     DataSpace fileSpace, memSpace;
     std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
-
-    if (memType.isVariableString()) {
-        StringWriter writer(count, static_cast<std::string *>(data));
-        read(*writer, memType, memSpace, fileSpace);
-        writer.finish();
-        vlenReclaim(memType.h5id(), *writer);
-    } else {
-        read(data, memType, memSpace, fileSpace);
-    }
+    read(data, memType, memSpace, fileSpace);
 }
 
 
@@ -57,15 +49,8 @@ void DataSet::write(const void *data, h5x::DataType memType, const NDSize &count
 {
     DataSpace fileSpace, memSpace;
     std::tie(memSpace, fileSpace) = offsetCount2DataSpaces(count, offset);
-
-    if (memType.isVariableString()) {
-        StringReader reader(count, static_cast<const std::string *>(data));
-        write(*reader, memType, memSpace, fileSpace);
-    } else {
-        write(data, memType, memSpace, fileSpace);
-    }
+    write(data, memType, memSpace, fileSpace);
 }
-
 
 #define CHUNK_BASE   16*1024
 #define CHUNK_MIN     8*1024
