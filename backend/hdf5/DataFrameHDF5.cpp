@@ -404,14 +404,24 @@ void DataFrameHDF5::writeColumn(ndsize_t col,
                                 const char *data) {
     DataSet ds = group().openData("data");
     h5x::DataType dts = ds.dataType();
-    h5x::DataType memtype = data_type_to_h5_memtype(dtype);
-    size_t ms = memtype.size();
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
+    size_t ms = memType.size();
     std::string name = dts.member_name(static_cast<unsigned>(col));
 
     h5x::DataType ct = h5x::DataType::makeCompound(ms);
-    ct.insert(name, 0, memtype);
+    ct.insert(name, 0, memType);
 
-    ds.write(data, ct, NDSize{count}, NDSize{offset});
+    NDSize ndcount = {count};
+    NDSize ndoffset = {offset};
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(ndcount, ndoffset);
+
+    if (dtype == DataType::String) {
+        StringReader reader(ndcount, data);
+        ds.write(*reader, ct, memSpace, fileSpace);
+    } else {
+        ds.write(data, ct, memSpace, fileSpace);
+    }
 }
 
 void DataFrameHDF5::readColumn(ndsize_t col,
@@ -421,15 +431,26 @@ void DataFrameHDF5::readColumn(ndsize_t col,
                                void *data) {
     DataSet ds = group().openData("data");
     h5x::DataType dts = ds.dataType();
-    h5x::DataType memtype = data_type_to_h5_memtype(dtype);
+    h5x::DataType memType = data_type_to_h5_memtype(dtype);
     std::string name = dts.member_name(static_cast<unsigned>(col));
 
-    size_t ms = memtype.size();
+    size_t ms = memType.size();
     h5x::DataType ct = h5x::DataType::makeCompound(ms);
-    ct.insert(name, 0, memtype);
+    ct.insert(name, 0, memType);
 
-    ds.read(data, ct, NDSize{count}, NDSize{offset});
+    NDSize ndcount = {count};
+    NDSize ndoffset = {offset};
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(ndcount, ndoffset);
 
+    if (dtype == DataType::String) {
+        StringWriter writer(ndcount, data);
+        ds.read(*writer, ct, memSpace, fileSpace);
+        writer.finish();
+        ds.vlenReclaim(memType.h5id(), *writer, &memSpace);
+    } else {
+        ds.read(data, ct, memSpace, fileSpace);
+    }
 }
 
 }
