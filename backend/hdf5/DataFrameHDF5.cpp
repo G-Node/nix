@@ -379,8 +379,16 @@ Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
     h5x::DataType dtype = ds.dataType();
 
     Janus j{dtype, {(unsigned) col}};
-    ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
+    NDSize count = {1};
+    NDSize offset = {row};
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(count, offset);
+
+    ds.read(j.data, j.dtype, count, offset);
+
     std::vector<Variant> res = j.copyData();
+    ds.vlenReclaim(j.dtype.h5id(), j.data, &memSpace);
+
     return res[0];
 }
 
@@ -392,9 +400,18 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
     std::iota(cols.begin(), cols.end(), 0);
 
     Janus j{dts, cols};
-    ds.read(j.data, j.dtype, NDSize{1}, NDSize{row});
-    //TODO: reclaim vlan data
-    return j.copyData();
+
+    NDSize count = {1};
+    NDSize offset = {row};
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(count, offset);
+
+    ds.read(j.data, j.dtype, count, offset);
+
+    std::vector<Variant> res = j.copyData();
+    ds.vlenReclaim(j.dtype.h5id(), j.data, &memSpace);
+
+    return res;
 }
 
 void DataFrameHDF5::writeColumn(ndsize_t col,
