@@ -30,6 +30,8 @@ public:
     typedef char        *data_type;
     typedef data_type   *data_ptr;
 
+    StringWriter(const NDSize &size, void *data)
+        : StringWriter(size, static_cast<pointer>(data)) { }
 
     StringWriter(const NDSize &size, pointer stringdata)
             : nelms(size.nelms()), data(stringdata) {
@@ -65,6 +67,8 @@ public:
     typedef const char         *data_type;
     typedef data_type          *data_ptr;
 
+    StringReader(const NDSize &size, const void *data)
+        : StringReader(size, static_cast<pointer>(data)) { }
 
     StringReader(const NDSize &size, pointer stringdata)
             : nelms(size.nelms()), data(stringdata) {
