@@ -84,14 +84,15 @@ public:
                          ndsize_t offset,
                          const std::vector<T> &vals,
                          ndsize_t count = 0) {
-        DataType dt = to_data_type<T>::value;
+        const Hydra<const std::vector<T>> hydra(vals);
 
         if (count == 0)
             count = vals.size();
         else if (count > vals.size())
             throw OutOfBounds("bla");
 
-        backend()->writeColumn(col, offset, count, dt, (const char *) vals.data());
+        DataType dtype = hydra.element_data_type();
+        backend()->writeColumn(col, offset, count, dtype, (const char *) hydra.data());
     }
 
     template<typename T>
@@ -105,7 +106,7 @@ public:
             count = vals.size();
 
         DataType dtype = hydra.element_data_type();
-        backend()->readColumn(col, offset, count, dtype, (void *) vals.data());
+        backend()->readColumn(col, offset, count, dtype, (void *) hydra.data());
     }
 
 };
