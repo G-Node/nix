@@ -170,12 +170,12 @@ struct Janus {
         }
     }
 
-    explicit Janus(const h5x::DataType &dst, const std::vector<unsigned> &cols) {
+    explicit Janus(const h5x::DataType &dst, const std::vector<std::string> &cols) {
 
         std::vector<h5x::DataType> dtypes(cols.size());
 
         std::transform(cols.cbegin(), cols.cend(), dtypes.begin(),
-                       [&dst](const unsigned &c){
+                       [&dst](const std::string &c){
                            return dst.member_type(c);
                        });
 
@@ -190,8 +190,7 @@ struct Janus {
 
         size_t offset = 0;
         for (size_t i = 0; i < cols.size(); i++) {
-            unsigned n = cols[i];
-            const std::string &name = dst.member_name(n);
+            const std::string &name = cols[i];
             DataType nix_type = data_type_from_h5(dtypes[i]);
             dtype.insert(name, offset, data_type_to_h5_memtype(nix_type));
             offset += dtypes[i].size();
@@ -368,11 +367,11 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
     ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
 
-Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
+std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<std::string> &cols) const {
     DataSet ds = group().openData("data");
     h5x::DataType dtype = ds.dataType();
 
-    Janus j{dtype, {(unsigned) col}};
+    Janus j{dtype, cols};
     NDSize count = {1};
     NDSize offset = {row};
     DataSpace fileSpace, memSpace;
@@ -383,15 +382,19 @@ Variant DataFrameHDF5::readCell(ndsize_t row, ndsize_t col) {
     std::vector<Variant> res = j.copyData();
     ds.vlenReclaim(j.dtype.h5id(), j.data, &memSpace);
 
-    return res[0];
+    return res;
 }
 
 std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
     DataSet ds = group().openData("data");
     h5x::DataType dts = ds.dataType();
 
-    std::vector<unsigned> cols(dts.member_count());
-    std::iota(cols.begin(), cols.end(), 0);
+    unsigned n = 0;
+    std::vector<std::string> cols(dts.member_count());
+    std::generate(cols.begin(), cols.end(), [&n, &dts]{
+            const unsigned i = n++;
+            return dts.member_name(i);
+        });
 
     Janus j{dts, cols};
 

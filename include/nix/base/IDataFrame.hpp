@@ -81,7 +81,7 @@ public:
     virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
 
-    virtual Variant readCell(ndsize_t row, ndsize_t col) = 0;
+    virtual std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const = 0;
     virtual std::vector<Variant> readRow(ndsize_t row) = 0;
 
     virtual void writeColumn(ndsize_t col,
