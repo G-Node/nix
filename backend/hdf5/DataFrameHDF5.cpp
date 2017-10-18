@@ -133,7 +133,7 @@ void DataFrameHDF5::rows(ndsize_t n) {
 
 struct Janus {
 
-    explicit Janus(const std::vector<Cell> &cells) {
+    explicit Janus(const h5x::DataType &dst, const std::vector<Cell> &cells) {
 
         std::vector<h5x::DataType> dtypes(cells.size());
 
@@ -162,10 +162,12 @@ struct Janus {
             const Cell &c = cells[i];
             const h5x::DataType &t = dtypes[i];
             const size_t s = sizes[i];
-            dtype.insert(c.name, offset, t);
+            const std::string &name = c.haveName() ?
+                                          c.name :
+                                          dst.member_name(c.col);
 
+            dtype.insert(name, offset, t);
             copyValue(offset, c.value);
-
             offset += s;
         }
     }
@@ -311,30 +313,6 @@ struct Janus {
         return res;
     }
 
-    static std::vector<Cell> resolveIndex(const h5x::DataType ct,
-                                          const ndsize_t col,
-                                          const Variant &v) {
-        return {Cell{ct.member_name(col), v}};
-
-    }
-
-    static std::vector<Cell> resolveIndex(const h5x::DataType ct,
-                                          const std::vector<Cell> &cells) {
-
-        std::vector<Cell> res;
-
-        std::transform(cells.cbegin(), cells.cend(), std::back_inserter(res),
-                       [&ct](const Cell &c) {
-                           if (c.haveName()) {
-                               return c;
-                           }
-
-                           return Cell(ct.member_name(c.col), c.value);
-
-                       });
-        return res;
-    }
-
     ~Janus() {
         delete[] data;
     }
@@ -346,7 +324,8 @@ struct Janus {
 
 void DataFrameHDF5::writeCells(ndsize_t row, const std::vector<Cell> &cells) {
     DataSet ds = group().openData("data");
-    Janus j{Janus::resolveIndex(ds.dataType(), cells)};
+    h5x::DataType dt = ds.dataType();
+    Janus j{dt, cells};
 
     ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
@@ -359,10 +338,11 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
     size_t i = 0;
     std::transform(vals.cbegin(), vals.cend(), std::back_inserter(cells),
                    [&dt, &i](const Variant &v) {
-                       return Cell{dt.member_name(i++), v};
+                       const unsigned k = static_cast<unsigned>(i++);
+                       return Cell{dt.member_name(k), v};
                    });
 
-    Janus j{cells};
+    Janus j{dt, cells};
 
     ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
