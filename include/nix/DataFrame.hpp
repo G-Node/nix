@@ -64,7 +64,7 @@ public:
     }
 
     void writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
-        return backend()->writeCell(row, col, v);
+        return this->writeCells(row, {{col, v}});
     }
 
     void writeCells(ndsize_t row, const std::vector<Cell> &cells) {

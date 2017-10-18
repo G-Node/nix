@@ -344,12 +344,6 @@ struct Janus {
     h5x::DataType dtype;
 };
 
-void DataFrameHDF5::writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
-    DataSet ds = group().openData("data");
-    Janus j{Janus::resolveIndex(ds.dataType(), col, v)};
-
-    ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
-}
 
 void DataFrameHDF5::writeCells(ndsize_t row, const std::vector<Cell> &cells) {
     DataSet ds = group().openData("data");
