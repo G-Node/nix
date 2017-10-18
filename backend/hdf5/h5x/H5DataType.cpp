@@ -130,6 +130,10 @@ DataType DataType::member_type(unsigned int index) const {
     return res;
 }
 
+DataType DataType::member_type(const std::string &name) const {
+    const unsigned idx = member_index(name);
+    return member_type(idx);
+}
 
 void DataType::insert(const std::string &name, size_t offset, const DataType &dtype) {
     HErr res = H5Tinsert(hid, name.c_str(), offset, dtype.hid);

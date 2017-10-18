@@ -55,6 +55,7 @@ public:
     bool isCompound() const;
     unsigned int member_count() const;
     DataType member_type(unsigned int index) const;
+    DataType member_type(const std::string &name) const;
 
     H5T_class_t member_class(unsigned int index) const;
     std::string member_name(unsigned int index) const;
