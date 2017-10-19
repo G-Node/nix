@@ -216,6 +216,8 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT_EQUAL(2U, cmpd.member_count());
     CPPUNIT_ASSERT_EQUAL(std::string("d"), cmpd.member_name(0));
     CPPUNIT_ASSERT_EQUAL(std::string("i"), cmpd.member_name(1));
+    CPPUNIT_ASSERT_EQUAL(cmpd.member_index("d"), unsigned(0));
+    CPPUNIT_ASSERT_EQUAL(cmpd.member_index("i"), unsigned(1));
     CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, d), cmpd.member_offset(0));
     CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, i), cmpd.member_offset(1));
     CPPUNIT_ASSERT_EQUAL(H5T_FLOAT, cmpd.member_class(0));
