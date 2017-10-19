@@ -365,7 +365,7 @@ std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<st
     return res;
 }
 
-std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) {
+std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) const {
     DataSet ds = group().openData("data");
     h5x::DataType dts = ds.dataType();
 
@@ -422,7 +422,7 @@ void DataFrameHDF5::readColumn(ndsize_t col,
                                ndsize_t offset,
                                ndsize_t count,
                                DataType dtype,
-                               void *data) {
+                               void *data) const {
     DataSet ds = group().openData("data");
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);

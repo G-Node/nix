@@ -51,23 +51,24 @@ public:
     ndsize_t rows() const;
     void rows(ndsize_t n);
 
-    void writeCells(ndsize_t row, const std::vector<Cell> &cells);
+    std::vector<Variant> readRow(ndsize_t row) const;
     void writeRow(ndsize_t row, const std::vector<Variant> &v);
 
     std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const;
-    std::vector<Variant> readRow(ndsize_t row);
+    void writeCells(ndsize_t row, const std::vector<Cell> &cells);
+
+
+    void readColumn(ndsize_t col,
+                    ndsize_t offset,
+                    ndsize_t count,
+                    DataType dtype,
+                    void *data) const;
 
     void writeColumn(ndsize_t col,
                      ndsize_t offset,
                      ndsize_t count,
                      DataType dtype,
                      const char *data);
-
-    void readColumn(ndsize_t col,
-                    ndsize_t offset,
-                    ndsize_t count,
-                    DataType dtype,
-                    void *data);
 
 };
 

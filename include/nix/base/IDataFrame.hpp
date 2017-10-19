@@ -78,11 +78,18 @@ public:
     virtual std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const = 0;
     virtual std::vector<std::string> colToName(const std::vector<unsigned> &cols) const = 0;
 
-    virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
+    virtual std::vector<Variant> readRow(ndsize_t row) const = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
 
     virtual std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const = 0;
-    virtual std::vector<Variant> readRow(ndsize_t row) = 0;
+    virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
+
+
+    virtual void readColumn(ndsize_t col,
+                            ndsize_t offset,
+                            ndsize_t count,
+                            DataType dtype,
+                            void *data) const = 0;
 
     virtual void writeColumn(ndsize_t col,
                              ndsize_t offset,
@@ -90,11 +97,6 @@ public:
                              DataType dtype,
                              const char *data) = 0;
 
-    virtual void readColumn(ndsize_t col,
-                            ndsize_t offset,
-                            ndsize_t count,
-                            DataType dtype,
-                            void *data) = 0;
 };
 
 }
