@@ -191,6 +191,9 @@ void TestH5::testDataType() {
 
     CPPUNIT_ASSERT_EQUAL(H5T_SGN_2, dt_int.sign());
 
+    CPPUNIT_ASSERT(dt_int.equal(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT(!dt_int.equal(H5T_NATIVE_DOUBLE));
+
     h5x::DataType v_str = h5x::DataType::makeStrType();
     CPPUNIT_ASSERT_EQUAL(true, v_str.isVariableString());
 
