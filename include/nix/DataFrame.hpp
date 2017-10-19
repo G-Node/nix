@@ -106,7 +106,7 @@ public:
         if (count == 0)
             count = vals.size();
         else if (count > vals.size())
-            throw OutOfBounds("bla");
+            throw OutOfBounds("Requested to write more data than available");
 
         DataType dtype = hydra.element_data_type();
         backend()->writeColumn(col, offset, count, dtype, (const char *) hydra.data());
