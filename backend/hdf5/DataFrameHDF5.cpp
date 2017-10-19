@@ -389,7 +389,7 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) const {
     return res;
 }
 
-void DataFrameHDF5::writeColumn(ndsize_t col,
+void DataFrameHDF5::writeColumn(int col,
                                 ndsize_t offset,
                                 ndsize_t count,
                                 DataType dtype,
@@ -416,7 +416,7 @@ void DataFrameHDF5::writeColumn(ndsize_t col,
     }
 }
 
-void DataFrameHDF5::readColumn(ndsize_t col,
+void DataFrameHDF5::readColumn(int col,
                                ndsize_t offset,
                                ndsize_t count,
                                DataType dtype,

@@ -31,24 +31,24 @@ class NIXAPI Column {
 struct Cell {
 
     Cell(const std::string &name, const Variant &value) :
-        col(-1), name(name), value(value)
+        col(0), name(name), value(value)
     {}
 
-    Cell(ndsize_t col, const Variant &value) :
+    Cell(unsigned col, const Variant &value) :
         col(col), value(value)
     {}
 
     Cell(const std::string &name, const char *str) :
-        col(-1), name(name), value(Variant(str))
+        col(0), name(name), value(Variant(str))
     {}
 
     template<typename T>
     Cell(const std::string &name, const T &value) :
-        col(-1), name(name), value(Variant{value})
+        col(0), name(name), value(Variant{value})
     {}
 
     template<typename T>
-    Cell(ndsize_t col, const T &value) :
+    Cell(int col, const T &value) :
         col(col), value(Variant{value})
     {}
 
@@ -57,9 +57,9 @@ struct Cell {
     {}
 
     bool haveName() const { return !name.empty(); }
-    bool haveIndex() const { return col > -1; }
+    bool haveIndex() const { return name.empty(); }
 
-    const ndssize_t col;
+    const int col;
     const std::string name;
     const Variant value;
 };
@@ -85,13 +85,13 @@ public:
     virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
 
 
-    virtual void readColumn(ndsize_t col,
+    virtual void readColumn(int col,
                             ndsize_t offset,
                             ndsize_t count,
                             DataType dtype,
                             void *data) const = 0;
 
-    virtual void writeColumn(ndsize_t col,
+    virtual void writeColumn(int col,
                              ndsize_t offset,
                              ndsize_t count,
                              DataType dtype,

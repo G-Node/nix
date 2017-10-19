@@ -63,7 +63,7 @@ public:
         return backend()->writeRow(row, v);
     }
 
-    void writeCell(ndsize_t row, ndsize_t col, const Variant &v) {
+    void writeCell(ndsize_t row, unsigned col, const Variant &v) {
         return this->writeCells(row, {{col, v}});
     }
 
@@ -97,7 +97,7 @@ public:
     }
 
     template<typename T>
-        void writeColumn(ndsize_t col,
+        void writeColumn(int col,
                          ndsize_t offset,
                          const std::vector<T> &vals,
                          ndsize_t count = 0) {
@@ -113,7 +113,7 @@ public:
     }
 
     template<typename T>
-        void readColumn(ndsize_t col,
+        void readColumn(int col,
                         ndsize_t offset,
                         std::vector<T> &vals,
                         ndsize_t count = 0) {

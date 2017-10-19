@@ -58,13 +58,13 @@ public:
     void writeCells(ndsize_t row, const std::vector<Cell> &cells);
 
 
-    void readColumn(ndsize_t col,
+    void readColumn(int col,
                     ndsize_t offset,
                     ndsize_t count,
                     DataType dtype,
                     void *data) const;
 
-    void writeColumn(ndsize_t col,
+    void writeColumn(int col,
                      ndsize_t offset,
                      ndsize_t count,
                      DataType dtype,
