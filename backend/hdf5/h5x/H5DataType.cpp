@@ -16,6 +16,11 @@ namespace nix {
 namespace hdf5 {
 namespace h5x {
 
+bool DataType::equal(const DataType &other) const {
+    HTri res = H5Tequal(hid, other.hid);
+    res.check("DataType::equal(): H5Tequal failed");
+    return res.result();
+}
 
 DataType DataType::copy(hid_t source) {
     DataType hi_copy = H5Tcopy(source);

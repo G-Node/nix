@@ -30,6 +30,7 @@ public:
     DataType(hid_t hid, bool is_copy) : H5Object(hid, is_copy) { }
     DataType(const DataType &other) : H5Object(other) { }
 
+    bool equal(const DataType &other) const;
 
     //Basically the same as DataType(hid_t, true)
     // but more explicit, so it is easier in the code
