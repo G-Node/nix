@@ -121,9 +121,7 @@ std::vector<std::string> DataFrameHDF5::colToName(const std::vector<unsigned> &c
 ndsize_t DataFrameHDF5::rows() const {
     DataSet ds = group().openData("data");
     NDSize s = ds.size();
-
-    //assert size
-    return s[0];
+    return s.size() > 0 ? s[0] : 0;
 }
 
 void DataFrameHDF5::rows(ndsize_t n) {
