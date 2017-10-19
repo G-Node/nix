@@ -70,11 +70,7 @@ void DataFrameHDF5::createData(const std::vector<Column> &cols) {
 }
 
 std::vector<Column> DataFrameHDF5::columns() const {
-    if (! group().hasData("data")) {
-        throw ConsistencyError("DataFrame's hdf5 data group is missing!");
-    }
-
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dt = ds.dataType();
 
     const unsigned n = dt.member_count();
@@ -93,7 +89,7 @@ std::vector<Column> DataFrameHDF5::columns() const {
 }
 
 std::vector<unsigned> DataFrameHDF5::nameToCol(const std::vector<std::string> &names) const {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 
     std::vector<unsigned> cols(names.size());
@@ -106,7 +102,7 @@ std::vector<unsigned> DataFrameHDF5::nameToCol(const std::vector<std::string> &n
 }
 
 std::vector<std::string> DataFrameHDF5::colToName(const std::vector<unsigned> &cols) const {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 
     std::vector<std::string> names(cols.size());
@@ -119,13 +115,13 @@ std::vector<std::string> DataFrameHDF5::colToName(const std::vector<unsigned> &c
 }
 
 ndsize_t DataFrameHDF5::rows() const {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     NDSize s = ds.size();
     return s.size() > 0 ? s[0] : 0;
 }
 
 void DataFrameHDF5::rows(ndsize_t n) {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     ds.setExtent({n});
 }
 
@@ -321,7 +317,7 @@ struct Janus {
 
 
 void DataFrameHDF5::writeCells(ndsize_t row, const std::vector<Cell> &cells) {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dt = ds.dataType();
     Janus j{dt, cells};
 
@@ -329,7 +325,7 @@ void DataFrameHDF5::writeCells(ndsize_t row, const std::vector<Cell> &cells) {
 }
 
 void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dt = ds.dataType();
     std::vector<Cell> cells;
 
@@ -346,7 +342,7 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
 }
 
 std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<std::string> &cols) const {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 
     Janus j{dtype, cols};
@@ -364,7 +360,7 @@ std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<st
 }
 
 std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) const {
-    DataSet ds = group().openData("data");
+    DataSet ds = data();
     h5x::DataType dts = ds.dataType();
 
     unsigned n = 0;
@@ -394,7 +390,7 @@ void DataFrameHDF5::writeColumn(int col,
                                 ndsize_t count,
                                 DataType dtype,
                                 const char *data) {
-    DataSet ds = group().openData("data");
+    DataSet ds = this->data();
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
     size_t ms = memType.size();
@@ -421,7 +417,7 @@ void DataFrameHDF5::readColumn(int col,
                                ndsize_t count,
                                DataType dtype,
                                void *data) const {
-    DataSet ds = group().openData("data");
+    DataSet ds = this->data();
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
     std::string name = dts.member_name(static_cast<unsigned>(col));

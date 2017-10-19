@@ -70,6 +70,15 @@ public:
                      DataType dtype,
                      const char *data);
 
+private:
+    DataSet data() const {
+        if (! group().hasData("data")) {
+            throw ConsistencyError("DataFrame's hdf5 data group is missing!");
+        }
+
+        return group().openData("data");
+    }
+
 };
 
 
