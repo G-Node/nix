@@ -31,6 +31,9 @@ public:
     DataType(const DataType &other) : H5Object(other) { }
 
     bool equal(const DataType &other) const;
+    bool operator ==(const DataType &other) const {
+        return equal(other);
+    }
 
     //Basically the same as DataType(hid_t, true)
     // but more explicit, so it is easier in the code
