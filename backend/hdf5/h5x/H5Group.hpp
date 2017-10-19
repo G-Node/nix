@@ -202,7 +202,17 @@ void H5Group::setData(const std::string &name, const T &value, const Compression
     }
 
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.write(hydra.data(), memType, shape);
+
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(shape);
+
+    const void *data = hydra.data();
+    if (dtype == DataType::String) {
+        StringReader reader(shape, data);
+        ds.write(*reader, memType, memSpace, fileSpace);
+    } else {
+        ds.write(data, memType, memSpace, fileSpace);
+    }
 }
 
 
@@ -221,7 +231,18 @@ bool H5Group::getData(const std::string &name, T &value) const
     NDSize shape = ds.size();
     hydra.resize(shape);
 
-    ds.read(hydra.data(), memType, shape);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(shape);
+
+    void *data = hydra.data();
+    if (dtype == DataType::String) {
+        StringWriter writer(shape, data);
+        ds.read(*writer, memType, memSpace, fileSpace);
+        writer.finish();
+        ds.vlenReclaim(memType.h5id(), *writer, &memSpace);
+    } else {
+        ds.read(data, memType, memSpace, fileSpace);
+    }
 
     return true;
 }

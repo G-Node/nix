@@ -264,7 +264,16 @@ void DataArrayHDF5::write(DataType dtype, const void *data, const NDSize &count,
 
     DataSet ds = group().openData("data");
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.write(data, memType, count, offset);
+
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(count, offset);
+
+    if (dtype == DataType::String) {
+        StringReader reader(count, data);
+        ds.write(*reader, memType, memSpace, fileSpace);
+    } else {
+        ds.write(data, memType, memSpace, fileSpace);
+    }
 }
 
 void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
@@ -274,7 +283,17 @@ void DataArrayHDF5::read(DataType dtype, void *data, const NDSize &count, const 
 
     DataSet ds = group().openData("data");
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.read(data, memType, count, offset);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(count, offset);
+
+    if (dtype == DataType::String) {
+        StringWriter writer(count, data);
+        ds.read(*writer, memType, memSpace, fileSpace);
+        writer.finish();
+        ds.vlenReclaim(memType.h5id(), *writer, &memSpace);
+    } else {
+        ds.read(data, memType, memSpace, fileSpace);
+    }
 }
 
 NDSize DataArrayHDF5::dataExtent(void) const {
