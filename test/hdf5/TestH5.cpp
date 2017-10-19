@@ -229,6 +229,8 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT(cmpd.member_type(1).equal(cmpd.member_type("i")));
     CPPUNIT_ASSERT(cmpd.member_type(0).equal(H5T_NATIVE_DOUBLE));
     CPPUNIT_ASSERT(cmpd.member_type(1).equal(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT(cmpd.member_type(0) == H5T_NATIVE_DOUBLE);
+    CPPUNIT_ASSERT(cmpd.member_type(1) == H5T_NATIVE_INT);
 
     {
         CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));
