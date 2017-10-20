@@ -32,6 +32,7 @@ public:
     void testMetadataAccess();
     void testSourceAccess();
     void testDataArrayAccess();
+    void testDataFrameAccess();
     void testTagAccess();
     void testMultiTagAccess();
     void testGroupAccess();

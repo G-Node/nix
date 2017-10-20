@@ -171,6 +171,68 @@ void BaseTestBlock::testDataArrayAccess() {
     CPPUNIT_ASSERT(block.getDataArray("invalid_id") == false);
 }
 
+void BaseTestBlock::testDataFrameAccess() {
+
+    DataFrame df;
+
+    CPPUNIT_ASSERT(!block.hasDataFrame(df));
+    CPPUNIT_ASSERT(block.dataFrameCount() == 0);
+    CPPUNIT_ASSERT(block.dataFrames().size() == 0);
+    CPPUNIT_ASSERT(block.getDataFrame("invalid_id") == false);
+    CPPUNIT_ASSERT(!block.hasDataFrame("invalid_id"));
+    CPPUNIT_ASSERT_THROW(block.getDataFrame(block.dataFrameCount() + 10), OutOfBounds);
+
+    const std::vector<nix::Column> cols = {
+        {"int32", "V", nix::DataType::Int32},
+        {"string", "", nix::DataType::String},
+        {"double", "mV", nix::DataType::Double}};
+
+    std::vector<std::string> names = { "a", "b", "c", "d", "e" };
+    std::vector<DataFrame> dfs;
+
+    std::transform(names.cbegin(), names.cend(), std::back_inserter(dfs),
+                   [this, &cols](const std::string &name) {
+
+                       DataFrame d = block.createDataFrame(name, "df", cols);
+                       CPPUNIT_ASSERT(d.name() == name);
+                       CPPUNIT_ASSERT(block.hasDataFrame(name));
+                       CPPUNIT_ASSERT(block.hasDataFrame(d));
+
+                       return d;
+                   });
+
+    std::vector<DataFrame> filtered = block.dataFrames(util::TypeFilter<DataFrame>("df"));
+    CPPUNIT_ASSERT_EQUAL(dfs.size(), filtered.size());
+
+    filtered = block.dataFrames(util::TypeFilter<DataFrame>("xx"));
+    CPPUNIT_ASSERT_EQUAL(size_t(0), filtered.size());
+
+    filtered = block.dataFrames(util::NameFilter<DataFrame>("c"));
+    CPPUNIT_ASSERT_EQUAL(size_t(1), filtered.size());
+
+    boost::optional<std::string> name = filtered.at(0).name();
+    CPPUNIT_ASSERT(name && *name == "c");
+
+    for (const auto &frame : dfs) {
+        const std::string &id = frame.id();
+
+        CPPUNIT_ASSERT(block.hasDataFrame(frame));
+        CPPUNIT_ASSERT(block.hasDataFrame(id));
+
+        CPPUNIT_ASSERT_EQUAL(id, block.getDataFrame(id).id());
+    }
+
+    /* get rid of them again */
+    for (const auto &frame : dfs) {
+        block.deleteDataFrame(frame);
+    }
+
+    CPPUNIT_ASSERT(!block.deleteDataFrame(df));
+    CPPUNIT_ASSERT_EQUAL(ndsize_t(0), block.dataFrameCount());
+    CPPUNIT_ASSERT_EQUAL(size_t(0), block.dataFrames().size());
+    CPPUNIT_ASSERT(block.getDataFrame(names[0]) == false);
+}
+
 
 void BaseTestBlock::testTagAccess() {
     std::vector<std::string> names = { "tag_a", "tag_b", "tag_c", "tag_d", "tag_e" };
