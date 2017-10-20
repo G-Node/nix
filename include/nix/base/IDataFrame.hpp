@@ -56,12 +56,30 @@ struct Cell {
         col(other.col), name(other.name), value(other.value)
     {}
 
+    Cell(Cell &&other) :
+        col(other.col),
+        name(std::move(other.name)),
+        value(std::move(other.value))
+    {}
+
+    Cell& operator=(Cell other) {
+        swap(other);
+        return *this;
+    }
+
+    void swap(Cell &other) {
+        using std::swap;
+        swap(other.col, col);
+        swap(other.name, name);
+        swap(other.value, value);
+    }
+
     bool haveName() const { return !name.empty(); }
     bool haveIndex() const { return name.empty(); }
 
-    const int col;
-    const std::string name;
-    const Variant value;
+    int col;
+    std::string name;
+    Variant value;
 };
 
 
