@@ -1,3 +1,12 @@
+nix (1.4.1-1) trusty; urgency=medium
+
+  * internal improvements (test coverage, fixed build warning, arm build working, improved string handling)
+  * fixed and improved seraching of sections in metadata
+  * add option to compress datasets
+  * allow for non-si units at several places
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Fri, 20 Oct 2017 09:40:00 +0100
+
 nix (1.4.0-2) xenial; urgency=medium
 
   * version bump to 1.4.0
