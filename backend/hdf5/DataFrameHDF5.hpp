@@ -45,30 +45,30 @@ public:
 
     std::vector<Column> columns() const override;
 
-    std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const;
-    std::vector<std::string> colToName(const std::vector<unsigned> &cols) const;
+    std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const override;
+    std::vector<std::string> colToName(const std::vector<unsigned> &cols) const override;
 
-    ndsize_t rows() const;
-    void rows(ndsize_t n);
+    ndsize_t rows() const override;
+    void rows(ndsize_t n) override;
 
-    std::vector<Variant> readRow(ndsize_t row) const;
-    void writeRow(ndsize_t row, const std::vector<Variant> &v);
+    std::vector<Variant> readRow(ndsize_t row) const override;
+    void writeRow(ndsize_t row, const std::vector<Variant> &v) override;
 
-    std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const;
-    void writeCells(ndsize_t row, const std::vector<Cell> &cells);
+    std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const override;
+    void writeCells(ndsize_t row, const std::vector<Cell> &cells) override;
 
 
     void readColumn(int col,
                     ndsize_t offset,
                     ndsize_t count,
                     DataType dtype,
-                    void *data) const;
+                    void *data) const override;
 
     void writeColumn(int col,
                      ndsize_t offset,
                      ndsize_t count,
                      DataType dtype,
-                     const char *data);
+                     const char *data) override;
 
 private:
     DataSet data() const {
