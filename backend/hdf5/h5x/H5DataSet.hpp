@@ -62,8 +62,7 @@ public:
 
     DataSpace getSpace() const;
 
-private:
-    std::tuple<DataSpace, DataSpace> offsetCount2DataSpaces(const NDSize &count, const NDSize &offset) const;
+    std::tuple<DataSpace, DataSpace> offsetCount2DataSpaces(const NDSize &count, const NDSize &offset={}) const;
 };
 
 

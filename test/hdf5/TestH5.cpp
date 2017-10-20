@@ -191,6 +191,9 @@ void TestH5::testDataType() {
 
     CPPUNIT_ASSERT_EQUAL(H5T_SGN_2, dt_int.sign());
 
+    CPPUNIT_ASSERT(dt_int.equal(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT(!dt_int.equal(H5T_NATIVE_DOUBLE));
+
     h5x::DataType v_str = h5x::DataType::makeStrType();
     CPPUNIT_ASSERT_EQUAL(true, v_str.isVariableString());
 
@@ -216,10 +219,18 @@ void TestH5::testDataType() {
     CPPUNIT_ASSERT_EQUAL(2U, cmpd.member_count());
     CPPUNIT_ASSERT_EQUAL(std::string("d"), cmpd.member_name(0));
     CPPUNIT_ASSERT_EQUAL(std::string("i"), cmpd.member_name(1));
+    CPPUNIT_ASSERT_EQUAL(cmpd.member_index("d"), unsigned(0));
+    CPPUNIT_ASSERT_EQUAL(cmpd.member_index("i"), unsigned(1));
     CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, d), cmpd.member_offset(0));
     CPPUNIT_ASSERT_EQUAL(offsetof(TestStruct, i), cmpd.member_offset(1));
     CPPUNIT_ASSERT_EQUAL(H5T_FLOAT, cmpd.member_class(0));
     CPPUNIT_ASSERT_EQUAL(H5T_INTEGER, cmpd.member_class(1));
+    CPPUNIT_ASSERT(cmpd.member_type(0).equal(cmpd.member_type("d")));
+    CPPUNIT_ASSERT(cmpd.member_type(1).equal(cmpd.member_type("i")));
+    CPPUNIT_ASSERT(cmpd.member_type(0).equal(H5T_NATIVE_DOUBLE));
+    CPPUNIT_ASSERT(cmpd.member_type(1).equal(H5T_NATIVE_INT));
+    CPPUNIT_ASSERT(cmpd.member_type(0) == H5T_NATIVE_DOUBLE);
+    CPPUNIT_ASSERT(cmpd.member_type(1) == H5T_NATIVE_INT);
 
     {
         CPPUNIT_ASSERT_EQUAL(0, H5Iget_ref(H5T_NATIVE_DOUBLE));

@@ -76,18 +76,6 @@ bool Section::deleteSection(const Section &section) {
     return backend()->deleteSection(section.id());
 }
 
-/*
- * Helper struct for {@link findSections}.
- */
-struct SectionCont {
-    SectionCont(Section s, size_t d = 0)
-    : entity(s), depth(d)
-    {}
-
-    Section entity;
-    size_t depth;
-};
-
 
 std::vector<Section> Section::sections(const util::Filter<Section>::type &filter) const {
     auto f = [this] (ndsize_t i) { return getSection(i); };
@@ -95,36 +83,36 @@ std::vector<Section> Section::sections(const util::Filter<Section>::type &filter
 }
 
 
-std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
-                                           size_t max_depth) const
-{
-    std::vector<Section>  results;
-    std::list<SectionCont> todo;
-
-    todo.push_back(SectionCont(*this));
-
-    while (todo.size() > 0)
-    {
-        SectionCont current = todo.front();
-        todo.pop_front();
-
-        bool filter_ok = filter(current.entity);
-        if (filter_ok) {
-            results.push_back(current.entity);
-        }
-
-        if (current.depth < max_depth) {
-            std::vector<Section> children = current.entity.sections();
-            size_t next_depth = current.depth + 1;
-
-            for (auto it = children.begin(); it != children.end(); ++it) {
-                todo.push_back(SectionCont(*it, next_depth));
-            }
+void addChildrenIfNotMaxDepth(std::tuple<Section, size_t>& current,
+                              std::list<std::tuple<Section, size_t>> &todo,
+                              size_t max_depth) {
+    if (std::get<1>(current) < max_depth) {
+        size_t next_depth = std::get<1>(current) + 1;
+        for (const auto &s : std::get<0>(current).sections()) {
+            todo.emplace_back(s, next_depth);
         }
     }
+}
 
+
+std::vector<Section> Section::findSections(const util::Filter<Section>::type &filter,
+                                           size_t max_depth) const {
+    std::vector<Section> results;
+    std::list<std::tuple<Section, size_t>> todo;
+    std::tuple<Section, size_t> current = std::make_tuple(*this, 0);
+    addChildrenIfNotMaxDepth(current, todo, max_depth);
+
+    while (todo.size() > 0) {
+        current = todo.front();
+        todo.pop_front();
+        if (filter(std::get<0>(current))) {
+            results.push_back(std::get<0>(current));
+        }
+        addChildrenIfNotMaxDepth(current, todo, max_depth);
+    }
     return results;
 }
+
 
 static inline auto erase_section_with_id(std::vector<Section> &sections, const std::string &my_id)
     -> decltype(sections.size())
@@ -139,6 +127,7 @@ static inline auto erase_section_with_id(std::vector<Section> &sections, const s
     return sections.size();
 }
 
+
 std::vector<Section> Section::findRelated(const util::Filter<Section>::type &filter) const
 {
     std::vector<Section> results = findDownstream(filter);
@@ -146,13 +135,11 @@ std::vector<Section> Section::findRelated(const util::Filter<Section>::type &fil
 
     //This checking of results can be removed if we decide not to include this in findSection
     auto results_size = erase_section_with_id(results, my_id);
-
     if (results_size == 0) {
-        results = findUpstream(filter);
+        results = findAmongParents(filter);
     }
-    //This checking of results can be removed if we decide not to include this in findSection
-    results_size = erase_section_with_id(results, my_id);
 
+    results_size = erase_section_with_id(results, my_id);
     if (results_size == 0) {
         results = findSideways(filter, id());
     }
@@ -186,7 +173,6 @@ bool Section::deleteProperty(const Property &property) {
 }
 
 std::vector<Property> Section::inheritedProperties() const {
-
     std::vector<Property> own = properties();
 
     if (link() == none)
@@ -224,7 +210,7 @@ size_t Section::tree_depth() const{
 }
 
 
-std::vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const{
+std::vector<Section> Section::findDownstream(const std::function<bool(Section)> &filter) const {
     std::vector<Section> results;
     size_t max_depth = tree_depth();
     size_t actual_depth = 1;
@@ -236,18 +222,18 @@ std::vector<Section> Section::findDownstream(const std::function<bool(Section)> 
 }
 
 
-std::vector<Section> Section::findUpstream(const std::function<bool(Section)> &filter) const{
+std::vector<Section> Section::findAmongParents(const std::function<bool(Section)> &filter) const {
     std::vector<Section> results;
     Section p = parent();
-
-    if (p != none) {
-        results = p.findSections(filter,1);
-        if (results.size() > 0) {
-            return results;
-        }
-        return p.findUpstream(filter);
+    if (p == none) {
+        return results;
     }
-    return results;
+    if (filter(p)) {
+        results.push_back(p);
+        return results;
+    } else {
+        return p.findAmongParents(filter);
+    }
 }
 
 

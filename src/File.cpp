@@ -21,16 +21,19 @@ namespace bfs = boost::filesystem;
 
 namespace nix {
 
-File File::open(const std::string &name, FileMode mode, const std::string &impl) {
+File File::open(const std::string &name, FileMode mode, const std::string &impl, Compression compression) {
     if (mode == nix::FileMode::ReadOnly && !bfs::exists({name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }
+    if (compression == Compression::Auto) {
+         compression = Compression::None;
+    }
     if (impl == "hdf5") {
-        return File(std::make_shared<hdf5::FileHDF5>(name, mode));
+         return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression));
     }
 #ifdef  ENABLE_FS_BACKEND
     else if (impl == "file") {
-        return File(std::make_shared<file::FileFS>(name, mode));
+         return File(std::make_shared<file::FileFS>(name, mode, compression));
     }
 #endif
     else {
@@ -43,7 +46,7 @@ bool File::flush() {
     return backend()->flush();
 }
 
-    
+
 Block File::createBlock(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
     if (backend()->hasBlock(name)) {
@@ -111,8 +114,13 @@ bool File::deleteSection(const Section &section) {
 std::vector<Section> File::findSections(const util::Filter<Section>::type &filter, size_t max_depth) const {
     std::vector<Section> results;
     std::vector<Section> roots = sections();
+    if (max_depth == 0) {
+        return results;
+    }
     for (auto root : roots) {
-        std::vector<Section> secs = root.findSections(filter, max_depth);
+        if (filter(root))
+            results.push_back(root);
+        std::vector<Section> secs = root.findSections(filter, max_depth - 1);
         results.insert(results.end(), secs.begin(), secs.end());
     }
     return results;

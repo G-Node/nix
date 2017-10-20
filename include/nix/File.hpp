@@ -81,15 +81,17 @@ public:
     /**
      * @brief Opens a file.
      *
-     * @param name      The name/path of the file.
-     * @param mode      The open mode.
-     * @param impl      The back-end implementation the should be used to open the file.
-     *                  (currently only hdf5)
+     * @param name          The name/path of the file.
+     * @param mode          The open mode.
+     * @param impl          The back-end implementation to be used to open the file.
+     *                      (currently only hdf5)
+     * @param compresssion  The compression mode, defaults to Compression::None (can be
+     *                      overridden upon DataArray creation)
      *
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     const std::string &impl="hdf5");
+                     const std::string &impl="hdf5", Compression compression=Compression::Auto);
 
     /**
      * @brief Persists all cached changes to the backend.
@@ -97,7 +99,7 @@ public:
      */
     bool flush();
 
-    
+
     /**
      * @brief Get the number of blocks in in the file.
      *
@@ -277,7 +279,7 @@ public:
      * @return A vector of filtered Section entities.
      */
     std::vector<Section> sections(const util::Filter<Section>::type &filter) const;
-    
+
 
     /**
      * @brief Get all root sections within this file.
@@ -291,7 +293,7 @@ public:
     {
         return sections(util::AcceptAll<Section>());
     }
-    
+
 
     /**
      * @brief Get all sections in this file recursively.
@@ -323,9 +325,8 @@ public:
      *
      * @return A vector containing the matching sections.
      */
-    std::vector<Section> findSections(size_t max_depth = std::numeric_limits<size_t>::max()) const
-    {
-        return findSections(util::AcceptAll<Section>());
+    std::vector<Section> findSections(size_t max_depth = std::numeric_limits<size_t>::max()) const {
+        return findSections(util::AcceptAll<Section>(), max_depth);
     }
 
 
@@ -469,6 +470,17 @@ public:
     FileMode fileMode() {
         return backend()->fileMode();
     }
+
+    /*
+    * @brief Returns the default choice for compressing datasets.
+    * This choice can be made during file opening.
+    *
+    * @return true if dataset compression is selected as default.
+    */
+    Compression compression() const {
+        return backend()->compression();
+    }
+
     /**
      * @brief Assignment operator for none.
      */

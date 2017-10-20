@@ -13,6 +13,7 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/Platform.hpp>
 #include <nix/ObjectType.hpp>
+#include <nix/Compression.hpp>
 
 #include <string>
 #include <vector>
@@ -124,6 +125,9 @@ public:
 
 
     virtual FileMode fileMode() const = 0;
+
+
+    virtual Compression compression() const = 0;
 
 
     virtual ~IFile() {}

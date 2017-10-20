@@ -30,6 +30,7 @@ class BlockFS : virtual public base::IBlock, public EntityWithMetadataFS,
 
 private:
     Directory data_array_dir, tag_dir, multi_tag_dir, source_dir, group_dir;
+    Compression compr;
 
     void createSubFolders(const std::shared_ptr<base::IFile> &file);
 
@@ -56,7 +57,8 @@ public:
      * @param type      The type of this block.
      * @param name      The name of this block.
      */
-    BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, const std::string &type, const std::string &name);
+    BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+            const std::string &type, const std::string &name, const Compression &compression);
 
     /**
      * Standard constructor for a new Block.
@@ -68,7 +70,8 @@ public:
      * @param name      The name of this block.
      * @param time      The creation time of this block.
      */
-    BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id, const std::string &type, const std::string &name, time_t time);
+     BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
+             const std::string &type, const std::string &name, time_t time, const Compression &compression);
 
     //--------------------------------------------------
     // Generic entity methods
@@ -113,7 +116,8 @@ public:
     //--------------------------------------------------
 
     std::shared_ptr<base::IDataArray> createDataArray(const std::string &name, const std::string &type,
-                                                      nix::DataType data_type, const NDSize &shape);
+                                                      nix::DataType data_type, const NDSize &shape,
+                                                      const Compression &compression);
 
     //--------------------------------------------------
     // Methods concerning tags.

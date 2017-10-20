@@ -16,9 +16,10 @@ namespace nix {
 namespace file {
 
 
-FileFS::FileFS(const std::string &name, FileMode mode)
-    : DirectoryWithAttributes(name, mode, true){
+    FileFS::FileFS(const std::string &name, FileMode mode, Compression compression)
+    : DirectoryWithAttributes(name, mode, true) {
     this->mode = mode;
+    this->compr = compression;
     if (mode == FileMode::Overwrite) {
         removeAll();
     }
@@ -81,7 +82,7 @@ std::shared_ptr<base::IBlock> FileFS::createBlock(const std::string &name, const
         throw DuplicateName("Block with the given name already exists!");
     }
     std::string id = util::createId();
-    BlockFS b(file(), data_dir.location(), id, type, name);
+    BlockFS b(file(), data_dir.location(), id, type, name, this->compression());
     return std::make_shared<BlockFS>(b);
 }
 
@@ -255,6 +256,10 @@ std::shared_ptr<base::IFile> FileFS::file() const {
 
 FileMode FileFS::fileMode() const {
     return mode;
+}
+
+Compression FileFS::compression() const {
+    return compr;
 }
 
 FileFS::~FileFS() {}

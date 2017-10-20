@@ -22,19 +22,4 @@
 #include <nix/base/IMultiTag.hpp>
 #include <nix/base/IDataArray.hpp>
 
-namespace nix {
-namespace base {
-
-template class Entity<base::IProperty>;
-template class Entity<base::IFeature>;
-template class NamedEntity<base::ISection>;
-template class EntityWithMetadata<base::ISource>;
-template class EntityWithMetadata<base::IBlock>;
-template class EntityWithSources<base::ITag>;
-template class EntityWithSources<base::IMultiTag>;
-template class EntityWithSources<base::IDataArray>;
-
-}
-}
-
 #endif

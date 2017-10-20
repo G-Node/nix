@@ -30,6 +30,10 @@ public:
     DataType(hid_t hid, bool is_copy) : H5Object(hid, is_copy) { }
     DataType(const DataType &other) : H5Object(other) { }
 
+    bool equal(const DataType &other) const;
+    bool operator ==(const DataType &other) const {
+        return equal(other);
+    }
 
     //Basically the same as DataType(hid_t, true)
     // but more explicit, so it is easier in the code
@@ -55,11 +59,13 @@ public:
     bool isCompound() const;
     unsigned int member_count() const;
     DataType member_type(unsigned int index) const;
+    DataType member_type(const std::string &name) const;
 
     H5T_class_t member_class(unsigned int index) const;
     std::string member_name(unsigned int index) const;
     std::vector<std::string> member_names() const;
     size_t member_offset(unsigned int index) const;
+    unsigned int member_index(const std::string &name) const;
 
     void insert(const std::string &name, size_t offset, const DataType &dtype);
     void insert(const std::string &name, void *value);
