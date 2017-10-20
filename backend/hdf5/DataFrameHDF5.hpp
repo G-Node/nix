@@ -41,7 +41,7 @@ public:
     DataFrameHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group, const std::string &id, const std::string &type, const std::string &name, time_t time);
 
 
-    void createData(const std::vector<Column> &cols);
+    void createData(const std::vector<Column> &cols, const Compression &compression);
 
     std::vector<Column> columns() const override;
 

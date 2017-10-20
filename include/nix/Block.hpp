@@ -432,8 +432,11 @@ public:
     // Methods concerning DataFrames
     //--------------------------------------------------
 
-    DataFrame createDataFrame(const std::string &name, const std::string &type, const std::vector<Column> &cols) {
-        return backend()->createDataFrame(name, type, cols);
+    DataFrame createDataFrame(const std::string &name,
+                              const std::string &type,
+                              const std::vector<Column> &cols,
+                              const Compression &compression=Compression::Auto) {
+        return backend()->createDataFrame(name, type, cols, compression);
     }
 
     //--------------------------------------------------

@@ -86,7 +86,8 @@ public:
 
     virtual std::shared_ptr<base::IDataFrame> createDataFrame(const std::string &name,
                                                               const std::string &type,
-                                                              const std::vector<Column> &cols) = 0;
+                                                              const std::vector<Column> &cols,
+                                                              const Compression &compression) = 0;
 
     //--------------------------------------------------
     // Methods concerning tags.

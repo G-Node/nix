@@ -123,7 +123,8 @@ public:
 
     std::shared_ptr<base::IDataFrame> createDataFrame(const std::string &name,
                                                       const std::string &type,
-                                                      const std::vector<Column> &cols);
+                                                      const std::vector<Column> &cols,
+                                                      const Compression &compression);
 
     //--------------------------------------------------
     // Methods concerning tags.

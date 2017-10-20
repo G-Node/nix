@@ -37,7 +37,7 @@ DataFrameHDF5::DataFrameHDF5(const std::shared_ptr<base::IFile> &file, const std
     : EntityWithSourcesHDF5(file, block, group, id, type, name, time) {
 }
 
-void DataFrameHDF5::createData(const std::vector<Column> &cols) {
+void DataFrameHDF5::createData(const std::vector<Column> &cols, const Compression &compression) {
 
     if (group().hasData("data")) {
         throw ConsistencyError("DataFrame's hdf5 data group already exists!");
@@ -60,7 +60,7 @@ void DataFrameHDF5::createData(const std::vector<Column> &cols) {
         ct.insert(cols[i].name, offset[i], dtypes[i]);
     }
 
-    DataSet ds = group().createData("data", ct, {0}, Compression::None);
+    DataSet ds = group().createData("data", ct, {0}, compression);
 
     std::vector<std::string> units(cols.size());
 

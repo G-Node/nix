@@ -326,14 +326,15 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
 
 std::shared_ptr<IDataFrame> BlockHDF5::createDataFrame(const std::string &name,
                                                        const std::string &type,
-                                                       const std::vector<Column> &cols) {
+                                                       const std::vector<Column> &cols,
+                                                       const Compression &compression) {
 
     string id = util::createId();
     boost::optional<H5Group> g = data_frame_group(true);
     H5Group group = g->openGroup(name, true);
 
     auto df = make_shared<DataFrameHDF5>(file(), block(), group, id, type, name);
-    df->createData(cols);
+    df->createData(cols, compression == Compression::Auto ? compr : compression);
     return df;
 }
 
