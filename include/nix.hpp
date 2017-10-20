@@ -13,6 +13,7 @@
 #include <nix/NDSize.hpp>
 #include <nix/Block.hpp>
 #include <nix/DataArray.hpp>
+#include <nix/DataFrame.hpp>
 #include <nix/MultiTag.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/File.hpp>
