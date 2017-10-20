@@ -439,6 +439,48 @@ public:
         return backend()->createDataFrame(name, type, cols, compression);
     }
 
+
+    bool hasDataFrame(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::DataFrame});
+    }
+
+    bool hasDataFrame(const DataFrame &df) const {
+        if (!util::checkEntityInput(df, false)) {
+            return false;
+        }
+        return backend()->hasEntity(df);
+    }
+
+    DataFrame getDataFrame(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IDataFrame>(name_or_id);
+    }
+
+    DataFrame getDataFrame(ndsize_t index) const {
+        if (index >= dataFrameCount()) {
+            throw OutOfBounds("Block::getDataFrame: index is out of bounds!");
+        }
+        return backend()->getEntity<base::IDataFrame>(index);
+    }
+
+    std::vector<DataFrame> dataFrames(const util::AcceptAll<DataFrame>::type &filter
+                                      = util::AcceptAll<DataFrame>()) const;
+
+    ndsize_t dataFrameCount() const {
+        return backend()->entityCount(ObjectType::DataFrame);
+    }
+
+    bool deleteDataFrame(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::DataFrame});
+    }
+
+    bool deleteDataFrame(const DataFrame &df) {
+        if (!util::checkEntityInput(df, false)) {
+            return false;
+        }
+        return backend()->removeEntity(df);
+    }
+
+
     //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------

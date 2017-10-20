@@ -59,6 +59,11 @@ std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type 
     return getEntities<DataArray>(f, dataArrayCount(), filter);
 }
 
+std::vector<DataFrame> Block::dataFrames(const util::AcceptAll<DataFrame>::type &filter) const {
+    auto f = [this] (size_t i) { return getDataFrame(i); };
+    return getEntities<DataFrame>(f, dataFrameCount(), filter);
+}
+
 Tag Block::createTag(const std::string &name, const std::string &type, const std::vector<double> &position) {
     util::checkEntityNameAndType(name, type);
     if (hasTag(name)){
