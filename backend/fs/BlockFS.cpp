@@ -265,6 +265,18 @@ std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &na
 }
 
 //--------------------------------------------------
+// Methods concerning data arrays
+//--------------------------------------------------
+
+std::shared_ptr<base::IDataFrame> BlockFS::createDataFrame(const std::string &name,
+                                                           const std::string &type,
+                                                           const std::vector<Column> &cols,
+                                                           const Compression &compression) {
+    throw std::runtime_error("not implemented");
+}
+
+
+//--------------------------------------------------
 // Methods concerning tags
 //--------------------------------------------------
 
