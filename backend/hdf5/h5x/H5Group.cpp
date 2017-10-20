@@ -190,6 +190,7 @@ void H5Group::removeData(const std::string &name) {
 DataSet H5Group::createData(const std::string &name,
                             const h5x::DataType &fileType,
                             const NDSize &size,
+                            const Compression &compression,
                             const NDSize &maxsize,
                             NDSize chunks,
                             bool max_size_unlimited,
@@ -217,8 +218,22 @@ DataSet H5Group::createData(const std::string &name,
         HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
         res.check("Could not set chunk size on data set creation plist");
     }
-
-    DataSet ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    DataSet ds;
+    switch (compression) {
+        case Compression::None :
+            break;
+        case Compression::Auto :
+            break;
+        case Compression::DeflateNormal : {
+            HErr status = H5Pset_deflate (dcpl.h5id(), 6);
+            status.check("Could not set compression!");
+            break;
+        }
+        default : {
+            throw std::invalid_argument("Invalid compression flag!");
+        }
+    }
+    ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
     ds.check("H5Group::createData: Could not create DataSet with name " + name);
 
     return ds;

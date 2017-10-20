@@ -34,13 +34,15 @@ BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &gr
     groups_group = this->group().openOptGroup("groups");
 }
 
-BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, const string &type, const string &name)
-        : BlockHDF5(file, group, id, type, name, util::getTime()) {
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id,
+                     const string &type, const string &name, const Compression &compression)
+     : BlockHDF5(file, group, id, type, name, util::getTime(), compression) {
 }
 
 
-BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id, const string &type, const string &name, time_t time)
-        : EntityWithMetadataHDF5(file, group, id, type, name, time) {
+BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const string &id,
+                     const string &type, const string &name, time_t time, const Compression &compression)
+     : EntityWithMetadataHDF5(file, group, id, type, name, time), compr(compression) {
     data_array_group = this->group().openOptGroup("data_arrays");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
@@ -53,32 +55,32 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
 // Generic access methods
 //--------------------------------------------------
 
-boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type) const {
+boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool create) const {
     boost::optional<H5Group> p;
 
     switch (type) {
     case ObjectType::DataArray:
-        p = data_array_group();
+        p = data_array_group(create);
         break;
 
     case ObjectType::Tag:
-        p = tag_group();
+        p = tag_group(create);
         break;
 
     case ObjectType::MultiTag:
-        p = multi_tag_group();
+        p = multi_tag_group(create);
         break;
 
     case ObjectType::Group:
-        p = groups_group();
+        p = groups_group(create);
         break;
 
     case ObjectType::Source:
-        p = source_group();
+        p = source_group(create);
         break;
 
     default:
-       p = boost::optional<H5Group>();
+       p = boost::optional<H5Group>(create);
     }
 
     return p;
@@ -290,7 +292,8 @@ shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string
 shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const std::string &type,
                                                   nix::DataType data_type,
-                                                  const NDSize &shape) {
+                                                  const NDSize &shape,
+                                                  const Compression &compression) {
     string id = util::createId();
     boost::optional<H5Group> g = data_array_group(true);
 
@@ -298,7 +301,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
     auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
 
     // now create the actual H5::DataSet
-    da->createData(data_type, shape);
+    da->createData(data_type, shape, compression == Compression::Auto ? compr : compression);
     return da;
 }
 

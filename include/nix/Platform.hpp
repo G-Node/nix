@@ -9,11 +9,15 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #ifdef _WIN32
- #ifdef NIXEXPORT
- #define NIXAPI __declspec(dllexport)
- #else
- #define NIXAPI __declspec(dllimport)
- #endif
+ #ifndef NIX_STATIC
+  #ifdef NIXEXPORT
+   #define NIXAPI __declspec(dllexport)
+  #else
+   #define NIXAPI __declspec(dllimport)
+  #endif
+ #else // NIX_STATIC
+   #define NIXAPI
+ #endif // NIX_STATIC
 #pragma warning(disable: 4250 4251 4275)
 
  //workaround for missing ssize_t on windows

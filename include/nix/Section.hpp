@@ -539,7 +539,7 @@ private:
 
     std::vector<Section> findDownstream(const std::function<bool(Section)> &filter) const;
 
-    std::vector<Section> findUpstream(const std::function<bool(Section)> &filter) const;
+    std::vector<Section> findAmongParents(const std::function<bool(Section)> &filter) const;
 
     std::vector<Section> findSideways(const std::function<bool(Section)> &filter, const std::string &caller_id) const;
 
@@ -552,6 +552,8 @@ struct objectToType<nix::Section> {
     static const ObjectType value = ObjectType::Section;
     typedef nix::base::ISection backendType;
 };
+
+NIXAPI std::ostream& operator<<(std::ostream &out, const Section &ent);
 
 } // namespace nix
 

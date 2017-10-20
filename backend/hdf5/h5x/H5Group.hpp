@@ -14,6 +14,7 @@
 #include "DataSpace.hpp"
 #include <nix/Hydra.hpp>
 #include <nix/Platform.hpp>
+#include <nix/Compression.hpp>
 
 #include <boost/optional.hpp>
 
@@ -47,14 +48,15 @@ public:
     bool hasData(const std::string &name) const;
 
     DataSet createData(const std::string &name, const h5x::DataType &fileType,
-            const NDSize &size, const NDSize &maxsize = {}, NDSize chunks = {},
-            bool maxSizeUnlimited = true, bool guessChunks = true) const;
+                       const NDSize &size,  const Compression &compression = Compression::Auto,
+                       const NDSize &maxsize = {}, NDSize chunks = {},
+                       bool maxSizeUnlimited = true, bool guessChunks = true) const;
 
     DataSet openData(const std::string &name) const;
     void removeData(const std::string &name);
 
     template<typename T>
-    void setData(const std::string &name, const T &value);
+    void setData(const std::string &name, const T &value, const Compression &compression = Compression::Auto);
     template<typename T>
     bool getData(const std::string &name, T &value) const;
 
@@ -184,7 +186,7 @@ private:
 //template functions
 
 template<typename T>
-void H5Group::setData(const std::string &name, const T &value)
+void H5Group::setData(const std::string &name, const T &value, const Compression &compression)
 {
     const Hydra<const T> hydra(value);
     DataType dtype = hydra.element_data_type();
@@ -193,14 +195,24 @@ void H5Group::setData(const std::string &name, const T &value)
     DataSet ds;
     if (!hasData(name)) {
         h5x::DataType fileType = data_type_to_h5_filetype(dtype);
-        ds = createData(name, fileType, shape);
+        ds = createData(name, fileType, shape, compression);
     } else {
         ds = openData(name);
         ds.setExtent(shape);
     }
 
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    ds.write(hydra.data(), memType, shape);
+
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(shape);
+
+    const void *data = hydra.data();
+    if (dtype == DataType::String) {
+        StringReader reader(shape, data);
+        ds.write(*reader, memType, memSpace, fileSpace);
+    } else {
+        ds.write(data, memType, memSpace, fileSpace);
+    }
 }
 
 
@@ -219,7 +231,18 @@ bool H5Group::getData(const std::string &name, T &value) const
     NDSize shape = ds.size();
     hydra.resize(shape);
 
-    ds.read(hydra.data(), memType, shape);
+    DataSpace fileSpace, memSpace;
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(shape);
+
+    void *data = hydra.data();
+    if (dtype == DataType::String) {
+        StringWriter writer(shape, data);
+        ds.read(*writer, memType, memSpace, fileSpace);
+        writer.finish();
+        ds.vlenReclaim(memType.h5id(), *writer, &memSpace);
+    } else {
+        ds.read(data, memType, memSpace, fileSpace);
+    }
 
     return true;
 }

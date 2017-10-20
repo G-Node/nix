@@ -17,6 +17,7 @@
 #include <nix/Hydra.hpp>
 
 #include <nix/Platform.hpp>
+#include <nix/util/util.hpp>
 
 
 namespace nix {
@@ -217,8 +218,9 @@ public:
      *
      * @param polynom_coefficients      The new polynom coefficients for the calibration.
      */
-    void polynomCoefficients(const std::vector<double> &polynom_coefficients) {
-        backend()->polynomCoefficients(polynom_coefficients);
+    void polynomCoefficients(const std::vector<double> &polynom_coefficients,
+                             const Compression &compression=Compression::None) {
+        backend()->polynomCoefficients(polynom_coefficients, compression);
     }
 
     /**
@@ -304,33 +306,40 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) { 
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
         if (ticks.size() == 0) {
-            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!", 
+            throw nix::InvalidDimension("The ticks of a range dimension must not be empty!",
                                         "DataArray::appendRangeDimension");
         }
         return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
     }
-    
+
     /**
      * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
      * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
      * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
-     * 
+     *
      * @return The created RangeDimension
      */
     RangeDimension appendAliasRangeDimension() {
         if (this->dataExtent().size() > 1) {
             throw nix::InvalidDimension("AliasRangeDimensions only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
         }
         if (!nix::data_type_is_numeric(this->dataType())) {
             throw nix::InvalidDimension("AliasRangeDimensions are only allowed for 1D numeric DataArrays!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
         }
         if (dimensionCount() > 0) {
             throw nix::InvalidDimension("Cannot append additional alias dimension. There must only be one!",
-                                        "DataArray::createAliasRangeDimension");
+                                        "DataArray::appendAliasRangeDimension");
+        }
+        if (this->unit()) {
+            std::string unit = *this->unit();
+            if(!(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
+                throw nix:: InvalidUnit("AliasRangeDimensions are only allowed when SI or composites of SI units are used.",
+                                        "DataArray::appendAliasRangeDimension");
+            }
         }
         return backend()->createAliasRangeDimension();
     }
@@ -380,7 +389,7 @@ public:
 
     /**
      * @brief Create a new RangeDimension that uses the data stored in this DataArray as ticks.
-     * 
+     *
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and will be removed. Use appendAliasRangeDimension instead!
      */
@@ -501,6 +510,7 @@ struct objectToType<nix::DataArray> {
     typedef nix::base::IDataArray backendType;
 };
 
+NIXAPI std::ostream& operator<<(std::ostream &out, const DataArray &ent);
 
 } // namespace nix
 

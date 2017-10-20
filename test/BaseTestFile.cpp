@@ -184,7 +184,7 @@ void BaseTestFile::testReopen() {
     b = none;
     file_open.close();
 
-    file_open = nix::File::open("test_file_b.h5", FileMode::Overwrite);
+    file_open = openFile("test_file_b", FileMode::Overwrite);
     b = file_open.createBlock("b", "b");
 
     CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);

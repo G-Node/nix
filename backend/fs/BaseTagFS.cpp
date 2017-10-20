@@ -102,32 +102,12 @@ bool BaseTagFS::removeReference(const std::string &name_or_id) {
 
 
 void BaseTagFS::references(const std::vector<DataArray> &refs_new) {
-    auto cmp = [](const DataArray &a, const DataArray& b) { return a.name() < b.name(); };
-    std::vector<DataArray> new_arrays(refs_new);
-    size_t ref_count = nix::check::fits_in_size_t(referenceCount(), "referenceCount() failed; count > size_t.");
-    std::vector<DataArray> old_arrays(ref_count);
-    for (size_t i = 0; i < old_arrays.size(); i++) {
-        old_arrays[i] = getReference(i);
+     while (referenceCount() > 0) {
+        removeReference(getReference(0)->id());
     }
-    std::sort(new_arrays.begin(), new_arrays.end(), cmp);
-    std::sort(old_arrays.begin(), old_arrays.end(), cmp);
-    std::vector<DataArray> add;
-    std::vector<DataArray> rem;
 
-    std::set_difference(new_arrays.begin(), new_arrays.end(), old_arrays.begin(), old_arrays.end(),
-                        std::inserter(add, add.begin()), cmp);
-    std::set_difference(old_arrays.begin(), old_arrays.end(), new_arrays.begin(), new_arrays.end(),
-                        std::inserter(rem, rem.begin()), cmp);
-
-    auto blck = std::dynamic_pointer_cast<BlockFS>(block());
-    for (const auto &da : add) {
-        auto a = std::dynamic_pointer_cast<DataArrayFS>(blck->getEntity(da));
-        if (!a)
-            throw std::runtime_error("One or more data arrays do not exist in this block!");
-        addReference(a->id());
-    }
-    for (const auto &da : rem) {
-        removeReference(da.id());
+    for (const auto &ref : refs_new) {
+        addReference(ref.id());
     }
 }
 

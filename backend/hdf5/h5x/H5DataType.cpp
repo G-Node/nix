@@ -16,6 +16,11 @@ namespace nix {
 namespace hdf5 {
 namespace h5x {
 
+bool DataType::equal(const DataType &other) const {
+    HTri res = H5Tequal(hid, other.hid);
+    res.check("DataType::equal(): H5Tequal failed");
+    return res.result();
+}
 
 DataType DataType::copy(hid_t source) {
     DataType hi_copy = H5Tcopy(source);
@@ -115,12 +120,25 @@ size_t DataType::member_offset(unsigned int index) const {
     return H5Tget_member_offset(hid, index);
 }
 
+unsigned int DataType::member_index(const std::string &name) const {
+    int res = H5Tget_member_index(hid, name.c_str());
+    if (res < 0) {
+        throw H5Exception("DataType::member_index(): H5Tget_member_index failed");
+    }
+
+    return static_cast<unsigned>(res);
+}
+
 DataType DataType::member_type(unsigned int index) const {
     h5x::DataType res = H5Tget_member_type(hid, index);
     res.check("DataType::member_type(): H5Tget_member_type failed");
     return res;
 }
 
+DataType DataType::member_type(const std::string &name) const {
+    const unsigned idx = member_index(name);
+    return member_type(idx);
+}
 
 void DataType::insert(const std::string &name, size_t offset, const DataType &dtype) {
     HErr res = H5Tinsert(hid, name.c_str(), offset, dtype.hid);

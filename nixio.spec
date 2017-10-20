@@ -1,5 +1,5 @@
 Name:		nixio
-Version:	1.3.2
+Version:	1.4.0
 Release:	1%{?dist}
 Summary:	IO-libray for nix data files
 
@@ -31,11 +31,11 @@ cd build
 %cmake .. \
        -DCMAKE_INSTALL_PREFIX=/usr \
        -DCMAKE_BUILD_TYPE=RelWithDebInfo
-make %{?_smp_mflags}
+%make_build
 
 %install
 cd build
-make install DESTDIR=%{buildroot}
+%make_install
 
 %post -p /sbin/ldconfig
 
@@ -44,7 +44,7 @@ make install DESTDIR=%{buildroot}
 
 %files
 %license LICENSE LICENSE.h5py
-%doc README.md Contributing.md
+%doc README.md CONTRIBUTING.md
 %{_bindir}/nix-tool
 %{_libdir}/libnix.so.1*
 
@@ -56,5 +56,8 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Mon Sep 25 2017 Christian Kellner <gicmo@gnome.org> - 1.4.0-1
+- New upstream release
+
 * Fri Jan 20 2017 Chrisian Kellner <gicmo@gnome.org>
 - Initial revision

@@ -23,16 +23,16 @@ BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &lo
 
 
 BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
-                 const std::string &type, const std::string &name)
-    : EntityWithMetadataFS(file, loc, id, type, name)
+                 const std::string &type, const std::string &name, const Compression &compression)
+     : EntityWithMetadataFS(file, loc, id, type, name), compr(compression)
 {
     createSubFolders(file);
 }
 
 
 BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc, const std::string &id,
-                 const std::string &type, const std::string &name, time_t time)
-    : EntityWithMetadataFS(file, loc, id, type, name, time)
+                 const std::string &type, const std::string &name, time_t time, const Compression &compression)
+     : EntityWithMetadataFS(file, loc, id, type, name, time), compr(compression)
 {
     createSubFolders(file);
 }
@@ -250,7 +250,8 @@ bool BlockFS::deleteSource(const std::string &name_or_id) {
 //--------------------------------------------------
 
 std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &name, const std::string &type,
-                                                           nix::DataType data_type, const NDSize &shape) {
+                                                           nix::DataType data_type, const NDSize &shape,
+                                                           const Compression &compression) {
     if (name.empty()) {
         throw EmptyString("Block::createDataArray empty name provided!");
     }
@@ -259,7 +260,7 @@ std::shared_ptr<base::IDataArray> BlockFS::createDataArray(const std::string &na
     }
     std::string id = util::createId();
     DataArrayFS da(file(), block(), data_array_dir.location(), id, type, name);
-    da.createData(data_type, shape);
+    da.createData(data_type, shape, compression);
     return std::make_shared<DataArrayFS>(da);
 }
 

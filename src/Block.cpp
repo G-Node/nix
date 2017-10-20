@@ -46,12 +46,12 @@ bool Block::deleteSource(const Source &source) {
 }
 
 DataArray Block::createDataArray(const std::string &name, const std::string &type, nix::DataType data_type,
-                                 const NDSize &shape) {
+                                 const NDSize &shape, const Compression &compression) {
     util::checkEntityNameAndType(name, type);
     if (hasDataArray(name)){
         throw DuplicateName("create DataArray");
     }
-    return backend()->createDataArray(name, type, data_type, shape);
+    return backend()->createDataArray(name, type, data_type, shape, compression);
 }
 
 std::vector<DataArray> Block::dataArrays(const util::AcceptAll<DataArray>::type &filter) const {

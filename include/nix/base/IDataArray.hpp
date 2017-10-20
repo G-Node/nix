@@ -11,6 +11,7 @@
 
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDimensions.hpp>
+#include <nix/Compression.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/ObjectType.hpp>
@@ -49,9 +50,7 @@ public:
     virtual void unit(const std::string &unit) = 0;
 
 
-
     virtual void unit(const none_t t) = 0;
-
 
 
     virtual boost::optional<double> expansionOrigin()const = 0;
@@ -63,7 +62,8 @@ public:
     virtual void expansionOrigin(const none_t t) = 0;
 
 
-    virtual void polynomCoefficients(const std::vector<double> &polynom_coefficients) = 0;
+    virtual void polynomCoefficients(const std::vector<double> &polynom_coefficients,
+                                     const Compression &compression) = 0;
 
 
     virtual std::vector<double> polynomCoefficients() const = 0;
@@ -114,10 +114,11 @@ public:
      * }
      * ~~~
      *
-     * @param dtype     The data type that should be stored in this data array.
-     * @param size      The size of the data to store.
+     * @param dtype        The data type that should be stored in this data array.
+     * @param size         The size of the data to store.
+     * @param compression  En-/disables compression for this DataArray
      */
-    virtual void createData(DataType dtype, const NDSize &size) = 0;
+    virtual void createData(DataType dtype, const NDSize &size, const Compression &compression) = 0;
 
     /**
      * @brief Check if the data array has some data.

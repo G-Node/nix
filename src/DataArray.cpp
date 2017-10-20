@@ -8,7 +8,6 @@
 
 #include <nix/DataArray.hpp>
 
-#include <nix/util/util.hpp>
 #include "hdf5/h5x/H5DataType.hpp"
 
 #include <cstring>
@@ -99,9 +98,15 @@ void DataArray::appendData(DataType dtype, const void *data, const NDSize &count
 }
 
 void DataArray::unit(const std::string &unit) {
-    util::checkEmptyString(unit, "unit");
-    if (!unit.empty() && !(util::isSIUnit(unit) || util::isCompoundSIUnit(unit))) {
-        throw InvalidUnit("Unit is not SI or composite of SI units.", "DataArray::unit(const string &unit)");
+    std::string dblnk_unit = util::deblankString(unit);
+    util::checkEmptyString(dblnk_unit, "unit");
+    if (this->dimensionCount() == 1 && this->getDimension(1).dimensionType() == nix::DimensionType::Range) {
+        nix::RangeDimension rd;
+        rd = this->getDimension(1);
+        if (rd.alias() && !(util::isSIUnit(dblnk_unit) || util::isCompoundSIUnit(dblnk_unit))) {
+                throw InvalidUnit("Non-SI units are not allowed if the DataArray has an AliasRangeDimension. Data retrieval might not work!",
+                                  "DataArray::unit(const string &unit)");
+        }
     }
     backend()->unit(unit);
 }
@@ -126,4 +131,3 @@ void DataArray::label(const std::string &label) {
     util::checkEmptyString(label, "label");
     backend()->label(label);
 }
-

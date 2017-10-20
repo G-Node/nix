@@ -541,6 +541,8 @@ struct objectToType<nix::Group> {
     typedef nix::base::IGroup backendType;
 };
 
+NIXAPI std::ostream &operator<<(std::ostream &out, const Group &ent);
+
 } // namespace nix
 
 #endif //NIX_GROUP_HPP

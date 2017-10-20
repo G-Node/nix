@@ -84,41 +84,16 @@ std::shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) co
 }
 
 void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
-    // extract vectors of ids from vectors of new & old sources
-    std::vector<std::string> ids_new(sources.size());
-    std::transform(sources.begin(), sources.end(), ids_new.begin(), util::toId<Source>);
-
-    size_t src_count = nix::check::fits_in_size_t(sourceCount(), "sourceCount() failed, count > size_t!");
-    std::vector<Source> sources_old(src_count);
-    for (size_t i = 0; i < sources_old.size(); i++) sources_old[i] = getSource(i);
-    std::vector<std::string> ids_old(sources_old.size());
-    std::transform(sources_old.begin(), sources_old.end(), ids_old.begin(), util::toId<Source>);
-    // sort them
-    std::sort(ids_new.begin(), ids_new.end());
-    std::sort(ids_old.begin(), ids_old.end());
-    // get ids only in ids_new (add), ids only in ids_old (remove) & ignore rest
-    std::vector<std::string> ids_add;
-    std::vector<std::string> ids_rem;
-    std::set_difference(ids_new.begin(), ids_new.end(), ids_old.begin(), ids_old.end(), 
-                        std::inserter(ids_add, ids_add.begin()));
-    std::set_difference(ids_old.begin(), ids_old.end(), ids_new.begin(), ids_new.end(), 
-                        std::inserter(ids_rem, ids_rem.begin()));
-    
-    // check if all new sources exist
-    Block tmp(entity_block);
-    auto found = tmp.findSources(util::IdsFilter<Source>(ids_add));
-    if (ids_add.size() != found.size())
-        throw std::runtime_error("One or more sources do not exist in this block!");
-    // add sources
-    for (auto id : ids_add) {
-        addSource(id);
+    while (sourceCount() > 0) {
+        removeSource(getSource(0)->id());
     }
-    // remove sources
-    for (auto id : ids_rem) {
-        removeSource(id);
+    for (const auto &src : sources) {
+        if (block()->hasEntity(src) ) {
+            addSource(src.id());
+        }
     }
 }
-    
+
 void EntityWithSourcesHDF5::addSource(const std::string &id) {
     if (id.empty())
         throw EmptyString("addSource");

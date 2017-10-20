@@ -494,6 +494,7 @@ struct objectToType<nix::Tag> {
     typedef nix::base::ITag backendType;
 };
 
+NIXAPI std::ostream &operator<<(std::ostream &out, const Tag &ent);
 
 } // namespace nix
 

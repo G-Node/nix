@@ -256,6 +256,8 @@ struct objectToType<nix::Source> {
     typedef nix::base::ISource backendType;
 };
 
+NIXAPI std::ostream& operator<<(std::ostream &out, const Source &ent);
+
 } // namespace nix
 
 #endif // NIX_SOURCE_H

@@ -12,9 +12,11 @@ project (nix C CXX)
 
 set(VERSION_MAJOR 1)
 set(VERSION_MINOR 4)
-set(VERSION_PATCH 0)
+set(VERSION_PATCH 1)
 
 set(VERSION_ABI   1)
+
+option(BUILD_STATIC "Build static version of the library" OFF)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
@@ -44,13 +46,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 #########################################
 # HDF-5
-if(WIN32)
-  set(HDF5_USE_STATIC_LIBS OFF)
-  find_package (HDF5 NO_MODULE)
-else()
-  set(HDF5_USE_STATIC_LIBS OFF)
-  find_package (HDF5 REQUIRED COMPONENTS C)
-endif()
+set(HDF5_USE_STATIC_LIBRARIES ${BUILD_STATIC})
+find_package (HDF5 REQUIRED COMPONENTS C)
 include_directories (${HDF5_INCLUDE_DIRS})
 set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 
@@ -58,10 +55,11 @@ set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
 ########################################
 # Boost
 if(WIN32)
+  # On windows we always use the static version of boost
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_USE_STATIC_RUNTIME OFF)
 else()
-  set(Boost_USE_STATIC_LIBS OFF)
+  set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
 endif()
 
 set(Boost_USE_MULTITHREADED ON)
@@ -127,8 +125,17 @@ endforeach()
 
 ### LIBRARY
 
-add_library(nix SHARED ${nix_INCLUDES} ${nix_SOURCES})
+if(BUILD_STATIC)
+  set(NIX_LIBTYPE STATIC)
+  add_definitions(-DNIX_STATIC=1)
+else()
+  set(NIX_LIBTYPE SHARED)
+endif()
+
+add_library(nix ${NIX_LIBTYPE} ${nix_INCLUDES} ${nix_SOURCES})
 target_link_libraries(nix ${LINK_LIBS})
+set_target_properties(nix PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(nix PROPERTIES COMPILE_FLAGS "-fPIC")
 set_target_properties(nix PROPERTIES
 		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 		      SOVERSION ${VERSION_ABI})
@@ -233,6 +240,7 @@ endif()
 
 install(TARGETS nix nix-tool
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
 install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
@@ -256,10 +264,13 @@ if(WIN32)
 		  DESTINATION ./
 		  COMPONENT libraries)
 
+if(NOT BUILD_STATIC)
   file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
   install(FILES ${HDF5_DLLS}
 		  DESTINATION bin
 		  COMPONENT libraries)
+endif()
+
   file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
   install(FILES ${HDF5_COPYING}
 		  DESTINATION ./
@@ -289,6 +300,8 @@ endif()
 get_directory_property(incdirs INCLUDE_DIRECTORIES)
 
 MESSAGE(STATUS "READY. ")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "STATIC:  ${BUILD_STATIC}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "INCDIRS: ${incdirs}")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
