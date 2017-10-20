@@ -33,7 +33,7 @@ This is at least one possible way of doing it...
 ````
 
 - Get the tarball. E.g. nix-1.1.0.tar.gz file from github (not *.zip).
-   
+
 - Unpack the tarball within the new folder
 ````
     tar -xvf nix-1.1.0.tar.gz
@@ -45,9 +45,9 @@ This is at least one possible way of doing it...
 ````
 
 - Have dh_make create the ../nix_1.1.0.orig.tar.gz file. It will ask for the package type just give 's'.
-````	
+````
     cd nix-1.1.0
-    dh_make -f  ../nix-1.1.0.tar.gz 
+    dh_make -f  ../nix-1.1.0.tar.gz
 ````
 
 - Create the source package and have it signed.
@@ -63,8 +63,8 @@ This is at least one possible way of doing it...
 
 
 ***Packages for multiple ubuntu series***
-- Change the changelog to name the series you want 
-```` 
+- Change the changelog to name the series you want
+````
     nix (1.1.0-5) xenial; urgency=medium
 
       * Set to version 1.1.0
@@ -91,8 +91,45 @@ The rest is the same as before:
 - If needed, update changelog, increase version counter.
 - Have ```dh_make``` build the orig tarball.
 - Create signed source package with ```debuild```.
-- Upload source package to Launchpad. 
+- Upload source package to Launchpad.
 ````dput ppa:gnode/nix python-nix_1.1.0-3_source.changes````
+
+Linux: Creating rpm package and building on copr
+------------------------------------------------
+
+Install development tools:
+
+~~~~
+sudo dnf install rpmdevtools fedpkg copr-cli
+~~~~
+
+Go to the project directory and download the sources.
+
+~~~~
+spectool -g -R -C . nixio.spec
+~~~~
+
+Create the binary and source packages
+
+~~~~
+fedpkg --release f26 local
+fedpkg --release f26 srpm
+~~~~
+
+
+Build package locally with chroot
+
+~~~~
+sudo mock -r fedora-25-x86_64 <source_rpm>
+~~~~
+
+Send it to copr for building.
+
+~~~~
+copr build gicmo/nix nixio-1.4.1-1.f26.src.spm
+~~~~
+baut das ding im coper dann
+
 
 
 Windows - Binary packages and upload to github
