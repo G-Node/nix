@@ -128,7 +128,6 @@ Send it to copr for building.
 ~~~~
 copr build gicmo/nix nixio-1.4.1-1.f26.src.spm
 ~~~~
-baut das ding im coper dann
 
 
 
