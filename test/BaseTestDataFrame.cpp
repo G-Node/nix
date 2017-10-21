@@ -130,23 +130,43 @@ void BaseTestDataFrame::testColIO() {
         dbl[i] = i / static_cast<double>(n);
     }
 
-    df.writeColumn(0, 0, i32);
-    df.writeColumn(1, 0, str);
-    df.writeColumn(2, 0, dbl);
+    df.writeColumn(0, i32);
+    df.writeColumn(1, str);
+    df.writeColumn(2, dbl);
 
 
     std::vector<int32_t> i32_out(n);
     std::vector<std::string> str_out(n);
     std::vector<double> dbl_out(n);
 
-    df.readColumn(0, 0, i32_out);
-    df.readColumn(1, 0, str_out);
-    df.readColumn(2, 0, dbl_out);
+    df.readColumn(0, i32_out);
+    df.readColumn(1, str_out);
+    df.readColumn(2, dbl_out);
 
     for (size_t i = 0; i < n; i++) {
         CPPUNIT_ASSERT_EQUAL(i32[i], i32_out[i]);
         CPPUNIT_ASSERT_EQUAL(str[i], str_out[i]);
         CPPUNIT_ASSERT_EQUAL(dbl[i], dbl_out[i]);
+    }
+
+    size_t count = 5;
+
+    std::vector<int32_t> i32_rs(1);
+    std::vector<std::string> str_rs(1);
+    std::vector<double> dbl_rs(1);
+
+    df.readColumn(0, i32_rs, count, true);
+    df.readColumn(1, str_rs, count, true);
+    df.readColumn(2, dbl_rs, count, true);
+
+    for (size_t i = 0; i < count; i++) {
+        CPPUNIT_ASSERT_EQUAL(count, i32_rs.size());
+        CPPUNIT_ASSERT_EQUAL(count, str_rs.size());
+        CPPUNIT_ASSERT_EQUAL(count, dbl_rs.size());
+
+        CPPUNIT_ASSERT_EQUAL(i32[i], i32_rs[i]);
+        CPPUNIT_ASSERT_EQUAL(str[i], str_rs[i]);
+        CPPUNIT_ASSERT_EQUAL(dbl[i], dbl_rs[i]);
     }
 
 }

@@ -97,10 +97,10 @@ public:
     }
 
     template<typename T>
-        void writeColumn(int col,
-                         ndsize_t offset,
-                         const std::vector<T> &vals,
-                         ndsize_t count = 0) {
+    void writeColumn(int col,
+                     const std::vector<T> &vals,
+                     ndsize_t offset = 0,
+                     ndsize_t count = 0) {
         const Hydra<const std::vector<T>> hydra(vals);
 
         if (count == 0)
@@ -113,14 +113,42 @@ public:
     }
 
     template<typename T>
-        void readColumn(int col,
-                        ndsize_t offset,
-                        std::vector<T> &vals,
-                        ndsize_t count = 0) {
+    void readColumn(int col,
+                    std::vector<T> &vals,
+                    bool resize = false,
+                    ndsize_t offset = 0) {
         Hydra<std::vector<T>> hydra(vals);
 
-        if (count == 0)
-            count = vals.size();
+        size_t count = vals.size();
+        if (resize) {
+            ndsize_t n_rows = rows();
+            if (offset > n_rows) {
+                throw OutOfBounds("offset > number of rows");
+            }
+
+            // >= 0, as per the check above
+            n_rows -= offset;
+
+            count = check::fits_in_size_t(n_rows, "n > sizeof(size_t)");
+        }
+
+        // OOB check done by called readColumn below
+        return this->readColumn<T>(col, vals, count, resize, offset);
+    }
+
+    template<typename T>
+    void readColumn(int col,
+                    std::vector<T> &vals,
+                    size_t count,
+                    bool resize,
+                    ndsize_t offset = 0) {
+        Hydra<std::vector<T>> hydra(vals);
+
+        if (resize) {
+            vals.resize(count);
+        } else if (count > vals.size()) {
+            throw OutOfBounds("Vector not big enough for requested data");
+        }
 
         DataType dtype = hydra.element_data_type();
         backend()->readColumn(col, offset, count, dtype, hydra.data());
