@@ -1,6 +1,6 @@
 Linux installation
 ------------------
- 
+
 **Debian PPA**
 
 You can get a ready to install package for Ubuntu "trusty"(14.04) and "xenial" (16.04). You have to add & install the following software source to your system:
@@ -19,6 +19,15 @@ sudo apt-get install libnix-dev
 
 *Note:* replace trusty with xenial for 16.04
 
+
+**Fedora copr**
+
+A fedora 25+ package can be installed via copr. To do so:
+
+```
+sudo dnf copr enable gicmo/nix
+sudo dnf install nixio-devel
+```
 
 **Build NIX under Ubuntu 14.04/16.04**
 
@@ -56,6 +65,8 @@ ctest
 # 5 install
 sudo make install
 ```
+
+
 
 In case building nix fails because libboost-*** libraries are not found try the following:
 
