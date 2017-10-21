@@ -88,7 +88,7 @@ std::vector<Column> DataFrameHDF5::columns() const {
     return cols;
 }
 
-std::vector<unsigned> DataFrameHDF5::nameToCol(const std::vector<std::string> &names) const {
+std::vector<unsigned> DataFrameHDF5::colIndex(const std::vector<std::string> &names) const {
     DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 
@@ -101,7 +101,7 @@ std::vector<unsigned> DataFrameHDF5::nameToCol(const std::vector<std::string> &n
     return cols;
 }
 
-std::vector<std::string> DataFrameHDF5::colToName(const std::vector<unsigned> &cols) const {
+std::vector<std::string> DataFrameHDF5::colName(const std::vector<unsigned> &cols) const {
     DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 

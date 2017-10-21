@@ -47,12 +47,12 @@ public:
         return backend()->rows(n);
     }
 
-    virtual std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const {
-        return backend()->nameToCol(names);
+    std::vector<unsigned> colIndex(const std::vector<std::string> &names) const {
+        return backend()->colIndex(names);
     }
 
-    virtual std::vector<std::string> colToName(const std::vector<unsigned> &cols) const {
-        return backend()->colToName(cols);
+    std::vector<std::string> colName(const std::vector<unsigned> &cols) const {
+        return backend()->colName(cols);
     }
 
     std::vector<Column> columns() const {
@@ -72,7 +72,7 @@ public:
     }
 
     Variant readCell(ndsize_t row, unsigned col) const {
-        const std::vector<std::string> &cols = colToName({col});
+        const std::vector<std::string> &cols = colName({col});
         if (cols.size() < 1) {
             return Variant{};
         }

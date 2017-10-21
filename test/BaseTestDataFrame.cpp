@@ -38,8 +38,8 @@ void BaseTestDataFrame::testBasic() {
                        return c.name;
                    });
 
-    std::vector<unsigned> idx = f1.nameToCol(names);
-    std::vector<std::string> resolved = f1.colToName(idx);
+    std::vector<unsigned> idx = f1.colIndex(names);
+    std::vector<std::string> resolved = f1.colName(idx);
 
     CPPUNIT_ASSERT_EQUAL(cols.size(), idx.size());
     CPPUNIT_ASSERT_EQUAL(cols.size(), resolved.size());

@@ -93,8 +93,8 @@ public:
 
     virtual std::vector<Column> columns() const = 0;
 
-    virtual std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const = 0;
-    virtual std::vector<std::string> colToName(const std::vector<unsigned> &cols) const = 0;
+    virtual std::vector<unsigned> colIndex(const std::vector<std::string> &names) const = 0;
+    virtual std::vector<std::string> colName(const std::vector<unsigned> &cols) const = 0;
 
     virtual std::vector<Variant> readRow(ndsize_t row) const = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;

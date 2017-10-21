@@ -45,8 +45,8 @@ public:
 
     std::vector<Column> columns() const override;
 
-    std::vector<unsigned> nameToCol(const std::vector<std::string> &names) const override;
-    std::vector<std::string> colToName(const std::vector<unsigned> &cols) const override;
+    std::vector<unsigned> colIndex(const std::vector<std::string> &names) const override;
+    std::vector<std::string> colName(const std::vector<unsigned> &cols) const override;
 
     ndsize_t rows() const override;
     void rows(ndsize_t n) override;
