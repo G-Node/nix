@@ -123,7 +123,7 @@ public:
             count = vals.size();
 
         DataType dtype = hydra.element_data_type();
-        backend()->readColumn(col, offset, count, dtype, (void *) hydra.data());
+        backend()->readColumn(col, offset, count, dtype, hydra.data());
     }
 
 };

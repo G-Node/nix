@@ -389,7 +389,7 @@ void DataFrameHDF5::writeColumn(int col,
                                 ndsize_t offset,
                                 ndsize_t count,
                                 DataType dtype,
-                                const char *data) {
+                                const void *data) {
     DataSet ds = this->data();
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);

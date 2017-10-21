@@ -68,7 +68,7 @@ public:
                      ndsize_t offset,
                      ndsize_t count,
                      DataType dtype,
-                     const char *data) override;
+                     const void *data) override;
 
 private:
     DataSet data() const {
