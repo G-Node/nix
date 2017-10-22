@@ -162,9 +162,6 @@ namespace valid {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
-            std::string id = nix::util::numToStr(
-                                ID<hasID<TOBJ>::value>().get(parent)
-                             );
 
             // execute getter call & check for error
             try {
