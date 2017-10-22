@@ -1,5 +1,5 @@
 Name:		nixio
-Version:	1.3.2
+Version:	1.5.0
 Release:	1%{?dist}
 Summary:	IO-libray for nix data files
 
@@ -56,5 +56,12 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+
+* Fri Oct 20 2017 Jan Grewe <jan.grewe@g-node.org> - 1.4.1-1
+- New upstream release
+
+* Mon Sep 25 2017 Christian Kellner <gicmo@gnome.org> - 1.4.0-1
+- New upstream release
+
 * Fri Jan 20 2017 Chrisian Kellner <gicmo@gnome.org>
 - Initial revision

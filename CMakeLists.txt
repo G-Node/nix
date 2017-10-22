@@ -11,7 +11,7 @@ SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "Include install directory")
 project (nix C CXX)
 
 set(VERSION_MAJOR 1)
-set(VERSION_MINOR 4)
+set(VERSION_MINOR 5)
 set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
