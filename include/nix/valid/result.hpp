@@ -21,49 +21,8 @@ namespace nix {
 namespace valid {
 
 class NIXAPI Result {
-
     std::vector<Message> errors;
     std::vector<Message> warnings;
-    static const char* prefixErr;
-    static const char* prefixWarn;
-    static const char* prefixID;
-
-    /**
-     * @brief sets error on 1st and warning prefixes on 2nd given vector of msgs
-     * 
-     * Takes a pair of vector<Message> vars, the first with errors the
-     * second with warnings, and sets according prefix on all strings
-     * in both vectors.
-     * NOTE: does _not_ check if prefixes already set and thus will
-     * produce duplicate prefixes.
-     * NOTE: since declared "const" will refuse to operate on class
-     * own vectors.
-     *
-     * @param errs vector of error strings
-     * @param warns vector of warning strings
-     * @return void
-     */
-    void setPrefixes(std::vector<Message> &errs,
-                     std::vector<Message> &warns) const;
-
-    /**
-     * @brief sets msg ids as prefix on both given vectors of msgs
-     * 
-     * Takes a pair of vector<Message> vars, the first with errors the
-     * second with warnings, and sets each msgs id as prefix in its msg
-     * string in both vectors.
-     * NOTE: does _not_ check if id prefixes already set and thus will
-     * produce duplicate prefixes.
-     * NOTE: since declared "const" will refuse to operate on msgs
-     * own vectors.
-     *
-     * @param errs vector of error messages
-     * @param warns vector of warning messages
-     * @return void
-     */
-    void setIdPrefixes(std::vector<Message> &errs,
-                       std::vector<Message> &warns) const;
-
 public:
 
     /**
