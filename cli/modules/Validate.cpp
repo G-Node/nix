@@ -37,6 +37,8 @@ std::ostream &print(std::ostream &out,
     for (const auto &msg : msgs) {
         if (!msg.id.empty())
             out << "ID " << msg.id << " ";
+        if (msg.name)
+            out << "['" << *msg.name << "'] ";
         out << (isError ? "ERROR:" : "WARNING: ");
         out << msg.msg << std::endl;
     }
