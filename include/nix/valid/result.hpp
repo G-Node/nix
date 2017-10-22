@@ -213,16 +213,18 @@ public:
         // make temp copies to set prefixes on
         std::vector<Message> tmp_errors = res.getErrors();
         std::vector<Message> tmp_warnings = res.getWarnings();
-        // set prefixes
-        res.setPrefixes(tmp_errors, tmp_warnings);
-        // set ID prefixes
-        res.setIdPrefixes(tmp_errors, tmp_warnings);
-        // output messages with prefixes
-        for(auto &tmp_warn : tmp_warnings) {
-            out << tmp_warn.msg << std::endl;
+
+        for (const auto &warn : tmp_warnings) {
+            if (!warn.id.empty())
+                out << "ID " << warn.id << " ";
+            out << "WARNING: " << warn.msg << std::endl;
         }
-        for(auto &tmp_err : tmp_errors) {
-            out << tmp_err.msg << std::endl;
+
+        for (const auto &err : tmp_errors) {
+            if (!err.id.empty())
+                out << "ID " << err.id << " ";
+
+            out << "ERROR: " << err.msg << std::endl;
         }
 
         return out;
