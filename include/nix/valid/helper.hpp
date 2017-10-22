@@ -15,6 +15,8 @@
 
 #include <nix/types.hpp>
 
+#include <boost/optional.hpp>
+
 #include <string>
 #include <vector>
 
@@ -30,6 +32,7 @@ namespace valid {
     struct NIXAPI Message {
         std::string id;
         std::string msg;
+        boost::optional<std::string> name;
 
         Message() { }
 
@@ -37,6 +40,10 @@ namespace valid {
         : id(new_id), msg(new_msg)
         {
         }
+
+        Message(std::string id, std::string msg, boost::optional<std::string> name)
+            : id(std::move(id)), msg(std::move(msg)), name(std::move(name))
+        {}
     };
 
     /**
