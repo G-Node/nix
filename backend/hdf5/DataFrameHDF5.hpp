@@ -45,6 +45,9 @@ public:
 
     std::vector<Column> columns() const override;
 
+    unsigned colIndex(const std::string &name) const override;
+    std::string colName(unsigned col) const override;
+
     std::vector<unsigned> colIndex(const std::vector<std::string> &names) const override;
     std::vector<std::string> colName(const std::vector<unsigned> &cols) const override;
 

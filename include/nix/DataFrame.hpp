@@ -55,6 +55,14 @@ public:
         return backend()->colName(cols);
     }
 
+    unsigned colIndex(const std::string &name) const {
+        return backend()->colIndex(name);
+    }
+
+    std::string colName(unsigned col) const {
+        return backend()->colName(col);
+    }
+
     std::vector<Column> columns() const {
         return backend()->columns();
     }
