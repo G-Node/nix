@@ -58,6 +58,21 @@ void BaseTestDataFrame::testBasic() {
         CPPUNIT_ASSERT_EQUAL(cols[i].dtype, cs[i].dtype);
     }
 
+    for (int i = 0; i < static_cast<int>(nix::DataType::Opaque); i++) {
+        nix::DataType dt = static_cast<nix::DataType>(i);
+        if (nix::Variant::supports_type(dt))
+            continue;
+
+        std::vector<nix::Column> wrong_col = {
+            {"peng", "", dt}
+        };
+
+        CPPUNIT_ASSERT_THROW(block.createDataFrame("peng",
+                                                   "peng",
+                                                   wrong_col),
+                             std::invalid_argument);
+    }
+
 }
 
 nix::DataFrame createStandardFrame(nix::Block b) {
