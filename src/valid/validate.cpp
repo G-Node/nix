@@ -106,7 +106,7 @@ Result validate(const DataArray &data_array) {
                 must(data_array, &DataArray::dimensions, dimTicksMatchData(data_array), "in some of the Range dimensions the number of ticks differs from the number of data entries along the corresponding data dimension!"),
                 must(data_array, &DataArray::dimensions, dimLabelsMatchData(data_array), "in some of the Set dimensions the number of labels differs from the number of data entries along the corresponding data dimension!") }) }),
         could(data_array, &DataArray::unit, notFalse(), {
-            must(data_array, &DataArray::unit, isValidUnit(), "Unit is not SI or composite of SI units.") }),
+            should(data_array, &DataArray::unit, isValidUnit(), "Unit is not SI or composite of SI units.") }),
         could(data_array, &DataArray::polynomCoefficients, notEmpty(), {
             should(data_array, &DataArray::expansionOrigin, notFalse(), "polynomial coefficients for calibration are set, but expansion origin is missing!") }),
         could(data_array, &DataArray::expansionOrigin, notFalse(), {
