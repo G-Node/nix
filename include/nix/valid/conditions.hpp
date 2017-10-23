@@ -10,6 +10,7 @@
 #define NIX_CONDITIONS_H
 
 #include <nix/Platform.hpp>
+#include <nix/base/NamedEntity.hpp>
 #include <nix/util/util.hpp>
 #include <nix/valid/helper.hpp>
 #include <nix/valid/result.hpp>
@@ -54,6 +55,7 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
+            boost::optional<std::string> name = nix::getEntityName(parent);
 
             // execute getter call & check for error
             try {
@@ -64,7 +66,7 @@ namespace valid {
 
             // compare value & check for validity
             if(errOccured || !check(val)) {
-                return Result(Message(id, msg), none); // failed || error
+                return Result(Message(id, msg, name), none); // failed || error
             }
 
             // passed
@@ -108,6 +110,7 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
+            boost::optional<std::string> name = nix::getEntityName(parent);
 
             // execute getter call & check for error
             try {
@@ -118,7 +121,7 @@ namespace valid {
 
             // compare value & check for validity
             if(errOccured || !check(val)) { // failed || error
-                return Result(none, Message(id, msg));
+                return Result(none, Message(id, msg, name));
             }
 
             // passed
@@ -159,9 +162,6 @@ namespace valid {
             bool errOccured = false;
             typedef decltype((parent.*get)()) return_type;
             return_type val;
-            std::string id = nix::util::numToStr(
-                                ID<hasID<TOBJ>::value>().get(parent)
-                             );
 
             // execute getter call & check for error
             try {

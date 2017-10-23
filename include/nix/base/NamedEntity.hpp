@@ -145,7 +145,59 @@ public:
 
 };
 
+template<typename Entity>
+struct NIXAPI has_name {
+#ifndef _WIN32
+    typedef char have;
+    typedef long nope;
+
+        template<typename C> static have check(decltype(&C::name));
+        template<typename C> static nope check(...);
+
+    public:
+        enum {
+            value = sizeof(check<Entity>(0)) == sizeof(have)
+        };
+
+#else
+    __if_exists(T::empty) {
+        static const bool value = true;
+    }
+    __if_not_exists(T::empty) {
+        static const bool value = false;
+    }
+#endif
+};
+
+template<typename Entity>
+typename std::enable_if<has_name<Entity>::value,
+               boost::optional<std::string>>::type
+getEntityName(const Entity &e) {
+    return boost::make_optional(e.name());
+}
+
+template<typename Entity>
+typename std::enable_if<! has_name<Entity>::value,
+                        boost::optional<std::string>>::type
+getEntityName(const Entity &e) {
+    return nix::none;
+}
 
 } // namespace base
+
+/**
+ * @brief Get the name of an entity.
+ *
+ * @param entity The entity to get the name of.
+ *
+ * @return the name of the entity, if it is a {@link nix::Entity} to begin
+ * with or {@link nix::none}.
+ */
+template<typename Entity>
+boost::optional<std::string> getEntityName(const Entity &e) {
+    return base::getEntityName<Entity>(e);
+}
+
+
 } // namespace nix
 #endif // NIX_NAMED_ENTITY_H

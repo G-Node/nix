@@ -21,49 +21,8 @@ namespace nix {
 namespace valid {
 
 class NIXAPI Result {
-
     std::vector<Message> errors;
     std::vector<Message> warnings;
-    static const char* prefixErr;
-    static const char* prefixWarn;
-    static const char* prefixID;
-
-    /**
-     * @brief sets error on 1st and warning prefixes on 2nd given vector of msgs
-     * 
-     * Takes a pair of vector<Message> vars, the first with errors the
-     * second with warnings, and sets according prefix on all strings
-     * in both vectors.
-     * NOTE: does _not_ check if prefixes already set and thus will
-     * produce duplicate prefixes.
-     * NOTE: since declared "const" will refuse to operate on class
-     * own vectors.
-     *
-     * @param errs vector of error strings
-     * @param warns vector of warning strings
-     * @return void
-     */
-    void setPrefixes(std::vector<Message> &errs,
-                     std::vector<Message> &warns) const;
-
-    /**
-     * @brief sets msg ids as prefix on both given vectors of msgs
-     * 
-     * Takes a pair of vector<Message> vars, the first with errors the
-     * second with warnings, and sets each msgs id as prefix in its msg
-     * string in both vectors.
-     * NOTE: does _not_ check if id prefixes already set and thus will
-     * produce duplicate prefixes.
-     * NOTE: since declared "const" will refuse to operate on msgs
-     * own vectors.
-     *
-     * @param errs vector of error messages
-     * @param warns vector of warning messages
-     * @return void
-     */
-    void setIdPrefixes(std::vector<Message> &errs,
-                       std::vector<Message> &warns) const;
-
 public:
 
     /**
@@ -213,16 +172,18 @@ public:
         // make temp copies to set prefixes on
         std::vector<Message> tmp_errors = res.getErrors();
         std::vector<Message> tmp_warnings = res.getWarnings();
-        // set prefixes
-        res.setPrefixes(tmp_errors, tmp_warnings);
-        // set ID prefixes
-        res.setIdPrefixes(tmp_errors, tmp_warnings);
-        // output messages with prefixes
-        for(auto &tmp_warn : tmp_warnings) {
-            out << tmp_warn.msg << std::endl;
+
+        for (const auto &warn : tmp_warnings) {
+            if (!warn.id.empty())
+                out << "ID " << warn.id << " ";
+            out << "WARNING: " << warn.msg << std::endl;
         }
-        for(auto &tmp_err : tmp_errors) {
-            out << tmp_err.msg << std::endl;
+
+        for (const auto &err : tmp_errors) {
+            if (!err.id.empty())
+                out << "ID " << err.id << " ";
+
+            out << "ERROR: " << err.msg << std::endl;
         }
 
         return out;

@@ -14,10 +14,6 @@
 namespace nix {
 namespace valid {
 
-const char* Result::prefixErr = "ERROR: ";
-const char* Result::prefixWarn = "WARNING: ";
-const char* Result::prefixID = "ID __ID__: ";
-
 Result::Result(const std::vector<Message> &errs,
                const std::vector<Message> &warns) {
     // assign to member vars
@@ -36,38 +32,6 @@ Result::Result(none_t t, const Message &warn)
 
 Result::Result(const Message &err, none_t t)
     : Result(std::vector<Message> {err}, std::vector<Message>()) {}
-
-void Result::setPrefixes(std::vector<Message> &errs, std::vector<Message> &warns) const {
-    for (auto &err : errs) {
-        err.msg.insert(0, prefixErr);
-    }
-    for (auto &warn : warns) {
-        warn.msg.insert(0, prefixWarn);
-    }
-}
-
-void Result::setIdPrefixes(std::vector<Message> &errs, std::vector<Message> &warns) const {
-    for (auto &err : errs) {
-        // copy prefix in string
-        std::string prefixIDcpy = std::string(prefixID);
-        // replace placeholder with id
-        prefixIDcpy.replace(prefixIDcpy.find("__ID__"),
-                            std::string("__ID__").length(),
-                            err.id);
-        // insert id prefix in msg string
-        err.msg.insert(0, prefixIDcpy);
-    }
-    for (auto &warn : warns) {
-        // copy prefix in string
-        std::string prefixIDcpy = std::string(prefixID);
-        // replace placeholder with id
-        prefixIDcpy.replace(prefixIDcpy.find("__ID__"),
-                            std::string("__ID__").length(),
-                            warn.id);
-        // insert id prefix in msg string
-        warn.msg.insert(0, prefixIDcpy);
-    }
-}
 
 std::vector<Message> Result::getWarnings() const {
     return warnings;
