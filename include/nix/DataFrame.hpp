@@ -80,11 +80,8 @@ public:
     }
 
     Variant readCell(ndsize_t row, unsigned col) const {
-        const std::vector<std::string> &cols = colName({col});
-        if (cols.size() < 1) {
-            return Variant{};
-        }
-        return this->readCell(row, cols[0]);
+        const std::string name = colName(col);
+        return this->readCell(row, name);
     }
 
     Variant readCell(ndsize_t row, const std::string &col) const {
@@ -105,7 +102,7 @@ public:
     }
 
     template<typename T>
-    void writeColumn(int col,
+    void writeColumn(const std::string &name,
                      const std::vector<T> &vals,
                      ndsize_t offset = 0,
                      ndsize_t count = 0) {
@@ -117,11 +114,20 @@ public:
             throw OutOfBounds("Requested to write more data than available");
 
         DataType dtype = hydra.element_data_type();
-        backend()->writeColumn(col, offset, count, dtype, (const char *) hydra.data());
+        backend()->writeColumn(name, offset, count, dtype, (const char *) hydra.data());
     }
 
     template<typename T>
-    void readColumn(int col,
+    void writeColumn(unsigned col,
+                     const std::vector<T> &vals,
+                     ndsize_t offset = 0,
+                     ndsize_t count = 0) {
+        const std::string name = this->colName(col);
+        writeColumn(name, vals, offset, count);
+    }
+
+    template<typename T>
+    void readColumn(const std::string &name,
                     std::vector<T> &vals,
                     bool resize = false,
                     ndsize_t offset = 0) {
@@ -141,11 +147,20 @@ public:
         }
 
         // OOB check done by called readColumn below
-        return this->readColumn<T>(col, vals, count, resize, offset);
+        return this->readColumn<T>(name, vals, count, resize, offset);
     }
 
     template<typename T>
-    void readColumn(int col,
+    void readColumn(unsigned col,
+                    std::vector<T> &vals,
+                    bool resize = false,
+                    ndsize_t offset = 0) {
+        const std::string name = this->colName(col);
+        readColumn(name, vals, resize, offset);
+    }
+
+    template<typename T>
+    void readColumn(const std::string &name,
                     std::vector<T> &vals,
                     size_t count,
                     bool resize,
@@ -159,9 +174,18 @@ public:
         }
 
         DataType dtype = hydra.element_data_type();
-        backend()->readColumn(col, offset, count, dtype, hydra.data());
+        backend()->readColumn(name, offset, count, dtype, hydra.data());
     }
 
+    template<typename T>
+    void readColumn(unsigned col,
+                    std::vector<T> &vals,
+                    size_t count,
+                    bool resize,
+                    ndsize_t offset = 0) {
+        const std::string name = this->colName(col);
+        readColumn(name, vals, count, resize, offset);
+    }
 };
 
 

@@ -119,13 +119,13 @@ public:
     virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
 
 
-    virtual void readColumn(int col,
+    virtual void readColumn(const std::string &name,
                             ndsize_t offset,
                             ndsize_t count,
                             DataType dtype,
                             void *data) const = 0;
 
-    virtual void writeColumn(int col,
+    virtual void writeColumn(const std::string &name,
                              ndsize_t offset,
                              ndsize_t count,
                              DataType dtype,

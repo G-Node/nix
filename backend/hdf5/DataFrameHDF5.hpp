@@ -61,13 +61,13 @@ public:
     void writeCells(ndsize_t row, const std::vector<Cell> &cells) override;
 
 
-    void readColumn(int col,
+    void readColumn(const std::string &name,
                     ndsize_t offset,
                     ndsize_t count,
                     DataType dtype,
                     void *data) const override;
 
-    void writeColumn(int col,
+    void writeColumn(const std::string &name,
                      ndsize_t offset,
                      ndsize_t count,
                      DataType dtype,

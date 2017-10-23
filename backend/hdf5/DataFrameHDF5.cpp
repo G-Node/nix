@@ -397,7 +397,7 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) const {
     return res;
 }
 
-void DataFrameHDF5::writeColumn(int col,
+void DataFrameHDF5::writeColumn(const std::string &name,
                                 ndsize_t offset,
                                 ndsize_t count,
                                 DataType dtype,
@@ -406,7 +406,6 @@ void DataFrameHDF5::writeColumn(int col,
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
     size_t ms = memType.size();
-    std::string name = dts.member_name(static_cast<unsigned>(col));
 
     h5x::DataType ct = h5x::DataType::makeCompound(ms);
     ct.insert(name, 0, memType);
@@ -424,7 +423,7 @@ void DataFrameHDF5::writeColumn(int col,
     }
 }
 
-void DataFrameHDF5::readColumn(int col,
+void DataFrameHDF5::readColumn(const std::string &name,
                                ndsize_t offset,
                                ndsize_t count,
                                DataType dtype,
@@ -432,7 +431,6 @@ void DataFrameHDF5::readColumn(int col,
     DataSet ds = this->data();
     h5x::DataType dts = ds.dataType();
     h5x::DataType memType = data_type_to_h5_memtype(dtype);
-    std::string name = dts.member_name(static_cast<unsigned>(col));
 
     size_t ms = memType.size();
     h5x::DataType ct = h5x::DataType::makeCompound(ms);
