@@ -436,6 +436,12 @@ public:
                               const std::string &type,
                               const std::vector<Column> &cols,
                               const Compression &compression=Compression::Auto) {
+        for (const Column &c : cols) {
+            if (!Variant::supports_type(c.dtype)) {
+                std::string msg = "Incompatible DataType for column ";
+                throw std::invalid_argument(msg + c.name);
+            }
+        }
         return backend()->createDataFrame(name, type, cols, compression);
     }
 
