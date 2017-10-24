@@ -160,10 +160,10 @@ struct NIXAPI has_name {
         };
 
 #else
-    __if_exists(T::empty) {
+    __if_exists(Entity::name) {
         static const bool value = true;
     }
-    __if_not_exists(T::empty) {
+    __if_not_exists(Entity::name) {
         static const bool value = false;
     }
 #endif
