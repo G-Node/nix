@@ -220,6 +220,22 @@ void TestValidate::setInvalid() {
 
 void TestValidate::test() {
 
+    // check if nix::getEntityName works correctly
+    // this is here because there is currently no better place
+    // and we only use that function in the validation code
+    boost::optional<std::string> name = nix::getEntityName(block);
+    CPPUNIT_ASSERT(!!name);
+    CPPUNIT_ASSERT_EQUAL(*name, block.name());
+
+    name = nix::getEntityName(file);
+    CPPUNIT_ASSERT(!name);
+
+    valid::Message m1("w1", "meh", std::string("michi"));
+    CPPUNIT_ASSERT_EQUAL(m1.id, std::string("w1"));
+    CPPUNIT_ASSERT_EQUAL(m1.msg, std::string("meh"));
+    CPPUNIT_ASSERT(!!m1.name);
+    CPPUNIT_ASSERT_EQUAL(std::string("michi"), *m1.name);
+
     // test result class
     valid::Result res;
     CPPUNIT_ASSERT_EQUAL(false, res.hasWarnings());
