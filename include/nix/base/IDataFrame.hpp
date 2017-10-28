@@ -13,6 +13,7 @@
 
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/NDSize.hpp>
+#include <nix/Variant.hpp>
 
 #include <string>
 #include <vector>
@@ -28,38 +29,40 @@ class NIXAPI Column {
 };
 
 
-struct Cell {
+struct Cell : public nix::Variant {
 
     Cell(const std::string &name, const Variant &value) :
-        col(0), name(name), value(value)
+        Variant(value), col(0), name(name)
     {}
 
     Cell(unsigned col, const Variant &value) :
-        col(col), value(value)
+        Variant(value), col(col)
     {}
 
     Cell(const std::string &name, const char *str) :
-        col(0), name(name), value(Variant(str))
+        Variant(str), col(0), name(name)
     {}
 
     template<typename T>
     Cell(const std::string &name, const T &value) :
-        col(0), name(name), value(Variant{value})
+        Variant(value), col(0), name(name)
     {}
 
     template<typename T>
     Cell(int col, const T &value) :
-        col(col), value(Variant{value})
+        Variant(value), col(col)
     {}
 
     Cell(const Cell &other) :
-        col(other.col), name(other.name), value(other.value)
+        Variant(static_cast<const Variant &>(other)),
+        col(other.col),
+        name(other.name)
     {}
 
-    Cell(Cell &&other) :
+    Cell(Cell &&other) NOEXCEPT :
+        Variant(std::forward<Variant>(other)),
         col(other.col),
-        name(std::move(other.name)),
-        value(std::move(other.value))
+        name(std::move(other.name))
     {}
 
     Cell& operator=(Cell other) {
@@ -69,9 +72,9 @@ struct Cell {
 
     void swap(Cell &other) {
         using std::swap;
+        Variant::swap(other);
         swap(other.col, col);
         swap(other.name, name);
-        swap(other.value, value);
     }
 
     bool haveName() const { return !name.empty(); }
@@ -79,7 +82,6 @@ struct Cell {
 
     int col;
     std::string name;
-    Variant value;
 };
 
 

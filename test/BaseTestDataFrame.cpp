@@ -214,7 +214,7 @@ void BaseTestDataFrame::testCellIO() {
     std::vector<nix::Variant> out = df.readCells(0, names);
 
     for (size_t i = 0; i < vals.size(); i++) {
-        CPPUNIT_ASSERT_EQUAL(vals[i].value, out[i]);
+        CPPUNIT_ASSERT_EQUAL(static_cast<nix::Variant &>(vals[i]), out[i]);
     }
 
 }

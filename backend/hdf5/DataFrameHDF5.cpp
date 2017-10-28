@@ -145,7 +145,7 @@ struct Janus {
 
         std::transform(cells.cbegin(), cells.cend(), dtypes.begin(),
                        [](const Cell &c){
-                           return data_type_to_h5_memtype(c.value.type());
+                           return data_type_to_h5_memtype(c.type());
                        });
 
         std::vector<size_t> sizes(cells.size());
@@ -173,7 +173,7 @@ struct Janus {
                                           dst.member_name(c.col);
 
             dtype.insert(name, offset, t);
-            copyValue(offset, c.value);
+            copyValue(offset, c);
             offset += s;
         }
     }
