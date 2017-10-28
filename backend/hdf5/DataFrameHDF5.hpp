@@ -57,7 +57,7 @@ public:
     std::vector<Variant> readRow(ndsize_t row) const override;
     void writeRow(ndsize_t row, const std::vector<Variant> &v) override;
 
-    std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const override;
+    std::vector<Cell> readCells(ndsize_t row, const std::vector<std::string> &names) const override;
     void writeCells(ndsize_t row, const std::vector<Cell> &cells) override;
 
 

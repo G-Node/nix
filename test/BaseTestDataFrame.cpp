@@ -211,10 +211,11 @@ void BaseTestDataFrame::testCellIO() {
                        return c.name;
                    });
 
-    std::vector<nix::Variant> out = df.readCells(0, names);
+    std::vector<nix::Cell> out = df.readCells(0, names);
 
     for (size_t i = 0; i < vals.size(); i++) {
-        CPPUNIT_ASSERT_EQUAL(static_cast<nix::Variant &>(vals[i]), out[i]);
+        CPPUNIT_ASSERT_EQUAL(vals[i], out[i]);
+        CPPUNIT_ASSERT_EQUAL(vals[i].name, out[i].name);
     }
 
 }

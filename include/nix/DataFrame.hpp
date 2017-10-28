@@ -79,21 +79,21 @@ public:
         return backend()->writeCells(row, cells);
     }
 
-    Variant readCell(ndsize_t row, unsigned col) const {
+    Cell readCell(ndsize_t row, unsigned col) const {
         const std::string name = colName(col);
         return this->readCell(row, name);
     }
 
-    Variant readCell(ndsize_t row, const std::string &col) const {
-        std::vector<Variant> cells = backend()->readCells(row, {col});
+    Cell readCell(ndsize_t row, const std::string &col) const {
+        std::vector<Cell> cells = backend()->readCells(row, {col});
         if (cells.size() < 1) {
-            return Variant{};
+            return Cell{};
         }
 
         return cells[0];
     }
 
-    std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &cols) const {
+    std::vector<Cell> readCells(ndsize_t row, const std::vector<std::string> &cols) const {
         return backend()->readCells(row, cols);
     }
 

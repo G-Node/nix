@@ -31,6 +31,9 @@ class NIXAPI Column {
 
 struct Cell : public nix::Variant {
 
+    Cell() : Variant(), col(0), name("")
+    {}
+
     Cell(const std::string &name, const Variant &value) :
         Variant(value), col(0), name(name)
     {}
@@ -117,7 +120,7 @@ public:
     virtual std::vector<Variant> readRow(ndsize_t row) const = 0;
     virtual void writeRow(ndsize_t row, const std::vector<Variant> &v) = 0;
 
-    virtual std::vector<Variant> readCells(ndsize_t row, const std::vector<std::string> &names) const = 0;
+    virtual std::vector<Cell> readCells(ndsize_t row, const std::vector<std::string> &names) const = 0;
     virtual void writeCells(ndsize_t row, const std::vector<Cell> &cells) = 0;
 
 

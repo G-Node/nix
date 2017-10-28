@@ -257,66 +257,85 @@ struct Janus {
         };
     }
 
-    Variant copyData(size_t offset, DataType data_type) {
+    void copyData(Variant &v, size_t offset, DataType data_type) {
         char *mem = data + offset;
 
         switch (data_type) {
         case DataType::Bool:
             bool b;
             std::memcpy(&b, mem, sizeof(b));
-            return Variant(b);
+            v.set(b);
+            break;
 
         case DataType::Double:
             double d;
             std::memcpy(&d, mem, sizeof(d));
-            return Variant(d);
+            v.set(d);
+            break;
 
         case DataType::UInt32:
             uint32_t ui32;
             std::memcpy(&ui32, mem, sizeof(ui32));
-            return Variant(ui32);
+            v.set(ui32);
+            break;
 
         case DataType::Int32:
             int32_t i32;
             std::memcpy(&i32, mem, sizeof(i32));
-            return Variant(i32);
+            v.set(i32);
+            break;
 
         case DataType::UInt64:
             uint64_t ui64;
             std::memcpy(&ui64, mem, sizeof(ui64));
-            return Variant(ui64);
+            v.set(ui64);
+            break;
 
         case DataType::Int64:
             int64_t i64;
             std::memcpy(&i64, mem, sizeof(i64));
-            return Variant(i64);
+            v.set(i64);
+            break;
 
         case DataType::String:
             const char *str;
             std::memcpy(&str, mem, sizeof(str));
-            return Variant(str);
+            v.set(str);
+            break;
 
         default:
             throw std::invalid_argument("Unhandled DataType");
         };
     }
 
-    std::vector<Variant> copyData() {
+    void copyData(Variant &v, unsigned i) {
+        size_t offset = dtype.member_offset(i);
+        h5x::DataType dt = dtype.member_type(i);
+        DataType nt = data_type_from_h5(dt);
+
+        copyData(v, offset, nt);
+    }
+
+    std::vector<Cell> copyData() {
         unsigned n = dtype.member_count();
 
-        std::vector<Variant> res(n);
+        std::vector<Cell> res(n);
+        for (unsigned i = 0; i < n; i++) {
+            copyData(res[i], i);
+            res[i].name = dtype.member_name(i);
+            res[i].col = i;
+        }
 
-        unsigned i = 0;
-        std::generate(res.begin(), res.end(),
-                      [&i, this](){
-                          size_t offset = dtype.member_offset(i);
-                          h5x::DataType dt = dtype.member_type(i);
-                          DataType nt = data_type_from_h5(dt);
-                          i++;
-
-                          return copyData(offset, nt);
-                      });
         return res;
+    }
+
+    void copyData(std::vector<Variant> &res) {
+        unsigned n = dtype.member_count();
+        res.resize(n);
+
+        for (unsigned i = 0; i < n; i++) {
+            copyData(res[i], i);
+        }
     }
 
     ~Janus() {
@@ -353,7 +372,7 @@ void DataFrameHDF5::writeRow(ndsize_t row, const std::vector<Variant> &vals) {
     ds.write(j.data, j.dtype, NDSize{1}, NDSize{row});
 }
 
-std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<std::string> &cols) const {
+std::vector<Cell> DataFrameHDF5::readCells(ndsize_t row, const std::vector<std::string> &cols) const {
     DataSet ds = data();
     h5x::DataType dtype = ds.dataType();
 
@@ -365,7 +384,7 @@ std::vector<Variant> DataFrameHDF5::readCells(ndsize_t row, const std::vector<st
 
     ds.read(j.data, j.dtype, count, offset);
 
-    std::vector<Variant> res = j.copyData();
+    std::vector<Cell> res = j.copyData();
     ds.vlenReclaim(j.dtype.h5id(), j.data, &memSpace);
 
     return res;
@@ -391,7 +410,9 @@ std::vector<Variant> DataFrameHDF5::readRow(ndsize_t row) const {
 
     ds.read(j.data, j.dtype, count, offset);
 
-    std::vector<Variant> res = j.copyData();
+    std::vector<Variant> res(cols.size());
+    j.copyData(res);
+
     ds.vlenReclaim(j.dtype.h5id(), j.data, &memSpace);
 
     return res;
