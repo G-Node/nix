@@ -164,6 +164,7 @@ void BaseTestDataFrame::testColIO() {
         CPPUNIT_ASSERT_EQUAL(dbl[i], dbl_out[i]);
     }
 
+    /* auto resize test */
     size_t count = 5;
 
     std::vector<int32_t> i32_rs(1);
@@ -174,16 +175,40 @@ void BaseTestDataFrame::testColIO() {
     df.readColumn(1, str_rs, count, true);
     df.readColumn(2, dbl_rs, count, true);
 
+    CPPUNIT_ASSERT_EQUAL(count, i32_rs.size());
+    CPPUNIT_ASSERT_EQUAL(count, str_rs.size());
+    CPPUNIT_ASSERT_EQUAL(count, dbl_rs.size());
+
     for (size_t i = 0; i < count; i++) {
-        CPPUNIT_ASSERT_EQUAL(count, i32_rs.size());
-        CPPUNIT_ASSERT_EQUAL(count, str_rs.size());
-        CPPUNIT_ASSERT_EQUAL(count, dbl_rs.size());
 
         CPPUNIT_ASSERT_EQUAL(i32[i], i32_rs[i]);
         CPPUNIT_ASSERT_EQUAL(str[i], str_rs[i]);
         CPPUNIT_ASSERT_EQUAL(dbl[i], dbl_rs[i]);
     }
 
+    /* more auto resize test; df.rows() == n == 10 */
+    i32_rs.resize(5);
+    str_rs.resize(5);
+    dbl_rs.resize(5);
+
+    df.readColumn(0, i32_rs, true);
+    df.readColumn(1, str_rs, true);
+    df.readColumn(2, dbl_rs, true);
+
+    CPPUNIT_ASSERT_EQUAL(n, i32_rs.size());
+    CPPUNIT_ASSERT_EQUAL(n, str_rs.size());
+    CPPUNIT_ASSERT_EQUAL(n, dbl_rs.size());
+
+    for (size_t i = 0; i < n; i++) {
+        CPPUNIT_ASSERT_EQUAL(i32[i], i32_rs[i]);
+        CPPUNIT_ASSERT_EQUAL(str[i], str_rs[i]);
+        CPPUNIT_ASSERT_EQUAL(dbl[i], dbl_rs[i]);
+    }
+
+    /* Error handling; df.rows() == n == 10 */
+    i32_rs.resize(5);
+    CPPUNIT_ASSERT_THROW(df.writeColumn(0, i32_rs, 0, n + 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(df.readColumn(0, i32_rs, n, false), nix::OutOfBounds);
 }
 
 void BaseTestDataFrame::testCellIO() {
