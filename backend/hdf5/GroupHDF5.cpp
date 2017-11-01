@@ -12,6 +12,7 @@
 #include "MultiTagHDF5.hpp"
 #include "BlockHDF5.hpp"
 #include "DataArrayHDF5.hpp"
+#include "DataFrameHDF5.hpp"
 #include <boost/range/irange.hpp>
 
 using namespace nix::base;
@@ -32,6 +33,11 @@ boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type, bool cre
     case ObjectType::MultiTag:
         p = multi_tag_group(create);
         break;
+
+    case ObjectType::DataFrame:
+        p = data_frame_group(create);
+        break;
+
         //TODO
     default:
         p = boost::optional<H5Group>(create);
@@ -84,6 +90,7 @@ GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
                      const H5Group &h5group)
     : EntityWithSourcesHDF5(file, block, h5group) {
     data_array_group = this->group().openOptGroup("data_arrays");
+    data_frame_group = this->group().openOptGroup("data_frame");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
 }
@@ -105,6 +112,7 @@ GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
                      time_t time)
     : EntityWithSourcesHDF5(file, block, h5group, id, type, name, time) {
     data_array_group = this->group().openOptGroup("data_arrays");
+    data_frame_group = this->group().openOptGroup("data_frame");
     tag_group = this->group().openOptGroup("tags");
     multi_tag_group = this->group().openOptGroup("multi_tags");
 }
@@ -139,6 +147,14 @@ std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) 
         }
         return t;
     }
+    case ObjectType::DataFrame: {
+        std::shared_ptr<DataFrameHDF5> df;
+        if (eg) {
+            df = std::make_shared<DataFrameHDF5>(file(), block(), *eg);
+        }
+        return df;
+    }
+
     default:
         return std::shared_ptr<base::IEntity>();
     }

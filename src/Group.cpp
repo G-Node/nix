@@ -39,6 +39,20 @@ std::vector<DataArray> Group::dataArrays(const util::Filter<DataArray>::type &fi
 }
 
 
+void Group::dataFrames(const std::vector<DataFrame> &data_frames) {
+    replaceEntities(data_frames);
+}
+
+
+std::vector<DataFrame> Group::dataFrames(const util::Filter<DataFrame>::type &filter) const {
+    auto f = [this] (size_t i) { return getDataFrame(i); };
+    return getEntities<DataFrame>(f,
+                                  dataFrameCount(),
+                                  filter);
+}
+
+
+
 void Group::tags(const std::vector<Tag> &tags) {
     replaceEntities(tags);
 }
