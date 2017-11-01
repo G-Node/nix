@@ -134,6 +134,110 @@ void BaseTestGroup::testDataArrays() {
     file.deleteBlock(b);
 }
 
+void BaseTestGroup::testDataFrames() {
+    Group g = block.createGroup("test frame group", "group");
+
+    DataFrame df;
+
+    CPPUNIT_ASSERT(!g.hasDataFrame(df));
+    CPPUNIT_ASSERT(g.dataFrameCount() == 0);
+    CPPUNIT_ASSERT(g.dataFrames().size() == 0);
+    CPPUNIT_ASSERT(g.getDataFrame("invalid_id") == false);
+    CPPUNIT_ASSERT(!g.hasDataFrame("invalid_id"));
+    CPPUNIT_ASSERT_THROW(g.getDataFrame(g.dataFrameCount() + 10), OutOfBounds);
+
+    const std::vector<nix::Column> cols = {
+        {"int32", "V", nix::DataType::Int32},
+        {"string", "", nix::DataType::String},
+        {"double", "mV", nix::DataType::Double}};
+
+    std::vector<std::string> names = { "a", "b", "c", "d", "e" };
+    std::vector<DataFrame> dfs;
+
+    std::transform(names.cbegin(), names.cend(), std::back_inserter(dfs),
+                   [this, &g, &cols](const std::string &name) {
+
+                       DataFrame d = block.createDataFrame(name, "df", cols);
+
+                       //via the object
+                       g.addDataFrame(d);
+
+                       CPPUNIT_ASSERT(g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(g.hasDataFrame(d));
+
+                       g.removeDataFrame(d);
+
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d));
+
+                       //via the id
+                       g.addDataFrame(d.id());
+
+                       CPPUNIT_ASSERT(g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(g.hasDataFrame(d));
+
+                       g.removeDataFrame(d.id());
+
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d));
+
+                       //via the ma,e
+                       g.addDataFrame(name);
+
+                       CPPUNIT_ASSERT(g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(g.hasDataFrame(d));
+
+                       g.removeDataFrame(name);
+
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d.id()));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(name));
+                       CPPUNIT_ASSERT(!g.hasDataFrame(d));
+
+                       return d;
+                   });
+
+    CPPUNIT_ASSERT_EQUAL(ndsize_t(0), g.dataFrameCount());
+    g.dataFrames(dfs);
+    CPPUNIT_ASSERT_EQUAL(ndsize_t(dfs.size()), g.dataFrameCount());
+
+    std::vector<DataFrame> filtered = g.dataFrames(util::TypeFilter<DataFrame>("df"));
+    CPPUNIT_ASSERT_EQUAL(dfs.size(), filtered.size());
+
+    filtered = g.dataFrames(util::TypeFilter<DataFrame>("xx"));
+    CPPUNIT_ASSERT_EQUAL(size_t(0), filtered.size());
+
+    filtered = g.dataFrames(util::NameFilter<DataFrame>("c"));
+    CPPUNIT_ASSERT_EQUAL(size_t(1), filtered.size());
+
+    boost::optional<std::string> name = filtered.at(0).name();
+    CPPUNIT_ASSERT(name && *name == "c");
+
+    for (const auto &frame : dfs) {
+        const std::string &id = frame.id();
+
+        CPPUNIT_ASSERT(g.hasDataFrame(frame));
+        CPPUNIT_ASSERT(g.hasDataFrame(id));
+
+        CPPUNIT_ASSERT_EQUAL(id, g.getDataFrame(id).id());
+    }
+
+    /* get rid of them again */
+    for (const auto &frame : dfs) {
+        g.removeDataFrame(frame);
+        block.deleteDataFrame(frame);
+    }
+
+    CPPUNIT_ASSERT(!g.removeDataFrame(df));
+    CPPUNIT_ASSERT_EQUAL(ndsize_t(0), g.dataFrameCount());
+    CPPUNIT_ASSERT_EQUAL(size_t(0), g.dataFrames().size());
+    CPPUNIT_ASSERT(g.getDataFrame(names[0]) == false);
+
+}
 
 void BaseTestGroup::testTags() {
     Tag tag_1 = block.createTag("TestTag 1","tag", std::vector<double>{0.0});

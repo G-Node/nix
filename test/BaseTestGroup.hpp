@@ -45,6 +45,7 @@ public:
     void testOperators();
 
     void testDataArrays();
+    void testDataFrames();
     void testTags();
     void testMultiTags();
 };
