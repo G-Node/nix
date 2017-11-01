@@ -287,7 +287,7 @@ public:
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
-     * @param data_array The Tag to add.
+     * @param tag The Tag to add.
      */
     void addTag(const Tag &tag) {
         if (util::checkEntityInput(tag, true)) {
