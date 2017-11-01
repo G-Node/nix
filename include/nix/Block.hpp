@@ -432,6 +432,16 @@ public:
     // Methods concerning DataFrames
     //--------------------------------------------------
 
+    /**
+     * @brief Create a new data frame associated with this block.
+     *
+     * @param name         The name of the data frame to create.
+     * @param type         The type of the data frame.
+     * @param cols         A vector of nix::Column representing the columns to create.
+     * @param compression  En-/disable dataset compression, default nix::Compression::Auto.
+     *
+     * @return The newly created data frame.
+     */
     DataFrame createDataFrame(const std::string &name,
                               const std::string &type,
                               const std::vector<Column> &cols,
@@ -445,11 +455,24 @@ public:
         return backend()->createDataFrame(name, type, cols, compression);
     }
 
-
+    /**
+     * @brief Checks if a specific data frame exists in this block.
+     *
+     * @param name_or_id        Name or id of a data frame.
+     *
+     * @return True if the data frame exists, false otherwise.
+     */
     bool hasDataFrame(const std::string &name_or_id) const {
         return backend()->hasEntity({name_or_id, ObjectType::DataFrame});
     }
 
+    /**
+     * @brief Checks if a specific data frame exists in this block.
+     *
+     * @param df        The data frame to check.
+     *
+     * @return True if the data frame exists, false otherwise.
+     */
     bool hasDataFrame(const DataFrame &df) const {
         if (!util::checkEntityInput(df, false)) {
             return false;
@@ -457,10 +480,25 @@ public:
         return backend()->hasEntity(df);
     }
 
+    /**
+     * @brief Retrieves a specific data frame from the block by name or id.
+     *
+     * @param name_or_id        Name or id of an existing data frame.
+     *
+     * @return The data frame with the specified id. If this
+     *         doesn't exist, an exception will be thrown.
+     */
     DataFrame getDataFrame(const std::string &name_or_id) const {
         return backend()->getEntity<base::IDataFrame>(name_or_id);
     }
 
+    /**
+     * @brief Retrieves a data frame by index.
+     *
+     * @param index     The index of the data frame.
+     *
+     * @return The data frame at the specified index.
+     */
     DataFrame getDataFrame(ndsize_t index) const {
         if (index >= dataFrameCount()) {
             throw OutOfBounds("Block::getDataFrame: index is out of bounds!");
@@ -468,17 +506,52 @@ public:
         return backend()->getEntity<base::IDataFrame>(index);
     }
 
+    /**
+     * @brief Get data frames within this block.
+     *
+     * The parameter filter can be used to filter data frames by various
+     * criteria. By default a filter is used that accepts all data frames.
+     *
+     * @param filter    A filter function.
+     *
+     * @return A vector that contains all filtered data frames.
+     */
     std::vector<DataFrame> dataFrames(const util::AcceptAll<DataFrame>::type &filter
                                       = util::AcceptAll<DataFrame>()) const;
 
+    /**
+     * @brief Returns the number of all data frames of the block.
+     *
+     * @return The number of data frames of the block.
+     */
     ndsize_t dataFrameCount() const {
         return backend()->entityCount(ObjectType::DataFrame);
     }
 
+    /**
+     * @brief Deletes a data frame from this block.
+     *
+     * This deletes a data frame and all its dimensions from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param name_or_id        Name or id of the data frame to delete.
+     *
+     * @return True if the data frame was deleted, false otherwise.
+     */
     bool deleteDataFrame(const std::string &name_or_id) {
         return backend()->removeEntity({name_or_id, ObjectType::DataFrame});
     }
 
+    /**
+     * @brief Deletes a data frame from this block.
+     *
+     * This deletes a data frame and all its dimensions from the block and the file.
+     * The deletion can't be undone.
+     *
+     * @param df        The data frame to delete.
+     *
+     * @return True if the data frame was deleted, false otherwise.
+     */
     bool deleteDataFrame(const DataFrame &df) {
         if (!util::checkEntityInput(df, false)) {
             return false;
