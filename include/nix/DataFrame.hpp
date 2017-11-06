@@ -146,7 +146,7 @@ public:
     /**
      * @brief Read a single cell.
      *
-     * @param row     Index of the row to read from to.
+     * @param row     Index of the row to read from.
      * @param co;     Column index of the cell to read.
      *
      * @return A {@link nix::Cell} with the cell's data.
@@ -159,7 +159,7 @@ public:
     /**
      * @brief Read a single cell.
      *
-     * @param row     Index of the row to read from to.
+     * @param row     Index of the row to read from.
      * @param col     Column name of the cell to read.
      *
      * @return A {@link nix::Cell} with the cell's data.
@@ -177,7 +177,7 @@ public:
     /**
      * @brief Read multiple cells of the same row.
      *
-     * @param row     Index of the row to read from to.
+     * @param row     Index of the row to read from.
      * @param cols    Names of the cells to read.
      *
      * @return A std::vector of {@link nix::Cell} with the cells' data.
@@ -189,7 +189,7 @@ public:
     /**
      * @brief Read an entire row of the DataFrame.
      *
-     * @param row     Index of the row to read from to.
+     * @param row     Index of the row to read from.
      *
      * @return A std::vector of {@link nix::Variant} containing the row data.
      */
@@ -296,7 +296,7 @@ public:
      *
      * @param name    Name of the column to read.
      * @param vals    A std::vector to store the data in
-     * @param count   How much rows to read.
+     * @param count   How many rows to read.
      * @param resize  Resize the vector to fit the data
      * @param offset  Which row to start reading.
      */
@@ -323,7 +323,7 @@ public:
      *
      * @param col     Index of the column to read data from.
      * @param vals    A std::vector to store the data in
-     * @param count   How much rows to read.
+     * @param count   How many rows to read.
      * @param resize  Resize the vector to fit the data
      * @param offset  Which row to start reading.
      */
