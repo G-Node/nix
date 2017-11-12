@@ -189,6 +189,16 @@ ndsize_t SampledDimension::indexOf(const double position) const {
 }
 
 
+std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, const double end) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+
+    ndsize_t si = getSampledIndex(start, offset, sampling_interval);
+    ndsize_t ei = getSampledIndex(end, offset, sampling_interval);
+    return std::pair<ndsize_t, ndsize_t>(si, ei);
+}
+
+
 double SampledDimension::positionAt(const ndsize_t index) const {
 
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
