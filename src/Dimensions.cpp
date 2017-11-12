@@ -381,6 +381,21 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 }
 
 
+std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
+                                                                   const std::vector<double> &end_positions) const {
+    std::vector<std::pair<ndsize_t, ndsize_t>> indices(std::min(start_positions.size(), end_positions.size()));
+    vector<double> ticks = this->ticks();
+
+    for (size_t i = 0; i < (std::min(start_positions.size(), end_positions.size())); i++) {
+        if (start_positions[i] > end_positions[i] ) {
+            continue;
+        }
+        indices.emplace_back(getIndex(start_positions[i], ticks), getIndex(end_positions[i], ticks));
+    }
+    return indices;
+}
+
+
 vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
     size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
