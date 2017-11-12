@@ -173,15 +173,19 @@ void SampledDimension::samplingInterval(double interval) {
 }
 
 
-ndsize_t SampledDimension::indexOf(const double position) const {
-    ndssize_t index;
-    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
-    double sampling_interval = backend()->samplingInterval();
-    index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
+ndsize_t getSampledIndex(const double position, const double offset, const double sampling_interval) {
+    ndssize_t index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
     if (index < 0) {
         throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
     }
     return static_cast<ndsize_t>(index);
+}
+
+
+ndsize_t SampledDimension::indexOf(const double position) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    return getSampledIndex(position, offset, sampling_interval);
 }
 
 
