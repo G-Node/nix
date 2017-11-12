@@ -372,9 +372,19 @@ ndsize_t RangeDimension::indexOf(const double position) const {
     return getIndex(position, ticks);
 }
 
+
+pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const double end) const {
+    vector<double> ticks = this->ticks();
+    ndsize_t si = getIndex(start, ticks);
+    ndsize_t ei = getIndex(end, ticks);
+    return std::pair<ndsize_t, ndsize_t>(si, ei);
+}
+
+
+vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
     size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
- 
+
     vector<double> ticks = this->ticks();
 
     size_t end;
@@ -416,7 +426,3 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
 
     return *this;
 }
-
-
-
-
