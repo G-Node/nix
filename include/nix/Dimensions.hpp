@@ -281,7 +281,7 @@ public:
         ImplContainer::operator=(t);
         return *this;
     }
-    
+
     /**
      * @brief Returns the position at the given index
      *
@@ -497,12 +497,12 @@ public:
      * @param other     The dimension to copy.
      */
     RangeDimension(const RangeDimension &other);
-    
+
     /**
-     *   @brief tells if the RangeDimension uses the contents of a linked DataArray for ticks, 
+     *   @brief tells if the RangeDimension uses the contents of a linked DataArray for ticks,
      *  i.e. is an alias.
-     *  
-     * @return bool true, if RangeDimension is an alias, false otherwise. 
+     *
+     * @return bool true, if RangeDimension is an alias, false otherwise.
      */
     bool alias() const {
         return backend()->alias();
@@ -610,7 +610,7 @@ public:
      * @param ticks     The new ticks for the dimension provided as a vector.
      */
     void ticks(const std::vector<double> &ticks);
-    
+
     /**
      * @brief Returns the entry of the range dimension at a given index.
      *
@@ -626,23 +626,37 @@ public:
      * @brief Returns the index of the given position
      *
      * Method will return the index equal or larger than position
-     * 
+     *
      * @param position    The position.
      *
      * @return The index.
      */
     ndsize_t indexOf(const double position) const;
-    
+
+
+    /**
+     * @brief Returns the start and end index of the given start and end positions.
+     *
+     * Method will return the index equal or larger than the respective positions
+     *
+     * @param start      The start position
+     * @param end        The end position
+     *
+     * @return  Start and end index returned in a std::pair.
+     */
+    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+
+
     /**
      * @brief Returns a vector containing a number of ticks
      *
      * The result vector contains a given number of ticks starting from a
-     * starting index 
+     * starting index
      *
      * @param count       The number of ticks.
      * @param startIndex  The starting index. Default 0.
      *
-     * @return vector<double> containing the ticks. 
+     * @return vector<double> containing the ticks.
      *
      * Method will throw a nix::OutOfBounds exception if startIndex + count is beyond
      * the number of ticks.
