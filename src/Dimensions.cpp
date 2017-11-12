@@ -356,20 +356,21 @@ double RangeDimension::tickAt(const ndsize_t index) const {
     return ticks[idx];
 }
 
-
-ndsize_t RangeDimension::indexOf(const double position) const {
-    vector<double> ticks = this->ticks();
+ndsize_t getIndex(const double position, std::vector<double> &ticks) {
     if (position < *ticks.begin()) {
         return 0;
     } else if (position > *prev(ticks.end())) {
         return prev(ticks.end()) - ticks.begin();
     }
-    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position);
+    std::vector<double>::iterator low = std::lower_bound(ticks.begin(), ticks.end(), position);
     return low - ticks.begin();
 }
 
 
-vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
+ndsize_t RangeDimension::indexOf(const double position) const {
+    vector<double> ticks = this->ticks();
+    return getIndex(position, ticks);
+}
 
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
     size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
