@@ -234,6 +234,22 @@ public:
      */
     ndsize_t indexOf(const double position) const;
 
+
+    /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data!
+     *
+     * @param position  The position, e.g. a time
+     *
+     * @returns The respective index.
+     */
+    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+
+
     /**
      * @brief Returns the position of this dimension at a given index.
      *
