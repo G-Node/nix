@@ -647,6 +647,20 @@ public:
     std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
 
 
+     /**
+     * @brief Returns a vector of start and end indices of given start and end positions.
+     *
+     * Method will return the index equal or larger than the respective positions
+     *
+     * @param start_positions    Vector of start positions
+     * @param end_positions      Vector of end positions
+     *
+     * @return  Vector of pairs of start and end indices.
+     */
+    std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
+                                                       const std::vector<double> &end_positions) const;
+
+
     /**
      * @brief Returns a vector containing a number of ticks
      *
