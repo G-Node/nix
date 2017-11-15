@@ -24,6 +24,7 @@ class TestBlockHDF5 : public BaseTestBlock {
     CPPUNIT_TEST(testMetadataAccess);
     CPPUNIT_TEST(testSourceAccess);
     CPPUNIT_TEST(testDataArrayAccess);
+    CPPUNIT_TEST(testDataFrameAccess);
     CPPUNIT_TEST(testTagAccess);
     CPPUNIT_TEST(testMultiTagAccess);
     CPPUNIT_TEST(testGroupAccess);

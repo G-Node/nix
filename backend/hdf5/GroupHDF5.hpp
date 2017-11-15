@@ -21,7 +21,7 @@ class GroupHDF5 : virtual public base::IGroup, public EntityWithSourcesHDF5,
 
 private:
 
-    optGroup data_array_group, tag_group, multi_tag_group;
+    optGroup data_array_group, data_frame_group, tag_group, multi_tag_group;
 
 
     // Helper methods for generic entity related methods below

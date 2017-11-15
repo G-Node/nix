@@ -17,6 +17,7 @@ enum class ObjectType {
     File        = 1,
     Block,
     DataArray,
+    DataFrame,
     Tag,
     Source,
     Feature,

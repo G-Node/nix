@@ -22,6 +22,7 @@ class TestGroupHDF5 : public BaseTestGroup {
     CPPUNIT_TEST(testOperators);
 
     CPPUNIT_TEST(testDataArrays);
+    CPPUNIT_TEST(testDataFrames);
     CPPUNIT_TEST(testTags);
     CPPUNIT_TEST(testMultiTags);
 

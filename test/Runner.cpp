@@ -27,6 +27,7 @@
 #include "hdf5/TestDataSet.hpp"
 #include "hdf5/TestH5Group.hpp"
 #include "hdf5/TestDataArrayHDF5.hpp"
+#include "hdf5/TestDataFrameHDF5.hpp"
 #include "hdf5/TestBaseTagHDF5.hpp"
 #include "hdf5/TestMultiTagHDF5.hpp"
 #include "hdf5/TestTagHDF5.hpp"
@@ -70,6 +71,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5Group);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayHDF5);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataFrameHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestBaseTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestMultiTagHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestTagHDF5);
@@ -138,7 +140,7 @@ int main(int argc, char* argv[]) {
 
     CPPUNIT_NS::CompilerOutputter compileroutputter(&collectedresults, std::cerr);
     compileroutputter.write();
-    
+
     std::cout << "\n";
 
     return !collectedresults.wasSuccessful();

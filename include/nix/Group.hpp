@@ -12,6 +12,7 @@
 #include <nix/base/EntityWithSources.hpp>
 #include <nix/base/IGroup.hpp>
 #include <nix/DataArray.hpp>
+#include <nix/DataFrame.hpp>
 #include <nix/Platform.hpp>
 #include <nix/ObjectType.hpp>
 #include <nix/util/util.hpp>
@@ -222,6 +223,152 @@ public:
     void dataArrays(const std::vector<DataArray> &data_arrays);
 
     //--------------------------------------------------
+    // Methods concerning data frames.
+    //--------------------------------------------------
+    /**
+     * @brief Checks whether a DataFrame is referenced by the group.
+     *
+     * @param id        The id of the DataFrame to check.
+     *
+     * @return True if the data frame is referenced, false otherwise.
+     */
+    bool hasDataFrame(const std::string &name_or_id) const {
+        return backend()->hasEntity({name_or_id, ObjectType::DataFrame});
+    }
+
+    /**
+     * @brief Checks whether a DataFrame is referenced by the group.
+     *
+     * @param data_frame The DataFrame to check.
+     *
+     * @return True if the data frame is referenced, false otherwise.
+     */
+    bool hasDataFrame(const DataFrame &data_frame) const {
+        if (!util::checkEntityInput(data_frame, false)) {
+            return false;
+        }
+        return backend()->hasEntity(data_frame);
+    }
+
+    /**
+     * @brief Gets the number of referenced DataFrame entities of the tag.
+     *
+     * @return The number of referenced data frames.
+     */
+    ndsize_t dataFrameCount() const {
+        return backend()->entityCount(ObjectType::DataFrame);
+    }
+
+    /**
+     * @brief Gets a specific referenced DataFrame from the tag.
+     *
+     * @param name_or_id           The name or id of the referenced
+     *                             DataFrame (using the id is faster).
+     *
+     * @return The referenced data frame.
+     */
+    DataFrame getDataFrame(const std::string &name_or_id) const {
+        return backend()->getEntity<base::IDataFrame>(name_or_id);
+    }
+
+    /**
+     * @brief Gets a referenced DataFrame by its index.
+     *
+     * @param index     The index of the DataFrame.
+     *
+     * @return The referenced data frame.
+     */
+    DataFrame getDataFrame(ndsize_t index) const {
+        if (index >= backend()->entityCount(ObjectType::DataFrame)) {
+            throw OutOfBounds("No DataFrame at given index", index);
+        }
+        return backend()->getEntity<base::IDataFrame>(index);
+    }
+
+    /**
+     * @brief Add a DataFrame to the list of referenced data of the group.
+     *
+     * @param data_frame The DataFrame to add.
+     */
+    void addDataFrame(const DataFrame &data_frame) {
+        if (util::checkEntityInput(data_frame, true)) {
+            backend()->addEntity(data_frame);
+        }
+    }
+    /**
+     * @brief Add a DataFrame to the list of referenced data of the group.
+     *
+     * @param name_or_id        The name or id of the DataFrame to add.
+     */
+    void addDataFrame(const std::string &name_or_id) {
+        backend()->addEntity({name_or_id, ObjectType::DataFrame});
+    }
+    /**
+     * @brief Remove a DataFrame from the list of referenced data of the group.
+     *
+     * This method just removes the association between the data frame and the
+     * tag, the data frame itself will not be removed from the file.
+     *
+     * @param data_frame The DataFrame to remove.
+     *
+     * @returns True if the DataFrame was removed, false otherwise.
+     */
+    bool removeDataFrame(const DataFrame &data_frame) {
+        if (!util::checkEntityInput(data_frame, false)) {
+            return false;
+        }
+        return backend()->removeEntity(data_frame);
+    }
+    /**
+     * @brief Remove a DataFrame from the list of referenced data of the group.
+     *
+     * This method just removes the association between the data frame and the
+     * tag, the data frame itself will not be removed from the file.
+     *
+     * @param name_or_id        The name or the id of the DataFrame to
+     *                          remove. (using the id is faster)
+     *
+     * @returns True if the DataFrame was removed, false otherwise.
+     */
+    bool removeDataFrame(const std::string &name_or_id) {
+        return backend()->removeEntity({name_or_id, ObjectType::DataFrame});
+    }
+
+    /**
+     * @brief Get referenced data frames associated with this group.
+     *
+     * The parameter filter can be used to filter data frames by various
+     * criteria.
+     *
+     * @param filter    A filter function.
+     *
+     * @return A vector containing the matching data frames.
+     */
+    std::vector<DataFrame> dataFrames(const util::Filter<DataFrame>::type &filter) const;
+
+    /**
+     * @brief Get all referenced data frames associated with this group.
+     *
+     * Always uses filter that accepts all dataFrames.
+     *
+     * @return The filtered DataFrames as a vector
+     */
+    std::vector<DataFrame> dataFrames() const
+    {
+        return dataFrames(util::AcceptAll<DataFrame>());
+    }
+
+    /**
+     * @brief Sets all referenced DataFrame entities.
+     *
+     * Previously referenced data frames, that are not in the references vector
+     * will be removed.
+     *
+     * @param data_frames    All referenced arrays.
+     */
+    void dataFrames(const std::vector<DataFrame> &data_frames);
+
+    //--------------------------------------------------
     // Methods concerning tags.
     //--------------------------------------------------
 
@@ -287,7 +434,7 @@ public:
     /**
      * @brief Add a Tag to the list of referenced data of the group.
      *
-     * @param data_array The Tag to add.
+     * @param tag The Tag to add.
      */
     void addTag(const Tag &tag) {
         if (util::checkEntityInput(tag, true)) {

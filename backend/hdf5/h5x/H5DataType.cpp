@@ -277,7 +277,7 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
         case DataType::Nothing: break;
     }
 
-    throw std::invalid_argument("Unkown DataType"); //FIXME
+    throw std::invalid_argument("Unknown DataType"); //FIXME
 }
 
 
@@ -302,7 +302,9 @@ h5x::DataType data_type_to_h5_memtype(DataType dtype) {
         case DataType::Opaque: return h5x::DataType::copy(H5T_NATIVE_OPAQUE);
 
         case DataType::Char: break; //FIXME
-        case DataType::Nothing: break;
+        case DataType::Nothing:
+            throw std::invalid_argument("Invalid DataType: Nothing");
+            break;
     }
 
     throw std::invalid_argument("DataType not handled!"); //FIXME
