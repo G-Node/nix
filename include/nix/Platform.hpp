@@ -54,3 +54,11 @@
 #ifndef __has_builtin
 #define __has_builtin(x) 0
 #endif
+
+#ifdef _MSC_VER
+#define DEPRECATED __declspec(deprecated)
+#elif defined(__GNUC__) | defined(__clang__)
+#define DEPRECATED __attribute__((__deprecated__))
+#else
+#define DEPRECATED
+#endif
