@@ -103,8 +103,9 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsiz
  * @param array                 The referenced DataArray.
  *
  * @return The data referenced by position and extent.
+ * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -114,8 +115,9 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by position and extent.
+ * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
 
 
 /**
