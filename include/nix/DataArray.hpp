@@ -367,7 +367,7 @@ public:
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and ignores the id argument!
      */
-    SetDimension createSetDimension(ndsize_t id) {
+    DEPRECATED SetDimension createSetDimension(ndsize_t id) {
         return appendSetDimension();
     }
 
@@ -383,7 +383,7 @@ public:
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and ignores the id argument!
      */
-    RangeDimension createRangeDimension(ndsize_t id, const std::vector<double> &ticks) {
+    DEPRECATED RangeDimension createRangeDimension(ndsize_t id, const std::vector<double> &ticks) {
         return appendRangeDimension(ticks);
     }
 
@@ -393,7 +393,7 @@ public:
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and will be removed. Use appendAliasRangeDimension instead!
      */
-    RangeDimension createAliasRangeDimension() {
+    DEPRECATED RangeDimension createAliasRangeDimension() {
         return appendAliasRangeDimension();
     }
 
@@ -409,7 +409,7 @@ public:
      * @return The created dimension descriptor.
      * @deprecated This function is deprecated and ignores the id argument!
      */
-    SampledDimension createSampledDimension(ndsize_t id, double sampling_interval) {
+    DEPRECATED SampledDimension createSampledDimension(ndsize_t id, double sampling_interval) {
         return appendSampledDimension(sampling_interval);
     }
 
