@@ -105,7 +105,7 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsiz
  * @return The data referenced by position and extent.
  */
 NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
-    
+
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
@@ -116,6 +116,30 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const
  * @return The data referenced by position and extent.
  */
 NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
+
+
+/**
+ * @brief Retrieve several data segments referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The indices of the positions.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ */
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector<ndsize_t> &position_indices, const DataArray &array);
+
+/**
+ * @brief Retrieve several segments of  data referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The indices of the position.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ */
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector<ndsize_t> &position_indices, size_t reference_index);
+
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -137,7 +161,7 @@ NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
  */
 NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
 
-    
+
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
  *
@@ -178,7 +202,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  * @return The associated data.
  */
 NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
-    
+
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
  *
