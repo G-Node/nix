@@ -3,7 +3,7 @@ exec_prefix=${CMAKE_INSTALL_PREFIX}
 libdir=${CMAKE_INSTALL_PREFIX}/lib
 includedir=${CMAKE_INSTALL_PREFIX}/include
 
-Name: nix
+Name: nixio
 Description: IO-library for nix datafiles
 Version: ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 Libs: -L${CMAKE_INSTALL_PREFIX}/lib -lnix
