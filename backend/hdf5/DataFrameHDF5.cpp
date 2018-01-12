@@ -189,7 +189,7 @@ struct Janus {
 
 
         size_t ms = std::accumulate(dtypes.cbegin(), dtypes.cend(), size_t(0),
-                                    [&dst](size_t size, const h5x::DataType &dt) {
+                                    [](size_t size, const h5x::DataType &dt) {
                                         return size + dt.size();
                                     });
 
