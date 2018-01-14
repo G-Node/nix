@@ -132,21 +132,21 @@ else()
   set(NIX_LIBTYPE SHARED)
 endif()
 
-add_library(nix ${NIX_LIBTYPE} ${nix_INCLUDES} ${nix_SOURCES})
-target_link_libraries(nix ${LINK_LIBS})
-set_target_properties(nix PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-set_target_properties(nix PROPERTIES COMPILE_FLAGS "-fPIC")
-set_target_properties(nix PROPERTIES
+add_library(nixio ${NIX_LIBTYPE} ${nix_INCLUDES} ${nix_SOURCES})
+target_link_libraries(nixio ${LINK_LIBS})
+set_target_properties(nixio PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+set_target_properties(nixio PROPERTIES COMPILE_FLAGS "-fPIC")
+set_target_properties(nixio PROPERTIES
 		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 		      SOVERSION ${VERSION_ABI})
 
 if(WIN32)
-  set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  set_target_properties(nixio PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
 endif()
 
 
 if(NIX_FRAMEWORK)
-  set_target_properties(nix PROPERTIES
+  set_target_properties(nixio PROPERTIES
                         FRAMEWORK FALSE
                         FRAMEWORK_VERSION 1.0
                         PUBLIC_HEADER "${nix_INCLUDES}")
@@ -155,7 +155,7 @@ endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
   add_executable(playground EXCLUDE_FROM_ALL main.cpp)
-  target_link_libraries(playground nix)
+  target_link_libraries(playground nixio)
 endif()
 
 
@@ -167,7 +167,7 @@ if(CLANG_CHECK)
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
 
   add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
-                    DEPENDS nix
+                    DEPENDS nixio
 		    SOURCES ${nix_SOURCES})
 endif()
 
@@ -183,7 +183,7 @@ add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
 if(NOT WIN32)
   set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
-target_link_libraries(nix-tool nix)
+target_link_libraries(nix-tool nixio)
 set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 message(STATUS "CLI executable added")
 
@@ -224,12 +224,12 @@ if(BUILD_TESTING)
   if(NOT WIN32)
     set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
   endif()
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
+  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nixio)
 
 endif()
 
 add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
-target_link_libraries(nix-bench nix)
+target_link_libraries(nix-bench nixio)
 if(NOT WIN32)
   set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
@@ -238,7 +238,7 @@ endif()
 ########################################
 # Install
 
-install(TARGETS nix nix-tool
+install(TARGETS nixio nix-tool
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
@@ -255,7 +255,7 @@ install(FILES ${CMAKE_BINARY_DIR}/nixio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgcon
 # CPack for Win
 if(WIN32)
 
-  install(TARGETS nix
+  install(TARGETS nixio
 		  ARCHIVE
 		  DESTINATION lib
 		  COMPONENT libraries)
