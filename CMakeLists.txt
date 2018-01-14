@@ -247,8 +247,8 @@ install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 
 #pkg-config support
-configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
-install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio.pc)
+install(FILES ${CMAKE_BINARY_DIR}/nixio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 
 ########################################
