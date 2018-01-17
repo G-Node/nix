@@ -6,5 +6,5 @@ includedir=${CMAKE_INSTALL_PREFIX}/include
 Name: nixio
 Description: IO-library for nix datafiles
 Version: ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
-Libs: -L${CMAKE_INSTALL_PREFIX}/lib -lnix
+Libs: -L${CMAKE_INSTALL_PREFIX}/lib -lnixio
 Cflags: -I${CMAKE_INSTALL_PREFIX}/include/nix
