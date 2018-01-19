@@ -179,12 +179,12 @@ file(GLOB NixCli_SOURCES "cli/*.cpp")
 file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
 include_directories("cli")
 
-add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
+add_executable(nixio-tool cli/Cli.cpp ${NixCli_SOURCES})
 if(NOT WIN32)
-  set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  set_target_properties(nixio-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
 endif()
-target_link_libraries(nix-tool nixio)
-set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
+target_link_libraries(nixio-tool nixio)
+set_target_properties(nixio-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
 message(STATUS "CLI executable added")
 
 
@@ -238,7 +238,7 @@ endif()
 ########################################
 # Install
 
-install(TARGETS nixio nix-tool
+install(TARGETS nixio nixio-tool
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
@@ -276,7 +276,7 @@ endif()
 		  DESTINATION ./
 		  COMPONENT libraries)
 
-  install(TARGETS nix-tool
+  install(TARGETS nixio-tool
 		  RUNTIME
 		  DESTINATION bin
 		  COMPONENT applications)
