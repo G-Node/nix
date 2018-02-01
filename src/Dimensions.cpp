@@ -200,7 +200,8 @@ std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, cons
 
 
 std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::vector<double> &start_positions,
-                                                                     const std::vector<double> &end_positions) const {
+                                                                     const std::vector<double> &end_positions,
+                                                                     const std::vector<std::string> &units) const {
     std::vector<std::pair<ndsize_t, ndsize_t>> indices(std::min(start_positions.size(), end_positions.size()));
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
