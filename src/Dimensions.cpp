@@ -412,7 +412,8 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 
 
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
-                                                                   const std::vector<double> &end_positions) const {
+                                                                   const std::vector<double> &end_positions,
+                                                                   const std::vector<std::string> & units) const {
     std::vector<std::pair<ndsize_t, ndsize_t>> indices(std::min(start_positions.size(), end_positions.size()));
     vector<double> ticks = this->ticks();
 
