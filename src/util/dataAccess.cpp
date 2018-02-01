@@ -350,22 +350,15 @@ vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &posit
 
 
 vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices, const DataArray &array) {
-    DataArray positions = tag.positions();
-    DataArray extents = tag.extents();
     vector<NDSize> counts, offsets;
     vector<DataView> views;
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts);
-    for (ndsize_t index : position_indices) {
-        /*
-        NDSize offset, count;
-        getOffsetAndCount(tag, array, index, offset, count);
-
-        if (!positionAndExtentInData(array, offset, count)) {
+    for (ndsize_t i = 0; i < offsets.size(); i++) {
+        if (!positionAndExtentInData(array, offsets[i], counts[i])) {
             throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
         }
-        */
-        DataView io = DataView(array, count, offset);
+        DataView io = DataView(array, count[i], offset[i]);
         views.push_back(io);
     }
     return views;
