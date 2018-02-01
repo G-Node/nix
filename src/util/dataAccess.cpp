@@ -57,7 +57,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
     } else {
         RangeDimension dim;
         dim = dimension;
-        indices = positionToIndex(start_position, end_positions, units, dim);
+        indices = positionToIndex(start_positions, end_positions, units, dim);
     }
     return indices;
 }
@@ -173,7 +173,6 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     if (extents) {
         extent_size = extents.dataExtent();
     }
-
     if (position_size.size() == 1 && dimension_count != 1) {
         throw nix::IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
                                           "util::getOffsetAndCount");
@@ -187,16 +186,19 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
                                           "util::getOffsetAndCount");
     }
     ndsize_t max_index =*std::max_element(indices.begin(), indices.end());
-    if (max_index >= positions[0] || (extents && max_index >= extents[0])) {
+    if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
         throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
-
+    //TODO need to calculate dimension scaling at this point
+    NDSize temp_offset(dimension_count, static_cast<NDSize::value_type>(0));
+    NDSize temp_count(1, static_cast<NDSize::value_type>(dimension_count)); //{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
     for (ndsize_t index : indices) {
-         NDSize temp_offset = NDSize{index, static_cast<NDSize::value_type>(0)};
-         NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
-         vector<double> offset;
-         positions.getData(offset, temp_count, temp_offset);
-
+        temp_offset[0] = index;
+        vector<double> offset, extent;
+        positions.getData(offset, temp_count, temp_offset);
+        if (extents) {
+            extents.getData(extent, temp_count, temp_offset);
+        }
          size_t dc_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
          NDSize data_offset(dc_sizet, static_cast<ndsize_t>(0));
          NDSize data_count(dc_sizet, static_cast<ndsize_t>(1));
@@ -224,8 +226,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         }
     }
 
-    offsets = data_offset;
-    counts = data_count;
+         offsets.push_back(data_offset);
+         counts.push_back(data_count);
 
     }
 }
@@ -340,7 +342,6 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 
 vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices, size_t reference_index) {
     vector<DataArray> refs = tag.references();
-
     if (reference_index >= tag.referenceCount()) {
         throw nix::OutOfBounds("Reference index out of bounds.", 0);
     }
@@ -358,7 +359,7 @@ vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &posit
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
             throw nix::OutOfBounds("References data slice out of the extent of the DataArray!", 0);
         }
-        DataView io = DataView(array, count[i], offset[i]);
+        DataView io = DataView(array, counts[i], offsets[i]);
         views.push_back(io);
     }
     return views;
