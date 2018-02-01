@@ -186,14 +186,12 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         throw nix::IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data",
                                           "util::getOffsetAndCount");
     }
+    ndsize_t max_index =*std::max_element(indices.begin(), indices.end());
+    if (max_index >= positions[0] || (extents && max_index >= extents[0])) {
+        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
+    }
 
     for (ndsize_t index : indices) {
-         if (!positions || index >= position_size[0]) {
-             throw nix::OutOfBounds("Index out of bounds of positions!", 0);
-         }
-         if (extents && index >= extent_size[0]) {
-             throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
-         }
          NDSize temp_offset = NDSize{index, static_cast<NDSize::value_type>(0)};
          NDSize temp_count{static_cast<NDSize::value_type>(1), static_cast<NDSize::value_type>(dimension_count)};
          vector<double> offset;
@@ -355,26 +353,7 @@ vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &posit
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     vector<NDSize> counts, offsets;
-    vector<DataView> views;//(position_indices.size());
-
-    ndsize_t dimension_count = array.dimensionCount();
-    ndsize_t max_index =*std::max_element(position_indices.begin(), position_indices.end());
-    //std::vector<ndsize_t>::iterator result;
-    //result = std::max_element(positions_indices.begin(), positions_indices.end());
-    //    std::cout << "max element at: " << std::distance(v.begin(), result) << '\n';
-    if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
-        throw nix::OutOfBounds("Index out of bounds of positions or extents!", 0);
-    }
-    if (positions.dataExtent().size() == 1 && dimension_count != 1) {
-        throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
-                                          "util::retrieveData");
-    } else if (positions.dataExtent().size() > 1) {
-        if (positions.dataExtent()[1] > dimension_count ||
-            (extents && extents.dataExtent()[1] > dimension_count)) {
-            throw nix::IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data",
-                                              "util::retrieveData");
-        }
-    }
+    vector<DataView> views;
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts);
     for (ndsize_t index : position_indices) {
