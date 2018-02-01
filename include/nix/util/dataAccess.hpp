@@ -81,6 +81,42 @@ NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const 
 NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 /**
+ * @brief Converts the passed vector of start and end positions in a unit into a vector of respective indices
+ * according to the dimension descriptor.
+ *
+ * This function can be used to get the index of e.g. a certain point in time in a Dimension that
+ * represents time. The units of the position and that provided by the Dimension must match, i.e.
+ * must be scalable versions of the same SI unit.
+ *
+ * @param positions     std::vector of positions
+ * @param units         std::vector of units in which the respective position is given, must have the same size or may
+ *                      be empty
+ * @param dimension     The dimension descriptor for the respective dimension.
+ *
+ * @return The calculated indices.
+ *
+ * @throws nix::IncompatibleDimension The the dimensions are incompatible.
+ * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
+ */
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const SampledDimension &dimension);
+
+
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const SetDimension &dimension);
+
+
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const RangeDimension &dimension);
+
+
+/**
  * @brief Returns the offsets and element counts associated with position and extent of a Tag and
  *        the referenced DataArray.
  *
@@ -94,6 +130,8 @@ NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &of
 
 NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
 
+NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
+                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
