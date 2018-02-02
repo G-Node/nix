@@ -122,9 +122,12 @@ ndsize_t positionToIndex(double position, const string &unit, const SetDimension
 
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions, const vector<double> &end_positions,
                                                  const vector<string> &units, const SampledDimension &dimension) {
-    vector<pair<ndsize_t, ndsize_t>> indices;
-    return indices;
-
+    size_t count = std::min(start_positions.size(), end_positions.size());
+    std::vector<double> scaled_start(count);
+    std::vector<double> scaled_end(count);
+    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
+    return dimension.indexOf(scaled_start, scaled_end);
 }
 
 
