@@ -23,6 +23,29 @@ namespace nix {
 namespace util {
 
 
+void scalePositions(const std::vector<double> &starts, const std::vector<double> &ends,
+                    const std::vector<std::string> &units, const std::string & dim_unit,
+                    std::vector<double> &scaled_starts, std::vector<double> &scaled_ends) {
+    size_t count = std::min(starts.size(), ends.size());
+    if (scaled_starts.size() != count)
+        scaled_starts.resize(count);
+    if (scaled_ends.size() != count)
+        scaled_ends.resize(count);
+    double scaling= 1.0;
+    for (size_t i = 0; i < count; i++) {
+        if (i < units.size() && units[i] != "none" && dim_unit != "none") {
+            try {
+                scaling = util::getSIScaling(units[i], dim_unit);
+            } catch (...) {
+                throw nix::IncompatibleDimensions("Provided units are not scalable!", "nix::util::positionToIndex");
+            }
+        }
+        scaled_starts[i] = starts[i] * scaling;
+        scaled_ends[i] = ends[i] * scaling;
+    }
+}
+
+
 ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
     ndsize_t pos;
     if (dimension.dimensionType() == nix::DimensionType::Sample) {
