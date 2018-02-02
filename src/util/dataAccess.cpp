@@ -134,17 +134,24 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions, const vector<double> &end_positions,
                                                  const vector<string> &units, const SetDimension &dimension) {
     vector<pair<ndsize_t, ndsize_t>> indices;
+    for (size_t i = 0; i < (std::min(start_positions.size(), end_positions.size())); i++) {
+        if (start_positions[i] > end_positions[i] ) {
+            continue;
+        }
+        indices.emplace_back(start_positions[i], end_positions[i]);
+    }
     return indices;
 }
 
 
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions, const vector<double> &end_positions,
                                                  const vector<string> &units, const RangeDimension &dimension) {
-    // need to take the units into account!!!
-    //TODO
-    vector<pair<ndsize_t, ndsize_t>> indices;
-
-    return dimension.indexOf(start_positions, end_positions, units);
+    size_t count = std::min(start_positions.size(), end_positions.size());
+    std::vector<double> scaled_start(count);
+    std::vector<double> scaled_end(count);
+    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
+    return dimension.indexOf(scaled_start, scaled_end);
 }
 
 
