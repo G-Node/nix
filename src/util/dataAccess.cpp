@@ -193,7 +193,7 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
 }
 
 void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector<ndsize_t> &indices,
-                       vector<NDSize> &counts, vector<NDSize> &offsets) {
+                       vector<NDSize> &offsets, vector<NDSize> &counts) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
