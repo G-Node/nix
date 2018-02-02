@@ -257,13 +257,11 @@ public:
      *
      * @param start_positions    Vector of start positions
      * @param end_positions      Vector of end positions
-     * @param units              Vector of units.
      *
      * @return  Vector of pairs of start and end indices.
      */
     std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions,
-                                                       const std::vector<std::string> &units) const;
+                                                       const std::vector<double> &end_positions) const;
 
     /**
      * @brief Returns the position of this dimension at a given index.
@@ -689,8 +687,7 @@ public:
      * @return  Vector of pairs of start and end indices.
      */
     std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions,
-                                                       const std::vector<std::string> &units) const;
+                                                       const std::vector<double> &end_positions) const;
 
 
     /**
