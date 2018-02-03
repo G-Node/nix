@@ -351,6 +351,32 @@ public:
      */
     DataView retrieveData(size_t position_index, size_t reference_index) const;
 
+    /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param reference_index the index of the requested reference.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    std::vector<DataView> retrieveData(const std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
+
+     /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param name_or_id the name or the id of the requested DataArray.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    std::vector<DataView> retrieveData(const std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
+
      /**
      * @brief Retrieves the data slice tagged by a certain position and extent
      *        of a certain reference.
