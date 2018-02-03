@@ -101,16 +101,31 @@ std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type 
 
 
 DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
-    return util::retrieveData(*this, position_index, reference_index);
+    std::vector<ndsize_t> indices(1, position_index);
+    return util::retrieveData(*this, indices, reference_index)[0];
 }
 
 
 DataView MultiTag::retrieveData(size_t position_index, const std::string &name_or_id) const {
+    std::vector<ndsize_t> indices(1, position_index);
+    std::vector<DataView> slices = retrieveData(indices, name_or_id);
+    if (slices.size() < 1)
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
+    return slices[0];
+}
+
+
+std::vector<DataView> MultiTag::retrieveData(const std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
+    return util::retrieveData(*this, position_indices, reference_index);
+}
+
+
+std::vector<DataView> MultiTag::retrieveData(const std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
     nix::DataArray array = backend()->getReference(name_or_id);
     if (array) {
-        return util::retrieveData(*this, position_index, array);
+        return util::retrieveData(*this, position_indices, array);
     } else {
-        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
+        return std::vector<DataView>();
     }
 }
 
