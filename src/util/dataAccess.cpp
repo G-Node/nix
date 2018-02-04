@@ -443,13 +443,7 @@ DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
         //return NDArray(nix::DataType::Float,{0});
     }
     if (feature.linkType() == nix::LinkType::Tagged) {
-        NDSize offset, count;
-        getOffsetAndCount(tag, data, offset, count);
-        if (!positionAndExtentInData(data, offset, count)) {
-            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
-        }
-        DataView io = DataView(data, count, offset);
-        return io;
+        return retrieveData(tag, data);
     }
     // for untagged and indexed return the full data
     NDSize offset(data.dataExtent().size(), 0);
@@ -488,14 +482,8 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const
         //return NDArray(nix::DataType::Float,{0});
     }
     if (feature.linkType() == nix::LinkType::Tagged) {
-        NDSize offset, count;
-        getOffsetAndCount(tag, data, position_index, offset, count);
-
-        if (!positionAndExtentInData(data, offset, count)) {
-            throw nix::OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
-        }
-        DataView io = DataView(data, count, offset);
-        return io;
+        vector<ndsize_t> indices(1, position_index);
+        return retrieveData(tag, indices, data)[0];
     } else if (feature.linkType() == nix::LinkType::Indexed) {
         //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
         //For now it will just be a slice across the first dim.
