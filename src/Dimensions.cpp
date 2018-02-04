@@ -392,8 +392,8 @@ ndsize_t getIndex(const double position, std::vector<double> &ticks) {
     } else if (position > *prev(ticks.end())) {
         return prev(ticks.end()) - ticks.begin();
     }
-    std::vector<double>::iterator low = std::lower_bound(ticks.begin(), ticks.end(), position);
-    return low - ticks.begin();
+    std::vector<double>::iterator less_or_equal = std::upper_bound(ticks.begin(), ticks.end(), position) - 1;
+    return less_or_equal - ticks.begin();
 }
 
 
