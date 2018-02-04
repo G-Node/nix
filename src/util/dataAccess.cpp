@@ -26,13 +26,13 @@ namespace util {
 void scalePositions(const std::vector<double> &starts, const std::vector<double> &ends,
                     const std::vector<std::string> &units, const std::string & dim_unit,
                     std::vector<double> &scaled_starts, std::vector<double> &scaled_ends) {
-    size_t count = std::min(starts.size(), ends.size());
+    ndsize_t count = std::min(starts.size(), ends.size());
     if (scaled_starts.size() != count)
         scaled_starts.resize(count);
     if (scaled_ends.size() != count)
         scaled_ends.resize(count);
     double scaling= 1.0;
-    for (size_t i = 0; i < count; i++) {
+    for (ndsize_t i = 0; i < count; i++) {
         if (i < units.size() && units[i] != "none" && dim_unit != "none") {
             try {
                 scaling = util::getSIScaling(units[i], dim_unit);
@@ -233,22 +233,23 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     std::vector<std::vector<double>> start_positions(dimensions.size());
     std::vector<std::vector<double>> end_positions(dimensions.size());
 
-    for (ndsize_t index : indices) {
-        temp_offset[0] = index;
+    for (ndsize_t idx = 0; idx < indices.size(); ++idx) {
+        temp_offset[0] = indices[idx];
         vector<double> offset, extent;
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
         }
         for (ndsize_t dim_index = 0; dim_index < dimensions.size(); dim_index++) {
-            if (index == 0) {
+            if (idx == 0) {
                 start_positions[dim_index] = std::vector<double>(indices.size());
                 end_positions[dim_index] = std::vector<double>(indices.size());
             }
-            start_positions[dim_index][index] = offset[dim_index];
-            end_positions[dim_index][index] = offset[dim_index] + extent[dim_index];
+            start_positions[dim_index][idx] = offset[dim_index];
+            end_positions[dim_index][idx] = offset[dim_index] + extent[dim_index];
         }
     }
+
     std::vector<std::vector<std::pair<ndsize_t, ndsize_t>>> data_indices;
     for (ndsize_t dim_index = 0; dim_index < dimensions.size(); dim_index++) {
         std::vector<string> temp_units(start_positions.size(), units[dim_index]);
