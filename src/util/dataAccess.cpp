@@ -32,7 +32,7 @@ void scalePositions(const vector<double> &starts, const vector<double> &ends,
     if (scaled_ends.size() != count)
         scaled_ends.resize(count);
     double scaling= 1.0;
-    for (ndsize_t i = 0; i < count; i++) {
+    for (ndsize_t i = 0; i < count; ++i) {
         if (i < units.size() && units[i] != "none" && dim_unit != "none") {
             try {
                 scaling = util::getSIScaling(units[i], dim_unit);
@@ -126,8 +126,10 @@ ndsize_t positionToIndex(double position, const string &unit, const SetDimension
 }
 
 
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions, const vector<double> &end_positions,
-                                                 const vector<string> &units, const SampledDimension &dimension) {
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const SampledDimension &dimension) {
     size_t count = min(start_positions.size(), end_positions.size());
     vector<double> scaled_start(count);
     vector<double> scaled_end(count);
@@ -137,10 +139,12 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
 }
 
 
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions, const vector<double> &end_positions,
-                                                 const vector<string> &units, const SetDimension &dimension) {
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const SetDimension &dimension) {
     vector<pair<ndsize_t, ndsize_t>> indices;
-    for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); i++) {
+    for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); ++i) {
         if (start_positions[i] > end_positions[i] ) {
             continue;
         }
@@ -164,12 +168,11 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
 
 
 ndsize_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
-    boost::optional<string> dim_unit = dimension.unit();
+    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
     double scaling = 1.0;
-
-    if (dim_unit && unit != "none") {
+    if (unit != "none") {
         try {
-            scaling = util::getSIScaling(unit, *dim_unit);
+            scaling = util::getSIScaling(unit, dim_unit);
         } catch (...) {
             throw IncompatibleDimensions("Provided units are not scalable!",
                                          "nix::util::positionToIndex");
@@ -255,7 +258,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
         }
-        for (ndsize_t dim_index = 0; dim_index < dimensions.size(); dim_index++) {
+        for (ndsize_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
             if (idx == 0) {
                 start_positions[dim_index] = vector<double>(indices.size());
                 end_positions[dim_index] = vector<double>(indices.size());
@@ -266,16 +269,16 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     }
 
     vector<vector<pair<ndsize_t, ndsize_t>>> data_indices;
-    for (ndsize_t dim_index = 0; dim_index < dimensions.size(); dim_index++) {
+    for (ndsize_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
         vector<string> temp_units(start_positions.size(), units[dim_index]);
         data_indices.push_back(positionToIndex(start_positions[dim_index], end_positions[dim_index],
                                                temp_units, dimensions[dim_index]));
     }
 
-    for (ndsize_t i = 0; i < indices.size(); i++) {
+    for (ndsize_t i = 0; i < indices.size(); ++i) {
         NDSize data_offset(dimcount_sizet, static_cast<ndsize_t>(0));
         NDSize data_count(dimcount_sizet, static_cast<ndsize_t>(1));
-        for (ndsize_t dim_index =0; dim_index < dimensions.size(); dim_index++) {
+        for (ndsize_t dim_index =0; dim_index < dimensions.size(); ++dim_index) {
             data_offset[dim_index] = data_indices[dim_index][i].first;
             ndsize_t count =  data_indices[dim_index][i].second - data_indices[dim_index][i].first;
             data_count[dim_index] += count;
@@ -300,7 +303,7 @@ bool positionInData(const DataArray &data, const NDSize &position) {
     if (!(data_size.size() == position.size())) {
         return false;
     }
-    for (size_t i = 0; i < data_size.size(); i++) {
+    for (size_t i = 0; i < data_size.size(); ++i) {
         valid &= position[i] < data_size[i];
     }
     return valid;
@@ -326,22 +329,23 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices, size_t reference_index) {
+vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices,
+                              size_t reference_index) {
     vector<DataArray> refs = tag.references();
     if (reference_index >= tag.referenceCount()) {
         throw OutOfBounds("Reference index out of bounds.", 0);
     }
-
     return retrieveData(tag, position_indices, refs[reference_index]);
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices, const DataArray &array) {
+vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices,
+                              const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts);
-    for (ndsize_t i = 0; i < offsets.size(); i++) {
+    for (ndsize_t i = 0; i < offsets.size(); ++i) {
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
             throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
         }
@@ -388,7 +392,7 @@ DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
         throw UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
-    if (feature.linkType() == nix::LinkType::Tagged) {
+    if (feature.linkType() == LinkType::Tagged) {
         return retrieveData(tag, data);
     }
     // for untagged and indexed return the full data
