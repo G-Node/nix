@@ -197,11 +197,10 @@ void BaseTestDataAccess::testTagFeatureData() {
     pos_tag.extent({2.0});
     data1 = util::retrieveFeatureData(pos_tag, 0);
     data2 = util::retrieveFeatureData(pos_tag, 1);
-    std::cerr << data2.dataExtent();
     data3 = util::retrieveFeatureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
-    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 2);
+    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 3);
     CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
 
     pos_tag.deleteFeature(f1.id());
