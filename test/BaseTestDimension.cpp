@@ -405,15 +405,17 @@ void BaseTestDimension::testRangeTicks() {
 void BaseTestDimension::testRangeDimIndexOf() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
-   
+
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
 
     RangeDimension rd;
     rd = d;
     CPPUNIT_ASSERT(rd.indexOf(-100.) == 0);
-    CPPUNIT_ASSERT(rd.indexOf(-50.) == 1);
-    CPPUNIT_ASSERT(rd.indexOf(-70.) == 1);
-    CPPUNIT_ASSERT(rd.indexOf(5.0) == 3);
+    CPPUNIT_ASSERT(rd.indexOf(-50.) == 0);
+    CPPUNIT_ASSERT(rd.indexOf(-70.) == 0);
+    CPPUNIT_ASSERT(rd.indexOf(-10.0) == 1);
+    CPPUNIT_ASSERT(rd.indexOf(-5.0) == 1);
+    CPPUNIT_ASSERT(rd.indexOf(5.0) == 2);
     CPPUNIT_ASSERT(rd.indexOf(257.28) == 4);
     CPPUNIT_ASSERT(rd.indexOf(-257.28) == 0);
 
@@ -424,7 +426,7 @@ void BaseTestDimension::testRangeDimIndexOf() {
 void BaseTestDimension::testRangeDimTickAt() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
-   
+
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
 
     RangeDimension rd;
@@ -444,17 +446,17 @@ void BaseTestDimension::testRangeDimTickAt() {
 void BaseTestDimension::testRangeDimAxis() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
-   
+
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
 
     RangeDimension rd;
     rd = d;
-    
+
     std::vector<double> axis = rd.axis(2);
     CPPUNIT_ASSERT(axis.size() == 2);
     CPPUNIT_ASSERT(axis[0] == -100.0);
     CPPUNIT_ASSERT(axis[1] == -10.0);
-    
+
     axis = rd.axis(2, 2);
     CPPUNIT_ASSERT(axis.size() == 2);
     CPPUNIT_ASSERT(axis[0] == 0.0);
