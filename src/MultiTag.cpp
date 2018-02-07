@@ -115,12 +115,12 @@ DataView MultiTag::retrieveData(size_t position_index, const std::string &name_o
 }
 
 
-std::vector<DataView> MultiTag::retrieveData(const std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
+std::vector<DataView> MultiTag::retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
     return util::retrieveData(*this, position_indices, reference_index);
 }
 
 
-std::vector<DataView> MultiTag::retrieveData(const std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
+std::vector<DataView> MultiTag::retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
     nix::DataArray array = backend()->getReference(name_or_id);
     if (array) {
         return util::retrieveData(*this, position_indices, array);

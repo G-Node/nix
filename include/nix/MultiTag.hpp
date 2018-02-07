@@ -362,7 +362,7 @@ public:
      *
      * @return vector of DataView objects representing the slices.
      */
-    std::vector<DataView> retrieveData(const std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
+    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
 
      /*
      * @brief Retrieves multiple tagged data slices from a certain reference.
@@ -375,7 +375,7 @@ public:
      *
      * @return vector of DataView objects representing the slices.
      */
-    std::vector<DataView> retrieveData(const std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
+    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
 
      /**
      * @brief Retrieves the data slice tagged by a certain position and extent
