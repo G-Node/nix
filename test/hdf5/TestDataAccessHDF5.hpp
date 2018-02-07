@@ -21,10 +21,10 @@ class TestDataAccessHDF5 : public BaseTestDataAccess {
     CPPUNIT_TEST(testPositionToIndexRangeDimension);
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
-    //CPPUNIT_TEST(testRetrieveData);
+    CPPUNIT_TEST(testRetrieveData);
     CPPUNIT_TEST(testTagFeatureData);
     CPPUNIT_TEST(testMultiTagFeatureData);
-    //CPPUNIT_TEST(testMultiTagUnitSupport);
+    CPPUNIT_TEST(testMultiTagUnitSupport);
     CPPUNIT_TEST(testDataView);
     CPPUNIT_TEST_SUITE_END ();
 

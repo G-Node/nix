@@ -126,12 +126,12 @@ void BaseTestDataAccess::testPositionInData() {
 
 
 void BaseTestDataAccess::testRetrieveData() {
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, -1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 0, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, -1, 0), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, 10, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {0}, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {0}, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {-1}, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {10}, 0), nix::OutOfBounds);
 
-    DataView data_view = util::retrieveData(multi_tag, 0,0);
+    DataView data_view = util::retrieveData(multi_tag, {0},0);
     NDSize data_size = data_view.dataExtent();
 
     CPPUNIT_ASSERT(data_size.size() == 3);
