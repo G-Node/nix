@@ -26,13 +26,13 @@ namespace util {
 void scalePositions(const vector<double> &starts, const vector<double> &ends,
                     const vector<string> &units, const string & dim_unit,
                     vector<double> &scaled_starts, vector<double> &scaled_ends) {
-    ndsize_t count = min(starts.size(), ends.size());
+    size_t count = min(starts.size(), ends.size());
     if (scaled_starts.size() != count)
         scaled_starts.resize(count);
     if (scaled_ends.size() != count)
         scaled_ends.resize(count);
     double scaling= 1.0;
-    for (ndsize_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         if (i < units.size() && units[i] != "none" && dim_unit != "none") {
             try {
                 scaling = util::getSIScaling(units[i], dim_unit);
@@ -130,7 +130,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
                                                  const vector<double> &end_positions,
                                                  const vector<string> &units,
                                                  const SampledDimension &dimension) {
-    size_t count = min(start_positions.size(), end_positions.size());
+    ndsize_t count = min(start_positions.size(), end_positions.size());
     vector<double> scaled_start(count);
     vector<double> scaled_end(count);
     string dim_unit = dimension.unit() ? *dimension.unit() : "none";
@@ -242,7 +242,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
 
-    size_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
+    ndsize_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
     NDSize temp_offset(dimcount_sizet, static_cast<NDSize::value_type>(0));
     NDSize temp_count(dimcount_sizet, static_cast<NDSize::value_type>(1));
 
@@ -251,14 +251,14 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
 
-    for (ndsize_t idx = 0; idx < indices.size(); ++idx) {
+    for (size_t idx = 0; idx < indices.size(); ++idx) {
         temp_offset[0] = indices[idx];
         vector<double> offset, extent;
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
         }
-        for (ndsize_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
+        for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
             if (idx == 0) {
                 start_positions[dim_index] = vector<double>(indices.size());
                 end_positions[dim_index] = vector<double>(indices.size());
@@ -269,16 +269,16 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     }
 
     vector<vector<pair<ndsize_t, ndsize_t>>> data_indices;
-    for (ndsize_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
+    for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
         vector<string> temp_units(start_positions.size(), units[dim_index]);
         data_indices.push_back(positionToIndex(start_positions[dim_index], end_positions[dim_index],
                                                temp_units, dimensions[dim_index]));
     }
 
-    for (ndsize_t i = 0; i < indices.size(); ++i) {
+    for (size_t i = 0; i < indices.size(); ++i) {
         NDSize data_offset(dimcount_sizet, static_cast<ndsize_t>(0));
         NDSize data_count(dimcount_sizet, static_cast<ndsize_t>(1));
-        for (ndsize_t dim_index =0; dim_index < dimensions.size(); ++dim_index) {
+        for (size_t dim_index =0; dim_index < dimensions.size(); ++dim_index) {
             data_offset[dim_index] = data_indices[dim_index][i].first;
             ndsize_t count =  data_indices[dim_index][i].second - data_indices[dim_index][i].first;
             data_count[dim_index] += count;
@@ -317,7 +317,7 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index) {
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index) {
     vector<ndsize_t> indices(1, position_index);
     return retrieveData(tag, indices, reference_index)[0];
 }
@@ -329,8 +329,8 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices,
-                              size_t reference_index) {
+vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+                              ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
     if (reference_index >= tag.referenceCount()) {
         throw OutOfBounds("Reference index out of bounds.", 0);
@@ -339,13 +339,12 @@ vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &posit
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &position_indices,
+vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
                               const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
-
     getOffsetAndCount(tag, array, position_indices, offsets, counts);
-    for (ndsize_t i = 0; i < offsets.size(); ++i) {
+    for (size_t i = 0; i < offsets.size(); ++i) {
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
             throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
         }
@@ -356,7 +355,7 @@ vector<DataView> retrieveData(const MultiTag &tag, const vector<ndsize_t> &posit
 }
 
 
-DataView retrieveData(const Tag &tag, size_t reference_index) {
+DataView retrieveData(const Tag &tag, ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
     if (refs.size() == 0) {
         throw OutOfBounds("There are no references in this tag!", 0);
@@ -402,7 +401,7 @@ DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
+DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
     if (tag.featureCount() == 0) {
         throw OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -414,7 +413,7 @@ DataView retrieveFeatureData(const Tag &tag, size_t feature_index) {
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index) {
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
     if (tag.featureCount() == 0) {
        throw OutOfBounds("There are no features associated with this tag!", 0);
     }

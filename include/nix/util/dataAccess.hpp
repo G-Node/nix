@@ -155,7 +155,7 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  * @return The data referenced by position and extent.
  * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
 
 
 /**
@@ -167,7 +167,7 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  *
  * @return The data referenced by the specified indices, respectively their positions and extents.
  */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector<ndsize_t> &position_indices, const DataArray &array);
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
 
 /**
  * @brief Retrieve several segments of  data referenced by the given position and extent of the MultiTag.
@@ -178,7 +178,7 @@ NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector
  *
  * @return The data referenced by the specified indices, respectively their positions and extents.
  */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector<ndsize_t> &position_indices, size_t reference_index);
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
 
 
 /**
@@ -189,7 +189,7 @@ NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, const std::vector
  *
  * @return The data referenced by the position.
  */
-NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
+NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -231,7 +231,7 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
@@ -252,7 +252,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
