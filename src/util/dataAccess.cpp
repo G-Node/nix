@@ -241,7 +241,6 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
-
     ndsize_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
     NDSize temp_offset(dimcount_sizet, static_cast<NDSize::value_type>(0));
     NDSize temp_count(dimcount_sizet, static_cast<NDSize::value_type>(1));
@@ -250,13 +249,14 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     vector<Dimension> dimensions = array.dimensions();
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
-
     for (size_t idx = 0; idx < indices.size(); ++idx) {
         temp_offset[0] = indices[idx];
         vector<double> offset, extent;
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
+        } else {
+            extent.resize(offset.size(), 0.0);
         }
         for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
             if (idx == 0) {
@@ -267,7 +267,6 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
             end_positions[dim_index][idx] = offset[dim_index] + extent[dim_index];
         }
     }
-
     vector<vector<pair<ndsize_t, ndsize_t>>> data_indices;
     for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
         vector<string> temp_units(start_positions.size(), units[dim_index]);
