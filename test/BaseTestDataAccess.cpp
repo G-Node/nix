@@ -126,15 +126,24 @@ void BaseTestDataAccess::testPositionInData() {
 
 
 void BaseTestDataAccess::testRetrieveData() {
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {0}, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {10}, 0), nix::OutOfBounds);
+    std::vector<ndsize_t> position_indices(1, 0);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 1), nix::OutOfBounds);
 
-    DataView data_view = util::retrieveData(multi_tag, {0},0);
+    position_indices[0] = 10;
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 0), nix::OutOfBounds);
+
+    position_indices[0] = 0;
+    std::vector<DataView> views;
+    views = util::retrieveData(multi_tag, position_indices, 0);
+    CPPUNIT_ASSERT(views.size() == 1);
+
+    DataView data_view = views[0];
     NDSize data_size = data_view.dataExtent();
 
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, {1}, 0), nix::OutOfBounds);
+    position_indices[0] = 1;
+    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 0), nix::OutOfBounds);
 
     data_view = util::retrieveData(position_tag, 0);
     data_size = data_view.dataExtent();
@@ -154,6 +163,7 @@ void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size.size() == 1);
     CPPUNIT_ASSERT(data_size[0] == 77);
 }
+
 
 void BaseTestDataAccess::testTagFeatureData() {
     DataArray number_feat = block.createDataArray("number feature", "test", nix::DataType::Double, {1});
@@ -332,15 +342,16 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 void BaseTestDataAccess::testMultiTagUnitSupport() {
     std::vector<std::string> valid_units{"none","ms","s"};
     std::vector<std::string> invalid_units{"mV", "Ohm", "muV"};
-
+    std::vector<ndsize_t> position_indices(1);
     MultiTag testTag = block.createMultiTag("test", "testTag", multi_tag.positions());
     testTag.units(valid_units);
     testTag.addReference(data_array);
-    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, {0}, 0));
+    position_indices[0] = 0;
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
     testTag.units(none);
-    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, {0}, 0));
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
     testTag.units(invalid_units);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, {0}, 0), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, position_indices, 0), nix::IncompatibleDimensions);
 }
 
 
