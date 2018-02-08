@@ -388,9 +388,9 @@ void BaseTestDataArray::testUnit() {
 
     array1.unit(nix::none);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(testStr));
-    CPPUNIT_ASSERT_THROW(array1.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array1.appendAliasRangeDimension(), nix::InvalidDimension);
 
-    nix::Dimension dim = array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.appendAliasRangeDimension();
     CPPUNIT_ASSERT_NO_THROW(array3.unit(validUnit));
     array3.unit(nix::none);
     CPPUNIT_ASSERT_THROW(array3.unit(testStr), nix::InvalidUnit);
