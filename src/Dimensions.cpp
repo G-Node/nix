@@ -386,27 +386,34 @@ double RangeDimension::tickAt(const ndsize_t index) const {
     return ticks[idx];
 }
 
-ndsize_t getIndex(const double position, std::vector<double> &ticks) {
+ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
     if (position < *ticks.begin()) {
         return 0;
     } else if (position > *prev(ticks.end())) {
         return prev(ticks.end()) - ticks.begin();
     }
-    std::vector<double>::iterator less_or_equal = std::upper_bound(ticks.begin(), ticks.end(), position) - 1;
-    return less_or_equal - ticks.begin();
+    ndsize_t index;
+    if (lower_bound) {
+        std::vector<double>::iterator lower = std::lower_bound(ticks.begin(), ticks.end(), position);
+        index = lower - ticks.begin();
+    } else{
+        std::vector<double>::iterator upper = std::upper_bound(ticks.begin(), ticks.end(), position) - 1;
+        index = upper - ticks.begin();
+    }
+    return index;
 }
 
 
-ndsize_t RangeDimension::indexOf(const double position) const {
+ndsize_t RangeDimension::indexOf(const double position, bool less_or_equal) const {
     vector<double> ticks = this->ticks();
-    return getIndex(position, ticks);
+    return getIndex(position, ticks, !less_or_equal);
 }
 
 
 pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const double end) const {
     vector<double> ticks = this->ticks();
-    ndsize_t si = getIndex(start, ticks);
-    ndsize_t ei = getIndex(end, ticks);
+    ndsize_t si = getIndex(start, ticks, true);
+    ndsize_t ei = getIndex(end, ticks, false);
     return std::pair<ndsize_t, ndsize_t>(si, ei);
 }
 
@@ -420,7 +427,8 @@ std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::ve
         if (start_positions[i] > end_positions[i] ) {
             continue;
         }
-        indices.emplace_back(getIndex(start_positions[i], ticks), getIndex(end_positions[i], ticks));
+        indices.emplace_back(getIndex(start_positions[i], ticks, true),
+                             getIndex(end_positions[i], ticks, false));
     }
     return indices;
 }
