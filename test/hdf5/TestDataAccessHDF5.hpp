@@ -135,13 +135,12 @@ public:
         alias_array.unit("ms");
         alias_array.label("time");
         aliasDim = alias_array.appendAliasRangeDimension();
-        std::vector<double> segment_time({4.5});
-        times_tag = block.createTag("stimulus on", "segment", std::vector<double>({4.5}));
-        times_tag.extent(std::vector<double>({100.0}));
-        times_tag.units(std::vector<std::string>({"ms"}));
+        std::vector<double> segment_time(1, 4.5);
+        times_tag = block.createTag("stimulus on", "segment", {4.5});
+        times_tag.extent({100.0});
+        times_tag.units({"ms"});
         times_tag.addReference(alias_array);
     }
-
 
     void tearDown() {
         file.close();
