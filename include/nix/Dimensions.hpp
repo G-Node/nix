@@ -657,10 +657,13 @@ public:
      * Method will return the index equal or larger than position
      *
      * @param position    The position.
+     * @param less_or_equal  If true, the first index that is less or
+     *                       equal will be returned. Else, the first index
+     *                       that is not less than position will be returned.
      *
      * @return The index.
      */
-    ndsize_t indexOf(const double position) const;
+    ndsize_t indexOf(const double position, bool less_or_equal = true) const;
 
 
     /**
