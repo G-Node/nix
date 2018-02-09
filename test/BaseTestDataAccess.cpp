@@ -240,7 +240,6 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
         }
     }
     index_data.setData(data1);
-
     DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10});
     dim1 = tagged_data.appendSampledDimension(1.0);
     dim1.unit("ms");
@@ -262,49 +261,50 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
         }
     }
     tagged_data.setData(data2);
-
     Feature index_feature = multi_tag.createFeature(index_data, nix::LinkType::Indexed);
     Feature tagged_feature = multi_tag.createFeature(tagged_data, nix::LinkType::Tagged);
     Feature untagged_feature = multi_tag.createFeature(index_data, nix::LinkType::Untagged);
 
     // preparations done, actually test
+    std::vector<ndsize_t> indices(1, 0);
     CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
-    // indexed feature
-    DataView data_view = util::retrieveFeatureData(multi_tag, 0, 0);
-    NDSize data_size = data_view.dataExtent();
 
+    // indexed feature
+    DataView data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+
+    NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 2);
     CPPUNIT_ASSERT(data_size.nelms() == 10);
     double sum = 0.;
     double temp;
     NDSize offset(data_view.dataExtent().size(), 0);
-
     for (size_t i = 0; i < data_size[1]; ++i){
         offset[1] = i;
         data_view.getData<double>(temp, offset);
         sum += temp;
     }
-
     CPPUNIT_ASSERT(sum == 45);
 
-    data_view = util::retrieveFeatureData(multi_tag, 9, 0);
+    indices[0] = 1;
+    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
     sum = 0;
     for (size_t i = 0; i < data_view.dataExtent()[1]; ++i){
         offset[1] = i;
         data_view.getData<double>(temp, offset);
         sum += temp;
     }
-    CPPUNIT_ASSERT(sum == 9045);
+    CPPUNIT_ASSERT(sum == 1045);
+
     // untagged feature
-    data_view = util::retrieveFeatureData(multi_tag, 0, 2);
+    indices[0] = 0;
+    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
     CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 100);
 
-
-    data_view = util::retrieveFeatureData(multi_tag, 1, 2);
+    indices[0] = 1;
+    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.nelms() == 100);
     sum = 0;
-
     for (size_t i = 0; i < data_size[0]; ++i) {
         offset[0] = i;
         for (size_t j = 0; j < data_size[1]; ++j) {
@@ -314,21 +314,31 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
         }
     }
     CPPUNIT_ASSERT(sum == total);
+
     // tagged feature
-    data_view = util::retrieveFeatureData(multi_tag, 0, 1);
+    indices[0] = 0;
+    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    data_view = util::retrieveFeatureData(multi_tag, 0, tagged_feature);
+    data_view = util::retrieveFeatureData(multi_tag, indices, tagged_feature)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    data_view = util::retrieveFeatureData(multi_tag, 1, 1);
+    indices[0] = 1;
+    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 2, 3), nix::OutOfBounds);
+    indices[0] = 2;
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 3), nix::OutOfBounds);
+
+    // test multiple positions
+    std::vector<DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
+    CPPUNIT_ASSERT(views.size() == 2);
+    CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
+    CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
 
     // clean up
     multi_tag.deleteFeature(index_feature.id());
