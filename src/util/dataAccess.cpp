@@ -243,8 +243,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
     ndsize_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
-    NDSize temp_offset(dimension_count, static_cast<NDSize::value_type>(0));
-    NDSize temp_count(dimension_count, static_cast<NDSize::value_type>(1));
+    NDSize temp_offset(dimcount_sizet, static_cast<NDSize::value_type>(0));
+    NDSize temp_count(dimcount_sizet, static_cast<NDSize::value_type>(1));
 
     temp_count[1] = static_cast<NDSize::value_type>(dimension_count);
     vector<Dimension> dimensions = array.dimensions();
