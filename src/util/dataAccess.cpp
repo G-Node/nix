@@ -238,7 +238,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         throw IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data",
                                           "util::getOffsetAndCount");
     }
-    ndsize_t max_index =*max_element(indices.begin(), indices.end());
+    ndsize_t max_index = *max_element(indices.begin(), indices.end());
     if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
@@ -418,50 +418,80 @@ DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
 
 
 DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
-    if (tag.featureCount() == 0) {
-       throw OutOfBounds("There are no features associated with this tag!", 0);
-    }
     size_t feat_idx = check::fits_in_size_t(feature_index, "retrieveFeatureData() failed; feaure_index > size_t.");
+    if (feat_idx >= tag.featureCount()) {
+        throw OutOfBounds("Feature index out of bounds.", 0);
+    }
 
+    Feature feat = tag.getFeature(feat_idx);
+    std::vector<ndsize_t> indices(1, position_index);
+    return retrieveFeatureData(tag, indices, feat)[0];
+}
+
+
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+    std::vector<ndsize_t> indices(1, position_index);
+    std::vector<DataView> views = retrieveFeatureData(tag, indices, feature);
+    return views[0];
+}
+
+
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                          std::vector<ndsize_t> position_indices,
+                                          ndsize_t feature_index) {
+    size_t feat_idx = check::fits_in_size_t(feature_index,
+                                            "retrieveFeatureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feat_idx);
-    return retrieveFeatureData(tag, position_index, feat);
+    return retrieveFeatureData(tag, position_indices, feat);
 }
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                          std::vector<ndsize_t> position_indices,
+                                          const Feature &feature) {
+    std::vector<DataView> views;
     DataArray data = feature.data();
     if (data == nix::none) {
         throw UninitializedEntity();
-        //return NDArray(nix::DataType::Float,{0});
     }
+
     if (feature.linkType() == LinkType::Tagged) {
-        vector<ndsize_t> indices(1, position_index);
-        return retrieveData(tag, indices, data)[0];
-    } else if (feature.linkType() == LinkType::Indexed) {
-        //FIXME does the feature data to have a setdimension in the first dimension for the indexed case?
-        //For now it will just be a slice across the first dim.
-        if (position_index > data.dataExtent()[0]){
-            throw OutOfBounds("Position is larger than the data stored in the feature.", 0);
-        }
-        NDSize offset(data.dataExtent().size(), 0);
-        offset[0] = position_index;
-        NDSize count(data.dataExtent());
-        count[0] = 1;
-
-        if (!positionAndExtentInData(data, offset, count)) {
-            throw OutOfBounds("Requested data slice out of the extent of the Feature!", 0);
-        }
-        DataView io = DataView(data, count, offset);
-        return io;
+        views = retrieveData(tag, position_indices, data);
+        return views;
     }
-    // FIXME is this expected behavior? In the untagged case all data is returned
-    NDSize offset(data.dataExtent().size(), 0);
-    DataView io = DataView(data, data.dataExtent(), offset);
-    return io;
-}
 
+    ndsize_t max_index = *max_element(position_indices.begin(), position_indices.end());
+    if (max_index >= tag.positions().dataExtent()[0]) {
+        throw OutOfBounds("Index out of bounds of positions!", 0);
+    }
+
+    if (feature.linkType() == LinkType::Indexed) {
+        // For now we return slices across the first dim.
+        for (size_t idx = 0; idx < position_indices.size(); ++idx) {
+            NDSize offset(data.dataExtent().size(), 0);
+            offset[0] = position_indices[idx];
+            NDSize count(data.dataExtent());
+            count[0] = 1;
+            if (!positionAndExtentInData(data, offset, count)) {
+                throw OutOfBounds("Requested data slice out of the extent of the Feature!",
+                                  position_indices[idx]);
+            }
+            DataView io = DataView(data, count, offset);
+            views.push_back(io);
+        }
+    } else {
+        for (size_t idx = 0; idx < position_indices.size(); ++idx){
+            // In the untagged case all data is returned for each position
+            NDSize offset(data.dataExtent().size(), 0);
+            DataView io = DataView(data, data.dataExtent(), offset);
+            views.push_back(io);
+        }
+    }
+    return views;
+}
 
 } // namespace util
 } // namespace nix
