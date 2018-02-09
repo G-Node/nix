@@ -131,8 +131,8 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
                                                  const vector<string> &units,
                                                  const SampledDimension &dimension) {
     ndsize_t count = min(start_positions.size(), end_positions.size());
-    vector<double> scaled_start(count);
-    vector<double> scaled_end(count);
+    vector<double> scaled_start(static_cast<size_t>(count));
+    vector<double> scaled_end(static_cast<size_t>(count));
     string dim_unit = dimension.unit() ? *dimension.unit() : "none";
     scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
     return dimension.indexOf(scaled_start, scaled_end);
@@ -148,7 +148,8 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
         if (start_positions[i] > end_positions[i] ) {
             continue;
         }
-        indices.emplace_back(start_positions[i], end_positions[i]);
+        indices.emplace_back(static_cast<ndsize_t>(round(start_positions[i])),
+                             static_cast<ndsize_t>(end_positions[i]));
     }
     return indices;
 }
@@ -242,8 +243,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
     ndsize_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
-    NDSize temp_offset(dimcount_sizet, static_cast<NDSize::value_type>(0));
-    NDSize temp_count(dimcount_sizet, static_cast<NDSize::value_type>(1));
+    NDSize temp_offset(dimension_count, static_cast<NDSize::value_type>(0));
+    NDSize temp_count(dimension_count, static_cast<NDSize::value_type>(1));
 
     temp_count[1] = static_cast<NDSize::value_type>(dimension_count);
     vector<Dimension> dimensions = array.dimensions();
@@ -275,8 +276,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     }
 
     for (size_t i = 0; i < indices.size(); ++i) {
-        NDSize data_offset(dimcount_sizet, static_cast<ndsize_t>(0));
-        NDSize data_count(dimcount_sizet, static_cast<ndsize_t>(1));
+        NDSize data_offset(dimcount_sizet, 0);
+        NDSize data_count(dimcount_sizet, 1);
         for (size_t dim_index =0; dim_index < dimensions.size(); ++dim_index) {
             data_offset[dim_index] = data_indices[dim_index][i].first;
             ndsize_t count =  data_indices[dim_index][i].second - data_indices[dim_index][i].first;
@@ -331,10 +332,12 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
                               ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
+    size_t ref_idx = check::fits_in_size_t(reference_index, "retrieveData() failed; reference_index > size_t.");
+
     if (reference_index >= tag.referenceCount()) {
         throw OutOfBounds("Reference index out of bounds.", 0);
     }
-    return retrieveData(tag, position_indices, refs[reference_index]);
+    return retrieveData(tag, position_indices, refs[ref_idx]);
 }
 
 
@@ -356,13 +359,15 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
 
 DataView retrieveData(const Tag &tag, ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
+    size_t ref_idx = check::fits_in_size_t(reference_index, "retrieveData() failed; reference_index > size_t.");
+
     if (refs.size() == 0) {
         throw OutOfBounds("There are no references in this tag!", 0);
     }
-    if (!(reference_index < tag.referenceCount())) {
+    if (!(ref_idx < tag.referenceCount())) {
         throw OutOfBounds("Reference index out of bounds.", 0);
     }
-    return retrieveData(tag, refs[reference_index]);
+    return retrieveData(tag, refs[ref_idx]);
 }
 
 
@@ -416,10 +421,12 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsiz
     if (tag.featureCount() == 0) {
        throw OutOfBounds("There are no features associated with this tag!", 0);
     }
-    if (feature_index >= tag.featureCount()) {
+    size_t feat_idx = check::fits_in_size_t(feature_index, "retrieveFeatureData() failed; feaure_index > size_t.");
+
+    if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
-    Feature feat = tag.getFeature(feature_index);
+    Feature feat = tag.getFeature(feat_idx);
     return retrieveFeatureData(tag, position_index, feat);
 }
 
