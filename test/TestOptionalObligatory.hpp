@@ -93,7 +93,7 @@ namespace test {
     ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
     ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions)
     ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
-    ACCEPTS(mapping) ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
+    ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
     ACCEPTS(repository) ACCEPTS(units) ACCEPTS(sources)
 
 } // namespace test
@@ -129,7 +129,6 @@ private:
     CPPUNIT_TEST(testFeatureData);
     CPPUNIT_TEST(testFeatureLinkType);
     CPPUNIT_TEST(testSectionLink);
-    CPPUNIT_TEST(testSectionMapping);
     CPPUNIT_TEST(testSectionRepository);
     CPPUNIT_TEST(testTagExtent);
     CPPUNIT_TEST(testTagPosition);
@@ -189,7 +188,6 @@ public:
     void testFeatureData();
     void testFeatureLinkType();
     void testSectionLink();
-    void testSectionMapping();
     void testSectionRepository();
     void testTagExtent();
     void testTagPosition();

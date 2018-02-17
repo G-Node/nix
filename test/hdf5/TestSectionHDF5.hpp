@@ -24,7 +24,6 @@ class TestSectionHDF5 : public BaseTestSection {
     CPPUNIT_TEST(testParent);
     CPPUNIT_TEST(testRepository);
     CPPUNIT_TEST(testLink);
-    CPPUNIT_TEST(testMapping);
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testFindSection);
     CPPUNIT_TEST(testFindRelated);

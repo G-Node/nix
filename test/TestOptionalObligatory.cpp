@@ -437,18 +437,6 @@ void TestOptionalObligatory::testSectionLink() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testSectionMapping() {
-    static const bool accepts_none = test::accepts_noneT<nix::Section, test::mapping>::value;
-    is_opt   = std::conditional<std::is_class<decltype(section.mapping())>::value,
-                                std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(section.mapping())>::value>
-                                >::type::value;
-    is_set   = test::TtoBool(util::deRef(section.mapping()));
-    summarize("Mapping::mapping", is_opt, is_set, accepts_none);
-    CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
-                   test::isValidObligatory(is_opt, is_set, accepts_none));
-}
-
 void TestOptionalObligatory::testSectionRepository() {
     static const bool accepts_none = test::accepts_noneT<nix::Section, test::repository>::value;
     is_opt   = std::conditional<std::is_class<decltype(section.repository())>::value,

@@ -219,7 +219,6 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         << static_cast<nix::base::NamedEntity<nix::base::ISection>>(section)
         << "propertyCount" << scalar_start << section.propertyCount() << scalar_end
         << "sectionCount" << scalar_start << section.sectionCount() << scalar_end
-        << "mapping" << scalar_start << section.mapping() << scalar_end
         << "repository" << scalar_start << section.repository() << scalar_end
         << "link"; ++(*this) << section.link(); --(*this);
 

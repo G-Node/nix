@@ -26,7 +26,7 @@ SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const H5Group
     : SectionHDF5(file, nullptr, group)
 {
 }
-    
+
 
 SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, const H5Group &group)
     : NamedEntityHDF5(file, group), parent_section(parent)
@@ -96,12 +96,12 @@ void SectionHDF5::repository(const none_t t) {
 void SectionHDF5::link(const std::string &id) {
     if (group().hasGroup("link"))
         link(none);
-        
+
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
     if (found.empty())
         throw std::runtime_error("SectionHDF5::link: Section not found in file!");
-    
+
     auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
     group().createLink(target->group(), "link");
@@ -132,29 +132,6 @@ void SectionHDF5::link(const none_t t) {
     forceUpdatedAt();
 }
 
-
-void SectionHDF5::mapping(const string &mapping) {
-    group().setAttr("mapping", mapping);
-    forceUpdatedAt();
-}
-
-
-boost::optional<string> SectionHDF5::mapping() const {
-    boost::optional<string> ret;
-    string mapping;
-    if (group().getAttr("mapping", mapping)) {
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void SectionHDF5::mapping(const none_t t) {
-    if (group().hasAttr("mapping")) {
-        group().removeAttr("mapping");
-    }
-    forceUpdatedAt();
-}
 
 //--------------------------------------------------
 // Methods for parent access

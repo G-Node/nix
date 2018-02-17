@@ -276,11 +276,6 @@ void Section::link(const std::string &id) {
     backend()->link(id);
 }
 
-void Section::mapping(const std::string &mapping) {
-    util::checkEmptyString(mapping, "mapping");
-    backend()->mapping(mapping);
-}
-
 Section Section::createSection(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
     if (backend()->hasSection(name)) {

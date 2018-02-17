@@ -172,17 +172,6 @@ void BaseTestSection::testLink() {
 }
 
 
-void BaseTestSection::testMapping() {
-    CPPUNIT_ASSERT(!section.mapping());
-    std::string map = "http://foo.bar/" + util::createId();
-    section.mapping(map);
-    CPPUNIT_ASSERT(section.mapping() == map);
-    section.mapping(boost::none);
-    CPPUNIT_ASSERT(!section.mapping());
-    CPPUNIT_ASSERT_THROW(section.mapping(""), EmptyString);
-}
-
-
 void BaseTestSection::testSectionAccess() {
     std::vector<std::string> names = { "section_a", "section_b", "section_c", "section_d", "section_e" };
     Section null;

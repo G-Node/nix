@@ -55,15 +55,6 @@ public:
 
     virtual void link(const none_t t) = 0;
 
-
-    virtual void mapping(const std::string &mapping) = 0;
-
-
-    virtual boost::optional<std::string> mapping() const = 0;
-
-
-    virtual void mapping(const none_t t) = 0;
-
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------

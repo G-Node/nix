@@ -34,7 +34,7 @@ public:
      * Standard constructor for existing entity
      */
     SectionHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group);
-    
+
     /**
      * Standard constructor for existing entity
      */
@@ -85,15 +85,6 @@ public:
 
 
     void link(const none_t t);
-
-
-    void mapping(const std::string &mapping);
-
-
-    boost::optional<std::string> mapping() const;
-
-
-    void mapping(const none_t t);
 
 
     //--------------------------------------------------

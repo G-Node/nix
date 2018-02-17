@@ -152,33 +152,6 @@ public:
         backend()->link(t);
     }
 
-    /**
-     * @brief Sets the mapping information for this section.
-     *
-     * The mapping is provided as a path or URL to another section.
-     *
-     * @param mapping   The mapping information to this section.
-     */
-    void mapping(const std::string &mapping);
-
-    /**
-     * @brief Gets the mapping information.
-     *
-     * @return The mapping information.
-     */
-    boost::optional<std::string> mapping() const {
-        return backend()->mapping();
-    }
-
-    /**
-     * @brief Deleter for the mapping information.
-     *
-     * @param t         None
-     */
-    void mapping(const boost::none_t t) {
-        backend()->mapping(t);
-    }
-
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------

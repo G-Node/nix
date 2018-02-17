@@ -142,35 +142,6 @@ void SectionFS::link(const none_t t) {
     forceUpdatedAt();
 }
 
-
-void SectionFS::mapping(const std::string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    } else {
-        setAttr("mapping", mapping);
-        forceUpdatedAt();
-    }
-}
-
-
-boost::optional<std::string> SectionFS::mapping() const {
-    boost::optional<std::string> ret;
-    std::string mapping;
-    if (hasAttr("mapping")) {
-        getAttr("mapping", mapping);
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void SectionFS::mapping(const none_t t) {
-    if (hasAttr("mapping")) {
-        removeAttr("mapping");
-    }
-    forceUpdatedAt();
-}
-
 //--------------------------------------------------
 // Methods for parent access
 //--------------------------------------------------

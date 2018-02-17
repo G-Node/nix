@@ -31,7 +31,6 @@ public:
     void testParent();
     void testRepository();
     void testLink();
-    void testMapping();
     void testSectionAccess();
     void testFindSection();
     void testFindRelated();
