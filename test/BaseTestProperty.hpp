@@ -30,7 +30,6 @@ public:
     void testId();
     void testName();
     void testDefinition();
-    void testMapping();
     void testDataType();
     void testValues();
     void testUnit();

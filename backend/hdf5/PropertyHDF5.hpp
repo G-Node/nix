@@ -23,7 +23,7 @@ namespace hdf5 {
 
 
 class PropertyHDF5 : virtual public base::IProperty {
-    
+
     std::shared_ptr<base::IFile>  entity_file;
     DataSet                       entity_dataset;
 
@@ -79,15 +79,6 @@ public:
 
 
     void definition(const none_t t);
-
-
-    void mapping(const std::string &mapping);
-
-
-    boost::optional<std::string> mapping() const;
-
-
-    void mapping(const none_t t);
 
 
     DataType dataType() const;

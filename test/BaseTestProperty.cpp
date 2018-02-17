@@ -63,16 +63,6 @@ void BaseTestProperty::testDefinition() {
 }
 
 
-void BaseTestProperty::testMapping() {
-    std::string map = "some_str";
-    CPPUNIT_ASSERT_THROW(property.mapping(""), EmptyString);
-    property.mapping(map);
-    CPPUNIT_ASSERT(*property.mapping() == map);
-    property.mapping(boost::none);
-    CPPUNIT_ASSERT(!property.mapping());
-}
-
-
 void BaseTestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");

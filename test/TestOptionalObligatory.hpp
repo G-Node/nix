@@ -70,13 +70,13 @@ namespace test {
     // then 'acceptsNoneT = accepts_noneT<nix::parentClass, test::methodName>::value;'
     enum METHOD_NAME { FIRST };
     template<typename T, METHOD_NAME S>
-    class accepts_noneT 
-    { 
-        template <typename U, void (U::*)(boost::none_t)> struct Check; 
-        template <typename U> static char func(Check<U, &U::id> *); 
-        template <typename U> static int func(...); 
-    public: 
-        enum { value = sizeof(func<T>(0)) == sizeof(char) }; 
+    class accepts_noneT
+    {
+        template <typename U, void (U::*)(boost::none_t)> struct Check;
+        template <typename U> static char func(Check<U, &U::id> *);
+        template <typename U> static int func(...);
+    public:
+        enum { value = sizeof(func<T>(0)) == sizeof(char) };
     };
     #define ACCEPTS(M) \
         static const METHOD_NAME M = static_cast<METHOD_NAME>(__COUNTER__ + 1); \
@@ -91,7 +91,7 @@ namespace test {
         };
     ACCEPTS(id) ACCEPTS(index) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
     ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
-    ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions) 
+    ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions)
     ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
     ACCEPTS(mapping) ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
     ACCEPTS(repository) ACCEPTS(units) ACCEPTS(sources)
@@ -124,7 +124,6 @@ private:
     CPPUNIT_TEST(testRangeDimensionLabel);
     CPPUNIT_TEST(testRangeDimensionTicks);
     CPPUNIT_TEST(testRangeDimensionUnit);
-    CPPUNIT_TEST(testPropertyMapping);
     CPPUNIT_TEST(testPropertyUnit);
     CPPUNIT_TEST(testPropertyValues);
     CPPUNIT_TEST(testFeatureData);
@@ -185,7 +184,6 @@ public:
     void testRangeDimensionLabel();
     void testRangeDimensionTicks();
     void testRangeDimensionUnit();
-    void testPropertyMapping();
     void testPropertyUnit();
     void testPropertyValues();
     void testFeatureData();

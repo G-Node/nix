@@ -42,9 +42,4 @@ void Property::definition(const std::string &definition) {
     backend()->definition(definition);
 }
 
-void Property::mapping(const std::string &mapping) {
-    util::checkEmptyString(mapping, "mapping");
-        backend()->mapping(mapping);
-}
-
 } // namespace nix

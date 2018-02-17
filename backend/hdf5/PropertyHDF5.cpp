@@ -62,7 +62,7 @@ namespace hdf5 {
         dataset.setAttr("name", name);
         forceUpdatedAt();
     }
-    
+
     dataset.setAttr("entity_id", id);
     setUpdatedAt();
     forceCreatedAt(time);
@@ -71,14 +71,14 @@ namespace hdf5 {
 
 string PropertyHDF5::id() const {
     string t;
-    
+
     if (dataset().hasAttr("entity_id")) {
         dataset().getAttr("entity_id", t);
     }
     else {
         throw runtime_error("Entity has no id!");
     }
-    
+
     return t;
 }
 
@@ -163,30 +163,6 @@ void PropertyHDF5::definition(const nix::none_t t) {
 DataType PropertyHDF5::dataType() const {
     const h5x::DataType dtype = dataset().dataType();
     return data_type_from_h5(dtype);
-}
-
-
-void PropertyHDF5::mapping(const string &mapping) {
-    dataset().setAttr("mapping", mapping);
-    forceUpdatedAt();
-}
-
-
-boost::optional<string> PropertyHDF5::mapping() const {
-    boost::optional<string> ret;
-    string mapping;
-    if (dataset().getAttr("mapping", mapping)) {
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void PropertyHDF5::mapping(const nix::none_t t) {
-    if (dataset().hasAttr("mapping")) {
-        dataset().removeAttr("mapping");
-        forceUpdatedAt();
-    }
 }
 
 

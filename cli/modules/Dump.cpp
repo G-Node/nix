@@ -165,13 +165,12 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
     if (!property) {
         return *this; // unset entity protection
     }
-        
+
     (*this)[level] << item() << "property &" << property.id();
     ++(*this)
         << static_cast<nix::base::Entity<nix::base::IProperty>>(property)
         << "dataType" << scalar_start << property.dataType() << scalar_end
         << "definition" << scalar_start << property.definition() << scalar_end
-        << "mapping" << scalar_start << property.mapping() << scalar_end
         << "name" << scalar_start << property.name() << scalar_end
         << "unit" << scalar_start << property.unit() << scalar_end
         << "valueCount" << scalar_start << property.valueCount() << scalar_end;
@@ -181,7 +180,7 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
         ++(*this);
             auto values = property.values();
             for (auto &value : values) {
-                *this << value; 
+                *this << value;
             }
         --(*this);
     --(*this);
@@ -203,7 +202,7 @@ yamlstream& yamlstream::operator<<(const nix::Source &source) {
         ++(*this);
             auto sources = source.sources();
             for (auto &source : sources) {
-                *this << source;            
+                *this << source;
             }
         --(*this);
     --(*this);
@@ -237,7 +236,7 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         ++(*this);
             auto sections = section.sections();
             for (auto &section : sections) {
-                *this << section;            
+                *this << section;
             }
         --(*this);
     --(*this);
@@ -248,7 +247,7 @@ yamlstream& yamlstream::operator<<(const nix::SetDimension &dim) {
     if (!dim) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "dimension " << dim.index();
     ++(*this)
         << "index" << scalar_start << dim.index() << scalar_end
@@ -262,7 +261,7 @@ yamlstream& yamlstream::operator<<(const nix::SampledDimension &dim) {
     if (!dim) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "dimension " << dim.index();
     ++(*this)
         << "index" << scalar_start << dim.index() << scalar_end
@@ -279,7 +278,7 @@ yamlstream& yamlstream::operator<<(const nix::RangeDimension &dim) {
     if (!dim) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "dimension " << dim.index();
     ++(*this)
         << "index" << scalar_start << dim.index() << scalar_end
@@ -295,7 +294,7 @@ yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
     if (!dim) {
         return *this; // unset entity protection
     }
-    
+
     if (dim.dimensionType() == nix::DimensionType::Range) {
         (*this) << dim.asRangeDimension();
     }
@@ -305,7 +304,7 @@ yamlstream& yamlstream::operator<<(const nix::Dimension &dim) {
     if (dim.dimensionType() == nix::DimensionType::Sample) {
         (*this) << dim.asSampledDimension();
     }
-    
+
     return *this;
 }
 
@@ -313,7 +312,7 @@ yamlstream& yamlstream::operator<<(const nix::DataArray &data_array) {
     if (!data_array) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "data_array &" << data_array.id();
     ++(*this)
         << static_cast<nix::base::EntityWithSources<nix::base::IDataArray>>(data_array)
@@ -340,7 +339,7 @@ yamlstream& yamlstream::operator<<(const nix::Feature &feature) {
     if (!feature) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "feature &" << feature.id();
     ++(*this)
         << static_cast<nix::base::Entity<nix::base::IFeature>>(feature)
@@ -354,7 +353,7 @@ yamlstream& yamlstream::operator<<(const nix::Tag &tag) {
     if (!tag) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "tag &" << tag.id();
     ++(*this)
         << static_cast<nix::base::EntityWithSources<nix::base::ITag>>(tag)
@@ -387,7 +386,7 @@ yamlstream& yamlstream::operator<<(const nix::MultiTag &multi_tag) {
     if (!multi_tag) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "multi_tag &" << multi_tag.id();
     ++(*this)
         << static_cast<nix::base::EntityWithSources<nix::base::IMultiTag>>(multi_tag)
@@ -420,7 +419,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
     if (!block) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "block &" << block.id();
     ++(*this)
         << static_cast<nix::base::EntityWithMetadata<nix::base::IBlock>>(block)
@@ -457,7 +456,7 @@ yamlstream& yamlstream::operator<<(const nix::Block &block) {
         ++(*this);
             auto sources = block.sources();
             for (auto &source : sources) {
-                *this << source;            
+                *this << source;
             }
         --(*this);
     --(*this);
@@ -468,7 +467,7 @@ yamlstream& yamlstream::operator<<(const nix::File &file) {
     if (!file) {
         return *this; // unset entity protection
     }
-    
+
     (*this)[level] << item() << "file &" << file.location();
     ++(*this)
         << "location" << scalar_start << file.location() << scalar_end
@@ -492,18 +491,18 @@ yamlstream& yamlstream::operator<<(const nix::File &file) {
         ++(*this);
             auto sections = file.sections();
             for (auto &section : sections) {
-                *this << section;            
+                *this << section;
             }
         --(*this);
     --(*this);
-    
+
     return *this;
 }
 
 
 void Dump::load(po::options_description &desc) const {
     // declare purpose
-    desc.add(po::options_description("nix-tool " + std::string(module_name) + ":\n\n\t" + 
+    desc.add(po::options_description("nix-tool " + std::string(module_name) + ":\n\n\t" +
                                      "Dump data-contents of a given nix file as yaml to std out.\n\nSupported options"));
     // declare supported options
     po::options_description opt;
@@ -524,7 +523,7 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
     double A_max = std::numeric_limits<double>::min();
     typedef boost::multi_array<double, 2> array_type;
     typedef array_type::index index;
-    
+
     // --help
     if (vm.count(HELP_OPTION)) {
         po::options_description temp;
@@ -601,7 +600,7 @@ std::string Dump::call(const po::variables_map &vm, const po::options_descriptio
     else {
         throw NoInputFile();
     }
-    
+
     return out.str();
 }
 

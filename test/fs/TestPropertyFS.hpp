@@ -18,7 +18,6 @@ class TestPropertyFS : public BaseTestProperty {
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
-    CPPUNIT_TEST(testMapping);
 
     CPPUNIT_TEST(testValues);
     CPPUNIT_TEST(testDataType);

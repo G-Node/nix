@@ -30,8 +30,7 @@ namespace nix {
  * the type of the stored Value entities (e.g. double or integer).
  *
  * The {@link unit} is the unit of the stored values. Similar
- * to the {@link nix::Section} entity, mapping information can be provided
- * using the {@link mapping} field.
+ * to the {@link nix::Section} entity
  */
 class NIXAPI Property : public base::Entity<base::IProperty> {
 
@@ -135,35 +134,6 @@ public:
      */
     void definition(const none_t t) {
         backend()->definition(t);
-    }
-
-    /**
-     * @brief Set the mapping information for this Property.
-     *
-     * The mapping defines how this Property should be treated in a mapping procedure. The mapping
-     * is provided in form of an url pointing to the definition of a section into which this
-     * property should be mapped.
-     *
-     * @param mapping   The mapping information.
-     */
-    void mapping(const std::string &mapping);
-
-    /**
-     * @brief Getter for the mapping information stored in this Property.
-     *
-     * @return The mapping for the Property.
-     */
-    boost::optional<std::string> mapping() const {
-        return backend()->mapping();
-    }
-
-    /**
-     * @brief Deletes the mapping information.
-     *
-     * @param t         None
-     */
-    void mapping(const boost::none_t t) {
-        backend()->mapping(t);
     }
 
     /**

@@ -67,15 +67,6 @@ public:
     void definition(const none_t t);
 
 
-    void mapping(const std::string &mapping);
-
-
-    boost::optional<std::string> mapping() const;
-
-
-    void mapping(const none_t t);
-
-
     DataType dataType() const;
 
 
