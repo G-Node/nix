@@ -169,6 +169,22 @@ void BaseTestProperty::testUnit(){
 }
 
 
+void BaseTestProperty::testUncertainty() {
+    nix::Section section = file.createSection("testSection", "test");
+    nix::Property p1 = section.createProperty("testProperty", int_dummy);
+    double uncertainty = 1.2;
+
+    CPPUNIT_ASSERT(!p1.uncertainty());
+
+    p1.uncertainty(uncertainty);
+    CPPUNIT_ASSERT(p1.uncertainty());
+    CPPUNIT_ASSERT(p1.uncertainty() && *p1.uncertainty() == uncertainty);
+
+    p1.uncertainty(nix::none);
+    CPPUNIT_ASSERT(!p1.uncertainty());
+}
+
+
 void BaseTestProperty::testOperators() {
     CPPUNIT_ASSERT(property_null == false);
     CPPUNIT_ASSERT(property_null == none);

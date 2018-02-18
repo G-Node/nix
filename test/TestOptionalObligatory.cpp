@@ -389,6 +389,18 @@ void TestOptionalObligatory::testPropertyUnit() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
+void TestOptionalObligatory::testPropertyUncertainty() {
+    static const bool accepts_none = test::accepts_noneT<nix::Property, test::uncertainty>::value;
+    is_opt   = std::conditional<std::is_class<decltype(property.uncertainty())>::value,
+                                std::integral_constant<bool, accepts_none>,
+                                std::integral_constant<bool, util::is_optional<decltype(property.uncertainty())>::value>
+                                    >::type::value;
+    is_set   = test::TtoBool(util::deRef(property.uncertainty()));
+    summarize("Property::uncertainty", is_opt, is_set, accepts_none);
+    CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
+                   test::isValidObligatory(is_opt, is_set, accepts_none));
+}
+
 void TestOptionalObligatory::testPropertyValues() {
     static const bool accepts_none = test::accepts_noneT<nix::Property, test::values>::value;
     is_opt   = std::conditional<std::is_class<decltype(property.values())>::value,

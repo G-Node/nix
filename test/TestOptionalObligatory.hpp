@@ -90,7 +90,7 @@ namespace test {
             enum { value = sizeof(func<T>(0)) == sizeof(char) }; \
         };
     ACCEPTS(id) ACCEPTS(index) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
-    ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
+    ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(uncertainty) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
     ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions)
     ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
     ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
@@ -125,6 +125,7 @@ private:
     CPPUNIT_TEST(testRangeDimensionTicks);
     CPPUNIT_TEST(testRangeDimensionUnit);
     CPPUNIT_TEST(testPropertyUnit);
+    CPPUNIT_TEST(testPropertyUncertainty);
     CPPUNIT_TEST(testPropertyValues);
     CPPUNIT_TEST(testFeatureData);
     CPPUNIT_TEST(testFeatureLinkType);
@@ -184,6 +185,7 @@ public:
     void testRangeDimensionTicks();
     void testRangeDimensionUnit();
     void testPropertyUnit();
+    void testPropertyUncertainty();
     void testPropertyValues();
     void testFeatureData();
     void testFeatureLinkType();

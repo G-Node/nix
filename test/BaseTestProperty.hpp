@@ -33,6 +33,7 @@ public:
     void testDataType();
     void testValues();
     void testUnit();
+    void testUncertainty();
     void testIsValidEntity();
 
     void testOperators();
