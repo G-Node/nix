@@ -173,6 +173,7 @@ yamlstream& yamlstream::operator<<(const nix::Property &property) {
         << "definition" << scalar_start << property.definition() << scalar_end
         << "name" << scalar_start << property.name() << scalar_end
         << "unit" << scalar_start << property.unit() << scalar_end
+        << "uncertainty" << scalar_start << property.uncertainty() << scalar_end
         << "valueCount" << scalar_start << property.valueCount() << scalar_end;
 
         // Values
