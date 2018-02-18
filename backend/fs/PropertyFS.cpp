@@ -166,6 +166,31 @@ void PropertyFS::unit(const nix::none_t t) {
 }
 
 
+void PropertyFS::uncertainty(double uncertainty) {
+    setAttr("uncertainty", uncertainty);
+    forceUpdatedAt();
+}
+
+
+boost::optional<double> PropertyFS::uncertainty() const {
+    boost::optional<double> ret;
+    double error;
+    if (hasAttr("uncertainty")) {
+        getAttr("uncertainty", error);
+        ret = error;
+    }
+    return ret;
+}
+
+
+void PropertyFS::uncertainty(const nix::none_t t) {
+    if (hasAttr("uncertainty")) {
+        removeAttr("uncertainty");
+    }
+    forceUpdatedAt();
+}
+
+
 void PropertyFS::deleteValues() {
     // FIXME
 }

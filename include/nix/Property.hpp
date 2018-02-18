@@ -146,6 +146,35 @@ public:
     }
 
     /**
+     * @brief Set the uncertainty (e.g. the standard deviation) related to the
+     * stored values.
+     *
+     * @param uncertainty      The uncertainty
+     */
+    void uncertainty(double uncertainty) {
+        backend()->uncertainty(uncertainty);
+    }
+
+    /**
+     * @brief Returns the uncertainty (e.g . the standard deviation) of the
+     * stored value.
+     *
+     * @return The uncertainty.
+     */
+    boost::optional<double> uncertainty() const {
+        return backend()->uncertainty();
+    }
+
+    /**
+     * @brief Remove the uncertainty.
+     *
+     * @param t         None
+     */
+    void uncertainty(const boost::none_t t) {
+        return backend()->uncertainty(t);
+    }
+
+    /**
      * @brief Set the unit for all stored values.
      *
      * @param unit      The unit for all values.

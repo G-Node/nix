@@ -190,6 +190,30 @@ void PropertyHDF5::unit(const nix::none_t t) {
 }
 
 
+void PropertyHDF5::uncertainty(double uncertainty) {
+    dataset().setAttr("uncertainty", uncertainty);
+    forceUpdatedAt();
+}
+
+
+boost::optional<double> PropertyHDF5::uncertainty() const {
+    boost::optional<double> ret;
+    double error;
+    if (dataset().getAttr("uncertainty", error)) {
+        ret = error;
+    }
+    return ret;
+}
+
+
+void PropertyHDF5::uncertainty(const nix::none_t t) {
+    if (dataset().hasAttr("uncertainty")) {
+        dataset().removeAttr("uncertainty");
+    }
+    forceUpdatedAt();
+}
+
+
 bool PropertyHDF5::isValidEntity() const {
     return dataset().referenceCount() > 0;
 }

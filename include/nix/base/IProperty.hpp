@@ -55,6 +55,15 @@ public:
     virtual void unit(const none_t t) = 0;
 
 
+    virtual void uncertainty(double uncertainty) = 0;
+
+
+    virtual boost::optional<double> uncertainty() const = 0;
+
+
+    virtual void uncertainty(const none_t t) = 0;
+
+
     virtual void deleteValues() = 0;
 
 

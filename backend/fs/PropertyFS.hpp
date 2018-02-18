@@ -79,6 +79,15 @@ public:
     void unit(const none_t t);
 
 
+    void uncertainty(double uncertainty);
+
+
+    boost::optional<double> uncertainty() const;
+
+
+    void uncertainty(const none_t t);
+
+
     void deleteValues();
 
 
