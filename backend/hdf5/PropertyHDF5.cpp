@@ -228,15 +228,7 @@ PropertyHDF5::~PropertyHDF5() {}
 #endif
 template<typename T>
 struct NIX_PACKED FileValue  {
-
     T       value;
-
-    double  uncertainty;
-    char   *reference;
-    char   *filename;
-    char   *encoder;
-    char   *checksum;
-
     //ctors
     FileValue() {}
     explicit FileValue(const T &vref) : value(vref) { }
@@ -255,9 +247,10 @@ h5x::DataType h5_type_for_value(bool for_memory)
     typedef FileValue<T> file_value_t;
 
     h5x::DataType ct = h5x::DataType::makeCompound(sizeof(file_value_t));
-    h5x::DataType strType = h5x::DataType::makeStrType();
+    // h5x::DataType strType = h5x::DataType::makeStrType();
 
     h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
+    /*
     h5x::DataType double_type = data_type_to_h5(DataType::Double, for_memory);
 
     ct.insert("value", HOFFSET(file_value_t, value), value_type);
@@ -266,7 +259,7 @@ h5x::DataType h5_type_for_value(bool for_memory)
     ct.insert("filename", HOFFSET(file_value_t, filename), strType);
     ct.insert("encoder", HOFFSET(file_value_t, encoder), strType);
     ct.insert("checksum", HOFFSET(file_value_t, checksum), strType);
-
+    */
     return ct;
 }
 
@@ -297,7 +290,7 @@ h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
 
 
 template<typename T>
-void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
+void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &values)
 {
     h5x::DataType memType = h5_type_for_value<T>(true);
 
@@ -310,12 +303,7 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
     h5ds.read(fileValues.data(), memType, H5S_ALL, H5S_ALL);
 
     std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
-        Value temp(val.val());
-        temp.uncertainty = val.uncertainty;
-        temp.reference = val.reference;
-        temp.filename = val.filename;
-        temp.encoder = val.encoder;
-        temp.checksum = val.checksum;
+        Variant temp(val.val());
         return temp;
     });
 
@@ -326,21 +314,15 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
 #define NOT_IMPLEMENTED 1
 
 template<typename T>
-void do_write_value(DataSet &h5ds, const std::vector<Value> &values)
+void do_write_value(DataSet &h5ds, const std::vector<Variant> &values)
 {
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
 
     fileValues.resize(values.size());
 
-    std::transform(values.begin(), values.end(), fileValues.begin(), [](const Value &val) {
+    std::transform(values.begin(), values.end(), fileValues.begin(), [](const Variant &val) {
         file_value_t fileVal(val.get<T>());
-        fileVal.uncertainty = val.uncertainty;
-        fileVal.reference = const_cast<char *>(val.reference.c_str());
-        fileVal.filename = const_cast<char *>(val.filename.c_str());
-        fileVal.encoder = const_cast<char *>(val.encoder.c_str());
-        fileVal.checksum = const_cast<char *>(val.checksum.c_str());
-
         return fileVal;
     });
 
@@ -360,40 +342,121 @@ ndsize_t PropertyHDF5::valueCount() const {
     return size[0];
 }
 
+void copyValue(char *buffer, const Variant &v) {
+    const char n = '\0';
 
-void PropertyHDF5::values(const std::vector<Value> &values)
+    switch (v.type()) {
+    case DataType::Bool:
+        bool b;
+        v.get(b);
+        std::memcpy(buffer, &b, sizeof(b));
+        break;
+
+    case DataType::Double:
+        double d;
+        v.get(d);
+        std::memcpy(buffer, &d, sizeof(d));
+        break;
+
+    case DataType::UInt32:
+        uint32_t ui32;
+        v.get(ui32);
+        std::memcpy(buffer, &ui32, sizeof(ui32));
+        break;
+
+    case DataType::Int32:
+        int32_t i32;
+        v.get(i32);
+        std::memcpy(buffer, &i32, sizeof(i32));
+        break;
+
+    case DataType::UInt64:
+        uint64_t ui64;
+        v.get(ui64);
+        std::memcpy(buffer, &ui64, sizeof(ui64));
+        break;
+
+    case DataType::Int64:
+        int64_t i64;
+        v.get(i64);
+        std::memcpy(buffer, &i64, sizeof(i64));
+        break;
+
+    case DataType::String:
+        const char *str;
+        str = v.get<const char *>();
+        std::cerr << "Pointer address1 = " << static_cast<void*>(buffer) << std::endl;
+
+        std::memcpy(buffer, &str, strlen(str));
+        buffer += strlen(str);
+        std::cerr << "Pointer address2 = " << static_cast<void*>(buffer) << std::endl;
+        std::memcpy(buffer, &n, sizeof(n));
+        buffer += sizeof(n);
+        std::cerr << "Pointer address3 = " << static_cast<void*>(buffer) << std::endl;
+        break;
+
+    default:
+        throw std::invalid_argument("Unhandled DataType");
+    };
+}
+
+
+void PropertyHDF5::values(const std::vector<Variant> &values)
 {
     if (values.size() < 1) {
         deleteValues();
         return;
     }
-
     DataSet dset = dataset();
+    DataType dt = values[0].type();
+    if (dt != data_type_from_h5(dset.dataType())) {
+        std::cerr << "ping!\n"; //TODO throw an exception
+    }
     dset.setExtent(NDSize{values.size()});
 
     if (values.size() < 1) {
         return; //nothing to do
     }
-
-    switch(values[0].type()) {
-
-        case DataType::Bool:   do_write_value<bool>(dset, values); break;
-        case DataType::Int32:  do_write_value<int32_t>(dset, values); break;
-        case DataType::UInt32: do_write_value<uint32_t>(dset, values); break;
-        case DataType::Int64:  do_write_value<int64_t>(dset, values); break;
-        case DataType::UInt64: do_write_value<uint64_t>(dset, values); break;
-        case DataType::String: do_write_value<const char *>(dset, values); break;
-        case DataType::Double: do_write_value<double>(dset, values); break;
-#ifndef CHECK_SUPOORTED_VALUES
-        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
-#endif
+    size_t buffer_size  = nix::data_type_to_size(values[0].type()) * values.size();
+    if (dt == DataType::String) {
+        buffer_size = 0;
+        for (Variant v : values) {
+            const char *str;
+            str = v.get<const char *>();
+            buffer_size += (strlen(str) + 1);
+        }
     }
+    std::cerr << buffer_size << std::endl;
+    char *buffer = new char[buffer_size];
+    char *mem = buffer;
+    std::cerr << "Pointer address = " << static_cast<void*>(mem) << std::endl;
+
+    std::cerr << *mem << std::endl;
+    for (Variant v : values) {
+        if (v.type() == dt) {
+            if (dt != DataType::String) {
+                copyValue(mem, v);
+                mem += nix::data_type_to_size(dt);
+            } else {
+                copyValue(mem, v);
+                 const char *str;
+                 str = v.get<const char *>();
+                 mem += (strlen(str) + 1);
+                 std::cerr << "Pointer address = " << static_cast<void*>(mem) << std::endl;
+            }
+        } else {
+            delete [] buffer;
+            throw std::invalid_argument("Inconsistent DTypes");
+        }
+    }
+    dset.write(buffer, data_type_to_h5_memtype(dt), NDSize{values.size()});
+    delete [] buffer;
 }
 
 
-std::vector<Value> PropertyHDF5::values(void) const
+std::vector<Variant> PropertyHDF5::values(void) const
 {
-    std::vector<Value> values;
+    std::vector<Variant> values;
 
     DataSet dset = dataset();
     DataType dtype = data_type_from_h5(dset.dataType());
