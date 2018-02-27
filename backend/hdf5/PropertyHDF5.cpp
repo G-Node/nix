@@ -239,7 +239,6 @@ struct NIX_PACKED FileValue  {
 #pragma pack(pop)
 #endif
 
-//
 
 template<typename T>
 h5x::DataType h5_type_for_value(bool for_memory)
@@ -329,64 +328,6 @@ ndsize_t PropertyHDF5::valueCount() const {
     return size[0];
 }
 
-void copyValue(char *buffer, const Variant &v) {
-    const char n = '\0';
-
-    switch (v.type()) {
-    case DataType::Bool:
-        bool b;
-        v.get(b);
-        std::memcpy(buffer, &b, sizeof(b));
-        break;
-
-    case DataType::Double:
-        double d;
-        v.get(d);
-        std::memcpy(buffer, &d, sizeof(d));
-        break;
-
-    case DataType::UInt32:
-        uint32_t ui32;
-        v.get(ui32);
-        std::memcpy(buffer, &ui32, sizeof(ui32));
-        break;
-
-    case DataType::Int32:
-        int32_t i32;
-        v.get(i32);
-        std::memcpy(buffer, &i32, sizeof(i32));
-        break;
-
-    case DataType::UInt64:
-        uint64_t ui64;
-        v.get(ui64);
-        std::memcpy(buffer, &ui64, sizeof(ui64));
-        break;
-
-    case DataType::Int64:
-        int64_t i64;
-        v.get(i64);
-        std::memcpy(buffer, &i64, sizeof(i64));
-        break;
-
-    case DataType::String:
-        const char *str;
-        str = v.get<const char *>();
-        std::cerr << "Pointer address1 = " << static_cast<void*>(buffer) << std::endl;
-
-        std::memcpy(buffer, &str, strlen(str));
-        buffer += strlen(str);
-        std::cerr << "Pointer address2 = " << static_cast<void*>(buffer) << std::endl;
-        std::memcpy(buffer, &n, sizeof(n));
-        buffer += sizeof(n);
-        std::cerr << "Pointer address3 = " << static_cast<void*>(buffer) << std::endl;
-        break;
-
-    default:
-        throw std::invalid_argument("Unhandled DataType");
-    };
-}
-
 
 void PropertyHDF5::values(const std::vector<Variant> &values)
 {
@@ -401,37 +342,18 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
     }
     dset.setExtent(NDSize{values.size()});
 
-    if (dt == DataType::String) {
-        h5x::DataType memType = data_type_to_h5_memtype(dt);
-        DataSpace fileSpace, memSpace;
-        std::tie(memSpace, fileSpace) = dset.offsetCount2DataSpaces(NDSize{values.size()}, NDSize{0});
-        std::vector<std::string> strings;
-        for (Variant v : values) {
-            if (v.type() != dt) {
-                throw std::invalid_argument("Inconsistent DataTypes!");
-            }
-            std::string temp;
-            v.get(temp);
-            strings.push_back(temp);
-        }
-        StringReader reader(NDSize{values.size()}, strings.data());
-        dset.write(*reader, memType, memSpace, fileSpace);
-    } else {
-        size_t buffer_size  = nix::data_type_to_size(values[0].type()) * values.size();
-        char *buffer = new char[buffer_size];
-        char *mem = buffer;
-        for (Variant v : values) {
-            if (v.type() == dt) {
-                copyValue(mem, v);
-                mem += nix::data_type_to_size(dt);
-            } else {
-                delete [] buffer;
-                throw std::invalid_argument("Inconsistent DataTypes");
-            }
-        }
-        dset.write(buffer, data_type_to_h5_memtype(dt), NDSize{values.size()});
-        delete [] buffer;
-    }
+     switch(values[0].type()) {
+        case DataType::Bool:   do_write_value<bool>(dset, values); break;
+        case DataType::Int32:  do_write_value<int32_t>(dset, values); break;
+        case DataType::UInt32: do_write_value<uint32_t>(dset, values); break;
+        case DataType::Int64:  do_write_value<int64_t>(dset, values); break;
+        case DataType::UInt64: do_write_value<uint64_t>(dset, values); break;
+        case DataType::String: do_write_value<const char *>(dset, values); break;
+        case DataType::Double: do_write_value<double>(dset, values); break;
+#ifndef CHECK_SUPOORTED_VALUES
+        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+#endif
+     }
 }
 
 
@@ -450,8 +372,8 @@ std::vector<Variant> PropertyHDF5::values(void) const
     size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
 
     switch (dtype) {
-        case DataType::Bool: do_read_value<bool>(dset, nvalues, values); break;
-        case DataType::Int32: do_read_value<int32_t>(dset, nvalues, values); break;
+        case DataType::Bool:   do_read_value<bool>(dset, nvalues, values); break;
+        case DataType::Int32:  do_read_value<int32_t>(dset, nvalues, values); break;
         case DataType::UInt32: do_read_value<uint32_t>(dset, nvalues, values); break;
         case DataType::Int64:  do_read_value<int64_t>(dset, nvalues, values);  break;
         case DataType::UInt64: do_read_value<uint64_t>(dset, nvalues, values); break;
