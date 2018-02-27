@@ -43,7 +43,7 @@ namespace test {
         return true; // LinkType as enum is always set
     }
     template<>
-    bool TtoBool<std::vector<nix::Value>>(std::vector<nix::Value> var) {
+    bool TtoBool<std::vector<nix::Variant>>(std::vector<nix::Variant> var) {
         return !(var.empty());
     }
     template<>
@@ -81,7 +81,7 @@ void TestOptionalObligatory::setUp() {
     block = file.createBlock("block_one", "dataset");
 
     // property---------------------------------------------------------
-    dummy = Value(10);
+    dummy = Variant(10);
     property = section.createProperty("prop", dummy);
 
     // dataAray---------------------------------------------------------

@@ -11,7 +11,7 @@
 
 #include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
-#include <nix/Value.hpp>
+#include <nix/Variant.hpp>
 #include <nix/ObjectType.hpp>
 
 #include <nix/Platform.hpp>
@@ -224,7 +224,7 @@ public:
      *
      * @param values    The values to set.
      */
-    void values(const std::vector<Value> &values) {
+    void values(const std::vector<Variant> &values) {
         backend()->values(values);
     }
 
@@ -233,7 +233,7 @@ public:
      *
      * @return The values of the property.
      */
-    std::vector<Value> values(void) const {
+    std::vector<Variant> values(void) const {
         return backend()->values();
     }
 

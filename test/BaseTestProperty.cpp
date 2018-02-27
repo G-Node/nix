@@ -67,13 +67,13 @@ void BaseTestProperty::testValues()
 {
     nix::Section section = file.createSection("Area51", "Boolean");
     nix::Property p1 = section.createProperty("strProperty", str_dummy);
-    std::vector<nix::Value> strValues = { nix::Value("Freude"),
-                                          nix::Value("schoener"),
-                                          nix::Value("Goetterfunken") };
+    std::vector<nix::Variant> strValues = { nix::Variant("Freude"),
+                                          nix::Variant("schoener"),
+                                          nix::Variant("Goetterfunken") };
     p1.values(strValues);
     CPPUNIT_ASSERT_EQUAL(p1.valueCount(), static_cast<ndsize_t>(strValues.size()));
 
-    std::vector<nix::Value> ctrlValues = p1.values();
+    std::vector<nix::Variant> ctrlValues = p1.values();
     for(size_t i = 0; i < ctrlValues.size(); ++i) {
         CPPUNIT_ASSERT_EQUAL(strValues[i], ctrlValues[i]);
     }
@@ -107,17 +107,17 @@ void BaseTestProperty::testValues()
 
 void BaseTestProperty::testDataType() {
     nix::Section section = file.createSection("Area51", "Boolean");
-    std::vector<nix::Value> strValues = { nix::Value("Freude"),
-                                          nix::Value("schoener"),
-                                          nix::Value("Goetterfunken") };
-    std::vector<nix::Value> doubleValues = { nix::Value(1.0),
-                                             nix::Value(2.0),
-                                             nix::Value(-99.99) };
-    std::vector<nix::Value> intValues = {nix::Value(int32_t(1)), nix::Value(int32_t(2)), nix::Value(int32_t(3))};
-    std::vector<nix::Value> uintValues = {nix::Value(uint32_t(1)), nix::Value(uint32_t(2)), nix::Value(uint32_t(3))};
-    std::vector<nix::Value> int64Values = {nix::Value(int64_t(1)), nix::Value(int64_t(2)), nix::Value(int64_t(3))};
-    std::vector<nix::Value> uint64Values = {nix::Value(uint64_t(1)), nix::Value(uint64_t(2)), nix::Value(uint64_t(3))};
-    std::vector<nix::Value> boolValues = {nix::Value(true), nix::Value(false), nix::Value(true)};
+    std::vector<nix::Variant> strValues = { nix::Variant("Freude"),
+                                          nix::Variant("schoener"),
+                                          nix::Variant("Goetterfunken") };
+    std::vector<nix::Variant> doubleValues = { nix::Variant(1.0),
+                                             nix::Variant(2.0),
+                                             nix::Variant(-99.99) };
+    std::vector<nix::Variant> intValues = {nix::Variant(int32_t(1)), nix::Variant(int32_t(2)), nix::Variant(int32_t(3))};
+    std::vector<nix::Variant> uintValues = {nix::Variant(uint32_t(1)), nix::Variant(uint32_t(2)), nix::Variant(uint32_t(3))};
+    std::vector<nix::Variant> int64Values = {nix::Variant(int64_t(1)), nix::Variant(int64_t(2)), nix::Variant(int64_t(3))};
+    std::vector<nix::Variant> uint64Values = {nix::Variant(uint64_t(1)), nix::Variant(uint64_t(2)), nix::Variant(uint64_t(3))};
+    std::vector<nix::Variant> boolValues = {nix::Variant(true), nix::Variant(false), nix::Variant(true)};
 
 
     nix::Property p1 = section.createProperty("strProperty", strValues);
@@ -143,9 +143,9 @@ void BaseTestProperty::testDataType() {
 
 void BaseTestProperty::testUnit(){
     nix::Section section = file.createSection("testSection", "test");
-    nix::Value v(22.2);
-    v.uncertainty = 1.2;
-    std::vector<Value> values = {v};
+    nix::Variant v(22.2);
+    //v.uncertainty = 1.2;
+    std::vector<nix::Variant> values = {v};
     nix::Property p1 = section.createProperty("testProperty", int_dummy);
 
     std::string valid_unit = "mV*cm^-2";

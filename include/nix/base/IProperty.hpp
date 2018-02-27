@@ -9,7 +9,8 @@
 #ifndef NIX_I_PROPERTY_H
 #define NIX_I_PROPERTY_H
 
-#include <nix/Value.hpp>
+//#include <nix/Value.hpp>
+#include <nix/Variant.hpp>
 #include <nix/base/INamedEntity.hpp>
 #include <nix/ObjectType.hpp>
 
@@ -70,10 +71,10 @@ public:
     virtual ndsize_t valueCount() const = 0;
 
 
-    virtual void values(const std::vector<Value> &values) = 0;
+    virtual void values(const std::vector<Variant> &values) = 0;
 
 
-    virtual std::vector<Value> values(void) const = 0;
+    virtual std::vector<Variant> values(void) const = 0;
 
 
     virtual void values(const boost::none_t t) = 0;

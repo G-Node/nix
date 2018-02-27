@@ -152,7 +152,7 @@ private:
     nix::RangeDimension range_dim;
     nix::Feature feature;
     time_t startup_time;
-    nix::Value dummy;
+    nix::Variant dummy;
     bool is_opt;   // whether getter return value is boost::optional
     bool is_set;   // whether getter return value is set
     // bool accepts_none; // whether setter accepts boost::none (declared in place)

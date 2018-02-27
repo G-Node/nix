@@ -455,7 +455,7 @@ void BaseTestSection::testPropertyAccess() {
     CPPUNIT_ASSERT(!section.hasProperty(p));
     CPPUNIT_ASSERT(!section.deleteProperty(p));
 
-    Value dummy(10);
+    Variant dummy(10);
     prop = section.createProperty("single value", dummy);
     CPPUNIT_ASSERT(section.hasProperty("single value"));
     CPPUNIT_ASSERT(section.propertyCount() == 1);
