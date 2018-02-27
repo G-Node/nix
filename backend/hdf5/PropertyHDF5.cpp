@@ -246,21 +246,8 @@ h5x::DataType h5_type_for_value(bool for_memory)
 {
     typedef FileValue<T> file_value_t;
 
-    h5x::DataType ct = h5x::DataType::makeCompound(sizeof(file_value_t));
-    // h5x::DataType strType = h5x::DataType::makeStrType();
-
     h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
-    /*
-    h5x::DataType double_type = data_type_to_h5(DataType::Double, for_memory);
-
-    ct.insert("value", HOFFSET(file_value_t, value), value_type);
-    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), double_type);
-    ct.insert("reference", HOFFSET(file_value_t, reference), strType);
-    ct.insert("filename", HOFFSET(file_value_t, filename), strType);
-    ct.insert("encoder", HOFFSET(file_value_t, encoder), strType);
-    ct.insert("checksum", HOFFSET(file_value_t, checksum), strType);
-    */
-    return ct;
+    return value_type;
 }
 
 #if 0 //set to one to check that all supported DataTypes are handled
@@ -459,24 +446,21 @@ std::vector<Variant> PropertyHDF5::values(void) const
     if (shape.size() < 1 || shape[0] < 1) {
         return values;
     }
-
     assert(shape.size() == 1);
     size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
 
     switch (dtype) {
-        case DataType::Bool:   do_read_value<bool>(dset, nvalues, values);     break;
-        case DataType::Int32:  do_read_value<int32_t>(dset, nvalues, values);  break;
+        case DataType::Bool: do_read_value<bool>(dset, nvalues, values); break;
+        case DataType::Int32: do_read_value<int32_t>(dset, nvalues, values); break;
         case DataType::UInt32: do_read_value<uint32_t>(dset, nvalues, values); break;
         case DataType::Int64:  do_read_value<int64_t>(dset, nvalues, values);  break;
         case DataType::UInt64: do_read_value<uint64_t>(dset, nvalues, values); break;
         case DataType::String: do_read_value<char *>(dset, nvalues, values);   break;
         case DataType::Double: do_read_value<double>(dset, nvalues, values);   break;
 #ifndef CHECK_SUPOORTED_VALUES
-        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+    default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
-
-
     return values;
 }
 
