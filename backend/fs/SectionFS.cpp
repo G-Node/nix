@@ -260,15 +260,15 @@ std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &na
 }
 
 
-std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const Value &value) {
+std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const Variant &value) {
     std::shared_ptr<base::IProperty> p = createProperty(name, value.type());
-    std::vector<Value> val{value};
+    std::vector<Variant> val{value};
     p->values(val);
     return p;
 }
 
 
-std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const std::vector<Value> &values) {
+std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const std::vector<Variant> &values) {
     if (values.size() < 1)
         throw std::runtime_error("Trying to create a property without a value!");
 

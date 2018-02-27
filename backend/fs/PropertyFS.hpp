@@ -94,10 +94,10 @@ public:
     ndsize_t valueCount() const;
 
 
-    void values(const std::vector<Value> &values);
+    void values(const std::vector<Variant> &values);
 
 
-    std::vector<Value> values(void) const;
+    std::vector<Variant> values(void) const;
 
 
     void values(const boost::none_t t);

@@ -137,10 +137,10 @@ public:
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);
 
 
-    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Value &value);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Variant &value);
 
 
-    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Value> &values);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Variant> &values);
 
 
     bool deleteProperty(const std::string &name_or_id);

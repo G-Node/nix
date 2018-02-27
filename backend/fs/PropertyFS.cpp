@@ -202,13 +202,13 @@ ndsize_t PropertyFS::valueCount() const {
 }
 
 
-void PropertyFS::values(const std::vector<Value> &values) {
+void PropertyFS::values(const std::vector<Variant> &values) {
     // FIXME
 }
 
 
-std::vector<Value> PropertyFS::values(void) const {
-    std::vector<Value> values;
+std::vector<Variant> PropertyFS::values(void) const {
+    std::vector<Variant> values;
     // FIXME
     return values;
 }
