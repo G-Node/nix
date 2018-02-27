@@ -410,47 +410,41 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
     DataSet dset = dataset();
     DataType dt = values[0].type();
     if (dt != data_type_from_h5(dset.dataType())) {
-        std::cerr << "ping!\n"; //TODO throw an exception
+        throw std::invalid_argument("Inconsistent DataTypes!");
     }
     dset.setExtent(NDSize{values.size()});
 
-    if (values.size() < 1) {
-        return; //nothing to do
-    }
-    size_t buffer_size  = nix::data_type_to_size(values[0].type()) * values.size();
     if (dt == DataType::String) {
-        buffer_size = 0;
+        h5x::DataType memType = data_type_to_h5_memtype(dt);
+        DataSpace fileSpace, memSpace;
+        std::tie(memSpace, fileSpace) = dset.offsetCount2DataSpaces(NDSize{values.size()}, NDSize{0});
+        std::vector<std::string> strings;
         for (Variant v : values) {
-            const char *str;
-            str = v.get<const char *>();
-            buffer_size += (strlen(str) + 1);
+            if (v.type() != dt) {
+                throw std::invalid_argument("Inconsistent DataTypes!");
+            }
+            std::string temp;
+            v.get(temp);
+            strings.push_back(temp);
         }
-    }
-    std::cerr << buffer_size << std::endl;
-    char *buffer = new char[buffer_size];
-    char *mem = buffer;
-    std::cerr << "Pointer address = " << static_cast<void*>(mem) << std::endl;
-
-    std::cerr << *mem << std::endl;
-    for (Variant v : values) {
-        if (v.type() == dt) {
-            if (dt != DataType::String) {
+        StringReader reader(NDSize{values.size()}, strings.data());
+        dset.write(*reader, memType, memSpace, fileSpace);
+    } else {
+        size_t buffer_size  = nix::data_type_to_size(values[0].type()) * values.size();
+        char *buffer = new char[buffer_size];
+        char *mem = buffer;
+        for (Variant v : values) {
+            if (v.type() == dt) {
                 copyValue(mem, v);
                 mem += nix::data_type_to_size(dt);
             } else {
-                copyValue(mem, v);
-                 const char *str;
-                 str = v.get<const char *>();
-                 mem += (strlen(str) + 1);
-                 std::cerr << "Pointer address = " << static_cast<void*>(mem) << std::endl;
+                delete [] buffer;
+                throw std::invalid_argument("Inconsistent DataTypes");
             }
-        } else {
-            delete [] buffer;
-            throw std::invalid_argument("Inconsistent DTypes");
         }
+        dset.write(buffer, data_type_to_h5_memtype(dt), NDSize{values.size()});
+        delete [] buffer;
     }
-    dset.write(buffer, data_type_to_h5_memtype(dt), NDSize{values.size()});
-    delete [] buffer;
 }
 
 
