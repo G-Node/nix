@@ -243,8 +243,6 @@ struct NIX_PACKED FileValue  {
 template<typename T>
 h5x::DataType h5_type_for_value(bool for_memory)
 {
-    typedef FileValue<T> file_value_t;
-
     h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
     return value_type;
 }
