@@ -254,7 +254,7 @@ shared_ptr<IProperty> SectionHDF5::getProperty(ndsize_t index) const {
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
     string new_id = util::createId();
     boost::optional<H5Group> g = property_group(true);
-    DataSet ds = g->createData("values", data_type_to_h5_filetype(dtype), {0});
+    DataSet ds = g->createData(name, data_type_to_h5_filetype(dtype), {0});
     return make_shared<PropertyHDF5>(file(), ds, new_id, name);
 }
 
