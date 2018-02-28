@@ -172,6 +172,9 @@ public:
         mtag2 = block.createMultiTag("sinus_segments", "test", seg_starts);
         mtag2.extents(seg_extents);
         mtag2.addReference(sinus_array);
+
+        pointmtag = block.createMultiTag("sinus_points", "test", seg_starts);
+        pointmtag.addReference(sinus_array);
     }
 
     void tearDown() {
