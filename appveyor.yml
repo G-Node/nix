@@ -13,7 +13,7 @@ environment:
     CONFIGURATION: Release
 install:
 - cmd: >-
-    choco install nsis.install -version 2.49 -y
+    choco install nsis.install -version 2.49 -y --ignore-checksums
 
     if not exist C:\deps.zip appveyor DownloadFile https://projects.g-node.org/nix/nix-dependencies-windows-20160121.zip -FileName C:\deps.zip
 
