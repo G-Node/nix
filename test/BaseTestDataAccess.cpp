@@ -137,6 +137,10 @@ void BaseTestDataAccess::testRetrieveData() {
     views = util::retrieveData(multi_tag, position_indices, 0);
     CPPUNIT_ASSERT(views.size() == 1);
 
+    std::vector<ndsize_t> temp;
+    std::vector<DataView> slices = util::retrieveData(mtag2, temp, 0);
+    CPPUNIT_ASSERT(slices.size() == mtag2.positions().dataExtent()[0]);
+
     DataView data_view = views[0];
     NDSize data_size = data_view.dataExtent();
 
