@@ -217,6 +217,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     NDSize position_size, extent_size;
     ndsize_t dimension_count = array.dimensionCount();
     vector<string> units = tag.units();
+
     while (units.size() < dimension_count) {
         units.push_back("none");
     }
@@ -226,6 +227,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     if (extents) {
         extent_size = extents.dataExtent();
     }
+
     if (position_size.size() == 1 && dimension_count != 1) {
         throw IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
                                           "util::getOffsetAndCount");
@@ -242,11 +244,14 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
         throw OutOfBounds("Index out of bounds of positions or extents!", 0);
     }
+
     size_t dimcount_sizet = check::fits_in_size_t(dimension_count, "getOffsetAndCount() failed; dimension count > size_t.");
     NDSize temp_offset(dimcount_sizet, static_cast<NDSize::value_type>(0));
     NDSize temp_count(dimcount_sizet, static_cast<NDSize::value_type>(1));
 
-    temp_count[1] = static_cast<NDSize::value_type>(dimension_count);
+    int dim_index = dimension_count > 1 ? 1 : 0;
+    temp_count[dim_index] = static_cast<NDSize::value_type>(dimension_count);
+
     vector<Dimension> dimensions = array.dimensions();
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
@@ -268,6 +273,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
             end_positions[dim_index][idx] = offset[dim_index] + extent[dim_index];
         }
     }
+
     vector<vector<pair<ndsize_t, ndsize_t>>> data_indices;
     for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
         vector<string> temp_units(start_positions.size(), units[dim_index]);
@@ -345,7 +351,13 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
                               const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
+    if (position_indices.size() < 1) {
+        position_indices.resize(tag.positions().dataExtent()[0]);
+        std::iota(position_indices.begin(), position_indices.end(), 0);
+    }
+
     getOffsetAndCount(tag, array, position_indices, offsets, counts);
+
     for (size_t i = 0; i < offsets.size(); ++i) {
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
             throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
