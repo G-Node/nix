@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
+#include <numeric>
 
 #include <boost/optional.hpp>
 
@@ -331,6 +332,10 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 
 vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
                               ndsize_t reference_index) {
+    if (position_indices.size() < 1) {
+        position_indices.resize(tag.positions().dataExtent()[0]);
+        std::iota(position_indices.begin(), position_indices.end(), 0);
+    }
     vector<DataArray> refs = tag.references();
     size_t ref_idx = check::fits_in_size_t(reference_index, "retrieveData() failed; reference_index > size_t.");
 
@@ -457,7 +462,10 @@ std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
     if (data == nix::none) {
         throw UninitializedEntity();
     }
-
+    if (position_indices.size() < 1) {
+        position_indices.resize(tag.positions().dataExtent()[0]);
+        std::iota(position_indices.begin(), position_indices.end(), 0);
+    }
     if (feature.linkType() == LinkType::Tagged) {
         views = retrieveData(tag, position_indices, data);
         return views;
