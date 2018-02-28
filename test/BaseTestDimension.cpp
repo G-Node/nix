@@ -177,6 +177,9 @@ void BaseTestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(sd.indexOf(4.28) == 1);
     CPPUNIT_ASSERT(sd.indexOf(7.28) == 2);
 
+    CPPUNIT_ASSERT_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9}), std::runtime_error);
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9, 12., 1.}));
+    CPPUNIT_ASSERT(sd.indexOf({0.0, 20.0, 40.0}, {10.9, 12., 1.}).size() == 3);
     data_array.deleteDimensions();
 }
 
@@ -419,6 +422,9 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(rd.indexOf(257.28) == 4);
     CPPUNIT_ASSERT(rd.indexOf(-257.28) == 0);
 
+    CPPUNIT_ASSERT_THROW(rd.indexOf({-100.0, -90, 0.0}, {10.}), std::runtime_error);
+    CPPUNIT_ASSERT_NO_THROW(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}));
+    CPPUNIT_ASSERT(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}).size() == 3);
     data_array.deleteDimensions();
 }
 
