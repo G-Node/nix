@@ -43,7 +43,7 @@ namespace test {
         return true; // LinkType as enum is always set
     }
     template<>
-    bool TtoBool<std::vector<nix::Value>>(std::vector<nix::Value> var) {
+    bool TtoBool<std::vector<nix::Variant>>(std::vector<nix::Variant> var) {
         return !(var.empty());
     }
     template<>
@@ -81,7 +81,7 @@ void TestOptionalObligatory::setUp() {
     block = file.createBlock("block_one", "dataset");
 
     // property---------------------------------------------------------
-    dummy = Value(10);
+    dummy = Variant(10);
     property = section.createProperty("prop", dummy);
 
     // dataAray---------------------------------------------------------
@@ -97,7 +97,7 @@ void TestOptionalObligatory::setUp() {
         refs.push_back(block.createDataArray(name, "reference", DataType::Double, nix::NDSize({ 0 })));
     }
     tag.references(refs);
-    
+
     // multiTag----------------------------------------------------------
     positions = block.createDataArray("positions_DataArray", "dataArray",
                                       DataType::Double, nix::NDSize({ 0 }));
@@ -377,18 +377,6 @@ void TestOptionalObligatory::testRangeDimensionUnit() {
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
 
-void TestOptionalObligatory::testPropertyMapping() {
-    static const bool accepts_none = test::accepts_noneT<nix::Property, test::mapping>::value;
-    is_opt   = std::conditional<std::is_class<decltype(property.mapping())>::value,
-                                std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(property.mapping())>::value>
-                                    >::type::value;
-    is_set   = test::TtoBool(util::deRef(property.mapping()));
-    summarize("Property::mapping", is_opt, is_set, accepts_none);
-    CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
-                   test::isValidObligatory(is_opt, is_set, accepts_none));
-}
-
 void TestOptionalObligatory::testPropertyUnit() {
     static const bool accepts_none = test::accepts_noneT<nix::Property, test::unit>::value;
     is_opt   = std::conditional<std::is_class<decltype(property.unit())>::value,
@@ -397,6 +385,18 @@ void TestOptionalObligatory::testPropertyUnit() {
                                     >::type::value;
     is_set   = test::TtoBool(util::deRef(property.unit()));
     summarize("Property::unit", is_opt, is_set, accepts_none);
+    CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
+                   test::isValidObligatory(is_opt, is_set, accepts_none));
+}
+
+void TestOptionalObligatory::testPropertyUncertainty() {
+    static const bool accepts_none = test::accepts_noneT<nix::Property, test::uncertainty>::value;
+    is_opt   = std::conditional<std::is_class<decltype(property.uncertainty())>::value,
+                                std::integral_constant<bool, accepts_none>,
+                                std::integral_constant<bool, util::is_optional<decltype(property.uncertainty())>::value>
+                                    >::type::value;
+    is_set   = test::TtoBool(util::deRef(property.uncertainty()));
+    summarize("Property::uncertainty", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
@@ -445,18 +445,6 @@ void TestOptionalObligatory::testSectionLink() {
                                 >::type::value;
     is_set   = test::TtoBool(util::deRef(section.link()));
     summarize("Section::link", is_opt, is_set, accepts_none);
-    CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
-                   test::isValidObligatory(is_opt, is_set, accepts_none));
-}
-
-void TestOptionalObligatory::testSectionMapping() {
-    static const bool accepts_none = test::accepts_noneT<nix::Section, test::mapping>::value;
-    is_opt   = std::conditional<std::is_class<decltype(section.mapping())>::value,
-                                std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(section.mapping())>::value>
-                                >::type::value;
-    is_set   = test::TtoBool(util::deRef(section.mapping()));
-    summarize("Mapping::mapping", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
 }
@@ -549,4 +537,3 @@ void TestOptionalObligatory::summarize(std::string name, bool is_opt, bool is_se
     }
     summary += "\n";
 }
-

@@ -29,9 +29,9 @@ using namespace valid;
 void BaseTestReadOnly::setUp() {
     nix::File file = openFile("test_read_only", FileMode::Overwrite);
     startup_time = time(NULL);
-    std::vector<nix::Value> values = { nix::Value(1.0),
-                                       nix::Value(2.0),
-                                       nix::Value(-99.99) };
+    std::vector<nix::Variant> values = { nix::Variant(1.0),
+                                         nix::Variant(2.0),
+                                         nix::Variant(-99.99) };
     std::vector<double> ticks = {1.0, 2.0, 3.4, 42.0};
 
     Section section = file.createSection("foo_section", "metadata");

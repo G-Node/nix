@@ -276,11 +276,6 @@ void Section::link(const std::string &id) {
     backend()->link(id);
 }
 
-void Section::mapping(const std::string &mapping) {
-    util::checkEmptyString(mapping, "mapping");
-    backend()->mapping(mapping);
-}
-
 Section Section::createSection(const std::string &name, const std::string &type) {
     util::checkEntityNameAndType(name, type);
     if (backend()->hasSection(name)) {
@@ -297,7 +292,7 @@ Property Section::createProperty(const std::string &name, const DataType &dtype)
     return backend()->createProperty(name, dtype);
 }
 
-Property Section::createProperty(const std::string &name, const std::vector<Value> &values) {
+Property Section::createProperty(const std::string &name, const std::vector<Variant> &values) {
     if (values.size() < 1)
         throw std::runtime_error("Trying to create a property without a value!");
     util::checkEntityName(name);
@@ -307,7 +302,7 @@ Property Section::createProperty(const std::string &name, const std::vector<Valu
     return backend()->createProperty(name, values);
 }
 
-Property Section::createProperty(const std::string &name, const Value &value) {
+Property Section::createProperty(const std::string &name, const Variant &value) {
     util::checkEntityName(name);
     if (backend()->hasProperty(name)){
         throw DuplicateName("Property with that name already exists!");

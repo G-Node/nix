@@ -67,15 +67,6 @@ public:
     void definition(const none_t t);
 
 
-    void mapping(const std::string &mapping);
-
-
-    boost::optional<std::string> mapping() const;
-
-
-    void mapping(const none_t t);
-
-
     DataType dataType() const;
 
 
@@ -88,16 +79,25 @@ public:
     void unit(const none_t t);
 
 
+    void uncertainty(double uncertainty);
+
+
+    boost::optional<double> uncertainty() const;
+
+
+    void uncertainty(const none_t t);
+
+
     void deleteValues();
 
 
     ndsize_t valueCount() const;
 
 
-    void values(const std::vector<Value> &values);
+    void values(const std::vector<Variant> &values);
 
 
-    std::vector<Value> values(void) const;
+    std::vector<Variant> values(void) const;
 
 
     void values(const boost::none_t t);

@@ -70,13 +70,13 @@ namespace test {
     // then 'acceptsNoneT = accepts_noneT<nix::parentClass, test::methodName>::value;'
     enum METHOD_NAME { FIRST };
     template<typename T, METHOD_NAME S>
-    class accepts_noneT 
-    { 
-        template <typename U, void (U::*)(boost::none_t)> struct Check; 
-        template <typename U> static char func(Check<U, &U::id> *); 
-        template <typename U> static int func(...); 
-    public: 
-        enum { value = sizeof(func<T>(0)) == sizeof(char) }; 
+    class accepts_noneT
+    {
+        template <typename U, void (U::*)(boost::none_t)> struct Check;
+        template <typename U> static char func(Check<U, &U::id> *);
+        template <typename U> static int func(...);
+    public:
+        enum { value = sizeof(func<T>(0)) == sizeof(char) };
     };
     #define ACCEPTS(M) \
         static const METHOD_NAME M = static_cast<METHOD_NAME>(__COUNTER__ + 1); \
@@ -90,10 +90,10 @@ namespace test {
             enum { value = sizeof(func<T>(0)) == sizeof(char) }; \
         };
     ACCEPTS(id) ACCEPTS(index) ACCEPTS(type) ACCEPTS(name) ACCEPTS(definition) ACCEPTS(label)
-    ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
-    ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions) 
+    ACCEPTS(labels) ACCEPTS(unit) ACCEPTS(uncertainty) ACCEPTS(metadata) ACCEPTS(ticks) ACCEPTS(offset)
+    ACCEPTS(extent) ACCEPTS(extents) ACCEPTS(position) ACCEPTS(positions)
     ACCEPTS(references) ACCEPTS(expansionOrigin) ACCEPTS(samplingInterval)
-    ACCEPTS(mapping) ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
+    ACCEPTS(values) ACCEPTS(data) ACCEPTS(linkType) ACCEPTS(link)
     ACCEPTS(repository) ACCEPTS(units) ACCEPTS(sources)
 
 } // namespace test
@@ -124,13 +124,12 @@ private:
     CPPUNIT_TEST(testRangeDimensionLabel);
     CPPUNIT_TEST(testRangeDimensionTicks);
     CPPUNIT_TEST(testRangeDimensionUnit);
-    CPPUNIT_TEST(testPropertyMapping);
     CPPUNIT_TEST(testPropertyUnit);
+    CPPUNIT_TEST(testPropertyUncertainty);
     CPPUNIT_TEST(testPropertyValues);
     CPPUNIT_TEST(testFeatureData);
     CPPUNIT_TEST(testFeatureLinkType);
     CPPUNIT_TEST(testSectionLink);
-    CPPUNIT_TEST(testSectionMapping);
     CPPUNIT_TEST(testSectionRepository);
     CPPUNIT_TEST(testTagExtent);
     CPPUNIT_TEST(testTagPosition);
@@ -153,7 +152,7 @@ private:
     nix::RangeDimension range_dim;
     nix::Feature feature;
     time_t startup_time;
-    nix::Value dummy;
+    nix::Variant dummy;
     bool is_opt;   // whether getter return value is boost::optional
     bool is_set;   // whether getter return value is set
     // bool accepts_none; // whether setter accepts boost::none (declared in place)
@@ -185,13 +184,12 @@ public:
     void testRangeDimensionLabel();
     void testRangeDimensionTicks();
     void testRangeDimensionUnit();
-    void testPropertyMapping();
     void testPropertyUnit();
+    void testPropertyUncertainty();
     void testPropertyValues();
     void testFeatureData();
     void testFeatureLinkType();
     void testSectionLink();
-    void testSectionMapping();
     void testSectionRepository();
     void testTagExtent();
     void testTagPosition();

@@ -19,7 +19,6 @@ class TestPropertyHDF5 : public BaseTestProperty {
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testName);
     CPPUNIT_TEST(testDefinition);
-    CPPUNIT_TEST(testMapping);
 
     CPPUNIT_TEST(testValues);
     CPPUNIT_TEST(testDataType);
@@ -36,8 +35,8 @@ public:
         startup_time = time(NULL);
         file = nix::File::open("test_property.h5", nix::FileMode::Overwrite);
         section = file.createSection("cool section", "metadata");
-        int_dummy = nix::Value(10);
-        str_dummy = nix::Value("test");
+        int_dummy = nix::Variant(10);
+        str_dummy = nix::Variant("test");
         property = section.createProperty("prop", int_dummy);
         property_other = section.createProperty("other", int_dummy);
         property_null = nix::none;

@@ -142,35 +142,6 @@ void SectionFS::link(const none_t t) {
     forceUpdatedAt();
 }
 
-
-void SectionFS::mapping(const std::string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    } else {
-        setAttr("mapping", mapping);
-        forceUpdatedAt();
-    }
-}
-
-
-boost::optional<std::string> SectionFS::mapping() const {
-    boost::optional<std::string> ret;
-    std::string mapping;
-    if (hasAttr("mapping")) {
-        getAttr("mapping", mapping);
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void SectionFS::mapping(const none_t t) {
-    if (hasAttr("mapping")) {
-        removeAttr("mapping");
-    }
-    forceUpdatedAt();
-}
-
 //--------------------------------------------------
 // Methods for parent access
 //--------------------------------------------------
@@ -289,15 +260,15 @@ std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &na
 }
 
 
-std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const Value &value) {
+std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const Variant &value) {
     std::shared_ptr<base::IProperty> p = createProperty(name, value.type());
-    std::vector<Value> val{value};
+    std::vector<Variant> val{value};
     p->values(val);
     return p;
 }
 
 
-std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const std::vector<Value> &values) {
+std::shared_ptr<base::IProperty> SectionFS::createProperty(const std::string &name, const std::vector<Variant> &values) {
     if (values.size() < 1)
         throw std::runtime_error("Trying to create a property without a value!");
 

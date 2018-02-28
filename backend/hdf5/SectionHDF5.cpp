@@ -26,7 +26,7 @@ SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const H5Group
     : SectionHDF5(file, nullptr, group)
 {
 }
-    
+
 
 SectionHDF5::SectionHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::ISection> &parent, const H5Group &group)
     : NamedEntityHDF5(file, group), parent_section(parent)
@@ -96,12 +96,12 @@ void SectionHDF5::repository(const none_t t) {
 void SectionHDF5::link(const std::string &id) {
     if (group().hasGroup("link"))
         link(none);
-        
+
     File tmp = file();
     auto found = tmp.findSections(util::IdFilter<Section>(id));
     if (found.empty())
         throw std::runtime_error("SectionHDF5::link: Section not found in file!");
-    
+
     auto target = dynamic_pointer_cast<SectionHDF5>(found.front().impl());
 
     group().createLink(target->group(), "link");
@@ -132,29 +132,6 @@ void SectionHDF5::link(const none_t t) {
     forceUpdatedAt();
 }
 
-
-void SectionHDF5::mapping(const string &mapping) {
-    group().setAttr("mapping", mapping);
-    forceUpdatedAt();
-}
-
-
-boost::optional<string> SectionHDF5::mapping() const {
-    boost::optional<string> ret;
-    string mapping;
-    if (group().getAttr("mapping", mapping)) {
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void SectionHDF5::mapping(const none_t t) {
-    if (group().hasAttr("mapping")) {
-        group().removeAttr("mapping");
-    }
-    forceUpdatedAt();
-}
 
 //--------------------------------------------------
 // Methods for parent access
@@ -277,23 +254,20 @@ shared_ptr<IProperty> SectionHDF5::getProperty(ndsize_t index) const {
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
     string new_id = util::createId();
     boost::optional<H5Group> g = property_group(true);
-
-    h5x::DataType fileType = PropertyHDF5::fileTypeForValue(dtype);
-    DataSet dataset = g->createData(name, fileType, {0});
-
-    return make_shared<PropertyHDF5>(file(), dataset, new_id, name);
+    DataSet ds = g->createData(name, data_type_to_h5_filetype(dtype), {0});
+    return make_shared<PropertyHDF5>(file(), ds, new_id, name);
 }
 
 
-shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Value &value) {
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Variant &value) {
     shared_ptr<IProperty> p = createProperty(name, value.type());
-    vector<Value> val{value};
+    vector<Variant> val{value};
     p->values(val);
     return p;
 }
 
 
-shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vector<Value> &values) {
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vector<Variant> &values) {
     shared_ptr<IProperty> p = createProperty(name, values[0].type());
     p->values(values);
     return p;

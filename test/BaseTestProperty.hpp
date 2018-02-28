@@ -23,17 +23,17 @@ protected:
     nix::File file;
     nix::Section section;
     nix::Property property, property_other, property_null;
-    nix::Value int_dummy, str_dummy;
+    nix::Variant int_dummy, str_dummy;
 
 public:
     void testValidate();
     void testId();
     void testName();
     void testDefinition();
-    void testMapping();
     void testDataType();
     void testValues();
     void testUnit();
+    void testUncertainty();
     void testIsValidEntity();
 
     void testOperators();

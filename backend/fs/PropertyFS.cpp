@@ -138,34 +138,6 @@ DataType PropertyFS::dataType() const {
 }
 
 
-void PropertyFS::mapping(const std::string &mapping) {
-    if (mapping.empty()) {
-        throw EmptyString("mapping");
-    }
-    setAttr("mapping", mapping);
-    forceUpdatedAt();
-}
-
-
-boost::optional<std::string> PropertyFS::mapping() const {
-    boost::optional<std::string> ret;
-    std::string mapping;
-    if (hasAttr("mapping")) {
-        getAttr("mapping", mapping);
-        ret = mapping;
-    }
-    return ret;
-}
-
-
-void PropertyFS::mapping(const nix::none_t t) {
-    if (hasAttr("mapping")) {
-        removeAttr("mapping");
-        forceUpdatedAt();
-    }
-}
-
-
 void PropertyFS::unit(const std::string &unit) {
     if (unit.empty()) {
         throw EmptyString("unit");
@@ -194,6 +166,31 @@ void PropertyFS::unit(const nix::none_t t) {
 }
 
 
+void PropertyFS::uncertainty(double uncertainty) {
+    setAttr("uncertainty", uncertainty);
+    forceUpdatedAt();
+}
+
+
+boost::optional<double> PropertyFS::uncertainty() const {
+    boost::optional<double> ret;
+    double error;
+    if (hasAttr("uncertainty")) {
+        getAttr("uncertainty", error);
+        ret = error;
+    }
+    return ret;
+}
+
+
+void PropertyFS::uncertainty(const nix::none_t t) {
+    if (hasAttr("uncertainty")) {
+        removeAttr("uncertainty");
+    }
+    forceUpdatedAt();
+}
+
+
 void PropertyFS::deleteValues() {
     // FIXME
 }
@@ -205,13 +202,13 @@ ndsize_t PropertyFS::valueCount() const {
 }
 
 
-void PropertyFS::values(const std::vector<Value> &values) {
+void PropertyFS::values(const std::vector<Variant> &values) {
     // FIXME
 }
 
 
-std::vector<Value> PropertyFS::values(void) const {
-    std::vector<Value> values;
+std::vector<Variant> PropertyFS::values(void) const {
+    std::vector<Variant> values;
     // FIXME
     return values;
 }

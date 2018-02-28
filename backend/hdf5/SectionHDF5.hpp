@@ -34,7 +34,7 @@ public:
      * Standard constructor for existing entity
      */
     SectionHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group);
-    
+
     /**
      * Standard constructor for existing entity
      */
@@ -87,15 +87,6 @@ public:
     void link(const none_t t);
 
 
-    void mapping(const std::string &mapping);
-
-
-    boost::optional<std::string> mapping() const;
-
-
-    void mapping(const none_t t);
-
-
     //--------------------------------------------------
     // Methods for parent access
     //--------------------------------------------------
@@ -146,10 +137,10 @@ public:
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);
 
 
-    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Value &value);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Variant &value);
 
 
-    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Value> &values);
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const std::vector<Variant> &values);
 
 
     bool deleteProperty(const std::string &name_or_id);

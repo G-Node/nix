@@ -11,7 +11,7 @@
 
 #include <nix/base/Entity.hpp>
 #include <nix/base/IProperty.hpp>
-#include <nix/Value.hpp>
+#include <nix/Variant.hpp>
 #include <nix/ObjectType.hpp>
 
 #include <nix/Platform.hpp>
@@ -30,8 +30,7 @@ namespace nix {
  * the type of the stored Value entities (e.g. double or integer).
  *
  * The {@link unit} is the unit of the stored values. Similar
- * to the {@link nix::Section} entity, mapping information can be provided
- * using the {@link mapping} field.
+ * to the {@link nix::Section} entity
  */
 class NIXAPI Property : public base::Entity<base::IProperty> {
 
@@ -138,41 +137,41 @@ public:
     }
 
     /**
-     * @brief Set the mapping information for this Property.
-     *
-     * The mapping defines how this Property should be treated in a mapping procedure. The mapping
-     * is provided in form of an url pointing to the definition of a section into which this
-     * property should be mapped.
-     *
-     * @param mapping   The mapping information.
-     */
-    void mapping(const std::string &mapping);
-
-    /**
-     * @brief Getter for the mapping information stored in this Property.
-     *
-     * @return The mapping for the Property.
-     */
-    boost::optional<std::string> mapping() const {
-        return backend()->mapping();
-    }
-
-    /**
-     * @brief Deletes the mapping information.
-     *
-     * @param t         None
-     */
-    void mapping(const boost::none_t t) {
-        backend()->mapping(t);
-    }
-
-    /**
      * @brief Returns the data type of the stored Values.
      *
      * @return The data type.
      */
     DataType dataType() const {
         return backend()->dataType();
+    }
+
+    /**
+     * @brief Set the uncertainty (e.g. the standard deviation) related to the
+     * stored values.
+     *
+     * @param uncertainty      The uncertainty
+     */
+    void uncertainty(double uncertainty) {
+        backend()->uncertainty(uncertainty);
+    }
+
+    /**
+     * @brief Returns the uncertainty (e.g . the standard deviation) of the
+     * stored value.
+     *
+     * @return The uncertainty.
+     */
+    boost::optional<double> uncertainty() const {
+        return backend()->uncertainty();
+    }
+
+    /**
+     * @brief Remove the uncertainty.
+     *
+     * @param t         None
+     */
+    void uncertainty(const boost::none_t t) {
+        return backend()->uncertainty(t);
     }
 
     /**
@@ -225,7 +224,7 @@ public:
      *
      * @param values    The values to set.
      */
-    void values(const std::vector<Value> &values) {
+    void values(const std::vector<Variant> &values) {
         backend()->values(values);
     }
 
@@ -234,7 +233,7 @@ public:
      *
      * @return The values of the property.
      */
-    std::vector<Value> values(void) const {
+    std::vector<Variant> values(void) const {
         return backend()->values();
     }
 

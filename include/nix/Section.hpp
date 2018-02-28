@@ -117,6 +117,7 @@ public:
      * Properties of the same name are overridden.
      *
      * @param id        The id of the section that should be linked.
+1
      */
     void link(const std::string &id);
 
@@ -150,33 +151,6 @@ public:
      */
     void link(const boost::none_t t) {
         backend()->link(t);
-    }
-
-    /**
-     * @brief Sets the mapping information for this section.
-     *
-     * The mapping is provided as a path or URL to another section.
-     *
-     * @param mapping   The mapping information to this section.
-     */
-    void mapping(const std::string &mapping);
-
-    /**
-     * @brief Gets the mapping information.
-     *
-     * @return The mapping information.
-     */
-    boost::optional<std::string> mapping() const {
-        return backend()->mapping();
-    }
-
-    /**
-     * @brief Deleter for the mapping information.
-     *
-     * @param t         None
-     */
-    void mapping(const boost::none_t t) {
-        backend()->mapping(t);
     }
 
     //--------------------------------------------------
@@ -409,7 +383,7 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const Value &value);
+    Property createProperty(const std::string &name, const Variant &value);
 
     /**
      * @brief Add a new Property with values to the Section.
@@ -419,7 +393,7 @@ public:
      *
      * @return The newly created property.
      */
-    Property createProperty(const std::string &name, const std::vector<Value> &values);
+    Property createProperty(const std::string &name, const std::vector<Variant> &values);
 
     /**
      * @brief Delete the Property identified by its name or id.

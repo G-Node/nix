@@ -14,7 +14,7 @@
 #include <nix/base/INamedEntity.hpp>
 #include <nix/base/IProperty.hpp>
 #include <nix/DataType.hpp>
-#include <nix/Value.hpp>
+#include <nix/Variant.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/ObjectType.hpp>
 
@@ -54,15 +54,6 @@ public:
 
 
     virtual void link(const none_t t) = 0;
-
-
-    virtual void mapping(const std::string &mapping) = 0;
-
-
-    virtual boost::optional<std::string> mapping() const = 0;
-
-
-    virtual void mapping(const none_t t) = 0;
 
     //--------------------------------------------------
     // Methods for parent access
@@ -110,10 +101,10 @@ public:
     virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const DataType &dtype) = 0;
 
 
-    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const Value &value) = 0;
+    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const Variant &value) = 0;
 
 
-    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const std::vector<Value> &values) = 0;
+    virtual std::shared_ptr<IProperty> createProperty(const std::string &name, const std::vector<Variant> &values) = 0;
 
 
     virtual bool deleteProperty(const std::string &name_or_id) = 0;
