@@ -140,6 +140,38 @@ public:
         times_tag.extent({100.0});
         times_tag.units({"ms"});
         times_tag.addReference(alias_array);
+
+        // prepare a mtag with multiple valid segments
+        std::vector<double> segment_starts{1.0, 5.0, 10.0, 15.0, 20.0};
+        std::vector<double> segment_extents(5, 2.5);
+        double sampling_interval = 0.1;
+        std::vector<double> sinus((int)(25 / sampling_interval));
+        for (size_t i = 0; i < sinus.size(); ++i) {
+            sinus[i] = sin(i * 0.1  * 6.28);
+        }
+
+        nix::DataArray seg_starts = block.createDataArray("sinus_starts", "test",
+                                                          nix::DataType::Double,
+                                                          nix::NDSize({segment_starts.size()}));
+        seg_starts.setData(segment_starts);
+        seg_starts.appendSetDimension();
+
+        nix::DataArray seg_extents = block.createDataArray("sinus_extents", "test",
+                                                           nix::DataType::Double,
+                                                           nix::NDSize({segment_starts.size()}));
+        seg_extents.setData(segment_extents);
+        seg_extents.appendSetDimension();
+
+        nix::DataArray sinus_array = block.createDataArray("sinus", "test", nix::DataType::Double,
+                                                           nix::NDSize({sinus.size()}));
+        sinus_array.setData(sinus);
+        nix::SampledDimension sd = sinus_array.appendSampledDimension(sampling_interval);
+        sd.unit("s");
+        sd.label("time");
+
+        mtag2 = block.createMultiTag("sinus_segments", "test", seg_starts);
+        mtag2.extents(seg_extents);
+        mtag2.addReference(sinus_array);
     }
 
     void tearDown() {
