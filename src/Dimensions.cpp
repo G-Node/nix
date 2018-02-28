@@ -201,14 +201,15 @@ std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, cons
 
 std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::vector<double> &start_positions,
                                                                      const std::vector<double> &end_positions) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
     std::vector<std::pair<ndsize_t, ndsize_t>> indices;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
 
-    for (size_t i = 0; i < (std::min(start_positions.size(), end_positions.size())); i++) {
-        if (start_positions[i] > end_positions[i] ) {
-            continue;
-        }
+    for (size_t i = 0; i < start_positions.size(); ++i) {
         indices.emplace_back(getSampledIndex(start_positions[i], offset, sampling_interval),
                              getSampledIndex(end_positions[i], offset, sampling_interval));
     }
@@ -420,13 +421,14 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
                                                                    const std::vector<double> &end_positions) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
     std::vector<std::pair<ndsize_t, ndsize_t>> indices;
     vector<double> ticks = this->ticks();
 
-    for (size_t i = 0; i < (std::min(start_positions.size(), end_positions.size())); i++) {
-        if (start_positions[i] > end_positions[i] ) {
-            continue;
-        }
+    for (size_t i = 0; i < start_positions.size(); ++i) {
         indices.emplace_back(getIndex(start_positions[i], ticks, true),
                              getIndex(end_positions[i], ticks, false));
     }
