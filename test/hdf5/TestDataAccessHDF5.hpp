@@ -152,18 +152,18 @@ public:
 
         nix::DataArray seg_starts = block.createDataArray("sinus_starts", "test",
                                                           nix::DataType::Double,
-                                                          nix::NDSize({segment_starts.size()}));
+                                                          nix::NDSize(1,segment_starts.size()));
         seg_starts.setData(segment_starts);
         seg_starts.appendSetDimension();
 
         nix::DataArray seg_extents = block.createDataArray("sinus_extents", "test",
                                                            nix::DataType::Double,
-                                                           nix::NDSize({segment_starts.size()}));
+                                                           nix::NDSize(1,segment_starts.size()));
         seg_extents.setData(segment_extents);
         seg_extents.appendSetDimension();
 
         nix::DataArray sinus_array = block.createDataArray("sinus", "test", nix::DataType::Double,
-                                                           nix::NDSize({sinus.size()}));
+                                                           nix::NDSize(1, sinus.size()));
         sinus_array.setData(sinus);
         nix::SampledDimension sd = sinus_array.appendSampledDimension(sampling_interval);
         sd.unit("s");
