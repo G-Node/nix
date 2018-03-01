@@ -352,8 +352,11 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
                               const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
+
     if (position_indices.size() < 1) {
-        position_indices.resize(tag.positions().dataExtent()[0]);
+        size_t pos_count = check::fits_in_size_t(tag.positions().dataExtent()[0],
+                                                 "Number of positions > size_t.");
+        position_indices.resize(pos_count);
         std::iota(position_indices.begin(), position_indices.end(), 0);
     }
 
@@ -471,7 +474,9 @@ std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
         throw UninitializedEntity();
     }
     if (position_indices.size() < 1) {
-        position_indices.resize(tag.positions().dataExtent()[0]);
+        size_t pos_count = check::fits_in_size_t(tag.positions().dataExtent()[0],
+                                                 "Number of positions > size_t.");
+        position_indices.resize(pos_count);
         std::iota(position_indices.begin(), position_indices.end(), 0);
     }
     if (feature.linkType() == LinkType::Tagged) {
