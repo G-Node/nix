@@ -388,9 +388,9 @@ void BaseTestDataArray::testUnit() {
 
     array1.unit(nix::none);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(testStr));
-    CPPUNIT_ASSERT_THROW(array1.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array1.appendAliasRangeDimension(), nix::InvalidDimension);
 
-    nix::Dimension dim = array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.appendAliasRangeDimension();
     CPPUNIT_ASSERT_NO_THROW(array3.unit(validUnit));
     array3.unit(nix::none);
     CPPUNIT_ASSERT_THROW(array3.unit(testStr), nix::InvalidUnit);
@@ -447,7 +447,7 @@ void BaseTestDataArray::testDimension() {
 
 
 void BaseTestDataArray::testAliasRangeDimension() {
-    nix::Dimension dim = array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.appendAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
     CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT_THROW(array2.appendAliasRangeDimension(), nix::InvalidDimension);
@@ -488,7 +488,7 @@ void BaseTestDataArray::testAliasRangeDimension() {
     DataArray int_array = block.createDataArray("int array", "int_array",
                                                  nix::DataType::Int64,
                                                  nix::NDSize({20}));
-    CPPUNIT_ASSERT_NO_THROW(int_array.createAliasRangeDimension());
+    CPPUNIT_ASSERT_NO_THROW(int_array.appendAliasRangeDimension());
     dim = int_array.getDimension(1);
     rd = dim;
     CPPUNIT_ASSERT(rd.alias());

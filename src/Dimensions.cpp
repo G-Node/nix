@@ -173,17 +173,48 @@ void SampledDimension::samplingInterval(double interval) {
 }
 
 
-ndsize_t SampledDimension::indexOf(const double position) const {
-    ndssize_t index;
-    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
-    double sampling_interval = backend()->samplingInterval();
-    index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
+ndsize_t getSampledIndex(const double position, const double offset, const double sampling_interval) {
+    ndssize_t index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
     if (index < 0) {
         throw nix::OutOfBounds("Position is out of bounds of this dimension!", 0);
     }
     return static_cast<ndsize_t>(index);
 }
 
+
+ndsize_t SampledDimension::indexOf(const double position) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    return getSampledIndex(position, offset, sampling_interval);
+}
+
+
+std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, const double end) const {
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+
+    ndsize_t si = getSampledIndex(start, offset, sampling_interval);
+    ndsize_t ei = getSampledIndex(end, offset, sampling_interval);
+    return std::pair<ndsize_t, ndsize_t>(si, ei);
+}
+
+
+std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::vector<double> &start_positions,
+                                                                     const std::vector<double> &end_positions) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
+    std::vector<std::pair<ndsize_t, ndsize_t>> indices;
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+
+    for (size_t i = 0; i < start_positions.size(); ++i) {
+        indices.emplace_back(getSampledIndex(start_positions[i], offset, sampling_interval),
+                             getSampledIndex(end_positions[i], offset, sampling_interval));
+    }
+    return indices;
+}
 
 double SampledDimension::positionAt(const ndsize_t index) const {
 
@@ -356,24 +387,59 @@ double RangeDimension::tickAt(const ndsize_t index) const {
     return ticks[idx];
 }
 
-
-ndsize_t RangeDimension::indexOf(const double position) const {
-    vector<double> ticks = this->ticks();
+ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
     if (position < *ticks.begin()) {
         return 0;
     } else if (position > *prev(ticks.end())) {
         return prev(ticks.end()) - ticks.begin();
     }
-    vector<double>::iterator low = std::lower_bound (ticks.begin(), ticks.end(), position);
-    return low - ticks.begin();
+    ndsize_t index;
+    if (lower_bound) {
+        std::vector<double>::iterator lower = std::lower_bound(ticks.begin(), ticks.end(), position);
+        index = lower - ticks.begin();
+    } else{
+        std::vector<double>::iterator upper = std::upper_bound(ticks.begin(), ticks.end(), position) - 1;
+        index = upper - ticks.begin();
+    }
+    return index;
+}
+
+
+ndsize_t RangeDimension::indexOf(const double position, bool less_or_equal) const {
+    vector<double> ticks = this->ticks();
+    return getIndex(position, ticks, !less_or_equal);
+}
+
+
+pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const double end) const {
+    vector<double> ticks = this->ticks();
+    ndsize_t si = getIndex(start, ticks, true);
+    ndsize_t ei = getIndex(end, ticks, false);
+    return std::pair<ndsize_t, ndsize_t>(si, ei);
+}
+
+
+std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
+                                                                   const std::vector<double> &end_positions) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
+    std::vector<std::pair<ndsize_t, ndsize_t>> indices;
+    vector<double> ticks = this->ticks();
+
+    for (size_t i = 0; i < start_positions.size(); ++i) {
+        indices.emplace_back(getIndex(start_positions[i], ticks, true),
+                             getIndex(end_positions[i], ticks, false));
+    }
+    return indices;
 }
 
 
 vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
-
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
     size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
- 
+
     vector<double> ticks = this->ticks();
 
     size_t end;
@@ -415,7 +481,3 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
 
     return *this;
 }
-
-
-
-

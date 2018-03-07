@@ -35,7 +35,8 @@ namespace nix {
  * tag applies to are defined by its property {@link references}.
  *
  * Further the referenced data is defined by an origin vector called {@link positions}
- * and an optional {@link extents} vector that defines its size.
+ * and an optional {@link extents} vector that defines its size with
+ * position >= x <= position + extent.
  * Therefore position and extent of a tag, together with the references field
  * defines a group of points or regions of interest collected from a subset of all
  * available {@link nix::DataArray} entities.
@@ -137,7 +138,8 @@ public:
      * @brief Getter for the extents of a tag.
      *
      * The extents of a multi tag are defined in an associated DataArray. This array has to define a set of
-     * extent vectors, each defining the size of the corresponding region of interest.
+     * extent vectors, each defining the size of the corresponding region of interest.  Position
+     * and extent define a closed set, i.e. position >= x <= position + extent.
      *
      * @return The DataArray defining the extents of the tag.
      */
@@ -147,6 +149,9 @@ public:
 
     /**
      * @brief Sets the extents DataArray of the tag.
+     *
+     * Position and extent define a closed set, i.e.
+     * position >= x <= position + extent.
      *
      * @param extents      The DataArray containing the extents of the tag.
      */
@@ -337,7 +342,7 @@ public:
 
     /**
      * @brief Retrieves the data slice tagged by a certain position and extent
-     *        of a certain reference.  
+     *        of a certain reference.
      *
      * @param position_index the index of the requested position.
      * @param reference_index the index of the requested reference.
@@ -346,9 +351,35 @@ public:
      */
     DataView retrieveData(size_t position_index, size_t reference_index) const;
 
+    /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param reference_index the index of the requested reference.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
+
+     /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param name_or_id the name or the id of the requested DataArray.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
+
      /**
      * @brief Retrieves the data slice tagged by a certain position and extent
-     *        of a certain reference.  
+     *        of a certain reference.
      *
      * @param position_index      The index of the requested position.
      * @param name_or_id          The name or id of the requested DataArray.

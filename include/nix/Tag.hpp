@@ -34,11 +34,12 @@ namespace nix {
  * that is stored in other {@link nix::DataArray} entities. The data array entities the
  * tag applies to are defined by its property {@link references}.
  *
- * Further the referenced data is defined by an origin vector called {@link position}
- * and an optional {@link extent} vector that defines its size.
- * Therefore position and extent of a tag, together with the references field
- * defines a group of points or regions of interest collected from a subset of all
- * available {@link nix::DataArray} entities.
+ * Further the referenced data is defined by an origin vector called {@link
+ * position} and an optional {@link extent} vector that defines its size with
+ * position >= x <= position + extent.  Therefore position and extent of a tag,
+ * together with the references field defines a group of points or regions of
+ * interest collected from a subset of all available {@link nix::DataArray}
+ * entities.
  *
  * Further tags have a field called {@link features} which makes it possible to associate
  * other data with the tag.  Semantically a feature of a tag is some additional data that
@@ -161,8 +162,9 @@ public:
     /**
      * @brief Gets the extent of a tag.
      *
-     * Given a specified position vector, the extent vector defined the size
-     * of a region of interest in the referenced DataArray entities.
+     * Given a specified position vector, the extent vector defines the size
+     * of a region of interest in the referenced DataArray entities. Position
+     * and extent define a closed set, i.e. position >= x <= position + extent.
      *
      * @return The extent of the tag.
      */
@@ -172,6 +174,9 @@ public:
 
     /**
      * @brief Sets the extent of a tag.
+     *
+     * Position and extent define a closed set, i.e.
+     * position >= x <= position + extent.
      *
      * @param extent    The extent vector.
      */
@@ -444,8 +449,8 @@ public:
      *
      * @return the data
      */
-    DataView retrieveData(const std::string &name_or_id) const; 
-    
+    DataView retrieveData(const std::string &name_or_id) const;
+
     /**
      * @brief Returns the data stored in the selected Feature.
      *

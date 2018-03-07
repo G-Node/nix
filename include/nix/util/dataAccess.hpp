@@ -81,6 +81,42 @@ NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const 
 NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
 
 /**
+ * @brief Converts the passed vector of start and end positions in a unit into a vector of respective indices
+ * according to the dimension descriptor.
+ *
+ * This function can be used to get the index of e.g. a certain point in time in a Dimension that
+ * represents time. The units of the position and that provided by the Dimension must match, i.e.
+ * must be scalable versions of the same SI unit.
+ *
+ * @param positions     std::vector of positions
+ * @param units         std::vector of units in which the respective position is given, must have the same size or may
+ *                      be empty
+ * @param dimension     The dimension descriptor for the respective dimension.
+ *
+ * @return The calculated indices.
+ *
+ * @throws nix::IncompatibleDimension The the dimensions are incompatible.
+ * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
+ */
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const SampledDimension &dimension);
+
+
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const SetDimension &dimension);
+
+
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
+                                                                  const RangeDimension &dimension);
+
+
+/**
  * @brief Returns the offsets and element counts associated with position and extent of a Tag and
  *        the referenced DataArray.
  *
@@ -94,6 +130,8 @@ NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &of
 
 NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
 
+NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
+                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -103,9 +141,10 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsiz
  * @param array                 The referenced DataArray.
  *
  * @return The data referenced by position and extent.
+ * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
-    
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
@@ -114,8 +153,33 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by position and extent.
+ * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
+
+
+/**
+ * @brief Retrieve several data segments referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The indices of the positions.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ */
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
+
+/**
+ * @brief Retrieve several segments of  data referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_index        The indices of the position.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ */
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -125,7 +189,7 @@ NIXAPI DataView retrieveData(const MultiTag &tag, ndsize_t position_index, size_
  *
  * @return The data referenced by the position.
  */
-NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
+NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -137,7 +201,7 @@ NIXAPI DataView retrieveData(const Tag &tag, size_t reference_index);
  */
 NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
 
-    
+
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
  *
@@ -167,7 +231,7 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
@@ -178,7 +242,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, size_t feature_index=0);
  * @return The associated data.
  */
 NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
-    
+
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
  *
@@ -188,7 +252,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, size_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -201,6 +265,33 @@ NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index
  */
 NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
 
-}
-}
+
+/**
+ * @brief Retruns the feature data associated with a MultiTag.
+ *
+ * @param tag              The MultiTag whos feature data is requested
+ * @param position_indices A vector of position indices.
+ * @param feature_index    The index of the desired feature. Default is 0.
+ *
+ * @return A vector of the associated data, may be empty.
+ */
+NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                                 std::vector<ndsize_t> position_indices,
+                                                 ndsize_t feature_index = 0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's positions.
+ *
+ * @param tag              The MultiTag whos feature data is requested.
+ * @param position_indices A vector of position indices.
+ * @param feature          The feature of which the tagged data is requested.
+ *
+ * @return A vector of the associated data, may be empty.
+ */
+NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                                 std::vector<ndsize_t> position_indices,
+                                                 const Feature &feature);
+
+} //namespace util
+} //namespace nix
 #endif // NIX_DATAACCESS_H
