@@ -66,7 +66,6 @@ Platform specific installation instructions can be found:
 - [macOS](./install_mac.md)
 - [Windows](./install_win.md)
 
-
 <!-- ## NIX API Documentation -->
 
 <!-- The API documentation for the C++ library can be found [here](http://g-node.github.io/nix/) -->
@@ -79,14 +78,14 @@ If you use NIX, it would be much appreciated if you would cite it in publication
 
 # Contributing
 
-Any kind of contribution is welcome! This includes reporting bugs and issues. If you want to contribute to code or documentation please refer to the [contributing guide](https://github.com/G-Node/nix/blob/master/CONTRIBUTING.md).
+Any kind of contribution is welcome! This includes reporting bugs and issues. If you want to contribute to code or documentation please refer to the [contributing guide](../CONTRIBUTING.md).
 
 # Support
 
 If experience problems using NIX feel free to join our IRC channel
 #gnode on FreeNode, write an email to <dev@gnode.org>. If you find a
 bug, please report it using
-the [github issue tracker](https://github.com/.g-node/nix/issues).
+the [github issue tracker](https://github.com/G-Node/nix/issues "Issue tracker").
 
 
 # License
