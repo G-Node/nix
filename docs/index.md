@@ -78,18 +78,7 @@ Platform specific installation instructions can be found:
  [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using
  nixpy.
 
-
-# Citation
-
-If you use *NIX*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
-*Stoewer A, Kellner CJ, Benda J, Wachtler T and Grewe J (2014). File format and library for neuroscience data and metadata. Front. Neuroinform. Conference Abstract: Neuroinformatics 2014. doi: 10.3389/conf.fninf.2014.18.00027*
-
-
-# Contributing
-
-Any kind of contribution is welcome! This includes reporting bugs and issues. If you want to contribute to code or documentation please refer to the [contributing guide](../CONTRIBUTING.md).
-
-# Support
+# Getting support
 
 If you experience problems using *NIX* feel free to join our IRC channel
 [#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
@@ -97,8 +86,20 @@ bug please report it using
 the [project issue tracker](https://github.com/G-Node/nix/issues "NIX issue tracker").
 
 
+# Contributing
+
+Any kind of contribution is welcome! This includes reporting bugs and issues. If you want to contribute to code or documentation please refer to the [contributing guide](../CONTRIBUTING.md).
+
+
 # License
+
 This project is open source published under the BSD-3 license see [license file](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
+
+## Citing
+
+If you use *NIX*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
+
+*Stoewer A, Kellner CJ, Benda J, Wachtler T and Grewe J (2014). File format and library for neuroscience data and metadata. Front. Neuroinform. Conference Abstract: Neuroinformatics 2014. doi: 10.3389/conf.fninf.2014.18.00027*
 
 
 ### Referenced By
