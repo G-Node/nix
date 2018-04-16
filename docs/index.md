@@ -1,6 +1,6 @@
 ![Nix_logo](./nix_logo.png "NIX")
 
-C++ library for storing scientific data in the NIX data model.
+C++ library for storing scientific data in the *NIX* data model.
 
 <!-- The *NIX* project started as an initiative within the -->
 <!-- Electrophysiology Task Force a part of the -->
@@ -13,14 +13,15 @@ common/generic data structure for a multitude of data
 types.
 [See the wiki for more information](https://github.com/G-Node/nix/wiki)
 
-NIX originates from neurosciences but the generic nature of the
+<!-- NIX originates from neurosciences but the generic nature of the
 underlying data model makes it applicable to a much wider range. In
 fact we would be happy to know of datasets that cannot be represented
-in NIX.
+in NIX. -->
 
 The current implementations store the actual data using
 the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
+*NIX* is a registered research resource with the RRID:SCR_016196.
 
 ## The NIX ecosystem
 
@@ -38,10 +39,12 @@ We provide bindings for:
 - [Matlab: *nix-mx*](https://github.com/g-node/nix-mx "Matlab language bindings, requires the C++ library")
 - [Java: *nix-java*](https://github.com/g-node/nix-java "Java language bindings, requires the C++ library")
 
-### Tools
+### Viewer
 
 - Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
+
+### Used by
 - [relacs](http://relacs.sourceforge.net "Relacs - enjoy your recordings") is
   a software platform for closed-loop data acquisition, online
   analysis, and stimulus generation specifically designed for (but not
@@ -49,6 +52,8 @@ We provide bindings for:
   the nix c++-library is installed.
 
 - [IO class](https://github.com/python-neo-nixio) for the [NEO](http://neuralensemble.org/neo/) data model for spike train data.
+
+- Output format for [EEGBase](http://eegdatabase.kiv.zcu.cz)
 
 # Tutorial and examples
 
@@ -62,7 +67,7 @@ We provide bindings for:
 
 Platform specific installation instructions can be found:
 
-- [Linux](./install_linux.md)
+- [GNU/Linux](./install_linux.md)
 - [macOS](./install_mac.md)
 - [Windows](./install_win.md)
 
@@ -72,9 +77,9 @@ Platform specific installation instructions can be found:
 
 # Citation
 
-If you use NIX, it would be much appreciated if you would cite it in publications:
+If you use NIX, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
+*Stoewer A, Kellner CJ, Benda J, Wachtler T and Grewe J (2014). File format and library for neuroscience data and metadata. Front. Neuroinform. Conference Abstract: Neuroinformatics 2014. doi: 10.3389/conf.fninf.2014.18.00027*
 
-*Stoewer A., Kellner C. J., Sobolev A., Sonntag M., Benda J., Wachtler T., and Grewe J. (2015); Integrating data storage and annotation in the data workflow using the NIX format and libraries; Frontiers in Neuroscience 9, DOI10.3389/conf.fnins.2015.91.00050*
 
 # Contributing
 
@@ -90,6 +95,17 @@ the [github issue tracker](https://github.com/G-Node/nix/issues "Issue tracker")
 
 # License
 This project is open source published under the BSD-3 for [details](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
+
+
+### Referenced By
+
+Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169),
+Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024),
+Grewe et al (2017) [doi:10.1073/pnas.1615561114](https://doi.org/10.1073/pnas.1615561114),
+Vanek et al (2016) [doi:10.1109/informatics.2015.7377849](https://doi.org/10.1109/informatics.2015.7377849),
+Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048),
+Denker et al (2016) [doi:10.1007/978-3-319-50862-7_5](https://doi.org/doi:10.1007/978-3-319-50862-7_5),
+Teeters et al (2015) [doi:10.1016/j.neuron.2015.10.025](https://doi.org/doi:10.1016/j.neuron.2015.10.025)
 
 
 [![Build Status](https://travis-ci.org/G-Node/nix.svg?branch=master)](https://travis-ci.org/G-Node/nix)
