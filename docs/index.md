@@ -1,4 +1,4 @@
-<!-- ![Nix_logo](./nix_logo.png "NIX") -->
+![Nix_logo](./nix_logo.png "NIX")
 
 C++ library for storing scientific data in the NIX data model.
 
@@ -28,7 +28,8 @@ the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
 - [*nix* c++ library](https://github.com/g-node/nix "C++ api for nix files"). C++ library for reading and writing NIX files.
 
-- [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py")
+- [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py") self-sustained
+  Python implementation of the NIX data model using h5py.
 
 **Language bindings**
 
@@ -41,7 +42,11 @@ We provide bindings for:
 
 - Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
-- [relacs](https://relacs.net "Relacs - enjoy your recordings") is a software platform for closed-loop data acquisition, online analysis, and stimulus generation specifically designed for (but not limited to) electrophysiological recordings. Writes out NIX files if the nix c++-library is installed.
+- [relacs](http://relacs.sourceforge.net "Relacs - enjoy your recordings") is
+  a software platform for closed-loop data acquisition, online
+  analysis, and stimulus generation specifically designed for (but not
+  limited to) electrophysiological recordings. Writes out NIX files if
+  the nix c++-library is installed.
 
 - [IO class](https://github.com/python-neo-nixio) for the [NEO](http://neuralensemble.org/neo/) data model for spike train data.
 
