@@ -23,6 +23,8 @@ the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
 *NIX* is a registered research resource with the [RRID:SCR_016196](https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196).
 
+* * *
+
 # The NIX ecosystem
 
 ## APIs
@@ -55,6 +57,7 @@ We provide bindings for:
 
 - Output format for [EEGBase](http://eegdatabase.kiv.zcu.cz)
 
+* * *
 
 # Getting started
 
@@ -94,6 +97,8 @@ Any kind of contribution is welcome! This includes reporting bugs and issues. If
 # License
 
 This project is open source published under the BSD-3 license see [license file](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
+
+* * *
 
 ## Citing
 
