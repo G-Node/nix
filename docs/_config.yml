@@ -1,0 +1,4 @@
+theme: jekyll-theme-slate
+title: Neuroscience information exchange format -- NIX --
+description: data model for storing fully annotated datasets
+show_downloads: "true"
