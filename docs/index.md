@@ -21,30 +21,30 @@ in NIX. -->
 The current implementations store the actual data using
 the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
-*NIX* is a registered research resource with the RRID:SCR_016196.
+*NIX* is a registered research resource with the [RRID:SCR_016196](https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196).
 
-## The NIX ecosystem
+# The NIX ecosystem
 
-### APIs
+## APIs
 
 - [*nix* c++ library](https://github.com/g-node/nix "C++ api for nix files"). C++ library for reading and writing NIX files.
 
 - [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py") self-sustained
   Python implementation of the NIX data model using h5py.
 
-**Language bindings**
+## Language bindings
 
 We provide bindings for:
 
 - [Matlab: *nix-mx*](https://github.com/g-node/nix-mx "Matlab language bindings, requires the C++ library")
 - [Java: *nix-java*](https://github.com/g-node/nix-java "Java language bindings, requires the C++ library")
 
-### Viewer
+## Viewer
 
 - Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
 
-### Used by
+## Used by
 - [relacs](http://relacs.sourceforge.net "Relacs - enjoy your recordings") is
   a software platform for closed-loop data acquisition, online
   analysis, and stimulus generation specifically designed for (but not
@@ -55,15 +55,10 @@ We provide bindings for:
 
 - Output format for [EEGBase](http://eegdatabase.kiv.zcu.cz)
 
-# Tutorial and examples
 
-- We have assembled a set of
- [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
- [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using the python language
- bindings.
+# Getting started
 
-
-# Installation
+## Installation
 
 Platform specific installation instructions can be found:
 
@@ -75,9 +70,18 @@ Platform specific installation instructions can be found:
 
 <!-- The API documentation for the C++ library can be found [here](http://g-node.github.io/nix/) -->
 
+## Tutorial and examples
+
+- We have assembled a set
+ of
+ [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
+ [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using
+ nixpy.
+
+
 # Citation
 
-If you use NIX, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
+If you use *NIX*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
 *Stoewer A, Kellner CJ, Benda J, Wachtler T and Grewe J (2014). File format and library for neuroscience data and metadata. Front. Neuroinform. Conference Abstract: Neuroinformatics 2014. doi: 10.3389/conf.fninf.2014.18.00027*
 
 
@@ -87,25 +91,25 @@ Any kind of contribution is welcome! This includes reporting bugs and issues. If
 
 # Support
 
-If experience problems using NIX feel free to join our IRC channel
-#gnode on FreeNode, write an email to <dev@gnode.org>. If you find a
-bug, please report it using
-the [github issue tracker](https://github.com/G-Node/nix/issues "Issue tracker").
+If you experience problems using *NIX* feel free to join our IRC channel
+[#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
+bug please report it using
+the [project issue tracker](https://github.com/G-Node/nix/issues "NIX issue tracker").
 
 
 # License
-This project is open source published under the BSD-3 for [details](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
+This project is open source published under the BSD-3 license see [license file](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
 
 
 ### Referenced By
 
-Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169),
-Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024),
-Grewe et al (2017) [doi:10.1073/pnas.1615561114](https://doi.org/10.1073/pnas.1615561114),
-Vanek et al (2016) [doi:10.1109/informatics.2015.7377849](https://doi.org/10.1109/informatics.2015.7377849),
-Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048),
-Denker et al (2016) [doi:10.1007/978-3-319-50862-7_5](https://doi.org/doi:10.1007/978-3-319-50862-7_5),
-Teeters et al (2015) [doi:10.1016/j.neuron.2015.10.025](https://doi.org/doi:10.1016/j.neuron.2015.10.025)
+* Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169)
+* Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024)
+* Grewe et al (2017) [doi:10.1073/pnas.1615561114](https://doi.org/10.1073/pnas.1615561114)
+* Vanek et al (2016) [doi:10.1109/informatics.2015.7377849](https://doi.org/10.1109/informatics.2015.7377849)
+* Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048)
+* Denker et al (2016) [doi:10.1007/978-3-319-50862-7_5](https://doi.org/doi:10.1007/978-3-319-50862-7_5)
+* Teeters et al (2015) [doi:10.1016/j.neuron.2015.10.025](https://doi.org/doi:10.1016/j.neuron.2015.10.025)
 
 
 [![Build Status](https://travis-ci.org/G-Node/nix.svg?branch=master)](https://travis-ci.org/G-Node/nix)

@@ -1,4 +1,4 @@
 theme: jekyll-theme-leap-day
 title: Neuroscience information exchange format - NIX -
 description: data model for storing fully annotated datasets
-show_downloads: "false"
+show_downloads: ["false"]
