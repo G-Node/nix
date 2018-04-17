@@ -31,7 +31,7 @@ the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
 - [*nix* c++ library](https://github.com/g-node/nix "C++ api for nix files"). C++ library for reading and writing NIX files.
 
-- [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py") self-sustained
+- [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py") native
   Python implementation of the NIX data model using h5py.
 
 ## Language bindings
@@ -91,7 +91,11 @@ the [project issue tracker](https://github.com/G-Node/nix/issues "NIX issue trac
 
 # Contributing
 
-Any kind of contribution is welcome! This includes reporting bugs and issues. If you want to contribute to code or documentation please refer to the [contributing guide](../CONTRIBUTING.md).
+Any kind of contribution is welcome! This includes reporting bugs and
+issues. If you want to contribute to code or documentation please
+refer to
+the
+[contributing guide](https://github.com/G-Node/nix/blob/master/CONTRIBUTING.md "Contributing guide").
 
 
 # License
