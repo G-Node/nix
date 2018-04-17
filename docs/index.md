@@ -21,7 +21,11 @@ in NIX. -->
 The current implementations store the actual data using
 the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
-*NIX* is a registered research resource with the [RRID:SCR_016196](https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196).
+*NIX* emerged from the activities of the Electrophysiology Task Force
+of the [INCF](http://www.incf.org) Datasharing Program (2010-2015). It
+is a registered research resource with
+the
+[RRID:SCR_016196](https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196).
 
 * * *
 
@@ -30,7 +34,6 @@ the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 ## APIs
 
 - [*nix* c++ library](https://github.com/g-node/nix "C++ api for nix files"). C++ library for reading and writing NIX files.
-
 - [*nixpy*](https://github.com/g-node/nixpy "Python library either as bindings or using h5py") native
   Python implementation of the NIX data model using h5py.
 
