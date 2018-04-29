@@ -74,10 +74,12 @@ Platform specific installation instructions can be found:
 
 <!-- The API documentation for the C++ library can be found [here](http://g-node.github.io/nix/) -->
 
-## Tutorial and examples
-A general introduction featuring code snippets using the  c++ library can be found [here](./getting_started.md).
+## Introduction
 
-We have assembled a set  of
+[This introduction](./getting_started.md) guides thorough the *NIX* data model and shows how to use it with the C++ library.
+
+
+Tutorial and demos for using the python library ([*nixpy*](https://github.com/g-node/nixpy))) can be found here:
  [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
  [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using nixpy.
 

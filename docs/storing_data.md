@@ -95,3 +95,125 @@ Data can be set with a call like this:
 
 Writing/Replacing subsets can be done by providing the *count* and the
 *offset* of the data chunk.
+
+
+## Dimensions
+
+We can store n-dimensional data in *DataArrays* and for each dimension
+of the data we must provide an **dimension descriptor*. The following
+introduces the individual descriptors.
+
+### SampledDimension
+
+![sampled_plot](./images/regular_sampled.png "simple plot")
+
+The same situation as before, the data has been sampled in regular
+intervals. That is, the time between successive data points is always
+the same. The x-axis can be fully described by only a few parameters:
+
+1. sampling interval
+2. offset
+3. label
+4. unit
+
+The *SampledDimension* entity is used in such situations and needs to
+be added to the *DataArray* entity when it is created:
+
+```
+nix::DataArray array = block.createDataArray("name", "nix.sampled", voltages);
+array.label("voltage");
+array.unit("mV");
+
+nix::SampledDimension dim = array.appendSampledDimension(sampling_interval);
+dim.label("time");
+dim.unit("s");
+dim.offset(0.0);   // not needed, it is 0.0 by default
+```
+
+**Why sampling interval, not sampling rate?** Because the interval is
+the more **general** term, it can also be applied to dimensions that
+do not extend in time but, for example space.
+
+
+### RangeDimension
+![range_plot](./images/irregular.png "another simple plot")
+
+Similar situation as before, but this time the temporal distance
+between the sampled voltages is not regular. Storing this kind of data
+is not as efficient as in the regularly sampled case. The following
+information needs to be stored to describe the dimension:
+
+1. the x-positions of the data point, i.e. *ticks*
+2. the label
+3. the unit
+
+In this kind of dimension we store a *range* of ticks, therefore the
+name **RangeDimension**. It needs to be added to the **DataArray**
+when it is created.
+
+```
+std::vector<double> ticks = {1.2, 2.7, 3.4, 4.0, 5.1};
+nix::DataArray array = block.createDataArray("name", "nix.irregular_sampled", voltages);
+array.label("voltage");
+array.unit("mV");
+
+nix::RangeDimension dim = array.appendRangeDimension(ticks);
+dim.label("time");
+dim.unit("s");
+```
+
+The *ticks* of a **RangeDimension** must be numeric and ascending.
+
+
+#### AliasRangeDimension
+
+A special case of a **RangeDimension** that is used when storing something equivalent to event times.
+
+![alias_range_plot](./images/alias_range.png "simple plot marking events")
+
+In the plot above, each dot marks the occurrence of an event. In such
+a case it is basically the x-values that are of interest. It would be
+most inefficient to store them twice, 1st as values and 2nd as ticks
+in the dimension descriptor.
+
+The **AliasRangeDimension** is used in such situations, internally it
+is a **RangeDimension** whose information is tied to the information
+stored in the **DataArray** itself. Changing the ticks, label or unit
+of the dimension descriptor will change the **DataArray** itself. Adding
+an **AliasRangeDimension** is straight forward:
+
+```
+nix::DataArray array = block.createDataArray("name", "nix.irregular_sampled", event_times);
+array.label("time");
+array.unit("s");
+
+nix::RangeDimension dim = array.appendAliasRangeDimension();
+```
+
+**Note!** An **AliasRangeDimension** is only permitted, if the data is
+1-D and the values are numeric, an exception will be thrown otherwise.
+
+
+### SetDimension
+
+![set_dim_plot](./images/set_dimension.png "simple plot with categories")
+
+If we need to store data that falls into categories, i.e. the
+x-positions are not numeric or the dimension does not have a natural
+order, a **SetDimension** is used. It merely stores a label for each
+entry along the described dimension.
+
+```
+std::vector<std::string> labels = {"A", "B", "C", "D", "E"};
+
+nix::DataArray array = block.createDataArray("temperatures", "nix.categorical", temperatures);
+array.label("temperature");
+array.unit("K")
+
+SetDimension dim = array.appendSetDimension();
+dim.labels(labels);
+```
+
+
+
+[home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
