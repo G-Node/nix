@@ -400,6 +400,7 @@ void BaseTestDataArray::testUnit() {
 void BaseTestDataArray::testDimension() {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
+    std::vector<std::string> setLabels = {"a", "b", "c"};
     double samplingInterval = boost::math::constants::pi<double>();
 
     for(size_t i = 0; i < 5; i++) {
@@ -420,7 +421,9 @@ void BaseTestDataArray::testDimension() {
     CPPUNIT_ASSERT(dim_sampled.label() && *dim_sampled.label() == "time");
     CPPUNIT_ASSERT(dim_sampled.unit() && *dim_sampled.unit() == "s");
 
-    nix::SetDimension dim_set = array1.appendSetDimension();
+    nix::SetDimension dim_set = array1.appendSetDimension(setLabels);
+    CPPUNIT_ASSERT(dim_set.labels().size() == 3);
+
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
