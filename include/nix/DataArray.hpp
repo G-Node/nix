@@ -307,6 +307,8 @@ public:
      * @brief Append a new RangeDimension to the list of existing dimension descriptors.
      *
      * @param ticks     The ticks of the RangeDimension to create.
+     * @param label     The label of the dimension (e.g. 'time'), default: empty
+     * @param unit      The unit of the ticks, default: empty
      *
      * @return The newly created RangeDimension
      */
@@ -359,6 +361,8 @@ public:
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
      *
      * @param sampling_interval         The sampling interval of the SetDimension to create.
+     * @param label                     The label of the dimension (e.g. 'time'), default: empty
+     * @param unit                      The unit of the dimension, default: empty
      *
      * @return The newly created SampledDimension.
      */
