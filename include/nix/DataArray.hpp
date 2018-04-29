@@ -306,12 +306,18 @@ public:
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks, const std::string &label="",
+                                        const std::string &unit="") {
         if (ticks.size() == 0) {
             throw nix::InvalidDimension("The ticks of a range dimension must not be empty!",
                                         "DataArray::appendRangeDimension");
         }
-        return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
+        RangeDimension dim = backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
+        if (label.size() > 0)
+            dim.label(label);
+        if (unit.size() > 0)
+            dim.unit(unit);
+        return dim;
     }
 
     /**
@@ -352,8 +358,17 @@ public:
      *
      * @return The newly created SampledDimension.
      */
-    SampledDimension appendSampledDimension(double sampling_interval) {
-        return backend()->createSampledDimension(backend()->dimensionCount() + 1, sampling_interval);
+    SampledDimension appendSampledDimension(double sampling_interval, const std::string &label="",
+                                            const std::string &unit="", double offset=0.0) {
+        SampledDimension dim = backend()->createSampledDimension(backend()->dimensionCount() + 1,
+                                                                 sampling_interval);
+        if (label.size() > 0)
+            dim.label(label);
+        if (unit.size() > 0)
+            dim.unit(unit);
+        if (offset > 0.0)
+            dim.offset(offset);
+        return dim;
     }
 
     /**
