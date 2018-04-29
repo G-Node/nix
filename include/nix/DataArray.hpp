@@ -293,10 +293,14 @@ public:
     /**
      * @brief Append a new SetDimension to the list of existing dimension descriptors.
      *
-     * @return The newly created SetDimension.
+     * @param    The category labels, default: empty std::vector of std::string
+     * @return   The newly created SetDimension.
      */
-    SetDimension appendSetDimension() {
-        return backend()->createSetDimension(backend()->dimensionCount() + 1);
+    SetDimension appendSetDimension(const std::vector<std::string> &labels={}) {
+        SetDimension dim = backend()->createSetDimension(backend()->dimensionCount() + 1);
+        if (labels.size() > 0 )
+            dim.labels(labels);
+        return dim;
     }
 
     /**
