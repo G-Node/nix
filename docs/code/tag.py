@@ -2,17 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as spsn
 
+
 def butter_lowpass(highcut, fs, order=5):
-    nyq =  0.5 * fs
+    nyq = 0.5 * fs
     high = highcut / nyq
     b, a = spsn.butter(order, high, btype='low')
     return b, a
 
+
 def butter_highpass(lowcut, fs, order=5):
-    nyq =  0.5 * fs
+    nyq = 0.5 * fs
     low = lowcut / nyq
     b, a = spsn.butter(order, low, btype='high')
     return b, a
+
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, lporder=1, hporder=1):
     lpb, lpa = butter_lowpass(highcut, fs, order=lporder)
@@ -21,11 +24,12 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, lporder=1, hporder=1):
     y = spsn.lfilter(hpb, hpa, y)
     return y
 
+
 stim_on = 0.5
 stim_off = 2.5
 time = np.arange(0., 3.5, 0.001)
 stimulus = np.zeros(time.shape)
-stimulus[(time >= stim_on) & (time < stim_off)] = 1;
+stimulus[(time >= stim_on) & (time < stim_off)] = 1
 response = butter_bandpass_filter(stimulus, .25, 10., 1./0.001)
 
 fig = plt.figure()
