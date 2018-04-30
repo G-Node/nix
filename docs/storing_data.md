@@ -44,7 +44,7 @@ unit. In addition the *DataArray* needs a dimension descriptor for
 each dimension. The following snippet shows a simple way how to create
 a *DataArray* and store some dummy data in it.
 
-```
+```c++
 #include <nix.hpp>
 
 int main() {
@@ -84,7 +84,9 @@ of the *DataArray* can be changed.
 In case you need more control, *DataArrays* can be created empty for
 later filling e.g. during data acquisition.
 
-``nix::DataArray array = block.createDataArray("name", "type", nix::DataType::Double, {100});``
+```c++
+nix::DataArray array = block.createDataArray("name", "type", nix::DataType::Double, {100});
+```
 
 The resulting *DataArray* will have an initial size (100 elements)
 which will be automatically resized, if required. NIX will further try
@@ -97,13 +99,13 @@ Writing/Replacing subsets can be done by providing the *count* and the
 *offset* of the data chunk.
 
 
-## Dimensions
+# Dimensions
 
 We can store n-dimensional data in *DataArrays* and for each dimension
 of the data we must provide an **dimension descriptor*. The following
 introduces the individual descriptors.
 
-### SampledDimension
+## SampledDimension
 
 ![sampled_plot](./images/regular_sampled.png "simple plot")
 
@@ -119,7 +121,7 @@ the same. The x-axis can be fully described by only a few parameters:
 The *SampledDimension* entity is used in such situations and needs to
 be added to the *DataArray* entity when it is created:
 
-```
+```c++
 nix::DataArray array = block.createDataArray("name", "nix.sampled", voltages);
 array.label("voltage");
 array.unit("mV");
@@ -135,7 +137,7 @@ the more **general** term, it can also be applied to dimensions that
 do not extend in time but, for example space.
 
 
-### RangeDimension
+## RangeDimension
 ![range_plot](./images/irregular.png "another simple plot")
 
 Similar situation as before, but this time the temporal distance
@@ -151,7 +153,7 @@ In this kind of dimension we store a *range* of ticks, therefore the
 name **RangeDimension**. It needs to be added to the **DataArray**
 when it is created.
 
-```
+```c++
 std::vector<double> ticks = {1.2, 2.7, 3.4, 4.0, 5.1};
 nix::DataArray array = block.createDataArray("name", "nix.irregular_sampled", voltages);
 array.label("voltage");
@@ -165,7 +167,7 @@ dim.unit("s");
 The *ticks* of a **RangeDimension** must be numeric and ascending.
 
 
-#### AliasRangeDimension
+### AliasRangeDimension
 
 A special case of a **RangeDimension** that is used when storing something equivalent to event times.
 
@@ -182,7 +184,7 @@ stored in the **DataArray** itself. Changing the ticks, label or unit
 of the dimension descriptor will change the **DataArray** itself. Adding
 an **AliasRangeDimension** is straight forward:
 
-```
+```c++
 nix::DataArray array = block.createDataArray("name", "nix.irregular_sampled", event_times);
 array.label("time");
 array.unit("s");
@@ -194,7 +196,7 @@ nix::RangeDimension dim = array.appendAliasRangeDimension();
 1-D and the values are numeric, an exception will be thrown otherwise.
 
 
-### SetDimension
+## SetDimension
 
 ![set_dim_plot](./images/set_dimension.png "simple plot with categories")
 
@@ -203,7 +205,7 @@ x-positions are not numeric or the dimension does not have a natural
 order, a **SetDimension** is used. It merely stores a label for each
 entry along the described dimension.
 
-```
+```c++
 std::vector<std::string> labels = {"A", "B", "C", "D", "E"};
 
 nix::DataArray array = block.createDataArray("temperatures", "nix.categorical", temperatures);

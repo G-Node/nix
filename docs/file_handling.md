@@ -16,7 +16,7 @@ There are three file modes to open a NIX file.
 
 ## Creating a new file.
 
-```
+```c++
 #include <nix.hpp>
 
 int main() {
@@ -46,7 +46,7 @@ fully implemented file-system backend, that stores data in a folder
 structure.
 
 The desired backend must be selected upon opening of a file:
-```
+```c++
 nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5");
 ```
 
@@ -57,7 +57,7 @@ nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5");
 By default, data stored inside a NIX file will not be compressed. You
 can swith compression on during opening of a file.
 
-```
+```c++
 nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5", nix::Compression::DeflateNormal);
 ```
 

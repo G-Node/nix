@@ -1,8 +1,8 @@
-# Getting Started with NIX (under construction)
+# Introduction to NIX (under construction)
 
 In the following we provide a (gentle) introduction to the general
-concepts behind the NIX data model and try to illustrate and provide
-code examples.
+concepts behind the NIX data model and try to illustrate its design
+and provide code examples showing its usage.
 
 Code examples use the c++ library but almost all functions have direct
 counterparts in the python library or the language bindings for Matlab
