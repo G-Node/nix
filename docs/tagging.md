@@ -67,7 +67,7 @@ units and compounds of these.
 ```c++
     nix::Tag stim_tag = block.createTag("Stimulus", "nix.stimulus_segment", {stim_on});
     stim_tag.extent({stim_off - stim_on});
-    stim_tag.units({'ms'});
+    stim_tag.units({"ms"});
 ```
 
 The same principle shown here for 1-D data extends to two or more
