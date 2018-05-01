@@ -2,11 +2,11 @@
 
 The *File* entity encapsulates all information of a dataset. *File*
 entities keep some general information such as creation time and date, format
-version etc.. The entry-point to a NIX file.
+version etc.. The entry-point to a *NIX* file.
 
 ## File modes
 
-There are three file modes to open a NIX file.
+There are three file modes to open a *NIX* file.
 
 1. **Overwrite** Used for creating a new file overwriting any existing content!
 2. **ReadWrite** Opens a file, if it exists or creates a new one. Does
@@ -39,7 +39,7 @@ open an existing file to work with the data. If you want to overwrite
 Trying to open an non-existing file in *ReadOnly* mode will lead to an error!
 
 ## Selecting a storage backend
-So far, the NIX data model is only fully supported
+So far, the *NIX* data model is only fully supported
 using [HDF5](https://www.hdfgroup.org). The library design, though, is
 meant for multiple backend support. We have an **experimental**, not
 fully implemented file-system backend, that stores data in a folder
@@ -54,8 +54,8 @@ nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5");
 
 ## Enabling compression
 
-By default, data stored inside a NIX file will not be compressed. You
-can swith compression on during opening of a file.
+By default, data stored inside a *NIX* file will not be compressed. You
+can switch on compression during fil opening.
 
 ```c++
 nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5", nix::Compression::DeflateNormal);
@@ -65,7 +65,7 @@ Compression is handled transparently by the hdf5-library, no further
 user interaction is required. Compression reduces reading and writing
 performance. You can choose to switch off compression on individual
 *DataArray*s by passing the ``nix::Compression::None`` flag when
-creating it.
+creating them.
 
 ## FAQ
 
