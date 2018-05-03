@@ -1,4 +1,4 @@
-# Tagging points and regionsq
+# Tagging points and regions
 
 The *DataArray*s store data, but this is not all that is needed to
 store scientific data. We may want to highlight points or regions in
@@ -125,5 +125,28 @@ int main() {
 ```
 
 ## Multiple points/regions
+Consider the following situation: A signal has been recorided and
+within this signal certain events have been detected (figure below).
+
+![multiple_points_plot](./images/multiple_points.png "multiple events")
+
+For storing this kind of data we need two *DataArrays*, the first
+storing the recorded signal, the other for the events. Finally, a
+*MultiTag* entity is used to link both. One can use the event times
+stored in one of the *DataArrays* to tag multiple points in the
+signal.
+
+```c++
+
+```
+
+
+
+## Adding features
+
+
+## Retrieving tagged data
+
+
 
 [home](./index.md) -- [back](./getting_started.md)
