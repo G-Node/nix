@@ -37,9 +37,11 @@ int main() {
     double stim_on = 0.5;
     double stim_off = 2.5;
     std::vector<double> response(350);
-    std::iota(response.begin(), response.end(), interval);
+    std::iota(response.begin(), response.end(), 0.);
     std::transform(response.begin(), response.end(), response.begin(),
-                   [stim_on, stim_off](double x){return (x >= stim_on && x < stim_off) ? 1 : 0;});
+                   [interval](double x){ return x * interval; });
+    std::transform(response.begin(), response.end(), response.begin(),
+                   [stim_on, stim_off](double x){ return (x >= stim_on && x < stim_off) ? 1 : 0; });
 
     nix::File f = nix::File::open("tagging1.nix", nix::FileMode::Overwrite);
     nix::Block block = f.createBlock("demo block", "nix.demo");
@@ -125,6 +127,9 @@ int main() {
 ```
 
 ## Multiple points/regions
+
+### Tagging multiple points in 1D
+
 Consider the following situation: A signal has been recorided and
 within this signal certain events have been detected (figure below).
 
@@ -137,9 +142,68 @@ stored in one of the *DataArrays* to tag multiple points in the
 signal.
 
 ```c++
+#include <nix.hpp>
+#include <numeric>
 
+
+int main() {
+    // create dummy data
+    std::vector<double> time(1000);
+    std::vector<double> voltage;
+    std::vector<double> threshold_crossings;
+    double threshold = 0.5;
+    double interval = 0.001;
+    double pi = 3.1415;
+    double freq = 5.;
+
+    std::iota(time.begin(), time.end(), 0.);
+    std::transform(time.begin(), time.end(), time.begin(),
+                   [interval](double t){ return t * interval; });
+    std::transform(time.begin(), time.end(), std::back_inserter(voltage),
+                   [pi, freq](double t){ return std::sin(t * freq * 2 * pi) + std::sin(t * freq * 4 * pi) * 0.4; });
+    for (size_t i = 0; i < voltage.size() - 1; ++i) {
+        if (voltage[i] <= threshold && voltage[i+1] > threshold) {
+            threshold_crossings.push_back(time[i]);
+        }
+    }
+
+    // open a file, create a block that will host the data
+    nix::File f = nix::File::open("mtag_test.nix", nix::FileMode::Overwrite, "hdf5",
+                                  nix::Compression::DeflateNormal);
+    nix::Block b = f.createBlock("demo block", "demo");
+
+    // create two DataArrays, one for the signal, the other one for the events
+    nix::DataArray signal = b.createDataArray("signal", "nix.sampled", voltage);
+    signal.label("voltage");
+    signal.unit("mV");
+
+    nix::SampledDimension dim = signal.appendSampledDimension(interval);
+    dim.label("time");
+    dim.unit("s");
+
+    nix::DataArray events = b.createDataArray("threshold crossings", "nix.event_times", threshold_crossings);
+    events.label("time");
+    events.unit("s");
+
+    events.appendAliasRangeDimension();
+
+    // create the MultiTag entity to link signal and events
+    nix::MultiTag mtag = b.createMultiTag("event tag", "nix.event_tag", events);
+    mtag.addReference(signal);
+
+    f.close();
+    return 0;
+}
 ```
 
+Creating the *MultiTag* is very similar to the creation of the simpler
+*Tag* above. The main difference is that the tagged positions are not
+stored in the *MultiTag* itself but we use the event *DataArray*
+(events in the code example) for this purpose. Finally, the signal
+*DataArray* is added to the list of references.
+
+
+### Tagging multiple regions in 2D
 
 
 ## Adding features
