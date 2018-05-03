@@ -130,13 +130,13 @@ int main() {
 
 ### Tagging multiple points in 1D
 
-Consider the following situation: A signal has been recorided and
-within this signal certain events have been detected (figure below).
+Consider the following situation: A signal has been recorded and
+within this signal, certain events have been detected (figure below).
 
 ![multiple_points_plot](./images/multiple_points.png "multiple events")
 
 For storing this kind of data we need two *DataArrays*, the first
-storing the recorded signal, the other for the events. Finally, a
+stores the recorded signal, the other the events. Finally, a
 *MultiTag* entity is used to link both. One can use the event times
 stored in one of the *DataArrays* to tag multiple points in the
 signal.
@@ -144,7 +144,6 @@ signal.
 ```c++
 #include <nix.hpp>
 #include <numeric>
-
 
 int main() {
     // create dummy data
@@ -203,9 +202,24 @@ stored in the *MultiTag* itself but we use the event *DataArray*
 *DataArray* is added to the list of references.
 
 
-### Tagging multiple regions in 2D
+### Tagging multiple regions in 1D
+
+In the following exampled we want to plot multiple regions, in which ,
+for example a stimulus was switched on.
+
+![multiple_regions_plot](./images/multiple_regions.png "multiple regions")
+
+For storing such data we again need one *DataArray* to store the
+recorded signal. Storing the regions is similar to the approach for
+the simpler *Tag*. We store the *positions* and the
+**extents**. Accordingly, **two** additional *DataArray*s are
+needed. The first of which stores the positions and the second the
+extents.
+
+```c++
 
 
+```
 ## Adding features
 
 
@@ -213,4 +227,4 @@ stored in the *MultiTag* itself but we use the event *DataArray*
 
 
 
-[home](./index.md) -- [back](./getting_started.md)
+[home](./index.md "g-node.github.io/nix") -- [back](./getting_started.md "NIX Introduction")
