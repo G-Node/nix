@@ -293,25 +293,37 @@ public:
     /**
      * @brief Append a new SetDimension to the list of existing dimension descriptors.
      *
-     * @return The newly created SetDimension.
+     * @param    The category labels, default: empty std::vector of std::string
+     * @return   The newly created SetDimension.
      */
-    SetDimension appendSetDimension() {
-        return backend()->createSetDimension(backend()->dimensionCount() + 1);
+    SetDimension appendSetDimension(const std::vector<std::string> &labels={}) {
+        SetDimension dim = backend()->createSetDimension(backend()->dimensionCount() + 1);
+        if (labels.size() > 0 )
+            dim.labels(labels);
+        return dim;
     }
 
     /**
      * @brief Append a new RangeDimension to the list of existing dimension descriptors.
      *
      * @param ticks     The ticks of the RangeDimension to create.
+     * @param label     The label of the dimension (e.g. 'time'), default: empty
+     * @param unit      The unit of the ticks, default: empty
      *
      * @return The newly created RangeDimension
      */
-    RangeDimension appendRangeDimension(const std::vector<double> &ticks) {
+    RangeDimension appendRangeDimension(const std::vector<double> &ticks, const std::string &label="",
+                                        const std::string &unit="") {
         if (ticks.size() == 0) {
             throw nix::InvalidDimension("The ticks of a range dimension must not be empty!",
                                         "DataArray::appendRangeDimension");
         }
-        return backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
+        RangeDimension dim = backend()->createRangeDimension(backend()->dimensionCount() + 1, ticks);
+        if (label.size() > 0)
+            dim.label(label);
+        if (unit.size() > 0)
+            dim.unit(unit);
+        return dim;
     }
 
     /**
@@ -349,11 +361,22 @@ public:
      * @brief Append a new SampledDimension to the list of existing dimension descriptors.
      *
      * @param sampling_interval         The sampling interval of the SetDimension to create.
+     * @param label                     The label of the dimension (e.g. 'time'), default: empty
+     * @param unit                      The unit of the dimension, default: empty
      *
      * @return The newly created SampledDimension.
      */
-    SampledDimension appendSampledDimension(double sampling_interval) {
-        return backend()->createSampledDimension(backend()->dimensionCount() + 1, sampling_interval);
+    SampledDimension appendSampledDimension(double sampling_interval, const std::string &label="",
+                                            const std::string &unit="", double offset=0.0) {
+        SampledDimension dim = backend()->createSampledDimension(backend()->dimensionCount() + 1,
+                                                                 sampling_interval);
+        if (label.size() > 0)
+            dim.label(label);
+        if (unit.size() > 0)
+            dim.unit(unit);
+        if (offset > 0.0)
+            dim.offset(offset);
+        return dim;
     }
 
     /**
