@@ -112,9 +112,12 @@ int main() {
     nix::Block b = f.createBlock("demo block", "nix.demo");
 
     nix::DataArray array = b.createDataArray("2D data", "nix.sampled.2d", data);
+    array.label("fantastic ints")
+    // add descriptor for x-, and y axes
     SampledDimension dim = array.appendSampledDimension(1.);
     dim.label("width");
     dim.unit("mm");
+
     dim = array.appendSampledDimension(1.);
     dim.label("height");
     dim.unit("mm");
@@ -211,15 +214,77 @@ for example a stimulus was switched on.
 
 For storing such data we again need one *DataArray* to store the
 recorded signal. Storing the regions is similar to the approach for
-the simpler *Tag*. We store the *positions* and the
-**extents**. Accordingly, **two** additional *DataArray*s are
-needed. The first of which stores the positions and the second the
-extents.
+the simpler *Tag*, i.e. *positions* and the *extents* need to be
+stored. Accordingly, **two** additional *DataArray*s are required. The
+first of which stores the positions and the second the extents.
 
 ```c++
+#include <nix.hpp>
+#include <numeric>
 
+int main() {
+    // create dummy data, i.e. stimulus and response
+    double interval = 0.001;
+    double stim_duration = 0.25;
+    double baseline_freq = 5.;
+    double pi = 3.1415;
+    std::vector<double> time(3000);
+    std::vector<double> stimulus(3000, 1.);
+    std::vector<double> response;
 
+    std::iota(time.begin(), time.end(), 0.);
+    std::transform(time.begin(), time.end(), time.begin(),
+                   [interval](double t){ return t * interval; });
+
+    std::vector<double> stim_on_times(4);
+    for (size_t i = 0; i < stim_on_times.size(); ++i)
+        stim_on_times[i] = i * stim_duration * 3 + 0.25;
+
+    for (size_t i = 0; i < stim_on_times.size(); ++i) {
+        for (size_t j = 0; j < time.size(); ++j) {
+            if (time[j] >= stim_on_times[i] + stim_duration)
+                break;
+            if (time[j] >= stim_on_times[i])
+                stimulus[j] = i + 2;
+        }
+    }
+
+    for (size_t i = 0; i < time.size(); ++i) {
+        response.push_back(std::sin(time[i] * 2 * pi * stimulus[i] * baseline_freq));
+    }
+
+    // store the data in NIX
+    nix::File f = nix::File::open("multiple_regions.nix", nix::FileMode::Overwrite,
+                                  "hdf5", nix::Compression::DeflateNormal);
+    nix::Block b = f.createBlock("demo block", "nix.demo");
+
+    // store the response in a DataArray
+    nix::DataArray array = b.createDataArray("signal", "nix.sampled", response);
+    array.label("voltage");
+    array.unit("mV");
+
+    SampledDimension dim = array.appendSampledDimension(interval);
+    dim.label("time");
+    dim.unit("s");
+
+    // create DataArrays to store stimulus onset positions and durations
+    nix::DataArray positions = b.createDataArray("stimulus ON", "nix.event_times", stim_on_times);
+    positions.label("time");
+    positions.unit("s");
+    positions.appendAliasRangeDimension();
+
+    std::vector<double> ext(stim_on_times.size(), stim_duration);
+    nix::DataArray extents = b.createDataArray("stimulus extents", "nix.extents", ext);
+    extents.appendSetDimension();
+
+    // create the MultiTag
+    nix::MultiTag mtag = b.createMultiTag("stimulus regions", "nix.region", positions);
+    mtag.extents(extents);
+    mtag.addReference(array);
+    return 0;
+}
 ```
+
 ## Adding features
 
 

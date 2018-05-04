@@ -14,7 +14,6 @@ for i, interval in enumerate(intervals):
 stim *= base_freq
 signal = np.sin(time * 2 * np.pi * stim)
 
-
 fig = plt.figure()
 fig.set_size_inches(5.5, 2.5)
 ax = fig.add_subplot(111)
