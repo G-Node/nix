@@ -400,6 +400,7 @@ void BaseTestDataArray::testUnit() {
 void BaseTestDataArray::testDimension() {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
+    std::vector<std::string> setLabels = {"a", "b", "c"};
     double samplingInterval = boost::math::constants::pi<double>();
 
     for(size_t i = 0; i < 5; i++) {
@@ -412,9 +413,17 @@ void BaseTestDataArray::testDimension() {
     dims.push_back(array2.appendSetDimension());
 
     // have some explicit dimension types
-    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
-    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
-    nix::SetDimension dim_set = array1.appendSetDimension();
+    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks, "time", "s");
+    CPPUNIT_ASSERT(dim_range.label() && *dim_range.label() == "time");
+    CPPUNIT_ASSERT(dim_range.unit() && *dim_range.unit() == "s");
+
+    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval, "time", "s");
+    CPPUNIT_ASSERT(dim_sampled.label() && *dim_sampled.label() == "time");
+    CPPUNIT_ASSERT(dim_sampled.unit() && *dim_sampled.unit() == "s");
+
+    nix::SetDimension dim_set = array1.appendSetDimension(setLabels);
+    CPPUNIT_ASSERT(dim_set.labels().size() == 3);
+
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
