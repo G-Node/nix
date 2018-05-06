@@ -291,7 +291,7 @@ int main() {
 
 The example code is rather straight forward. The *DataArrays*
 'positions' and 'extents' take respective data and are added to the
-create *MultiTag* entity. Finally, the array storing the data is added
+created *MultiTag* entity. Finally, the array storing the data is added
 to the list of *references* of the *MultiTag*.
 
 ## Adding features
@@ -331,8 +331,9 @@ specified via the *LinkType*. There are three distinct types:
 2. **Tagged**: Positions and extents of the referring *Tag/MultiTag*
    need to be applied in the same way to the linked *DataArray* as to
    the referenced data (stored in the 'references' list).
-3. **Untagged**: The whole data stored in the linked Feature applies
-   is a feature of the *Tag/MultiTag* ignoring any indexing.
+3. **Untagged**: The whole data stored in the linked Feature is a
+   feature of the *Tag/MultiTag* ignoring any indexing, positions or
+   extents.
 
 
 In the above example we have a single stimulus intensity for each
