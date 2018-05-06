@@ -205,17 +205,17 @@ stored in the *MultiTag* itself but we use the event *DataArray*
 *DataArray* is added to the list of references.
 
 
-### Tagging multiple regions in 1D
+### Tagging multiple intervals in 1D
 
-In the following exampled we want to plot multiple regions, in which ,
-for example a stimulus was switched on.
+In the following exampled we want to plot multiple intervals in which,
+for example, a stimulus was switched on.
 
 ![multiple_regions_plot](./images/multiple_regions.png "multiple regions")
 
 For storing such data we again need one *DataArray* to store the
 recorded signal. Storing the regions is similar to the approach for
 the simpler *Tag*, i.e. *positions* and the *extents* need to be
-stored. Accordingly, **two** additional *DataArray*s are required. The
+provided. Accordingly, **two** additional *DataArray*s are required. The
 first of which stores the positions and the second the extents.
 
 ```c++
@@ -275,21 +275,72 @@ int main() {
 
     std::vector<double> ext(stim_on_times.size(), stim_duration);
     nix::DataArray extents = b.createDataArray("stimulus extents", "nix.extents", ext);
+    extents.label("time");
+    extents.unit("s");
     extents.appendSetDimension();
 
     // create the MultiTag
     nix::MultiTag mtag = b.createMultiTag("stimulus regions", "nix.region", positions);
     mtag.extents(extents);
     mtag.addReference(array);
+
+    f.close();
     return 0;
 }
 ```
 
+The example code is rather straight forward. The *DataArrays*
+'positions' and 'extents' take respective data and are added to the
+create *MultiTag* entity. Finally, the array storing the data is added
+to the list of *references* of the *MultiTag*.
+
 ## Adding features
 
+We use the above example to increase complexity a bit. So far, the
+*MultiTag* 'mtag' just notes that in the data stored in 'array' there
+are some interesting intervals in which something happened. The name
+of the *MultiTag* entity tells us that the highlighted intervals
+represent stimulus regions. Using *Features* we can now add further
+information to these regions. Let's assume we wanted to store the
+stimulus intensity. The following lines of code can be inserted into
+the previous example before the file is closed.
+
+```c++
+    // extract stimulus intensities from the stimulus vector
+    std::vector<double> stimulus_intensities;
+    for (double stim_on_time : stim_on_times) {
+        stimulus_intensities.push_back(stimulus[size_t(stim_on_time / interval) + 1]);
+    }
+
+    nix::DataArray stimulus_intensities = b.createDataArray("stimulus intensities", "nix.collection", stimulus_intensities);
+    stimulus_intensities.label("voltage");
+    stimulus_intensities.unit("V");
+    stimulus_intensities.appendSetDimensions();
+
+    mtag.createFeature(stimulus_intensities, nix::LinkType::Indexed);
+```
+
+The *Feature* adds the information stored in a *DataArray* to the
+*Tag/MultiTag*. The way how this information has to be interpreted is
+specified via the *LinkType*. There are three distinct types:
+
+1. **Indexed**: For each position in the referring *Tag/MultiTag*
+   there is one entry in the linked *DataArray*. In case the linked
+   *DataArray* is multi-dimensional, the number of entries along
+   dimension 0 must match the number of positions.
+2. **Tagged**: Positions and extents of the referring *Tag/MultiTag*
+   need to be applied in the same way to the linked *DataArray* as to
+   the referenced data (stored in the 'references' list).
+3. **Untagged**: The whole data stored in the linked Feature applies
+   is a feature of the *Tag/MultiTag* ignoring any indexing.
+
+
+In the above example we have a single stimulus intensity for each
+position. Hence, the *LinkType::Indexed* is used.
 
 ## Retrieving tagged data
 
 
 
-[home](./index.md "g-node.github.io/nix") -- [back](./getting_started.md "NIX Introduction")
+[home](./index.md "g-node.github.io/nix")
+-- [back](./getting_started.md "NIX Introduction")
