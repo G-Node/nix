@@ -339,7 +339,17 @@ specified via the *LinkType*. There are three distinct types:
 In the above example we have a single stimulus intensity for each
 position. Hence, the *LinkType::Indexed* is used.
 
+
+## Tagging in n-D
+
+The same principle as demonstrated above applies also to n-dimensional
+data. Tagging in n dimensions requires positions and extents to
+provide the position in n dimensions.
+
+
+
 ## Retrieving tagged data
+
 
 
 
