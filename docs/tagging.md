@@ -343,8 +343,8 @@ position. Hence, the *LinkType::Indexed* is used.
 ## Tagging in n-D
 
 The same principle as demonstrated above applies also to n-dimensional
-data. Tagging in n dimensions requires positions and extents to
-provide the position in n dimensions.
+data. Tagging in n dimensions requires **positions** and **extents**
+stored in *DataArrays* of appropriate shapes.
 
 
 
