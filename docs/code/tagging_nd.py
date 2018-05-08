@@ -7,7 +7,7 @@ import matplotlib.patches as patches
 from IPython import embed
 
 
-def plotcubus(axis, pos, ext):
+def plotcubus(axis, pos, ext, color):
     xs = pos[0]
     ys = pos[1]
     zs = pos[2]
@@ -21,7 +21,7 @@ def plotcubus(axis, pos, ext):
     z = [zs, ze, ze, zs, zs]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75, linestyle='--', edgecolors='gray')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
 
     # top
@@ -30,7 +30,7 @@ def plotcubus(axis, pos, ext):
     z = [zs, zs, zs, zs, zs]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75,  linestyle='--', edgecolors='gray')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
 
     # bottom
@@ -39,7 +39,7 @@ def plotcubus(axis, pos, ext):
     z = [ze, ze, ze, ze, ze]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75,  linestyle='--', edgecolors='gray')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
 
     # back
@@ -48,7 +48,7 @@ def plotcubus(axis, pos, ext):
     z = [zs, ze, ze, zs, zs]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75,  linestyle='--', edgecolors='gray')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
 
     # left
@@ -57,7 +57,7 @@ def plotcubus(axis, pos, ext):
     z = [zs, zs, ze, ze, zs]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75, edgecolors='gray', linestyle='--')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
 
     # right
@@ -66,59 +66,91 @@ def plotcubus(axis, pos, ext):
     z = [zs, zs, ze, ze, zs]
     verts = [list(zip(x, y, z))]
     poly = Poly3DCollection(verts, alpha=0.1, lw=0.75, edgecolors='gray', linestyle='--')
-    poly.set_facecolor('dodgerblue')
+    poly.set_facecolor(color)
     axis.add_collection3d(poly)
+    axis.scatter(xs, ys, zs, marker='.', s=50, facecolor='r', edgecolor='k')
+    axis.plot([xs, xe], [ys, ys], [zs, zs], lw=1.5, color='r')
+    axis.plot([xs, xs], [ys, ye], [zs, zs], lw=1.5, color='r')
+    axis.plot([xs, xs], [ys, ys], [zs, ze], lw=1.5, color='r')
+    #axis.text(xs + ext[0]/2, ys, zs + ext[2]/2, 'region')
 
 
-positions = [[10, 10, 90], [60, 5, 20]]
-extents = [[30, 40, -30], [30, 60, 20]]
 
-fig = plt.figure()
-ax = plt.subplot2grid((4, 4), (0, 0), colspan=3, rowspan=2, projection='3d')
-ax2 = plt.subplot2grid((4, 4), (2,0), colspan=3, rowspan=2)
+def plot_2d():
+    fig = plt.figure()
+    fig.set_size_inches(5.5, 2.5)
+    ax = fig.add_subplot(211)
+    ax.scatter([10, 60], [60, 5], marker=".", s=40, color='r', zorder=2)
+    ax.set_xlim([0, 100])
+    ax.set_ylim([0, 100])
+    rect = patches.Rectangle((10, 90), 30, -30, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
+                             lw=0.75, ls='--')
+    ax.add_patch(rect)
+    rect = patches.Rectangle((60, 5), 30, 20, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
+                             lw=0.75, ls='--')
+    ax.add_patch(rect)
+    #ax.annotate('', xy=(x_start + x_extent, y_start), xytext=(x_start, y_start),
+    #            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5))
+    #ax.annotate('', xy=(x_start, y_start + y_extent), xytext=(x_start, y_start),
+    #            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5 ))
+    #ax.annotate('position (%i, %i)'%(x_start, y_start), xy=(x_start, y_start), xytext=(5, 95),
+    #
+    rows_2d = ["width", "height"]
 
-ax2.scatter([10, 60], [60, 5], marker=".", s=40, color='r', zorder=2)
-ax2.set_xlim([0, 100])
-ax2.set_ylim([0, 100])
-rect = patches.Rectangle((10, 90), 30, -30, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
-                         lw=0.75, ls='--')
-ax2.add_patch(rect)
-rect = patches.Rectangle((60, 5), 30, 20, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
-                         lw=0.75, ls='--')
-ax2.add_patch(rect)
-
-#ax.annotate('', xy=(x_start + x_extent, y_start), xytext=(x_start, y_start),
-#            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5))
-#ax.annotate('', xy=(x_start, y_start + y_extent), xytext=(x_start, y_start),
-#            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5 ))
-#ax.annotate('position (%i, %i)'%(x_start, y_start), xy=(x_start, y_start), xytext=(5, 95),
-#            arrowprop
-
-#ax = fig.add_subplot(2, 2, 2, projection='3d')
-ax.set_xlim([0, 100])
-ax.set_xlabel('width')
-ax.set_ylim([0, 100])
-ax.set_ylabel('depth')
-ax.set_zlabel('height')
-ax.set_zlim([0, 100])
-for i in range(len(positions)):
-    plotcubus(ax, positions[i], extents[i])
+    pass
 
 
-rows_2d = ["width", "height"]
-rows_3d = ["width", "height", "depth"]
+def plot_3d():
+    positions = [[10, 10, 90], [60, 5, 20]]
+    extents = [[30, 40, -30], [30, 60, 20]]
+    colors = ['dodgerblue', 'crimson']
+    fig = plt.figure()
+    fig.set_size_inches(5.5, 2.5)
+    ax = plt.subplot2grid((2, 5), (0, 0), colspan=3, rowspan=2, projection='3d')
 
-#ax = fig.add_subplot(223)
-col_labels = ["Position 1",  "Position 2"]
-cell_text = [[positions[0][0], positions[1][0]], [positions[0][1], positions[1][1]],
-             [positions[0][2], positions[1][2]]]
+    ax.set_xlim([0, 100])
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xlabel('width')
+    ax.set_ylim([0, 100])
+    ax.set_yticks([0, 25, 50, 75, 100])
 
-table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_3d, colLabels=col_labels,
-                               cellLoc="center", bbox=[1.2, 0., 0.5, 0.3])
-table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_3d, colLabels=col_labels,
-                               cellLoc="center", bbox=[1.2, .5, 0.5, 0.3])
-table.auto_set_font_size(False)
-table.set_fontsize(8)
-#table.AXESPAD = 0.5
+    ax.set_ylabel('depth')
+    ax.set_zlabel('height')
+    ax.set_zlim([0, 100])
+    ax.set_zticks([0, 25, 50, 75, 100])
 
-plt.show()
+    for i in range(len(positions)):
+        plotcubus(ax, positions[i], extents[i], colors[i])
+
+    col_labels = ["Pos 1",  "Pos 2"]
+    rows_3d = ["width", "height", "depth"]
+
+    cell_text = [[positions[0][0], positions[1][0]], [positions[0][2], positions[1][2]],
+                 [positions[0][1], positions[1][1]]]
+
+    table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_3d, colLabels=col_labels,
+                                   cellLoc="center", bbox=[1.4, 0.5, 0.25, 0.3],
+                                   colWidths=[0.1 for c in col_labels],
+                                   colColours=colors)
+    ax.text(170, 100, 130.0, "Positions DataArray") #, transform=ax.transAxes , fontsize=10)
+    table.auto_set_font_size(False)
+    table.set_fontsize(8)
+
+    col_labels = ["Ext 1",  "Ext 2"]
+    cell_text = [[extents[0][0], extents[1][0]], [extents[0][2], extents[1][2]],
+                 [extents[0][1], extents[1][1]]]
+    table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_3d, colLabels=col_labels,
+                                   cellLoc="center", bbox=[1.4, -.1, 0.25, 0.3],
+                                   colWidths=[0.1 for c in col_labels],
+                                   colColours=colors)
+    table.auto_set_font_size(False)
+    table.set_fontsize(8)
+    ax.text(180, 100, 5.0, "Extents DataArray") #, transform=ax.transAxes , fontsize=10)
+
+    fig.subplots_adjust(bottom=0.1, left=0., right=0.95, top=0.95)
+    fig.savefig("../images/3d_mtag.png")
+    #    plt.show()
+
+
+if __name__ == "__main__":
+    plot_3d()
