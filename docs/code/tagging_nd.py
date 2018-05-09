@@ -75,29 +75,64 @@ def plotcubus(axis, pos, ext, color):
     #axis.text(xs + ext[0]/2, ys, zs + ext[2]/2, 'region')
 
 
-
 def plot_2d():
+    positions = [[10, 90], [60, 5]]
+    extents = [[30, -30], [30, 20]]
+    colors = ['dodgerblue', 'crimson']
+
     fig = plt.figure()
     fig.set_size_inches(5.5, 2.5)
-    ax = fig.add_subplot(211)
-    ax.scatter([10, 60], [60, 5], marker=".", s=40, color='r', zorder=2)
+    ax = fig.add_subplot(121)
     ax.set_xlim([0, 100])
+    ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xlabel('width [mm]')
     ax.set_ylim([0, 100])
-    rect = patches.Rectangle((10, 90), 30, -30, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
+    ax.set_ylabel('height [mm]')
+    ax.set_yticks([0, 25, 50, 75, 100])
+    rect = patches.Rectangle((10, 90), 30, -30, alpha=0.25, facecolor="dodgerblue", edgecolor='k',
                              lw=0.75, ls='--')
     ax.add_patch(rect)
-    rect = patches.Rectangle((60, 5), 30, 20, alpha=0.5, facecolor="dodgerblue", edgecolor='k',
+    rect = patches.Rectangle((60, 5), 30, 20, alpha=0.25, facecolor="crimson", edgecolor='k',
                              lw=0.75, ls='--')
     ax.add_patch(rect)
-    #ax.annotate('', xy=(x_start + x_extent, y_start), xytext=(x_start, y_start),
-    #            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5))
-    #ax.annotate('', xy=(x_start, y_start + y_extent), xytext=(x_start, y_start),
-    #            arrowprops=dict(facecolor='silver', connectionstyle="arc3", arrowstyle="->", lw=1.5 ))
-    #ax.annotate('position (%i, %i)'%(x_start, y_start), xy=(x_start, y_start), xytext=(5, 95),
-    #
-    rows_2d = ["width", "height"]
+    ax.scatter([10, 60], [90, 5], marker=".", s=50, lw=0.25, facecolor="r", edgecolor='k')
+    ax.plot([10, 40], [90, 90], lw=1.5, color='r')
+    ax.plot([10, 10], [90, 60], lw=1.5, color='r')
+    ax.plot([60, 60], [5, 25], lw=1.5, color='r')
+    ax.plot([60, 90], [5, 5], lw=1.5, color='r')
 
-    pass
+    col_labels = ["Pos 1",  "Pos 2"]
+    rows_2d = ["width", "height"]
+    cell_text = [[positions[0][0], positions[1][0]],
+                 [positions[0][1], positions[1][1]]]
+
+    table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_2d,
+                                   colLabels=col_labels,
+                                   cellLoc="center", bbox=[1.6, 0.6, 0.4, 0.3],
+                                   colWidths=[0.2 for c in col_labels],
+                                   colColours=colors)
+    ax.text(130, 100, "Positions DataArray") #, transform=ax.transAxes , fontsize=10)
+    table.auto_set_font_size(False)
+    table.set_fontsize(8)
+
+    col_labels = ["Ext 1",  "Ext 2"]
+    cell_text = [[extents[0][0], extents[1][0]],
+                 [extents[0][1], extents[1][1]]]
+
+    table = matplotlib.table.table(ax, cellText=cell_text, rowLabels=rows_2d,
+                                   colLabels=col_labels,
+                                   cellLoc="center", bbox=[1.6, 0.1, 0.4, 0.3],
+                                   colWidths=[0.2 for c in col_labels],
+                                   colColours=colors)
+    ax.text(130, 100, "Positions DataArray") #, transform=ax.transAxes , fontsize=10)
+    table.auto_set_font_size(False)
+    table.set_fontsize(8)
+    ax.text(130, 45, "Extents DataArray") #, transform=ax.transAxes , fontsize=10)
+
+    ax.spines["top"].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    fig.subplots_adjust(bottom=0.175, left=0.15, right=0.95, top=0.95)
+    fig.savefig("../images/2d_mtag.png")
 
 
 def plot_3d():
@@ -110,12 +145,12 @@ def plot_3d():
 
     ax.set_xlim([0, 100])
     ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xlabel('width')
+    ax.set_xlabel('width [mm]')
     ax.set_ylim([0, 100])
     ax.set_yticks([0, 25, 50, 75, 100])
 
-    ax.set_ylabel('depth')
-    ax.set_zlabel('height')
+    ax.set_ylabel('depth [mm]')
+    ax.set_zlabel('height [mm]')
     ax.set_zlim([0, 100])
     ax.set_zticks([0, 25, 50, 75, 100])
 
@@ -149,8 +184,8 @@ def plot_3d():
 
     fig.subplots_adjust(bottom=0.1, left=0., right=0.95, top=0.95)
     fig.savefig("../images/3d_mtag.png")
-    #    plt.show()
 
 
 if __name__ == "__main__":
+    plot_2d()
     plot_3d()
