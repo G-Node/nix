@@ -359,26 +359,26 @@ regions, the second the number of dimensions.
 
 ```c++
 #include <nix.hpp>
-#include <boost/multi_array.hpp>
+#include <nix/hydra/multiArray.hpp>
 
 int main() {
-    // create some 2-D data filled with random numbers
-    typedef boost::multi_array<int, 2> 2d_array_type;
-    typedef 2d_array_type::index index;
+    typedef boost::multi_array<int, 2> array_type_2d;
+    typedef array_type_2d::index index;
 
-    2d_array_type 2d_data(boost::extents[1024][1024]);
-    for(index i = 0; i < 1024; ++i) {
-        for(index j = 0; j < 1024; ++j) {
-            2d_data[i][j] = std::rand() % 100 + 1;
+    array_type_2d data(boost::extents[100][100]);
+    for(index i = 0; i < 100; ++i) {
+        for(index j = 0; j < 100; ++j) {
+            data[i][j] = std::rand() % 100 + 1;
         }
     }
+    nix::NDSize data_shape(2, 100);
 
     // store data in a nix file
     nix::File f = nix::File::open("2d_multiple_regions.nix", nix::FileMode::Overwrite, "hdf5",
                                   nix::Compression::DeflateNormal);
-    b = f.createBlock("demo block", "nix.demo");
+    nix::Block b = f.createBlock("demo block", "nix.demo");
 
-    nix::DataArray array = block.createDataArray("2d random data", "nix.sampled.2d", 2d_data);
+    nix::DataArray array = b.createDataArray("2d random data", "nix.sampled.2d", data);
     nix::SampledDimension dim = array.appendSampledDimension(1.);
     dim.label("width");
     dim.unit("mm");
@@ -386,27 +386,29 @@ int main() {
     dim.label("height");
     dim.unit("mm");
 
-    2d_array_type pos(boost::extents[2][2]); // 2 regions, 2 dimensions
+    array_type_2d pos(boost::extents[2][2]); // 2 regions, 2 dimensions
+    nix::NDSize pos_shape = {2, 2};
     pos[0][0] = 10;
-    pos[0][1] = 90;
-    pos[1][0] = 60;
+    pos[1][0] = 90;
+    pos[0][1] = 60;
     pos[1][1] = 5;
     nix::DataArray positions = b.createDataArray("positions", "nix.positions", pos);
     positions.appendSetDimension();
     positions.appendSetDimension();
 
-    2d_array_type ext(boost::extents[2][2]);
+    array_type_2d ext(boost::extents[2][2]);
+    nix::NDSize ext_shape = pos_shape;
     ext[0][0] = 30;
-    ext[0][1] = -30;
-    ext[1][0] = 30;
+    ext[1][0] = -30;
+    ext[0][1] = 30;
     ext[1][1] = 20;
     nix::DataArray extents = b.createDataArray("extents", "nix.extents", ext);
     extents.appendSetDimension();
     extents.appendSetDimension();
 
     // bind everything together using a MultiTag
-    nix::MultiTag regions = b.createMultiTag("regions", "nix.regions.2d", pos);
-    regions.extents(ext);
+    nix::MultiTag regions = b.createMultiTag("regions", "nix.regions.2d", positions);
+    regions.extents(extents);
     regions.addReference(array);
 
     f.close();
@@ -414,7 +416,7 @@ int main() {
 }
 ```
 
-This approach is extended into n-D. The following figure illustrates
+This approach can be extended into n-D. The following figure illustrates
 the 3-D case.
 
 ![multiple_regions_3D_plot](./images/3D_mtag.png "multiple regions in 3D")
