@@ -348,7 +348,7 @@ stored in *DataArrays* of appropriate shapes.
 
 The following figures show the tagging of multiple regions in 2- and 3D.
 
-![multiple_regions_2D_plot](./images/2D_mtag.png "multiple regions in 2D")
+![multiple_regions_2D_plot](./images/2d_mtag.png "multiple regions in 2D")
 
 According to the number of dimensions of the data (here, width and
 height) each starting point and the extent of a tagged region is defined by two
@@ -419,7 +419,7 @@ int main() {
 This approach can be extended into n-D. The following figure illustrates
 the 3-D case.
 
-![multiple_regions_3D_plot](./images/3D_mtag.png "multiple regions in 3D")
+![multiple_regions_3D_plot](./images/3d_mtag.png "multiple regions in 3D")
 
 The only things that need to be changed in the above code, is the layout
 of the data (now 3-dimensional) and further entries into **position**
@@ -433,5 +433,4 @@ number of dimensions.
 
 
 
-[home](./index.md "g-node.github.io/nix")
-    -- [back](./getting_started.md "NIX Introduction
+[home](./index.md "nix github.io home") -- [back](./getting_started.md "NIX introduction")
