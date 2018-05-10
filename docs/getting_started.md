@@ -5,8 +5,8 @@ concepts behind the *NIX* data model and try to illustrate its design
 and provide code examples showing its usage.
 
 Code examples use the c++ library but almost all functions have direct
-counterparts in the python library or the language bindings for Matlab
-and java.
+counterparts in the [python library](https://github.com/nixpy) or the
+language bindings for Matlab and java.
 
 ## Basic idea
 

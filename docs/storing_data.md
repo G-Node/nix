@@ -226,6 +226,7 @@ SetDimension dim = array.appendSetDimension();
 dim.labels(labels);
 ```
 
+# Advanced storing
 ## Supported DataTypes
 
 *DataArrays* can store a multitude of different data types. The
@@ -251,7 +252,7 @@ cannot be changed. In many cases the *NIX* library will try to handle
 data types transparently and cast data to the data type specified for
 the *DataArray* in which it is supposed to be stored.
 
-## Advanced storing: multi-dimensional data
+## Multi-dimensional data
 
 For storing multi-dimensional data we support native as well as Boost
 MultiArrays. The following example illustrates the use of
@@ -298,7 +299,7 @@ int main() {
 }
 ```
 
-## Advanced storing: extending stored data
+## Extending datasets on the fly
 
 The dimensionality (aka known as rank) and the stored *DataType* of a
 *DataArray* are fixed. The actual size of the stored dataset, however,
@@ -357,4 +358,6 @@ write the data to file. Choose it appropriately to the expected size
 increment. Selecting a size that is too small can severly affect
 efficiency.
 
+
+**TODO** Opaque data type, using pointers.
 [home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
