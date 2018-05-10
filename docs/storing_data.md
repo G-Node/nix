@@ -298,6 +298,63 @@ int main() {
 }
 ```
 
+## Advanced storing: Extending stored data
 
+The dimensionality (aka known as rank) and the stored *DataType* of a
+*DataArray* are fixed. The actual size of the stored dataset, however,
+can be changed. This is ofter used when you acquire data e.g. during
+an experiment.
+
+The workflow would be:
+
+1. Preparations: Open a nix-file in ```nix::FileMode::ReadWrite``` or
+   ```nix::FileMode::Overwrite```. Create or open the *DataArray*.
+2. Acquire more data.
+3. If necessary resize the DataArray and set the offset within the dataset.
+4. Write the data.
+5. Acquire more data.
+
+The following code shows how this works.
+
+```c++
+#include <nix.hpp>
+
+int main() {
+    // 1. open a nix file, enable compression
+    nix::File f = nix::File::open("extending_data.nix", nix::FileMode::Overwrite, "hdf5",
+                                  nix::Compression::DeflateNormal);
+    nix::Block b = f.createBlock("demo block", "nix.demo");
+
+    nix::NDSize shape(1, 2000); // initial shape
+    nix::DataArray array = b.createDataArray("4d random data", "nix.sampled.4d",
+                                             nix::DataType::Double, shape);
+    array.appendSampledDimension(1.);
+
+    int iterations = 100;
+    nix::NDSize offset(1, 0); // inital offset for writing
+
+    for (int i = 0; i < iterations; ++i) {
+        //2. acquire data
+        std::vector<double> data(2000, 3.14 * i / 10); // just some data
+
+        // 3. resize DataArray, update offset
+        shape[0] = (i + 1) * 2000;
+        array.dataExtent(shape);
+        offset[0] = i * 2000;
+
+        // 4. write data
+        array.setData(data, offset);
+
+        std::cerr << array.dataExtent();
+    }
+    f.close();
+    return 0;
+}
+```
+
+**Note!** Selecting the initial shape defines the chunk size using to
+write the data to file. Choose it approriatly to the expected size
+increment. Selecting a size that is too small can severly affect
+efficiency.
 
 [home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
