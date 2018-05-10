@@ -251,7 +251,7 @@ cannot be changed. In many cases the *NIX* library will try to handle
 data types transparently and cast data to the data type specified for
 the *DataArray* in which it is supposed to be stored.
 
-## Advanced storing: Storing multi-dimensional data
+## Advanced storing: multi-dimensional data
 
 For storing multi-dimensional data we support native as well as Boost
 MultiArrays. The following example illustrates the use of
@@ -298,11 +298,11 @@ int main() {
 }
 ```
 
-## Advanced storing: Extending stored data
+## Advanced storing: extending stored data
 
 The dimensionality (aka known as rank) and the stored *DataType* of a
 *DataArray* are fixed. The actual size of the stored dataset, however,
-can be changed. This is ofter used when you acquire data e.g. during
+can be changed. This is often used when you acquire data e.g. during
 an experiment.
 
 The workflow would be:
@@ -310,7 +310,7 @@ The workflow would be:
 1. Preparations: Open a nix-file in ```nix::FileMode::ReadWrite``` or
    ```nix::FileMode::Overwrite```. Create or open the *DataArray*.
 2. Acquire more data.
-3. If necessary resize the DataArray and set the offset within the dataset.
+3. If necessary resize the *DataArray* and update the offset within the dataset.
 4. Write the data.
 5. Acquire more data.
 
@@ -334,7 +334,7 @@ int main() {
     nix::NDSize offset(1, 0); // inital offset for writing
 
     for (int i = 0; i < iterations; ++i) {
-        //2. acquire data
+        // 2. acquire data
         std::vector<double> data(2000, 3.14 * i / 10); // just some data
 
         // 3. resize DataArray, update offset
@@ -352,8 +352,8 @@ int main() {
 }
 ```
 
-**Note!** Selecting the initial shape defines the chunk size using to
-write the data to file. Choose it approriatly to the expected size
+**Note!** Selecting the initial shape defines the chunk size used to
+write the data to file. Choose it appropriately to the expected size
 increment. Selecting a size that is too small can severly affect
 efficiency.
 
