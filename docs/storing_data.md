@@ -251,6 +251,53 @@ cannot be changed. In many cases the *NIX* library will try to handle
 data types transparently and cast data to the data type specified for
 the *DataArray* in which it is supposed to be stored.
 
+## Advanced storing: Storing multi-dimensional data
+
+For storing multi-dimensional data we support native as well as Boost
+MultiArrays. The following example illustrates the use of
+MultiArrays. MultiArray support is implemented in the
+```nix/hydra/multiArray.hpp`` header.
+
+```c++
+#include <nix.hpp>
+#include <nix/hydra/multiArray.hpp>
+
+int main() {
+    typedef boost::multi_array<int, 4> array_type_4d;
+    typedef array_type_4d::index index;
+
+    array_type_4d data(boost::extents[10][10][10][10]);
+    for(index i = 0; i < 10; ++i) {
+        for(index j = 0; j < 10; ++j) {
+            for (index k = 0; k < 10; ++k) {
+                for (index l = 0; l < 10; ++l) {
+                    data[i][j][k][l] = std::rand() % 100 + 1;
+                }
+            }
+        }
+    }
+    nix::NDSize data_shape(4, 10);  // NDSize object with rank four 10 elements per dim
+
+    // open a nix file, enable compression
+    nix::File f = nix::File::open("4d_data.nix", nix::FileMode::Overwrite, "hdf5",
+                                  nix::Compression::DeflateNormal);
+    nix::Block b = f.createBlock("demo block", "nix.demo");
+
+    // create the DataArray and store the data.
+    nix::DataArray array = b.createDataArray("4d random data", "nix.sampled.4d", data);
+
+    for (int i = 0; i < 4; ++i) {
+        nix::SampledDimension dim = array.appendSampledDimension(1.);
+        dim.label("width");
+        dim.unit("mm");
+    }
+
+    std::cerr << array.dataType() << std::endl;
+    std::cerr << array.dataExtent() << std::endl;
+    return 0;
+}
+```
+
 
 
 [home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
