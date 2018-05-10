@@ -226,6 +226,31 @@ SetDimension dim = array.appendSetDimension();
 dim.labels(labels);
 ```
 
+## Supported DataTypes
+
+*DataArrays* can store a multitude of different data types. The
+supported data types are defined in the ```nix::DataType``
+enumeration:
+
+* ```nix::DataType::Bool```: 1 bit boolean value.
+* ```nix::DataType::Char```: 8 bit charater.
+* ```nix::DataType::Float```: floating point number.
+* ```nix::DataType::Double```: double precision floating point number.
+* ```nix::DataType::Int8```: 8 bit integer, signed.
+* ```nix::DataType::Int16```: 16 bit integer, signed.
+* ```nix::DataType::Int32```: 32 bit integer, signed.
+* ```nix::DataType::Int64```: 64 bit integer, signed.
+* ```nix::DataType::UInt8```: 8 bit unsigned int.
+* ```Nix::DataType::UInt16```: 16 bit unsigned int.
+* ```nix::DataType::UInt32```: 32 bit unsigned int.
+* ```nix::DataType::UInt64```: 64 bit unsigned int.
+* ```nix::DataType::String```: std::string value.
+
+The data type of an *DataArray* must be specified at creation time and
+cannot be changed. In many cases the *NIX* library will try to handle
+data types transparently and cast data to the data type specified for
+the *DataArray* in which it is supposed to be stored.
+
 
 
 [home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
