@@ -230,7 +230,7 @@ dim.labels(labels);
 ## Supported DataTypes
 
 *DataArrays* can store a multitude of different data types. The
-supported data types are defined in the ```nix::DataType``
+supported data types are defined in the ```nix::DataType```
 enumeration:
 
 * ```nix::DataType::Bool```: 1 bit boolean value.
@@ -246,6 +246,7 @@ enumeration:
 * ```nix::DataType::UInt32```: 32 bit unsigned int.
 * ```nix::DataType::UInt64```: 64 bit unsigned int.
 * ```nix::DataType::String```: std::string value.
+* ```nix::DataType::Opaque```: data type for binary data.
 
 The data type of an *DataArray* must be specified at creation time and
 cannot be changed. In many cases the *NIX* library will try to handle
@@ -257,7 +258,7 @@ the *DataArray* in which it is supposed to be stored.
 For storing multi-dimensional data we support native as well as Boost
 MultiArrays. The following example illustrates the use of
 MultiArrays. MultiArray support is implemented in the
-```nix/hydra/multiArray.hpp`` header.
+```nix/hydra/multiArray.hpp``` header.
 
 ```c++
 #include <nix.hpp>
@@ -301,10 +302,10 @@ int main() {
 
 ## Extending datasets on the fly
 
-The dimensionality (aka known as rank) and the stored *DataType* of a
+The dimensionality (aka rank) and the stored *DataType* of a
 *DataArray* are fixed. The actual size of the stored dataset, however,
-can be changed. This is often used when you acquire data e.g. during
-an experiment.
+can be changed. This is often used when you acquire data continuously
+e.g. when recording during an experiment.
 
 The workflow would be:
 
@@ -358,6 +359,51 @@ write the data to file. Choose it appropriately to the expected size
 increment. Selecting a size that is too small can severly affect
 efficiency.
 
+## Writing data directly using a data pointer
 
-**TODO** Opaque data type, using pointers.
-[home](./index.md "nix github.io home") -- [back](./getting_started.md "Getting started")
+When writing binary data (e.g. the dump of any object using the
+```nix::DataType::Opaque``` data type) or data stored in custom objects
+that provide a pointer to the data a slightly different approach is
+chosen.
+
+Consider the following example in which we write data stored in a
+std::vector directly. We use std::vector::data() method to get a pointer to the stored data.
+
+
+```c++
+#include <nix.hpp>
+
+int main() {
+    // some data
+    std::vector<double> random_data;
+    for (size_t i =0; i < 100000; ++i) {
+        random_data.push_back((std::rand() % 1000) / 1000.);
+    }
+
+    // create a NIX file, enable compression
+    nix::File f = nix::File::open("write_direct.nix", nix::FileMode::Overwrite, "hdf5",
+                                  nix::Compression::DeflateNormal);
+    nix::Block b = f.createBlock("demo", "nix.demo");
+
+    // prepare the DataArray, need to set the DataType and shape appropriately
+    nix::NDSize shape(1, random_data.size());
+    nix::NDSize offset(1, 0);
+    nix::DataArray array = b.createDataArray("random data", "nix.sampled",
+                                             nix::DataType::Double, shape);
+    array.appendSetDimension();  // this dimension does not mean anything special
+
+    // write data, random_data.data() returns a pointer
+    array.setDataDirect(nix::DataType::Double, random_data.data(), shape, offset);
+
+    return 0;
+}
+```
+
+In this case it is the user's responsibility to provide the required
+information. Specifying mismatched data types, or wrong shapes can lead to corrupted
+data or segmentation faults.
+
+
+
+[home](./index.md "nix github.io home")
+-- [back](./getting_started.md "Getting started")
