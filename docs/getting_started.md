@@ -5,7 +5,7 @@ concepts behind the *NIX* data model and try to illustrate its design
 and provide code examples showing its usage.
 
 Code examples use the c++ library but almost all functions have direct
-counterparts in the [python library](https://github.com/nixpy) or the
+counterparts in the [python library](https://github.com/g-node/nixpy) or the
 language bindings for Matlab and java.
 
 ## Basic idea
@@ -28,3 +28,5 @@ the [HDF5](https://www.hdfgroup.org) file format.
 
 * [Working with files](./file_handling.md)
 * [Working with data](./data_handling.md)
+
+* [ER-schema of data model](./data_model.md)
