@@ -405,5 +405,4 @@ data or segmentation faults.
 
 
 
-[home](./index.md "nix github.io home")
--- [back](./getting_started.md "Getting started")
+[home](./index.md) -- [back](./getting_started.md)

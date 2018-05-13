@@ -11,7 +11,7 @@ datasets, i.e. the data together with its metadata within the same
 container. Our aim is to achieve standardization by providing a
 common/generic data structure for a multitude of data
 types.
-[See the wiki for more information](https://github.com/G-Node/nix/wiki)
+See the [wiki](https://github.com/G-Node/nix/wiki) or the [introduction](./getting_started.md)  for more information.
 
 <!-- NIX originates from neurosciences but the generic nature of the
 underlying data model makes it applicable to a much wider range. In
@@ -76,7 +76,7 @@ Platform specific installation instructions can be found:
 
 ## Introduction
 
-[This introduction](./getting_started.md "Inroduction to NIX") guides through the *NIX*
+[This introduction](./getting_started.md) guides through the *NIX*
 data model and shows how to use it with the [*nix* c++ library](https://github.com/g-node/nix "C++ api for nix files").
 
 
