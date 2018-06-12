@@ -2,17 +2,18 @@
 
 The *File* entity encapsulates all information of a dataset. *File*
 entities keep some general information such as creation time and date, format
-version etc.. The entry-point to a *NIX* file.
+version etc. The entry-point to a *NIX* file.
 
 ## File modes
 
-There are three file modes to open a *NIX* file.
+A *NIX* file can be opened in one of three modes:
 
-1. **Overwrite** Used for creating a new file overwriting any existing content!
-2. **ReadWrite** Opens a file, if it exists or creates a new one. Does
+1. **Overwrite** Used for creating a new file or overwriting any content in an
+   existing one!
+2. **ReadWrite** Opens a file if it exists or otherwise creates a new one. Does
    **not** overwrite existing content.
-3. **ReadOnly** Opens an existing file. The content can not be
-   changed. Will raise an error when the provided path is invalid.
+3. **ReadOnly** Opens an existing file. The content can not be changed. Will
+   raise an error when the provided path is invalid (e.g. the file doesn't exist).
 
 ## Creating a new file.
 
@@ -55,7 +56,7 @@ nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5");
 ## Enabling compression
 
 By default, data stored inside a *NIX* file will not be compressed. You
-can switch on compression during fil opening.
+can switch on compression during file opening.
 
 ```c++
 nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5", nix::Compression::DeflateNormal);
