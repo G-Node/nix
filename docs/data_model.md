@@ -9,7 +9,7 @@ there has to be at least one object of the *bar* type.
 ![er-schema](./images/data_model_brief.png "NIX data model")
 
 
-The figure shows the intentions of the different entities but not
+The figure shows the purpose of the different entities but not
 their fields. For this, refer to the API documentation,
 the [wiki](https://github.com/G-Node/nix/wiki) and the tutorials.
 
