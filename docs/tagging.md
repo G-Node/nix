@@ -4,7 +4,7 @@ The *DataArray*s store data, but this is not all that is needed to
 store scientific data. We may want to highlight points or regions in
 the data and link it to further information.
 
-This is done using the *Tag* and the *MultiTag* for tagging single or
+This is done using the *Tag* and the *MultiTag*, for tagging single or
 mutliple points or regions, respectively.
 
 
@@ -23,7 +23,7 @@ We may want to store:
 2. The time, the stimulus was on.
 
 In the *NIX* data model *Tag* entities are used to tag regions in a
-*DataArray*. For this the *Tag* refers to the *DataArray* and
+*DataArray*. For this, the *Tag* refers to the *DataArray* and
 stores **position** and **extent** of the highlighted segment.
 
 ![simple_tag_plot](./images/tag2.png "a system's response to a stimulus")
@@ -63,7 +63,7 @@ int main() {
 ```
 
 **Note!** Position and extent of the tagged region are given as
-``std::vector``. Extent is optional, not setting it tags a point not
+``std::vector``. Extent is optional, not setting it tags a point instead of
 a segment of the referenced data.
 
 
@@ -72,8 +72,8 @@ In the above example we do not explicitly specify a unit for position
 and extent. They are implicitly assumed to be given in the same unit
 as the *DataArray*. It is, however, possible to specify a unit (or
 rather a unit for each dimension), if this is more convenient. For
-example, it would be possible to give position and extent in *ms*. The
-*NIX* does not validate at this point. It is user responsibility that
+example, it would be possible to give position and extent in *ms*.
+In this case, *NIX* does not validate. It is the user's responsibility that
 units match. In order to work smoothly, it is best to use only SI
 units and compounds of these.
 
@@ -87,7 +87,7 @@ units and compounds of these.
 
 The same principle shown above for 1-D data extends to two or more
 dimensions. The only difference is that one has to provide vectors of
-positions/extents that match in length to the number of dimensions of
+positions/extents whose length matches the number of dimensions of
 the referenced *DataArray*.
 
 ![2d_tag_plot](./images/2d_tag.png "tagging in 2-D")
@@ -321,7 +321,7 @@ the previous example before the file is closed.
 ```
 
 The *Feature* adds the information stored in a *DataArray* to the
-*Tag/MultiTag*. The way how this information has to be interpreted is
+*Tag/MultiTag*. The way this information has to be interpreted is
 specified via the *LinkType*. There are three distinct types:
 
 1. **Indexed**: For each position in the referring *Tag/MultiTag*
@@ -421,7 +421,7 @@ the 3-D case.
 
 ![multiple_regions_3D_plot](./images/3d_mtag.png "multiple regions in 3D")
 
-The only things that need to be changed in the above code, is the layout
+The only things that need to be changed in the above code, are the layout
 of the data (now 3-dimensional) and further entries into **position**
 and **extent** *DataArrays* along the second dimension (compare tables
 in the figure). Again, these *DataArrays* are **always** 2D, the first
