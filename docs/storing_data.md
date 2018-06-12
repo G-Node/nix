@@ -1,12 +1,13 @@
 # Storing data
 
+When storing data, we have two main requirements:
 1. We want to be able to store **n-dimensional** data structures.
-2. The data structures must be **self-explanatory**, that is, it must
+2. The data structures must be **self-explanatory**, that is, they must
   contain sufficient information to draw a basic plot of the data.
 
 ![sampled_plot](./images/regular_sampled.png "1-D regular sampled data")
 Considering the simple plot above, we can list all information that it
-shows, or, the other way round, that needs to be stored.
+shows and by extension, that needs to be stored in order to reproduce it.
 
 * the data (voltage measurements)
 * the y-axis labeling, i.e. label (voltage) and unit (mV)
@@ -24,8 +25,8 @@ This is exactly the approach chosen in *NIX*. For each dimension of the
 data a **dimension descriptor** must be given. In *NIX* we define three
 (and a half) dimension descriptors:
 
-1. *SampledDimension*: Used if a dimension is sampled in regular intervals.
-2. *RangeDimension*: Used if a dimension is sampled in irregular
+1. *SampledDimension*: Used if a dimension is sampled at regular intervals.
+2. *RangeDimension*: Used if a dimension is sampled at irregular
    intervals. There is a special case of the *RangeDimension*, the
    *AliasRangeDimension*, which is used when e.g. event times are
    stored.
@@ -40,7 +41,7 @@ almost all other *NIX*-entities it requires a *name* and a
 *type*. Both are not restricted but names must be **unique** inside a
 *Block*. *type* information can be used to introduce semantic meaning
 and domain-specificity. Upon creation, a unique ID will be assigned to
-the *DataArray*.  have a unique ID.
+the *DataArray*.
 
 The *DataArray* stores the actual data together with label and
 unit. In addition, the *DataArray* needs a dimension descriptor for
@@ -84,10 +85,10 @@ int main() {
 ```
 
 In the example shown above, the *NIX* library will figure out the
-dimensionality of the data, the shape of the data and its type. The
-data type and the dimensionality are fixed once the *DataArray* has
-been created. The actual size of the *DataArray* can be changed,
-altered during the life-time of the entity.
+dimensionality of the data, the shape of the data and its type. The data type
+and the dimensionality (i.e. the number of dimensions) are fixed once the
+*DataArray* has been created. The actual size of the *DataArray* can be
+changed during the life-time of the entity.
 
 In case you need more control, *DataArrays* can be created empty for
 later filling e.g. during data acquisition.
@@ -101,7 +102,7 @@ which will be automatically resized, if required. The data type is set
 to double. The *NIX* library will further try to convert passed data
 to the defined data type, if possible.
 
-Data can be set with a call like this:
+Data can be set as follows:
 ``array.setData(voltage);``
 
 Writing/Replacing subsets can be done by providing the *count* and the
@@ -111,16 +112,16 @@ Writing/Replacing subsets can be done by providing the *count* and the
 # Dimensions
 
 Within the *DataArray* we can store n-dimensional data. For each
-dimension we must provide an **dimension descriptor*. The following
+dimension we must provide a *dimension descriptor*. The following
 introduces the individual descriptors.
 
 ## SampledDimension
 
 ![sampled_plot](./images/regular_sampled.png "1-D regular sampled data")
 
-The same situation as before, the data has been sampled in regular
-intervals. That is, the time between successive data points is always
-the same. The x-axis can be fully described with just a few parameters:
+Here we have the same situation as before, the data has been sampled in regular
+intervals. That is, the time between successive data points is always the same.
+The x-axis can be fully described with just a few parameters:
 
 1. sampling interval
 2. offset
@@ -142,17 +143,17 @@ dim.offset(0.0);   // not needed, it is 0.0 by default
 ```
 
 **Why sampling interval, not sampling rate?** Because the interval is
-the more **general** term, it can also be applied to dimensions that
-do not extend in time but, for example space.
+the more **general** term. It can also be applied to dimensions that
+do not extend in time but for example space.
 
 
 ## RangeDimension
 ![range_plot](./images/irregular_sampled.png "1-D irregularly sampled data")
 
-Similar situation as before, but this time the temporal distance
-between the sampled voltages is not regular. Storing this kind of data
-is not as efficient as in the regularly sampled case. The following
-information needs to be stored to describe the dimension:
+Here we have a similar situation as before, but this time the temporal distance
+between the sampled voltages is not regular. Storing this kind of data is not
+as efficient as in the regularly sampled case. The following information needs
+to be stored to describe the dimension:
 
 1. x-positions of the data points, i.e. *ticks*
 2. label
@@ -183,16 +184,16 @@ something equivalent to event times.
 
 ![alias_range_plot](./images/alias_range.png "1-D event data")
 
-In the plot above, each dot marks the occurrence of an event. In such
-a case it is basically the x-values that are of interest. It would be
-most inefficient to store them twice, first as values in the *DataArray*
-and then again as ticks in the dimension descriptor.
+In the plot above, each dot marks the occurrence of an event. In such a case it
+is basically the x-values that are of interest. It would be inefficient to
+store them twice, first as values in the *DataArray* and then again as ticks in
+the dimension descriptor.
 
 The *AliasRangeDimension* is used in such situations. Internally, it is
 a *RangeDimension* whose information is tied to the information stored
 in the *DataArray* itself. Changing the ticks, label or unit on the
 dimension descriptor will change the *DataArray* itself. Adding an
-*AliasRangeDimension* is straight forward:
+*AliasRangeDimension* is straightforward:
 
 ```c++
 nix::DataArray array = block.createDataArray("events", "nix.irregular_sampled", event_times);
@@ -202,7 +203,7 @@ array.unit("s");
 nix::RangeDimension dim = array.appendAliasRangeDimension();
 ```
 
-**Note!** An *AliasRangeDimension* is only permitted, if the data is
+**Note!** An *AliasRangeDimension* is only permitted if the data is
 1-D and the values are numeric, an exception will be thrown otherwise.
 
 
@@ -248,8 +249,8 @@ enumeration:
 * ```nix::DataType::String```: std::string value.
 * ```nix::DataType::Opaque```: data type for binary data.
 
-The data type of an *DataArray* must be specified at creation time and
-cannot be changed. In many cases the *NIX* library will try to handle
+The data type of a *DataArray* must be specified at creation time and
+cannot be changed. In many cases, the *NIX* library will try to handle
 data types transparently and cast data to the data type specified for
 the *DataArray* in which it is supposed to be stored.
 
@@ -355,7 +356,7 @@ int main() {
 ```
 
 **Note!** Selecting the initial shape defines the chunk size used to
-write the data to file. Choose it appropriately to the expected size
+write the data to file. Choose it appropriately for the expected size
 increment. Selecting a size that is too small can severly affect
 efficiency.
 
