@@ -27,7 +27,7 @@ namespace hdf5 {
 
 
 BlockHDF5::BlockHDF5(const std::shared_ptr<base::IFile> &file, const H5Group &group)
-        : EntityWithMetadataHDF5(file, group) {
+        : EntityWithMetadataHDF5(file, group), compr(Compression::Auto) {
     data_array_group = this->group().openOptGroup("data_arrays");
     data_frame_group = this->group().openOptGroup("data_frames");
     tag_group = this->group().openOptGroup("tags");
