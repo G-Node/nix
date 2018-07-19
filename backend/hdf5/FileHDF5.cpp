@@ -26,7 +26,8 @@ namespace hdf5 {
 static FormatVersion my_version = HDF5_FF_VERSION;
 
 static unsigned int map_file_mode(FileMode mode) {
-    switch (mode) {
+
+    switch (mode & FileMode::ModeMask) {
         case FileMode::ReadWrite:
             return H5F_ACC_RDWR;
 
@@ -338,6 +339,10 @@ bool FileHDF5::checkHeader(FileMode mode) const {
     bool check = true;
     vector<int> vv;
     string str;
+
+    if ((mode & FileMode::Force) == FileMode::Force)
+        return true;
+
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
             check = false;

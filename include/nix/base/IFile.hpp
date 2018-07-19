@@ -27,7 +27,12 @@ namespace nix {
 enum class FileMode {
     ReadOnly = 0,
     ReadWrite,
-    Overwrite
+    Overwrite,
+
+    ModeMask = 0xFF,
+
+    /* Flags */
+    Force = 1 << 8
 };
 
 
