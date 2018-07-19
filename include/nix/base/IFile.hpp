@@ -31,6 +31,16 @@ enum class FileMode {
 };
 
 
+FileMode inline operator | (const FileMode base, const FileMode p) {
+    typedef std::underlying_type<FileMode>::type base_type;
+    return static_cast<FileMode>(static_cast<base_type>(base) | static_cast<base_type>(p));
+}
+
+FileMode inline operator & (const FileMode base, const FileMode t) {
+    typedef std::underlying_type<FileMode>::type base_type;
+    return static_cast<FileMode>(static_cast<base_type>(base) & static_cast<base_type>(t));
+}
+
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
 
