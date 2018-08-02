@@ -217,6 +217,7 @@ public:
      * with zero offset.
      *
      * @param polynom_coefficients      The new polynom coefficients for the calibration.
+     * @param compression               The nix::Compression flag defining the compression of the dataset.
      */
     void polynomCoefficients(const std::vector<double> &polynom_coefficients,
                              const Compression &compression=Compression::None) {
@@ -293,7 +294,7 @@ public:
     /**
      * @brief Append a new SetDimension to the list of existing dimension descriptors.
      *
-     * @param    The category labels, default: empty std::vector of std::string
+     * @param    labels       The category labels, default: empty std::vector of std::string
      * @return   The newly created SetDimension.
      */
     SetDimension appendSetDimension(const std::vector<std::string> &labels={}) {
@@ -329,7 +330,7 @@ public:
     /**
      * @brief Append a new RangeDimension that uses the data stored in this DataArray as ticks.
      * This works only(!) if the DataArray in 1D and the stored data is numeric. An Exception of the
-     * type {@link nix::exception::InvalidDimension} will be thrown otherwise.
+     * type {@link nix::InvalidDimension} will be thrown otherwise.
      *
      * @return The created RangeDimension
      */
@@ -363,6 +364,7 @@ public:
      * @param sampling_interval         The sampling interval of the SetDimension to create.
      * @param label                     The label of the dimension (e.g. 'time'), default: empty
      * @param unit                      The unit of the dimension, default: empty
+     * @param offset                    The offset with which this dimension starts, default: 0.0
      *
      * @return The newly created SampledDimension.
      */
