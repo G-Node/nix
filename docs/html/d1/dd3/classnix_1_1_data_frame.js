@@ -1,0 +1,26 @@
+var classnix_1_1_data_frame =
+[
+    [ "DataFrame", "d1/dd3/classnix_1_1_data_frame.html#a8bd4aaa930619ec72d04cad8b3268ede", null ],
+    [ "DataFrame", "d1/dd3/classnix_1_1_data_frame.html#aaeabfd2aaf4c36dbd7c4dfc1ce5ce21b", null ],
+    [ "DataFrame", "d1/dd3/classnix_1_1_data_frame.html#aedb01548dccf632a2e986a1ceacdc732", null ],
+    [ "colIndex", "d1/dd3/classnix_1_1_data_frame.html#a8a871c70fc852d4454114146894e779d", null ],
+    [ "colIndex", "d1/dd3/classnix_1_1_data_frame.html#a3e34cace1d8f3f5e90ae9fe072d21de8", null ],
+    [ "colName", "d1/dd3/classnix_1_1_data_frame.html#a9a9f2720a5c98ba3dc0f4eb5c0869962", null ],
+    [ "colName", "d1/dd3/classnix_1_1_data_frame.html#ac32e3758efdb5e6ef98a9b7f51849c71", null ],
+    [ "columns", "d1/dd3/classnix_1_1_data_frame.html#aa596ea00db530961dbf7f65c2208717a", null ],
+    [ "readCell", "d1/dd3/classnix_1_1_data_frame.html#aae300cb3d163a04e7d2824f0ead2ee69", null ],
+    [ "readCell", "d1/dd3/classnix_1_1_data_frame.html#ab77c547056badd6526c2fb16eb394c77", null ],
+    [ "readCells", "d1/dd3/classnix_1_1_data_frame.html#abb8a15f9232fc6b37b904b69f3048922", null ],
+    [ "readColumn", "d1/dd3/classnix_1_1_data_frame.html#adfc0a93b5d9e779f1f5a55ff88f5bcf2", null ],
+    [ "readColumn", "d1/dd3/classnix_1_1_data_frame.html#a794188d56b937e48ecb44b999fbf5f96", null ],
+    [ "readColumn", "d1/dd3/classnix_1_1_data_frame.html#a2ae4e4376786dbfcd6785baf358180c5", null ],
+    [ "readColumn", "d1/dd3/classnix_1_1_data_frame.html#ae84a346ae29ce1594cca8bd4fc6c3633", null ],
+    [ "readRow", "d1/dd3/classnix_1_1_data_frame.html#a61cb5b1474e0e01a9c6daa2e853fadf6", null ],
+    [ "rows", "d1/dd3/classnix_1_1_data_frame.html#a3f245ab93f7c7402a3b521c71c6fabc6", null ],
+    [ "rows", "d1/dd3/classnix_1_1_data_frame.html#ac207c1931a908c411af5e6afeeeecceb", null ],
+    [ "writeCell", "d1/dd3/classnix_1_1_data_frame.html#adc7786422c01f8fd80cd358f82d4d0fa", null ],
+    [ "writeCells", "d1/dd3/classnix_1_1_data_frame.html#a49393f043a06a88b3075ad9a6f098175", null ],
+    [ "writeColumn", "d1/dd3/classnix_1_1_data_frame.html#ad388cf4f70ec4c1a38afb7bf2170c26b", null ],
+    [ "writeColumn", "d1/dd3/classnix_1_1_data_frame.html#a226f684ee2d17fb56f5e040b40c6ed28", null ],
+    [ "writeRow", "d1/dd3/classnix_1_1_data_frame.html#ae18fe3d66d5d98b7d7521d4fa9b0faa6", null ]
+];
