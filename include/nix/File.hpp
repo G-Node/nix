@@ -85,7 +85,7 @@ public:
      * @param mode          The open mode.
      * @param impl          The back-end implementation to be used to open the file.
      *                      (currently only hdf5)
-     * @param compresssion  The compression mode, defaults to Compression::None (can be
+     * @param compression   The compression mode, defaults to Compression::None (can be
      *                      overridden upon DataArray creation)
      *
      * @return The opened file.

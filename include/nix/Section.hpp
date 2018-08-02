@@ -475,7 +475,6 @@ public:
     /**
      * @brief Find the Sources that refer to this Section in the metadata field.
      *
-     * @param b The Block in which the search should be performed.
      * @return std::vector of Sources.
      */
     std::vector<nix::Source> referringSources() const;
@@ -483,7 +482,8 @@ public:
 
     /**
      * @brief Find the Sources that refer to this Section in the metadata field.
-     * Search is performed in the whole file.
+     *
+     * @param b      The {@link nix::Block} to which the search should be restricted.
      *
      * @return std::vector of Sources.
      */

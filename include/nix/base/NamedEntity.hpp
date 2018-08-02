@@ -188,9 +188,9 @@ getEntityName(const Entity &e) {
 /**
  * @brief Get the name of an entity.
  *
- * @param entity The entity to get the name of.
+ * @param e The entity to get the name of.
  *
- * @return the name of the entity, if it is a {@link nix::Entity} to begin
+ * @return the name of the entity, if it is a {@link nix::base::Entity} to begin
  * with or {@link nix::none}.
  */
 template<typename Entity>

@@ -124,7 +124,7 @@ public:
      * @brief Write a single cell.
      *
      * @param row     Index of the row to write to.
-     * @param row     Index of the column to write to.
+     * @param col     Index of the column to write to.
      * @param v       nix::Variant containing the data.
      */
     void writeCell(ndsize_t row, unsigned col, const Variant &v) {
@@ -147,7 +147,7 @@ public:
      * @brief Read a single cell.
      *
      * @param row     Index of the row to read from.
-     * @param co;     Column index of the cell to read.
+     * @param col     Column index of the cell to read.
      *
      * @return A {@link nix::Cell} with the cell's data.
      */
