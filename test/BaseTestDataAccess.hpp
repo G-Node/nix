@@ -35,6 +35,7 @@ public:
     void testMultiTagFeatureData();
     void testMultiTagUnitSupport();
     void testDataView();
+    void testDataSlice();
 };
 
 #endif // NIX_BASETESTDATAACCESS_H
