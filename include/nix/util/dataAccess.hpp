@@ -143,6 +143,10 @@ NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const
  * @param array          The {@link nix::DataArray}.
  * @param start          A std::vector<double> that define the starting points of the data slice.
  * @param end            A std::vector<double> that defines the end point of the data slice.
+ * @param units          A std::vector<std::string> containing the  units which have to be used for each dimension.
+ *                       Start and end are assumed to be given in the same unit. If no unit is required for a dimension
+ *                       provide an empty string or "none". SI units will be automatically scaled. That is, a time
+ *                       start may be given in s even though the dimension is defined in ms.
  *
  * @returns {@link nix::DataView} the data slice.
  */

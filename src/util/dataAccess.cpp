@@ -343,6 +343,8 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
     for (size_t i = 0; i < start.size(); i++) {
         Dimension dim = array.getDimension(i+1);
         std::string unit = units.size() != 0 ? units[i] : "none";
+        if (unit.size() == 0)
+            unit = "none";
         std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
         offset[i] = indices[0].first;
         count[i] += indices[0].second - indices[0].first;
