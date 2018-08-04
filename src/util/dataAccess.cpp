@@ -324,6 +324,37 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
+DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
+                   const std::vector<std::string> &units) {
+    if (array == nix::none) {
+        throw UninitializedEntity();
+    }
+    if (start.size() == 0 || start.size() != end.size()) {
+        throw OutOfBounds("Number of start entries does not match number of end entries.", 0);
+    }
+    if (start.size() != array.dimensionCount()) {
+        throw OutOfBounds("Number of start/end entries does not match dimensionality of the data.", 0);
+    }
+    if (units.size() > 0 && units.size() != start.size()) {
+        throw OutOfBounds("Number of units does not match dimensionality of the data.", 0);
+    }
+    NDSize count(start.size(), 0), offset(start.size(), 1);
+
+    for (size_t i = 0; i < start.size(); i++) {
+        Dimension dim = array.getDimension(i+1);
+        std::string unit = units.size() != 0 ? units[i] : "none";
+        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
+        offset[i] = indices[0].first;
+        count[i] += indices[0].second - indices[0].first;
+    }
+    if (!positionAndExtentInData(array, offset, count)) {
+        throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+    }
+    DataView slice = DataView(array, count, offset);
+    return slice;
+};
+
+
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index) {
     vector<ndsize_t> indices(1, position_index);
     return retrieveData(tag, indices, reference_index)[0];
