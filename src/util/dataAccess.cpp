@@ -338,13 +338,17 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
     if (units.size() > 0 && units.size() != start.size()) {
         throw OutOfBounds("Number of units does not match dimensionality of the data.", 0);
     }
-    NDSize count(start.size(), 0), offset(start.size(), 1);
+    NDSize count(start.size(), 1), offset(start.size(), 0);
 
     for (size_t i = 0; i < start.size(); i++) {
         Dimension dim = array.getDimension(i+1);
         std::string unit = units.size() != 0 ? units[i] : "none";
-        if (unit.size() == 0)
+        if (unit.size() == 0) {
             unit = "none";
+        }
+        if (start[i] > end[i]) {
+            throw OutOfBounds("Start position must not be larger than end position.", i);
+        }
         std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
         offset[i] = indices[0].first;
         count[i] += indices[0].second - indices[0].first;
