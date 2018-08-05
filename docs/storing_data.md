@@ -142,11 +142,6 @@ dim.unit("s");
 dim.offset(0.0);   // not needed, it is 0.0 by default
 ```
 
-**Why sampling interval, not sampling rate?** Because the interval is
-the more **general** term. It can also be applied to dimensions that
-do not extend in time but for example space.
-
-
 ## RangeDimension
 ![range_plot](./images/irregular_sampled.png "1-D irregularly sampled data")
 
