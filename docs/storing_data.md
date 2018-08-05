@@ -60,8 +60,8 @@ int main() {
     double pi = 3.1415;
     double freq = 1.5;
     std::iota(time.begin(), time.end(), 0.);
-    std::transform(time.begin(), tims.end(), time.begin(),
-                   [interval](double t){ return t * interval; })
+    std::transform(time.begin(), time.end(), time.begin(),
+                   [interval](double t){ return t * interval; });
     std::transform(time.begin(), time.end(), std::back_inserter(voltage),
                    [pi, freq](double t) { return std::sin(t * freq * 2 * pi); });
 
