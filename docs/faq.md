@@ -26,4 +26,5 @@ If you feel this is unjustified, feel free to improve our uni-handling
 system.
 
 ## Q: Can I use unicode?
-Unfortunately, unicode is so far not supported.
+Unfortunately, unicode is so far not supported. In order to specify
+microseconds you can, and have to write "us".

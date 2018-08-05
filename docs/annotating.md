@@ -1,8 +1,9 @@
 ## Annotating datasets
 
-Storing data is one thing. In order to allow later reuse of
-once-acquired data and to achieve reproducibility of scientific
-results, also the storing of metadata is required.
+Storing data is one thing. Providing essential information about the
+data is the other. In order to allow later reuse of once-acquired data
+and to achieve reproducibility of scientific results we also need the
+means to of storing sufficient metadata.
 
 In the *NIX* [data model](./data_model.md) we allow annotation of data
 on several levels. It is possible to store global information, for
@@ -42,12 +43,10 @@ int main() {
     temp.unit("K"); // using degree sign is tricky, unicode symbols are not supported... sorry
     nix::Property p = global_mdata.createProperty("ambient temperature", temp);
 
-
     return 0;
 }
 
 ```
 
 
-[home](./index.md)
--- [back](./getting_started.md)
+[home](./index.md) -- [back](./getting_started.md)
