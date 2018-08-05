@@ -223,6 +223,34 @@ dim.labels(labels);
 ```
 
 # Advanced storing
+
+## Data compression
+By default data is stored uncompressed. If you want to use data compression this can be enabled by providing the ``nix::Compression::DeflateNormal`` flag during file-opening:
+
+```c++
+nix::File f = nix::File::open("test.nix", nix::FileMode::Overwrite, "hdf5",
+                              nix::Compression::DeflateNormal);
+```
+
+By doing this, **all** data will be stored with compression enabled, if not explicitly stated otherwise. At any time you can select or deselect compression by providing a ``nix::Compression`` flag during *DataArray* creation. Available flags are:
+
+* ``nix::Compression::Auto``: compression as defined during file-opening.
+* ``nix::Compression::DeflateNormal``: use compression (fixed level).
+* ``nix::Compression::None``: no compression.
+
+```c++
+ nix::DataArray array = b.createDataArray("some data", "nix.sampled", data,
+                                          nix::DataType::Double,
+                                          nix::Compression::DeflateNormal);
+```
+
+Note the following:
+
+1. Compression comes with a little cost of read-write performance.
+2. Data compression is fixed once the *DataArray* has been created, it
+cannot be changed afterwards.
+3. Opening and extending an compressed *DataArray* is easily possible even if the file has not been openend with the ``nix::Compression::DeflateNormal`` flag.
+
 ## Supported DataTypes
 
 *DataArrays* can store a multitude of different data types. The
