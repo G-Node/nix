@@ -28,3 +28,11 @@ system.
 ## Q: Can I use unicode?
 Unfortunately, unicode is so far not supported. In order to specify
 microseconds you can, and have to write "us".
+
+## Q: Why does a *DataArray* not automatically load the data from file?
+This would be very convenient, indeed. Otoh, the *NIX* entities, such
+as the *DataArray*, are designed to be lightweight objects that can be
+created quickly and do not eat up the RAM. At opening time we do not
+have an idea about the actual data size. In our use-cases a single
+*DataArray* may contain GB of data. Reading these would take some time
+and increase memory demand.
