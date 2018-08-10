@@ -97,3 +97,28 @@ void main() {
 }
 ```
 
+There are a few noteworthy things here:
+
+* We use some previous knowledge here. For one, we know the names of
+  the entities. Next, we know the data type of the data
+  (double). Further, we know that the data is 1-D and the single
+  dimension is a ```SampledDimension```. If these things are not
+  known, the NIX library offers the necessary functions.
+    * ```DataArray::dataExtent()``` returns and ```nix::NDSize```
+        that is the data extent/shape.
+    * ```DataArray::dataType()``` returns the data type.
+    * To find out the ```DimensionType```, we need to do something like: 
+    
+    ```c++
+    nix::Dimension dim = responseArray.getDimension(1);
+    if (dim.dimensionType() == nix::DimensionType::Sampled)
+    	nix::SampledDimension sd = dim.asSampledDimension();
+    ```
+    **Note:** Dimension indices start with 1.
+* We use a std::vector, this is not necessary. We could also use boost
+  mulitarrays, for example.
+* ```DataArrat::getData()``` will automatically resize the vector. When reading all
+  the data we do not need to worry about the data extent.
+* *DataArray* ans *Dimension* functions ```label()``` and ```unit()``` return
+  ```boost::optional``` values. Since these fields are optional, the returned optionals may not contain values. Here, we use them only for output (and thus need to include the boost header). 
+   
