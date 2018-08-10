@@ -61,10 +61,11 @@ int main() {
     dim.label("time");
     dim.unit("s");
 
-    nix::Tag stim_tag = block.createTag("Stimulus", "nix.stimulus_segment", {stim_on});
+    nix::Tag stim_tag = block.createTag("stimulus", "nix.stimulus_segment", {stim_on});
     stim_tag.extent({stim_off - stim_on});
     stim_tag.addReference(data);
 
+    f.close();
     return 0;
 }
 ```
@@ -85,7 +86,7 @@ units match. In order to work smoothly, it is best to use only SI
 units and compounds of these.
 
 ```c++
-    nix::Tag stim_tag = block.createTag("Stimulus", "nix.stimulus_segment", {stim_on});
+    nix::Tag stim_tag = block.createTag("stimulus", "nix.stimulus_segment", {stim_on});
     stim_tag.extent({stim_off - stim_on});
     stim_tag.units({"ms"});
 ```
