@@ -50,3 +50,54 @@ In this example we know the interesting entities by name, i.e. the
 **stimulus**. In cases in which we have no clue about the names, we
 just have to browse the file or [search](#finding_stuff) by name and type.
 
+## Reading data
+The first and maybe most common problem is to read the data stored in
+a *DataArray*.
+
+### Reading all data
+In *NIX* when you open a *DataArray* the stored the data is **not**
+automatically read from file. This needs to be done separately.
+
+1. open the file, get the *Block* and the *DataArray*
+2. Reserve some space to copy the data.
+3. Get the data from file.
+4. Get the timestamps from the dimension.
+
+The following code snippet shows (one way) how this works.
+
+```c++
+#include <nix.hpp>
+#include <boost/optional/optional_io.hpp>
+
+void main() {
+ // 1. Open file, block, and dataarray
+    nix::File file = nix::File::open("tagging1.nix", nix::FileMode::ReadOnly);
+    nix::Block block = file.getBlock("demo block");
+
+    if (!block.hasDataArray("response"))
+        return -1;
+    nix::DataArray responseArray = block.getDataArray("response");
+
+    // 2. reserve some space, will use a std::vector here, hardcoded data type double
+    nix::NDSize dataExtent = responseArray.dataExtent();
+    std::vector<double> responseData(dataExtent[0]);
+
+    // 3. read the data to the vector
+    responseArray.getData(nix::DataType::Double, responseData.data(), dataExtent, nix::NDSize({ 0 }));
+
+    // 4. get the timestamps
+    SampledDimension dim = responseArray.getDimension(1).asSampledDimension();
+    std::vector<double> time = dim.axis(responseData.size());
+
+    // some output to confirm it worked
+    std::cerr << dim.label() << "\t" << responseArray.label() << std::endl;
+    std::cerr << dim.unit() << "\t" << responseArray.unit() << std::endl;
+    for (size_t i = 0; i < responseData.size(); ++i) {
+        std::cerr << time[i] << "\t" << responseData[i] << std::endl;
+    }
+
+    file.close();
+    return 0;
+}
+```
+
