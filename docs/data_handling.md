@@ -59,15 +59,14 @@ In *NIX* when you open a *DataArray* the stored the data is **not**
 automatically read from file. This needs to be done separately.
 
 1. open the file, get the *Block* and the *DataArray*
-2. Reserve some space to copy the data.
-3. Get the data from file.
-4. Get the timestamps from the dimension.
+2. Get the data from file.
+3. Get the timestamps from the dimension.
 
 The following code snippet shows (one way) how this works.
 
 ```c++
 #include <nix.hpp>
-#include <boost/optional/optional_io.hpp>
+#include <boost/optional/optional_io.hpp> // only needed for << operator on optionals
 
 void main() {
  // 1. Open file, block, and dataarray
@@ -78,14 +77,11 @@ void main() {
         return -1;
     nix::DataArray responseArray = block.getDataArray("response");
 
-    // 2. reserve some space, will use a std::vector here, hardcoded data type double
-    nix::NDSize dataExtent = responseArray.dataExtent();
-    std::vector<double> responseData(dataExtent[0]);
+    // 2. read the data to the vector
+    std::vector<double> responseData;
+    responseArray.getData(responseData);
 
-    // 3. read the data to the vector
-    responseArray.getData(nix::DataType::Double, responseData.data(), dataExtent, nix::NDSize({ 0 }));
-
-    // 4. get the timestamps
+    // 3. get the timestamps
     SampledDimension dim = responseArray.getDimension(1).asSampledDimension();
     std::vector<double> time = dim.axis(responseData.size());
 
