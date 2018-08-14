@@ -188,3 +188,54 @@ Again, some things may be noted here:
    matching timestamps that match offset and count.
 
 
+### From Tags and MultiTags
+
+*Tag* and *MultiTag* tag single or multiple segments in stored
+datasets (see [tagging](./tagging.md) for more information and the
+example data created in the [example](#mtag_regions) which will be
+used in the following code snippets)).
+
+![multiple_regions_plot](./images/multiple_regions.png "tagging multiple segments")
+
+In order to read the data that belong to the highlighted region(s)
+*Tag* and *MultiTag* define ``retrieveData`` functions which return
+``nix::DataView`` objects from which the data is read as shown above.
+
+The following code snippet shows how to use these functions:
+
+```c++
+#include <nix.hpp>
+#include <boost/optional/optional_io.hpp> // only needed for << operator on optionals
+
+void main() {
+    // 1. Open file, block, and multitag
+    nix::File file = nix::File::open("multiple_regions.nix", nix::FileMode::ReadOnly);
+    nix::Block block = file.getBlock("demo block");
+
+    if (!block.hasMultiTag("stimulus regions"))
+        return;
+    nix::MultiTag stimRegionsTag = block.getMultiTag("stimulus regions");
+    nix::DataArray responseArray = stimRegionsTag.getReference(0);
+    SampledDimension dim = responseArray.getDimension(1).asSampledDimension();
+
+    // 2. Walk through the tagged segments
+    for (size_t i = 0; i < stimRegionsTag.positions().dataExtent()[0]; ++i) {
+        // 3. get the data
+        nix::DataView slice = stimRegionsTag.retrieveData(i, 0);
+        std::vector<double> data;
+        slice.getData(data);
+
+        // 4. get the time-axis and print out the data
+        std::vector<double> time = dim.axis(slice.dataExtent()[0]);
+
+        std::cerr << "*** Region: " << i << std::endl;
+        std::cerr << dim.label() << "\t" << responseArray.label() << std::endl;
+        std::cerr << dim.unit() << "\t" << responseArray.unit() << std::endl;
+        for (size_t i = 0; i < data.size(); ++i) {
+            std::cerr << time[i] << "\t" << data[i] << std::endl;
+        }
+    }
+    file.close();
+    return 0;
+}
+```
