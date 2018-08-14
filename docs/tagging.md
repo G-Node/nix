@@ -213,7 +213,7 @@ stored in the *MultiTag* itself but we use the event *DataArray*
 *DataArray* is added to the list of references.
 
 
-### Tagging multiple intervals in 1D
+### Tagging multiple intervals in 1D <a id="mtag_regions"></a>
 
 In the following exampled we want to plot multiple intervals in which,
 for example, a stimulus was switched on.
