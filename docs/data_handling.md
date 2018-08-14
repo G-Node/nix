@@ -128,3 +128,63 @@ There are a few noteworthy things:
   use them only for output (and thus need to include the boost
   header).
 
+### Reading partial data
+
+In other instances it might be wanted to read only parts of the
+data. When doing this, the library needs to know where it should start
+to read and how many elements should be read. Because *DataArray*s can
+store n-dimensional data we need to specify these with an
+n-dimensional construct, the ``nix::NDSize``.
+
+The following steps need to be taken.
+
+1. Open the file, get the *Block* and the *DataArray*
+2. Define offset and count.
+3. Read the data from file.
+4. Get the timestamps from the dimension.
+
+```c++
+#include <nix.hpp>
+#include <boost/optional/optional_io.hpp> // only needed for << operator on optionals
+
+void main() {
+    // 1. Open file, block, and dataarray
+    nix::File file = nix::File::open("tagging1.nix", nix::FileMode::ReadOnly);
+    nix::Block block = file.getBlock("demo block");
+
+    if (!block.hasDataArray("response"))
+        return;
+    nix::DataArray responseArray = block.getDataArray("response");
+
+    // 2. define offset and count
+    nix::NDSize dataExtent = responseArray.dataExtent();
+    nix::NDSize offset(1, (int)(dataExtent[0]/4));
+    nix::NDSize count(1, (int)(dataExtent[0]/2));
+
+    // 3. read the data
+    std::vector<double> responseData;
+    responseArray.getData(responseData, count, offset);
+
+    // 4. get the timestamps
+    SampledDimension dim = responseArray.getDimension(1).asSampledDimension();
+    std::vector<double> time = dim.axis(count[0], offset[0]);
+
+    // some output to confirm it worked
+    std::cerr << dim.label() << "\t" << responseArray.label() << std::endl;
+    std::cerr << dim.unit() << "\t" << responseArray.unit() << std::endl;
+    for (size_t i = 0; i < responseData.size(); ++i) {
+        std::cerr << time[i] << "\t" << responseData[i] << std::endl;
+    }
+    file.close();
+    return 0;
+}
+```
+
+Again, some things may be noted here:
+1. We use some previous knowledge in this example.
+2. We are reading half of the data and start at 1/4th of the data extent.
+3. We read to a std::vector that will be resized appropriately.
+4. We use the ``axis()`` function of the ``SampledDimension`` to get
+   matching timestamps that match offset and count.
+
+
