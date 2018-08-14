@@ -69,7 +69,7 @@ The following code snippet shows (one way) how this works.
 #include <boost/optional/optional_io.hpp> // only needed for << operator on optionals
 
 void main() {
- // 1. Open file, block, and dataarray
+    // 1. Open file, block, and dataarray
     nix::File file = nix::File::open("tagging1.nix", nix::FileMode::ReadOnly);
     nix::Block block = file.getBlock("demo block");
 
@@ -97,18 +97,20 @@ void main() {
 }
 ```
 
-There are a few noteworthy things here:
+There are a few noteworthy things:
 
 * We use some previous knowledge here. For one, we know the names of
   the entities. Next, we know the data type of the data
   (double). Further, we know that the data is 1-D and the single
   dimension is a ```SampledDimension```. If these things are not
-  known, the NIX library offers the necessary functions.
-    * ```DataArray::dataExtent()``` returns and ```nix::NDSize```
+  known, the NIX library offers the necessary functions to get this
+  information.
+    * ```DataArray::dataExtent()``` returns an ```nix::NDSize```
         that is the data extent/shape.
     * ```DataArray::dataType()``` returns the data type.
-    * To find out the ```DimensionType```, we need to do something like: 
-    
+    * To find out the ```DimensionType```, we need to do something
+      like:
+
     ```c++
     nix::Dimension dim = responseArray.getDimension(1);
     if (dim.dimensionType() == nix::DimensionType::Sampled)
@@ -117,8 +119,12 @@ There are a few noteworthy things here:
     **Note:** Dimension indices start with 1.
 * We use a std::vector, this is not necessary. We could also use boost
   mulitarrays, for example.
-* ```DataArrat::getData()``` will automatically resize the vector. When reading all
-  the data we do not need to worry about the data extent.
-* *DataArray* ans *Dimension* functions ```label()``` and ```unit()``` return
-  ```boost::optional``` values. Since these fields are optional, the returned optionals may not contain values. Here, we use them only for output (and thus need to include the boost header). 
-   
+* ```DataArrat::getData()``` will automatically resize the
+  vector. When reading all the data we do not need to worry about the
+  data extent.
+* *DataArray* ans *Dimension* functions ```label()``` and ```unit()```
+  return ``boost::optional`` values. Since these fields are
+  optional, the returned optionals may not contain values. Here, we
+  use them only for output (and thus need to include the boost
+  header).
+
