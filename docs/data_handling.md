@@ -239,3 +239,15 @@ void main() {
     return 0;
 }
 ```
+
+Analogously, the feature data attached to the *Tag* or *MultiTag* can
+be obtained using the ``Tag::retrieveFeatureData()`` methods.
+
+**Note:**
+1. With the next release (1.4.2) it will be possible to retrieve the
+   data of multiple slices with one call which allows for some
+   optimizations and yields higher performance.
+2. When one of the *DataArray* dimensions is a *RangeDimension* this
+   method is not optimal. In order to find the correct indices, all
+   ticks of the respective dimension has to be read first. Manual
+   access of the data might yield better performance.
