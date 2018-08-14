@@ -112,6 +112,15 @@ public:
     }
 
     /**
+     * @brief Returns the number of tagged positions.
+     *
+     * @return The number of positions tagging the referenced data.
+     */
+    ndsize_t positionCount() const {
+        return positions().dataExtent()[0];
+    }
+
+    /**
      * @brief Setter for the positions of the tag.
      *
      * @param name_or_id      Name or id of the DataArray that defines the positions for this tag.
