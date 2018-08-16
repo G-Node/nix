@@ -7,7 +7,7 @@ the data and link it to further information.
 This is done using the *Tag* and the *MultiTag*, for tagging single or
 mutliple points or regions, respectively.
 
-The basic idea is that the *Tag* define the point (and extent) with
+The basic idea is that the *Tag* defines the point (and extent) with
 which it refers to points (or regions) in the data. A tag can point to
 several *DataArrays* at once. These are mere links that are stored in
 the list of *references*. The following figure illustrates, how a

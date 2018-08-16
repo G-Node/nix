@@ -1,9 +1,9 @@
 ## Annotating datasets
 
 Storing data is one thing. Providing essential information about the
-data is the other. In order to allow later reuse of once-acquired data
+data is the other. In order to allow for later reuse of once-acquired data
 and to achieve reproducibility of scientific results we also need the
-means to of storing sufficient metadata.
+means for storing sufficient metadata.
 
 In the *NIX* [data model](./data_model.md) we allow annotation of data
 on several levels. It is possible to store global information, for
@@ -11,7 +11,7 @@ example about the experimental session, and also to annotate the data
 itself. In the extreme it would be possible to annotate individual
 data points.
 
-We implemented the (*odml*)[http://g-node.github.io/python-odml] data
+We implemented the [*odml*](http://g-node.github.io/python-odml) data
 model for metadata for this purpose. In brief, metadata are stored as
 extended key-value pairs that are grouped. Accordingly, three entities
 are defined: *Section*, *Property*, and *Value*. *Sections* can

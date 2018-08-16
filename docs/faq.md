@@ -8,9 +8,9 @@ space.
 ## Q: What does this error mean? “Cannot open a nonexistent file in ReadOnly mode”
 Arises when the provided file path is invalid and you try to open it
 with the nix::FileMode::ReadOnly mode. Solution: provide the path to
-an existing file to be opened in ReadOnly mode or use the
-nix::FileMode::ReadWrite or nix::FileMode::Overwrite flag to create a
-new one.
+an existing file to be opened in ``nix::ReadOnly`` mode or use the
+``nix::FileMode::ReadWrite`` or ``nix::FileMode::Overwrite`` flag to
+create a new one.
 
 ## Q: Is it ok to use non-SI units?
 Well, let's say it is tolerated but not advised.  When using SI and
@@ -22,7 +22,7 @@ become problematic in the context of *Dimensions*. Some functions
 support reading data with the positions provided by the *Tags* in
 these cases we rely on scalability of the units.
 
-If you feel this is unjustified, feel free to improve our uni-handling
+If you feel this is unjustified, feel free to improve our unit-handling
 system.
 
 ## Q: Can I use unicode?
@@ -36,3 +36,8 @@ created quickly and do not eat up the RAM. At opening time we do not
 have an idea about the actual data size. In our use-cases a single
 *DataArray* may contain GB of data. Reading these would take some time
 and increase memory demand.
+
+It further allows for partial loading of data. A *DataArray* that
+cotains multiple very long signals can be very large and it would be
+very inefficient if the data was loaded entirely when you need only a
+sing signals, or a few small signel segments.

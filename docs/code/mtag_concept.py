@@ -12,7 +12,6 @@ def plot_signal(signal, time, ax):
     ax.set_ylabel("voltage [mV]")
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    pass
 
 
 def plot_events(events, ax):
