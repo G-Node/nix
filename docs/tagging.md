@@ -7,6 +7,13 @@ the data and link it to further information.
 This is done using the *Tag* and the *MultiTag*, for tagging single or
 mutliple points or regions, respectively.
 
+The basic idea is that the *Tag* defines the point (and extent) with
+which it refers to points (or regions) in the data. A tag can point to
+several *DataArrays* at once. These are mere links that are stored in
+the list of *references*. The following figure illustrates, how a
+*MultiTag* links two *DataArrays* to create a new construct.
+
+![mtag_concept_plot](./images/mtag_concept.png "An MultiTag can link the data stored in several DataArrays.")
 
 ## Single points/regions
 
@@ -54,10 +61,11 @@ int main() {
     dim.label("time");
     dim.unit("s");
 
-    nix::Tag stim_tag = block.createTag("Stimulus", "nix.stimulus_segment", {stim_on});
+    nix::Tag stim_tag = block.createTag("stimulus", "nix.stimulus_segment", {stim_on});
     stim_tag.extent({stim_off - stim_on});
     stim_tag.addReference(data);
 
+    f.close();
     return 0;
 }
 ```
@@ -78,7 +86,7 @@ units match. In order to work smoothly, it is best to use only SI
 units and compounds of these.
 
 ```c++
-    nix::Tag stim_tag = block.createTag("Stimulus", "nix.stimulus_segment", {stim_on});
+    nix::Tag stim_tag = block.createTag("stimulus", "nix.stimulus_segment", {stim_on});
     stim_tag.extent({stim_off - stim_on});
     stim_tag.units({"ms"});
 ```
@@ -205,7 +213,7 @@ stored in the *MultiTag* itself but we use the event *DataArray*
 *DataArray* is added to the list of references.
 
 
-### Tagging multiple intervals in 1D
+### Tagging multiple intervals in 1D <a id="mtag_regions"></a>
 
 In the following exampled we want to plot multiple intervals in which,
 for example, a stimulus was switched on.

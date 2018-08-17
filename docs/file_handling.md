@@ -68,13 +68,5 @@ performance. You can choose to switch off compression on individual
 *DataArray*s by passing the ``nix::Compression::None`` flag when
 creating them.
 
-## FAQ
-
-* **Error: "Cannot open a nonexistent file in ReadOnly mode"** Arises
-  when the provided file path is invalid and you try to open it with
-  the ``nix::FileMode::ReadOnly`` mode. Solution: correct the path or
-  use the ``nix::FileMode::ReadWrite`` or ``nix::FileMode::Overwrite``
-  flag.
-
 
 [home](./index.md) -- [back](./getting_started.md)

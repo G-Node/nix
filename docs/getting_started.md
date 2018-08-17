@@ -30,3 +30,5 @@ the [HDF5](https://www.hdfgroup.org) file format.
 * [Working with data](./data_handling.md)
 
 * [ER-schema of data model](./data_model.md)
+
+* [FAQs](./faq.md)
