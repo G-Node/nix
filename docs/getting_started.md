@@ -29,6 +29,7 @@ the [HDF5](https://www.hdfgroup.org) file format.
 
 * [Working with files](./file_handling.md)
 * [Working with data](./data_handling.md)
+* [Finding things](./finding_things.md)
 
 * [ER-schema of data model](./data_model.md)
 
