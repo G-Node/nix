@@ -1,6 +1,6 @@
 # Finding things
 
-It might be hard to make sense out of the contents of a *NIX* file
+It might be hard to make sense of the contents of a *NIX* file
 that has been written by another person or has been automatically
 created by a recording tool such
 as [relacs](https://github.com/relacs/relacs). **Name** and **Type**
@@ -20,7 +20,7 @@ relations between entities.
    relation between the grouped entities.
 3. Within *Group*s or, if there are no *Group*s, within the *Block*
    look out for *Tag*s and *MultiTag*s. These link between data
-   carrying *DataArrays* and provide semantice background.
+   carrying *DataArrays* and provide semantic background.
 4. For example, a *MultiTag* that has a type "stimulus_segment" quite
    clearly indicates that it highlights periods during which a
    stimulus was presented.
@@ -36,7 +36,7 @@ As mentioned [before](./standardization.md), if the file is created
 according to known definitions, finding stuff in an unknown file is
 considerably simplified.
 
-For example, in case one looks for the voltage recoding made on the
+For example, in case one looks for the voltage recording made on the
 first channel  and it is further known that the file is
 created e.g. by [relacs](https://github.com/relacs/relacs) then one
 needs to look for "nix.data.sampled.V-1" typed *DataArray*s:

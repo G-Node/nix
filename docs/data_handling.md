@@ -1,6 +1,6 @@
 # Data handling
 Storing data is one thing, but we want to work with it. The following
-examples illustrate the reading of data from *DataArray*s and *Tag&
+examples illustrate the reading of data from *DataArray*, *Tag*
 and *MultiTag* entities We will use the dummy dataset already used in
 the [tagging](./tagging.md) example.
 
