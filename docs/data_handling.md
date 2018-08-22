@@ -1,12 +1,12 @@
 # Data handling
-Storing data is one thing, but we want to work with it. The
-following examples are meant to illustrate the reading of data and
-metadata and the handling of tags. We will use the dummy dataset already used in
+Storing data is one thing, but we want to work with it. The following
+examples illustrate the reading of data from *DataArray*, *Tag*
+and *MultiTag* entities We will use the dummy dataset already used in
 the [tagging](./tagging.md) example.
 
 ![simple_tag_plot](./images/tag1.png "a system's response to a stimulus")
 
-The code that creates the dummy data and links the *Tag* providing the
+The following code creates the dummy data and links the *Tag* providing the
 context (a stimulus was on in a certain time segment) to the
 *DataArray* that actually stores the data.
 
@@ -56,13 +56,13 @@ a *DataArray*.
 
 ### Reading all data
 In *NIX* when you open a *DataArray* the stored the data is **not**
-automatically read from file. This needs to be done separately.
+automatically read from file. This needs to be done separately by
+performing the following steps.
 
-1. open the file, get the *Block* and the *DataArray*
+1. Open the file, get the *Block* and the *DataArray*
 2. Get the data from file.
 3. Get the timestamps from the dimension.
 
-The following code snippet shows (one way) how this works.
 
 ```c++
 #include <nix.hpp>
@@ -122,7 +122,7 @@ There are a few noteworthy things:
 * ```DataArrat::getData()``` will automatically resize the
   vector. When reading all the data we do not need to worry about the
   data extent.
-* *DataArray* ans *Dimension* functions ```label()``` and ```unit()```
+* *DataArray* and *Dimension* functions ```label()``` and ```unit()```
   return ``boost::optional`` values. Since these fields are
   optional, the returned optionals may not contain values. Here, we
   use them only for output (and thus need to include the boost
@@ -193,7 +193,7 @@ Again, some things may be noted here:
 *Tag* and *MultiTag* tag single or multiple segments in stored
 datasets (see [tagging](./tagging.md) for more information and the
 example data created in the [example](#mtag_regions) which will be
-used in the following code snippets)).
+used in the following code snippets).
 
 ![multiple_regions_plot](./images/multiple_regions.png "tagging multiple segments")
 
@@ -251,3 +251,6 @@ be obtained using the ``Tag::retrieveFeatureData()`` methods.
    method is not optimal. In order to find the correct indices, all
    ticks of the respective dimension has to be read first. Manual
    access of the data might yield better performance.
+
+
+[home](./index.md) -- [back](./getting_started.md)
