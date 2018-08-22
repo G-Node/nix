@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <string>
 #include <iostream>
+#include <boost/regex.hpp>
 namespace nix {
 namespace util {
 
@@ -89,16 +90,31 @@ struct IdsFilter : public Filter<T> {
 template<typename T>
 struct TypeFilter : public Filter<T> {
 
-    const std::string type;
+    boost::regex expression;
+    bool exact;
 
 
-    TypeFilter(const std::string &str)
-        : type(str)
+    TypeFilter(const std::string &str, bool exact=true)
+        :exact(exact) {
+        if (exact) {
+            expression = boost::regex(str);
+        } else {
+            expression = boost::regex(str, boost::regex::icase);
+        }
+    }
+
+    TypeFilter( const boost::regex &expr )
+        : expression(expr), exact(true)
     {}
 
 
     virtual bool operator()(const T &e) {
-        return e.type() == type;
+        if (exact) {
+            return boost::regex_match(e.type(), expression);
+        } else {
+            boost::smatch matches;
+            return boost::regex_search(e.type(), matches, expression);
+        }
     }
 
 };
