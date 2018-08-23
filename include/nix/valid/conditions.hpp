@@ -58,7 +58,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception &e) {
+            } catch (const std::exception&) {
                 errOccured = true;
             }
 
@@ -112,7 +112,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception &e) {
+            } catch (const std::exception&) {
                 errOccured = true;
             }
 
@@ -166,7 +166,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception &e) {
+            } catch (const std::exception&) {
                 errOccured = true;
             }
 
