@@ -459,7 +459,7 @@ void BaseTestDataAccess::testDataSlice() {
 
     array_type_2d data(boost::extents[10][time.size()]);
     for(index i = 0; i < 10; ++i) {
-        for (index j = 0; j < time.size(); ++j) {
+        for (size_t j = 0; j < time.size(); ++j) {
             data[i][j] = std::sin(time[j] * freq * 2 * pi + (i*2*pi/10));
         }
     }
