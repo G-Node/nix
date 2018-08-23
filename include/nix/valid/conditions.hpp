@@ -24,7 +24,7 @@ namespace valid {
 
     /**
      * @brief creates condition throwing error if check fails
-     * 
+     *
      * Creates a condition check that produces an error with the given
      * message if the given function call's return value does not pass
      * the test.
@@ -58,7 +58,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception e) {
+            } catch (std::exception &e) {
                 errOccured = true;
             }
 
@@ -78,7 +78,7 @@ namespace valid {
 
     /**
      * @brief creates condition throwing warning if check fails
-     * 
+     *
      * Creates a condition check that produces a warning with the given
      * message if the given function call's return value does not pass
      * the test.
@@ -112,7 +112,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception e) {
+            } catch (std::exception &e) {
                 errOccured = true;
             }
 
@@ -132,7 +132,7 @@ namespace valid {
 
     /**
      * @brief creates condition not throwing any message even if check fails
-     * 
+     *
      * Creates a condition check that produces no message even if the
      * given function call's return value does not pass the test.
      * It is meant to be used to execute sub-conditions only if test passes
@@ -166,7 +166,7 @@ namespace valid {
             // execute getter call & check for error
             try {
                 val = (parent.*get)();
-            } catch (std::exception e) {
+            } catch (std::exception &e) {
                 errOccured = true;
             }
 
