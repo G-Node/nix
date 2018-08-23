@@ -358,7 +358,7 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
     }
     DataView slice = DataView(array, count, offset);
     return slice;
-};
+}
 
 
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index) {
