@@ -906,7 +906,7 @@ public:
     * Deletes a group and all its features from the block and the file.
     * The deletion can't be undone.
     *
-    * @param Group  The group to remove.
+    * @param group  The group to remove.
     *
     * @return True if the group was removed, false otherwise.
     */

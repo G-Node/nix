@@ -87,6 +87,11 @@ Tutorial and demos for using the python library
 - [tutorial](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial")
 - [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases")
 
+
+## API documentation
+
+API documentation of the c++ library can be found [here](./html/index.html).
+
 * * *
 
 # Getting support

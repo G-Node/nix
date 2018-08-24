@@ -82,7 +82,7 @@ public:
     /**
      * @brief Checks whether a DataArray is referenced by the group.
      *
-     * @param id        The id of the DataArray to check.
+     * @param name_or_id      The name or the id of the DataArray to check.
      *
      * @return True if the data array is referenced, false otherwise.
      */
@@ -228,7 +228,7 @@ public:
     /**
      * @brief Checks whether a DataFrame is referenced by the group.
      *
-     * @param id        The id of the DataFrame to check.
+     * @param name_or_id     The name or the id of the DataFrame to check.
      *
      * @return True if the data frame is referenced, false otherwise.
      */
@@ -521,7 +521,7 @@ public:
     /**
      * @brief Checks whether a MultiTag is referenced by the group.
      *
-     * @param name or id        The name or id of the MultiTag to check.
+     * @param name_or_id        The name or id of the MultiTag to check.
      *
      * @return True if the MultiTag is referenced, false otherwise.
      */
@@ -581,7 +581,7 @@ public:
     /**
      * @brief Add a MultiTag to the list of referenced tags of the group.
      *
-     * @param mutlti_tag The MultiTag to add.
+     * @param multi_tag The MultiTag to add.
      */
     void addMultiTag(const MultiTag &multi_tag) {
         if (util::checkEntityInput(multi_tag, true)) {
@@ -604,7 +604,7 @@ public:
      * This method just removes the association between the tag and the
      * group, the tag itself will not be removed from the file.
      *
-     * @param mulit_tag     The MultiTag to remove.
+     * @param multi_tag     The MultiTag to remove.
      *
      * @returns True if the MultiTag was removed, false otherwise.
      */
@@ -658,7 +658,7 @@ public:
      * Previously referenced MultiTags, that are not in the passed vector
      * will be removed.
      *
-     * @param mulit_tags    All MultiTags.
+     * @param multi_tags    All MultiTags.
      */
     void multiTags(const std::vector<MultiTag> &multi_tags);
 
