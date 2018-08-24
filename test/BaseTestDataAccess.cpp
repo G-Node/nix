@@ -425,6 +425,99 @@ void BaseTestDataAccess::testDataView() {
     CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3}, {}), OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(io.dataExtent(zcount), std::runtime_error);
+}
 
 
+void BaseTestDataAccess::testDataSlice() {
+    nix::Block b = file.createBlock("slicing data", "nix.test");
+
+    // 1D SampledDimension
+    std::vector<double> time(1000);
+    std::vector<double> voltage;
+    double interval = 0.01;
+    double pi = 3.1415;
+    double freq = 1.5;
+    std::iota(time.begin(), time.end(), 0.);
+    std::transform(time.begin(), time.end(), time.begin(),
+                   [interval](double t){ return t * interval; });
+    std::transform(time.begin(), time.end(), std::back_inserter(voltage),
+                   [pi, freq](double t) { return std::sin(t * freq * 2 * pi); });
+
+    // create a DataArray
+    nix::DataArray oned_array = b.createDataArray("sinewave", "nix.sampled", nix::DataType::Double, {voltage.size()});
+    oned_array.setData(voltage);
+    oned_array.label("voltage");
+    oned_array.unit("mV");
+
+    nix::SampledDimension dim = oned_array.appendSampledDimension(interval);
+    dim.label("time");
+    dim.unit("s");
+
+    // 2d data: Set - Sample
+    typedef boost::multi_array<double, 2> array_type_2d;
+    typedef array_type_2d::index index;
+
+    array_type_2d data(boost::extents[10][time.size()]);
+    for(index i = 0; i < 10; ++i) {
+        for (size_t j = 0; j < time.size(); ++j) {
+            data[i][j] = std::sin(time[j] * freq * 2 * pi + (i*2*pi/10));
+        }
+    }
+
+    nix::NDSize data_shape(2, 10);  // NDSize object with rank two  10 elements per dim, for now
+    data_shape[1] = time.size();
+    // create the DataArray and store the data.
+    nix::DataArray twod_array = b.createDataArray("2d sinewaves", "nix.test", nix::DataType::Double, data_shape);
+    twod_array.setData(data);
+    twod_array.label("voltage");
+    twod_array.unit("mV");
+    twod_array.appendSetDimension();
+    dim = twod_array.appendSampledDimension(interval);
+    dim.label("time");
+    dim.unit("s");
+
+    // 2d data: Range - Sample
+    std::vector<double> ticks(10);
+    for(size_t i = 0; i < 10; ++i) {
+        ticks[i] = i * pi;
+    }
+    nix::DataArray twod_array2 = b.createDataArray("2d sinewaves 2", "nix.test", nix::DataType::Double, data_shape);
+    twod_array2.setData(data);
+    twod_array2.label("voltage");
+    twod_array2.unit("mV");
+    RangeDimension rangeDim = twod_array2.appendRangeDimension(ticks);
+    rangeDim.label("time");
+    rangeDim.unit("s");
+    dim = twod_array2.appendSampledDimension(interval);
+    dim.label("time");
+    dim.unit("s");
+
+    // do the tests!
+    nix::DataArray no_array;
+    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
+
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1.0}, {0.0}), std::invalid_argument);
+
+    nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0});
+    CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 101);
+
+    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0});
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 3 && slice.dataExtent()[1] == 101);
+
+    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"});
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 10 && slice.dataExtent()[1] == 101);
+
+    b.deleteDataArray(oned_array);
+    b.deleteDataArray(twod_array);
+    file.deleteBlock(b);
 }

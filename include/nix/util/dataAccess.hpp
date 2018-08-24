@@ -133,6 +133,26 @@ NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsiz
 NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
                               std::vector<NDSize> &offsets, std::vector<NDSize> & counts);
 
+
+/**
+ * @brief Returns a slice of the data stored in the passed {@link
+ * nix::DataArray} that is defined by start and end points given in dimension
+ * units. For example, if the data array is 1-D defined with a time axis, the
+ * requested data slice is given in times.
+ *
+ * @param array          The {@link nix::DataArray}.
+ * @param start          A std::vector<double> that define the starting points of the data slice.
+ * @param end            A std::vector<double> that defines the end point of the data slice.
+ * @param units          A std::vector<std::string> containing the  units which have to be used for each dimension.
+ *                       Start and end are assumed to be given in the same unit. If no unit is required for a dimension
+ *                       provide an empty string or "none". SI units will be automatically scaled. That is, a time
+ *                       start may be given in s even though the dimension is defined in ms.
+ *
+ * @returns {@link nix::DataView} the data slice.
+ */
+NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
+                          const std::vector<std::string> &units={});
+
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
