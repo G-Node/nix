@@ -496,16 +496,16 @@ void BaseTestDataAccess::testDataSlice() {
     nix::DataArray no_array;
     CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
 
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds);
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1.0}, {0.0}), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1.0}, {0.0}), std::invalid_argument);
 
     nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0});
     CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
