@@ -330,13 +330,13 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
         throw UninitializedEntity();
     }
     if (start.size() == 0 || start.size() != end.size()) {
-        throw OutOfBounds("Number of start entries does not match number of end entries.", 0);
+        throw std::invalid_argument("Number of start entries does not match number of end entries.");
     }
     if (start.size() != array.dimensionCount()) {
-        throw OutOfBounds("Number of start/end entries does not match dimensionality of the data.", 0);
+        throw std::invalid_argument("Number of start/end entries does not match dimensionality of the data.");
     }
     if (units.size() > 0 && units.size() != start.size()) {
-        throw OutOfBounds("Number of units does not match dimensionality of the data.", 0);
+        throw std::invalid_argument("Number of units does not match dimensionality of the data.");
     }
     NDSize count(start.size(), 1), offset(start.size(), 0);
 
@@ -347,14 +347,14 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
             unit = "none";
         }
         if (start[i] > end[i]) {
-            throw OutOfBounds("Start position must not be larger than end position.", i);
+            throw std::invalid_argument("Start position must not be larger than end position.");
         }
         std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
         offset[i] = indices[0].first;
         count[i] += indices[0].second - indices[0].first;
     }
     if (!positionAndExtentInData(array, offset, count)) {
-        throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+        throw OutOfBounds("Selected data slice is out of the extent of the DataArray!", 0);
     }
     DataView slice = DataView(array, count, offset);
     return slice;
