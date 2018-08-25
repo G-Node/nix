@@ -1,4 +1,4 @@
-# Introduction to *NIX* (under construction)
+# Introduction to *NIX*
 
 In the following we provide an introduction to the general concepts of
 the *NIX* data model, try to illustrate its design principles and
@@ -25,6 +25,8 @@ the *domain-specific* terms used in any given field or community.
 
 The idea of the *NIX* data model has been implemented using
 the [HDF5](https://www.hdfgroup.org) file format.
+
+## Tutorials
 
 * [Storing data](./storing_data.md)
 * [Tagging points and regions](./tagging.md)
