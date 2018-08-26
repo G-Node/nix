@@ -86,6 +86,13 @@ void TestFileHDF5::testVersion() {
 
     // newer x (huge breaking change), all hope is lost
     std::string hbc = make_file_with_version(ver.x() + 1, ver.y(), ver.z());
-    ASSERT_NOOPEN(mbc.c_str(), nix::FileMode::ReadWrite);
-    ASSERT_NOOPEN(mbc.c_str(), nix::FileMode::ReadOnly);
+    ASSERT_NOOPEN(hbc.c_str(), nix::FileMode::ReadWrite);
+    ASSERT_NOOPEN(hbc.c_str(), nix::FileMode::ReadOnly);
+
+    // so all hope is lost ... or is it? Lets force it!
+    {
+        nix::File f = nix::File::open(mbc.c_str(), nix::FileMode::ReadOnly | nix::FileMode::Force);
+        CPPUNIT_ASSERT(f.isOpen());
+        f.close();
+    }
 }
