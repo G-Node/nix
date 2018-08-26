@@ -72,7 +72,7 @@ FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression, O
 
     if (is_create) {
         createHeader();
-    } else if (!checkHeader(mode)) {
+    } else if (!checkHeader(mode) && (flags & OpenFlags::Force) != OpenFlags::Force) {
         throw nix::InvalidFile("FileHDF5::open_existing!");
     }
 
