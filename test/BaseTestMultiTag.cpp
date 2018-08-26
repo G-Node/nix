@@ -256,6 +256,7 @@ void BaseTestMultiTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions(""), EmptyString);
 
     tag.positions(positions);
+    CPPUNIT_ASSERT(tag.positionCount() == positions.dataExtent()[0]);
     CPPUNIT_ASSERT(tag.positions().id() == positions.id());
     CPPUNIT_ASSERT(tag.hasPositions());
     block.deleteDataArray(positions.id());
