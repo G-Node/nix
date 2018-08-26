@@ -112,6 +112,11 @@ This project is open source published under the BSD-3 license see [license file]
 
 * * *
 
+## Contact
+
+The project is maintained by the [German Neuroinformatics Node, G-Node](http://www.g-node.org). [G-Node at GitHub](https://github.com/g-node), [email](mailto:dev@g-node.org).
+
+
 ## Citing
 
 If you use *NIX*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
