@@ -33,7 +33,7 @@ File File::open(const std::string &name,
          compression = Compression::None;
     }
     if (impl == "hdf5") {
-         return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression));
+        return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression, flags));
     }
 #ifdef  ENABLE_FS_BACKEND
     else if (impl == "file") {
