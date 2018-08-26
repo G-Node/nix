@@ -35,6 +35,7 @@ enum class FileMode {
  */
 enum class OpenFlags {
     None  = 0,
+    Force = 1 << 0,
 };
 
 
