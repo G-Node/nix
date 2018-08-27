@@ -50,6 +50,7 @@ public:
     void testReopen();
     void testCheckHeader();
     void testCompare();
+    void testFlags();
 
 };
 
