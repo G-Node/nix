@@ -189,3 +189,21 @@ void BaseTestFile::testReopen() {
 
     CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
 }
+
+#define ASSERT_FLAGS_EQUAL(want, have) \
+    CPPUNIT_ASSERT_EQUAL(static_cast<unsigned long>(have), \
+                         static_cast<unsigned long>(want));
+
+void BaseTestFile::testFlags() {
+    nix::OpenFlags flags = nix::OpenFlags::None;
+
+    ASSERT_FLAGS_EQUAL(nix::OpenFlags::None, flags & nix::OpenFlags::Force);
+    ASSERT_FLAGS_EQUAL(nix::OpenFlags::Force, flags | nix::OpenFlags::Force);
+
+    flags = nix::OpenFlags::Force;
+    ASSERT_FLAGS_EQUAL(nix::OpenFlags::Force, flags & nix::OpenFlags::Force);
+    ASSERT_FLAGS_EQUAL(nix::OpenFlags::Force, flags | nix::OpenFlags::Force);
+
+    flags = static_cast<OpenFlags>(0xFF); // simulate we have more flags
+    ASSERT_FLAGS_EQUAL(nix::OpenFlags::Force, flags & nix::OpenFlags::Force);
+}

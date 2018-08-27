@@ -87,11 +87,13 @@ public:
      *                      (currently only hdf5)
      * @param compression   The compression mode, defaults to Compression::None (can be
      *                      overridden upon DataArray creation)
+     * @param flags         Control aspects of the file opening process
      *
      * @return The opened file.
      */
     static File open(const std::string &name, FileMode mode=FileMode::ReadWrite,
-                     const std::string &impl="hdf5", Compression compression=Compression::Auto);
+                     const std::string &impl="hdf5", Compression compression=Compression::Auto,
+                     OpenFlags flags=OpenFlags::None);
 
     /**
      * @brief Persists all cached changes to the backend.

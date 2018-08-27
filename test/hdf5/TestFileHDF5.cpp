@@ -19,9 +19,9 @@
 
 namespace h5x = nix::hdf5;
 
-static std::string make_file_with_version(int x, int y, int z) {
+static std::string make_file_with_version(int x, int y, int z, const std::string &format="nix") {
     std::stringstream buf;
-    buf << "nix-version-" << x << "." << y << "." << z << ".nix";
+    buf << "nix-version-" << x << "." << y << "." << z << "-" << format << ".nix";
 
     std::string fn = buf.str();
     h5x::H5Object file = H5Fcreate (fn.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
@@ -29,7 +29,8 @@ static std::string make_file_with_version(int x, int y, int z) {
 
     h5x::H5Group root = H5Gopen(file.h5id(), "/", H5P_DEFAULT);
     root.check("Could not open root group");
-    root.setAttr("format", std::string("nix"));
+    if (format.size() > 0)
+        root.setAttr("format", format);
     root.setAttr("version", std::vector<int>{x, y, z});
 
     root.openGroup("data");
@@ -45,6 +46,20 @@ static std::string make_file_with_version(int x, int y, int z) {
 }
 
 #define ASSERT_NOOPEN(str__, mode__) CPPUNIT_ASSERT_THROW(static_cast<void>(nix::File::open(str__, mode__)),  nix::InvalidFile)
+
+void TestFileHDF5::testFormat()
+{
+    CPPUNIT_ASSERT(file_open.format() == "nix");
+
+    /* file without format property */
+    nix::FormatVersion ver = HDF5_FF_VERSION;
+    std::string fn = make_file_with_version(ver.x(), ver.y(), ver.z(), "");
+    ASSERT_NOOPEN(fn.c_str(), nix::FileMode::ReadOnly);
+
+    /* file without format property */
+    fn = make_file_with_version(ver.x(), ver.y(), ver.z(), "BollocksWithoutBorders");
+    ASSERT_NOOPEN(fn.c_str(), nix::FileMode::ReadOnly);
+}
 
 void TestFileHDF5::testVersion() {
 
@@ -86,6 +101,17 @@ void TestFileHDF5::testVersion() {
 
     // newer x (huge breaking change), all hope is lost
     std::string hbc = make_file_with_version(ver.x() + 1, ver.y(), ver.z());
-    ASSERT_NOOPEN(mbc.c_str(), nix::FileMode::ReadWrite);
-    ASSERT_NOOPEN(mbc.c_str(), nix::FileMode::ReadOnly);
+    ASSERT_NOOPEN(hbc.c_str(), nix::FileMode::ReadWrite);
+    ASSERT_NOOPEN(hbc.c_str(), nix::FileMode::ReadOnly);
+
+    // so all hope is lost ... or is it? Lets force it!
+    {
+        nix::File f = nix::File::open(mbc.c_str(),
+                                      nix::FileMode::ReadOnly,
+                                      "hdf5",
+                                      nix::Compression::Auto,
+                                      nix::OpenFlags::Force);
+        CPPUNIT_ASSERT(f.isOpen());
+        f.close();
+    }
 }

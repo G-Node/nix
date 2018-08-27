@@ -22,9 +22,12 @@ class TestFileHDF5: public BaseTestFile {
     CPPUNIT_TEST(testSectionAccess);
     CPPUNIT_TEST(testOperators);
     CPPUNIT_TEST(testReopen);
+    CPPUNIT_TEST(testFlags);
     CPPUNIT_TEST_SUITE_END ();
 
 public:
+
+    void testFormat() override;
 
     void testVersion() override;
 
