@@ -345,7 +345,7 @@ bool FileHDF5::checkHeader(FileMode mode) const {
     } else {
         check = false;
     }
-    if (root.hasAttr("version")) {
+    if (check && root.hasAttr("version")) {
         if (!root.getAttr("version", vv)) {
             check = false;
         } else {
