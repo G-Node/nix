@@ -27,6 +27,8 @@ class TestFileHDF5: public BaseTestFile {
 
 public:
 
+    void testFormat() override;
+
     void testVersion() override;
 
     void setUp() override {
