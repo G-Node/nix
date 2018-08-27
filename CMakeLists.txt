@@ -50,7 +50,7 @@ set(HDF5_USE_STATIC_LIBRARIES ${BUILD_STATIC})
 find_package (HDF5 REQUIRED COMPONENTS C)
 include_directories (${HDF5_INCLUDE_DIRS})
 set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
-
+add_definitions(-DH5_USE_110_API=1)
 
 ########################################
 # Boost
