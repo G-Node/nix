@@ -7,4 +7,4 @@ Name: nixio
 Description: IO-library for nix datafiles
 Version: ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
 Libs: -L${libdir} -lnixio
-Cflags: -I${includedir}/nix
+Cflags: -I${includedir}/nixio-1.0

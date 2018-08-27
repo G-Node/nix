@@ -243,8 +243,8 @@ install(TARGETS nixio nixio-tool
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
         RUNTIME DESTINATION bin)
-install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio.pc)
