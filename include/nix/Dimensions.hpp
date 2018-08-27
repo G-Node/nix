@@ -236,16 +236,17 @@ public:
 
 
     /**
-     * @brief Returns the index of the given position.
+     * @brief Returns a pair of indices of the start and end positions within this dimension.
      *
-     * This method returns the index of the given position. Use this method for
-     * example to find out which data point (index) relates to a given
-     * time. Note: This method does not check if the position is within the
+     * This method returns the indices of the given start and end positions. Use this method for
+     * example to find out which data indices relate to a given start and end positions given in
+     * time. Note: This method does not check if the positions are within the
      * extent of the data!
      *
-     * @param position  The position, e.g. a time
+     * @param start  The start position of, e.g., a time segment
+     * @param end    The end position
      *
-     * @returns The respective index.
+     * @returns The pair of respective indices.
      */
     std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
 

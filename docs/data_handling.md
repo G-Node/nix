@@ -48,7 +48,8 @@ int main() {
 In this example we know the interesting entities by name, i.e. the
 *DataArray* is called **response** and the *Tag* is called
 **stimulus**. In cases in which we have no clue about the names, we
-just have to browse the file or [search](#finding_stuff) by name and type.
+just have to browse the file or [search](./finding_things.md) by name
+or type.
 
 ## Reading data
 The first and maybe most common problem is to read the data stored in
