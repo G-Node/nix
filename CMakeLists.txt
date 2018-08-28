@@ -249,8 +249,8 @@ install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 
 #pkg-config support
-configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio.pc @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/nixio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio-1.0.pc @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/nixio-1.0.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 
 set(GIT_REV_SHORT "unknown")

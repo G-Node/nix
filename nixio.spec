@@ -52,7 +52,7 @@ make install DESTDIR=%{buildroot}
 %{_includedir}/nixio-1.0/nix.hpp
 %{_includedir}/nixio-1.0/nix/
 %{_libdir}/libnixio.so
-%{_libdir}/pkgconfig/nixio.pc
+%{_libdir}/pkgconfig/nixio-1.0.pc
 
 
 
