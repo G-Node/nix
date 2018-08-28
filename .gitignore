@@ -53,3 +53,7 @@ src/pandora_cpp.cpp
 # kdevelop
 .kdev4
 nix.kdev4
+
+# cquery
+compile_commands.json
+.cquery_cached_index/
