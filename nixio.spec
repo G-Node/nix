@@ -44,15 +44,16 @@ make install DESTDIR=%{buildroot}
 
 %files
 %license LICENSE LICENSE.h5py
-%doc README.md Contributing.md
-%{_bindir}/nix-tool
-%{_libdir}/libnix.so.1*
+%doc README.md CONTRIBUTING.md
+%{_bindir}/nixio-tool
+%{_libdir}/libnixio.so.1*
 
 %files devel
-%{_includedir}/nix.hpp
-%{_includedir}/nix/
-%{_libdir}/libnix.so
-%{_libdir}/pkgconfig/nix.pc
+%{_includedir}/nixio-1.0/nix.hpp
+%{_includedir}/nixio-1.0/nix/
+%{_libdir}/libnixio.so
+%{_libdir}/pkgconfig/nixio.pc
+
 
 
 %changelog
