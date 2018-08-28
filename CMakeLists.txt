@@ -16,6 +16,8 @@ set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
 
+set(VERSION_FULL ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
 option(BUILD_STATIC "Build static version of the library" OFF)
 
 if(NOT WIN32)
@@ -250,6 +252,25 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR
 configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio.pc)
 install(FILES ${CMAKE_BINARY_DIR}/nixio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
+
+set(GIT_REV_SHORT "unknown")
+
+find_package(Git)
+if(GIT_FOUND)
+  message("git found: ${GIT_EXECUTABLE}")
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY "${local_dir}"
+    OUTPUT_VARIABLE GIT_REV_SHORT
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+
+string(TIMESTAMP TS_RPM "%a %b %d %Y")
+string(TIMESTAMP TS_GIT "%Y%m%d")
+set(RPM_RELTAG "${TS_GIT}git${GIT_REV_SHORT}")
+
+configure_file(${CMAKE_SOURCE_DIR}/nixio.spec.in ${CMAKE_BINARY_DIR}/nixio.spec)
 
 ########################################
 # CPack packaging

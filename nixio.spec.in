@@ -1,0 +1,61 @@
+Name:		nixio
+Version:	${VERSION_FULL}
+Release:	0.${RPM_RELTAG}%{?dist}
+Summary:	IO-libray for nix data files
+
+License:	BSD
+URL:		https://www.g-node.org/nix
+Source0:	%{name}-%{version}.tar.gz
+
+BuildRequires:	cmake, boost-devel, hdf5-devel, cppunit-devel
+
+%description
+Neuroscience information exchange - data model for annotated (neuroscience)
+data. For more information visit https://github.com/G-Node/nix
+
+%package devel
+Summary: nixio development files
+Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}
+Requires: hdf5-devel, boost-devel
+
+%description devel
+nixio development headers and libraries.
+
+%prep
+%setup -q -n %{name}-%{version}
+
+%build
+mkdir -p build
+cd build
+%cmake .. \
+       -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_BUILD_TYPE=RelWithDebInfo
+make %{?_smp_mflags}
+
+%install
+cd build
+make install DESTDIR=%{buildroot}
+
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
+
+
+%files
+%license LICENSE LICENSE.h5py
+%doc README.md CONTRIBUTING.md
+%{_bindir}/nixio-tool
+%{_libdir}/libnixio.so.1*
+
+%files devel
+%{_includedir}/nixio-1.0/nix.hpp
+%{_includedir}/nixio-1.0/nix/
+%{_libdir}/libnixio.so
+%{_libdir}/pkgconfig/nixio.pc
+
+
+%changelog
+
+* ${TS_RPM} G-Node Developers <nix@g-node.org> - ${VERSION_FULL}-${RPM_RELTAG}
+- development snapshot release
