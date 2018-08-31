@@ -16,6 +16,8 @@ set(VERSION_PATCH 0)
 
 set(VERSION_ABI   1)
 
+set(VERSION_FULL ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
 option(BUILD_STATIC "Build static version of the library" OFF)
 
 if(NOT WIN32)
@@ -247,12 +249,54 @@ install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 
 #pkg-config support
-configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio.pc)
-install(FILES ${CMAKE_BINARY_DIR}/nixio.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+configure_file(${CMAKE_SOURCE_DIR}/nixio.pc.in ${CMAKE_BINARY_DIR}/nixio-1.0.pc @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/nixio-1.0.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
+
+set(GIT_REV_SHORT "unknown")
+
+find_package(Git)
+if(GIT_FOUND)
+  message("git found: ${GIT_EXECUTABLE}")
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY "${local_dir}"
+    OUTPUT_VARIABLE GIT_REV_SHORT
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+
+string(TIMESTAMP TS_RPM "%a %b %d %Y")
+string(TIMESTAMP TS_GIT "%Y%m%d")
+set(RPM_RELTAG "${TS_GIT}git${GIT_REV_SHORT}")
+
+configure_file(${CMAKE_SOURCE_DIR}/nixio.spec.in ${CMAKE_BINARY_DIR}/nixio.spec)
 
 ########################################
-# CPack for Win
+# CPack packaging
+set(CPACK_PACKAGE_NAME "nixio")
+set(CPACK_PACKAGE_VENDOR "g-node.org")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
+set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "nixio")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
+set(CPACK_SOURCE_IGNORE_FILES
+  "~$"
+  "\\\\.gitignore$"
+  "\\\\.gitmodules$"
+  "^${PROJECT_SOURCE_DIR}/.git/"
+  "^${PROJECT_SOURCE_DIR}/build/"
+  )
+
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "nixio-${CPACK_PACKAGE_VERSION}"
+    CACHE INTERNAL "tarball basename")
+set(CPACK_SOURCE_GENERATOR ${CPACK_GENERATOR})
+
 if(WIN32)
 
   install(TARGETS nixio
@@ -282,19 +326,15 @@ endif()
 		  COMPONENT applications)
 
   set(CPACK_GENERATOR NSIS)
-  set(CPACK_PACKAGE_NAME "nix")
-  set(CPACK_PACKAGE_VENDOR "g-node.org")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "nix - neuroscience information exchange")
-  set(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-  set(CPACK_PACKAGE_VERSION_MAJOR "${VERSION_MAJOR}")
-  set(CPACK_PACKAGE_VERSION_MINOR "${VERSION_MINOR}")
-  set(CPACK_PACKAGE_VERSION_PATCH "${VERSION_PATCH}")
-  set(CPACK_PACKAGE_INSTALL_DIRECTORY "nix")
   set(CPACK_NSIS_MODIFY_PATH ON)
-  set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-  set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
-  INCLUDE(CPack)
+
+else()
+  if (NOT CPACK_GENERATOR)
+    set(CPACK_GENERATOR TGZ)
+  endif ()
 endif()
+
+INCLUDE(CPack)
 
 ########################################
 get_directory_property(incdirs INCLUDE_DIRECTORIES)

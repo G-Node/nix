@@ -1,11 +1,11 @@
 Name:		nixio
-Version:	1.5.0
-Release:	1%{?dist}
+Version:	${VERSION_FULL}
+Release:	0.${RPM_RELTAG}%{?dist}
 Summary:	IO-libray for nix data files
 
 License:	BSD
 URL:		https://www.g-node.org/nix
-Source0:	https://github.com/G-Node/nix/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:	%{name}-%{version}.tar.gz
 
 BuildRequires:	cmake, boost-devel, hdf5-devel, cppunit-devel
 
@@ -23,7 +23,7 @@ Requires: hdf5-devel, boost-devel
 nixio development headers and libraries.
 
 %prep
-%setup -q -n nix-%{version}
+%setup -q -n %{name}-%{version}
 
 %build
 mkdir -p build
@@ -55,14 +55,7 @@ make install DESTDIR=%{buildroot}
 %{_libdir}/pkgconfig/nixio-1.0.pc
 
 
-
 %changelog
 
-* Fri Oct 20 2017 Jan Grewe <jan.grewe@g-node.org> - 1.4.1-1
-- New upstream release
-
-* Mon Sep 25 2017 Christian Kellner <gicmo@gnome.org> - 1.4.0-1
-- New upstream release
-
-* Fri Jan 20 2017 Chrisian Kellner <gicmo@gnome.org>
-- Initial revision
+* ${TS_RPM} G-Node Developers <nix@g-node.org> - ${VERSION_FULL}-${RPM_RELTAG}
+- development snapshot release
