@@ -18,7 +18,7 @@ protected:
     nix::File file;
     nix::DataArray data_array, alias_array;
     nix::Tag position_tag, segment_tag, times_tag;
-    nix::MultiTag multi_tag;
+    nix::MultiTag multi_tag, mtag2, pointmtag;
     nix::Block block;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim, aliasDim;
@@ -35,6 +35,7 @@ public:
     void testMultiTagFeatureData();
     void testMultiTagUnitSupport();
     void testDataView();
+    void testDataSlice();
 };
 
 #endif // NIX_BASETESTDATAACCESS_H

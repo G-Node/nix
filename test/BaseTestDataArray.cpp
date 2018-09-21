@@ -388,9 +388,9 @@ void BaseTestDataArray::testUnit() {
 
     array1.unit(nix::none);
     CPPUNIT_ASSERT_NO_THROW(array1.unit(testStr));
-    CPPUNIT_ASSERT_THROW(array1.createAliasRangeDimension(), nix::InvalidDimension);
+    CPPUNIT_ASSERT_THROW(array1.appendAliasRangeDimension(), nix::InvalidDimension);
 
-    nix::Dimension dim = array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.appendAliasRangeDimension();
     CPPUNIT_ASSERT_NO_THROW(array3.unit(validUnit));
     array3.unit(nix::none);
     CPPUNIT_ASSERT_THROW(array3.unit(testStr), nix::InvalidUnit);
@@ -400,6 +400,7 @@ void BaseTestDataArray::testUnit() {
 void BaseTestDataArray::testDimension() {
     std::vector<nix::Dimension> dims;
     std::vector<double> ticks;
+    std::vector<std::string> setLabels = {"a", "b", "c"};
     double samplingInterval = boost::math::constants::pi<double>();
 
     for(size_t i = 0; i < 5; i++) {
@@ -412,9 +413,17 @@ void BaseTestDataArray::testDimension() {
     dims.push_back(array2.appendSetDimension());
 
     // have some explicit dimension types
-    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks);
-    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval);
-    nix::SetDimension dim_set = array1.appendSetDimension();
+    nix::RangeDimension dim_range = array1.appendRangeDimension(ticks, "time", "s");
+    CPPUNIT_ASSERT(dim_range.label() && *dim_range.label() == "time");
+    CPPUNIT_ASSERT(dim_range.unit() && *dim_range.unit() == "s");
+
+    nix::SampledDimension dim_sampled = array1.appendSampledDimension(samplingInterval, "time", "s");
+    CPPUNIT_ASSERT(dim_sampled.label() && *dim_sampled.label() == "time");
+    CPPUNIT_ASSERT(dim_sampled.unit() && *dim_sampled.unit() == "s");
+
+    nix::SetDimension dim_set = array1.appendSetDimension(setLabels);
+    CPPUNIT_ASSERT(dim_set.labels().size() == 3);
+
     CPPUNIT_ASSERT(array2.getDimension(dims[0].index()).dimensionType() == nix::DimensionType::Sample);
     CPPUNIT_ASSERT(array2.getDimension(dims[1].index()).dimensionType() == nix::DimensionType::Set);
     CPPUNIT_ASSERT(array2.getDimension(dims[2].index()).dimensionType() == nix::DimensionType::Range);
@@ -447,7 +456,7 @@ void BaseTestDataArray::testDimension() {
 
 
 void BaseTestDataArray::testAliasRangeDimension() {
-    nix::Dimension dim = array3.createAliasRangeDimension();
+    nix::Dimension dim = array3.appendAliasRangeDimension();
     CPPUNIT_ASSERT(array3.dimensionCount() == 1);
     CPPUNIT_ASSERT(dim.dimensionType() == nix::DimensionType::Range);
     CPPUNIT_ASSERT_THROW(array2.appendAliasRangeDimension(), nix::InvalidDimension);
@@ -488,7 +497,7 @@ void BaseTestDataArray::testAliasRangeDimension() {
     DataArray int_array = block.createDataArray("int array", "int_array",
                                                  nix::DataType::Int64,
                                                  nix::NDSize({20}));
-    CPPUNIT_ASSERT_NO_THROW(int_array.createAliasRangeDimension());
+    CPPUNIT_ASSERT_NO_THROW(int_array.appendAliasRangeDimension());
     dim = int_array.getDimension(1);
     rd = dim;
     CPPUNIT_ASSERT(rd.alias());

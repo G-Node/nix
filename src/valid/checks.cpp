@@ -25,15 +25,15 @@ bool dimEquals::operator()(const DataArray &array) const {
 bool tagRefsHaveUnits::operator()(const std::vector<DataArray> &references) const {
     bool match = true;
     std::vector<std::string> dims_units;
-    
+
     for (auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
-        if (!util::isScalable(units, dims_units)) {
+        if (dims_units.size() != units.size()){
             match = false;
             break;
         }
     }
-    
+
     return match;
 }
 
@@ -41,7 +41,7 @@ bool tagRefsHaveUnits::operator()(const std::vector<DataArray> &references) cons
 bool tagUnitsMatchRefsUnits::operator()(const std::vector<DataArray> &references) const {
     bool match = true;
     std::vector<std::string> dims_units;
-    
+
     for (auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
         if (!util::isScalable(units, dims_units)) {
@@ -49,7 +49,7 @@ bool tagUnitsMatchRefsUnits::operator()(const std::vector<DataArray> &references
             break;
         }
     }
-    
+
     return match;
 }
 
@@ -81,7 +81,7 @@ bool extentsMatchRefs::operator()(const DataArray &extents) const {
                 (extExtent.size() == 2 && extExtent[1] != arrayExtent.size());
         ++it;
     }
-    
+
     return !mismatch;
 }
 
@@ -95,21 +95,21 @@ bool extentsMatchRefs::operator()(const std::vector<double> &extents) const {
         mismatch = extSize != arrayExtent.size();
         ++it;
     }
-    
+
     return !mismatch;
 }
 
 
 bool positionsMatchRefs::operator()(const DataArray &positions) const {
     extentsMatchRefs alias = extentsMatchRefs(refs);
-    
+
     return alias(positions);
 }
 
 
 bool positionsMatchRefs::operator()(const std::vector<double> &positions) const {
     extentsMatchRefs alias = extentsMatchRefs(refs);
-    
+
     return alias(positions);
 }
 
