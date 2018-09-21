@@ -42,7 +42,7 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-    FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression) {
+FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression, OpenFlags flags) {
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
@@ -72,7 +72,7 @@ static unsigned int map_file_mode(FileMode mode) {
 
     if (is_create) {
         createHeader();
-    } else if (!checkHeader(mode)) {
+    } else if (!checkHeader(mode) && (flags & OpenFlags::Force) != OpenFlags::Force) {
         throw nix::InvalidFile("FileHDF5::open_existing!");
     }
 
@@ -345,7 +345,7 @@ bool FileHDF5::checkHeader(FileMode mode) const {
     } else {
         check = false;
     }
-    if (root.hasAttr("version")) {
+    if (check && root.hasAttr("version")) {
         if (!root.getAttr("version", vv)) {
             check = false;
         } else {

@@ -21,7 +21,11 @@ namespace bfs = boost::filesystem;
 
 namespace nix {
 
-File File::open(const std::string &name, FileMode mode, const std::string &impl, Compression compression) {
+File File::open(const std::string &name,
+                FileMode mode,
+                const std::string &impl,
+                Compression compression,
+                OpenFlags flags) {
     if (mode == nix::FileMode::ReadOnly && !bfs::exists({name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }
@@ -29,7 +33,7 @@ File File::open(const std::string &name, FileMode mode, const std::string &impl,
          compression = Compression::None;
     }
     if (impl == "hdf5") {
-         return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression));
+        return File(std::make_shared<hdf5::FileHDF5>(name, mode, compression, flags));
     }
 #ifdef  ENABLE_FS_BACKEND
     else if (impl == "file") {
