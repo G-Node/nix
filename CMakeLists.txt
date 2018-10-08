@@ -1,16 +1,12 @@
 #################################################################################################
 # NIX CMake
-
 cmake_minimum_required (VERSION 2.8.10)
 
-# options
+# Options
 option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
 option(BUILD_STATIC "Build static version of the library" OFF)
 option(BUILD_SHARED "Build shared version of the library" ON)
 
-
-
-#################################################################################################
 # Defaults and general settings
 SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
 SET(LIB_INSTALL_DIR "lib" CACHE PATH "Library install directory")
@@ -88,16 +84,22 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 list(APPEND install_targets "")
+list(APPEND static_boost "")
+list(APPEND shared_boost "")
+list(APPEND static_hdf5 "")
+list(APPEND shared_hdf5 "")
+list(APPEND static_yaml "")
+list(APPEND shared_yaml "")
 
 ################################################################################################
-# SHARED LIBRARY
-
+#                                        SHARED LIBRARY                                        #
 if(BUILD_SHARED)
   # HDF-5
   set(HDF5_USE_STATIC_LIBRARIES OFF)
-  find_package (HDF5 REQUIRED COMPONENTS C)
-  include_directories (${HDF5_INCLUDE_DIRS})
-  set (LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${HDF5_LIBRARIES})
+  find_package(HDF5 REQUIRED COMPONENTS C)
+  include_directories(${HDF5_INCLUDE_DIRS})
+  set(LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${HDF5_LIBRARIES})
+  set(shared_hdf5 ${HDF5_LIBRARIES})
   add_definitions(-DH5_USE_110_API=1)
 
   # Boost
@@ -110,11 +112,10 @@ if(BUILD_SHARED)
   endif()
 
   set(Boost_USE_MULTITHREADED ON)
-
   find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
-
   include_directories(${Boost_INCLUDE_DIR})
-  set (LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${Boost_LIBRARIES})
+  set(shared_boost ${Boost_LIBRARIES})
+  set(LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${Boost_LIBRARIES})
 
   # YAML-CPP
   if(BUILD_FS_BACKEND)
@@ -161,7 +162,7 @@ if(BUILD_SHARED)
       SOURCES ${nix_SOURCES})
   endif()
 
-  # CLI
+  # Command line interface
   file(GLOB NixCli_SOURCES "cli/*.cpp")
   file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
   include_directories("cli")
@@ -220,7 +221,7 @@ if(BUILD_SHARED)
 endif()
 
 ################################################################################################
-# STATIC LIBRARY
+#                                        STATIC LIBRARY                                        #
 if(BUILD_STATIC)
   add_definitions(-DNIX_STATIC=1)
 
@@ -228,7 +229,8 @@ if(BUILD_STATIC)
   set(HDF5_USE_STATIC_LIBRARIES ON)
   find_package (HDF5 REQUIRED COMPONENTS C)
   include_directories (${HDF5_INCLUDE_DIRS})
-  set (LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${HDF5_LIBRARIES})
+  set(LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${HDF5_LIBRARIES})
+  set(static_hdf5 ${HDF5_LIBRARIES})
   add_definitions(-DH5_USE_110_API=1)
 
   # Boost
@@ -236,13 +238,11 @@ if(BUILD_STATIC)
   if(WIN32)
     set(Boost_USE_STATIC_RUNTIME OFF)
   endif()
-
   set(Boost_USE_MULTITHREADED ON)
-
   find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
-
   include_directories(${Boost_INCLUDE_DIR})
-  set (LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${Boost_LIBRARIES})
+  set(static_boost ${Boost_LIBRARIES})
+  set(LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${Boost_LIBRARIES})
 
   # YAML-CPP
   if(BUILD_FS_BACKEND)
@@ -252,7 +252,7 @@ if(BUILD_STATIC)
     set(LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${YAMLCPP_LIBRARY})
   endif()
 
-  ### LIBRARY
+  # LIBRARY
   add_library(nix_static STATIC ${nix_INCLUDES} ${nix_SOURCES})
   target_link_libraries(nix_static ${LINK_LIBS_STATIC})
   set_target_properties(nix_static PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
@@ -263,7 +263,7 @@ if(BUILD_STATIC)
 
   if(WIN32)
     set_target_properties(nix_static PROPERTIES OUTPUT_NAME nix-static)
-    set_target_properties(nix_shared PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+    set_target_properties(nix_static PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
   else()
     set_target_properties(nix_static PROPERTIES OUTPUT_NAME nix)
   endif()
@@ -278,8 +278,8 @@ if(BUILD_STATIC)
   list(APPEND install_targets "nix_static")
 endif()
 
-########################################
-# Install
+################################################################################################
+#                                        INSTALLATION                                          #
 install(TARGETS ${install_targets}
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
@@ -288,37 +288,44 @@ install(TARGETS ${install_targets}
 install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
 
-#pkg-config support
+# pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
 install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
 
-########################################
-# CPack for Win
-if(WIN32)
-  install(TARGETS nix_shared
-		  ARCHIVE
-		  DESTINATION lib
-		  COMPONENT libraries)
-  file(GLOB NIX_LICENSE "LICENSE*")
-  install(FILES ${NIX_LICENSE}
-		  DESTINATION ./
-		  COMPONENT libraries)
-
-  if(NOT BUILD_STATIC)
+################################################################################################
+#                                        CPack for Win                                         #
+if(WIN32 AND (BUILD_SHARED OR BUILD_STATIC))
+  if(BUILD_SHARED)
+    install(TARGETS nix_shared
+      ARCHIVE
+      DESTINATION lib
+      COMPONENT libraries)
     file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
     install(FILES ${HDF5_DLLS} DESTINATION bin COMPONENT libraries)
+    install(TARGETS nix-tool
+      RUNTIME
+      DESTINATION bin
+      COMPONENT applications)
   endif()
-
+  if(BUILD_STATIC)
+    install(TARGETS nix_static
+      ARCHIVE
+      DESTINATION lib
+      COMPONENT libraries)
+    file(GLOB NIX_LICENSE "LICENSE*")
+    install(FILES ${NIX_LICENSE}
+      DESTINATION ./
+      COMPONENT libraries)
+  endif()
+  file(GLOB NIX_LICENSE "LICENSE*")
+  install(FILES ${NIX_LICENSE}
+    DESTINATION ./
+    COMPONENT libraries)
   file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
   install(FILES ${HDF5_COPYING}
-		  DESTINATION ./
-		  COMPONENT libraries)
-
-  install(TARGETS nix-tool
-		  RUNTIME
-		  DESTINATION bin
-		  COMPONENT applications)
+    DESTINATION ./
+    COMPONENT libraries)
 
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
@@ -331,23 +338,39 @@ if(WIN32)
   set(CPACK_PACKAGE_INSTALL_DIRECTORY "nix")
   set(CPACK_NSIS_MODIFY_PATH ON)
   set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
-  set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+  set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.MD")
   INCLUDE(CPack)
 endif()
 
-########################################
+################################################################################################
+#                                             SUMMARY                                          #
 get_directory_property(incdirs INCLUDE_DIRECTORIES)
-
-MESSAGE(STATUS "READY. ")
+get_directory_property(srcdirs SOURCE_DIRECTORIES)
+MESSAGE("")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "READY TO BUILD! ")
+MESSAGE(STATUS "SUMMARY: ")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "STATIC:  ${BUILD_STATIC}")
+MESSAGE(STATUS "SHARED:  ${BUILD_SHARED}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "INCDIRS: ${incdirs}")
+MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
-MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
-MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
-MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
-MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
+MESSAGE(STATUS "===============================")
+MESSAGE(STATUS "LIBRARIES:")
+if(BUILD_SHARED)
+  MESSAGE(STATUS " BOOST shared:    ${shared_boost}")
+  MESSAGE(STATUS " HDF5 shared:     ${shared_hdf5}")
+  MESSAGE(STATUS " CPPUNIT shared:  ${CPPUNIT_LIBRARIES}")
+  MESSAGE(STATUS " YAML-cpp shared: ${YAMLCPP_LIBRARY}")
+endif()
+if(BUILD_STATIC)
+  MESSAGE(STATUS " BOOST static:    ${static_boost}")
+  MESSAGE(STATUS " HDF5 static:     ${static_hdf5}")
+  MESSAGE(STATUS " CPPUNIT static:  ${CPPUNIT_LIBRARIES}")
+  MESSAGE(STATUS " YAML-cpp static: ${YAMLCPP_LIBRARY}")
+endif()
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")
