@@ -1,9 +1,17 @@
-##########################################
+#################################################################################################
 # NIX CMake
 
 cmake_minimum_required (VERSION 2.8.10)
 
-# Defaults
+# options
+option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
+option(BUILD_STATIC "Build static version of the library" OFF)
+option(BUILD_SHARED "Build shared version of the library" ON)
+
+
+
+#################################################################################################
+# Defaults and general settings
 SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
 SET(LIB_INSTALL_DIR "lib" CACHE PATH "Library install directory")
 SET(INCLUDE_INSTALL_DIR "include" CACHE PATH "Include install directory")
@@ -15,8 +23,6 @@ set(VERSION_MINOR 4)
 set(VERSION_PATCH 2)
 
 set(VERSION_ABI   1)
-
-option(BUILD_STATIC "Build static version of the library" OFF)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
@@ -32,81 +38,31 @@ if(NOT WIN32)
     SET(CMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
   endif()
 
-endif()
-
-if(NOT WIN32)
   if(USE_NO_DEPRECATED_DECLARATIONS)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
   endif()
 endif()
 
-
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-#########################################
-# HDF-5
-set(HDF5_USE_STATIC_LIBRARIES ${BUILD_STATIC})
-find_package (HDF5 REQUIRED COMPONENTS C)
-include_directories (${HDF5_INCLUDE_DIRS})
-set (LINK_LIBS ${LINK_LIBS} ${HDF5_LIBRARIES})
-add_definitions(-DH5_USE_110_API=1)
-
-########################################
-# Boost
-if(WIN32)
-  # On windows we always use the static version of boost
-  set(Boost_USE_STATIC_LIBS ON)
-  set(Boost_USE_STATIC_RUNTIME OFF)
-else()
-  set(Boost_USE_STATIC_LIBS ${BUILD_STATIC})
-endif()
-
-set(Boost_USE_MULTITHREADED ON)
-
-find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
-
-include_directories(${Boost_INCLUDE_DIR})
-set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})
-
-########################################
-# Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM)
-endif(DOXYGEN_FOUND)
-
-
-########################################
-# NIX
-
-### AUTO-GENERATED VERSION HEADER
+# AUTO-GENERATED VERSION HEADER
 configure_file (
   "${PROJECT_SOURCE_DIR}/version.h.in"
   "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp"
   )
 include_directories("${PROJECT_BINARY_DIR}/include")
 
-### scan files
+# scan files
 include_directories(BEFORE include)
 file(GLOB_RECURSE nix_SOURCES src/*.cpp)
 file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
 list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 
-### BACKENDS
+# BACKENDS
 set(backends "hdf5")
 
-option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
 if(BUILD_FS_BACKEND)
-  # Yaml-cpp
-  set(YAMLCPP_STATIC_LIBRARY FALSE)
-  find_package(YamlCpp REQUIRED)
-  include_directories(${YAMLCPP_INCLUDE_DIR})
-  set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
-
   list(APPEND backends "fs")
   add_definitions(-DENABLE_FS_BACKEND=1)
 endif()
@@ -122,123 +78,209 @@ foreach(backend ${backends})
   list(APPEND nix_INCLUDES ${backend_INCLUDES})
 endforeach()
 
+# Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+  add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM)
+endif(DOXYGEN_FOUND)
 
-### LIBRARY
+list(APPEND install_targets "")
 
-if(BUILD_STATIC)
-  set(NIX_LIBTYPE STATIC)
-  add_definitions(-DNIX_STATIC=1)
-else()
-  set(NIX_LIBTYPE SHARED)
-endif()
+################################################################################################
+# SHARED LIBRARY
 
-add_library(nix ${NIX_LIBTYPE} ${nix_INCLUDES} ${nix_SOURCES})
-target_link_libraries(nix ${LINK_LIBS})
-set_target_properties(nix PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-set_target_properties(nix PROPERTIES COMPILE_FLAGS "-fPIC")
-set_target_properties(nix PROPERTIES
-		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
-		      SOVERSION ${VERSION_ABI})
+if(BUILD_SHARED)
+  # HDF-5
+  set(HDF5_USE_STATIC_LIBRARIES OFF)
+  find_package (HDF5 REQUIRED COMPONENTS C)
+  include_directories (${HDF5_INCLUDE_DIRS})
+  set (LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${HDF5_LIBRARIES})
+  add_definitions(-DH5_USE_110_API=1)
 
-if(WIN32)
-  set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
-endif()
+  # Boost
+  if(WIN32)
+    # On windows we always use the static version of boost
+    set(Boost_USE_STATIC_LIBS ON)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+  else()
+    set(Boost_USE_STATIC_LIBS OFF)
+  endif()
 
+  set(Boost_USE_MULTITHREADED ON)
 
-if(NIX_FRAMEWORK)
-  set_target_properties(nix PROPERTIES
-                        FRAMEWORK FALSE
-                        FRAMEWORK_VERSION 1.0
-                        PUBLIC_HEADER "${nix_INCLUDES}")
-endif()
+  find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
 
+  include_directories(${Boost_INCLUDE_DIR})
+  set (LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${Boost_LIBRARIES})
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
-  add_executable(playground EXCLUDE_FROM_ALL main.cpp)
-  target_link_libraries(playground nix)
-endif()
+  # YAML-CPP
+  if(BUILD_FS_BACKEND)
+    set(YAMLCPP_STATIC_LIBRARY FALSE)
+    find_package(YamlCpp REQUIRED)
+    include_directories(${YAMLCPP_INCLUDE_DIR})
+    set(LINK_LIBS_SHARED ${LINK_LIBS_SHARED} ${YAMLCPP_LIBRARY})
+  endif()
 
+  ### LIBRARY
+  add_library(nix_shared SHARED ${nix_INCLUDES} ${nix_SOURCES})
+  target_link_libraries(nix_shared ${LINK_LIBS_SHARED})
+  set_target_properties(nix_shared PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  set_target_properties(nix_shared PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(nix_shared PROPERTIES
+    VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+    SOVERSION ${VERSION_ABI})
+  set_target_properties(nix_shared PROPERTIES OUTPUT_NAME nix)
 
-########################################
-# static analysis
-find_program(CLANG_CHECK clang-check)
-if(CLANG_CHECK)
-  MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
+  if(WIN32)
+    set_target_properties(nix_shared PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  endif()
 
-  add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
-                    DEPENDS nix
-		    SOURCES ${nix_SOURCES})
-endif()
+  if(NIX_FRAMEWORK)
+    set_target_properties(nix_shared PROPERTIES
+      FRAMEWORK FALSE
+      FRAMEWORK_VERSION 1.0
+      PUBLIC_HEADER "${nix_INCLUDES}")
+  endif()
 
+  if(EXISTS "${CMAKE_SOURCE_DIR}/main.cpp")
+    add_executable(playground EXCLUDE_FROM_ALL main.cpp)
+    target_link_libraries(playground nix_shared)
+  endif()
 
-########################################
-# CLI
+  # static analysis
+  find_program(CLANG_CHECK clang-check)
+  if(CLANG_CHECK)
+    MESSAGE(STATUS "FOUND clang-check: ${CLANG_CHECK}")
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #should maybe check for generator
 
-file(GLOB NixCli_SOURCES "cli/*.cpp")
-file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
-include_directories("cli")
+    add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
+      DEPENDS nix_shared
+      SOURCES ${nix_SOURCES})
+  endif()
 
-add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
-if(NOT WIN32)
-  set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-endif()
-target_link_libraries(nix-tool nix)
-set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
-message(STATUS "CLI executable added")
+  # CLI
+  file(GLOB NixCli_SOURCES "cli/*.cpp")
+  file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
+  include_directories("cli")
 
+  add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(nix-tool nix_shared)
+  set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
+  message(STATUS "CLI executable added")
 
-########################################
-# Tests
+  # Tests
+  include(CTest)
+  enable_testing()
 
-include(CTest)
-enable_testing()
+  if(BUILD_TESTING)
+    find_package(CppUnit)
+    include_directories(${CPPUNIT_INCLUDE_DIR})
+    include_directories(${CMAKE_SOURCE_DIR}/test)
 
-if(BUILD_TESTING)
+    file(GLOB Tests_SOURCES "test/*Test*.[ch]pp")
+    file(GLOB Real_Test_HEADERS "test/Test*.hpp")
 
-  find_package(CppUnit)
-  include_directories(${CPPUNIT_INCLUDE_DIR})
-  include_directories(${CMAKE_SOURCE_DIR}/test)
+    foreach(thebackend ${backends})
+      set(thebackend_TEST_HEADERS)
+      file(GLOB thebackend_TEST_HEADERS "test/${thebackend}/Test*.hpp")
+      list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
 
-  file(GLOB Tests_SOURCES "test/*Test*.[ch]pp")
-  file(GLOB Real_Test_HEADERS "test/Test*.hpp")
+      set(thebackend_TEST_SOURCES)
+      file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.[ch]pp")
+      list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
+    endforeach()
 
-  foreach(thebackend ${backends})
-    set(thebackend_TEST_HEADERS)
-    file(GLOB thebackend_TEST_HEADERS "test/${thebackend}/Test*.hpp")
-    list(APPEND Real_Test_HEADERS ${thebackend_TEST_HEADERS})
-
-    set(thebackend_TEST_SOURCES)
-    file(GLOB thebackend_TEST_SOURCES "test/${thebackend}/*Test*.[ch]pp")
-    list(APPEND Tests_SOURCES ${thebackend_TEST_SOURCES})
-  endforeach()
-
-  foreach(test ${Real_Test_HEADERS})
+    foreach(test ${Real_Test_HEADERS})
       get_filename_component(TestFileName ${test} NAME_WE)
       string(REPLACE "Test" "" TestName ${TestFileName})
       message(STATUS " Test added: ${TestName}")
       add_test(${TestName} TestRunner ${TestName})
-  endforeach(test)
+    endforeach(test)
 
-  add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
-  if(NOT WIN32)
-    set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    add_executable(TestRunner test/Runner.cpp ${Tests_SOURCES})
+    if(NOT WIN32)
+      set_target_properties(TestRunner PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    endif()
+    target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix_shared)
   endif()
-  target_link_libraries(TestRunner ${CPPUNIT_LIBRARIES} nix)
 
+  add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
+  target_link_libraries(nix-bench nix_shared)
+  if(NOT WIN32)
+    set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+
+  list(APPEND install_targets ${install_targets} "nix_shared" "nix-tool")
 endif()
 
-add_executable(nix-bench EXCLUDE_FROM_ALL test/Benchmark.cpp)
-target_link_libraries(nix-bench nix)
-if(NOT WIN32)
-  set_target_properties(nix-bench PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-endif()
+################################################################################################
+# STATIC LIBRARY
+if(BUILD_STATIC)
+  add_definitions(-DNIX_STATIC=1)
 
+  # HDF-5
+  set(HDF5_USE_STATIC_LIBRARIES ON)
+  find_package (HDF5 REQUIRED COMPONENTS C)
+  include_directories (${HDF5_INCLUDE_DIRS})
+  set (LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${HDF5_LIBRARIES})
+  add_definitions(-DH5_USE_110_API=1)
+
+  # Boost
+  set(Boost_USE_STATIC_LIBS ON)
+  if(WIN32)
+    set(Boost_USE_STATIC_RUNTIME OFF)
+  endif()
+
+  set(Boost_USE_MULTITHREADED ON)
+
+  find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
+
+  include_directories(${Boost_INCLUDE_DIR})
+  set (LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${Boost_LIBRARIES})
+
+  # YAML-CPP
+  if(BUILD_FS_BACKEND)
+    set(YAMLCPP_STATIC_LIBRARY TRUE)
+    find_package(YamlCpp REQUIRED)
+    include_directories(${YAMLCPP_INCLUDE_DIR})
+    set(LINK_LIBS_STATIC ${LINK_LIBS_STATIC} ${YAMLCPP_LIBRARY})
+  endif()
+
+  ### LIBRARY
+  add_library(nix_static STATIC ${nix_INCLUDES} ${nix_SOURCES})
+  target_link_libraries(nix_static ${LINK_LIBS_STATIC})
+  set_target_properties(nix_static PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+  set_target_properties(nix_static PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(nix_static PROPERTIES
+    VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+    SOVERSION ${VERSION_ABI})
+
+  if(WIN32)
+    set_target_properties(nix_static PROPERTIES OUTPUT_NAME nix-static)
+    set_target_properties(nix_shared PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  else()
+    set_target_properties(nix_static PROPERTIES OUTPUT_NAME nix)
+  endif()
+
+  if(NIX_FRAMEWORK)
+    set_target_properties(nix_static PROPERTIES
+      FRAMEWORK FALSE
+      FRAMEWORK_VERSION 1.0
+      PUBLIC_HEADER "${nix_INCLUDES}")
+  endif()
+
+  list(APPEND install_targets "nix_static")
+endif()
 
 ########################################
 # Install
-
-install(TARGETS nix nix-tool
+install(TARGETS ${install_targets}
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
         FRAMEWORK DESTINATION "/Library/Frameworks"
@@ -254,8 +296,7 @@ install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfi
 ########################################
 # CPack for Win
 if(WIN32)
-
-  install(TARGETS nix
+  install(TARGETS nix_shared
 		  ARCHIVE
 		  DESTINATION lib
 		  COMPONENT libraries)
@@ -264,12 +305,10 @@ if(WIN32)
 		  DESTINATION ./
 		  COMPONENT libraries)
 
-if(NOT BUILD_STATIC)
-  file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
-  install(FILES ${HDF5_DLLS}
-		  DESTINATION bin
-		  COMPONENT libraries)
-endif()
+  if(NOT BUILD_STATIC)
+    file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
+    install(FILES ${HDF5_DLLS} DESTINATION bin COMPONENT libraries)
+  endif()
 
   file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
   install(FILES ${HDF5_COPYING}
