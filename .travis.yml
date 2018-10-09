@@ -54,7 +54,7 @@ install:
     fi
 
 script:
-  - cmake -DBUILD_STATIC=ON .. && make && make test
+  - cmake -DBUILD_STATIC=ON . && make && make test
   - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
 
 after_success:
