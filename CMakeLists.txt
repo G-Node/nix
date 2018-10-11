@@ -178,24 +178,22 @@ endif()
 file(GLOB NixCli_SOURCES "cli/*.cpp")
 file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
 include_directories("cli")
-
-add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
-if(NOT WIN32)
-  set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+if(NOT ${BUILD_STATIC})
+  add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
+  if(NOT WIN32)
+    set_target_properties(nixio-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+  endif()
+  target_link_libraries(nix-tool nix)
+  set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
+  message(STATUS "CLI executable added")
 endif()
-target_link_libraries(nix-tool nix)
-set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
-message(STATUS "CLI executable added")
-
 
 ########################################
 # Tests
-
 include(CTest)
 enable_testing()
 
 if(BUILD_TESTING)
-
   find_package(CppUnit)
   include_directories(${CPPUNIT_INCLUDE_DIR})
   include_directories(${CMAKE_SOURCE_DIR}/test)
@@ -237,14 +235,15 @@ endif()
 
 ########################################
 # Install
-
-install(TARGETS nix nix-tool
-        LIBRARY DESTINATION ${LIB_INSTALL_DIR}
-        ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-        FRAMEWORK DESTINATION "/Library/Frameworks"
-        RUNTIME DESTINATION bin)
-install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
-install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+if(NOT ${BUILD_STATIC})
+  install(TARGETS nix nix-tool
+    LIBRARY DESTINATION ${LIB_INSTALL_DIR}
+    ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    FRAMEWORK DESTINATION "/Library/Frameworks"
+    RUNTIME DESTINATION bin)
+  install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR})
+endif()
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
@@ -276,10 +275,12 @@ endif()
 		  DESTINATION ./
 		  COMPONENT libraries)
 
-  install(TARGETS nix-tool
-		  RUNTIME
-		  DESTINATION bin
-		  COMPONENT applications)
+  if(NOT ${BUILD_STATIC})
+    install(TARGETS nix-tool
+      RUNTIME
+      DESTINATION bin
+      COMPONENT applications)
+  endif()
 
   set(CPACK_GENERATOR NSIS)
   set(CPACK_PACKAGE_NAME "nix")
