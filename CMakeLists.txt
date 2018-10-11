@@ -142,6 +142,9 @@ set_target_properties(nix PROPERTIES
 
 if(WIN32)
   set_target_properties(nix PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
+  if(BUILD_STATIC)
+    set_target_properties(nix PROPERTIES OUTPUT_NAME nix_static)
+  endif()
 endif()
 
 
@@ -181,7 +184,7 @@ include_directories("cli")
 if(NOT ${BUILD_STATIC})
   add_executable(nix-tool cli/Cli.cpp ${NixCli_SOURCES})
   if(NOT WIN32)
-    set_target_properties(nixio-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
+    set_target_properties(nix-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
   endif()
   target_link_libraries(nix-tool nix)
   set_target_properties(nix-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
