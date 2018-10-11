@@ -247,13 +247,13 @@ endif()
 
 #pkg-config support
 configure_file(${CMAKE_SOURCE_DIR}/nix.pc.in ${CMAKE_BINARY_DIR}/nix.pc)
-install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
-
+if(NOT EXISTS "${LIB_INSTALL_DIR}/pkgconfig/nix.pc")
+   install(FILES ${CMAKE_BINARY_DIR}/nix.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+endif()
 
 ########################################
 # CPack for Win
 if(WIN32)
-
   install(TARGETS nix
 		  ARCHIVE
 		  DESTINATION lib
