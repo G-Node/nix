@@ -325,7 +325,54 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
+void fillPositionsExtentsAndUnits(const DataArray &array,
+                                  std::vector<double> &starts,
+                                  std::vector<double> &ends, std::vector<std::string> &units) {
+    std::vector<nix::Dimension> dims = array.dimensions();
+    NDSize shape = array.dataExtent();
+    for (ndsize_t i = 0; i < dims.size(); ++i) {
+        Dimension dim = dims[i];
+        DimensionType dt = dim.dimensionType();
+        if (dt == DimensionType::Sample) {
+            SampledDimension sd = dim.asSampledDimension();
+            if (i >= starts.size()) {
+                starts.push_back(sd.offset() ? *sd.offset() : 0.0);
+            }
+            if (i >= ends.size()) {
+                ends.push_back(sd[shape[i]-1]);
+            }
+            if (i >= units.size()) {
+                units.push_back(sd.unit() ? *sd.unit() : "none");
+            }
+        } else if (dt == DimensionType::Range) {
+            RangeDimension rd = dim.asRangeDimension();
+            if (i >= starts.size()) {
+                starts.push_back(rd.axis(1, 0)[0]);
+            }
+            if (i >= ends.size()) {
+                ends.push_back(rd.axis(1, shape[i]-1)[0]);
+            }
+            if (i >= units.size()) {
+                units.push_back(rd.unit() ? *rd.unit() : "none");
+            }
+        } else if (dt == DimensionType::Set) {
+            SetDimension sd = dim.asSetDimension();
+            if (i >= starts.size()) {
+                starts.push_back(0.0);
+            }
+            if (i >= ends.size()) {
+                ends.push_back(shape[i]-1);
+            }
+            if (i >= units.size()) {
+                units.push_back("none");
+            }
+        }
+    }
+}
+
+
+DataView dataSlice(const DataArray &array, const std::vector<double> &start,
+                   const std::vector<double> &end,
                    const std::vector<std::string> &units) {
     if (array == nix::none) {
         throw UninitializedEntity();
