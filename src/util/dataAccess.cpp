@@ -257,9 +257,11 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     vector<Dimension> dimensions = array.dimensions();
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
+
     for (size_t idx = 0; idx < indices.size(); ++idx) {
         temp_offset[0] = indices[idx];
         vector<double> offset, extent;
+
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
@@ -374,30 +376,31 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
 DataView dataSlice(const DataArray &array, const std::vector<double> &start,
                    const std::vector<double> &end,
                    const std::vector<std::string> &units) {
+    std::vector<double> my_start(start);
+    std::vector<double> my_end(end);
+    std::vector<std::string> my_units(units);
+
     if (array == nix::none) {
         throw UninitializedEntity();
     }
-    if (start.size() == 0 || start.size() != end.size()) {
-        throw std::invalid_argument("Number of start entries does not match number of end entries.");
+    size_t dim_count = array.dimensionCount();
+    if (start.size() > dim_count || end.size() > dim_count || units.size() > dim_count) {
+        throw std::invalid_argument("More start/end/unit entries given than number of dimensions in the data!");
     }
-    if (start.size() != array.dimensionCount()) {
-        throw std::invalid_argument("Number of start/end entries does not match dimensionality of the data.");
+    if (start.size() < dim_count || end.size() < dim_count || units.size() < dim_count) {
+        fillPositionsExtentsAndUnits(array, my_start, my_end, my_units);
     }
-    if (units.size() > 0 && units.size() != start.size()) {
-        throw std::invalid_argument("Number of units does not match dimensionality of the data.");
-    }
-    NDSize count(start.size(), 1), offset(start.size(), 0);
 
-    for (size_t i = 0; i < start.size(); i++) {
+    NDSize count(my_start.size(), 1), offset(my_start.size(), 0);
+    for (size_t i = 0; i < my_start.size(); i++) {
         Dimension dim = array.getDimension(i+1);
-        std::string unit = units.size() != 0 ? units[i] : "none";
-        if (unit.size() == 0) {
-            unit = "none";
-        }
-        if (start[i] > end[i]) {
+        if (my_start[i] > my_end[i]) {
             throw std::invalid_argument("Start position must not be larger than end position.");
         }
-        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
+        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({my_start[i]},
+                                                                             {my_end[i]},
+                                                                             {my_units[i]},
+                                                                             dim);
         offset[i] = indices[0].first;
         count[i] += indices[0].second - indices[0].first;
     }
