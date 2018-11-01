@@ -1,8 +1,8 @@
-version: 1.2.{build}
+version: 1.4.{build}
 branches:
   only:
   - master
-  - 1.2
+  - 1.4
 image: Visual Studio 2014 CTP4
 shallow_clone: true
 environment:
@@ -13,7 +13,7 @@ environment:
     CONFIGURATION: Release
 install:
 - cmd: >-
-    choco install nsis.install -version 2.49 -y
+    choco install nsis.install -version 2.49 -y --ignore-checksums
 
     if not exist C:\deps.zip appveyor DownloadFile https://projects.g-node.org/nix/nix-dependencies-windows-20160121.zip -FileName C:\deps.zip
 

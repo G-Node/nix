@@ -16,7 +16,7 @@ namespace nix {
 namespace file {
 
 BlockFS::BlockFS(const std::shared_ptr<base::IFile> &file, const std::string &loc)
-    : EntityWithMetadataFS(file, loc)
+    : EntityWithMetadataFS(file, loc), compr(Compression::Auto)
 {
     createSubFolders(file);
 }

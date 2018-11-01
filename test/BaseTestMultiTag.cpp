@@ -217,7 +217,7 @@ void BaseTestMultiTag::testFeatures() {
     CPPUNIT_ASSERT(!tag.hasFeature(f));
     CPPUNIT_ASSERT(!tag.deleteFeature(f));
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Indexed), nix::UninitializedEntity);
-    
+
     CPPUNIT_ASSERT_NO_THROW(f = tag.createFeature(positions, nix::LinkType::Indexed));
     CPPUNIT_ASSERT(tag.hasFeature(f));
     CPPUNIT_ASSERT(tag.featureCount() == 1);
@@ -256,6 +256,7 @@ void BaseTestMultiTag::testPositions() {
     CPPUNIT_ASSERT_THROW(tag.positions(""), EmptyString);
 
     tag.positions(positions);
+    CPPUNIT_ASSERT(tag.positionCount() == positions.dataExtent()[0]);
     CPPUNIT_ASSERT(tag.positions().id() == positions.id());
     CPPUNIT_ASSERT(tag.hasPositions());
     block.deleteDataArray(positions.id());
@@ -379,15 +380,15 @@ void BaseTestMultiTag::testDataAccess() {
     DataView ret_data = multi_tag.retrieveData(0, 0);
     NDSize data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
     ret_data = multi_tag.retrieveData(0, data_array.name());
     data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
     CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);
-    
+
     block.deleteMultiTag(multi_tag);
     block.deleteDataArray(data_array);
     block.deleteDataArray(event_array);
@@ -400,7 +401,7 @@ void BaseTestMultiTag::testMetadataAccess() {
     tag.metadata(section);
     CPPUNIT_ASSERT(tag.metadata());
     CPPUNIT_ASSERT(tag.metadata().id() == section.id());
-    
+
     // test none-unsetter
     tag.metadata(none);
     CPPUNIT_ASSERT(!tag.metadata());

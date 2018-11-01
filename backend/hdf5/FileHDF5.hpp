@@ -43,7 +43,7 @@ public:
      * @param prefix  The prefix used for IDs.
      * @param mode    File open mode ReadOnly, ReadWrite or Overwrite.
      */
-    FileHDF5(const std::string &name, const FileMode mode = FileMode::ReadWrite, const Compression compression = Compression::Auto);
+    FileHDF5(const std::string &name, const FileMode mode = FileMode::ReadWrite, const Compression compression = Compression::Auto, OpenFlags flags = OpenFlags::None);
 
     //--------------------------------------------------
     // Methods concerning blocks

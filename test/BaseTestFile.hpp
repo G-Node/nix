@@ -39,7 +39,7 @@ public:
     void testOpen();
     void testFlush();
     void testValidate();
-    void testFormat();
+    virtual void testFormat();
     virtual void testLocation() = 0;
     virtual void testVersion();
     void testCreatedAt();
@@ -50,6 +50,7 @@ public:
     void testReopen();
     void testCheckHeader();
     void testCompare();
+    void testFlags();
 
 };
 

@@ -126,7 +126,7 @@ void BaseTestSource::testSourceAccess() {
 
 void BaseTestSource::testFindSource() {
     /* We create the following tree:
-     * 
+     *
      * source---l1n1---l2n1---l3n1
      *    |      |      |
      *    |      ------l2n2
@@ -135,7 +135,7 @@ void BaseTestSource::testFindSource() {
      *    |             |
      *    |             ------l3n3
      *    ------l1n2
-     *    | 
+     *    |
      *    ------l1n3---l2n4
      *           |
      *           ------l2n5---l3n4
@@ -162,7 +162,7 @@ void BaseTestSource::testFindSource() {
     Source l3n5 = l2n5.createSource("l3n5", "typ2");
     mtag.addSource(l2n6.id());
     darray.addSource(l3n5.id());
-    
+
     // test if sources are in place
     CPPUNIT_ASSERT(mtag.hasSource(l2n6));
     CPPUNIT_ASSERT(darray.hasSource(l3n5));
@@ -180,12 +180,27 @@ void BaseTestSource::testFindSource() {
     auto filter_typ2 = util::TypeFilter<Source>("typ2");
     CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
     CPPUNIT_ASSERT(source.findSources(filter_typ2).size() == 9);
-    
+
+    filter_typ1 = util::TypeFilter<Source>("Typ1");
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 0);
+    filter_typ1 = util::TypeFilter<Source>("Typ1", false);
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 3);
+    filter_typ1 = util::TypeFilter<Source>("Typ", false);
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 14);
+    filter_typ1 = util::TypeFilter<Source>("typ", true);
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 0);
+
+    Source l3n6 = l2n5.createSource("l3n6", "typ typ");
+    filter_typ1 = util::TypeFilter<Source>("typ", true);
+    CPPUNIT_ASSERT(source.findSources(filter_typ1).size() == 0);
+    l2n5.deleteSource(l3n6);
+
+
     // test deleter
     /* chop the tree down to:
-     * 
+     *
      * source---l1n2
-     *    | 
+     *    |
      *    ------l1n3---l2n4
      *           |
      *           ------l2n5---l3n4
@@ -199,7 +214,7 @@ void BaseTestSource::testFindSource() {
     source.deleteSource(l1n1.id());
     CPPUNIT_ASSERT(source.findSources().size() == 8);
     /* chop the tree down to:
-     * 
+     *
      * source---l1n3---l2n4
      *           |
      *           ------l2n5---l3n4
@@ -213,7 +228,7 @@ void BaseTestSource::testFindSource() {
     source.deleteSource(l1n2.id());
     CPPUNIT_ASSERT(source.findSources().size() == 7);
     /* chop the tree down to:
-     * 
+     *
      * source
      * mtag
      * darray

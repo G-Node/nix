@@ -30,6 +30,24 @@ enum class FileMode {
     Overwrite
 };
 
+/**
+ * @brief Control the open process
+ */
+enum class OpenFlags {
+    None  = 0,
+    Force = 1 << 0,
+};
+
+
+OpenFlags inline operator | (const OpenFlags base, const OpenFlags f) {
+    typedef std::underlying_type<OpenFlags>::type base_type;
+    return static_cast<OpenFlags>(static_cast<base_type>(base) | static_cast<base_type>(f));
+}
+
+OpenFlags inline operator & (const OpenFlags base, const OpenFlags t) {
+    typedef std::underlying_type<OpenFlags>::type base_type;
+    return static_cast<OpenFlags>(static_cast<base_type>(base) & static_cast<base_type>(t));
+}
 
 #define FILE_VERSION std::vector<int>{1, 0, 0}
 #define FILE_FORMAT  std::string("nix")
