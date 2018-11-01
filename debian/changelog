@@ -1,3 +1,28 @@
+nix (1.4.3-3) bionic; urgency=medium
+
+  * version bump to 1.4.3
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Thu, 01 Nov 2018 16:09:00 +0100
+
+nix (1.4.3-2) xenial; urgency=medium
+
+  * version bump to 1.4.3
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Thu, 01 Nov 2018 16:09:00 +0100
+
+nix (1.4.3-1) trusty; urgency=medium
+
+  * fix of compile issues with the latest hdf5 version
+  * add data slicing method
+  * improvements of retrieve data functionality: multiple slices an be retrieved at once
+  * name and type filter functions accept regular expressions
+  * add default arguments for appending dimensions
+  * adds a file open flag that allows to force open a file skipping version and format checks
+  * changes to static build
+  * fixed a bug when 1D data was retrieved from a tag with 2D positions
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Thu, 01 Nov 2018 15:40:00 +0100
+
 nix (1.4.1-2) xenial; urgency=medium
 
   * version bump to 1.4.1
