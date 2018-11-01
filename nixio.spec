@@ -5,7 +5,7 @@ Summary:	IO-libray for nix data files
 
 License:	BSD
 URL:		https://www.g-node.org/nix
-Source0:	https://github.com/G-Node/nix/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:	https://github.com/G-Node/nix/archive/%{version}.tar.gz
 
 BuildRequires:	cmake, boost-devel, hdf5-devel, cppunit-devel
 
