@@ -277,7 +277,14 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
 
     // indexed feature
-    DataView data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    // read a single feature, old style function
+    DataView data_view = util::retrieveFeatureData(multi_tag, 1, 0);
+    CPPUNIT_ASSERT(data_view.dataExtent().size()  == 2);
+    CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 10);
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 10, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveFeatureData(multi_tag, 1, index_feature));
+    // read feature data, multiple indices at once
+    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
 
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 2);
@@ -516,6 +523,7 @@ void BaseTestDataAccess::testDataSlice() {
 
     slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"});
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 10 && slice.dataExtent()[1] == 101);
+
 
     b.deleteDataArray(oned_array);
     b.deleteDataArray(twod_array);
