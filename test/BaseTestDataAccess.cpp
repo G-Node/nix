@@ -283,6 +283,7 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 10);
     CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 10, 0), nix::OutOfBounds);
     CPPUNIT_ASSERT_NO_THROW(util::retrieveFeatureData(multi_tag, 1, index_feature));
+
     // read feature data, multiple indices at once
     data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
 
@@ -349,10 +350,15 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 3), nix::OutOfBounds);
 
     // test multiple positions
-    std::vector<DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
+    std::vector<nix::DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
     CPPUNIT_ASSERT(views.size() == 2);
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
+
+    // test positions without specifying
+    indices.clear();
+    views = util::retrieveFeatureData(multi_tag, indices, 0);
+    CPPUNIT_ASSERT(views.size() == multi_tag.positionCount());
 
     // clean up
     multi_tag.deleteFeature(index_feature.id());
