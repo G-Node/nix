@@ -48,26 +48,6 @@ void scalePositions(const vector<double> &starts, const vector<double> &ends,
 }
 
 
-ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
-    ndsize_t pos;
-    if (dimension.dimensionType() == DimensionType::Sample) {
-        SampledDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    } else if (dimension.dimensionType() == DimensionType::Set) {
-        SetDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    } else {
-        RangeDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    }
-
-    return pos;
-}
-
-
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
                                                  const vector<double> end_positions,
                                                  const vector<string> &units,

@@ -31,6 +31,7 @@ void BaseTestDataAccess::testPositionToIndexRangeDimension() {
     std::string invalid_unit = "kV";
     std::string scaled_unit = "s";
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
+
     CPPUNIT_ASSERT(util::positionToIndex(1.0, unit, rangeDim) == 0);
     CPPUNIT_ASSERT(util::positionToIndex(8.0, unit, rangeDim) == 4);
     CPPUNIT_ASSERT(util::positionToIndex(0.001, scaled_unit, rangeDim) == 0);
