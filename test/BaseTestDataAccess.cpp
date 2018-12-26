@@ -142,6 +142,10 @@ void BaseTestDataAccess::testRetrieveData() {
     std::vector<DataView> slices = util::retrieveData(mtag2, temp, 0);
     CPPUNIT_ASSERT(slices.size() == mtag2.positions().dataExtent()[0]);
 
+    // old-style calls, deprecated
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, 0));
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, mtag2.references()[0]));
+
     slices = util::retrieveData(pointmtag, temp, 0);
     CPPUNIT_ASSERT(slices.size() == pointmtag.positions().dataExtent()[0]);
 
@@ -163,6 +167,7 @@ void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
+
     DataView times_view = util::retrieveData(times_tag, 0);
     data_size = times_view.dataExtent();
     std::vector<double> times(data_size.size());
@@ -170,6 +175,7 @@ void BaseTestDataAccess::testRetrieveData() {
     RangeDimension dim = times_tag.references()[0].dimensions()[0].asRangeDimension();
     CPPUNIT_ASSERT(data_size.size() == 1);
     CPPUNIT_ASSERT(data_size[0] == 77);
+
 }
 
 
