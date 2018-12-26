@@ -508,9 +508,22 @@ void BaseTestDataAccess::testDataSlice() {
 
     // do the tests!
     nix::DataArray no_array;
-    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2, 3}), nix::UninitializedEntity);
 
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), std::invalid_argument);
+    // test incomplete information
+    nix::DataView view = util::dataSlice(oned_array, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == oned_array.dataExtent());
+    view = util::dataSlice(twod_array, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == twod_array.dataExtent());
+    view = util::dataSlice(twod_array2, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == twod_array2.dataExtent());
+    view = util::dataSlice(twod_array2, {0.0}, {9.0}, {"s"});
+    CPPUNIT_ASSERT(view.dataExtent()[1] == twod_array2.dataExtent()[1]);
+    view = util::dataSlice(twod_array2, {0.0, 0.0}, {9.0, 1000.}, {"s", "ms"});
+    CPPUNIT_ASSERT(view.dataExtent()[1] == (1/interval + 1));
+
+    // test scaling, exceptions etc.
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2, 3}), std::invalid_argument);
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
