@@ -377,14 +377,14 @@ void RangeDimension::ticks(const std::vector<double> &ticks) {
 
 
 double RangeDimension::tickAt(const ndsize_t index) const {
-
     size_t idx = check::fits_in_size_t(index, "Tick index exceeds memory (size larger than current system supports)");
 
-    vector<double> ticks = this->ticks();
-    if (idx >= ticks.size()) {
+    try {
+        vector<double> ticks = this->ticks(idx, 1);
+        return ticks[0];
+    } catch (...) {
         throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", idx);
     }
-    return ticks[idx];
 }
 
 ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
