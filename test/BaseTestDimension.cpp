@@ -401,6 +401,15 @@ void BaseTestDimension::testRangeTicks() {
         CPPUNIT_ASSERT(new_ticks[i] == retrieved_ticks[i]);
     }
 
+    ticks.resize(100);
+    for (size_t i = 0; i < 100; ++i) {
+        ticks[i] = i * 3.14;
+    }
+    rd.ticks(ticks);
+    CPPUNIT_ASSERT(rd.ticks(0, 10).size() == 10);
+    CPPUNIT_ASSERT(rd.ticks(1, 99).size() == 99);
+    CPPUNIT_ASSERT(rd.ticks(10, 1)[0] == 10 * 3.14);
+    CPPUNIT_ASSERT(rd.ticks(20, 1)[0] == 20 * 3.14);
     data_array.deleteDimensions();
 }
 
