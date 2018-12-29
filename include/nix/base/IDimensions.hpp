@@ -139,7 +139,7 @@ public:
 
     virtual boost::optional<std::string> label() const = 0;
 
-    
+
     virtual bool alias() const = 0;
 
 
@@ -159,6 +159,9 @@ public:
 
 
     virtual std::vector<double> ticks() const = 0;
+
+
+    virtual std::vector<double> ticks(size_t start, size_t count) const = 0;
 
 
     virtual void ticks(const std::vector<double> &ticks) = 0;

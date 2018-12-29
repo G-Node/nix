@@ -624,12 +624,26 @@ public:
      * values. This can be used to store data that is sampled at irregular
      * intervals.
      *
-     * Ticks must be ordered in ascending order.
-     *
      * @return A vector with all ticks for the dimension.
      */
     std::vector<double> ticks() const {
         return backend()->ticks();
+    }
+
+    /**
+     * @brief Get a number of ticks from the dimension.
+     *
+     * The ticks map the index of the data at the respective dimension to other
+     * values. This can be used to store data that is sampled at irregular
+     * intervals.
+     *
+     * @param start size_t the start index.
+     * @param count size_t the number of ticks to read.
+     *
+     * @return A vector with the ticks for the dimension.
+     */
+    std::vector<double> ticks(size_t start, size_t count) const {
+        return backend()->ticks(start, count);
     }
 
     /**
