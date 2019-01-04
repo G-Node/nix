@@ -7,7 +7,7 @@ License:	BSD
 URL:		https://www.g-node.org/nix
 Source0:	https://github.com/G-Node/nix/archive/%{version}.tar.gz
 
-BuildRequires:	cmake, boost-devel, hdf5-devel, cppunit-devel
+BuildRequires:	gcc-c++, cmake, boost-devel, hdf5-devel, cppunit-devel
 
 %description
 Neuroscience information exchange - data model for annotated (neuroscience)
@@ -57,6 +57,9 @@ make install DESTDIR=%{buildroot}
 
 
 %changelog
+* Thu Nov 01 2018 Jan Grewe <jan.grewe@g-node.org> - 1.4.0-1
+- version bump to 1.4.3
+
 
 * Fri Oct 20 2017 Jan Grewe <jan.grewe@g-node.org> - 1.4.1-1
 - New upstream release
