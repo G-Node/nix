@@ -31,7 +31,7 @@ int main() {
     nix::File f = nix::File::open("metadata_demo.nix", nix::FileMode::Overwrite);
 
     nix::Section global_mdata = f.createSection("session info", "recording");
-    global_mdata.repository("https://portal.g-node.org/odml/terminologies/v1.0/");
+    global_mdata.repository("https://portal.g-node.org/odml/terminologies/v1.1/terminologies.xml");
 
     // add a simple string property
     nix::Value author("John Doe");
