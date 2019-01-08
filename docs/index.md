@@ -55,7 +55,7 @@ We provide bindings for:
   analysis, and stimulus generation specifically designed for (but not
   limited to) electrophysiological recordings. Writes out NIX files if
   the nix c++-library is installed.
-- [IO class](https://github.com/python-neo-nixio) for the [NEO](http://neuralensemble.org/neo/) data model for neurophysiology data.
+- [IO class](https://github.com/G-Node/python-neo/wiki) for the [NEO](http://neuralensemble.org/neo/) data model for neurophysiology data.
 - Output format for [EEGBase](http://eegdatabase.kiv.zcu.cz)
 
 * * *
