@@ -26,6 +26,9 @@ doc/html
 .dbg.
 *.dSYM
 
+# gdb
+.gdb_history
+
 # ignore codeblocs project files
 *.cbp
 *.depend

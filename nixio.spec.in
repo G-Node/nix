@@ -5,9 +5,13 @@ Summary:	IO-libray for nix data files
 
 License:	BSD
 URL:		https://www.g-node.org/nix
-Source0:	%{name}-%{version}.tar.gz
+Source0:	https://github.com/G-Node/nix/archive/%{version}/%{name}-%{version}.tar.gz
 
-BuildRequires:	cmake, boost-devel, hdf5-devel, cppunit-devel
+BuildRequires:	gcc-c++
+BuildRequires:	cmake
+BuildRequires:	boost-devel
+BuildRequires:	hdf5-devel
+BuildRequires:	cppunit-devel
 
 %description
 Neuroscience information exchange - data model for annotated (neuroscience)
