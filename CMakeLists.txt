@@ -19,6 +19,9 @@ set(VERSION_ABI   1)
 set(VERSION_FULL ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 option(BUILD_STATIC "Build static version of the library" OFF)
+option(BUILD_COVERAGE "Build with coverage information" OFF)
+
+set(HAVE_COVERAGE OFF)
 
 if(NOT WIN32)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
@@ -28,7 +31,8 @@ if(NOT WIN32)
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb3")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2")
 
-  if(CMAKE_COMPILER_IS_GNUCXX)
+  if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_COVERAGE)
+    set (HAVE_COVERAGE ON)
     MESSAGE(STATUS "Activating coverage support.")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
     SET(CMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
@@ -341,7 +345,8 @@ get_directory_property(incdirs INCLUDE_DIRECTORIES)
 
 MESSAGE(STATUS "READY. ")
 MESSAGE(STATUS "===============================")
-MESSAGE(STATUS "STATIC:  ${BUILD_STATIC}")
+MESSAGE(STATUS "STATIC:   ${BUILD_STATIC}")
+MESSAGE(STATUS "COVERAGE: ${HAVE_COVERAGE}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "INCDIRS: ${incdirs}")
 MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
