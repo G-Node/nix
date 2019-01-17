@@ -361,8 +361,7 @@ DataType data_type_from_h5(const h5x::DataType &dtype) {
     if (ftclass == H5T_COMPOUND) {
         //if it is a compound data type then it must be a
         //a property dataset, we can handle that
-        int nmems = dtype.member_count();
-        assert(nmems == 6);
+        assert(dtype.member_count() == 6);
         h5x::DataType vtype = dtype.member_type(0);
 
         ftclass = vtype.class_t();
