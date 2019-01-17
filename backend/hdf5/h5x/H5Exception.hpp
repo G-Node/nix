@@ -78,9 +78,14 @@ struct SourceLocation {
 };
 
 NIXAPI void check_h5_arg_name_loc(const std::string &name, const SourceLocation &location);
+
+#ifdef NDEBUG
+#define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FUNC})
+#else
 #define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FUNC, \
                                                                                    NIX_SRC_FILE, \
                                                                                    NIX_SRC_LINE})
+#endif
 
 } //nix::hdf5::check
 } // nix::hdf5
