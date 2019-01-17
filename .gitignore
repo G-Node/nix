@@ -57,6 +57,7 @@ src/pandora_cpp.cpp
 .kdev4
 nix.kdev4
 
-# cquery
+# cquery / ccls
 compile_commands.json
 .cquery_cached_index/
+.ccls-cache/

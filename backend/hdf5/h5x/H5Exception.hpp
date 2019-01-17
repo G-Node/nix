@@ -16,7 +16,7 @@
 
 // The single include point of HDF5
 //
-// A bit of a hack, but we directly include 
+// A bit of a hack, but we directly include
 // hdf5's H5version.h to bypass any potetional
 // H5_USE_16_API defines set in H5pubconf.h
 // especially on old hdf5 versions (ubuntu precise)
@@ -67,18 +67,25 @@ namespace check {
 
 struct SourceLocation {
 
-    SourceLocation(const std::string &fp, int fl, const std::string &fs) :
-            filepath(fp), fileline(fl), funcsig(fs) {}
+    SourceLocation(const std::string &fs, const std::string &fp = "", int fl = -1) :
+        funcsig(fs), filepath(fp), fileline(fl) {}
+
+    std::string funcsig;
     std::string filepath;
     int         fileline;
-    std::string funcsig;
+
 
 };
 
 NIXAPI void check_h5_arg_name_loc(const std::string &name, const SourceLocation &location);
-#define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FILE, \
-                                                                                   NIX_SRC_LINE, \
-                                                                                   NIX_SRC_FUNC})
+
+#ifdef NDEBUG
+#define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FUNC})
+#else
+#define check_h5_arg_name(name__) nix::hdf5::check::check_h5_arg_name_loc(name__, {NIX_SRC_FUNC, \
+                                                                                   NIX_SRC_FILE, \
+                                                                                   NIX_SRC_LINE})
+#endif
 
 } //nix::hdf5::check
 } // nix::hdf5

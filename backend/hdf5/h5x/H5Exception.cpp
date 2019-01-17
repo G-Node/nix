@@ -22,7 +22,12 @@ void check_h5_arg_name_loc(const std::string &name, const SourceLocation &loc) {
     if (name.find("/") != std::string::npos) {
         std::stringstream stream;
         stream << "Invalid Name: " << name << " contains a '/'!";
-        stream << " [" << loc.funcsig << " in " << loc.filepath << ": " << loc.fileline << "]";
+        stream << " [" << loc.funcsig;
+
+        if (!loc.filepath.empty()) {
+            stream << " in " << loc.filepath << ": " << loc.fileline;
+        }
+        stream << "]";
         throw InvalidName(stream.str());
     }
 }
