@@ -421,7 +421,7 @@ std::vector<double> RangeDimensionFS::ticks() const {
     } else {
         throw MissingAttr("ticks");
     }
-    */ // FIXME
+    */ // FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
     return ticks;
 }
 
@@ -438,7 +438,7 @@ std::vector<double> RangeDimensionFS::ticks(size_t start, size_t count) const {
     } else {
         throw MissingAttr("ticks");
     }
-    */ // FIXME
+    */ // FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
     return ticks;
 }
 
@@ -455,7 +455,7 @@ void RangeDimensionFS::ticks(const std::vector<double> &ticks) {
     } else {
         throw MissingAttr("ticks");
     }
-    */ //FIXME
+    */ //FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
 }
 
 RangeDimensionFS::~RangeDimensionFS() {}
