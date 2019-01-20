@@ -479,8 +479,7 @@ void BaseTestDimension::testRangeDimAxis() {
 
     CPPUNIT_ASSERT_THROW(rd.axis(10), OutOfBounds);
     CPPUNIT_ASSERT_THROW(rd.axis(2, 10), OutOfBounds);
-
-    CPPUNIT_ASSERT_THROW(rd.axis(std::numeric_limits<size_t>::max(), static_cast<size_t>(1)), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(rd.axis(std::numeric_limits<ndsize_t>::max(), static_cast<size_t>(1)), OutOfBounds);
 }
 
 
