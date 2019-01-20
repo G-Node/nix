@@ -309,7 +309,8 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 
 void fillPositionsExtentsAndUnits(const DataArray &array,
                                   std::vector<double> &starts,
-                                  std::vector<double> &ends, std::vector<std::string> &units) {
+                                  std::vector<double> &ends,
+                                  std::vector<std::string> &units) {
     std::vector<nix::Dimension> dims = array.dimensions();
     NDSize shape = array.dataExtent();
     for (size_t i = 0; i < dims.size(); ++i) {
@@ -353,7 +354,8 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
 }
 
 
-DataView dataSlice(const DataArray &array, const std::vector<double> &start,
+DataView dataSlice(const DataArray &array,
+                   const std::vector<double> &start,
                    const std::vector<double> &end,
                    const std::vector<std::string> &units) {
     std::vector<double> my_start(start);
@@ -404,7 +406,8 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+vector<DataView> retrieveData(const MultiTag &tag,
+                              vector<ndsize_t> &position_indices,
                               ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
     size_t ref_idx = check::fits_in_size_t(reference_index, "retrieveData() failed; reference_index > size_t.");
@@ -416,7 +419,8 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+vector<DataView> retrieveData(const MultiTag &tag,
+                              vector<ndsize_t> &position_indices,
                               const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
