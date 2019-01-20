@@ -378,6 +378,30 @@ vector<double> RangeDimensionHDF5::ticks() const {
 }
 
 
+vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
+    vector<double> ticks;
+    if (count > ticks.max_size()) {
+        throw nix::OutOfBounds("count exceeds the maximum size of std::vector!");
+    }
+    ticks.resize(count);
+
+    H5Group g = redirectGroup();
+    std::string dset_name = g.hasData("ticks") ? "ticks" : "data";
+    DataSet ds = g.openData(dset_name);
+    NDSize s = ds.size();
+    if (start > s[0] || count > s[0] || (start + count) > s[0]) {
+        throw nix::OutOfBounds("Access to RangeDimension::ticks: start is out of Bounds!");
+    }
+    h5x::DataType memType = data_type_to_h5_memtype(nix::DataType::Double);
+    DataSpace fileSpace, memSpace;
+    nix::NDSize offst(1, start);
+    nix::NDSize cnt(1, count);
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(cnt, offst);
+    ds.read(ticks.data(),  memType, memSpace, fileSpace);
+    return ticks;
+}
+
+
 void RangeDimensionHDF5::ticks(const vector<double> &ticks) {
     H5Group g = redirectGroup();
     if (!alias()) {

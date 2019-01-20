@@ -99,7 +99,7 @@ DimensionFS::DimensionFS(const bfs::path &loc, size_t index, FileMode mode)
     this->index(index);
 }
 
-DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode) 
+DimensionFS::DimensionFS(const std::string &loc, size_t index, FileMode mode)
 	: DimensionFS(bfs::path(loc), index, mode) {
 }
 
@@ -421,10 +421,26 @@ std::vector<double> RangeDimensionFS::ticks() const {
     } else {
         throw MissingAttr("ticks");
     }
-    */ // FIXME
+    */ // FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
     return ticks;
 }
 
+std::vector<double> RangeDimensionFS::ticks(ndsize_t start, size_t count) const {
+    std::vector<double> ticks;
+    /*
+    Group g = redirectGroup();
+    if (g.hasData("ticks")) {
+        g.getData("ticks", ticks);
+        return ticks;
+    } else if (g.hasData("data")) {
+        g.getData("data", ticks);
+        return ticks;
+    } else {
+        throw MissingAttr("ticks");
+    }
+    */ // FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
+    return ticks;
+}
 
 void RangeDimensionFS::ticks(const std::vector<double> &ticks) {
     /*
@@ -439,11 +455,10 @@ void RangeDimensionFS::ticks(const std::vector<double> &ticks) {
     } else {
         throw MissingAttr("ticks");
     }
-    */ //FIXME
+    */ //FIXME this needs to implemented once there is a dataset or equivalent in the FS backend
 }
 
 RangeDimensionFS::~RangeDimensionFS() {}
 
 } // ns nix::file
 } // ns nix
-

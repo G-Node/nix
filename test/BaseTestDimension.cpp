@@ -387,8 +387,7 @@ void BaseTestDimension::testRangeTicks() {
     CPPUNIT_ASSERT(rd.ticks().size() == ticks.size());
     std::vector<double> retrieved_ticks = rd.ticks();
     CPPUNIT_ASSERT(retrieved_ticks.size() == ticks.size());
-    for (
-        size_t i = 0; i < ticks.size(); i++) {
+    for (size_t i = 0; i < ticks.size(); i++) {
         CPPUNIT_ASSERT(ticks[i] == retrieved_ticks[i]);
     }
     CPPUNIT_ASSERT_THROW(rd.ticks(unordered_ticks), UnsortedTicks);
@@ -396,11 +395,22 @@ void BaseTestDimension::testRangeTicks() {
     rd.ticks(new_ticks);
     retrieved_ticks = rd.ticks();
     CPPUNIT_ASSERT(retrieved_ticks.size() == new_ticks.size());
-    for (
-        size_t i = 0; i < new_ticks.size(); i++) {
+    for (size_t i = 0; i < new_ticks.size(); i++) {
         CPPUNIT_ASSERT(new_ticks[i] == retrieved_ticks[i]);
     }
 
+    ticks.resize(100);
+    for (size_t i = 0; i < 100; ++i) {
+        ticks[i] = i * 3.14;
+    }
+    rd.ticks(ticks);
+    CPPUNIT_ASSERT(rd.ticks(0, 10).size() == 10);
+    CPPUNIT_ASSERT(rd.ticks(1, 99).size() == 99);
+    CPPUNIT_ASSERT(rd.ticks(10, 1)[0] == 10 * 3.14);
+    CPPUNIT_ASSERT(rd.ticks(20, 1)[0] == 20 * 3.14);
+
+    CPPUNIT_ASSERT_THROW(rd.ticks(0, ticks.size() + 10), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(rd.ticks(20, ticks.size() - 10), nix::OutOfBounds);
     data_array.deleteDimensions();
 }
 
@@ -470,8 +480,7 @@ void BaseTestDimension::testRangeDimAxis() {
 
     CPPUNIT_ASSERT_THROW(rd.axis(10), OutOfBounds);
     CPPUNIT_ASSERT_THROW(rd.axis(2, 10), OutOfBounds);
-
-    CPPUNIT_ASSERT_THROW(rd.axis(std::numeric_limits<size_t>::max(), static_cast<size_t>(1)), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(rd.axis(std::numeric_limits<ndsize_t>::max(), static_cast<size_t>(1)), OutOfBounds);
 }
 
 

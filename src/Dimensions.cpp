@@ -377,14 +377,8 @@ void RangeDimension::ticks(const std::vector<double> &ticks) {
 
 
 double RangeDimension::tickAt(const ndsize_t index) const {
-
-    size_t idx = check::fits_in_size_t(index, "Tick index exceeds memory (size larger than current system supports)");
-
-    vector<double> ticks = this->ticks();
-    if (idx >= ticks.size()) {
-        throw nix::OutOfBounds("RangeDimension::tickAt: Given index is out of bounds!", idx);
-    }
-    return ticks[idx];
+    vector<double> ticks = this->ticks(index, 1);
+    return ticks[0];
 }
 
 ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
@@ -438,22 +432,8 @@ std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::ve
 
 vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
-    size_t idx = check::fits_in_size_t(startIndex, "Axis start index exceeds memory (size larger than current system supports)");
-
-    vector<double> ticks = this->ticks();
-
-    size_t end;
-    if (nix_safe_add(cnt, idx, &end)) {
-        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex > ndsize_t");
-    }
-
-    if (end > ticks.size()) {
-        throw nix::OutOfBounds("RangeDimension::axis: Count + startIndex is invalid, reaches beyond the ticks stored in this dimension.");
-    }
-
-    vector<double>::const_iterator first = ticks.begin() + idx;
-    vector<double> axis(first, first + cnt);
-    return axis;
+    vector<double> ticks = this->ticks(startIndex, cnt);
+    return ticks;
 }
 
 
