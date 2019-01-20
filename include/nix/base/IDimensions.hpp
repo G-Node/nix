@@ -161,7 +161,7 @@ public:
     virtual std::vector<double> ticks() const = 0;
 
 
-    virtual std::vector<double> ticks(size_t start, size_t count) const = 0;
+    virtual std::vector<double> ticks(ndsize_t start, size_t count) const = 0;
 
 
     virtual void ticks(const std::vector<double> &ticks) = 0;

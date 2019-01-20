@@ -184,7 +184,7 @@ public:
     std::vector<double> ticks() const;
 
 
-    std::vector<double> ticks(size_t start, size_t count) const;
+    std::vector<double> ticks(ndsize_t start, size_t count) const;
 
 
     void ticks(const std::vector<double> &ticks);

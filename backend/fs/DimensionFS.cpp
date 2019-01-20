@@ -425,7 +425,7 @@ std::vector<double> RangeDimensionFS::ticks() const {
     return ticks;
 }
 
-std::vector<double> RangeDimensionFS::ticks(size_t start, size_t count) const {
+std::vector<double> RangeDimensionFS::ticks(ndsize_t start, size_t count) const {
     std::vector<double> ticks;
     /*
     Group g = redirectGroup();

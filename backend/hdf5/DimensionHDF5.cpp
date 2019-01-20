@@ -378,7 +378,7 @@ vector<double> RangeDimensionHDF5::ticks() const {
 }
 
 
-vector<double> RangeDimensionHDF5::ticks(size_t start, size_t count) const {
+vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
     vector<double> ticks;
     ticks.resize(count);
     H5Group g = redirectGroup();

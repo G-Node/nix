@@ -637,12 +637,12 @@ public:
      * values. This can be used to store data that is sampled at irregular
      * intervals.
      *
-     * @param start size_t the start index.
+     * @param start ndsize_t the start index.
      * @param count size_t the number of ticks to read.
      *
      * @return A vector with the ticks for the dimension.
      */
-    std::vector<double> ticks(size_t start, size_t count) const {
+    std::vector<double> ticks(ndsize_t start, size_t count) const {
         return backend()->ticks(start, count);
     }
 
