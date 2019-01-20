@@ -391,9 +391,9 @@ vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
     }
     h5x::DataType memType = data_type_to_h5_memtype(nix::DataType::Double);
     DataSpace fileSpace, memSpace;
-    nix::NDSize o(1, start);
-    nix::NDSize c(1, count);
-    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(c, o);
+    nix::NDSize offst(1, start);
+    nix::NDSize cnt(1, count);
+    std::tie(memSpace, fileSpace) = ds.offsetCount2DataSpaces(cnt, offst);
     ds.read(ticks.data(),  memType, memSpace, fileSpace);
     return ticks;
 }
