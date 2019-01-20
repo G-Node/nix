@@ -312,7 +312,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                                   std::vector<double> &ends, std::vector<std::string> &units) {
     std::vector<nix::Dimension> dims = array.dimensions();
     NDSize shape = array.dataExtent();
-    for (ndsize_t i = 0; i < dims.size(); ++i) {
+    for (size_t i = 0; i < dims.size(); ++i) {
         Dimension dim = dims[i];
         DimensionType dt = dim.dimensionType();
         if (dt == DimensionType::Sample) {
@@ -363,7 +363,7 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start,
     if (array == nix::none) {
         throw UninitializedEntity();
     }
-    size_t dim_count = array.dimensionCount();
+    ndsize_t dim_count = array.dimensionCount();
     if (start.size() > dim_count || end.size() > dim_count || units.size() > dim_count) {
         throw std::invalid_argument("More start/end/unit entries given than number of dimensions in the data!");
     }
