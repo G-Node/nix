@@ -380,6 +380,9 @@ vector<double> RangeDimensionHDF5::ticks() const {
 
 vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
     vector<double> ticks;
+    if (count > ticks.max_size()) {
+        throw nix::OutOfBounds("count exceeds the maximum size of std::vector!");
+    }
     ticks.resize(count);
 
     H5Group g = redirectGroup();
