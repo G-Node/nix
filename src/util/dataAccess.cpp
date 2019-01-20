@@ -344,7 +344,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                 starts.push_back(0.0);
             }
             if (i >= ends.size()) {
-                ends.push_back(shape[i]-1);
+                ends.push_back(static_cast<double>(shape[i]-1));
             }
             if (i >= units.size()) {
                 units.push_back("none");
