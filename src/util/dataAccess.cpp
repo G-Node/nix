@@ -15,6 +15,7 @@
 #include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <cfloat>
 
 #include <boost/optional.hpp>
 
@@ -344,6 +345,11 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                 starts.push_back(0.0);
             }
             if (i >= ends.size()) {
+                // TODO fix double cast for very large shapes
+                // issue might be theoretical, see https://github.com/G-Node/nix/issues/765
+                if (shape[i]-1 > pow(FLT_RADIX, std::numeric_limits<double>::digits)) {
+                    throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of precision. Please open an issue on github!");
+                }
                 ends.push_back(static_cast<double>(shape[i]-1));
             }
             if (i >= units.size()) {
