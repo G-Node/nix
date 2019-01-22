@@ -5,6 +5,10 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
 
 #include <iostream>
 #include <sstream>
@@ -25,12 +29,12 @@
 
 using namespace nix;
 
-
 void BaseTestDataAccess::testPositionToIndexRangeDimension() {
     std::string unit = "ms";
     std::string invalid_unit = "kV";
     std::string scaled_unit = "s";
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
+
     CPPUNIT_ASSERT(util::positionToIndex(1.0, unit, rangeDim) == 0);
     CPPUNIT_ASSERT(util::positionToIndex(8.0, unit, rangeDim) == 4);
     CPPUNIT_ASSERT(util::positionToIndex(0.001, scaled_unit, rangeDim) == 0);
@@ -141,6 +145,10 @@ void BaseTestDataAccess::testRetrieveData() {
     std::vector<DataView> slices = util::retrieveData(mtag2, temp, 0);
     CPPUNIT_ASSERT(slices.size() == mtag2.positions().dataExtent()[0]);
 
+    // old-style calls, deprecated
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, 0));
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, mtag2.references()[0]));
+
     slices = util::retrieveData(pointmtag, temp, 0);
     CPPUNIT_ASSERT(slices.size() == pointmtag.positions().dataExtent()[0]);
 
@@ -162,6 +170,7 @@ void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
+
     DataView times_view = util::retrieveData(times_tag, 0);
     data_size = times_view.dataExtent();
     std::vector<double> times(data_size.size());
@@ -169,6 +178,7 @@ void BaseTestDataAccess::testRetrieveData() {
     RangeDimension dim = times_tag.references()[0].dimensions()[0].asRangeDimension();
     CPPUNIT_ASSERT(data_size.size() == 1);
     CPPUNIT_ASSERT(data_size[0] == 77);
+
 }
 
 
@@ -277,7 +287,15 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(multi_tag.featureCount() == 3);
 
     // indexed feature
-    DataView data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    // read a single feature, old style function
+    DataView data_view = util::retrieveFeatureData(multi_tag, 1, 0);
+    CPPUNIT_ASSERT(data_view.dataExtent().size()  == 2);
+    CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 10);
+    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, 10, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(util::retrieveFeatureData(multi_tag, 1, index_feature));
+
+    // read feature data, multiple indices at once
+    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
 
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 2);
@@ -342,10 +360,15 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 3), nix::OutOfBounds);
 
     // test multiple positions
-    std::vector<DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
+    std::vector<nix::DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
     CPPUNIT_ASSERT(views.size() == 2);
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
+
+    // test positions without specifying
+    indices.clear();
+    views = util::retrieveFeatureData(multi_tag, indices, 0);
+    CPPUNIT_ASSERT(views.size() == multi_tag.positionCount());
 
     // clean up
     multi_tag.deleteFeature(index_feature.id());
@@ -494,9 +517,22 @@ void BaseTestDataAccess::testDataSlice() {
 
     // do the tests!
     nix::DataArray no_array;
-    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2, 3}), nix::UninitializedEntity);
 
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), std::invalid_argument);
+    // test incomplete information
+    nix::DataView view = util::dataSlice(oned_array, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == oned_array.dataExtent());
+    view = util::dataSlice(twod_array, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == twod_array.dataExtent());
+    view = util::dataSlice(twod_array2, {}, {}, {});
+    CPPUNIT_ASSERT(view.dataExtent() == twod_array2.dataExtent());
+    view = util::dataSlice(twod_array2, {0.0}, {9.0}, {"s"});
+    CPPUNIT_ASSERT(view.dataExtent()[1] == twod_array2.dataExtent()[1]);
+    view = util::dataSlice(twod_array2, {0.0, 0.0}, {9.0, 1000.}, {"s", "ms"});
+    CPPUNIT_ASSERT(view.dataExtent()[1] == (1/interval + 1));
+
+    // test scaling, exceptions etc.
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2, 3}), std::invalid_argument);
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
     CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
@@ -517,7 +553,12 @@ void BaseTestDataAccess::testDataSlice() {
     slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"});
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 10 && slice.dataExtent()[1] == 101);
 
+
     b.deleteDataArray(oned_array);
     b.deleteDataArray(twod_array);
     file.deleteBlock(b);
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

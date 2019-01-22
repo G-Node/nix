@@ -15,6 +15,7 @@
 #include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <cfloat>
 
 #include <boost/optional.hpp>
 
@@ -45,26 +46,6 @@ void scalePositions(const vector<double> &starts, const vector<double> &ends,
         scaled_starts[i] = starts[i] * scaling;
         scaled_ends[i] = ends[i] * scaling;
     }
-}
-
-
-ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
-    ndsize_t pos;
-    if (dimension.dimensionType() == DimensionType::Sample) {
-        SampledDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    } else if (dimension.dimensionType() == DimensionType::Set) {
-        SetDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    } else {
-        RangeDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, dim);
-    }
-
-    return pos;
 }
 
 
@@ -257,9 +238,11 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     vector<Dimension> dimensions = array.dimensions();
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
+
     for (size_t idx = 0; idx < indices.size(); ++idx) {
         temp_offset[0] = indices[idx];
         vector<double> offset, extent;
+
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
@@ -325,32 +308,87 @@ bool positionAndExtentInData(const DataArray &data, const NDSize &position, cons
 }
 
 
-DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
+void fillPositionsExtentsAndUnits(const DataArray &array,
+                                  std::vector<double> &starts,
+                                  std::vector<double> &ends,
+                                  std::vector<std::string> &units) {
+    std::vector<nix::Dimension> dims = array.dimensions();
+    NDSize shape = array.dataExtent();
+    for (size_t i = 0; i < dims.size(); ++i) {
+        Dimension dim = dims[i];
+        DimensionType dt = dim.dimensionType();
+        if (dt == DimensionType::Sample) {
+            SampledDimension sd = dim.asSampledDimension();
+            if (i >= starts.size()) {
+                starts.push_back(sd.offset() ? *sd.offset() : 0.0);
+            }
+            if (i >= ends.size()) {
+                ends.push_back(sd[shape[i]-1]);
+            }
+            if (i >= units.size()) {
+                units.push_back(sd.unit() ? *sd.unit() : "none");
+            }
+        } else if (dt == DimensionType::Range) {
+            RangeDimension rd = dim.asRangeDimension();
+            if (i >= starts.size()) {
+                starts.push_back(rd.axis(1, 0)[0]);
+            }
+            if (i >= ends.size()) {
+                ends.push_back(rd.axis(1, shape[i]-1)[0]);
+            }
+            if (i >= units.size()) {
+                units.push_back(rd.unit() ? *rd.unit() : "none");
+            }
+        } else if (dt == DimensionType::Set) {
+            SetDimension sd = dim.asSetDimension();
+            if (i >= starts.size()) {
+                starts.push_back(0.0);
+            }
+            if (i >= ends.size()) {
+                // TODO fix double cast for very large shapes
+                // issue might be theoretical, see https://github.com/G-Node/nix/issues/765
+                if (shape[i]-1 > pow(FLT_RADIX, std::numeric_limits<double>::digits)) {
+                    throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of precision. Please open an issue on github!");
+                }
+                ends.push_back(static_cast<double>(shape[i]-1));
+            }
+            if (i >= units.size()) {
+                units.push_back("none");
+            }
+        }
+    }
+}
+
+
+DataView dataSlice(const DataArray &array,
+                   const std::vector<double> &start,
+                   const std::vector<double> &end,
                    const std::vector<std::string> &units) {
+    std::vector<double> my_start(start);
+    std::vector<double> my_end(end);
+    std::vector<std::string> my_units(units);
+
     if (array == nix::none) {
         throw UninitializedEntity();
     }
-    if (start.size() == 0 || start.size() != end.size()) {
-        throw std::invalid_argument("Number of start entries does not match number of end entries.");
+    ndsize_t dim_count = array.dimensionCount();
+    if (start.size() > dim_count || end.size() > dim_count || units.size() > dim_count) {
+        throw std::invalid_argument("More start/end/unit entries given than number of dimensions in the data!");
     }
-    if (start.size() != array.dimensionCount()) {
-        throw std::invalid_argument("Number of start/end entries does not match dimensionality of the data.");
+    if (start.size() < dim_count || end.size() < dim_count || units.size() < dim_count) {
+        fillPositionsExtentsAndUnits(array, my_start, my_end, my_units);
     }
-    if (units.size() > 0 && units.size() != start.size()) {
-        throw std::invalid_argument("Number of units does not match dimensionality of the data.");
-    }
-    NDSize count(start.size(), 1), offset(start.size(), 0);
 
-    for (size_t i = 0; i < start.size(); i++) {
+    NDSize count(my_start.size(), 1), offset(my_start.size(), 0);
+    for (size_t i = 0; i < my_start.size(); i++) {
         Dimension dim = array.getDimension(i+1);
-        std::string unit = units.size() != 0 ? units[i] : "none";
-        if (unit.size() == 0) {
-            unit = "none";
-        }
-        if (start[i] > end[i]) {
+        if (my_start[i] > my_end[i]) {
             throw std::invalid_argument("Start position must not be larger than end position.");
         }
-        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({start[i]}, {end[i]}, {unit}, dim);
+        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({my_start[i]},
+                                                                             {my_end[i]},
+                                                                             {my_units[i]},
+                                                                             dim);
         offset[i] = indices[0].first;
         count[i] += indices[0].second - indices[0].first;
     }
@@ -374,7 +412,8 @@ DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataAr
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+vector<DataView> retrieveData(const MultiTag &tag,
+                              vector<ndsize_t> &position_indices,
                               ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
     size_t ref_idx = check::fits_in_size_t(reference_index, "retrieveData() failed; reference_index > size_t.");
@@ -386,7 +425,8 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+vector<DataView> retrieveData(const MultiTag &tag,
+                              vector<ndsize_t> &position_indices,
                               const DataArray &array) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
