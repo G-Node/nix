@@ -5,6 +5,10 @@
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted under the terms of the BSD License. See
 // LICENSE file in the root of the Project.
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
 
 #include <iostream>
 #include <sstream>
@@ -24,7 +28,6 @@
 #include "BaseTestDataAccess.hpp"
 
 using namespace nix;
-
 
 void BaseTestDataAccess::testPositionToIndexRangeDimension() {
     std::string unit = "ms";
@@ -555,3 +558,7 @@ void BaseTestDataAccess::testDataSlice() {
     b.deleteDataArray(twod_array);
     file.deleteBlock(b);
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
