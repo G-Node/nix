@@ -228,7 +228,7 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
 /**
  * @brief Retrieve the data tagged by position and extent of the Tag.
  *
- * @param tag                   The multi tag.
+ * @param tag                   The tag.
  * @param reference_index       The index of the reference of which data should be returned.
  *
  * @return nix::DataView containing the tagged data.
@@ -238,7 +238,7 @@ NIXAPI DataView taggedData(const Tag &tag, ndsize_t reference_index);
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
- * @param tag                   The multi tag.
+ * @param tag                   The Tag.
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by the position.
@@ -249,7 +249,7 @@ NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, ndsize_t reference_index
 /**
  * @brief Retrieve the data tagged by position and extent of the Tag.
  *
- * @param tag                   The multi tag.
+ * @param tag                   The tag.
  * @param array                 The referenced DataArray.
  *
  * @return nix::DataView containing the tagged data.
@@ -259,7 +259,7 @@ NIXAPI DataView taggedData(const Tag &tag, const DataArray &array);
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
- * @param tag                   The multi tag.
+ * @param tag                   The tag.
  * @param array                 The referenced DataArray.
  *
  * @return The data referenced by the position.
@@ -295,8 +295,30 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  * @param feature_index The index of the desired feature. Default is 0.
  *
  * @return The associated data.
+ * @deprecated This function has been deprecated! User featureData(Tag, ndsize_t) instead.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
+
+/**
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested
+ * @param feature_index The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView featureData(const Tag &tag, ndsize_t feature_index=0);
+
+/**
+ * @brief Retruns the feature data associated with a Tag.
+ *
+ * @param tag           The Tag whos feature data is requested.
+ * @param feature       The Feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ * @deprecated This function has been deprecated! User featureData(Tag, Feature) instead.
+ */
+NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
@@ -306,7 +328,7 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
+NIXAPI DataView featureData(const Tag &tag, const Feature &feature);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.

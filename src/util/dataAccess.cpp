@@ -496,11 +496,10 @@ DataView taggedData(const Tag &tag, const DataArray &array) {
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
+DataView featureData(const Tag &tag, const Feature &feature) {
     DataArray data = feature.data();
     if (data == none) {
         throw UninitializedEntity();
-        //return NDArray(nix::DataType::Float,{0});
     }
     if (feature.linkType() == LinkType::Tagged) {
         return taggedData(tag, data);
@@ -512,7 +511,12 @@ DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
+DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
+    return featureData(tag, feature);
+}
+
+
+DataView featureData(const Tag &tag, ndsize_t feature_index) {
     if (tag.featureCount() == 0) {
         throw OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -520,7 +524,12 @@ DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
-    return retrieveFeatureData(tag, feat);
+    return featureData(tag, feat);
+}
+
+
+DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
+    return featureData(tag, feature_index);
 }
 
 
