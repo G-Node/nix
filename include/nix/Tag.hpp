@@ -475,7 +475,7 @@ public:
         return taggedData(name_or_id);
     }
 
-    /**
+     /**
      * @brief Returns the data stored in the selected Feature.
      *
      * @param feature_index   The index of the requested feature.
@@ -483,7 +483,19 @@ public:
      * @return The data stored in the Feature.
      *
      */
-    DataView retrieveFeatureData(size_t feature_index) const;
+    DataView featureData(size_t feature_index) const;
+
+    /**
+     * @brief Returns the data stored in the selected Feature.
+     *
+     * @param feature_index   The index of the requested feature.
+     *
+     * @return The data stored in the Feature.
+     * @deprecated This function has been deprecated! Please use featureData(size_t) instead.
+     */
+    DEPRECATED DataView retrieveFeatureData(size_t feature_index) const {
+        return featureData(feature_index);
+    }
 
     /**
      * @brief Returns the data stored in the selected Feature.
@@ -494,7 +506,20 @@ public:
      * @return The data stored in the Feature.
      *
      */
-    DataView retrieveFeatureData(const std::string &name_or_id) const;
+    DataView featureData(const std::string &name_or_id) const;
+
+    /**
+     * @brief Returns the data stored in the selected Feature.
+     *
+     * @param name_or_id     The name or id of the feature or the DataArray stored
+     *                       in the feature.
+     *
+     * @return The data stored in the Feature.
+     * @deprecated This function has been deprecated. Pleas use featureData(std::string) instead.
+     */
+    DataView retrieveFeatureData(const std::string &name_or_id) const {
+        return featureData(name_or_id);
+    }
 
     //--------------------------------------------------
     // Other methods and functions

@@ -133,12 +133,12 @@ DataView Tag::taggedData(const std::string &name_or_id) const {
 }
 
 
-DataView Tag::retrieveFeatureData(size_t feature_index) const {
+DataView Tag::featureData(size_t feature_index) const {
     return util::retrieveFeatureData(*this, feature_index);
 }
 
 
-DataView Tag::retrieveFeatureData(const std::string &name_or_id) const {
+DataView Tag::featureData(const std::string &name_or_id) const {
     nix::Feature feature = backend()->getFeature(name_or_id);
     if (feature) {
         return util::retrieveFeatureData(*this, feature);
