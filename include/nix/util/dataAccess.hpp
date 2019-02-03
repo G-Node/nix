@@ -156,6 +156,52 @@ NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &sta
                           const std::vector<std::string> &units={});
 
 /**
+ * @brief Retrieve several data segments that are tagged by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indices      The indices of the positions.
+ * @param array                 The referenced DataArray.
+ *
+ * @return vector of nix::DataViews that contain the data tagged by the specified position indices.
+ */
+NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
+
+/**
+ * @brief Retrieve several data segments referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indices      The indices of the positions.
+ * @param array                 The referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
+ */
+NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
+
+/**
+ * @brief Retrieve several data segments that are tagged by the given positions and extents of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indices      The indices of the position.
+ * @param reference_index       The index of the referenced DataArray.
+ *
+ * @return vector of nix::DataViews containing the data tagged by the specified position indices.
+ */
+NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+
+/**
+ * @brief Retrieve several segments of data referenced by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indices      The indices of the position.
+ * @param reference_index       The index of the referenced DataArray.
+ *
+ * @return The data referenced by the specified indices, respectively their positions and extents.
+ * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, reference_index) instead.
+ */
+NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+
+/**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
  * @param tag                   The multi tag.
@@ -163,7 +209,7 @@ NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &sta
  * @param array                 The referenced DataArray.
  *
  * @return The data referenced by position and extent.
- * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
+ * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
 NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
 
@@ -175,33 +221,19 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by position and extent.
- * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
+ * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
 NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
 
-
 /**
- * @brief Retrieve several data segments referenced by the given position and extent of the MultiTag.
+ * @brief Retrieve the data tagged by position and extent of the Tag.
  *
  * @param tag                   The multi tag.
- * @param position_indices      The indices of the positions.
- * @param array                 The referenced DataArray.
+ * @param reference_index       The index of the reference of which data should be returned.
  *
- * @return The data referenced by the specified indices, respectively their positions and extents.
+ * @return nix::DataView containing the tagged data.
  */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
-
-/**
- * @brief Retrieve several segments of data referenced by the given position and extent of the MultiTag.
- *
- * @param tag                   The multi tag.
- * @param position_indices      The indices of the position.
- * @param reference_index       The index of the referenced DataArray.
- *
- * @return The data referenced by the specified indices, respectively their positions and extents.
- */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
-
+NIXAPI DataView taggedData(const Tag &tag, ndsize_t reference_index);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -210,8 +242,19 @@ NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsiz
  * @param reference_index       The index of the reference from which data should be returned.
  *
  * @return The data referenced by the position.
+ * @deprecated This function has been deprecated! Use taggedData(Tag, ndsize_t) instead.
  */
-NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, ndsize_t reference_index);
+
+/**
+ * @brief Retrieve the data tagged by position and extent of the Tag.
+ *
+ * @param tag                   The multi tag.
+ * @param array                 The referenced DataArray.
+ *
+ * @return nix::DataView containing the tagged data.
+ */
+NIXAPI DataView taggedData(const Tag &tag, const DataArray &array);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -220,9 +263,9 @@ NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
  * @param array                 The referenced DataArray.
  *
  * @return The data referenced by the position.
+ * @deprecated This function has been deprecated! Use taggedData(Tag, DataArray) instead.
  */
-NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
-
+NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, const DataArray &array);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
