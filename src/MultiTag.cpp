@@ -100,30 +100,30 @@ std::vector<DataArray> MultiTag::references(const util::Filter<DataArray>::type 
 }
 
 
-DataView MultiTag::retrieveData(size_t position_index, size_t reference_index) const {
+DataView MultiTag::taggedData(size_t position_index, size_t reference_index) const {
     std::vector<ndsize_t> indices(1, position_index);
-    return util::retrieveData(*this, indices, reference_index)[0];
+    return util::taggedData(*this, indices, reference_index)[0];
 }
 
 
-DataView MultiTag::retrieveData(size_t position_index, const std::string &name_or_id) const {
+DataView MultiTag::taggedData(size_t position_index, const std::string &name_or_id) const {
     std::vector<ndsize_t> indices(1, position_index);
-    std::vector<DataView> slices = retrieveData(indices, name_or_id);
+    std::vector<DataView> slices = taggedData(indices, name_or_id);
     if (slices.size() < 1)
-        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::retrieveData");
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at MultiTag::taggedData");
     return slices[0];
 }
 
 
-std::vector<DataView> MultiTag::retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
-    return util::retrieveData(*this, position_indices, reference_index);
+std::vector<DataView> MultiTag::taggedData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
+    return util::taggedData(*this, position_indices, reference_index);
 }
 
 
-std::vector<DataView> MultiTag::retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
+std::vector<DataView> MultiTag::taggedData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
     nix::DataArray array = backend()->getReference(name_or_id);
     if (array) {
-        return util::retrieveData(*this, position_indices, array);
+        return util::taggedData(*this, position_indices, array);
     } else {
         return std::vector<DataView>();
     }

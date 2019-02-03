@@ -431,7 +431,6 @@ public:
     //--------------------------------------------------
     // Methods for data retrieval
     //--------------------------------------------------
-
     /**
      * @brief Returns the data associated with a certain reference.
      *
@@ -440,7 +439,20 @@ public:
      *
      * @return the data
      */
-    DataView retrieveData(size_t reference_index) const;
+    DataView taggedData(size_t reference_index) const;
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param reference_index The index of the reference of which
+     *                        the data should be returned.
+     *
+     * @return the data
+     * @deprecated This function has been marked deprecated. Please use taggedData(size_t) instead.
+     */
+    DEPRECATED DataView retrieveData(size_t reference_index) const {
+        return taggedData(reference_index);
+    }
 
     /**
      * @brief Returns the data associated with a certain reference.
@@ -449,7 +461,19 @@ public:
      *
      * @return the data
      */
-    DataView retrieveData(const std::string &name_or_id) const;
+    DataView taggedData(const std::string &name_or_id) const;
+
+    /**
+     * @brief Returns the data associated with a certain reference.
+     *
+     * @param name_or_id      Name or id of the referenced dataArray.
+     *
+     * @return the data
+     * @deprecated This function has been deprecated. Please use taggedData(std::string) instead.
+     */
+    DEPRECATED DataView retrieveData(const std::string &name_or_id) const {
+        return taggedData(name_or_id);
+    }
 
     /**
      * @brief Returns the data stored in the selected Feature.

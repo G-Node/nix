@@ -118,17 +118,17 @@ bool Tag::deleteFeature(const Feature &feature) {
 }
 
 
-DataView Tag::retrieveData(size_t reference_index) const {
-    return util::retrieveData(*this, reference_index);
+DataView Tag::taggedData(size_t reference_index) const {
+    return util::taggedData(*this, reference_index);
 }
 
 
-DataView Tag::retrieveData(const std::string &name_or_id) const {
+DataView Tag::taggedData(const std::string &name_or_id) const {
     nix::DataArray array = backend()->getReference(name_or_id);
     if (array) {
-        return util::retrieveData(*this, array);
+        return util::taggedData(*this, array);
     } else {
-        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::retrieveData");
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::taggedData");
     }
 }
 
