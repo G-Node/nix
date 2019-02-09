@@ -533,7 +533,7 @@ DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
+DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
     size_t feat_idx = check::fits_in_size_t(feature_index, "retrieveFeatureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
@@ -541,33 +541,50 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsiz
 
     Feature feat = tag.getFeature(feat_idx);
     std::vector<ndsize_t> indices(1, position_index);
-    return retrieveFeatureData(tag, indices, feat)[0];
+    return featureData(tag, indices, feat)[0];
+}
+
+
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
+    return featureData(tag, position_index, feature_index);
+}
+
+
+DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+    std::vector<ndsize_t> indices(1, position_index);
+    std::vector<DataView> views = featureData(tag, indices, feature);
+    return views[0];
 }
 
 
 DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
-    std::vector<ndsize_t> indices(1, position_index);
-    std::vector<DataView> views = retrieveFeatureData(tag, indices, feature);
-    return views[0];
+    return featureData(tag, position_index, feature);
+}
+
+
+std::vector<DataView> featureData(const MultiTag &tag,
+                                  std::vector<ndsize_t> position_indices,
+                                  ndsize_t feature_index) {
+    size_t feat_idx = check::fits_in_size_t(feature_index,
+                                            "featureData() failed; feaure_index > size_t.");
+    if (feat_idx >= tag.featureCount()) {
+        throw OutOfBounds("Feature index out of bounds.", 0);
+    }
+    Feature feat = tag.getFeature(feat_idx);
+    return featureData(tag, position_indices, feat);
 }
 
 
 std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
                                           std::vector<ndsize_t> position_indices,
                                           ndsize_t feature_index) {
-    size_t feat_idx = check::fits_in_size_t(feature_index,
-                                            "retrieveFeatureData() failed; feaure_index > size_t.");
-    if (feat_idx >= tag.featureCount()) {
-        throw OutOfBounds("Feature index out of bounds.", 0);
-    }
-    Feature feat = tag.getFeature(feat_idx);
-    return retrieveFeatureData(tag, position_indices, feat);
+     return featureData(tag, position_indices, feature_index);
 }
 
 
-std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                          std::vector<ndsize_t> position_indices,
-                                          const Feature &feature) {
+std::vector<DataView> featureData(const MultiTag &tag,
+                                  std::vector<ndsize_t> position_indices,
+                                  const Feature &feature) {
     std::vector<DataView> views;
     DataArray data = feature.data();
     if (data == nix::none) {
@@ -612,6 +629,13 @@ std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
         }
     }
     return views;
+}
+
+
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                          std::vector<ndsize_t> position_indices,
+                                          const Feature &feature) {
+    return featureData(tag, position_indices, feature);
 }
 
 } // namespace util

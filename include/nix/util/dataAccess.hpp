@@ -338,8 +338,32 @@ NIXAPI DataView featureData(const Tag &tag, const Feature &feature);
  * @param feature_index  The index of the desired feature. Default is 0.
  *
  * @return The associated data.
+ * @deprecated This function has been deprecated! Use featureData(MultiTag, ndsize_t, feature_index) instead.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature_index  The index of the desired feature. Default is 0.
+ *
+ * @return The associated data.
+ */
+NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's position.
+ *
+ * @param tag            The MultiTag whos feature data is requested.
+ * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
+ * @param feature        The feature of which the tagged data is requested.
+ *
+ * @return The associated data.
+ * @deprecated This function has been deprecated! Use featureData(MultiTag, ndsize_t, Feature) instead.
+ */
+NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -350,8 +374,7 @@ NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
-
+NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
 
 /**
  * @brief Retruns the feature data associated with a MultiTag.
@@ -361,10 +384,37 @@ NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index
  * @param feature_index    The index of the desired feature. Default is 0.
  *
  * @return A vector of the associated data, may be empty.
+ * @deprecated This function has been deprecated! Use featureData(MultiTag, std::vector<ndsize_t>, ndsize_t) instead.
  */
-NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                 std::vector<ndsize_t> position_indices,
-                                                 ndsize_t feature_index = 0);
+NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                                            std::vector<ndsize_t> position_indices,
+                                                            ndsize_t feature_index = 0);
+/**
+ * @brief Retruns the feature data associated with a MultiTag.
+ *
+ * @param tag              The MultiTag whos feature data is requested
+ * @param position_indices A vector of position indices.
+ * @param feature_index    The index of the desired feature. Default is 0.
+ *
+ * @return A vector of the associated data, may be empty.
+ */
+NIXAPI std::vector<DataView> featureData(const MultiTag &tag,
+                                         std::vector<ndsize_t> position_indices,
+                                         ndsize_t feature_index = 0);
+
+/**
+ * @brief Returns the feature data associated with the given MuliTag's positions.
+ *
+ * @param tag              The MultiTag whos feature data is requested.
+ * @param position_indices A vector of position indices.
+ * @param feature          The feature of which the tagged data is requested.
+ *
+ * @return A vector of the associated data, may be empty.
+ * @deprecated This function has been deprecated! Use featureData(MultiTag, std::vector<ndsize_t>, Feature) instead.
+ */
+NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
+                                                            std::vector<ndsize_t> position_indices,
+                                                            const Feature &feature);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's positions.
@@ -375,9 +425,9 @@ NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
  *
  * @return A vector of the associated data, may be empty.
  */
-NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                 std::vector<ndsize_t> position_indices,
-                                                 const Feature &feature);
+NIXAPI std::vector<DataView> featureData(const MultiTag &tag,
+                                         std::vector<ndsize_t> position_indices,
+                                         const Feature &feature);
 
 } //namespace util
 } //namespace nix
