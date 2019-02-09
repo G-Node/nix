@@ -152,15 +152,15 @@ bool MultiTag::deleteFeature(const Feature &feature) {
 }
 
 
-DataView MultiTag::retrieveFeatureData(size_t position_index, size_t feature_index) const {
-    return util::retrieveFeatureData(*this, position_index, feature_index);
+DataView MultiTag::featureData(size_t position_index, size_t feature_index) const {
+    return util::featureData(*this, position_index, feature_index);
 }
 
 
-DataView MultiTag::retrieveFeatureData(size_t position_index, const std::string &name_or_id) const {
+DataView MultiTag::featureData(size_t position_index, const std::string &name_or_id) const {
     nix::Feature feature = backend()->getFeature(name_or_id);
     if (feature) {
-        return util::retrieveFeatureData(*this, position_index, feature);
+        return util::featureData(*this, position_index, feature);
     } else {
         throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at MultiTag::retrieveFeatureData");
     }

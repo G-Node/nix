@@ -134,16 +134,16 @@ DataView Tag::taggedData(const std::string &name_or_id) const {
 
 
 DataView Tag::featureData(size_t feature_index) const {
-    return util::retrieveFeatureData(*this, feature_index);
+    return util::featureData(*this, feature_index);
 }
 
 
 DataView Tag::featureData(const std::string &name_or_id) const {
     nix::Feature feature = backend()->getFeature(name_or_id);
     if (feature) {
-        return util::retrieveFeatureData(*this, feature);
+        return util::featureData(*this, feature);
     } else {
-        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::retrieveFeatureData");
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::featureData");
     }
 }
 
