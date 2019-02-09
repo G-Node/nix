@@ -201,18 +201,18 @@ void BaseTestDataAccess::testTagFeatureData() {
     Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
     Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
 
-    DataView data1 = util::retrieveFeatureData(pos_tag, 0);
-    DataView data2 = util::retrieveFeatureData(pos_tag, 1);
-    DataView data3 = util::retrieveFeatureData(pos_tag, 2);
+    DataView data1 = util::featureData(pos_tag, 0);
+    DataView data2 = util::featureData(pos_tag, 1);
+    DataView data3 = util::featureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data2.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
 
-    data1 = util::retrieveFeatureData(pos_tag, f1);
-    data2 = util::retrieveFeatureData(pos_tag, f2);
-    data3 = util::retrieveFeatureData(pos_tag, f3);
+    data1 = util::featureData(pos_tag, f1);
+    data2 = util::featureData(pos_tag, f2);
+    data3 = util::featureData(pos_tag, f3);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
@@ -221,9 +221,9 @@ void BaseTestDataAccess::testTagFeatureData() {
 
     // make tag pointing to a slice
     pos_tag.extent({2.0});
-    data1 = util::retrieveFeatureData(pos_tag, 0);
-    data2 = util::retrieveFeatureData(pos_tag, 1);
-    data3 = util::retrieveFeatureData(pos_tag, 2);
+    data1 = util::featureData(pos_tag, 0);
+    data2 = util::featureData(pos_tag, 1);
+    data3 = util::featureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data2.dataExtent().nelms() == 3);
@@ -295,7 +295,7 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT_NO_THROW(util::retrieveFeatureData(multi_tag, 1, index_feature));
 
     // read feature data, multiple indices at once
-    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    data_view = util::featureData(multi_tag, indices, 0)[0];
 
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 2);
@@ -311,7 +311,7 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(sum == 45);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    data_view = util::featureData(multi_tag, indices, 0)[0];
     sum = 0;
     for (size_t i = 0; i < data_view.dataExtent()[1]; ++i){
         offset[1] = i;
@@ -322,11 +322,11 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
     // untagged feature
     indices[0] = 0;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
+    data_view = util::featureData(multi_tag, indices, 2)[0];
     CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 100);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
+    data_view = util::featureData(multi_tag, indices, 2)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.nelms() == 100);
     sum = 0;
@@ -342,32 +342,32 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
     // tagged feature
     indices[0] = 0;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
+    data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    data_view = util::retrieveFeatureData(multi_tag, indices, tagged_feature)[0];
+    data_view = util::featureData(multi_tag, indices, tagged_feature)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
+    data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
     indices[0] = 2;
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 3), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::featureData(multi_tag, indices, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::featureData(multi_tag, indices, 3), nix::OutOfBounds);
 
     // test multiple positions
-    std::vector<nix::DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
+    std::vector<nix::DataView> views = util::featureData(multi_tag, {0, 1}, 0);
     CPPUNIT_ASSERT(views.size() == 2);
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
 
     // test positions without specifying
     indices.clear();
-    views = util::retrieveFeatureData(multi_tag, indices, 0);
+    views = util::featureData(multi_tag, indices, 0);
     CPPUNIT_ASSERT(views.size() == multi_tag.positionCount());
 
     // clean up
