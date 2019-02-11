@@ -118,32 +118,32 @@ bool Tag::deleteFeature(const Feature &feature) {
 }
 
 
-DataView Tag::retrieveData(size_t reference_index) const {
-    return util::retrieveData(*this, reference_index);
+DataView Tag::taggedData(size_t reference_index) const {
+    return util::taggedData(*this, reference_index);
 }
 
 
-DataView Tag::retrieveData(const std::string &name_or_id) const {
+DataView Tag::taggedData(const std::string &name_or_id) const {
     nix::DataArray array = backend()->getReference(name_or_id);
     if (array) {
-        return util::retrieveData(*this, array);
+        return util::taggedData(*this, array);
     } else {
-        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::retrieveData");
+        throw std::invalid_argument("There is no DataArray with the specified name or id! Evoked at Tag::taggedData");
     }
 }
 
 
-DataView Tag::retrieveFeatureData(size_t feature_index) const {
-    return util::retrieveFeatureData(*this, feature_index);
+DataView Tag::featureData(size_t feature_index) const {
+    return util::featureData(*this, feature_index);
 }
 
 
-DataView Tag::retrieveFeatureData(const std::string &name_or_id) const {
+DataView Tag::featureData(const std::string &name_or_id) const {
     nix::Feature feature = backend()->getFeature(name_or_id);
     if (feature) {
-        return util::retrieveFeatureData(*this, feature);
+        return util::featureData(*this, feature);
     } else {
-        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::retrieveFeatureData");
+        throw std::invalid_argument("There is no Feature with the specified name or id! Evoked at Tag::featureData");
     }
 }
 

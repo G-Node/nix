@@ -7,6 +7,10 @@
 // LICENSE file in the root of the Project.
 //
 // Author: Jan Grewe <jan.grewe@g-node.org>
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4996)
+#endif
 
 #include <sstream>
 #include <ctime>
@@ -379,3 +383,7 @@ void BaseTestTag::testCreatedAt() {
 void BaseTestTag::testUpdatedAt() {
     CPPUNIT_ASSERT(tag.updatedAt() >= startup_time);
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

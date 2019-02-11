@@ -358,7 +358,20 @@ public:
      *
      * @return the requested data.
      */
-    DataView retrieveData(size_t position_index, size_t reference_index) const;
+    DataView taggedData(size_t position_index, size_t reference_index) const;
+
+    /**
+     * @brief Retrieves the data slice tagged by a certain position and extent
+     *        of a certain reference.
+     *
+     * @param position_index the index of the requested position.
+     * @param reference_index the index of the requested reference.
+     *
+     * @return the requested data.
+     */
+    DEPRECATED DataView retrieveData(size_t position_index, size_t reference_index) const {
+        return taggedData(position_index, reference_index);
+    }
 
     /*
      * @brief Retrieves multiple tagged data slices from a certain reference.
@@ -371,7 +384,35 @@ public:
      *
      * @return vector of DataView objects representing the slices.
      */
-    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
+    std::vector<DataView> taggedData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const;
+
+    /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param reference_index the index of the requested reference.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    DEPRECATED std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, ndsize_t reference_index) const {
+        return taggedData(position_indices, reference_index);
+    }
+
+    /*
+     * @brief Retrieves multiple tagged data slices from a certain reference.
+     *
+     * Depending on the dimensionality of the data this function is much more efficient
+     * than retrieving slices separately.
+     *
+     * @param position_indices: vector of indices.
+     * @param name_or_id the name or the id of the requested DataArray.
+     *
+     * @return vector of DataView objects representing the slices.
+     */
+    std::vector<DataView> taggedData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
 
      /*
      * @brief Retrieves multiple tagged data slices from a certain reference.
@@ -384,7 +425,9 @@ public:
      *
      * @return vector of DataView objects representing the slices.
      */
-    std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const;
+    DEPRECATED std::vector<DataView> retrieveData(std::vector<ndsize_t> &position_indices, const std::string &name_or_id) const {
+        return taggedData(position_indices, name_or_id);
+    }
 
      /**
      * @brief Retrieves the data slice tagged by a certain position and extent
@@ -395,7 +438,20 @@ public:
      *
      * @return the requested data.
      */
-    DataView retrieveData(size_t position_index, const std::string &name_or_id) const;
+    DataView taggedData(size_t position_index, const std::string &name_or_id) const;
+
+     /**
+     * @brief Retrieves the data slice tagged by a certain position and extent
+     *        of a certain reference.
+     *
+     * @param position_index      The index of the requested position.
+     * @param name_or_id          The name or id of the requested DataArray.
+     *
+     * @return the requested data.
+     */
+    DataView retrieveData(size_t position_index, const std::string &name_or_id) const {
+        return taggedData(position_index, name_or_id);
+    }
 
     //--------------------------------------------------
     // Methods concerning features.
@@ -518,7 +574,21 @@ public:
      *
      * @return The data
      */
-    DataView retrieveFeatureData(size_t position_index, size_t feature_index) const;
+    DataView featureData(size_t position_index, size_t feature_index) const;
+
+    /**
+     * @brief Retrieves the data stored in a feature related to a certain
+     *        position of this tag.
+     *
+     * @param position_index The index of the requested position
+     * @param feature_index The index of the selected feature
+     *
+     * @return The data
+     * @deprecated This function has been deprecated. Use featureData(size_t, size_t) instead.
+     */
+    DEPRECATED DataView retrieveFeatureData(size_t position_index, size_t feature_index) const {
+        return featureData(position_index, feature_index);
+    }
 
     /**
      * @brief Retrieves the data stored in a feature related to a certain
@@ -529,7 +599,21 @@ public:
      *
      * @return The data
      */
-    DataView retrieveFeatureData(size_t position_index, const std::string &name_or_id) const;
+    DataView featureData(size_t position_index, const std::string &name_or_id) const;
+
+    /**
+     * @brief Retrieves the data stored in a feature related to a certain
+     *        position of this tag.
+     *
+     * @param position_index The index of the requested position.
+     * @param name_or_id     The name or id of the feature that is requested.
+     *
+     * @return The data
+     * @deprecated This function has been deprecated! Use featureData(size_t, std::string) instead.
+     */
+    DEPRECATED DataView retrieveFeatureData(size_t position_index, const std::string &name_or_id) const {
+        return featureData(position_index, name_or_id);
+    }
 
     //------------------------------------------------------
     // Operators and other functions

@@ -131,25 +131,25 @@ void BaseTestDataAccess::testPositionInData() {
 
 void BaseTestDataAccess::testRetrieveData() {
     std::vector<ndsize_t> position_indices(1, 0);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::taggedData(multi_tag, position_indices, 1), nix::OutOfBounds);
 
     position_indices[0] = 10;
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::taggedData(multi_tag, position_indices, 0), nix::OutOfBounds);
 
     position_indices[0] = 0;
     std::vector<DataView> views;
-    views = util::retrieveData(multi_tag, position_indices, 0);
+    views = util::taggedData(multi_tag, position_indices, 0);
     CPPUNIT_ASSERT(views.size() == 1);
 
     std::vector<ndsize_t> temp;
-    std::vector<DataView> slices = util::retrieveData(mtag2, temp, 0);
+    std::vector<DataView> slices = util::taggedData(mtag2, temp, 0);
     CPPUNIT_ASSERT(slices.size() == mtag2.positions().dataExtent()[0]);
 
     // old-style calls, deprecated
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, 0));
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, mtag2.references()[0]));
 
-    slices = util::retrieveData(pointmtag, temp, 0);
+    slices = util::taggedData(pointmtag, temp, 0);
     CPPUNIT_ASSERT(slices.size() == pointmtag.positions().dataExtent()[0]);
 
     DataView data_view = views[0];
@@ -158,20 +158,20 @@ void BaseTestDataAccess::testRetrieveData() {
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
     position_indices[0] = 1;
-    CPPUNIT_ASSERT_THROW(util::retrieveData(multi_tag, position_indices, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::taggedData(multi_tag, position_indices, 0), nix::OutOfBounds);
 
-    data_view = util::retrieveData(position_tag, 0);
+    data_view = util::taggedData(position_tag, 0);
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1);
 
-    data_view = util::retrieveData(segment_tag, 0);
+    data_view = util::taggedData(segment_tag, 0);
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
 
-    DataView times_view = util::retrieveData(times_tag, 0);
+    DataView times_view = util::taggedData(times_tag, 0);
     data_size = times_view.dataExtent();
     std::vector<double> times(data_size.size());
     times_view.getData(times);
@@ -201,18 +201,18 @@ void BaseTestDataAccess::testTagFeatureData() {
     Feature f2 = pos_tag.createFeature(ramp_feat, nix::LinkType::Tagged);
     Feature f3 = pos_tag.createFeature(ramp_feat, nix::LinkType::Untagged);
 
-    DataView data1 = util::retrieveFeatureData(pos_tag, 0);
-    DataView data2 = util::retrieveFeatureData(pos_tag, 1);
-    DataView data3 = util::retrieveFeatureData(pos_tag, 2);
+    DataView data1 = util::featureData(pos_tag, 0);
+    DataView data2 = util::featureData(pos_tag, 1);
+    DataView data3 = util::featureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data2.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
 
-    data1 = util::retrieveFeatureData(pos_tag, f1);
-    data2 = util::retrieveFeatureData(pos_tag, f2);
-    data3 = util::retrieveFeatureData(pos_tag, f3);
+    data1 = util::featureData(pos_tag, f1);
+    data2 = util::featureData(pos_tag, f2);
+    data3 = util::featureData(pos_tag, f3);
 
     CPPUNIT_ASSERT(pos_tag.featureCount() == 3);
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
@@ -221,9 +221,9 @@ void BaseTestDataAccess::testTagFeatureData() {
 
     // make tag pointing to a slice
     pos_tag.extent({2.0});
-    data1 = util::retrieveFeatureData(pos_tag, 0);
-    data2 = util::retrieveFeatureData(pos_tag, 1);
-    data3 = util::retrieveFeatureData(pos_tag, 2);
+    data1 = util::featureData(pos_tag, 0);
+    data2 = util::featureData(pos_tag, 1);
+    data3 = util::featureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
     CPPUNIT_ASSERT(data2.dataExtent().nelms() == 3);
@@ -295,7 +295,7 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT_NO_THROW(util::retrieveFeatureData(multi_tag, 1, index_feature));
 
     // read feature data, multiple indices at once
-    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    data_view = util::featureData(multi_tag, indices, 0)[0];
 
     NDSize data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 2);
@@ -311,7 +311,7 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     CPPUNIT_ASSERT(sum == 45);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 0)[0];
+    data_view = util::featureData(multi_tag, indices, 0)[0];
     sum = 0;
     for (size_t i = 0; i < data_view.dataExtent()[1]; ++i){
         offset[1] = i;
@@ -322,11 +322,11 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
     // untagged feature
     indices[0] = 0;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
+    data_view = util::featureData(multi_tag, indices, 2)[0];
     CPPUNIT_ASSERT(data_view.dataExtent().nelms() == 100);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 2)[0];
+    data_view = util::featureData(multi_tag, indices, 2)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.nelms() == 100);
     sum = 0;
@@ -342,32 +342,32 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
     // tagged feature
     indices[0] = 0;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
+    data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
-    data_view = util::retrieveFeatureData(multi_tag, indices, tagged_feature)[0];
+    data_view = util::featureData(multi_tag, indices, tagged_feature)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
     indices[0] = 1;
-    data_view = util::retrieveFeatureData(multi_tag, indices, 1)[0];
+    data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
 
     indices[0] = 2;
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::retrieveFeatureData(multi_tag, indices, 3), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::featureData(multi_tag, indices, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::featureData(multi_tag, indices, 3), nix::OutOfBounds);
 
     // test multiple positions
-    std::vector<nix::DataView> views = util::retrieveFeatureData(multi_tag, {0, 1}, 0);
+    std::vector<nix::DataView> views = util::featureData(multi_tag, {0, 1}, 0);
     CPPUNIT_ASSERT(views.size() == 2);
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
     CPPUNIT_ASSERT(views[0].dataExtent() == NDSize({1, 10}));
 
     // test positions without specifying
     indices.clear();
-    views = util::retrieveFeatureData(multi_tag, indices, 0);
+    views = util::featureData(multi_tag, indices, 0);
     CPPUNIT_ASSERT(views.size() == multi_tag.positionCount());
 
     // clean up
@@ -387,11 +387,11 @@ void BaseTestDataAccess::testMultiTagUnitSupport() {
     testTag.units(valid_units);
     testTag.addReference(data_array);
     position_indices[0] = 0;
-    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
+    CPPUNIT_ASSERT_NO_THROW(util::taggedData(testTag, position_indices, 0));
     testTag.units(none);
-    CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
+    CPPUNIT_ASSERT_NO_THROW(util::taggedData(testTag, position_indices, 0));
     testTag.units(invalid_units);
-    CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, position_indices, 0), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::taggedData(testTag, position_indices, 0), nix::IncompatibleDimensions);
 }
 
 

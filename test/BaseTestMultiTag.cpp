@@ -372,22 +372,22 @@ void BaseTestMultiTag::testDataAccess() {
     multi_tag.extents(extent_array);
     multi_tag.addReference(data_array);
 
-    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, -1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(0, 1), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(-1, 0), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(10, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.taggedData(0, -1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.taggedData(0, 1), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.taggedData(-1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.taggedData(10, 0), nix::OutOfBounds);
 
-    DataView ret_data = multi_tag.retrieveData(0, 0);
+    DataView ret_data = multi_tag.taggedData(0, 0);
     NDSize data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
-    ret_data = multi_tag.retrieveData(0, data_array.name());
+    ret_data = multi_tag.taggedData(0, data_array.name());
     data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
 
-    CPPUNIT_ASSERT_THROW(multi_tag.retrieveData(1, 0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(multi_tag.taggedData(1, 0), nix::OutOfBounds);
 
     block.deleteMultiTag(multi_tag);
     block.deleteDataArray(data_array);
