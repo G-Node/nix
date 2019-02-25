@@ -202,6 +202,17 @@ NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_
 NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
 
 /**
+ * @brief Retrieve the data tagged by the given position and extent of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indice       The index of the position, extent.
+ * @param reference_index       The index of the referenced DataArray.
+ *
+ * @return nix::DataView containing the data tagged by the specified position index.
+ */
+NIXAPI DataView taggedData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
+
+/**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
  *
  * @param tag                   The multi tag.

@@ -430,6 +430,12 @@ vector<DataView> taggedData(const MultiTag &tag,
     return taggedData(tag, position_indices, refs[ref_idx]);
 }
 
+DataView taggedData(const MultiTag &tag,
+                    ndsize_t position_index,
+                    ndsize_t reference_index) {
+    std::vector<ndsize_t> position_indices(1, position_index);
+    return taggedData(tag, position_indices, reference_index)[0];
+}
 
 vector<DataView> taggedData(const MultiTag &tag,
                             vector<ndsize_t> &position_indices,
