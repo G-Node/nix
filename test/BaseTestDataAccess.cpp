@@ -140,6 +140,8 @@ void BaseTestDataAccess::testRetrieveData() {
     std::vector<DataView> views;
     views = util::taggedData(multi_tag, position_indices, 0);
     CPPUNIT_ASSERT(views.size() == 1);
+    nix::DataView v = util::taggedData(multi_tag, 0, 0);
+    CPPUNIT_ASSERT_EQUAL(v.dataExtent(), views[0].dataExtent());
 
     std::vector<ndsize_t> temp;
     std::vector<DataView> slices = util::taggedData(mtag2, temp, 0);
