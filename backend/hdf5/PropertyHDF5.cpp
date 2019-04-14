@@ -442,6 +442,7 @@ Variant valueToVariant(const Value &val) {
      default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
      }
+     return Variant();
 }
 
 std::vector<Value> PropertyHDF5::readOldstyleValues() const {
@@ -478,7 +479,7 @@ std::vector<Variant> PropertyHDF5::values(void) const
 {
     std::vector<Variant> values;
     nix::FormatVersion ver(this->entity_file->version());
-    if ( ver < nix::FormatVersion({1, 1, 1})) {
+    if (ver < nix::FormatVersion({1, 1, 1})) {
         for (Value v : readOldstyleValues()) {
             values.push_back(valueToVariant(v));
         }

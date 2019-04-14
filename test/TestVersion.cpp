@@ -74,5 +74,5 @@ void TestVersion::testToVector() {
     std::vector<int> v = fmtv.asVector();
     CPPUNIT_ASSERT(v.size() == 3);
     for (size_t i = 0; i < v.size(); ++i)
-        CPPUNIT_ASSERT(v[i] == i);
+        CPPUNIT_ASSERT(v[i] == (int)i);
 }
