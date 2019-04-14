@@ -33,6 +33,7 @@ private:
     Compression compr;
     H5Group root, metadata, data;
     FileMode mode;
+    FormatVersion file_format_version;
 
 public:
 
@@ -153,10 +154,10 @@ private:
     void openRoot();
 
 
-    bool checkHeader(FileMode mode) const;
+    bool checkHeader(FileMode mode);
 
 
-    void createHeader() const;
+    void createHeader();
 };
 
 
