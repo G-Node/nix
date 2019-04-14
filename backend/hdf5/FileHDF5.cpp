@@ -70,11 +70,10 @@ FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression, O
     }
 
     openRoot();
-
     if (is_create) {
         createHeader();
-    } else if (!checkHeader(mode) && (flags & OpenFlags::Force) != OpenFlags::Force) {
-        throw nix::InvalidFile("FileHDF5::open_existing!");
+    } else {
+        checkHeader(mode, (flags & OpenFlags::Force) != OpenFlags::Force);
     }
 
     metadata = root.openGroup("metadata");
@@ -333,30 +332,47 @@ shared_ptr<base::IFile> FileHDF5::file() const {
 }
 
 
-bool FileHDF5::checkHeader(FileMode mode) {
+bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
     bool check = true;
     vector<int> vv;
     string str;
+    std::stringstream message;
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
             check = false;
+            message << "File is not a valid NIX file, format mismatch!";
         }
     } else {
         check = false;
+        message << "File is not a valid NIX file, format attribute missing!";
     }
     if (check && root.hasAttr("version")) {
         if (!root.getAttr("version", vv)) {
             check = false;
+            message << "File is not a valid NIX file, could not read version attribute!";
         } else {
             file_format_version = FormatVersion(vv);
             if (mode == FileMode::ReadWrite) {
                 check = my_version.canWrite(file_format_version);
+                if (!check) {
+                    message << "Cannot open file for ReadWrite access, format mismatch! ";
+                    message << "API: " << my_version << ", File: " << file_format_version;
+                    message << (". ReadOnly access might work.");
+                }
             } else {
                 check = my_version.canRead(file_format_version);
+                if (!check) {
+                    message << "Cannot open file for Read access, format mismatch! ";
+                    message << "API: " << my_version << ", File: " << file_format_version;
+                }
             }
         }
     } else {
         check = false;
+        message << "File is not a valid NIX file, version attribute missing!";
+    }
+    if (!check && throw_error) {
+        throw nix::InvalidFile(message.str());
     }
     return check;
 }
