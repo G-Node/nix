@@ -1,7 +1,10 @@
 language: cpp
 
 sudo: required
-dist: trusty
+dist: xenial
+
+services:
+  - docker
 
 compiler:
   - gcc
@@ -21,40 +24,42 @@ matrix:
       compiler: gcc
 
 before_install:
-  - if [[ "$CXX" == "g++" ]];
+  - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
-       pip install --upgrade pip;
-       export CTEST_ARGS=-V;
-       pip install --user cpp-coveralls;
-    else
+       export CC=clang;
+       export CXX=clang++;
        export CTEST_ARGS=-VV;
-    fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    sudo apt-get update -qq;
-    sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 -y;
-    sudo apt-get install libyaml-cpp-dev -y;
-    fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-    brew update;
-    brew install cmake boost cppunit hdf5 yaml-cpp;
-    brew --env;
-    fi
-  - if [ "$CXX" == "g++" ]; then
-    g++ --version;
-    else clang --version;
+    elif [[ "$CXX" == "g++" ]];
+    then
+       export CC=gcc-8;
+       export CXX=g++-8;
+       export CTEST_ARGS=-V;
+    else
+       export CC=clang-7;
+       export CXX=clang++-7;
+       export CTEST_ARGS=-VV;
     fi
 
 install:
-  - if [ "$CXX" == "g++" ]; then
-    export CXX="g++-4.8";
-    export COMPILER="g++";
-    $CXX --version;
-    else
-    clang --version;
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      ./contrib/make-env.sh /tmp/docker.env;
+      docker build -t nix-ub1804 -f ./contrib/Dockerfile-ub1804 .;
+    elif [ "$TRAVIS_OS_NAME" == "osx" ];
+    then
+      brew update;
+      brew install cmake boost cppunit hdf5 yaml-cpp;
+      brew --env;
     fi
 
 script:
-  - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      docker run --env-file /tmp/docker.env -e -t -v `pwd`:/src nix-ub1804 /bin/bash -c "ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;";
+    else
+      $CXX --version;
+      ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    fi
 
 after_success:
   - if [[ "$COMPILER" == "g++" ]]; then

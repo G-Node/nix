@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo "usage: $0 FILE "
+    exit 1
+fi
+
+cat > "$1" <<EOF
+# Travis variables
+TRAVIS_BUILD_DIR=/src
+TRAVIS_BRANCH=${TRAVIS_BRANCH}
+TRAVIS_COMMIT=${TRAVIS_COMMIT}
+TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST}
+TRAVIS_OS_NAME=${TRAVIS_OS_NAME}
+TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+
+# Compiler
+CC=${CC}
+CXX=${CXX}
+
+# Our stuff
+FS_BACKEND=${FS_BACKEND}
+
+EOF
