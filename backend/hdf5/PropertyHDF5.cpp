@@ -424,8 +424,7 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
 }
 
 
-std::vector<Variant> PropertyHDF5::readOldstyleValues() const {
-    std::vector<Variant> vals;
+std::vector<Value> PropertyHDF5::readOldstyleValues() const {
     std::vector<Value> values;
 
     DataSet dset = dataset();
@@ -433,7 +432,7 @@ std::vector<Variant> PropertyHDF5::readOldstyleValues() const {
     NDSize shape = dset.size();
 
     if (shape.size() < 1 || shape[0] < 1) {
-        return vals;
+        return values;
     }
 
     assert(shape.size() == 1);
@@ -451,21 +450,7 @@ std::vector<Variant> PropertyHDF5::readOldstyleValues() const {
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
-    for (Value v : values) {
-        switch (v.type()) {
-        case DataType::Bool:   vals.push_back(Variant(v.get<bool>()));        break;
-        case DataType::Int32:  vals.push_back(Variant(v.get<int32_t>()));     break;
-        case DataType::UInt32: vals.push_back(Variant(v.get<uint32_t>()));    break;
-        case DataType::Int64:  vals.push_back(Variant(v.get<int64_t>()));     break;
-        case DataType::UInt64: vals.push_back(Variant(v.get<uint64_t>()));    break;
-        case DataType::String: vals.push_back(Variant(v.get<std::string>())); break;
-        case DataType::Double: vals.push_back(Variant(v.get<double>()));      break;
-#ifndef CHECK_SUPOORTED_VALUES
-        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
-#endif
-        }
-    }
-    return vals;
+    return values;
 }
 
 
