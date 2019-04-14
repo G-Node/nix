@@ -40,12 +40,14 @@ public:
 
     void testFormatVersion();
     void testAPIVersion();
+    void testToVector();
 
 private:
 
     CPPUNIT_TEST_SUITE(TestVersion);
     CPPUNIT_TEST(testFormatVersion);
     CPPUNIT_TEST(testAPIVersion);
+    CPPUNIT_TEST(testToVector);
     CPPUNIT_TEST_SUITE_END ();
 
 };

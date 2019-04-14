@@ -16,12 +16,12 @@
 namespace nix {
 /**
  * @brief Returns the version of the library.
- * 
+ *
  * @return the version as a vector<int> in the order major, minor, patch
  */
 NIXAPI std::vector<int> apiVersion();
 
-    
+
 class FormatVersion {
 public:
 
@@ -55,6 +55,11 @@ public:
     // exact match for x and, be the same or newer
     // in y
     return vx == thefile.x() && vy >= thefile.y();
+  }
+
+  std::vector<int> asVector() const {
+      std::vector<int> vec = {x(), y(), z()};
+      return vec;
   }
 
   // operators
