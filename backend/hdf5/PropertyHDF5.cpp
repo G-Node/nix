@@ -296,7 +296,7 @@ h5x::DataType h5_type_for_old_value(bool for_memory)
 
 
 #if 0 //set to one to check that all supported DataTypes are handled
-#define CHECK_SUPOORTED_VALUES
+#define CHECK_SUPPORTED_VALUES
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 
@@ -312,7 +312,7 @@ h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
         case DataType::UInt64: return h5_type_for_value<uint64_t>(for_memory);
         case DataType::Double: return h5_type_for_value<double>(for_memory);
         case DataType::String: return h5_type_for_value<char *>(for_memory);
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); break;
 #endif
     }
@@ -423,7 +423,7 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
         case DataType::UInt64: do_write_value<uint64_t>(dset, values);     break;
         case DataType::String: do_write_value<const char *>(dset, values); break;
         case DataType::Double: do_write_value<double>(dset, values);       break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
      }
@@ -432,13 +432,13 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
 Variant valueToVariant(const Value &val) {
      switch (val.type()) {
      case DataType::Bool:   return Variant(val.get<bool>());
-     case DataType::Int32:   return Variant(val.get<int32_t>());
+     case DataType::Int32:  return Variant(val.get<int32_t>());
      case DataType::UInt32: return Variant(val.get<uint32_t>());
      case DataType::Int64:  return Variant(val.get<int64_t>());
      case DataType::UInt64: return Variant(val.get<uint64_t>());
      case DataType::String: return Variant(val.get<std::string>());
      case DataType::Double: return Variant(val.get<double>());
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
      default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
      }
@@ -466,7 +466,7 @@ std::vector<Value> PropertyHDF5::readOldstyleValues() const {
         case DataType::UInt64: do_read_old_value<uint64_t>(dset, nvalues, values); break;
         case DataType::String: do_read_old_value<char *>(dset, nvalues, values);   break;
         case DataType::Double: do_read_old_value<double>(dset, nvalues, values);   break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
@@ -502,7 +502,7 @@ std::vector<Variant> PropertyHDF5::values(void) const
         case DataType::UInt64: do_read_value<uint64_t>(dset, nvalues, values); break;
         case DataType::String: do_read_value<char *>(dset, nvalues, values);   break;
         case DataType::Double: do_read_value<double>(dset, nvalues, values);   break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
