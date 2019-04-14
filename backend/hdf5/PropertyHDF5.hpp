@@ -135,6 +135,8 @@ private:
         return entity_dataset;
     }
 
+    std::vector<Variant> readOldstyleValues() const;
+
 };
 
 
