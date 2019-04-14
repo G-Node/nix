@@ -200,7 +200,13 @@ void PropertyHDF5::uncertainty(double uncertainty) {
 boost::optional<double> PropertyHDF5::uncertainty() const {
     boost::optional<double> ret;
     double error;
-    if (dataset().getAttr("uncertainty", error)) {
+    nix::FormatVersion ver(this->entity_file->version());
+    if ( ver < nix::FormatVersion({1, 1, 1})) {
+        std::vector<Value> values = readOldstyleValues();
+        if (values.size() > 0)
+            ret = values[0].uncertainty;
+    }
+    else if (dataset().getAttr("uncertainty", error)) {
         ret = error;
     }
     return ret;
@@ -423,6 +429,20 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
      }
 }
 
+Variant valueToVariant(const Value &val) {
+     switch (val.type()) {
+     case DataType::Bool:   return Variant(val.get<bool>());
+     case DataType::Int32:   return Variant(val.get<int32_t>());
+     case DataType::UInt32: return Variant(val.get<uint32_t>());
+     case DataType::Int64:  return Variant(val.get<int64_t>());
+     case DataType::UInt64: return Variant(val.get<uint64_t>());
+     case DataType::String: return Variant(val.get<std::string>());
+     case DataType::Double: return Variant(val.get<double>());
+#ifndef CHECK_SUPOORTED_VALUES
+     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+#endif
+     }
+}
 
 std::vector<Value> PropertyHDF5::readOldstyleValues() const {
     std::vector<Value> values;
@@ -459,7 +479,10 @@ std::vector<Variant> PropertyHDF5::values(void) const
     std::vector<Variant> values;
     nix::FormatVersion ver(this->entity_file->version());
     if ( ver < nix::FormatVersion({1, 1, 1})) {
-         return readOldstyleValues();
+        for (Value v : readOldstyleValues()) {
+            values.push_back(valueToVariant(v));
+        }
+        return values;
     }
     DataSet dset = dataset();
     DataType dtype = data_type_from_h5(dset.dataType());
