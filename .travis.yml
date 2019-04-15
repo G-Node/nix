@@ -33,6 +33,7 @@ before_install:
     then
        export CC=gcc-8;
        export CXX=g++-8;
+       export GCOV=gcov-8
        export CTEST_ARGS=-V;
     else
        export CC=clang-7;

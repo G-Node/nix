@@ -21,8 +21,8 @@ set(CTEST_MEMORYCHECK_COMMAND_OPTIONS "-q --track-origins=yes --leak-check=yes -
 set(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE ${CTEST_SOURCE_DIRECTORY}/.valgrind.supp)
 
 if($ENV{CXX} MATCHES "g\\+\\+")
-  find_program(GCOV gcov-4.8)
-  set(CTEST_COVERAGE_COMMAND ${GCOV})
+  find_program(GCOV_BINARY $ENV{GCOV})
+  set(CTEST_COVERAGE_COMMAND ${GCOV_BINARY})
   set(COVERAGE_EXTRA_FLAGS "-l -p")
   set(BUILD_COVERAGE ON)
 else()

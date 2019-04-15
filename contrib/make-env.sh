@@ -18,6 +18,7 @@ TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
 # Compiler
 CC=${CC}
 CXX=${CXX}
+GCOV=${GCOV}
 
 # Our stuff
 FS_BACKEND=${FS_BACKEND}
