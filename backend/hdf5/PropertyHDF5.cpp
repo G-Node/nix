@@ -36,8 +36,7 @@ struct to_data_type<const char *> {
 namespace hdf5 {
 
 
-
-    PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset)
+PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset)
     : entity_file(file)
 {
     this->entity_dataset = dataset;
@@ -201,12 +200,11 @@ boost::optional<double> PropertyHDF5::uncertainty() const {
     boost::optional<double> ret;
     double error;
     nix::FormatVersion ver(this->entity_file->version());
-    if ( ver < nix::FormatVersion({1, 1, 1})) {
+    if (ver < nix::FormatVersion({1, 1, 1})) {
         std::vector<Value> values = readOldstyleValues();
         if (values.size() > 0)
             ret = values[0].uncertainty;
-    }
-    else if (dataset().getAttr("uncertainty", error)) {
+    } else if (dataset().getAttr("uncertainty", error)) {
         ret = error;
     }
     return ret;
@@ -266,16 +264,14 @@ struct NIX_PACKED FileOldValue  {
 
 
 template<typename T>
-h5x::DataType h5_type_for_value(bool for_memory)
-{
+h5x::DataType h5_type_for_value(bool for_memory) {
     h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
     return value_type;
 }
 
 
 template<typename T>
-h5x::DataType h5_type_for_old_value(bool for_memory)
-{
+h5x::DataType h5_type_for_old_value(bool for_memory) {
     typedef FileOldValue<T> file_value_t;
 
     h5x::DataType ct = h5x::DataType::makeCompound(sizeof(file_value_t));
@@ -300,8 +296,7 @@ h5x::DataType h5_type_for_old_value(bool for_memory)
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 
-h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
-{
+h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype) {
     const bool for_memory = false;
 
     switch(dtype) {
@@ -322,8 +317,7 @@ h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
 
 
 template<typename T>
-void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &values)
-{
+void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &values) {
     h5x::DataType memType = h5_type_for_value<T>(true);
 
     typedef FileValue<T> file_value_t;
@@ -344,8 +338,7 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &value
 
 
 template<typename T>
-void do_read_old_value(const DataSet &h5ds, size_t size, std::vector<Value> &values)
-{
+void do_read_old_value(const DataSet &h5ds, size_t size, std::vector<Value> &values) {
     h5x::DataType memType = h5_type_for_old_value<T>(true);
 
     typedef FileOldValue<T> file_value_t;
@@ -373,8 +366,7 @@ void do_read_old_value(const DataSet &h5ds, size_t size, std::vector<Value> &val
 #define NOT_IMPLEMENTED 1
 
 template<typename T>
-void do_write_value(DataSet &h5ds, const std::vector<Variant> &values)
-{
+void do_write_value(DataSet &h5ds, const std::vector<Variant> &values) {
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
 
@@ -402,8 +394,7 @@ ndsize_t PropertyHDF5::valueCount() const {
 }
 
 
-void PropertyHDF5::values(const std::vector<Variant> &values)
-{
+void PropertyHDF5::values(const std::vector<Variant> &values) {
     if (values.size() < 1) {
         deleteValues();
         return;
@@ -415,7 +406,7 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
     }
     dset.setExtent(NDSize{values.size()});
 
-     switch(values[0].type()) {
+    switch(values[0].type()) {
         case DataType::Bool:   do_write_value<bool>(dset, values);         break;
         case DataType::Int32:  do_write_value<int32_t>(dset, values);      break;
         case DataType::UInt32: do_write_value<uint32_t>(dset, values);     break;
@@ -431,15 +422,15 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
 
 Variant valueToVariant(const Value &val) {
      switch (val.type()) {
-     case DataType::Bool:   return Variant(val.get<bool>());
-     case DataType::Int32:  return Variant(val.get<int32_t>());
-     case DataType::UInt32: return Variant(val.get<uint32_t>());
-     case DataType::Int64:  return Variant(val.get<int64_t>());
-     case DataType::UInt64: return Variant(val.get<uint64_t>());
-     case DataType::String: return Variant(val.get<std::string>());
-     case DataType::Double: return Variant(val.get<double>());
+         case DataType::Bool:   return Variant(val.get<bool>());
+         case DataType::Int32:  return Variant(val.get<int32_t>());
+         case DataType::UInt32: return Variant(val.get<uint32_t>());
+         case DataType::Int64:  return Variant(val.get<int64_t>());
+         case DataType::UInt64: return Variant(val.get<uint64_t>());
+         case DataType::String: return Variant(val.get<std::string>());
+         case DataType::Double: return Variant(val.get<double>());
 #ifndef CHECK_SUPPORTED_VALUES
-     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
      }
      return Variant();
@@ -475,8 +466,7 @@ std::vector<Value> PropertyHDF5::readOldstyleValues() const {
 }
 
 
-std::vector<Variant> PropertyHDF5::values(void) const
-{
+std::vector<Variant> PropertyHDF5::values(void) const {
     std::vector<Variant> values;
     nix::FormatVersion ver(this->entity_file->version());
     if (ver < nix::FormatVersion({1, 1, 1})) {
