@@ -15,6 +15,7 @@ RUN apt-get update -q && apt-get install -yy \
     libyaml-cpp-dev \
     libstdc++-8-dev \
     python-pip \
+    valgrind \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install cpp-coveralls && \
