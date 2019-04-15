@@ -59,7 +59,8 @@ public:
      * @return string with the module response for the user
      */
     virtual std::string call(const po::variables_map &vm, const po::options_description &desc) = 0;
-    
+
+    virtual ~IModule() { }
 };
 
 } // namespace module
