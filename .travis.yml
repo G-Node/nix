@@ -28,6 +28,7 @@ before_install:
     then
        export CC=clang;
        export CXX=clang++;
+       export GCOV=gcov;
        export CTEST_ARGS=-VV;
     elif [[ "$CXX" == "g++" ]];
     then
@@ -38,6 +39,7 @@ before_install:
     else
        export CC=clang-7;
        export CXX=clang++-7;
+       export GCOV=gcov-8;
        export CTEST_ARGS=-VV;
     fi
 
@@ -46,6 +48,8 @@ install:
     then
       ./contrib/make-env.sh /tmp/docker.env;
       docker build -t nix-ub1804 -f ./contrib/Dockerfile-ub1804 .;
+      docker run --env-file /tmp/docker.env -d -i -t -v `pwd`:/src --name nix nix-ub1804;
+      docker exec nix ${CXX} --version;
     elif [ "$TRAVIS_OS_NAME" == "osx" ];
     then
       brew update;
@@ -56,15 +60,16 @@ install:
 script:
   - if [ "$TRAVIS_OS_NAME" == "linux" ];
     then
-      docker run --env-file /tmp/docker.env -e -t -v `pwd`:/src nix-ub1804 /bin/bash -c "ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;";
+      docker exec nix ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
     else
       $CXX --version;
       ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
     fi
 
 after_success:
-  - if [[ "$COMPILER" == "g++" ]]; then
-    coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null;
+  - if [[ "$TRAVIS_COMPILER" == "gcc" ]];
+    then
+        docker exec nix coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp --gcov ${GCOV} --gcov-options '\-lp';
     fi
 
 notifications:
