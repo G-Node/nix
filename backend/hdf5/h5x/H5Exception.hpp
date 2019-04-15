@@ -55,7 +55,7 @@ private:
 class NIXAPI H5Error : public H5Exception {
 public:
     H5Error(herr_t err, const std::string &msg)
-    : H5Exception(msg, err) {
+    : H5Exception(msg, err), error(err) {
     }
 
     static void check(herr_t result, const std::string &msg_if_fail) {
@@ -63,6 +63,13 @@ public:
             throw H5Error(result, msg_if_fail);
         }
     }
+
+    herr_t code(void) {
+        return error;
+    }
+
+private:
+    herr_t      error;
 };
 
 namespace check {
