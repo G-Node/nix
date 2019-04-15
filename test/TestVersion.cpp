@@ -68,3 +68,11 @@ void TestVersion::testAPIVersion() {
     std::vector<int> v = nix::apiVersion();
     CPPUNIT_ASSERT(v.size() == 3);
 }
+
+void TestVersion::testToVector() {
+    nix::FormatVersion fmtv({0, 1, 2});
+    std::vector<int> v = fmtv.asVector();
+    CPPUNIT_ASSERT(v.size() == 3);
+    for (size_t i = 0; i < v.size(); ++i)
+        CPPUNIT_ASSERT(v[i] == (int)i);
+}

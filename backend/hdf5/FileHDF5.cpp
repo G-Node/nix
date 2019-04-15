@@ -42,7 +42,8 @@ static unsigned int map_file_mode(FileMode mode) {
 }
 
 
-FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression, OpenFlags flags) {
+FileHDF5::FileHDF5(const string &name, FileMode mode, Compression compression, OpenFlags flags):
+    file_format_version(HDF5_FF_VERSION) {
     if (!fileExists(name)) {
         mode = FileMode::Overwrite;
     }
@@ -246,9 +247,7 @@ void FileHDF5::forceCreatedAt(time_t t) {
 
 
 vector<int> FileHDF5::version() const {
-    vector<int> version;
-    root.getAttr("version",version);
-    return version;
+    return file_format_version.asVector();
 }
 
 
@@ -334,7 +333,7 @@ shared_ptr<base::IFile> FileHDF5::file() const {
 }
 
 
-bool FileHDF5::checkHeader(FileMode mode) const {
+bool FileHDF5::checkHeader(FileMode mode) {
     bool check = true;
     vector<int> vv;
     string str;
@@ -349,12 +348,11 @@ bool FileHDF5::checkHeader(FileMode mode) const {
         if (!root.getAttr("version", vv)) {
             check = false;
         } else {
-            FormatVersion ver = FormatVersion(vv);
-
+            file_format_version = FormatVersion(vv);
             if (mode == FileMode::ReadWrite) {
-                check = my_version.canWrite(ver);
+                check = my_version.canWrite(file_format_version);
             } else {
-                check = my_version.canRead(ver);
+                check = my_version.canRead(file_format_version);
             }
         }
     } else {
@@ -364,7 +362,7 @@ bool FileHDF5::checkHeader(FileMode mode) const {
 }
 
 
-void FileHDF5::createHeader() const {
+void FileHDF5::createHeader() {
     try {
         root.setAttr("format", FILE_FORMAT);
         root.setAttr("version", std::vector<int>{my_version.x(), my_version.y(), my_version.z()});

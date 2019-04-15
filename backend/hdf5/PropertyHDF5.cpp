@@ -9,6 +9,7 @@
 #include "PropertyHDF5.hpp"
 
 #include <nix/util/util.hpp>
+#include <nix/Version.hpp>
 
 #include <iostream>
 
@@ -35,8 +36,7 @@ struct to_data_type<const char *> {
 namespace hdf5 {
 
 
-
-    PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset)
+PropertyHDF5::PropertyHDF5(const std::shared_ptr<IFile> &file, const DataSet &dataset)
     : entity_file(file)
 {
     this->entity_dataset = dataset;
@@ -199,7 +199,12 @@ void PropertyHDF5::uncertainty(double uncertainty) {
 boost::optional<double> PropertyHDF5::uncertainty() const {
     boost::optional<double> ret;
     double error;
-    if (dataset().getAttr("uncertainty", error)) {
+    nix::FormatVersion ver(this->entity_file->version());
+    if (ver < nix::FormatVersion({1, 1, 1})) {
+        std::vector<Value> values = readOldstyleValues();
+        if (values.size() > 0)
+            ret = values[0].uncertainty;
+    } else if (dataset().getAttr("uncertainty", error)) {
         ret = error;
     }
     return ret;
@@ -235,25 +240,63 @@ struct NIX_PACKED FileValue  {
 
     inline T val() const { return value; }
 };
+
+template<typename T>
+struct NIX_PACKED FileOldValue  {
+
+    T       value;
+
+    double  uncertainty;
+    char   *reference;
+    char   *filename;
+    char   *encoder;
+    char   *checksum;
+
+    //ctors
+    FileOldValue() {}
+    explicit FileOldValue(const T &vref) : value(vref) { }
+
+    inline T val() const { return value; }
+};
 #ifdef _MSC_VER
 #pragma pack(pop)
 #endif
 
 
 template<typename T>
-h5x::DataType h5_type_for_value(bool for_memory)
-{
+h5x::DataType h5_type_for_value(bool for_memory) {
     h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
     return value_type;
 }
 
+
+template<typename T>
+h5x::DataType h5_type_for_old_value(bool for_memory) {
+    typedef FileOldValue<T> file_value_t;
+
+    h5x::DataType ct = h5x::DataType::makeCompound(sizeof(file_value_t));
+    h5x::DataType strType = h5x::DataType::makeStrType();
+
+    h5x::DataType value_type = data_type_to_h5(to_data_type<T>::value, for_memory);
+    h5x::DataType double_type = data_type_to_h5(DataType::Double, for_memory);
+
+    ct.insert("value", HOFFSET(file_value_t, value), value_type);
+    ct.insert("uncertainty", HOFFSET(file_value_t, uncertainty), double_type);
+    ct.insert("reference", HOFFSET(file_value_t, reference), strType);
+    ct.insert("filename", HOFFSET(file_value_t, filename), strType);
+    ct.insert("encoder", HOFFSET(file_value_t, encoder), strType);
+    ct.insert("checksum", HOFFSET(file_value_t, checksum), strType);
+
+    return ct;
+}
+
+
 #if 0 //set to one to check that all supported DataTypes are handled
-#define CHECK_SUPOORTED_VALUES
+#define CHECK_SUPPORTED_VALUES
 #endif
 #define DATATYPE_SUPPORT_NOT_IMPLEMENTED false
 
-h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
-{
+h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype) {
     const bool for_memory = false;
 
     switch(dtype) {
@@ -264,7 +307,7 @@ h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
         case DataType::UInt64: return h5_type_for_value<uint64_t>(for_memory);
         case DataType::Double: return h5_type_for_value<double>(for_memory);
         case DataType::String: return h5_type_for_value<char *>(for_memory);
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED); break;
 #endif
     }
@@ -274,8 +317,7 @@ h5x::DataType PropertyHDF5::fileTypeForValue(DataType dtype)
 
 
 template<typename T>
-void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &values)
-{
+void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &values) {
     h5x::DataType memType = h5_type_for_value<T>(true);
 
     typedef FileValue<T> file_value_t;
@@ -295,11 +337,36 @@ void do_read_value(const DataSet &h5ds, size_t size, std::vector<Variant> &value
 }
 
 
+template<typename T>
+void do_read_old_value(const DataSet &h5ds, size_t size, std::vector<Value> &values) {
+    h5x::DataType memType = h5_type_for_old_value<T>(true);
+
+    typedef FileOldValue<T> file_value_t;
+    std::vector<file_value_t> fileValues;
+
+    fileValues.resize(size);
+    values.resize(size);
+
+    h5ds.read(fileValues.data(), memType, H5S_ALL, H5S_ALL);
+
+    std::transform(fileValues.begin(), fileValues.end(), values.begin(), [](const file_value_t &val) {
+        Value temp(val.val());
+        temp.uncertainty = val.uncertainty;
+        temp.reference = val.reference;
+        temp.filename = val.filename;
+        temp.encoder = val.encoder;
+        temp.checksum = val.checksum;
+        return temp;
+    });
+
+    h5ds.vlenReclaim(memType, fileValues.data());
+}
+
+
 #define NOT_IMPLEMENTED 1
 
 template<typename T>
-void do_write_value(DataSet &h5ds, const std::vector<Variant> &values)
-{
+void do_write_value(DataSet &h5ds, const std::vector<Variant> &values) {
     typedef FileValue<T> file_value_t;
     std::vector<file_value_t> fileValues;
 
@@ -327,8 +394,7 @@ ndsize_t PropertyHDF5::valueCount() const {
 }
 
 
-void PropertyHDF5::values(const std::vector<Variant> &values)
-{
+void PropertyHDF5::values(const std::vector<Variant> &values) {
     if (values.size() < 1) {
         deleteValues();
         return;
@@ -340,25 +406,75 @@ void PropertyHDF5::values(const std::vector<Variant> &values)
     }
     dset.setExtent(NDSize{values.size()});
 
-     switch(values[0].type()) {
-        case DataType::Bool:   do_write_value<bool>(dset, values); break;
-        case DataType::Int32:  do_write_value<int32_t>(dset, values); break;
-        case DataType::UInt32: do_write_value<uint32_t>(dset, values); break;
-        case DataType::Int64:  do_write_value<int64_t>(dset, values); break;
-        case DataType::UInt64: do_write_value<uint64_t>(dset, values); break;
+    switch(values[0].type()) {
+        case DataType::Bool:   do_write_value<bool>(dset, values);         break;
+        case DataType::Int32:  do_write_value<int32_t>(dset, values);      break;
+        case DataType::UInt32: do_write_value<uint32_t>(dset, values);     break;
+        case DataType::Int64:  do_write_value<int64_t>(dset, values);      break;
+        case DataType::UInt64: do_write_value<uint64_t>(dset, values);     break;
         case DataType::String: do_write_value<const char *>(dset, values); break;
-        case DataType::Double: do_write_value<double>(dset, values); break;
-#ifndef CHECK_SUPOORTED_VALUES
+        case DataType::Double: do_write_value<double>(dset, values);       break;
+#ifndef CHECK_SUPPORTED_VALUES
         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
      }
 }
 
+Variant valueToVariant(const Value &val) {
+     switch (val.type()) {
+         case DataType::Bool:   return Variant(val.get<bool>());
+         case DataType::Int32:  return Variant(val.get<int32_t>());
+         case DataType::UInt32: return Variant(val.get<uint32_t>());
+         case DataType::Int64:  return Variant(val.get<int64_t>());
+         case DataType::UInt64: return Variant(val.get<uint64_t>());
+         case DataType::String: return Variant(val.get<std::string>());
+         case DataType::Double: return Variant(val.get<double>());
+#ifndef CHECK_SUPPORTED_VALUES
+         default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+#endif
+     }
+     return Variant();
+}
 
-std::vector<Variant> PropertyHDF5::values(void) const
-{
+std::vector<Value> PropertyHDF5::readOldstyleValues() const {
+    std::vector<Value> values;
+
+    DataSet dset = dataset();
+    DataType dtype = data_type_from_h5(dset.dataType());
+    NDSize shape = dset.size();
+
+    if (shape.size() < 1 || shape[0] < 1) {
+        return values;
+    }
+
+    assert(shape.size() == 1);
+    size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
+
+    switch (dtype) {
+        case DataType::Bool:   do_read_old_value<bool>(dset, nvalues, values);     break;
+        case DataType::Int32:  do_read_old_value<int32_t>(dset, nvalues, values);  break;
+        case DataType::UInt32: do_read_old_value<uint32_t>(dset, nvalues, values); break;
+        case DataType::Int64:  do_read_old_value<int64_t>(dset, nvalues, values);  break;
+        case DataType::UInt64: do_read_old_value<uint64_t>(dset, nvalues, values); break;
+        case DataType::String: do_read_old_value<char *>(dset, nvalues, values);   break;
+        case DataType::Double: do_read_old_value<double>(dset, nvalues, values);   break;
+#ifndef CHECK_SUPPORTED_VALUES
+        default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
+#endif
+    }
+    return values;
+}
+
+
+std::vector<Variant> PropertyHDF5::values(void) const {
     std::vector<Variant> values;
-
+    nix::FormatVersion ver(this->entity_file->version());
+    if (ver < nix::FormatVersion({1, 1, 1})) {
+        for (Value v : readOldstyleValues()) {
+            values.push_back(valueToVariant(v));
+        }
+        return values;
+    }
     DataSet dset = dataset();
     DataType dtype = data_type_from_h5(dset.dataType());
     NDSize shape = dset.size();
@@ -370,14 +486,14 @@ std::vector<Variant> PropertyHDF5::values(void) const
     size_t nvalues = nix::check::fits_in_size_t(shape[0], "Can't resize: data to big for memory");
 
     switch (dtype) {
-        case DataType::Bool:   do_read_value<bool>(dset, nvalues, values); break;
-        case DataType::Int32:  do_read_value<int32_t>(dset, nvalues, values); break;
+        case DataType::Bool:   do_read_value<bool>(dset, nvalues, values);     break;
+        case DataType::Int32:  do_read_value<int32_t>(dset, nvalues, values);  break;
         case DataType::UInt32: do_read_value<uint32_t>(dset, nvalues, values); break;
         case DataType::Int64:  do_read_value<int64_t>(dset, nvalues, values);  break;
         case DataType::UInt64: do_read_value<uint64_t>(dset, nvalues, values); break;
         case DataType::String: do_read_value<char *>(dset, nvalues, values);   break;
         case DataType::Double: do_read_value<double>(dset, nvalues, values);   break;
-#ifndef CHECK_SUPOORTED_VALUES
+#ifndef CHECK_SUPPORTED_VALUES
     default: assert(DATATYPE_SUPPORT_NOT_IMPLEMENTED);
 #endif
     }
