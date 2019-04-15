@@ -226,6 +226,8 @@ namespace valid {
             // if test succeeds find_if_not will not find anything & return it == end
             return std::find_if_not(u.begin(), u.end(), obj) == u.end();
         }
+
+        virtual ~isUnit() { }
     };
 
     /**
