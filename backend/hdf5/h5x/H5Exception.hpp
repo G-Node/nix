@@ -59,6 +59,10 @@ public:
         }
     }
 
+    herr_t code(void) {
+        return error;
+    }
+
 private:
     herr_t      error;
 };

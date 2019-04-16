@@ -31,6 +31,7 @@ struct Filter : public std::unary_function<T, bool> {
 
     typedef std::function<bool(const T&)> type;
 
+    virtual ~Filter() { }
 };
 
 
