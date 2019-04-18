@@ -89,8 +89,8 @@ public:
 
 class InvalidFile: public std::invalid_argument {
 public:
-    InvalidFile(const std::string &caller):
-        std::invalid_argument("Invalid file - file is not a nix file. (" + caller + ")") { }
+    InvalidFile(const std::string &message):
+        std::invalid_argument("Invalid file! (" + message + ")") { }
 };
 
 

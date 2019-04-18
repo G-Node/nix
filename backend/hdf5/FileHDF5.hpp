@@ -154,7 +154,7 @@ private:
     void openRoot();
 
 
-    bool checkHeader(FileMode mode);
+    bool checkHeader(FileMode mode, bool throw_error);
 
 
     void createHeader();
