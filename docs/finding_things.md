@@ -1,13 +1,16 @@
 # Finding things
 
-It might be hard to make sense of the contents of a *NIX* file that
-has been written by another person or has been automatically created
-by a recording tool such
-as [relacs](https://github.com/relacs/relacs). **Name** and **Type**
+NIX provides features to store data in a way that makes it understandable
+and discoverable by others. For example, **Name** and **Type**
 fields of the entities should help the human reader to find their ways
 through the file and make sense of the stored content and the
 relations between entities.
 
+Still, reading a *NIX* file that has been created by another person or
+has been automatically written by a recording tool such
+as [relacs](https://github.com/relacs/relacs) might be confusing a
+first. The following recommendation should help you when exploring an
+unknown file.
 
 ## Recommendations when opening an unknown NIX file
 
@@ -32,9 +35,12 @@ relations between entities.
    contain information about the stored data.
 
 ## Standardization helps
-As mentioned [before](./standardization.md), if the file is created
-according to known definitions, finding stuff in an unknown file is
-considerably simplified.
+
+Having a well-defined data model and the respective APIsto store and
+annotate scientific data with a is a huge step toward standardization
+and reusability.  As mentioned [before](./standardization.md), if the
+file is created according to known definitions, finding stuff in an
+unknown file is considerably simplified.
 
 For example, in case one looks for the voltage recording made on the
 first channel and it is further known that the file is created
