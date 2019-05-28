@@ -1,0 +1,142 @@
+Creating a NIX release
+======================
+
+Instructions on creating a nix release. This includes nix, nixpy, nix_mx
+and java-nix.
+
+Homebrew
+--------
+
+TODO please fill in stuff
+
+Linux: Creating Debian Packages and publishing on Launchpad
+-----------------------------------------------------------
+
+This is at least one possible way of doing it…
+
+**Preparatory stuff**
+
+-  Install all the packages you need for creating debian packages (see
+   ubuntu packaging guideline)
+-  Create PGP Key and activate it on Launchpad
+-  Check out the debian branch and merge the master
+-  Change the debian/changelog file
+
+**Building source packages**
+
+-  Create an empty directory somewhere.
+
+::
+
+       cd ~/releases
+       mkdir nix
+       cd nix
+
+-  Get the tarball. E.g. nix-1.1.0.tar.gz file from github (not \*.zip).
+
+-  Unpack the tarball within the new folder
+
+::
+
+        tar -xvf nix-1.1.0.tar.gz
+
+-  Copy the debian folder from the original folder into the source
+   folder.
+
+::
+
+        cp -r coding/nix/debian realeases/nix/nix-1.1.0/
+
+-  Have dh_make create the ../nix_1.1.0.orig.tar.gz file. It will ask
+   for the package type just give ‘s’.
+
+::
+
+        cd nix-1.1.0
+        dh_make -f  ../nix-1.1.0.tar.gz
+
+-  Create the source package and have it signed.
+
+::
+
+        debuild -S -sa
+
+-  Upload the package to launchpad and keep your fingers crossed.
+
+::
+
+        cd ..
+        dput ppa:gnode/nix nix_1.1.0-5_source.changes
+
+***Packages for multiple ubuntu series*** - Change the changelog to name
+the series you want
+
+::
+
+        nix (1.1.0-5) xenial; urgency=medium
+
+          * Set to version 1.1.0
+
+You will have to increment the version number for each upload to
+launchpad (1.1.0-5 will change to 1.1.0-6).
+
+-  Upload and wait :)
+
+***Packages for nixpy***
+
+Packaging *nixpy* is similar except for the naming. The tarball you
+download from github will be called “nixpy-1.1.0.tar.gz”. The package,
+however, is call *python-nix*. It is easiest to rename the tarball:
+
+::
+
+        mv nixpy-1.1.0.tar.gz python-nix-1.1.0.tar.gz
+
+The rest is the same as before:
+
+-  Unpack tarball.
+-  Copy debian folder.
+-  If needed, update changelog, increase version counter.
+-  Have ``dh_make`` build the orig tarball.
+-  Create signed source package with ``debuild``.
+-  Upload source package to Launchpad.
+   ``dput ppa:gnode/nix python-nix_1.1.0-3_source.changes``
+
+Linux: Creating rpm package and building on copr
+------------------------------------------------
+
+Install development tools:
+
+::
+
+    sudo dnf install rpmdevtools fedpkg copr-cli
+
+Go to the project directory and download the sources.
+
+::
+
+    spectool -g -R -C . nixio.spec
+
+Create the binary and source packages
+
+::
+
+    fedpkg --release f26 local
+    fedpkg --release f26 srpm
+
+Build package locally with chroot
+
+::
+
+    sudo mock -r fedora-25-x86_64 <source_rpm>
+
+Send it to copr for building.
+
+::
+
+    copr build gicmo/nix nixio-1.4.1-1.f26.src.spm
+
+Windows - Binary packages and upload to github
+----------------------------------------------
+
+TODO - please fill in
