@@ -28,6 +28,7 @@ version = ''
 # The full version, including alpha/beta/rc tags
 release = '1.4'
 
+github_url = "https://github.com/g-node/nix"
 
 # -- General configuration ---------------------------------------------------
 
@@ -84,7 +85,8 @@ html_theme_options = {
     'logo_only'       : False,
     # 'style_nav_header_background': 'silver',
     'style_external_links' : True,
-    'display_version'      : True
+    'display_version'      : True,
+    'prev_next_buttons_location' : "both"
 }
 
 html_logo = "nix_logo.png"
