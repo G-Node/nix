@@ -81,16 +81,20 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_theme_options = {
-    'logo'            : 'logo.png',
     'github_user'     : 'G-Node',
+    'logo_only'       : False,
+    # 'style_nav_header_background': 'silver',
     'github_repo'     : 'nix',
     'github_button'   : True,
     'github_count'    : True,
     'travis_button'   : True,
-    'appveyor_button'  : True,
-    'coveralls_button' : True,
+    'style_external_links' : True,
+    'display_version'      : True,
     'link' : '#456BA8'
 }
+
+html_logo = "nix_logo.png"
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".

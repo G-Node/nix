@@ -3,16 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to nixio's documentation!
+NIXIO library documentation
 =================================
 
 .. toctree::
-
-   .. figure:: ./nix_logo.png
-               :alt: NIX
-
    getting_started
-   :maxdepth: 2
+   introduction
+   install_linux
+   install_win
+   install_mac
+   faq
+   :maxdepth: 4
    :caption: Contents:
 
 
