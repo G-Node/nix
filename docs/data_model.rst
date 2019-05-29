@@ -15,5 +15,3 @@ has to be at least one object of the *bar* type.
 The figure shows the purpose of the different entities but not their
 fields. For this, refer to the API documentation, the
 `wiki <https://github.com/G-Node/nix/wiki>`__ and the tutorials.
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

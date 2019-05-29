@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 File handling
 =============
 
@@ -78,5 +81,3 @@ user interaction is required. Compression reduces reading and writing
 performance. You can choose to switch off compression on individual
 *DataArray*\ s by passing the ``nix::Compression::None`` flag when
 creating them.
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

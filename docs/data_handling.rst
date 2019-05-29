@@ -1,15 +1,17 @@
-Data handling
-=============
+.. toctree::
+   :maxdepth: 1
+
+Working with data
+=================
 
 Storing data is one thing, but we want to work with it. The following
 examples illustrate the reading of data from *DataArray*, *Tag* and
 *MultiTag* entities We will use the dummy dataset already used in the
-`tagging <./tagging.md>`__ example.
+:doc:`tagging <./tagging>` example.
 
 .. figure:: ./images/tag1.png
    :alt: a system's response to a stimulus
 
-   simple_tag_plot
 
 The following code creates the dummy data and links the *Tag* providing
 the context (a stimulus was on in a certain time segment) to the
@@ -260,5 +262,3 @@ optimizations and yields higher performance. 2. When one of the
 In order to find the correct indices, all ticks of the respective
 dimension has to be read first. Manual access of the data might yield
 better performance.
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 Finding things
 ==============
 
@@ -34,7 +37,7 @@ Recommendations when opening an unknown NIX file
 Standardization helps
 ---------------------
 
-As mentioned `before <./standardization.md>`__, if the file is created
+As mentioned :doc:`before <./standardization>`, if the file is created
 according to known definitions, finding stuff in an unknown file is
 considerably simplified.
 
@@ -69,5 +72,3 @@ methods to get the referring *DataArray*\ s, *Tag*\ s, etc..
     for (auto b : blocks) {
         std::cerr << b;
     }
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

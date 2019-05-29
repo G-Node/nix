@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 Storing data
 ============
 
@@ -459,7 +462,4 @@ In this case it is the user’s responsibility to provide the required
 information. Specifying mismatched data types, or wrong shapes can lead
 to corrupted data or segmentation faults.
 
-`home <./index.md>`__ – `back <./getting_started.md>`__
-
 .. |sampled_plot| image:: ./images/regular_sampled.png
-

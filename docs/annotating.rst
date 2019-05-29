@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 Annotating datasets
 -------------------
 
@@ -12,7 +15,7 @@ example about the experimental session, and also to annotate the data
 itself. In the extreme it would be possible to annotate individual data
 points.
 
-We implemented the `*odml* <http://g-node.github.io/python-odml>`__ data
+We implemented the `odml <http://g-node.github.io/python-odml>`__ data
 model for metadata for this purpose. In brief, metadata are stored as
 extended key-value pairs that are grouped. Accordingly, three entities
 are defined: *Section*, *Property*, and *Value*. *Sections* can contain
@@ -47,5 +50,3 @@ added.
 
         return 0;
     }
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

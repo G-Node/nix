@@ -1,5 +1,8 @@
-Linux installation
-------------------
+.. :toctree::
+ :maxdepth = 2
+
+Linux
+-----
 
 **Debian PPA**
 

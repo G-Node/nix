@@ -81,16 +81,10 @@ html_theme = 'sphinx_rtd_theme'
 # documentation.
 #
 html_theme_options = {
-    'github_user'     : 'G-Node',
     'logo_only'       : False,
     # 'style_nav_header_background': 'silver',
-    'github_repo'     : 'nix',
-    'github_button'   : True,
-    'github_count'    : True,
-    'travis_button'   : True,
     'style_external_links' : True,
-    'display_version'      : True,
-    'link' : '#456BA8'
+    'display_version'      : True
 }
 
 html_logo = "nix_logo.png"

@@ -1,3 +1,7 @@
+.. toctree::
+   :maxdepth: 1
+
+
 Tagging points and regions
 ==========================
 
@@ -234,7 +238,7 @@ stored in the *MultiTag* itself but we use the event *DataArray* (events
 in the code example) for this purpose. Finally, the signal *DataArray*
 is added to the list of references.
 
-Tagging multiple intervals in 1D 
+Tagging multiple intervals in 1D
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In the following exampled we want to plot multiple intervals in which,
@@ -468,5 +472,3 @@ second the number of dimensions.
 
 Retrieving tagged data
 ----------------------
-
-`home <./index.md>`__ – `back <./getting_started.md>`__

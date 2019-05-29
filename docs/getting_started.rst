@@ -1,6 +1,15 @@
 Introduction to *NIX*
 =====================
 
+This introduction guides through the *NIX*
+data model and shows how to use it with the `nix c++
+library <https://github.com/g-node/nix>`__.
+
+For python we assembled `tutorials
+<http://g-node.github.io/nixpy/tutorial.html>`__ and `demos
+<https://github.com/g-node/nix-demo>`__ using (`nixpy
+<https://github.com/g-node/nixpy>`__).  ---------------
+
 In the following we provide an introduction to the general concepts of
 the *NIX* data model, try to illustrate its design principles and
 provide code examples showing the usage of the
@@ -14,7 +23,7 @@ or the language bindings for
 `java <https://github.com/g-node/nix-java>`__.
 
 Basic idea
-----------
+==========
 
 The basic idea of the *NIX* project is to come up with a **generic**
 data model that defines as few structures/entities as possible while
@@ -28,18 +37,17 @@ named in a way that may seem uncommon but are more general than the
 The idea of the *NIX* data model has been implemented using the
 `HDF5 <https://www.hdfgroup.org>`__ file format.
 
-Tutorials
 ---------
 
--  `Storing data <./storing_data.md>`__
--  `Tagging points and regions <./tagging.md>`__
--  `Annotating data <./annotating.md>`__
--  `Support for standardization <./standardization.md>`__
+Tutorials
+=========
 
--  `Working with files <./file_handling.md>`__
--  `Working with data <./data_handling.md>`__
--  `Finding things <./finding_things.md>`__
-
--  `ER-schema of data model <./data_model.md>`__
-
--  `FAQs <./faq.md>`__
+.. toctree::
+   storing_data
+   data_handling
+   tagging
+   annotating
+   standardization
+   file_handling
+   finding_things
+   :maxdepth: 1

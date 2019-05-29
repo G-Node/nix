@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 How to compile nix on Windows
 =============================
 
@@ -30,7 +33,7 @@ Dependencies
          ``/K "<VSPATH>\VC\bin\vcvars32.bat"`` or :six::four:``Title`` =
          ``Command Prompt 64``, ``Command`` =
          ``C:\Windows\SysWOW64\cmd.exe``, ``Arguments`` =
-         ``/K "<VSPATH>\VC\bin\x86_amd64\vcvarsx86_amd64.bat"``\ 
+         ``/K "<VSPATH>\VC\bin\x86_amd64\vcvarsx86_amd64.bat"``\
 
 -  ***CMake***
 
@@ -46,7 +49,7 @@ Dependencies
    http://www.hdfgroup.org/HDF5/release/obtainsrc.html
 -  Create a build sub-folder (e.g. ``build``) in the HDF5 folder
 -  From within the build folder execute: :three::two:
-   ``> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..``\ 
+   ``> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..``\
    :six::four:
    ``> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..``
 -  From within the hdf5:raw-latex:`\build `folder execute: Build HDF5
@@ -74,7 +77,7 @@ Dependencies
 -  Build & install needed libraries via (installs to ``C:\opt\boost``,
    choose any folder you like, but then you are on your own regarding
    paths & environment vars): :three::two:
-   ``> .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=32 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system``\ 
+   ``> .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=32 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system``\
    :six::four:
 
    ::

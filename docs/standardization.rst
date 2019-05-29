@@ -1,3 +1,6 @@
+.. toctree::
+   :maxdepth: 1
+
 Support for standardization
 ===========================
 
@@ -55,8 +58,6 @@ future development towards domain-specificity.
 .. figure:: ./images/api_design.png
    :alt: API design
 
-   api-design
-
 The *NIX* ecosystem so far consists of the generic
 `C++ <https://github.com/g-node/nix>`__ and
 `python <https://github.com/g-node/nixpy>`__ libraries that directly
@@ -69,5 +70,3 @@ the generic entities and wrap them in the terms that are used in a given
 community. A first step into this direction is the nix storage backend
 in `*NEO* <http://neuralensemble.org>`__ that exposes *NIX* constructs
 as *NEO* entities.
-
-`home <./index.md>`__ – `back <./getting_started.md>`__
