@@ -57,3 +57,7 @@ if you need help on how to build and run them).
    file_handling
    finding_things
    :maxdepth: 1
+
+.. toctree::
+   example_guide
+   :maxdepth: 1
