@@ -8,7 +8,9 @@ library <https://github.com/g-node/nix>`__.
 For python we assembled `tutorials
 <http://g-node.github.io/nixpy/tutorial.html>`__ and `demos
 <https://github.com/g-node/nix-demo>`__ using (`nixpy
-<https://github.com/g-node/nixpy>`__).  ---------------
+<https://github.com/g-node/nixpy>`__).
+
+---------------
 
 In the following we provide an introduction to the general concepts of
 the *NIX* data model, try to illustrate its design principles and
@@ -41,6 +43,10 @@ The idea of the *NIX* data model has been implemented using the
 
 Tutorials
 =========
+
+Most code examples are standalone and
+should readily build and run (:doc:`See these instructions<example_guide>`
+if you need help on how to build and run them).
 
 .. toctree::
    storing_data
