@@ -101,15 +101,15 @@ Referenced by
 --------------
 
 .. toctree::
-   ecosystem
    installation
+   ecosystem
    :maxdepth: 1
    :caption: Getting started:
 
 .. toctree::
    getting_started
    data_model
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Introduction:
 
 .. toctree::
