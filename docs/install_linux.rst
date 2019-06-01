@@ -1,10 +1,8 @@
-.. :toctree::
- :maxdepth = 2
-
 Linux
------
+=====
 
-**Debian PPA**
+Debian PPA
+----------
 
 You can get a ready to install package for Ubuntu “trusty”(14.04) and
 “xenial” (16.04). You have to add & install the following software
@@ -25,7 +23,9 @@ by executing
 
 *Note:* replace trusty with xenial for 16.04
 
-**Fedora copr**
+
+Fedora copr
+-----------
 
 A fedora 25+ package can be installed via copr. To do so:
 
@@ -34,7 +34,8 @@ A fedora 25+ package can be installed via copr. To do so:
     sudo dnf copr enable gicmo/nix
     sudo dnf install nixio-devel
 
-**Build NIX under Ubuntu 14.04/16.04**
+Build NIX under Ubuntu 14.04/16.04
+----------------------------------
 
 *Dependencies*
 
@@ -72,7 +73,7 @@ needed (g++ >= 4.8, clang >= 3.4) as well as the build tool CMake (>=
     # 5 install
     sudo make install
 
-In case building nix fails because libboost-**\* libraries are not found
+In case building nix fails because libboost-\*\* libraries are not found
 try the following:
 
 .. code:: bash
@@ -82,3 +83,7 @@ try the following:
     cd build
     cmake -DBoost_NO_BOOST_CMAKE=TRUE ..
     make all
+
+
+.. :toctree::
+ :maxdepth: 1

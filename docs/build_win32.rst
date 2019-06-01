@@ -4,8 +4,7 @@
 How to compile nix on Windows
 =============================
 
-The following guide shows build options for both, 32- and 64-bit. They
-are marked with :three::two: and :six::four: in the text.
+The following guide shows build options for both, 32- and 64-bit.
 
 Dependencies
 ------------
@@ -48,19 +47,19 @@ Dependencies
 -  Obtain sources (>= 1.8.13) from:
    http://www.hdfgroup.org/HDF5/release/obtainsrc.html
 -  Create a build sub-folder (e.g. ``build``) in the HDF5 folder
--  From within the build folder execute: :three::two:
+-  From within the build folder execute: **32bit:**
    ``> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..``\
-   :six::four:
+   **64bit:**
    ``> cmake -C"../config/cmake/cacheinit.cmake" -G"Visual Studio 12 Win64" -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DHDF5_BUILD_FORTRAN:BOOL=OFF -DBUILD_SHARED_LIBS:BOOL=OFF ..``
--  From within the hdf5:raw-latex:`\build `folder execute: Build HDF5
+-  From within the `hdf5\\build` folder execute: Build HDF5
    via: ``> cmake --build . --config Release``
 -  Install Nullsoft installer version 2.x from:
    http://nsis.sourceforge.net - newer versions 3.x will *not* work!
 -  From within the hdf5 folder execute: Create a installer for HDF5 via:
    ``> cpack -C Release CPackConfig.cmake``
 -  Install HDF5 via the installer which now should have been created in
-   the hdf5 folder named e.g. :three::two:``HDF5-1.8.13-win32.exe`` or
-   :six::four:``HDF5-1.8.13-win64.exe``. Install inside ``C:\opt\hdf5``.
+   the hdf5 folder named e.g. **32bit:** ``HDF5-1.8.13-win32.exe`` or
+   **64bit:** ``HDF5-1.8.13-win64.exe``. Install inside ``C:\opt\hdf5``.
    (Or any folder you like, but then you are on your own regarding paths
    & environment vars)
 -  Set ``HDF5_DIR`` to ``C:\opt\hdf5\cmake\hdf5``
@@ -76,13 +75,21 @@ Dependencies
 -  Boostrap with: ``> bootstrap``
 -  Build & install needed libraries via (installs to ``C:\opt\boost``,
    choose any folder you like, but then you are on your own regarding
-   paths & environment vars): :three::two:
-   ``> .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=32 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system``\
-   :six::four:
+   paths & environment vars):
 
-   ::
+**32bit:**
 
-        > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=64 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
+.. code-block:: bash
+
+   > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=32 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
+
+
+
+**64bit:**
+
+.. code-block:: bash
+
+   > .\b2 install -j4 -a --prefix=C:\opt\boost toolset=msvc architecture=x86 address-model=64 threading=multi variant=release link=static runtime-link=shared --with-date_time --with-regex --with-filesystem --with-program_options --with-system
 
 -  Set ``BOOST_ROOT`` to ``C:\opt\boost``
    (``> set BOOST_ROOT=C:\opt\boost``) (And
@@ -96,18 +103,18 @@ Dependencies
 -  Open src/CppUnitLibraries.dsw in VS2013 (and agree to conversion,
    ignore error on creation of backup file)
 -  Go to BUILD->Configuration Manage and :three::two: set build
-   configuration to ``Release`` & platform to ``win32`` :six::four: set
+   configuration to ``Release`` & platform to ``win32`` **64bit:** set
    build configuration to ``Release`` & platform to ``x64``.
 -  Mark all projects in solution (on the right), right click them,
    select properties and make sure “Configuration Properties -> C/C++ ->
    Code Generation -> Runtime Library” is set to “Multi-threaded DLL
    (/MD)
--  :six::four: Only if you are building 64-bit: right click each item in
+-  **64bit:** Only if you are building 64-bit: right click each item in
    the solution and select “Properties”->“Configuration
    Properties”->“Librarian” or “Linker”->“General”->“Output File” and
-   change it by adding the prefix “:math:`(SolutionDir)`\ (Platform)”.
-   E.g. “Release:raw-latex:`\cppunit`.lib” should change to
-   “:math:`(SolutionDir)`\ (Platform):raw-latex:`\Release`:raw-latex:`\cppunit`.lib”.
+   change it by adding the prefix “`$(SolutionDir)\\$(Platform)`”.
+   E.g. “`Release\\cppunit.lib`” should change to
+   “`$(SolutionDir)\\$(Platform)\\Release\\cppunitlib`”.
    IMPORTANT: delete any leading ``.`` (dot) in the paths. Do this for
    all items in solution.
 -  Now try to build the solution at least once: ignore the errors you
@@ -132,11 +139,11 @@ Dependencies
 -  Obtain sources from git (https://github.com/G-Node/nix)
 -  Create build folder (e.g. “build”)
 -  Run CMake from build folder:
-   :three::two:``> cmake .. -G"Visual Studio 12"`` or
-   :six::four:``> cmake .. -G"Visual Studio 12 Win64"``
+   **32bit:** ``> cmake .. -G"Visual Studio 12"`` or
+   **64bit:** ``> cmake .. -G"Visual Studio 12 Win64"``
 -  Open ``nix.sln`` with Visual Studio, go to “Configuration Manager”
-   and set configuration to ``Release`` and platform to :three::two:
-   ``win32`` or :six::four:``x64``. If you want the nix installer to be
+   and set configuration to ``Release`` and platform to **32bit:**
+   ``win32`` or **64bit:** ``x64``. If you want the nix installer to be
    built too, make ``PACKAGE`` checked in the ``build`` column. Now
    build via “Build->Build Solution” (You can also build via CMake:
    ``> cmake --build . --config Release``. Then there is no need to
