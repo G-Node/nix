@@ -109,7 +109,7 @@ Referenced by
 .. toctree::
    getting_started
    data_model
-   relacs
+   use_cases
    :maxdepth: 1
    :caption: Introduction:
 
