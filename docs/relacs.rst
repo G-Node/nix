@@ -20,10 +20,10 @@ Relacs overview
 In the `Neuroethology group <www.neuroetho.uni-tuebingen.de>`__ relacs
 is used to record the activity of single neurons during
 electrophysiological experiments. It controls the experiment, presents
-stimuli, does some online analysis and stores the data to disk. It
-knows a lot of metadata that are essential to correclty analyze the
+stimuli, performs some online analyses and stores the data to disk. It
+knows a lot of metadata that are essential to correctly analyze the
 data and adapts stimuli in a closed loop fashion. Accordingly, it
-requires a lot of flexibility and the configurability leads to the
+requires a lot of flexibility and the configurable leads to the
 situation that options and settings are to some extent not
 foreseeable.
 
@@ -32,7 +32,7 @@ foreseeable.
    :align: left
    :figwidth: 100 %
 
-   **Figure 1:** The relacs user interface. The ui is divided into four panels. Top
+   **Figure 1:** The relacs user interface. The UI is divided into four panels. Top
    left: Filter and detector plugins that are used to detect events in
    the recorded data (such as action-potentials, spikes). Top right:
    Main panel showing the four recorded traces (membrane potential,
@@ -44,7 +44,8 @@ foreseeable.
    experimenter.
 
 Several traces are recorded in parallel (usually sampled with 20, 40,
-or 100 kHz per channel 16 bit, depending on experimental requirements).
+or 100 kHz per channel 16 bit, depending on experimental
+requirements).
 
 1. The neuron's membrane voltage (V-1).
 2. The fish's electric organ discharge (EOD), global measurement.
@@ -81,15 +82,16 @@ the data (right figure below) or are derived from the recorded data
 A recording session
 -------------------
 
-Once the recording of a neuron has been established and we are ready
+Once the recording of a neuron has been established, we are ready
 to start running the actual experiment.  Either pre-defined macros are
 used to control the experiments or the experimenter starts research
 protocols (RePros) manually.
 
-When recording the data time is not necessarily real time. That is,
-the data is only recorded when an active research protocol (RePro)
-sets the acquisition active and thus the data time is only runs when
-the acquisition is active. The figure below illustrates this.
+During a recording session, the "data time" is not necessarily real
+time.  Data time proceeds only when the acquisition is active and data
+is actually recorded and stored to disk, this is under control of the
+currently active research protocol (RePro). Figure 4 below
+illustrates this.
 
 .. figure:: ./images/relacs_timeline.png
    :alt: data time vs. real time
@@ -105,7 +107,7 @@ the acquisition is active. The figure below illustrates this.
    stimulus presentation the fi-curve RePro applies a stimulus with a
    different intensity (contrast, blue numbers).
 
-Data storage uding NIX
+Data storage using NIX
 ----------------------
 
 So much for the background. In the following we will illustrate how
@@ -127,7 +129,7 @@ used for this. The code below uses the python implementation *nixpy*.
    this RePro run. A RePro may apply certain stimuli (the fi-curve
    RePro) and these stimulus times and extents are stored in a
    ``nix::MultiTag`` entity. It further links to some more metadata
-   entries. Some paramters, in this case the stimulus "contrast"
+   entries. Some parameters, in this case the stimulus "contrast"
    changes with each stimulus presentation. This information is not
    stored in the metadata but is considered a *feature* of the
    stimulus presentation. That is, we create a ``nix::DataArray`` to
@@ -146,7 +148,7 @@ themselves are double values. In NIX data is stored in
 ``nix::DataArray`` entities. The regular sampling of the time
 dimension is defined using a ``nix::SampledDimension`` (see `storing
 data <storing_data.html#dimensions>`__ for more information). Since the duration
-of the recording is unknown the data is continously written to file.
+of the recording is unknown the data is continuously written to file.
 
 The following code block illustrates the basic steps (the full
 implementation can be found `here
@@ -188,7 +190,7 @@ objects. These provide some information about the data coming in.
 **Line 4:** for each ``k``th element of the InputList, a ``NixTrace``
 object is created that merely buffers the entity for later re-use.
 **Line 6:** a ``nix::DataArray`` is initialized with a name, a type
-(line2), the data type and an initial size. Selecting this intial size
+(line2), the data type and an initial size. Selecting this initial size
 defines the chunksize applied by the underlying HDF5
 library. Selecting a too small chunk size will cause performance
 problems. **Lines 16--19** set the dimension information
@@ -255,7 +257,7 @@ smaller, we expect less events than data points in the traces. **Line
 17:** The values stored in the ``nix::DataArray`` are times, (in
 *data time*, see above). Thus, we apply an
 ``nix::AliasRangeDimension`` which indicates that the values
-themselves define the dimension (see `dimension docu
+themselves define the dimension (see `dimension documentation
 <storing_data.html#dimensions>`__ for details on dimensions).
 
 
@@ -265,9 +267,9 @@ Noting RePro runs
 Whenever a RePro is started the start time (data time) is noted and
 ``nix::Tag`` is created. This indicates when and how long a RePro ran
 and links to respective metadata (settings of the RePro). The Tag
-refers to all event and continuous data traces (as
-``references``). This allows for automatic data retrieval of the thus
-tagged segments of the data.
+refers to all event and continuous data traces (as ``references``
+`see here <tagging.html>`__ for more information of tagging). This allows
+for automatic data retrieval of the thus tagged segments of the data.
 
 
 
