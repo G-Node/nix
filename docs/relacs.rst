@@ -105,8 +105,8 @@ the acquisition is active. The figure below illustrates this.
    stimulus presentation the fi-curve RePro applies a stimulus with a
    different intensity (contrast, blue numbers).
 
-Representation in NIX
----------------------
+Data storage uding NIX
+----------------------
 
 So much for the background. In the following we will illustrate how
 such data is persisted in NIX files and how to work with the
@@ -145,7 +145,7 @@ vectors. This only dimension represents time, the measured values
 themselves are double values. In NIX data is stored in
 ``nix::DataArray`` entities. The regular sampling of the time
 dimension is defined using a ``nix::SampledDimension`` (see `storing
-data <storing_data.html>`__ for more information). Since the duration
+data <storing_data.html#dimensions>`__ for more information). Since the duration
 of the recording is unknown the data is continously written to file.
 
 The following code block illustrates the basic steps (the full
@@ -219,10 +219,9 @@ the NixTrace object created before:
 Storing of event data
 `````````````````````
 
-Neuronal event such as action potentials are stored in
+Neuronal events such as action potentials are stored in
 ``nix::DataArrays``. Again, the data is basically a 1-D vector in
-which the one dimension represents time. We store event times and the
-events may come at any time.
+which the one dimension represents time.
 
 .. code-block:: c++
    :linenos:
@@ -251,14 +250,30 @@ events may come at any time.
    }
 
 This is very similar to the ``initTaces`` above. Two things are wroth
-mentioning. **Line 14:** The initial size was chose much smaller, we
-expect less event than data points in the traces. **Line 17:** The
-values stored in the ``nix::DataArray`` are times, (int *data time*,
-see above). Thus, we apply an ``nix::AliasRangeDimension`` which
-indicates that the values themselves define the dimension.
+mentioning. **Line 14:** The initial size was chosen to be much
+smaller, we expect less events than data points in the traces. **Line
+17:** The values stored in the ``nix::DataArray`` are times, (in
+*data time*, see above). Thus, we apply an
+``nix::AliasRangeDimension`` which indicates that the values
+themselves define the dimension (see `dimension docu
+<storing_data.html#dimensions>`__ for details on dimensions).
 
 
-Defining stimulus segments ``````````````````````````
+Noting RePro runs
+`````````````````
+
+Whenever a RePro is started the start time (data time) is noted and
+``nix::Tag`` is created. This indicates when and how long a RePro ran
+and links to respective metadata (settings of the RePro). The Tag
+refers to all event and continuous data traces (as
+``references``). This allows for automatic data retrieval of the thus
+tagged segments of the data.
+
+
+
+
+Defining stimulus segments
+``````````````````````````
 
 
 Working with relacs-flavored NIX files
