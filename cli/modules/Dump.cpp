@@ -202,8 +202,8 @@ yamlstream& yamlstream::operator<<(const nix::Source &source) {
         *this << "sources";
         ++(*this);
             auto sources = source.sources();
-            for (auto &source : sources) {
-                *this << source;
+            for (auto &s : sources) {
+                *this << s;
             }
         --(*this);
     --(*this);
@@ -235,8 +235,8 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         *this << "sections";
         ++(*this);
             auto sections = section.sections();
-            for (auto &section : sections) {
-                *this << section;
+            for (auto &s : sections) {
+                *this << s;
             }
         --(*this);
     --(*this);
