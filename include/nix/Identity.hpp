@@ -39,7 +39,7 @@ public:
 
     const std::string & id() const { return myId; }
     const std::string & name() const { return myName; }
-    const ObjectType type() const { return myType; }
+    ObjectType type() const { return myType; }
 
  private:
     std::string myName;
