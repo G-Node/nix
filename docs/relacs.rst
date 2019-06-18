@@ -163,7 +163,7 @@ implementation can be found `here
    {
       for ( int k=0; k<IL.size(); k++ ) {
          NixTrace trace;
-         string data_type = "nix.data.sampled." + IL[k].ident();
+         string data_type = "relacs.data.sampled." + IL[k].ident();
          trace.data = root_block.createDataArray(IL[k].ident(), data_type, nix::DataType::Float, {4096});
          std::string unit = IL[k].unit();
          nix::util::unitSanitizer(unit);
@@ -186,11 +186,11 @@ implementation can be found `here
    }
 
 In this code snippet ``IL`` is a vector of ``relacs::InData``
-objects. These provide some information about the data coming in.
-**Line 4:** for each ``k``th element of the InputList, a ``NixTrace``
-object is created that merely buffers the entity for later re-use.
+objects. These provide information about the data coming in.
+**Line 4:** for each ``k`` th element of the InputList, a ``NixTrace``
+object is created that buffers the entity for later re-use.
 **Line 6:** a ``nix::DataArray`` is initialized with a name, a type
-(line2), the data type and an initial size. Selecting this initial size
+(line2), the data type and an initial size. Selecting the initial size
 defines the chunksize applied by the underlying HDF5
 library. Selecting a too small chunk size will cause performance
 problems. **Lines 16--19** set the dimension information
@@ -198,7 +198,7 @@ problems. **Lines 16--19** set the dimension information
 At this point, no data has been written to file.
 
 Writing actually happens in a small helper function that works with
-the NixTrace object created before:
+the ``NixTrace`` object created before:
 
 .. code-block:: c++
    :linenos:
@@ -239,7 +239,7 @@ which the one dimension represents time.
          ed.index = EL[i].size();
          ed.offset = {0};
          std::string ident = EL[i].ident();
-         std::string data_type = "nix.events.position." + ident;
+         std::string data_type = "relacs.data.events." + ident;
          if ( root_block.hasDataArray(ident) )
              ident = EL[i].ident() + "_events";
          ed.data = root_block.createDataArray( ident, data_type, nix::DataType::Double, {256} );
@@ -264,19 +264,78 @@ themselves define the dimension (see `dimension documentation
 Noting RePro runs
 `````````````````
 
-Whenever a RePro is started the start time (data time) is noted and
-``nix::Tag`` is created. This indicates when and how long a RePro ran
+Whenever a *RePro* is started the start time (data time) is noted and
+``nix::Tag`` is created. This indicates *when* and *how long* a RePro ran
 and links to respective metadata (settings of the RePro). The Tag
 refers to all event and continuous data traces (as ``references``
 `see here <tagging.html>`__ for more information of tagging). This allows
-for automatic data retrieval of the thus tagged segments of the data.
-
-
+for automatic data retrieval of the thus tagged slabs of the data (below).
 
 
 Defining stimulus segments
 ``````````````````````````
 
+Within a RePro run relacs may present stimuli. Stimulus epochs are
+stored within a ``nix::MultiTag``. Other than the simpler ``nix::Tag``
+the MultiTag is meant to tag multiple regions of interest in the data
+that belong together.
+
+If a RePro puts out a number of identical stimuli, start times and
+extents are stored in the same MultiTag. A RePro might also apply
+stimuli that are not identical due to different parameters. In this
+case there will be a ``nix::MultiTag`` for each unique stimulus
+parametrization.
+
+In relacs RePro options can be defined as ``relacs::Mutable`` that is,
+they are intended to change during the RePro run. All mutable
+parameters are stored as ``nix::LinkType::indexed`` ``nix::Feature``
+(see f-i curve example in figure 5). With this approach, the
+parameters become directly available during further data processing.
 
 Working with relacs-flavored NIX files
 --------------------------------------
+
+
+
+
+Defined types and their meaning
+-------------------------------
+
+In the nix `DataModel <data_model.html>`__ almost all entities have a
+*name*, *type*, and an *id*. Name is a user-specified string, id an is
+auto-generated UUID and the type is meant to provide semantic
+meaning. The type support in relacs is not very elaborated which is to
+some extent due to the flexibility of the tool. For example, relacs on
+it own, has no information whether an recorded trace is the membrane
+voltage, a temperature or any other kind of measurement. We thus
+discriminate between events and regularly sampled data.
+
+The following types are used:
+
++----------------------------+-----------------------------------------------------+
+| **type**                   |                   **meaning**                       |
++----------------------------+-----------------------------------------------------+
+|relacs.data.sampled         |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.data.events          |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.stimulus.segment     |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.stimulus.onset       |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.stimulus.duration    |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.repro                |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.repro_run            |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.repro_group          |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.feature.time         |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.feature.amplitude    |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.feature.mutable      |                                                     |
++----------------------------+-----------------------------------------------------+
+|relacs.feature.repro_tag_id |                                                     |
++----------------------------+-----------------------------------------------------+
