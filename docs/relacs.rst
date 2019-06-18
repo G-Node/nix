@@ -276,7 +276,7 @@ Defining stimulus segments
 ``````````````````````````
 
 Within a RePro run relacs may present stimuli. Stimulus epochs are
-stored within a ``nix::MultiTag``. Other than the simpler ``nix::Tag``
+stored within a ``nix::MultiTag``. Other than the simpler ``nix::Tag``,
 the MultiTag is meant to tag multiple regions of interest in the data
 that belong together.
 
@@ -286,15 +286,21 @@ stimuli that are not identical due to different parameters. In this
 case there will be a ``nix::MultiTag`` for each unique stimulus
 parametrization.
 
-In relacs RePro options can be defined as ``relacs::Mutable`` that is,
-they are intended to change during the RePro run. All mutable
-parameters are stored as ``nix::LinkType::indexed`` ``nix::Feature``
-(see f-i curve example in figure 5). With this approach, the
-parameters become directly available during further data processing.
+In relacs RePro options can be given the ``OutData::Mutable`` flag,
+which communicates that the respective parameter is intended to change
+during the RePro run. All mutable parameters are stored as an
+``nix::LinkType::indexed`` ``nix::Feature`` (see f-i curve example in
+figure 5). With this approach, the parameters become directly
+available during further data processing (see below).
 
 Working with relacs-flavored NIX files
 --------------------------------------
 
+For the following we will use a file containing simulated data. The
+simulation models the neuronal activity of a p-type electroreceptor
+afferent in the electrosensory system of the weakly electric fish
+*Apteronotus leptorhynchus*. The code snippets will use the python
+library (`nixpy <https://github.com/g-node/nixpy>`__).
 
 
 
@@ -306,36 +312,47 @@ In the nix `DataModel <data_model.html>`__ almost all entities have a
 auto-generated UUID and the type is meant to provide semantic
 meaning. The type support in relacs is not very elaborated which is to
 some extent due to the flexibility of the tool. For example, relacs on
-it own, has no information whether an recorded trace is the membrane
-voltage, a temperature or any other kind of measurement. We thus
-discriminate between events and regularly sampled data.
+its own, has no information whether an recorded trace is the membrane
+voltage, a temperature or any other kind of measurement.
 
 The following types are used:
 
-+----------------------------+-----------------------------------------------------+
-| **type**                   |                   **meaning**                       |
-+----------------------------+-----------------------------------------------------+
-|relacs.data.sampled         |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.data.events          |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.stimulus.segment     |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.stimulus.onset       |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.stimulus.duration    |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.repro                |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.repro_run            |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.repro_group          |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.feature.time         |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.feature.amplitude    |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.feature.mutable      |                                                     |
-+----------------------------+-----------------------------------------------------+
-|relacs.feature.repro_tag_id |                                                     |
-+----------------------------+-----------------------------------------------------+
++----------------------------+------------+--------------------------------------------------------+
+| **type**                   | **entity** |                    **meaning**                         |
++============================+============+========================================================+
+|relacs.data.sampled         | DataArray  | Regularly sampled data, vectors of time.               |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.data.events          | DataArray  | | Any kind of event data, e.g. action potentials, etc. |
+|                            |            | | Entries denote the time at which the event occurred  |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.stimulus.segment     | MultiTag   | | Tags the data segments in which a stimulus was       |
+|                            |            | | presented. One *position* and *extent* entry for     |
+|                            |            | | each segment in which the identical stimulus was     |
+|                            |            | | used. This entity is re-used whenever the same stim  |
+|                            |            | | is presented, even within a different RePro run.     |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.stimulus.onset       | DataArray  | Onset times of a stimulus segment(s).                  |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.stimulus.duration    | DataArray  | Temporal duration of the stimulus segment(s).          |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.repro                |  Section   | Metadata containing RePro settings and properties.     |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.repro_run            |  Tag       | | Tags the data segment in which a RePro was active and|
+|                            |            | | links to metadata. This does not imply that a stim-  |
+|                            |            | | ulus was active.                                     |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.repro_group          |  Group     | | Group that contains all entities created during a    |
+|                            |            | | RePro run.                                           |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.feature.time         |  DataArray | A feature of the stimulus segment that is a timestamp  |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.feature.amplitude    |  DataArray | | A feature of the stimulus segment that is the        |
+|                            |            | | amplitude of the stimulus.                           |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.feature.mutable      |  DataArray | | These features contain the values of settings that   |
+|                            |            | | are intended to change. Changes in such settings     |
+|                            |            | | will not lead to the creation of a new MultiTag.     |
++----------------------------+------------+--------------------------------------------------------+
+|relacs.feature.repro_tag_id |  DataArray | | Notes the RePro run (the Tag above) during which the |
+|                            |            | | stimulus was active. Contains the Tag's entity id.   |
++----------------------------+------------+--------------------------------------------------------+
