@@ -8,14 +8,14 @@ def show_file_info(filename):
     print("file: %s \n\tformat: %s \n\tformat version: %s \n\tlibrary version %s"
           % (filename, f.format, f.version, nix.__version__))
 
-    print("\tNumber of Blocks: %i"% len(f.blocks))
-    print("\tNumber of DataArrays: %i" % len(f.blocks[0].data_arrays))
-    print("\tNumber of MultiTags: %i" % len(f.blocks[0].multi_tags))
-    print("\tNumber of Tags: %i" % len(f.blocks[0].tags))
+    print("\tnumber of Blocks: %i"% len(f.blocks))
+    print("\tnumber of DataArrays: %i" % len(f.blocks[0].data_arrays))
+    print("\tnumber of MultiTags: %i" % len(f.blocks[0].multi_tags))
+    print("\tnumber of Tags: %i" % len(f.blocks[0].tags))
 
     print("\tRelacs specific information:")
     traces = [da for da in f.blocks[0].data_arrays if "relacs.data.sampled" in da.type]
-    print("\t\tNumber of regularly sampled traces: %i with %i data samples" %
+    print("\t\tnumber of regularly sampled traces: %i with %i data samples" %
           (len(traces), sum([da.shape[0] for da in traces])))
     print("\t\tnumber of RePro runs: %i" % len([t for t in f.blocks[0].tags if "repro_run" in t.type]))
     print("\t\tnumber of unique stimuli: %i" %
