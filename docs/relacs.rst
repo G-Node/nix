@@ -296,11 +296,19 @@ available during further data processing (see below).
 Working with relacs-flavored NIX files
 --------------------------------------
 
-For the following we will use a file containing simulated data. The
-simulation models the neuronal activity of a p-type electroreceptor
-afferent in the electrosensory system of the weakly electric fish
-*Apteronotus leptorhynchus*. The code snippets will use the python
+For the following we will use :download:`this file
+<examples/relacs_data.nix>` containing simulated data. The simulation
+models the neuronal activity of a p-type electroreceptor afferent in
+the electrosensory system of the weakly electric fish *Apteronotus
+leptorhynchus*. The code snippets shown below are part of
+:download:`this script <code/relacs_example.py>` which uses the python
 library (`nixpy <https://github.com/g-node/nixpy>`__).
+
+.. literalinclude:: code/relacs_example.py
+   :language: python
+   :lines: 36-48
+   :linenos:
+   :caption: Creating a simple plot of one of the recorded traces.
 
 
 

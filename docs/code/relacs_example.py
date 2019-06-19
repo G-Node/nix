@@ -21,28 +21,27 @@ def show_file_info(filename):
     print("\t\tnumber of unique stimuli: %i" %
           len([mt for mt in f.blocks[0].multi_tags if "relacs.stimulus" in mt.type]))
 
-    for mt in f.blocks[0].multi_tags:
-        print(mt.name, mt.type)
     f.close()
 
 
 def print_subject_metadata(filename):
-    print("Blocks:")
-    for b in f.blocks:
-        print("\t%s\t%s" % (b.name, b.type))
-        b.metadata.pprint(max_depth=1)
-    pass
+    f = nix.File.open(filename, nix.FileMode.ReadOnly)
+    b = f.blocks[0]
+    sections = b.metadata.find_sections(lambda sec : "subject" in sec.type.lower())
+    for sec in sections:
+        sec.pprint(max_depth=-1)
+    f.close()
 
 
 def plot_data_snippet(filename, trace_name="V-1", samples=5000):
     f = nix.File.open(filename, nix.FileMode.ReadOnly)
     b = f.blocks[0]
-    eod = b.data_arrays[trace_name]
+    trace = b.data_arrays[trace_name]
     dim = eod.dimensions[0]
 
-    plt.plot(dim.axis(samples), eod[:samples], label=eod.name)
+    plt.plot(dim.axis(samples), trace[:samples], label=eod.name)
     plt.xlabel("%s [%s]" % (dim.label, dim.unit))
-    plt.ylabel("%s [%s]" % (eod.label, eod.unit))
+    plt.ylabel("%s [%s]" % (trace.label, trace.unit))
     plt.legend()
     plt.show()
 
@@ -59,5 +58,6 @@ def using_tags(filename):
 
 if __name__ == "__main__":
     example_file = "../examples/relacs_data.nix"
-    show_file_info(example_file)
-   # plot_data_snippet(example_file)
+    # show_file_info(example_file)
+    # print_subject_metadata(example_file)
+    # plot_data_snippet(example_file)
