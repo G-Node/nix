@@ -140,7 +140,7 @@ used for this. The code below uses the python implementation *nixpy*.
 
 
 Storing of continuously sampled data
-````````````````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The continuous traces in **figure 5** are continuously sampled 1-D
 vectors. This only dimension represents time, the measured values
@@ -219,7 +219,7 @@ the ``NixTrace`` object created before:
 
 
 Storing of event data
-`````````````````````
+~~~~~~~~~~~~~~~~~~~~~
 
 Neuronal events such as action potentials are stored in
 ``nix::DataArrays``. Again, the data is basically a 1-D vector in
@@ -262,7 +262,7 @@ themselves define the dimension (see `dimension documentation
 
 
 Noting RePro runs
-`````````````````
+~~~~~~~~~~~~~~~~~
 
 Whenever a *RePro* is started the start time (data time) is noted and
 ``nix::Tag`` is created. This indicates *when* and *how long* a RePro ran
@@ -273,7 +273,7 @@ for automatic data retrieval of the thus tagged slabs of the data (below).
 
 
 Defining stimulus segments
-``````````````````````````
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Within a RePro run relacs may present stimuli. Stimulus epochs are
 stored within a ``nix::MultiTag``. Other than the simpler ``nix::Tag``,
@@ -302,13 +302,127 @@ models the neuronal activity of a p-type electroreceptor afferent in
 the electrosensory system of the weakly electric fish *Apteronotus
 leptorhynchus*. The code snippets shown below are part of
 :download:`this script <code/relacs_example.py>` which uses the python
-library (`nixpy <https://github.com/g-node/nixpy>`__).
+library (`nixpy <https://github.com/g-node/nixpy>`__). To run the
+example code we need the nixpy, numpy, and matplotlib packages.
+
+
+A simple plot
+~~~~~~~~~~~~~
+
+The first example simply plots a short part of the recorded traces.
 
 .. literalinclude:: code/relacs_example.py
    :language: python
    :lines: 36-48
    :linenos:
    :caption: Creating a simple plot of one of the recorded traces.
+
+All information that is needed to create a basic plot of the stored
+data is attached to the ``DataArray`` (``trace``).  Its ``label`` and
+``unit`` define the y-labels, the dimension descriptor
+(``nix::SampledDimension``) contains all information that is needed to
+label the x-axis. In line 7 a convenience function of the dimension
+descriptor (see `dimensions <storing_data.html#dimensions>`__) is used to
+get a vector of time values matching the data.
+
+In this code snippet we use some prior information about the recorded
+data (we directly ask for the "V-1" trace). To find out which data
+traces are available we can search for ``nix::DataArrays`` that have
+the *type* ``relacs.data.sampled`` (see defined types below) by using
+list comprehension executing:
+
+.. code-block:: python
+   :caption: Finding which data traces are recorded.
+
+   sampled_traces = [da for da in b.data_arrays if "relacs.data.sampled" in da.type]
+   for t in sampled_traces:
+       print(t.name, t.type)
+
+
+Accessing metadata
+~~~~~~~~~~~~~~~~~~
+
+Relacs knows a lot about the data and settings, this information is
+automatically saved to file and is attached to the only ``nix::Block``
+entity.
+
+The following code snippte shows how to access metadata about the
+subject that was used in this recording session.
+
+.. literalinclude:: code/relacs_example.py
+   :caption: Accessing metadata.
+   :lines: 27-33
+   :language: python
+   :linenos:
+
+Two things are worth noting: Line 4 uses the ``section`` 's find
+method to find the "subject" section. The method takes a filter
+function as input argument. Here we filter on the section type.  Line
+6 uses the section's ``pprint`` function to dump an overview to the
+command line. The ``max_depth=-1`` argument defines that the full tree
+is recursively traversed.
+
+Using Tags
+~~~~~~~~~~
+
+The core of relacs is to stimulate and record the data. In the example
+file, two RePros have been run. The first one (*BaselineActivity*), is
+a simple one that just records without stimulation. The following code
+block shows how to get the data (the "V-1" trace) associated with the
+tag.
+
+.. literalinclude:: code/relacs_example.py
+   :language: python
+   :caption: Get the tagged data.
+   :lines: 51-68
+   :linenos:
+
+There are a few noteworthy lines here: Line 4 assembles all
+"BaselineActivity" tags (there may be more than one). We filter on the
+``tag.name`` and ``tag.type`` (see table below), just to be sure.
+Lines 9--11 get all the information needed to plot the data. Line 9
+uses the ``tag.retrieve_data`` method to access only the data of the
+*V-1* trace that is tagged. ``tag.retrieve_data`` returns a
+``DataView`` object and to actually read the data from file we access
+it with the ``[:]`` operator. Line 63, finally, plots the data. Two
+helper functions of the dimension descriptor are used to get the time
+axis. ``dim.index_of(tag.position[0])`` gets the index of the start
+time of the tag. ``dim.axis()`` uses this offset index to return the
+correct time values.
+
+
+Using Tags and Features
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The "FI-curve" RePro is used to measure the neuron's input-ouptut
+characteristic. Again for each run of the "FI-curve" RePro a
+``nix::Tag`` is created. The RePro puts out a set of stimuli. The
+stimulus segments and the stimulus amplitude are stored in a
+``nix::MultiTag`` respectively one of its ``nix::Features``.
+
+.. literalinclude:: code/relacs_example.py
+   :language: python
+   :lines: 71-100
+   :linenos:
+   :caption: Plotting the Firing rate versus Intensity
+             curve. **Note:** The following code is kept rather simple
+             and is suboptimal in several respects.
+
+During a RePro run (the ``nix::Tag``) there may be several stimuli
+presented. In lines 5-13 the ``nix::Group`` that has the same name as
+the Tag is used to get the ``nix::MultiTags`` that are related to the
+FI-Curve RePro run. In line 15 we get search the feature that stores
+the stimulus intensity. This is prior knowledge. Lines 16, 17 create
+variables for storing the x- and y-values for the plot (the stimulus
+intensities and the firing rates, respectively). The ``for`` -loop in
+lines 19-25 then iterates over the number of positions (stimulus
+segments) and reads the duration of each stimulus presentation (line
+20) and the spike times observed in the respective stimulus
+segments. The firing rate is then simply calculated as the number of
+spikes per stimulus duration (line 22). The stimulus intensity is read
+from file using the ``mtag.retrieve_feature_data method`` (line 23,
+the method will be renamed in 1.5.x releases). Finally, the firing
+rate is plotted as a function of the stimulus intensity.
 
 
 
@@ -328,10 +442,17 @@ The following types are used:
 +----------------------------+------------+--------------------------------------------------------+
 | **type**                   | **entity** |                    **meaning**                         |
 +============================+============+========================================================+
-|relacs.data.sampled         | DataArray  | Regularly sampled data, vectors of time.               |
+|relacs.recording            | Block      | | Only one ``nix::Block`` is created in each file,     |
+|                            |            | | all data entities are children of this block and it  |
+|                            |            | | represents a "recording" session.                    |
+|                            |            | | Session names are created from the date and a suffix.|
++----------------------------+------------+--------------------------------------------------------+
+|relacs.data.sampled         | DataArray  | | Regularly sampled data, vectors of time.             |
+|                            |            | | ``nix::SampledDimension`` as dimension descriptor.   |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.data.events          | DataArray  | | Any kind of event data, e.g. action potentials, etc. |
 |                            |            | | Entries denote the time at which the event occurred  |
+|                            |            | | ``nix::AliasRangeDimension`` defines the time dim.   |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.stimulus.segment     | MultiTag   | | Tags the data segments in which a stimulus was       |
 |                            |            | | presented. One *position* and *extent* entry for     |
@@ -339,9 +460,11 @@ The following types are used:
 |                            |            | | used. This entity is re-used whenever the same stim  |
 |                            |            | | is presented, even within a different RePro run.     |
 +----------------------------+------------+--------------------------------------------------------+
-|relacs.stimulus.onset       | DataArray  | Onset times of a stimulus segment(s).                  |
+|relacs.stimulus.onset       | DataArray  | | Onset times of a stimulus segment(s).                |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+
-|relacs.stimulus.duration    | DataArray  | Temporal duration of the stimulus segment(s).          |
+|relacs.stimulus.duration    | DataArray  | | Temporal duration of the stimulus segment(s).        |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.repro                |  Section   | Metadata containing RePro settings and properties.     |
 +----------------------------+------------+--------------------------------------------------------+
@@ -352,15 +475,19 @@ The following types are used:
 |relacs.repro_group          |  Group     | | Group that contains all entities created during a    |
 |                            |            | | RePro run.                                           |
 +----------------------------+------------+--------------------------------------------------------+
-|relacs.feature.time         |  DataArray | A feature of the stimulus segment that is a timestamp  |
+|relacs.feature.time         |  DataArray | | A set of timestamps                                  |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.feature.amplitude    |  DataArray | | A feature of the stimulus segment that is the        |
 |                            |            | | amplitude of the stimulus.                           |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.feature.mutable      |  DataArray | | These features contain the values of settings that   |
 |                            |            | | are intended to change. Changes in such settings     |
 |                            |            | | will not lead to the creation of a new MultiTag.     |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+
 |relacs.feature.repro_tag_id |  DataArray | | Notes the RePro run (the Tag above) during which the |
 |                            |            | | stimulus was active. Contains the Tag's entity id.   |
+|                            |            | | ``nix::SetDimension`` defines only dimension.        |
 +----------------------------+------------+--------------------------------------------------------+

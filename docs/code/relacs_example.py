@@ -37,9 +37,9 @@ def plot_data_snippet(filename, trace_name="V-1", samples=5000):
     f = nix.File.open(filename, nix.FileMode.ReadOnly)
     b = f.blocks[0]
     trace = b.data_arrays[trace_name]
-    dim = eod.dimensions[0]
+    dim = trace.dimensions[0]
 
-    plt.plot(dim.axis(samples), trace[:samples], label=eod.name)
+    plt.plot(dim.axis(samples), trace[:samples], label=trace.name)
     plt.xlabel("%s [%s]" % (dim.label, dim.unit))
     plt.ylabel("%s [%s]" % (trace.label, trace.unit))
     plt.legend()
@@ -48,16 +48,62 @@ def plot_data_snippet(filename, trace_name="V-1", samples=5000):
     f.close()
 
 
-def using_tags(filename):
+def get_baseline_data(filename):
     f = nix.File.open(filename, nix.FileMode.ReadOnly)
     b = f.blocks[0]
-    eod = b.data_arrays["V-1"]
-    dim = eod.dimensions[0]
-    pass
+    tags = [t for t in b.tags if "baseline" in t.name.lower() and "relacs.repro_run" in t.type]
+    if len(tags) < 1:
+        return
+    tag = tags[0]
+
+    data = tag.retrieve_data("V-1")[:]  # FIXME: beyond 1.5 this will be tag.data("V-1")
+    trace = tag.references["V-1"]
+    dim = trace.dimensions[0]
+
+    plt.plot(dim.axis(len(data), dim.index_of(tag.position[0])), data)
+    plt.xlabel("%s [%s]" % (dim.label, dim.unit))
+    plt.ylabel("%s [%s]" % (trace.label, trace.unit))
+    plt.show()
+
+    f.close()
+
+
+def plot_fi_curve(filename):
+    f = nix.File.open(filename, nix.FileMode.ReadOnly)
+    b = f.blocks[0]
+
+    tags = [t for t in b.tags if "ficurve" in t.name.lower() and "relacs.repro_run" in t.type]
+    if len(tags) < 1:
+        return
+    tag = tags[0]
+    g = b.groups[tag.name]
+    mtags = g.multi_tags
+    if len(mtags) < 1:
+        return
+    mtag = mtags[0]
+
+    intensity_feature = [ft for ft in mtag.features if "_intensity" in ft.data.name.lower()][0]
+    rates = np.zeros(mtag.positions.shape)
+    intensities = np.zeros(mtag.positions.shape)
+
+    for i in range(mtag.positions.shape[0]):
+        duration = mtag.extents[i]
+        spikes = mtag.retrieve_data(i, "Spikes-1")[:]
+        rates[i] = len(spikes) / duration
+        intensities[i] = mtag.retrieve_feature_data(i, intensity_feature.data.name)[:]
+
+    plt.scatter(intensities, rates)
+    plt.xlabel("stimulus [mV/cm]")
+    plt.ylabel("firing rate [Hz]")
+    plt.show()
+
+    f.close()
 
 
 if __name__ == "__main__":
     example_file = "../examples/relacs_data.nix"
-    # show_file_info(example_file)
-    # print_subject_metadata(example_file)
-    # plot_data_snippet(example_file)
+    show_file_info(example_file)
+    print_subject_metadata(example_file)
+    plot_data_snippet(example_file)
+    get_baseline_data(example_file)
+    plot_fi_curve(example_file)
