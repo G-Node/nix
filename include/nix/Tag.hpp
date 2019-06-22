@@ -534,12 +534,18 @@ public:
     }
 
     /**
+     * @brief Copy-assignment operator.
+     */
+    Tag &operator=(const Tag &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const Tag &ent);
-
 };
-
 
 template<>
 struct objectToType<nix::Tag> {
