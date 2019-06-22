@@ -20,12 +20,12 @@ Relacs overview
 In the `Neuroethology group <www.neuroetho.uni-tuebingen.de>`__ relacs
 is used to record the activity of single neurons during
 electrophysiological experiments. It controls the experiment, presents
-stimuli, performs some online analyses and stores the data to disk. It
-knows a lot of metadata that are essential to correctly analyze the
-data and adapts stimuli in a closed loop fashion. Accordingly, it
-requires a lot of flexibility and the configurable leads to the
-situation that options and settings are to some extent not
-foreseeable.
+stimuli, performs online analyses, adapts stimuli in a closed loop
+fashion, and stores data to file. Being configurable implies that
+settings and properties are not forseeable at compile
+time. Accordingly it requires a lot of flexibility on the side of the
+storage backend. At the same time it knows a lot of metadata that are
+essential for corretly analyzing the data.
 
 .. figure:: ./images/relacs_ephys.png
    :alt: relacs user interface
@@ -43,9 +43,9 @@ foreseeable.
    protocol (RePro) can use to display data or interact with the
    experimenter.
 
-Several traces are recorded in parallel (usually sampled with 20, 40,
-or 100 kHz per channel 16 bit, depending on experimental
-requirements).
+In the depicted use-case, several traces are recorded in parallel
+(usually sampled with 20, 40, or 100 kHz per channel 16 bit, depending
+on experimental requirements).
 
 1. The neuron's membrane voltage (V-1).
 2. The fish's electric organ discharge (EOD), global measurement.
@@ -113,7 +113,7 @@ Data storage using NIX
 So much for the background. In the following we will illustrate how
 such data is persisted in NIX files and how to work with the
 data. Since relacs is programmed in C++ the *nixio* c++ library is
-used for this. The code below uses the python implementation *nixpy*.
+used for this.
 
 .. figure:: ./images/relacs_tagging.png
    :alt: tagging repros and stimuli
@@ -164,24 +164,24 @@ implementation can be found `here
       for ( int k=0; k<IL.size(); k++ ) {
          NixTrace trace;
          string data_type = "relacs.data.sampled." + IL[k].ident();
-         trace.data = root_block.createDataArray(IL[k].ident(), data_type, nix::DataType::Float, {4096});
+         trace.data = root_block.createDataArray( IL[k].ident(), data_type, nix::DataType::Float, {4096} );
          std::string unit = IL[k].unit();
-         nix::util::unitSanitizer(unit);
-         if ( !unit.empty() && nix::util::isSIUnit(unit) ) {
+         nix::util::unitSanitizer( unit );
+         if ( !unit.empty() && nix::util::isSIUnit( unit ) ) {
              trace.data.unit( unit );
          } else if ( !unit.empty() ) {
              std::cerr << "NIX output Warning: Given unit " << unit << " is no valid SI unit, not saving it!" << std::endl;
          }
          if ( !IL[k].ident().empty() )
-             trace.data.label(IL[k].ident() );
+             trace.data.label( IL[k].ident() );
          nix::SampledDimension dim;
-         dim = trace.data.appendSampledDimension(IL[k].sampleInterval());
-         dim.unit("s");
-         dim.label("time");
+         dim = trace.data.appendSampledDimension( IL[k].sampleInterval() );
+         dim.unit( "s" );
+         dim.label( "time" );
          trace.index = IL[k].size();
          trace.written = 0;
          trace.offset = {0};
-         traces.push_back(std::move(trace));
+         traces.push_back(std::move( trace ));
       }
    }
 
@@ -207,7 +207,7 @@ the ``NixTrace`` object created before:
    void SaveFiles::NixFile::writeChunk( NixTrace &trace, size_t to_read, const void *data )
    {
       typedef nix::NDSize::value_type value_type;
-      nix::NDSize count = { static_cast<value_type>(to_read) };
+      nix::NDSize count = { static_cast<value_type>( to_read ) };
       nix::NDSize size = trace.offset + count;
       trace.data.dataExtent( size );
       trace.data.setData( nix::DataType::Float, data, count, trace.offset );
@@ -229,7 +229,8 @@ which the one dimension represents time.
    :linenos:
    :caption: Creating ``nix::DataArrays`` for events.
 
-   void SaveFiles::NixFile::initEvents( const EventList &EL, FilterDetectors *FD ) {
+   void SaveFiles::NixFile::initEvents( const EventList &EL, FilterDetectors *FD )
+   {
       for ( int i = 0; i < EL.size(); i++ ) {
          if ( (EL[i].mode() & SaveTrace) == 0 ) {
              continue;      //Nothing to save
@@ -240,14 +241,14 @@ which the one dimension represents time.
          ed.offset = {0};
          std::string ident = EL[i].ident();
          std::string data_type = "relacs.data.events." + ident;
-         if ( root_block.hasDataArray(ident) )
+         if ( root_block.hasDataArray( ident ) )
              ident = EL[i].ident() + "_events";
          ed.data = root_block.createDataArray( ident, data_type, nix::DataType::Double, {256} );
          ed.data.unit( "s" );
          ed.data.label( "time" );
          ed.data.appendAliasRangeDimension();
          ed.input_trace =  FD->eventInputTrace( i );
-         events.push_back(std::move(ed));
+         events.push_back(std::move( ed ));
       }
    }
 
@@ -303,7 +304,7 @@ the electrosensory system of the weakly electric fish *Apteronotus
 leptorhynchus*. The code snippets shown below are part of
 :download:`this script <code/relacs_example.py>` which uses the python
 library (`nixpy <https://github.com/g-node/nixpy>`__). To run the
-example code we need the nixpy, numpy, and matplotlib packages.
+example code nixpy, numpy, and matplotlib python packages are required.
 
 
 A simple plot
@@ -395,10 +396,10 @@ Using Tags and Features
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 The "FI-curve" RePro is used to measure the neuron's input-ouptut
-characteristic. Again for each run of the "FI-curve" RePro a
-``nix::Tag`` is created. The RePro puts out a set of stimuli. The
-stimulus segments and the stimulus amplitude are stored in a
-``nix::MultiTag`` respectively one of its ``nix::Features``.
+characteristic. Again, a ``nix::Tag`` is created for each run of the
+"FI-curve" RePro. The RePro puts out a set of stimuli. The stimulus
+segments and the stimulus amplitude are stored in a ``nix::MultiTag``
+respectively one of its ``nix::Features``.
 
 .. literalinclude:: code/relacs_example.py
    :language: python
@@ -411,16 +412,17 @@ stimulus segments and the stimulus amplitude are stored in a
 During a RePro run (the ``nix::Tag``) there may be several stimuli
 presented. In lines 5-13 the ``nix::Group`` that has the same name as
 the Tag is used to get the ``nix::MultiTags`` that are related to the
-FI-Curve RePro run. In line 15 we get search the feature that stores
-the stimulus intensity. This is prior knowledge. Lines 16, 17 create
-variables for storing the x- and y-values for the plot (the stimulus
-intensities and the firing rates, respectively). The ``for`` -loop in
-lines 19-25 then iterates over the number of positions (stimulus
-segments) and reads the duration of each stimulus presentation (line
+FI-Curve RePro run. In line 15 we use prior knowledge to search the
+``nix::Feature`` that stores the stimulus intensity. Lines 16, 17
+create variables for storing the x- and y-values for the plot (the
+stimulus intensities and the firing rates, respectively). The
+``for`` -loop in lines 19-25 then iterates over the number of
+positions (stimulus segments) and reads the duration of each stimulus
+presentation (line
 20) and the spike times observed in the respective stimulus
 segments. The firing rate is then simply calculated as the number of
 spikes per stimulus duration (line 22). The stimulus intensity is read
-from file using the ``mtag.retrieve_feature_data method`` (line 23,
+from file using the ``mtag.retrieve_feature_data`` method(line 23,
 the method will be renamed in 1.5.x releases). Finally, the firing
 rate is plotted as a function of the stimulus intensity.
 
