@@ -33,6 +33,10 @@ public:
 
     void hyperslab(const NDSize &count, const NDSize &start, H5S_seloper_t op = H5S_SELECT_SET);
 
+    DataSpace &operator=(const DataSpace &other) {
+        H5Object::operator=(other);
+        return *this;
+    }
 };
 
 } //::nix::hdf5

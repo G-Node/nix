@@ -172,6 +172,10 @@ public:
      */
     bool removeAllLinks(const std::string &name);
 
+    H5Group &operator=(const H5Group &other) {
+        H5Object::operator=(other);
+        return *this;
+    }
 
     virtual ~H5Group();
 
