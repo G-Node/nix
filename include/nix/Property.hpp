@@ -267,6 +267,14 @@ public:
     }
 
     /**
+     * @brief Copy-assignment operator.
+     */
+    Property &operator=(const Property &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const Property &ent);

@@ -509,6 +509,14 @@ public:
     }
 
     /**
+     * @brief Copy-assignment operator.
+     */
+    DataArray &operator=(const DataArray &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
     NIXAPI friend std::ostream& operator<<(std::ostream &out, const DataArray &ent);

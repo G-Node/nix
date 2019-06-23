@@ -930,6 +930,14 @@ public:
     }
 
     /**
+     * @brief Copy-assignment operator.
+     */
+    Block &operator=(const Block &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
+
+    /**
      * @brief Output operator
      */
     NIXAPI friend std::ostream &operator<<(std::ostream &out, const Block &ent);

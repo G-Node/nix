@@ -162,6 +162,13 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Copy-assignment operator.
+     */
+    Feature &operator=(const Feature &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
 };
 
 /**
