@@ -49,7 +49,7 @@ public:
 
     /**
      * @brief returns the minimum and maximum chunk sizes
-     * 
+     *
      */
     static std::tuple<ndsize_t, ndsize_t> getChunkBounds();
 
@@ -63,6 +63,11 @@ public:
     DataSpace getSpace() const;
 
     std::tuple<DataSpace, DataSpace> offsetCount2DataSpaces(const NDSize &count, const NDSize &offset={}) const;
+
+    DataSet &operator=(const DataSet &other) {
+        LocID::operator=(other);
+        return *this;
+    }
 };
 
 

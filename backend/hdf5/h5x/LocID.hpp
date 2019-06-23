@@ -41,6 +41,12 @@ public:
     void deleteLink(std::string name, hid_t plist = H5L_SAME_LOC);
 
     unsigned int referenceCount() const;
+
+    LocID &operator=(const LocID &other) {
+        H5Object::operator= (other);
+        return *this;
+    }
+
 private:
 
     Attribute openAttr(const std::string &name) const;

@@ -33,6 +33,11 @@ public:
 
     DataSpace getSpace() const;
     NDSize extent() const;
+
+    Attribute &operator=(const Attribute &other) {
+        H5Object::operator=(other);
+        return *this;
+    }
 };
 
 

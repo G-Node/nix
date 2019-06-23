@@ -18,6 +18,9 @@
 #pragma warning(pop)
 #endif
 
+#define __STDC_WANT_LIB_EXT1__ 1
+#include <time.h>
+
 #include <modules/Dump.hpp>
 #include <limits>
 #include <cstddef>
@@ -91,14 +94,19 @@ yamlstream& yamlstream::operator[](const size_t n_indent) {
 std::string yamlstream::t(const time_t &tm) {
     char tbuff[100];
     std::tm t_local;
-
-#ifndef _MSC_VER
-    t_local = *std::localtime(&tm);
-#else
+#ifdef __STDC_LIB_EXT1__
+    std::tm buf;
+    t_local = localtime_s(&tm, &buf);
+    if (buf == nullptr)
+        return "NA";
+#elif _MSC_VER
     errno_t err = localtime_s(&t_local, &tm);
     if (err) {
-	    return "NA";
+        return "NA";
     }
+#else
+    std::tm buf;
+    t_local = *localtime_r(&tm, &buf);
 #endif
 
     size_t res = strftime(tbuff, sizeof(tbuff), "%c", &t_local);
@@ -202,8 +210,8 @@ yamlstream& yamlstream::operator<<(const nix::Source &source) {
         *this << "sources";
         ++(*this);
             auto sources = source.sources();
-            for (auto &source : sources) {
-                *this << source;
+            for (auto &s : sources) {
+                *this << s;
             }
         --(*this);
     --(*this);
@@ -235,8 +243,8 @@ yamlstream& yamlstream::operator<<(const nix::Section &section) {
         *this << "sections";
         ++(*this);
             auto sections = section.sections();
-            for (auto &section : sections) {
-                *this << section;
+            for (auto &s : sections) {
+                *this << s;
             }
         --(*this);
     --(*this);

@@ -185,8 +185,8 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
                                                                    {position[i] + extent[i]},
                                                                    {units[i]}, dimensions[i]);
         temp_offset[i] = indices[0].first;
-        ndsize_t count = indices[0].second - indices[0].first;
-        temp_count[i] += count;
+        ndsize_t c = indices[0].second - indices[0].first;
+        temp_count[i] += c;
     }
     offset = temp_offset;
     count = temp_count;

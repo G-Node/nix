@@ -901,6 +901,14 @@ public:
     Dimension& operator=(const SetDimension &other);
 
     /**
+     * @brief Assignment operator.
+     */
+    Dimension &operator=(const Dimension &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
+
+    /**
      * @brief Assignment operator for none.
      */
     Dimension &operator=(const none_t &t) {

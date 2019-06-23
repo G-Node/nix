@@ -211,7 +211,7 @@ H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
 
     ndsize_t dim_max = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
-        throw new runtime_error("Invalid dimension index: has to be 0 < index <= " + util::numToStr(dim_max));
+        throw runtime_error("Invalid dimension index: has to be 0 < index <= " + util::numToStr(dim_max));
 
     string str_id = util::numToStr(index);
     if (g->hasGroup(str_id)) {

@@ -7,6 +7,8 @@
 // LICENSE file in the root of the Project.
 //
 // Author: Christian Kellner <kellner@bio.lmu.de>
+#ifndef HYDRA_MULTI_ARRAY_H
+#define HYDRA_MULTI_ARRAY_H
 
 #ifdef _MSC_VER
 #pragma warning(push)
@@ -23,8 +25,6 @@
 
 #include <type_traits>
 
-#ifndef HYDRA_MULTI_ARRAY_H
-#define HYDRA_MULTI_ARRAY_H
 
 namespace nix {
 

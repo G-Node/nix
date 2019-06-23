@@ -491,6 +491,13 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Copy-assignment operator.
+     */
+    File &operator=(const File &other)  {
+        ImplContainer::operator=(other);
+        return *this;
+    }
     //------------------------------------------------------
     // Validate
     //------------------------------------------------------

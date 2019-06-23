@@ -77,6 +77,11 @@ public:
 
     void enum_valueof(const std::string &name, void *value);
     bool enum_equal(const DataType &other) const;
+
+    DataType &operator=(const DataType &other) {
+        H5Object::operator=(other);
+        return *this;
+    }
 };
 
 }
