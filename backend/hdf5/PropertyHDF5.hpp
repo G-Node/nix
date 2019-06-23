@@ -120,11 +120,6 @@ public:
     bool isValidEntity() const;
 
 
-    bool operator==(const PropertyHDF5 &other) const; //FIXME: not implemented
-
-
-    bool operator!=(const PropertyHDF5 &other) const; //FIXME: not implemented
-
     static h5x::DataType fileTypeForValue(DataType dtype);
 
     virtual ~PropertyHDF5();
