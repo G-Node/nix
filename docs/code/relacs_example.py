@@ -1,6 +1,8 @@
+import os
 import nixio as nix
 import numpy as np
 import matplotlib.pyplot as plt
+import requests
 
 
 def show_file_info(filename):
@@ -100,8 +102,31 @@ def plot_fi_curve(filename):
     f.close()
 
 
+def load_data():
+    success = False
+    example_url = "https://gin.g-node.org/G-Node/nix-examples/raw/master/relacs_simulation/relacs_data.nix"
+    print("Dowloading example file from gin.g-node.org:")
+    r = requests.get(example_url, stream=True)
+    if r.status_code != requests.codes.ok:
+        return success
+    read_bytes = 0
+    with open("relacs_data.nix", 'wb') as f:
+        for chunk in r.iter_content(chunk_size=256):
+            read_bytes += 256
+            print("Downloaded %i bytes" % read_bytes, end="\r")
+            f.write(chunk)
+        success = True
+        print("\nDownload succeeded!")
+
+    return success
+
+
 if __name__ == "__main__":
-    example_file = "../examples/relacs_data.nix"
+    example_file = "relacs_data.nix"
+    if not os.path.exists(example_file):
+        if not load_data():
+            print("Failed to find example data!")
+            pass
     show_file_info(example_file)
     print_subject_metadata(example_file)
     plot_data_snippet(example_file)

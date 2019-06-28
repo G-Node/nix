@@ -314,7 +314,7 @@ The first example simply plots a short part of the recorded traces.
 
 .. literalinclude:: code/relacs_example.py
    :language: python
-   :lines: 36-48
+   :lines: 38-50
    :linenos:
    :caption: Creating a simple plot of one of the recorded traces.
 
@@ -352,7 +352,7 @@ subject that was used in this recording session.
 
 .. literalinclude:: code/relacs_example.py
    :caption: Accessing metadata.
-   :lines: 27-33
+   :lines: 29-35
    :language: python
    :linenos:
 
@@ -375,7 +375,7 @@ tag.
 .. literalinclude:: code/relacs_example.py
    :language: python
    :caption: Get the tagged data.
-   :lines: 51-68
+   :lines: 53-70
    :linenos:
 
 There are a few noteworthy lines here: Line 4 assembles all
@@ -403,7 +403,7 @@ respectively one of its ``nix::Features``.
 
 .. literalinclude:: code/relacs_example.py
    :language: python
-   :lines: 71-100
+   :lines: 73-102
    :linenos:
    :caption: Plotting the Firing rate versus Intensity
              curve. **Note:** The following code is kept rather simple
