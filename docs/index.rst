@@ -37,7 +37,7 @@ datasets, i.e. the data together with its metadata within the same
 container. Our aim is to achieve standardization by providing a
 common/generic data structure for a multitude of data types. See the
 `wiki <https://github.com/G-Node/nix/wiki>`__ or the
-`introduction <./getting_started.md>`__ for more information.
+`introduction <getting_started.html>`__ for more information.
 
 .. raw:: html
 
@@ -109,6 +109,7 @@ Referenced by
 .. toctree::
    getting_started
    data_model
+   use_cases
    :maxdepth: 1
    :caption: Introduction:
 
