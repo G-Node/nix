@@ -110,9 +110,10 @@ def load_data():
     if r.status_code != requests.codes.ok:
         return success
     read_bytes = 0
+    chunksize = 2**12
     with open("relacs_data.nix", 'wb') as f:
-        for chunk in r.iter_content(chunk_size=256):
-            read_bytes += 256
+        for chunk in r.iter_content(chunk_size=chunksize):
+            read_bytes += len(chunk)
             print("Downloaded %i bytes" % read_bytes, end="\r")
             f.write(chunk)
         success = True
