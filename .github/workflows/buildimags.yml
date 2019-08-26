@@ -1,0 +1,14 @@
+name: Build and publish build images
+on:
+  schedules:
+  - cron: 0 6 * * 1
+jobs:
+  build-publish:
+    name: Build and publish the image
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build image
+      uses: actions/docker/cli@master
+      with:
+        args: build -f .github/workflows/Dockerfile-ub1804 -t "gnode/nixbuild:ub1804" .
