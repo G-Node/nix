@@ -33,10 +33,13 @@ jobs:
       run: |
         mkdir build
         pushd build
-        cmake -DBUILD_FS_BACKEND=OFF ..
+        cmake -DBUILD_FS_BACKEND=OFF -DBUILD_COVERAGE=ON ..
         make
         make test
         popd
+    - name: Coverage
+      run: |
+        coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp -e docs --gcov-options '\-lp'
 
   build-macos:
     name: Build on macOS
