@@ -1,6 +1,43 @@
 name: CI
 on: [push]
 jobs:
+  build-ub1804:
+    name: Build on Ubuntu 18.04
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Install dependecies
+      run: |
+        sudo apt-get update -y &&
+        sudo apt-get install -yy --no-install-recommends \
+          cmake \
+          clang-7 \
+          doxygen \
+          git \
+          gcc-8 \
+          g++-8 \
+          libcppunit-dev \
+          libboost-all-dev \
+          libhdf5-dev \
+          libhdf5-serial-dev \
+          libyaml-cpp-dev \
+          libstdc++-8-dev \
+          python3-pip \
+          python3-setuptools \
+          python3-wheel \
+          valgrind
+    - name: Install coveralls
+      run: |
+        sudo pip3 install cpp-coveralls
+    - uses: actions/checkout@v1
+    - name: Build
+      run: |
+        mkdir build
+        pushd build
+        cmake -DBUILD_FS_BACKEND=OFF ..
+        make
+        make test
+        popd
+
   build-macos:
     name: Build on macOS
     runs-on: macOS-10.14
