@@ -41,6 +41,9 @@ jobs:
   build-macos:
     name: Build on macOS
     runs-on: macOS-10.14
+    strategy:
+      matrix:
+        fs-backend: [ 'FS_BACKEND=ON', 'FS_BACKEND=OFF' ]
     steps:
     - name: Install dependecies
       run: |
@@ -55,6 +58,6 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DBUILD_FS_BACKEND=OFF ..
+        cmake -DBUILD_${{ matrix.fs-backend }} ..
         make
         make test
