@@ -55,10 +55,6 @@ jobs:
       run: |
         brew update
         brew install cmake boost cppunit hdf5 yaml-cpp
-    - name: Install coveralls
-      run: |
-        pip install --upgrade pip
-        pip install --user cpp-coveralls
     - uses: actions/checkout@v1
     - name: Build
       run: |
