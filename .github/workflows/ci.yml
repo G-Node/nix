@@ -41,6 +41,7 @@ jobs:
         make test
         popd
     - name: Coverage
+      if: endsWith(matrix.fs-backend, 'OFF')
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
       run: |
