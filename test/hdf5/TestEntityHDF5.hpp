@@ -24,6 +24,7 @@ class TestEntityHDF5 : public BaseTestEntity {
     CPPUNIT_TEST(testCreatedAt);
 
     CPPUNIT_TEST(testIsValidEntity);
+    CPPUNIT_TEST(testOperators);
 
     CPPUNIT_TEST_SUITE_END ();
 
