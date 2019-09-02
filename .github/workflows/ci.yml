@@ -12,8 +12,10 @@ jobs:
       run: |
         sudo apt-get update -y &&
         sudo apt-get install -yy --no-install-recommends \
+          bash \
           cmake \
           clang-7 \
+          curl \
           doxygen \
           git \
           gcc-8 \
@@ -24,13 +26,8 @@ jobs:
           libhdf5-serial-dev \
           libyaml-cpp-dev \
           libstdc++-8-dev \
-          python3-pip \
-          python3-setuptools \
-          python3-wheel \
+          lcov \
           valgrind
-    - name: Install coveralls
-      run: |
-        sudo pip3 install cpp-coveralls
     - uses: actions/checkout@v1
     - name: Build
       run: |
@@ -43,9 +40,10 @@ jobs:
     - name: Coverage
       if: endsWith(matrix.fs-backend, 'OFF')
       env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
-        coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp -e docs --gcov-options '\-lp'
+        lcov --capture --directory . --no-extern --output-file coverage.info
+        bash <(curl -s https://codecov.io/bash) -f coverage.info
 
   build-macos:
     name: Build on macOS
