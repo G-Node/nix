@@ -43,7 +43,7 @@ jobs:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         lcov -q --capture --directory . --no-extern --output-file coverage.info
-        bash <(curl -s https://codecov.io/bash) -f coverage.info
+        bash <(curl -s https://codecov.io/bash) -f coverage.info -Z
 
   build-macos:
     name: Build on macOS
