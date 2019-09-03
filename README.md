@@ -2,7 +2,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/1qlcasjg2fpqotig/branch/master?svg=true)](https://ci.appveyor.com/project/G-Node/nix/branch/master)
 [![Coverage](https://codecov.io/gh/G-Node/nix/branch/master/graph/badge.svg)](https://codecov.io/gh/G-Node/nix)
 
---
+---
 
 ![nix_logo](docs/nix_logo.png "NIX")
 
