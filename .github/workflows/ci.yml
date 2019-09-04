@@ -40,7 +40,7 @@ jobs:
     - name: Coverage
       if: endsWith(matrix.fs-backend, 'OFF')
       env:
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        VCS_SLUG: G-Node/nix
       run: |
         lcov -q --capture --directory . --no-extern --output-file coverage.info
         bash <(curl -s https://codecov.io/bash) -f coverage.info -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
