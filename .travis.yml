@@ -1,7 +1,7 @@
 language: cpp
 
 sudo: required
-dist: trusty
+dist: bionic
 
 compiler:
   - gcc
@@ -20,17 +20,34 @@ matrix:
     - os: osx
       compiler: gcc
 
+addons:
+  apt:
+    update: true
+    packages:
+      - cmake
+      - bash
+      - cmake
+      - clang-7
+      - curl
+      - doxygen
+      - git
+      - gcc-8
+      - g++-8
+      - libcppunit-dev
+      - libboost-all-dev
+      - libhdf5-dev
+      - libhdf5-serial-dev
+      - libyaml-cpp-dev
+      - libstdc++-8-dev
+      - lcov
+      - valgrind
+
 before_install:
   - if [[ "$CXX" == "g++" ]];
     then
        export CTEST_ARGS=-V;
     else
        export CTEST_ARGS=-VV;
-    fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    sudo apt-get update -qq;
-    sudo apt-get install -q gcc-4.8 g++-4.8 lcov libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 -y;
-    sudo apt-get install libyaml-cpp-dev -y;
     fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     brew update;
@@ -40,15 +57,6 @@ before_install:
   - if [ "$CXX" == "g++" ]; then
     g++ --version;
     else clang --version;
-    fi
-
-install:
-  - if [ "$CXX" == "g++" ]; then
-    export CXX="g++-4.8";
-    export COMPILER="g++";
-    $CXX --version;
-    else
-    clang --version;
     fi
 
 script:
