@@ -23,15 +23,13 @@ matrix:
 before_install:
   - if [[ "$CXX" == "g++" ]];
     then
-       pip install --upgrade pip;
        export CTEST_ARGS=-V;
-       pip install --user cpp-coveralls;
     else
        export CTEST_ARGS=-VV;
     fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
     sudo apt-get update -qq;
-    sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 -y;
+    sudo apt-get install -q gcc-4.8 g++-4.8 lcov libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 -y;
     sudo apt-get install libyaml-cpp-dev -y;
     fi
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
@@ -58,7 +56,8 @@ script:
 
 after_success:
   - if [[ "$COMPILER" == "g++" ]]; then
-    coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp -e docs --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null;
+      lcov -q --capture --directory . --no-extern --output-file coverage.info;
+      bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
     fi
 
 notifications:
