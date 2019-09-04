@@ -50,6 +50,13 @@ addons:
       - yaml-cpp
     update: true
 
+before_cache:
+  - brew cleanup
+
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 before_install:
   - if [[ "$CXX" == "g++" ]];
     then
