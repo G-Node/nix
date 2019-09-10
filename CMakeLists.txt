@@ -32,10 +32,17 @@ if(NOT WIN32)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O2 -DNDEBUG")
 
   if(CMAKE_COMPILER_IS_GNUCXX AND BUILD_COVERAGE)
-    set (HAVE_COVERAGE ON)
     MESSAGE(STATUS "Activating coverage support.")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fprofile-arcs -ftest-coverage")
-    SET(CMAKE_SHARED_LINKER_FLAGS="${CMAKE_SHARED_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+    set(HAVE_COVERAGE ON)
+
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+      message(WARNING "Coverage requested but built type not 'Debug'")
+    endif()
+
+    add_compile_options(--coverage)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
   endif()
 
 endif()

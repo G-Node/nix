@@ -1,7 +1,7 @@
 language: cpp
 
 sudo: required
-dist: trusty
+dist: bionic
 
 compiler:
   - gcc
@@ -20,45 +20,62 @@ matrix:
     - os: osx
       compiler: gcc
 
+addons:
+  apt:
+    update: true
+    packages:
+      - cmake
+      - bash
+      - cmake
+      - clang-7
+      - curl
+      - doxygen
+      - git
+      - gcc-8
+      - g++-8
+      - libcppunit-dev
+      - libboost-all-dev
+      - libhdf5-dev
+      - libhdf5-serial-dev
+      - libyaml-cpp-dev
+      - libstdc++-8-dev
+      - lcov
+      - valgrind
+  homebrew:
+    packages:
+      - cmake
+      - boost
+      - cppunit
+      - hdf5
+      - yaml-cpp
+    update: true
+
+before_cache:
+  - brew cleanup
+
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
 before_install:
   - if [[ "$CXX" == "g++" ]];
     then
-       pip install --upgrade pip;
        export CTEST_ARGS=-V;
-       pip install --user cpp-coveralls;
     else
        export CTEST_ARGS=-VV;
-    fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-    sudo apt-get update -qq;
-    sudo apt-get install -q gcc-4.8 g++-4.8 libstdc++-4.8-dev libcppunit-dev libboost-all-dev libhdf5-serial-dev libhdf5-dev libhdf5-7 -y;
-    sudo apt-get install libyaml-cpp-dev -y;
-    fi
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-    brew update;
-    brew install cmake boost cppunit hdf5 yaml-cpp;
-    brew --env;
     fi
   - if [ "$CXX" == "g++" ]; then
     g++ --version;
     else clang --version;
     fi
 
-install:
-  - if [ "$CXX" == "g++" ]; then
-    export CXX="g++-4.8";
-    export COMPILER="g++";
-    $CXX --version;
-    else
-    clang --version;
-    fi
-
 script:
   - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
 
 after_success:
-  - if [[ "$COMPILER" == "g++" ]]; then
-    coveralls -b build -E ".*CMakeFiles.*" -e cli -e test -e tmp -e docs --gcov gcov-4.8 --gcov-options '\-lp' > /dev/null;
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
+      lcov -q --capture --directory . --no-extern --output-file coverage.info;
+      bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
     fi
 
 notifications:
