@@ -20,6 +20,12 @@ public:
     DataView(DataArray da, NDSize count, NDSize offset)
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
 
+        if (this->offset.size() != array.dataExtent().size()) {
+            throw IncompatibleDimensions("DataView offset dimensionality does not match dimensionality of data", "nix::DataView");
+        }
+        if (this->count.size() != array.dataExtent().size()) {
+            throw IncompatibleDimensions("DataView count dimensionality does not match dimensionality of data", "nix::DataView");
+        }
         if (this->offset + this->count > array.dataExtent()) {
             throw OutOfBounds("Trying to create DataView which is out of bounds");
         }
