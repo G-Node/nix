@@ -42,7 +42,8 @@ DataArray objects
 - Data type must be set: HDF5 attribute `dtype`.
 - Number of attached Dimension objects must match the number of dimensions in the data.
 - Number of Ticks in any attached RangeDimension objects must match the length of the corresponding dimension in the data.
-- Number of Labels in any attached SetDimension objects must match the length of the corresponding dimension in the data.
+- Number of Labels in any attached SetDimension objects, if set, must match the length of the corresponding dimension in the data.
+  - Note that Labels may be empty.
 
 Dimension objects
 ~~~~~~~~~~~~~~~~~
@@ -69,7 +70,7 @@ Tag objects
 MultiTag objects
 ----------------
 - Rules for `Tag objects`_ apply.
-- Number of Positions must match number of Extents.
+- Number of Extents, if set, must match number of Positions.
 - Each element in the Positions and Extents arrays must match the number of dimensions in all the referenced DataArray objects.
 - Multiple Positions and Extents are specified, so the first dimension of the Positions and Extents arrays does not need to match any other property of the data.
 
