@@ -70,9 +70,10 @@ Tag objects
 MultiTag objects
 ----------------
 - Rules for `Tag objects`_ apply.
-- Number of Extents, if set, must match number of Positions.
-- Each element in the Positions and Extents arrays must match the number of dimensions in all the referenced DataArray objects.
-- Multiple Positions and Extents are specified, so the first dimension of the Positions and Extents arrays does not need to match any other property of the data.
+- Positons can be one- or two-dimensional:
+  - If the Positions array is one-dimensional, the referenced DataArray objects must also be one-dimensional.
+  - If the Positions array is two-dimensional, the length of each element (the second dimension) must match the number of dimensions of all referenced DataArray objects.
+- If the MultiTag contains Extents, the shape of the Extents array must match the shape of the Positions array.
 
 Feature objects
 ---------------
