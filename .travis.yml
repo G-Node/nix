@@ -2,6 +2,7 @@ language: cpp
 
 sudo: required
 dist: bionic
+services: docker
 
 compiler:
   - gcc
@@ -21,26 +22,6 @@ matrix:
       compiler: gcc
 
 addons:
-  apt:
-    update: true
-    packages:
-      - cmake
-      - bash
-      - cmake
-      - clang-7
-      - curl
-      - doxygen
-      - git
-      - gcc-8
-      - g++-8
-      - libcppunit-dev
-      - libboost-all-dev
-      - libhdf5-dev
-      - libhdf5-serial-dev
-      - libyaml-cpp-dev
-      - libstdc++-8-dev
-      - lcov
-      - valgrind
   homebrew:
     packages:
       - cmake
@@ -58,6 +39,8 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
+  - docker build -f ./dockerfiles/albuild.Dockerfile . -t local/nixio
+  - docker run -it -d --name nixbuilder local/nixio
   - if [[ "$CXX" == "g++" ]];
     then
        export CTEST_ARGS=-V;
@@ -65,12 +48,15 @@ before_install:
        export CTEST_ARGS=-VV;
     fi
   - if [ "$CXX" == "g++" ]; then
-    g++ --version;
-    else clang --version;
+      docker exec nixbuilder g++ --version;
+    else
+      docker exec nixbuilder clang --version;
     fi
 
 script:
-  - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
+  - docker exec nixbuilder cmake ..
+  - docker exec nixbuilder make
+  - docker exec nixbuilder make test
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
