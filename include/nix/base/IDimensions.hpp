@@ -11,7 +11,8 @@
 
 #include <nix/Platform.hpp>
 
-#include <nix/base/IDataFrame>
+#include <nix/base/IDataFrame.hpp>
+#include <nix/Variant.hpp>
 
 #include <string>
 #include <vector>
@@ -120,6 +121,10 @@ class NIXAPI IColumnDimension : virtual public IDimension {
     virtual boost::optional<std::string> unit() const = 0;
 
     virtual nix::Column column() const = 0;
+
+    virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;
+
+    virtual std::vector<nix::Variant> ticks() const = 0;
 };
 
 
