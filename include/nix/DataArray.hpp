@@ -15,6 +15,7 @@
 #include <nix/base/IDataArray.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/Hydra.hpp>
+#include <nix/DataFrame.hpp>
 
 #include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
@@ -380,6 +381,14 @@ public:
             dim.offset(offset);
         return dim;
     }
+
+
+    ColumnDimension appendColumnDimension(const DataFrame &frame, std::vector<unsigned> column_indices) {
+        ColumnDimension dim = backend()->createColumnDimension(backend()->dimensionCount() + 1, frame, column_indices);
+        return dim;
+    };
+
+
 
     /**
      * @brief Create a new SetDimension at a specified dimension index.

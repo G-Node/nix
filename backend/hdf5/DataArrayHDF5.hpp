@@ -15,6 +15,7 @@
 #define NIX_DATA_ARRAY_HDF5_H
 
 #include <nix/base/IDataArray.hpp>
+#include <nix/DataFrame.hpp>
 #include "EntityWithSourcesHDF5.hpp"
 
 #include <boost/multi_array.hpp>
@@ -112,6 +113,9 @@ public:
 
 
     std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval);
+
+
+    std::shared_ptr<base::IColumnDimension> createColumnDimension(ndsize_t id, const nix::DataFrame &df, std::vector<unsigned> col_indices);
 
 
     bool deleteDimensions();

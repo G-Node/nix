@@ -10,8 +10,13 @@
 #define NIX_DIMENSIONFS_HPP
 
 #include <nix/base/IDimensions.hpp>
+#include <nix/base/IBlock.hpp>
+#include <nix/base/IFile.hpp>
+#include <nix/DataFrame.hpp>
+
 #include "DirectoryWithAttributes.hpp"
 #include "DataArrayFS.hpp"
+
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -138,6 +143,55 @@ public:
 
 
     virtual ~SetDimensionFS();
+
+};
+
+
+class DataFrameDimensionFS : virtual public base::IDataFrameDimension, public DimensionFS {
+
+public:
+    DataFrameDimensionFS(const std::string &loc, FileMode mode)
+        :DimensionFS(loc, mode){};
+
+
+    DataFrameDimensionFS(const std::string &loc, size_t index, FileMode mode)
+        :DimensionFS(loc, index, mode){};
+
+    DimensionType dimensionType() const {
+        return DimensionType::DataFrame;
+    }
+
+    int columnIndex() const {
+        int index = -1;
+        return index;
+    }
+
+    Column column(int col_index) const {
+        nix::Column c;
+        return c;
+    }
+
+    std::string label(int col_index) const {
+        std::string label = "";
+        return label;
+    }
+
+    std::string unit(int col_index) const {
+        std::string unit;
+        return unit;
+    };
+
+    nix::DataType columnDataType(int col_index) const {
+        nix::DataType dtype;
+        return dtype;
+    }
+
+    std::shared_ptr<base::IDataFrame> dataFrame() const {
+        //std::shared_ptr<base::IDataFrameFS> df; //FIXME DataFrameFS does not exist
+        return nullptr;
+    }
+
+    virtual ~DataFrameDimensionFS(){};
 
 };
 
