@@ -18,7 +18,7 @@
 
 # -- Generate doxygen api documentation
 import subprocess
-subprocess.call('cd api_doc; doxygen Doxyfile', shell=True)
+subprocess.call('doxygen Doxyfile', shell=True, cwd='api_doc')
 
 
 # -- Project information -----------------------------------------------------
