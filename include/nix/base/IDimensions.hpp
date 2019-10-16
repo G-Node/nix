@@ -11,6 +11,8 @@
 
 #include <nix/Platform.hpp>
 
+#include <nix/base/IDataFrame>
+
 #include <string>
 #include <vector>
 #include <ostream>
@@ -25,7 +27,7 @@ namespace nix {
  * @brief Enumeration that provides constants for different dimension types.
  */
 enum class DimensionType : unsigned int {
-    Sample, Set, Range
+    Sample, Set, Range, Column
 };
 
 /**
@@ -102,6 +104,22 @@ public:
 
     virtual ~ISampledDimension() {}
 
+};
+
+
+/**
+   @brief Interface for the implementation of a ColumnDimension entity.
+   See {@link nix::ColumnDimension} for more detailed information.
+ */
+class NIXAPI IColumnDimension : virtual public IDimension {
+
+ public:
+
+    virtual boost::optional<std::string> label() const = 0;
+
+    virtual boost::optional<std::string> unit() const = 0;
+
+    virtual nix::Column column() const = 0;
 };
 
 
