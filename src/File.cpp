@@ -26,7 +26,7 @@ File File::open(const std::string &name,
                 const std::string &impl,
                 Compression compression,
                 OpenFlags flags) {
-    if (mode == nix::FileMode::ReadOnly && !bfs::exists({name})) {
+    if (mode == nix::FileMode::ReadOnly && !bfs::exists(bfs::path{name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }
     if (compression == Compression::Auto) {
