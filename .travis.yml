@@ -13,8 +13,10 @@ os:
   - osx
 
 env:
- - FS_BACKEND=ON
- - FS_BACKEND=OFF
+ - FS_BACKEND=ON DOCKERFILE=archlinux
+ - FS_BACKEND=OFF DOCKERFILE=archlinux
+ - FS_BACKEND=ON DOCKERFILE=ub1804
+ - FS_BACKEND=OFF DOCKERFILE=ub1804
 
 matrix:
   exclude:
@@ -62,7 +64,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ];
     then
       ./contrib/make-env.sh /tmp/docker.env;
-      docker build -f ./dockerfiles/albuild.Dockerfile . -t local/nixio;
+      docker build -f ./dockerfiles/${DOCKERFILE}.Dockerfile . -t local/nixio;
       docker run -it -d --name nixbuilder local/nixio
       docker exec nixbuilder ${CXX} --version;
     elif [ "$TRAVIS_OS_NAME" == "osx" ];
