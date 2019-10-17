@@ -39,24 +39,47 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
-  - docker build -f ./dockerfiles/albuild.Dockerfile . -t local/nixio
-  - docker run -it -d --name nixbuilder local/nixio
-  - if [[ "$CXX" == "g++" ]];
+  - if [ "$TRAVIS_OS_NAME" == "osx" ];
     then
+       export CC=clang;
+       export CXX=clang++;
+       export GCOV=gcov;
+       export CTEST_ARGS=-VV;
+    elif [[ "$CXX" == "g++" ]];
+    then
+       export CC=gcc-8;
+       export CXX=g++-8;
+       export GCOV=gcov-8
        export CTEST_ARGS=-V;
     else
+       export CC=clang-7;
+       export CXX=clang++-7;
+       export GCOV=gcov-8;
        export CTEST_ARGS=-VV;
     fi
-  - if [ "$CXX" == "g++" ]; then
-      docker exec nixbuilder g++ --version;
-    else
-      docker exec nixbuilder clang --version;
+
+install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      ./contrib/make-env.sh /tmp/docker.env;
+      docker build -f ./dockerfiles/albuild.Dockerfile . -t local/nixio;
+      docker run -it -d --name nixbuilder local/nixio
+      docker exec nixbuilder ${CXX} --version;
+    elif [ "$TRAVIS_OS_NAME" == "osx" ];
+    then
+      brew update;
+      brew install cmake boost cppunit hdf5 yaml-cpp;
+      brew --env;
     fi
 
 script:
-  - docker exec nixbuilder cmake ..
-  - docker exec nixbuilder make
-  - docker exec nixbuilder make test
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      docker exec nixbuilder ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    else
+      $CXX --version;
+      ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
