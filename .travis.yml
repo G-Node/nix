@@ -65,11 +65,6 @@ install:
       docker build -f ./dockerfiles/${DOCKERFILE}.Dockerfile . -t local/nixio;
       docker run --env-file /tmp/docker.env -d -i -t -v $(pwd):/src --name nixbuilder local/nixio;
       docker exec nixbuilder ${CXX} --version;
-    elif [ "$TRAVIS_OS_NAME" == "osx" ];
-    then
-      brew update;
-      brew install cmake boost cppunit hdf5 yaml-cpp;
-      brew --env;
     fi
 
 script:
