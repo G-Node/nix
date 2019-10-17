@@ -18,6 +18,12 @@ RUN apt-get update -q && apt-get install -yy \
     valgrind \
     && rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-7 1000
+RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-7 1000
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 1000
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 1000
+RUN update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-8 1000
+
 RUN pip install cpp-coveralls && \
     rm -rf /tmp/pip && \
     rm -rf /root/.cache
