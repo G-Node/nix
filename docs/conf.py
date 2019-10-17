@@ -16,6 +16,10 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+# -- Generate doxygen api documentation
+import subprocess
+subprocess.call('doxygen Doxyfile', shell=True, cwd='api_doc')
+
 
 # -- Project information -----------------------------------------------------
 
@@ -69,6 +73,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
+html_extra_path = ['api_doc/html']
 
 # -- Options for HTML output -------------------------------------------------
 
