@@ -45,22 +45,16 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ];
+  - if [[ "$CXX" == "gcc" ]];
     then
+       export CC=gcc;
+       export CXX=g++;
+       export GCOV=gcov;
+       export CTEST_ARGS=-V;
+    else
        export CC=clang;
        export CXX=clang++;
        export GCOV=gcov;
-       export CTEST_ARGS=-VV;
-    elif [[ "$CXX" == "g++" ]];
-    then
-       export CC=gcc-8;
-       export CXX=g++-8;
-       export GCOV=gcov-8
-       export CTEST_ARGS=-V;
-    else
-       export CC=clang-7;
-       export CXX=clang++-7;
-       export GCOV=gcov-8;
        export CTEST_ARGS=-VV;
     fi
 
