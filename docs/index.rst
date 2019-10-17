@@ -125,6 +125,13 @@ Referenced by
    :maxdepth: 1
    :caption: Misc
 
+.. toctree::
+   api/library_root
+   :maxdepth: 3
+   :caption: API Reference
+
+
+
 Indices and tables
 ==================
 
