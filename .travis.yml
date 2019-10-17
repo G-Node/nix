@@ -22,6 +22,10 @@ matrix:
   exclude:
     - os: osx
       compiler: gcc
+    - os: osx
+      env: FS_BACKEND=ON DOCKERFILE=ub1804
+    - os: osx
+      env: FS_BACKEND=OFF DOCKERFILE=ub1804
 
 addons:
   homebrew:
