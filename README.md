@@ -27,7 +27,7 @@ Documentation --- where to find which information?
 Project documentation is split up into three parts:
 1. Technical information: Please visit the GitHub repository [Wiki](https://github.com/G-Node/nix/wiki).
 2. General Introduction and tutorial: Visit the project pages on [ReadTheDocs](https://nixio.readthedocs.io/en/latest/)
-3. API documentation.
+3. API documentation: Visit the project pages on [ReadTheDocs](https://nixio.readthedocs.io/en/latest/)
 
 Further project related information:
 

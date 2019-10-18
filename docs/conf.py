@@ -44,8 +44,36 @@ github_url = "https://github.com/g-node/nix"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'breathe',
+    'exhale'
 ]
 
+breathe_projects = {
+    "NIXIO": "./api_doc/xml"
+}
+
+breathe_default_project = "NIXIO"
+
+exhale_args = {
+    # These arguments are required
+    "containmentFolder":     "./api",
+    "rootFileName":          "library_root.rst",
+    "rootFileTitle":         "Library API",
+    "doxygenStripFromPath":  "..",
+    # Suggested optional arguments
+    "createTreeView":        True,
+    # TIP: if using the sphinx-bootstrap-theme, you need
+    # "treeViewIsBootstrap": True,
+    "exhaleExecutesDoxygen": True,
+    "exhaleDoxygenStdin":    "INPUT = ../include"
+}
+
+
+# Tell sphinx what the primary language being documented is.
+primary_domain = 'cpp'
+
+# Tell sphinx what the pygments highlight language should be.
+highlight_language = 'cpp'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -73,7 +101,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-html_extra_path = ['api_doc/html']
+# html_extra_path = ['api_doc/html']
 
 # -- Options for HTML output -------------------------------------------------
 
