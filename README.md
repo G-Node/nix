@@ -21,6 +21,20 @@ information](https://github.com/G-Node/nix/wiki)
 
 The current implementations store the actual data using the [HDF5](http://www.hdfgroup.org/) file format as a storage backend.
 
+Documentation --- where to find which information?
+--------------------------------------------------
+
+Project documentation is split up into three parts:
+1. Technical information: Please visit the GitHub repository [Wiki](https://github.com/G-Node/nix/wiki).
+2. General Introduction and tutorial: Visit the project pages on [ReadTheDocs](https://nixio.readthedocs.io/en/latest/)
+3. API documentation.
+
+Further project related information:
+
+- We have assembled a set of
+ [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
+ [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using the python library.
+
 
 The NIX ecosystem
 -----------------
@@ -41,15 +55,8 @@ We provide bindings in various languages:
 
 - Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
-**Tutorial and examples**
 
-- We have assembled a set of
- [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
- [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using the python language
- bindings.
-
-
-Getting Started 
+Getting Started
 ---------------
 
 Platform specific installation instructions can be found:
@@ -57,11 +64,3 @@ Platform specific installation instructions can be found:
 - [Linux](docs/install_linux.md)
 - [macOS](docs/install_mac.md)
 - [Windows](docs/install_win.md)
-
-
-NIX API Documentation
----------------------
-
-The API documentation for the C++ library can be found [here](http://g-node.github.io/nix/)
-
-

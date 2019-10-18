@@ -306,7 +306,7 @@ void TestDataSet::testValArrayIO() {
     ds.read(va_double1, true);
 
     CPPUNIT_ASSERT_EQUAL(va_double.size(), va_double1.size());
-    for(size_t i = 0; i << va_double.size(); i++) {
+    for(size_t i = 0; i < va_double.size(); i++) {
         CPPUNIT_ASSERT_DOUBLES_EQUAL(va_double[i], va_double1[i],
                                      std::numeric_limits<double>::epsilon());
     }

@@ -450,6 +450,9 @@ void BaseTestDataAccess::testDataView() {
     CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3}, {}), OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(io.dataExtent(zcount), std::runtime_error);
+
+    CPPUNIT_ASSERT_THROW(DataView(data_array, {0, 0, 0, 0}, {1, 1, 1}), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(DataView(data_array, {0, 0, 0}, {1, 1}), IncompatibleDimensions);
 }
 
 

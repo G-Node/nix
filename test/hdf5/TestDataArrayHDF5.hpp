@@ -22,6 +22,7 @@ class TestDataArrayHDF5 : public BaseTestDataArray {
     CPPUNIT_TEST(testDefinition);
     CPPUNIT_TEST(testData);
     CPPUNIT_TEST(testPolynomial);
+    CPPUNIT_TEST(testPolynomialSetter);
     CPPUNIT_TEST(testLabel);
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
