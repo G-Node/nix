@@ -2,6 +2,7 @@ language: cpp
 
 sudo: required
 dist: bionic
+services: docker
 
 compiler:
   - gcc
@@ -12,35 +13,21 @@ os:
   - osx
 
 env:
- - FS_BACKEND=ON
- - FS_BACKEND=OFF
+ - FS_BACKEND=ON DOCKERFILE=archlinux
+ - FS_BACKEND=OFF DOCKERFILE=archlinux
+ - FS_BACKEND=ON DOCKERFILE=ub1804
+ - FS_BACKEND=OFF DOCKERFILE=ub1804
 
 matrix:
   exclude:
     - os: osx
       compiler: gcc
+    - os: osx
+      env: FS_BACKEND=ON DOCKERFILE=ub1804
+    - os: osx
+      env: FS_BACKEND=OFF DOCKERFILE=ub1804
 
 addons:
-  apt:
-    update: true
-    packages:
-      - cmake
-      - bash
-      - cmake
-      - clang-7
-      - curl
-      - doxygen
-      - git
-      - gcc-8
-      - g++-8
-      - libcppunit-dev
-      - libboost-all-dev
-      - libhdf5-dev
-      - libhdf5-serial-dev
-      - libyaml-cpp-dev
-      - libstdc++-8-dev
-      - lcov
-      - valgrind
   homebrew:
     packages:
       - cmake
@@ -58,19 +45,36 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
-  - if [[ "$CXX" == "g++" ]];
+  - if [[ "$CXX" == "gcc" ]];
     then
+       export CC=gcc;
+       export CXX=g++;
+       export GCOV=gcov;
        export CTEST_ARGS=-V;
     else
+       export CC=clang;
+       export CXX=clang++;
+       export GCOV=gcov;
        export CTEST_ARGS=-VV;
     fi
-  - if [ "$CXX" == "g++" ]; then
-    g++ --version;
-    else clang --version;
+
+install:
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      ./contrib/make-env.sh /tmp/docker.env;
+      docker build -f ./dockerfiles/${DOCKERFILE}.Dockerfile . -t local/nixio;
+      docker run --env-file /tmp/docker.env -d -i -t -v $(pwd):/src --name nixbuilder local/nixio;
+      docker exec nixbuilder ${CXX} --version;
     fi
 
 script:
-  - ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest
+  - if [ "$TRAVIS_OS_NAME" == "linux" ];
+    then
+      docker exec nixbuilder ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    else
+      $CXX --version;
+      ctest ${CTEST_ARGS} --output-on-failure -S .travis.ctest;
+    fi
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
