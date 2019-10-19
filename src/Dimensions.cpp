@@ -64,6 +64,11 @@ Dimension::Dimension(const SetDimension &other)
 }
 
 
+Dimension::Dimension(const ColumnDimension &other)
+    : ImplContainer(dynamic_pointer_cast<IDimension>(other.impl()))
+{
+}
+
 SetDimension Dimension::asSetDimension() const {
     if (dimensionType() != DimensionType::Set) {
         throw IncompatibleDimensions("Dimension is not of type Set and thus cannot be cast to this type", "asSetDimension");
@@ -85,6 +90,14 @@ RangeDimension Dimension::asRangeDimension() const {
         throw IncompatibleDimensions("Dimension is not of type Range and thus cannot be cast to this type", "asRangeDimension");
     }
     return RangeDimension(std::dynamic_pointer_cast<base::IRangeDimension>(impl()));
+}
+
+
+ColumnDimension Dimension::asColumnDimension() const {
+    if (dimensionType() != DimensionType::Column) {
+        throw IncompatibleDimensions("Dimension is not of type Column and thus cannot be cast to this type", "asColumnDimension");
+    }
+    return ColumnDimension(std::dynamic_pointer_cast<base::IColumnDimension>(impl()));
 }
 
 
@@ -120,6 +133,16 @@ Dimension& Dimension::operator=(const SetDimension &other) {
     return *this;
 }
 
+
+Dimension& Dimension::operator=(const ColumnDimension &other) {
+    shared_ptr<IDimension> tmp(dynamic_pointer_cast<IDimension>(other.impl()));
+
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
+
+    return *this;
+}
 //-------------------------------------------------------
 // Implementation of SampledDimension
 //-------------------------------------------------------

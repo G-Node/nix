@@ -849,6 +849,17 @@ public:
      */
     Dimension(const SetDimension &other);
 
+     /**
+     * @brief Copy constructor that converts a ColumnDimension to Dimension.
+     *
+     * Copying of all NIX front facing objects like Dimension is a rather cheap operation.
+     * Semantically this is equivalent to the creation of another reference to the original
+     * object.
+     *
+     * @param other     The dimension to copy.
+     */
+    Dimension(const ColumnDimension &other);
+
     /**
      * @brief The actual dimension that is described by the dimension descriptor.
      *
@@ -864,8 +875,8 @@ public:
     /**
      * @brief The type of the dimension.
      *
-     * This field indicates whether the dimension is a SampledDimension, SetDimension or
-     * RangeDimension.
+     * This field indicates whether the dimension is a SampledDimension, SetDimension,
+     * RangeDimension, or ColumnDimension..
      *
      * @return The dimension type.
      */
@@ -878,6 +889,8 @@ public:
     SampledDimension asSampledDimension() const;
 
     RangeDimension asRangeDimension() const;
+
+    ColumnDimension asColumnDimension() const;
 
     /**
      * @brief Assignment operator that converts a SampledDimension to Dimension.
@@ -899,6 +912,13 @@ public:
      * @param other     The dimension to assign.
      */
     Dimension& operator=(const SetDimension &other);
+
+    /**
+     * @brief Assignment operator that converts a ColumnDimension to Dimension.
+     *
+     * @param other     The dimension to assign.
+     */
+    Dimension &operator=(const ColumnDimension &other);
 
     /**
      * @brief Assignment operator.
@@ -940,6 +960,13 @@ struct objectToType<nix::RangeDimension> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::RangeDimension;
     typedef nix::base::IRangeDimension backendType;
+};
+
+template<>
+struct objectToType<nix::ColumnDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::ColumnDimension;
+    typedef nix::base::IColumnDimension backendType;
 };
 
 } // namespace nix

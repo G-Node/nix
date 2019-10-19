@@ -216,6 +216,12 @@ struct objectToType<nix::base::IRangeDimension> {
     static const ObjectType value = ObjectType::RangeDimension;
 };
 
+template<>
+struct objectToType<nix::base::IColumnDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::ColumnDimension;
+};
+
 } // namespace nix
 
 #endif // NIX_I_DIMENSIONS_H
