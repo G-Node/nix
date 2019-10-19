@@ -10,6 +10,9 @@ Makefile.conf
 # ingore documentation
 doc/html
 docs/_build
+docs/api
+docs/api_doc/html
+docs/api_doc/xml
 
 # ignore hdf5 files
 *.hdf
