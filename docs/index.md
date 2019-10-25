@@ -8,9 +8,16 @@ container. Our aim is to achieve standardization by providing a
 common/generic data structure for a multitude of data
 types.
 
+*NIX* emerged from the activities of the Electrophysiology Task Force
+of the [INCF](http://www.incf.org) Datasharing Program (2010-2015). It
+is a registered research resource with
+the
+[RRID:SCR_016196](https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196).
 
-Documentation --- where to find which information?
---------------------------------------------------
+
+**We have restructured our documentation and all information is available on the project pages on [ReadTheDocs](https://nixio.readthedocs.io/en/latest/)**
+
+# Documentation --- where to find which information?
 
 Project documentation is split up into three parts:
 1. General Introduction and tutorial: Visit the project pages on [ReadTheDocs](https://nixio.readthedocs.io/en/latest/)
@@ -24,8 +31,8 @@ Further project related information:
  [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using the python library.
 
 
-The NIX ecosystem
------------------
+# The NIX ecosystem
+
 
 In this repository you find the C++ library for reading and writing NIX files.
 
@@ -40,6 +47,47 @@ In this repository you find the C++ library for reading and writing NIX files.
 
 - Viewer for *NIX* data files [nixView](https://github.com/bendalab/nixview "NixView - viewer for nix files")
 
+# Used by
+- [relacs](http://relacs.sourceforge.net "Relacs - enjoy your recordings") is
+  a software platform for closed-loop data acquisition, online
+  analysis, and stimulus generation specifically designed for (but not
+  limited to) electrophysiological recordings. Writes out NIX files if
+  the nix c++-library is installed.
+- [IO class](https://github.com/G-Node/python-neo/wiki) for the [NEO](http://neuralensemble.org/neo/) data model for neurophysiology data.
+- Output format for [EEGBase](http://eegdatabase.kiv.zcu.cz)
+
+# Citing
+
+If you use *NIX*, it would be much appreciated if you would cite it in publications with its identifier RRID:SCR_016196 and/or the reference:
+
+*Stoewer A, Kellner CJ, Benda J, Wachtler T and Grewe J (2014). File format and library for neuroscience data and metadata. Front. Neuroinform. Conference Abstract: Neuroinformatics 2014. doi: 10.3389/conf.fninf.2014.18.00027*
+
+
+# Referenced By
+
+* Dragly et al (2018) [doi:10.3389/fninf.2018.000169](https://doi.org/10.3389/fninf.2018.000169)
+* Papez et al (2017) [doi:10.3389/fninf.2017.00024](https://doi.org/10.3389/fninf.2017.00024)
+* Grewe et al (2017) [doi:10.1073/pnas.1615561114](https://doi.org/10.1073/pnas.1615561114)
+* Vanek et al (2016) [doi:10.1109/informatics.2015.7377849](https://doi.org/10.1109/informatics.2015.7377849)
+* Rübel et al (2016) [doi:10.3389/fninf.2016.00048](https://doi.org/10.3389/fninf.2016.00048)
+* Denker et al (2016) [doi:10.1007/978-3-319-50862-7_5](https://doi.org/doi:10.1007/978-3-319-50862-7_5)
+* Teeters et al (2015) [doi:10.1016/j.neuron.2015.10.025](https://doi.org/doi:10.1016/j.neuron.2015.10.025)
+
+# Contact
+
+The project is maintained by the [German Neuroinformatics Node, G-Node](http://www.g-node.org). [G-Node at GitHub](https://github.com/g-node), [email](mailto:dev@g-node.org).
+
+If you experience problems using *NIX* feel free to join our IRC channel
+[#gnode at FreeNode](irc://irc.freenode.net/gnode) or write an email to <dev@g-node.org>. If you find a
+bug please report it using
+the [project issue tracker](https://github.com/G-Node/nix/issues "NIX issue tracker").
+
+
+
+
+# License
+
+This project is open source published under the BSD-3 license see [license file](https://github.com/G-Node/nix/blob/master/LICENSE) for details.
 
 
 
