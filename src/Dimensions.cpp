@@ -514,10 +514,6 @@ ColumnDimension::ColumnDimension(const ColumnDimension &other)
 }
 
 
-unsigned ColumnDimension::columnIndex() const {
-    return 0;  // FIXME
-}
-
 ColumnDimension& ColumnDimension::operator=(const ColumnDimension &other) {
     shared_ptr<IColumnDimension> tmp(other.impl());
 
