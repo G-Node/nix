@@ -22,6 +22,8 @@ DimensionType dimensionTypeFromStr(const string &str) {
         return DimensionType::Range;
     } else if (str == "sample") {
         return DimensionType::Sample;
+    } else if (str == "column") {
+        return DimensionType::Column;
     } else {
         throw runtime_error("Not a valid dimension name");
     }
@@ -51,6 +53,9 @@ std::string dimensionTypeToStr(DimensionType dim) {
         case DimensionType::Sample:
             dimType = "sample";
             break;
+        case DimensionType::Column:
+            dimType = "column";
+            break;
     }
 
     if (dimType.empty()) {
@@ -77,6 +82,9 @@ shared_ptr<IDimension> openDimensionHDF5(const H5Group &group, ndsize_t index) {
             break;
         case DimensionType::Sample:
             dim = make_shared<SampledDimensionHDF5>(group, index);
+            break;
+        case DimensionType::Column:
+            dim = make_shared<ColumnDimensionHDF5>(group, index);
             break;
     }
 
@@ -117,6 +125,7 @@ DimensionHDF5::~DimensionHDF5() {}
 SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
+    setType();
 }
 
 SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index, double sampling_interval)
@@ -260,12 +269,64 @@ void SetDimensionHDF5::labels(const none_t t) {
 SetDimensionHDF5::~SetDimensionHDF5() {}
 
 //--------------------------------------------------------------
+// Implementation of ColumnDimensionHDF5
+//--------------------------------------------------------------
+ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index)
+    : DimensionHDF5(group, index)
+{
+    setType();
+}
+
+unsigned ColumnDimensionHDF5::columnIndex() const {
+    return 0;
+}
+
+DimensionType ColumnDimensionHDF5::dimensionType() const {
+    return DimensionType::Column;
+}
+
+boost::optional<std::string> ColumnDimensionHDF5::unit() const {
+    boost::optional<std::string> ret;
+    ret = "";
+    return ret;
+}
+
+boost::optional<std::string> ColumnDimensionHDF5::label() const {
+    boost::optional<std::string> ret;
+    ret = "";
+    return ret;
+}
+
+std::vector<Variant> ColumnDimensionHDF5::ticks() const {
+    std::vector<Variant> tcks;
+    return tcks;
+}
+
+Column ColumnDimensionHDF5::column() const {
+    Column col;
+    return col;
+}
+
+std::shared_ptr<base::IDataFrame> ColumnDimensionHDF5::dataFrame() const {
+    shared_ptr<DataFrameHDF5> df;
+    //if (eg) {
+    //    df = make_shared<DataFrameHDF5>(file(), block(), *eg);
+    //}
+    return df;
+}
+
+
+ColumnDimensionHDF5::~ColumnDimensionHDF5() {}
+
+
+//--------------------------------------------------------------
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
 RangeDimensionHDF5::RangeDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
+    setType();
 }
 
 

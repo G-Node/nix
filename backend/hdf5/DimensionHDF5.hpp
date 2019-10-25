@@ -10,6 +10,8 @@
 #define NIX_DIMENSIONS_HDF5_H
 
 #include <nix/base/IDimensions.hpp>
+#include <nix/Variant.hpp>
+#include "DataFrameHDF5.hpp"
 #include "h5x/H5Group.hpp"
 #include "DataArrayHDF5.hpp"
 #include <string>
@@ -134,6 +136,29 @@ public:
 
 };
 
+class ColumnDimensionHDF5 : virtual public base::IColumnDimension, public DimensionHDF5 {
+
+public:
+
+    ColumnDimensionHDF5(const H5Group &group, ndsize_t index);
+
+    DimensionType dimensionType() const;
+
+    unsigned columnIndex() const;
+
+    Column column() const;
+
+    boost::optional<std::string> label() const;
+
+    boost::optional<std::string> unit() const;
+
+    std::shared_ptr<base::IDataFrame> dataFrame() const;
+
+    std::vector<Variant> ticks() const;
+
+    virtual ~ColumnDimensionHDF5();
+
+};
 
 class RangeDimensionHDF5 : virtual public base::IRangeDimension, public DimensionHDF5 {
 
