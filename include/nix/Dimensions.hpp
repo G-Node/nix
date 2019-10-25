@@ -326,6 +326,45 @@ public:
     }
 };
 
+/**
+
+
+ */
+class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension> {
+
+ public:
+    ColumnDimension();
+
+    ColumnDimension(const std::shared_ptr<base::IColumnDimension> &p_impl);
+
+    ColumnDimension(std::shared_ptr<base::IColumnDimension> &&ptr);
+
+    ColumnDimension(const ColumnDimension &other);
+
+    unsigned columnIndex() const;
+
+    /**
+     * @brief Assignment operator.
+     *
+     * @param other     The dimension to assign.
+     */
+    ColumnDimension& operator=(const ColumnDimension &other);
+
+    /**
+     * @brief Assignment operator that converts a Dimension to a ColumnDimension.
+     *
+     * @param other     The dimension to assign.
+     */
+    ColumnDimension& operator=(const Dimension &other);
+
+    /**
+     * @brief Assignment operator for none.
+     */
+    ColumnDimension &operator=(const none_t &t) {
+        ImplContainer::operator=(t);
+        return *this;
+    }
+};
 
 /**
  * @brief Dimension descriptor for a dimension that represents just a list or set of values.

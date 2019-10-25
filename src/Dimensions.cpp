@@ -484,3 +484,60 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
 
     return *this;
 }
+
+
+//-------------------------------------------------------
+// Implementation of ColumnDimension
+//-------------------------------------------------------
+
+ColumnDimension::ColumnDimension()
+    : ImplContainer()
+{
+}
+
+
+ColumnDimension::ColumnDimension(const std::shared_ptr<IColumnDimension> &p_impl)
+    : ImplContainer(p_impl)
+{
+}
+
+
+ColumnDimension::ColumnDimension(std::shared_ptr<IColumnDimension> &&ptr)
+    : ImplContainer(std::move(ptr))
+{
+}
+
+
+ColumnDimension::ColumnDimension(const ColumnDimension &other)
+    : ImplContainer(other)
+{
+}
+
+
+unsigned ColumnDimension::columnIndex() const {
+    return 0;  // FIXME
+}
+
+ColumnDimension& ColumnDimension::operator=(const ColumnDimension &other) {
+    shared_ptr<IColumnDimension> tmp(other.impl());
+
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
+
+    return *this;
+}
+
+
+ColumnDimension& ColumnDimension::operator=(const Dimension &other) {
+    shared_ptr<IColumnDimension> tmp(dynamic_pointer_cast<IColumnDimension>(other.impl()));
+
+    if (other.dimensionType() != DimensionType::Column) {
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a ColumnDimension", "ColumnDimension::operator=");
+    }
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
+    return *this;
+}
