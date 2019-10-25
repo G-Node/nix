@@ -10,6 +10,8 @@
 #define NIX_DIMENSIONS_HDF5_H
 
 #include <nix/base/IDimensions.hpp>
+#include <nix/base/IBlock.hpp>
+#include <nix/base/IFile.hpp>
 #include <nix/Variant.hpp>
 #include "DataFrameHDF5.hpp"
 #include "h5x/H5Group.hpp"
@@ -138,10 +140,20 @@ public:
 
 class ColumnDimensionHDF5 : virtual public base::IColumnDimension, public DimensionHDF5 {
 
+private:
+    std::shared_ptr<base::IBlock> entity_block;
+    std::shared_ptr<base::IFile>  entity_file;
+    
 public:
-
     ColumnDimensionHDF5(const H5Group &group, ndsize_t index);
+    
+    ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
+                        const std::shared_ptr<nix::base::IBlock> &block);
 
+    ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
+                        const std::shared_ptr<nix::base::IBlock> &block, const DataFrameHDF5 &frame,
+                        unsigned column_index);
+    
     DimensionType dimensionType() const;
 
     unsigned columnIndex() const;
@@ -170,7 +182,7 @@ public:
     RangeDimensionHDF5(const H5Group &group, ndsize_t index, std::vector<double> ticks);
 
 
-    RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &dataArray );
+    RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &dataArray);
 
 
     DimensionType dimensionType() const;

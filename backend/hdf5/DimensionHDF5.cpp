@@ -275,10 +275,33 @@ ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
     setType();
+    // Note: maybe having this is a bad idea, because a ColumnDimension created
+    // this way will not have the block and file
+}
+
+ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index,  const std::shared_ptr<IFile> &file,
+                                         const std::shared_ptr<IBlock> &block)
+    : DimensionHDF5(group, index), entity_block(block), entity_file(file)
+{
+}
+
+ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<IFile> &file,
+                                         const std::shared_ptr<IBlock> &block, const DataFrameHDF5 &frame,
+                                         unsigned col_index)
+    :ColumnDimensionHDF5(group, index, file, block)
+{
+    this->group.createLink(frame.group(), "data_frame");
+    this->group.setAttr("column_index", col_index);
 }
 
 unsigned ColumnDimensionHDF5::columnIndex() const {
-    return 0;
+    unsigned col_idx;
+    if (group.hasAttr("column_index")) {
+        group.getAttr("column_index", col_idx);
+        return col_idx;
+    } else {
+        throw MissingAttr("column_index");
+    }
 }
 
 DimensionType ColumnDimensionHDF5::dimensionType() const {
@@ -309,9 +332,20 @@ Column ColumnDimensionHDF5::column() const {
 
 std::shared_ptr<base::IDataFrame> ColumnDimensionHDF5::dataFrame() const {
     shared_ptr<DataFrameHDF5> df;
-    //if (eg) {
-    //    df = make_shared<DataFrameHDF5>(file(), block(), *eg);
-    //}
+    bool error = false;
+
+    if (this->group.hasGroup("data_frame")) {
+        H5Group other_group = this->group.openGroup("data_frame", false);
+        df = std::make_shared<DataFrameHDF5>(entity_file, entity_block, other_group);
+        if (!entity_block->getEntity(df))
+            error = true;
+    } else error = true;
+
+    // NOTE: we check that link exists in both places, here & in entity
+    // if error = true it was missing in one of the two
+    if (error)
+        throw std::runtime_error("ColumnDimensionHDF5::dataFrame: DataFrame not found!");
+
     return df;
 }
 
