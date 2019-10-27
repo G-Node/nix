@@ -11,6 +11,7 @@
 
 #include <nix/base/IEntityWithSources.hpp>
 #include <nix/base/IDimensions.hpp>
+#include <nix/DataFrame.hpp>
 #include <nix/Compression.hpp>
 #include <nix/DataType.hpp>
 #include <nix/NDSize.hpp>
@@ -93,6 +94,9 @@ public:
 
 
     virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval) = 0;
+
+
+    virtual std::shared_ptr<base::IColumnDimension> createColumnDimension(ndsize_t id, const DataFrame &frame, unsigned column_index) = 0;
 
 
     virtual bool deleteDimensions() = 0;
