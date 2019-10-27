@@ -345,15 +345,15 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      * @brief The column index of the referenced DataFrame.
      *
      * @returns the index
-     */ 
+     */
     unsigned columnIndex() const {
         return backend()->columnIndex();
     }
-    
+
     /**
      * @brief Returns the DataFrame to which this Dimension links.
      *
-     * @returns shared pointer of the type IDataFrame 
+     * @returns shared pointer of the type IDataFrame
      */
     std::shared_ptr<base::IDataFrame> dataFrame() const {
         return backend()->dataFrame();
@@ -376,7 +376,7 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
     boost::optional<std::string> unit() const {
         return backend()->unit();
     }
-    
+
     /**
      * @brief The values (ticks) of the ColumnDimension.
      *
@@ -385,7 +385,7 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
     std::vector<nix::Variant> ticks() const {
         return backend()->ticks();
     }
-    
+
     /**
      * @brief Assignment operator.
      *
