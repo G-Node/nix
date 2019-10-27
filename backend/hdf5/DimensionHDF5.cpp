@@ -286,12 +286,21 @@ ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index,  
 }
 
 ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<IFile> &file,
-                                         const std::shared_ptr<IBlock> &block, const DataFrameHDF5 &frame,
+                                         const std::shared_ptr<IBlock> &block, const DataFrame &frame,
                                          unsigned col_index)
     :ColumnDimensionHDF5(group, index, file, block)
 {
-    this->group.createLink(frame.group(), "data_frame");
+    setType();
     this->group.setAttr("column_index", col_index);
+    std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(frame.id());
+    if (!idf)
+        throw std::runtime_error("ColumnDimensionHDF5 DataFrame not found in block!");
+    if (this->group.hasGroup("data_frame"))
+        this->group.removeGroup("data_frame");
+
+    auto target = std::dynamic_pointer_cast<DataFrameHDF5>(idf);
+
+    this->group.createLink(target->group(), "data_frame");
 }
 
 unsigned ColumnDimensionHDF5::columnIndex() const {

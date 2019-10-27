@@ -13,9 +13,10 @@
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IFile.hpp>
 #include <nix/Variant.hpp>
-#include "DataFrameHDF5.hpp"
+#include <nix/DataFrame.hpp>
 #include "h5x/H5Group.hpp"
 #include "DataArrayHDF5.hpp"
+#include "DataFrameHDF5.hpp"
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -143,17 +144,17 @@ class ColumnDimensionHDF5 : virtual public base::IColumnDimension, public Dimens
 private:
     std::shared_ptr<base::IBlock> entity_block;
     std::shared_ptr<base::IFile>  entity_file;
-    
+
 public:
     ColumnDimensionHDF5(const H5Group &group, ndsize_t index);
-    
+
     ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
                         const std::shared_ptr<nix::base::IBlock> &block);
 
     ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
-                        const std::shared_ptr<nix::base::IBlock> &block, const DataFrameHDF5 &frame,
+                        const std::shared_ptr<nix::base::IBlock> &block, const DataFrame &frame,
                         unsigned column_index);
-    
+
     DimensionType dimensionType() const;
 
     unsigned columnIndex() const;
