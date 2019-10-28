@@ -334,50 +334,6 @@ boost::optional<std::string> ColumnDimensionHDF5::label() const {
     return ret;
 }
 
-std::vector<Variant> ColumnDimensionHDF5::ticks() const {
-    std::vector<Variant> tcks;
-    Column col = this->column();
-    nix::DataFrame df = this->dataFrame();
-    std::string name = *this->label();
-    switch (col.dtype) {
-    case nix::DataType::Int64: {
-        std::vector<long long int> dat;
-        df.readColumn(name, dat, true);
-        for (size_t i = 0; i < dat.size(); ++i) {
-            tcks.emplace_back(dat[i]);
-        }
-    }
-        break;
-    case nix::DataType::Int32: {
-        std::vector<int> dat;
-        df.readColumn(name, dat, true);
-        for (size_t i = 0; i < dat.size(); ++i) {
-            tcks.emplace_back(dat[i]);
-        }
-    }
-        break;
-    case nix::DataType::Int16: {
-        std::vector<short int> dat;
-        df.readColumn(name, dat, true);
-        for (size_t i = 0; i < dat.size(); ++i) {
-            tcks.emplace_back(dat[i]);
-        }
-    }
-        break;
-    case nix::DataType::String: {
-        std::vector<std::string> dat;
-        df.readColumn(name, dat, true);
-        for (size_t i = 0; i < dat.size(); ++i) {
-            tcks.emplace_back(dat[i]);
-        }
-    }
-        break;
-    default:
-        throw std::runtime_error("Unsupported dtype");
-    }
-    return tcks;
-}
-
 Column ColumnDimensionHDF5::column() const {
     std::vector<nix::Column> cols = this->dataFrame()->columns();
     return cols[this->columnIndex()];

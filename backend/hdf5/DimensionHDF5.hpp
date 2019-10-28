@@ -167,8 +167,6 @@ public:
 
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 
-    std::vector<Variant> ticks() const;
-
     virtual ~ColumnDimensionHDF5();
 
 };
