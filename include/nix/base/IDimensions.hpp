@@ -124,8 +124,6 @@ class NIXAPI IColumnDimension : virtual public IDimension {
 
     virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;
 
-    virtual std::vector<nix::Variant> ticks() const = 0;
-
     virtual unsigned columnIndex() const = 0;
 };
 
