@@ -320,13 +320,17 @@ DimensionType ColumnDimensionHDF5::dimensionType() const {
 
 boost::optional<std::string> ColumnDimensionHDF5::unit() const {
     boost::optional<std::string> ret;
-    ret = "";
+    std::string u = this->dataFrame()->columns()[this->columnIndex()].unit;
+    if (u != "")
+        ret = u;
     return ret;
 }
 
 boost::optional<std::string> ColumnDimensionHDF5::label() const {
     boost::optional<std::string> ret;
-    ret = "";
+    std::string n = this->dataFrame()->colName(this->columnIndex());
+    if (n != "")
+        ret = n;
     return ret;
 }
 
@@ -336,8 +340,8 @@ std::vector<Variant> ColumnDimensionHDF5::ticks() const {
 }
 
 Column ColumnDimensionHDF5::column() const {
-    Column col;
-    return col;
+    std::vector<nix::Column> cols = this->dataFrame()->columns();
+    return cols[this->columnIndex()];
 }
 
 std::shared_ptr<base::IDataFrame> ColumnDimensionHDF5::dataFrame() const {
