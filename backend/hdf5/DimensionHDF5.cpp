@@ -283,6 +283,7 @@ ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index,  
                                          const std::shared_ptr<IBlock> &block)
     : DimensionHDF5(group, index), entity_block(block), entity_file(file)
 {
+    setType();
 }
 
 ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<IFile> &file,
@@ -340,18 +341,13 @@ Column ColumnDimensionHDF5::column() const {
 }
 
 std::shared_ptr<base::IDataFrame> ColumnDimensionHDF5::dataFrame() const {
-    shared_ptr<DataFrameHDF5> df;
+    std::shared_ptr<DataFrameHDF5> df;
     bool error = false;
 
     if (this->group.hasGroup("data_frame")) {
         H5Group other_group = this->group.openGroup("data_frame", false);
         df = std::make_shared<DataFrameHDF5>(entity_file, entity_block, other_group);
-        if (!entity_block->getEntity(df))
-            error = true;
     } else error = true;
-
-    // NOTE: we check that link exists in both places, here & in entity
-    // if error = true it was missing in one of the two
     if (error)
         throw std::runtime_error("ColumnDimensionHDF5::dataFrame: DataFrame not found!");
 
