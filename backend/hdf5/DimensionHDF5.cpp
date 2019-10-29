@@ -339,6 +339,13 @@ Column ColumnDimensionHDF5::column() const {
     return cols[this->columnIndex()];
 }
 
+
+nix::DataType ColumnDimensionHDF5::columnDatatype() const {
+    nix::Column c = column();
+    return c.dtype;
+}
+
+
 std::shared_ptr<base::IDataFrame> ColumnDimensionHDF5::dataFrame() const {
     std::shared_ptr<DataFrameHDF5> df;
     bool error = false;

@@ -380,6 +380,15 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
     }
 
     /**
+     * @brief Getter of the column's data type.
+     * 
+     * @returns the column's data type
+     */
+    nix::DataType columnDatatype() const {
+        return backend()->columnDatatype();
+    }
+    
+    /**
      * @brief The values (ticks) of the ColumnDimension.
      *
      * @param ticks std::vector<T> to store the ticks.

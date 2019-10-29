@@ -120,6 +120,8 @@ class NIXAPI IColumnDimension : virtual public IDimension {
 
     virtual boost::optional<std::string> unit() const = 0;
 
+    virtual nix::DataType columnDatatype() const = 0;
+
     virtual nix::Column column() const = 0;
 
     virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;

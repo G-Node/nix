@@ -165,6 +165,8 @@ public:
 
     boost::optional<std::string> unit() const;
 
+    nix::DataType columnDatatype() const;
+    
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 
     virtual ~ColumnDimensionHDF5();
