@@ -328,9 +328,63 @@ public:
     }
 };
 
+
 /**
-
-
+ * @brief Dimension descriptor to be used in conjunction with Information stored in
+ * a DataFrame.
+ *
+ * Suppose that a set of measurements have been made under certain
+ * settings. These settings are stored in the table-like structure of a
+ * DataFrame. The DataArray can use the information of the DataFrame to describe
+ * the respective dimension of the data.
+ *
+ * A ColumnDimension is defined by the DataFrame and the index of the column
+ * that should be used to annotate the axis of the data.
+ *
+ * ### Creating a ColumnDimension: 
+ *
+ * The following example will create a DataArray that stores a set of regularly
+ * sampled data recorded under conditions stored in a DataFrame.
+ *
+ * ~~~
+ *  nix::NDSize data_shape = {1000, 10}
+ *  double dt = 0.001;
+ *  double pi = 3.1415;
+ *
+ *  // create dummy data
+ *  std::vector<double> frequencies(10);
+ *  for (size_t i = 0; i < 10; ++i)
+ *      frequencies[i] = (i + 1) * 10;
+ * 
+ *  typedef boost::multi_array<double, 2> array_type;
+ *  typedef array_type::index index;
+ *  array_type data(boost::extents[1000][10]);
+ *  for(index i = 0; i < 1000; ++i) {
+ *      for(index j = 0; j < 10; ++j) {
+ *          data[i][j] = std::sin(i * st * 2 * pi * frequencies[j]);
+ *      }
+ *  }
+ *
+ *  // create the DataFrame
+ *  std::vector<nix::Column> cols = {{"frequency", "Hz", nix::DataType::Double}};
+ *  nix::DataFrame df = block.createDataFrame("frequencies", "nix.df", cols);
+ *  df.rows(10)
+ *  df.writeColumn(0, frequencies);
+ *
+ *  // store data in a DataArray
+ *  nix::DataArray data_array = b.createDataArray("columnDimTest",
+ *                                                "test",
+ *                                                data);
+ *  data_array.label("voltage");
+ *  data_array.unit("mV")
+ *  // define first data dimension, i.e. regularly sampled in time
+ *  SampledDimension dim = data_array.appendSampledDimension(time_axis_samplingInterval)
+ *  dim.label = "time";
+ *  dim.unit = "s";
+ *  // define second data dimension, information is stored in the 
+ *  // 'frequency' column of the DataFrame
+ *  data_array.appendColumnDimension(df, 0);
+ * ~~~
  */
 class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension> {
 
