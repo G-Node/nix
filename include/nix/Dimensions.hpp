@@ -12,6 +12,8 @@
 #include <nix/base/ImplContainer.hpp>
 #include <nix/base/IDimensions.hpp>
 
+#include <nix/DataFrame.hpp>
+
 namespace nix {
 class DataArray;
 class Dimension;
@@ -380,10 +382,20 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
     /**
      * @brief The values (ticks) of the ColumnDimension.
      *
-     * @returns vector of nix::Variants.
+     * @param ticks std::vector<T> to store the ticks.
+     * @param resize bool to indicate whether or not the 
+     *        ticks vector should be resized. If false
+     *        (default), the size of the vector is taken as 
+     *        the number of ticks to read. If true, all ticks 
+     *        will be read and returned.
+     * @param offset ndsize_t giving the offset (default 0) relative to
+     *        the start.
+     *
      */
-    std::vector<nix::Variant> ticks() const {
-        return backend()->ticks();
+    template<typename T> 
+    void ticks(std::vector<T> &ticks, bool resize=false, ndsize_t offset=0) const {
+        nix::DataFrame df = dataFrame();
+        df.readColumn(columnIndex(), ticks, true, offset); 
     }
 
     /**
