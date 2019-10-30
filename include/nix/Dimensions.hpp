@@ -372,9 +372,9 @@ public:
  *  df.writeColumn(0, frequencies);
  *
  *  // store data in a DataArray
- *  nix::DataArray data_array = b.createDataArray("columnDimTest",
- *                                                "test",
- *                                                data);
+ *  nix::DataArray data_array = b.createDataArray("columnDimTest", "test",
+ *                                                nix::DataType::Double, data_shape);
+ *  data_array.setData(data, {0, 0});
  *  data_array.label("voltage");
  *  data_array.unit("mV")
  *  // define first data dimension, i.e. regularly sampled in time
