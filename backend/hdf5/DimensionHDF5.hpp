@@ -153,19 +153,19 @@ public:
 
     ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
                         const std::shared_ptr<nix::base::IBlock> &block, const DataFrame &frame,
-                        unsigned column_index);
+                        std::vector<unsigned> column_indices);
 
     DimensionType dimensionType() const;
 
-    unsigned columnIndex() const;
+    std::vector<unsigned> columnIndices() const;
 
-    Column column() const;
+    Column column(unsigned col_index) const;
 
-    boost::optional<std::string> label() const;
+    std::vector<std::string> labels() const;
 
-    boost::optional<std::string> unit() const;
+    std::vector<std::string> units() const;
 
-    nix::DataType columnDatatype() const;
+    std::vector<nix::DataType> columnDataTypes() const;
     
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 

@@ -402,8 +402,8 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      *
      * @returns the index
      */
-    unsigned columnIndex() const {
-        return backend()->columnIndex();
+    std::vector<unsigned> columnIndices() const {
+        return backend()->columnIndices();
     }
 
     /**
@@ -420,8 +420,8 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      *
      * @returns the label, if any, that is defined in the Column.
      */
-    boost::optional<std::string> label() const {
-        return backend()->label();
+    std::vector<std::string> labels() const {
+        return backend()->labels();
     }
 
     /**
@@ -429,8 +429,8 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      *
      * @returns the unit, if any, that is defined in the Column.
      */
-    boost::optional<std::string> unit() const {
-        return backend()->unit();
+    std::vector<std::string> units() const {
+        return backend()->units();
     }
 
     /**
@@ -438,8 +438,8 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      * 
      * @returns the column's data type
      */
-    nix::DataType columnDatatype() const {
-        return backend()->columnDatatype();
+    std::vector<nix::DataType> columnDataTypes() const {
+        return backend()->columnDataTypes();
     }
     
     /**
@@ -456,9 +456,9 @@ class NIXAPI ColumnDimension : public base::ImplContainer<base::IColumnDimension
      *
      */
     template<typename T> 
-    void ticks(std::vector<T> &ticks, bool resize=false, ndsize_t offset=0) const {
+    void ticks(unsigned col_index, std::vector<T> &ticks, bool resize=false, ndsize_t offset=0) const {
         nix::DataFrame df = dataFrame();
-        df.readColumn(columnIndex(), ticks, true, offset); 
+        df.readColumn(col_index, ticks, true, offset); 
     }
 
     /**

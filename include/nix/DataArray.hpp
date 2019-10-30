@@ -383,8 +383,8 @@ public:
     }
 
 
-    ColumnDimension appendColumnDimension(const DataFrame &frame, unsigned column_index) {
-        ColumnDimension dim = backend()->createColumnDimension(backend()->dimensionCount() + 1, frame, column_index);
+    ColumnDimension appendColumnDimension(const DataFrame &frame, std::vector<unsigned> column_indices) {
+        ColumnDimension dim = backend()->createColumnDimension(backend()->dimensionCount() + 1, frame, column_indices);
         return dim;
     };
 

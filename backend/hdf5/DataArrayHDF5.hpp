@@ -115,7 +115,7 @@ public:
     std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval);
 
 
-    std::shared_ptr<base::IColumnDimension> createColumnDimension(ndsize_t id, const nix::DataFrame &df, unsigned col_index);
+    std::shared_ptr<base::IColumnDimension> createColumnDimension(ndsize_t id, const nix::DataFrame &df, std::vector<unsigned> col_indices);
 
 
     bool deleteDimensions();

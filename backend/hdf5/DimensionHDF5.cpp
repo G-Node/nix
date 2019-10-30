@@ -288,29 +288,28 @@ ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index,  
 
 ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<IFile> &file,
                                          const std::shared_ptr<IBlock> &block, const DataFrame &frame,
-                                         unsigned col_index)
+                                         std::vector<unsigned> col_indices)
     :ColumnDimensionHDF5(group, index, file, block)
 {
-    setType();
-    this->group.setAttr("column_index", col_index);
     std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(frame.id());
     if (!idf)
         throw std::runtime_error("ColumnDimensionHDF5 DataFrame not found in block!");
     if (this->group.hasGroup("data_frame"))
         this->group.removeGroup("data_frame");
-
     auto target = std::dynamic_pointer_cast<DataFrameHDF5>(idf);
 
+    setType();    
+    this->group.setAttr("column_indices", col_indices); //TODO
     this->group.createLink(target->group(), "data_frame");
 }
 
-unsigned ColumnDimensionHDF5::columnIndex() const {
-    unsigned col_idx;
-    if (group.hasAttr("column_index")) {
-        group.getAttr("column_index", col_idx);
-        return col_idx;
+std::vector<unsigned> ColumnDimensionHDF5::columnIndices() const {
+    std::vector<unsigned> col_indices;
+    if (group.hasAttr("column_indices")) {
+        group.getAttr("column_indices", col_indices);
+        return col_indices;
     } else {
-        throw MissingAttr("column_index");
+        throw MissingAttr("column_indices");
     }
 }
 
@@ -318,31 +317,40 @@ DimensionType ColumnDimensionHDF5::dimensionType() const {
     return DimensionType::Column;
 }
 
-boost::optional<std::string> ColumnDimensionHDF5::unit() const {
-    boost::optional<std::string> ret;
-    std::string u = this->dataFrame()->columns()[this->columnIndex()].unit;
-    if (u != "")
-        ret = u;
-    return ret;
+std::vector<std::string> ColumnDimensionHDF5::units() const {
+    std::vector<unsigned> col_indices = columnIndices();
+    nix::DataFrame df = dataFrame();
+    
+    std::vector<std::string> units;
+    std::vector<Column> cols = df.columns();
+    for (unsigned index : col_indices) {
+        units.push_back(cols[index].unit);
+    }
+    return units;
 }
 
-boost::optional<std::string> ColumnDimensionHDF5::label() const {
-    boost::optional<std::string> ret;
-    std::string n = this->dataFrame()->colName(this->columnIndex());
-    if (n != "")
-        ret = n;
-    return ret;
+std::vector<std::string> ColumnDimensionHDF5::labels() const {
+    std::vector<unsigned> col_indices = columnIndices();
+    nix::DataFrame df = dataFrame();
+    return df.colName(col_indices);
 }
 
-Column ColumnDimensionHDF5::column() const {
+Column ColumnDimensionHDF5::column(unsigned col_index) const {
     std::vector<nix::Column> cols = this->dataFrame()->columns();
-    return cols[this->columnIndex()];
+    return cols[col_index];
 }
 
 
-nix::DataType ColumnDimensionHDF5::columnDatatype() const {
-    nix::Column c = column();
-    return c.dtype;
+std::vector<nix::DataType> ColumnDimensionHDF5::columnDataTypes() const {
+    std::vector<unsigned> col_indices = columnIndices();
+    nix::DataFrame df = dataFrame();
+    
+    std::vector<Column> all_cols = df.columns();
+    std::vector<nix::DataType> dtypes;
+    for (unsigned index : col_indices) {
+        dtypes.push_back(all_cols[index].dtype);
+    }
+    return dtypes;
 }
 
 
