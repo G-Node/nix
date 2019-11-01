@@ -12,11 +12,12 @@
 #include <nix/base/IDimensions.hpp>
 #include <nix/base/IBlock.hpp>
 #include <nix/base/IFile.hpp>
-#include <nix/Variant.hpp>
 #include <nix/DataFrame.hpp>
+
 #include "h5x/H5Group.hpp"
 #include "DataArrayHDF5.hpp"
 #include "DataFrameHDF5.hpp"
+
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -166,7 +167,7 @@ public:
     std::vector<std::string> units() const;
 
     std::vector<nix::DataType> columnDataTypes() const;
-    
+
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 
     virtual ~ColumnDimensionHDF5();

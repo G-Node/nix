@@ -298,7 +298,7 @@ ColumnDimensionHDF5::ColumnDimensionHDF5(const H5Group &group, ndsize_t index, c
         this->group.removeGroup("data_frame");
     auto target = std::dynamic_pointer_cast<DataFrameHDF5>(idf);
 
-    setType();    
+    setType();
     this->group.setAttr("column_indices", col_indices); //TODO
     this->group.createLink(target->group(), "data_frame");
 }
@@ -320,7 +320,7 @@ DimensionType ColumnDimensionHDF5::dimensionType() const {
 std::vector<std::string> ColumnDimensionHDF5::units() const {
     std::vector<unsigned> col_indices = columnIndices();
     nix::DataFrame df = dataFrame();
-    
+
     std::vector<std::string> units;
     std::vector<Column> cols = df.columns();
     for (unsigned index : col_indices) {
@@ -344,7 +344,7 @@ Column ColumnDimensionHDF5::column(unsigned col_index) const {
 std::vector<nix::DataType> ColumnDimensionHDF5::columnDataTypes() const {
     std::vector<unsigned> col_indices = columnIndices();
     nix::DataFrame df = dataFrame();
-    
+
     std::vector<Column> all_cols = df.columns();
     std::vector<nix::DataType> dtypes;
     for (unsigned index : col_indices) {
