@@ -269,29 +269,24 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
     ndsize_t dimension_count = array.dimensionCount();
+    vector<Dimension> dimensions = array.dimensions();
     vector<string> units = tag.units();
 
     while (units.size() < dimension_count) {
         units.push_back("none");
+    } // ok
+
+    vector<pair<double, double>> max_extents(dimensions.size());
+    for (size_t i = 0; i < dimensions.size(); ++i) {
+        double pos, ext;
+        getMaxExtent(dimensions[i], array.dataExtent()[i]-1, pos, ext);
+        max_extents.emplace_back(pos, ext);
     }
     if (positions) {
         position_size = positions.dataExtent();
     }
     if (extents) {
         extent_size = extents.dataExtent();
-    }
-
-    if (position_size.size() == 1 && dimension_count != 1) {
-        throw IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
-                                          "util::getOffsetAndCount");
-    }
-    if (position_size.size() > 1 && position_size[1] > dimension_count) {
-        throw IncompatibleDimensions("Number of dimensions in positions does not match dimensionality of data",
-                                          "util::getOffsetAndCount");
-    }
-    if (extents && extent_size != position_size) {
-        throw IncompatibleDimensions("Number of dimensions in extents does not match dimensionality of data",
-                                          "util::getOffsetAndCount");
     }
     ndsize_t max_index = *max_element(indices.begin(), indices.end());
     if (max_index >= positions.dataExtent()[0] || (extents && max_index >= extents.dataExtent()[0])) {
@@ -304,9 +299,9 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     NDSize temp_count(positions.dataExtent().size(), static_cast<NDSize::value_type>(1));
 
     int dim_index = dimension_count > 1 ? 1 : 0;
-    temp_count[dim_index] = static_cast<NDSize::value_type>(dimension_count);
+    int count = dimension_count > 1 ? position_size[dim_index] : 1;
+    temp_count[dim_index] = static_cast<NDSize::value_type>(count);
 
-    vector<Dimension> dimensions = array.dimensions();
     vector<vector<double>> start_positions(dimensions.size());
     vector<vector<double>> end_positions(dimensions.size());
 
@@ -320,6 +315,19 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         } else {
             extent.resize(offset.size(), 0.0);
         }
+
+        // here we need to fix the missing information or throw away stuff
+        // offset contains the start positions, extents the extents
+        // they both have the same length, size of units has been assured before
+        while (offset.size() < dimensions.size()) {
+            offset.push_back(get<0>(max_extents[offset.size()]));
+            extent.push_back(get<1>(max_extents[extent.size()]));
+        }
+        while (offset.size() > dimensions.size()) {
+            offset.pop_back();
+            extent.pop_back();
+        }
+
         for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
             if (idx == 0) {
                 start_positions[dim_index] = vector<double>(indices.size());
@@ -558,11 +566,7 @@ DataView taggedData(const Tag &tag, ndsize_t reference_index) {
 DataView taggedData(const Tag &tag, const DataArray &array) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
-    ndsize_t dimension_count = array.dimensionCount();
-    //if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
-    //      throw IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data", "util::retrieveData");
-    // }
-    //
+
     NDSize offset, count;
     getOffsetAndCount(tag, array, offset, count);
     if (!positionAndExtentInData(array, offset, count)) {
