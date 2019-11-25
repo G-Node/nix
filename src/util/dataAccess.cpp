@@ -15,6 +15,7 @@
 #include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <cfloat>
 
 #include <boost/optional.hpp>
 
@@ -183,22 +184,93 @@ ndsize_t positionToIndex(double position, const string &unit, const RangeDimensi
     return dimension.indexOf(position * scaling);
 }
 
+void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double &ext) {
+    DimensionType dt = dim.dimensionType();
+    if (dt == DimensionType::Sample) {
+        SampledDimension sd = dim.asSampledDimension();
+        pos = sd.positionAt(0);
+        ext = sd.positionAt(max_index);
+    } else if (dt == DimensionType::Range) {
+        RangeDimension rd = dim.asRangeDimension();
+        pos = rd.tickAt(0);
+        ext = rd.tickAt(max_index);
+    } else if (dt == DimensionType::Set) {
+        SetDimension sd = dim.asSetDimension();
+        pos = 0.0;
+        if (max_index > pow(FLT_RADIX, std::numeric_limits<double>::digits)) {
+            throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of precision. Please open an issue on github!");
+        }
+        ext = static_cast<double>(max_index);
+    }
+}
+
+
+string getDimensionUnit(const Dimension &dim) {
+    if (dim.dimensionType() == DimensionType::Set) {
+        return "none";
+    }
+    if (dim.dimensionType() == DimensionType::Sample) {
+        SampledDimension sd = dim.asSampledDimension();
+        string unit = sd.unit() ? *sd.unit() : "none";
+        return unit;
+    } else if (dim.dimensionType() == DimensionType::Range) {
+        RangeDimension rd = dim.asRangeDimension();
+        string unit = rd.unit() ? *rd.unit() : "none";
+        return unit;
+    }
+    return "none";
+}
+
 
 void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, NDSize &count) {
     vector<double> position = tag.position();
     vector<double> extent = tag.extent();
     vector<string> units = tag.units();
+    vector<Dimension> dimensions = array.dimensions();
+    NDSize shape = array.dataExtent();
+
+    if (extent.size() > 0 && (extent.size() != position.size())) {
+        throw IncompatibleDimensions("Size of position and extent do not match!",
+                                     "nix::util::getOffsetAndCount");
+    }
+
+    if (position.size() > dimensions.size()) {
+        while (position.size() > dimensions.size()) {
+            position.pop_back();
+            if (extent.size() > position.size()) {
+                extent.pop_back();
+            }
+            if (units.size() > position.size()) {
+                units.pop_back();
+            }
+        }
+    } else if (position.size() <  dimensions.size()) {
+        double pos, ext;
+        for (size_t i = position.size(); i < dimensions.size(); ++i) {
+            getMaxExtent(dimensions[i], shape[i]-1, pos, ext);
+            position.push_back(pos);
+            extent.push_back(ext);
+        }
+    }
+
+    if (extent.size() == 0) {
+        extent = vector<double>(position.size(), 0.0);
+    }
+
+    if (units.size() == 0) {
+        units = std::vector<std::string>(position.size(), "none");
+    } else if (units.size() > position.size()) {
+        while (units.size() > position.size()) {
+            units.pop_back();
+        }
+    } else {
+        while (units.size() < position.size()) {
+            units.push_back(getDimensionUnit(dimensions[units.size()]));
+        }
+    }
+
     NDSize temp_offset(position.size());
     NDSize temp_count(position.size(), 1);
-    vector<Dimension> dimensions = array.dimensions();
-
-    if (array.dimensionCount() != position.size() || (extent.size() > 0 && extent.size() != array.dimensionCount())) {
-        throw runtime_error("Dimensionality of position or extent vector does not match dimensionality of data!");
-    }
-    if (units.size() < position.size())
-        units = vector<string>(position.size(), "none");
-    if (extent.size() < position.size())
-        extent = vector<double>(position.size(), 0.0);
     for (size_t i = 0; i < position.size(); ++i) {
         vector<pair<ndsize_t, ndsize_t>> indices = positionToIndex({position[i]},
                                                                    {position[i] + extent[i]},
@@ -429,10 +501,10 @@ DataView retrieveData(const Tag &tag, const DataArray &array) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
     ndsize_t dimension_count = array.dimensionCount();
-    if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
-        throw IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data", "util::retrieveData");
-    }
-
+    //if (positions.size() != dimension_count || (extents.size() > 0 && extents.size() != dimension_count)) {
+    //      throw IncompatibleDimensions("Number of dimensions in position or extent do not match dimensionality of data", "util::retrieveData");
+    // }
+    //
     NDSize offset, count;
     getOffsetAndCount(tag, array, offset, count);
     if (!positionAndExtentInData(array, offset, count)) {
