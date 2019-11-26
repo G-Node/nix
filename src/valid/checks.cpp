@@ -88,6 +88,7 @@ bool extentsMatchRefs::operator()(const DataArray &extents) const {
 
 bool extentsMatchRefs::operator()(const std::vector<double> &extents) const {
     bool mismatch = false;
+    /*
     auto extSize = extents.size();
     auto it = refs.begin();
     while (!mismatch && (it != refs.end())) {
@@ -95,7 +96,7 @@ bool extentsMatchRefs::operator()(const std::vector<double> &extents) const {
         mismatch = extSize != arrayExtent.size();
         ++it;
     }
-
+    */
     return !mismatch;
 }
 
