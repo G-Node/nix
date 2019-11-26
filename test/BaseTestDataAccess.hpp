@@ -36,6 +36,7 @@ public:
     void testMultiTagUnitSupport();
     void testDataView();
     void testDataSlice();
+    void testFlexibleTagging();
 };
 
 #endif // NIX_BASETESTDATAACCESS_H
