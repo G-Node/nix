@@ -627,18 +627,35 @@ void BaseTestDataAccess::testFlexibleTagging() {
     tag.addReference(array2d);
     tag.addReference(array3d);
 
-    CPPUNIT_ASSERT_NO_THROW(tag.retrieveData("2d random data"));
-    CPPUNIT_ASSERT_NO_THROW(tag.retrieveData("1d random data"));
-    CPPUNIT_ASSERT_NO_THROW(tag.retrieveData("3d random data"));
+    nix::DataView view = tag.retrieveData("1d random data");
+    nix::NDSize exp_shape({501});
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    // Tag, tagging 3 dims without extents
+    view = tag.retrieveData("2d random data");
+    exp_shape = {51, 6};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = tag.retrieveData("3d random data");
+    exp_shape = {51, 6, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    // Tag, tagging 3 dims without extents, i.e. a point
     nix::Tag ndTag = b.createTag("2ndTag", "nix.points", {25, 0, 0});
     ndTag.addReference(array);
     ndTag.addReference(array2d);
     ndTag.addReference(array3d);
 
-    CPPUNIT_ASSERT_NO_THROW(ndTag.retrieveData("3d random data"));
-    nix::DataView view = ndTag.retrieveData("3d random data");
+    view = ndTag.retrieveData("1d random data");
+    exp_shape = {1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = ndTag.retrieveData("2d random data");
+    exp_shape = {1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = ndTag.retrieveData("3d random data");
+    exp_shape = {1, 1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     //Tag, tagging 3d dims but with explicit zero extents
     nix::Tag rdTag = b.createTag("3rdTag11", "nix.points", {25, 0, 0});
@@ -647,9 +664,25 @@ void BaseTestDataAccess::testFlexibleTagging() {
     rdTag.addReference(array2d);
     rdTag.addReference(array3d);
 
-    CPPUNIT_ASSERT_NO_THROW(rdTag.retrieveData("3d random data"));
-    nix::DataView view2 = rdTag.retrieveData("3d random data");
-    CPPUNIT_ASSERT(view.dataExtent() == view2.dataExtent());
+    view = rdTag.retrieveData("1d random data");
+    exp_shape = {1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = rdTag.retrieveData("2d random data");
+    exp_shape = {1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = rdTag.retrieveData("3d random data");
+    exp_shape = {1, 1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    nix::Tag failTag = b.createTag("failing tag", "nix.points", {25, 0, 0});
+    failTag.extent({0.0, 0.0}); // this is invalid!
+    failTag.addReference(array);
+    failTag.addReference(array2d);
+    failTag.addReference(array3d);
+
+    CPPUNIT_ASSERT_THROW(failTag.retrieveData("3d random data"), nix::IncompatibleDimensions);
 
     // MultiTag
     typedef boost::multi_array<double, 2> pos_type;
@@ -678,9 +711,17 @@ void BaseTestDataAccess::testFlexibleTagging() {
     mtag.addReference(array2d);
     mtag.addReference(array3d);
 
-    CPPUNIT_ASSERT_NO_THROW(mtag.retrieveData(0, "1d random data"));
-    CPPUNIT_ASSERT_NO_THROW(mtag.retrieveData(0, "2d random data"));
-    CPPUNIT_ASSERT_NO_THROW(mtag.retrieveData(0, "3d random data"));
+    view = mtag.retrieveData(0, "1d random data");
+    exp_shape = {101};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = mtag.retrieveData(0, "2d random data");
+    exp_shape = {11, 3};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = mtag.retrieveData(0, "3d random data");
+    exp_shape = {11, 3, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     file.deleteBlock(b);
 }
