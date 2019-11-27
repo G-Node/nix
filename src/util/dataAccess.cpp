@@ -184,6 +184,7 @@ ndsize_t positionToIndex(double position, const string &unit, const RangeDimensi
     return dimension.indexOf(position * scaling);
 }
 
+
 void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double &ext) {
     DimensionType dt = dim.dimensionType();
     if (dt == DimensionType::Sample) {
@@ -202,6 +203,18 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
         }
         ext = static_cast<double>(max_index);
     }
+}
+
+
+vector<pair<double, double>> maximumExtents(const DataArray &array) {
+    vector<Dimension> dimensions = array.dimensions();
+    vector<pair<double, double>> max_extents;
+    for (size_t i = 0; i < dimensions.size(); ++i) {
+        double pos, ext;
+        getMaxExtent(dimensions[i], array.dataExtent()[i]-1, pos, ext);
+        max_extents.emplace_back(pos, ext);
+    }
+    return max_extents;
 }
 
 
@@ -227,36 +240,29 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
     vector<double> extent = tag.extent();
     vector<string> units = tag.units();
     vector<Dimension> dimensions = array.dimensions();
+    size_t dim_count = dimensions.size();
     NDSize shape = array.dataExtent();
-
+    
     if (extent.size() > 0 && (extent.size() != position.size())) {
         throw IncompatibleDimensions("Size of position and extent do not match!",
                                      "nix::util::getOffsetAndCount");
     }
-
-    if (position.size() > dimensions.size()) {
-        while (position.size() > dimensions.size()) {
-            position.pop_back();
-            if (extent.size() > position.size()) {
-                extent.pop_back();
-            }
-            if (units.size() > position.size()) {
-                units.pop_back();
-            }
-        }
-    } else if (position.size() <  dimensions.size()) {
-        double pos, ext;
-        for (size_t i = position.size(); i < dimensions.size(); ++i) {
-            getMaxExtent(dimensions[i], shape[i]-1, pos, ext);
-            position.push_back(pos);
-            extent.push_back(ext);
-        }
+    vector<pair<double, double>> max_extents;
+    if (position.size() < dim_count) {
+        max_extents = maximumExtents(array);
     }
-
     if (extent.size() == 0) {
-        extent = vector<double>(position.size(), 0.0);
+        extent.resize(position.size(), 0.0);
     }
-
+    while (position.size() > dim_count) {
+        position.pop_back();
+        extent.pop_back();
+    }
+    while (position.size() < dim_count) {
+        position.push_back(get<0>(max_extents[position.size()]));
+        extent.push_back(get<1>(max_extents[extent.size()]));        
+    }
+    
     if (units.size() == 0) {
         units = std::vector<std::string>(position.size(), "none");
     } else if (units.size() > position.size()) {
@@ -283,6 +289,7 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
     count = temp_count;
 }
 
+
 void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector<ndsize_t> &indices,
                        vector<NDSize> &offsets, vector<NDSize> &counts) {
     DataArray positions = tag.positions();
@@ -294,13 +301,10 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
 
     while (units.size() < dimension_count) {
         units.push_back("none");
-    } // ok
-
-    vector<pair<double, double>> max_extents(dimensions.size());
-    for (size_t i = 0; i < dimensions.size(); ++i) {
-        double pos, ext;
-        getMaxExtent(dimensions[i], array.dataExtent()[i]-1, pos, ext);
-        max_extents.emplace_back(pos, ext);
+    } 
+    vector<pair<double, double>> max_extents;
+    if (position_size.size() < dimension_count) {
+        max_extents = maximumExtents(array);
     }
     if (positions) {
         position_size = positions.dataExtent();
@@ -322,25 +326,23 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     int count = dimension_count > 1 ? position_size[dim_index] : 1;
     temp_count[dim_index] = static_cast<NDSize::value_type>(count);
 
-    vector<vector<double>> start_positions(dimensions.size());
-    vector<vector<double>> end_positions(dimensions.size());
+    vector<vector<double>> start_positions(dimension_count);
+    vector<vector<double>> end_positions(dimension_count);
+    vector<double> offset, extent;
     for (size_t idx = 0; idx < indices.size(); ++idx) {
         temp_offset[0] = indices[idx];
-        vector<double> offset, extent;
         positions.getData(offset, temp_count, temp_offset);
         if (extents) {
             extents.getData(extent, temp_count, temp_offset);
         } else {
             extent.resize(offset.size(), 0.0);
         }
-
-        // here we need to fix the missing information or throw away stuff
-        // offset contains the start positions, extents the extents
-        // they both have the same length, size of units has been assured before
+        // add pos/extents if missing
         while (offset.size() < dimensions.size()) {
             offset.push_back(get<0>(max_extents[offset.size()]));
             extent.push_back(get<1>(max_extents[extent.size()]));
         }
+        // throw away info, if not needed
         while (offset.size() > dimensions.size()) {
             offset.pop_back();
             extent.pop_back();
