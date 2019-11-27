@@ -245,14 +245,12 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
 
     if (units.size() == 0) {
         units = std::vector<std::string>(position.size(), "none");
-    } else if (units.size() > position.size()) {
-        while (units.size() > position.size()) {
-            units.pop_back();
-        }
-    } else {
-        while (units.size() < position.size()) {
-            units.push_back(getDimensionUnit(dimensions[units.size()]));
-        }
+    }
+    while (units.size() > position.size()) {
+        units.pop_back();
+    }
+    while (units.size() < position.size()) {
+        units.push_back(getDimensionUnit(dimensions[units.size()]));
     }
 
     NDSize temp_offset(position.size());
