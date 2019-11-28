@@ -54,8 +54,21 @@ the `INCF <http://www.incf.org>`__ Datasharing Program (2010-2015). It
 is a registered research resource with the
 `RRID:SCR_016196 <https://scicrunch.org/resources/Any/record/nlx_144509-1/SCR_016196/resolver?q=SCR_016196&l=SCR_016196>`__.
 
-Contributing
+Introduction
 ============
+
+We have assembled `introductory material <getting_started.html>`__
+that illustrates using nix. The tutorials contain several code
+examples. `The use_cases <use_cases.html>`__ explain in more detail how
+nix is used in real world situations.
+
+Support
+=======
+If you need help, want to get in touch, or have any other request
+`these <contact.html>`__ are your options.
+
+Contributing & Governance
+=========================
 
 Any kind of contribution is welcome! This includes reporting bugs and
 issues. If you want to contribute to code or documentation please refer
@@ -82,7 +95,10 @@ Neuroinform. Conference Abstract: Neuroinformatics 2014. doi:
 
 Referenced by
 =============
-
+-  Buccino et al. (2019)
+   `doi:10.1101/796599 <https://www.biorxiv.org/content/10.1101/796599v1>`__
+-  Sprenger et al. (2019)
+   `doi:10.3389/fninf.2019.00062 <https://doi.org/10.3389/fninf.2019.00062>`__
 -  Dragly et al (2018)
    `doi:10.3389/fninf.2018.000169 <https://doi.org/10.3389/fninf.2018.000169>`__
 -  Papez et al (2017)
@@ -97,6 +113,7 @@ Referenced by
    `doi:10.1007/978-3-319-50862-7_5 <https://doi.org/doi:10.1007/978-3-319-50862-7_5>`__
 -  Teeters et al (2015)
    `doi:10.1016/j.neuron.2015.10.025 <https://doi.org/doi:10.1016/j.neuron.2015.10.025>`__
+   
 
 --------------
 
@@ -109,10 +126,14 @@ Referenced by
 .. toctree::
    getting_started
    data_model
-   use_cases
    :maxdepth: 1
    :caption: Introduction:
-
+	     
+.. toctree::
+   use_cases
+   :maxdepth: 1
+   :caption: Use cases
+	     
 .. toctree::
    contact
    faq

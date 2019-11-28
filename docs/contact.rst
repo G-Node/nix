@@ -4,10 +4,11 @@
 Getting support
 ===============
 
-If you experience problems using *NIX* feel free to join our IRC channel
-`#gnode at FreeNode <irc://irc.freenode.net/gnode>`__ or write an email
-to dev@g-node.org. If you find a bug please report it using the `project
-issue tracker <https://github.com/G-Node/nix/issues>`__.
+If you experience problems using *NIX* feel free to join our IRC
+channel `#gnode at FreeNode <irc://irc.freenode.net/gnode>`__ or write
+an email to dev@g-node.org. If you find a bug or have a feature
+request please report it using the `project issue tracker
+<https://github.com/G-Node/nix/issues>`__.
 
 
 Contact
