@@ -3,6 +3,13 @@ How to contribute to NIX
 
 This document gives some information about how to contribute to the NIX project.
 
+Governance model
+----------------
+
+The project has a core team of maintainers who are long-term contributors and responsible for coordinating the project. There is also a set of one-time or short period contributors. We consider everyone a contributor who reports issues, opens pull requests, or takes part in issue discussions. Any such contribution is welcome. Maintainers have commit access to the repository and will review and merge pull requests. Becoming a maintainer is possible for everyone who wants to help maintaining and shaping the project and to take over more responsibility. Requests to become a maintainer need to be approved by the existing maintainers.
+
+Any addition to the code happens via pull requests (there are only very few exceptions in which someone pushes directly to master, see below for more information). Thus, any contribution will be reviewed before it is merged. Bug fixes and other contributions to the API will undergo this pragmatic approach. Format or API changes, especially those that would lead to breaking changes, will be discussed via the issue tracker and video meetings and need to be agreed on by the maintainers. We aim at consensus decisions, but where this is not possible decisions are made by majority vote among the maintainers.
+
 
 Contributing
 ------------
