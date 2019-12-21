@@ -1,19 +1,18 @@
 Linux
 =====
 
-Debian PPA
-----------
+Ubuntu and Debian PPA
+---------------------
 
-You can get a ready to install package for Ubuntu “trusty”(14.04) and
-“xenial” (16.04). You have to add & install the following software
-source to your system:
+You can get a ready to install package via Launchpad. The following
+software sources need to be added to your system:
 
-::
+- deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
+- deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
+(*Note:* replace trusty (14.04) with xenial (16.04) or bionic (18.04)
+depending on your distribution)
 
-    deb http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
-    deb-src http://ppa.launchpad.net/gnode/nix/ubuntu trusty main
-
-by executing
+This is most easily done by executing:
 
 ::
 
@@ -21,21 +20,21 @@ by executing
     sudo apt-get update
     sudo apt-get install libnix-dev
 
-*Note:* replace trusty with xenial for 16.04
 
 
 Fedora copr
 -----------
 
-A fedora 25+ package can be installed via copr. To do so:
+A fedora 29+ package can be installed via copr. To do so:
 
 ::
 
-    sudo dnf copr enable gicmo/nix
+    sudo dnf copr enable jgrewe/nix
     sudo dnf install nixio-devel
 
-Build NIX under Ubuntu 14.04/16.04
+Build NIX from source under Ubuntu
 ----------------------------------
+If you decide to rather build NIX yourself you can follow these instructions.
 
 *Dependencies*
 
@@ -61,7 +60,7 @@ needed (g++ >= 4.8, clang >= 3.4) as well as the build tool CMake (>=
     git clone https://github.com/G-Node/nix
     cd nix
 
-    # 3 make a build dir and build nix
+    # 3 create a build directory and build nix
     mkdir build
     cd build
     cmake ..
@@ -78,7 +77,7 @@ try the following:
 
 .. code:: bash
 
-    # 3 make a build dir and build nix
+    # 3 create a build directory and build nix
     mkdir build
     cd build
     cmake -DBoost_NO_BOOST_CMAKE=TRUE ..
