@@ -627,15 +627,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     tag.addReference(array2d);
     tag.addReference(array3d);
 
-    nix::DataView view = tag.retrieveData("1d random data");
+    nix::DataView view = tag.taggedData("1d random data");
     nix::NDSize exp_shape({501});
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = tag.retrieveData("2d random data");
+    view = tag.taggedData("2d random data");
     exp_shape = {51, 6};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = tag.retrieveData("3d random data");
+    view = tag.taggedData("3d random data");
     exp_shape = {51, 6, 5};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
@@ -645,15 +645,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     ndTag.addReference(array2d);
     ndTag.addReference(array3d);
 
-    view = ndTag.retrieveData("1d random data");
+    view = ndTag.taggedData("1d random data");
     exp_shape = {1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = ndTag.retrieveData("2d random data");
+    view = ndTag.taggedData("2d random data");
     exp_shape = {1, 1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = ndTag.retrieveData("3d random data");
+    view = ndTag.taggedData("3d random data");
     exp_shape = {1, 1, 1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
@@ -664,15 +664,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     rdTag.addReference(array2d);
     rdTag.addReference(array3d);
 
-    view = rdTag.retrieveData("1d random data");
+    view = rdTag.taggedData("1d random data");
     exp_shape = {1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = rdTag.retrieveData("2d random data");
+    view = rdTag.taggedData("2d random data");
     exp_shape = {1, 1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = rdTag.retrieveData("3d random data");
+    view = rdTag.taggedData("3d random data");
     exp_shape = {1, 1, 1};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
@@ -682,7 +682,7 @@ void BaseTestDataAccess::testFlexibleTagging() {
     failTag.addReference(array2d);
     failTag.addReference(array3d);
 
-    CPPUNIT_ASSERT_THROW(failTag.retrieveData("3d random data"), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(failTag.taggedData("3d random data"), nix::IncompatibleDimensions);
 
     // MultiTag
     typedef boost::multi_array<double, 2> pos_type;
@@ -711,15 +711,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     mtag.addReference(array2d);
     mtag.addReference(array3d);
 
-    view = mtag.retrieveData(0, "1d random data");
+    view = mtag.taggedData(0, "1d random data");
     exp_shape = {101};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = mtag.retrieveData(0, "2d random data");
+    view = mtag.taggedData(0, "2d random data");
     exp_shape = {11, 3};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    view = mtag.retrieveData(0, "3d random data");
+    view = mtag.taggedData(0, "3d random data");
     exp_shape = {11, 3, 5};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
