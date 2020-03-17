@@ -521,3 +521,166 @@ void BaseTestDataAccess::testDataSlice() {
     b.deleteDataArray(twod_array);
     file.deleteBlock(b);
 }
+
+
+void BaseTestDataAccess::testFlexibleTagging() {
+    nix::Block b = file.createBlock("flexible tagging", "nix.test");
+
+    // create dummy data
+    std::vector<double> data(1000, 0.0);
+    for (size_t i = 0; i <data.size(); ++i) {
+        data[i] = 3.14 * 1;
+    }
+
+    typedef boost::multi_array<int, 2> array_type_2d;
+    typedef array_type_2d::index index;
+    nix::NDSize data_shape_2d(2, 0);
+    data_shape_2d[0] = 100;
+    data_shape_2d[1] = 10;
+    array_type_2d data2d(boost::extents[data_shape_2d[0]][data_shape_2d[1]]);
+    for(index i = 0; i < 100; ++i) {
+        for(index j = 0; j < 10; ++j) {
+            data2d[i][j] = std::rand() % 100 + 1;
+        }
+    }
+
+    typedef boost::multi_array<int, 3> array_type_3d;
+    typedef array_type_3d::index index3;
+    nix::NDSize data_shape_3d(3, 0);
+    data_shape_3d[0] = 100;
+    data_shape_3d[1] = 10;
+    data_shape_3d[2] = 5;
+
+    array_type_3d data3d(boost::extents[100][10][5]);
+    for(index3 i = 0; i < 100; ++i) {
+        for(index3 j = 0; j < 10; ++j) {
+            for(index3 k = 0; k < 5; ++k) {
+                data3d[i][j][k] = std::rand() % 100 + 1;
+            }
+        }
+    }
+    // Create the DataArrays and store the data.
+    nix::DataArray array = b.createDataArray("1d random data", "nix.sampled", data);
+    nix::SampledDimension dim = array.appendSampledDimension(0.1);
+    dim.label("time");
+    dim.unit("s");
+
+    nix::DataArray array2d = b.createDataArray("2d random data", "nix.sampled.2d", data2d);
+    dim = array2d.appendSampledDimension(1.);
+    dim.label("time");
+    dim.unit("s");
+    array2d.appendSetDimension();
+
+    nix::DataArray array3d = b.createDataArray("3d random data", "nix.sampled.3d", data3d);
+    dim = array3d.appendSampledDimension(1.);
+    dim.label("time");
+    dim.unit("s");
+    array3d.appendSetDimension();
+    array3d.appendSetDimension();
+
+    // Tag, tagging 2 dimensions
+    nix::Tag tag = b.createTag("1stTag", "nix.segment", {25, 0});
+    tag.extent({50, 5});
+    tag.units({"s"});
+    tag.addReference(array);
+    tag.addReference(array2d);
+    tag.addReference(array3d);
+
+    nix::DataView view = tag.retrieveData("1d random data");
+    nix::NDSize exp_shape({501});
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = tag.retrieveData("2d random data");
+    exp_shape = {51, 6};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = tag.retrieveData("3d random data");
+    exp_shape = {51, 6, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+    
+    // Tag, tagging 3 dims without extents, i.e. a point
+    nix::Tag ndTag = b.createTag("2ndTag", "nix.points", {25, 0, 0});
+    ndTag.addReference(array);
+    ndTag.addReference(array2d);
+    ndTag.addReference(array3d);
+    
+    view = ndTag.retrieveData("1d random data");
+    exp_shape = {1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = ndTag.retrieveData("2d random data");
+    exp_shape = {1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = ndTag.retrieveData("3d random data");
+    exp_shape = {1, 1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    //Tag, tagging 3d dims but with explicit zero extents
+    nix::Tag rdTag = b.createTag("3rdTag11", "nix.points", {25, 0, 0});
+    rdTag.extent({0.0, 0.0, 0.0});
+    rdTag.addReference(array);
+    rdTag.addReference(array2d);
+    rdTag.addReference(array3d);
+
+    view = rdTag.retrieveData("1d random data");
+    exp_shape = {1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = rdTag.retrieveData("2d random data");
+    exp_shape = {1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = rdTag.retrieveData("3d random data");
+    exp_shape = {1, 1, 1};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    nix::Tag failTag = b.createTag("failing tag", "nix.points", {25, 0, 0});
+    failTag.extent({0.0, 0.0}); // this is invalid!
+    failTag.addReference(array);
+    failTag.addReference(array2d);
+    failTag.addReference(array3d);
+
+    CPPUNIT_ASSERT_THROW(failTag.retrieveData("3d random data"), nix::IncompatibleDimensions);
+
+    // MultiTag
+    typedef boost::multi_array<double, 2> pos_type;
+    typedef pos_type::index index4;
+
+    pos_type pos_data(boost::extents[5][2]);
+    pos_type ext_data(boost::extents[5][2]);
+    for(index4 i = 0; i < 5; ++i) {
+        pos_data[i][0] = i * 15.0 + 5.00;
+        ext_data[i][0] = 10.0;
+        pos_data[i][1] = 1.0;
+        ext_data[i][1] = 2.0;
+    }
+    nix::DataArray positions = b.createDataArray("mtag positions", "nix.positions.2d", pos_data);
+    positions.appendSetDimension();
+    positions.appendSetDimension();
+
+    nix::DataArray extents = b.createDataArray("mtag_extents", "nix.extents.2d", ext_data);
+    extents.appendSetDimension();
+    extents.appendSetDimension();
+
+    nix::MultiTag mtag = b.createMultiTag("mtag", "segments", positions);
+    mtag.extents(extents);
+
+    mtag.addReference(array);
+    mtag.addReference(array2d);
+    mtag.addReference(array3d);
+
+    view = mtag.retrieveData(0, "1d random data");
+    exp_shape = {101};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = mtag.retrieveData(0, "2d random data");
+    exp_shape = {11, 3};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    view = mtag.retrieveData(0, "3d random data");
+    exp_shape = {11, 3, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    file.deleteBlock(b);
+}

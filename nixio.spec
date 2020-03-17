@@ -1,5 +1,5 @@
 Name:		nixio
-Version:	1.4.3
+Version:	1.4.4
 Release:	1%{?dist}
 Summary:	IO-libray for nix data files
 
@@ -56,6 +56,9 @@ cd build
 
 
 %changelog
+* Tue Nov 26 2019 Jan Grewe <jan.grewe@g-node.org> - 1.4.0-1
+- version bump to 1.4.4
+
 * Thu Nov 01 2018 Jan Grewe <jan.grewe@g-node.org> - 1.4.0-1
 - version bump to 1.4.3
 
