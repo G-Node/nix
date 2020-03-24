@@ -388,10 +388,11 @@ bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
 
     if (check && my_version >= file_format_version) {
         if (!root.hasAttr("id") || !root.getAttr("id", id)) {
-            std::cerr << "Nix Format warning! The file does not have a valid id. Consider setting it with File::forceId()!\n";
+            check = false;
+            message << "Cannot open file! The file does not have a id! ";
         }
-
     }
+    
     if (!check && throw_error) {
         throw nix::InvalidFile(message.str());
     }
