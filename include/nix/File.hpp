@@ -397,6 +397,26 @@ public:
     }
 
     /**
+     * @brief Return the file's id.
+     *
+     * @return The file's id.
+     */
+    std::string id() const {
+        return backend()->id();
+    }
+
+    /**
+     * @brief Forces resetting the file's id.  
+     * WARNING! A unique file id is automatically assigned during file creation and should 
+     * under normal circumstances not be changed afterwards. Use this function only
+     * for assigning an id when, for some reason, there has not bee any or you created
+     * a copy and want to force a new id.
+     */
+    void forceId() {
+        backend()->forceId();
+    }
+    
+    /**
      * @brief Get the creation date of the file.
      *
      * @return The creation date of the file.

@@ -84,6 +84,12 @@ public:
     std::string format() const;
 
 
+    std::string id() const;
+
+
+    void forceId();
+    
+    
     std::string location() const;
 
 

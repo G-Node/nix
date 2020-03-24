@@ -95,10 +95,15 @@ public:
     // Methods for file attribute access.
     //--------------------------------------------------
 
-
     std::vector<int> version() const;
 
 
+    std::string id() const;
+    
+
+    void forceId();
+
+    
     std::string format() const;
 
 
