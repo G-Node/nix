@@ -386,7 +386,7 @@ bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
         message << "File is not a valid NIX file, version attribute missing!";
     }
 
-    if (check && my_version >= file_format_version) {
+    if (check && file_format_version >= nix::FormatVersion({1, 2, 0})) {
         if (!root.hasAttr("id") || !root.getAttr("id", id)) {
             check = false;
             message << "Cannot open file! The file does not have a id! ";
