@@ -382,12 +382,65 @@ public:
         return dim;
     }
 
-
-    ColumnDimension appendColumnDimension(const DataFrame &frame, std::vector<unsigned> column_indices) {
-        ColumnDimension dim = backend()->createColumnDimension(backend()->dimensionCount() + 1, frame, column_indices);
+    /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     * @param column_index: The index of the column that should be used.
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame, unsigned column_index) {
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, column_index);
         return dim;
     };
 
+    /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     * @param column_name: The name of the column that should be used.
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame, const std::string &column_name) {
+        std::vector<std::string> names = {column_name};
+        std::vector<unsigned> indices = frame.colIndex(names);
+        unsigned index = indices[0];
+            
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, index);
+        return dim;
+    };
+
+     /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame) {
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame);
+        return dim;
+    };
 
 
     /**

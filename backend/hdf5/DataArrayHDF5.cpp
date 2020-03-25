@@ -206,10 +206,17 @@ std::shared_ptr<base::ISampledDimension> DataArrayHDF5::createSampledDimension(n
 }
 
 
-std::shared_ptr<base::IColumnDimension> DataArrayHDF5::createColumnDimension(ndsize_t index, const nix::DataFrame &df, std::vector<unsigned> col_indices) {
+std::shared_ptr<base::IDataFrameDimension> DataArrayHDF5::createDataFrameDimension(ndsize_t index, const nix::DataFrame &df, unsigned col_index) {
     H5Group g = createDimensionGroup(index);
-    return make_shared<ColumnDimensionHDF5>(g, index, file(), block(), df, col_indices);
+    return make_shared<DataFrameDimensionHDF5>(g, index, file(), block(), df, col_index);
 }
+
+
+std::shared_ptr<base::IDataFrameDimension> DataArrayHDF5::createDataFrameDimension(ndsize_t index, const nix::DataFrame &df) {
+    H5Group g = createDimensionGroup(index);
+    return make_shared<DataFrameDimensionHDF5>(g, index, file(), block(), df);
+}
+
 
 H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
     boost::optional<H5Group> g = dimension_group(true);

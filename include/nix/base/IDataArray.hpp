@@ -96,7 +96,11 @@ public:
     virtual std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval) = 0;
 
 
-    virtual std::shared_ptr<base::IColumnDimension> createColumnDimension(ndsize_t id, const DataFrame &frame, std::vector<unsigned> column_indices) = 0;
+    virtual std::shared_ptr<base::IDataFrameDimension> createDataFrameDimension(ndsize_t id, const DataFrame &frame) = 0;
+
+
+    
+    virtual std::shared_ptr<base::IDataFrameDimension> createDataFrameDimension(ndsize_t id, const DataFrame &frame, unsigned column_index) = 0;
 
 
     virtual bool deleteDimensions() = 0;
