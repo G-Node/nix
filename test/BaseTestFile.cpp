@@ -190,7 +190,19 @@ void BaseTestFile::testReopen() {
     CPPUNIT_ASSERT(file_open.fileMode() == FileMode::Overwrite);
 }
 
-#define ASSERT_FLAGS_EQUAL(want, have) \
+
+void BaseTestFile::testId() {
+    std::string id = file_open.id();
+    CPPUNIT_ASSERT(id != "");
+
+    file_open.forceId();  
+    std::string new_id = file_open.id();
+    CPPUNIT_ASSERT(new_id != "");
+    CPPUNIT_ASSERT(id != new_id);
+}
+
+
+#define ASSERT_FLAGS_EQUAL(want, have)                     \
     CPPUNIT_ASSERT_EQUAL(static_cast<unsigned long>(have), \
                          static_cast<unsigned long>(want));
 
@@ -207,3 +219,4 @@ void BaseTestFile::testFlags() {
     flags = static_cast<OpenFlags>(0xFF); // simulate we have more flags
     ASSERT_FLAGS_EQUAL(nix::OpenFlags::Force, flags & nix::OpenFlags::Force);
 }
+

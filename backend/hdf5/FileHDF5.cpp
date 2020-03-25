@@ -274,8 +274,20 @@ string FileHDF5::location() const {
 }
 
 
-void FileHDF5::close() {
+string FileHDF5::id() const {
+    string id;
+    root.getAttr("id", id);
+    return id;
+}
 
+
+void FileHDF5::forceId() {
+    root.setAttr("id", util::createId());
+    setUpdatedAt();
+}
+
+
+void FileHDF5::close() {
     if (!isOpen())
         return;
 
@@ -335,8 +347,9 @@ shared_ptr<base::IFile> FileHDF5::file() const {
 bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
     bool check = true;
     vector<int> vv;
-    string str;
+    string str, id;
     std::stringstream message;
+    
     if (root.hasAttr("format")) {
         if (!root.getAttr("format", str) || str != FILE_FORMAT) {
             check = false;
@@ -346,6 +359,7 @@ bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
         check = false;
         message << "File is not a valid NIX file, format attribute missing!";
     }
+
     if (check && root.hasAttr("version")) {
         if (!root.getAttr("version", vv)) {
             check = false;
@@ -371,6 +385,14 @@ bool FileHDF5::checkHeader(FileMode mode, bool throw_error) {
         check = false;
         message << "File is not a valid NIX file, version attribute missing!";
     }
+
+    if (check && file_format_version >= nix::FormatVersion({1, 2, 0})) {
+        if (!root.hasAttr("id") || !root.getAttr("id", id)) {
+            check = false;
+            message << "Cannot open file! The file does not have a id! ";
+        }
+    }
+    
     if (!check && throw_error) {
         throw nix::InvalidFile(message.str());
     }
@@ -382,6 +404,7 @@ void FileHDF5::createHeader() {
     try {
         root.setAttr("format", FILE_FORMAT);
         root.setAttr("version", std::vector<int>{my_version.x(), my_version.y(), my_version.z()});
+        root.setAttr("id",  util::createId());
     } catch ( ... ) {
         throw H5Exception("Could not open/create file");
     }

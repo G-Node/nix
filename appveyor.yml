@@ -4,7 +4,7 @@ branches:
   - master
   - 1.4
 image: Visual Studio 2014 CTP4
-shallow_clone: true
+
 environment:
   matrix:
   - PLATFORM: x64

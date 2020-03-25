@@ -17,7 +17,7 @@
 #include <string>
 #include <memory>
 
-#define HDF5_FF_VERSION nix::FormatVersion({1, 1, 1})
+#define HDF5_FF_VERSION nix::FormatVersion({1, 2, 0})
 
 namespace nix {
 namespace hdf5 {
@@ -95,10 +95,15 @@ public:
     // Methods for file attribute access.
     //--------------------------------------------------
 
-
     std::vector<int> version() const;
 
 
+    std::string id() const;
+    
+
+    void forceId();
+
+    
     std::string format() const;
 
 

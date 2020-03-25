@@ -115,6 +115,12 @@ public:
     virtual std::string format() const = 0;
 
 
+    virtual std::string id() const = 0;
+
+
+    virtual void forceId() = 0;
+
+
     virtual std::string location() const = 0;
 
 

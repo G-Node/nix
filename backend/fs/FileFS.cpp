@@ -16,7 +16,7 @@ namespace nix {
 namespace file {
 
 
-    FileFS::FileFS(const std::string &name, FileMode mode, Compression compression)
+FileFS::FileFS(const std::string &name, FileMode mode, Compression compression)
     : DirectoryWithAttributes(name, mode, true) {
     this->mode = mode;
     this->compr = compression;
@@ -162,6 +162,19 @@ std::string FileFS::format() const {
 }
 
 
+std::string FileFS::id() const {
+    std::string id;
+    getAttr("id", id);
+    return  id;
+}
+
+
+void FileFS::forceId() {
+    std::string id = util::createId();
+    setAttr("id", id);
+}
+
+
 std::string FileFS::location() const {
     return boost::filesystem::canonical(Directory::location()).string();
 }
@@ -229,6 +242,7 @@ bool FileFS::checkHeader() {
     bool check = true;
     std::vector<int> version;
     std::string str;
+    std::string id;
     // check format
     if (hasAttr("format")) {
         getAttr("format", str);
@@ -246,6 +260,15 @@ bool FileFS::checkHeader() {
         }
     } else {
         setAttr("version", FILE_VERSION);
+    }
+    // check id
+    if (hasAttr("id")) {
+        getAttr("id", id);
+        if (!util::looksLikeUUID(id)) {
+            check = false;
+        }
+    } else {
+        setAttr("id", util::createId());
     }
     return check;
 }

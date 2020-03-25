@@ -39,6 +39,7 @@ static std::string make_file_with_version(int x, int y, int z, const std::string
     time_t t = time(NULL);
     root.setAttr("created_at", nix::util::timeToStr(t));
     root.setAttr("updated_at", nix::util::timeToStr(t));
+    root.setAttr("id", nix::util::createId());
 
     root.close();
     file.close();

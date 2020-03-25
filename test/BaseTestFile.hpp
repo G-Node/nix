@@ -51,6 +51,7 @@ public:
     void testCheckHeader();
     void testCompare();
     void testFlags();
+    void testId();
 
 };
 
