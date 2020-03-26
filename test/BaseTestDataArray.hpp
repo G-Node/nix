@@ -36,6 +36,7 @@ public:
     void testUnit();
     void testDimension();
     void testAliasRangeDimension();
+    void testDataFrameDimension();
     void testOperator();
     void testValidate();
 };

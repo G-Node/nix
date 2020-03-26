@@ -510,6 +510,92 @@ void BaseTestDataArray::testAliasRangeDimension() {
 }
 
 
+void BaseTestDataArray::testDataFrameDimension() {
+    // Create DataFrame with some data
+    std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double},
+                                     {"note", "", nix::DataType::String}};
+    DataFrame df = block.createDataFrame("conditions", "test", cols);
+    std::vector<nix::Variant> vals(2);
+    df.rows(10);
+    for (int i = 0; i < 10; ++i) {
+        vals[0].set(i * 2.5);
+        vals[1].set("test");
+        df.writeRow(i, vals);
+    }
+
+    // Create DataArrays with some data
+    std::vector<double> data(10);
+    for (size_t i = 0; i < data.size(); ++i)
+        data[i] = 3.14 * i;
+
+    DataArray array1 = block.createDataArray("measurement1", "test", data);
+    array1.label("voltage");
+    array1.unit("mV");
+
+    // append with no index
+    DataFrameDimension dim = array2.appendDataFrameDimension(df);
+    DataFrame rdf = dim.data();
+    CPPUNIT_ASSERT_EQUAL(df.id(), rdf.id());
+
+    CPPUNIT_ASSERT_EQUAL(dim.label(), df.name());
+    CPPUNIT_ASSERT_NO_THROW(dim.label(0));
+    CPPUNIT_ASSERT_EQUAL(dim.label(0), cols[0].name);
+    CPPUNIT_ASSERT_NO_THROW(dim.label(1));
+    CPPUNIT_ASSERT_EQUAL(dim.label(1), cols[1].name);
+    CPPUNIT_ASSERT_THROW(dim.label(3), nix::OutOfBounds);
+
+    CPPUNIT_ASSERT_THROW(dim.unit(), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(dim.unit(0));
+    CPPUNIT_ASSERT_EQUAL(dim.unit(0), cols[0].unit);
+    CPPUNIT_ASSERT_NO_THROW(dim.unit(1));
+    CPPUNIT_ASSERT_EQUAL(dim.unit(1), cols[1].unit);
+    CPPUNIT_ASSERT_THROW(dim.unit(3), nix::OutOfBounds);
+
+    CPPUNIT_ASSERT_THROW(dim.columnDataType(), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(0));
+    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(0), cols[0].dtype);
+    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(1));
+    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(1), cols[1].dtype);
+    CPPUNIT_ASSERT_THROW(dim.columnDataType(3), nix::OutOfBounds);
+
+    // append with index
+    DataArray array2 = block.createDataArray("measurement2", "test", data);
+    array2.label("voltage");
+    array2.unit("mV");
+
+    //append with invalid index
+    CPPUNIT_ASSERT_THROW(array2.appendDataFrameDimension(df, 100), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(array2.appendDataFrameDimension(df, "test"), nix::OutOfBounds);
+
+    dim = array2.appendDataFrameDimension(df, "current");
+    CPPUNIT_ASSERT_EQUAL(dim.columnIndex(), 0);
+    array2.deleteDimensions();
+
+    dim = array2.appendDataFrameDimension(df, 1);
+    CPPUNIT_ASSERT_EQUAL(dim.columnIndex(), 1);
+    CPPUNIT_ASSERT_EQUAL(dim.label(), cols[1].name);
+    CPPUNIT_ASSERT_EQUAL(dim.unit(), cols[1].unit);
+    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(), cols[1].dtype);
+
+    std::vector<std::string> ticks(10);
+    CPPUNIT_ASSERT_THROW(dim.ticks(ticks, 10), nix::OutOfBounds);
+
+    dim.ticks(ticks);
+    std::string pattern = "test";
+    for (size_t i = 0; i < ticks.size(); ++i)
+        CPPUNIT_ASSERT_EQUAL(ticks[i], pattern);
+
+    dim.ticks(ticks, 1);
+    for (size_t i = 0; i < ticks.size(); ++i)
+        CPPUNIT_ASSERT_EQUAL(ticks[i], pattern);
+
+    std::vector<double> ticks2(df.rows());
+    dim.ticks(ticks2, 0);
+     for (size_t i = 0; i < ticks2.size(); ++i)
+        CPPUNIT_ASSERT_EQUAL(ticks2[i], i * 2.5);
+}
+
+
 void BaseTestDataArray::testOperator() {
     std::stringstream mystream;
     mystream << array1;

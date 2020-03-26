@@ -27,6 +27,7 @@ class TestDataArrayHDF5 : public BaseTestDataArray {
     CPPUNIT_TEST(testUnit);
     CPPUNIT_TEST(testDimension);
     CPPUNIT_TEST(testAliasRangeDimension);
+    CPPUNIT_TEST(testDataFrameDimension);
     CPPUNIT_TEST(testOperator);
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST_SUITE_END ();
