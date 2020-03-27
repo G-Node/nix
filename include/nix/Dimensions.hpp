@@ -341,7 +341,7 @@ public:
  * A DataFrameDimension is defined by the DataFrame and the index of the column
  * that should be used to annotate the axis of the data.
  *
- * ### Creating a DataFrameDimension: 
+ * ### Creating a DataFrameDimension:
  *
  * The following example will create a DataArray that stores a set of regularly
  * sampled data recorded under conditions stored in a DataFrame.
@@ -355,7 +355,7 @@ public:
  *  std::vector<double> frequencies(10);
  *  for (size_t i = 0; i < 10; ++i)
  *      frequencies[i] = (i + 1) * 10;
- * 
+ *
  *  typedef boost::multi_array<double, 2> array_type;
  *  typedef array_type::index index;
  *  array_type data(boost::extents[1000][10]);
@@ -381,7 +381,7 @@ public:
  *  SampledDimension dim = data_array.appendSampledDimension(time_axis_samplingInterval)
  *  dim.label = "time";
  *  dim.unit = "s";
- *  // define second data dimension, information is stored in the 
+ *  // define second data dimension, information is stored in the
  *  // 'frequency' column of the DataFrame
  *  data_array.appendDataFrameDimension(df, 0);
  * ~~~
@@ -424,7 +424,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *        Dimension will be chosen. If no default column was specified upon
      *        creation of the DataFrameDimension and no argument is given the
      *        DataFrame's name will be returned.
-     * 
+     *
      * @returns the label, that is defined in the Column, or if not otherwise
      *          specified, the name of the DataFrame.
      */
@@ -449,7 +449,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
 
     /**
      * @brief Getter of the column's data type.
-     * 
+     *
      * @param col_index the index of the DataFrame column. When called with no
      *        arguments, the default column specified during creation of the
      *        Dimension will be chosen. If no default column was specified upon
@@ -461,7 +461,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
     nix::DataType columnDataType(int col_index=-1) const {
         return backend()->columnDataType(col_index);
     }
-    
+
     /**
      * @brief The values (ticks) of the DataFrameDimension.
      *
@@ -482,10 +482,21 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *                 column.
      *
      */
-    template<typename T> 
+    template<typename T>
     void ticks(std::vector<T> &ticks, int col_index=-1, bool resize=false, ndsize_t offset=0) const {
         nix::DataFrame df = data();
-        df.readColumn(col_index, ticks, true, offset); 
+        unsigned column_index = col_index;
+        if (col_index == -1) {
+            column_index = columnIndex();
+        }
+        if (column_index == -1) {
+            throw nix::OutOfBounds("DataFrameDimension: Error accessing column, no column index was given and no default is specified.");
+        }
+        std::vector<Column> cols = df.columns();
+        if (static_cast<size_t>(column_index) >= cols.size()) {
+            throw nix::OutOfBounds("DataFrameDimension: Error accessing column, column index exceeds number of columns!");
+        }
+        df.readColumn(column_index, ticks, true, offset);
     }
 
     /**

@@ -397,6 +397,13 @@ public:
      * @return The new DataFrameDimension
      */
     DataFrameDimension appendDataFrameDimension(const DataFrame &frame, unsigned column_index) {
+        if (column_index > frame.columns().size()) {
+            throw nix::OutOfBounds("DataArray::appendDataFrameDimensios: Invalid columnIndex ", column_index);
+        }
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
+
         DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, column_index);
         return dim;
     };
@@ -416,10 +423,17 @@ public:
      * @return The new DataFrameDimension
      */
     DataFrameDimension appendDataFrameDimension(const DataFrame &frame, const std::string &column_name) {
-        std::vector<std::string> names = {column_name};
-        std::vector<unsigned> indices = frame.colIndex(names);
-        unsigned index = indices[0];
-            
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
+        unsigned index;
+        try {
+            std::vector<std::string> names = {column_name};
+            std::vector<unsigned> indices = frame.colIndex(names);
+            index = indices[0];
+        } catch ( ... ) {
+            throw nix::OutOfBounds("DataArray::appendDataFrameDimension: provided column name does not exist in the DataFrame!");
+        }
         DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, index);
         return dim;
     };
@@ -438,6 +452,9 @@ public:
      * @return The new DataFrameDimension
      */
     DataFrameDimension appendDataFrameDimension(const DataFrame &frame) {
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
         DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame);
         return dim;
     };
