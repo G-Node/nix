@@ -101,8 +101,9 @@ DimensionHDF5::DimensionHDF5(const H5Group &group, ndsize_t index)
 
 
 void DimensionHDF5::setType() {
-    if (!group.hasAttr("dimension_type"))
+    if (!group.hasAttr("dimension_type")) {
         group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
+    }
 }
 
 

@@ -283,7 +283,7 @@ public:
      * @brief Returns a vector containing the positions defined by this
      * dimension
      *
-     * Returns an axis vector defined by this dimsension.
+     * Returns an axis vector defined by this dimension.
      *
      * @param count        The number of indices
      * @param startIndex   The start index, default = 0
@@ -497,6 +497,30 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
             throw nix::OutOfBounds("DataFrameDimension: Error accessing column, column index exceeds number of columns!");
         }
         df.readColumn(column_index, ticks, true, offset);
+    }
+
+
+    /**
+     * @brief returns the number of entries in the dimension, aka the number of
+     * rows in the DataFrame.
+     *
+     * @returns the size
+     */
+    ndsize_t size() const {
+        nix::DataFrame df = data();
+        return df.rows();
+    }
+
+    /**
+     * @brief The type of the dimension.
+     *
+     * This field indicates whether the dimension is a SampledDimension, SetDimension or
+     * RangeDimension.
+     *
+     * @return The dimension type.
+     */
+    DimensionType dimensionType() const {
+        return backend()->dimensionType();
     }
 
     /**
