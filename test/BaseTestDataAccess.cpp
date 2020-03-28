@@ -52,7 +52,6 @@ void BaseTestDataAccess::testGetDimensionUnit() {
     DataFrame df = block.createDataFrame("test", "test", cols);
 
     data_array.appendDataFrameDimension(df);
-    data_array.appendDataFrameDimension(df, 0);
     data_array.appendDataFrameDimension(df, 1);
 
     std::string unit = "ms";
@@ -63,8 +62,8 @@ void BaseTestDataAccess::testGetDimensionUnit() {
     CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[0]), no_unit);
     CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[1]), unit);
     CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[2]), unit);
-    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[3]), no_unit);
-    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[4]), cols[0].unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[3]), cols[0].unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[4]), no_unit);
     CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[5]), no_unit);
 }
 
@@ -83,7 +82,7 @@ void BaseTestDataAccess::testPositionToIndexSampledDimension() {
 
 void BaseTestDataAccess::testPositionToIndexSetDimension() {
     std::string unit = "ms";
-
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(-5.9, "none", setDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, setDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
@@ -92,51 +91,60 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
 }
 
 
+void BaseTestDataAccess::testPositionToIndexDataFrameDimension() {
+    std::string unit = "ms";
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(-1.1, "none", dfDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(12.2, "none", dfDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, dfDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", dfDim));
+    CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", dfDim) == 1);
+    CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", dfDim) == 0);
+}
+
+
 void BaseTestDataAccess::testOffsetAndCount() {
     NDSize offsets, counts;
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
-
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1 && counts[3] == 1);
 
     position_tag.units(std::vector<std::string>());
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
-
     CPPUNIT_ASSERT(position_tag.units().size() == 0);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1 && counts[3] == 1);
 
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
 
     segment_tag.units(std::vector<std::string>());
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2 && counts[3] == 2);
 
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
 
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2 && counts[3] == 3);
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2 && counts[3] == 7);
 }
 
 
@@ -180,21 +188,20 @@ void BaseTestDataAccess::testRetrieveData() {
     DataView data_view = views[0];
     NDSize data_size = data_view.dataExtent();
 
-    CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
+    CPPUNIT_ASSERT(data_size.size() == 4);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2 && data_size[3] == 3);
     position_indices[0] = 1;
     CPPUNIT_ASSERT_THROW(util::taggedData(multi_tag, position_indices, 0), nix::OutOfBounds);
 
     data_view = util::taggedData(position_tag, 0);
     data_size = data_view.dataExtent();
-    CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1);
+    CPPUNIT_ASSERT(data_size.size() == 4);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1 && data_size[3] == 1);
 
     data_view = util::taggedData(segment_tag, 0);
     data_size = data_view.dataExtent();
-    CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
-
+    CPPUNIT_ASSERT(data_size.size() == 4);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2 && data_size[3] == 2);
 
     DataView times_view = util::taggedData(times_tag, 0);
     data_size = times_view.dataExtent();
@@ -203,7 +210,6 @@ void BaseTestDataAccess::testRetrieveData() {
     RangeDimension dim = times_tag.references()[0].dimensions()[0].asRangeDimension();
     CPPUNIT_ASSERT(data_size.size() == 1);
     CPPUNIT_ASSERT(data_size[0] == 77);
-
 }
 
 
@@ -282,7 +288,8 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
         }
     }
     index_data.setData(data1);
-    DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10});
+
+    DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10, 10});
     dim1 = tagged_data.appendSampledDimension(1.0);
     dim1.unit("ms");
     dim2 = tagged_data.appendSampledDimension(1.0);
@@ -290,15 +297,18 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     SampledDimension dim3;
     dim3 = tagged_data.appendSampledDimension(1.0);
     dim3.unit("ms");
-    typedef boost::multi_array<double, 3> three_d_array;
-    typedef three_d_array::index three_d_index;
-    three_d_array data2(boost::extents[10][20][10]);
+    SetDimension dim4 = tagged_data.appendSetDimension();
+    typedef boost::multi_array<double, 4> four_d_array;
+    typedef four_d_array::index four_d_index;
+    four_d_array data2(boost::extents[10][20][10][10]);
 
-    for(three_d_index i = 0; i != 2; ++i) {
+    for(four_d_index i = 0; i != 2; ++i) {
         value = 100 * i;
-        for(three_d_index j = 0; j != 20; ++j) {
-            for(three_d_index k = 0; k != 10; ++k) {
-                data2[i][j][k] = static_cast<double>(value++);
+        for(four_d_index j = 0; j != 20; ++j) {
+            for(four_d_index k = 0; k != 10; ++k) {
+                for (four_d_index l = 0; l != 10; ++l) {
+                    data2[i][j][k][l] = static_cast<double>(value++);
+                }
             }
         }
     }
@@ -369,16 +379,16 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
     indices[0] = 0;
     data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
-    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size.size() == 4);
 
     data_view = util::featureData(multi_tag, indices, tagged_feature)[0];
     data_size = data_view.dataExtent();
-    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size.size() == 4);
 
     indices[0] = 1;
     data_view = util::featureData(multi_tag, indices, 1)[0];
     data_size = data_view.dataExtent();
-    CPPUNIT_ASSERT(data_size.size() == 3);
+    CPPUNIT_ASSERT(data_size.size() == 4);
 
     indices[0] = 2;
     CPPUNIT_ASSERT_THROW(util::featureData(multi_tag, indices, 1), nix::OutOfBounds);
@@ -421,20 +431,20 @@ void BaseTestDataAccess::testMultiTagUnitSupport() {
 
 
 void BaseTestDataAccess::testDataView() {
-    NDSize zcount = {2, 5, 2};
-    NDSize zoffset = {0, 5, 2};
+    NDSize zcount = {2, 5, 2, 5};
+    NDSize zoffset = {0, 5, 2, 2};
 
     DataView io = DataView(data_array, zcount, zoffset);
 
     CPPUNIT_ASSERT_EQUAL(zcount, io.dataExtent());
     CPPUNIT_ASSERT_EQUAL(data_array.dataType(), io.dataType());
 
-    typedef boost::multi_array<double, 3> array_type;
-    array_type data(boost::extents[2][5][2]);
+    typedef boost::multi_array<double, 4> array_type;
+    array_type data(boost::extents[2][5][2][5]);
     io.getData(data);
 
     const array_type::size_type *ext = data.shape();
-    for (size_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 4; i++) {
         CPPUNIT_ASSERT_EQUAL(static_cast<array_type::size_type >(zcount[i]), ext[i]);
     }
 
@@ -444,37 +454,40 @@ void BaseTestDataAccess::testDataView() {
     for(size_t i = 0; i < zcount[0]; ++i) {
         for(size_t j = 0; j < zcount[1]; ++j) {
             for(size_t k = 0; k < zcount[2]; ++k) {
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
-                                             data[i][j][k],
-                                             std::numeric_limits<double>::epsilon());
-                data[i][j][k] = 0.0;
+                for (size_t l = 0; l < zcount[3]; ++l) {
+                    CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2][l + 2],
+                                                 data[i][j][k][l],
+                                                 std::numeric_limits<double>::epsilon());
+                    data[i][j][k][l] = 0.0;
+                }
             }
         }
     }
 
-    io.setData(data, {0, 0, 0});
+    io.setData(data, {0, 0, 0, 0});
     data_array.getData(ref);
 
     for(size_t i = 0; i < zcount[0]; ++i) {
         for(size_t j = 0; j < zcount[1]; ++j) {
             for(size_t k = 0; k < zcount[2]; ++k) {
-                CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2],
-                                             0.0,
-                                             std::numeric_limits<double>::epsilon());
+                for (size_t l = 0; l < zcount[3]; ++l) {
+                    CPPUNIT_ASSERT_DOUBLES_EQUAL(ref[i + 0][j + 5][k + 2][l + 2],
+                                                 0.0,
+                                                 std::numeric_limits<double>::epsilon());
+                }
             }
         }
     }
 
-
     double val = 0.0;
-    CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3}), OutOfBounds);
+    CPPUNIT_ASSERT_THROW(io.getData(val, {}, {0, 0, 3, 2}), OutOfBounds);
 
-    array_type r2d2(boost::extents[3][3][3]);
-    CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3}, {}), OutOfBounds);
+    array_type r2d2(boost::extents[3][3][3][3]);
+    CPPUNIT_ASSERT_THROW(io.getData(r2d2, {3, 3, 3, 3}, {}), OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(io.dataExtent(zcount), std::runtime_error);
 
-    CPPUNIT_ASSERT_THROW(DataView(data_array, {0, 0, 0, 0}, {1, 1, 1}), IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(DataView(data_array, {0, 0, 0, 0, 0}, {1, 1, 1}), IncompatibleDimensions);
     CPPUNIT_ASSERT_THROW(DataView(data_array, {0, 0, 0}, {1, 1}), IncompatibleDimensions);
 }
 
