@@ -29,9 +29,11 @@ namespace util {
 /**
  * @brief Converts a position given in a unit into an index according to the dimension descriptor.
  *
- * This function can be used to get the index of e.g. a certain point in time in a Dimension that
- * represents time. The units of the position and that provided by the Dimension must match, i.e.
- * must be scalable versions of the same SI unit.
+ * This function can be used to get the index of e.g. a certain point in time in
+ * a Dimension that represents time. The units of the position and that provided
+ * by the Dimension must match, i.e.  must be scalable versions of the same SI
+ * unit.  In case of a SetDimension the provided position is interpreted as an
+ * index. Units are ignored and the position is rounded to the next integer.
  *
  * @param position      The position
  * @param unit          The unit in which the position is given, may be "none"
@@ -44,8 +46,29 @@ namespace util {
  */
 NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
-/**
+ /**
  * @brief Converts a position given in a unit into an index according to the dimension descriptor.
+ *
+ * This function can be used to get the index of e.g. a certain point in time in
+ * a Dimension that represents time. The units of the position and that provided
+ * by the Dimension must match, i.e.  must be scalable versions of the same SI
+ * unit.  In case of a DataFrameDimension the provided position is interpreted
+ * as an index. The unit is ignored and the position is rounded to the next
+ * integer.
+ *
+ * @param position      The position
+ * @param unit          The unit in which the position is given, may be "none"
+ * @param dimension     The dimension descriptor for the respective dimension.
+ *
+ * @return The calculated index.
+ *
+ * @throws nix::IncompatibleDimension The the dimensions are incompatible.
+ * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
+ */
+NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const DataFrameDimension &dimension);
+
+/**
+ * @Brief Converts a position given in a unit into an index according to the dimension descriptor.
  *
  * This function can be used to get the index of e.g. a certain point in time in a Dimension that
  * represents time. The units of the position and that provided by the Dimension must match, i.e.
@@ -115,6 +138,12 @@ NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vec
 NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
                                                                   const std::vector<double> &end_positions,
                                                                   const std::vector<std::string> &units,
+                                                                  const DataFrameDimension &dimension);
+
+
+NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  const std::vector<std::string> &units,
                                                                   const RangeDimension &dimension);
 
 /**
@@ -139,6 +168,7 @@ NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &of
 
 
 NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
+
 
 NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
                               std::vector<NDSize> &offsets, std::vector<NDSize> & counts);

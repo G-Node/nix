@@ -62,6 +62,10 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
         SetDimension dim;
         dim = dimension;
         indices = positionToIndex(start_positions, end_positions, units, dim);
+    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
+        DataFrameDimension dim;
+        dim = dimension;
+        indices = positionToIndex(start_positions, end_positions, units, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
@@ -95,18 +99,29 @@ ndsize_t positionToIndex(double position, const string &unit, const SampledDimen
 ndsize_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
     ndsize_t index;
     if (unit.length() > 0 && unit != "none") {
-        // TODO check here for the content
-        // convert unit and the go looking for it, see range dimension
         throw IncompatibleDimensions("Cannot apply a position with unit to a SetDimension",
                                      "nix::util::positionToIndex");
     }
     index = static_cast<ndsize_t>(round(position));
-    if (dimension.labels().size() > 0 && index > dimension.labels().size()) {
-        throw OutOfBounds("Position is out of bounds in setDimension.", static_cast<int>(position));
+    if (round(position) < 0.0 || (dimension.labels().size() > 0 && index >= dimension.labels().size())) {
+        throw OutOfBounds("Position is out of bounds of the given SetDimension.", static_cast<int>(position));
     }
     return index;
 }
 
+
+ndsize_t positionToIndex(double position, const string &unit, const DataFrameDimension &dimension) {
+    ndsize_t index;
+    if (unit.length() > 0 && unit != "none") {
+        throw IncompatibleDimensions("Cannot apply a position with unit to a DataFrameDimension",
+                                     "nix::util::positionToIndex");
+    }
+    index = static_cast<ndsize_t>(round(position));
+    if (round(position) < 0 || index >= dimension.size()) {
+        throw OutOfBounds("Position is out of bounds of the given DataFrameDimension.", static_cast<int>(position));
+    }
+    return index;
+}
 
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
                                                  const vector<double> &end_positions,
@@ -132,6 +147,35 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
         }
         indices.emplace_back(static_cast<ndsize_t>(round(start_positions[i])),
                              static_cast<ndsize_t>(end_positions[i]));
+    }
+    return indices;
+}
+
+
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const DataFrameDimension &dimension) {
+    vector<pair<ndsize_t, ndsize_t>> indices;
+    ndsize_t df_size = dimension.size();
+    double min_start = *std::min_element(start_positions.begin(), start_positions.end());
+    double min_end = *std::min_element(end_positions.begin(), end_positions.end());
+    double max_start = *std::max_element(start_positions.begin(), start_positions.end());
+    double max_end = *std::max_element(end_positions.begin(), end_positions.end());
+
+    if (static_cast<ndsize_t>(round(min_start)) < 0 || static_cast<ndsize_t>(round(min_end)) < 0) {
+        throw nix::OutOfBounds("dataAccess::positionToIndex: min start or end index < 0");
+    }
+    if (static_cast<ndsize_t>(round(max_start)) >= df_size || static_cast<ndsize_t>(round(max_end)) >= df_size) {
+        throw nix::OutOfBounds("dataAccess::positionToIndex: max start or end index >= size of DataFrame");
+    }
+    for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); ++i) {
+        if (start_positions[i] > end_positions[i] ) {
+            continue;
+        }
+        ndsize_t start = static_cast<ndsize_t>(round(start_positions[i]));
+        ndsize_t end = static_cast<ndsize_t>(round(end_positions[i]));
+        indices.emplace_back(start, end);
     }
     return indices;
 }
