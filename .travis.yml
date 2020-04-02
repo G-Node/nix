@@ -49,7 +49,7 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
-  - if [[ "$CXX" == "gcc" ]];
+  - if [[ "$TRAVIS_COMPILER" == "gcc" ]];
     then
        export CC=gcc;
        export CXX=g++;
