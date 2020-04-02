@@ -47,8 +47,6 @@ if(GCOV AND $ENV{CXX} MATCHES "g\\+\\+")
   ctest_coverage()
 endif()
 
-ctest_submit()
-
 if(NOT tests_ret EQUAL 0)
   message(FATAL_ERROR "Test had failures!")
 endif()
