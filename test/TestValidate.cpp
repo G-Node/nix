@@ -36,6 +36,10 @@ void TestValidate::setUp() {
     array2 = block.createDataArray("array_two", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     array3 = block.createDataArray("array_three", "testdata", nix::DataType::Double, nix::NDSize({ 0, 0, 0 }));
     array4 = block.createDataArray("array_four", "sindata", nix::DataType::Double, nix::NDSize({ 0, 0}));
+    array5 = block.createDataArray("array_five", "dftest", nix::DataType::Double, nix::NDSize{ 0 });
+    // create data frame
+    std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double}};
+    frame1 = block.createDataFrame("frame_one", "conditions", cols);
     // set references vector
     refs = {array2, array3};
     // create positions & extents arrays
@@ -62,6 +66,7 @@ void TestValidate::setUp() {
     dim_sample1 = array3.appendSampledDimension(42);
     dim_sample2 = array3.appendSampledDimension(42);
     dim_sample3 = array3.appendSampledDimension(42);
+    dim_frame1 = array5.appendDataFrameDimension(frame1);
 }
 
 void TestValidate::tearDown() {
@@ -151,7 +156,21 @@ void TestValidate::setValid() {
     dim_sample3.unit(atomic_units[2]);
     // fill tag_tmp
     units_tmp = tag_tmp(compound_units);
-    
+
+    // fill array5
+    size_t count = 10;
+    std::vector<double> array5_data(count);
+    for (size_t i = 0; i < count; ++i)
+        array5_data[i] = i * 3.14;
+    array5.setData(array5_data);
+    // fill data frame
+    frame1.rows(count);
+    std::vector<nix::Variant> vals(1);
+    for (size_t i = 0; i < count; ++i) {
+        vals[0].set(i * 2.5);
+        frame1.writeRow(i, vals);
+    }
+
     return;
 }
 
@@ -215,6 +234,21 @@ void TestValidate::setInvalid() {
     array4.deleteDimensions();
     positions.deleteDimensions();
     extents.deleteDimensions();
+
+    // fill array5
+    size_t count = 10;
+    std::vector<double> array5_data(count);
+    for (size_t i = 0; i < count; ++i)
+        array5_data[i] = i * 3.14;
+    array5.setData(array5_data);
+    // fill data frame
+    frame1.rows(count - 5);
+    std::vector<nix::Variant> vals(1);
+    for (size_t i = 0; i < count - 5; ++i) {
+        vals[0].set(i * 2.5);
+        frame1.writeRow(i, vals);
+    }
+
     return;
 }
 
@@ -327,6 +361,7 @@ void TestValidate::test() {
         must(  mtag,   &nix::MultiTag::extents, dimEquals(2), "dimEquals(2)"),
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
         must(  array2, &nix::DataArray::dimensions, dimTicksMatchData(array2),  "dimTicksMatchData(array)"),
+        must(  array5, &nix::DataArray::dimensions, dimDataFrameTicksMatchData(array5), "dimDataFrameTicksMatchData(array)"),
         should(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),
         must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
         must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
@@ -361,6 +396,7 @@ void TestValidate::test() {
             must(mtag, &nix::MultiTag::extents, dimEquals(42), "dimEquals(42)") }),//
         must(  mtag,   &nix::MultiTag::extents, dimEquals(42), "dimEquals(42)"),//
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
+        must(array5, &nix::DataArray::dimensions, dimDataFrameTicksMatchData(array5), "dimDataFrameTicksMatchData(array"), 
         must(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),//
         must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
         must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
@@ -380,12 +416,12 @@ void TestValidate::test() {
     });
     // std::cout << myResult;
     CPPUNIT_ASSERT(myResult.getWarnings().size() == 3);
-    CPPUNIT_ASSERT(myResult.getErrors().size() == 16);
+    CPPUNIT_ASSERT(myResult.getErrors().size() == 17);
 
     myResult = file.validate();
     // std::cout << myResult;
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(11), myResult.getErrors().size());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(12), myResult.getErrors().size());
     
     // uncomment this to have debug info
     // std::cout << myResult;
