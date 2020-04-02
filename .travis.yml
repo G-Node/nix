@@ -82,7 +82,6 @@ script:
 
 after_success:
   - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
-      docker cp nixbuilder:coverage.info ./converage.info;
       lcov -q --capture --directory . --no-extern --output-file coverage.info;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
     fi
