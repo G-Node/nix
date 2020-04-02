@@ -81,7 +81,8 @@ script:
     fi
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" && "$DOCKERFILE" == "archlinux" && "$CC" == "gcc" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" && "$DOCKERFILE" == "archlinux" && "$CXX" == "g++" ]]; then
+      echo "Submitting code coverage report";
       docker exec nixbuilder lcov -q --capture --directory . --no-extern --output-file coverage.info;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
     fi
