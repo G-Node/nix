@@ -104,7 +104,8 @@ Result validate(const DataArray &data_array) {
         must(data_array, &DataArray::dimensionCount, isEqual<size_t>(data_array.dataExtent().size()), "data dimensionality does not match number of defined dimensions!", {
             could(data_array, &DataArray::dimensions, notEmpty(), {
                 must(data_array, &DataArray::dimensions, dimTicksMatchData(data_array), "in some of the Range dimensions the number of ticks differs from the number of data entries along the corresponding data dimension!"),
-                must(data_array, &DataArray::dimensions, dimLabelsMatchData(data_array), "in some of the Set dimensions the number of labels differs from the number of data entries along the corresponding data dimension!") }) }),
+                must(data_array, &DataArray::dimensions, dimLabelsMatchData(data_array), "in some of the Set dimensions the number of labels differs from the number of data entries along the corresponding data dimension!"),
+                must(data_array, &DataArray::dimensions, dimDataFrameTicksMatchData(data_array), "in some of the DataFrame dimensions the number of rows in the DataFrame does not match the number of data entries along the corresponding data dimension!") }) }),
         could(data_array, &DataArray::unit, notFalse(), {
             should(data_array, &DataArray::unit, isValidUnit(), "Unit is not SI or composite of SI units.") }),
         could(data_array, &DataArray::polynomCoefficients, notEmpty(), {
