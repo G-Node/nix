@@ -485,7 +485,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
     template<typename T>
     void ticks(std::vector<T> &ticks, int col_index=-1, bool resize=false, ndsize_t offset=0) const {
         nix::DataFrame df = data();
-        unsigned column_index = col_index;
+        int column_index = col_index;
         if (col_index == -1) {
             column_index = columnIndex();
         }
@@ -496,7 +496,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
         if (static_cast<size_t>(column_index) >= cols.size()) {
             throw nix::OutOfBounds("DataFrameDimension: Error accessing column, column index exceeds number of columns!");
         }
-        df.readColumn(column_index, ticks, true, offset);
+        df.readColumn(static_cast<unsigned>(column_index), ticks, true, offset);
     }
 
 
