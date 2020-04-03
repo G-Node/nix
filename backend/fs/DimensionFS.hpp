@@ -182,7 +182,7 @@ public:
     };
 
     nix::DataType columnDataType(int col_index) const {
-        nix::DataType dtype;
+        nix::DataType dtype = nix::DataType::Nothing;
         return dtype;
     }
 
