@@ -104,7 +104,6 @@ void SectionFS::repository(const none_t t) {
 
 void SectionFS::link(const std::string &id) {
     bfs::path p(location()), l("link");
-
     if (bfs::exists(p / l)) {
         link(none);
     }
@@ -122,8 +121,9 @@ void SectionFS::link(const std::string &id) {
 
 std::shared_ptr<base::ISection> SectionFS::link() const {
     std::shared_ptr<base::ISection> sec;
-
-    if (bfs::exists({location() + "/link"})) {
+    bfs::path p(location());
+    p /= "link";
+    if (bfs::exists(p)) {
         auto sec_tmp = std::make_shared<SectionFS>(file(), location() + "/link");
         // re-get above section "sec_tmp": parent missing, findSections will set it!
         auto found = File(file()).findSections(util::IdFilter<Section>(sec_tmp->id()));
@@ -136,8 +136,10 @@ std::shared_ptr<base::ISection> SectionFS::link() const {
 
 
 void SectionFS::link(const none_t t) {
-    if (bfs::exists({location() + "/link"})) {
-        bfs::remove_all({location() + "/link"});
+    bfs::path p(location());
+    p /= "link";
+    if (bfs::exists(p)) {
+        bfs::remove_all(p);
     }
     forceUpdatedAt();
 }
