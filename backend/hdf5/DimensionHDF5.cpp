@@ -311,27 +311,31 @@ DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t in
     this->group.setAttr("column_index", col_index);
 }
 
-int DataFrameDimensionHDF5::columnIndex() const {
-    int col_index = -1;
+boost::optional<unsigned> DataFrameDimensionHDF5::columnIndex() const {
+    unsigned idx;
+    boost::optional<unsigned> col_index;
+
     if (group.hasAttr("column_index")) {
-        group.getAttr("column_index", col_index);
+        group.getAttr("column_index", idx);
+        col_index = idx;
     }
+
     return col_index;
 }
 
-int DataFrameDimensionHDF5::checkColumnIndex(int col_index) const {
-    int column_index = col_index;
-    if (col_index == -1) {
+boost::optional<unsigned> DataFrameDimensionHDF5::checkColumnIndex(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = col_index;
+    if (!col_index) {
         column_index = columnIndex();
     }
 
-    if (column_index == -1) {
+    if (!column_index) {
         throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, no column index was given and no default is specified.");
     }
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
-    if (static_cast<size_t>(column_index) >= cols.size()) {
+    if (static_cast<size_t>(*column_index) >= cols.size()) {
         throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, column index exceeds number of columns!");
     }
 
@@ -344,47 +348,48 @@ DimensionType DataFrameDimensionHDF5::dimensionType() const {
 }
 
 
-std::string DataFrameDimensionHDF5::unit(int col_index) const {
-    int column_index = checkColumnIndex(col_index);
+std::string DataFrameDimensionHDF5::unit(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
-    return cols[column_index].unit;
+    return cols[*column_index].unit;
 }
 
 
-std::string DataFrameDimensionHDF5::label(int col_index) const {
-    int column_index;
+std::string DataFrameDimensionHDF5::label(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index;
     nix::DataFrame df = dataFrame();
-    try {
-        column_index = checkColumnIndex(col_index);
-    } catch (const nix::OutOfBounds& e) {
-        if (col_index == -1)
+    if (!col_index) {
+        column_index = columnIndex();
+        if (!column_index) {
             return df.name();
-        else
-            throw e;
+        }
+    } else {
+        column_index = col_index;
     }
-    std::vector<unsigned> indices = {static_cast<unsigned>(column_index)};
-    std::vector<std::string> names = df.colName(indices);
-    return names[0];
+    column_index = checkColumnIndex(column_index);
+
+    std::string name = df.colName(*column_index);
+    return name;
 }
 
 
-Column DataFrameDimensionHDF5::column(int col_index) const {
-    int column_index = checkColumnIndex(col_index);
+Column DataFrameDimensionHDF5::column(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
-    return cols[column_index];
+    return cols[*column_index];
 }
 
 
-nix::DataType DataFrameDimensionHDF5::columnDataType(int col_index) const {
-    int column_index = checkColumnIndex(col_index);
+nix::DataType DataFrameDimensionHDF5::columnDataType(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> all_cols = df.columns();
-    return all_cols[column_index].dtype;
+    return all_cols[*column_index].dtype;
 }
 
 

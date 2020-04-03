@@ -116,17 +116,17 @@ class NIXAPI IDataFrameDimension : virtual public IDimension {
 
  public:
 
-    virtual std::string label(int col_index) const = 0;
+    virtual std::string label(boost::optional<unsigned> col_index) const = 0;
 
-    virtual std::string unit(int col_index) const = 0;
+    virtual std::string unit(boost::optional<unsigned> col_index) const = 0;
 
-    virtual nix::DataType columnDataType(int col_index) const = 0;
+    virtual nix::DataType columnDataType(boost::optional<unsigned> col_index) const = 0;
 
-    virtual nix::Column column(int col_index) const = 0;
+    virtual nix::Column column(boost::optional<unsigned> col_index) const = 0;
 
     virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;
 
-    virtual int columnIndex() const = 0;
+    virtual boost::optional<unsigned> columnIndex() const = 0;
 };
 
 

@@ -428,9 +428,7 @@ public:
         }
         unsigned index;
         try {
-            std::vector<std::string> names = {column_name};
-            std::vector<unsigned> indices = frame.colIndex(names);
-            index = indices[0];
+            index = frame.colIndex(column_name);
         } catch ( ... ) {
             throw nix::OutOfBounds("DataArray::appendDataFrameDimension: provided column name does not exist in the DataFrame!");
         }

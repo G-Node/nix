@@ -161,27 +161,27 @@ public:
         return DimensionType::DataFrame;
     }
 
-    int columnIndex() const {
-        int index = -1;
+    boost::optional<unsigned> columnIndex() const {
+        boost::optional<unsigned> index ={};
         return index;
     }
 
-    Column column(int col_index) const {
+    Column column(boost::optional<unsigned> col_index) const {
         nix::Column c;
         return c;
     }
 
-    std::string label(int col_index) const {
+    std::string label(boost::optional<unsigned> col_index) const {
         std::string label = "";
         return label;
     }
 
-    std::string unit(int col_index) const {
+    std::string unit(boost::optional<unsigned> col_index) const {
         std::string unit;
         return unit;
     };
 
-    nix::DataType columnDataType(int col_index) const {
+    nix::DataType columnDataType(boost::optional<unsigned> col_index) const {
         nix::DataType dtype = nix::DataType::Nothing;
         return dtype;
     }

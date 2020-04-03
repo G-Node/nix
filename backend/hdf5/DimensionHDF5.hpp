@@ -146,7 +146,7 @@ private:
     std::shared_ptr<base::IBlock> entity_block;
     std::shared_ptr<base::IFile>  entity_file;
 
-    int checkColumnIndex(int col_index) const; 
+    boost::optional<unsigned> checkColumnIndex(boost::optional<unsigned> col_index) const;
 public:
     DataFrameDimensionHDF5(const H5Group &group, ndsize_t index);
 
@@ -162,15 +162,15 @@ public:
 
     DimensionType dimensionType() const;
 
-    int columnIndex() const;
+    boost::optional<unsigned> columnIndex() const;
 
-    Column column(int col_index = -1) const;
+    Column column(boost::optional<unsigned> col_index) const;
 
-    std::string label(int col_index) const;
+    std::string label(boost::optional<unsigned> col_index) const;
 
-    std::string unit(int col_index) const;
+    std::string unit(boost::optional<unsigned> col_index) const;
 
-    nix::DataType columnDataType(int col_index) const;
+    nix::DataType columnDataType(boost::optional<unsigned> col_index) const;
 
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 

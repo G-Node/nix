@@ -536,27 +536,37 @@ void BaseTestDataArray::testDataFrameDimension() {
     DataFrameDimension dim = array2.appendDataFrameDimension(df);
     DataFrame rdf = dim.data();
     CPPUNIT_ASSERT_EQUAL(df.id(), rdf.id());
-
     CPPUNIT_ASSERT_EQUAL(dim.label(), df.name());
-    CPPUNIT_ASSERT_NO_THROW(dim.label(0));
-    CPPUNIT_ASSERT_EQUAL(dim.label(0), cols[0].name);
-    CPPUNIT_ASSERT_NO_THROW(dim.label(1));
-    CPPUNIT_ASSERT_EQUAL(dim.label(1), cols[1].name);
-    CPPUNIT_ASSERT_THROW(dim.label(3), nix::OutOfBounds);
+
+    boost::optional<unsigned> col(0);
+    CPPUNIT_ASSERT_NO_THROW(dim.label(col));
+    CPPUNIT_ASSERT_EQUAL(dim.label(col), cols[0].name);
+
+    col = 1;
+    CPPUNIT_ASSERT_NO_THROW(dim.label(col));
+    CPPUNIT_ASSERT_EQUAL(dim.label(col), cols[1].name);
+    col = 3;
+    CPPUNIT_ASSERT_THROW(dim.label(col), nix::OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(dim.unit(), nix::OutOfBounds);
-    CPPUNIT_ASSERT_NO_THROW(dim.unit(0));
-    CPPUNIT_ASSERT_EQUAL(dim.unit(0), cols[0].unit);
-    CPPUNIT_ASSERT_NO_THROW(dim.unit(1));
-    CPPUNIT_ASSERT_EQUAL(dim.unit(1), cols[1].unit);
-    CPPUNIT_ASSERT_THROW(dim.unit(3), nix::OutOfBounds);
+    col = 0;
+    CPPUNIT_ASSERT_NO_THROW(dim.unit(col));
+    CPPUNIT_ASSERT_EQUAL(dim.unit(col), cols[0].unit);
+    col = 1;
+    CPPUNIT_ASSERT_NO_THROW(dim.unit(col));
+    CPPUNIT_ASSERT_EQUAL(dim.unit(col), cols[1].unit);
+    col = 3;
+    CPPUNIT_ASSERT_THROW(dim.unit(col), nix::OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(dim.columnDataType(), nix::OutOfBounds);
-    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(0));
-    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(0), cols[0].dtype);
-    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(1));
-    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(1), cols[1].dtype);
-    CPPUNIT_ASSERT_THROW(dim.columnDataType(3), nix::OutOfBounds);
+    col = 0;
+    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(col));
+    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(col), cols[0].dtype);
+    col = 1;
+    CPPUNIT_ASSERT_NO_THROW(dim.columnDataType(col));
+    CPPUNIT_ASSERT_EQUAL(dim.columnDataType(col), cols[1].dtype);
+    col = 3;
+    CPPUNIT_ASSERT_THROW(dim.columnDataType(col), nix::OutOfBounds);
 
     // append with index
     DataArray array2 = block.createDataArray("measurement2", "test", data);
@@ -568,29 +578,36 @@ void BaseTestDataArray::testDataFrameDimension() {
     CPPUNIT_ASSERT_THROW(array2.appendDataFrameDimension(df, "test"), nix::OutOfBounds);
 
     dim = array2.appendDataFrameDimension(df, "current");
-    CPPUNIT_ASSERT_EQUAL(dim.columnIndex(), 0);
+    boost::optional<unsigned> col_index = dim.columnIndex();
+
+    CPPUNIT_ASSERT(col_index && *col_index == 0);
     array2.deleteDimensions();
 
     dim = array2.appendDataFrameDimension(df, 1);
-    CPPUNIT_ASSERT_EQUAL(dim.columnIndex(), 1);
+    col_index = dim.columnIndex();
+
+    CPPUNIT_ASSERT(col_index && *col_index == 1);
     CPPUNIT_ASSERT_EQUAL(dim.label(), cols[1].name);
     CPPUNIT_ASSERT_EQUAL(dim.unit(), cols[1].unit);
     CPPUNIT_ASSERT_EQUAL(dim.columnDataType(), cols[1].dtype);
 
     std::vector<std::string> ticks(10);
+    std::string pattern = "test";
+
     CPPUNIT_ASSERT_THROW(dim.ticks(ticks, 10), nix::OutOfBounds);
 
     dim.ticks(ticks);
-    std::string pattern = "test";
     for (size_t i = 0; i < ticks.size(); ++i)
         CPPUNIT_ASSERT_EQUAL(ticks[i], pattern);
 
-    dim.ticks(ticks, 1);
+    col = 1;
+    dim.ticks(ticks, col);
     for (size_t i = 0; i < ticks.size(); ++i)
         CPPUNIT_ASSERT_EQUAL(ticks[i], pattern);
 
+    col = 0;
     std::vector<double> ticks2(df.rows());
-    dim.ticks(ticks2, 0);
+    dim.ticks(ticks2, col);
      for (size_t i = 0; i < ticks2.size(); ++i)
         CPPUNIT_ASSERT_EQUAL(ticks2[i], i * 2.5);
 }

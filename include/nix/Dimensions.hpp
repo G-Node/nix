@@ -403,7 +403,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      * @returns the index the specified column index or -1 if none was set upon
      *          creation.
      */
-    int columnIndex() const {
+    boost::optional<unsigned> columnIndex() const {
         return backend()->columnIndex();
     }
 
@@ -428,7 +428,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      * @returns the label, that is defined in the Column, or if not otherwise
      *          specified, the name of the DataFrame.
      */
-    std::string label(int col_index=-1) const {
+    std::string label(boost::optional<unsigned> col_index = {}) const {
         return backend()->label(col_index);
     }
 
@@ -443,7 +443,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      * @returns the unit, if any, that is defined in the Column.
      */
-    std::string unit(int col_index=-1) const {
+    std::string unit(boost::optional<unsigned> col_index = {}) const {
         return backend()->unit(col_index);
     }
 
@@ -458,7 +458,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      *  @returns the column's data type
      */
-    nix::DataType columnDataType(int col_index=-1) const {
+    nix::DataType columnDataType(boost::optional<unsigned> col_index = {}) const {
         return backend()->columnDataType(col_index);
     }
 
@@ -483,20 +483,22 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      */
     template<typename T>
-    void ticks(std::vector<T> &ticks, int col_index=-1, bool resize=false, ndsize_t offset=0) const {
+    void ticks(std::vector<T> &ticks, boost::optional<unsigned> col_index = {}, bool resize=false, ndsize_t offset=0) const {
         nix::DataFrame df = data();
-        int column_index = col_index;
-        if (col_index == -1) {
+        boost::optional<unsigned> column_index;
+        if (!col_index) {
             column_index = columnIndex();
+        } else {
+            column_index = col_index;
         }
-        if (column_index == -1) {
+        if (!column_index) {
             throw nix::OutOfBounds("DataFrameDimension: Error accessing column, no column index was given and no default is specified.");
         }
         std::vector<Column> cols = df.columns();
-        if (static_cast<size_t>(column_index) >= cols.size()) {
+        if (static_cast<size_t>(*column_index) >= cols.size()) {
             throw nix::OutOfBounds("DataFrameDimension: Error accessing column, column index exceeds number of columns!");
         }
-        df.readColumn(static_cast<unsigned>(column_index), ticks, true, offset);
+        df.readColumn(*column_index, ticks, true, offset);
     }
 
 
