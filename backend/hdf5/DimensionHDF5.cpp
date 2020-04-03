@@ -276,8 +276,6 @@ DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t in
     : DimensionHDF5(group, index)
 {
     setType();
-    // Note: maybe having this is a bad idea, because a DataFrameDimension created
-    // this way will not have the block and file
 }
 
 DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t index,
@@ -295,7 +293,7 @@ DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t in
 {
     std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(frame.id());
     if (!idf)
-        throw std::runtime_error("ColumnDimensionHDF5 DataFrame not found in block!");
+        throw std::runtime_error("DataFrameDimensionHDF5 DataFrame not found in block!");
     if (this->group.hasGroup("data_frame"))
         this->group.removeGroup("data_frame");
     auto target = std::dynamic_pointer_cast<DataFrameHDF5>(idf);
@@ -328,13 +326,13 @@ int DataFrameDimensionHDF5::checkColumnIndex(int col_index) const {
     }
 
     if (column_index == -1) {
-        throw nix::OutOfBounds("DataFrameDimension: Error accessing column, no column index was given and no default is specified.");
+        throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, no column index was given and no default is specified.");
     }
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
     if (static_cast<size_t>(column_index) >= cols.size()) {
-        throw nix::OutOfBounds("DataFrameDimension: Error accessing column, column index exceeds number of columns!");
+        throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, column index exceeds number of columns!");
     }
 
     return column_index;
@@ -399,7 +397,7 @@ std::shared_ptr<base::IDataFrame> DataFrameDimensionHDF5::dataFrame() const {
         df = std::make_shared<DataFrameHDF5>(entity_file, entity_block, other_group);
     } else error = true;
     if (error)
-        throw std::runtime_error("ColumnDimensionHDF5::dataFrame: DataFrame not found!");
+        throw std::runtime_error("DataFrameDimensionHDF5::dataFrame: DataFrame not found!");
 
     return df;
 }
@@ -540,7 +538,7 @@ vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
     DataSet ds = g.openData(dset_name);
     NDSize s = ds.size();
     if (start > s[0] || count > s[0] || (start + count) > s[0]) {
-        throw nix::OutOfBounds("Access to RangeDimension::ticks: start is out of Bounds!");
+        throw nix::OutOfBounds("Access to RangeDimensionHDF5::ticks: start is out of Bounds!");
     }
     h5x::DataType memType = data_type_to_h5_memtype(nix::DataType::Double);
     DataSpace fileSpace, memSpace;
