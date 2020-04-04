@@ -22,6 +22,8 @@ DimensionType dimensionTypeFromStr(const string &str) {
         return DimensionType::Range;
     } else if (str == "sample") {
         return DimensionType::Sample;
+    } else if (str == "data_frame") {
+        return DimensionType::DataFrame;
     } else {
         throw runtime_error("Not a valid dimension name");
     }
@@ -51,6 +53,9 @@ std::string dimensionTypeToStr(DimensionType dim) {
         case DimensionType::Sample:
             dimType = "sample";
             break;
+        case DimensionType::DataFrame:
+            dimType = "data_frame";
+            break;
     }
 
     if (dimType.empty()) {
@@ -78,6 +83,9 @@ shared_ptr<IDimension> openDimensionHDF5(const H5Group &group, ndsize_t index) {
         case DimensionType::Sample:
             dim = make_shared<SampledDimensionHDF5>(group, index);
             break;
+        case DimensionType::DataFrame:
+            dim = make_shared<DataFrameDimensionHDF5>(group, index);
+            break;
     }
 
     return dim;
@@ -93,8 +101,9 @@ DimensionHDF5::DimensionHDF5(const H5Group &group, ndsize_t index)
 
 
 void DimensionHDF5::setType() {
-    if (!group.hasAttr("dimension_type"))
+    if (!group.hasAttr("dimension_type")) {
         group.setAttr("dimension_type", dimensionTypeToStr(dimensionType()));
+    }
 }
 
 
@@ -117,6 +126,7 @@ DimensionHDF5::~DimensionHDF5() {}
 SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
+    setType();
 }
 
 SampledDimensionHDF5::SampledDimensionHDF5(const H5Group &group, ndsize_t index, double sampling_interval)
@@ -260,12 +270,155 @@ void SetDimensionHDF5::labels(const none_t t) {
 SetDimensionHDF5::~SetDimensionHDF5() {}
 
 //--------------------------------------------------------------
+// Implementation of DataFrameDimensionHDF5
+//--------------------------------------------------------------
+DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t index)
+    : DimensionHDF5(group, index)
+{
+    setType();
+}
+
+DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t index,
+                                               const std::shared_ptr<IFile> &file,
+                                               const std::shared_ptr<IBlock> &block)
+    : DimensionHDF5(group, index), entity_block(block), entity_file(file)
+{
+    setType();
+}
+
+DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t index,
+                                               const std::shared_ptr<IFile> &file,
+                                               const std::shared_ptr<IBlock> &block, const DataFrame &frame)
+    :DataFrameDimensionHDF5(group, index, file, block)
+{
+    std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(frame.id());
+    if (!idf)
+        throw std::runtime_error("DataFrameDimensionHDF5 DataFrame not found in block!");
+    if (this->group.hasGroup("data_frame"))
+        this->group.removeGroup("data_frame");
+    auto target = std::dynamic_pointer_cast<DataFrameHDF5>(idf);
+
+    setType();
+    this->group.createLink(target->group(), "data_frame");
+}
+
+DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t index,
+                                               const std::shared_ptr<IFile> &file,
+                                               const std::shared_ptr<IBlock> &block, const DataFrame &frame,
+                                               unsigned col_index)
+    :DataFrameDimensionHDF5(group, index, file, block, frame)
+{
+    this->group.setAttr("column_index", col_index);
+}
+
+boost::optional<unsigned> DataFrameDimensionHDF5::columnIndex() const {
+    unsigned idx;
+    boost::optional<unsigned> col_index;
+
+    if (group.hasAttr("column_index")) {
+        group.getAttr("column_index", idx);
+        col_index = idx;
+    }
+
+    return col_index;
+}
+
+boost::optional<unsigned> DataFrameDimensionHDF5::checkColumnIndex(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = col_index;
+    if (!col_index) {
+        column_index = columnIndex();
+    }
+
+    if (!column_index) {
+        throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, no column index was given and no default is specified.");
+    }
+
+    nix::DataFrame df = dataFrame();
+    std::vector<Column> cols = df.columns();
+    if (static_cast<size_t>(*column_index) >= cols.size()) {
+        throw nix::OutOfBounds("DataFrameDimensionHDF5: Error accessing column, column index exceeds number of columns!");
+    }
+
+    return column_index;
+}
+
+
+DimensionType DataFrameDimensionHDF5::dimensionType() const {
+    return DimensionType::DataFrame;
+}
+
+
+std::string DataFrameDimensionHDF5::unit(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+
+    nix::DataFrame df = dataFrame();
+    std::vector<Column> cols = df.columns();
+    return cols[*column_index].unit;
+}
+
+
+std::string DataFrameDimensionHDF5::label(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index;
+    nix::DataFrame df = dataFrame();
+    if (!col_index) {
+        column_index = columnIndex();
+        if (!column_index) {
+            return df.name();
+        }
+    } else {
+        column_index = col_index;
+    }
+    column_index = checkColumnIndex(column_index);
+
+    std::string name = df.colName(*column_index);
+    return name;
+}
+
+
+Column DataFrameDimensionHDF5::column(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+
+    nix::DataFrame df = dataFrame();
+    std::vector<Column> cols = df.columns();
+    return cols[*column_index];
+}
+
+
+nix::DataType DataFrameDimensionHDF5::columnDataType(boost::optional<unsigned> col_index) const {
+    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+
+    nix::DataFrame df = dataFrame();
+    std::vector<Column> all_cols = df.columns();
+    return all_cols[*column_index].dtype;
+}
+
+
+std::shared_ptr<base::IDataFrame> DataFrameDimensionHDF5::dataFrame() const {
+    std::shared_ptr<DataFrameHDF5> df;
+    bool error = false;
+
+    if (this->group.hasGroup("data_frame")) {
+        H5Group other_group = this->group.openGroup("data_frame", false);
+        df = std::make_shared<DataFrameHDF5>(entity_file, entity_block, other_group);
+    } else error = true;
+    if (error)
+        throw std::runtime_error("DataFrameDimensionHDF5::dataFrame: DataFrame not found!");
+
+    return df;
+}
+
+
+DataFrameDimensionHDF5::~DataFrameDimensionHDF5() {}
+
+
+//--------------------------------------------------------------
 // Implementation of RangeDimensionHDF5
 //--------------------------------------------------------------
 
 RangeDimensionHDF5::RangeDimensionHDF5(const H5Group &group, ndsize_t index)
     : DimensionHDF5(group, index)
 {
+    setType();
 }
 
 
@@ -390,7 +543,7 @@ vector<double> RangeDimensionHDF5::ticks(ndsize_t start, size_t count) const {
     DataSet ds = g.openData(dset_name);
     NDSize s = ds.size();
     if (start > s[0] || count > s[0] || (start + count) > s[0]) {
-        throw nix::OutOfBounds("Access to RangeDimension::ticks: start is out of Bounds!");
+        throw nix::OutOfBounds("Access to RangeDimensionHDF5::ticks: start is out of Bounds!");
     }
     h5x::DataType memType = data_type_to_h5_memtype(nix::DataType::Double);
     DataSpace fileSpace, memSpace;

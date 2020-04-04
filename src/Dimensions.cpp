@@ -64,6 +64,11 @@ Dimension::Dimension(const SetDimension &other)
 }
 
 
+Dimension::Dimension(const DataFrameDimension &other)
+    : ImplContainer(dynamic_pointer_cast<IDimension>(other.impl()))
+{
+}
+
 SetDimension Dimension::asSetDimension() const {
     if (dimensionType() != DimensionType::Set) {
         throw IncompatibleDimensions("Dimension is not of type Set and thus cannot be cast to this type", "asSetDimension");
@@ -85,6 +90,14 @@ RangeDimension Dimension::asRangeDimension() const {
         throw IncompatibleDimensions("Dimension is not of type Range and thus cannot be cast to this type", "asRangeDimension");
     }
     return RangeDimension(std::dynamic_pointer_cast<base::IRangeDimension>(impl()));
+}
+
+
+DataFrameDimension Dimension::asDataFrameDimension() const {
+    if (dimensionType() != DimensionType::DataFrame) {
+        throw IncompatibleDimensions("Dimension is not of type DataFrame and thus cannot be cast to this type", "asDataFrameDimension");
+    }
+    return DataFrameDimension(std::dynamic_pointer_cast<base::IDataFrameDimension>(impl()));
 }
 
 
@@ -120,6 +133,16 @@ Dimension& Dimension::operator=(const SetDimension &other) {
     return *this;
 }
 
+
+Dimension& Dimension::operator=(const DataFrameDimension &other) {
+    shared_ptr<IDimension> tmp(dynamic_pointer_cast<IDimension>(other.impl()));
+
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
+
+    return *this;
+}
 //-------------------------------------------------------
 // Implementation of SampledDimension
 //-------------------------------------------------------
@@ -459,5 +482,58 @@ RangeDimension& RangeDimension::operator=(const Dimension &other) {
         std::swap(impl(), tmp);
     }
 
+    return *this;
+}
+
+
+//-------------------------------------------------------
+// Implementation of DataFrameDimension
+//-------------------------------------------------------
+
+DataFrameDimension::DataFrameDimension()
+    : ImplContainer()
+{
+}
+
+
+DataFrameDimension::DataFrameDimension(const std::shared_ptr<IDataFrameDimension> &p_impl)
+    : ImplContainer(p_impl)
+{
+}
+
+
+DataFrameDimension::DataFrameDimension(std::shared_ptr<IDataFrameDimension> &&ptr)
+    : ImplContainer(std::move(ptr))
+{
+}
+
+
+DataFrameDimension::DataFrameDimension(const DataFrameDimension &other)
+    : ImplContainer(other)
+{
+}
+
+
+DataFrameDimension& DataFrameDimension::operator=(const DataFrameDimension &other) {
+    shared_ptr<IDataFrameDimension> tmp(other.impl());
+
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
+
+    return *this;
+}
+
+
+DataFrameDimension& DataFrameDimension::operator=(const Dimension &other) {
+    shared_ptr<IDataFrameDimension> tmp(dynamic_pointer_cast<IDataFrameDimension>(other.impl()));
+
+    if (other.dimensionType() != DimensionType::DataFrame) {
+        throw nix::IncompatibleDimensions("Cannot assign dimension of type " + nix::util::dimTypeToStr(other.dimensionType())
+                                          + " to a DataFrameDimension", "DataFrameDimension::operator=");
+    }
+    if (impl() != tmp) {
+        std::swap(impl(), tmp);
+    }
     return *this;
 }

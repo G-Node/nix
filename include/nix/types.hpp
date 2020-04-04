@@ -18,6 +18,7 @@ class File;
 class DataArray;
 class DataSet;
 class DataView;
+class DataFrameDimension;
 class Dimension;
 class MultiTag;
 class NDArray;

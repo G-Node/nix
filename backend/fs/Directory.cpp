@@ -136,7 +136,8 @@ bool Directory::removeObjectByNameOrAttribute(const std::string &attribute, cons
 
 
 void Directory::createDirectoryLink(const std::string &target, const std::string &name) {
-    if (boost::filesystem::exists({target})) {
+    bfs::path p(target);
+    if (boost::filesystem::exists(p)) {
         boost::filesystem::create_directory_symlink(boost::filesystem::path(target), loc / boost::filesystem::path(name));
     } else {
         throw std::runtime_error("Directory::createLink: target does not exist");

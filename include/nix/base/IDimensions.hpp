@@ -11,6 +11,9 @@
 
 #include <nix/Platform.hpp>
 
+#include <nix/base/IDataFrame.hpp>
+#include <nix/Variant.hpp>
+
 #include <string>
 #include <vector>
 #include <ostream>
@@ -25,7 +28,7 @@ namespace nix {
  * @brief Enumeration that provides constants for different dimension types.
  */
 enum class DimensionType : unsigned int {
-    Sample, Set, Range
+    Sample, Set, Range, DataFrame
 };
 
 /**
@@ -102,6 +105,28 @@ public:
 
     virtual ~ISampledDimension() {}
 
+};
+
+
+/**
+   @brief Interface for the implementation of a DataFrameDimension entity.
+   See {@link nix::DataFrameDimension} for more detailed information.
+ */
+class NIXAPI IDataFrameDimension : virtual public IDimension {
+
+ public:
+
+    virtual std::string label(boost::optional<unsigned> col_index) const = 0;
+
+    virtual std::string unit(boost::optional<unsigned> col_index) const = 0;
+
+    virtual nix::DataType columnDataType(boost::optional<unsigned> col_index) const = 0;
+
+    virtual nix::Column column(boost::optional<unsigned> col_index) const = 0;
+
+    virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;
+
+    virtual boost::optional<unsigned> columnIndex() const = 0;
 };
 
 
@@ -191,6 +216,12 @@ template<>
 struct objectToType<nix::base::IRangeDimension> {
     static const bool isValid = true;
     static const ObjectType value = ObjectType::RangeDimension;
+};
+
+template<>
+struct objectToType<nix::base::IDataFrameDimension> {
+    static const bool isValid = true;
+    static const ObjectType value = ObjectType::DataFrameDimension;
 };
 
 } // namespace nix

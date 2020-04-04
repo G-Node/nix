@@ -10,8 +10,14 @@
 #define NIX_DIMENSIONS_HDF5_H
 
 #include <nix/base/IDimensions.hpp>
+#include <nix/base/IBlock.hpp>
+#include <nix/base/IFile.hpp>
+#include <nix/DataFrame.hpp>
+
 #include "h5x/H5Group.hpp"
 #include "DataArrayHDF5.hpp"
+#include "DataFrameHDF5.hpp"
+
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -134,6 +140,43 @@ public:
 
 };
 
+class DataFrameDimensionHDF5 : virtual public base::IDataFrameDimension, public DimensionHDF5 {
+
+private:
+    std::shared_ptr<base::IBlock> entity_block;
+    std::shared_ptr<base::IFile>  entity_file;
+
+    boost::optional<unsigned> checkColumnIndex(boost::optional<unsigned> col_index) const;
+public:
+    DataFrameDimensionHDF5(const H5Group &group, ndsize_t index);
+
+    DataFrameDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
+                           const std::shared_ptr<nix::base::IBlock> &block);
+
+    DataFrameDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
+                           const std::shared_ptr<nix::base::IBlock> &block, const DataFrame &frame);
+
+    DataFrameDimensionHDF5(const H5Group &group, ndsize_t index, const std::shared_ptr<nix::base::IFile> &file,
+                           const std::shared_ptr<nix::base::IBlock> &block, const DataFrame &frame,
+                           unsigned column_index);
+
+    DimensionType dimensionType() const;
+
+    boost::optional<unsigned> columnIndex() const;
+
+    Column column(boost::optional<unsigned> col_index) const;
+
+    std::string label(boost::optional<unsigned> col_index) const;
+
+    std::string unit(boost::optional<unsigned> col_index) const;
+
+    nix::DataType columnDataType(boost::optional<unsigned> col_index) const;
+
+    std::shared_ptr<base::IDataFrame> dataFrame() const;
+
+    virtual ~DataFrameDimensionHDF5();
+
+};
 
 class RangeDimensionHDF5 : virtual public base::IRangeDimension, public DimensionHDF5 {
 
@@ -145,7 +188,7 @@ public:
     RangeDimensionHDF5(const H5Group &group, ndsize_t index, std::vector<double> ticks);
 
 
-    RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &dataArray );
+    RangeDimensionHDF5(const H5Group &group, ndsize_t index, const DataArrayHDF5 &dataArray);
 
 
     DimensionType dimensionType() const;

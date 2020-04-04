@@ -64,6 +64,8 @@ private:
     nix::DataArray array2;
     nix::DataArray array3;
     nix::DataArray array4;
+    nix::DataArray array5;
+    nix::DataFrame frame1;
     std::vector<nix::DataArray> refs;
     std::vector<double> extent, position;
     nix::DataArray positions;
@@ -83,7 +85,8 @@ private:
     nix::RangeDimension dim_range1;
     nix::RangeDimension dim_range2;
     nix::RangeDimension dim_range3;
-
+    nix::DataFrameDimension dim_frame1;
+    
     void setValid();    
     void setInvalid();
     

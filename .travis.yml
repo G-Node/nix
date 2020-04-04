@@ -28,6 +28,10 @@ matrix:
       env: FS_BACKEND=OFF DOCKERFILE=ub1804
 
 addons:
+  apt:
+    update: true
+    packages:
+      - lcov
   homebrew:
     packages:
       - cmake
@@ -45,7 +49,7 @@ cache:
     - $HOME/Library/Caches/Homebrew
 
 before_install:
-  - if [[ "$CXX" == "gcc" ]];
+  - if [[ "$TRAVIS_COMPILER" == "gcc" ]];
     then
        export CC=gcc;
        export CXX=g++;
@@ -77,8 +81,9 @@ script:
     fi
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" ]]; then
-      lcov -q --capture --directory . --no-extern --output-file coverage.info;
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" && "$DOCKERFILE" == "archlinux" && "$CXX" == "g++" ]]; then
+      echo "Submitting code coverage report";
+      docker exec nixbuilder lcov -q --capture --directory . --no-extern --output-file coverage.info;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
     fi
 

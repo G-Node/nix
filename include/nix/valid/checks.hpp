@@ -473,6 +473,22 @@ namespace valid {
         bool operator()(const std::vector<Dimension> &dims) const;
     };
 
+    /**
+     * @brief Check if DataFrame dimension specifics ticks match data
+     * 
+     * Struct for checking whether the number of rows in the dimensions of type
+     * "DataFrame" in the given dimensions vector matches the given DataArray's
+     * data extent in the respective dimension: number of rows in DataFrame == number of
+     * entries along the corresponding dimension in the data.
+     */
+    struct NIXAPI dimDataFrameTicksMatchData {
+        const DataArray &data;
+
+        dimDataFrameTicksMatchData(const DataArray &data) : data(data) {}
+    
+        bool operator()(const std::vector<Dimension> &dims) const;
+    };
+
 } // namespace valid
 } // namespace nix
 

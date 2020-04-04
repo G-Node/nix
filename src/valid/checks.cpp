@@ -151,5 +151,24 @@ bool dimLabelsMatchData::operator()(const std::vector<Dimension> &dims) const {
     return !mismatch;
 }
 
+
+bool dimDataFrameTicksMatchData::operator()(const std::vector<Dimension> &dims) const {
+    bool mismatch = false;
+    auto it = dims.begin();
+    while (!mismatch && it != dims.end()) {
+        if ((*it).dimensionType() == DimensionType::DataFrame) {
+            ndsize_t dimIndex = (*it).index() - 1;
+            if (dimIndex >= data.dataExtent().size()) {
+                break;
+            }
+            auto dim = (*it).asDataFrameDimension();
+            size_t idx = check::fits_in_size_t(dimIndex, "Cannot check ticks of DataFrameDimension: dimension bigger than size_t.");
+            mismatch = !(dim.size() == data.dataExtent()[idx]);
+        }
+        ++it;
+    }
+    return !mismatch;
+}
+
 } // namespace valid
 } // namespace nix

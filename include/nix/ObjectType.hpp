@@ -31,7 +31,8 @@ enum class ObjectType {
 
     SetDimension      = 0x81,
     SampledDimension,
-    RangeDimension
+    RangeDimension,
+    DataFrameDimension
 };
 
 

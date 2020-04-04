@@ -15,6 +15,7 @@
 #include <nix/base/IDataArray.hpp>
 #include <nix/Dimensions.hpp>
 #include <nix/Hydra.hpp>
+#include <nix/DataFrame.hpp>
 
 #include <nix/Platform.hpp>
 #include <nix/util/util.hpp>
@@ -380,6 +381,82 @@ public:
             dim.offset(offset);
         return dim;
     }
+
+    /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     * @param column_index: The index of the column that should be used.
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame, unsigned column_index) {
+        if (column_index > frame.columns().size()) {
+            throw nix::OutOfBounds("DataArray::appendDataFrameDimensios: Invalid columnIndex ", column_index);
+        }
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
+
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, column_index);
+        return dim;
+    };
+
+    /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     * @param column_name: The name of the column that should be used.
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame, const std::string &column_name) {
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
+        unsigned index;
+        try {
+            index = frame.colIndex(column_name);
+        } catch ( ... ) {
+            throw nix::OutOfBounds("DataArray::appendDataFrameDimension: provided column name does not exist in the DataFrame!");
+        }
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame, index);
+        return dim;
+    };
+
+     /**
+     * @brief Append a new {@link nix::DataFrameDimension} to the list of
+     *        dimension descriptors.  A DataFrameDimension can be used to
+     *        specify a dimension of a DataArray as specified by one (or all)
+     *        column(s) of the linked DataFrame. That is, for each entry in the
+     *        DataArray there must be a respecive row in the DataFrame. If no
+     *        column index is specified that whole DataFrame is assumed to
+     *        describe the DataArray entries along this dimension.
+     *
+     * @param frame: The DataFrame
+     *
+     * @return The new DataFrameDimension
+     */
+    DataFrameDimension appendDataFrameDimension(const DataFrame &frame) {
+        if (!frame) {
+            throw nix::UninitializedEntity();
+        }
+        DataFrameDimension dim = backend()->createDataFrameDimension(backend()->dimensionCount() + 1, frame);
+        return dim;
+    };
+
 
     /**
      * @brief Create a new SetDimension at a specified dimension index.

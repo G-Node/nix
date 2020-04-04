@@ -126,6 +126,15 @@ public:
     std::shared_ptr<base::ISampledDimension> createSampledDimension(ndsize_t id, double sampling_interval);
 
 
+    std::shared_ptr<base::IDataFrameDimension> createDataFrameDimension(ndsize_t id, const nix::DataFrame &df) {
+        throw std::runtime_error("not implemented");
+    }
+
+    
+    std::shared_ptr<base::IDataFrameDimension> createDataFrameDimension(ndsize_t id, const nix::DataFrame &df, unsigned col_index) {
+        throw std::runtime_error("not implemented");
+    }
+
     bool deleteDimensions();
 
     //--------------------------------------------------

@@ -20,6 +20,8 @@ DimensionType dimensionTypeFromStr(const std::string &str) {
         return DimensionType::Range;
     } else if (str == "sample") {
         return DimensionType::Sample;
+    } else if (str == "data_frame") {
+        return DimensionType::DataFrame;
     } else {
         throw std::runtime_error("Not a valid dimension name");
     }
@@ -49,6 +51,9 @@ std::string dimensionTypeToStr(DimensionType dim) {
         case DimensionType::Sample:
             dimType = "sample";
             break;
+        case DimensionType::DataFrame:
+            dimType = "data_frame";
+            break;
     }
 
     if (dimType.empty()) {
@@ -76,6 +81,9 @@ std::shared_ptr<IDimension> openDimensionFS(const std::string &loc, FileMode mod
             break;
         case DimensionType::Sample:
             dim = std::make_shared<SampledDimensionFS>(loc, mode);
+            break;
+        case DimensionType::DataFrame:
+            dim = std::make_shared<DataFrameDimensionFS>(loc, mode);
             break;
     }
     return dim;
