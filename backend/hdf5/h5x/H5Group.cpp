@@ -9,7 +9,7 @@
 #include "H5Group.hpp"
 #include <nix/util/util.hpp>
 #include "H5Exception.hpp"
-
+#include "H5PList.hpp"
 
 namespace nix {
 namespace hdf5 {
@@ -233,7 +233,13 @@ DataSet H5Group::createData(const std::string &name,
             throw std::invalid_argument("Invalid compression flag!");
         }
     }
-    ds = H5Dcreate(hid, name.c_str(), fileType.h5id(), space.h5id(), H5P_DEFAULT, dcpl.h5id(), H5P_DEFAULT);
+    ds = H5Dcreate(hid,
+                   name.c_str(),
+                   fileType.h5id(),
+                   space.h5id(),
+                   PList::linkUTF8().h5id(),
+                   dcpl.h5id(),
+                   H5P_DEFAULT);
     ds.check("H5Group::createData: Could not create DataSet with name " + name);
 
     return ds;
@@ -269,7 +275,7 @@ H5Group H5Group::openGroup(const std::string &name, bool create) const {
         HErr res = H5Pset_link_creation_order(gcpl.h5id(), H5P_CRT_ORDER_TRACKED|H5P_CRT_ORDER_INDEXED);
         res.check("Unable to create group with name '" + name + "'! (H5Pset_link_cr...)");
 
-        g = H5Group(H5Gcreate2(hid, name.c_str(), H5P_DEFAULT, gcpl.h5id(), H5P_DEFAULT));
+        g = H5Group(H5Gcreate2(hid, name.c_str(), PList::linkUTF8().h5id(), gcpl.h5id(), H5P_DEFAULT));
         g.check("Unable to create group with name '" + name + "'! (H5Gcreate2)");
 
     } else {
@@ -305,7 +311,8 @@ H5Group H5Group::createLink(const H5Group &target, const std::string &link_name)
     check_h5_arg_name(link_name);
 
     HErr res = H5Lcreate_hard(target.hid, ".", hid, link_name.c_str(),
-                              H5L_SAME_LOC, H5L_SAME_LOC);
+                              PList::linkUTF8().h5id(),
+                              H5P_DEFAULT);
     res.check("Unable to create link " + link_name);
     return openGroup(link_name, false);
 }
@@ -337,7 +344,8 @@ bool H5Group::renameAllLinks(const std::string &old_name, const std::string &new
             }
 
             HErr res = H5Lcreate_hard(group.hid, ".", hid, curr_name.c_str(),
-                                      H5L_SAME_LOC, H5L_SAME_LOC);
+                                      PList::linkUTF8().h5id(),
+                                      H5P_DEFAULT);
             renamed = renamed && res;
         }
     }
