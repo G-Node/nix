@@ -196,9 +196,14 @@ void TestH5::testDataType() {
 
     h5x::DataType v_str = h5x::DataType::makeStrType();
     CPPUNIT_ASSERT_EQUAL(true, v_str.isVariableString());
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, v_str.cset());
 
     h5x::DataType str_255 = h5x::DataType::makeStrType(255);
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_255.size());
+
+    h5x::DataType str_ascii = h5x::DataType::makeStrType(255, H5T_CSET_ASCII);
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(255), str_ascii.size());
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_ASCII, str_ascii.cset());
 
     h5x::DataType otype = h5x::DataType::make(H5T_OPAQUE, 42);
     CPPUNIT_ASSERT_EQUAL(H5T_OPAQUE, otype.class_t());
