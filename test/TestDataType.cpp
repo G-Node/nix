@@ -33,16 +33,16 @@ void TestDataType::setUp() {
                 "int8", "int16", "int32", "int64",
                 "uint8", "uint16", "uint32", "uint64",
                 "string", "nothing",  "opaque"};
-    fixed_sizes = {{nix::DataType::Int8, 1},
-                   {nix::DataType::UInt8, 1},
-                   {nix::DataType::Int16, 2},
-                   {nix::DataType::UInt16, 2},
-                   {nix::DataType::Int32, 4},
-                   {nix::DataType::UInt32, 4},
-                   {nix::DataType::Float, 4},
-                   {nix::DataType::Int64, 8},
-                   {nix::DataType::UInt64, 8},
-                   {nix::DataType::Double, 8}};
+    fixed_sizes = decltype(fixed_sizes) {{nix::DataType::Int8, 1},
+                                         {nix::DataType::Int8, 1},
+                                         {nix::DataType::Int16, 2},
+                                         {nix::DataType::UInt16, 2},
+                                         {nix::DataType::Int32, 4},
+                                         {nix::DataType::UInt32, 4},
+                                         {nix::DataType::Float, 4},
+                                         {nix::DataType::Int64, 8},
+                                         {nix::DataType::UInt64, 8},
+                                         {nix::DataType::Double, 8}};
 }
 
 
