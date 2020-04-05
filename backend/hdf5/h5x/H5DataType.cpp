@@ -76,6 +76,15 @@ H5T_sign_t DataType::sign() const {
     return res;
 }
 
+void DataType::cset(H5T_cset_t cset) {
+    HErr res = H5Tset_cset(hid, cset);
+    res.check("DataType::cset(): H5Tset_cset failed");
+}
+H5T_cset_t DataType::cset() const {
+    H5T_cset_t res = H5Tget_cset(hid);
+    return res;
+}
+
 bool DataType::isVariableString() const {
     HTri res = H5Tis_variable_str(hid);
     res.check("DataType::isVariableString(): H5Tis_variable_str failed");
