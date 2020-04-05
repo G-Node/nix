@@ -316,7 +316,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     NDSize temp_count(positions.dataExtent().size(), static_cast<NDSize::value_type>(1));
 
     int dim_index = dimension_count > 1 ? 1 : 0;
-    int count = dimension_count > 1 ? position_size[dim_index] : 1;
+    size_t count = dimension_count > 1 ? position_size[dim_index] : 1;
     temp_count[dim_index] = static_cast<NDSize::value_type>(count);
 
     vector<vector<double>> start_positions(dimension_count);
