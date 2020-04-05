@@ -362,12 +362,7 @@ void TestValidate::test() {
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
         must(  array2, &nix::DataArray::dimensions, dimTicksMatchData(array2),  "dimTicksMatchData(array)"),
         must(  array5, &nix::DataArray::dimensions, dimDataFrameTicksMatchData(array5), "dimDataFrameTicksMatchData(array)"),
-        should(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),
-        must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
-        //must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
-        //should(mtag, &nix::MultiTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (mtag)"),
-        //must(  tag, &nix::Tag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (tag)"),
-        //must(mtag, &nix::MultiTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (mtag)"),
+
         should(dim_range1, &nix::RangeDimension::unit, isAtomicUnit(), "isAtomicUnit(); (dim_range1)"),
         should(tag,       &nix::Tag::units,     isAtomicUnit(), "isAtomicUnit(); (tag)"),
         must(units_tmp, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
@@ -397,12 +392,6 @@ void TestValidate::test() {
         must(  mtag,   &nix::MultiTag::extents, dimEquals(42), "dimEquals(42)"),//
         should(array1, &nix::DataArray::dimensions, dimLabelsMatchData(array1), "dimLabelsMatchData(array)"),
         must(array5, &nix::DataArray::dimensions, dimDataFrameTicksMatchData(array5), "dimDataFrameTicksMatchData(array"),
-        must(tag, &nix::Tag::position, extentsMatchPositions(extent),  "extentsMatchPositions(extent)"),//
-        must(  mtag, &nix::MultiTag::positions,  extentsMatchPositions(extents), "extentsMatchPositions(extents)"),
-        //  must(  tag, &nix::Tag::extent, extentsMatchRefs(refs), "extentsMatchRefs(refs); (tag)"),
-        //must(mtag, &nix::MultiTag::extents,  extentsMatchRefs(refs), "extentsMatchRefs(refs); (mtag)"),
-        //must(  tag, &nix::Tag::position, positionsMatchRefs(refs), "positionsMatchRefs(refs); (tag)"),
-        //must(mtag, &nix::MultiTag::positions,  positionsMatchRefs(refs), "positionsMatchRefs(refs); (mtag)"),
         must(units_tmp, &tag_tmp::unit,  isAtomicUnit(), "isAtomicUnit(); (units_tmp.unit)"),
         must(units_tmp, &tag_tmp::units, isAtomicUnit(), "isAtomicUnit(); (units_tmp.units)"),
         must(units_tmp, &tag_tmp::unit,  isCompoundUnit(), "isCompoundUnit(); (units_tmp.unit)"),
@@ -416,15 +405,13 @@ void TestValidate::test() {
     });
     // std::cout << myResult;
     CPPUNIT_ASSERT(myResult.getWarnings().size() == 3);
-    CPPUNIT_ASSERT(myResult.getErrors().size() == 13);
+    CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
 
     myResult = file.validate();
     // std::cout << myResult;
     CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(0), myResult.getWarnings().size());
-    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(10), myResult.getErrors().size());
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(6), myResult.getErrors().size());
 
-    // uncomment this to have debug info
-    // std::cout << myResult;
     // lets leave the file clean & valid
     setValid();
 

@@ -24,17 +24,17 @@ namespace valid {
 
     /**
      * @brief Check if later given not greater than initally defined value.
-     * 
+     *
      * One Check struct that checks whether the given value is not greater
      * than the initially given other value, both of which have to be
      * convertible to double.
      */
     struct notGreater {
         const double value;
-        
+
         template<typename T>
         notGreater(T value) : value(static_cast<double>(value)) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return !(static_cast<double>(val) > value);
@@ -43,17 +43,17 @@ namespace valid {
 
     /**
      * @brief Check if later given greater than initally defined value.
-     * 
+     *
      * One Check struct that checks whether the given value is greater than
      * the initially given other value, both of which have to be
      * convertible to double.
      */
     struct isGreater {
         const double value;
-        
+
         template<typename T>
         isGreater(T value) : value(static_cast<double>(value)) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return static_cast<double>(val) > value;
@@ -62,17 +62,17 @@ namespace valid {
 
     /**
      * @brief Check if later given not smaller than initally defined value.
-     * 
+     *
      * One Check struct that checks whether the given value is not smaller
      * than the initially given other value, both of which have to be
      * convertible to double.
      */
     struct notSmaller {
         const double value;
-        
+
         template<typename T>
         notSmaller(T value) : value(static_cast<double>(value)) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return !(static_cast<double>(val) < value);
@@ -81,17 +81,17 @@ namespace valid {
 
     /**
      * @brief Check if later given smaller than initally defined value.
-     * 
+     *
      * One Check struct that checks whether the given value is smaller than
      * the initially given other value, both of which have to be
      * convertible to double.
      */
     struct isSmaller {
         const double value;
-        
+
         template<typename T>
         isSmaller(T value) : value(static_cast<double>(value)) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return static_cast<double>(val) < value;
@@ -100,16 +100,16 @@ namespace valid {
 
     /**
      * @brief Check for un-equality of initally defined and later given value.
-     * 
+     *
      * One Check struct that checks whether the given value is not equal
      * to the initially given other value.
      */
     template<typename T>
     struct notEqual {
         const T value;
-        
+
         notEqual(T value) : value(value) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return value != val;
@@ -118,16 +118,16 @@ namespace valid {
 
     /**
      * @brief Check for equality of initally defined and later given value.
-     * 
+     *
      * One Check struct that checks whether the given value is equal to
      * the initially given other value.
      */
     template<typename T>
     struct isEqual {
         const T value;
-        
+
         isEqual(T value) : value(value) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return value == val;
@@ -137,9 +137,9 @@ namespace valid {
     template<>
     struct isEqual<bool> {
         const bool value;
-        
+
         isEqual(bool value) : value(value) {}
-        
+
         template<typename T2>
         bool operator()(const T2 &val) const {
             return value ? !!val : !val;
@@ -148,7 +148,7 @@ namespace valid {
 
     /**
      * @brief Check if given value casts to boolean true
-     * 
+     *
      * One Check struct that checks whether the given value casts to true
      * or to false.
      * T can be: boost::optional, boost::none, nix-entity
@@ -164,7 +164,7 @@ namespace valid {
 
     /**
      * @brief Check if given value casts to boolean false
-     * 
+     *
      * One Check struct that checks whether the given value casts to false
      * or to true.
      * T can be: boost::optional, boost::none, nix-entity
@@ -180,7 +180,7 @@ namespace valid {
 
     /**
      * @brief Check if given class/struct returns "empty() == false"
-     * 
+     *
      * One Check struct that checks whether the given value is not empty
      * or is empty.
      * T can be: any STL container.
@@ -194,7 +194,7 @@ namespace valid {
 
     /**
      * @brief Check if given class/struct returns "empty() == true"
-     * 
+     *
      * One Check struct that checks whether the given value is empty or
      * not.
      * T can be: any STL container.
@@ -205,23 +205,23 @@ namespace valid {
             return val.empty();
         }
     };
-    
+
     /**
      * @brief Check if given class represents valid SI unit string(s)
-     * 
+     *
      * Base struct to be inherited by the {@link isValidUnit}, {@link
      * isAtomicUnit}, {@link isCompoundUnit}. Not viable on its own!
      */
     struct isUnit {
         typedef std::function<bool(std::string)> TPRED;
-        
+
         virtual bool operator()(const std::string &u) const = 0;
-        
+
         bool operator()(const boost::optional<std::string> &u) const {
             // note: relying on short-curcuiting here
             return u && (*this)(*u);
         }
-                
+
         bool operator()(const std::vector<std::string> &u, TPRED obj) const {
             // if test succeeds find_if_not will not find anything & return it == end
             return std::find_if_not(u.begin(), u.end(), obj) == u.end();
@@ -232,7 +232,7 @@ namespace valid {
 
     /**
      * @brief Check if given class represents valid SI unit string(s)
-     * 
+     *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid atomic or compound SI unit.
      * Parameter can be of type boost optional (containing nothing or
@@ -252,7 +252,7 @@ namespace valid {
 
     /**
      * @brief Check if given class represents valid atomic SI unit string(s)
-     * 
+     *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid atomic SI unit.
      * Parameter can be of type boost optional (containing nothing or
@@ -272,7 +272,7 @@ namespace valid {
 
     /**
      * @brief Check if given class represents valid compound SI unit string(s)
-     * 
+     *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid compound SI unit.
      * Parameter can be of type boost optional (containing nothing or
@@ -292,7 +292,7 @@ namespace valid {
 
     /**
      * @brief Check if given value can be regarded as being set
-     * 
+     *
      * One Check struct that checks whether the given value can be
      * considered set, by applying {@link notFalse} and {@link notEmpty}
      * checks. Value thus is set if: STL cotnainer not empty OR
@@ -311,7 +311,7 @@ namespace valid {
 
     /**
      * @brief Check if given container is sorted using std::is_sorted
-     * 
+     *
      * One Check struct that checks whether the given container is sorted
      * according to std::is_sorted. Thus supports types that are
      * supported by std::is_sorted.
@@ -325,7 +325,7 @@ namespace valid {
 
     /**
      * @brief Check if given DataArray has given dimensionality
-     * 
+     *
      * One Check struct that checks whether the given DataArray entity
      * has a dimensionality of the given uint value by getting its'
      * NDSize class via the "dataExtent" method and checking its' size
@@ -333,15 +333,15 @@ namespace valid {
      */
     struct NIXAPI dimEquals {
         size_t value;
-        
+
         dimEquals(const size_t &value) : value(value) {}
-        
+
         bool operator()(const DataArray &array) const;
     };
 
     /**
      * @brief Check if given DataArrays' dimensions all have units where given units vector has
-     * 
+     *
      * One Check struct that checks whether the given referenced
      * DataArrays' dimensions all have units defined where the tag has.
      * (where the tag has means at the same index in the tag's units
@@ -357,15 +357,15 @@ namespace valid {
      */
     struct NIXAPI tagRefsHaveUnits {
         std::vector<std::string> units;
-        
+
         tagRefsHaveUnits(const std::vector<std::string> &units) : units(units) {}
-        
+
         bool operator()(const std::vector<DataArray> &references) const;
     };
 
     /**
      * @brief Check if given units match given referenced DataArrays' units
-     * 
+     *
      * One Check struct that checks whether the given units (vector of
      * strings) match the given referenced DataArrays' (vector of
      * DataArray references) units. Therefore it takes all non-
@@ -381,69 +381,15 @@ namespace valid {
      */
     struct NIXAPI tagUnitsMatchRefsUnits {
         std::vector<std::string> units;
-        
+
         tagUnitsMatchRefsUnits(const std::vector<std::string> &units) : units(units) {}
-        
+
         bool operator()(const std::vector<DataArray> &references) const;
     };
 
     /**
-     * @brief Check if given number of positions and extents matches
-     * 
-     * One Check struct that checks whether the given number of
-     * positions matches the given number of extents. It is irrelevant
-     * which gets passed at construction time and which via operator().
-     */
-    struct NIXAPI extentsMatchPositions {
-        boost::any extents;
-        
-        extentsMatchPositions(const DataArray &extents) : extents(extents) {}
-        
-        extentsMatchPositions(const std::vector<double> &extents) : extents(extents) {}
-        
-        bool operator()(const DataArray &positions) const;
-        bool operator()(const std::vector<double> &positions) const;
-    };
-
-    /**
-     * @brief Check if number of extents (along 2nd dim) match number of references' data dims
-     * 
-     * One Check struct that checks whether the given number of
-     * extents (if DataArray: size along 2nd dimensions of extents
-     * DataArray; if vector: size of vector) matches the data's
-     * dimensionality in each of the given referenced DataArrays.
-     */
-    struct NIXAPI extentsMatchRefs {
-        std::vector<DataArray> refs;
-        
-        extentsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
-
-        bool operator()(const DataArray &extents) const;
-        bool operator()(const std::vector<double> &extents) const;
-    };
-
-    /**
-     * @brief Check if number of positions (along 2nd dim) match number of references' data dims
-     * 
-     * One Check struct that checks whether the given number of
-     * positions (if DataArray: size along 2nd dimensions of positions
-     * DataArray; if vector: size of vector) matches the data's
-     * dimensionality in each of the given referenced DataArrays.
-     * Note: this is just an alias for extentsMatchRefs wich does the
-     * same thing.
-     */
-    struct NIXAPI positionsMatchRefs {
-        std::vector<DataArray> refs;
-
-        positionsMatchRefs(const std::vector<DataArray> &refs) : refs(refs) {}
-    
-        bool operator()(const DataArray &positions) const;
-        bool operator()(const std::vector<double> &positions) const;
-    };
-
-    /**
      * @brief Check if range dimension specifics ticks match data
-     * 
+     *
      * One Check struct that checks whether the dimensions of type
      * "Range" in the given dimensions vector have ticks that match
      * the given DataArray's data: number of ticks == number of entries
@@ -453,13 +399,13 @@ namespace valid {
         const DataArray &data;
 
         dimTicksMatchData(const DataArray &data) : data(data) {}
-    
+
         bool operator()(const std::vector<Dimension> &dims) const;
     };
 
     /**
      * @brief Check if set dimension specifics labels match data
-     * 
+     *
      * One Check struct that checks whether the dimensions of type
      * "Set" in the given dimensions vector have labels that match
      * the given DataArray's data: number of labels == number of entries
@@ -469,13 +415,13 @@ namespace valid {
         const DataArray &data;
 
         dimLabelsMatchData(const DataArray &data) : data(data) {}
-    
+
         bool operator()(const std::vector<Dimension> &dims) const;
     };
 
     /**
      * @brief Check if DataFrame dimension specifics ticks match data
-     * 
+     *
      * Struct for checking whether the number of rows in the dimensions of type
      * "DataFrame" in the given dimensions vector matches the given DataArray's
      * data extent in the respective dimension: number of rows in DataFrame == number of
@@ -485,7 +431,7 @@ namespace valid {
         const DataArray &data;
 
         dimDataFrameTicksMatchData(const DataArray &data) : data(data) {}
-    
+
         bool operator()(const std::vector<Dimension> &dims) const;
     };
 
