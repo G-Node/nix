@@ -13,6 +13,7 @@
 #include "TestValue.hpp"
 #include "TestVersion.hpp"
 #include "TestOptionalObligatory.hpp"
+#include "TestDataType.hpp"
 
 #include "TestValidate.hpp"
 
@@ -68,6 +69,7 @@ int main(int argc, char* argv[]) {
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSourceHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestSectionHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataSet);
+    CPPUNIT_TEST_SUITE_REGISTRATION(TestDataType);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestH5Group);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataAccessHDF5);
     CPPUNIT_TEST_SUITE_REGISTRATION(TestDataArrayHDF5);
