@@ -199,19 +199,34 @@ vector<pair<double, double>> maximumExtents(const DataArray &array) {
 
 
 string getDimensionUnit(const Dimension &dim) {
-    if (dim.dimensionType() == DimensionType::Set) {
-        return "none";
+    DimensionType dim_type = dim.dimensionType();
+    string unit;
+    switch (dim_type) {
+    case DimensionType::Set:
+        unit = "none";
+        break;
+    case DimensionType::DataFrame: {
+        DataFrameDimension df_dim = dim.asDataFrameDimension();
+        unit = df_dim.unit();
+        if (unit.empty()) {
+            unit = "none";
+        }
+        break;
     }
-    if (dim.dimensionType() == DimensionType::Sample) {
+    case DimensionType::Sample: {
         SampledDimension sd = dim.asSampledDimension();
-        string unit = sd.unit() ? *sd.unit() : "none";
-        return unit;
-    } else if (dim.dimensionType() == DimensionType::Range) {
-        RangeDimension rd = dim.asRangeDimension();
-        string unit = rd.unit() ? *rd.unit() : "none";
-        return unit;
+        unit = sd.unit() ? *sd.unit() : "none";
+        break;
     }
-    return "none";
+    case DimensionType::Range: {
+        RangeDimension rd = dim.asRangeDimension();
+        unit = rd.unit() ? *rd.unit() : "none";
+        break;
+    }
+    default:
+       throw std::invalid_argument("Unkown DimensionType");
+    }
+    return unit;
 }
 
 
