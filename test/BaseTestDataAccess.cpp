@@ -46,6 +46,29 @@ void BaseTestDataAccess::testPositionToIndexRangeDimension() {
 }
 
 
+void BaseTestDataAccess::testGetDimensionUnit() {
+    std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double},
+                                     {"note", "", nix::DataType::String}};
+    DataFrame df = block.createDataFrame("test", "test", cols);
+
+    data_array.appendDataFrameDimension(df);
+    data_array.appendDataFrameDimension(df, 0);
+    data_array.appendDataFrameDimension(df, 1);
+
+    std::string unit = "ms";
+    std::string no_unit = "none";
+
+    std::vector<Dimension> dims = data_array.dimensions();
+    CPPUNIT_ASSERT(dims.size() == 6);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[0]), no_unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[1]), unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[2]), unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[3]), no_unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[4]), cols[0].unit);
+    CPPUNIT_ASSERT_EQUAL(util::getDimensionUnit(dims[5]), no_unit);
+}
+
+
 void BaseTestDataAccess::testPositionToIndexSampledDimension() {
     std::string unit = "ms";
     std::string invalid_unit = "kV";

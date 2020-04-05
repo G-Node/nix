@@ -28,6 +28,7 @@ public:
     void testPositionToIndexSetDimension();
     void testPositionToIndexSampledDimension();
     void testPositionToIndexRangeDimension();
+    void testGetDimensionUnit();
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
