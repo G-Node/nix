@@ -53,6 +53,9 @@ public:
     void sign(H5T_sign_t sign);
     H5T_sign_t sign() const;
 
+    void cset(H5T_cset_t cset);
+    H5T_cset_t cset() const;
+
     bool isVariableString() const;
 
     // Compound type related
