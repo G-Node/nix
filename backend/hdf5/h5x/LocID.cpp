@@ -9,6 +9,7 @@
 // Author: Christian Kellner <kellner@bio.lmu.de>
 
 #include "LocID.hpp"
+#include "H5PList.hpp"
 
 namespace nix {
 
@@ -43,7 +44,15 @@ Attribute LocID::openAttr(const std::string &name) const {
 
 
 Attribute LocID::createAttr(const std::string &name, h5x::DataType fileType, const DataSpace &fileSpace) const {
-    Attribute attr = H5Acreate(hid, name.c_str(), fileType.h5id(), fileSpace.h5id(), H5P_DEFAULT, H5P_DEFAULT);
+    PList acpl = PList::create(H5P_ATTRIBUTE_CREATE);
+    acpl.charEncoding(H5T_CSET_UTF8);
+
+    Attribute attr = H5Acreate(hid,
+                               name.c_str(),
+                               fileType.h5id(),
+                               fileSpace.h5id(),
+                               acpl.h5id(),
+                               H5P_DEFAULT);
     attr.check("LocID::openAttr: Could not create attribute " + name);
     return attr;
 }
