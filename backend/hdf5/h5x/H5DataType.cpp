@@ -34,10 +34,11 @@ DataType DataType::make(H5T_class_t klass, size_t size) {
     return dt;
 }
 
-DataType DataType::makeStrType(size_t size) {
+DataType DataType::makeStrType(size_t size, H5T_cset_t cset) {
     DataType str_type = H5Tcopy(H5T_C_S1);
     str_type.check("Could not create string type");
     str_type.size(size);
+    str_type.cset(cset);
     return str_type;
 }
 
