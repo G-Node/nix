@@ -28,10 +28,6 @@ matrix:
       env: FS_BACKEND=OFF DOCKERFILE=ub1804
 
 addons:
-  apt:
-    update: true
-    packages:
-      - lcov
   homebrew:
     packages:
       - cmake
