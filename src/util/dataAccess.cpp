@@ -218,12 +218,12 @@ string getDimensionUnit(const Dimension &dim) {
     }
     case DimensionType::Sample: {
         SampledDimension sd = dim.asSampledDimension();
-        unit = sd.unit() ? *sd.unit() : "none";
+        unit = sd.unit().value_or("none");
         break;
     }
     case DimensionType::Range: {
         RangeDimension rd = dim.asRangeDimension();
-        unit = rd.unit() ? *rd.unit() : "none";
+        unit = rd.unit().value_or("none");
         break;
     }
     default:

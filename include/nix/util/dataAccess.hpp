@@ -118,7 +118,7 @@ NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vec
                                                                   const RangeDimension &dimension);
 
 /**
- * @brief Returs the unit associated with the respective {@link nix::Dimension}.
+ * @brief Returns the unit associated with the respective {@link nix::Dimension}.
  *
  * @param nix::Dimension The dimension descriptor.
  *
