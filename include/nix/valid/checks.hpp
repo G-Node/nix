@@ -340,44 +340,13 @@ namespace valid {
     };
 
     /**
-     * @brief Check if given DataArrays' dimensions all have units where given units vector has
+     * @brief Checks if units of the passed DataArray dimensions matches those
+     * defined in the Tag
      *
-     * One Check struct that checks whether the given referenced
-     * DataArrays' dimensions all have units defined where the tag has.
-     * (where the tag has means at the same index in the tag's units
-     * vector as the dimension index in the referenced DataArray)
-     * Therefore it takes all non-SetDimension dimensions of all given
-     * references and checks whether the dimension has a unit set if the
-     * tag has. If a dimension is a SetDimension the test counts as
-     * passed. Thus in the end the test counts as passed if all non-
-     * SetDimension dimensions have units set where the tag has and
-     * have no units set where the tag has not. It counts as failed
-     * immediately if number of dimensions differs from number of units
-     * in given unit vector.
-     */
-    struct NIXAPI tagRefsHaveUnits {
-        std::vector<std::string> units;
-
-        tagRefsHaveUnits(const std::vector<std::string> &units) : units(units) {}
-
-        bool operator()(const std::vector<DataArray> &references) const;
-    };
-
-    /**
-     * @brief Check if given units match given referenced DataArrays' units
-     *
-     * One Check struct that checks whether the given units (vector of
-     * strings) match the given referenced DataArrays' (vector of
-     * DataArray references) units. Therefore it takes all non-
-     * SetDimension dimensions of all given references and checks
-     * whether the dimension has a unit convertible to the unit with the
-     * same index in the given units vector. If a dimension is a
-     * SetDimension the test counts as passed. Thus in the end the test
-     * counts as passed if all non-SetDimension dimensions have units
-     * set that are convertible where the units vector has a unit set
-     * and all dims have no unit set where the units vector has not.
-     * The test counts as failed immediately if the number of dimensions
-     * in a DataArray differs the number of units in the units vector.
+     * Struct to check whether the units defined in the Tag match with the units
+     * specified in the referenced DataArray dimensions. The check tests for
+     * scalability of the tag-provided units and the ones of the DataArrays.
+     * 
      */
     struct NIXAPI tagUnitsMatchRefsUnits {
         std::vector<std::string> units;

@@ -124,8 +124,7 @@ Result validate(const Tag &tag) {
         // check units for validity
         could(tag, &Tag::units, notEmpty(), {
             must(tag, &Tag::units, isValidUnit(), "Unit is invalid: not an atomic SI. Note: So far composite units are not supported!"),
-            must(tag, &Tag::references, tagRefsHaveUnits(tag.units()), "Some of the referenced DataArrays' dimensions don't have units where the tag has. Make sure that all references have the same number of dimensions as the tag has units and that each dimension has a unit set."),
-                must(tag, &Tag::references, tagUnitsMatchRefsUnits(tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!")}),
+            must(tag, &Tag::references, tagUnitsMatchRefsUnits(tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!")}),
     });
 
     return result.concat(result_base);

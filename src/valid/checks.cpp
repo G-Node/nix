@@ -22,32 +22,27 @@ bool dimEquals::operator()(const DataArray &array) const {
 }
 
 
-bool tagRefsHaveUnits::operator()(const std::vector<DataArray> &references) const {
-    bool match = true;
-    std::vector<std::string> dims_units;
-
-    for (auto &ref : references) {
-        dims_units = getDimensionsUnits(ref);
-        if (dims_units.size() != units.size()){
-            match = false;
-            break;
-        }
-    }
-
-    return match;
-}
-
-
 bool tagUnitsMatchRefsUnits::operator()(const std::vector<DataArray> &references) const {
     bool match = true;
     std::vector<std::string> dims_units;
-
+    std::string tu, du;
     for (auto &ref : references) {
         dims_units = getDimensionsUnits(ref);
-        if (!util::isScalable(units, dims_units)) {
-            match = false;
-            break;
+        for (size_t i = 0; i < units.size(); ++i) {
+            tu = units[i];
+            if (i < dims_units.size()) {
+                du = dims_units[i];
+                if (du != "none") {
+                    if (!tu.empty() && tu != "none") {
+                        match = util::isScalable(tu, du); 
+                    }
+                }
+            } else {
+                match = !tu.empty() || tu != "none";
+            }
         }
+        if (!match)
+            break;
     }
 
     return match;

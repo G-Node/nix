@@ -371,7 +371,6 @@ void TestValidate::test() {
         should(units_tmp, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
         must(  units_tmp, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
         should(units_tmp, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
-        must(  tag, &nix::Tag::references, tagRefsHaveUnits(atomic_units),       "tagRefsHaveUnits(atomic_units); (tag)"),
         must(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(atomic_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
     // have debug info
@@ -400,12 +399,11 @@ void TestValidate::test() {
         should(units_tmp, &tag_tmp::unit,  isValidUnit(), "isValidUnit(); (units_tmp.unit)"),
         must(  units_tmp, &tag_tmp::units, isValidUnit(), "isValidUnit(); (units_tmp.units)"),
         should(units_tmp, &tag_tmp::unito, isValidUnit(), "isValidUnit(); (units_tmp.unito)"),
-        must(  tag, &nix::Tag::references, tagRefsHaveUnits(invalid_units),       "tagRefsHaveUnits(atomic_units); (tag)"),
         must(tag, &nix::Tag::references, tagUnitsMatchRefsUnits(invalid_units), "tagUnitsMatchRefsUnits(atomic_units); (tag)")
     });
     // std::cout << myResult;
     CPPUNIT_ASSERT(myResult.getWarnings().size() == 3);
-    CPPUNIT_ASSERT(myResult.getErrors().size() == 11);
+    CPPUNIT_ASSERT(myResult.getErrors().size() == 10);
 
     myResult = file.validate();
     // std::cout << myResult;
