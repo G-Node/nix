@@ -178,10 +178,10 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
     } else if (dt == DimensionType::Set) {
         SetDimension sd = dim.asSetDimension();
         pos = 0.0;
-        if (max_index > pow(FLT_RADIX, std::numeric_limits<double>::digits)) {
-            throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of precision. Please open an issue on github!");
-        }
         ext = static_cast<double>(max_index);
+        if (static_cast<ndsize_t>(ext) != max_index) {
+            throw nix::OutOfBounds("dataAccess::getMaxExtent: max_index cannot be cast to double without loss of resolution. Please open an issue on github!");
+        }
     }
 }
 
