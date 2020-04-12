@@ -12,6 +12,7 @@
 
 #include "hdf5/FileHDF5.hpp"
 #include "hdf5/h5x/H5Exception.hpp"
+#include "hdf5/h5x/H5PList.hpp"
 
 #include "RefTester.hpp"
 
@@ -148,6 +149,11 @@ void TestH5::testBase() {
 
     H5Gclose(ga);
     H5Gclose(gb);
+
+    test_refcounting<nix::hdf5::PList>(gcpl, dcpl);
+
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(gcpl));
+    CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(dcpl));
 
     //name()
     std::string name = h5group.name();
@@ -325,4 +331,16 @@ void TestH5::testDataSpace() {
 
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ds));
     space.close();
+}
+
+void TestH5::testPropertyList() {
+    nix::hdf5::PList pl = nix::hdf5::PList::create(H5P_LINK_CREATE);
+    pl.charEncoding(H5T_CSET_ASCII);
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_ASCII, pl.charEncoding());
+
+    pl.charEncoding(H5T_CSET_UTF8);
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, pl.charEncoding());
+
+    nix::hdf5::PList pl_utf8 = nix::hdf5::PList::linkUTF8();
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, pl_utf8.charEncoding());
 }
