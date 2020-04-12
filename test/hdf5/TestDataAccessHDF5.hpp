@@ -27,6 +27,8 @@ class TestDataAccessHDF5 : public BaseTestDataAccess {
     CPPUNIT_TEST(testMultiTagUnitSupport);
     CPPUNIT_TEST(testDataView);
     CPPUNIT_TEST(testDataSlice);
+    CPPUNIT_TEST(testFlexibleTagging);
+    CPPUNIT_TEST(testGetDimensionUnit);
     CPPUNIT_TEST_SUITE_END ();
 
 public:

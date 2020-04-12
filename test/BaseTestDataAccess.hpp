@@ -28,6 +28,7 @@ public:
     void testPositionToIndexSetDimension();
     void testPositionToIndexSampledDimension();
     void testPositionToIndexRangeDimension();
+    void testGetDimensionUnit();
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
@@ -36,6 +37,7 @@ public:
     void testMultiTagUnitSupport();
     void testDataView();
     void testDataSlice();
+    void testFlexibleTagging();
 };
 
 #endif // NIX_BASETESTDATAACCESS_H

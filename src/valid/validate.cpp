@@ -23,7 +23,7 @@ namespace valid {
 
 /**
   * @brief base entity validator
-  * 
+  *
   * Function taking a base entity and returning {@link Result} object
   *
   * @param entity base entity
@@ -40,7 +40,7 @@ Result validate_entity(const base::Entity<T> &entity) {
 
 /**
   * @brief base named entity validator
-  * 
+  *
   * Function taking a base named entity and returning {@link Result}
   * object
   *
@@ -61,7 +61,7 @@ Result validate_named_entity(const base::NamedEntity<T> &named_entity) {
 
 /**
   * @brief base entity with metadata validator
-  * 
+  *
   * Function taking a base entity with metadata and returning
   * {@link Result} object
   *
@@ -76,7 +76,7 @@ Result validate_entity_with_metadata(const base::EntityWithMetadata<T> &entity_w
 
 /**
   * @brief base entity with sources validator
-  * 
+  *
   * Function taking a base entity with sources and returning
   * {@link Result} object
   *
@@ -121,19 +121,10 @@ Result validate(const Tag &tag) {
     Result result_base = validate_entity_with_sources(tag);
     Result result = validator({
         must(tag, &Tag::position, notEmpty(), "position is not set!"),
-        could(tag, &Tag::references, notEmpty(), {
-            must(tag, &Tag::position, positionsMatchRefs(tag.references()),
-                "number of entries in position does not match number of dimensions in all referenced DataArrays!"),
-            could(tag, &Tag::extent, notEmpty(), {
-                must(tag, &Tag::position, extentsMatchPositions(tag.extent()), "Number of entries in position and extent do not match!"),
-                must(tag, &Tag::extent, extentsMatchRefs(tag.references()),
-                    "number of entries in extent does not match number of dimensions in all referenced DataArrays!") })
-        }),
         // check units for validity
         could(tag, &Tag::units, notEmpty(), {
             must(tag, &Tag::units, isValidUnit(), "Unit is invalid: not an atomic SI. Note: So far composite units are not supported!"),
-            must(tag, &Tag::references, tagRefsHaveUnits(tag.units()), "Some of the referenced DataArrays' dimensions don't have units where the tag has. Make sure that all references have the same number of dimensions as the tag has units and that each dimension has a unit set."),
-                must(tag, &Tag::references, tagUnitsMatchRefsUnits(tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!")}),
+            must(tag, &Tag::references, tagUnitsMatchRefsUnits(tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!")}),
     });
 
     return result.concat(result_base);
@@ -161,14 +152,7 @@ Result validate(const MultiTag &multi_tag) {
         could(multi_tag, &MultiTag::units, notEmpty(), {
             must(multi_tag, &MultiTag::units, isValidUnit(), "Some of the units in tag are invalid: not an atomic SI. Note: So far composite SI units are not supported!"),
             must(multi_tag, &MultiTag::references, tagUnitsMatchRefsUnits(multi_tag.units()), "Some of the referenced DataArrays' dimensions have units that are not convertible to the units set in tag. Note: So far composite SI units are not supported!")}),
-        // check positions & extents
-        could(multi_tag, &MultiTag::extents, notFalse(), {
-            must(multi_tag, &MultiTag::positions, extentsMatchPositions(multi_tag.extents()), "Number of entries in positions and extents do not match!") }),
-        could(multi_tag, &MultiTag::references, notEmpty(), {
-            could(multi_tag, &MultiTag::extents, notFalse(), {
-                must(multi_tag, &MultiTag::extents, extentsMatchRefs(multi_tag.references()), "number of entries (in 2nd dim) in extents does not match number of dimensions in all referenced DataArrays!") }),
-            must(multi_tag, &MultiTag::positions, positionsMatchRefs(multi_tag.references()), "number of entries (in 2nd dim) in positions does not match number of dimensions in all referenced DataArrays!") })
-    });
+        });
 
     return result.concat(result_base);
 }

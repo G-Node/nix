@@ -117,6 +117,14 @@ NIXAPI std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(const std::vec
                                                                   const std::vector<std::string> &units,
                                                                   const RangeDimension &dimension);
 
+/**
+ * @brief Returns the unit associated with the respective {@link nix::Dimension}.
+ *
+ * @param nix::Dimension The dimension descriptor.
+ *
+ * @returns string: the unit, or "none" if none defined within the dimension descriptor.
+ */
+NIXAPI std::string getDimensionUnit(const nix::Dimension &dim);
 
 /**
  * @brief Returns the offsets and element counts associated with position and extent of a Tag and
