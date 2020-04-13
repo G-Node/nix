@@ -151,19 +151,6 @@ public:
     H5Group createLink(const H5Group &target, const std::string &link_name);
 
     /**
-     * @brief Renames all links of the object defined by the old name.
-     *
-     * This method will only change the links where the last part of the path
-     * is the old name.
-     *
-     * @param old_name  The old name of the object
-     * @param new_name  The new name of the object
-     *
-     * @return True if all links where changed successfully.
-     */
-    bool renameAllLinks(const std::string &old_name, const std::string &new_name);
-
-    /**
      * @brief Removes all links to the object defined by the given name.
      *
      * @param name      The name of the object to remove.
