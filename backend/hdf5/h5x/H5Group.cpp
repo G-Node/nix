@@ -317,41 +317,6 @@ H5Group H5Group::createLink(const H5Group &target, const std::string &link_name)
     return openGroup(link_name, false);
 }
 
-// TODO implement some kind of roll-back in order to avoid half renamed links.
-bool H5Group::renameAllLinks(const std::string &old_name, const std::string &new_name) {
-    check_h5_arg_name(new_name);
-
-    bool renamed = false;
-
-    if (hasGroup(old_name)) {
-        std::vector<std::string> links;
-
-        H5Group group     = openGroup(old_name, false);
-        std::string gname = group.name();
-
-        while (! gname.empty()) {
-            deleteLink(gname);
-            links.push_back(gname);
-            gname = group.name();
-        }
-
-        renamed = links.size() > 0;
-        for (std::string curr_name: links) {
-            size_t pos = curr_name.find_last_of('/') + 1;
-
-            if (curr_name.substr(pos) == old_name) {
-                curr_name.replace(curr_name.begin() + pos, curr_name.end(), new_name.begin(), new_name.end());
-            }
-
-            HErr res = H5Lcreate_hard(group.hid, ".", hid, curr_name.c_str(),
-                                      PList::linkUTF8().h5id(),
-                                      H5P_DEFAULT);
-            renamed = renamed && res;
-        }
-    }
-
-    return renamed;
-}
 
 // TODO implement some kind of roll-back in order to avoid half removed links.
 bool H5Group::removeAllLinks(const std::string &name) {
