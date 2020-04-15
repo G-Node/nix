@@ -136,6 +136,9 @@ public:
 
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype);
 
+    
+    std::shared_ptr<base::IProperty> createProperty(const std::string &name, const DataType &dtype, const NDSize &shape);
+
 
     std::shared_ptr<base::IProperty> createProperty(const std::string &name, const Variant &value);
 
