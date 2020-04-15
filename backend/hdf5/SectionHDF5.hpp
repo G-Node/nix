@@ -19,6 +19,11 @@
 namespace nix {
 namespace hdf5 {
 
+// Most properties will only contain a small number of values. The default chunk
+// guessing uses way too much memory in most cases. 8 is an arbitrary compromise
+// and should avoid the need to resize the dataset for most cases.
+#define DEFAULT_PROPERTY_SIZE 8 
+
 class SectionHDF5 : public NamedEntityHDF5, virtual public base::ISection,
                     public std::enable_shared_from_this<SectionHDF5> {
 

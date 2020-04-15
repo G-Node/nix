@@ -261,13 +261,13 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Data
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
-    shared_ptr<IProperty> p = createProperty(name, dtype, {8});
+    shared_ptr<IProperty> p = createProperty(name, dtype, {DEFAULT_PROPERTY_SIZE});
     return p;
 }
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Variant &value) {
-    shared_ptr<IProperty> p = createProperty(name, value.type(), {8});
+    shared_ptr<IProperty> p = createProperty(name, value.type(), {DEFAULT_PROPERTY_SIZE});
     vector<Variant> val{value};
     p->values(val);
     return p;
