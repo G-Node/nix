@@ -251,16 +251,23 @@ shared_ptr<IProperty> SectionHDF5::getProperty(ndsize_t index) const {
 }
 
 
-shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype, const NDSize &shape) {
     string new_id = util::createId();
     boost::optional<H5Group> g = property_group(true);
-    DataSet ds = g->createData(name, data_type_to_h5_filetype(dtype), {0});
+    DataSet ds = g->createData(name, data_type_to_h5_filetype(dtype), shape, Compression::DeflateNormal,
+                               {}, shape, true, false);
     return make_shared<PropertyHDF5>(file(), ds, new_id, name);
 }
 
 
+shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const DataType &dtype) {
+    shared_ptr<IProperty> p = createProperty(name, dtype, {DEFAULT_PROPERTY_SIZE});
+    return p;
+}
+
+
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Variant &value) {
-    shared_ptr<IProperty> p = createProperty(name, value.type());
+    shared_ptr<IProperty> p = createProperty(name, value.type(), {DEFAULT_PROPERTY_SIZE});
     vector<Variant> val{value};
     p->values(val);
     return p;
@@ -268,7 +275,8 @@ shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const Vari
 
 
 shared_ptr<IProperty> SectionHDF5::createProperty(const string &name, const vector<Variant> &values) {
-    shared_ptr<IProperty> p = createProperty(name, values[0].type());
+    NDSize shape(1, values.size());
+    shared_ptr<IProperty> p = createProperty(name, values[0].type(), shape);
     p->values(values);
     return p;
 }
