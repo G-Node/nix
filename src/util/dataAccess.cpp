@@ -223,9 +223,9 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
     } else if (dt == DimensionType::Set) {
         SetDimension sd = dim.asSetDimension();
         pos = 0.0;
-        ext = static_cast<double>(max_index);
-        if (static_cast<ndsize_t>(ext) != max_index) {
-            throw nix::OutOfBounds("dataAccess::getMaxExtent: max_index cannot be cast to double without loss of resolution. Please open an issue on github!");
+        if (!check::converts_to_double(max_index, ext)) {
+            throw nix::OutOfBounds(double_fail);
+        }
     } else if (dt == DimensionType::DataFrame) {
         DataFrameDimension dfdim = dim.asDataFrameDimension();
         pos = 0.0;
@@ -488,11 +488,12 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                 starts.push_back(0.0);
             }
             if (i >= ends.size()) {
-                 double end  = static_cast<double>(shape[i] - 1);
-                 if (static_cast<ndsize_t>(end) != shape[i] - 1) {
-                     throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
-                 }
-                 ends.push_back(end);
+                double end;
+                if (!check::converts_to_double(shape[i] - 1, end)) {
+                    throw nix::OutOfBounds(double_fail);
+                }
+                ends.push_back(end);
+            }
         } else if (dt == DimensionType::DataFrame) {
             DataFrameDimension dfdim = dim.asDataFrameDimension();
             if (i >= starts.size()) {
