@@ -255,7 +255,11 @@ vector<double> SampledDimension::axis(const ndsize_t count, const ndsize_t start
     double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     for (size_t i = 0; i < axis.size(); ++i) {
-        axis[i] = (static_cast<double>(i) + startIndex) * sampling_interval + offset;
+        double dbl;
+        if (!check::converts_to_double(i, dbl)) {
+            throw nix::OutOfBounds("SampledDimension::axis conversion to double failed!");
+        }
+        axis[i] = (dbl + startIndex) * sampling_interval + offset;
     }
     return axis;
 }
