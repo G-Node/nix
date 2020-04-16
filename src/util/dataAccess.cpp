@@ -211,6 +211,7 @@ ndsize_t positionToIndex(double position, const string &unit, const RangeDimensi
 
 void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double &ext) {
     DimensionType dt = dim.dimensionType();
+    std::string double_fail("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
     if (dt == DimensionType::Sample) {
         SampledDimension sd = dim.asSampledDimension();
         pos = sd.positionAt(0);
@@ -225,6 +226,11 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
         ext = static_cast<double>(max_index);
         if (static_cast<ndsize_t>(ext) != max_index) {
             throw nix::OutOfBounds("dataAccess::getMaxExtent: max_index cannot be cast to double without loss of resolution. Please open an issue on github!");
+    } else if (dt == DimensionType::DataFrame) {
+        DataFrameDimension dfdim = dim.asDataFrameDimension();
+        pos = 0.0;
+        if (!check::converts_to_double(max_index, ext)) {
+            throw nix::OutOfBounds(double_fail);
         }
     }
 }
@@ -453,6 +459,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                                   std::vector<std::string> &units) {
     std::vector<nix::Dimension> dims = array.dimensions();
     NDSize shape = array.dataExtent();
+    std::string double_fail("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
     for (size_t i = 0; i < dims.size(); ++i) {
         Dimension dim = dims[i];
         DimensionType dt = dim.dimensionType();
@@ -486,7 +493,17 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                      throw nix::OutOfBounds("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
                  }
                  ends.push_back(end);
+        } else if (dt == DimensionType::DataFrame) {
+            DataFrameDimension dfdim = dim.asDataFrameDimension();
+            if (i >= starts.size()) {
+                starts.push_back(0.0);
             }
+            if (i >= ends.size()) {
+                double end;
+                if (!check::converts_to_double(shape[i] - 1, end)) {
+                    throw nix::OutOfBounds(double_fail);
+                }
+                ends.push_back(end);
             }
         }
     }
