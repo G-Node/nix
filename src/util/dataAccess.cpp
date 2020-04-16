@@ -456,6 +456,9 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
     for (size_t i = 0; i < dims.size(); ++i) {
         Dimension dim = dims[i];
         DimensionType dt = dim.dimensionType();
+        if (i >= units.size()) {
+            units.push_back(getDimensionUnit(dim));
+        }
         if (dt == DimensionType::Sample) {
             SampledDimension sd = dim.asSampledDimension();
             if (i >= starts.size()) {
@@ -464,9 +467,6 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
             if (i >= ends.size()) {
                 ends.push_back(sd[shape[i]-1]);
             }
-            if (i >= units.size()) {
-                units.push_back(sd.unit() ? *sd.unit() : "none");
-            }
         } else if (dt == DimensionType::Range) {
             RangeDimension rd = dim.asRangeDimension();
             if (i >= starts.size()) {
@@ -474,9 +474,6 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
             }
             if (i >= ends.size()) {
                 ends.push_back(rd.axis(1, shape[i]-1)[0]);
-            }
-            if (i >= units.size()) {
-                units.push_back(rd.unit() ? *rd.unit() : "none");
             }
         } else if (dt == DimensionType::Set) {
             SetDimension sd = dim.asSetDimension();
@@ -490,8 +487,6 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                  }
                  ends.push_back(end);
             }
-            if (i >= units.size()) {
-                units.push_back("none");
             }
         }
     }
@@ -542,19 +537,23 @@ vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_in
     return taggedData(tag, position_indices, array);
 }
 
+
 vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices, ndsize_t reference_index) {
     return taggedData(tag, position_indices, reference_index);
 }
+
 
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array) {
     vector<ndsize_t> indices(1, position_index);
     return taggedData(tag, indices, array)[0];
 }
 
+
 DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index) {
     vector<ndsize_t> indices(1, position_index);
     return taggedData(tag, indices, reference_index)[0];
 }
+
 
 vector<DataView> taggedData(const MultiTag &tag,
                             vector<ndsize_t> &position_indices,
@@ -568,12 +567,14 @@ vector<DataView> taggedData(const MultiTag &tag,
     return taggedData(tag, position_indices, refs[ref_idx]);
 }
 
+
 DataView taggedData(const MultiTag &tag,
                     ndsize_t position_index,
                     ndsize_t reference_index) {
     std::vector<ndsize_t> position_indices(1, position_index);
     return taggedData(tag, position_indices, reference_index)[0];
 }
+
 
 vector<DataView> taggedData(const MultiTag &tag,
                             vector<ndsize_t> &position_indices,
@@ -600,13 +601,16 @@ vector<DataView> taggedData(const MultiTag &tag,
     return views;
 }
 
+
 DataView retrieveData(const Tag &tag, ndsize_t reference_index) {
     return taggedData(tag, reference_index);
 }
 
+
 DataView retrieveData(const Tag &tag, const DataArray &array) {
     return taggedData(tag, array);
 }
+
 
 DataView taggedData(const Tag &tag, ndsize_t reference_index) {
     vector<DataArray> refs = tag.references();
