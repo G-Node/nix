@@ -239,8 +239,8 @@ std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::
     return indices;
 }
 
-double SampledDimension::positionAt(const ndsize_t index) const {
 
+double SampledDimension::positionAt(const ndsize_t index) const {
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     return index * sampling_interval + offset;
@@ -248,17 +248,13 @@ double SampledDimension::positionAt(const ndsize_t index) const {
 
 
 vector<double> SampledDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
-
     size_t cnt = check::fits_in_size_t(count, "Axis count exceeds memory (size larger than current system supports)");
 
     vector<double> axis(cnt);
     double offset =  backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     for (size_t i = 0; i < axis.size(); ++i) {
-        double dbl;
-        if (!check::converts_to_double(i, dbl)) {
-            throw nix::OutOfBounds("SampledDimension::axis conversion to double failed!");
-        }
+        double dbl = check::converts_to_double(i, "SampledDimension::axis conversion to double failed!");
         axis[i] = (dbl + startIndex) * sampling_interval + offset;
     }
     return axis;
@@ -267,11 +263,9 @@ vector<double> SampledDimension::axis(const ndsize_t count, const ndsize_t start
 
 SampledDimension& SampledDimension::operator=(const SampledDimension &other) {
     shared_ptr<ISampledDimension> tmp(other.impl());
-
     if (impl() != tmp) {
         std::swap(impl(), tmp);
     }
-
     return *this;
 }
 

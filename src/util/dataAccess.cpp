@@ -141,6 +141,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
                                                  const vector<string> &units,
                                                  const SetDimension &dimension) {
     vector<pair<ndsize_t, ndsize_t>> indices;
+
     for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); ++i) {
         if (start_positions[i] > end_positions[i] ) {
             continue;
@@ -211,7 +212,7 @@ ndsize_t positionToIndex(double position, const string &unit, const RangeDimensi
 
 void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double &ext) {
     DimensionType dt = dim.dimensionType();
-    std::string double_fail("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
+    std::string double_fail_msg("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
     if (dt == DimensionType::Sample) {
         SampledDimension sd = dim.asSampledDimension();
         pos = sd.positionAt(0);
@@ -220,18 +221,9 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
         RangeDimension rd = dim.asRangeDimension();
         pos = rd.tickAt(0);
         ext = rd.tickAt(max_index);
-    } else if (dt == DimensionType::Set) {
-        SetDimension sd = dim.asSetDimension();
+    } else if (dt == DimensionType::Set || dt == DimensionType::DataFrame) {
         pos = 0.0;
-        if (!check::converts_to_double(max_index, ext)) {
-            throw nix::OutOfBounds(double_fail);
-        }
-    } else if (dt == DimensionType::DataFrame) {
-        DataFrameDimension dfdim = dim.asDataFrameDimension();
-        pos = 0.0;
-        if (!check::converts_to_double(max_index, ext)) {
-            throw nix::OutOfBounds(double_fail);
-        }
+        ext = check::converts_to_double(max_index, double_fail_msg);
     }
 }
 
@@ -239,9 +231,10 @@ void getMaxExtent(const Dimension &dim, ndsize_t max_index, double &pos, double 
 vector<pair<double, double>> maximumExtents(const DataArray &array) {
     vector<Dimension> dimensions = array.dimensions();
     vector<pair<double, double>> max_extents;
+    NDSize shape = array.dataExtent();
+    double pos, ext;
     for (size_t i = 0; i < dimensions.size(); ++i) {
-        double pos, ext;
-        getMaxExtent(dimensions[i], array.dataExtent()[i]-1, pos, ext);
+        getMaxExtent(dimensions[i], shape[i]-1, pos, ext);
         max_extents.emplace_back(pos, ext);
     }
     return max_extents;
@@ -459,7 +452,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                                   std::vector<std::string> &units) {
     std::vector<nix::Dimension> dims = array.dimensions();
     NDSize shape = array.dataExtent();
-    std::string double_fail("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
+    std::string double_fail_msg("dataAccess::fillPositionsExtents: shape cannot be cast to double without loss of resolution. Please open an issue on github!");
     for (size_t i = 0; i < dims.size(); ++i) {
         Dimension dim = dims[i];
         DimensionType dt = dim.dimensionType();
@@ -488,10 +481,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                 starts.push_back(0.0);
             }
             if (i >= ends.size()) {
-                double end;
-                if (!check::converts_to_double(shape[i] - 1, end)) {
-                    throw nix::OutOfBounds(double_fail);
-                }
+                double end = check::converts_to_double(shape[i] - 1, double_fail_msg);
                 ends.push_back(end);
             }
         } else if (dt == DimensionType::DataFrame) {
@@ -500,10 +490,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
                 starts.push_back(0.0);
             }
             if (i >= ends.size()) {
-                double end;
-                if (!check::converts_to_double(shape[i] - 1, end)) {
-                    throw nix::OutOfBounds(double_fail);
-                }
+                double end = check::converts_to_double(shape[i] - 1, double_fail_msg);
                 ends.push_back(end);
             }
         }
