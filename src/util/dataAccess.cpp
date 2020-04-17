@@ -130,7 +130,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
     ndsize_t count = min(start_positions.size(), end_positions.size());
     vector<double> scaled_start(static_cast<size_t>(count));
     vector<double> scaled_end(static_cast<size_t>(count));
-    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    string dim_unit = getDimensionUnit(dimension);
     scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
     return dimension.indexOf(scaled_start, scaled_end);
 }
@@ -163,7 +163,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
     double max_start = *std::max_element(start_positions.begin(), start_positions.end());
     double max_end = *std::max_element(end_positions.begin(), end_positions.end());
 
-    if (static_cast<ndsize_t>(round(min_start)) < 0 || static_cast<ndsize_t>(round(min_end)) < 0) {
+    if (round(min_start) < 0 || round(min_end) < 0) {
         throw nix::OutOfBounds("dataAccess::positionToIndex: min start or end index < 0");
     }
     if (static_cast<ndsize_t>(round(max_start)) >= df_size || static_cast<ndsize_t>(round(max_end)) >= df_size) {
@@ -188,7 +188,7 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
     size_t count = min(start_positions.size(), end_positions.size());
     vector<double> scaled_start(count);
     vector<double> scaled_end(count);
-    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    string dim_unit = getDimensionUnit(dimension);
     scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
     return dimension.indexOf(scaled_start, scaled_end);
 }
