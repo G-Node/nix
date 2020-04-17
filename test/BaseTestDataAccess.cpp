@@ -759,6 +759,42 @@ void BaseTestDataAccess::testFlexibleTagging() {
     exp_shape = {11, 3, 5};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
+
+    // Test DataFrameDim
+    std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double},
+                                     {"note", "", nix::DataType::String}};
+    nix::DataFrame df = b.createDataFrame("conditions", "test", cols);
+    std::vector<nix::Variant> vals(2);
+    df.rows(10);
+    for (int i = 0; i < 10; ++i) {
+        vals[0].set(i * 2.5);
+        vals[1].set("test");
+        df.writeRow(i, vals);
+    }
+    array3d.deleteDimensions();
+    dim = array3d.appendSampledDimension(1.);
+    dim.label("time");
+    dim.unit("s");
+    array3d.appendDataFrameDimension(df);
+    array3d.appendSetDimension();
+
+    nix::Tag dfTag = b.createTag("dftest", "dftest", {25, 0});
+    dfTag.extent({50, 5});
+    dfTag.addReference(array3d);
+    std::cerr << "ping" << std::endl;
+
+    view = dfTag.taggedData("3d random data");
+    exp_shape = {51, 6, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
+    std::cerr << "ping" << std::endl;
+    dfTag.position({25});
+    dfTag.extent({50});
+
+    view = dfTag.taggedData("3d random data");
+    exp_shape = {51, 10, 5};
+    CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
+
     file.deleteBlock(b);
 }
 
