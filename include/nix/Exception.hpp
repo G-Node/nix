@@ -151,10 +151,13 @@ fits_in_size_t(T size, const std::string &msg_if_fail) {
 }
 
 template<typename T>
-inline typename std::enable_if<std::is_integral<T>::value, bool>::type
-converts_to_double(T num, double &dbl) {
-    dbl = static_cast<double>(num);
-    return static_cast<T>(dbl) == num;
+inline typename std::enable_if<std::is_integral<T>::value, double>::type
+converts_to_double(T num, const std::string &msg_if_fail) {
+    double dbl = static_cast<double>(num);
+    if (static_cast<T>(dbl) != num) {
+        throw OutOfBounds(msg_if_fail);
+    }
+    return dbl;
 }
 
 } // nix::check::
