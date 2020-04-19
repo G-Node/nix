@@ -36,6 +36,7 @@ public:
     void testDataType();
     void testDataSpace();
     void testPropertyList();
+    void testUTF8();
 
 private:
     hid_t h5file;
@@ -46,6 +47,7 @@ private:
     CPPUNIT_TEST(testDataType);
     CPPUNIT_TEST(testDataSpace);
     CPPUNIT_TEST(testPropertyList);
+    CPPUNIT_TEST(testUTF8);
     CPPUNIT_TEST_SUITE_END ();
 
 };
