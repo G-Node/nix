@@ -55,7 +55,7 @@ void Attribute::write(h5x::DataType mem_type, const NDSize &size, const std::str
 DataSpace Attribute::getSpace() const {
 
     DataSpace space = H5Aget_space(hid);
-    space.check("Attribute::getSpace(): Dould not get data space");
+    space.check("Attribute::getSpace(): Could not get data space");
     return space;
 }
 
