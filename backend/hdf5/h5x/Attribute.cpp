@@ -51,6 +51,11 @@ void Attribute::write(h5x::DataType mem_type, const NDSize &size, const std::str
     write(mem_type, size, *reader);
 }
 
+h5x::DataType Attribute::dataType() const {
+    h5x::DataType dtype = H5Aget_type(hid);
+    dtype.check("Attribute::dataType(): Could not get type");
+    return dtype;
+}
 
 DataSpace Attribute::getSpace() const {
 
