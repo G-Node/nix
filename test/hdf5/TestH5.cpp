@@ -344,3 +344,39 @@ void TestH5::testPropertyList() {
     nix::hdf5::PList pl_utf8 = nix::hdf5::PList::linkUTF8();
     CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, pl_utf8.charEncoding());
 }
+
+void TestH5::testUTF8() {
+    nix::hdf5::H5Group g = h5group.openGroup("utf8");
+
+    // Check the name of the group is in UTF-8
+    H5L_info_t li;
+    h5group.linkInfo("utf8", li);
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, li.cset);
+
+    // Check the attribute name and contents are in UTF-8
+    g.setAttr("str", std::string{"hopefully utf8"});
+    nix::hdf5::Attribute attr = g.openAttr("str");
+
+    nix::hdf5::PList apl = attr.createPList();
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, apl.charEncoding());
+
+    nix::hdf5::h5x::DataType attr_dtype = attr.dataType();
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, attr_dtype.cset());
+
+    std::vector<std::string> strs = {"a", "b", "c"};
+    g.setData("dataStr", strs);
+
+    // Check the DataSet name and contents are in UTF-8
+    nix::hdf5::DataSet ds = g.openData("dataStr");
+
+    nix::hdf5::h5x::DataType ds_dtype = ds.dataType();
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, ds_dtype.cset());
+
+    g.linkInfo("dataStr", li);
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, li.cset);
+
+    // Check link names are UTF-8
+    h5group.createLink(g, "zelda");
+    h5group.linkInfo("zelda", li);
+    CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, li.cset);
+}
