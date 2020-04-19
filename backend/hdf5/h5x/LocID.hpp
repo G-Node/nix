@@ -49,11 +49,10 @@ public:
         return *this;
     }
 
-private:
-
+    /* Low level functions */
     Attribute openAttr(const std::string &name) const;
-    Attribute createAttr(const std::string &name, h5x::DataType fileType, const DataSpace &fileSpace) const;
 
+    Attribute createAttr(const std::string &name, h5x::DataType fileType, const DataSpace &fileSpace) const;
 };
 
 
