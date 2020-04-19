@@ -51,6 +51,12 @@ void Attribute::write(h5x::DataType mem_type, const NDSize &size, const std::str
     write(mem_type, size, *reader);
 }
 
+PList Attribute::createPList() const {
+    PList pl = H5Aget_create_plist(hid);
+    pl.check("Attribute::createPList(): Could not get creation property list");
+    return pl;
+}
+
 h5x::DataType Attribute::dataType() const {
     h5x::DataType dtype = H5Aget_type(hid);
     dtype.check("Attribute::dataType(): Could not get type");
