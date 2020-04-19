@@ -29,6 +29,8 @@ public:
 
     LocID(const LocID &other);
 
+    void linkInfo(const std::string &name, H5L_info_t &info) const;
+
     bool hasAttr(const std::string &name) const;
     void removeAttr(const std::string &name) const;
 
