@@ -24,6 +24,11 @@ LocID::LocID(hid_t hid) : H5Object(hid) {}
 LocID::LocID(const LocID &other) : H5Object(other) {}
 
 
+void LocID::linkInfo(const std::string &name, H5L_info_t &info) const {
+    HErr res = H5Lget_info(hid, name.c_str(), &info, H5P_DEFAULT);
+    res.check("LocID::linkInfo(): H5Lget_info() failed");
+}
+
 bool LocID::hasAttr(const std::string &name) const {
     HTri res = H5Aexists(hid, name.c_str());
     return res.check("LocID.hasAttr() failed");
