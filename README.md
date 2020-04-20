@@ -32,7 +32,7 @@ Project documentation is split up into three parts:
 Further project related information:
 
 - We have assembled a set of
- [tutorials](http://g-node.github.io/nixpy/tutorial.html "Python Tutorial") and
+ [tutorials](https://nixpy.readthedocs.io/en/latest/tutorial.html "Python Tutorial") and
  [demos](https://github.com/g-node/nix-demo "Jupiter notebooks demonstrating nix for various use-cases") using the python library.
 
 
