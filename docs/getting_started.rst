@@ -6,7 +6,7 @@ data model and shows how to use it with the `nix c++
 library <https://github.com/g-node/nix>`__.
 
 For python we assembled `tutorials
-<http://g-node.github.io/nixpy/tutorial.html>`__ and `demos
+<https://nixpy.readthedocs.io/en/latest/tutorial.html>`__ and `demos
 <https://github.com/g-node/nix-demo>`__ using (`nixpy
 <https://github.com/g-node/nixpy>`__).
 
