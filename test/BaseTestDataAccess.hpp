@@ -17,18 +17,21 @@ class BaseTestDataAccess : public CPPUNIT_NS::TestFixture {
 protected:
     nix::File file;
     nix::DataArray data_array, alias_array;
+    nix::DataFrame df;
     nix::Tag position_tag, segment_tag, times_tag;
     nix::MultiTag multi_tag, mtag2, pointmtag;
     nix::Block block;
     nix::SampledDimension sampledDim;
     nix::RangeDimension rangeDim, aliasDim;
     nix::SetDimension setDim;
+    nix::DataFrameDimension dfDim;
 
 public:
     void testPositionToIndexSetDimension();
     void testPositionToIndexSampledDimension();
     void testPositionToIndexRangeDimension();
     void testGetDimensionUnit();
+    void testPositionToIndexDataFrameDimension();
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();

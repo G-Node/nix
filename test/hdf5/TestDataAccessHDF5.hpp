@@ -19,6 +19,7 @@ class TestDataAccessHDF5 : public BaseTestDataAccess {
     CPPUNIT_TEST(testPositionToIndexSampledDimension);
     CPPUNIT_TEST(testPositionToIndexSetDimension);
     CPPUNIT_TEST(testPositionToIndexRangeDimension);
+    CPPUNIT_TEST(testPositionToIndexDataFrameDimension);
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
@@ -39,24 +40,37 @@ public:
         data_array = block.createDataArray("dimensionTest",
                                            "test",
                                            nix::DataType::Double,
-                                           nix::NDSize({0, 0, 0}));
+                                           nix::NDSize({0, 0, 0, 0}));
         double samplingInterval = 1.0;
         std::vector<double> ticks {1.2, 2.3, 3.4, 4.5, 6.7};
         std::string unit = "ms";
 
-        typedef boost::multi_array<double, 3> array_type;
+        typedef boost::multi_array<double, 4> array_type;
         typedef array_type::index index;
-        array_type data(boost::extents[2][10][5]);
+        array_type data(boost::extents[2][10][5][10]);
         int value;
         for(index i = 0; i != 2; ++i) {
             value = 0;
             for(index j = 0; j != 10; ++j) {
                 for(index k = 0; k != 5; ++k) {
-                    data[i][j][k] = value++;
+                    for(index l = 0; l != 10; ++l) {
+                        data[i][j][k][l] = value++;
+                    }
                 }
             }
         }
         data_array.setData(data);
+
+        std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double},
+                                         {"note", "", nix::DataType::String}};
+        nix::DataFrame df = block.createDataFrame("conditions", "test", cols);
+        std::vector<nix::Variant> vals(2);
+        df.rows(10);
+        for (int i = 0; i < 10; ++i) {
+            vals[0].set(i * 2.5);
+            vals[1].set("test");
+            df.writeRow(i, vals);
+        }
 
         setDim = data_array.appendSetDimension();
         std::vector<std::string> labels = {"label_a", "label_b"};
@@ -68,10 +82,12 @@ public:
         rangeDim = data_array.appendRangeDimension(ticks);
         rangeDim.unit(unit);
 
+        dfDim = data_array.appendDataFrameDimension(df, 0);
+
         std::vector<nix::DataArray> refs;
         refs.push_back(data_array);
-        std::vector<double> position {0.0, 2.0, 3.4};
-        std::vector<double> extent {0.0, 6.0, 2.3};
+        std::vector<double> position {0.0, 2.0, 3.4, 1.0};
+        std::vector<double> extent {0.0, 6.0, 2.3, 1.0};
         std::vector<std::string> units {"none", "ms", "ms"};
 
         position_tag = block.createTag("position tag", "event", position);
@@ -85,23 +101,27 @@ public:
 
         //setup multiTag
         typedef boost::multi_array<double, 2> position_type;
-        position_type event_positions(boost::extents[2][3]);
-        position_type event_extents(boost::extents[2][3]);
+        position_type event_positions(boost::extents[2][4]);
+        position_type event_extents(boost::extents[2][4]);
         event_positions[0][0] = 0.0;
         event_positions[0][1] = 3.0;
         event_positions[0][2] = 3.4;
+        event_positions[0][3] = 1.0;
 
         event_extents[0][0] = 0.0;
         event_extents[0][1] = 6.0;
         event_extents[0][2] = 2.3;
+        event_extents[0][3] = 2.0;
 
         event_positions[1][0] = 0.0;
         event_positions[1][1] = 8.0;
         event_positions[1][2] = 2.3;
+        event_positions[1][3] = 1.0;
 
         event_extents[1][0] = 0.0;
         event_extents[1][1] = 3.0;
         event_extents[1][2] = 2.0;
+        event_extents[1][3] = 6.0;
 
         std::vector<std::string> event_labels = {"event 1", "event 2"};
         std::vector<std::string> dim_labels = {"dim 0", "dim 1", "dim 2"};

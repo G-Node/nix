@@ -469,8 +469,8 @@ void BaseTestDataArray::testAliasRangeDimension() {
     CPPUNIT_ASSERT_THROW(bool_array.appendAliasRangeDimension(), nix::InvalidDimension);
     nix::RangeDimension rd;
     rd = dim;
-    CPPUNIT_ASSERT(rd.alias());
 
+    CPPUNIT_ASSERT(rd.alias());
     CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
     rd.label("new_label");
     CPPUNIT_ASSERT((rd.label() && array3.label()) && (*rd.label() == *array3.label()));
@@ -534,8 +534,10 @@ void BaseTestDataArray::testDataFrameDimension() {
 
     // append with no index
     DataFrameDimension dim = array2.appendDataFrameDimension(df);
+
     DataFrame rdf = dim.data();
     CPPUNIT_ASSERT_EQUAL(df.id(), rdf.id());
+    CPPUNIT_ASSERT_EQUAL(df.rows(), dim.size());
     CPPUNIT_ASSERT_EQUAL(dim.label(), df.name());
 
     boost::optional<unsigned> col(0);
