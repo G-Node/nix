@@ -88,6 +88,14 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
     CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
     CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", setDim) == 0);
+
+    int pos = -1;
+    CPPUNIT_ASSERT_NO_THROW(check::converts_to_double(pos, "Does not convert seamlessly to double!"));
+    ndsize_t large_pos = pow(10, 16);
+    CPPUNIT_ASSERT_NO_THROW(check::converts_to_double(large_pos, "Does not convert seamlessly to double!"));
+    large_pos = pow(10, 16);
+    large_pos += 1;
+    CPPUNIT_ASSERT_THROW(check::converts_to_double(large_pos, "Does not convert seamlessly to double!"), nix::OutOfBounds);
 }
 
 
@@ -781,13 +789,11 @@ void BaseTestDataAccess::testFlexibleTagging() {
     nix::Tag dfTag = b.createTag("dftest", "dftest", {25, 0});
     dfTag.extent({50, 5});
     dfTag.addReference(array3d);
-    std::cerr << "ping" << std::endl;
 
     view = dfTag.taggedData("3d random data");
     exp_shape = {51, 6, 5};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
-    std::cerr << "ping" << std::endl;
     dfTag.position({25});
     dfTag.extent({50});
 
