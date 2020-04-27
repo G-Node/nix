@@ -475,17 +475,7 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
             if (i >= ends.size()) {
                 ends.push_back(rd.axis(1, shape[i]-1)[0]);
             }
-        } else if (dt == DimensionType::Set) {
-            SetDimension sd = dim.asSetDimension();
-            if (i >= starts.size()) {
-                starts.push_back(0.0);
-            }
-            if (i >= ends.size()) {
-                double end = check::converts_to_double(shape[i] - 1, double_fail_msg);
-                ends.push_back(end);
-            }
-        } else if (dt == DimensionType::DataFrame) {
-            DataFrameDimension dfdim = dim.asDataFrameDimension();
+        } else if (dt == DimensionType::Set || dt == DimensionType::DataFrame) {
             if (i >= starts.size()) {
                 starts.push_back(0.0);
             }
