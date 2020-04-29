@@ -28,9 +28,7 @@ void BaseTestDataFrame::testBasic() {
         {"uint64", "A", nix::DataType::UInt64},
         {"string", "", nix::DataType::String},
         {"double", "mV", nix::DataType::Double}};
-
     nix::DataFrame f1 = block.createDataFrame("isd", "isd", cols);
-
     std::vector<std::string> names(cols.size());
 
     std::transform(cols.cbegin(), cols.cend(), names.begin(),
@@ -66,14 +64,21 @@ void BaseTestDataFrame::testBasic() {
         std::vector<nix::Column> wrong_col = {
             {"peng", "", dt}
         };
-
         CPPUNIT_ASSERT_THROW(block.createDataFrame("peng",
                                                    "peng",
                                                    wrong_col),
                              std::invalid_argument);
     }
 
+    std::vector<nix::Column> cols_duplicates = {{"bool", "", nix::DataType::Bool},
+                                                {"int", "V", nix::DataType::Int32},
+                                                {"int", "A", nix::DataType::Int64},
+                                                {"double", "mV", nix::DataType::Double}};
+
+    CPPUNIT_ASSERT_THROW(block.createDataFrame("peng2", "peng2", cols_duplicates),
+                         nix::ConsistencyError);
 }
+
 
 nix::DataFrame createStandardFrame(nix::Block b) {
         std::vector<nix::Column> cols = {

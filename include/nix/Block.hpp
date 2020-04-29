@@ -23,6 +23,7 @@
 
 #include <string>
 #include <memory>
+#include <set>
 
 namespace nix {
 
@@ -446,10 +447,15 @@ public:
                               const std::string &type,
                               const std::vector<Column> &cols,
                               const Compression &compression=Compression::Auto) {
+        std::set<std::string> names;
         for (const Column &c : cols) {
             if (!Variant::supports_type(c.dtype)) {
                 std::string msg = "Incompatible DataType for column ";
                 throw std::invalid_argument(msg + c.name);
+            }
+            std::pair<std::set<std::string>::iterator, bool> inserted = names.insert(c.name);
+            if (!inserted.second) {
+                throw ConsistencyError("Block::createDataFrame: Column names must be unique!");
             }
         }
         return backend()->createDataFrame(name, type, cols, compression);
