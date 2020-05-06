@@ -931,6 +931,19 @@ public:
      * @brief Returns the index of the given position
      *
      * Method will return the index of the tick that matches or is close to
+     * position. The way of matching can be controlled using the PositionMatch
+     * enum.
+     * 
+     * @param position The position.  
+     * @param matching PositionMatch enum entry that defines the matching
+     *                 behavior. 
+     *
+     * @return boost optional containing the index if valid
+     *
+     */
+    boost::optional<ndsize_t> indexOf(const double position, PositionMatch matching) const;
+
+
     /**
      * @brief Returns the index of the given position
      *
