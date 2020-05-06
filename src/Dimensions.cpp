@@ -422,6 +422,52 @@ ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_
 }
 
 
+boost::optional<ndsize_t> getIndex(const double position, std::vector<double> &ticks, PositionMatch matching) {
+    boost::optional<ndsize_t> idx;
+    // check easy cases first ...
+    if (ticks.size() == 0)
+        return idx;
+    if (position < *ticks.begin()) {
+        if (matching == PositionMatch::Greater || matching == PositionMatch::GreaterOrEqual)
+            idx = 0;
+        return idx;
+    } else if (position > *prev(ticks.end())) {
+        if (matching == PositionMatch::Less || matching == PositionMatch::LessOrEqual) 
+            idx =  prev(ticks.end()) - ticks.begin();
+        return idx;
+    }
+    // need to do some searching --> first element larger or equal to position
+    std::vector<double>::iterator lower = std::lower_bound(ticks.begin(), ticks.end(), position);
+    if (matching == PositionMatch::Greater || matching == PositionMatch::GreaterOrEqual) {
+        idx = lower - ticks.begin();
+        if (matching == PositionMatch::Greater && *lower == position) {
+            if ((lower + 1) < ticks.end()) {
+                idx = lower + 1 - ticks.begin();
+            } else {
+                idx = boost::none;
+            }
+        }
+    } else if (matching == PositionMatch::LessOrEqual && *lower > position) {
+        if (lower - 1 >= ticks.begin()) {
+            idx = lower - 1 - ticks.begin();
+        } else {
+            idx = boost::none;
+        }
+    } else if (matching == PositionMatch::Less && *lower >= position) {
+        if ((lower - 1) >= ticks.begin()) {
+            idx = lower - 1 - ticks.begin();
+        } else {
+            idx = boost::none;
+        }
+    } else { // exact match
+        if (lower != ticks.end() && *lower == position) {
+            idx = lower - ticks.begin();
+        }
+    }
+    return idx;
+}
+
+
 ndsize_t RangeDimension::indexOf(const double position, bool less_or_equal) const {
     vector<double> ticks = this->ticks();
     PositionMatch matching = less_or_equal ? PositionMatch::LessOrEqual : PositionMatch::GreaterOrEqual;
