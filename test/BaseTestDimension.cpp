@@ -475,6 +475,23 @@ void BaseTestDimension::testRangeDimAxis() {
 }
 
 
+void BaseTestDimension::testRangeDimPositionInRange() {
+    std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
+    Dimension d = data_array.appendRangeDimension(ticks);
+
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
+    RangeDimension rd = d.asRangeDimension();
+
+    CPPUNIT_ASSERT(rd.positionInRange(-99.0) == nix::PositionInRange::InRange);
+    CPPUNIT_ASSERT(rd.positionInRange(99.0) == nix::PositionInRange::InRange);
+    CPPUNIT_ASSERT(rd.positionInRange(100.1) == nix::PositionInRange::Greater);
+    CPPUNIT_ASSERT(rd.positionInRange(-100.1) == nix::PositionInRange::Less);
+
+    rd.ticks({});
+    CPPUNIT_ASSERT(rd.positionInRange(0.1) == nix::PositionInRange::NoRange);
+}
+
+
 void BaseTestDimension::testAsDimensionMethods() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension x;

@@ -32,13 +32,15 @@ enum class PositionMatch {
 /**
  * @brief Enumeration providing constants for position matching.
  *
- * These constants are used as Return values when checking if a position is in
+ * These constants are used as return values when checking if a position is in
  * the data range.
  */
 enum class PositionInRange{
                           InRange,
                           Greater,
-                          Less
+                          Less,
+                          
+                          NoRange = -1
 };
 
 /**
@@ -665,6 +667,7 @@ public:
      */
     void ticks(const std::vector<double> &ticks);
 
+
     /**
      * @brief Returns the entry of the range dimension at a given index.
      *
@@ -675,6 +678,18 @@ public:
      * Method will throw an nix::OutOfBounds Exception if the index is invalid
      */
     double tickAt(const ndsize_t index) const;
+
+
+    /**
+     * @brief Checks whether a given position is in the Range of ticks in this
+     * dimension.
+     *
+     * @param position     The position.
+     *
+     * @return PositionInRange which can be either Less, Greater, or InRange
+     */
+    PositionInRange positionInRange(const double position) const;
+
 
     /**
      * @brief Returns the index of the given position

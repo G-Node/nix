@@ -387,6 +387,23 @@ double RangeDimension::tickAt(const ndsize_t index) const {
     return ticks[idx];
 }
 
+
+PositionInRange RangeDimension::positionInRange(const double position) const {
+    PositionInRange result;
+    vector<double> ticks = this->ticks();
+    if (ticks.size() == 0) {
+        result = PositionInRange::NoRange;
+    } else if (position < *ticks.begin()) {
+        result = PositionInRange::Less;
+    } else if (position > *prev(ticks.end())) {
+        result = PositionInRange::Greater;
+    } else {
+        result = PositionInRange::InRange;
+    }
+    return result;
+}
+
+
 ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
     if (position < *ticks.begin()) {
         return 0;
