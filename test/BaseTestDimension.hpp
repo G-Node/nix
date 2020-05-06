@@ -45,7 +45,8 @@ public:
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
-
+    void testRangeDimPositionInRange();
+    
     void testAsDimensionMethods();
 };
 
