@@ -695,9 +695,17 @@ public:
      * @brief Returns the index of the given position
      *
      * Method will return the index of the tick that matches or is close to
+    /**
+     * @brief Returns the index of the given position
+     *
+     * Method will return the index of the tick that matches or is close to
      * position. If "less_or_equal" is true, the index of the first tick that is
      * less or equal is given. If "less_or_equal" is false the index of the
      * first index that is greater than than position is returned.
+     * 
+     * Version 1.4.5: The behavior of this function has been slightly changed,
+     * it now throws an OutOfBounds exception if the position is not in the
+     * range. Use positionInRange(position) to check before calling this function.
      *
      * @param position       The position.
      * @param less_or_equal  If true, the first index that is less or
@@ -705,8 +713,10 @@ public:
      *                       that is not less than position will be returned.
      *
      * @return The index.
+     *
+     * @deprecated This function has been deprecated! Use indexOf(position, PositionMatch) instead.
      */
-    ndsize_t indexOf(const double position, bool less_or_equal = true) const;
+    DEPRECATED ndsize_t indexOf(const double position, bool less_or_equal = true) const;
 
 
     /**

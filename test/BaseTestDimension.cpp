@@ -419,9 +419,12 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(rd.indexOf(-10.0) == 1);
     CPPUNIT_ASSERT(rd.indexOf(-5.0) == 1);
     CPPUNIT_ASSERT(rd.indexOf(5.0) == 2);
-    CPPUNIT_ASSERT(rd.indexOf(257.28) == 4);
-    CPPUNIT_ASSERT(rd.indexOf(-257.28) == 0);
-
+    
+    CPPUNIT_ASSERT_NO_THROW(rd.indexOf(257.28));
+    CPPUNIT_ASSERT_THROW(rd.indexOf(257.28, false), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(rd.indexOf(-257.28), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(rd.indexOf(-257.28, false));
+    
     CPPUNIT_ASSERT_THROW(rd.indexOf({-100.0, -90, 0.0}, {10.}), std::runtime_error);
     CPPUNIT_ASSERT_NO_THROW(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}));
     CPPUNIT_ASSERT(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}).size() == 3);
