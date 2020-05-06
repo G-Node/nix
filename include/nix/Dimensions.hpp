@@ -19,6 +19,31 @@ class DataArray;
 class Dimension;
 
 /**
+ * @brief Enumeration providing constants for position matching.
+ *
+ * These constants are used to control the behaviour of the index finding.
+ */
+enum class PositionMatch {
+                          Equal,
+                          Less,
+                          Greater,
+                          GreaterOrEqual,
+                          LessOrEqual
+};
+
+/**
+ * @brief Enumeration providing constants for position matching.
+ *
+ * These constants are used as Return values when checking if a position is in
+ * the data range.
+ */
+enum class PositionInRange{
+                          InRange,
+                          Greater,
+                          Less
+};
+
+/**
  * @brief Dimension descriptor for regularly sampled dimensions.
  *
  * Instances of the SampledDimension Class are used to describe a dimension of data in
