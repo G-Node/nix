@@ -890,9 +890,12 @@ public:
     /**
      * @brief Returns the index of the given position
      *
-     * Method will return the index equal or larger than position
+     * Method will return the index of the tick that matches or is close to
+     * position. If "less_or_equal" is true, the index of the first tick that is
+     * less or equal is given. If "less_or_equal" is false the index of the
+     * first index that is greater than than position is returned.
      *
-     * @param position    The position.
+     * @param position       The position.
      * @param less_or_equal  If true, the first index that is less or
      *                       equal will be returned. Else, the first index
      *                       that is not less than position will be returned.
