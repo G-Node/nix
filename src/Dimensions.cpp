@@ -468,6 +468,13 @@ boost::optional<ndsize_t> getIndex(const double position, std::vector<double> &t
 }
 
 
+boost::optional<ndsize_t> RangeDimension::indexOf(const double position, PositionMatch matching) const {
+    vector<double> ticks = this->ticks();
+    boost::optional<ndsize_t> index = getIndex(position, ticks, matching);
+    return index;
+}
+
+
 ndsize_t RangeDimension::indexOf(const double position, bool less_or_equal) const {
     vector<double> ticks = this->ticks();
     PositionMatch matching = less_or_equal ? PositionMatch::LessOrEqual : PositionMatch::GreaterOrEqual;

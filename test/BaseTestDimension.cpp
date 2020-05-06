@@ -405,7 +405,7 @@ void BaseTestDimension::testRangeTicks() {
 }
 
 
-void BaseTestDimension::testRangeDimIndexOf() {
+void BaseTestDimension::testRangeDimIndexOfOld() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
     Dimension d = data_array.appendRangeDimension(ticks);
 
@@ -428,6 +428,55 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT_THROW(rd.indexOf({-100.0, -90, 0.0}, {10.}), std::runtime_error);
     CPPUNIT_ASSERT_NO_THROW(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}));
     CPPUNIT_ASSERT(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}).size() == 3);
+    data_array.deleteDimensions();
+}
+
+
+void BaseTestDimension::testRangeDimIndexOf() {
+    std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};
+    Dimension d = data_array.appendRangeDimension(ticks);
+
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
+
+    RangeDimension rd;
+    rd = d;
+
+    CPPUNIT_ASSERT(*rd.indexOf(-110., PositionMatch::GreaterOrEqual) == 0);
+    CPPUNIT_ASSERT(*rd.indexOf(-110., PositionMatch::GreaterOrEqual) == 0);
+    CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::LessOrEqual));
+    CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::Less));
+    CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::Equal));
+    
+    CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::GreaterOrEqual) == 0);
+    CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::Greater) == 1);
+    CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::LessOrEqual) == 0);
+    CPPUNIT_ASSERT(!rd.indexOf(-100., PositionMatch::Less));
+    CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::Equal) == 0);
+    
+    CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::GreaterOrEqual) == 1);
+    CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::Greater) == 1);
+    CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::LessOrEqual) == 0);
+    CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::Less) == 0);
+    CPPUNIT_ASSERT(!rd.indexOf(-50., PositionMatch::Equal));
+
+    CPPUNIT_ASSERT(*rd.indexOf(7., PositionMatch::GreaterOrEqual) == 3);
+    CPPUNIT_ASSERT(*rd.indexOf(7., PositionMatch::Greater) == 3);
+    CPPUNIT_ASSERT(*rd.indexOf(7., PositionMatch::LessOrEqual) == 2);
+    CPPUNIT_ASSERT(*rd.indexOf(7., PositionMatch::Less) == 2);
+    CPPUNIT_ASSERT(!rd.indexOf(7., PositionMatch::Equal));
+
+    CPPUNIT_ASSERT(*rd.indexOf(10., PositionMatch::GreaterOrEqual) == 3);
+    CPPUNIT_ASSERT(*rd.indexOf(10., PositionMatch::Greater) == 4);
+    CPPUNIT_ASSERT(*rd.indexOf(10., PositionMatch::LessOrEqual) == 3);
+    CPPUNIT_ASSERT(*rd.indexOf(10., PositionMatch::Less) == 2);
+    CPPUNIT_ASSERT(*rd.indexOf(10., PositionMatch::Equal) == 3);
+
+    CPPUNIT_ASSERT(!rd.indexOf(110., PositionMatch::GreaterOrEqual));
+    CPPUNIT_ASSERT(!rd.indexOf(110., PositionMatch::Greater));
+    CPPUNIT_ASSERT(*rd.indexOf(110., PositionMatch::LessOrEqual) == 4);
+    CPPUNIT_ASSERT(*rd.indexOf(110., PositionMatch::Less) == 4);
+    CPPUNIT_ASSERT(!rd.indexOf(110., PositionMatch::Equal));
+
     data_array.deleteDimensions();
 }
 

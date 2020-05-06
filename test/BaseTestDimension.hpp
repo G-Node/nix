@@ -42,6 +42,7 @@ public:
     void testRangeDimLabel();
     void testRangeTicks();
     void testRangeDimUnit();
+    void testRangeDimIndexOfOld();
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
