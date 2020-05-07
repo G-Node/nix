@@ -484,6 +484,43 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(*rd.indexOf(110., PositionMatch::Less) == 4);
     CPPUNIT_ASSERT(!rd.indexOf(110., PositionMatch::Equal));
 
+    boost::optional<std::pair<ndsize_t, ndsize_t>> range;
+    range = rd.indexOf(40., 100., {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 4 && (*range).second == 4);
+    range = rd.indexOf(40., 100., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = rd.indexOf(-100., -45., {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = rd.indexOf(-100., -45., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = rd.indexOf(10., 120., {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 4);
+    range = rd.indexOf(10., 120., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 4);
+    range = rd.indexOf(100., 120., {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 4 && (*range).second == 4);
+    range = rd.indexOf(100., 120., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 4 && (*range).second == 4);
+    range = rd.indexOf(110., 150., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = rd.indexOf(100., -100., {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 4);
+    range = rd.indexOf(100., -100., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+
+    range = rd.indexOf(100., -100., rd.ticks(), RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+
+    std::vector<std::pair<ndsize_t, ndsize_t>> ranges;
+    ranges = rd.indexOf({40., -100.}, {100., 100.}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(ranges.size() == 2);
+    CPPUNIT_ASSERT(ranges[0].first == 4 && ranges[0].second == 4);
+    CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
+
+    ranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(ranges.size() == 2);
+    CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 3);
+    CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
     data_array.deleteDimensions();
 }
 
