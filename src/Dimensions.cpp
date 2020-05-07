@@ -404,24 +404,7 @@ PositionInRange RangeDimension::positionInRange(const double position) const {
 }
 
 
-ndsize_t getIndex(const double position, std::vector<double> &ticks, bool lower_bound) {
-    if (position < *ticks.begin()) {
-        return 0;
-    } else if (position > *prev(ticks.end())) {
-        return prev(ticks.end()) - ticks.begin();
-    }
-    ndsize_t index;
-    if (lower_bound) {
-        std::vector<double>::iterator lower = std::lower_bound(ticks.begin(), ticks.end(), position);
-        index = lower - ticks.begin();
-    } else{
-        std::vector<double>::iterator upper = std::upper_bound(ticks.begin(), ticks.end(), position) - 1;
-        index = upper - ticks.begin();
-    }
     return index;
-}
-
-
 boost::optional<ndsize_t> getIndex(const double position, std::vector<double> &ticks, PositionMatch matching) {
     boost::optional<ndsize_t> idx;
     // check easy cases first ...
@@ -472,6 +455,30 @@ boost::optional<ndsize_t> RangeDimension::indexOf(const double position, Positio
     vector<double> ticks = this->ticks();
     boost::optional<ndsize_t> index = getIndex(position, ticks, matching);
     return index;
+}
+
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(double start, double end,
+                                                                       std::vector<double> ticks,
+                                                                       RangeMatch match) const {
+    if (ticks.size() == 0) {
+        ticks = this->ticks();
+    }
+    boost::optional<std::pair<ndsize_t, ndsize_t>> range;
+    if (start > end){
+        std::swap(start, end);
+    }
+    
+    boost::optional<ndsize_t> si = getIndex(start, ticks, PositionMatch::GreaterOrEqual);
+    if (!si) {
+        return range;  
+    }
+    PositionMatch endMatching = (match == RangeMatch::Inclusive) ? PositionMatch::LessOrEqual : PositionMatch::Less;
+    boost::optional<ndsize_t> ei = getIndex(end, ticks, endMatching);
+    if (ei && *si <= *ei) {
+        range = std::pair<ndsize_t, ndsize_t>(*si, *ei);
+    }
+    return range;
 }
 
 
