@@ -957,6 +957,26 @@ public:
 
 
     /**
+     * @brief Returns the start and end index of the given start and end
+     * positions.  By default, the range includes the end position. This can be
+     * controlled via the RangeMatch enum.
+     *
+     *
+     * @param start      The start position
+     * @param end        The end position
+     * @param ticks      std::vector<double> of ticks, if empty ({}) they are automatically retrieved
+     * @param range      RangeMatch enum, controls whether end is included or not, 
+     *                   defaults to RangeMatch::Inclusive
+     *
+     * @return           Start and end indices returned in a boost::optional<std::pair>
+     *                   which is invalid if out of range.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end,
+                                                           std::vector<double> ticks,
+                                                           RangeMatch match = RangeMatch::Inclusive) const;
+
+   
+    /**
      * @brief Returns the index of the given position
      *
      * Method will return the index of the tick that matches or is close to
