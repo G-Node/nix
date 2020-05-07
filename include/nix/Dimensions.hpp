@@ -985,12 +985,17 @@ public:
      *
      * Method will return the index equal or larger than the respective positions
      *
+     * Version 1.4.5: The behavior of this function has been slightly changed,
+     * it now throws an OutOfBounds exception if the position is not in the
+     * range. Use positionInRange(position) to check before calling this function.
+     *
      * @param start      The start position
      * @param end        The end position
      *
      * @return  Start and end index returned in a std::pair.
+     * @deprecated This function has been deprecated! Use indexOf(position, PositionMatch) instead.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+    DEPRECATED std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
 
 
      /**

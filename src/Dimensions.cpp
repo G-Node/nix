@@ -503,9 +503,12 @@ ndsize_t RangeDimension::indexOf(const double position, bool less_or_equal) cons
 
 pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const double end) const {
     vector<double> ticks = this->ticks();
-    ndsize_t si = getIndex(start, ticks, true);
-    ndsize_t ei = getIndex(end, ticks, false);
-    return std::pair<ndsize_t, ndsize_t>(si, ei);
+    boost::optional<ndsize_t> si = getIndex(start, ticks, PositionMatch::GreaterOrEqual);
+    boost::optional<ndsize_t> ei = getIndex(end, ticks, PositionMatch::LessOrEqual);
+    if (!ei || !si) {
+        throw nix::OutOfBounds("RangeDimension::indexOf: start or end of range are out of Bounds!");
+    }
+    return std::pair<ndsize_t, ndsize_t>(*si, *ei);
 }
 
 
