@@ -419,7 +419,6 @@ PositionInRange RangeDimension::positionInRange(const double position) const {
 }
 
 
-    return index;
 boost::optional<ndsize_t> getIndex(const double position, std::vector<double> &ticks, PositionMatch matching) {
     boost::optional<ndsize_t> idx;
     // check easy cases first ...
@@ -520,7 +519,8 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 
 
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
-                                                                   const std::vector<double> &end_positions) const {
+                                                                   const std::vector<double> &end_positions,
+                                                                   RangeMatch match) const {
     if (start_positions.size() != end_positions.size()) {
         throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
     }
@@ -529,8 +529,11 @@ std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::ve
     vector<double> ticks = this->ticks();
 
     for (size_t i = 0; i < start_positions.size(); ++i) {
-        indices.emplace_back(getIndex(start_positions[i], ticks, true),
-                             getIndex(end_positions[i], ticks, false));
+        boost::optional<std::pair<ndsize_t, ndsize_t>> range;
+        range = this->indexOf(start_positions[i], end_positions[i], ticks, match);
+        if (range) {
+            indices.push_back(*range);
+        }
     }
     return indices;
 }
