@@ -32,6 +32,18 @@ enum class PositionMatch {
 };
 
 /**
+ * @brief Enumeration providing constants for range matching.
+ *
+ * These constants are used to control the behaviour of the range finding.
+ * Inclusive means [start, end], i.e. start and end are included 
+ * Exclusive means [start, end), i.e. start is included, end is not
+ */
+enum class RangeMatch {
+                       Inclusive,
+                       Exclusive
+};
+
+/**
  * @brief Enumeration providing constants for position matching.
  *
  * These constants are used as return values when checking if a position is in
