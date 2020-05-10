@@ -429,7 +429,7 @@ boost::optional<ndsize_t> getIndex(const double position, std::vector<double> &t
             idx = 0;
         return idx;
     } else if (position > *prev(ticks.end())) {
-        if (matching == PositionMatch::Less || matching == PositionMatch::LessOrEqual) 
+        if (matching == PositionMatch::Less || matching == PositionMatch::LessOrEqual)
             idx =  prev(ticks.end()) - ticks.begin();
         return idx;
     }
@@ -482,10 +482,10 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(double st
     if (start > end){
         std::swap(start, end);
     }
-    
+
     boost::optional<ndsize_t> si = getIndex(start, ticks, PositionMatch::GreaterOrEqual);
     if (!si) {
-        return range;  
+        return range;
     }
     PositionMatch endMatching = (match == RangeMatch::Inclusive) ? PositionMatch::LessOrEqual : PositionMatch::Less;
     boost::optional<ndsize_t> ei = getIndex(end, ticks, endMatching);
@@ -520,7 +520,7 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
                                                                    const std::vector<double> &end_positions,
-                                                                   RangeMatch match) const {
+                                                                   RangeMatch match, bool strict) const {
     if (start_positions.size() != end_positions.size()) {
         throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
     }
@@ -531,6 +531,9 @@ std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::ve
     for (size_t i = 0; i < start_positions.size(); ++i) {
         boost::optional<std::pair<ndsize_t, ndsize_t>> range;
         range = this->indexOf(start_positions[i], end_positions[i], std::move(ticks), match);
+        if (!range && strict) {
+            throw nix::OutOfBounds("RangeDimension::indexOf an invalid range occurred!");
+        }
         if (range) {
             indices.push_back(*range);
         }
