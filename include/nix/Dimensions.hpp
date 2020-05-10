@@ -35,7 +35,7 @@ enum class PositionMatch {
  * @brief Enumeration providing constants for range matching.
  *
  * These constants are used to control the behaviour of the range finding.
- * Inclusive means [start, end], i.e. start and end are included 
+ * Inclusive means [start, end], i.e. start and end are included
  * Exclusive means [start, end), i.e. start is included, end is not
  */
 enum class RangeMatch {
@@ -53,7 +53,7 @@ enum class PositionInRange{
                           InRange,
                           Greater,
                           Less,
-                          
+
                           NoRange = -1
 };
 
@@ -945,10 +945,10 @@ public:
      * Method will return the index of the tick that matches or is close to
      * position. The way of matching can be controlled using the PositionMatch
      * enum.
-     * 
-     * @param position The position.  
+     *
+     * @param position The position.
      * @param matching PositionMatch enum entry that defines the matching
-     *                 behavior. 
+     *                 behavior.
      *
      * @return boost optional containing the index if valid
      *
@@ -965,17 +965,17 @@ public:
      * @param start      The start position
      * @param end        The end position
      * @param ticks      std::vector<double> of ticks, if empty ({}) they are automatically retrieved
-     * @param range      RangeMatch enum, controls whether end is included or not, 
+     * @param range      RangeMatch enum, controls whether end is included or not,
      *                   defaults to RangeMatch::Inclusive
      *
      * @return           Start and end indices returned in a boost::optional<std::pair>
      *                   which is invalid if out of range.
      */
     boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end,
-                                                           std::vector<double> ticks,
+                                                           std::vector<double> &&ticks,
                                                            RangeMatch match = RangeMatch::Inclusive) const;
 
-   
+
     /**
      * @brief Returns the index of the given position
      *
@@ -983,7 +983,7 @@ public:
      * position. If "less_or_equal" is true, the index of the first tick that is
      * less or equal is given. If "less_or_equal" is false the index of the
      * first index that is greater than than position is returned.
-     * 
+     *
      * Version 1.4.5: The behavior of this function has been slightly changed,
      * it now throws an OutOfBounds exception if the position is not in the
      * range. Use positionInRange(position) to check before calling this function.
