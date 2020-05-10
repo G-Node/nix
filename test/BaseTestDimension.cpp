@@ -419,7 +419,7 @@ void BaseTestDimension::testRangeDimIndexOfOld() {
     CPPUNIT_ASSERT(rd.indexOf(-10.0) == 1);
     CPPUNIT_ASSERT(rd.indexOf(-5.0) == 1);
     CPPUNIT_ASSERT(rd.indexOf(5.0) == 2);
-    
+
     CPPUNIT_ASSERT_NO_THROW(rd.indexOf(257.28));
     CPPUNIT_ASSERT_THROW(rd.indexOf(257.28, false), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(rd.indexOf(-257.28), nix::OutOfBounds);
@@ -431,7 +431,7 @@ void BaseTestDimension::testRangeDimIndexOfOld() {
     CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
     range = rd.indexOf(-200., 200.);
     CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
-    
+
     CPPUNIT_ASSERT_THROW(rd.indexOf({-100.0, -90, 0.0}, {10.}), std::runtime_error);
     CPPUNIT_ASSERT_NO_THROW(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}));
     CPPUNIT_ASSERT(rd.indexOf({-100.0, 20.0, 40.0}, {-45, 120., 100.}).size() == 3);
@@ -453,13 +453,13 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::LessOrEqual));
     CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::Less));
     CPPUNIT_ASSERT(!rd.indexOf(-110., PositionMatch::Equal));
-    
+
     CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::GreaterOrEqual) == 0);
     CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::Greater) == 1);
     CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::LessOrEqual) == 0);
     CPPUNIT_ASSERT(!rd.indexOf(-100., PositionMatch::Less));
     CPPUNIT_ASSERT(*rd.indexOf(-100., PositionMatch::Equal) == 0);
-    
+
     CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::GreaterOrEqual) == 1);
     CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::Greater) == 1);
     CPPUNIT_ASSERT(*rd.indexOf(-50., PositionMatch::LessOrEqual) == 0);
@@ -517,7 +517,8 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(ranges[0].first == 4 && ranges[0].second == 4);
     CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
 
-    ranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT_THROW(rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive), nix::OutOfBounds);
+    ranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive, false);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 3);
     CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
