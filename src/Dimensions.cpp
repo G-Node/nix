@@ -506,25 +506,26 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
                                                                    const std::vector<double> &end_positions,
                                                                    RangeMatch match, bool strict) const {
+
+
+std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> RangeDimension::indexOf(const std::vector<double> &start_positions,
+                                                                                    const std::vector<double> &end_positions,
+                                                                                    RangeMatch match) const {
     if (start_positions.size() != end_positions.size()) {
         throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
     }
 
-    std::vector<std::pair<ndsize_t, ndsize_t>> indices;
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indices(start_positions.size());
     vector<double> ticks = this->ticks();
-
+    // add another overload that accepts a reference
     for (size_t i = 0; i < start_positions.size(); ++i) {
         boost::optional<std::pair<ndsize_t, ndsize_t>> range;
         range = this->indexOf(start_positions[i], end_positions[i], std::move(ticks), match);
-        if (!range && strict) {
-            throw nix::OutOfBounds("RangeDimension::indexOf an invalid range occurred!");
-        }
-        if (range) {
-            indices.push_back(*range);
-        }
+        indices.push_back(*range);
     }
     return indices;
 }
+
 
 
 vector<double> RangeDimension::axis(const ndsize_t count, const ndsize_t startIndex) const {
