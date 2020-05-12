@@ -1025,18 +1025,18 @@ public:
      *
      * @param start_positions    Vector of start positions
      * @param end_positions      Vector of end positions
-     * @param match              Enum entry that defines whether the range is inclusive
-     *                           or exclusive regarding the end position
      * @param strict             Bool that indicates whether the function will throw an
      *                           OutOfBounds exception when an invalid range occurred or
      *                           if such ranges are silently ignored. Default is true.
+     * @param match              Enum entry that defines whether the range is inclusive
+     *                           or exclusive regarding the end position
      *
      * @return  Vector of pairs of start and end indices.
+     * @deprecated This function has been deprecated and will be removed in future versions!
      */
-    std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions,
-                                                       RangeMatch match = RangeMatch::Inclusive,
-                                                       bool strict = true) const;
+    DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  bool strict, RangeMatch match = RangeMatch::Inclusive) const;
 
 
      /**
