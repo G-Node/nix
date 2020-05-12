@@ -505,7 +505,20 @@ pair<ndsize_t, ndsize_t> RangeDimension::indexOf(const double start, const doubl
 
 std::vector<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(const std::vector<double> &start_positions,
                                                                    const std::vector<double> &end_positions,
-                                                                   RangeMatch match, bool strict) const {
+                                                                   bool strict, RangeMatch match) const {
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> optionalIndices;
+    optionalIndices = indexOf(start_positions, end_positions, match);
+    std::vector<std::pair<ndsize_t, ndsize_t>> indices;
+
+    for(auto o: optionalIndices) {
+        if (o) {
+            indices.push_back(*o);
+        } else if(strict) {
+            throw nix::OutOfBounds("RangeDimension::indexOf: an invalid range was encountered.");
+        }
+    }
+    return indices;
+}
 
 
 std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> RangeDimension::indexOf(const std::vector<double> &start_positions,

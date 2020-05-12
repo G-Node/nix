@@ -512,16 +512,29 @@ void BaseTestDimension::testRangeDimIndexOf() {
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
 
     std::vector<std::pair<ndsize_t, ndsize_t>> ranges;
-    ranges = rd.indexOf({40., -100.}, {100., 100.}, RangeMatch::Inclusive);
+    ranges = rd.indexOf({40., -100.}, {100., 100.}, true, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(ranges[0].first == 4 && ranges[0].second == 4);
     CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
 
-    CPPUNIT_ASSERT_THROW(rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive), nix::OutOfBounds);
-    ranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive, false);
+    CPPUNIT_ASSERT_THROW(rd.indexOf({40., -100., -100.}, {100., 100., 101.}, true, RangeMatch::Exclusive), nix::OutOfBounds);
+    ranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, false, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 3);
     CPPUNIT_ASSERT(ranges[1].first == 0 && ranges[1].second == 4);
+
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> optranges;
+    optranges = rd.indexOf({40., -100.}, {100., 100.}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(optranges.size() == 2);
+    CPPUNIT_ASSERT(optranges[0] && (*optranges[0]).first == 4 && (*optranges[0]).second == 4);
+    CPPUNIT_ASSERT(optranges[1] && (*optranges[1]).first == 0 && (*optranges[1]).second == 4);
+
+    optranges = rd.indexOf({40., -100., -100.}, {100., 100., 101.}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(optranges.size() == 3);
+    CPPUNIT_ASSERT(!optranges[0]);
+    CPPUNIT_ASSERT(optranges[1] && (*optranges[1]).first == 0 && (*optranges[1]).second == 3);
+    CPPUNIT_ASSERT(optranges[2] && (*optranges[2]).first == 0 && (*optranges[2]).second == 4);
+    
     data_array.deleteDimensions();
 }
 
