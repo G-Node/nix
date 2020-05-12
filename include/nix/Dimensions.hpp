@@ -1039,6 +1039,22 @@ public:
                                                        bool strict = true) const;
 
 
+     /**
+     * @brief Returns a vector of start and end indices of given start and end positions.
+     *
+     * Method will return the index equal or larger than the respective positions
+     *
+     * @param start_positions    Vector of start positions
+     * @param end_positions      Vector of end positions
+     * @param match              Enum entry that defines whether the range is inclusive
+     *                           or exclusive regarding the end position
+     *
+     * @return  Vector of optional pairs of start and end indices.
+     */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        RangeMatch match = RangeMatch::Inclusive) const;
+
     /**
      * @brief Returns a vector containing a number of ticks
      *
