@@ -37,6 +37,11 @@ public:
             : msg(message) {
 
     }
+    
+    H5Exception(const std::string &message, herr_t error) 
+            : msg(message) {
+        msg += " Error code is: " + std::to_string(error); 
+    }
 
     const char *what() const NOEXCEPT {
         return msg.c_str();
@@ -50,7 +55,7 @@ private:
 class NIXAPI H5Error : public H5Exception {
 public:
     H5Error(herr_t err, const std::string &msg)
-    : H5Exception(msg), error(err) {
+    : H5Exception(msg, err) {
     }
 
     static void check(herr_t result, const std::string &msg_if_fail) {
@@ -58,9 +63,6 @@ public:
             throw H5Error(result, msg_if_fail);
         }
     }
-
-private:
-    herr_t      error;
 };
 
 namespace check {
