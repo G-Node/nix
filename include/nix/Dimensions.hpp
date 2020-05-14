@@ -265,7 +265,8 @@ public:
      * This method returns the index of the given position. Use this method for
      * example to find out which data point (index) relates to a given
      * time. Note: This method does not check if the position is within the
-     * extent of the data!
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the position is less than the offset of the dimension.
      *
      * @param position  The position, e.g. a time
      *
@@ -280,27 +281,59 @@ public:
      * This method returns the index of the given position. Use this method for
      * example to find out which data point (index) relates to a given
      * time. Note: This method does not check if the position is within the
-     * extent of the data!
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the start position is less than the offset of the dimension.
      *
-     * @param position  The position, e.g. a time
-     *
+     * @param start          The start position, e.g. a time
+     * @param end            The end position
+     * @param match          RangeMatch enum to control whether the range should be
+     *                       including the end position or exclusive, i.e. without 
+     *                       the end position, default is RangeMatch::Inclusive
+     * 
      * @returns The respective index.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end, RangeMatch match = RangeMatch::Inclusive) const;
 
-
+   
+    /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the start position is less than the offset of the dimension.
+     *
+     * @param start                The start position, e.g. a time
+     * @param end                  The end position
+     * @param sampling_interval    The sampling interval of the dimension.
+     * @param offset               The offset of the dimension.
+     * @param match                RangeMatch enum to control whether the range should be
+     *                             including the end position or exclusive, i.e. without 
+     *                             the end position, default is RangeMatch::Inclusive
+     * 
+     * @returns The pair of start and end indices.
+     */
+    std::pair<ndsize_t, ndsize_t> indexOf(double start, double end, const double sampling_interval, const double offset,
+                                          RangeMatch match = RangeMatch::Inclusive) const;
+    
+    
     /**
      * @brief Returns a vector of start and end indices of given start and end positions.
-     *
-     * Method will return the index equal or larger than the respective positions
+     * This method does not check whether the index is in the extent of the data. Nevertheless,
+     * an OutOfBounds exception is thrown if the start position is less than the offset of the dimension.
      *
      * @param start_positions    Vector of start positions
      * @param end_positions      Vector of end positions
+     * @param match              RangeMatch enum to control whether the range should be
+     *                           including the end position or exclusive, i.e. without 
+     *                           the end position, default is RangeMatch::Inclusive
      *
      * @return  Vector of pairs of start and end indices.
      */
     std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions) const;
+                                                       const std::vector<double> &end_positions,
+                                                       RangeMatch match = RangeMatch::Inclusive) const;
 
     /**
      * @brief Returns the position of this dimension at a given index.
@@ -502,10 +535,10 @@ public:
 /**
  * @brief Dimension descriptor for a dimension that is irregularly sampled.
  *
- * The RangeDimension covers cases when indexes of a dimension are mapped to other values
- * in a not regular fashion. A use-case for this would be for example irregularly sampled
- * time-series or certain kinds of histograms. To achieve the mapping of the indexes an
- * array of mapping values must be provided. Those values are stored in the dimensions {@link ticks}
+ * The RangeDimension covers cases in which indicess of a dimension are mapped to other values
+ * in a non-regular fashion. For example, when event times are recorded that would occur in irregularly 
+ * intervals. To achieve the mapping of the indexes an array of mapping values must be provided. 
+ * Those values are stored in the dimensions {@link ticks}
  * property. In analogy to the sampled dimension a {@link unit} and a {@link label} can be defined.
  */
 class NIXAPI RangeDimension : public base::ImplContainer<base::IRangeDimension> {
