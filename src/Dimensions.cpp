@@ -175,7 +175,7 @@ void SampledDimension::samplingInterval(double interval) {
 
 ndsize_t getSampledIndex(const double position, const double offset, const double sampling_interval) {
     if (position < offset) {
-        throw nix::OutOfBounds("Position is out of bounds of this dimension!", position);
+        throw nix::OutOfBounds("SampledDimension::indexOf: Position is less than offset!", position);
     }
     ndssize_t index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
     return index;
@@ -192,7 +192,6 @@ ndsize_t SampledDimension::indexOf(const double position) const {
 std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, const double end, RangeMatch match) const {
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-
     return indexOf(start, end, sampling_interval, offset, match);
 }
 
@@ -201,6 +200,9 @@ std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(double start, double end
                                                         const double offset, RangeMatch match) const {
     if (start > end) {
         std::swap(start, end);
+    }
+    if (match == RangeMatch::Exclusive && end - start < sampling_interval/2) {
+        throw nix::OutOfBounds("SampledDimension::indexOf: An invalid range occured, difference of start and end is less than the sampling interval.");
     }
     ndsize_t si = getSampledIndex(start, offset, sampling_interval);
     ndsize_t ei = getSampledIndex(end - (match == RangeMatch::Exclusive ? sampling_interval : 0.0), offset, sampling_interval);

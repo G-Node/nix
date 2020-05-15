@@ -179,7 +179,14 @@ void BaseTestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(sd.indexOf(1.0, 1.01).first == 0);
     CPPUNIT_ASSERT_THROW(sd.indexOf(1.01, 0.0), nix::OutOfBounds);
     CPPUNIT_ASSERT_THROW(sd.indexOf(1.01, 0.99), nix::OutOfBounds);
-
+    CPPUNIT_ASSERT_THROW(sd.indexOf(3.14, 3.14 + samplingInterval/2 - 0.2, RangeMatch::Exclusive), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf(3.14, 3.14 + samplingInterval/2 - 0.2, RangeMatch::Inclusive));
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf(3.14, 3.14 + samplingInterval/2 + 0.2, RangeMatch::Exclusive));
+    
+    std::pair<ndsize_t, ndsize_t> range = sd.indexOf(3.14, 3.14 + samplingInterval/2 - 0.2, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range.first == 1 && range.second == 1);
+    range = sd.indexOf(3.14, 3.14 + samplingInterval/2 + 0.2, RangeMatch::Exclusive);    
+    CPPUNIT_ASSERT(range.first == 1 && range.second == 0); // this actually an invalid range!
 
     CPPUNIT_ASSERT_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9}), std::runtime_error);
     CPPUNIT_ASSERT_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9, 12., 1.}), nix::OutOfBounds);
