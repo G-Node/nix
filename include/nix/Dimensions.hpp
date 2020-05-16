@@ -271,8 +271,24 @@ public:
      * @param position  The position, e.g. a time
      *
      * @returns The respective index.
+     * @deprecated This function has been deprecated use {@link SampledDimension::indexOf} instead.
      */
-    ndsize_t indexOf(const double position) const;
+    DEPRECATED ndsize_t indexOf(const double position) const;
+
+    /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. If the position is invalid, an invalid optional is returned.
+     *
+     * @param position  The position, e.g. a time
+     * @param strict    Defines whether an exception should be thrown if the
+     *                  position is invalid
+     *
+     * @returns An optional containing the respective index.
+     */
+    boost::optional<ndsize_t> indexOf(const double position, PositionMatch match) const;
 
 
     /**
@@ -292,8 +308,13 @@ public:
      * 
      * @returns The respective index.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end, RangeMatch match = RangeMatch::Inclusive) const;
-
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, RangeMatch match) const;
+    
+    /**
+     * @deprecated This function has been deprecated please use
+     *             {@link SampledDimension::indexOf(const double, const double&, const RangeMatch)} instead
+     */
+    DEPRECATED std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
    
     /**
      * @brief Returns the index of the given position.
@@ -312,10 +333,10 @@ public:
      *                             including the end position or exclusive, i.e. without 
      *                             the end position, default is RangeMatch::Inclusive
      * 
-     * @returns The pair of start and end indices.
+     * @returns The a boost::optional containing the pair of start and end indices.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(double start, double end, const double sampling_interval, const double offset,
-                                          RangeMatch match = RangeMatch::Inclusive) const;
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, const double sampling_interval, const double offset,
+                                                           const RangeMatch match) const;
     
     
     /**
@@ -329,11 +350,20 @@ public:
      *                           including the end position or exclusive, i.e. without 
      *                           the end position, default is RangeMatch::Inclusive
      *
-     * @return  Vector of pairs of start and end indices.
+     * @return  Vector of optionals containing pairs of start and end indices.
      */
-    std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions,
-                                                       RangeMatch match = RangeMatch::Inclusive) const;
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch match) const;
+
+    /**
+     * @deprecated This function has been deprecated please use
+     *             {@link SampledDimension::indexOf(const std::vector<double>&, const std::vector<double>&, const RangeMatch)} instead
+     */
+    DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions) const;
+
+
 
     /**
      * @brief Returns the position of this dimension at a given index.

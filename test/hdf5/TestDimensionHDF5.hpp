@@ -26,6 +26,7 @@ class TestDimensionHDF5 : public BaseTestDimension {
     CPPUNIT_TEST(testSampledDimSamplingInterval);
     CPPUNIT_TEST(testSampledDimOperators);
     CPPUNIT_TEST(testSampledDimIndexOf);
+    CPPUNIT_TEST(testSampledDimIndexOfOld);
     CPPUNIT_TEST(testSampledDimPositionAt);
     CPPUNIT_TEST(testSampledDimAxis);
     CPPUNIT_TEST(testSetDimLabels);
