@@ -196,46 +196,112 @@ void SampledDimension::samplingInterval(double interval) {
 }
 
 
-ndsize_t getSampledIndex(const double position, const double offset, const double sampling_interval) {
-    if (position < offset) {
-        throw nix::OutOfBounds("SampledDimension::indexOf: Position is less than offset!", position);
+boost::optional<ndsize_t> getSampledIndex(const double position, const double offset, const double sampling_interval, const PositionMatch match) {
+    boost::optional<ndsize_t> index;
+    if (position < offset && (match != PositionMatch::Greater && match != PositionMatch::GreaterOrEqual)) {
+        return index;
     }
-    ndssize_t index = static_cast<ndssize_t>(round(( position - offset) / sampling_interval));
+    double tmp;
+    if (match == PositionMatch::Greater || match == PositionMatch::GreaterOrEqual) {
+        tmp = ceil((position - offset) / sampling_interval);
+        if (tmp < 0.0) {
+            tmp = 0.0;
+        }
+        bool equals = fabs(tmp * sampling_interval + offset - position) <= numeric_limits<double>::epsilon();
+        index = (match == PositionMatch::Greater && equals) ? static_cast<ndsize_t>(tmp + 1) : static_cast<ndsize_t>(tmp);
+    } else if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
+        tmp = floor((position - offset) / sampling_interval);
+        bool equals = fabs(tmp * sampling_interval + offset - position) <= numeric_limits<double>::epsilon();
+        if (match == PositionMatch::Less && equals) { 
+            if (tmp >= 1) {
+                index = static_cast<ndsize_t>(tmp - 1);
+            } 
+        } else {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    } else {
+        tmp = round((position - offset) / sampling_interval);
+        if (fabs(tmp * sampling_interval + offset - position) <= numeric_limits<double>::epsilon()) {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    }
     return index;
 }
 
 
 ndsize_t SampledDimension::indexOf(const double position) const {
+    boost::optional<ndsize_t> index = indexOf(position, PositionMatch::GreaterOrEqual);
+    if (!index) {
+        throw nix::OutOfBounds("SampledDimension::indexOf: An invalid position was encountered! position < offset?");
+    }
+    return *index;   
+}
+
+boost::optional<ndsize_t> SampledDimension::indexOf(const double position, const PositionMatch match) const {
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    return getSampledIndex(position, offset, sampling_interval);
+    boost::optional<ndsize_t> index = getSampledIndex(position, offset, sampling_interval, match);
+    return index;
 }
 
 
-std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, const double end, RangeMatch match) const {
+std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(const double start, const double end) const {
+    boost::optional<std::pair<ndsize_t, ndsize_t>> pair = indexOf(start, end, RangeMatch::Inclusive);
+    if (!pair) {
+        throw nix::OutOfBounds("SampledDimension::indexOf: An invalid range was encountered!");
+    }
+    return *pair;
+}
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const double start, const double end, const RangeMatch range_matching) const {
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
-    return indexOf(start, end, sampling_interval, offset, match);
+    return indexOf(start, end, sampling_interval, offset, range_matching);
 }
 
 
-std::pair<ndsize_t, ndsize_t> SampledDimension::indexOf(double start, double end, const double sampling_interval, 
-                                                        const double offset, RangeMatch match) const {
+boost::optional<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(double start, double end, const double sampling_interval, 
+                                                                         const double offset, const RangeMatch match) const {
     if (start > end) {
         std::swap(start, end);
     }
-    if (match == RangeMatch::Exclusive && end - start < sampling_interval/2) {
-        throw nix::OutOfBounds("SampledDimension::indexOf: An invalid range occured, difference of start and end is less than the sampling interval.");
+    PositionMatch pos_match = match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less;
+
+    boost::optional<ndsize_t> si = getSampledIndex(start, offset, sampling_interval, PositionMatch::GreaterOrEqual);
+    boost::optional<ndsize_t> ei = getSampledIndex(end, offset, sampling_interval, pos_match);
+    
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indices;
+    if (si && ei) {
+        if (*si <= *ei) {
+            if (match == RangeMatch::Exclusive && *si < *ei) {
+                indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
+            } else if (match == RangeMatch::Inclusive) {
+                indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
+            }
+        }
     }
-    ndsize_t si = getSampledIndex(start, offset, sampling_interval);
-    ndsize_t ei = getSampledIndex(end - (match == RangeMatch::Exclusive ? sampling_interval : 0.0), offset, sampling_interval);
-    return std::pair<ndsize_t, ndsize_t>(si, ei);
+    return indices;
 }
 
 
+std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> SampledDimension::indexOf(const std::vector<double> &start_positions,
+                                                                                      const std::vector<double> &end_positions,
+                                                                                      const RangeMatch range_matching) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indices;
+    double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
+    double sampling_interval = backend()->samplingInterval();
+    for (size_t i = 0; i < start_positions.size(); ++i) {
+        indices.push_back(indexOf(start_positions[i], end_positions[i], sampling_interval, offset, range_matching));
+    }
+    return indices;
+}
+
 std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::vector<double> &start_positions,
-                                                                     const std::vector<double> &end_positions, 
-                                                                     RangeMatch match) const {
+                                                                     const std::vector<double> &end_positions) const {
     if (start_positions.size() != end_positions.size()) {
         throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
     }
@@ -243,8 +309,13 @@ std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::
     std::vector<std::pair<ndsize_t, ndsize_t>> indices;
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
+    boost::optional<std::pair<ndsize_t, ndsize_t>> pair;
     for (size_t i = 0; i < start_positions.size(); ++i) {
-        indices.push_back(indexOf(start_positions[i], end_positions[i], sampling_interval, offset, match));
+        pair = indexOf(start_positions[i], end_positions[i], sampling_interval, offset, RangeMatch::Inclusive);
+        if (!pair) {
+            throw nix::OutOfBounds("SampledDimension::indexOf: an invalid range was encountered");
+        }
+        indices.push_back(*pair);
     }
     return indices;
 }

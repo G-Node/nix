@@ -33,6 +33,7 @@ public:
     void testSampledDimUnit();
     void testSampledDimSamplingInterval();
     void testSampledDimOperators();
+    void testSampledDimIndexOfOld();
     void testSampledDimIndexOf();
     void testSampledDimPositionAt();
     void testSampledDimAxis();
