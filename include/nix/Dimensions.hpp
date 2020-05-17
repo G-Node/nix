@@ -538,6 +538,17 @@ public:
     }
 
     /**
+     * @brief converts a position given as a double to an index in this dimension, if 
+     * it contains labels, then the position will be validated within these limits.
+     * 
+     * @param  position       The position.
+     * @param  match          Memeber of the {@link PositionMatch} enumeration to control conversion.
+     * 
+     * @return An optional containing the index, if valid.
+     */
+    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.

@@ -371,6 +371,47 @@ SetDimension::SetDimension(const SetDimension &other)
 {
 }
 
+boost::optional<ndsize_t> SetDimension::indexOf(const double position, const PositionMatch match) const {
+    boost::optional<ndsize_t> index;
+    if (position < 0 && (match != PositionMatch::Greater && match != PositionMatch::GreaterOrEqual)) {
+        return index;
+    }
+    double tmp;
+    if (match == PositionMatch::Greater || match == PositionMatch::GreaterOrEqual) {
+        tmp = ceil(position);
+        if (tmp < 0.0) {
+            tmp = 0.0;
+        }
+        bool equals = fabs(tmp - position) <= numeric_limits<double>::epsilon();
+        index = (match == PositionMatch::Greater && equals) ? static_cast<ndsize_t>(tmp + 1) : static_cast<ndsize_t>(tmp);
+    } else if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
+        tmp = floor(position);
+        bool equals = fabs(tmp - position) <= numeric_limits<double>::epsilon();
+        if (match == PositionMatch::Less && equals) { 
+            if (tmp >= 1) {
+                index = static_cast<ndsize_t>(tmp - 1);
+            } 
+        } else {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    } else {
+        tmp = round(position);
+        if (fabs(tmp - position) <= numeric_limits<double>::epsilon()) {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    }
+
+    ndsize_t label_count = labels().size();
+    if (index && label_count > 0 && *index > label_count - 1) {
+        if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
+            index = label_count - 1;
+        } else {
+            index = boost::none;
+        }
+    }
+    return index;
+}
+
 
 SetDimension& SetDimension::operator=(const SetDimension &other) {
     shared_ptr<ISetDimension> tmp(other.impl());
