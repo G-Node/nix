@@ -560,6 +560,37 @@ void BaseTestDimension::testSetDimIndexOf() {
     CPPUNIT_ASSERT(index && *index == 6);
     index = sd.indexOf(5.5, PositionMatch::Greater);
     CPPUNIT_ASSERT(index && *index == 6);
+
+    boost::optional<std::pair<ndsize_t, ndsize_t>> range = sd.indexOf(0.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = sd.indexOf(0.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = sd.indexOf(0.0, 3.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = sd.indexOf(0.0, 3.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = sd.indexOf(3.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = sd.indexOf(3.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+
+    sd.labels(labels);
+    range = sd.indexOf(0.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = sd.indexOf(0.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = sd.indexOf(0.0, 3.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = sd.indexOf(0.0, 3.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = sd.indexOf(3.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = sd.indexOf(3.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = sd.indexOf(0.0, 7.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 4);
+    range = sd.indexOf(3.0, 7.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 4);
 }
 
 void BaseTestDimension::testRangeDimLabel() {

@@ -548,6 +548,31 @@ public:
      */
     boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
 
+
+    /**
+     * @brief returns the start and end indices corresponding to the provided start and end positions.
+     * 
+     * @param  start    double, the start position
+     * @param  end      double, the end position 
+     * @param  match    RangeMatch, controls whether the range includes the end position or not.
+     * 
+     * @return optional containing a pair of ndsize_t.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, const RangeMatch match) const;
+
+    /**
+     * @brief returns the start and end indices corresponding to the provided start and end positions.
+     * 
+     * @param  start    double, the start position
+     * @param  end      double, the end position 
+     * @param  labels   vector<string> of labels
+     * @param  match    RangeMatch, controls whether the range includes the end position or not.
+     * 
+     * @return optional containing a pair of ndsize_t.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, std::vector<std::string> &set_labels, const RangeMatch match) const;
+    
+    
     /**
      * @brief Assignment operator.
      *

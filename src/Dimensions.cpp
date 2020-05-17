@@ -371,7 +371,8 @@ SetDimension::SetDimension(const SetDimension &other)
 {
 }
 
-boost::optional<ndsize_t> SetDimension::indexOf(const double position, const PositionMatch match) const {
+
+boost::optional<ndsize_t> getSetIndex(const double position, std::vector<std::string> labels, const PositionMatch match) {
     boost::optional<ndsize_t> index;
     if (position < 0 && (match != PositionMatch::Greater && match != PositionMatch::GreaterOrEqual)) {
         return index;
@@ -401,7 +402,7 @@ boost::optional<ndsize_t> SetDimension::indexOf(const double position, const Pos
         }
     }
 
-    ndsize_t label_count = labels().size();
+    ndsize_t label_count = labels.size();
     if (index && label_count > 0 && *index > label_count - 1) {
         if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
             index = label_count - 1;
@@ -410,7 +411,40 @@ boost::optional<ndsize_t> SetDimension::indexOf(const double position, const Pos
         }
     }
     return index;
+
 }
+
+
+boost::optional<ndsize_t> SetDimension::indexOf(const double position, const PositionMatch match) const {
+    std::vector<std::string> lbls = labels();
+    return getSetIndex(position, lbls, match);
+}
+
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> SetDimension::indexOf(double start, double end, std::vector<std::string> &set_labels, const RangeMatch match) const {
+    if (set_labels.size() == 0) {
+        set_labels = labels();
+    } 
+    if (start > end) {
+        std::swap(start, end);
+    }
+    PositionMatch end_match = match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less;
+    boost::optional<std::pair<ndsize_t, ndsize_t>> index;
+    
+    boost::optional<ndsize_t> si = getSetIndex(start, set_labels, PositionMatch::GreaterOrEqual);
+    boost::optional<ndsize_t> ei = getSetIndex(end, set_labels, end_match);
+    if (ei && si) {
+        index = std::pair<ndsize_t, ndsize_t>(*si, *ei);
+    }
+    return index;
+}
+
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> SetDimension::indexOf(const double start, const double end, const RangeMatch match) const {
+    std::vector<std::string> set_labels = labels();
+    return indexOf(start, end, set_labels, match);
+}
+
 
 
 SetDimension& SetDimension::operator=(const SetDimension &other) {
