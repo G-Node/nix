@@ -39,6 +39,7 @@ public:
     void testSampledDimAxis();
 
     void testSetDimLabels();
+    void testSetDimIndexOf();
 
     void testRangeDimLabel();
     void testRangeTicks();

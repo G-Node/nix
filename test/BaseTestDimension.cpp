@@ -482,6 +482,85 @@ void BaseTestDimension::testSetDimLabels() {
     data_array.deleteDimensions();
 }
 
+void BaseTestDimension::testSetDimIndexOf() {
+    std::vector<std::string> labels = {"label_a", "label_b","label_c","label_d","label_e"};
+
+    Dimension d = data_array.appendSetDimension();
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Set);
+    SetDimension sd;
+    sd = d;
+    sd.labels(labels);
+
+    boost::optional<ndsize_t> index;
+    index = sd.indexOf(-1.0, PositionMatch::Less);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(-1.0, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(-1.0, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(-1.0, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(index && *index == 0);
+    index = sd.indexOf(-1.0, PositionMatch::Greater);
+    CPPUNIT_ASSERT(index && *index == 0);
+
+    index = sd.indexOf(0.0, PositionMatch::Less);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(0.0, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(index && *index == 0);
+    index = sd.indexOf(0.0, PositionMatch::Equal);
+    CPPUNIT_ASSERT(index && *index == 0);
+    index = sd.indexOf(0.0000001, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(0.0, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(index && *index == 0);
+    index = sd.indexOf(0.0, PositionMatch::Greater);
+    CPPUNIT_ASSERT(index && *index == 1);
+
+    index = sd.indexOf(4.0, PositionMatch::Less);
+    CPPUNIT_ASSERT(index && *index == 3);
+    index = sd.indexOf(4.0, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(4.0, PositionMatch::Equal);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(4.0, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(4.0, PositionMatch::Greater);
+    CPPUNIT_ASSERT(!index);
+
+    index = sd.indexOf(5.0, PositionMatch::Less);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(5.0, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(5.0, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(5.0, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(5.0, PositionMatch::Greater);
+    CPPUNIT_ASSERT(!index);
+
+    sd.labels(boost::none);
+    index = sd.indexOf(5.0, PositionMatch::Less);
+    CPPUNIT_ASSERT(index && *index == 4);
+    index = sd.indexOf(5.0, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(index && *index == 5);
+    index = sd.indexOf(5.0, PositionMatch::Equal);
+    CPPUNIT_ASSERT(index && *index == 5);
+    index = sd.indexOf(5.0, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(index && *index == 5);
+    index = sd.indexOf(5.0, PositionMatch::Greater);
+    CPPUNIT_ASSERT(index && *index == 6);
+
+    index = sd.indexOf(5.5, PositionMatch::Less);
+    CPPUNIT_ASSERT(index && *index == 5);
+    index = sd.indexOf(5.5, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(index && *index == 5);
+    index = sd.indexOf(5.5, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!index);
+    index = sd.indexOf(5.5, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(index && *index == 6);
+    index = sd.indexOf(5.5, PositionMatch::Greater);
+    CPPUNIT_ASSERT(index && *index == 6);
+}
 
 void BaseTestDimension::testRangeDimLabel() {
     std::string label = "aLabel";
