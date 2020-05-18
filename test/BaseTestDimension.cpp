@@ -581,7 +581,7 @@ void BaseTestDimension::testSetDimIndexOf() {
     sd.labels(labels);
     range = sd.indexOf(0.0, 0.0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
-    range = sd.indexOf(0.0, 0.0, RangeMatch::Exclusive);
+    range = sd.indexOf(1.0, 1.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(!range);
     range = sd.indexOf(0.0, 3.0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
@@ -595,6 +595,24 @@ void BaseTestDimension::testSetDimIndexOf() {
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 4);
     range = sd.indexOf(3.0, 7.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 4);
+
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> ranges;
+    CPPUNIT_ASSERT_THROW(sd.indexOf({0.0, -1.0, 1.0}, {1.0, 2.0}, RangeMatch::Inclusive), std::runtime_error);
+    ranges = sd.indexOf({0.0, -1.0, 1.0, 1.0}, {1.0, 4.0, 9.0, 1.0}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(ranges.size() == 4);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 1);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 4);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 1 && (*ranges[2]).second == 4);
+    CPPUNIT_ASSERT(ranges[3] && (*ranges[3]).first == 1 && (*ranges[3]).second == 1);
+
+    ranges = sd.indexOf({0.0, -1.0, 1.0, 1.0}, {1.0, 4.0, 9.0, 1.0}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(ranges.size() == 4);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 0);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 3);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 1 && (*ranges[2]).second == 4);
+    CPPUNIT_ASSERT(!ranges[3]);
+
+
 }
 
 void BaseTestDimension::testRangeDimLabel() {

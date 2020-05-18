@@ -427,8 +427,9 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> SetDimension::indexOf(double star
     
     boost::optional<ndsize_t> si = getSetIndex(start, set_labels, PositionMatch::GreaterOrEqual);
     boost::optional<ndsize_t> ei = getSetIndex(end, set_labels, end_match);
-    if (ei && si) {
-        index = std::pair<ndsize_t, ndsize_t>(*si, *ei);
+    
+    if (si && ei && *si <= *ei) {
+        index = std::pair<ndsize_t, ndsize_t>(*si, *ei);    
     }
     return index;
 }
@@ -439,6 +440,21 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> SetDimension::indexOf(const doubl
     return indexOf(start, end, set_labels, match);
 }
 
+
+std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> SetDimension::indexOf(const std::vector<double> &start_positions,
+                                                                                  const std::vector<double> &end_positions,
+                                                                                  const RangeMatch match) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("Dimension::IndexOf - Number of start and end positions must match!");
+    }
+
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indices;
+    std::vector<std::string> set_labels = labels();
+    for (size_t i = 0; i < start_positions.size(); ++i) {
+        indices.push_back(indexOf(start_positions[i], end_positions[i], set_labels, match));
+    }
+    return indices;
+}
 
 
 SetDimension& SetDimension::operator=(const SetDimension &other) {

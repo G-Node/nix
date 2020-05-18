@@ -572,7 +572,20 @@ public:
      */
     boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, std::vector<std::string> &set_labels, const RangeMatch match) const;
     
-    
+    /**
+     * @brief converts vectors of start and end positions to a vector of optionals containg start and end indices.
+     * 
+     * @param start_positions    vector of start positions
+     * @param end_positions      vector of end positions
+     * @param match              Member of the RangeMatch enum to control whether ranges are inclusive or exclusiv the end positions
+     * 
+     * @return vector of optionals containing a pair of start and end indices
+     */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch match) const;
+
+
     /**
      * @brief Assignment operator.
      *
