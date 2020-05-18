@@ -313,6 +313,10 @@ void BaseTestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
     range = sd.indexOf(2., -2.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = sd.indexOf(2.0, 2.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 3);
+    range = sd.indexOf(2., 2.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
 
     // test vector of ranges, offset = -1, sampling interval = 1
     CPPUNIT_ASSERT_THROW(sd.indexOf({1.0, 20.0, 40.0}, {10.9, 12.}, RangeMatch::Exclusive), std::runtime_error);

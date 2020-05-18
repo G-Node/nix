@@ -271,14 +271,8 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(double 
     boost::optional<ndsize_t> ei = getSampledIndex(end, offset, sampling_interval, pos_match);
     
     boost::optional<std::pair<ndsize_t, ndsize_t>> indices;
-    if (si && ei) {
-        if (*si <= *ei) {
-            if (match == RangeMatch::Exclusive && *si < *ei) {
-                indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
-            } else if (match == RangeMatch::Inclusive) {
-                indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
-            }
-        }
+    if (si && ei && *si <= *ei) {
+        indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
     }
     return indices;
 }
