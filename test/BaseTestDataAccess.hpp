@@ -28,10 +28,13 @@ protected:
 
 public:
     void testPositionToIndexSetDimension();
+    void testPositionToIndexSetDimensionOld();
     void testPositionToIndexSampledDimension();
+    void testPositionToIndexSampledDimensionOld();
     void testPositionToIndexRangeDimension();
     void testGetDimensionUnit();
     void testPositionToIndexDataFrameDimension();
+    void testPositionToIndexRangeDimensionOld();
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();

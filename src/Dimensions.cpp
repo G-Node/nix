@@ -316,8 +316,6 @@ std::vector<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const std::
 
 
 double SampledDimension::positionAt(const ndsize_t index) const {
-
-double SampledDimension::positionAt(const ndsize_t index) const {
     double offset = backend()->offset() ? *(backend()->offset()) : 0.0;
     double sampling_interval = backend()->samplingInterval();
     return index * sampling_interval + offset;

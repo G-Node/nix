@@ -20,6 +20,7 @@
 #include <boost/optional.hpp>
 
 using namespace std;
+using namespace boost;
 
 namespace nix {
 namespace util {
@@ -49,69 +50,231 @@ void scalePositions(const vector<double> &starts, const vector<double> &ends,
 }
 
 
+vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> &start_positions,
+                                                           const vector<double> &end_positions,
+                                                           const vector<string> &units,
+                                                           const RangeMatch range_matching,
+                                                           const Dimension &dimension) {
+    vector<optional<pair<ndsize_t, ndsize_t>>> indices;
+    if (dimension.dimensionType() == DimensionType::Sample) {
+        SampledDimension dim;
+        dim = dimension;
+        indices = positionToIndex(start_positions, end_positions, units, range_matching, dim);
+    } else if (dimension.dimensionType() == DimensionType::Set) {
+        SetDimension dim;
+        dim = dimension;
+        indices = positionToIndex(start_positions, end_positions, range_matching, dim);
+    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
+        // T ODO
+    } else {
+        RangeDimension dim;
+        dim = dimension;
+        indices = positionToIndex(start_positions, end_positions, units, range_matching, dim);
+    }
+    return indices;
+}
+
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
                                                  const vector<double> end_positions,
                                                  const vector<string> &units,
                                                  const Dimension &dimension) {
+    vector<optional<pair<ndsize_t, ndsize_t>>> opt_indices = positionToIndex(start_positions, end_positions, units, RangeMatch::Inclusive, dimension);
     vector<pair<ndsize_t, ndsize_t>> indices;
-    if (dimension.dimensionType() == DimensionType::Sample) {
-        SampledDimension dim;
-        dim = dimension;
-        indices = positionToIndex(start_positions, end_positions, units, dim);
-    } else if (dimension.dimensionType() == DimensionType::Set) {
-        SetDimension dim;
-        dim = dimension;
-        indices = positionToIndex(start_positions, end_positions, units, dim);
-    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
-        DataFrameDimension dim;
-        dim = dimension;
-        indices = positionToIndex(start_positions, end_positions, units, dim);
-    } else {
-        RangeDimension dim;
-        dim = dimension;
-        indices = positionToIndex(start_positions, end_positions, units, dim);
+    for (auto o : opt_indices) {
+        if (o) {
+            indices.push_back(*o);
+        } else {
+            throw nix::OutOfBounds("util::positionToIndex: An invalid range was encountered!");
+        }
     }
     return indices;
 }
 
 
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const SampledDimension &dimension) {
+    vector<optional<pair<ndsize_t, ndsize_t>>> opt_ranges = positionToIndex(start_positions, end_positions, units, RangeMatch::Inclusive, dimension);
+    vector<pair<ndsize_t, ndsize_t>> ranges;
+    for (auto o : opt_ranges) {
+        if (o) {
+            ranges.push_back(*o);
+        } else {
+            throw nix::OutOfBounds("utial::positionToIndex: An invalid range was encountered!");
+        }
+    }
+    return ranges;
+}
+
+vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> &start_positions,
+                                                           const vector<double> &end_positions,
+                                                           const vector<string> &units,
+                                                           const RangeMatch range_matching,
+                                                           const SampledDimension &dimension) {
+    if (start_positions.size() != end_positions.size() || start_positions.size() != units.size() ) {
+        throw std::runtime_error("util::positionToIndex: Invalid numbers of start and end positions, or units!");
+    }
+    ndsize_t count = end_positions.size();
+    vector<double> scaled_start(static_cast<size_t>(count));
+    vector<double> scaled_end(static_cast<size_t>(count));
+    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
+    return dimension.indexOf(scaled_start, scaled_end, range_matching);
+}
+
+
+vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> &start_positions,
+                                                           const vector<double> &end_positions,
+                                                           const RangeMatch range_matching,
+                                                           const SetDimension &dimension) {
+    if (start_positions.size() != end_positions.size()) {
+        throw std::runtime_error("util::positionToIndex: Invalid numbers of start and end positions!");
+    }
+    vector<optional<pair<ndsize_t, ndsize_t>>> indices = dimension.indexOf(start_positions, end_positions, range_matching);
+    return indices;
+}
+
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const SetDimension &dimension) {
+    vector<pair<ndsize_t, ndsize_t>> indices;
+    vector<optional<pair<ndsize_t, ndsize_t>>> opt_indices = positionToIndex(start_positions, end_positions, RangeMatch::Inclusive, dimension);
+    for (auto o : opt_indices) {
+        if (!o) {
+            throw nix::OutOfBounds("util::positionToIndex: An invalid range was encountered!");
+        }
+        indices.push_back(*o);
+    }
+    return indices; 
+}
+
+
+vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> &start_positions,
+                                                           const vector<double> &end_positions,
+                                                           const vector<string> &units,
+                                                           const RangeMatch range_matching,
+                                                           const RangeDimension &dimension) {
+    if (start_positions.size() != end_positions.size() || start_positions.size() != units.size() ) {
+        throw std::runtime_error("util::positionToIndex: Invalid numbers of start and end positions, or units!");
+    }
+    size_t count = end_positions.size();
+    vector<double> scaled_start(count);
+    vector<double> scaled_end(count);
+    string dim_unit = dimension.unit() ? *dimension.unit() : "none";
+    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
+    return dimension.indexOf(scaled_start, scaled_end, range_matching);
+}
+
+
+vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
+                                                 const vector<double> &end_positions,
+                                                 const vector<string> &units,
+                                                 const RangeDimension &dimension) {
+    vector<optional<pair<ndsize_t, ndsize_t>>> opt_ranges = positionToIndex(start_positions, end_positions, units, RangeMatch::Inclusive, dimension);
+    vector<pair<ndsize_t, ndsize_t>> ranges;
+    for (auto o : opt_ranges) {
+        if (o) {
+            ranges.push_back(*o);
+        } else {
+            throw nix::OutOfBounds("utial::positionToIndex: An invalid range was encountered!");
+        }
+    }
+    return ranges;
+}
+
+
+optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch match, const Dimension &dimension) {
+    optional<ndsize_t> pos;
+    if (dimension.dimensionType() == DimensionType::Sample) {
+        SampledDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, match, dim);
+    } else if (dimension.dimensionType() == DimensionType::Set) {
+        SetDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, match, dim); 
+    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
+        DataFrameDimension dim;
+        dim = dimension;
+        // TODO
+    } else {
+        RangeDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, match, dim);
+    }
+
+    return pos;
+}
+
+ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
+    boost::optional<ndsize_t> pos;
+
+    if (dimension.dimensionType() == DimensionType::Sample) {
+        SampledDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
+    } else if (dimension.dimensionType() == DimensionType::Set) {
+        SetDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
+    } else {
+        RangeDimension dim;
+        dim = dimension;
+        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
+    }
+    if (!pos) {
+        throw nix::OutOfBounds("util::positionToIndex: Out of range position was given.");
+    }
+    return *pos;
+}
+
 ndsize_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
-    ndsize_t index;
+    optional<ndsize_t> index = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dimension);
+    if (!index) {
+        throw nix::OutOfBounds("util::positionToIndex: An invalid position was encoutered!");
+    }
+    return *index;
+}
+
+optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch match, const SampledDimension &dimension) {
+    optional<ndsize_t> index;
     boost::optional<string> dim_unit = dimension.unit();
     double scaling = 1.0;
     if (!dim_unit && unit != "none") {
-        throw IncompatibleDimensions("Units of position and SampledDimension must both be given!",
+        throw IncompatibleDimensions("Position is given with a unit, the dimension has none!",
                                      "util::positionToIndex");
     }
     if (dim_unit && unit != "none") {
         try {
             scaling = util::getSIScaling(unit, *dim_unit);
         } catch (...) {
-            throw IncompatibleDimensions("Cannot apply a position with unit to a SetDimension",
+            throw IncompatibleDimensions("The unit provided for position is not applicable to the unit of the SampledDimension",
                                          "nix::util::positionToIndex");
         }
     }
-    index = dimension.indexOf(position * scaling);
+    index = dimension.indexOf(position * scaling, match);
     return index;
 }
 
 
 ndsize_t positionToIndex(double position, const string &unit, const SetDimension &dimension) {
-    ndsize_t index;
-    if (unit.length() > 0 && unit != "none") {
-        throw IncompatibleDimensions("Cannot apply a position with unit to a SetDimension",
-                                     "nix::util::positionToIndex");
+    optional<ndsize_t> index = positionToIndex(position, PositionMatch::GreaterOrEqual, dimension);
+    if (!index) {
+        throw nix::OutOfBounds("util::positionToIndex: An invalid position was encoutered!");
     }
-    index = static_cast<ndsize_t>(round(position));
-    if (round(position) < 0.0 || (dimension.labels().size() > 0 && index >= dimension.labels().size())) {
-        throw OutOfBounds("Position is out of bounds of the given SetDimension.", static_cast<int>(position));
-    }
+    return *index;
+}
+
+optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const SetDimension &dimension) {
+    optional<ndsize_t> index = dimension.indexOf(position, match);
     return index;
 }
 
 
 ndsize_t positionToIndex(double position, const string &unit, const DataFrameDimension &dimension) {
-    ndsize_t index;
+    ndsize_t index; //TODO
     if (unit.length() > 0 && unit != "none") {
         throw IncompatibleDimensions("Cannot apply a position with unit to a DataFrameDimension",
                                      "nix::util::positionToIndex");
@@ -123,79 +286,16 @@ ndsize_t positionToIndex(double position, const string &unit, const DataFrameDim
     return index;
 }
 
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
-                                                 const vector<double> &end_positions,
-                                                 const vector<string> &units,
-                                                 const SampledDimension &dimension) {
-    ndsize_t count = min(start_positions.size(), end_positions.size());
-    vector<double> scaled_start(static_cast<size_t>(count));
-    vector<double> scaled_end(static_cast<size_t>(count));
-    string dim_unit = getDimensionUnit(dimension);
-    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
-    return dimension.indexOf(scaled_start, scaled_end);
-}
-
-
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
-                                                 const vector<double> &end_positions,
-                                                 const vector<string> &units,
-                                                 const SetDimension &dimension) {
-    vector<pair<ndsize_t, ndsize_t>> indices;
-
-    for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); ++i) {
-        if (start_positions[i] > end_positions[i] ) {
-            continue;
-        }
-        indices.emplace_back(static_cast<ndsize_t>(round(start_positions[i])),
-                             static_cast<ndsize_t>(end_positions[i]));
-    }
-    return indices;
-}
-
-
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
-                                                 const vector<double> &end_positions,
-                                                 const vector<string> &units,
-                                                 const DataFrameDimension &dimension) {
-    vector<pair<ndsize_t, ndsize_t>> indices;
-    ndsize_t df_size = dimension.size();
-    double min_start = *std::min_element(start_positions.begin(), start_positions.end());
-    double min_end = *std::min_element(end_positions.begin(), end_positions.end());
-    double max_start = *std::max_element(start_positions.begin(), start_positions.end());
-    double max_end = *std::max_element(end_positions.begin(), end_positions.end());
-
-    if (round(min_start) < 0 || round(min_end) < 0) {
-        throw nix::OutOfBounds("dataAccess::positionToIndex: min start or end index < 0");
-    }
-    if (static_cast<ndsize_t>(round(max_start)) >= df_size || static_cast<ndsize_t>(round(max_end)) >= df_size) {
-        throw nix::OutOfBounds("dataAccess::positionToIndex: max start or end index >= size of DataFrame");
-    }
-    for (size_t i = 0; i < (min(start_positions.size(), end_positions.size())); ++i) {
-        if (start_positions[i] > end_positions[i] ) {
-            continue;
-        }
-        ndsize_t start = static_cast<ndsize_t>(round(start_positions[i]));
-        ndsize_t end = static_cast<ndsize_t>(round(end_positions[i]));
-        indices.emplace_back(start, end);
-    }
-    return indices;
-}
-
-
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
-                                                 const vector<double> &end_positions,
-                                                 const vector<string> &units,
-                                                 const RangeDimension &dimension) {
-    size_t count = min(start_positions.size(), end_positions.size());
-    vector<double> scaled_start(count);
-    vector<double> scaled_end(count);
-    string dim_unit = getDimensionUnit(dimension);
-    scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
-    return dimension.indexOf(scaled_start, scaled_end);
-}
-
 
 ndsize_t positionToIndex(double position, const string &unit, const RangeDimension &dimension) {
+    boost::optional<ndsize_t> index = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dimension);
+    if (!index) {
+        throw nix::OutOfBounds("PositionToIndex: An invalid index was encountered");
+    }
+    return *index;
+}
+
+boost::optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch position_match, const RangeDimension &dimension) {
     string dim_unit = dimension.unit() ? *dimension.unit() : "none";
     double scaling = 1.0;
     if (unit != "none") {
@@ -206,7 +306,8 @@ ndsize_t positionToIndex(double position, const string &unit, const RangeDimensi
                                          "nix::util::positionToIndex");
         }
     }
-    return dimension.indexOf(position * scaling);
+    boost::optional<ndsize_t> index = dimension.indexOf(position * scaling, position_match);
+    return index;
 }
 
 
