@@ -17,8 +17,11 @@ class TestDataAccessHDF5 : public BaseTestDataAccess {
 
     CPPUNIT_TEST_SUITE(TestDataAccessHDF5);
     CPPUNIT_TEST(testPositionToIndexSampledDimension);
+    CPPUNIT_TEST(testPositionToIndexSampledDimensionOld);
     CPPUNIT_TEST(testPositionToIndexSetDimension);
+    CPPUNIT_TEST(testPositionToIndexSetDimensionOld);
     CPPUNIT_TEST(testPositionToIndexRangeDimension);
+    CPPUNIT_TEST(testPositionToIndexRangeDimensionOld);
     CPPUNIT_TEST(testOffsetAndCount);
     CPPUNIT_TEST(testPositionInData);
     CPPUNIT_TEST(testRetrieveData);
