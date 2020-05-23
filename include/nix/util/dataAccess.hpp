@@ -39,8 +39,9 @@ namespace util {
  * @param position      The position
  * @param match         Member of the PositionMatch enum to control the matching.
  * @param dimension     The dimension descriptor for the respective dimension, i.e. a SetDimension.
+ * @param match         PositionMatch argument to control position matching behavior.
  *
- * @return The calculated index.
+ * @return An optional containing the calculated index.
  *
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
@@ -62,13 +63,14 @@ NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &u
  * @param position      The position
  * @param unit          The unit in which the position is given, may be "none"
  * @param dimension     The dimension descriptor for the respective dimension.
+ * @param match         PositionMatch argument to control position matching behavior.
  *
- * @return The calculated index.
+ * @return an optional conatining the calculated index.
  *
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const DataFrameDimension &dimension);
+NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const DataFrameDimension &dimension);
 
 /**
  * @Brief Converts a position given in a unit into an index according to the dimension descriptor.
@@ -80,8 +82,9 @@ NIXAPI ndsize_t positionToIndex(double position, const std::string &unit, const 
  * @param position      The position
  * @param unit          The unit in which the position is given, may be "none"
  * @param dimension     The dimension descriptor for the respective dimension.
+ * @param match         PositionMatch argument to control position matching behavior.
  *
- * @return The calculated index.
+ * @return an optional containing the calculated index.
  *
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
@@ -191,15 +194,18 @@ NIXAPI std::string getDimensionUnit(const nix::Dimension &dim);
  * @param array         A referenced data array.
  * @param[out] offsets  The resulting offset.
  * @param[out] counts   The number of elements to read from data
+ * @param match         Member of the RangeMatch enum, defining wheter the range includes the end position
+ *                      or not. By default this is RangeMatch::Inclusive (Note: this behavior will change 
+ *                      with version 1.5)
  */
-NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts, RangeMatch match = RangeMatch::Inclusive);
 
 
-NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts, RangeMatch match = RangeMatch::Inclusive);
 
 
 NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
-                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts);
+                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts, RangeMatch match = RangeMatch::Inclusive);
 
 
 /**
@@ -219,7 +225,7 @@ NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const
  * @returns {@link nix::DataView} the data slice.
  */
 NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
-                          const std::vector<std::string> &units={});
+                          const std::vector<std::string> &units={}, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve several data segments that are tagged by the given position and extent of the MultiTag.
@@ -227,10 +233,23 @@ NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &sta
  * @param tag                   The multi tag.
  * @param position_indices      The indices of the positions.
  * @param array                 The referenced DataArray.
+ * @param match                 Controls the RangeMatch behavior.
  *
  * @return vector of nix::DataViews that contain the data tagged by the specified position indices.
  */
-NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
+NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array, RangeMatch match = RangeMatch::Inclusive); //TODO range support
+
+/**
+ * @brief Retrieve several data segments that are tagged by the given positions and extents of the MultiTag.
+ *
+ * @param tag                   The multi tag.
+ * @param position_indices      The indices of the position.
+ * @param reference_index       The index of the referenced DataArray.
+ * @param match                 Controls the RangeMatch behavior.
+ *
+ * @return vector of nix::DataViews containing the data tagged by the specified position indices.
+ */
+NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve several data segments referenced by the given position and extent of the MultiTag.
@@ -242,18 +261,7 @@ NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_
  * @return The data referenced by the specified indices, respectively their positions and extents.
  * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
-
-/**
- * @brief Retrieve several data segments that are tagged by the given positions and extents of the MultiTag.
- *
- * @param tag                   The multi tag.
- * @param position_indices      The indices of the position.
- * @param reference_index       The index of the referenced DataArray.
- *
- * @return vector of nix::DataViews containing the data tagged by the specified position indices.
- */
-NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve several segments of data referenced by the given position and extent of the MultiTag.
@@ -265,7 +273,7 @@ NIXAPI std::vector<DataView> taggedData(const MultiTag &tag, std::vector<ndsize_
  * @return The data referenced by the specified indices, respectively their positions and extents.
  * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, reference_index) instead.
  */
-NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data tagged by the given position and extent of the MultiTag.
@@ -276,7 +284,9 @@ NIXAPI DEPRECATED std::vector<DataView> retrieveData(const MultiTag &tag, std::v
  *
  * @return nix::DataView containing the data tagged by the specified position index.
  */
-NIXAPI DataView taggedData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
+NIXAPI DataView taggedData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
+
+NIXAPI DataView taggedData(const MultiTag &tag, ndsize_t position_index, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -288,7 +298,7 @@ NIXAPI DataView taggedData(const MultiTag &tag, ndsize_t position_index, ndsize_
  * @return The data referenced by position and extent.
  * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -300,49 +310,53 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  * @return The data referenced by position and extent.
  * @deprecated This function has been deprecated! Use taggedData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data tagged by position and extent of the Tag.
  *
  * @param tag                   The tag.
  * @param reference_index       The index of the reference of which data should be returned.
+ * @param match                 RangeMatch to control range matching behavior.
  *
  * @return nix::DataView containing the tagged data.
  */
-NIXAPI DataView taggedData(const Tag &tag, ndsize_t reference_index);
+NIXAPI DataView taggedData(const Tag &tag, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
  * @param tag                   The Tag.
  * @param reference_index       The index of the reference from which data should be returned.
+ * @param match                 RangeMatch to control range matching behavior.
  *
  * @return The data referenced by the position.
  * @deprecated This function has been deprecated! Use taggedData(Tag, ndsize_t) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, ndsize_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data tagged by position and extent of the Tag.
  *
  * @param tag                   The tag.
  * @param array                 The referenced DataArray.
+ * @param match                 The range matching behavior, default //TODO
  *
  * @return nix::DataView containing the tagged data.
  */
-NIXAPI DataView taggedData(const Tag &tag, const DataArray &array);
+NIXAPI DataView taggedData(const Tag &tag, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
  *
  * @param tag                   The tag.
  * @param array                 The referenced DataArray.
+ * @param match                 The range matching behavior, default //TODO
  *
  * @return The data referenced by the position.
  * @deprecated This function has been deprecated! Use taggedData(Tag, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, const DataArray &array);
+NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
@@ -370,42 +384,46 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @param tag           The Tag whos feature data is requested
  * @param feature_index The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  * @deprecated This function has been deprecated! User featureData(Tag, ndsize_t) instead.
  */
-NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested
  * @param feature_index The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  */
-NIXAPI DataView featureData(const Tag &tag, ndsize_t feature_index=0);
+NIXAPI DataView featureData(const Tag &tag, ndsize_t feature_index=0, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested.
  * @param feature       The Feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  * @deprecated This function has been deprecated! User featureData(Tag, Feature) instead.
  */
-NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested.
  * @param feature       The Feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  */
-NIXAPI DataView featureData(const Tag &tag, const Feature &feature);
+NIXAPI DataView featureData(const Tag &tag, const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -413,11 +431,12 @@ NIXAPI DataView featureData(const Tag &tag, const Feature &feature);
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature_index  The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  * @deprecated This function has been deprecated! Use featureData(MultiTag, ndsize_t, feature_index) instead.
  */
-NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -425,10 +444,11 @@ NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t pos
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature_index  The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  */
-NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -436,11 +456,12 @@ NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature        The feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  * @deprecated This function has been deprecated! Use featureData(MultiTag, ndsize_t, Feature) instead.
  */
-NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
+NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -448,10 +469,11 @@ NIXAPI DEPRECATED DataView retrieveFeatureData(const MultiTag &tag, ndsize_t pos
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature        The feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return The associated data.
  */
-NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
+NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retruns the feature data associated with a MultiTag.
@@ -459,25 +481,25 @@ NIXAPI DataView featureData(const MultiTag &tag, ndsize_t position_index, const 
  * @param tag              The MultiTag whos feature data is requested
  * @param position_indices A vector of position indices.
  * @param feature_index    The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return A vector of the associated data, may be empty.
  * @deprecated This function has been deprecated! Use featureData(MultiTag, std::vector<ndsize_t>, ndsize_t) instead.
  */
-NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                            std::vector<ndsize_t> position_indices,
-                                                            ndsize_t feature_index = 0);
+NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                                            ndsize_t feature_index = 0, RangeMatch match = RangeMatch::Inclusive);
 /**
  * @brief Retruns the feature data associated with a MultiTag.
  *
  * @param tag              The MultiTag whos feature data is requested
  * @param position_indices A vector of position indices.
  * @param feature_index    The index of the desired feature. Default is 0.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return A vector of the associated data, may be empty.
  */
-NIXAPI std::vector<DataView> featureData(const MultiTag &tag,
-                                         std::vector<ndsize_t> position_indices,
-                                         ndsize_t feature_index = 0);
+NIXAPI std::vector<DataView> featureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                         ndsize_t feature_index = 0, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's positions.
@@ -485,13 +507,13 @@ NIXAPI std::vector<DataView> featureData(const MultiTag &tag,
  * @param tag              The MultiTag whos feature data is requested.
  * @param position_indices A vector of position indices.
  * @param feature          The feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return A vector of the associated data, may be empty.
  * @deprecated This function has been deprecated! Use featureData(MultiTag, std::vector<ndsize_t>, Feature) instead.
  */
-NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                            std::vector<ndsize_t> position_indices,
-                                                            const Feature &feature);
+NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                                            const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's positions.
@@ -499,12 +521,12 @@ NIXAPI DEPRECATED std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
  * @param tag              The MultiTag whos feature data is requested.
  * @param position_indices A vector of position indices.
  * @param feature          The feature of which the tagged data is requested.
+ * @param match         RangeMatch argument to control range matching behavior. Default is //TODO
  *
  * @return A vector of the associated data, may be empty.
  */
-NIXAPI std::vector<DataView> featureData(const MultiTag &tag,
-                                         std::vector<ndsize_t> position_indices,
-                                         const Feature &feature);
+NIXAPI std::vector<DataView> featureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                         const Feature &feature, RangeMatch match = RangeMatch::Inclusive);
 
 } //namespace util
 } //namespace nix

@@ -111,7 +111,7 @@ vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> 
                                                            const vector<double> &end_positions,
                                                            const vector<string> &units,
                                                            const RangeMatch range_matching,
-                                                           const SampledDimension &dimension) {
+                                                           const SampledDimension &dimension) {                                                           
     if (start_positions.size() != end_positions.size() || start_positions.size() != units.size() ) {
         throw std::runtime_error("util::positionToIndex: Invalid numbers of start and end positions, or units!");
     }
@@ -199,6 +199,7 @@ optional<ndsize_t> positionToIndex(double position, const string &unit, const Po
         DataFrameDimension dim;
         dim = dimension;
         // TODO
+        // pos = positionToIndex(position, match, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
@@ -273,8 +274,9 @@ optional<ndsize_t> positionToIndex(double position, const PositionMatch match, c
 }
 
 
-ndsize_t positionToIndex(double position, const string &unit, const DataFrameDimension &dimension) {
-    ndsize_t index; //TODO
+optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch position_match, const DataFrameDimension &dimension) {
+    optional<ndsize_t> index; //TODO
+
     if (unit.length() > 0 && unit != "none") {
         throw IncompatibleDimensions("Cannot apply a position with unit to a DataFrameDimension",
                                      "nix::util::positionToIndex");
@@ -377,7 +379,7 @@ string getDimensionUnit(const Dimension &dim) {
 }
 
 
-void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, NDSize &count) {
+void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, NDSize &count, RangeMatch match) {
     vector<double> position = tag.position();
     vector<double> extent = tag.extent();
     vector<string> units = tag.units();
@@ -395,6 +397,7 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
     }
     if (extent.size() == 0) {
         extent.resize(position.size(), 0.0);
+        match = RangeMatch::Inclusive;
     }
     while (position.size() > dim_count) {
         position.pop_back();
@@ -417,21 +420,33 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
 
     NDSize temp_offset(position.size());
     NDSize temp_count(position.size(), 1);
+    
     for (size_t i = 0; i < position.size(); ++i) {
-        vector<pair<ndsize_t, ndsize_t>> indices = positionToIndex({position[i]},
-                                                                   {position[i] + extent[i]},
-                                                                   {units[i]}, dimensions[i]);
-        temp_offset[i] = indices[0].first;
-        ndsize_t c = indices[0].second - indices[0].first;
-        temp_count[i] += c;
+        vector<optional<pair<ndsize_t, ndsize_t>>> ranges = positionToIndex({position[i]},
+                                                                             {position[i] + extent[i]},
+                                                                             {units[i]},
+                                                                             match,
+                                                                             dimensions[i]);
+        if (!ranges[0]) {
+            optional<ndsize_t> ofst = positionToIndex(position[i], units[i], PositionMatch::GreaterOrEqual, dimensions[i]);
+            if (extent[i] != 0. || !ofst) {
+                throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
+            }
+            temp_offset[i] = *ofst;
+        } else {
+            temp_offset[i] = (*ranges[0]).first;
+            ndsize_t count = (*ranges[0]).second - (*ranges[0]).first;
+            temp_count[i] += count;
+        }
     }
+
     offset = temp_offset;
     count = temp_count;
 }
 
 
 void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector<ndsize_t> &indices,
-                       vector<NDSize> &offsets, vector<NDSize> &counts) {
+                       vector<NDSize> &offsets, vector<NDSize> &counts, RangeMatch match) {
     DataArray positions = tag.positions();
     DataArray extents = tag.extents();
     NDSize position_size, extent_size;
@@ -498,29 +513,44 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         }
     }
 
-    vector<vector<pair<ndsize_t, ndsize_t>>> data_indices;
+    vector<vector<optional<pair<ndsize_t, ndsize_t>>>> data_indices;
     for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
-        vector<string> temp_units(start_positions.size(), units[dim_index]);
-        data_indices.push_back(positionToIndex(start_positions[dim_index], end_positions[dim_index],
-                                               temp_units, dimensions[dim_index]));
+        vector<string> temp_units(start_positions[dim_index].size(), units[dim_index]);
+        vector<optional<pair<ndsize_t, ndsize_t>>> ranges = positionToIndex(start_positions[dim_index], end_positions[dim_index],
+                                                                            temp_units, match, dimensions[dim_index]);
+                                                                          
+        data_indices.push_back(ranges);
     }
-
-    for (size_t i = 0; i < indices.size(); ++i) {
+    // at this point we do have all the start and end indices of the tagged positions that the caller wants the data of.
+    // data_indices contains for each dimension a vector of optionals, one for each position index
+    for (size_t i = 0; i < indices.size(); ++i) {  // for each of the requested positions
         NDSize data_offset(dimcount_sizet, 0);
         NDSize data_count(dimcount_sizet, 1);
-        for (size_t dim_index =0; dim_index < dimensions.size(); ++dim_index) {
-            data_offset[dim_index] = data_indices[dim_index][i].first;
-            ndsize_t count =  data_indices[dim_index][i].second - data_indices[dim_index][i].first;
-            data_count[dim_index] += count;
+        for (size_t dim_index =0; dim_index < dimensions.size(); ++dim_index) { // for each dimension
+            optional<pair<ndsize_t, ndsize_t>> opt_range = data_indices[dim_index][i];
+            if (opt_range) {
+                data_offset[dim_index] = (*opt_range).first;
+                ndsize_t count =  (*opt_range).second - (*opt_range).first;
+                data_count[dim_index] += count;
+            } else { //todo need to check for range check and the
+                if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
+                    optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
+                    if (!ofst) {
+                        cerr << end_positions[dim_index][i] << "\t" << start_positions[dim_index][i]  << "\t" << units[dim_index] << endl;
+                        throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
+                    }
+                    temp_offset[i] = *ofst;
+                }
+            }   
         }
         offsets.push_back(data_offset);
         counts.push_back(data_count);
     }
 }
 
-void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts) {
+void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts, RangeMatch match) {
     vector<NDSize> temp_offsets, temp_counts;
-    getOffsetAndCount(tag, array, {index}, temp_offsets, temp_counts);
+    getOffsetAndCount(tag, array, {index}, temp_offsets, temp_counts, match);
     offsets = temp_offsets[0];
     counts = temp_counts[0];
  }
@@ -589,10 +619,8 @@ void fillPositionsExtentsAndUnits(const DataArray &array,
 }
 
 
-DataView dataSlice(const DataArray &array,
-                   const std::vector<double> &start,
-                   const std::vector<double> &end,
-                   const std::vector<std::string> &units) {
+DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
+                   const std::vector<std::string> &units, RangeMatch match) {
     std::vector<double> my_start(start);
     std::vector<double> my_end(end);
     std::vector<std::string> my_units(units);
@@ -614,12 +642,10 @@ DataView dataSlice(const DataArray &array,
         if (my_start[i] > my_end[i]) {
             throw std::invalid_argument("Start position must not be larger than end position.");
         }
-        std::vector<std::pair<ndsize_t, ndsize_t>> indices = positionToIndex({my_start[i]},
-                                                                             {my_end[i]},
-                                                                             {my_units[i]},
-                                                                             dim);
-        offset[i] = indices[0].first;
-        count[i] += indices[0].second - indices[0].first;
+
+        std::vector<optional<std::pair<ndsize_t, ndsize_t>>> indices = positionToIndex({start[i]}, {end[i]}, {my_units[i]}, match, dim);
+        offset[i] = (*indices[0]).first;
+        count[i] += (*indices[0]).second - (*indices[0]).first;  // TODO this needs to check for extent == 0
     }
     if (!positionAndExtentInData(array, offset, count)) {
         throw OutOfBounds("Selected data slice is out of the extent of the DataArray!", 0);
@@ -629,52 +655,53 @@ DataView dataSlice(const DataArray &array,
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices, const DataArray &array) {
-    return taggedData(tag, position_indices, array);
+vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices, const DataArray &array, RangeMatch match) {
+    return taggedData(tag, position_indices, array, match);
 }
 
 
-vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices, ndsize_t reference_index) {
-    return taggedData(tag, position_indices, reference_index);
+vector<DataView> retrieveData(const MultiTag &tag, vector<ndsize_t> &position_indices, ndsize_t reference_index, RangeMatch match) {
+    return taggedData(tag, position_indices, reference_index, match);
 }
 
 
-DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array) {
-    vector<ndsize_t> indices(1, position_index);
-    return taggedData(tag, indices, array)[0];
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array, RangeMatch match) {
+    return taggedData(tag, position_index, array, match);
 }
 
 
-DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index) {
-    vector<ndsize_t> indices(1, position_index);
-    return taggedData(tag, indices, reference_index)[0];
+DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index, RangeMatch match) {
+    return taggedData(tag, position_index, reference_index, match);
 }
 
 
-vector<DataView> taggedData(const MultiTag &tag,
-                            vector<ndsize_t> &position_indices,
-                            ndsize_t reference_index) {
+vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+                            ndsize_t reference_index, RangeMatch match) {
+
     vector<DataArray> refs = tag.references();
     size_t ref_idx = check::fits_in_size_t(reference_index, "taggedData() failed; reference_index > size_t.");
 
     if (reference_index >= tag.referenceCount()) {
         throw OutOfBounds("Reference index out of bounds.", 0);
     }
-    return taggedData(tag, position_indices, refs[ref_idx]);
+    return taggedData(tag, position_indices, refs[ref_idx], match);
 }
 
 
-DataView taggedData(const MultiTag &tag,
-                    ndsize_t position_index,
-                    ndsize_t reference_index) {
+DataView taggedData(const MultiTag &tag, ndsize_t position_index,
+                    ndsize_t reference_index, RangeMatch match) {
     std::vector<ndsize_t> position_indices(1, position_index);
-    return taggedData(tag, position_indices, reference_index)[0];
+    return taggedData(tag, position_indices, reference_index, match)[0];
 }
 
+DataView taggedData(const MultiTag &tag, ndsize_t position_index,
+                    const DataArray &array, RangeMatch match) {
+    std::vector<ndsize_t> position_indices(1, position_index);
+    return taggedData(tag, position_indices, array, match)[0];
+}
 
-vector<DataView> taggedData(const MultiTag &tag,
-                            vector<ndsize_t> &position_indices,
-                            const DataArray &array) {
+vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indices,
+                            const DataArray &array, RangeMatch match) {
     vector<NDSize> counts, offsets;
     vector<DataView> views;
 
@@ -685,7 +712,7 @@ vector<DataView> taggedData(const MultiTag &tag,
         std::iota(position_indices.begin(), position_indices.end(), 0);
     }
 
-    getOffsetAndCount(tag, array, position_indices, offsets, counts);
+    getOffsetAndCount(tag, array, position_indices, offsets, counts, match);
 
     for (size_t i = 0; i < offsets.size(); ++i) {
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
@@ -698,19 +725,19 @@ vector<DataView> taggedData(const MultiTag &tag,
 }
 
 
-DataView retrieveData(const Tag &tag, ndsize_t reference_index) {
-    return taggedData(tag, reference_index);
+DataView retrieveData(const Tag &tag, ndsize_t reference_index, RangeMatch match) {
+    return taggedData(tag, reference_index, match);
 }
 
 
-DataView retrieveData(const Tag &tag, const DataArray &array) {
-    return taggedData(tag, array);
+DataView retrieveData(const Tag &tag, const DataArray &array, RangeMatch match) {
+    return taggedData(tag, array, match);
 }
 
 
-DataView taggedData(const Tag &tag, ndsize_t reference_index) {
-    vector<DataArray> refs = tag.references();
+DataView taggedData(const Tag &tag, ndsize_t reference_index, RangeMatch match) {
     size_t ref_idx = check::fits_in_size_t(reference_index, "taggedData() failed; reference_index > size_t.");
+    vector<DataArray> refs = tag.references();
 
     if (refs.size() == 0) {
         throw OutOfBounds("There are no references in this tag!", 0);
@@ -718,16 +745,16 @@ DataView taggedData(const Tag &tag, ndsize_t reference_index) {
     if (!(ref_idx < tag.referenceCount())) {
         throw OutOfBounds("Reference index out of bounds.", 0);
     }
-    return taggedData(tag, refs[ref_idx]);
+    return taggedData(tag, refs[ref_idx], match);
 }
 
 
-DataView taggedData(const Tag &tag, const DataArray &array) {
+DataView taggedData(const Tag &tag, const DataArray &array, RangeMatch match) {
     vector<double> positions = tag.position();
     vector<double> extents = tag.extent();
 
     NDSize offset, count;
-    getOffsetAndCount(tag, array, offset, count);
+    getOffsetAndCount(tag, array, offset, count, match);
     if (!positionAndExtentInData(array, offset, count)) {
         throw OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
     }
@@ -736,27 +763,27 @@ DataView taggedData(const Tag &tag, const DataArray &array) {
 }
 
 
-DataView featureData(const Tag &tag, const Feature &feature) {
+DataView featureData(const Tag &tag, const Feature &feature, RangeMatch match) {
     DataArray data = feature.data();
     if (data == none) {
         throw UninitializedEntity();
     }
     if (feature.linkType() == LinkType::Tagged) {
-        return taggedData(tag, data);
+        return taggedData(tag, data, match);
     }
-    // for untagged and indexed return the full data
+    // for untagged and indexed return the full data, a Tag tags only a single region
     NDSize offset(data.dataExtent().size(), 0);
     DataView io = DataView(data, data.dataExtent(), offset);
     return io;
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
-    return featureData(tag, feature);
+DataView retrieveFeatureData(const Tag &tag, const Feature &feature, RangeMatch match) {
+    return featureData(tag, feature, match);
 }
 
 
-DataView featureData(const Tag &tag, ndsize_t feature_index) {
+DataView featureData(const Tag &tag, ndsize_t feature_index, RangeMatch match) {
     if (tag.featureCount() == 0) {
         throw OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -764,16 +791,16 @@ DataView featureData(const Tag &tag, ndsize_t feature_index) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
-    return featureData(tag, feat);
+    return featureData(tag, feat, match);
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
-    return featureData(tag, feature_index);
+DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index, RangeMatch match) {
+    return featureData(tag, feature_index, match);
 }
 
 
-DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
+DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index, RangeMatch match) {
     size_t feat_idx = check::fits_in_size_t(feature_index, "retrieveFeatureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
@@ -781,50 +808,47 @@ DataView featureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feat
 
     Feature feat = tag.getFeature(feat_idx);
     std::vector<ndsize_t> indices(1, position_index);
-    return featureData(tag, indices, feat)[0];
+    return featureData(tag, indices, feat, match)[0];
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
-    return featureData(tag, position_index, feature_index);
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index, RangeMatch match) {
+    return featureData(tag, position_index, feature_index, match);
 }
 
 
-DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+DataView featureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch match) {
     std::vector<ndsize_t> indices(1, position_index);
-    std::vector<DataView> views = featureData(tag, indices, feature);
+    std::vector<DataView> views = featureData(tag, indices, feature, match);
     return views[0];
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
-    return featureData(tag, position_index, feature);
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch match) {
+    return featureData(tag, position_index, feature, match);
 }
 
 
-std::vector<DataView> featureData(const MultiTag &tag,
-                                  std::vector<ndsize_t> position_indices,
-                                  ndsize_t feature_index) {
+std::vector<DataView> featureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                  ndsize_t feature_index, RangeMatch match) {
     size_t feat_idx = check::fits_in_size_t(feature_index,
                                             "featureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feat_idx);
-    return featureData(tag, position_indices, feat);
+    return featureData(tag, position_indices, feat, match);
 }
 
 
-std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                          std::vector<ndsize_t> position_indices,
-                                          ndsize_t feature_index) {
-     return featureData(tag, position_indices, feature_index);
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                          ndsize_t feature_index, RangeMatch match) {
+     return featureData(tag, position_indices, feature_index, match);
 }
 
 
-std::vector<DataView> featureData(const MultiTag &tag,
-                                  std::vector<ndsize_t> position_indices,
-                                  const Feature &feature) {
+std::vector<DataView> featureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                  const Feature &feature, RangeMatch match) {
     std::vector<DataView> views;
     DataArray data = feature.data();
     if (data == nix::none) {
@@ -837,7 +861,7 @@ std::vector<DataView> featureData(const MultiTag &tag,
         std::iota(position_indices.begin(), position_indices.end(), 0);
     }
     if (feature.linkType() == LinkType::Tagged) {
-        views = taggedData(tag, position_indices, data);
+        views = taggedData(tag, position_indices, data, match);
         return views;
     }
 
@@ -872,10 +896,9 @@ std::vector<DataView> featureData(const MultiTag &tag,
 }
 
 
-std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                          std::vector<ndsize_t> position_indices,
-                                          const Feature &feature) {
-    return featureData(tag, position_indices, feature);
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                          const Feature &feature, RangeMatch match) {
+    return featureData(tag, position_indices, feature, match);
 }
 
 } // namespace util
