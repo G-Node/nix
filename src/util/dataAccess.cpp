@@ -536,7 +536,6 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
                 if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
                     optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
                     if (!ofst) {
-                        cerr << end_positions[dim_index][i] << "\t" << start_positions[dim_index][i]  << "\t" << units[dim_index] << endl;
                         throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
                     }
                     temp_offset[i] = *ofst;
