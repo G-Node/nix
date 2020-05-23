@@ -716,42 +716,40 @@ void BaseTestDataAccess::testDataSlice() {
 
     // do the tests!
     nix::DataArray no_array;
-    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2, 3}), nix::UninitializedEntity);
-
-    // test incomplete information
-    nix::DataView view = util::dataSlice(oned_array, {}, {}, {});
-    CPPUNIT_ASSERT(view.dataExtent() == oned_array.dataExtent());
-    view = util::dataSlice(twod_array, {}, {}, {});
-    CPPUNIT_ASSERT(view.dataExtent() == twod_array.dataExtent());
-    view = util::dataSlice(twod_array2, {}, {}, {});
-    CPPUNIT_ASSERT(view.dataExtent() == twod_array2.dataExtent());
-    view = util::dataSlice(twod_array2, {0.0}, {9.0}, {"s"});
-    CPPUNIT_ASSERT(view.dataExtent()[1] == twod_array2.dataExtent()[1]);
-    view = util::dataSlice(twod_array2, {0.0, 0.0}, {9.0, 1000.}, {"s", "ms"});
-    CPPUNIT_ASSERT(view.dataExtent()[1] == (1/interval + 1));
-
-    // test scaling, exceptions etc.
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2, 3}), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
+    CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2, 3}), std::invalid_argument); // 1d data but called with 2d segment 
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument); // 1d positions, but two units
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument); // different size of start and end
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions); // sampledDimension represents time
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds); // well beyond data
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1.0}, {0.0}), std::invalid_argument);
 
-    nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0});
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
+ 
+    // test with RangeMatch::Inclusive
+    nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0}, {}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 101);
 
-    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0});
+    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0}, {}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 3 && slice.dataExtent()[1] == 101);
 
-    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"});
+    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 10 && slice.dataExtent()[1] == 101);
 
+    // test with RangeMatch::Exclusive
+    slice = util::dataSlice(oned_array, {0.0}, {1.0}, {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 100);
+
+    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0}, {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 3 && slice.dataExtent()[1] == 100);
+
+    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 9 && slice.dataExtent()[1] == 100);
 
     b.deleteDataArray(oned_array);
     b.deleteDataArray(twod_array);
