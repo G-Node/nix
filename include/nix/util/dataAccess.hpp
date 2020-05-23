@@ -283,20 +283,25 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
  *
  * @param tag           The Tag whos feature data is requested
  * @param feature_index The index of the desired feature. Default is 0.
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored) 
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0, RangeMatch range_match = RangeMatch::Inclusive);
 
 /**
  * @brief Retruns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested.
  * @param feature       The Feature of which the tagged data is requested.
- *
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored)
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
+NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature, RangeMatch range_match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -304,10 +309,13 @@ NIXAPI DataView retrieveFeatureData(const Tag &tag, const Feature &feature);
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature_index  The index of the desired feature. Default is 0.
- *
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored)
+ * 
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0);
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index=0, RangeMatch range_match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's position.
@@ -315,10 +323,13 @@ NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index
  * @param tag            The MultiTag whos feature data is requested.
  * @param position_index The index of the selected position, respectively the selected tag of the MultiTag.
  * @param feature        The feature of which the tagged data is requested.
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored)
  *
  * @return The associated data.
  */
-NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature);
+NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch range_match = RangeMatch::Inclusive);
 
 
 /**
@@ -327,12 +338,14 @@ NIXAPI DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index
  * @param tag              The MultiTag whos feature data is requested
  * @param position_indices A vector of position indices.
  * @param feature_index    The index of the desired feature. Default is 0.
- *
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored)
+ * 
  * @return A vector of the associated data, may be empty.
  */
-NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                 std::vector<ndsize_t> position_indices,
-                                                 ndsize_t feature_index = 0);
+NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                                 ndsize_t feature_index = 0, RangeMatch range_match = RangeMatch::Inclusive);
 
 /**
  * @brief Returns the feature data associated with the given MuliTag's positions.
@@ -340,12 +353,14 @@ NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
  * @param tag              The MultiTag whos feature data is requested.
  * @param position_indices A vector of position indices.
  * @param feature          The feature of which the tagged data is requested.
- *
+ * @param range_match   Member of RangeMatch enum to control whether a 
+ *                      data range should include the last position or not
+ *                      (only required for tagged features, otherwise ignored)
+ * 
  * @return A vector of the associated data, may be empty.
  */
-NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                                 std::vector<ndsize_t> position_indices,
-                                                 const Feature &feature);
+NIXAPI std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                                 const Feature &feature, RangeMatch range_match = RangeMatch::Inclusive);
 
 } //namespace util
 } //namespace nix

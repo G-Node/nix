@@ -501,7 +501,6 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
                 if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
                     optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
                     if (!ofst) {
-                        cerr << end_positions[dim_index][i] << "\t" << start_positions[dim_index][i]  << "\t" << units[dim_index] << endl;
                         throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
                     }
                     temp_offset[i] = *ofst;
@@ -656,14 +655,14 @@ DataView retrieveData(const Tag &tag, const DataArray &array, RangeMatch match) 
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
+DataView retrieveFeatureData(const Tag &tag, const Feature &feature, RangeMatch range_match) {
     DataArray data = feature.data();
     if (data == none) {
         throw UninitializedEntity();
         //return NDArray(nix::DataType::Float,{0});
     }
     if (feature.linkType() == LinkType::Tagged) {
-        return retrieveData(tag, data);
+        return retrieveData(tag, data, range_match);
     }
     // for untagged and indexed return the full data
     NDSize offset(data.dataExtent().size(), 0);
@@ -672,7 +671,7 @@ DataView retrieveFeatureData(const Tag &tag, const Feature &feature) {
 }
 
 
-DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
+DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index, RangeMatch range_match) {
     if (tag.featureCount() == 0) {
         throw OutOfBounds("There are no features associated with this tag!", 0);
     }
@@ -680,11 +679,11 @@ DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feature_index);
-    return retrieveFeatureData(tag, feat);
+    return retrieveFeatureData(tag, feat, range_match);
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index) {
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsize_t feature_index, RangeMatch range_match) {
     size_t feat_idx = check::fits_in_size_t(feature_index, "retrieveFeatureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
@@ -692,33 +691,31 @@ DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, ndsiz
 
     Feature feat = tag.getFeature(feat_idx);
     std::vector<ndsize_t> indices(1, position_index);
-    return retrieveFeatureData(tag, indices, feat)[0];
+    return retrieveFeatureData(tag, indices, feat, range_match)[0];
 }
 
 
-DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature) {
+DataView retrieveFeatureData(const MultiTag &tag, ndsize_t position_index, const Feature &feature, RangeMatch range_match) {
     std::vector<ndsize_t> indices(1, position_index);
-    std::vector<DataView> views = retrieveFeatureData(tag, indices, feature);
+    std::vector<DataView> views = retrieveFeatureData(tag, indices, feature, range_match);
     return views[0];
 }
 
 
-std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                          std::vector<ndsize_t> position_indices,
-                                          ndsize_t feature_index) {
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                          ndsize_t feature_index, RangeMatch range_match) {
     size_t feat_idx = check::fits_in_size_t(feature_index,
                                             "retrieveFeatureData() failed; feaure_index > size_t.");
     if (feat_idx >= tag.featureCount()) {
         throw OutOfBounds("Feature index out of bounds.", 0);
     }
     Feature feat = tag.getFeature(feat_idx);
-    return retrieveFeatureData(tag, position_indices, feat);
+    return retrieveFeatureData(tag, position_indices, feat, range_match);
 }
 
 
-std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
-                                          std::vector<ndsize_t> position_indices,
-                                          const Feature &feature) {
+std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
+                                          const Feature &feature, RangeMatch range_match) {
     std::vector<DataView> views;
     DataArray data = feature.data();
     if (data == nix::none) {
@@ -731,7 +728,7 @@ std::vector<DataView> retrieveFeatureData(const MultiTag &tag,
         std::iota(position_indices.begin(), position_indices.end(), 0);
     }
     if (feature.linkType() == LinkType::Tagged) {
-        views = retrieveData(tag, position_indices, data);
+        views = retrieveData(tag, position_indices, data, range_match);
         return views;
     }
 
