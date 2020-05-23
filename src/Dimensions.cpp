@@ -625,7 +625,7 @@ boost::optional<ndsize_t> RangeDimension::indexOf(const double position, Positio
 
 
 boost::optional<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(double start, double end,
-                                                                       std::vector<double> &&ticks,
+                                                                       std::vector<double> ticks,
                                                                        RangeMatch match) const {
     if (ticks.size() == 0) {
         ticks = this->ticks();
@@ -698,7 +698,7 @@ std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> RangeDimension::inde
     vector<double> ticks = this->ticks();
     for (size_t i = 0; i < start_positions.size(); ++i) {
         boost::optional<std::pair<ndsize_t, ndsize_t>> range;
-        range = this->indexOf(start_positions[i], end_positions[i], std::move(ticks), match);
+        range = this->indexOf(start_positions[i], end_positions[i], ticks, match);
         indices.push_back(range);
     }
     return indices;
