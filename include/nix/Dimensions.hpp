@@ -1082,8 +1082,7 @@ public:
      * @return           Start and end indices returned in a boost::optional<std::pair>
      *                   which is invalid if out of range.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end,
-                                                           std::vector<double> &&ticks,
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, std::vector<double> ticks,
                                                            RangeMatch match = RangeMatch::Inclusive) const;
 
 
