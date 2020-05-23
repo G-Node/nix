@@ -156,14 +156,17 @@ NIXAPI DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(con
  * @param array         A referenced data array.
  * @param[out] offsets  The resulting offset.
  * @param[out] counts   The number of elements to read from data
+ * @param match         Member of the RangeMatch enum, defining wheter the range includes the end position
+ *                      or not. By default this is RangeMatch::Inclusive (Note: this behavior will change 
+ *                      with version 1.5)
  */
-NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offsets, NDSize &counts, RangeMatch match = RangeMatch::Inclusive);
 
 
-NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts);
+NIXAPI void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t index, NDSize &offsets, NDSize &counts, RangeMatch match = RangeMatch::Inclusive);
 
 NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const std::vector<ndsize_t> indices,
-                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts);
+                              std::vector<NDSize> &offsets, std::vector<NDSize> & counts, RangeMatch match = RangeMatch::Inclusive);
 
 
 /**
@@ -183,7 +186,7 @@ NIXAPI void getOffestAndCount(const MultiTag &tag, const DataArray &array, const
  * @returns {@link nix::DataView} the data slice.
  */
 NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &start, const std::vector<double> &end,
-                          const std::vector<std::string> &units={});
+                          const std::vector<std::string> &units={}, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -195,7 +198,7 @@ NIXAPI DataView dataSlice(const DataArray &array, const std::vector<double> &sta
  * @return The data referenced by position and extent.
  * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the MultiTag.
@@ -207,7 +210,7 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  * @return The data referenced by position and extent.
  * @deprecated This function has been deprecated! Use retrieveData(MultiTag, vector<ndsize_t>, DataArray) instead.
  */
-NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index);
+NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_index, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 
 /**
@@ -219,7 +222,7 @@ NIXAPI DEPRECATED DataView retrieveData(const MultiTag &tag, ndsize_t position_i
  *
  * @return The data referenced by the specified indices, respectively their positions and extents.
  */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array);
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve several segments of  data referenced by the given position and extent of the MultiTag.
@@ -230,7 +233,7 @@ NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsiz
  *
  * @return The data referenced by the specified indices, respectively their positions and extents.
  */
-NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index);
+NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsize_t> &position_indices, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 
 /**
@@ -241,7 +244,7 @@ NIXAPI std::vector<DataView> retrieveData(const MultiTag &tag, std::vector<ndsiz
  *
  * @return The data referenced by the position.
  */
-NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
+NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index, RangeMatch match = RangeMatch::Inclusive);
 
 /**
  * @brief Retrieve the data referenced by the given position and extent of the Tag.
@@ -251,7 +254,7 @@ NIXAPI DataView retrieveData(const Tag &tag, ndsize_t reference_index);
  *
  * @return The data referenced by the position.
  */
-NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array);
+NIXAPI DataView retrieveData(const Tag &tag, const DataArray &array, RangeMatch match = RangeMatch::Inclusive);
 
 
 /**

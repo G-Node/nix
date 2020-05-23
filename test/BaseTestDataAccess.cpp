@@ -173,8 +173,20 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
 
 void BaseTestDataAccess::testOffsetAndCount() {
     NDSize offsets, counts;
+    /*
+     std::vector<double> position {0.0, 2.0, 3.4};
+     std::vector<double> extent {0.0, 6.0, 2.3};
+     std::vector<std::string> units {"none", "ms", "ms"};
+    */
+    // implicitely calls with range = RangeMatch::Inclusive, 
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
+    // even if called with RangeMatch::Exclusive it will return count == 1
+    util::getOffsetAndCount(position_tag, data_array, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
@@ -189,21 +201,38 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
+    
+    /*
+     Test a tag with position and extents
+     position {0.0, 2.0, 3.4};
+     extent {0.0, 6.0, 2.3};
+     units {"none", "ms", "ms"};
+     ref_dims = {Set (labels:{"label_a", "label_b"}), Sampled(1.0, ms), Range(ticks:{1.2, 2.3, 3.4, 4.5, 6.7}, ms)}
+    */
+    // call with RangeMatch::Inclusive
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
 
-    segment_tag.units(std::vector<std::string>());
-    util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
+    // call with RangeMatch::Exclusive
+    util::getOffsetAndCount(segment_tag, data_array, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+    
+    /*
+    MultiTag:
+    positions = [0.0 --> 0.0, 3.0 --> 9.0,  3.4 --> 5.7];  // position 1
+                [0.0 --> 0.0, 8.0 --> 11.0, 2.3 --> 4.3];  // position 2
 
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
+    ref_array {Set, Sample, Range}, as above
+    */
+    // calling with RangeMatch::Inclusive
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds); // not a valid position index
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds); // not a valid position index
 
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
@@ -211,11 +240,23 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
 
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2);
+
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 3 && counts[2] == 2);
 }
 
 
@@ -463,16 +504,20 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
 
 void BaseTestDataAccess::testMultiTagUnitSupport() {
-    std::vector<std::string> valid_units{"none","ms","s"};
+    std::vector<std::string> valid_units{"none","ms","ms"};
     std::vector<std::string> invalid_units{"mV", "Ohm", "muV"};
     std::vector<ndsize_t> position_indices(1);
+
     MultiTag testTag = block.createMultiTag("test", "testTag", multi_tag.positions());
     testTag.units(valid_units);
     testTag.addReference(data_array);
+    
     position_indices[0] = 0;
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
+    
     testTag.units(nix::none);
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
+    
     testTag.units(invalid_units);
     CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, position_indices, 0), nix::IncompatibleDimensions);
 }
