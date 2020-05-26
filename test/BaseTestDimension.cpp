@@ -611,8 +611,6 @@ void BaseTestDimension::testSetDimIndexOf() {
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 3);
     CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 1 && (*ranges[2]).second == 4);
     CPPUNIT_ASSERT(!ranges[3]);
-
-
 }
 
 void BaseTestDimension::testRangeDimLabel() {
@@ -900,6 +898,126 @@ void BaseTestDimension::testRangeDimPositionInRange() {
     CPPUNIT_ASSERT(rd.positionInRange(0.1) == nix::PositionInRange::NoRange);
 }
 
+
+void BaseTestDimension::testDataFrameDimIndexOf() {
+    std::vector<nix::Column> cols = {{"current", "nA", nix::DataType::Double},
+                                     {"note", "", nix::DataType::String}};
+    nix::DataFrame df = block.createDataFrame("conditions", "test", cols);
+    std::vector<nix::Variant> vals(2);
+    df.rows(10);
+    for (int i = 0; i < 10; ++i) {
+        vals[0].set(i * 2.5);
+        vals[1].set("test");
+        df.writeRow(i, vals);
+    }
+
+    Dimension d = data_array.appendDataFrameDimension(df, 0);
+
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::DataFrame);
+    DataFrameDimension dfDim;
+    dfDim = d;
+
+    boost::optional<ndsize_t> pos = dfDim.indexOf(12.2, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(12.2, PositionMatch::Greater);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(12.2, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(12.2, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 9);
+    pos = dfDim.indexOf(12.2, PositionMatch::Less);
+    CPPUNIT_ASSERT(pos && *pos == 9);
+
+    pos = dfDim.indexOf(9, PositionMatch::Greater);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(9, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 9);
+    pos = dfDim.indexOf(9, PositionMatch::Equal);
+    CPPUNIT_ASSERT(pos && *pos == 9);
+    pos = dfDim.indexOf(9, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 9);
+    pos = dfDim.indexOf(9, PositionMatch::Less);
+    CPPUNIT_ASSERT(pos && *pos == 8);
+
+    pos = dfDim.indexOf(5, PositionMatch::Greater);
+    CPPUNIT_ASSERT(pos && *pos == 6);
+    pos = dfDim.indexOf(5, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 5);
+    pos = dfDim.indexOf(5, PositionMatch::Equal);
+    CPPUNIT_ASSERT(pos && *pos == 5);
+    pos = dfDim.indexOf(5, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 5);
+    pos = dfDim.indexOf(5, PositionMatch::Less);
+    CPPUNIT_ASSERT(pos && *pos == 4);
+
+    pos = dfDim.indexOf(0.5, PositionMatch::Greater);
+    CPPUNIT_ASSERT(pos && *pos == 1);
+    pos = dfDim.indexOf(0.5, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 1);
+    pos = dfDim.indexOf(0.5, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(0.5, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 0);
+    pos = dfDim.indexOf(0.5, PositionMatch::Less);
+    CPPUNIT_ASSERT(pos && *pos == 0);
+
+    pos = dfDim.indexOf(-0.5, PositionMatch::Greater);
+    CPPUNIT_ASSERT(pos && *pos == 0);
+    pos = dfDim.indexOf(-0.5, PositionMatch::GreaterOrEqual);
+    CPPUNIT_ASSERT(pos && *pos == 0);
+    pos = dfDim.indexOf(-0.5, PositionMatch::Equal);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(-0.5, PositionMatch::LessOrEqual);
+    CPPUNIT_ASSERT(!pos);
+    pos = dfDim.indexOf(-0.5, PositionMatch::Less);
+    CPPUNIT_ASSERT(!pos);
+ 
+    boost::optional<std::pair<ndsize_t, ndsize_t>> range = dfDim.indexOf(0.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = dfDim.indexOf(0.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = dfDim.indexOf(0.0, 3.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = dfDim.indexOf(0.0, 3.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = dfDim.indexOf(3.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = dfDim.indexOf(3.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    
+    range = dfDim.indexOf(0.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = dfDim.indexOf(1.0, 1.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = dfDim.indexOf(0.0, 3.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = dfDim.indexOf(0.0, 3.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = dfDim.indexOf(3.0, 0.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    range = dfDim.indexOf(3.0, 0.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    range = dfDim.indexOf(0.0, 9.0, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 9);
+    range = dfDim.indexOf(3.0, 9.0, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 8);
+
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> ranges;
+    CPPUNIT_ASSERT_THROW(dfDim.indexOf({0.0, -1.0, 1.0}, {1.0, 2.0}, RangeMatch::Inclusive), std::runtime_error);
+    ranges = dfDim.indexOf({0.0, -1.0, 1.0, 1.0}, {1.0, 4.0, 9.0, 1.0}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(ranges.size() == 4);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 1);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 4);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 1 && (*ranges[2]).second == 9);
+    CPPUNIT_ASSERT(ranges[3] && (*ranges[3]).first == 1 && (*ranges[3]).second == 1);
+
+    ranges = dfDim.indexOf({0.0, -1.0, 1.0, 1.0}, {1.0, 4.0, 9.0, 1.0}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(ranges.size() == 4);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 0);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 3);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 1 && (*ranges[2]).second == 8);
+    CPPUNIT_ASSERT(!ranges[3]);
+}
 
 void BaseTestDimension::testAsDimensionMethods() {
     std::vector<double> ticks = {-100.0, -10.0, 0.0, 10.0, 100.0};

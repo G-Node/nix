@@ -602,7 +602,52 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
         df.readColumn(*column_index, ticks, true, offset);
     }
 
+    /**
+    * @brief returns the index in this dimension that matches the given position. 
+    * 
+    * @param position   The position that should be converted to a corresponding index in the dimension.
+    * @param match      The matching rule for the position {@link PositionMatch}.
+    * 
+    * @return an boost::optional containing the index. 
+    */
+    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
 
+    /**
+    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension.
+    * 
+    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+    * @param range_match      The matching rule for the position {@link RangeMatch}.
+    * 
+    * @return an boost::optional containing a std::pair of start and end index. 
+    */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, RangeMatch range_match) const;
+    
+    /**
+    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension. Mostly needed internally.
+    * 
+    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+    * @param tick_count       The number of of ticks stored in this dimension.
+    * @param range_match      The matching rule for the range {@link RangeMatch}.
+    * 
+    * @return an boost::optional containing a std::pair of start and end index. 
+    */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, ndsize_t tick_count, RangeMatch range_match) const;
+
+    /**
+     * @brief Converts a set of start and end positions to a vector of pairs of start and end indices.
+     * 
+     * @param start_positions  std::vector of start positions. 
+     * @param end_positions    std::vector of end positions. 
+     * @param range_match      The matching rule for the range {@link RangeMatch}.
+     * 
+     * @return A std::vector of boost::optionals containing pairs of start and end indices.
+    */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch range_match) const;
+    
     /**
      * @brief returns the number of entries in the dimension, aka the number of
      * rows in the DataFrame.

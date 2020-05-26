@@ -50,6 +50,8 @@ public:
     void testRangeDimAxis();
     void testRangeDimPositionInRange();
     
+    void testDataFrameDimIndexOf();
+
     void testAsDimensionMethods();
 };
 

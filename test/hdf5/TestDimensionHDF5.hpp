@@ -39,6 +39,7 @@ class TestDimensionHDF5 : public BaseTestDimension {
     CPPUNIT_TEST(testRangeDimPositionInRange);
     CPPUNIT_TEST(testRangeDimTickAt);
     CPPUNIT_TEST(testRangeDimAxis);
+    CPPUNIT_TEST(testDataFrameDimIndexOf);
     CPPUNIT_TEST(testAsDimensionMethods);
     CPPUNIT_TEST_SUITE_END ();
 

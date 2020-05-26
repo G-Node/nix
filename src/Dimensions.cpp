@@ -392,11 +392,14 @@ boost::optional<ndsize_t> getSetIndex(const double position, std::vector<std::st
         return index;
     }
     double tmp;
+
     if (match == PositionMatch::Greater || match == PositionMatch::GreaterOrEqual) {
         tmp = ceil(position);
         if (tmp < 0.0) {
             tmp = 0.0;
         }
+        
+
         bool equals = fabs(tmp - position) <= numeric_limits<double>::epsilon();
         index = (match == PositionMatch::Greater && equals) ? static_cast<ndsize_t>(tmp + 1) : static_cast<ndsize_t>(tmp);
     } else if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
@@ -424,8 +427,8 @@ boost::optional<ndsize_t> getSetIndex(const double position, std::vector<std::st
             index = boost::none;
         }
     }
-    return index;
 
+    return index;
 }
 
 
@@ -777,6 +780,96 @@ DataFrameDimension::DataFrameDimension(std::shared_ptr<IDataFrameDimension> &&pt
 DataFrameDimension::DataFrameDimension(const DataFrameDimension &other)
     : ImplContainer(other)
 {
+}
+
+
+boost::optional<ndsize_t> getDataFrameIndex(const double position, const ndsize_t tick_count, const PositionMatch match) {
+    boost::optional<ndsize_t> index;
+    if (position < 0 && (match != PositionMatch::Greater && match != PositionMatch::GreaterOrEqual)) {
+        return index;
+    }
+    double tmp;
+
+    if (match == PositionMatch::Greater || match == PositionMatch::GreaterOrEqual) {
+        tmp = ceil(position);
+        if (tmp < 0.0) {
+            tmp = 0.0;
+        }
+
+        bool equals = fabs(tmp - position) <= numeric_limits<double>::epsilon();
+        index = (match == PositionMatch::Greater && equals) ? static_cast<ndsize_t>(tmp + 1) : static_cast<ndsize_t>(tmp);
+    } else if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
+        tmp = floor(position);
+        bool equals = fabs(tmp - position) <= numeric_limits<double>::epsilon();
+        if (match == PositionMatch::Less && equals) { 
+            if (tmp >= 1) {
+                index = static_cast<ndsize_t>(tmp - 1);
+            } 
+        } else {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    } else {
+        tmp = round(position);
+        if (fabs(tmp - position) <= numeric_limits<double>::epsilon()) {
+            index = static_cast<ndsize_t>(tmp);
+        }
+    }
+
+    if (index && tick_count > 0 && *index > tick_count - 1) {
+        if (match == PositionMatch::Less || match == PositionMatch::LessOrEqual) {
+            index = tick_count - 1;
+        } else {
+            index = boost::none;
+        }
+    }
+   
+    return index;
+}
+
+
+boost::optional<ndsize_t> DataFrameDimension::indexOf(const double position, const PositionMatch pos_match) const {
+    ndsize_t tick_count = this->size();
+    return getDataFrameIndex(position, tick_count, pos_match);
+}
+
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> DataFrameDimension::indexOf(double start, double end, ndsize_t tick_count, const RangeMatch match) const {
+    if (start > end) {
+        std::swap(start, end);
+    }
+    PositionMatch end_match = (match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less);
+    boost::optional<std::pair<ndsize_t, ndsize_t>> index;
+    
+    boost::optional<ndsize_t> si = getDataFrameIndex(start, tick_count, PositionMatch::GreaterOrEqual);
+    boost::optional<ndsize_t> ei = getDataFrameIndex(end, tick_count, end_match);
+    
+    if (si && ei && *si <= *ei) {
+        index = std::pair<ndsize_t, ndsize_t>(*si, *ei);    
+    }
+
+    return index;
+}
+
+
+boost::optional<std::pair<ndsize_t, ndsize_t>> DataFrameDimension::indexOf(double start, double end, const RangeMatch match) const {
+    ndsize_t tick_count = this->size();
+    return indexOf(start, end, tick_count, match);
+}
+
+
+std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> DataFrameDimension::indexOf(const std::vector<double> &start_positions,
+                                                                                        const std::vector<double> &end_positions,
+                                                                                        const RangeMatch match) const {
+    if (start_positions.size() != end_positions.size()) {
+        throw runtime_error("DataFrameDimension::IndexOf - Number of start and end positions must match!");
+    }
+    ndsize_t tick_count = this->size();
+    
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indices;
+    for (size_t i = 0; i < start_positions.size(); ++i) {
+        indices.push_back(indexOf(start_positions[i], end_positions[i], tick_count, match));
+    }
+    return indices;
 }
 
 
