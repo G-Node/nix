@@ -538,7 +538,7 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
                 data_offset[dim_index] = (*opt_range).first;
                 ndsize_t count =  (*opt_range).second - (*opt_range).first;
                 data_count[dim_index] += count;
-            } else { //todo need to check for range check and the
+            } else {
                 if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
                     optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
                     if (!ofst) {
@@ -647,10 +647,17 @@ DataView dataSlice(const DataArray &array, const std::vector<double> &start, con
         if (my_start[i] > my_end[i]) {
             throw std::invalid_argument("Start position must not be larger than end position.");
         }
-
         std::vector<optional<std::pair<ndsize_t, ndsize_t>>> indices = positionToIndex({start[i]}, {end[i]}, {my_units[i]}, match, dim);
-        offset[i] = (*indices[0]).first;
-        count[i] += (*indices[0]).second - (*indices[0]).first;  // TODO this needs to check for extent == 0
+        if (!indices[0]) {
+            optional<ndsize_t> ofst = positionToIndex(my_start[i], my_units[i], PositionMatch::GreaterOrEqual, dim);
+            if (my_end[i] - my_start[i] > std::numeric_limits<double>::epsilon() || !ofst) {
+                throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
+            }
+            offset[i] = *ofst;
+        } else {
+            offset[i] = (*indices[0]).first;
+            count[i] +=  (*indices[0]).second - (*indices[0]).first;
+        }
     }
     if (!positionAndExtentInData(array, offset, count)) {
         throw OutOfBounds("Selected data slice is out of the extent of the DataArray!", 0);
