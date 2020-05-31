@@ -65,7 +65,9 @@ vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> 
         dim = dimension;
         indices = positionToIndex(start_positions, end_positions, range_matching, dim);
     } else if (dimension.dimensionType() == DimensionType::DataFrame) {
-        // T ODO
+        DataFrameDimension dim;
+        dim = dimension;
+        indices = positionToIndex(start_positions, end_positions, range_matching, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
@@ -184,6 +186,17 @@ vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_pos
     return ranges;
 }
 
+vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> &start_positions,
+                                                           const vector<double> &end_positions,
+                                                           const RangeMatch range_matching,
+                                                           const DataFrameDimension &dimension) {
+    if (start_positions.size() != end_positions.size()) {
+        throw std::runtime_error("util::positionToIndex: Invalid numbers of start and end positions!");
+    }
+    vector<optional<pair<ndsize_t, ndsize_t>>> indices = dimension.indexOf(start_positions, end_positions, range_matching);
+    return indices;
+}
+
 
 optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch match, const Dimension &dimension) {
     optional<ndsize_t> pos;
@@ -194,12 +207,11 @@ optional<ndsize_t> positionToIndex(double position, const string &unit, const Po
     } else if (dimension.dimensionType() == DimensionType::Set) {
         SetDimension dim;
         dim = dimension;
-        pos = positionToIndex(position, unit, match, dim); 
+        pos = positionToIndex(position, match, dim); 
     } else if (dimension.dimensionType() == DimensionType::DataFrame) {
         DataFrameDimension dim;
         dim = dimension;
-        // TODO
-        // pos = positionToIndex(position, match, dim);
+        pos = positionToIndex(position, match, dim);
     } else {
         RangeDimension dim;
         dim = dimension;
@@ -220,11 +232,16 @@ ndsize_t positionToIndex(double position, const string &unit, const Dimension &d
         SetDimension dim;
         dim = dimension;
         pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
+    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
+       DataFrameDimension dim;
+       dim = dimension;
+       pos = positionToIndex(position, PositionMatch::GreaterOrEqual, dim); 
     } else {
         RangeDimension dim;
         dim = dimension;
         pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
     }
+    
     if (!pos) {
         throw nix::OutOfBounds("util::positionToIndex: Out of range position was given.");
     }
@@ -274,17 +291,8 @@ optional<ndsize_t> positionToIndex(double position, const PositionMatch match, c
 }
 
 
-optional<ndsize_t> positionToIndex(double position, const string &unit, const PositionMatch position_match, const DataFrameDimension &dimension) {
-    optional<ndsize_t> index; //TODO
-
-    if (unit.length() > 0 && unit != "none") {
-        throw IncompatibleDimensions("Cannot apply a position with unit to a DataFrameDimension",
-                                     "nix::util::positionToIndex");
-    }
-    index = static_cast<ndsize_t>(round(position));
-    if (round(position) < 0 || index >= dimension.size()) {
-        throw OutOfBounds("Position is out of bounds of the given DataFrameDimension.", static_cast<int>(position));
-    }
+optional<ndsize_t> positionToIndex(double position, const PositionMatch position_match, const DataFrameDimension &dimension) {
+    optional<ndsize_t> index = dimension.indexOf(position, position_match);
     return index;
 }
 
@@ -420,7 +428,6 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
 
     NDSize temp_offset(position.size());
     NDSize temp_count(position.size(), 1);
-    
     for (size_t i = 0; i < position.size(); ++i) {
         vector<optional<pair<ndsize_t, ndsize_t>>> ranges = positionToIndex({position[i]},
                                                                              {position[i] + extent[i]},
@@ -439,7 +446,6 @@ void getOffsetAndCount(const Tag &tag, const DataArray &array, NDSize &offset, N
             temp_count[i] += count;
         }
     }
-
     offset = temp_offset;
     count = temp_count;
 }

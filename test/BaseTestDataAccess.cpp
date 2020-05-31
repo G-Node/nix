@@ -171,13 +171,10 @@ void BaseTestDataAccess::testPositionToIndexSampledDimensionOld() {
 
 void BaseTestDataAccess::testPositionToIndexSetDimensionOld() {
     std::string unit = "ms";
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(-5.9, "none", setDim), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(-5.9, "none", setDim)); // because old style defaults to GreaterOrEqual
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds); // labels are set, but too few
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
     CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
-
-
-    CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", setDim) == 0);
 
     int pos = -1;
     CPPUNIT_ASSERT_NO_THROW(check::converts_to_double(pos, "Does not convert seamlessly to double!"));
@@ -203,37 +200,42 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 0);   
 }
 
+
 void BaseTestDataAccess::testPositionToIndexDataFrameDimension() {
-    std::string unit = "ms";
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(12.2, "none", PositionMatch::GreaterOrEqual, dfDim), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, PositionMatch::GreaterOrEqual, dfDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", PositionMatch::GreaterOrEqual, dfDim));
-    optional<ndsize_t> index = util::positionToIndex(0.5, "none", PositionMatch::GreaterOrEqual, dfDim);
-    CPPUNIT_ASSERT( index && *index == 1);
-    index = util::positionToIndex(0.45, "none", PositionMatch::LessOrEqual, dfDim);
-    CPPUNIT_ASSERT( index && *index == 0);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(12.2, PositionMatch::GreaterOrEqual, dfDim)); // no throw even though not valid
+    boost::optional<ndsize_t> pos = util::positionToIndex(12.2, PositionMatch::GreaterOrEqual, dfDim);
+    CPPUNIT_ASSERT(!pos);
+
+    
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({1.0, 2.0}, {0.0}, RangeMatch::Exclusive, dfDim), std::runtime_error);
+    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 12.0, 5.0}, {9.0, 15.0, 0.0}, RangeMatch::Exclusive, dfDim);
+    CPPUNIT_ASSERT(ranges.size() == 3);
+    CPPUNIT_ASSERT(ranges[0]);
+    CPPUNIT_ASSERT(!ranges[1]);
+    CPPUNIT_ASSERT(ranges[2]);
 }
+
 
 void BaseTestDataAccess::testOffsetAndCount() {
     NDSize offsets, counts;
     /*
-     std::vector<double> position {0.0, 2.0, 3.4};
-     std::vector<double> extent {0.0, 6.0, 2.3};
+     std::vector<double> position {0.0, 2.0, 3.4, 1.0};
+     std::vector<double> extent {0.0, 6.0, 2.3, 1.0};
      std::vector<std::string> units {"none", "ms", "ms"};
     */
     // implicitely calls with range = RangeMatch::Inclusive, 
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1 && counts[3] == 1);
 
     // even if called with RangeMatch::Exclusive it will return count == 1
     util::getOffsetAndCount(position_tag, data_array, offsets, counts, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1 && counts[3] == 1);
 
     position_tag.units(std::vector<std::string>());
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
@@ -243,13 +245,13 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2 && offsets[3] == 1);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1 && counts[3] == 1);
 
-    
     /*
      Test a tag with position and extents
-     position {0.0, 2.0, 3.4};
-     extent {0.0, 6.0, 2.3};
+     position {0.0, 2.0, 3.4, 1.0};
+     extent {0.0, 6.0, 2.3, 1.0};
      units {"none", "ms", "ms"};
-     ref_dims = {Set (labels:{"label_a", "label_b"}), Sampled(1.0, ms), Range(ticks:{1.2, 2.3, 3.4, 4.5, 6.7}, ms)}
+     ref_dims = {Set (labels:{"label_a", "label_b"}), Sampled(1.0, ms), Range(ticks:{1.2, 2.3, 3.4, 4.5, 6.7}, ms),
+     DataFrame(ticks:{0., 2.5, 5.0, 7.5, 10.0, 12.5, 15., 17.5, 20., 22.5})}
     */
     // call with RangeMatch::Inclusive
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
@@ -260,17 +262,18 @@ void BaseTestDataAccess::testOffsetAndCount() {
 
     // call with RangeMatch::Exclusive
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
+
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
-    
+
     /*
     MultiTag:
-    positions = [0.0 --> 0.0, 3.0 --> 9.0,  3.4 --> 5.7];  // position 1
-                [0.0 --> 0.0, 8.0 --> 11.0, 2.3 --> 4.3];  // position 2
+    positions = [0.0 --> 0.0, 3.0 --> 9.0,  3.4 --> 5.7, 1.0 --> 3.0];  // position 1
+                [0.0 --> 0.0, 8.0 --> 11.0, 2.3 --> 4.3, 1.0 --> 7.0];  // position 2
 
-    ref_array {Set, Sample, Range}, as above
+    ref_array {Set, Sample, Range, DataFrame}, as above
     */
     // calling with RangeMatch::Inclusive
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds); // not a valid position index
@@ -283,22 +286,22 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2 && counts[3] == 3);
 
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2 && counts[3] == 2);
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2 && counts[3] == 7);
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(offsets.size() == 3);
-    CPPUNIT_ASSERT(counts.size() == 3);
-    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 3 && counts[2] == 2);
+    CPPUNIT_ASSERT(offsets.size() == 4);
+    CPPUNIT_ASSERT(counts.size() == 4);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1 && offsets[3] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 3 && counts[2] == 2 && counts[3] == 6);
 }
 
 

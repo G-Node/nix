@@ -73,6 +73,28 @@ NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &u
 NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const DataFrameDimension &dimension);
 
 /**
+ * @brief Converts a position to an index according to the dimension descriptor.
+ *
+ * This function can be used to get the index of e.g. a certain point in time in
+ * a Dimension that represents time. The units of the position and that provided
+ * by the Dimension must match, i.e.  must be scalable versions of the same SI
+ * unit. In case of a SetDimension the provided position is interpreted as an
+ * index. Units are ignored.
+ * The match argument controls how the position is converted to an index.
+ *
+ * @param position      The position
+ * @param match         PositionMatch argument to control position matching behavior.
+ * @param dimension     The dimension descriptor for the respective dimension, i.e. a DataFrameDimension.
+ *
+ * @return An optional containing the calculated index.
+ *
+ * @throws nix::IncompatibleDimension The the dimensions are incompatible.
+ * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
+ */
+NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const DataFrameDimension &dimension);
+
+
+/**
  * @Brief Converts a position given in a unit into an index according to the dimension descriptor.
  *
  * This function can be used to get the index of e.g. a certain point in time in a Dimension that
@@ -175,6 +197,12 @@ NIXAPI DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(con
                                                                              const std::vector<double> &end_positions,
                                                                              const std::vector<std::string> &units,
                                                                              const RangeDimension &dimension);
+
+
+NIXAPI std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
+                                                                                   const std::vector<double> &end_positions,
+                                                                                   const RangeMatch range_matching,
+                                                                                   const DataFrameDimension &dimension);
 
 
 /**
