@@ -12,7 +12,7 @@ Five possible rules of *PositionMatching* (we always assuming ascending order in
 1. **Less**: the index points to the last entry that is less than position.
 2. **LessOrEqual**: the index points to the last entry that is less or equal to position.
 3. **Equal**: the index points to the entry that exatly matches position.
-4. **GreaterOrEqual**: the intex points to the first entry that is greater or equal to position.
+4. **GreaterOrEqual**: the index points to the first entry that is greater or equal to position.
 5. **Greater**: the index points to the first entry that is greater than position.
 
 For the different DimensionTypes slightly different rules apply:
@@ -21,25 +21,25 @@ For the different DimensionTypes slightly different rules apply:
 
 Assume a SampledDimension with *sampling_interval* = 1 and *offset* = -1
 x = [-1, 0., 1, 2, 3, 4, 5, ... n]
-
+The table below shows three example positions `p = -2, -1, 0` combined with each `PositionMatching` rule and the expected result.
 | p  | index | PositionRule   | validity |
 |----|-------|----------------|----------|
 | -2 |       |  Less          |  false   |
 | -2 |       |  LessOrEqual   |  false   |
 | -2 |       |  Equal         |  false   |
-| -2 |   0   |  GreaterOrEqal |  true    |
+| -2 |   0   |  GreaterOrEqual |  true    |
 | -2 |   0   |  Greater       |  true    |
 |    |       |                |          |
 | -1 |       |  Less          |  false   |
 | -1 |   0   |  LessOrEqual   |  true    |
 | -1 |   0   |  Equal         |  true    |
-| -1 |   0   |  GreaterOrEqal |  true    |
+| -1 |   0   |  GreaterOrEqual |  true    |
 | -1 |   1   |  Greater       |  true    |
 |    |       |                |          |
 | 0  |   0   |  Less          |  true    |
 | 0  |   1   |  LessOrEqual   |  true    |
 | 0  |   1   |  Equal         |  true    |
-| 0  |   1   |  GreaterOrEqal |  true    |
+| 0  |   1   |  GreaterOrEqual |  true    |
 | 0  |   2   |  Greater       |  true    |
 
 A position is invalid if it is less than offset and PositionRule is *Less*, *LessOrEqual*, or *Equal*.
