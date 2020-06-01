@@ -327,22 +327,22 @@ void BaseTestTag::testDataAccess() {
     segment_tag.extent(extent);
     segment_tag.units(units);
 
-    DataView retrieved_data = position_tag.retrieveData(0);
+    DataView retrieved_data = position_tag.taggedData(0);
     NDSize data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
 
-    CPPUNIT_ASSERT_THROW(position_tag.retrieveData("invalid name"), std::invalid_argument);
+    CPPUNIT_ASSERT_THROW(position_tag.taggedData("invalid name"), std::invalid_argument);
 
-    retrieved_data = position_tag.retrieveData(data_array.name());
+    retrieved_data = position_tag.taggedData(data_array.name());
     data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 &&  data_size[2] == 1);
 
-    retrieved_data = segment_tag.retrieveData( 0);
+    retrieved_data = segment_tag.taggedData(0);
     data_size = retrieved_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2);
+    CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
 
     block.deleteTag(position_tag);
     block.deleteTag(segment_tag);
