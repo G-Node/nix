@@ -333,7 +333,7 @@ public:
      * @param offset               The offset of the dimension.
      * @param match                RangeMatch enum to control whether the range should be
      *                             including the end position or exclusive, i.e. without 
-     *                             the end position, default is RangeMatch::Inclusive
+     *                             the end position.
      * 
      * @returns The a boost::optional containing the pair of start and end indices.
      */
@@ -350,7 +350,7 @@ public:
      * @param end_positions      Vector of end positions
      * @param match              RangeMatch enum to control whether the range should be
      *                           including the end position or exclusive, i.e. without 
-     *                           the end position, default is RangeMatch::Inclusive
+     *                           the end position.
      *
      * @return  Vector of optionals containing pairs of start and end indices.
      */
@@ -1128,7 +1128,7 @@ public:
      *                   which is invalid if out of range.
      */
     boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, std::vector<double> ticks,
-                                                           RangeMatch match = RangeMatch::Inclusive) const;
+                                                           RangeMatch match = RangeMatch::Exclusive) const;
 
 
     /**
@@ -1208,7 +1208,7 @@ public:
      */
     std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
                                                                         const std::vector<double> &end_positions,
-                                                                        RangeMatch match = RangeMatch::Inclusive) const;
+                                                                        RangeMatch match = RangeMatch::Exclusive) const;
 
     /**
      * @brief Returns a vector containing a number of ticks
