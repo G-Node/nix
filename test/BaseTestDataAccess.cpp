@@ -178,6 +178,11 @@ void BaseTestDataAccess::testPositionToIndexSetDimensionOld() {
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
     CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
 
+
+    std::vector<std::pair<ndsize_t, ndsize_t>> ranges;
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({10}, {1.}, {"none"}, setDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex({1}, {10.}, {"none"}, setDim));
+
     int pos = -1;
     CPPUNIT_ASSERT_NO_THROW(check::converts_to_double(pos, "Does not convert seamlessly to double!"));
     ndsize_t large_pos = pow(10, 16);
@@ -191,6 +196,8 @@ void BaseTestDataAccess::testPositionToIndexSetDimensionOld() {
 void BaseTestDataAccess::testPositionToIndexSetDimension() {
     CPPUNIT_ASSERT(!util::positionToIndex(5.8, PositionMatch::Equal, setDim));
 
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({5.0, 0.}, {10.5}, RangeMatch::Inclusive, setDim), std::runtime_error);
+    
     vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(!ranges[0]);
