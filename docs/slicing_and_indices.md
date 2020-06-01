@@ -4,7 +4,7 @@
 
 A position is converted to an index in several steps:
 
-1. Scaling if approriate. This applies to Sampled and Range Dimensions if they contain units. **Note:** Incompatible units will always lead to an error!
+1. Scaling if approriate. This applies to Sampled and Range Dimensions if they contain units. **Note:** Incompatible units will always lead to an error! **Note:** We cannot scale non-SI units.
 2. Converting to an index depending on a) the dimension type and b) the *PositionMatching* rule.
 
 Five possible rules of *PositionMatching* (we always assuming ascending order in the dimension):
@@ -22,107 +22,110 @@ For the different DimensionTypes slightly different rules apply:
 Assume a SampledDimension with *sampling_interval* = 1 and *offset* = -1
 x = [-1, 0., 1, 2, 3, 4, 5, ... n]
 The table below shows three example positions `p = -2, -1, 0` combined with each `PositionMatching` rule and the expected result.
-| p  | index | PositionRule   | validity |
-|----|-------|----------------|----------|
-| -2 |       |  Less          |  false   |
-| -2 |       |  LessOrEqual   |  false   |
-| -2 |       |  Equal         |  false   |
-| -2 |   0   |  GreaterOrEqual |  true    |
-| -2 |   0   |  Greater       |  true    |
-|    |       |                |          |
-| -1 |       |  Less          |  false   |
-| -1 |   0   |  LessOrEqual   |  true    |
-| -1 |   0   |  Equal         |  true    |
-| -1 |   0   |  GreaterOrEqual |  true    |
-| -1 |   1   |  Greater       |  true    |
-|    |       |                |          |
-| 0  |   0   |  Less          |  true    |
-| 0  |   1   |  LessOrEqual   |  true    |
-| 0  |   1   |  Equal         |  true    |
-| 0  |   1   |  GreaterOrEqual |  true    |
-| 0  |   2   |  Greater       |  true    |
+| p  |  PositionRule   | validity | index |
+|----|-----------------|----------|-------|
+| -2 |  Less           |  false   |       |
+| -2 |  LessOrEqual    |  false   |       |
+| -2 |  Equal          |  false   |       |
+| -2 |  GreaterOrEqual |  true    |   0   |
+| -2 |  Greater        |  true    |   0   |
+|    |                 |          |       |
+| -1 |  Less           |  false   |       |
+| -1 |  LessOrEqual    |  true    |   0   |
+| -1 |  Equal          |  true    |   0   |
+| -1 |  GreaterOrEqual |  true    |   0   |
+| -1 |  Greater        |  true    |   1   |
+|    |                 |          |       |
+| 0  |  Less           |  true    |   0   |
+| 0  |  LessOrEqual    |  true    |   1   |
+| 0  |  Equal          |  true    |   1   |
+| 0  |  GreaterOrEqual |  true    |   1   |
+| 0  |  Greater        |  true    |   2   |
 
 A position is invalid if it is less than offset and PositionRule is *Less*, *LessOrEqual*, or *Equal*.
 
 ### RangeDimension
 
 Assume a *RangeDimension* with the following ticks:
-ticks = {-1.9, 0, 3, 5.9}
+ticks = {-1.9, 0, 3, 5.9}.
+The table below shows four example positions `p = -2, -1, 0, 6` combined with each `PositionMatching` rule and the expected result.
 
-| p  | index | PositionRule    | validity |
-|----|-------|-----------------|----------|
-| -2 |       |  Less           |  false   |
-| -2 |       |  LessOrEqual    |  false   |
-| -2 |       |  Equal          |  false   |
-| -2 |   0   |  GreaterOrEqual |  true    |
-| -2 |   0   |  Greater        |  true    |
-|    |       |                 |          |
-| -1 |   0   |  Less           |  true    |
-| -1 |   0   |  LessOrEqual    |  true    |
-| -1 |       |  Equal          |  false   |
-| -1 |   1   |  GreaterOrEqual |  true    |
-| -1 |   1   |  Greater        |  true    |
-|    |       |                 |          |
-| 0  |   0   |  Less           |  true    |
-| 0  |   1   |  LessOrEqual    |  true    |
-| 0  |   1   |  Equal          |  true    |
-| 0  |   1   |  GreaterOrEqual |  true    |
-| 0  |   2   |  Greater        |  true    |
-|    |       |                 |          |
-| 6  |   3   |  Less           |  true    |
-| 6  |   3   |  LessOrEqual    |  true    |
-| 6  |       |  Equal          |  false   |
-| 6  |       |  GreaterOrEqual |  false   |
-| 6  |       |  Greater        |  false   |
+| p  | PositionRule    | validity | index |
+|----|-----------------|----------|-------|
+| -2 |  Less           |  false   |       |
+| -2 |  LessOrEqual    |  false   |       |
+| -2 |  Equal          |  false   |       |
+| -2 |  GreaterOrEqual |  true    |       |
+| -2 |  Greater        |  true    |   0   |
+|    |                 |          |       |
+| -1 |  Less           |  true    |   0   |
+| -1 |  LessOrEqual    |  true    |   0   |
+| -1 |  Equal          |  false   |       |
+| -1 |  GreaterOrEqual |  true    |   1   |
+| -1 |  Greater        |  true    |   1   |
+|    |                 |          |       |
+| 0  |  Less           |  true    |   0   |
+| 0  |  LessOrEqual    |  true    |   1   |
+| 0  |  Equal          |  true    |   1   |
+| 0  |  GreaterOrEqual |  true    |   1   |
+| 0  |  Greater        |  true    |   2   |
+|    |                 |          |       |
+| 6  |  Less           |  true    |   3   |
+| 6  |  LessOrEqual    |  true    |   3   |
+| 6  |  Equal          |  false   |       |
+| 6  |  GreaterOrEqual |  false   |       |
+| 6  |  Greater        |  false   |       |
 
 ### SetDimension
 
 Assume a *SetDimension* **without** labels:
+Again, the table below shows three example positions
+ `p = -2, 0, 6` combined with each `PositionMatching` rule and the expected result.
 
-| p  | index | PositionRule    | validity |
-|----|-------|-----------------|----------|
-| -2 |       |  Less           |  false   |
-| -2 |       |  LessOrEqual    |  false   |
-| -2 |       |  Equal          |  false   |
-| -2 |   0   |  GreaterOrEqual |  true    |
-| -2 |   0   |  Greater        |  true    |
-|    |       |                 |          |
-| 0  |   0   |  Less           |  true    |
-| 0  |   0   |  LessOrEqual    |  true    |
-| 0  |   0   |  Equal          |  true    |
-| 0  |   0   |  GreaterOrEqual |  true    |
-| 0  |   1   |  Greater        |  true    |
-|    |       |                 |          |
-| 6  |   6   |  Less           |  true    |
-| 6  |   6   |  LessOrEqual    |  true    |
-| 6  |   6   |  Equal          |  true    |
-| 6  |   6   |  GreaterOrEqual |  true    |
-| 6  |   7   |  Greater        |  true    |
+| p  | PositionRule    | validity | index |
+|----|-----------------|----------|-------|
+| -2 |  Less           |  false   |       |
+| -2 |  LessOrEqual    |  false   |       |
+| -2 |  Equal          |  false   |       |
+| -2 |  GreaterOrEqual |  true    |   0   |
+| -2 |  Greater        |  true    |   0   |
+|    |                 |          |       |
+| 0  |  Less           |  true    |   0   |
+| 0  |  LessOrEqual    |  true    |   0   |
+| 0  |  Equal          |  true    |   0   |
+| 0  |  GreaterOrEqual |  true    |   0   |
+| 0  |  Greater        |  true    |   1   |
+|    |                 |          |       |
+| 6  |  Less           |  true    |   6   |
+| 6  |  LessOrEqual    |  true    |   6   |
+| 6  |  Equal          |  true    |   6   |
+| 6  |  GreaterOrEqual |  true    |   6   |
+| 6  |  Greater        |  true    |   7   |
 
 Positions that are positive numbers will allways give a valid index.
 
 Assume a *SetDimension* **with** labels:
-labels = {"A", "B", "C"}
+labels = {"A", "B", "C"}. Using the same positions as above yields to results shown in the table below.
 
-| p  | index | PositionRule    | validity |
-|----|-------|-----------------|----------|
-| -2 |       |  Less           |  false   |
-| -2 |       |  LessOrEqual    |  false   |
-| -2 |       |  Equal          |  false   |
-| -2 |   0   |  GreaterOrEqual |  true    |
-| -2 |   0   |  Greater        |  true    |
-|    |       |                 |          |
-| 0  |   0   |  Less           |  true    |
-| 0  |   0   |  LessOrEqual    |  true    |
-| 0  |   0   |  Equal          |  true    |
-| 0  |   0   |  GreaterOrEqual |  true    |
-| 0  |   1   |  Greater        |  true    |
-|    |       |                 |          |
-| 6  |   2   |  Less           |  true    |
-| 6  |   2   |  LessOrEqual    |  true    |
-| 6  |       |  Equal          |  false   |
-| 6  |       |  GreaterOrEqual |  false   |
-| 6  |       |  Greater        |  false   |
+| p  | PositionRule    | validity | index |
+|----|-----------------|----------|-------|
+| -2 |  Less           |  false   |       |
+| -2 |  LessOrEqual    |  false   |       |
+| -2 |  Equal          |  false   |       |
+| -2 |  GreaterOrEqual |  true    |   0   |
+| -2 |  Greater        |  true    |   0   |
+|    |                 |          |       |
+| 0  |  Less           |  true    |   0   |
+| 0  |  LessOrEqual    |  true    |   0   |
+| 0  |  Equal          |  true    |   0   |
+| 0  |  GreaterOrEqual |  true    |   0   |
+| 0  |  Greater        |  true    |   1   |
+|    |                 |          |       |
+| 6  |  Less           |  true    |   2   |
+| 6  |  LessOrEqual    |  true    |   2   |
+| 6  |  Equal          |  false   |       |
+| 6  |  GreaterOrEqual |  false   |       |
+| 6  |  Greater        |  false   |       |
 
 Positions that exceed the label count will be invalid unless *Less* or *LessOrEqual* rules are applied.
 
@@ -131,10 +134,10 @@ Positions that exceed the label count will be invalid unless *Less* or *LessOrEq
 In version 1.4.x ranges along a dimension are **inclusive** that is, start and end position are included in the range:
 $$range = [start ... end].$$
 
-Numpy, for example, does not include the end position:
+Numpy ranges (or slices), for example, do not include the end index:
 $$range = [start ... end)$$
 
-With NIX version 1.4.5 (nixpy 1.4.9x) we allow to choose which behavior is desired. The *RangeMatch* enum contains flags to control this behavior.
+With NIX version 1.4.5 (nixpy 1.4.9x) we allow to choose which behavior is desired. The *RangeMatch* enum contains flags to control this behavior. **Note:** With version > 1.5 the default behaivor will be changed to **exclude** the end index, respectively the end position!
 
 ### *RangeMatching* enumeration
 
@@ -147,7 +150,7 @@ To find indices, libraries apply *PositionMatch::GreaterOrEqual* to the start po
 
 ### Validity of ranges
 
-Validity of ranges depends on the dimension type and the RangeMatch rule. The current implementation in NIX will swap start and end positions if end < start. This swapping is done **before** an index is calculated.
+Validity of ranges depends on the dimension type and the RangeMatch rule. Start position **must not** be larger than the end position. A start position that is greater than the end position will lead to an invalid range.
 *RangeMatch::Exclusive* might lead to the situation that the end index is less than the start index. This will lead to an **invalid** range. If start and end indices are the same the range is **valid**.
 
 ## Data retrieval via Tag and MultiTag
