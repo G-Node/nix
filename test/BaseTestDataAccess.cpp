@@ -143,13 +143,13 @@ void BaseTestDataAccess::testPositionToIndexSampledDimension() {
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 10);
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 2 && (*ranges[1]).second == 2);
-    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 5 && (*ranges[2]).second == 10);
+    CPPUNIT_ASSERT(!ranges[2]);// && (*ranges[2]).first == 5 && (*ranges[2]).second == 10);
 
     ranges = util::positionToIndex({0.0, 2.0, 10.0}, {10.0, 2.0, 5.0}, {unit, unit, unit}, RangeMatch::Exclusive, sampledDim);
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 9);
     CPPUNIT_ASSERT(!ranges[1]);
-    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 5 && (*ranges[2]).second == 9);
+    CPPUNIT_ASSERT(!ranges[2]); // && (*ranges[2]).first == 5 && (*ranges[2]).second == 9);
 }
 
 void BaseTestDataAccess::testPositionToIndexSampledDimensionOld() {
@@ -163,7 +163,9 @@ void BaseTestDataAccess::testPositionToIndexSampledDimensionOld() {
     CPPUNIT_ASSERT(util::positionToIndex(0.005, scaled_unit, sampledDim) == 5);
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex({},{1.0}, {unit}, sampledDim), std::runtime_error);
-    CPPUNIT_ASSERT(util::positionToIndex({0.0, 1.0}, {3.5, 0.5}, {unit, unit}, sampledDim).size() == 2);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({0.0, 1.0}, {3.5, 0.5}, {unit, unit}, sampledDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT(util::positionToIndex({0.0, 0.5}, {3.5, 1.0}, {unit, unit}, sampledDim).size() == 2);
+
     vector<pair<ndsize_t, ndsize_t>> ranges = util::positionToIndex({0.0}, {0.0}, {unit}, sampledDim);
     CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 0);
 }
@@ -212,7 +214,7 @@ void BaseTestDataAccess::testPositionToIndexDataFrameDimension() {
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0]);
     CPPUNIT_ASSERT(!ranges[1]);
-    CPPUNIT_ASSERT(ranges[2]);
+    CPPUNIT_ASSERT(!ranges[2]);
 }
 
 
