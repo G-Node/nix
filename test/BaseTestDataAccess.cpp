@@ -326,20 +326,20 @@ void BaseTestDataAccess::testRetrieveData() {
 
     position_indices[0] = 0;
     std::vector<DataView> views;
-    views = util::taggedData(multi_tag, position_indices, 0);
+    views = util::taggedData(multi_tag, position_indices, 0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(views.size() == 1);
-    nix::DataView v = util::taggedData(multi_tag, 0, 0);
+    nix::DataView v = util::taggedData(multi_tag, 0, 0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT_EQUAL(v.dataExtent(), views[0].dataExtent());
 
     std::vector<ndsize_t> temp;
-    std::vector<DataView> slices = util::taggedData(mtag2, temp, 0);
+    std::vector<DataView> slices = util::taggedData(mtag2, temp, 0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slices.size() == mtag2.positions().dataExtent()[0]);
 
     // old-style calls, deprecated
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, 0));
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(mtag2, 0, mtag2.references()[0]));
 
-    slices = util::taggedData(pointmtag, temp, 0);
+    slices = util::taggedData(pointmtag, temp, 0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slices.size() == pointmtag.positions().dataExtent()[0]);
 
     DataView data_view = views[0];
@@ -350,17 +350,17 @@ void BaseTestDataAccess::testRetrieveData() {
     position_indices[0] = 1;
     CPPUNIT_ASSERT_THROW(util::taggedData(multi_tag, position_indices, 0), nix::OutOfBounds);
 
-    data_view = util::taggedData(position_tag, 0);
+    data_view = util::taggedData(position_tag, 0, RangeMatch::Inclusive);
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 4);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 1 && data_size[2] == 1 && data_size[3] == 1);
 
-    data_view = util::taggedData(segment_tag, 0);
+    data_view = util::taggedData(segment_tag, 0, RangeMatch::Inclusive);
     data_size = data_view.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 4);
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 7 && data_size[2] == 2 && data_size[3] == 2);
 
-    DataView times_view = util::taggedData(times_tag, 0);
+    DataView times_view = util::taggedData(times_tag, 0, RangeMatch::Inclusive);
     data_size = times_view.dataExtent();
     std::vector<double> times(data_size.size());
     times_view.getData(times);
@@ -414,7 +414,7 @@ void BaseTestDataAccess::testTagFeatureData() {
     data3 = util::featureData(pos_tag, 2);
 
     CPPUNIT_ASSERT(data1.dataExtent().nelms() == 1);
-    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 3);
+    CPPUNIT_ASSERT(data2.dataExtent().nelms() == 2);
     CPPUNIT_ASSERT(data3.dataExtent().nelms() == ramp_data.size());
 
     pos_tag.deleteFeature(f1.id());
@@ -827,15 +827,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     tag.addReference(array3d);
 
     nix::DataView view = tag.taggedData("1d random data");
-    nix::NDSize exp_shape({501});
+    nix::NDSize exp_shape({500});
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     view = tag.taggedData("2d random data");
-    exp_shape = {51, 6};
+    exp_shape = {50, 5};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     view = tag.taggedData("3d random data");
-    exp_shape = {51, 6, 5};
+    exp_shape = {50, 5, 4};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     // Tag, tagging 3 dims without extents, i.e. a point
@@ -911,15 +911,15 @@ void BaseTestDataAccess::testFlexibleTagging() {
     mtag.addReference(array3d);
 
     view = mtag.taggedData(0, "1d random data");
-    exp_shape = {101};
+    exp_shape = {100};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     view = mtag.taggedData(0, "2d random data");
-    exp_shape = {11, 3};
+    exp_shape = {10, 2};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     view = mtag.taggedData(0, "3d random data");
-    exp_shape = {11, 3, 5};
+    exp_shape = {10, 2, 4};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
 
@@ -946,14 +946,14 @@ void BaseTestDataAccess::testFlexibleTagging() {
     dfTag.addReference(array3d);
 
     view = dfTag.taggedData("3d random data");
-    exp_shape = {51, 6, 5};
+    exp_shape = {50, 5, 4};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     dfTag.position({25});
     dfTag.extent({50});
 
     view = dfTag.taggedData("3d random data");
-    exp_shape = {51, 10, 5};
+    exp_shape = {50, 9, 4};
     CPPUNIT_ASSERT(view.dataExtent() == exp_shape);
 
     file.deleteBlock(b);
