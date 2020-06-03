@@ -76,22 +76,6 @@ vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> 
     return indices;
 }
 
-vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
-                                                 const vector<double> end_positions,
-                                                 const vector<string> &units,
-                                                 const Dimension &dimension) {
-    vector<optional<pair<ndsize_t, ndsize_t>>> opt_indices = positionToIndex(start_positions, end_positions, units, RangeMatch::Inclusive, dimension);
-    vector<pair<ndsize_t, ndsize_t>> indices;
-    for (auto o : opt_indices) {
-        if (o) {
-            indices.push_back(*o);
-        } else {
-            throw nix::OutOfBounds("util::positionToIndex: An invalid range was encountered!");
-        }
-    }
-    return indices;
-}
-
 
 vector<pair<ndsize_t, ndsize_t>> positionToIndex(const vector<double> &start_positions,
                                                  const vector<double> &end_positions,
@@ -221,32 +205,6 @@ optional<ndsize_t> positionToIndex(double position, const string &unit, const Po
     return pos;
 }
 
-ndsize_t positionToIndex(double position, const string &unit, const Dimension &dimension) {
-    boost::optional<ndsize_t> pos;
-
-    if (dimension.dimensionType() == DimensionType::Sample) {
-        SampledDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
-    } else if (dimension.dimensionType() == DimensionType::Set) {
-        SetDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
-    } else if (dimension.dimensionType() == DimensionType::DataFrame) {
-       DataFrameDimension dim;
-       dim = dimension;
-       pos = positionToIndex(position, PositionMatch::GreaterOrEqual, dim); 
-    } else {
-        RangeDimension dim;
-        dim = dimension;
-        pos = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dim);
-    }
-    
-    if (!pos) {
-        throw nix::OutOfBounds("util::positionToIndex: Out of range position was given.");
-    }
-    return *pos;
-}
 
 ndsize_t positionToIndex(double position, const string &unit, const SampledDimension &dimension) {
     optional<ndsize_t> index = positionToIndex(position, unit, PositionMatch::GreaterOrEqual, dimension);
