@@ -191,16 +191,16 @@ void BaseTestDimension::testSampledDimIndexOfOld() {
     CPPUNIT_ASSERT_NO_THROW(sd.indexOf(-0.25, 1.01));
     CPPUNIT_ASSERT_NO_THROW(sd.indexOf(0.0, 1.01));
     CPPUNIT_ASSERT_NO_THROW(sd.indexOf(1.0, 1.01));
-    CPPUNIT_ASSERT_NO_THROW(sd.indexOf(1.01, 0.0));
-    CPPUNIT_ASSERT_NO_THROW(sd.indexOf(3.5, 1.5));
+    CPPUNIT_ASSERT_THROW(sd.indexOf(1.01, 0.0), nix::OutOfBounds);
+    CPPUNIT_ASSERT_THROW(sd.indexOf(3.5, 1.5), nix::OutOfBounds);
 
     CPPUNIT_ASSERT_THROW(sd.indexOf(-1.0, -.05), nix::OutOfBounds);  // because end pos is invalid
     std::pair<ndsize_t, ndsize_t> range = sd.indexOf(-1.0, 5.0);
     CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
     range = sd.indexOf(1.0, 5.0);
     CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
-    range = sd.indexOf(5.0, 1.0);
-    CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
+    //range = sd.indexOf(5.0, 1.0);
+    //CPPUNIT_ASSERT(range.first == 0 && range.second == 4);
     range = sd.indexOf(1.5, 3.2);
     CPPUNIT_ASSERT(range.first == 1 && range.second == 2); // less or equal for end of range
     range = sd.indexOf(1.5, 3.7);
@@ -210,11 +210,11 @@ void BaseTestDimension::testSampledDimIndexOfOld() {
     
     // test vectors of ranges, offset = 1, sampling interval = 1
     CPPUNIT_ASSERT_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9}), std::runtime_error);        
-    CPPUNIT_ASSERT_NO_THROW(sd.indexOf({0.0, 20.0, 40.0}, {10.9, 12., 1.}));
-    CPPUNIT_ASSERT_NO_THROW(sd.indexOf({1.0, 20.0, 40.0}, {10.9, 12., 1.}));
-    CPPUNIT_ASSERT(sd.indexOf({1.0, 20.0, 40.0}, {10.9, 12., 1.}).size() == 3);
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf({0.0, 12.0, 1.0}, {10.9, 20., 40.}));
+    CPPUNIT_ASSERT_NO_THROW(sd.indexOf({1.0, 12.0, 1.0}, {10.9, 20., 40.}));
+    CPPUNIT_ASSERT(sd.indexOf({1.0, 12.0, 1.0}, {10.9, 20., 40.}).size() == 3);
 
-    std::vector<std::pair<ndsize_t, ndsize_t>> ranges = sd.indexOf({1.0, 20.0, 40.0}, {10.9, 12., 1.});
+    std::vector<std::pair<ndsize_t, ndsize_t>> ranges = sd.indexOf({1.0, 12.0, 1.0}, {10.9, 20., 40.});
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 9);
     CPPUNIT_ASSERT(sd.positionAt(ranges[0].first) == 1.0 && sd.positionAt(ranges[0].second) == 10.); 
@@ -310,9 +310,9 @@ void BaseTestDimension::testSampledDimIndexOf() {
     range = sd.indexOf(-1.5, 2.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
     range = sd.indexOf(2., -2.0, RangeMatch::Inclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    CPPUNIT_ASSERT(!range);
     range = sd.indexOf(2., -2.0, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    CPPUNIT_ASSERT(!range);
     range = sd.indexOf(2.0, 2.0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(range && (*range).first == 3 && (*range).second == 3);
     range = sd.indexOf(2., 2.0, RangeMatch::Exclusive);
@@ -321,7 +321,7 @@ void BaseTestDimension::testSampledDimIndexOf() {
     // test vector of ranges, offset = -1, sampling interval = 1
     CPPUNIT_ASSERT_THROW(sd.indexOf({1.0, 20.0, 40.0}, {10.9, 12.}, RangeMatch::Exclusive), std::runtime_error);
     
-    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> ranges = sd.indexOf({1.0, 20.0, 40.0, 5.0}, {10.9, 12.0, 1.0, 5.0}, RangeMatch::Inclusive);
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> ranges = sd.indexOf({1.0, 12.0, 1.0, 5.0}, {10.9, 20.0, 40.0, 5.0}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(ranges.size() == 4);
     CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 2 && (*ranges[0]).second == 11 && 
                    sd.positionAt((*ranges[0]).first) >= 1.0 && sd.positionAt((*ranges[0]).second) <= 10.9);
@@ -332,7 +332,7 @@ void BaseTestDimension::testSampledDimIndexOf() {
     CPPUNIT_ASSERT(ranges[3] && (*ranges[3]).first == 6 && (*ranges[3]).second == 6 && 
                    sd.positionAt((*ranges[3]).first) == 5 && sd.positionAt((*ranges[3]).second) == 5);
 
-    ranges = sd.indexOf({1.0, 20.0, 40.0, 5.0}, {10.9, 12.0, 1.0, 5.0}, RangeMatch::Exclusive);
+    ranges = sd.indexOf({1.0, 12.0, 1.0, 5.0}, {10.9, 20.0, 40.0, 5.0}, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(ranges.size() == 4);
     CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 2 && (*ranges[0]).second == 11 && 
                    sd.positionAt((*ranges[0]).first) >= 1.0 && sd.positionAt((*ranges[0]).second) <= 10.9);
@@ -574,9 +574,9 @@ void BaseTestDimension::testSetDimIndexOf() {
     range = sd.indexOf(0.0, 3.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
     range = sd.indexOf(3.0, 0.0, RangeMatch::Inclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    CPPUNIT_ASSERT(!range);
     range = sd.indexOf(3.0, 0.0, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    CPPUNIT_ASSERT(!range);
 
     sd.labels(labels);
     range = sd.indexOf(0.0, 0.0, RangeMatch::Inclusive);
@@ -588,9 +588,9 @@ void BaseTestDimension::testSetDimIndexOf() {
     range = sd.indexOf(0.0, 3.0, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
     range = sd.indexOf(3.0, 0.0, RangeMatch::Inclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 3);
+    CPPUNIT_ASSERT(!range);
     range = sd.indexOf(3.0, 0.0, RangeMatch::Exclusive);
-    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 2);
+    CPPUNIT_ASSERT(!range);
     range = sd.indexOf(0.0, 7.0, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 4);
     range = sd.indexOf(3.0, 7.0, RangeMatch::Exclusive);

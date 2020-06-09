@@ -239,15 +239,16 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(const d
 
 boost::optional<std::pair<ndsize_t, ndsize_t>> SampledDimension::indexOf(double start, double end, const double sampling_interval, 
                                                                          const double offset, const RangeMatch match) const {
-    if (start > end) {
-        std::swap(start, end);
-    }
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indices;
     PositionMatch pos_match = match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less;
+    
+    if (start > end) {
+        return indices;
+    }
 
     boost::optional<ndsize_t> si = getSampledIndex(start, offset, sampling_interval, PositionMatch::GreaterOrEqual);
     boost::optional<ndsize_t> ei = getSampledIndex(end, offset, sampling_interval, pos_match);
     
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indices;
     if (si && ei && *si <= *ei) {
         indices = std::pair<ndsize_t, ndsize_t>(*si, *ei);
     }
@@ -405,7 +406,6 @@ boost::optional<ndsize_t> getSetIndex(const double position, std::vector<std::st
         }
     }
     return index;
-
 }
 
 
@@ -419,11 +419,12 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> SetDimension::indexOf(double star
     if (set_labels.size() == 0) {
         set_labels = labels();
     } 
-    if (start > end) {
-        std::swap(start, end);
-    }
-    PositionMatch end_match = match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less;
+    
     boost::optional<std::pair<ndsize_t, ndsize_t>> index;
+    PositionMatch end_match = match == RangeMatch::Inclusive ? PositionMatch::LessOrEqual : PositionMatch::Less;
+    if (start > end) {
+        return index;
+    }
     
     boost::optional<ndsize_t> si = getSetIndex(start, set_labels, PositionMatch::GreaterOrEqual);
     boost::optional<ndsize_t> ei = getSetIndex(end, set_labels, end_match);
