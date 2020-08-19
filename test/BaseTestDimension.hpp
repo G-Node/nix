@@ -33,19 +33,23 @@ public:
     void testSampledDimUnit();
     void testSampledDimSamplingInterval();
     void testSampledDimOperators();
+    void testSampledDimIndexOfOld();
     void testSampledDimIndexOf();
     void testSampledDimPositionAt();
     void testSampledDimAxis();
 
     void testSetDimLabels();
+    void testSetDimIndexOf();
 
     void testRangeDimLabel();
     void testRangeTicks();
     void testRangeDimUnit();
+    void testRangeDimIndexOfOld();
     void testRangeDimIndexOf();
     void testRangeDimTickAt();
     void testRangeDimAxis();
-
+    void testRangeDimPositionInRange();
+    
     void testAsDimensionMethods();
 };
 

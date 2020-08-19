@@ -24,51 +24,169 @@
 #include "BaseTestDataAccess.hpp"
 
 using namespace nix;
+using namespace std;
+using namespace boost;
 
 
 void BaseTestDataAccess::testPositionToIndexRangeDimension() {
-    std::string unit = "ms";
-    std::string invalid_unit = "kV";
-    std::string scaled_unit = "s";
+    string unit = "ms";
+    string invalid_unit = "kV";
+    string scaled_unit = "s";
+
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.0, invalid_unit, rangeDim), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT(util::positionToIndex(1.0, unit, rangeDim) == 0);
-    CPPUNIT_ASSERT(util::positionToIndex(8.0, unit, rangeDim) == 4);
-    CPPUNIT_ASSERT(util::positionToIndex(0.001, scaled_unit, rangeDim) == 0);
-    CPPUNIT_ASSERT(util::positionToIndex(0.008, scaled_unit, rangeDim) == 4);
-    CPPUNIT_ASSERT(util::positionToIndex(3.4, unit, rangeDim) == 2);
-    CPPUNIT_ASSERT(util::positionToIndex(3.6, unit, rangeDim) == 2);
-    CPPUNIT_ASSERT(util::positionToIndex(4.0, unit, rangeDim) == 2);
-    CPPUNIT_ASSERT(util::positionToIndex(0.0036, scaled_unit, rangeDim) == 2);
+    CPPUNIT_ASSERT(*util::positionToIndex(5.0, unit, PositionMatch::Less, rangeDim) == 3);
+    CPPUNIT_ASSERT(*util::positionToIndex(0.005, scaled_unit, PositionMatch::Less, rangeDim) == 3);
+
+    CPPUNIT_ASSERT(!util::positionToIndex(1.0, unit, PositionMatch::Less, rangeDim));
+    CPPUNIT_ASSERT(!util::positionToIndex(1.0, unit, PositionMatch::LessOrEqual, rangeDim));
+    CPPUNIT_ASSERT(!util::positionToIndex(1.0, unit, PositionMatch::Equal, rangeDim));
+    CPPUNIT_ASSERT(*(util::positionToIndex(1.0, unit, PositionMatch::GreaterOrEqual, rangeDim)) == 0);
+    CPPUNIT_ASSERT(*(util::positionToIndex(1.0, unit, PositionMatch::Greater, rangeDim)) == 0);
+
+    CPPUNIT_ASSERT(!util::positionToIndex(1.2, unit, PositionMatch::Less, rangeDim));
+    CPPUNIT_ASSERT(util::positionToIndex(1.2, unit, PositionMatch::LessOrEqual, rangeDim));
+    CPPUNIT_ASSERT(util::positionToIndex(1.2, unit, PositionMatch::Equal, rangeDim));
+    CPPUNIT_ASSERT(*(util::positionToIndex(1.2, unit, PositionMatch::GreaterOrEqual, rangeDim)) == 0);
+    CPPUNIT_ASSERT(*(util::positionToIndex(1.2, unit, PositionMatch::Greater, rangeDim)) == 1);
+
+    CPPUNIT_ASSERT(*util::positionToIndex(4.5, unit, PositionMatch::Less, rangeDim) == 2);
+    CPPUNIT_ASSERT(*util::positionToIndex(4.5, unit, PositionMatch::LessOrEqual, rangeDim) == 3);
+    CPPUNIT_ASSERT(*util::positionToIndex(4.5, unit, PositionMatch::Equal, rangeDim) == 3);
+    CPPUNIT_ASSERT(*(util::positionToIndex(4.5, unit, PositionMatch::GreaterOrEqual, rangeDim)) == 3);
+    CPPUNIT_ASSERT(*(util::positionToIndex(4.5, unit, PositionMatch::Greater, rangeDim)) == 4);
+
+    CPPUNIT_ASSERT(*util::positionToIndex(7.0, unit, PositionMatch::Less, rangeDim) == 4);
+    CPPUNIT_ASSERT(*util::positionToIndex(7.0, unit, PositionMatch::LessOrEqual, rangeDim) == 4);
+    CPPUNIT_ASSERT(!util::positionToIndex(7.0, unit, PositionMatch::Equal, rangeDim));
+    CPPUNIT_ASSERT(!(util::positionToIndex(7.0, unit, PositionMatch::GreaterOrEqual, rangeDim)));
+    CPPUNIT_ASSERT(!util::positionToIndex(7.0, unit, PositionMatch::Greater, rangeDim));
+
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({5.0, 1.2}, {1.4}, {unit, unit}, RangeMatch::Inclusive, rangeDim), std::runtime_error);
+
+    vector<optional<pair<ndsize_t, ndsize_t>>> range = util::positionToIndex({0.0}, {7.0}, {unit}, RangeMatch::Inclusive, rangeDim);
+    CPPUNIT_ASSERT(range[0] && (*range[0]).first == 0 && (*range[0]).second == 4);
+    range = util::positionToIndex({0.0}, {7.0}, {unit}, RangeMatch::Exclusive, rangeDim);
+    CPPUNIT_ASSERT(range[0] && (*range[0]).first == 0 && (*range[0]).second == 4);
+    
+    range = util::positionToIndex({2.0}, {6.7}, {unit}, RangeMatch::Inclusive, rangeDim);
+    CPPUNIT_ASSERT(range[0] && (*range[0]).first == 1 && (*range[0]).second == 4);
+    range = util::positionToIndex({2.0}, {6.7}, {unit}, RangeMatch::Exclusive, rangeDim);
+    CPPUNIT_ASSERT(range[0] && (*range[0]).first == 1 && (*range[0]).second == 3);
+
+    range = util::positionToIndex({1.2}, {1.2}, {unit}, RangeMatch::Inclusive, rangeDim);
+    CPPUNIT_ASSERT(range[0] && (*range[0]).first == 0 && (*range[0]).second == 0);
+    range = util::positionToIndex({1.2}, {1.2}, {unit}, RangeMatch::Exclusive, rangeDim);
+    CPPUNIT_ASSERT(!range[0]);
 }
+
+void BaseTestDataAccess::testPositionToIndexRangeDimensionOld() {
+    string unit = "ms";
+    string invalid_unit = "kV";
+    string scaled_unit = "s";
+
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.001, invalid_unit, rangeDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(8.0, unit, rangeDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT(util::positionToIndex(0.001, unit, rangeDim) == 0);
+    CPPUNIT_ASSERT(util::positionToIndex(0.001, scaled_unit, rangeDim) == 0);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.008, scaled_unit, rangeDim), nix::OutOfBounds);
+    CPPUNIT_ASSERT(util::positionToIndex(3.4, unit, rangeDim) == 2);
+    CPPUNIT_ASSERT(util::positionToIndex(3.6, unit, rangeDim) == 3);
+    CPPUNIT_ASSERT(util::positionToIndex(4.0, unit, rangeDim) == 3);
+    CPPUNIT_ASSERT(util::positionToIndex(0.0034, scaled_unit, rangeDim) == 2);
+
+    vector<pair<ndsize_t, ndsize_t>> range = util::positionToIndex({0.001}, {3.4}, {unit}, rangeDim);
+    CPPUNIT_ASSERT(range[0].first == 0 && range[0].second == 2);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({0.001, 2.0}, {3.4}, {unit}, rangeDim), std::runtime_error);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({7.5}, {8.0}, {unit}, rangeDim), nix::OutOfBounds);
+}
+
 
 
 void BaseTestDataAccess::testPositionToIndexSampledDimension() {
-    std::string unit = "ms";
-    std::string invalid_unit = "kV";
-    std::string scaled_unit = "s";
+    string unit = "ms";
+    string invalid_unit = "kV";
+    string scaled_unit = "s";
+    // test incompatible dims
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(1.0, invalid_unit, sampledDim), nix::IncompatibleDimensions);
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(1.0, unit, sampledDim));
+    CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(1.0, scaled_unit, sampledDim));
 
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(-1.0, unit, sampledDim), nix::OutOfBounds);
+    sampledDim.unit(nix::none);
+    CPPUNIT_ASSERT_THROW(util::positionToIndex(1.0, unit, sampledDim), nix::IncompatibleDimensions);
+    sampledDim.unit(unit);
+
+    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 2.0, 5.0}, {10.0, 2.0, 10.0}, {unit, unit, unit}, RangeMatch::Inclusive, sampledDim);
+    CPPUNIT_ASSERT(ranges.size() == 3);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 10);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 2 && (*ranges[1]).second == 2);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 5 && (*ranges[2]).second == 10);
+
+    ranges = util::positionToIndex({0.0, 2.0, 5.0}, {10.0, 2.0, 10.0}, {unit, unit, unit}, RangeMatch::Exclusive, sampledDim);
+    CPPUNIT_ASSERT(ranges.size() == 3);
+    CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 9);
+    CPPUNIT_ASSERT(!ranges[1]);
+    CPPUNIT_ASSERT(ranges[2] && (*ranges[2]).first == 5 && (*ranges[2]).second == 9);
+}
+
+void BaseTestDataAccess::testPositionToIndexSampledDimensionOld() {
+    string unit = "ms";
+    string invalid_unit = "kV";
+    string scaled_unit = "s";
+
+    CPPUNIT_ASSERT(util::positionToIndex(-8.0, unit, sampledDim) == 0);
     CPPUNIT_ASSERT_THROW(util::positionToIndex(0.005, invalid_unit, sampledDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT(util::positionToIndex(5.0, unit, sampledDim) == 5);
     CPPUNIT_ASSERT(util::positionToIndex(0.005, scaled_unit, sampledDim) == 5);
+
+    CPPUNIT_ASSERT_THROW(util::positionToIndex({},{1.0}, {unit}, sampledDim), std::runtime_error);
+    CPPUNIT_ASSERT(util::positionToIndex({0.0, 0.5}, {3.5, 1.0}, {unit, unit}, sampledDim).size() == 2);
+    vector<pair<ndsize_t, ndsize_t>> ranges = util::positionToIndex({0.0}, {0.0}, {unit}, sampledDim);
+    CPPUNIT_ASSERT(ranges[0].first == 0 && ranges[0].second == 0);
 }
 
 
-void BaseTestDataAccess::testPositionToIndexSetDimension() {
+void BaseTestDataAccess::testPositionToIndexSetDimensionOld() {
     std::string unit = "ms";
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex(5.8, "none", setDim), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::positionToIndex(0.5, unit, setDim), nix::IncompatibleDimensions);
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(0.5, "none", setDim));
     CPPUNIT_ASSERT(util::positionToIndex(0.5, "none", setDim) == 1);
-    CPPUNIT_ASSERT(util::positionToIndex(0.45, "none", setDim) == 0);
+    CPPUNIT_ASSERT(util::positionToIndex(0.45, unit, setDim) == 1);
+    CPPUNIT_ASSERT(util::positionToIndex(1., "none", setDim) == 1);
+
+}
+
+void BaseTestDataAccess::testPositionToIndexSetDimension() {
+    CPPUNIT_ASSERT(!util::positionToIndex(5.8, PositionMatch::Equal, setDim));
+
+    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
+    CPPUNIT_ASSERT(ranges.size() == 2);
+    CPPUNIT_ASSERT(!ranges[0]);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 1);
+
+    ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Exclusive, setDim);
+    CPPUNIT_ASSERT(ranges.size() == 2);
+    CPPUNIT_ASSERT(!ranges[0]);
+    CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 0);   
 }
 
 
 void BaseTestDataAccess::testOffsetAndCount() {
     NDSize offsets, counts;
+    /*
+     std::vector<double> position {0.0, 2.0, 3.4};
+     std::vector<double> extent {0.0, 6.0, 2.3};
+     std::vector<std::string> units {"none", "ms", "ms"};
+    */
+    // implicitely calls with range = RangeMatch::Inclusive, 
     util::getOffsetAndCount(position_tag, data_array, offsets, counts);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
+    // even if called with RangeMatch::Exclusive it will return count == 1
+    util::getOffsetAndCount(position_tag, data_array, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
@@ -83,21 +201,38 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 1 && counts[2] == 1);
 
+    
+    /*
+     Test a tag with position and extents
+     position {0.0, 2.0, 3.4};
+     extent {0.0, 6.0, 2.3};
+     units {"none", "ms", "ms"};
+     ref_dims = {Set (labels:{"label_a", "label_b"}), Sampled(1.0, ms), Range(ticks:{1.2, 2.3, 3.4, 4.5, 6.7}, ms)}
+    */
+    // call with RangeMatch::Inclusive
     util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
 
-    segment_tag.units(std::vector<std::string>());
-    util::getOffsetAndCount(segment_tag, data_array, offsets, counts);
+    // call with RangeMatch::Exclusive
+    util::getOffsetAndCount(segment_tag, data_array, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 2 && offsets[2] == 2);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+    
+    /*
+    MultiTag:
+    positions = [0.0 --> 0.0, 3.0 --> 9.0,  3.4 --> 5.7];  // position 1
+                [0.0 --> 0.0, 8.0 --> 11.0, 2.3 --> 4.3];  // position 2
 
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds);
-    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds);
+    ref_array {Set, Sample, Range}, as above
+    */
+    // calling with RangeMatch::Inclusive
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds); // not a valid position index
+    CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds); // not a valid position index
 
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
@@ -105,11 +240,23 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2);
 
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2);
+
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
     CPPUNIT_ASSERT(offsets.size() == 3);
     CPPUNIT_ASSERT(counts.size() == 3);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 4 && counts[2] == 2);
+
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(offsets.size() == 3);
+    CPPUNIT_ASSERT(counts.size() == 3);
+    CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 3 && counts[2] == 2);
 }
 
 
@@ -357,16 +504,20 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
 
 
 void BaseTestDataAccess::testMultiTagUnitSupport() {
-    std::vector<std::string> valid_units{"none","ms","s"};
+    std::vector<std::string> valid_units{"none","ms","ms"};
     std::vector<std::string> invalid_units{"mV", "Ohm", "muV"};
     std::vector<ndsize_t> position_indices(1);
+
     MultiTag testTag = block.createMultiTag("test", "testTag", multi_tag.positions());
     testTag.units(valid_units);
     testTag.addReference(data_array);
+    
     position_indices[0] = 0;
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
-    testTag.units(none);
+    
+    testTag.units(nix::none);
     CPPUNIT_ASSERT_NO_THROW(util::retrieveData(testTag, position_indices, 0));
+    
     testTag.units(invalid_units);
     CPPUNIT_ASSERT_THROW(util::retrieveData(testTag, position_indices, 0), nix::IncompatibleDimensions);
 }
@@ -495,27 +646,39 @@ void BaseTestDataAccess::testDataSlice() {
     // do the tests!
     nix::DataArray no_array;
     CPPUNIT_ASSERT_THROW(util::dataSlice(no_array, {1, 2}, {2,3}), nix::UninitializedEntity);
-
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2,3}), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument);
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
-    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds);
-    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2}, {2, 3}), std::invalid_argument); // 1d data but called with 2d segment 
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1}, {2}, {"ms", "mV"}), std::invalid_argument); // 1d positions, but two units
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1, 2, 3}, {1, 2}), std::invalid_argument); // different size of start and end
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"mV"}), nix::IncompatibleDimensions); // sampledDimension represents time
+    CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ks"}), nix::OutOfBounds); // well beyond data
     CPPUNIT_ASSERT_THROW(util::dataSlice(oned_array, {1.0}, {0.0}), std::invalid_argument);
 
-    nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0});
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"s"}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {1.0}, {"ms"}));
+    CPPUNIT_ASSERT_NO_THROW(util::dataSlice(oned_array, {0.0}, {0.001}, {"ks"}));
+ 
+    // test with RangeMatch::Inclusive
+    nix::DataView slice = util::dataSlice(oned_array, {0.0}, {1.0}, {}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 101);
 
-    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0});
+    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0}, {}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 3 && slice.dataExtent()[1] == 101);
 
-    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"});
+    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(slice.dataExtent()[0] == 10 && slice.dataExtent()[1] == 101);
+
+    // test with RangeMatch::Exclusive
+    slice = util::dataSlice(oned_array, {0.0}, {1.0}, {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent().size() == 1);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 100);
+
+    slice = util::dataSlice(twod_array2, {3.14, 1.0}, {9.6, 2.0}, {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 3 && slice.dataExtent()[1] == 100);
+
+    slice = util::dataSlice(twod_array, {0., 0.0}, {9.0, 1.0}, {"none", "s"}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(slice.dataExtent()[0] == 9 && slice.dataExtent()[1] == 100);
 
     b.deleteDataArray(oned_array);
     b.deleteDataArray(twod_array);

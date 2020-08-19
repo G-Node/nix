@@ -26,8 +26,11 @@ protected:
 
 public:
     void testPositionToIndexSetDimension();
+    void testPositionToIndexSetDimensionOld();
     void testPositionToIndexSampledDimension();
+    void testPositionToIndexSampledDimensionOld();
     void testPositionToIndexRangeDimension();
+    void testPositionToIndexRangeDimensionOld();
     void testOffsetAndCount();
     void testPositionInData();
     void testRetrieveData();
