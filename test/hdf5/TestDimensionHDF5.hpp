@@ -26,15 +26,20 @@ class TestDimensionHDF5 : public BaseTestDimension {
     CPPUNIT_TEST(testSampledDimSamplingInterval);
     CPPUNIT_TEST(testSampledDimOperators);
     CPPUNIT_TEST(testSampledDimIndexOf);
+    CPPUNIT_TEST(testSampledDimIndexOfOld);
     CPPUNIT_TEST(testSampledDimPositionAt);
     CPPUNIT_TEST(testSampledDimAxis);
     CPPUNIT_TEST(testSetDimLabels);
+    CPPUNIT_TEST(testSetDimIndexOf);
     CPPUNIT_TEST(testRangeDimLabel);
     CPPUNIT_TEST(testRangeDimUnit);
     CPPUNIT_TEST(testRangeTicks);
+    CPPUNIT_TEST(testRangeDimIndexOfOld);
     CPPUNIT_TEST(testRangeDimIndexOf);
+    CPPUNIT_TEST(testRangeDimPositionInRange);
     CPPUNIT_TEST(testRangeDimTickAt);
     CPPUNIT_TEST(testRangeDimAxis);
+    CPPUNIT_TEST(testDataFrameDimIndexOf);
     CPPUNIT_TEST(testAsDimensionMethods);
     CPPUNIT_TEST_SUITE_END ();
 

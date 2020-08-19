@@ -19,6 +19,45 @@ class DataArray;
 class Dimension;
 
 /**
+ * @brief Enumeration providing constants for position matching.
+ *
+ * These constants are used to control the behaviour of the index finding.
+ */
+enum class PositionMatch {
+                          Equal,
+                          Less,
+                          Greater,
+                          GreaterOrEqual,
+                          LessOrEqual
+};
+
+/**
+ * @brief Enumeration providing constants for range matching.
+ *
+ * These constants are used to control the behaviour of the range finding.
+ * Inclusive means [start, end], i.e. start and end are included
+ * Exclusive means [start, end), i.e. start is included, end is not
+ */
+enum class RangeMatch {
+                       Inclusive,
+                       Exclusive
+};
+
+/**
+ * @brief Enumeration providing constants for position matching.
+ *
+ * These constants are used as return values when checking if a position is in
+ * the data range.
+ */
+enum class PositionInRange{
+                          InRange,
+                          Greater,
+                          Less,
+
+                          NoRange = -1
+};
+
+/**
  * @brief Dimension descriptor for regularly sampled dimensions.
  *
  * Instances of the SampledDimension Class are used to describe a dimension of data in
@@ -228,43 +267,105 @@ public:
      * This method returns the index of the given position. Use this method for
      * example to find out which data point (index) relates to a given
      * time. Note: This method does not check if the position is within the
-     * extent of the data!
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the position is less than the offset of the dimension.
      *
      * @param position  The position, e.g. a time
      *
      * @returns The respective index.
+     * @deprecated This function has been deprecated use {@link SampledDimension::indexOf} instead.
      */
-    ndsize_t indexOf(const double position) const;
+    DEPRECATED ndsize_t indexOf(const double position) const;
+
+    /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. If the position is invalid, an invalid optional is returned.
+     *
+     * @param position  The position, e.g. a time
+     * @param strict    Defines whether an exception should be thrown if the
+     *                  position is invalid
+     *
+     * @returns An optional containing the respective index.
+     */
+    boost::optional<ndsize_t> indexOf(const double position, PositionMatch match) const;
 
 
     /**
      * @brief Returns a pair of indices of the start and end positions within this dimension.
      *
-     * This method returns the indices of the given start and end positions. Use this method for
-     * example to find out which data indices relate to a given start and end positions given in
-     * time. Note: This method does not check if the positions are within the
-     * extent of the data!
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the start position is less than the offset of the dimension.
      *
-     * @param start  The start position of, e.g., a time segment
-     * @param end    The end position
-     *
-     * @returns The pair of respective indices.
+     * @param start          The start position, e.g. a time
+     * @param end            The end position
+     * @param match          RangeMatch enum to control whether the range should be
+     *                       including the end position or exclusive, i.e. without 
+     *                       the end position, default is RangeMatch::Inclusive
+     * 
+     * @returns The respective index.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
-
-
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, RangeMatch match) const;
+    
+    /**
+     * @deprecated This function has been deprecated please use
+     *             {@link SampledDimension::indexOf(const double, const double&, const RangeMatch)} instead
+     */
+    DEPRECATED std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+   
+    /**
+     * @brief Returns the index of the given position.
+     *
+     * This method returns the index of the given position. Use this method for
+     * example to find out which data point (index) relates to a given
+     * time. Note: This method does not check if the position is within the
+     * extent of the data! Nevertheless, an OutOfBounds exception is thrown if
+     * the start position is less than the offset of the dimension.
+     *
+     * @param start                The start position, e.g. a time
+     * @param end                  The end position
+     * @param sampling_interval    The sampling interval of the dimension.
+     * @param offset               The offset of the dimension.
+     * @param match                RangeMatch enum to control whether the range should be
+     *                             including the end position or exclusive, i.e. without 
+     *                             the end position.
+     * 
+     * @returns The a boost::optional containing the pair of start and end indices.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, const double sampling_interval, const double offset,
+                                                           const RangeMatch match) const;
+    
+    
     /**
      * @brief Returns a vector of start and end indices of given start and end positions.
-     *
-     * Method will return the index equal or larger than the respective positions
+     * This method does not check whether the index is in the extent of the data. Nevertheless,
+     * an OutOfBounds exception is thrown if the start position is less than the offset of the dimension.
      *
      * @param start_positions    Vector of start positions
      * @param end_positions      Vector of end positions
+     * @param match              RangeMatch enum to control whether the range should be
+     *                           including the end position or exclusive, i.e. without 
+     *                           the end position.
      *
-     * @return  Vector of pairs of start and end indices.
+     * @return  Vector of optionals containing pairs of start and end indices.
      */
-    std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions) const;
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch match) const;
+
+    /**
+     * @deprecated This function has been deprecated please use
+     *             {@link SampledDimension::indexOf(const std::vector<double>&, const std::vector<double>&, const RangeMatch)} instead
+     */
+    DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions) const;
+
+
 
     /**
      * @brief Returns the position of this dimension at a given index.
@@ -501,7 +602,52 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
         df.readColumn(*column_index, ticks, true, offset);
     }
 
+    /**
+    * @brief returns the index in this dimension that matches the given position. 
+    * 
+    * @param position   The position that should be converted to a corresponding index in the dimension.
+    * @param match      The matching rule for the position {@link PositionMatch}.
+    * 
+    * @return an boost::optional containing the index. 
+    */
+    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
 
+    /**
+    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension.
+    * 
+    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+    * @param range_match      The matching rule for the position {@link RangeMatch}.
+    * 
+    * @return an boost::optional containing a std::pair of start and end index. 
+    */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, RangeMatch range_match) const;
+    
+    /**
+    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension. Mostly needed internally.
+    * 
+    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+    * @param tick_count       The number of of ticks stored in this dimension.
+    * @param range_match      The matching rule for the range {@link RangeMatch}.
+    * 
+    * @return an boost::optional containing a std::pair of start and end index. 
+    */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, ndsize_t tick_count, RangeMatch range_match) const;
+
+    /**
+     * @brief Converts a set of start and end positions to a vector of pairs of start and end indices.
+     * 
+     * @param start_positions  std::vector of start positions. 
+     * @param end_positions    std::vector of end positions. 
+     * @param range_match      The matching rule for the range {@link RangeMatch}.
+     * 
+     * @return A std::vector of boost::optionals containing pairs of start and end indices.
+    */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch range_match) const;
+    
     /**
      * @brief returns the number of entries in the dimension, aka the number of
      * rows in the DataFrame.
@@ -658,6 +804,55 @@ public:
     }
 
     /**
+     * @brief converts a position given as a double to an index in this dimension, if 
+     * it contains labels, then the position will be validated within these limits.
+     * 
+     * @param  position       The position.
+     * @param  match          Memeber of the {@link PositionMatch} enumeration to control conversion.
+     * 
+     * @return An optional containing the index, if valid.
+     */
+    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
+
+
+    /**
+     * @brief returns the start and end indices corresponding to the provided start and end positions.
+     * 
+     * @param  start    double, the start position
+     * @param  end      double, the end position 
+     * @param  match    RangeMatch, controls whether the range includes the end position or not.
+     * 
+     * @return optional containing a pair of ndsize_t.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, const RangeMatch match) const;
+
+    /**
+     * @brief returns the start and end indices corresponding to the provided start and end positions.
+     * 
+     * @param  start    double, the start position
+     * @param  end      double, the end position 
+     * @param  labels   vector<string> of labels
+     * @param  match    RangeMatch, controls whether the range includes the end position or not.
+     * 
+     * @return optional containing a pair of ndsize_t.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, std::vector<std::string> &set_labels, const RangeMatch match) const;
+    
+    /**
+     * @brief converts vectors of start and end positions to a vector of optionals containg start and end indices.
+     * 
+     * @param start_positions    vector of start positions
+     * @param end_positions      vector of end positions
+     * @param match              Member of the RangeMatch enum to control whether ranges are inclusive or exclusiv the end positions
+     * 
+     * @return vector of optionals containing a pair of start and end indices
+     */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        const RangeMatch match) const;
+
+
+    /**
      * @brief Assignment operator.
      *
      * @param other     The dimension to assign.
@@ -685,10 +880,10 @@ public:
 /**
  * @brief Dimension descriptor for a dimension that is irregularly sampled.
  *
- * The RangeDimension covers cases when indexes of a dimension are mapped to other values
- * in a not regular fashion. A use-case for this would be for example irregularly sampled
- * time-series or certain kinds of histograms. To achieve the mapping of the indexes an
- * array of mapping values must be provided. Those values are stored in the dimensions {@link ticks}
+ * The RangeDimension covers cases in which indicess of a dimension are mapped to other values
+ * in a non-regular fashion. For example, when event times are recorded that would occur in irregularly 
+ * intervals. To achieve the mapping of the indexes an array of mapping values must be provided. 
+ * Those values are stored in the dimensions {@link ticks}
  * property. In analogy to the sampled dimension a {@link unit} and a {@link label} can be defined.
  */
 class NIXAPI RangeDimension : public base::ImplContainer<base::IRangeDimension> {
@@ -876,6 +1071,7 @@ public:
      */
     void ticks(const std::vector<double> &ticks);
 
+
     /**
      * @brief Returns the entry of the range dimension at a given index.
      *
@@ -887,19 +1083,76 @@ public:
      */
     double tickAt(const ndsize_t index) const;
 
+
+    /**
+     * @brief Checks whether a given position is in the Range of ticks in this
+     * dimension.
+     *
+     * @param position     The position.
+     *
+     * @return PositionInRange which can be either Less, Greater, or InRange
+     */
+    PositionInRange positionInRange(const double position) const;
+
+
     /**
      * @brief Returns the index of the given position
      *
-     * Method will return the index equal or larger than position
+     * Method will return the index of the tick that matches or is close to
+     * position. The way of matching can be controlled using the PositionMatch
+     * enum.
      *
-     * @param position    The position.
+     * @param position The position.
+     * @param matching PositionMatch enum entry that defines the matching
+     *                 behavior.
+     *
+     * @return boost optional containing the index if valid
+     *
+     */
+    boost::optional<ndsize_t> indexOf(const double position, PositionMatch matching) const;
+
+
+    /**
+     * @brief Returns the start and end index of the given start and end
+     * positions.  By default, the range includes the end position. This can be
+     * controlled via the RangeMatch enum.
+     *
+     *
+     * @param start      The start position
+     * @param end        The end position
+     * @param ticks      std::vector<double> of ticks, if empty ({}) they are automatically retrieved
+     * @param range      RangeMatch enum, controls whether end is included or not,
+     *                   defaults to RangeMatch::Inclusive
+     *
+     * @return           Start and end indices returned in a boost::optional<std::pair>
+     *                   which is invalid if out of range.
+     */
+    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, std::vector<double> ticks,
+                                                           RangeMatch match = RangeMatch::Exclusive) const;
+
+
+    /**
+     * @brief Returns the index of the given position
+     *
+     * Method will return the index of the tick that matches or is close to
+     * position. If "less_or_equal" is true, the index of the first tick that is
+     * less or equal is given. If "less_or_equal" is false the index of the
+     * first index that is greater than than position is returned.
+     *
+     * Version 1.4.5: The behavior of this function has been slightly changed,
+     * it now throws an OutOfBounds exception if the position is not in the
+     * range. Use positionInRange(position) to check before calling this function.
+     *
+     * @param position       The position.
      * @param less_or_equal  If true, the first index that is less or
      *                       equal will be returned. Else, the first index
      *                       that is not less than position will be returned.
      *
      * @return The index.
+     *
+     * @deprecated This function has been deprecated! Use indexOf(position, PositionMatch) instead.
      */
-    ndsize_t indexOf(const double position, bool less_or_equal = true) const;
+    DEPRECATED ndsize_t indexOf(const double position, bool less_or_equal = true) const;
 
 
     /**
@@ -907,12 +1160,17 @@ public:
      *
      * Method will return the index equal or larger than the respective positions
      *
+     * Version 1.4.5: The behavior of this function has been slightly changed,
+     * it now throws an OutOfBounds exception if the position is not in the
+     * range. Use positionInRange(position) to check before calling this function.
+     *
      * @param start      The start position
      * @param end        The end position
      *
      * @return  Start and end index returned in a std::pair.
+     * @deprecated This function has been deprecated! Use indexOf(position, PositionMatch) instead.
      */
-    std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
+    DEPRECATED std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
 
 
      /**
@@ -922,12 +1180,35 @@ public:
      *
      * @param start_positions    Vector of start positions
      * @param end_positions      Vector of end positions
+     * @param strict             Bool that indicates whether the function will throw an
+     *                           OutOfBounds exception when an invalid range occurred or
+     *                           if such ranges are silently ignored. Default is true.
+     * @param match              Enum entry that defines whether the range is inclusive
+     *                           or exclusive regarding the end position
      *
      * @return  Vector of pairs of start and end indices.
+     * @deprecated This function has been deprecated and will be removed in future versions!
      */
-    std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
-                                                       const std::vector<double> &end_positions) const;
+    DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> indexOf(const std::vector<double> &start_positions,
+                                                                  const std::vector<double> &end_positions,
+                                                                  bool strict, RangeMatch match = RangeMatch::Inclusive) const;
 
+
+     /**
+     * @brief Returns a vector of start and end indices of given start and end positions.
+     *
+     * Method will return the index equal or larger than the respective positions
+     *
+     * @param start_positions    Vector of start positions
+     * @param end_positions      Vector of end positions
+     * @param match              Enum entry that defines whether the range is inclusive
+     *                           or exclusive regarding the end position
+     *
+     * @return  Vector of optional pairs of start and end indices.
+     */
+    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                        const std::vector<double> &end_positions,
+                                                                        RangeMatch match = RangeMatch::Exclusive) const;
 
     /**
      * @brief Returns a vector containing a number of ticks
