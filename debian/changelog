@@ -1,3 +1,12 @@
+nix (1.4.4-1) xenial; urgency=medium
+  * version bumb to 1.4.4
+  * fixes installation of static build
+  * allows to tag more flexibly: i.e. a Tag may now tag DataArrays that differ in dimensionality. Superfluous dimension information is ignored, missing information is added #801.
+  * fixes a bug in the IndexOf methods of RangeDimensions #819
+  * some internal modifications regarding error handling
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Thu, 27 NovAug 2020 13:53:00 +0100
+
 nix (1.4.3-3) bionic; urgency=medium
 
   * version bump to 1.4.3
