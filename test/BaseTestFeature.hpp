@@ -26,6 +26,7 @@ public:
     void testId();
 
     void testLinkType();
+    void testTargetType();
     void testData();
     void testLinkType2Str();
     void testStreamOperator();
