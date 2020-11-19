@@ -123,6 +123,15 @@ public:
     }
 
     /**
+     * @brief Getter for the traget type.
+     *
+     * @return The current target type of the feature.
+     */
+    TargetType targetType() const {
+        return backend()->targetType();
+    }
+
+    /**
      * @brief Sets the data array associated with this feature.
      *
      * @param name_or_id        Name or id of the data array to set.

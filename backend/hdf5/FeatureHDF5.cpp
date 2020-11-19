@@ -38,6 +38,22 @@ LinkType linkTypeFromString(const string &str) {
 }
 
 
+string targetTypeToString(TargetType target_type) {
+    static vector<string> type_names = {"DataArray", "DataFrame"};
+    return type_names[static_cast<int>(target_type)];
+}
+
+
+TargetType targetTypeFromString(const string &str) {
+    if (str == "DataArray")
+        return TargetType::DataArray;
+    else if (str == "DataFrame")
+        return TargetType::DataFrame;
+    else
+        throw runtime_error("Unable to create a TargetType from the string: " + str);
+}
+
+
 FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group)
     : EntityHDF5(file, group), block(block)
 {
@@ -55,6 +71,7 @@ FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock>
     : EntityHDF5(file, group, id, time), block(block)
 {
     linkType(link_type);
+    targetType(TargetType::DataArray);
     // TODO: the line below currently throws an exception if the DataArray
     // is not in block - to consider if we prefer copying it to the block
     this->data(data.id());
@@ -64,6 +81,12 @@ FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock>
 void FeatureHDF5::linkType(LinkType link_type) {
     // linkTypeToString will generate an error if link_type is invalid
     group().setAttr("link_type", linkTypeToString(link_type));
+    forceUpdatedAt();
+}
+
+
+void FeatureHDF5::targetType(TargetType ttype) {
+    group().setAttr("target_type", targetTypeToString(ttype));
     forceUpdatedAt();
 }
 
@@ -104,10 +127,19 @@ LinkType FeatureHDF5::linkType() const {
         group().getAttr("link_type", link_type);
         return linkTypeFromString(link_type);
     } else {
-        throw MissingAttr("data");
+        throw MissingAttr("link_type");
     }
 }
 
+TargetType FeatureHDF5::targetType() const {
+    if (group().hasAttr("target_type")) {
+        string target_type;
+        group().getAttr("target_type", target_type);
+        return targetTypeFromString(target_type);
+    } else {
+        return TargetType::DataFrame;
+    }
+}
 
 FeatureHDF5::~FeatureHDF5() {}
 
