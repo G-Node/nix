@@ -52,6 +52,9 @@ public:
 
     virtual LinkType linkType() const = 0;
 
+    
+    virtual TargetType targetType() const = 0;
+
 
     virtual void data(const std::string &name_or_id) = 0;
 

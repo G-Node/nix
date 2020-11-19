@@ -35,6 +35,21 @@ std::string linkTypeToString(LinkType link_type);
  */
 LinkType linkTypeFromString(const std::string &str);
 
+/**
+ * Converts a TargetType into a string.
+ *
+ * @param target_type   The type to convert.
+ */
+std::string targetTypeToString(TargetType target_type);
+
+/**
+ * Create a target type from a string. If no matching type
+ * exists, an exception will be thrown.
+ *
+ * @return The target type that matches the string.
+ */
+TargetType targetTypeFromString(const std::string &str);
+
 
 /**
  * Class that represents a NIX feature entity
@@ -44,7 +59,8 @@ class FeatureHDF5 : virtual public base::IFeature, public EntityHDF5 {
 private:
 
     std::shared_ptr<base::IBlock> block;
-
+    void targetType(TargetType type);
+    
 public:
 
     /**
@@ -69,6 +85,9 @@ public:
 
 
     LinkType linkType() const;
+
+    
+    TargetType targetType() const;
 
 
     void data(const std::string &name_or_id);
