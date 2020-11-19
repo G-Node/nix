@@ -21,12 +21,19 @@ namespace nix {
 /**
  * @brief Enumeration for link types.
  *
- *  TODO remove "untagged" from link type
  */
 enum class LinkType : int {
     Tagged, Untagged, Indexed
 };
 
+
+/**
+ * @brief Enumeration for feature target types.
+ *
+ */
+enum class TargetType : int {
+    DataArray, DataFrame
+};
 
 
 namespace base {

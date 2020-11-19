@@ -193,6 +193,29 @@ NIXAPI std::string link_type_to_string(LinkType ltype);
  */
 NIXAPI std::ostream& operator<<(std::ostream &out, const LinkType ltype);
 
+/**
+ * @brief Convert a target type into string representation.
+ *
+ * @param ttype         The target type.
+ *
+ * @return A human readable name for the given type.
+ */
+NIXAPI std::string target_type_to_string(TargetType ttype);
+
+
+/**
+ * @brief Output operator for link type.
+ *
+ * Prints a human readable string representation of the
+ * link type to an output stream.
+ *
+ * @param out           The output stream.
+ * @param ltype         The link type to print.
+ *
+ * @return The output stream.
+ */
+NIXAPI std::ostream& operator<<(std::ostream &out, const TargetType ttype);
+
 
 template<>
 struct objectToType<nix::Feature> {
