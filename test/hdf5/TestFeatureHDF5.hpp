@@ -14,6 +14,7 @@ class TestFeatureHDF5 : public BaseTestFeature {
     CPPUNIT_TEST(testValidate);
     CPPUNIT_TEST(testId);
     CPPUNIT_TEST(testLinkType);
+    CPPUNIT_TEST(testTargetType);
     CPPUNIT_TEST(testData);
     CPPUNIT_TEST(testLinkType2Str);
     CPPUNIT_TEST(testStreamOperator);

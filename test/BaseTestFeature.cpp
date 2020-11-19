@@ -63,6 +63,18 @@ void BaseTestFeature::testLinkType(){
 }
 
 
+void BaseTestFeature::testTargetType(){
+    CPPUNIT_ASSERT(target_type_to_string(nix::TargetType::DataArray) == "DataArray");
+    CPPUNIT_ASSERT(target_type_to_string(nix::TargetType::DataFrame) == "DataFrame");
+    
+    
+    Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
+    CPPUNIT_ASSERT(rp.targetType() == nix::TargetType::DataArray); 
+
+    tag.deleteFeature(rp.id());
+}
+
+
 void BaseTestFeature::testData() {
     DataArray a;
     Feature f;
