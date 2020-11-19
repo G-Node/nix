@@ -116,7 +116,6 @@ public:
 
 
 class InvalidDimension : public std::invalid_argument {
-
 public:
     InvalidDimension(const std::string &what, const std::string &where):
             std::invalid_argument("InvalidDimension: " + what + " evoked at: " + where) { }
@@ -127,11 +126,18 @@ public:
     ConsistencyError(const std::string &what) : runtime_error("ConsistencyError: " + what){ }
 };
 
-    class MissingAttr: public std::runtime_error {
+class MissingAttr: public std::runtime_error {
 public:
     MissingAttr(const std::string &name):
             std::runtime_error("MissingAttribute: Obligatory attribute " + name + " is not set!") { }
 };
+
+class InvalidLinkType: public std::invalid_argument {
+public:
+    InvalidLinkType(const std::string &what, const std::string &where):
+            std::invalid_argument("InvalidLinkType: " + what + " evoked at: " + where) { }
+};
+
 
 namespace check {
 
