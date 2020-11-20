@@ -11,6 +11,7 @@
 #include <nix/util/util.hpp>
 #include <nix/DataArray.hpp>
 #include "DataArrayHDF5.hpp"
+#include "DataFrameHDF5.hpp"
 
 
 using namespace std;
@@ -71,10 +72,27 @@ FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock>
     : EntityHDF5(file, group, id, time), block(block)
 {
     linkType(link_type);
-    targetType(TargetType::DataArray);
     // TODO: the line below currently throws an exception if the DataArray
     // is not in block - to consider if we prefer copying it to the block
-    this->data(data.id());
+    this->data(data);
+}
+
+
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
+                         const string &id, DataFrame data, LinkType link_type)
+    : FeatureHDF5(file, block, group, id, data, link_type, util::getTime())
+{
+}
+
+
+FeatureHDF5::FeatureHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBlock> &block, const H5Group &group,
+                         const string &id, DataFrame data, LinkType link_type, time_t time)
+    : EntityHDF5(file, group, id, time), block(block)
+{
+    linkType(link_type);
+    // TODO: the line below currently throws an exception if the DataArray
+    // is not in block - to consider if we prefer copying it to the block
+    this->data(data);
 }
 
 
@@ -91,8 +109,8 @@ void FeatureHDF5::targetType(TargetType ttype) {
 }
 
 
-void FeatureHDF5::data(const std::string &name_or_id) {
-    std::shared_ptr<IDataArray> ida = block->getEntity<IDataArray>(name_or_id);
+void FeatureHDF5::data(const DataArray &data) {
+    std::shared_ptr<IDataArray> ida = block->getEntity<IDataArray>(data.name());
     if (!ida) {
         throw std::runtime_error("FeatureHDF5::data: DataArray not found in block!");
     }
@@ -103,6 +121,48 @@ void FeatureHDF5::data(const std::string &name_or_id) {
     auto target = dynamic_pointer_cast<DataArrayHDF5>(ida);
 
     group().createLink(target->group(), "data");
+    targetType(TargetType::DataArray);
+
+    forceUpdatedAt();
+}
+
+
+void FeatureHDF5::data(const DataFrame &data) {
+    std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(data.name());
+    if (!idf) {
+        throw std::runtime_error("FeatureHDF5::data: DataFrame not found in block!");
+    }
+    if (group().hasGroup("data")) {
+        group().removeGroup("data");
+    }
+
+    auto target = dynamic_pointer_cast<DataFrameHDF5>(idf);
+
+    group().createLink(target->group(), "data");
+    targetType(TargetType::DataFrame);
+    forceUpdatedAt();
+}
+
+
+void FeatureHDF5::data(const std::string &name_or_id) {
+    TargetType tt = TargetType::DataArray;
+    if (group().hasGroup("data")) {
+        group().removeGroup("data");
+    }
+    std::shared_ptr<IDataArray> ida = block->getEntity<IDataArray>(name_or_id);
+    if (!ida) {
+        std::shared_ptr<IDataFrame> idf = block->getEntity<IDataFrame>(name_or_id);
+        if (!idf) {
+            throw std::runtime_error("FeatureHDF5::data: entity is not found in block, neither DataArray nor DataFrame!");
+        }
+        tt = TargetType::DataFrame;
+        auto target = dynamic_pointer_cast<DataFrameHDF5>(idf);
+        group().createLink(target->group(), "data");
+    } else {
+        auto target = dynamic_pointer_cast<DataArrayHDF5>(ida);
+        group().createLink(target->group(), "data");
+    }
+    targetType(tt);
     forceUpdatedAt();
 }
 

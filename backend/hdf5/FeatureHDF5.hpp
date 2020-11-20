@@ -60,7 +60,7 @@ private:
 
     std::shared_ptr<base::IBlock> block;
     void targetType(TargetType type);
-    
+
 public:
 
     /**
@@ -69,17 +69,29 @@ public:
     FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group);
 
     /**
-     * Standard constructor for new Feature
+     * Standard constructor for new Feature linking to a DataArray
      */
     FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                 const std::string &id, DataArray data, LinkType link_type);
 
     /**
-     * Standard constructor for new Feature with time
+     * Standard constructor for new Feature linking to a DataFrame
+     */
+    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
+                const std::string &id, DataFrame data, LinkType link_type);
+
+    /**
+     * Standard constructor for new Feature linking a DataArray with time
      */
     FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
                 const std::string &id, DataArray data, LinkType link_type, time_t time);
 
+    /**
+     * Standard constructor for new Feature linking a DataFrame with time
+     */
+    FeatureHDF5(const std::shared_ptr<base::IFile> &file, const std::shared_ptr<base::IBlock> &block, const H5Group &group,
+                const std::string &id, DataFrame data, LinkType link_type, time_t time);
+    
 
     void linkType(LinkType type);
 
@@ -89,8 +101,19 @@ public:
     
     TargetType targetType() const;
 
+    /**
+     * links to the given data (DataArray or DataFrame) method tries to find the given name_or_id
+     * first among the DataArrays and then the DataFrames. When passing a name there might be 
+     * an ambiguity that cannot be resolved. Rather, use the id or use the data(DataArray) or 
+     * data(DataFrame) overloads instead.
+     */
+    DEPRECATED void data(const std::string &name_or_id);
+    
+    
+    void data(const DataArray &data);
+    
 
-    void data(const std::string &name_or_id);
+    void data(const DataFrame &data);
 
 
     std::shared_ptr<base::IDataArray> data() const;
