@@ -67,15 +67,17 @@ void BaseTestFeature::testTargetType(){
     CPPUNIT_ASSERT(target_type_to_string(nix::TargetType::DataArray) == "DataArray");
     CPPUNIT_ASSERT(target_type_to_string(nix::TargetType::DataFrame) == "DataFrame");
     
-    
     Feature rp = tag.createFeature(data_array, nix::LinkType::Tagged);
     CPPUNIT_ASSERT(rp.targetType() == nix::TargetType::DataArray); 
-
     tag.deleteFeature(rp.id());
+
+    Feature ft = tag.createFeature(data_frame, nix::LinkType::Untagged);
+    CPPUNIT_ASSERT(ft.targetType() == nix::TargetType::DataFrame);
+    tag.deleteFeature(ft.id());
 }
 
 
-void BaseTestFeature::testData() {
+void BaseTestFeature::testDataArrayFeature() {
     DataArray a;
     Feature f;
     CPPUNIT_ASSERT_THROW(tag.createFeature(a, nix::LinkType::Tagged), UninitializedEntity);
@@ -98,6 +100,19 @@ void BaseTestFeature::testData() {
     CPPUNIT_ASSERT_THROW(rp.data(""), EmptyString);
     CPPUNIT_ASSERT_THROW(rp.data("worng_id"), std::runtime_error);
     tag.deleteFeature(rp.id());
+}
+
+
+void BaseTestFeature::testDataFrameFeature() {
+    Feature ft = tag.createFeature(data_frame, nix::LinkType::Indexed);
+    CPPUNIT_ASSERT(ft.targetType() == nix::TargetType::DataFrame && ft.linkType() == nix::LinkType::Indexed);
+    tag.deleteFeature(ft.id());
+
+    ft = tag.createFeature(data_frame, nix::LinkType::Untagged);
+    CPPUNIT_ASSERT(ft.targetType() == nix::TargetType::DataFrame && ft.linkType() == nix::LinkType::Untagged);
+    tag.deleteFeature(ft.id());
+    
+    CPPUNIT_ASSERT_THROW(tag.createFeature(data_frame, nix::LinkType::Tagged), InvalidLinkType);
 }
 
 
