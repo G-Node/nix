@@ -146,12 +146,38 @@ public:
     void data(const DataArray &data);
 
     /**
+     * @brief Sets the data frame associated with this feature.
+     *
+     * @param data    The DataFrame to set.
+     */
+    void data(const DataFrame &data);
+
+    /**
+     * @brief Gets the data array associated with this feature.
+     *
+     * @return The associated data array.
+     * @deprecated This function has been deprecated and will be removed 
+     */
+    DEPRECATED DataArray data() const {
+        return dataArray();
+    }
+
+    /**
      * @brief Gets the data array associated with this feature.
      *
      * @return The associated data array.
      */
-    DataArray data() const {
-        return backend()->data();
+    DataArray dataArray() const {
+        return backend()->dataArray();
+    }
+
+    /**
+     * @brief Gets the DataFrame associated with this feature.
+     *
+     * @return The associated DataFrame.
+     */
+    DataFrame dataFrame() const {
+        return backend()->dataFrame();
     }
 
     /**
@@ -178,6 +204,7 @@ public:
         ImplContainer::operator=(other);
         return *this;
     }
+ 
 };
 
 /**
