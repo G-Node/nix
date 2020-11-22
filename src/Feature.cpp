@@ -19,6 +19,14 @@ void Feature::data(const DataArray &data) {
     backend()->data(data.id());
 }
 
+void Feature::data(const DataFrame &data) {
+    util::checkEntityInput(data);
+    if (!data.isValidEntity()) {
+        throw UninitializedEntity();
+    }
+    backend()->data(data.id());
+}
+
 void Feature::data(const std::string &name_or_id) {
     util::checkNameOrId(name_or_id);
     backend()->data(name_or_id);

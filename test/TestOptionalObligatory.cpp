@@ -415,11 +415,11 @@ void TestOptionalObligatory::testPropertyValues() {
 
 void TestOptionalObligatory::testFeatureData() {
     static const bool accepts_none = test::accepts_noneT<nix::Feature, test::data>::value;
-    is_opt   = std::conditional<std::is_class<decltype(feature.data())>::value,
+    is_opt   = std::conditional<std::is_class<decltype(feature.dataArray())>::value,
                                 std::integral_constant<bool, accepts_none>,
-                                std::integral_constant<bool, util::is_optional<decltype(feature.data())>::value>
+                                std::integral_constant<bool, util::is_optional<decltype(feature.dataArray())>::value>
                                 >::type::value;
-    is_set   = test::TtoBool(util::deRef(feature.data()));
+    is_set   = test::TtoBool(util::deRef(feature.dataArray()));
     summarize("Feature::data", is_opt, is_set, accepts_none);
     CPPUNIT_ASSERT(test::isValidOptional(is_opt, is_set, accepts_none) ||
                    test::isValidObligatory(is_opt, is_set, accepts_none));
