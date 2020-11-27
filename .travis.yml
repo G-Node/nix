@@ -35,7 +35,7 @@ addons:
       - cppunit
       - hdf5
       - yaml-cpp
-    update: true
+    update: false
 
 before_cache:
   - brew cleanup
