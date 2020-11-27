@@ -9,6 +9,7 @@ Makefile.conf
 
 # ingore documentation
 doc/html
+
 docs/_build
 docs/api
 docs/api_doc/html
@@ -65,3 +66,6 @@ nix.kdev4
 compile_commands.json
 .cquery_cached_index/
 .ccls-cache/
+
+#ignore VS Code specific files
+.vscode/
