@@ -116,8 +116,10 @@ public:
     void data(const DataFrame &data);
 
 
-    std::shared_ptr<base::IDataArray> data() const;
+    std::shared_ptr<base::IDataArray> dataArray() const;
 
+
+    std::shared_ptr<base::IDataFrame> dataFrame() const;
 
     virtual ~FeatureHDF5();
 

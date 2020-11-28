@@ -167,9 +167,11 @@ void FeatureHDF5::data(const std::string &name_or_id) {
 }
 
 
-shared_ptr<IDataArray> FeatureHDF5::data() const {
+shared_ptr<IDataArray> FeatureHDF5::dataArray() const {
+    if (targetType() != TargetType::DataArray) {
+        throw std::runtime_error("Cannot convert Feature data to DataArray! Feature target is of type DataFrame!");
+    }
     shared_ptr<IDataArray> da;
-
     if (group().hasGroup("data")) {
         H5Group other_group = group().openGroup("data", false);
         da = make_shared<DataArrayHDF5>(file(), block, other_group);
@@ -178,6 +180,23 @@ shared_ptr<IDataArray> FeatureHDF5::data() const {
         }
     }
     return da;
+}
+
+
+shared_ptr<IDataFrame> FeatureHDF5::dataFrame() const {
+    if (targetType() != TargetType::DataFrame) {
+        throw std::runtime_error("Cannot convert Feature data to DataFrame! Feature target is of type DataArray!");
+    }
+    shared_ptr<IDataFrame> df;
+    if (group().hasGroup("data")) {
+        H5Group other_group = group().openGroup("data", false);
+        df = make_shared<DataFrameHDF5>(file(), block, other_group);
+
+        if (!block->hasEntity(df)) {
+            throw std::runtime_error("FeatureHDF5::data: DataFrame not found!");
+        }
+    }
+    return df;
 }
 
 
@@ -197,7 +216,7 @@ TargetType FeatureHDF5::targetType() const {
         group().getAttr("target_type", target_type);
         return targetTypeFromString(target_type);
     } else {
-        return TargetType::DataFrame;
+        return TargetType::DataArray;
     }
 }
 
