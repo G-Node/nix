@@ -4,6 +4,8 @@ RUN pacman -Syu --noconfirm base-devel cmake clang hdf5 boost cppunit yaml-cpp d
 
 RUN useradd builduser -m
 
+# don't compress built packages
+ENV PKGEXT=".pkg.tar"
 # install perl-perlio-gzip from aur (dependency for lcov-git)
 USER builduser
 RUN git clone --depth=1 https://aur.archlinux.org/perl-perlio-gzip.git /tmp/perl-perlio-gzip
@@ -11,7 +13,7 @@ WORKDIR /tmp/perl-perlio-gzip
 RUN makepkg
 USER root
 WORKDIR /tmp/perl-perlio-gzip
-RUN pacman -U --noconfirm perl-perlio-gzip-0.20-1-x86_64.pkg.tar.xz
+RUN pacman -U --noconfirm perl-perlio-gzip-*.pkg.tar
 RUN pacman -S --noconfirm perl-json
 
 # install lcov-git from aur (dev patches required for gcc compat)
@@ -21,7 +23,7 @@ WORKDIR /tmp/lcov
 RUN makepkg
 USER root
 WORKDIR /tmp/lcov
-RUN pacman -U --noconfirm lcov-git-r327.40580cd-1-any.pkg.tar.xz
+RUN pacman -U --noconfirm lcov-git-*.pkg.tar
 
 RUN mkdir /src
 WORKDIR /src

@@ -12,6 +12,9 @@ os:
   - linux
   - osx
 
+osx_image:
+  - xcode12.2
+
 env:
  - FS_BACKEND=ON DOCKERFILE=archlinux
  - FS_BACKEND=OFF DOCKERFILE=archlinux
@@ -35,7 +38,7 @@ addons:
       - cppunit
       - hdf5
       - yaml-cpp
-    update: true
+    update: false
 
 before_cache:
   - brew cleanup
