@@ -11,7 +11,9 @@ compiler:
 os:
   - linux
   - osx
-    osx_image: xcode12.2
+
+osx_image:
+  - xcode12.2
 
 env:
  - FS_BACKEND=ON DOCKERFILE=archlinux
