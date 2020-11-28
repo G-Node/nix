@@ -132,20 +132,32 @@ ndsize_t BaseTagHDF5::featureCount() const {
 std::shared_ptr<IFeature> BaseTagHDF5::getFeature(const std::string &name_or_id) const {
     std::shared_ptr<FeatureHDF5> feature;
     boost::optional<H5Group> g = feature_group(false);
-    // FIXME
     if (g) {
         boost::optional<H5Group> group = g->findGroupByNameOrAttribute("name", name_or_id);
         if (group)
             feature = std::make_shared<FeatureHDF5>(file(), block(), group.get());
         else {
-            for (ndsize_t i = 0; i < g->objectCount(); i++) {
-                H5Group gr = g->openGroup(g->objectName(i), false);
-                std::shared_ptr<FeatureHDF5> feat = std::make_shared<FeatureHDF5>(file(), block(), gr);
-                std::shared_ptr<base::IDataArray> da = feat->data();
-                if (da->name() == name_or_id || da->id() == name_or_id) {
-                    feature = std::make_shared<FeatureHDF5>(file(), block(), gr);
-                    break;
+            bool found = false;
+            ndsize_t index;
+            for (index = 0; index < featureCount(); ++index) {
+                Feature feat = getFeature(index);
+                if (feat.targetType() == TargetType::DataArray) {
+                    DataArray da = feat.dataArray();
+                    found = da && (da.name() == name_or_id || da.id() == name_or_id);
+                    if (found) {
+                        break;
+                    }
+                } else {
+                    DataFrame df = feat.dataFrame();
+                    found = df && (df.name() == name_or_id || df.id() == name_or_id);
+                    if (found) {
+                        break;
+                    }
                 }
+            }
+            if (found) {
+                H5Group gr = g->openGroup(g->objectName(index), false);
+                feature = std::make_shared<FeatureHDF5>(file(), block(), gr);
             }
         }
     }
