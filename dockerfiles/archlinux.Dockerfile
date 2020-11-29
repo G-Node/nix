@@ -1,6 +1,6 @@
 FROM archlinux/base
 
-RUN pacman -Syu --noconfirm base-devel cmake clang hdf5 boost cppunit yaml-cpp doxygen git
+RUN pacman -Syu --noconfirm base-devel cmake clang hdf5 boost cppunit doxygen git
 
 RUN useradd builduser -m
 
