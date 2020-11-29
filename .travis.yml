@@ -16,19 +16,15 @@ osx_image:
   - xcode12.2
 
 env:
- - FS_BACKEND=ON DOCKERFILE=archlinux
- - FS_BACKEND=OFF DOCKERFILE=archlinux
- - FS_BACKEND=ON DOCKERFILE=ub1804
- - FS_BACKEND=OFF DOCKERFILE=ub1804
+ - DOCKERFILE=archlinux
+ - DOCKERFILE=ub1804
 
 matrix:
   exclude:
     - os: osx
       compiler: gcc
     - os: osx
-      env: FS_BACKEND=ON DOCKERFILE=ub1804
-    - os: osx
-      env: FS_BACKEND=OFF DOCKERFILE=ub1804
+      env: DOCKERFILE=ub1804
 
 addons:
   homebrew:
@@ -37,7 +33,6 @@ addons:
       - boost
       - cppunit
       - hdf5
-      - yaml-cpp
     update: false
 
 before_cache:
@@ -80,7 +75,7 @@ script:
     fi
 
 after_success:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$FS_BACKEND" == "OFF" && "$DOCKERFILE" == "archlinux" && "$CXX" == "g++" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$DOCKERFILE" == "archlinux" && "$CXX" == "g++" ]]; then
       echo "Submitting code coverage report";
       docker exec nixbuilder lcov -q --capture --directory . --no-extern --output-file coverage.info;
       bash <(curl -s https://codecov.io/bash) -f coverage.info -Z;
