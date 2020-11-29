@@ -88,8 +88,8 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
   add_custom_target(doc ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM)
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    COMMENT "Generating API documentation with Doxygen" VERBATIM)
 endif(DOXYGEN_FOUND)
 
 
@@ -97,10 +97,9 @@ endif(DOXYGEN_FOUND)
 # NIX
 
 ### AUTO-GENERATED VERSION HEADER
-configure_file (
+configure_file(
   "${PROJECT_SOURCE_DIR}/version.h.in"
-  "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp"
-  )
+  "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 include_directories("${PROJECT_BINARY_DIR}/include")
 
 ### scan files
@@ -150,8 +149,8 @@ target_link_libraries(nixio ${LINK_LIBS})
 set_target_properties(nixio PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 set_target_properties(nixio PROPERTIES COMPILE_FLAGS "-fPIC")
 set_target_properties(nixio PROPERTIES
-		      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
-		      SOVERSION ${VERSION_ABI})
+                      VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}
+                      SOVERSION ${VERSION_ABI})
 
 if(WIN32)
   set_target_properties(nixio PROPERTIES COMPILE_FLAGS -DNIXEXPORT)
@@ -181,24 +180,8 @@ if(CLANG_CHECK)
 
   add_custom_target(check COMMAND ${CLANG_CHECK} -p ${CMAKE_BINARY_DIR} ${nix_SOURCES}
                     DEPENDS nixio
-		    SOURCES ${nix_SOURCES})
+                    SOURCES ${nix_SOURCES})
 endif()
-
-
-########################################
-# CLI
-
-file(GLOB NixCli_SOURCES "cli/*.cpp")
-file(GLOB NixCli_SOURCES "cli/modules/*.cpp")
-include_directories("cli")
-
-add_executable(nixio-tool cli/Cli.cpp ${NixCli_SOURCES})
-if(NOT WIN32)
-  set_target_properties(nixio-tool PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations")
-endif()
-target_link_libraries(nixio-tool nixio)
-set_target_properties(nixio-tool PROPERTIES INSTALL_RPATH "@loader_path/../lib")
-message(STATUS "CLI executable added")
 
 
 ########################################
@@ -251,11 +234,10 @@ endif()
 ########################################
 # Install
 
-install(TARGETS nixio nixio-tool
+install(TARGETS nixio
         LIBRARY DESTINATION ${LIB_INSTALL_DIR}
         ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
-        FRAMEWORK DESTINATION "/Library/Frameworks"
-        RUNTIME DESTINATION bin)
+        FRAMEWORK DESTINATION "/Library/Frameworks")
 install(DIRECTORY include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/ DESTINATION ${INCLUDE_INSTALL_DIR}/nixio-1.0)
 
@@ -309,37 +291,30 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME "nixio-${CPACK_PACKAGE_VERSION}"
 set(CPACK_SOURCE_GENERATOR ${CPACK_GENERATOR})
 
 if(WIN32)
-
   install(TARGETS nixio
-		  ARCHIVE
-		  DESTINATION lib
-		  COMPONENT libraries)
+          ARCHIVE
+          DESTINATION lib
+          COMPONENT libraries)
   file(GLOB NIX_LICENSE "LICENSE*")
   install(FILES ${NIX_LICENSE}
-		  DESTINATION ./
-		  COMPONENT libraries)
+          DESTINATION ./
+          COMPONENT libraries)
 
-if(NOT BUILD_STATIC)
-  file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
-  install(FILES ${HDF5_DLLS}
-		  DESTINATION bin
-		  COMPONENT libraries)
-endif()
+  if(NOT BUILD_STATIC)
+    file(GLOB HDF5_DLLS "${HDF5_DIR}/../../bin/*.dll")
+    install(FILES ${HDF5_DLLS}
+            DESTINATION bin
+            COMPONENT libraries)
+  endif()
 
   file(GLOB HDF5_COPYING "${HDF5_DIR}/../../COPYING")
   install(FILES ${HDF5_COPYING}
-		  DESTINATION ./
-		  COMPONENT libraries)
-
-  install(TARGETS nixio-tool
-		  RUNTIME
-		  DESTINATION bin
-		  COMPONENT applications)
+          DESTINATION ./
+          COMPONENT libraries)
 
   set(CPACK_GENERATOR NSIS)
   set(CPACK_NSIS_MODIFY_PATH ON)
-
-else()
+else()  # not WIN32
   if (NOT CPACK_GENERATOR)
     set(CPACK_GENERATOR TGZ)
   endif ()
