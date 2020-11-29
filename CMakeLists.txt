@@ -111,18 +111,6 @@ list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 ### BACKENDS
 set(backends "hdf5")
 
-option(BUILD_FS_BACKEND "Build filesystem backend" OFF)
-if(BUILD_FS_BACKEND)
-  # Yaml-cpp
-  set(YAMLCPP_STATIC_LIBRARY FALSE)
-  find_package(YamlCpp REQUIRED)
-  include_directories(${YAMLCPP_INCLUDE_DIR})
-  set(LINK_LIBS ${LINK_LIBS} ${YAMLCPP_LIBRARY})
-
-  list(APPEND backends "fs")
-  add_definitions(-DENABLE_FS_BACKEND=1)
-endif()
-
 # This is for tests
 include_directories(${CMAKE_SOURCE_DIR}/backend)
 
@@ -335,7 +323,6 @@ MESSAGE(STATUS "CFLAGS:  ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "BOOST:   ${Boost_LIBRARIES}")
 MESSAGE(STATUS "HDF5:    ${HDF5_LIBRARIES}")
 MESSAGE(STATUS "CPPUNIT: ${CPPUNIT_LIBRARIES}")
-MESSAGE(STATUS "YAML-cpp: ${YAMLCPP_LIBRARY}")
 MESSAGE(STATUS "===============================")
 MESSAGE(STATUS "BACKENDS: ${backends}")
 MESSAGE(STATUS "===============================")
