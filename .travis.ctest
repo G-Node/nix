@@ -30,7 +30,7 @@ else()
 endif()
 
 ctest_start(Continuous)
-ctest_configure(OPTIONS "-DBUILD_FS_BACKEND=$ENV{FS_BACKEND};-DBUILD_COVERAGE=$BUILD_COVERAGE")
+ctest_configure(OPTIONS "-DBUILD_COVERAGE=$BUILD_COVERAGE")
 ctest_build()
 
 if(CLANG_CHECK AND $ENV{CXX} MATCHES "clang")

@@ -12,7 +12,6 @@ RUN apt-get update -q && apt-get install -yy \
     libboost-all-dev \
     libhdf5-dev \
     libhdf5-serial-dev \
-    libyaml-cpp-dev \
     libstdc++-8-dev \
     python-pip \
     valgrind \
