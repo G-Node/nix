@@ -529,21 +529,28 @@ public:
      *
      * @return The created feature object.
      */
-    Feature createFeature(const DataArray &data, LinkType link_type) {
-        return backend()->createFeature(data.id(), link_type);
-    }
+    Feature createFeature(const DataArray &data, LinkType link_type);
+    
+    /**
+     * @brief Create a new feature.
+     *
+     * @param data      The data frame of this feature.
+     * @param link_type The link type of this feature.
+     *
+     * @return The created feature object.
+     */
+    Feature createFeature(const DataFrame &data, LinkType link_type);
 
     /**
      * @brief Create a new feature.
      *
-     * @param name_or_id        Name or id of the data array that is part of the new feature.
+     * @param name_or_id        Name or id of the DataArray/DataFrame that is part of the new feature.
      * @param link_type         The link type of this feature.
+     * @param target_type       The target type, i.e. TargetType::DataArray or TargetType::DataFrame
      *
      * @return The created feature object.
      */
-    Feature createFeature(const std::string &name_or_id, LinkType link_type) {
-        return backend()->createFeature(name_or_id, link_type);
-    }
+    Feature createFeature(const std::string &name_or_id, LinkType link_type, TargetType target_type = TargetType::DataArray);
 
     /**
      * @brief Delete a feature from the tag.

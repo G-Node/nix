@@ -196,7 +196,7 @@ Result validate(const SetDimension &set_dim) {
 Result validate(const Feature &feature) {
     Result result_base = validate_entity(feature);
     Result result = validator({
-        must(feature, &Feature::data, notFalse(), "data is not set!"),
+        must(feature, &Feature::dataArray, notFalse(), "data is not set!"),
         must(feature, &Feature::linkType, notSmaller(0), "linkType is not set!")
     });
 

@@ -110,7 +110,7 @@ void H5Object::close() {
 
 
 H5Object::~H5Object() {
-    close();
+    H5Object::close();
 }
 
 

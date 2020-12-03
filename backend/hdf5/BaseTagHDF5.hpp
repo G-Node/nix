@@ -86,7 +86,7 @@ public:
     virtual std::shared_ptr<base::IFeature> getFeature(ndsize_t index) const;
 
 
-    virtual std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type);
+    virtual std::shared_ptr<base::IFeature> createFeature(const std::string &name_or_id, LinkType link_type, TargetType target_type);
 
 
     virtual bool deleteFeature(const std::string &name_or_id);

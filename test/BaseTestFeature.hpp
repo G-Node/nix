@@ -18,6 +18,7 @@ class BaseTestFeature : public CPPUNIT_NS::TestFixture {
 protected:
     nix::File file;
     nix::DataArray data_array;
+    nix::DataFrame data_frame;
     nix::Block block;
     nix::Tag tag;
 
@@ -26,7 +27,9 @@ public:
     void testId();
 
     void testLinkType();
-    void testData();
+    void testTargetType();
+    void testDataArrayFeature();
+    void testDataFrameFeature();
     void testLinkType2Str();
     void testStreamOperator();
     void testOperator();

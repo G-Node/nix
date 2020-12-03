@@ -106,7 +106,23 @@ Feature Tag::createFeature(const DataArray &data, LinkType link_type) {
     if (!util::checkEntityInput(data)) {
         throw UninitializedEntity();
     }
-    return backend()->createFeature(data.id(), link_type);
+    return createFeature(data.id(), link_type, TargetType::DataArray);
+}
+
+
+Feature Tag::createFeature(const DataFrame &data, LinkType link_type) {
+    if (!util::checkEntityInput(data)) {
+        throw UninitializedEntity();
+    }
+    return createFeature(data.id(), link_type, TargetType::DataFrame);
+}
+
+
+Feature Tag::createFeature(const std::string &name_or_id, LinkType link_type, TargetType target_type) {
+    if (target_type == TargetType::DataFrame && link_type == LinkType::Tagged) {
+        throw InvalidLinkType("LinkType::Tagged is not allowed when using DataFrames!", "Tag::createFeature");
+    }
+    return backend()->createFeature(name_or_id, link_type, target_type);
 }
 
 

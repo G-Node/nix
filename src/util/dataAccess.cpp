@@ -734,7 +734,11 @@ DataView taggedData(const Tag &tag, const DataArray &array, RangeMatch match) {
 
 
 DataView featureData(const Tag &tag, const Feature &feature, RangeMatch match) {
-    DataArray data = feature.data();
+    if (feature.targetType() != TargetType::DataArray) {
+        throw std::runtime_error("Implement Tag::featureData for DataFrame!");
+    }
+    //FIXME
+    DataArray data = feature.dataArray();
     if (data == none) {
         throw UninitializedEntity();
     }
@@ -820,7 +824,11 @@ std::vector<DataView> retrieveFeatureData(const MultiTag &tag, std::vector<ndsiz
 std::vector<DataView> featureData(const MultiTag &tag, std::vector<ndsize_t> position_indices,
                                   const Feature &feature, RangeMatch match) {
     std::vector<DataView> views;
-    DataArray data = feature.data();
+    // FIXME!!!
+    if (feature.targetType() != TargetType::DataArray) {
+        throw std::runtime_error("Implement mtag featureData for DataFrames!");
+    }
+    DataArray data = feature.dataArray();
     if (data == nix::none) {
         throw UninitializedEntity();
     }

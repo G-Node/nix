@@ -416,7 +416,7 @@ NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
 NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
 
 /**
- * @brief Retruns the feature data associated with a Tag.
+ * @brief Returns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested
  * @param feature_index The index of the desired feature. Default is 0.
@@ -430,7 +430,7 @@ NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &positio
 NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_index=0, RangeMatch range_match = RangeMatch::Inclusive);
 
 /**
- * @brief Retruns the feature data associated with a Tag.
+ * @brief Returns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested
  * @param feature_index The index of the desired feature. Default is 0.
@@ -441,7 +441,7 @@ NIXAPI DEPRECATED DataView retrieveFeatureData(const Tag &tag, ndsize_t feature_
 NIXAPI DataView featureData(const Tag &tag, ndsize_t feature_index=0, RangeMatch range_match = RangeMatch::Exclusive);
 
 /**
- * @brief Retruns the feature data associated with a Tag.
+ * @brief Returns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested.
  * @param feature       The Feature of which the tagged data is requested.
@@ -453,7 +453,7 @@ NIXAPI DataView featureData(const Tag &tag, const Feature &feature, RangeMatch r
 
 
 /**
- * @brief Retruns the feature data associated with a Tag.
+ * @brief Returns the feature data associated with a Tag.
  *
  * @param tag           The Tag whos feature data is requested.
  * @param feature       The Feature of which the tagged data is requested.

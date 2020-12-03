@@ -130,6 +130,30 @@ std::vector<DataView> MultiTag::taggedData(std::vector<ndsize_t> &position_indic
 }
 
 
+Feature MultiTag::createFeature(const DataArray &data, LinkType link_type) {
+    if (!util::checkEntityInput(data)) {
+        throw UninitializedEntity();
+    }
+    return createFeature(data.id(), link_type, TargetType::DataArray);
+}
+
+
+Feature MultiTag::createFeature(const DataFrame &data, LinkType link_type) {
+    if (!util::checkEntityInput(data)) {
+        throw UninitializedEntity();
+    }
+    return createFeature(data.id(), link_type, TargetType::DataFrame);
+}
+
+
+Feature MultiTag::createFeature(const std::string &name_or_id, LinkType link_type, TargetType target_type) {
+    if (target_type == TargetType::DataFrame && link_type == LinkType::Tagged) {
+        throw InvalidLinkType("LinkType::Tagged is not allowed when using DataFrames!", "MultiTag::createFeature");
+    }
+    return backend()->createFeature(name_or_id, link_type, target_type);
+}
+
+
 bool MultiTag::hasFeature(const Feature &feature) const {
     if (!util::checkEntityInput(feature, false)) {
         return false;
