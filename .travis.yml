@@ -11,6 +11,9 @@ os:
   - linux
   - osx
 
+osx_image:
+  - xcode12.2
+
 env:
  - FS_BACKEND=ON
  - FS_BACKEND=OFF
@@ -19,6 +22,27 @@ matrix:
   exclude:
     - os: osx
       compiler: gcc
+    - os: osx
+      env: FS_BACKEND=ON DOCKERFILE=ub1804
+    - os: osx
+      env: FS_BACKEND=OFF DOCKERFILE=ub1804
+
+addons:
+  homebrew:
+    packages:
+      - cmake
+      - boost
+      - cppunit
+      - hdf5
+      - yaml-cpp
+    update: false
+
+before_cache:
+  - brew cleanup
+
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
 
 before_install:
   - if [[ "$CXX" == "g++" ]];
