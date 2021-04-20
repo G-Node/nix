@@ -1,3 +1,39 @@
+nix (1.4.5-3) xenial; urgency=medium
+
+  * version bump to 1.4.5
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Tue, 20 Apr 2021 13:52:00 +0200
+
+nix (1.4.5-2) bionic; urgency=medium
+
+  * version bump to 1.4.5
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Tue, 20 Apr 2021 14:18:00 +0200
+
+nix (1.4.5-1) focal; urgency=medium
+
+  * version bump to 1.4.5
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Tue, 20 Apr 2021 13:52:00 +0200
+
+nix (1.4.4-4) focal; urgency=medium
+
+  * version bump to 1.4.4
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Mon, 19 Apr 2021 14:31:00 +0200
+
+nix (1.4.4-3) focal; urgency=medium
+
+  * version bump to 1.4.4
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Fri, 16 Apr 2021 16:20:00 +0100
+
+nix (1.4.4-2) bionic; urgency=medium
+
+  * version bump to 1.4.4
+
+ -- Jan Grewe <jan.grewe@g-node.org>  Fri, 16 Apr 2021 16:17:00 +0100
+
 nix (1.4.4-1) xenial; urgency=medium
   * version bumb to 1.4.4
   * fixes installation of static build
@@ -5,7 +41,7 @@ nix (1.4.4-1) xenial; urgency=medium
   * fixes a bug in the IndexOf methods of RangeDimensions #819
   * some internal modifications regarding error handling
 
- -- Jan Grewe <jan.grewe@g-node.org>  Thu, 27 NovAug 2020 13:53:00 +0100
+ -- Jan Grewe <jan.grewe@g-node.org>  Thu,  Nov 2021 13:53:00 +0100
 
 nix (1.4.3-3) bionic; urgency=medium
 
