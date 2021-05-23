@@ -397,23 +397,23 @@ NIXAPI DEPRECATED DataView retrieveData(const Tag &tag, const DataArray &array, 
 /**
  * @brief Checks whether a given position is in the extent of the given DataArray.
  *
- * @param data          The data array.
+ * @param data_size     The extent of the data array.
  * @param position      The position.
  *
  * @return True if the position is in the extent of the data array, false otherwise.
  */
-NIXAPI bool positionInData(const DataArray &data, const NDSize &position);
+NIXAPI bool positionInData(const NDSize &data_size, const NDSize &position);
 
 /**
- * @brief Checks whether a given position plus count is in the extent of the given DataArray.
+ * @brief Checks whether a given offset plus count is in the extent of the given DataArray.
  *
  * @param data          The DataArray.
- * @param position      The position
+ * @param offset        The offset
  * @param count         The number of elements per dimension.
  *
- * @return True if position and count are in the extent of the data array, false otherwise.
+ * @return True if offset and  offset + count are in the extent of the data array, false otherwise.
  */
-NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count);
+NIXAPI bool positionAndExtentInData(const DataArray &data, const NDSize &offset, const NDSize &count);
 
 /**
  * @brief Retruns the feature data associated with a Tag.

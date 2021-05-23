@@ -317,11 +317,11 @@ void BaseTestDataAccess::testOffsetAndCount() {
 void BaseTestDataAccess::testPositionInData() {
     NDSize offsets, counts;
     util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
-    CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
+    CPPUNIT_ASSERT(util::positionInData(data_array.dataExtent(), offsets));
     CPPUNIT_ASSERT(util::positionAndExtentInData(data_array, offsets, counts));
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
-    CPPUNIT_ASSERT(util::positionInData(data_array, offsets));
+    CPPUNIT_ASSERT(util::positionInData(data_array.dataExtent(), offsets));
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
 

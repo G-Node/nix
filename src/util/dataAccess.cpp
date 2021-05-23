@@ -519,10 +519,8 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t ind
  }
 
 
-bool positionInData(const DataArray &data, const NDSize &position) {
-    NDSize data_size = data.dataExtent();
+bool positionInData(const NDSize &data_size, const NDSize &position) {
     bool valid = true;
-
     if (!(data_size.size() == position.size())) {
         return false;
     }
@@ -533,10 +531,12 @@ bool positionInData(const DataArray &data, const NDSize &position) {
 }
 
 
-bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count) {
-    NDSize pos = position + count;
-    pos -= 1;
-    return positionInData(data, pos);
+bool positionAndExtentInData(const DataArray &data, const NDSize &offset, const NDSize &count) {
+    NDSize end_pos = offset + count;
+    NDSize data_size = data.dataExtent();
+    bool valid = positionInData(data_size, offset);
+    valid &= positionInData(data_size, end_pos);
+    return valid;
 }
 
 
