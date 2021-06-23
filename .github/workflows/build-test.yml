@@ -1,0 +1,62 @@
+name: build-test
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-ub1804:
+    name: ubuntu-18.04-build
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Install dependecies
+      run: |
+        sudo apt-get update -y &&
+        sudo apt-get install -yy --no-install-recommends \
+          bash \
+          cmake \
+          clang-7 \
+          curl \
+          doxygen \
+          git \
+          gcc-8 \
+          g++-8 \
+          libcppunit-dev \
+          libboost-all-dev \
+          libhdf5-dev \
+          libhdf5-serial-dev \
+          libyaml-cpp-dev \
+          libstdc++-8-dev \
+          lcov \
+          valgrind
+    - uses: actions/checkout@v2
+    - name: Build
+      run: |
+        mkdir build
+        pushd build
+        cmake ..
+        make
+        make test
+        popd
+
+  build-macos:
+    name: Build on macOS
+    runs-on: macOS-10.14
+    steps:
+    - name: Install dependecies
+      run: |
+        brew update
+        brew install cmake boost cppunit hdf5 yaml-cpp
+    - uses: actions/checkout@v1
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        make test
