@@ -13,6 +13,9 @@ jobs:
   build-ub1804:
     name: ubuntu-18.04-build
     runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
     steps:
     - name: Install dependecies
       run: |
@@ -35,7 +38,9 @@ jobs:
           lcov \
           valgrind
     - uses: actions/checkout@v2
-    - name: Build
+    - name: Build-Test
+      env:
+        CC: ${{ matrix.compiler }}
       run: |
         mkdir build
         pushd build
@@ -52,8 +57,8 @@ jobs:
       run: |
         brew update
         brew install cmake boost cppunit hdf5 yaml-cpp
-    - uses: actions/checkout@v1
-    - name: Build
+    - uses: actions/checkout@v2
+    - name: Build-Test
       run: |
         mkdir build
         cd build
