@@ -44,10 +44,17 @@ jobs:
       run: |
         mkdir build
         pushd build
-        cmake ..
+        cmake -DBUILD_COVERAGE=ON ..
         make
         make test
         popd
+    - name: Coverage
+      if: endsWith(matrix.compiler, 'gcc')
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      run: |
+        lcov -q --capture --directory . --no-extern --output-file coverage.info
+        bash <(curl -s https://codecov.io/bash) -f coverage.info -C $GITHUB_SHA -B ${GITHUB_REF#refs/heads/} -Z
 
   build-macos:
     name: Build on macOS
