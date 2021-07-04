@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/G-Node/nix.svg?branch=master)](https://travis-ci.org/G-Node/nix)
+[![gh actions tests](https://github.com/G-Node/nix/workflows/build-test/badge.svg?branch=master)](https://github.com/G-Node/nix/actions)
 [![Build status](https://ci.appveyor.com/api/projects/status/1qlcasjg2fpqotig/branch/master?svg=true)](https://ci.appveyor.com/project/G-Node/nix/branch/master)
 [![Coverage](https://codecov.io/gh/G-Node/nix/branch/master/graph/badge.svg)](https://codecov.io/gh/G-Node/nix)
 
