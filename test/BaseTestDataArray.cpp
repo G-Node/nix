@@ -261,7 +261,7 @@ void BaseTestDataArray::testData() {
 
 void BaseTestDataArray::testPolynomial() {
     double PI = boost::math::constants::pi<double>();
-    boost::array<double, 10> coefficients1;
+    double coefficients1[10];
     std::vector<double> coefficients2;
     for(int i=0; i<10; i++) {
         coefficients1[i] = i;
