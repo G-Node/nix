@@ -19,6 +19,7 @@ class NIXAPI DataView : public DataSet {
 public:
     DataView(DataArray da, NDSize count, NDSize offset)
             : array(std::move(da)), offset(std::move(offset)), count(std::move(count)) {
+        std::cerr << "\tDataView Constructor " << std::endl;
 
         if (this->offset.size() != array.dataExtent().size()) {
             throw IncompatibleDimensions("DataView offset dimensionality does not match dimensionality of data", "nix::DataView");
@@ -28,7 +29,9 @@ public:
         }
         if (this->offset + this->count > array.dataExtent()) {
             throw OutOfBounds("Trying to create DataView which is out of bounds");
-        }
+        }        
+        std::cerr << "\tDataView Constructor " << std::endl;
+
     }
 
     // the DataIO interface implementation

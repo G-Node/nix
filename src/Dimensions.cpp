@@ -665,8 +665,11 @@ boost::optional<std::pair<ndsize_t, ndsize_t>> RangeDimension::indexOf(double st
     PositionMatch endMatching = (match == RangeMatch::Inclusive) ? PositionMatch::LessOrEqual : PositionMatch::Less;
     boost::optional<ndsize_t> ei = getIndex(end, ticks, endMatching);
     if (ei && *si <= *ei) {
+        std::cerr << *si << " " << *ei << std::endl;
         range = std::pair<ndsize_t, ndsize_t>(*si, *ei);
     }
+    if (!ei)
+        std::cerr << "\t Returning empty range!\n";
     return range;
 }
 
@@ -722,6 +725,9 @@ std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> RangeDimension::inde
     for (size_t i = 0; i < start_positions.size(); ++i) {
         boost::optional<std::pair<ndsize_t, ndsize_t>> range;
         range = this->indexOf(start_positions[i], end_positions[i], ticks, match);
+        std::cerr << "\t" << start_positions[i] << ", " << end_positions[i] << std::endl;
+        if (range)
+            std::cerr << "\t" << range->first << ", " << range->second << std::endl;
         indices.push_back(range);
     }
     return indices;

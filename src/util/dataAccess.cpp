@@ -72,6 +72,7 @@ vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> 
         RangeDimension dim;
         dim = dimension;
         indices = positionToIndex(start_positions, end_positions, units, range_matching, dim);
+        std::cerr << "\tposition_to_index::RangeDim" << std::endl;
     }
     return indices;
 }
@@ -150,6 +151,7 @@ vector<optional<pair<ndsize_t, ndsize_t>>> positionToIndex(const vector<double> 
     vector<double> scaled_end(count);
     string dim_unit = dimension.unit() ? *dimension.unit() : "none";
     scalePositions(start_positions, end_positions, units, dim_unit, scaled_start, scaled_end);
+    std::cerr << "\trange match " << (range_matching == RangeMatch::Exclusive) << std::endl;
     return dimension.indexOf(scaled_start, scaled_end, range_matching);
 }
 
@@ -482,30 +484,38 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
         vector<string> temp_units(start_positions[dim_index].size(), units[dim_index]);
         vector<optional<pair<ndsize_t, ndsize_t>>> ranges = positionToIndex(start_positions[dim_index], end_positions[dim_index],
                                                                             temp_units, match, dimensions[dim_index]);
-                                                                          
+
         data_indices.push_back(ranges);
     }
+    std::cerr << "\nping!! dataaccess 490" << std::endl;
     // at this point we do have all the start and end indices of the tagged positions that the caller wants the data of.
     // data_indices contains for each dimension a vector of optionals, one for each position index
     for (size_t i = 0; i < indices.size(); ++i) {  // for each of the requested positions
+        std::cerr << "\tposition: " << i << std::endl;
         NDSize data_offset(dimcount_sizet, 0);
         NDSize data_count(dimcount_sizet, 1);
         for (size_t dim_index =0; dim_index < dimensions.size(); ++dim_index) { // for each dimension
             optional<pair<ndsize_t, ndsize_t>> opt_range = data_indices[dim_index][i];
+            std::cerr << "\topt range is valid: " << (opt_range.is_initialized()) << std::endl;
             if (opt_range) {
                 data_offset[dim_index] = (*opt_range).first;
                 ndsize_t count =  (*opt_range).second - (*opt_range).first;
                 data_count[dim_index] += count;
+                std::cerr << count << std::endl;
             } else {
+                data_count[dim_index] = 0;
                 if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
+                    std::cerr << "\topt range is invalid: " << std::endl;
                     optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
                     if (!ofst) {
                         throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
                     }
-                    temp_offset[i] = *ofst;
+                    temp_offset[i] = *ofst;  // I do not remeber what this might be good for...
                 }
             }   
         }
+        std::cerr << "\tsetting offset and count: " << data_offset << "\t" << data_count <<std::endl;
+
         offsets.push_back(data_offset);
         counts.push_back(data_count);
     }
@@ -675,6 +685,7 @@ vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indi
     vector<NDSize> counts, offsets;
     vector<DataView> views;
 
+    // if no positions are given, we will return dataviews for all positions
     if (position_indices.size() < 1) {
         size_t pos_count = check::fits_in_size_t(tag.positions().dataExtent()[0],
                                                  "Number of positions > size_t.");
@@ -683,12 +694,17 @@ vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indi
     }
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts, match);
-
+    std::cerr << "taggedData 697" << offsets[0] << counts[0] << std::endl;
     for (size_t i = 0; i < offsets.size(); ++i) {
+        std::cerr << "\tcheck posistion and extents " << std::endl;
+
         if (!positionAndExtentInData(array, offsets[i], counts[i])) {
-            throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
+        std::cerr << "\tFail! " << std::endl;
+
+            //throw OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
         }
         DataView io = DataView(array, counts[i], offsets[i]);
+        std::cerr << "ping survived until here!" << std::endl;
         views.push_back(io);
     }
     return views;
