@@ -386,6 +386,12 @@ SetDimension::SetDimension(const SetDimension &other)
 }
 
 
+void SetDimension::label(const std::string &label) {
+    util::checkEmptyString(label, "label");
+    backend()->label(label);
+}
+
+
 boost::optional<ndsize_t> getSetIndex(const double position, std::vector<std::string> labels, const PositionMatch match) {
     boost::optional<ndsize_t> index;
     if (position < 0 && (match != PositionMatch::Greater && match != PositionMatch::GreaterOrEqual)) {

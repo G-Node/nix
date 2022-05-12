@@ -127,6 +127,15 @@ public:
     DimensionType dimensionType() const;
 
 
+    boost::optional<std::string> label() const;
+
+    
+    void label(const std::string &label);
+
+
+    void label(const none_t t);
+
+
     std::vector<std::string> labels() const;
 
 
