@@ -38,6 +38,7 @@ public:
     void testSampledDimPositionAt();
     void testSampledDimAxis();
 
+    void testSetDimLabel();
     void testSetDimLabels();
     void testSetDimIndexOf();
 
