@@ -1,7 +1,7 @@
 ##########################################
 # NIX CMake
 
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 2.8.10...3.23.1)
 
 # Defaults
 SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
