@@ -198,7 +198,8 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex({5.0, 0.}, {10.5}, RangeMatch::Inclusive, setDim), std::runtime_error);
     
-    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
+    vector<optional<pair<ndsize_t, ndsize_t>>> ranges;
+    ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(!ranges[0]);
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 1);
@@ -288,19 +289,18 @@ void BaseTestDataAccess::testOffsetAndCount() {
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, -1, offsets, counts), nix::OutOfBounds); // not a valid position index
     CPPUNIT_ASSERT_THROW(util::getOffsetAndCount(multi_tag, data_array, 3, offsets, counts), nix::OutOfBounds); // not a valid position index
 
-    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(offsets.size() == 4);
     CPPUNIT_ASSERT(counts.size() == 4);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2 && offsets[3] == 1);
     CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2 && counts[3] == 3);
 
-    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(offsets.size() == 4);
     CPPUNIT_ASSERT(counts.size() == 4);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 3 && offsets[2] == 2 && offsets[3] == 1);
-    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 6 && counts[2] == 2 && counts[3] == 2);
+    CPPUNIT_ASSERT(counts[0] == 1 && counts[1] == 7 && counts[2] == 2 && counts[3] == 3);
 
-    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(offsets.size() == 4);
     CPPUNIT_ASSERT(counts.size() == 4);
     CPPUNIT_ASSERT(offsets[0] == 0 && offsets[1] == 8 && offsets[2] == 1 && offsets[3] == 1);
@@ -321,6 +321,14 @@ void BaseTestDataAccess::testPositionInData() {
     CPPUNIT_ASSERT(util::positionAndExtentInData(data_array, offsets, counts));
 
     util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts);
+    CPPUNIT_ASSERT(util::positionInData(data_array.dataExtent(), offsets));
+    CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
+
+    util::getOffsetAndCount(multi_tag, data_array, 0, offsets, counts, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(util::positionInData(data_array.dataExtent(), offsets));
+    CPPUNIT_ASSERT(util::positionAndExtentInData(data_array, offsets, counts));
+
+    util::getOffsetAndCount(multi_tag, data_array, 1, offsets, counts, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(util::positionInData(data_array.dataExtent(), offsets));
     CPPUNIT_ASSERT(!util::positionAndExtentInData(data_array, offsets, counts));
 }
@@ -454,7 +462,6 @@ void BaseTestDataAccess::testMultiTagFeatureData() {
         }
     }
     index_data.setData(data1);
-
     DataArray tagged_data = block.createDataArray("tagged feature data", "test", nix::DataType::Double, {10, 20, 10, 10});
     dim1 = tagged_data.appendSampledDimension(1.0);
     dim1.unit("ms");
