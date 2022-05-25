@@ -694,11 +694,6 @@ vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indi
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts, match);
     for (size_t i = 0; i < offsets.size(); ++i) {
-        /*
-	 if (!positionAndExtentInData(array, offsets[i], counts[i])) {
-            throw OutOfBounds("Referenced data slice out of the extent of the DataArray!", 0);
-        }
-	*/
         DataView io = DataView(array, counts[i], offsets[i]);
         views.push_back(io);
     }

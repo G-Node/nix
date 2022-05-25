@@ -380,7 +380,6 @@ void BaseTestMultiTag::testDataAccess() {
     DataView ret_data = multi_tag.taggedData(0, 0);
     NDSize data_size = ret_data.dataExtent();
     CPPUNIT_ASSERT(data_size.size() == 3);
-    std::cerr << ret_data.dataExtent() << std::endl;
     CPPUNIT_ASSERT(data_size[0] == 1 && data_size[1] == 6 && data_size[2] == 2);
 
     ret_data = multi_tag.taggedData(0, data_array.name());
