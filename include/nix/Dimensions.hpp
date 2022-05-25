@@ -774,6 +774,34 @@ public:
     }
 
     /**
+     * @brief Getter for the label of the dimension.
+     *
+     * The label of a SetDimension corresponds to the axis label
+     * in a plot of the respective dimension.
+     *
+     * @return The label of the dimension.
+     */
+    boost::optional<std::string> label() const {
+        return backend()->label();
+    }
+
+    /**
+     * @brief Sets the label of the dimension.
+     *
+     * @param label     The label of the dimension.
+     */
+    void label(const std::string &label);
+
+    /**
+     * @brief Removes the label from a dimension.
+     *
+     * @param t         None
+     */
+    void label(const none_t t) {
+        backend()->label(t);
+    }
+
+    /**
      * @brief Get the labels of the range dimension.
      *
      * The labels serve as names for each index of the data at the respective

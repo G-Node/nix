@@ -249,6 +249,31 @@ DimensionType SetDimensionHDF5::dimensionType() const {
 }
 
 
+boost::optional<std::string> SetDimensionHDF5::label() const {
+    boost::optional<std::string> ret;
+    string label;
+    bool have_attr = group.getAttr("label", label);
+    if (have_attr) {
+        ret = label;
+    }
+    return ret;
+}
+
+
+void SetDimensionHDF5::label(const string &label) {
+    group.setAttr("label", label);
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
+}
+
+
+void SetDimensionHDF5::label(const none_t t) {
+    if (group.hasAttr("label")) {
+        group.removeAttr("label");
+    }
+    // NOTE: forceUpdatedAt() not possible since not reachable from here
+}
+
+
 vector<string> SetDimensionHDF5::labels() const {
     vector<string> labels;
 

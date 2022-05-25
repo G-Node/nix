@@ -453,6 +453,26 @@ void BaseTestDimension::testSampledDimOperators() {
 }
 
 
+void BaseTestDimension::testSetDimLabel() {
+    std::string label = "colors";
+    std::string other_label = "colours";
+
+    Dimension d = data_array.appendSetDimension({"red", "green", "blue"});
+    CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Set);
+
+    SetDimension sd;
+    sd = d;
+    sd.label(label);
+    CPPUNIT_ASSERT(*(sd.label()) == label);
+    sd.label(other_label);
+    CPPUNIT_ASSERT(*(sd.label()) == other_label);
+    CPPUNIT_ASSERT_NO_THROW(sd.label(none));
+    CPPUNIT_ASSERT(sd.label() == none);
+
+    data_array.deleteDimensions();
+}
+
+
 void BaseTestDimension::testSetDimLabels() {
     std::vector<std::string> labels = {"label_a", "label_b","label_c","label_d","label_e"};
     std::vector<std::string> new_labels = {"new label_a", "new label_b","new label_c"};
