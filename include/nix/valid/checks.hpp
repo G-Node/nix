@@ -16,9 +16,9 @@
 
 #include <nix/types.hpp>
 
-#include <boost/optional.hpp>
 #include <boost/any.hpp>
 
+#include <optional>
 namespace nix {
 namespace valid {
 
@@ -133,7 +133,7 @@ namespace valid {
             return value == val;
         }
     };
-    // needed because: for bizarre reasons bool converts to int when compared to boost::optional
+    // needed because: for bizarre reasons bool converts to int when compared to std::optional
     template<>
     struct isEqual<bool> {
         const bool value;
@@ -151,7 +151,7 @@ namespace valid {
      *
      * One Check struct that checks whether the given value casts to true
      * or to false.
-     * T can be: boost::optional, boost::none, nix-entity
+     * T can be: std::optional, std::nullopt, nix-entity
      * and any basic type.
      */
     struct notFalse {
@@ -167,7 +167,7 @@ namespace valid {
      *
      * One Check struct that checks whether the given value casts to false
      * or to true.
-     * T can be: boost::optional, boost::none, nix-entity
+     * T can be: std::optional, std::nullopt, nix-entity
      * and any basic type.
      */
     struct isFalse {
@@ -217,7 +217,7 @@ namespace valid {
 
         virtual bool operator()(const std::string &u) const = 0;
 
-        bool operator()(const boost::optional<std::string> &u) const {
+        bool operator()(const std::optional<std::string> &u) const {
             // note: relying on short-curcuiting here
             return u && (*this)(*u);
         }
@@ -235,14 +235,14 @@ namespace valid {
      *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid atomic or compound SI unit.
-     * Parameter can be of type boost optional (containing nothing or
+     * Parameter can be of type std optional (containing nothing or
      * string) or of type string or a vector of strings.
      */
     struct isValidUnit : public isUnit {
         bool operator()(const std::string &u) const {
             return (util::isSIUnit(u) || util::isCompoundSIUnit(u));
         }
-        bool operator()(const boost::optional<std::string> &u) const {
+        bool operator()(const std::optional<std::string> &u) const {
             return isUnit::operator()(u);
         }
         bool operator()(const std::vector<std::string> &u) const {
@@ -255,14 +255,14 @@ namespace valid {
      *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid atomic SI unit.
-     * Parameter can be of type boost optional (containing nothing or
+     * Parameter can be of type std optional (containing nothing or
      * string) or of type string or a vector of strings.
      */
     struct isAtomicUnit : public isUnit {
         bool operator()(const std::string &u) const {
             return util::isSIUnit(u);
         }
-        bool operator()(const boost::optional<std::string> &u) const {
+        bool operator()(const std::optional<std::string> &u) const {
             return isUnit::operator()(u);
         }
         bool operator()(const std::vector<std::string> &u) const {
@@ -275,14 +275,14 @@ namespace valid {
      *
      * One Check struct that checks whether the given string(s) represent(s)
      * a valid compound SI unit.
-     * Parameter can be of type boost optional (containing nothing or
+     * Parameter can be of type std optional (containing nothing or
      * string) or of type string or a vector of strings.
      */
     struct isCompoundUnit : public isUnit {
         bool operator()(const std::string &u) const {
             return util::isCompoundSIUnit(u);
         }
-        bool operator()(const boost::optional<std::string> &u) const {
+        bool operator()(const std::optional<std::string> &u) const {
             return isUnit::operator()(u);
         }
         bool operator()(const std::vector<std::string> &u) const {
@@ -296,8 +296,8 @@ namespace valid {
      * One Check struct that checks whether the given value can be
      * considered set, by applying {@link notFalse} and {@link notEmpty}
      * checks. Value thus is set if: STL cotnainer not empty OR
-     * bool is true OR boost optional is set OR number is not 0.
-     * Parameter can be of above types or even boost none_t.
+     * bool is true OR std optional is set OR number is not 0.
+     * Parameter can be of above types or even nix none_t.
      * NOTE: use this if you don't know wheter a type has and "empty"
      * method.
      */

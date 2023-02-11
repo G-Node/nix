@@ -181,7 +181,7 @@ public:
      *
      * @param t         None
      */
-    void extents(const boost::none_t t) {
+    void extents(const nix::none_t t) {
         backend()->extents(t);
     }
 
@@ -214,7 +214,7 @@ public:
      *
      * @param t         None
      */
-    void units(const boost::none_t t) {
+    void units(const nix::none_t t) {
         backend()->units(t);
     }
 

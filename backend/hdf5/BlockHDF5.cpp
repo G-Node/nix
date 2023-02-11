@@ -58,8 +58,8 @@ BlockHDF5::BlockHDF5(const shared_ptr<IFile> &file, const H5Group &group, const 
 // Generic access methods
 //--------------------------------------------------
 
-boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool create) const {
-    boost::optional<H5Group> p;
+std::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool create) const {
+    std::optional<H5Group> p;
 
     switch (type) {
     case ObjectType::DataArray:
@@ -87,20 +87,20 @@ boost::optional<H5Group> BlockHDF5::groupForObjectType(ObjectType type, bool cre
         break;
 
     default:
-       p = boost::optional<H5Group>(create);
+       p = std::optional<H5Group>(create);
     }
 
     return p;
 }
 
-boost::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) const {
-    boost::optional<H5Group> p = groupForObjectType(ident.type());
+std::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) const {
+    std::optional<H5Group> p = groupForObjectType(ident.type());
 
     if (!p) {
         return p;
     }
 
-    boost::optional<H5Group> g;
+    std::optional<H5Group> g;
     const std::string &iname = ident.name();
     const std::string &iid = ident.id();
 
@@ -115,7 +115,7 @@ boost::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) 
     bool foundNeedle = p->hasObject(needle);
 
     if (foundNeedle) {
-        g = boost::make_optional(p->openGroup(needle, false));
+        g = std::make_optional(p->openGroup(needle, false));
     } else if (haveId) {
         g = p->findGroupByAttribute("entity_id", iid);
     }
@@ -125,7 +125,7 @@ boost::optional<H5Group> BlockHDF5::findEntityGroup(const nix::Identity &ident) 
         g->getAttr("entity_id", eid);
 
         if (eid != iid) {
-            return boost::optional<H5Group>();
+            return std::optional<H5Group>();
         }
     }
 
@@ -137,7 +137,7 @@ std::string BlockHDF5::resolveEntityId(const nix::Identity &ident) const {
         return ident.id();
     }
 
-    boost::optional<H5Group> g = findEntityGroup(ident);
+    std::optional<H5Group> g = findEntityGroup(ident);
     if (!g) {
         return "";
     }
@@ -149,12 +149,12 @@ std::string BlockHDF5::resolveEntityId(const nix::Identity &ident) const {
 }
 
 bool BlockHDF5::hasEntity(const nix::Identity &ident) const {
-    boost::optional<H5Group> p = findEntityGroup(ident);
+    std::optional<H5Group> p = findEntityGroup(ident);
     return !!p;
 }
 
 std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) const {
-    boost::optional<H5Group> eg = findEntityGroup(ident);
+    std::optional<H5Group> eg = findEntityGroup(ident);
 
     switch (ident.type()) {
     case ObjectType::DataArray: {
@@ -213,19 +213,19 @@ std::shared_ptr<base::IEntity> BlockHDF5::getEntity(const nix::Identity &ident) 
 }
 
 std::shared_ptr<base::IEntity>BlockHDF5::getEntity(ObjectType type, ndsize_t index) const {
-    boost::optional<H5Group> eg = groupForObjectType(type);
+    std::optional<H5Group> eg = groupForObjectType(type);
     string name = eg ? eg->objectName(index) : "";
     return getEntity({name, "", type});
 }
 
 ndsize_t BlockHDF5::entityCount(ObjectType type) const {
-    boost::optional<H5Group> g = groupForObjectType(type);
+    std::optional<H5Group> g = groupForObjectType(type);
     return g ? g->objectCount() : ndsize_t(0);
 }
 
 bool BlockHDF5::removeEntity(const nix::Identity &ident) {
-    boost::optional<H5Group> p = groupForObjectType(ident.type());
-    boost::optional<H5Group> eg = findEntityGroup(ident);
+    std::optional<H5Group> p = groupForObjectType(ident.type());
+    std::optional<H5Group> eg = findEntityGroup(ident);
 
     if (!p || !eg) {
         return false;
@@ -255,7 +255,7 @@ bool BlockHDF5::removeEntity(const nix::Identity &ident) {
 
 shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &type) {
     string id = util::createId();
-    boost::optional<H5Group> g = source_group(true);
+    std::optional<H5Group> g = source_group(true);
 
     H5Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), block(), group, id, type, name);
@@ -263,7 +263,7 @@ shared_ptr<ISource> BlockHDF5::createSource(const string &name, const string &ty
 
 
 bool BlockHDF5::deleteSource(const string &name_or_id) {
-    boost::optional<H5Group> g = source_group();
+    std::optional<H5Group> g = source_group();
     bool deleted = false;
 
     if (g) {
@@ -293,7 +293,7 @@ bool BlockHDF5::deleteSource(const string &name_or_id) {
 shared_ptr<ITag> BlockHDF5::createTag(const std::string &name, const std::string &type,
                                       const std::vector<double> &position) {
     string id = util::createId();
-    boost::optional<H5Group> g = tag_group(true);
+    std::optional<H5Group> g = tag_group(true);
 
     H5Group group = g->openGroup(name);
     return make_shared<TagHDF5>(file(), block(), group, id, type, name, position);
@@ -310,7 +310,7 @@ shared_ptr<IDataArray> BlockHDF5::createDataArray(const std::string &name,
                                                   const NDSize &shape,
                                                   const Compression &compression) {
     string id = util::createId();
-    boost::optional<H5Group> g = data_array_group(true);
+    std::optional<H5Group> g = data_array_group(true);
 
     H5Group group = g->openGroup(name, true);
     auto da = make_shared<DataArrayHDF5>(file(), block(), group, id, type, name);
@@ -330,7 +330,7 @@ std::shared_ptr<IDataFrame> BlockHDF5::createDataFrame(const std::string &name,
                                                        const Compression &compression) {
 
     string id = util::createId();
-    boost::optional<H5Group> g = data_frame_group(true);
+    std::optional<H5Group> g = data_frame_group(true);
     H5Group group = g->openGroup(name, true);
 
     auto df = make_shared<DataFrameHDF5>(file(), block(), group, id, type, name);
@@ -346,7 +346,7 @@ std::shared_ptr<IDataFrame> BlockHDF5::createDataFrame(const std::string &name,
 shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const std::string &type,
                                                 const DataArray &positions) {
     string id = util::createId();
-    boost::optional<H5Group> g = multi_tag_group(true);
+    std::optional<H5Group> g = multi_tag_group(true);
 
     H5Group group = g->openGroup(name);
     return make_shared<MultiTagHDF5>(file(), block(), group, id, type, name, positions);
@@ -358,7 +358,7 @@ shared_ptr<IMultiTag> BlockHDF5::createMultiTag(const std::string &name, const s
 
 shared_ptr<IGroup> BlockHDF5::createGroup(const std::string &name, const std::string &type) {
     string id = util::createId();
-    boost::optional<H5Group> g = groups_group(true);
+    std::optional<H5Group> g = groups_group(true);
 
     H5Group group = g->openGroup(name);
     return make_shared<GroupHDF5>(file(), block(), group, id, type, name);

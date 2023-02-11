@@ -114,7 +114,7 @@ public:
      *
      * @return The definition of the entity.
      */
-    boost::optional<std::string> definition() const {
+    std::optional<std::string> definition() const {
         return Entity<T>::backend()->definition();
     }
 
@@ -171,14 +171,14 @@ struct NIXAPI has_name {
 
 template<typename Entity>
 typename std::enable_if<has_name<Entity>::value,
-               boost::optional<std::string>>::type
+               std::optional<std::string>>::type
 getEntityName(const Entity &e) {
-    return boost::make_optional(e.name());
+    return std::make_optional(e.name());
 }
 
 template<typename Entity>
 typename std::enable_if<! has_name<Entity>::value,
-                        boost::optional<std::string>>::type
+                        std::optional<std::string>>::type
 getEntityName(const Entity &e) {
     return nix::none;
 }
@@ -194,7 +194,7 @@ getEntityName(const Entity &e) {
  * with or {@link nix::none}.
  */
 template<typename Entity>
-boost::optional<std::string> getEntityName(const Entity &e) {
+std::optional<std::string> getEntityName(const Entity &e) {
     return base::getEntityName<Entity>(e);
 }
 

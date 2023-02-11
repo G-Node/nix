@@ -36,7 +36,7 @@ public:
     // Element getters and setters
     //--------------------------------------------------
 
-    virtual boost::optional<std::string> label() const = 0;
+    virtual std::optional<std::string> label() const = 0;
 
 
     virtual void label(const std::string &label) = 0;
@@ -45,7 +45,7 @@ public:
     virtual void label(const none_t t) = 0;
 
 
-    virtual boost::optional<std::string> unit() const = 0;
+    virtual std::optional<std::string> unit() const = 0;
 
 
     virtual void unit(const std::string &unit) = 0;
@@ -54,7 +54,7 @@ public:
     virtual void unit(const none_t t) = 0;
 
 
-    virtual boost::optional<double> expansionOrigin()const = 0;
+    virtual std::optional<double> expansionOrigin()const = 0;
 
 
     virtual void expansionOrigin(double expansion_origin) = 0;

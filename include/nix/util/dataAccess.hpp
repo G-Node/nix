@@ -22,6 +22,7 @@
 #include <nix/Tag.hpp>
 
 #include <ctime>
+#include <optional>
 
 namespace nix {
 namespace util {
@@ -46,7 +47,7 @@ namespace util {
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const SetDimension &dimension);
+NIXAPI std::optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const SetDimension &dimension);
 
 NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &unit, const SetDimension &dimension);
 
@@ -70,7 +71,7 @@ NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &u
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const DataFrameDimension &dimension);
+NIXAPI std::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const DataFrameDimension &dimension);
 
 /**
  * @brief Converts a position to an index according to the dimension descriptor.
@@ -91,7 +92,7 @@ NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const std::str
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const DataFrameDimension &dimension);
+NIXAPI std::optional<ndsize_t> positionToIndex(double position, const PositionMatch match, const DataFrameDimension &dimension);
 
 
 /**
@@ -111,7 +112,7 @@ NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const Position
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI  boost::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const SampledDimension &dimension);
+NIXAPI  std::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch match, const SampledDimension &dimension);
 
 NIXAPI  DEPRECATED ndsize_t positionToIndex(double position, const std::string &unit, const SampledDimension &dimension);
 
@@ -131,7 +132,7 @@ NIXAPI  DEPRECATED ndsize_t positionToIndex(double position, const std::string &
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */
-NIXAPI boost::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch position_match, const RangeDimension &dimension);
+NIXAPI std::optional<ndsize_t> positionToIndex(double position, const std::string &unit, const PositionMatch position_match, const RangeDimension &dimension);
 
 
 NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &unit, const RangeDimension &dimension);
@@ -155,11 +156,11 @@ NIXAPI DEPRECATED ndsize_t positionToIndex(double position, const std::string &u
  * @throws nix::IncompatibleDimension The the dimensions are incompatible.
  * @throws nix::OutOfBounds If the position either too large or too small for the dimension.
  */       
-NIXAPI std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
-                                                                                   const std::vector<double> &end_positions,
-                                                                                   const std::vector<std::string> &units,
-                                                                                   const RangeMatch rangeMatching,
-                                                                                   const SampledDimension &dimension);
+NIXAPI std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
+                                                                                 const std::vector<double> &end_positions,
+                                                                                 const std::vector<std::string> &units,
+                                                                                 const RangeMatch rangeMatching,
+                                                                                 const SampledDimension &dimension);
 
 /**
  * @deprecated this function has been deprecated see {@link nix::util::positionToIndex(const std::vector<double>&, const std::vector<double>&, const std::vector<std::string> &, const RangeMatch, const SampledDimension&)}
@@ -170,10 +171,10 @@ NIXAPI DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(con
                                                                              const SampledDimension &dimension);
 
 
-NIXAPI std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
-                                                                                   const std::vector<double> &end_positions,
-                                                                                   const RangeMatch rangeMatching,
-                                                                                   const SetDimension &dimension);
+NIXAPI std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
+                                                                                 const std::vector<double> &end_positions,
+                                                                                 const RangeMatch rangeMatching,
+                                                                                 const SetDimension &dimension);
 
 /**
  * @deprecated this function has been deprecated see {@link nix::util::positionToIndex(const std::vector<double>&, const std::vector<double>&, const std::vector<std::string> &, const RangeMatch, const SetDimension&)}
@@ -184,11 +185,11 @@ NIXAPI DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(con
                                                                              const SetDimension &dimension);
 
 
-NIXAPI std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
-                                                                                   const std::vector<double> &end_positions,
-                                                                                   const std::vector<std::string> &units,
-                                                                                   const RangeMatch rangeMatching,
-                                                                                   const RangeDimension &dimension);
+NIXAPI std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
+                                                                                 const std::vector<double> &end_positions,
+                                                                                 const std::vector<std::string> &units,
+                                                                                 const RangeMatch rangeMatching,
+                                                                                 const RangeDimension &dimension);
 
 /**
  * @deprecated this function has been deprecated see {@link nix::util::positionToIndex(const std::vector<double>&, const std::vector<double>&, const std::vector<std::string> &, const RangeMatch, const RangeDimension&)}
@@ -199,10 +200,10 @@ NIXAPI DEPRECATED std::vector<std::pair<ndsize_t, ndsize_t>> positionToIndex(con
                                                                              const RangeDimension &dimension);
 
 
-NIXAPI std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
-                                                                                   const std::vector<double> &end_positions,
-                                                                                   const RangeMatch range_matching,
-                                                                                   const DataFrameDimension &dimension);
+NIXAPI std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> positionToIndex(const std::vector<double> &start_positions,
+                                                                                 const std::vector<double> &end_positions,
+                                                                                 const RangeMatch range_matching,
+                                                                                 const DataFrameDimension &dimension);
 
 
 /**

@@ -195,13 +195,13 @@ void TestH5Group::testOpen() {
 
     std::string idout;
 
-    boost::optional<nix::hdf5::H5Group> a = root.findGroupByNameOrAttribute("entity_id", "name_a");
+    std::optional<nix::hdf5::H5Group> a = root.findGroupByNameOrAttribute("entity_id", "name_a");
     CPPUNIT_ASSERT(a);
     CPPUNIT_ASSERT(a->hasAttr("entity_id"));
     a->getAttr("entity_id", idout);
     CPPUNIT_ASSERT_EQUAL(uuid, idout);
 
-    boost::optional<nix::hdf5::H5Group> b = root.findGroupByNameOrAttribute("entity_id", uuid);
+    std::optional<nix::hdf5::H5Group> b = root.findGroupByNameOrAttribute("entity_id", uuid);
     CPPUNIT_ASSERT(b);
     CPPUNIT_ASSERT(b->hasAttr("entity_id"));
     b->getAttr("entity_id", idout);

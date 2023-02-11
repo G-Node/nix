@@ -41,10 +41,10 @@ public:
     virtual void repository(const std::string &repository) = 0;
 
 
-    virtual boost::optional<std::string> repository() const = 0;
+    virtual std::optional<std::string> repository() const = 0;
 
 
-    virtual void repository(const boost::none_t t) = 0;
+    virtual void repository(const none_t t) = 0;
 
 
     virtual void link(const std::string &id) = 0;

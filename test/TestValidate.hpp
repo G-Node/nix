@@ -25,7 +25,6 @@
 #include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
 
-#include <boost/optional.hpp>
 
 // define some tag like class with units- & unit-getter that allows compound units
 struct tag_tmp {
@@ -42,8 +41,8 @@ struct tag_tmp {
         return units_ref.front(); 
     }
     
-    boost::optional<std::string> unito() const { 
-        boost::optional<std::string> ret = units_ref.front(); 
+    std::optional<std::string> unito() const { 
+        std::optional<std::string> ret = units_ref.front(); 
         return ret; 
     }
 };

@@ -15,10 +15,9 @@
 
 #include <nix/types.hpp>
 
-#include <boost/optional.hpp>
-
 #include <string>
 #include <vector>
+#include <optional>
 
 namespace nix {
 namespace valid {
@@ -32,7 +31,7 @@ namespace valid {
     struct NIXAPI Message {
         std::string id;
         std::string msg;
-        boost::optional<std::string> name;
+        std::optional<std::string> name;
 
         Message() { }
 
@@ -41,7 +40,7 @@ namespace valid {
         {
         }
 
-        Message(std::string id, std::string msg, boost::optional<std::string> name)
+        Message(std::string id, std::string msg, std::optional<std::string> name)
             : id(std::move(id)), msg(std::move(msg)), name(std::move(name))
         {}
     };
@@ -144,7 +143,7 @@ namespace valid {
      * 
      * Helper function that gets all the units from all the dimensions
      * of the given DataArray and returns them as vector of strings.
-     * For all units not set (since boost::optional) it inserts an empty 
+     * For all units not set (since std::optional) it inserts an empty 
      * string andfor all dims that have no unit (since SetDimension) it
      * inserts the string "SetDimension". Thus the number of returned
      * units matches the number of dimensions and indices.

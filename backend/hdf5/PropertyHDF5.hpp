@@ -72,7 +72,7 @@ public:
     std::string name() const;
 
 
-    boost::optional<std::string> definition() const;
+    std::optional<std::string> definition() const;
 
 
     void definition(const std::string &definition);
@@ -87,7 +87,7 @@ public:
     void unit(const std::string &unit);
 
 
-    boost::optional<std::string> unit() const;
+    std::optional<std::string> unit() const;
 
 
     void unit(const none_t t);
@@ -96,7 +96,7 @@ public:
     void uncertainty(double uncertainty);
 
 
-    boost::optional<double> uncertainty() const;
+    std::optional<double> uncertainty() const;
 
 
     void uncertainty(const none_t t);
@@ -114,7 +114,7 @@ public:
     std::vector<Variant> values(void) const;
 
 
-    void values(const boost::none_t t);
+    void values(const none_t t);
 
 
     bool isValidEntity() const;

@@ -19,6 +19,7 @@
 
 #include <string>
 #include <functional>
+#include <optional>
 
 namespace nix {
 namespace valid {
@@ -55,7 +56,7 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
-            boost::optional<std::string> name = nix::getEntityName(parent);
+            std::optional<std::string> name = nix::getEntityName(parent);
 
             // execute getter call & check for error
             try {
@@ -110,7 +111,7 @@ namespace valid {
             std::string id = nix::util::numToStr(
                                 ID<hasID<TOBJ>::value>().get(parent)
                              );
-            boost::optional<std::string> name = nix::getEntityName(parent);
+            std::optional<std::string> name = nix::getEntityName(parent);
 
             // execute getter call & check for error
             try {

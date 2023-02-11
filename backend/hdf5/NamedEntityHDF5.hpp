@@ -53,7 +53,7 @@ public:
     std::string name() const;
 
 
-    boost::optional<std::string> definition() const;
+    std::optional<std::string> definition() const;
 
 
     void definition(const std::string &definition);

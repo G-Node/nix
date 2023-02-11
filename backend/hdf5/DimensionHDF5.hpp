@@ -79,7 +79,7 @@ public:
     DimensionType dimensionType() const;
 
 
-    boost::optional<std::string> label() const;
+    std::optional<std::string> label() const;
 
 
     void label(const std::string &label);
@@ -88,7 +88,7 @@ public:
     void label(const none_t t);
 
 
-    boost::optional<std::string> unit() const;
+    std::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
@@ -103,7 +103,7 @@ public:
     void samplingInterval(double sampling_interval);
 
 
-    boost::optional<double> offset() const;
+    std::optional<double> offset() const;
 
 
     void offset(double offset);
@@ -155,7 +155,7 @@ private:
     std::shared_ptr<base::IBlock> entity_block;
     std::shared_ptr<base::IFile>  entity_file;
 
-    boost::optional<unsigned> checkColumnIndex(boost::optional<unsigned> col_index) const;
+    std::optional<unsigned> checkColumnIndex(std::optional<unsigned> col_index) const;
 public:
     DataFrameDimensionHDF5(const H5Group &group, ndsize_t index);
 
@@ -171,15 +171,15 @@ public:
 
     DimensionType dimensionType() const;
 
-    boost::optional<unsigned> columnIndex() const;
+    std::optional<unsigned> columnIndex() const;
 
-    Column column(boost::optional<unsigned> col_index) const;
+    Column column(std::optional<unsigned> col_index) const;
 
-    std::string label(boost::optional<unsigned> col_index) const;
+    std::string label(std::optional<unsigned> col_index) const;
 
-    std::string unit(boost::optional<unsigned> col_index) const;
+    std::string unit(std::optional<unsigned> col_index) const;
 
-    nix::DataType columnDataType(boost::optional<unsigned> col_index) const;
+    nix::DataType columnDataType(std::optional<unsigned> col_index) const;
 
     std::shared_ptr<base::IDataFrame> dataFrame() const;
 
@@ -206,7 +206,7 @@ public:
     bool alias() const;
 
 
-    boost::optional<std::string> label() const;
+    std::optional<std::string> label() const;
 
 
     void label(const std::string &label);
@@ -215,7 +215,7 @@ public:
     void label(const none_t t);
 
 
-    boost::optional<std::string> unit() const;
+    std::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);

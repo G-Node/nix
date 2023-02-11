@@ -134,7 +134,7 @@ public:
      *
      * @return The label of the data array.
      */
-    boost::optional<std::string> label() const {
+    std::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -159,7 +159,7 @@ public:
      *
      * @return The unit of the data array.
      */
-    boost::optional<std::string> unit() const {
+    std::optional<std::string> unit() const {
         return backend()->unit();
     }
 
@@ -186,7 +186,7 @@ public:
      *
      * @return The expansion origin.
      */
-    boost::optional<double> expansionOrigin() const {
+    std::optional<double> expansionOrigin() const {
         return backend()->expansionOrigin();
     }
 

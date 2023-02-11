@@ -20,8 +20,8 @@ using namespace nix::base;
 namespace nix {
 namespace hdf5 {
 
-boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type, bool create) const {
-    boost::optional<H5Group> p;
+std::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type, bool create) const {
+    std::optional<H5Group> p;
 
     switch (type) {
     case ObjectType::DataArray:
@@ -40,20 +40,20 @@ boost::optional<H5Group> GroupHDF5::groupForObjectType(ObjectType type, bool cre
 
         //TODO
     default:
-        p = boost::optional<H5Group>(create);
+        p = std::optional<H5Group>(create);
     }
 
     return p;
 }
 
 
-boost::optional<H5Group> GroupHDF5::findEntityGroup(const nix::Identity &ident) const {
-    boost::optional<H5Group> p = groupForObjectType(ident.type());
+std::optional<H5Group> GroupHDF5::findEntityGroup(const nix::Identity &ident) const {
+    std::optional<H5Group> p = groupForObjectType(ident.type());
     if (!p) {
         return p;
     }
 
-    boost::optional<H5Group> g;
+    std::optional<H5Group> g;
     const std::string &iname = ident.name();
     const std::string &iid = ident.id();
 
@@ -67,7 +67,7 @@ boost::optional<H5Group> GroupHDF5::findEntityGroup(const nix::Identity &ident) 
     bool foundNeedle = p->hasObject(needle);
 
     if (foundNeedle) {
-        g = boost::make_optional(p->openGroup(needle, false));
+        g = std::make_optional(p->openGroup(needle, false));
     } else if (haveName) {
         g = p->findGroupByAttribute("name", iname);
     }
@@ -77,7 +77,7 @@ boost::optional<H5Group> GroupHDF5::findEntityGroup(const nix::Identity &ident) 
         g->getAttr("name", ename);
 
         if (ename != iname) {
-            return boost::optional<H5Group>();
+            return std::optional<H5Group>();
         }
     }
 
@@ -118,12 +118,12 @@ GroupHDF5::GroupHDF5(const std::shared_ptr<base::IFile> &file,
 }
 
 bool GroupHDF5::hasEntity(const nix::Identity &ident) const {
-    boost::optional<H5Group> p = findEntityGroup(ident);
+    std::optional<H5Group> p = findEntityGroup(ident);
     return !!p;
 }
 
 std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) const {
-    boost::optional<H5Group> eg = findEntityGroup(ident);
+    std::optional<H5Group> eg = findEntityGroup(ident);
 
     switch (ident.type()) {
     case ObjectType::DataArray: {
@@ -161,21 +161,21 @@ std::shared_ptr<base::IEntity> GroupHDF5::getEntity(const nix::Identity &ident) 
 }
 
 std::shared_ptr<base::IEntity>GroupHDF5::getEntity(ObjectType type, ndsize_t index) const {
-    boost::optional<H5Group> eg = groupForObjectType(type);
+    std::optional<H5Group> eg = groupForObjectType(type);
     std::string name = eg ? eg->objectName(index) : "";
     return getEntity({name, "", type});
 }
 
 
 ndsize_t GroupHDF5::entityCount(ObjectType type) const {
-    boost::optional<H5Group> g = groupForObjectType(type);
+    std::optional<H5Group> g = groupForObjectType(type);
     return g ? g->objectCount() : ndsize_t(0);
 }
 
 
 bool GroupHDF5::removeEntity(const nix::Identity &ident) {
-    boost::optional<H5Group> p = groupForObjectType(ident.type());
-    boost::optional<H5Group> eg = findEntityGroup(ident);
+    std::optional<H5Group> p = groupForObjectType(ident.type());
+    std::optional<H5Group> eg = findEntityGroup(ident);
 
     if (!p || !eg) {
         return false;
@@ -190,7 +190,7 @@ bool GroupHDF5::removeEntity(const nix::Identity &ident) {
 
 
 void GroupHDF5::addEntity(const nix::Identity &ident) {
-    boost::optional<H5Group> p = groupForObjectType(ident.type(), true);
+    std::optional<H5Group> p = groupForObjectType(ident.type(), true);
     if(!block()->hasEntity(ident)) {
         throw std::runtime_error("Entity does not exist in this block!");
     }

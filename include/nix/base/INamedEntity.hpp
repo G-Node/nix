@@ -12,10 +12,9 @@
 
 #include <nix/base/IEntity.hpp>
 
-#include <boost/optional.hpp>
-
 #include <string>
 #include <memory>
+#include <optional>
 
 namespace nix {
 namespace base {
@@ -42,7 +41,7 @@ public:
     virtual void definition(const std::string &definition) = 0;
 
 
-    virtual boost::optional<std::string> definition() const = 0;
+    virtual std::optional<std::string> definition() const = 0;
 
 
     virtual void definition(const none_t t) = 0;

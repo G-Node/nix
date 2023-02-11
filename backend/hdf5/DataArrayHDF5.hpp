@@ -57,7 +57,7 @@ public:
     //--------------------------------------------------
 
 
-    boost::optional<std::string> label() const;
+    std::optional<std::string> label() const;
 
 
     void label(const std::string &label);
@@ -66,7 +66,7 @@ public:
     void label(const none_t t);
 
 
-    boost::optional<std::string> unit() const;
+    std::optional<std::string> unit() const;
 
 
     void unit(const std::string &unit);
@@ -75,7 +75,7 @@ public:
     void unit(const none_t t);
 
 
-    boost::optional<double> expansionOrigin() const;
+    std::optional<double> expansionOrigin() const;
 
 
     void expansionOrigin(double expansion_origin);

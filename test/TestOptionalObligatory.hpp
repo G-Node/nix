@@ -45,9 +45,9 @@ namespace test {
      * Check if the given info about an attribute's getter-setter pair
      * amounts to correct optional attribute behaviour;
      *
-     * @param bool telling whether attribute getter returns boost::optional
+     * @param bool telling whether attribute getter returns std::optional
      * @param bool telling whether attribute getter returns value == true
-     * @param bool telling whether attribute setter accepts boost::none
+     * @param bool telling whether attribute setter accepts nix::none
      *
      * @return bool
      */
@@ -57,9 +57,9 @@ namespace test {
      * Check if the given info about an attribute's getter-setter pair
      * amounts to correct obligatory attribute behaviour;
      *
-     * @param bool telling whether attribute getter returns boost::optional
+     * @param bool telling whether attribute getter returns std::optional
      * @param bool telling whether attribute getter returns value == true
-     * @param bool telling whether attribute setter accepts boost::none
+     * @param bool telling whether attribute setter accepts nix::none
      *
      * @return bool
      */
@@ -72,7 +72,7 @@ namespace test {
     template<typename T, METHOD_NAME S>
     class accepts_noneT
     {
-        template <typename U, void (U::*)(boost::none_t)> struct Check;
+        template <typename U, void (U::*)(nix::none_t)> struct Check;
         template <typename U> static char func(Check<U, &U::id> *);
         template <typename U> static int func(...);
     public:
@@ -83,7 +83,7 @@ namespace test {
         template<typename T> \
         class accepts_noneT<T, M> \
         { \
-            template <typename U, void (U::*)(boost::none_t)> struct Check; \
+            template <typename U, void (U::*)(nix::none_t)> struct Check; \
             template <typename U> static char func(Check<U, &U::M> *); \
             template <typename U> static int func(...); \
         public: \
@@ -153,9 +153,9 @@ private:
     nix::Feature feature;
     time_t startup_time;
     nix::Variant dummy;
-    bool is_opt;   // whether getter return value is boost::optional
+    bool is_opt;   // whether getter return value is std::optional
     bool is_set;   // whether getter return value is set
-    // bool accepts_none; // whether setter accepts boost::none (declared in place)
+    // bool accepts_none; // whether setter accepts nix::none (declared in place)
 
     std::string summary;
 

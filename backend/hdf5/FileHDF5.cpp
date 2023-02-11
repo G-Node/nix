@@ -102,7 +102,7 @@ bool FileHDF5::hasBlock(const std::string &name_or_id) const {
 shared_ptr<base::IBlock> FileHDF5::getBlock(const std::string &name_or_id) const {
     shared_ptr<BlockHDF5> block;
 
-    boost::optional<H5Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
+    std::optional<H5Group> group = data.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         block = make_shared<BlockHDF5>(file(), *group);
 
@@ -153,7 +153,7 @@ bool FileHDF5::hasSection(const std::string &name_or_id) const {
 shared_ptr<base::ISection> FileHDF5::getSection(const std::string &name_or_id) const {
     shared_ptr<SectionHDF5> sec;
 
-    boost::optional<H5Group> group = metadata.findGroupByNameOrAttribute("entity_id", name_or_id);
+    std::optional<H5Group> group = metadata.findGroupByNameOrAttribute("entity_id", name_or_id);
     if (group)
         sec = make_shared<SectionHDF5>(file(), *group);
 

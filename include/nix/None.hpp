@@ -11,12 +11,12 @@
 #ifndef NIX_NONE_H
 #define NIX_NONE_H
 
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace nix {
 
-typedef boost::none_t none_t;
-const none_t none = boost::none;
+typedef std::nullopt_t none_t;
+const none_t none = std::nullopt;
 
 }
 
