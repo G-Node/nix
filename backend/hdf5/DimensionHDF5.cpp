@@ -249,8 +249,8 @@ DimensionType SetDimensionHDF5::dimensionType() const {
 }
 
 
-boost::optional<std::string> SetDimensionHDF5::label() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> SetDimensionHDF5::label() const {
+    std::optional<std::string> ret;
     string label;
     bool have_attr = group.getAttr("label", label);
     if (have_attr) {

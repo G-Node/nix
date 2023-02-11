@@ -783,7 +783,7 @@ class NIXAPI SetDimension : public base::ImplContainer<base::ISetDimension> {
      *
      * @return The label of the dimension.
      */
-    boost::optional<std::string> label() const {
+    std::optional<std::string> label() const {
         return backend()->label();
     }
 

@@ -139,7 +139,7 @@ class NIXAPI ISetDimension : virtual public IDimension {
 
 public:
 
-    virtual boost::optional<std::string> label() const = 0;
+    virtual std::optional<std::string> label() const = 0;
 
     virtual void label(const std::string &label) = 0;
 
