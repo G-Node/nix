@@ -10,9 +10,9 @@ on:
       - master
 
 jobs:
-  build-ub1804:
-    name: ubuntu-18.04-build
-    runs-on: ubuntu-18.04
+  build-ub2204:
+    name: ubuntu-22.04-build
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         compiler: [gcc, clang]
@@ -23,18 +23,18 @@ jobs:
         sudo apt-get install -yy --no-install-recommends \
           bash \
           cmake \
-          clang-7 \
+          clang-14 \
           curl \
           doxygen \
           git \
-          gcc-8 \
-          g++-8 \
+          gcc-10 \
+          g++-10 \
           libcppunit-dev \
           libboost-all-dev \
           libhdf5-dev \
           libhdf5-serial-dev \
           libyaml-cpp-dev \
-          libstdc++-8-dev \
+          libstdc++-10-dev \
           lcov \
           valgrind
     - uses: actions/checkout@v2
