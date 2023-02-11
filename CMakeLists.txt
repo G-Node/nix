@@ -24,7 +24,7 @@ option(BUILD_COVERAGE "Build with coverage information" OFF)
 set(HAVE_COVERAGE OFF)
 
 if(NOT WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++17") ## Optimize
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wunreachable-code")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef") # boost + clang
 
@@ -104,8 +104,8 @@ include_directories("${PROJECT_BINARY_DIR}/include")
 
 ### scan files
 include_directories(BEFORE include)
-file(GLOB_RECURSE nix_SOURCES src/*.cpp)
-file(GLOB_RECURSE nix_INCLUDES include/*.hpp)
+file(GLOB_RECURSE nix_SOURCES "src/[!.#]*.cpp")
+file(GLOB_RECURSE nix_INCLUDES "include/[!.#]*.hpp")
 list(APPEND nix_INCLUDES "${PROJECT_BINARY_DIR}/include/nix/nixversion.hpp")
 
 ### BACKENDS
@@ -115,8 +115,8 @@ set(backends "hdf5")
 include_directories(${CMAKE_SOURCE_DIR}/backend)
 
 foreach(backend ${backends})
-  file(GLOB_RECURSE backend_SOURCES "backend/${backend}/*.cpp")
-  file(GLOB_RECURSE backend_INCLUDES "backend/${backend}/*.hpp")
+  file(GLOB_RECURSE backend_SOURCES "backend/${backend}/[!.#]*.cpp")
+  file(GLOB_RECURSE backend_INCLUDES "backend/${backend}/[!.#]*.hpp")
 
   list(APPEND nix_SOURCES ${backend_SOURCES})
   list(APPEND nix_INCLUDES ${backend_INCLUDES})
