@@ -25,6 +25,9 @@ jobs:
     - name: Download and install CPPunit
       run: nuget install cppunit
 
+    - name: Download and install hdf5
+      run:  nuget install hdf5-v120-complete
+
     - name: Download and install Boost
       uses: MarkusJx/install-boost@v2.4.3
       with: 
