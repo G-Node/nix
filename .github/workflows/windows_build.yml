@@ -25,19 +25,19 @@ jobs:
     - name: Download and install CPPunit
       run: nuget install cppunit
 
-    - name: Download and install hdf5
-      run:  nuget install hdf5-v120-complete
+    #- name: Download and install hdf5
+    #  run:  nuget install hdf5-v120-complete
 
-    - name: Download and install Boost
-      uses: MarkusJx/install-boost@v2.4.3
-      with: 
-        boost_version: 1.80.0
-        # OPTIONAL: Specify a custon install location
-        boost_install_dir: C:\some_directory
-        # OPTIONAL: Specify a platform version
-        platform_version: 2022
-        # OPTIONAL: Specify a toolset
-        toolset: msvc
+    #- name: Download and install Boost
+    #  uses: MarkusJx/install-boost@v2.4.3
+    #  with: 
+    #    boost_version: 1.80.0
+    #    # OPTIONAL: Specify a custon install location
+    #    boost_install_dir: C:\some_directory
+    #    # OPTIONAL: Specify a platform version
+    #    platform_version: 2022
+    #    # OPTIONAL: Specify a toolset
+    #    toolset: msvc
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
