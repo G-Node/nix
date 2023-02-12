@@ -24,7 +24,17 @@ jobs:
     
     - name: Download and install CPPunit
       run: nuget install cppunit
+    
+    - name: Download and install Doxygen
+      run: nuget install Doxygen
 
+    - name: Install HDF5
+      run: |
+          git clone https://github.com/jgrewe/nixio_dependencies.git
+          cd nixio_dependencies
+          copy .\hdf5\bin\*.dll ${{github.workspace}}\bin\*.dll
+          copy .\hdf5\bin\*.exe ${{github.workspace}}\bin\*.exe
+          cd  ${{github.workspace}}
     #- name: Download and install hdf5
     #  run:  nuget install hdf5-v120-complete
 
