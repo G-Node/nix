@@ -21,8 +21,7 @@ install:
 build_script:
 - cmd: >-
     c:\deps\nixenv.bat
-    set BOOST_ROOT=C:\Libraries\boost
-    set BOOST_INCLUDEDIR=%BOOST_ROOT%\include\boost-1_57
+
     ctest -VV --output-on-failure -S .appveyor.ctest
 
 after_build:
