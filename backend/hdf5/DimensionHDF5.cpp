@@ -142,8 +142,8 @@ DimensionType SampledDimensionHDF5::dimensionType() const {
 }
 
 
-boost::optional<std::string> SampledDimensionHDF5::label() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> SampledDimensionHDF5::label() const {
+    std::optional<std::string> ret;
     string label;
     bool have_attr = group.getAttr("label", label);
     if (have_attr) {
@@ -167,8 +167,8 @@ void SampledDimensionHDF5::label(const none_t t) {
 }
 
 
-boost::optional<std::string> SampledDimensionHDF5::unit() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> SampledDimensionHDF5::unit() const {
+    std::optional<std::string> ret;
     string unit;
     bool have_attr = group.getAttr("unit", unit);
     if (have_attr) {
@@ -209,8 +209,8 @@ void SampledDimensionHDF5::samplingInterval(double sampling_interval) {
 }
 
 
-boost::optional<double> SampledDimensionHDF5::offset() const {
-    boost::optional<double> ret;
+std::optional<double> SampledDimensionHDF5::offset() const {
+    std::optional<double> ret;
     double offset = 0;
     if (group.getAttr("offset", offset)) {
         ret = offset;
@@ -249,8 +249,8 @@ DimensionType SetDimensionHDF5::dimensionType() const {
 }
 
 
-boost::optional<std::string> SetDimensionHDF5::label() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> SetDimensionHDF5::label() const {
+    std::optional<std::string> ret;
     string label;
     bool have_attr = group.getAttr("label", label);
     if (have_attr) {
@@ -336,9 +336,9 @@ DataFrameDimensionHDF5::DataFrameDimensionHDF5(const H5Group &group, ndsize_t in
     this->group.setAttr("column_index", col_index);
 }
 
-boost::optional<unsigned> DataFrameDimensionHDF5::columnIndex() const {
+std::optional<unsigned> DataFrameDimensionHDF5::columnIndex() const {
     unsigned idx;
-    boost::optional<unsigned> col_index;
+    std::optional<unsigned> col_index;
 
     if (group.hasAttr("column_index")) {
         group.getAttr("column_index", idx);
@@ -348,8 +348,8 @@ boost::optional<unsigned> DataFrameDimensionHDF5::columnIndex() const {
     return col_index;
 }
 
-boost::optional<unsigned> DataFrameDimensionHDF5::checkColumnIndex(boost::optional<unsigned> col_index) const {
-    boost::optional<unsigned> column_index = col_index;
+std::optional<unsigned> DataFrameDimensionHDF5::checkColumnIndex(std::optional<unsigned> col_index) const {
+    std::optional<unsigned> column_index = col_index;
     if (!col_index) {
         column_index = columnIndex();
     }
@@ -373,8 +373,8 @@ DimensionType DataFrameDimensionHDF5::dimensionType() const {
 }
 
 
-std::string DataFrameDimensionHDF5::unit(boost::optional<unsigned> col_index) const {
-    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+std::string DataFrameDimensionHDF5::unit(std::optional<unsigned> col_index) const {
+    std::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
@@ -382,8 +382,8 @@ std::string DataFrameDimensionHDF5::unit(boost::optional<unsigned> col_index) co
 }
 
 
-std::string DataFrameDimensionHDF5::label(boost::optional<unsigned> col_index) const {
-    boost::optional<unsigned> column_index;
+std::string DataFrameDimensionHDF5::label(std::optional<unsigned> col_index) const {
+    std::optional<unsigned> column_index;
     nix::DataFrame df = dataFrame();
     if (!col_index) {
         column_index = columnIndex();
@@ -400,8 +400,8 @@ std::string DataFrameDimensionHDF5::label(boost::optional<unsigned> col_index) c
 }
 
 
-Column DataFrameDimensionHDF5::column(boost::optional<unsigned> col_index) const {
-    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+Column DataFrameDimensionHDF5::column(std::optional<unsigned> col_index) const {
+    std::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> cols = df.columns();
@@ -409,8 +409,8 @@ Column DataFrameDimensionHDF5::column(boost::optional<unsigned> col_index) const
 }
 
 
-nix::DataType DataFrameDimensionHDF5::columnDataType(boost::optional<unsigned> col_index) const {
-    boost::optional<unsigned> column_index = checkColumnIndex(col_index);
+nix::DataType DataFrameDimensionHDF5::columnDataType(std::optional<unsigned> col_index) const {
+    std::optional<unsigned> column_index = checkColumnIndex(col_index);
 
     nix::DataFrame df = dataFrame();
     std::vector<Column> all_cols = df.columns();
@@ -480,8 +480,8 @@ H5Group RangeDimensionHDF5::redirectGroup() const {
 }
 
 
-boost::optional<std::string> RangeDimensionHDF5::label() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> RangeDimensionHDF5::label() const {
+    std::optional<std::string> ret;
     string label;
     H5Group g = redirectGroup();
     bool have_attr = g.getAttr("label", label);
@@ -508,8 +508,8 @@ void RangeDimensionHDF5::label(const none_t t) {
 }
 
 
-boost::optional<std::string> RangeDimensionHDF5::unit() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> RangeDimensionHDF5::unit() const {
+    std::optional<std::string> ret;
     string unit;
     H5Group g = redirectGroup();
     bool have_attr = g.getAttr("unit", unit);

@@ -38,7 +38,7 @@ public:
     virtual void definition(const std::string &definition) = 0;
 
 
-    virtual boost::optional<std::string> definition() const = 0;
+    virtual std::optional<std::string> definition() const = 0;
 
 
     virtual void definition(const none_t t) = 0;
@@ -50,7 +50,7 @@ public:
     virtual void unit(const std::string &unit) = 0;
 
 
-    virtual boost::optional<std::string> unit() const = 0;
+    virtual std::optional<std::string> unit() const = 0;
 
 
     virtual void unit(const none_t t) = 0;
@@ -59,7 +59,7 @@ public:
     virtual void uncertainty(double uncertainty) = 0;
 
 
-    virtual boost::optional<double> uncertainty() const = 0;
+    virtual std::optional<double> uncertainty() const = 0;
 
 
     virtual void uncertainty(const none_t t) = 0;
@@ -77,7 +77,7 @@ public:
     virtual std::vector<Variant> values(void) const = 0;
 
 
-    virtual void values(const boost::none_t t) = 0;
+    virtual void values(const none_t t) = 0;
 
 
     virtual ~IProperty() {}

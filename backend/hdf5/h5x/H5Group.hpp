@@ -16,10 +16,9 @@
 #include <nix/Platform.hpp>
 #include <nix/Compression.hpp>
 
-#include <boost/optional.hpp>
-
 #include <string>
 #include <vector>
+#include <optional>
 
 namespace nix {
 namespace hdf5 {
@@ -99,7 +98,7 @@ public:
      *
      * @return The name of the first group object found.
      */
-    boost::optional<H5Group> findGroupByAttribute(const std::string &attribute, const std::string &value) const;
+    std::optional<H5Group> findGroupByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
      * @brief Look for the first sub-data in the group with the given
@@ -111,7 +110,7 @@ public:
      *
      * @return The name of the first dataset object found.
      */
-    boost::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
+    std::optional<DataSet> findDataByAttribute(const std::string &attribute, const std::string &value) const;
 
     /**
     * @brief Look for the first sub-data in the group with the given
@@ -124,7 +123,7 @@ public:
     *
     * @return Optional containing the located H5Group or empty optional otherwise.
     */
-    boost::optional<H5Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+    std::optional<H5Group> findGroupByNameOrAttribute(std::string const &attribute, std::string const &value) const;
 
     /**
     * @brief Look for the first sub-data in the group with the given
@@ -137,7 +136,7 @@ public:
     *
     * @return Optional containing the located Dataset or empty optional otherwise.
     */
-    boost::optional<DataSet> findDataByNameOrAttribute(std::string const &attribute, std::string const &value) const;
+    std::optional<DataSet> findDataByNameOrAttribute(std::string const &attribute, std::string const &value) const;
 
     /**
      * @brief Create a new hard link with the given name inside this group,
@@ -249,7 +248,7 @@ bool H5Group::getData(const std::string &name, T &value) const
  * unset optional is returned.
  */
 struct NIXAPI optGroup {
-    mutable boost::optional<H5Group> g;
+    mutable std::optional<H5Group> g;
     H5Group parent;
     std::string g_name;
 
@@ -268,7 +267,7 @@ public:
      *
      * @return An optional with the opened group or unset.
      */
-    boost::optional<H5Group> operator() (bool create = false) const;
+    std::optional<H5Group> operator() (bool create = false) const;
 };
 
 

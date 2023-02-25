@@ -41,8 +41,8 @@ DataArrayHDF5::DataArrayHDF5(const shared_ptr<IFile> &file, const shared_ptr<IBl
 // Element getters and setters
 //--------------------------------------------------
 
-boost::optional<std::string> DataArrayHDF5::label() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> DataArrayHDF5::label() const {
+    std::optional<std::string> ret;
     string value;
     bool have_attr = group().getAttr("label", value);
 
@@ -68,8 +68,8 @@ void DataArrayHDF5::label(const none_t t) {
 }
 
 
-boost::optional<std::string> DataArrayHDF5::unit() const {
-    boost::optional<std::string> ret;
+std::optional<std::string> DataArrayHDF5::unit() const {
+    std::optional<std::string> ret;
     string value;
     bool have_attr = group().getAttr("unit", value);
     if (have_attr) {
@@ -94,8 +94,8 @@ void DataArrayHDF5::unit(const none_t t) {
 
 
 // TODO use defaults
-boost::optional<double> DataArrayHDF5::expansionOrigin() const {
-    boost::optional<double> ret;
+std::optional<double> DataArrayHDF5::expansionOrigin() const {
+    std::optional<double> ret;
     double expansion_origin;
     bool have_attr = group().getAttr("expansion_origin", expansion_origin);
     if (have_attr) {
@@ -157,7 +157,7 @@ void DataArrayHDF5::polynomCoefficients(const none_t t) {
 
 
 ndsize_t DataArrayHDF5::dimensionCount() const {
-    boost::optional<H5Group> g = dimension_group();
+    std::optional<H5Group> g = dimension_group();
 	ndsize_t count = 0;
 	if (g) {
 		count = g->objectCount();
@@ -168,7 +168,7 @@ ndsize_t DataArrayHDF5::dimensionCount() const {
 
 shared_ptr<IDimension> DataArrayHDF5::getDimension(ndsize_t index) const {
     shared_ptr<IDimension> dim;
-    boost::optional<H5Group> g = dimension_group();
+    std::optional<H5Group> g = dimension_group();
 
     if (g) {
         string str_id = util::numToStr(index);
@@ -219,7 +219,7 @@ std::shared_ptr<base::IDataFrameDimension> DataArrayHDF5::createDataFrameDimensi
 
 
 H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
-    boost::optional<H5Group> g = dimension_group(true);
+    std::optional<H5Group> g = dimension_group(true);
 
     ndsize_t dim_max = dimensionCount() + 1;
     if (index > dim_max || index <= 0)
@@ -236,7 +236,7 @@ H5Group DataArrayHDF5::createDimensionGroup(ndsize_t index) {
 
 bool DataArrayHDF5::deleteDimensions() {
     string dim_id;
-    boost::optional<H5Group> g = dimension_group();
+    std::optional<H5Group> g = dimension_group();
     for (ndsize_t i = dimensionCount(); i > 0; --i) {
         dim_id = util::numToStr(i);
         if (g->hasGroup(dim_id)) {

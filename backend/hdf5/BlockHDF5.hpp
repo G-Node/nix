@@ -14,7 +14,7 @@
 
 #include <vector>
 #include <string>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace nix {
 namespace hdf5 {
@@ -67,9 +67,9 @@ public:
 
 private:
     // Helper methods for generic entity related methods below
-    boost::optional<H5Group> groupForObjectType(ObjectType ot, bool create = false) const;
+    std::optional<H5Group> groupForObjectType(ObjectType ot, bool create = false) const;
 
-    boost::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
+    std::optional<H5Group> findEntityGroup(const nix::Identity &ident) const;
 
 public:
     //--------------------------------------------------

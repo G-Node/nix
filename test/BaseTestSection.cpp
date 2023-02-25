@@ -78,7 +78,7 @@ void BaseTestSection::testRepository() {
     std::string rep = "http://foo.bar/" + util::createId();
     section.repository(rep);
     CPPUNIT_ASSERT(section.repository() == rep);
-    section.repository(boost::none);
+    section.repository(nix::none);
     CPPUNIT_ASSERT(!section.repository());
     CPPUNIT_ASSERT_THROW(section.repository(""), EmptyString);
 }

@@ -91,8 +91,8 @@ void NamedEntityHDF5::definition(const string &definition) {
 }
 
 
-boost::optional<string> NamedEntityHDF5::definition() const {
-    boost::optional<string> ret;
+std::optional<string> NamedEntityHDF5::definition() const {
+    std::optional<string> ret;
     string definition;
     bool have_attr = group().getAttr("definition", definition);
     if (have_attr) {

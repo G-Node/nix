@@ -15,9 +15,9 @@
 #endif
 
 #include <nix/valid/validate.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
-namespace bfs = boost::filesystem;
+namespace fs = std::filesystem;
 
 namespace nix {
 
@@ -26,7 +26,7 @@ File File::open(const std::string &name,
                 const std::string &impl,
                 Compression compression,
                 OpenFlags flags) {
-    if (mode == nix::FileMode::ReadOnly && !bfs::exists(bfs::path{name})) {
+    if (mode == nix::FileMode::ReadOnly && !fs::exists(fs::path{name})) {
         throw std::runtime_error("Cannot open non-existent file in ReadOnly mode!");
     }
     if (compression == Compression::Auto) {

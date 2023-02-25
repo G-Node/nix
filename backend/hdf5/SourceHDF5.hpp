@@ -14,7 +14,6 @@
 
 #include <vector>
 #include <string>
-#include <boost/optional.hpp>
 
 namespace nix {
 namespace hdf5 {

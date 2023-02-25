@@ -42,7 +42,7 @@ void BaseTestGroup::testDefinition() {
     std::string def = nix::util::createId();
     g.definition(def);
     CPPUNIT_ASSERT(*g.definition() == def);
-    g.definition(boost::none);
+    g.definition(nix::none);
     CPPUNIT_ASSERT(g.definition() == nix::none);
 }
 

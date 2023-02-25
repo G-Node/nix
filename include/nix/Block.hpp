@@ -65,7 +65,7 @@ namespace nix {
  * b.metadata();
  *
  * // remove associated metadata from a block
- * b.metadata(boost::none);
+ * b.metadata(nix::none);
  * ~~~
  *
  * ### Deleting a block

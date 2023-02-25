@@ -18,11 +18,11 @@ optGroup::optGroup(const H5Group &parent, const std::string &g_name)
     : parent(parent), g_name(g_name)
 {}
 
-boost::optional<H5Group> optGroup::operator() (bool create) const {
+std::optional<H5Group> optGroup::operator() (bool create) const {
     if (parent.hasGroup(g_name)) {
-        g = boost::optional<H5Group>(parent.openGroup(g_name));
+        g = std::optional<H5Group>(parent.openGroup(g_name));
     } else if (create) {
-        g = boost::optional<H5Group>(parent.openGroup(g_name, true));
+        g = std::optional<H5Group>(parent.openGroup(g_name, true));
     }
     return g;
 }
@@ -73,8 +73,8 @@ ndsize_t H5Group::objectCount() const {
 }
 
 
-boost::optional<H5Group> H5Group::findGroupByAttribute(const std::string &attribute, const std::string &value) const {
-    boost::optional<H5Group> ret;
+std::optional<H5Group> H5Group::findGroupByAttribute(const std::string &attribute, const std::string &value) const {
+    std::optional<H5Group> ret;
 
     // look up first direct sub-group that has given attribute with given value
     for (ndsize_t index = 0; index < objectCount(); index++) {
@@ -96,9 +96,9 @@ boost::optional<H5Group> H5Group::findGroupByAttribute(const std::string &attrib
 }
 
 
-boost::optional<DataSet> H5Group::findDataByAttribute(const std::string &attribute, const std::string &value) const {
+std::optional<DataSet> H5Group::findDataByAttribute(const std::string &attribute, const std::string &value) const {
     std::vector<DataSet> dsets;
-    boost::optional<DataSet> ret;
+    std::optional<DataSet> ret;
 
     // look up all direct sub-datasets that have the given attribute
     for (ndsize_t index = 0; index < objectCount(); index++) {
@@ -339,26 +339,26 @@ bool H5Group::removeAllLinks(const std::string &name) {
 }
 
 
-boost::optional<H5Group> H5Group::findGroupByNameOrAttribute(std::string const &attr, std::string const &value) const {
+std::optional<H5Group> H5Group::findGroupByNameOrAttribute(std::string const &attr, std::string const &value) const {
 
     if (hasObject(value)) {
-        return boost::make_optional(openGroup(value, false));
+        return std::make_optional(openGroup(value, false));
     } else if (util::looksLikeUUID(value)) {
         return findGroupByAttribute(attr, value);
     } else {
-        return boost::optional<H5Group>();
+        return std::optional<H5Group>();
     }
 }
 
 
-boost::optional<DataSet> H5Group::findDataByNameOrAttribute(std::string const &attr, std::string const &value) const {
+std::optional<DataSet> H5Group::findDataByNameOrAttribute(std::string const &attr, std::string const &value) const {
 
     if (hasObject(value)) {
-        return boost::make_optional(openData(value));
+        return std::make_optional(openData(value));
     } else if (util::looksLikeUUID(value)) {
         return findDataByAttribute(attr, value);
     } else {
-        return boost::optional<DataSet>();
+        return std::optional<DataSet>();
     }
 }
 

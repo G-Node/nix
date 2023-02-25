@@ -14,6 +14,8 @@
 
 #include <nix/DataFrame.hpp>
 
+#include <optional>
+
 namespace nix {
 class DataArray;
 class Dimension;
@@ -24,11 +26,11 @@ class Dimension;
  * These constants are used to control the behaviour of the index finding.
  */
 enum class PositionMatch {
-                          Equal,
-                          Less,
-                          Greater,
-                          GreaterOrEqual,
-                          LessOrEqual
+    Equal,
+    Less,
+    Greater,
+    GreaterOrEqual,
+    LessOrEqual
 };
 
 /**
@@ -39,8 +41,8 @@ enum class PositionMatch {
  * Exclusive means [start, end), i.e. start is included, end is not
  */
 enum class RangeMatch {
-                       Inclusive,
-                       Exclusive
+    Inclusive,
+    Exclusive
 };
 
 /**
@@ -50,11 +52,11 @@ enum class RangeMatch {
  * the data range.
  */
 enum class PositionInRange{
-                          InRange,
-                          Greater,
-                          Less,
+    InRange,
+    Greater,
+    Less,
 
-                          NoRange = -1
+    NoRange = -1
 };
 
 /**
@@ -82,7 +84,7 @@ enum class PositionInRange{
  */
 class NIXAPI SampledDimension : public base::ImplContainer<base::ISampledDimension> {
 
-public:
+ public:
 
     /**
      * @brief Constructor that creates an uninitialized SampledDimension.
@@ -160,7 +162,7 @@ public:
      *
      * @return The label of the dimension.
      */
-    boost::optional<std::string> label() const {
+    std::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -188,7 +190,7 @@ public:
      *
      * @return The unit of the dimension.
      */
-    boost::optional<std::string> unit() const {
+    std::optional<std::string> unit() const {
         return backend()->unit();
     }
 
@@ -217,7 +219,7 @@ public:
      * @return The sampling interval.
      */
     double samplingInterval() const {
-       return backend()->samplingInterval();
+        return backend()->samplingInterval();
     }
 
     /**
@@ -237,7 +239,7 @@ public:
      *
      * @returns The offset of the SampledDimension.
      */
-    boost::optional<double> offset() const {
+    std::optional<double> offset() const {
         return backend()->offset();
     }
 
@@ -257,7 +259,7 @@ public:
      *
      * @param t         None
      */
-    void offset(const boost::none_t t) {
+    void offset(const none_t t) {
         backend()->offset(t);
     }
 
@@ -290,7 +292,7 @@ public:
      *
      * @returns An optional containing the respective index.
      */
-    boost::optional<ndsize_t> indexOf(const double position, PositionMatch match) const;
+    std::optional<ndsize_t> indexOf(const double position, PositionMatch match) const;
 
 
     /**
@@ -310,7 +312,7 @@ public:
      * 
      * @returns The respective index.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, RangeMatch match) const;
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, RangeMatch match) const;
     
     /**
      * @deprecated This function has been deprecated please use
@@ -335,10 +337,10 @@ public:
      *                             including the end position or exclusive, i.e. without 
      *                             the end position.
      * 
-     * @returns The a boost::optional containing the pair of start and end indices.
+     * @returns The a std::optional containing the pair of start and end indices.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, const double sampling_interval, const double offset,
-                                                           const RangeMatch match) const;
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, const double sampling_interval, const double offset,
+                                                         const RangeMatch match) const;
     
     
     /**
@@ -354,9 +356,9 @@ public:
      *
      * @return  Vector of optionals containing pairs of start and end indices.
      */
-    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
-                                                                        const std::vector<double> &end_positions,
-                                                                        const RangeMatch match) const;
+    std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                      const std::vector<double> &end_positions,
+                                                                      const RangeMatch match) const;
 
     /**
      * @deprecated This function has been deprecated please use
@@ -504,7 +506,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      * @returns the index the specified column index or -1 if none was set upon
      *          creation.
      */
-    boost::optional<unsigned> columnIndex() const {
+    std::optional<unsigned> columnIndex() const {
         return backend()->columnIndex();
     }
 
@@ -529,7 +531,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      * @returns the label, that is defined in the Column, or if not otherwise
      *          specified, the name of the DataFrame.
      */
-    std::string label(boost::optional<unsigned> col_index = {}) const {
+    std::string label(std::optional<unsigned> col_index = {}) const {
         return backend()->label(col_index);
     }
 
@@ -544,7 +546,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      * @returns the unit, if any, that is defined in the Column.
      */
-    std::string unit(boost::optional<unsigned> col_index = {}) const {
+    std::string unit(std::optional<unsigned> col_index = {}) const {
         return backend()->unit(col_index);
     }
 
@@ -559,7 +561,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      *  @returns the column's data type
      */
-    nix::DataType columnDataType(boost::optional<unsigned> col_index = {}) const {
+    nix::DataType columnDataType(std::optional<unsigned> col_index = {}) const {
         return backend()->columnDataType(col_index);
     }
 
@@ -584,9 +586,9 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      *
      */
     template<typename T>
-    void ticks(std::vector<T> &ticks, boost::optional<unsigned> col_index = {}, bool resize=false, ndsize_t offset=0) const {
+        void ticks(std::vector<T> &ticks, std::optional<unsigned> col_index = {}, bool resize=false, ndsize_t offset=0) const {
         nix::DataFrame df = data();
-        boost::optional<unsigned> column_index;
+        std::optional<unsigned> column_index;
         if (!col_index) {
             column_index = columnIndex();
         } else {
@@ -603,37 +605,37 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
     }
 
     /**
-    * @brief returns the index in this dimension that matches the given position. 
-    * 
-    * @param position   The position that should be converted to a corresponding index in the dimension.
-    * @param match      The matching rule for the position {@link PositionMatch}.
-    * 
-    * @return an boost::optional containing the index. 
-    */
-    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
+     * @brief returns the index in this dimension that matches the given position. 
+     * 
+     * @param position   The position that should be converted to a corresponding index in the dimension.
+     * @param match      The matching rule for the position {@link PositionMatch}.
+     * 
+     * @return an std::optional containing the index. 
+     */
+    std::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
 
     /**
-    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension.
-    * 
-    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
-    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
-    * @param range_match      The matching rule for the position {@link RangeMatch}.
-    * 
-    * @return an boost::optional containing a std::pair of start and end index. 
-    */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, RangeMatch range_match) const;
+     * @brief Converts a range defined by start and end position to the corresponding indices in the dimension.
+     * 
+     * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+     * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+     * @param range_match      The matching rule for the position {@link RangeMatch}.
+     * 
+     * @return an std::optional containing a std::pair of start and end index. 
+     */
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, RangeMatch range_match) const;
     
     /**
-    * @brief Converts a range defined by start and end position to the corresponding indices in the dimension. Mostly needed internally.
-    * 
-    * @param start_position   The start position that should be converted to a corresponding index in the dimension.
-    * @param end_position     The start position that should be converted to a corresponding index in the dimension.
-    * @param tick_count       The number of of ticks stored in this dimension.
-    * @param range_match      The matching rule for the range {@link RangeMatch}.
-    * 
-    * @return an boost::optional containing a std::pair of start and end index. 
-    */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, ndsize_t tick_count, RangeMatch range_match) const;
+     * @brief Converts a range defined by start and end position to the corresponding indices in the dimension. Mostly needed internally.
+     * 
+     * @param start_position   The start position that should be converted to a corresponding index in the dimension.
+     * @param end_position     The start position that should be converted to a corresponding index in the dimension.
+     * @param tick_count       The number of of ticks stored in this dimension.
+     * @param range_match      The matching rule for the range {@link RangeMatch}.
+     * 
+     * @return an std::optional containing a std::pair of start and end index. 
+     */
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start_position, double end_position, ndsize_t tick_count, RangeMatch range_match) const;
 
     /**
      * @brief Converts a set of start and end positions to a vector of pairs of start and end indices.
@@ -642,11 +644,11 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
      * @param end_positions    std::vector of end positions. 
      * @param range_match      The matching rule for the range {@link RangeMatch}.
      * 
-     * @return A std::vector of boost::optionals containing pairs of start and end indices.
-    */
-    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
-                                                                        const std::vector<double> &end_positions,
-                                                                        const RangeMatch range_match) const;
+     * @return A std::vector of std::optionals containing pairs of start and end indices.
+     */
+    std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                      const std::vector<double> &end_positions,
+                                                                      const RangeMatch range_match) const;
     
     /**
      * @brief returns the number of entries in the dimension, aka the number of
@@ -703,7 +705,7 @@ class NIXAPI DataFrameDimension : public base::ImplContainer<base::IDataFrameDim
  */
 class NIXAPI SetDimension : public base::ImplContainer<base::ISetDimension> {
 
-public:
+ public:
 
     /**
      * @brief Constructor that creates an uninitialized SetDimension.
@@ -781,7 +783,7 @@ public:
      *
      * @return The label of the dimension.
      */
-    boost::optional<std::string> label() const {
+    std::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -827,7 +829,7 @@ public:
      *
      * @param t         None
      */
-    void labels(const boost::none_t t) {
+    void labels(const none_t t) {
         backend()->labels(t);
     }
 
@@ -840,7 +842,7 @@ public:
      * 
      * @return An optional containing the index, if valid.
      */
-    boost::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
+    std::optional<ndsize_t> indexOf(const double position, const PositionMatch match) const;
 
 
     /**
@@ -852,7 +854,7 @@ public:
      * 
      * @return optional containing a pair of ndsize_t.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, const RangeMatch match) const;
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, const RangeMatch match) const;
 
     /**
      * @brief returns the start and end indices corresponding to the provided start and end positions.
@@ -864,7 +866,7 @@ public:
      * 
      * @return optional containing a pair of ndsize_t.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, std::vector<std::string> &set_labels, const RangeMatch match) const;
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(const double start, const double end, std::vector<std::string> &set_labels, const RangeMatch match) const;
     
     /**
      * @brief converts vectors of start and end positions to a vector of optionals containg start and end indices.
@@ -875,9 +877,9 @@ public:
      * 
      * @return vector of optionals containing a pair of start and end indices
      */
-    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
-                                                                        const std::vector<double> &end_positions,
-                                                                        const RangeMatch match) const;
+    std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                      const std::vector<double> &end_positions,
+                                                                      const RangeMatch match) const;
 
 
     /**
@@ -916,7 +918,7 @@ public:
  */
 class NIXAPI RangeDimension : public base::ImplContainer<base::IRangeDimension> {
 
-public:
+ public:
 
     /**
      * @brief Constructor that creates an uninitialized RangeDimension.
@@ -1013,7 +1015,7 @@ public:
      *
      * @return The label of the dimension.
      */
-    boost::optional<std::string> label() const {
+    std::optional<std::string> label() const {
         return backend()->label();
     }
 
@@ -1041,7 +1043,7 @@ public:
      *
      * @return The unit of the dimension.
      */
-    boost::optional<std::string> unit() const {
+    std::optional<std::string> unit() const {
         return backend()->unit();
     }
 
@@ -1134,10 +1136,10 @@ public:
      * @param matching PositionMatch enum entry that defines the matching
      *                 behavior.
      *
-     * @return boost optional containing the index if valid
+     * @return std optional containing the index if valid
      *
      */
-    boost::optional<ndsize_t> indexOf(const double position, PositionMatch matching) const;
+    std::optional<ndsize_t> indexOf(const double position, PositionMatch matching) const;
 
 
     /**
@@ -1152,11 +1154,11 @@ public:
      * @param range      RangeMatch enum, controls whether end is included or not,
      *                   defaults to RangeMatch::Inclusive
      *
-     * @return           Start and end indices returned in a boost::optional<std::pair>
+     * @return           Start and end indices returned in a std::optional<std::pair>
      *                   which is invalid if out of range.
      */
-    boost::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, std::vector<double> ticks,
-                                                           RangeMatch match = RangeMatch::Exclusive) const;
+    std::optional<std::pair<ndsize_t, ndsize_t>> indexOf(double start, double end, std::vector<double> ticks,
+                                                         RangeMatch match = RangeMatch::Exclusive) const;
 
 
     /**
@@ -1201,7 +1203,7 @@ public:
     DEPRECATED std::pair<ndsize_t, ndsize_t> indexOf(const double start, const double end) const;
 
 
-     /**
+    /**
      * @brief Returns a vector of start and end indices of given start and end positions.
      *
      * Method will return the index equal or larger than the respective positions
@@ -1222,7 +1224,7 @@ public:
                                                                   bool strict, RangeMatch match = RangeMatch::Inclusive) const;
 
 
-     /**
+    /**
      * @brief Returns a vector of start and end indices of given start and end positions.
      *
      * Method will return the index equal or larger than the respective positions
@@ -1234,9 +1236,9 @@ public:
      *
      * @return  Vector of optional pairs of start and end indices.
      */
-    std::vector<boost::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
-                                                                        const std::vector<double> &end_positions,
-                                                                        RangeMatch match = RangeMatch::Exclusive) const;
+    std::vector<std::optional<std::pair<ndsize_t, ndsize_t>>> indexOf(const std::vector<double> &start_positions,
+                                                                      const std::vector<double> &end_positions,
+                                                                      RangeMatch match = RangeMatch::Exclusive) const;
 
     /**
      * @brief Returns a vector containing a number of ticks
@@ -1299,7 +1301,7 @@ public:
  */
 class NIXAPI Dimension : public base::ImplContainer<base::IDimension> {
 
-public:
+ public:
 
     /**
      * @brief Constructor that creates an uninitialized Dimension.
@@ -1379,7 +1381,7 @@ public:
      */
     Dimension(const SetDimension &other);
 
-     /**
+    /**
      * @brief Copy constructor that converts a DataFrameDimension to Dimension.
      *
      * Copying of all NIX front facing objects like Dimension is a rather cheap operation.

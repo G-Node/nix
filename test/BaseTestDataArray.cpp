@@ -65,7 +65,7 @@ void BaseTestDataArray::testDefinition() {
     std::string def = nix::util::createId();
     array1.definition(def);
     CPPUNIT_ASSERT(*array1.definition() == def);
-    array1.definition(boost::none);
+    array1.definition(nix::none);
     CPPUNIT_ASSERT(array1.definition() == nix::none);
 }
 
@@ -287,7 +287,7 @@ void BaseTestDataArray::testPolynomial() {
     CPPUNIT_ASSERT(array2.polynomCoefficients().size() == 0);
 
     array2.expansionOrigin(3);
-    boost::optional<double> retval = array2.expansionOrigin();
+    std::optional<double> retval = array2.expansionOrigin();
     CPPUNIT_ASSERT(*retval == 3);
     array2.expansionOrigin(nix::none);
     CPPUNIT_ASSERT(array2.expansionOrigin() == nix::none);
@@ -332,7 +332,7 @@ void BaseTestDataArray::testPolynomial() {
     }
 
     // expansionOrigin alone
-    dap.polynomCoefficients(boost::none);
+    dap.polynomCoefficients(nix::none);
     dap.getData(DataType::Int32, dvin_poly.data(), nix::NDSize({2, 3}), nix::NDSize({0, 0}));
     CPPUNIT_ASSERT_EQUAL(dv.size(), dvin_poly.size());
     for (size_t i = 0; i < dvin_poly.size(); i++) {
@@ -345,7 +345,7 @@ void BaseTestDataArray::testLabel() {
     std::string testStr = "somestring";
     array1.label(testStr);
     CPPUNIT_ASSERT(*array1.label() == testStr);
-    array1.label(boost::none);
+    array1.label(nix::none);
     CPPUNIT_ASSERT(array1.label() == nix::none);
     CPPUNIT_ASSERT_THROW(array1.label(""), EmptyString);
 }
@@ -369,7 +369,7 @@ void BaseTestDataArray::testPolynomialSetter() {
     CPPUNIT_ASSERT(array1.polynomCoefficients().size() == 0);
 
     array1.expansionOrigin(3);
-    boost::optional<double> retval = array1.expansionOrigin();
+    std::optional<double> retval = array1.expansionOrigin();
     CPPUNIT_ASSERT(*retval == 3);
     array1.expansionOrigin(nix::none);
     CPPUNIT_ASSERT(array1.expansionOrigin() == nix::none);
@@ -540,7 +540,7 @@ void BaseTestDataArray::testDataFrameDimension() {
     CPPUNIT_ASSERT_EQUAL(df.rows(), dim.size());
     CPPUNIT_ASSERT_EQUAL(dim.label(), df.name());
 
-    boost::optional<unsigned> col(0);
+    std::optional<unsigned> col(0);
     CPPUNIT_ASSERT_NO_THROW(dim.label(col));
     CPPUNIT_ASSERT_EQUAL(dim.label(col), cols[0].name);
 
@@ -580,7 +580,7 @@ void BaseTestDataArray::testDataFrameDimension() {
     CPPUNIT_ASSERT_THROW(array2.appendDataFrameDimension(df, "test"), nix::OutOfBounds);
 
     dim = array2.appendDataFrameDimension(df, "current");
-    boost::optional<unsigned> col_index = dim.columnIndex();
+    std::optional<unsigned> col_index = dim.columnIndex();
 
     CPPUNIT_ASSERT(col_index && *col_index == 0);
     array2.deleteDimensions();

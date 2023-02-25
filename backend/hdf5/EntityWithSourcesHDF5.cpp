@@ -1,3 +1,4 @@
+
 // Copyright (c) 2013, German Neuroinformatics Node (G-Node)
 //
 // All rights reserved.
@@ -45,7 +46,7 @@ EntityWithSourcesHDF5::EntityWithSourcesHDF5 (const std::shared_ptr<IFile> &file
 
 
 ndsize_t EntityWithSourcesHDF5::sourceCount() const {
-    boost::optional<H5Group> g = sources_refs(false);
+    std::optional<H5Group> g = sources_refs(false);
     return g ? g->objectCount() : size_t(0);
 }
 
@@ -57,7 +58,7 @@ bool EntityWithSourcesHDF5::hasSource(const std::string &id) const {
 
 std::shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const std::string &name_or_id) const {
     std::shared_ptr<SourceHDF5> source;
-    boost::optional<H5Group> g = sources_refs(false);
+    std::optional<H5Group> g = sources_refs(false);
 
     std::string id = name_or_id;
 
@@ -78,7 +79,7 @@ std::shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const std::string &nam
 }
 
 std::shared_ptr<ISource> EntityWithSourcesHDF5::getSource(const size_t index) const {
-    boost::optional<H5Group> g = sources_refs(false);
+    std::optional<H5Group> g = sources_refs(false);
     std::string id = g ? g->objectName(index) : "";
     return getSource(id);
 }
@@ -97,7 +98,7 @@ void EntityWithSourcesHDF5::sources(const std::vector<Source> &sources) {
 void EntityWithSourcesHDF5::addSource(const std::string &id) {
     if (id.empty())
         throw EmptyString("addSource");
-    boost::optional<H5Group> g = sources_refs(true);
+    std::optional<H5Group> g = sources_refs(true);
 
     Block tmp(entity_block);
     auto found = tmp.findSources(util::IdFilter<Source>(id));
@@ -111,7 +112,7 @@ void EntityWithSourcesHDF5::addSource(const std::string &id) {
 
 
 bool EntityWithSourcesHDF5::removeSource(const std::string &id) {
-    boost::optional<H5Group> g = sources_refs(false);
+    std::optional<H5Group> g = sources_refs(false);
     bool removed = false;
 
     if (g) {

@@ -14,6 +14,7 @@
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
+#include <optional>
 
 #include <nix/hydra/multiArray.hpp>
 #include <nix/util/dataAccess.hpp>
@@ -29,7 +30,6 @@
 
 using namespace nix;
 using namespace std;
-using namespace boost;
 
 void BaseTestDataAccess::testPositionToIndexRangeDimension() {
     string unit = "ms";
@@ -66,7 +66,7 @@ void BaseTestDataAccess::testPositionToIndexRangeDimension() {
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex({5.0, 1.2}, {1.4}, {unit, unit}, RangeMatch::Inclusive, rangeDim), std::runtime_error);
 
-    vector<optional<pair<ndsize_t, ndsize_t>>> range = util::positionToIndex({0.0}, {7.0}, {unit}, RangeMatch::Inclusive, rangeDim);
+    vector<std::optional<pair<ndsize_t, ndsize_t>>> range = util::positionToIndex({0.0}, {7.0}, {unit}, RangeMatch::Inclusive, rangeDim);
     CPPUNIT_ASSERT(range[0] && (*range[0]).first == 0 && (*range[0]).second == 4);
     range = util::positionToIndex({0.0}, {7.0}, {unit}, RangeMatch::Exclusive, rangeDim);
     CPPUNIT_ASSERT(range[0] && (*range[0]).first == 0 && (*range[0]).second == 4);
@@ -139,7 +139,7 @@ void BaseTestDataAccess::testPositionToIndexSampledDimension() {
     CPPUNIT_ASSERT_THROW(util::positionToIndex(1.0, unit, sampledDim), nix::IncompatibleDimensions);
     sampledDim.unit(unit);
 
-    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 2.0, 10.0}, {10.0, 2.0, 5.0}, {unit, unit, unit}, RangeMatch::Inclusive, sampledDim);
+    vector<std::optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 2.0, 10.0}, {10.0, 2.0, 5.0}, {unit, unit, unit}, RangeMatch::Inclusive, sampledDim);
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0] && (*ranges[0]).first == 0 && (*ranges[0]).second == 10);
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 2 && (*ranges[1]).second == 2);
@@ -198,7 +198,7 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
 
     CPPUNIT_ASSERT_THROW(util::positionToIndex({5.0, 0.}, {10.5}, RangeMatch::Inclusive, setDim), std::runtime_error);
     
-    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
+    vector<std::optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({5.0, 0.}, {10.5, 1.0}, RangeMatch::Inclusive, setDim);
     CPPUNIT_ASSERT(ranges.size() == 2);
     CPPUNIT_ASSERT(!ranges[0]);
     CPPUNIT_ASSERT(ranges[1] && (*ranges[1]).first == 0 && (*ranges[1]).second == 1);
@@ -212,12 +212,12 @@ void BaseTestDataAccess::testPositionToIndexSetDimension() {
 
 void BaseTestDataAccess::testPositionToIndexDataFrameDimension() {
     CPPUNIT_ASSERT_NO_THROW(util::positionToIndex(12.2, PositionMatch::GreaterOrEqual, dfDim)); // no throw even though not valid
-    boost::optional<ndsize_t> pos = util::positionToIndex(12.2, PositionMatch::GreaterOrEqual, dfDim);
+    std::optional<ndsize_t> pos = util::positionToIndex(12.2, PositionMatch::GreaterOrEqual, dfDim);
     CPPUNIT_ASSERT(!pos);
 
     
     CPPUNIT_ASSERT_THROW(util::positionToIndex({1.0, 2.0}, {0.0}, RangeMatch::Exclusive, dfDim), std::runtime_error);
-    vector<optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 12.0, 5.0}, {9.0, 15.0, 0.0}, RangeMatch::Exclusive, dfDim);
+    vector<std::optional<pair<ndsize_t, ndsize_t>>> ranges = util::positionToIndex({0.0, 12.0, 5.0}, {9.0, 15.0, 0.0}, RangeMatch::Exclusive, dfDim);
     CPPUNIT_ASSERT(ranges.size() == 3);
     CPPUNIT_ASSERT(ranges[0]);
     CPPUNIT_ASSERT(!ranges[1]);

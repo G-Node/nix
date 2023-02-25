@@ -141,8 +141,8 @@ void PropertyHDF5::definition(const string &definition) {
 }
 
 
-boost::optional<string> PropertyHDF5::definition() const {
-    boost::optional<string> ret;
+std::optional<string> PropertyHDF5::definition() const {
+    std::optional<string> ret;
     string definition;
     bool have_attr = dataset().getAttr("definition", definition);
     if (have_attr) {
@@ -172,8 +172,8 @@ void PropertyHDF5::unit(const string &unit) {
 }
 
 
-boost::optional<string> PropertyHDF5::unit() const {
-    boost::optional<std::string> ret;
+std::optional<string> PropertyHDF5::unit() const {
+    std::optional<std::string> ret;
     string unit;
     if (dataset().getAttr("unit", unit)) {
         ret = unit;
@@ -196,8 +196,8 @@ void PropertyHDF5::uncertainty(double uncertainty) {
 }
 
 
-boost::optional<double> PropertyHDF5::uncertainty() const {
-    boost::optional<double> ret;
+std::optional<double> PropertyHDF5::uncertainty() const {
+    std::optional<double> ret;
     double error;
     nix::FormatVersion ver(this->entity_file->version());
     if (ver < nix::FormatVersion({1, 1, 1})) {

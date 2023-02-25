@@ -77,7 +77,7 @@ public:
     void repository(const std::string &repository);
 
 
-    boost::optional<std::string> repository() const;
+    std::optional<std::string> repository() const;
 
 
     void repository(const none_t t);

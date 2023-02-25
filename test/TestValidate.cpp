@@ -257,7 +257,7 @@ void TestValidate::test() {
     // check if nix::getEntityName works correctly
     // this is here because there is currently no better place
     // and we only use that function in the validation code
-    boost::optional<std::string> name = nix::getEntityName(block);
+    std::optional<std::string> name = nix::getEntityName(block);
     CPPUNIT_ASSERT(!!name);
     CPPUNIT_ASSERT_EQUAL(*name, block.name());
 

@@ -125,7 +125,7 @@ public:
      *
      * @return The definition of the property.
      */
-    boost::optional<std::string> definition() const {
+    std::optional<std::string> definition() const {
         return backend()->definition();
     }
 
@@ -161,7 +161,7 @@ public:
      *
      * @return The uncertainty.
      */
-    boost::optional<double> uncertainty() const {
+    std::optional<double> uncertainty() const {
         return backend()->uncertainty();
     }
 
@@ -170,7 +170,7 @@ public:
      *
      * @param t         None
      */
-    void uncertainty(const boost::none_t t) {
+    void uncertainty(const nix::none_t t) {
         return backend()->uncertainty(t);
     }
 
@@ -186,7 +186,7 @@ public:
      *
      * @return The unit for all values.
      */
-    boost::optional<std::string> unit() const {
+    std::optional<std::string> unit() const {
         return backend()->unit();
     }
 
@@ -195,7 +195,7 @@ public:
      *
      * @param t         None
      */
-    void unit(const boost::none_t t) {
+    void unit(const nix::none_t t) {
         return backend()->unit(t);
     }
 
@@ -240,7 +240,7 @@ public:
     /**
      * @brief Deletes all values from the property.
      */
-    void values(const boost::none_t t) {
+    void values(const nix::none_t t) {
         backend()->values(t);
     }
 

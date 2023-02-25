@@ -26,7 +26,7 @@ static void convertData(DataType source, DataType destination, void *data, size_
 
 void DataArray::ioRead(DataType dtype, void *data, const NDSize &count, const NDSize &offset) const {
     const std::vector<double> poly = polynomCoefficients();
-    boost::optional<double> opt_origin = expansionOrigin();
+    std::optional<double> opt_origin = expansionOrigin();
 
     if (poly.size() || opt_origin) {
         size_t data_esize = data_type_to_size(dtype);

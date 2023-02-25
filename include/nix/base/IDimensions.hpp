@@ -17,8 +17,8 @@
 #include <string>
 #include <vector>
 #include <ostream>
+#include <optional>
 
-#include <boost/optional.hpp>
 #include <nix/NDSize.hpp>
 #include <nix/ObjectType.hpp>
 
@@ -46,7 +46,7 @@ namespace base {
 class NIXAPI IDimension {
 
 protected:
-    typedef boost::none_t none_t;
+    typedef std::nullopt_t none_t;
 
 public:
 
@@ -70,7 +70,7 @@ class NIXAPI ISampledDimension : virtual public IDimension {
 
 public:
 
-    virtual boost::optional<std::string> label() const = 0;
+    virtual std::optional<std::string> label() const = 0;
 
 
     virtual void label(const std::string &label) = 0;
@@ -79,7 +79,7 @@ public:
     virtual void label(const none_t t) = 0;
 
 
-    virtual boost::optional<std::string> unit() const = 0;
+    virtual std::optional<std::string> unit() const = 0;
 
 
     virtual void unit(const std::string &unit) = 0;
@@ -94,7 +94,7 @@ public:
     virtual void samplingInterval(double interval) = 0;
 
 
-    virtual boost::optional<double> offset() const = 0;
+    virtual std::optional<double> offset() const = 0;
 
 
     virtual void offset(double offset) = 0;
@@ -116,17 +116,17 @@ class NIXAPI IDataFrameDimension : virtual public IDimension {
 
  public:
 
-    virtual std::string label(boost::optional<unsigned> col_index) const = 0;
+    virtual std::string label(std::optional<unsigned> col_index) const = 0;
 
-    virtual std::string unit(boost::optional<unsigned> col_index) const = 0;
+    virtual std::string unit(std::optional<unsigned> col_index) const = 0;
 
-    virtual nix::DataType columnDataType(boost::optional<unsigned> col_index) const = 0;
+    virtual nix::DataType columnDataType(std::optional<unsigned> col_index) const = 0;
 
-    virtual nix::Column column(boost::optional<unsigned> col_index) const = 0;
+    virtual nix::Column column(std::optional<unsigned> col_index) const = 0;
 
     virtual std::shared_ptr<base::IDataFrame> dataFrame() const = 0;
 
-    virtual boost::optional<unsigned> columnIndex() const = 0;
+    virtual std::optional<unsigned> columnIndex() const = 0;
 };
 
 
@@ -139,7 +139,7 @@ class NIXAPI ISetDimension : virtual public IDimension {
 
 public:
 
-    virtual boost::optional<std::string> label() const = 0;
+    virtual std::optional<std::string> label() const = 0;
 
     virtual void label(const std::string &label) = 0;
 
@@ -165,7 +165,7 @@ class NIXAPI IRangeDimension : virtual public IDimension {
 
 public:
 
-    virtual boost::optional<std::string> label() const = 0;
+    virtual std::optional<std::string> label() const = 0;
 
 
     virtual bool alias() const = 0;
@@ -177,7 +177,7 @@ public:
     virtual void label(const none_t t) = 0;
 
 
-    virtual boost::optional<std::string> unit() const = 0;
+    virtual std::optional<std::string> unit() const = 0;
 
 
     virtual void unit(const std::string &unit) = 0;

@@ -97,7 +97,7 @@ public:
      *
      * @return The URL to the repository.
      */
-    boost::optional<std::string> repository() const {
+    std::optional<std::string> repository() const {
         return backend()->repository();
     }
 
@@ -106,7 +106,7 @@ public:
      *
      * @param t         None
      */
-    void repository(const boost::none_t t) {
+    void repository(const nix::none_t t) {
         backend()->repository(t);
     }
 
@@ -149,7 +149,7 @@ public:
      *
      * @param t         None
      */
-    void link(const boost::none_t t) {
+    void link(const nix::none_t t) {
         backend()->link(t);
     }
 

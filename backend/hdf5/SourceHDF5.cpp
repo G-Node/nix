@@ -44,10 +44,10 @@ bool SourceHDF5::hasSource(const string &name_or_id) const {
 
 shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
     shared_ptr<SourceHDF5> source;
-    boost::optional<H5Group> g = source_group();
+    std::optional<H5Group> g = source_group();
 
     if (g) {
-        boost::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
+        std::optional<H5Group> group = g->findGroupByNameOrAttribute("entity_id", name_or_id);
         if (group)
             source = make_shared<SourceHDF5>(file(), parentBlock(), *group);
     }
@@ -57,21 +57,21 @@ shared_ptr<ISource> SourceHDF5::getSource(const string &name_or_id) const {
 
 
 shared_ptr<ISource> SourceHDF5::getSource(ndsize_t index) const {
-    boost::optional<H5Group> g = source_group();
+    std::optional<H5Group> g = source_group();
     string name = g ? g->objectName(index) : "";
     return getSource(name);
 }
 
 
 ndsize_t SourceHDF5::sourceCount() const {
-    boost::optional<H5Group> g = source_group(false);
+    std::optional<H5Group> g = source_group(false);
     return g ? g->objectCount() : size_t(0);
 }
 
 
 shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &type) {
     string id = util::createId();
-    boost::optional<H5Group> g = source_group(true);
+    std::optional<H5Group> g = source_group(true);
 
     H5Group group = g->openGroup(name, true);
     return make_shared<SourceHDF5>(file(), parentBlock(), group, id, type, name);
@@ -79,7 +79,7 @@ shared_ptr<ISource> SourceHDF5::createSource(const string &name, const string &t
 
 
 bool SourceHDF5::deleteSource(const string &name_or_id) {
-    boost::optional<H5Group> g = source_group();
+    std::optional<H5Group> g = source_group();
     bool deleted = false;
     
     if(g) {
