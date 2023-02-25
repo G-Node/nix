@@ -9,8 +9,11 @@ environment:
   matrix:
   - PLATFORM: x64
     CONFIGURATION: Release
-  - PLATFORM: x86
-    CONFIGURATION: Release
+  APPVEYOR_RDP_PASSWORD: nixioBuild@av
+
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 install:
 - cmd: >-
     choco install nsis.install -version 2.49 -y --ignore-checksums
