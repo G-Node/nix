@@ -19,6 +19,19 @@ void Feature::data(const DataArray &data) {
     backend()->data(data.id());
 }
 
+void Feature::data(const DataFrame &data) {
+    util::checkEntityInput(data);
+    if (!data.isValidEntity()) {
+        throw UninitializedEntity();
+    }
+    backend()->data(data.id());
+}
+
+void Feature::data(const std::string &name_or_id) {
+    util::checkNameOrId(name_or_id);
+    backend()->data(name_or_id);
+}
+
 std::string link_type_to_string(LinkType ltype) {
 
     std::string str;
@@ -39,9 +52,19 @@ std::ostream &operator<<(std::ostream &out, const LinkType ltype) {
     return out;
 }
 
-void Feature::data(const std::string &name_or_id) {
-    util::checkNameOrId(name_or_id);
-    backend()->data(name_or_id);
+std::string target_type_to_string(TargetType ttype) {
+    std::string str;
+
+    switch(ttype) {
+    case TargetType::DataArray:    str = "DataArray";  break;
+    case TargetType::DataFrame:    str = "DataFrame";  break;
+    }
+    return str;
+} 
+
+std::ostream &operator<<(std::ostream &out, const TargetType ttype) {
+    out << "TargetType::" << target_type_to_string(ttype);
+    return out;
 }
 
 }
