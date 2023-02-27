@@ -661,7 +661,7 @@ void BaseTestDimension::testRangeDimUnit() {
 
     std::vector<double> ticks;
     for (size_t i = 0; i < 5; i++) {
-        ticks.push_back(i * boost::math::constants::pi<double>());
+       ticks.push_back(i * boost::math::constants::pi<double>());
     }
     Dimension d = data_array.appendRangeDimension(ticks);
     CPPUNIT_ASSERT(d.dimensionType() == DimensionType::Range);
@@ -821,6 +821,11 @@ void BaseTestDimension::testRangeDimIndexOf() {
     range = rd.indexOf(100., -100., {}, RangeMatch::Inclusive);
     CPPUNIT_ASSERT(!range);
     range = rd.indexOf(100., -100., {}, RangeMatch::Exclusive);
+    CPPUNIT_ASSERT(!range);
+    range = rd.indexOf(-100., -100, {}, RangeMatch::Inclusive);
+    CPPUNIT_ASSERT(range);
+    CPPUNIT_ASSERT(range && (*range).first == 0 && (*range).second == 0);
+    range = rd.indexOf(-100., -100, {}, RangeMatch::Exclusive);
     CPPUNIT_ASSERT(!range);
 
     range = rd.indexOf(100., -100., rd.ticks(), RangeMatch::Exclusive);

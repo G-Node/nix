@@ -480,9 +480,16 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
     vector<vector<optional<pair<ndsize_t, ndsize_t>>>> data_indices;
     for (size_t dim_index = 0; dim_index < dimensions.size(); ++dim_index) {
         vector<string> temp_units(start_positions[dim_index].size(), units[dim_index]);
-        vector<optional<pair<ndsize_t, ndsize_t>>> ranges = positionToIndex(start_positions[dim_index], end_positions[dim_index],
-                                                                            temp_units, match, dimensions[dim_index]);
-                                                                          
+        vector<optional<pair<ndsize_t, ndsize_t>>> ranges;
+        RangeMatch rm;  // The range match needs to be adjusted if the extent is 0.0 in that case we want have an inclusive matching
+        if (start_positions[dim_index] == end_positions[dim_index]) {
+            rm = RangeMatch::Inclusive;
+        } else {
+            rm = match;
+        }
+        ranges = positionToIndex(start_positions[dim_index], end_positions[dim_index],
+                                 temp_units, rm, dimensions[dim_index]);
+
         data_indices.push_back(ranges);
     }
     // at this point we do have all the start and end indices of the tagged positions that the caller wants the data of.
@@ -497,15 +504,17 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, const vector
                 ndsize_t count =  (*opt_range).second - (*opt_range).first;
                 data_count[dim_index] += count;
             } else {
+                data_count[dim_index] = 0;
                 if (end_positions[dim_index][i] == start_positions[dim_index][i]) {
                     optional<ndsize_t> ofst = positionToIndex(end_positions[dim_index][i], units[dim_index], PositionMatch::GreaterOrEqual, dimensions[dim_index]);  
                     if (!ofst) {
                         throw nix::OutOfBounds("util::offsetAndCount:An invalid range was encountered!");
                     }
-                    temp_offset[i] = *ofst;
+                    temp_offset[i] = *ofst;  // I do not remember what this might be good for...
                 }
             }   
         }
+
         offsets.push_back(data_offset);
         counts.push_back(data_count);
     }
@@ -519,24 +528,24 @@ void getOffsetAndCount(const MultiTag &tag, const DataArray &array, ndsize_t ind
  }
 
 
-bool positionInData(const DataArray &data, const NDSize &position) {
-    NDSize data_size = data.dataExtent();
+bool positionInData(const NDSize &data_size, const NDSize &position) {
     bool valid = true;
-
     if (!(data_size.size() == position.size())) {
         return false;
     }
     for (size_t i = 0; i < data_size.size(); ++i) {
-        valid &= position[i] < data_size[i];
+        valid &= position[i] <= data_size[i];
     }
     return valid;
 }
 
 
-bool positionAndExtentInData(const DataArray &data, const NDSize &position, const NDSize &count) {
-    NDSize pos = position + count;
-    pos -= 1;
-    return positionInData(data, pos);
+bool positionAndExtentInData(const DataArray &data, const NDSize &offset, const NDSize &count) {
+    NDSize end_pos = offset + count;
+    NDSize data_size = data.dataExtent();
+    bool valid = positionInData(data_size, offset);
+    valid &= positionInData(data_size, end_pos);
+    return valid;
 }
 
 
@@ -675,6 +684,7 @@ vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indi
     vector<NDSize> counts, offsets;
     vector<DataView> views;
 
+    // if no positions are given, we will return dataviews for all positions
     if (position_indices.size() < 1) {
         size_t pos_count = check::fits_in_size_t(tag.positions().dataExtent()[0],
                                                  "Number of positions > size_t.");
@@ -683,11 +693,7 @@ vector<DataView> taggedData(const MultiTag &tag, vector<ndsize_t> &position_indi
     }
 
     getOffsetAndCount(tag, array, position_indices, offsets, counts, match);
-
     for (size_t i = 0; i < offsets.size(); ++i) {
-        if (!positionAndExtentInData(array, offsets[i], counts[i])) {
-            throw OutOfBounds("References data slice out of the extent of the DataArray!", 0);
-        }
         DataView io = DataView(array, counts[i], offsets[i]);
         views.push_back(io);
     }
