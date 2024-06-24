@@ -10,6 +10,8 @@
 
 #include "TestH5.hpp"
 
+#include <nix/Hydra.hpp>
+
 #include "hdf5/FileHDF5.hpp"
 #include "hdf5/h5x/H5Exception.hpp"
 #include "hdf5/h5x/H5PList.hpp"
@@ -379,4 +381,17 @@ void TestH5::testUTF8() {
     h5group.createLink(g, "zelda");
     h5group.linkInfo("zelda", li);
     CPPUNIT_ASSERT_EQUAL(H5T_CSET_UTF8, li.cset);
+
+    // ASCII in the file, utf8 in memory
+    nix::hdf5::h5x::DataType ascii_type = nix::hdf5::h5x::DataType::makeStrType(H5T_VARIABLE, H5T_CSET_ASCII);
+    std::string test_str = "Hallo";
+
+    const nix::Hydra<std::string> hydra(test_str);
+
+    nix::hdf5::DataSpace fileSpace = nix::hdf5::DataSpace::create(hydra.shape(), false);
+    nix::hdf5::Attribute attr_ascii = g.createAttr("ascii", ascii_type, fileSpace);
+    attr_ascii.write(nix::hdf5::data_type_to_h5_memtype(nix::DataType::String), hydra.shape(), hydra.data());
+
+    std::string str_out;
+    g.getAttr("ascii", str_out);
 }

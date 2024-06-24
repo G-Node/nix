@@ -10,6 +10,7 @@
 #include "H5DataType.hpp"
 
 #include <memory>
+#include <mutex>
 #include <cstring>
 
 namespace nix {
@@ -187,6 +188,8 @@ bool DataType::enum_equal(const DataType &other) const {
 }
 
 } // h5x
+
+// boolean types
 static herr_t bitfield2bool(hid_t src_id,
                             hid_t dst_id,
                             H5T_cdata_t *cdata,
@@ -257,6 +260,73 @@ static herr_t bitfield2bool(hid_t src_id,
     return 0;
 }
 
+// string type conversion
+static void ascii2utf8_one(void *buffer,
+                           size_t i,
+                           size_t stride_src,
+                           size_t stride_dst)
+{
+    char *base = static_cast<char *>(buffer);
+    char **src = reinterpret_cast<char **>(base + (i * stride_src));
+    char **dst = reinterpret_cast<char **>(base + (i * stride_dst));
+
+    *dst = ::strdup(*src);
+}
+
+static herr_t ascii2utf8(hid_t src_id,
+                         hid_t dst_id,
+                         H5T_cdata_t *cdata,
+                         size_t nl,
+                         size_t buf_stride,
+                         size_t bkg_stride,
+                         void *buf_i,
+                         void *bkg_i,
+                         hid_t dxpl) {
+
+    size_t si;
+    size_t so;
+
+    // document for what this function should to at:
+    // https://support.hdfgroup.org/HDF5/doc/H5.user/Datatypes.html#Datatypes-DataConversion
+
+    switch (cdata->command) {
+    case H5T_CONV_INIT: {
+        cdata->need_bkg = H5T_BKG_NO;
+
+        if (!H5Tis_variable_str(src_id) || !H5Tis_variable_str(dst_id)) {
+          return -1;
+        }
+
+        return 0;
+    }
+    case H5T_CONV_FREE:
+        return 0; //Nothing to do
+    case H5T_CONV_CONV:
+        break;
+    }
+
+    si = H5Tget_size(src_id);
+    so = H5Tget_size(dst_id);
+
+    if (buf_stride == 0) {
+        if (si >= so) {
+            for (size_t i = 0; i < nl; i++) {
+                ascii2utf8_one(buf_i, i, si, so);
+            }
+        } else {
+            for (size_t i = nl; i > 0; i--) {
+                ascii2utf8_one(buf_i, i - 1, si, so);
+            }
+        }
+    } else {
+        for (size_t i = 0; i < nl; i++) {
+            ascii2utf8_one(buf_i, i, buf_stride, buf_stride);
+        }
+    }
+
+    return 0;
+}
+
 h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
    /* The switch is structured in a way in order to get
@@ -292,6 +362,19 @@ h5x::DataType data_type_to_h5_filetype(DataType dtype) {
 
 
 h5x::DataType data_type_to_h5_memtype(DataType dtype) {
+
+    static std::once_flag init_flag;
+
+    std::call_once(init_flag, [](){
+        h5x::DataType utf8type = h5x::DataType::makeStrType(H5T_VARIABLE, H5T_CSET_UTF8);
+        h5x::DataType asciitype = h5x::DataType::makeStrType(H5T_VARIABLE, H5T_CSET_ASCII);
+
+        H5Tregister(H5T_PERS_SOFT,
+                    "ascii2utf8",
+                    asciitype.h5id(),
+                    utf8type.h5id(),
+                    ascii2utf8);
+    });
 
     // See data_type_to_h5_filetype for the reason why the switch is structured
     // in the way it is.
