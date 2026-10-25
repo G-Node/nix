@@ -36,6 +36,7 @@ public:
 
     std::string call(const po::variables_map &vm, const po::options_description &desc);
 
+    virtual ~Validate() {}
 };
 
 } // namespace module

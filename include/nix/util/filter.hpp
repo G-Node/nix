@@ -27,6 +27,8 @@ namespace util {
 template<typename T>
 struct Filter : public std::unary_function<T, bool> {
 
+    virtual ~Filter() {}
+
     virtual bool operator()(const T&) = 0;
 
     typedef std::function<bool(const T&)> type;
