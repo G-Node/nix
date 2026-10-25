@@ -188,7 +188,7 @@ std::string toName(const T &entity) {
 }
 
 /**
- * @brief Sanitizer function that deblanks units and replaces mu and µ
+ * @brief Sanitizer function that de-blanks units and replaces mu and µ
  * with the "u" replacement.
  *
  * @param unit The old unit.
@@ -223,7 +223,7 @@ NIXAPI bool isAtomicSIUnit(const std::string &unit);
  *
  * @param unit  A string that should be tested
  *
- * @return True if a valid compound si unti, false otherwise.
+ * @return True if a valid compound si unit, false otherwise.
  */
 NIXAPI bool isCompoundSIUnit(const std::string &unit);
 
