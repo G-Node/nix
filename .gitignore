@@ -50,6 +50,15 @@ src/pandora_cpp.cpp
 #ignore sublime specific files
 *.sublime-*
 
-# kdevelop
+#kdevelop
 .kdev4
 nix.kdev4
+
+#docs build-files
+docs/_build
+docs/api
+docs/api_doc
+doc
+
+#ignore vscode 
+.vscode
