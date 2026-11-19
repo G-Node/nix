@@ -315,8 +315,8 @@ void TestH5::testDataSpace() {
 
     nix::NDSize es = space.extent();
     CPPUNIT_ASSERT_EQUAL(es.size(), dims.size());
-    CPPUNIT_ASSERT_EQUAL(es[0], dims[0]);
-    CPPUNIT_ASSERT_EQUAL(es[1], dims[1]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<hsize_t>(es[0]), dims[0]);
+    CPPUNIT_ASSERT_EQUAL(static_cast<hsize_t>(es[1]), dims[1]);
 
     CPPUNIT_ASSERT_EQUAL(1, H5Iget_ref(ds));
     space.close();
