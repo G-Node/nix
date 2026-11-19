@@ -1,7 +1,7 @@
 ##########################################
 # NIX CMake
 
-cmake_minimum_required (VERSION 3.5)
+cmake_minimum_required (VERSION 3.10)
 
 # Defaults
 SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
@@ -54,6 +54,10 @@ add_definitions(-DH5_USE_110_API=1)
 
 ########################################
 # Boost
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 OLD)
+endif()
+
 if(WIN32)
   # On windows we always use the static version of boost
   set(Boost_USE_STATIC_LIBS ON)
