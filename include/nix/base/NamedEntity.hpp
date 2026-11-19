@@ -36,6 +36,8 @@ class NamedEntity : public Entity<T> {
 
 public:
 
+    using Entity<T>::operator=;
+
     /**
      * @brief Constructor that creates a null entity.
      */

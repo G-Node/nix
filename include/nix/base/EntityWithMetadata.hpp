@@ -30,6 +30,8 @@ class EntityWithMetadata : public NamedEntity<T> {
 
 public:
 
+    using NamedEntity<T>::operator=;
+
     /**
      * @brief Constructor that creates a null entity.
      */
