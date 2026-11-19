@@ -48,6 +48,8 @@ class NIXAPI Feature : public base::Entity<base::IFeature> {
 
 public:
 
+    using base::Entity<base::IFeature>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Feature.
      *
@@ -153,14 +155,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Feature &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
 };
 

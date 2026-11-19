@@ -36,6 +36,8 @@ class NIXAPI Source : public base::EntityWithMetadata<base::ISource> {
 
 public:
 
+    using base::EntityWithMetadata<base::ISource>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Source.
      *
@@ -233,14 +235,6 @@ public:
      */
     std::vector<nix::MultiTag> referringMultiTags() const;
 
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Source &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator

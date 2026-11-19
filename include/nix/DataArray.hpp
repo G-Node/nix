@@ -69,6 +69,8 @@ class NIXAPI DataArray : public base::EntityWithSources<base::IDataArray>, publi
 
 public:
 
+    using base::EntityWithSources<base::IDataArray>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized DataArray.
      *
@@ -497,14 +499,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    DataArray &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator

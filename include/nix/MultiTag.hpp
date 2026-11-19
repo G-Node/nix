@@ -51,6 +51,8 @@ class NIXAPI MultiTag : public base::EntityWithSources<base::IMultiTag> {
 
 public:
 
+    using base::EntityWithSources<base::IMultiTag>::operator=;
+
     /**
      *  @brief Constructor that creates an uninitialized MultiTag.
      *
@@ -534,14 +536,6 @@ public:
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    MultiTag &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator

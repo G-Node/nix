@@ -23,6 +23,8 @@ class NIXAPI Group : public base::EntityWithSources<base::IGroup> {
 
 public:
 
+    using base::EntityWithSources<base::IGroup>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Group.
      *
@@ -515,14 +517,6 @@ public:
      */
     void multiTags(const std::vector<MultiTag> &multi_tags);
 
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Group &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator
