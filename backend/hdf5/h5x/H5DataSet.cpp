@@ -11,9 +11,18 @@
 
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 namespace nix {
 namespace hdf5 {
+
+static std::vector<hsize_t> toHSize(const NDSize &ndsize) {
+    std::vector<hsize_t> hsizes(ndsize.size());
+    for (size_t i = 0; i < ndsize.size(); ++i) {
+        hsizes[i] = static_cast<hsize_t>(ndsize[i]);
+    }
+    return hsizes;
+}
 
 DataSet::DataSet(hid_t hid)
         : LocID(hid) {
@@ -98,7 +107,7 @@ NDSize DataSet::guessChunking(NDSize chunks, size_t element_size)
     }
 
     double product = 1;
-    std::for_each(chunks.begin(), chunks.end(), [&](hsize_t &val) {
+    std::for_each(chunks.begin(), chunks.end(), [&](ndsize_t &val) {
         //todo: check for +infinity
         if (val == 0)
             val = 1024;
@@ -160,7 +169,8 @@ void DataSet::setExtent(const NDSize &dims)
         throw InvalidRank("Cannot change the dimensionality via setExtent()");
     }
 
-    HErr res = H5Dset_extent(hid, dims.data());
+    std::vector<hsize_t> h_dims = toHSize(dims);
+    HErr res = H5Dset_extent(hid, h_dims.data());
     res.check("DataSet::setExtent(): Could not set the extent of the DataSet.");
 
 }
