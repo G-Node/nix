@@ -31,6 +31,8 @@ class Entity : public ImplContainer<T> {
 
 public:
 
+    using ImplContainer<T>::operator=;
+
     /**
      * @brief Constructor that creates a null entity.
      */

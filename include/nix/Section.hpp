@@ -30,6 +30,8 @@ class NIXAPI Section : public base::NamedEntity<base::ISection> {
 
 public:
 
+    using base::NamedEntity<base::ISection>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Section.
      *
@@ -521,14 +523,6 @@ public:
      * @return std::vector of Blocks.
      */
     std::vector<nix::Block> referringBlocks() const;
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Section &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator

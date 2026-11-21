@@ -130,6 +130,10 @@ public:
         return *this;
     }
 
+    virtual ImplContainer<T> &operator=(std::nullptr_t) {
+        impl_ptr = nullptr;
+        return *this;
+    }
 
     virtual bool operator==(const ImplContainer<T> &other) const {
         return this->impl_ptr == other.impl_ptr;

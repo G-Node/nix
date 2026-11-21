@@ -25,6 +25,8 @@ class NIXAPI File : public base::ImplContainer<base::IFile> {
 
 public:
 
+    using base::ImplContainer<base::IFile>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized File.
      *
@@ -481,14 +483,6 @@ public:
     */
     Compression compression() const {
         return backend()->compression();
-    }
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    File &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
     }
 
     //------------------------------------------------------

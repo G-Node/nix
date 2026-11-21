@@ -135,8 +135,20 @@ public:
 
 namespace check {
 
+// size_t max is not exactly representable as floating point; the converted
+// value is 2^N, which itself does not fit, hence ">=" against 2^N.
 template<typename T>
-inline typename std::enable_if<! std::is_same<T, size_t>::value, size_t>::type
+inline typename std::enable_if<std::is_floating_point<T>::value, size_t>::type
+fits_in_size_t(T size, const std::string &msg_if_fail) {
+    const T limit = static_cast<T>(std::numeric_limits<size_t>::max() / 2 + 1) * 2;
+    if (!(size < limit)) {
+        throw OutOfBounds(msg_if_fail);
+    }
+    return static_cast<size_t>(size);
+}
+
+template<typename T>
+inline typename std::enable_if<!std::is_floating_point<T>::value && !std::is_same<T, size_t>::value, size_t>::type
 fits_in_size_t(T size, const std::string &msg_if_fail) {
     if (size > std::numeric_limits<size_t>::max()) {
         throw OutOfBounds(msg_if_fail);

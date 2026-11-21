@@ -28,6 +28,8 @@ class EntityWithSources : public base::EntityWithMetadata<T> {
 
 public:
 
+    using EntityWithMetadata<T>::operator=;
+
     /**
      * @brief Constructor that creates a null entity.
      */

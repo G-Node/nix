@@ -9,10 +9,19 @@
 #include "H5Group.hpp"
 #include <nix/util/util.hpp>
 #include "H5Exception.hpp"
+#include <vector>
 
 
 namespace nix {
 namespace hdf5 {
+
+static std::vector<hsize_t> toHSize(const NDSize &ndsize) {
+    std::vector<hsize_t> hsizes(ndsize.size());
+    for (size_t i = 0; i < ndsize.size(); ++i) {
+        hsizes[i] = static_cast<hsize_t>(ndsize[i]);
+    }
+    return hsizes;
+}
 
 optGroup::optGroup(const H5Group &parent, const std::string &g_name)
     : parent(parent), g_name(g_name)
@@ -215,7 +224,8 @@ DataSet H5Group::createData(const std::string &name,
 
     if (chunks) {
         int rank = static_cast<int>(chunks.size());
-        HErr res = H5Pset_chunk(dcpl.h5id(), rank, chunks.data());
+        std::vector<hsize_t> h_chunks = toHSize(chunks);
+        HErr res = H5Pset_chunk(dcpl.h5id(), rank, h_chunks.data());
         res.check("Could not set chunk size on data set creation plist");
     }
     DataSet ds;

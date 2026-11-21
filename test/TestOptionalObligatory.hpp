@@ -68,18 +68,10 @@ namespace test {
     // hacky way to allow testing for none_t-overloads of entity methods
     // usage: add 'ACCEPT(methodName)' anywhere to namespace 'test'
     // then 'acceptsNoneT = accepts_noneT<nix::parentClass, test::methodName>::value;'
-    enum METHOD_NAME { FIRST };
-    template<typename T, METHOD_NAME S>
-    class accepts_noneT 
-    { 
-        template <typename U, void (U::*)(boost::none_t)> struct Check; 
-        template <typename U> static char func(Check<U, &U::id> *); 
-        template <typename U> static int func(...); 
-    public: 
-        enum { value = sizeof(func<T>(0)) == sizeof(char) }; 
-    };
+    template<typename T, typename S>
+    class accepts_noneT;
     #define ACCEPTS(M) \
-        static const METHOD_NAME M = static_cast<METHOD_NAME>(__COUNTER__ + 1); \
+        struct M {}; \
         template<typename T> \
         class accepts_noneT<T, M> \
         { \

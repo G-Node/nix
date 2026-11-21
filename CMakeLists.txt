@@ -1,7 +1,7 @@
 ##########################################
 # NIX CMake
 
-cmake_minimum_required (VERSION 2.8.10)
+cmake_minimum_required (VERSION 3.10)
 
 # Defaults
 SET(CMAKE_INSTALL_PREFIX "/usr/local" CACHE PATH "Install dir prefix")
@@ -19,7 +19,7 @@ set(VERSION_ABI   1)
 option(BUILD_STATIC "Build static version of the library" OFF)
 
 if(NOT WIN32)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++11") ## Optimize
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -std=c++17") ## Optimize
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wunreachable-code")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef") # boost + clang
 
@@ -54,6 +54,10 @@ add_definitions(-DH5_USE_110_API=1)
 
 ########################################
 # Boost
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 OLD)
+endif()
+
 if(WIN32)
   # On windows we always use the static version of boost
   set(Boost_USE_STATIC_LIBS ON)
@@ -64,7 +68,7 @@ endif()
 
 set(Boost_USE_MULTITHREADED ON)
 
-find_package(Boost 1.49.0 REQUIRED date_time regex program_options system filesystem)
+find_package(Boost 1.49.0 REQUIRED date_time regex program_options filesystem)
 
 include_directories(${Boost_INCLUDE_DIR})
 set (LINK_LIBS ${LINK_LIBS} ${Boost_LIBRARIES})

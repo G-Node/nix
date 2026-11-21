@@ -51,6 +51,8 @@ class NIXAPI Tag : public base::EntityWithSources<base::ITag> {
 
 public:
 
+    using base::EntityWithSources<base::ITag>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Tag.
      *
@@ -475,14 +477,6 @@ public:
     //--------------------------------------------------
     // Other methods and functions
     //--------------------------------------------------
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Tag &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator

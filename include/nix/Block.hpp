@@ -80,6 +80,8 @@ class NIXAPI Block : public base::EntityWithMetadata<base::IBlock> {
 
 public:
 
+    using base::EntityWithMetadata<base::IBlock>::operator=;
+
     /**
      * @brief Constructor that creates an uninitialized Block.
      *
@@ -787,14 +789,6 @@ public:
     //------------------------------------------------------
     // Operators and other functions
     //------------------------------------------------------
-
-    /**
-     * @brief Assignment operator for none.
-     */
-    Block &operator=(const none_t &t) {
-        ImplContainer::operator=(t);
-        return *this;
-    }
 
     /**
      * @brief Output operator
